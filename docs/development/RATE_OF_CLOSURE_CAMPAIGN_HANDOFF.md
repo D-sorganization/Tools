@@ -12,6 +12,8 @@
   build, static analysis, manifest, and module gates.
 - No executor, partial publication, UI/backend/storage, compiled physics, or
   downstream parity. Keep #4369/#4273/#4267 open.
+- Hosted MyPy 1.13 remediation removed a redundant result-digest cast without
+  changing runtime behavior or canonical evidence.
 
 ## 2026-08-11 #4369 execution qualification continuation
 

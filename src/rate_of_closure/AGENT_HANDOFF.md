@@ -13,6 +13,8 @@ The Python-produced shared golden preserves complete and censored rows with
 typed nulls. Full local gates passed 1,048 Python/PyQt and 818 React tests plus
 build and static/governance gates. No executor, partial publication,
 UI/backend/storage, compiled physics, or downstream parity is added.
+Hosted MyPy 1.13 remediation removed a redundant result-digest cast without
+changing the wire contract or canonical evidence.
 
 ## 2026-08-11 #4369 physical and launch-origin job qualification
 

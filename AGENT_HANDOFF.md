@@ -14,6 +14,8 @@ Full local gates passed 1,048 Python/PyQt and 818 React tests plus build,
 Ruff, MyPy, TypeScript, ESLint, manifest, and module budgets. The slice adds no
 executor, partial publication, UI/backend/storage, compiled physics, or
 downstream parity. Keep #4369/#4273/#4267 open.
+Hosted MyPy 1.13 remediation removed a redundant result-digest cast; the
+runtime contract and canonical evidence are unchanged.
 
 ## 2026-08-11 #4369 execution qualification child
 

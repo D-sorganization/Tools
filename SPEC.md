@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.68                                    |
-| **Spec Version**        | 1.14.68                                    |
+| **Current Version**     | 1.14.69                                    |
+| **Spec Version**        | 1.14.69                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3218,6 +3218,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.69 | fix(ground-study, #4369): satisfy hosted MyPy 1.13 by removing a redundant result-digest cast without changing runtime behavior or canonical evidence. |
 | 2026-08-11 | 1.14.68 | feat(ground-study, #4369): add a strict bounded Python/React execution-result envelope binding job/input identities and canonical scalar-dataset SHA; require expected-job matching for result ID, trial count/order, and series identities. |
 | 2026-08-11 | 1.14.67 | feat(ground-study, #4369): qualify execution jobs with exact physical regional/skid-roll settings, executor revision, and recomputable source-to-launch-origin plan translation; expose only implemented serial fail-fast max-trials orchestration. |
 | 2026-08-11 | 1.14.66 | fix(ground-study, #4369): retain the authenticated loopback authority readiness contract while replacing generic URL opening with an explicit fixed-host HTTP connection for hosted Bandit B310 compliance. |

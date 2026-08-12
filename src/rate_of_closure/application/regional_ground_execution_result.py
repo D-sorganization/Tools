@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import Any
 
 from rate_of_closure.application._regional_ground_execution_job_values import (
     digest,
@@ -61,7 +61,7 @@ class RegionalGroundExecutionResult:
     @property
     def expected_dataset_sha256(self) -> str:
         """Return the digest of the complete canonical scalar-ensemble object."""
-        return cast(str, sha256(self.dataset.to_wire()))
+        return sha256(self.dataset.to_wire())
 
     @property
     def canonical_sha256(self) -> str:
