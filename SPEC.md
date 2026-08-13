@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.46                                    |
-| **Spec Version**        | 1.16.46                                    |
+| **Current Version**     | 1.16.47                                    |
+| **Spec Version**        | 1.16.47                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -90,6 +90,22 @@ stable point ID and sample bounds determine presentation order. Insufficient or
 invalid evidence never qualifies, and volume additionally requires full-rank
 estimability. Existing RMS-only APIs remain unchanged. Python/PyQt/React UI
 selectors and renderers plus a serialized cross-runtime fixture remain open.
+
+### 2026-08-12 React worker transport hardening (#4142 R14.3)
+
+Version 1.16.47 makes the React worker transport fail closed. One terminal
+lifecycle owns cleanup for result, abort, worker error, response decoding error,
+malformed protocol data, and synchronous request-cloning failure. Progress is
+accepted only when its count is consecutive, total matches the planned bounded
+work, and phase matches the joint-then-individual execution order. Returned
+plans and the dataset, sensitivity, and swing-ensemble result envelopes are
+validated against the initiating request before acceptance.
+
+An injected Worker factory provides direct deterministic tests of the production
+transport service, including cleanup and late-event behavior. These unit tests
+do not constitute browser/Playwright interaction or screenshot evidence; R14.5
+remains open. This release does not complete #4142 or authorize an UpstreamDrift
+consumer pin.
 
 ### 2026-08-12 React Monte Carlo worker execution (#4142 R14.3)
 
@@ -3173,6 +3189,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.47 | fix(rate-of-closure, #4142 R14.3): fail closed across React worker result/error/decoding/clone boundaries with single-settlement cleanup, exact progress sequencing, request-bound result validation, late-event safety, and direct injected-Worker transport tests while retaining browser/Playwright as an open R14.5 gate. |
 | 2026-08-12 | 1.16.46 | feat(rate-of-closure, #4142 R14.3): execute React Monte Carlo and OAT studies in a bounded worker with completed-evaluation progress, cooperative AbortSignal cancellation, immediate rerun, stale-generation suppression, unmount safety, and unchanged deterministic plan/result semantics. |
 | 2026-08-12 | 1.16.45 | feat(rate-of-closure, #4142 R12.1/R12.2): add immutable plot-ready confidence-scaled 3D Gaussian position-content ellipsoids with exact chi-square scaling, explicit full-rank/sample adequacy, selectable RMS/principal-sigma/ellipsoid-volume quiet metrics, and deterministic dimensionless interval scoring with stable dense ties; retain UI/parity serialization as open work. |
 | 2026-08-12 | 1.16.44 | feat(rate-of-closure, #4142 R11.4): add a strict bounded typed reader and lossless round trip for complete Rate ensemble JSON; retain plan/spec/group/trial/point provenance, typed hit/no-impact/failure availability and full traces; reject duplicate, corrupt, truncated, noncanonical, crossed, and resource-excess documents; make all `VariationDataset` arrays owned and read-only. |

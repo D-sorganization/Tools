@@ -50,6 +50,28 @@ open.
   format, and MyPy. PyQt/React controls, rendering, serialized cross-runtime
   fixtures, protected CI/publication, and #4142 epic completion remain open.
 
+## 2026-08-12 React worker transport hardening (#4142 R14.3)
+
+The React Monte Carlo worker client now treats the worker boundary as untrusted
+runtime input. A single-settlement lifecycle terminates the worker and removes
+abort/message/error handlers after success, cancellation, decoding failure,
+worker failure, malformed messages, invalid progress, invalid result structure,
+or a synchronous `postMessage` clone failure. Late events are inert.
+
+Progress must advance by exactly one completed evaluation, retain the planned
+total, and follow the joint-then-individual phase order. Returned plans,
+datasets, sensitivity matrices, and swing-ensemble envelopes are validated
+against the initiating request before results are accepted. The execution entry
+point also validates the complete plan before OAT work, preserving the browser
+run bound for injected and worker callers.
+
+Direct production-transport unit coverage uses an injected Worker factory to
+exercise progress/result completion, abort and late-event safety, worker and
+message decoding errors, malformed progress/results, and `DataCloneError`
+cleanup. This is deterministic transport coverage, not browser/Playwright or
+screenshot evidence; those remain an explicit R14.5 release gate. This slice
+does not complete #4142 or authorize the UpstreamDrift consumer pin.
+
 ## 2026-08-12 React Monte Carlo worker execution (#4142 R14.3)
 
 The React Variation workspace no longer evaluates Monte Carlo studies in the
@@ -66,7 +88,7 @@ updating accepted results. Configuration and workflow changes invalidate active
 work. The same plan and seed produce the same datasets and sensitivity matrices
 as the prior synchronous authority.
 
-Verification: all 733 React tests pass, including production-path component
+Verification: all 733 React tests pass, including injected-service component
 coverage for run/progress, cancel/rerun, stale-generation suppression, and
 unmount abort. TypeScript, ESLint, and the Vite production build pass; the build
 emits the dedicated variation worker chunk. Browser/Playwright interaction and
