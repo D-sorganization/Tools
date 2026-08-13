@@ -1,5 +1,44 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 PR #4361 qualified regional-ground study adapter
+
+Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)
+starts from exact published PR #4360 head
+`74f1ceafd87f952a76917dc868baa6414f856144`. Its independently reviewed
+implementation commit is `d71c43fdd729b35e1abe5573f41ed60201698608`.
+A read-only audit of current
+flight metric, target, scalar-ensemble, capability, regional readback, and
+ground-result contracts plus the historical `ground-study-scalar-adapter`,
+`ground-study-result-adapter`, and `ground-study-projection` worktrees found
+one reusable invariant: final ground study values are qualified only after
+regional `COMPLETE` and ground `COMPLETE/REST` with a summary. The stale
+parallel study model and its numeric censored totals were not copied.
+
+The new UI-neutral Rate adapter reuses `to_ground_model_result`,
+`FlightMetricInputs`, and `ScalarEnsembleDataset`. Complete-rest evidence may
+populate canonical total distance, roll, final offline, and bounce count plus
+distinct bounce-air/skid/surface-path/final-downrange study detail. Carry stays
+separate. Partial and left-surface endpoints, all non-settled bounce outcomes,
+regional cancellation/failure, missing summaries, and typed transfer failures
+produce null numerics with exact typed cohort/reason/status/model/digest
+attributes. Applying unqualified evidence clears stale ground inputs, so
+censored total distance cannot become an optimizer final-rest objective.
+
+RED captured the missing adapter. GREEN passes 7 focused tests, including a
+positive numeric time-limited summary that is deliberately nulled, complete
+left-surface censorship, every non-settled bounce reason, regional failure and
+cancellation, transfer failure, and forged missing-summary defense. The full
+Rate/flight/ground selection passes 1,299 tests. Ruff check/format, strict
+MyPy, pinned Bandit, campaign-manifest validation and 8 manifest tests,
+documentation governance, blocking-quality policy, minimum-test contract,
+default module-size budget, and diff checks are green. The assertion and
+400-line scans report only inherited stack files when compared with main; the
+new test has behavioral assertions and the new production module is 328 lines.
+
+This PR adds no UI, solver/capability invocation, wind strategy,
+persistence, TypeScript or compiled runtime, four-surface parity, protected
+CI/review, publication, or release. Keep #4273 and #4267 open.
+
 ## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
 
 Ready-for-review PR [#4360](https://github.com/D-sorganization/Tools/pull/4360)

@@ -1,5 +1,33 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4361 qualified regional-ground study adapter
+
+- Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)
+  starts from exact published PR #4360 head
+  `74f1ceafd87f952a76917dc868baa6414f856144`; its independently reviewed
+  implementation commit is `d71c43fdd729b35e1abe5573f41ed60201698608`.
+- Contract and historical-worktree audits retained only the existing
+  complete-rest qualification invariant and scalar taxonomy. The adapter
+  reuses `to_ground_model_result`, `FlightMetricInputs`, and
+  `ScalarEnsembleDataset`; it does not import the stale parallel study model
+  or its numeric censored endpoints.
+- Regional complete plus ground complete/rest/summary evidence can populate
+  canonical total, roll, final-offline, and bounce-count metrics and distinct
+  bounce-air/skid/surface-path/final-downrange detail. Carry remains distinct.
+  Partial/left-surface, every non-settled bounce reason, regional
+  cancelled/failed, missing-summary, and typed transfer-error outcomes keep
+  null values with exact typed status/reason/model/digest attributes. An
+  unqualified outcome clears stale ground metric inputs.
+- Seven focused tests and 1,299 Rate/flight/ground tests pass. Ruff,
+  strict MyPy, pinned Bandit, manifest validation plus 8 manifest tests,
+  documentation governance, blocking-quality, minimum-test, default module
+  size, and diff gates pass. Inherited main-relative assertion and 400-line
+  findings do not include this 328-line production module or its
+  assertion-bearing test.
+- Solver/capability invocation, variation UI, wind strategy, persistence,
+  TypeScript/compiled and four-surface parity, protected CI/review,
+  protected release, and #4273/#4267 completion remain open.
+
 ## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
 
 - Ready-for-review PR
