@@ -1,5 +1,27 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R14.5 real-browser variation Worker foundation
+
+- Local branch `codex/4142-rate-web-playwright` starts from exact integrated
+  commit `11a699155588d3d948990c5f08b72c5cc8d2c746`.
+- The Rate web package pins Playwright Test 1.62.1 in its own manifest/lock;
+  the dedicated configuration serves the production Vite build in deterministic
+  Chromium desktop and narrow projects.
+- Role/label-driven tests observe the hashed production module Worker and prove
+  seeded progress/completion/reproducible rerun, long-run cancellation without
+  partial or stale result acceptance, and Worker termination on tab unmount.
+  `serviceWorkers: "block"` suppresses unrelated service-worker state only; the
+  tested dedicated module Worker remains active and is never mocked.
+- Desktop 1440x1000 and narrow 390x844 layouts have no document-level
+  horizontal overflow. Both full-page screenshots and all failure traces,
+  screenshots, and videos are retained in the Playwright report artifact.
+- Local evidence: 5/5 Playwright tests, 743/743 Vitest tests, TypeScript,
+  ESLint, and Vite production build. Chromium installed locally without error.
+- This is not R14.5 completion: screenshots are review artifacts rather than
+  CI-authority golden comparisons, and WebKit, Firefox, assistive-technology,
+  PyQt interaction, protected runner evidence, and cross-platform visual
+  baselines remain open.
+
 ## 2026-08-12 #4142 R11.5 bounded ensemble chunk lifecycle foundation
 
 - Local child `codex/4142-ensemble-chunks` starts from exact published #4405

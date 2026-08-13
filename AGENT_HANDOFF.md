@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
+
+Local branch `codex/4142-rate-web-playwright` starts from exact integrated
+commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The Rate web package pins
+Playwright Test 1.62.1 in its own manifest/lock and owns a deterministic
+Chromium configuration plus a path-filtered `d-sorg-fleet` CI workflow.
+
+The gate builds and serves the Vite production bundle, then uses role/label
+locators against the actual bundled module Worker. It proves seeded three-run
+progress/completion and deterministic rerun, cancels a 500-run swing/OAT job
+without accepting partial or late results, terminates active work on primary-
+tab unmount, and rejects browser page errors. Blocking service workers in the
+test context does not replace or disable the dedicated module Worker; every
+lifecycle case observes the hashed production Worker chunk. Desktop 1440x1000
+and narrow 390x844 checks enforce zero document-level horizontal overflow and
+attach full-page screenshots to the retained Playwright report.
+
+This is a narrow R14.5 foundation, not R14.5 completion or complete visual
+certification. It covers bundled Chromium only; screenshots are review
+artifacts, not cross-platform golden baselines. WebKit, Firefox, assistive-
+technology automation, PyQt interaction, protected runner evidence, and a
+CI-authority visual baseline remain open. Local evidence is 5/5 Playwright and
+743/743 Vitest tests, plus TypeScript, ESLint, and the Vite production build.
+
 ## 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
 
 Local child `codex/4142-ensemble-chunks` starts from published #4405 head

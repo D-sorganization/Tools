@@ -26,11 +26,34 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.53                                    |
-| **Spec Version**        | 1.16.53                                    |
+| **Current Version**     | 1.16.54                                    |
+| **Spec Version**        | 1.16.54                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
+
+Version 1.16.54 pins Playwright Test 1.62.1 inside the Rate web package and
+adds a dedicated deterministic Chromium configuration and path-filtered fleet
+workflow. The gate builds and previews the production Vite output. Role/label
+locators drive the real hashed module Worker through a seeded three-run study,
+completion and identical rerun, 500-run swing/OAT cancellation with no partial
+or late result, and primary-tab navigation which terminates active work before
+the Variation panel unmounts. The test context blocks service workers but not
+the tested dedicated module Worker.
+
+Desktop 1440x1000 and narrow 390x844 projects enforce zero document-level
+horizontal overflow and attach deterministic full-page screenshots. Reports,
+failure screenshots, traces, and videos are retained as CI artifacts. Local
+evidence is 5/5 Playwright tests and 743/743 Vitest tests, with TypeScript,
+ESLint, and the Vite production build green.
+
+This is a narrow R14.5 foundation rather than R14.5 completion. The screenshots
+are review artifacts, not CI-authority or cross-platform pixel baselines. Only
+bundled Chromium is exercised; WebKit, Firefox, assistive-technology automation,
+PyQt interaction, protected runner execution, and an approved visual baseline
+remain open. No scientific, plan, result, or persistence contract changed.
 
 ### 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
 
@@ -3309,6 +3332,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.54 | test(rate-of-closure, #4142 R14.5): pin a Rate-web-local Playwright/Chromium contract; exercise the real production module Worker for seeded progress/completion/rerun, cancellation without stale results, and navigation/unmount cleanup; retain desktop/narrow screenshots as review artifacts while keeping golden cross-platform visual approval and full R14.5 completion open. |
 | 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
 | 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |
 | 2026-08-12 | 1.16.51 | fix(rate-of-closure, #4142 R11.4): require complete trial output scalars to be finite real non-booleans; normalize accepted NumPy real scalars to built-in floats; and prove typed-object writer/reader domain closure with five TDD cases and 39 focused persistence tests. |

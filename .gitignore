@@ -80,6 +80,8 @@ flask_pid.txt
 node_modules/
 dist/
 build/
+playwright-report/
+test-results/
 
 # Cache
 .cache/
