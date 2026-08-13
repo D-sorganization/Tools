@@ -6,6 +6,7 @@ import { PrimaryWorkspacePanel } from "./components/PrimaryWorkspacePanel";
 import { useAppWorkspace } from "./hooks/useAppWorkspace";
 import { useImpactAppModel } from "./hooks/useImpactAppModel";
 import { useRegionalGroundVariationWorkspace } from "./hooks/useRegionalGroundVariationWorkspace";
+import { useRegionalGroundExecutionWorkspace } from "./hooks/useRegionalGroundExecutionWorkspace";
 import { HELP_TEXTS } from "./model/helptext";
 import { primaryViewLabel, type PrimaryViewId } from "./model/viewPreferences";
 
@@ -63,6 +64,7 @@ export default function App() {
   const workspace = useAppWorkspace();
   const model = useImpactAppModel();
   const regionalGroundVariation = useRegionalGroundVariationWorkspace();
+  const regionalGroundExecution = useRegionalGroundExecutionWorkspace();
   const active = workspace.viewState.active;
   const openGlossary = (term: string | undefined) => {
     model.setGlossaryTerm(term);
@@ -76,6 +78,7 @@ export default function App() {
         onModuleStateChange={workspace.setViewState}
         onCommand={workspace.handleCommand}
         regionalGroundVariationRequestPort={regionalGroundVariation.requestPort}
+        regionalGroundExecutionWorkspace={regionalGroundExecution}
         onShortcutHelpOpenChange={workspace.setShortcutHelpOpen} />
       <AppHeader />
       <PrimaryViewTabs state={workspace.viewState}
@@ -87,6 +90,7 @@ export default function App() {
         aria-labelledby={`primary-tab-${active}`}>
         <PrimaryWorkspacePanel active={active} model={model}
           regionalGroundVariation={regionalGroundVariation}
+          regionalGroundExecution={regionalGroundExecution}
           onOpenGlossary={openGlossary} />
       </main>
       <AppFooter />

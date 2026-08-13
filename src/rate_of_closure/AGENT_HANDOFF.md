@@ -1,5 +1,63 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 imported-job accessibility correction
+
+Physical browser inspection of PR #4373 found that the hidden file inputs and
+their visible proxy buttons both appeared as import actions in the accessibility
+tree. The Ground Playback panel and contextual File menu now use truly hidden,
+programmatically activated inputs, leaving each visible button as the sole
+accessible action. Focused React coverage proves the single-action contract and
+preserves strict file-import behavior across workspace navigation.
+
+## 2026-08-11 #4369 PyQt6 toolstrip protocol correction
+
+Hosted PR #4373 quality-gate job 94021363392 found that the concrete main
+window implemented all regional-ground execution File callbacks while the
+`ToolstripHost` structural protocol declared only the variation callbacks.
+The protocol now includes Open Job, Save Job, Save Result, and Export Rows CSV;
+this is a typing-only correction with no runtime behavior change. Reproduce with
+the pinned MyPy 1.13 changed-source profile and `MYPYPATH=src:src/python/src`.
+
+## 2026-08-11 #4369 integrated web-launch repair
+
+Physical launch verification found that Vite 7 mutates each proxy adapter with
+internal routing fields. The strict authority proxy builder now validates the
+loopback URL and ephemeral token, then returns a fresh mutable server-owned
+adapter instead of a frozen object. The token remains confined to Vite and is
+not emitted to browser code. `authorityProxyConfig.test.ts` pins both validation
+and framework extensibility; use `src/rate_of_closure/launch_web.py` for the
+integrated authority-backed client. A physical launch returned HTTP 200 from
+`http://localhost:5193/` and the proxied capability endpoint returned the exact
+qualified `available=true`, `regional_ground_execution=true` v1 evidence.
+
+## 2026-08-11 #4369 imported-job execution surfaces
+
+React now owns one regional-ground execution workspace above workspace
+navigation. Ground Playback mounts a visible strict imported-job surface with
+exact identity/provenance/digest evidence, explicit confirmation, Run, Cancel,
+progress, typed failure, ambiguous-request reconciliation, canonical job/result
+downloads, and lossless scalar-row CSV export. Active or uncertain authority
+ownership prevents job replacement, the same immutable authority job cannot be
+silently resubmitted, and neither editor state nor TypeScript physics enters the
+job. Contextual File commands share the same App-owned state.
+
+PyQt6 now exposes a dedicated Ground Study module between Ground Surfaces and
+Ground Playback. It uses bounded strict UTF-8 import, QThread execution and
+cooperative cancellation, safe error presentation, exact job/result evidence,
+and native atomic job/result/CSV writes. Close blocks until its worker is
+cancelled and joined. Direct embedded construction remains unavailable unless
+an authority is injected; the source standalone launcher injects the qualified
+direct Python runner without Uvicorn, while frozen distributions remain
+explicitly unqualified.
+
+Focused evidence passes 76 PyQt navigation, toolstrip, controller, file,
+workspace, standalone, registration, and manifest tests. React passes its complete
+875-test suite across 135 files, strict TypeScript, zero-warning ESLint, and the
+production build. Ruff, Black, pinned MyPy 1.13, and diff hygiene pass for the
+Python delta. Current-editor job construction, restart recovery, static-host
+execution, frozen-runtime qualification, compiled/downstream parity, protected
+integration, release, #4369, #4273, and #4267 remain open.
+
 ## 2026-08-11 #4369 qualified headless authority admission
 
 Independent post-admission review verified deterministic submit-versus-close

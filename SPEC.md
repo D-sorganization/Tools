@@ -44,6 +44,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -118,6 +119,10 @@
 | **Current Version**     | 1.14.84                                    |
 | **Spec Version**        | 1.14.84                                    |
 >>>>>>> origin/codex/4369-ground-authority-capability
+=======
+| **Current Version**     | 1.14.88                                    |
+| **Spec Version**        | 1.14.88                                    |
+>>>>>>> origin/codex/4369-imported-job-ui
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -357,7 +362,38 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   controls, model invocation, persistence, and downstream parity remain
   unimplemented and disabled.
 
+<<<<<<< HEAD
 >>>>>>> origin/codex/4369-ground-authority-capability
+=======
+### 2026-08-11 Imported Regional-Ground Study Execution
+
+- React owns one execution workspace above mutually exclusive navigation. It
+  strictly imports a bounded, fatal-UTF-8 `regional-ground-execution-job/v1`,
+  preserves the last accepted job on failure, displays model, provenance,
+  trial count and all job/input/qualified-plan digests, and requires explicit
+  confirmation before submitting the exact job to the authenticated local
+  Python authority. Active or ambiguous remote ownership blocks replacement;
+  ambiguous requests expose status reconciliation, and an immutable accepted
+  job cannot be submitted twice until a new job is imported.
+- React provides visible Run, Cancel, progress, typed terminal failure, compact
+  result identity, canonical job/result downloads, and lossless scalar-row CSV
+  export. File-menu commands and the visible workspace share the same App-owned
+  authority. Navigation cannot abort or discard the execution lifecycle. No
+  editor state enters the imported job and no physics executes in TypeScript.
+- PyQt6 adds a dedicated Ground Study workspace between Ground Surfaces and
+  Ground Playback. It performs bounded strict import, exact evidence readback,
+  explicit confirmation, QThread execution/cancellation, stable non-private
+  failure presentation, and native atomic job/result/CSV persistence. Window
+  shutdown cancels and joins the owned worker before QWidget destruction.
+- Direct `RateOfClosureMainWindow` construction remains injection-safe and
+  unavailable. The source standalone registration injects the qualified direct
+  Python production runner without a Uvicorn child. Frozen builds remain
+  explicitly unavailable until their complete numerical bundle is qualified.
+  Static React hosting, restart recovery, current-editor job construction,
+  compiled-runtime parity, downstream integration, protected merge, and
+  release remain open.
+
+>>>>>>> origin/codex/4369-imported-job-ui
 ### 2026-08-11 Regional-Ground Scalar Result Import
 
 - React can strictly import the two Python-owned regional
@@ -3560,6 +3596,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3579,6 +3616,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.87 | fix(ground-study, #4369): complete the PyQt6 toolstrip host protocol with the four strict execution-job/result file callbacks required by its contextual command group, restoring the pinned MyPy 1.13 changed-source gate without changing runtime behavior. |
+| 2026-08-11 | 1.14.86 | fix(web-authority, #4369): preserve strict loopback URL and ephemeral-token validation while returning the mutable proxy adapter required by Vite 7, restoring the integrated authority-backed web launcher without exposing the token to browser code. |
+| 2026-08-11 | 1.14.85 | feat(ground-study, #4369): add matched strict imported-job execution workflows with App-owned React Run/Cancel/reconciliation and canonical downloads, a dedicated source-qualified PyQt6 Ground Study workspace with QThread lifecycle and atomic JSON/CSV persistence, shared contextual File commands, and explicit static/frozen/editor-construction/restart/downstream/release limitations. |
+>>>>>>> origin/codex/4369-imported-job-ui
 | 2026-08-11 | 1.14.83 | feat(ground-study, #4369): deterministically regenerate profile-qualified job/status/result fixtures; execute qualified jobs through one reused flight solve and seeded regional ground with typed cancellation/failure and complete-only publication; add matched disabled PyQt6/React identity, progress, failure, and result presentation while retaining false default capability and open protected/downstream gates. |
 | 2026-08-11 | 1.14.81 | chore(ground-study, #4369): record the fully composed authority continuation and consolidated 1,148-Python/PyQt plus 854-React release gate; retain false capability, disabled visible controls, and open protected/ancestor gates because the canonical synthetic flight digests do not qualify. |
 | 2026-08-11 | 1.14.82 | fix(ground-study, #4369): remove a redundant exact-bool cast rejected by the hosted pinned MyPy 1.13 delta gate; runtime cancellation semantics and the fail-closed capability boundary are unchanged. |

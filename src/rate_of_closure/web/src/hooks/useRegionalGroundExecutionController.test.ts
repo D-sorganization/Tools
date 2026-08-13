@@ -8,9 +8,10 @@ import {
   qualifiedRegionalGroundAuthorityCapability,
   type RegionalGroundAuthorityCapability,
 } from "../model/regionalGroundAuthority";
-import type {
-  RegionalGroundAuthorityClient,
-  RegionalGroundAuthorityJobStatus,
+import {
+  RegionalGroundAuthorityRequestError,
+  type RegionalGroundAuthorityClient,
+  type RegionalGroundAuthorityJobStatus,
 } from "../model/regionalGroundAuthorityClient";
 import { regionalGroundExecutionResultFromJson } from "../model/regionalGroundExecutionResult";
 import { parseRegionalGroundExecutionJob } from "../model/regionalGroundExecutionJob";
@@ -166,7 +167,7 @@ describe("regional-ground React execution controller", () => {
     expect(authority.result).not.toHaveBeenCalled();
   });
 
-  it("aborts active polling and suppresses stale publication after reset", async () => {
+  it("rejects active reset, then aborts polling and suppresses stale publication on unmount", async () => {
     vi.useFakeTimers();
     const pending = deferred<RegionalGroundAuthorityJobStatus>();
     let signal: AbortSignal | undefined;
@@ -176,7 +177,7 @@ describe("regional-ground React execution controller", () => {
         return pending.promise;
       }),
     });
-    const { result } = renderHook(() => useRegionalGroundExecutionController({
+    const { result, unmount } = renderHook(() => useRegionalGroundExecutionController({
       client: authority,
       capability: qualified,
       pollIntervalMs: 250,
@@ -185,12 +186,47 @@ describe("regional-ground React execution controller", () => {
     await act(async () => { await result.current.submit(job); });
     await act(async () => { vi.advanceTimersByTime(250); });
     expect(signal?.aborted).toBe(false);
-    act(() => result.current.reset());
+    expect(() => result.current.reset()).toThrow(/active or uncertain/i);
+    expect(signal?.aborted).toBe(false);
+    unmount();
     expect(signal?.aborted).toBe(true);
     await act(async () => { pending.resolve(status("succeeded", 4)); });
 
-    expect(result.current.phase).toBe("idle");
-    expect(result.current.status).toBeNull();
     expect(authority.result).not.toHaveBeenCalled();
+  });
+
+  it("never resubmits an accepted terminal job until an explicit reset", async () => {
+    const authority = client({ submit: vi.fn().mockResolvedValue(status("succeeded", 4)) });
+    const { result } = renderHook(() => useRegionalGroundExecutionController({
+      client: authority, capability: qualified,
+    }));
+
+    await act(async () => { await result.current.submit(job); });
+    await expect(result.current.submit(job)).rejects.toThrow(/already been submitted/i);
+    expect(authority.submit).toHaveBeenCalledTimes(1);
+    act(() => result.current.reset());
+    await act(async () => { await result.current.submit(job); });
+    expect(authority.submit).toHaveBeenCalledTimes(2);
+  });
+
+  it("retains ambiguous remote ownership until reconciliation proves not-found", async () => {
+    const uncertain = new RegionalGroundAuthorityRequestError(500, "authority_error");
+    const authority = client({
+      submit: vi.fn().mockRejectedValue(uncertain),
+      status: vi.fn().mockRejectedValue(
+        new RegionalGroundAuthorityRequestError(404, "job_not_found"),
+      ),
+    });
+    const { result } = renderHook(() => useRegionalGroundExecutionController({
+      client: authority, capability: qualified,
+    }));
+
+    await act(async () => { await expect(result.current.submit(job)).rejects.toBe(uncertain); });
+    expect(result.current.phase).toBe("request_failed");
+    expect(result.current.controls.submitEnabled).toBe(false);
+    expect(result.current.controls.cancelEnabled).toBe(true);
+    await act(async () => { await result.current.reconcile(); });
+    expect(result.current.phase).toBe("not_found");
+    expect(result.current.controls.submitEnabled).toBe(true);
   });
 });

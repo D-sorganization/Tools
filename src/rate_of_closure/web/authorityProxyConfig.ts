@@ -31,9 +31,12 @@ export const buildAuthorityProxyConfig = (
   if (!token || token !== token.trim()) {
     throw new Error("authority token must be nonempty and trimmed");
   }
-  return Object.freeze({
+  // Vite's proxy middleware extends this adapter with internal fields such as
+  // `prependPath`. Keep strict validation at this boundary, but return a fresh
+  // mutable configuration object for the framework to own.
+  return {
     target,
     changeOrigin: false,
-    headers: Object.freeze({ Authorization: `Bearer ${token}` }),
-  });
+    headers: { Authorization: `Bearer ${token}` },
+  };
 };

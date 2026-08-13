@@ -171,6 +171,7 @@ class RegionalGroundExecutionController(QObject):
     succeeded = pyqtSignal(object)  # noqa: N815
     cancelled = pyqtSignal(object)  # noqa: N815
     failed = pyqtSignal(object)  # noqa: N815
+    finished = pyqtSignal()  # noqa: N815
 
     def __init__(
         self,
@@ -259,6 +260,7 @@ class RegionalGroundExecutionController(QObject):
     def _on_finished(self) -> None:
         if self._is_active_sender():
             self._worker = None
+            self.finished.emit()
 
 
 __all__ = [

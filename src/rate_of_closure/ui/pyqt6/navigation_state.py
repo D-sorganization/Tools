@@ -27,6 +27,7 @@ DEFAULT_TAB_IDS: tuple[str, ...] = (
     "simulation",
     "flight_explorer",
     "regional_surfaces",
+    "regional_ground_execution",
     "ground_playback",
     "launch_monitor_analytics",
     "capability_optimization",

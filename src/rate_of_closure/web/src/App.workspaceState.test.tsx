@@ -7,13 +7,18 @@ import {
   buildGroundRegionalSurfacePlanRequest,
   illustrativeRegionalSurfacePlanDraft,
 } from "./model/regionalSurfacePlan";
+import executionJobFixture from "./model/__fixtures__/regional_ground_execution_job_golden_v1.json";
 
 describe("App regional-ground variation workspace ownership", () => {
   beforeEach(() => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
+    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(() => {})));
   });
 
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
 
   it("preserves both controlled editors across mutually exclusive navigation", () => {
     render(<App />);
@@ -66,5 +71,27 @@ describe("App regional-ground variation workspace ownership", () => {
 
     expect(screen.getByLabelText("Regional plan request ID"))
       .toHaveValue("import-survives-navigation");
+  });
+
+  it("retains an exact imported execution job across lazy workspace navigation", async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("tab", { name: "Ground Playback" }));
+    const source = JSON.stringify(executionJobFixture.job);
+    fireEvent.change(await screen.findByTestId(
+      "regional-ground-execution-job-file-input",
+    ), { target: { files: [{
+      name: "persistent-job.json",
+      size: new TextEncoder().encode(source).byteLength,
+      arrayBuffer: vi.fn().mockResolvedValue(
+        Uint8Array.from(new TextEncoder().encode(source)).buffer,
+      ),
+    }] } });
+    expect(await screen.findByText(/Loaded persistent-job.json/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Variation" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Ground Playback" }));
+
+    expect(await screen.findByText("persistent-job.json")).toBeInTheDocument();
+    expect(screen.getByText(executionJobFixture.job.job_sha256)).toBeInTheDocument();
   });
 });

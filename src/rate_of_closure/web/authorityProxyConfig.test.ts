@@ -11,6 +11,8 @@ describe("authority Vite proxy configuration", () => {
 
     expect(proxy?.target).toBe("http://127.0.0.1:54321");
     expect(proxy?.headers).toEqual({ Authorization: "Bearer test-ephemeral-token" });
+    expect(Object.isExtensible(proxy)).toBe(true);
+    expect(Object.isExtensible(proxy?.headers)).toBe(true);
   });
 
   it("disables the proxy when no authority is launched", () => {

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import sys
 
 from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtWidgets import (
@@ -57,6 +58,13 @@ from rate_of_closure.ui.pyqt6.main_window_layout import (
 )
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
+from rate_of_closure.ui.pyqt6.regional_ground_execution_controller import (
+    RegionalGroundExecutionSubmitter,
+)
+from rate_of_closure.ui.pyqt6.regional_ground_execution_workspace import (
+    Confirmation,
+    RegionalGroundExecutionWorkspace,
+)
 from rate_of_closure.ui.pyqt6.regional_ground_variation_window import (
     RegionalGroundVariationWindowMixin,
 )
@@ -76,10 +84,15 @@ from rate_of_closure.ui.pyqt6.workspace_navigation import (
     WorkspaceNavigationMixin,
 )
 from rate_of_closure.units import convert_from_canonical
+from rate_of_closure.web_authority.capability import (
+    DEFAULT_UNAVAILABLE_CAPABILITY,
+    AuthorityCapability,
+)
 from shared.python.swing_sim.variation import VariationDataset
 
 __all__ = [
     "RateOfClosureMainWindow",
+    "RateOfClosureStandaloneMainWindow",
     "_DEFAULT_TAB_IDS",
     "_NAVIGATION_SETTINGS_APP",
     "_NAVIGATION_SETTINGS_ORG",
@@ -113,11 +126,19 @@ class RateOfClosureMainWindow(
         parent: QWidget | None = None,
         *,
         navigation_settings: NavigationSettings | None = None,
+        regional_ground_capability: AuthorityCapability = (
+            DEFAULT_UNAVAILABLE_CAPABILITY
+        ),
+        regional_ground_submitter: RegionalGroundExecutionSubmitter | None = None,
+        regional_ground_confirmation: Confirmation | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
         self.setMinimumSize(1024, 700)
 
+        self._regional_ground_capability = regional_ground_capability
+        self._regional_ground_submitter = regional_ground_submitter
+        self._regional_ground_confirmation = regional_ground_confirmation
         self._create_views()
         self._build_application_shell(navigation_settings)
         self._connect_view_signals()
@@ -136,6 +157,11 @@ class RateOfClosureMainWindow(
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._regional_surface_plan_tab = RegionalSurfacePlanTab()
+        self._regional_ground_execution_tab = RegionalGroundExecutionWorkspace(
+            capability=self._regional_ground_capability,
+            submitter=self._regional_ground_submitter,
+            confirmation=self._regional_ground_confirmation,
+        )
         self._ground_playback_tab = GroundPlaybackTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
         self._capability_optimization_tab = CapabilityOptimizationTab()
@@ -189,6 +215,11 @@ class RateOfClosureMainWindow(
             ("simulation", self._simulation_tab, "Simulation"),
             ("flight_explorer", self._flight_explorer_tab, "Flight Explorer"),
             ("regional_surfaces", self._regional_surface_plan_tab, "Ground Surfaces"),
+            (
+                "regional_ground_execution",
+                self._regional_ground_execution_tab,
+                "Ground Study",
+            ),
             ("ground_playback", self._ground_playback_tab, "Ground Playback"),
             (
                 "launch_monitor_analytics",
@@ -413,6 +444,14 @@ class RateOfClosureMainWindow(
     def closeEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
         """Stop the animation timers before the window goes away."""
         self._persist_primary_navigation()
+        try:
+            self._regional_ground_execution_tab.shutdown()
+        except TimeoutError as error:
+            status_bar = self.statusBar()
+            if status_bar is not None:
+                status_bar.showMessage(f"Close blocked: {error}")
+            event.ignore()
+            return
         self._club_view.stop()
         self._simulation_tab.stop()
         self._variation_tab.stop()
@@ -420,3 +459,29 @@ class RateOfClosureMainWindow(
         self._ground_playback_tab.stop()
         self._capability_optimization_tab.stop()
         super().closeEvent(event)
+
+
+class RateOfClosureStandaloneMainWindow(RateOfClosureMainWindow):
+    """Source launcher with direct qualified Python ground-study execution.
+
+    Frozen distributions remain explicitly unavailable until their complete
+    numerical dependency bundle is qualified. Embedded consumers should keep
+    constructing :class:`RateOfClosureMainWindow` with an authority they own.
+    """
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        if getattr(sys, "frozen", False):
+            super().__init__(parent)
+            return
+        from rate_of_closure.web_authority.capability import (
+            QUALIFIED_EXECUTION_CAPABILITY,
+        )
+        from rate_of_closure.web_authority.production_runner import (
+            run_regional_ground_production_job,
+        )
+
+        super().__init__(
+            parent,
+            regional_ground_capability=QUALIFIED_EXECUTION_CAPABILITY,
+            regional_ground_submitter=run_regional_ground_production_job,
+        )
