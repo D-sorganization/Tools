@@ -82,11 +82,6 @@ def test_upstream_scope_includes_every_release_build_package_root() -> None:
         "python/src/utils",
         "shared",
         "sidekick",
-<<<<<<< HEAD
-    } <= scope
-
-
-=======
         "vendor/ud-tools",
     } <= scope
 
@@ -116,7 +111,6 @@ def test_upstream_initializes_the_pinned_tools_submodule_before_install() -> Non
     assert "git submodule update --init --depth 1 vendor/ud-tools" in initialize["run"]
 
 
->>>>>>> origin/feat/4274-regional-surface-ui
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
     workflow = _workflow()
     steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]

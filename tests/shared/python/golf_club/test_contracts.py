@@ -21,10 +21,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.contract]
 def test_public_facade_exports_the_stable_domain_api() -> None:
     assert set(golf_club.__all__) == {
         "CURRENT_FORMAT",
-<<<<<<< HEAD
-=======
         "CATEGORY_TURF",
->>>>>>> origin/feat/4274-regional-surface-ui
         "LEGACY_FORMAT",
         "AssembledMassProperties",
         "ClubAssembly",
@@ -33,10 +30,6 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "ClubLengthMeasurement",
         "ComponentMassProperties",
         "ComponentRole",
-<<<<<<< HEAD
-        "RigidTransform",
-        "assemble_mass_properties",
-=======
         "ContactSequence",
         "ExtrapolationPolicy",
         "GroundPlane",
@@ -93,13 +86,10 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "analyze_wedge_kinematics",
         "analyze_wedge_ground_clearance",
         "angle_of_attack_deg",
->>>>>>> origin/feat/4274-regional-surface-ui
         "assembly_from_json",
         "assembly_from_json_dict",
         "assembly_to_json",
         "assembly_to_json_dict",
-<<<<<<< HEAD
-=======
         "build_wedge_solid",
         "export_wedge_artifacts",
         "evaluate_turf_contact",
@@ -129,7 +119,6 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "wedge_face_contact_point_m",
         "wedge_ground_clearance_to_json_dict",
         "wedge_preset",
->>>>>>> origin/feat/4274-regional-surface-ui
     }
 
 

@@ -12,7 +12,6 @@ from importlib.resources import files
 import json
 from typing import Any, Mapping
 
-
 _CATALOG_RESOURCE = "resources/companion_catalog.json"
 _RUN_SCHEMA_VERSION = "1.0.0"
 
@@ -104,7 +103,9 @@ def _parse_term(record: Mapping[str, Any]) -> GlossaryTerm:
     )
 
 
-def _require_unique_ids(records: tuple[Experiment | GlossaryTerm, ...], name: str) -> None:
+def _require_unique_ids(
+    records: tuple[Experiment | GlossaryTerm, ...], name: str
+) -> None:
     identifiers = [record.id for record in records]
     if len(identifiers) != len(set(identifiers)):
         raise ValueError(f"{name} IDs must be unique")
@@ -140,7 +141,9 @@ def search_glossary(catalog: CompanionCatalog, query: str) -> tuple[GlossaryTerm
         term
         for term in catalog.glossary
         if needle
-        in " ".join((term.term, term.definition, term.plain_language, term.caution)).casefold()
+        in " ".join(
+            (term.term, term.definition, term.plain_language, term.caution)
+        ).casefold()
     )
 
 

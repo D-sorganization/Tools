@@ -134,9 +134,11 @@ def generated_fixture_texts() -> dict[Path, str]:
             status=AuthorityJobStatus.FAILED,
             completed=1,
             failure=AuthorityJobFailure(
-                "result_rejected"
-                if stage == "result_validation"
-                else "execution_failed",
+                (
+                    "result_rejected"
+                    if stage == "result_validation"
+                    else "execution_failed"
+                ),
                 stage,
             ),
         )

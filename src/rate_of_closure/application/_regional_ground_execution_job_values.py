@@ -303,9 +303,11 @@ def _trajectory_point_payload(point: TrajectoryPoint) -> dict[str, object]:
         "time_s": point.time,
         "position_m": point.position.tolist(),
         "velocity_m_s": point.velocity.tolist(),
-        "angular_velocity_rad_s": point.angular_velocity_rad_s.tolist()
-        if isinstance(point, FlightStatePoint)
-        else None,
+        "angular_velocity_rad_s": (
+            point.angular_velocity_rad_s.tolist()
+            if isinstance(point, FlightStatePoint)
+            else None
+        ),
     }
 
 
