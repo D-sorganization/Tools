@@ -43,6 +43,7 @@ class NoiseRow(QWidget):
         *,
         localized_enabled: bool = False,
         duration_s: float = 1.5,
+        on_change: Callable[[], None] | None = None,
     ) -> None:
         super().__init__()
         self._mode = mode
@@ -53,6 +54,7 @@ class NoiseRow(QWidget):
         self._loaded_spec: NoiseSpec | None = None
         self._loaded_editor_state: tuple[object, ...] | None = None
         self._loaded_locus_state: tuple[float, float, object] | None = None
+        self._on_change = on_change
         self.variable = QComboBox()
         self.variable.setToolTip(
             "Which registry variable varies run to run. Grouped by "
@@ -106,6 +108,15 @@ class NoiseRow(QWidget):
         outer.addWidget(self.locus_editor)
 
         self.variable.currentIndexChanged.connect(self._on_variable_changed)
+        if on_change is not None:
+            self.variable.currentIndexChanged.connect(on_change)
+            self.distribution.currentIndexChanged.connect(on_change)
+            self.scale.valueChanged.connect(on_change)
+            self.clip.toggled.connect(on_change)
+            self.clip_low.valueChanged.connect(on_change)
+            self.clip_high.valueChanged.connect(on_change)
+            self.window_start.valueChanged.connect(on_change)
+            self.window_end.valueChanged.connect(on_change)
         self.set_context(mode, localized_enabled, duration_s)
 
     def set_context(
@@ -261,10 +272,12 @@ class NoiseRow(QWidget):
             self._localized_enabled if localized_enabled is None else localized_enabled
         )
         duration = self._duration_s if duration_s is None else duration_s
-        return self.locus_editor.accepts(
-            spec,
-            localized_enabled=enabled,
-            duration_s=duration,
+        return bool(
+            self.locus_editor.accepts(
+                spec,
+                localized_enabled=enabled,
+                duration_s=duration,
+            )
         )
 
     def _edited_bounds(

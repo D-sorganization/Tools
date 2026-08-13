@@ -1,5 +1,32 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 explicit PyQt paired-study workflow
+
+- The PyQt Localized Attribution surface now requires an explicit
+  **Configure & Run Separate Paired Study** action. It never runs hidden work
+  after Monte Carlo and never substitutes scatter or correlation for planted
+  baseline/one-source evidence.
+- The confirmation dialog exposes stable spec ID, variable, topological joint,
+  exact `[start,end)` window, and finite nonzero planted torque delta for every
+  localized source. It chooses an exact configured sample time and spatial
+  `swing.*` point; three state coordinates plus all registered impact/shot
+  targets form the fixed response matrix. Global factors are held at base and
+  groups are excluded.
+- A dedicated Qt worker/controller owns exact `2N` progress, cancellation,
+  generation guards, and shutdown. Prior authority remains visible until a
+  replacement succeeds; stale/cancelled/failed jobs cannot replace it. Any
+  plan or simulation-config mutation clears incompatible evidence.
+- Canonical finite authority-only JSON is bounded to 8 MiB before parsing and
+  loaded atomically. The UI explicitly states that archived authority was not
+  rerun or provenance-verified and clears the live production record.
+- React remains a strict presentation consumer only. Browser Worker production,
+  a full design/request/result persistence document, Rust parity, protected
+  publication, and remaining #4142 acceptance criteria stay open.
+- Local evidence passes 40 focused workflow/round-trip tests, 271 complete Rate
+  GUI plus localized producer/authority tests, Ruff/format, exact Mypy 1.13 on
+  nine changed production files, and repository/400-line size gates.
+- SPEC advances to 1.16.77.
+
 ## 2026-08-13 #4426 explicit-sample typing repair
 
 - The exact hosted quality-gate failure was Mypy 1.13 `no-any-return` at the

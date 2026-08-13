@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Explicit PyQt paired-attribution execution (#4142)
+
+- `LocalizedAttributionRunDialog` filters the current swing plan to its
+  localized shoulder/wrist sources, preserves base variables, removes groups,
+  confirms exact joint/window and finite nonzero deltas, and builds three state
+  plus all canonical impact/shot targets at an exact grid time/`swing.*` point.
+- `LocalizedAttributionWorker` is independent of `VariationWorker` and reports
+  the exact `2N` baseline/perturbed trials. The controller owns a separate
+  generation, progress, cancellation, and full live production record.
+- Replacement jobs leave prior authority displayed until success. Stale
+  callbacks are ignored; cancellation/failure cannot partially replace it;
+  plan/config changes cancel and clear it; window shutdown joins both workers.
+- Authority-only JSON is canonical, finite, capped at 8 MiB before parsing, and
+  loaded atomically. Archived authority is visibly not rerun or provenance-
+  verified and cannot masquerade as a live `LocalizedAttributionProduction`.
+- Normal Monte Carlo remains unchanged and never starts this paired producer.
+  React Worker production, full production-document persistence, Rust parity,
+  protected publication, and epic completion stay open. SPEC is 1.16.77.
+- Evidence: 40/40 focused and 271/271 broad GUI/producer/authority tests;
+  Ruff/format; exact Mypy 1.13 on nine changed production files; repository
+  module-size and stricter 400-line changed-file gates.
+
 ## 2026-08-13 Explicit sample matrix typing repair (#4426)
 
 - `_normalize_explicit_samples` separates the untrusted `np.asarray` view from

@@ -217,7 +217,8 @@ class VariationTabRunMixin:
             if has_localized
             else "No localized torque sources exist in this completed study."
         )
-        self._localized_attribution.set_authority(None, reason)
+        if self._localized_attribution.authority() is None:
+            self._localized_attribution.set_authority(None, reason)
 
     def _on_cancelled(self) -> None:
         self._status.setText("Cancelled.")
@@ -258,4 +259,5 @@ class VariationTabRunMixin:
         self._ensemble_scatter.clear_view()
         self._distribution_matrix.clear_view()
         self._arc_overlay.clear_view()
-        self._localized_attribution.set_authority(None)
+        # Explicit paired authority has its own lifecycle and is never produced
+        # or discarded as a hidden side effect of a Monte Carlo result reset.

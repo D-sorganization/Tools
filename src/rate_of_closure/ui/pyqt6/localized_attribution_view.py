@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QFormLayout,
     QHBoxLayout,
     QLabel,
+    QProgressBar,
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
@@ -76,12 +77,32 @@ class LocalizedAttributionView(QWidget):
         self._table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self._denominator = QLabel("No paired authority loaded.")
         self._denominator.setAccessibleName("Localized attribution denominator")
+        self._configure_run = QPushButton("Configure & Run Separate Paired Study…")
+        self._configure_run.setAccessibleName("Configure separate paired study")
+        self._configure_run.setToolTip(
+            "Run a separate deterministic baseline/one-source intervention study. "
+            "This does not reuse Monte Carlo scatter and adds 2 trials per "
+            "localized source."
+        )
+        self._cancel_study = QPushButton("Cancel Paired Study")
+        self._cancel_study.setAccessibleName("Cancel separate paired study")
+        self._cancel_study.setEnabled(False)
+        self._study_progress = QProgressBar()
+        self._study_progress.setAccessibleName("Separate paired study progress")
+        self._study_progress.setRange(0, 1)
+        self._study_status = QLabel("No separate paired study is running.")
+        self._study_status.setAccessibleName("Separate paired study status")
+        self._study_status.setWordWrap(True)
         self._raw_export = QPushButton("Export Raw Observations CSV")
         self._raw_export.setAccessibleName("Export localized attribution observations")
         self._view_export = QPushButton("Export View Definition JSON")
         self._view_export.setAccessibleName(
             "Export localized attribution view definition"
         )
+        self._save_authority = QPushButton("Save Paired Authority JSON…")
+        self._save_authority.setAccessibleName("Save paired authority JSON")
+        self._load_authority = QPushButton("Load Paired Authority JSON…")
+        self._load_authority.setAccessibleName("Load archived paired authority JSON")
         self._build_layout()
         self._source.currentIndexChanged.connect(self._source_changed)
         self._target.currentIndexChanged.connect(self._target_changed)
@@ -94,6 +115,13 @@ class LocalizedAttributionView(QWidget):
         layout = QVBoxLayout(self)
         layout.addWidget(self._caveat)
         layout.addWidget(self._status)
+        study_actions = QHBoxLayout()
+        study_actions.addWidget(self._configure_run)
+        study_actions.addWidget(self._cancel_study)
+        study_actions.addStretch(1)
+        layout.addLayout(study_actions)
+        layout.addWidget(self._study_progress)
+        layout.addWidget(self._study_status)
         controls = QFormLayout()
         controls.addRow("Source specification", self._source)
         controls.addRow("Target state / impact / shot", self._target)
@@ -105,6 +133,8 @@ class LocalizedAttributionView(QWidget):
         actions = QHBoxLayout()
         actions.addWidget(self._raw_export)
         actions.addWidget(self._view_export)
+        actions.addWidget(self._save_authority)
+        actions.addWidget(self._load_authority)
         actions.addStretch(1)
         layout.addLayout(actions)
 
@@ -134,6 +164,30 @@ class LocalizedAttributionView(QWidget):
     def authority(self) -> AttributionAuthority | None:
         """Return the currently displayed immutable authority."""
         return self._authority
+
+    def set_study_running(self, running: bool, total_runs: int = 1) -> None:
+        """Update only the separate paired-study controls."""
+        self._configure_run.setEnabled(not running)
+        self._cancel_study.setEnabled(running)
+        self._load_authority.setEnabled(not running)
+        if running:
+            self._study_progress.setRange(0, max(total_runs, 1))
+            self._study_progress.setValue(0)
+
+    def set_configure_enabled(self, enabled: bool, reason: str = "") -> None:
+        """Expose paired-study capability without changing loaded authority."""
+        if not self._cancel_study.isEnabled():
+            self._configure_run.setEnabled(enabled)
+        self._configure_run.setToolTip(
+            reason
+            or "Run a separate deterministic baseline/one-source intervention "
+            "study. This does not reuse Monte Carlo scatter and adds 2 trials per "
+            "localized source."
+        )
+
+    def set_study_status(self, text: str) -> None:
+        """Set user-visible status for the independent paired-study lifecycle."""
+        self._study_status.setText(text)
 
     def selected_view(self) -> AttributionView | None:
         """Resolve the current exact selection, if paired authority exists."""
@@ -262,6 +316,7 @@ class LocalizedAttributionView(QWidget):
             self._pair,
             self._raw_export,
             self._view_export,
+            self._save_authority,
         ):
             widget.setEnabled(enabled)
 

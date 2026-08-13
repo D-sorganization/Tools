@@ -26,11 +26,43 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.76                                    |
-| **Spec Version**        | 1.16.76                                    |
+| **Current Version**     | 1.16.77                                    |
+| **Spec Version**        | 1.16.77                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Explicit PyQt paired-attribution workflow (#4142)
+
+Version 1.16.77 makes genuine paired localized attribution intentionally
+available in PyQt without adding hidden work to ordinary Monte Carlo. The
+Localized Attribution surface has independent configuration, cancellation,
+determinate progress, and status controls. Its modal confirmation displays the
+stable source spec, localized variable, exact topological joint, and authored
+half-open time window; requires a finite nonzero planted torque delta; and
+selects one exact configured state sample time and canonical spatial `swing.*`
+point. The design holds global factors at their declared base values, removes
+groups, and fixes three state-coordinate targets plus every registered impact
+and shot scalar.
+
+A dedicated Qt worker/controller retains the complete self-verifying
+`LocalizedAttributionProduction`. Generation checks reject late callbacks;
+cancellation and failure leave prior authority intact; plan/config changes
+cancel and clear incompatible authority; shutdown joins both worker families.
+The ordinary `VariationWorker` never invokes the paired producer.
+
+Authority-only persistence emits compact sorted finite JSON and refuses files
+above 8 MiB before parsing. Loading is atomic and visibly classified as
+archived authority whose originating execution was not rerun or provenance-
+verified; it cannot be exposed as a live production record. This is not a full
+design/request/result production-package codec. React remains presentation-
+only for this producer; React Worker execution, Rust parity, protected
+publication, and the remaining #4142 acceptance gates remain open.
+
+Local verification passes 40 focused workflow and round-trip tests, 271 broad
+Rate GUI plus localized producer/authority tests, Ruff/format, pinned Mypy 1.13
+on all nine changed production files, the repository module-size gate, and a
+stricter 400-line changed-file audit.
 
 ### 2026-08-13 Explicit-sample NumPy typing repair (#4426)
 
@@ -4054,6 +4086,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.77 | feat(rate-of-closure, #4142 R13.3): add an explicit separate PyQt paired-attribution workflow with exact source/joint/window/delta confirmation, canonical state/impact/shot targets, independent `2N` progress/cancellation/generation authority, stale-result and plan/config invalidation safety, atomic bounded authority-only JSON persistence with an archived-execution disclaimer, and proof that ordinary Monte Carlo never starts the producer; retain React Worker production, full production-package persistence, Rust parity, protected publication, and remaining epic gates as open. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4426): give the validated owned explicit-sample matrix an `NDArray[float64]` return boundary, closing hosted Mypy 1.13 `no-any-return` without changing numerical, ownership, request, producer, or archive behavior. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4142 R13.3): make paired production self-verifying by retaining and recomputing exact design/request/result/authority bindings; reject cross-design request swaps, authority relabeling, and pair payload tampering; close the producer Mypy no-any boundary. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4142 R13.3): add a deterministic Python service that executes explicit baseline/one-localized-source pairs through canonical ensemble authority and emits strict typed source-window/joint-to-state/impact/shot attribution with bound design/request identities, cancellation, progress, and resource caps; automatic PyQt/React production remains open. |
