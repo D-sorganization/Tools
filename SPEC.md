@@ -26,11 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.40                                    |
-| **Spec Version**        | 1.16.40                                    |
+| **Current Version**     | 1.16.41                                    |
+| **Spec Version**        | 1.16.41                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Pairwise-finite variation attribution (#4142 R13.1)
+
+Version 1.16.41 defines one missing-data policy for local OAT spread and
+Spearman rank attribution in Python and React. Statistics use only evaluated
+rows where the particular values needed are finite. OAT selects each output
+independently and requires two observations. Spearman selects each input/output
+pair independently, requires three paired observations, and reports `NaN` for
+constant or insufficient columns. Failed or unavailable trials remain evidence
+and cannot silently contribute ranks, zeros, or cross-row pairings. One shared
+fixture is the cross-runtime authority; public shapes and statuses are unchanged.
 
 ### 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142 R10.4/R11.4)
 
@@ -3067,6 +3078,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.41 | fix(rate-of-closure, #4142 R13.1): make Python/React OAT and Spearman attribution pairwise finite with explicit minimum counts and constant-column unavailability, pinned by one shared missing-data fixture. |
 | 2026-08-12 | 1.16.40 | fix(rate-of-closure, #4142 R10.4/R11.4): make PyQt plan-v2 load/build/save lossless for stable spec IDs, localized loci, unedited numeric authority, and dependence groups; preflight all editor representability before atomic mutation. |
 | 2026-08-12 | 1.16.39 | fix(rate-of-closure, #4142 R11): enforce Morris archive sample/output-cell limits before parser allocation and require scientifically complete impact/shot availability for every evaluated hit at the archive-construction invariant. |
 | 2026-08-12 | 1.16.37 | merge(rate-of-closure, #4142 R13.8): combine exact independently reviewed Python/PyQt Morris workspace commit `8968f6f3544203029fea8e07659ab494eb050c67` and React parity commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`; preserve one byte-identical fixture and exact limits, Unicode semantics, immutable evidence binding, atomic imports, archived-ID isolation, accessible pre-read browser defenses, fail-closed invalid draft execution, report caps, and formula-neutral aggregate CSV. Protected CI, dependency-ordered publication, raw-observation retention, UpstreamDrift consumption, and epic completion remain open. |

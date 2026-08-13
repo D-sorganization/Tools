@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.1 pairwise-finite attribution correction
+
+- Python `spearman_matrix` and React `spearmanMatrix` form a fresh evaluated,
+  finite mask for every input/output cell before ranking. Three paired values
+  and nonconstant columns are required; otherwise the statistic remains `NaN`.
+- Python OAT now selects evaluated finite values per output and requires two
+  values for sample spread, matching the React scientific policy.
+- One shared parity fixture covers failure, independent missingness, constants,
+  monotonic signs, and minimum counts. No public schema or signature changed.
+- This is a correctness slice, not epic completion. Localized execution, full
+  trace authority, protected publication, and UpstreamDrift remain open.
+
 ## 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142)
 
 - The integrated PyQt host round-trips custom spec IDs, localized time/point

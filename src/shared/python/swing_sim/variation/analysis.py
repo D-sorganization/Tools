@@ -143,11 +143,20 @@ def one_at_a_time_sensitivity(
         )
         if outputs is None:
             outputs = dataset.output_names
-        ok = dataset.outputs[dataset.success]
-        if ok.shape[0] >= _MIN_RUNS_FOR_STATS:
-            rows.append(np.std(ok, axis=0, ddof=1))
-        else:
-            rows.append(np.full(len(dataset.output_names), np.nan))
+        rows.append(
+            np.asarray(
+                [
+                    (
+                        np.std(values, ddof=1)
+                        if (values := dataset.output_column(name)).size
+                        >= _MIN_RUNS_FOR_STATS
+                        else math.nan
+                    )
+                    for name in dataset.output_names
+                ],
+                dtype=float,
+            )
+        )
     assert outputs is not None  # plan.noise is non-empty (DbC)
     matrix = np.vstack(rows)
     with np.errstate(invalid="ignore"):
@@ -186,26 +195,33 @@ def spearman_matrix(dataset: VariationDataset) -> np.ndarray:
     Computed over the successful runs of the *full* dataset (all noise
     active at once) — a cheap global-sensitivity check that corroborates
     the one-at-a-time matrix without extra simulation. Entries are in
-    ``[-1, 1]``; ``NaN`` where a column is constant or there are fewer
-    than three successful runs.
+    ``[-1, 1]``; ``NaN`` where a paired column is constant or there are
+    fewer than three successful, paired finite observations.
     """
-    ok = dataset.success
-    n = int(np.count_nonzero(ok))
     shape = (len(dataset.input_names), len(dataset.output_names))
-    if n < 3:
-        return np.full(shape, np.nan)
-    inputs = dataset.inputs[ok]
-    outputs = dataset.outputs[ok]
     matrix = np.full(shape, np.nan)
-    in_ranks = [_ranks(inputs[:, i]) for i in range(shape[0])]
-    out_ranks = [_ranks(outputs[:, j]) for j in range(shape[1])]
-    for i, ri in enumerate(in_ranks):
-        si = float(np.std(ri))
-        for j, rj in enumerate(out_ranks):
-            sj = float(np.std(rj))
-            if si > 0.0 and sj > 0.0:
-                cov = float(np.mean((ri - np.mean(ri)) * (rj - np.mean(rj))))
-                matrix[i, j] = cov / (si * sj)
+    for input_index in range(shape[0]):
+        for output_index in range(shape[1]):
+            available = (
+                dataset.success
+                & np.isfinite(dataset.inputs[:, input_index])
+                & np.isfinite(dataset.outputs[:, output_index])
+            )
+            if np.count_nonzero(available) < 3:
+                continue
+            input_ranks = _ranks(dataset.inputs[available, input_index])
+            output_ranks = _ranks(dataset.outputs[available, output_index])
+            input_std = float(np.std(input_ranks))
+            output_std = float(np.std(output_ranks))
+            if input_std <= 0.0 or output_std <= 0.0:
+                continue
+            covariance = float(
+                np.mean(
+                    (input_ranks - np.mean(input_ranks))
+                    * (output_ranks - np.mean(output_ranks))
+                )
+            )
+            matrix[input_index, output_index] = covariance / (input_std * output_std)
     return matrix
 
 

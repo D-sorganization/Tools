@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import dataclasses
+import json
 import math
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -22,11 +24,15 @@ from shared.python.swing_sim.variation import (
     spearman_matrix,
     summary_stats,
 )
+from shared.python.swing_sim.variation import analysis as variation_analysis
 
 pytestmark = pytest.mark.physics
 
 _FACE = f"{CATEGORY_DELIVERY}.face_angle_deg"
 _SPEED = f"{CATEGORY_DELIVERY}.clubhead_speed_mps"
+_PAIRWISE_FIXTURE = (
+    Path(__file__).parents[4] / "fixtures" / "variation_spearman_pairwise_finite.json"
+)
 
 
 def _planted_plan(n_runs: int = 32) -> VariationPlan:
@@ -63,6 +69,51 @@ def _synthetic_launch_dataset(points: np.ndarray) -> VariationDataset:
         outputs=outputs,
         success=np.ones(n, dtype=bool),
     )
+
+
+def _pairwise_fixture_dataset() -> tuple[VariationDataset, np.ndarray]:
+    """Load the cross-runtime missing-value Spearman fixture."""
+    payload = json.loads(_PAIRWISE_FIXTURE.read_text(encoding="utf-8"))
+    inputs = np.asarray(
+        [
+            [math.nan if value is None else value for value in row]
+            for row in payload["inputs"]
+        ],
+        dtype=float,
+    )
+    outputs = np.asarray(
+        [
+            [math.nan if value is None else value for value in row]
+            for row in payload["outputs"]
+        ],
+        dtype=float,
+    )
+    expected = np.asarray(
+        [
+            [math.nan if value is None else value for value in row]
+            for row in payload["expected"]
+        ],
+        dtype=float,
+    )
+    plan = VariationPlan(
+        mode="launch",
+        noise=(
+            NoiseSpec(f"{CATEGORY_LAUNCH}.ball_speed_mph", scale=1.0),
+            NoiseSpec(f"{CATEGORY_LAUNCH}.spin_rpm", scale=1.0),
+            NoiseSpec(f"{CATEGORY_LAUNCH}.launch_angle_deg", scale=1.0),
+        ),
+        n_runs=len(payload["success"]),
+        seed=0,
+    )
+    dataset = VariationDataset(
+        plan=plan,
+        input_names=tuple(payload["input_names"]),
+        inputs=inputs,
+        output_names=tuple(payload["output_names"]),
+        outputs=outputs,
+        success=np.asarray(payload["success"], dtype=bool),
+    )
+    return dataset, expected
 
 
 class TestSensitivity:
@@ -123,6 +174,49 @@ class TestSensitivity:
         rho = spearman_matrix(dataset)
         carry = dataset.output_names.index("carry_m")
         assert rho[0, carry] == pytest.approx(1.0)
+
+    def test_spearman_uses_pairwise_finite_rows_with_cross_runtime_parity(
+        self,
+    ) -> None:
+        dataset, expected = _pairwise_fixture_dataset()
+
+        rho = spearman_matrix(dataset)
+
+        np.testing.assert_allclose(rho, expected, equal_nan=True)
+
+    def test_oat_uses_each_outputs_finite_evaluated_rows(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        plan = _planted_plan(n_runs=4)
+
+        def fake_run_variation(
+            sub_plan: VariationPlan, **_kwargs: object
+        ) -> VariationDataset:
+            is_face = sub_plan.noise[0].variable_key == _FACE
+            outputs = (
+                np.array(
+                    ((1.0, 4.0), (math.nan, math.nan), (3.0, math.nan), (999.0, 999.0))
+                )
+                if is_face
+                else np.array(((2.0, 5.0), (4.0, 7.0), (6.0, 9.0), (999.0, 999.0)))
+            )
+            return VariationDataset(
+                plan=sub_plan,
+                input_names=(sub_plan.noise[0].variable_key,),
+                inputs=np.zeros((4, 1)),
+                output_names=("partially_available", "below_minimum"),
+                outputs=outputs,
+                success=np.array((True, True, True, False)),
+            )
+
+        monkeypatch.setattr(variation_analysis, "run_variation", fake_run_variation)
+
+        result = one_at_a_time_sensitivity(plan, n_workers=1)
+
+        assert result.matrix[0, 0] == pytest.approx(math.sqrt(2.0))
+        assert math.isnan(result.matrix[0, 1])
+        assert result.matrix[1, 0] == pytest.approx(2.0)
+        assert result.matrix[1, 1] == pytest.approx(2.0)
 
 
 class TestSummaryStats:

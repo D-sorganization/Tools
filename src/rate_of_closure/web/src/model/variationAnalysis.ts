@@ -132,33 +132,38 @@ const ranks = (values: number[]): number[] => {
   return out;
 };
 
+const finitePair = (
+  dataset: VariationDatasetTs,
+  inputIndex: number,
+  outputIndex: number,
+): ReadonlyArray<readonly [number, number]> => {
+  const pair: Array<readonly [number, number]> = [];
+  dataset.success.forEach((successful, trialIndex) => {
+    const input = dataset.inputs[trialIndex]?.[inputIndex];
+    const output = dataset.outputs[trialIndex]?.[outputIndex];
+    if (successful && Number.isFinite(input) && Number.isFinite(output)) {
+      pair.push([input, output as number]);
+    }
+  });
+  return pair;
+};
+
 /** Spearman rank correlation, inputs (rows) x outputs (columns). */
 export function spearmanMatrix(dataset: VariationDatasetTs): number[][] {
-  const okRows: number[] = [];
-  dataset.success.forEach((ok, i) => {
-    if (ok) okRows.push(i);
-  });
   const shapeRows = dataset.inputNames.length;
   const shapeCols = dataset.outputNames.length;
-  if (okRows.length < 3) {
-    return Array.from({ length: shapeRows }, () =>
-      new Array<number>(shapeCols).fill(NaN),
-    );
-  }
-  const inRanks = dataset.inputNames.map((_k, col) =>
-    ranks(okRows.map((i) => dataset.inputs[i][col])),
-  );
-  const outRanks = dataset.outputNames.map((_k, col) =>
-    ranks(okRows.map((i) => dataset.outputs[i][col] as number)),
-  );
   const stats = (r: number[]): { mean: number; std: number } => {
     const mean = r.reduce((a, v) => a + v, 0) / r.length;
     const std = Math.sqrt(r.reduce((a, v) => a + (v - mean) ** 2, 0) / r.length);
     return { mean, std };
   };
-  return inRanks.map((ri) => {
-    const si = stats(ri);
-    return outRanks.map((rj) => {
+  return Array.from({ length: shapeRows }, (_unused, inputIndex) =>
+    Array.from({ length: shapeCols }, (_unusedOutput, outputIndex) => {
+      const pair = finitePair(dataset, inputIndex, outputIndex);
+      if (pair.length < 3) return NaN;
+      const ri = ranks(pair.map(([input]) => input));
+      const rj = ranks(pair.map(([, output]) => output));
+      const si = stats(ri);
       const sj = stats(rj);
       if (si.std <= 0 || sj.std <= 0) return NaN;
       let cov = 0;
@@ -167,8 +172,8 @@ export function spearmanMatrix(dataset: VariationDatasetTs): number[][] {
       }
       cov /= ri.length;
       return cov / (si.std * sj.std);
-    });
-  });
+    }),
+  );
 }
 
 export interface DispersionEllipseTs {

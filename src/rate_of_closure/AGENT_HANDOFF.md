@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Pairwise-finite OAT/Spearman parity (#4142 R13.1)
+
+- Python and React now select every input/output pair independently from
+  evaluated finite observations. Misses, failures, and unavailable downstream
+  cells cannot fabricate a zero/rank or invalidate another measurable pair.
+- Spearman requires three paired observations and nonconstant paired columns;
+  OAT spread requires two evaluated finite values per output. Unavailable
+  statistics remain explicit `NaN`.
+- Both runtimes consume one shared fixture covering failures, independent gaps,
+  positive/negative monotonic pairs, constants, and insufficient counts.
+
+This closes the missing-value correctness defect only. Protected publication,
+localized attribution, complete raw trace authority, and #4142 remain open.
+
 ## 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142)
 
 The integrated PyQt plan editor retains the full shared version-2 authority:
