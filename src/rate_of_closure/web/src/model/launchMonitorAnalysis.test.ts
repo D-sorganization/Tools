@@ -216,4 +216,20 @@ describe("launch monitor flexible analysis", () => {
       "shots.json", JSON.stringify([{ x: overLimit }]),
     )).toThrow(/field exceeds .* UTF-8 bytes/);
   });
+
+  it("requires well-formed Unicode scalars in JSON keys and string values", () => {
+    for (const testCase of importLimits.unicode_scalar_cases) {
+      for (const body of [
+        `[{"${testCase.json_escape}":1}]`,
+        `[{"x":"${testCase.json_escape}"}]`,
+      ]) {
+        const parse = () => parseLaunchMonitorFile("shots.json", body);
+        if (testCase.accepted) expect(parse()).toHaveLength(1);
+        else expect(parse).toThrow(/well-formed Unicode/);
+      }
+    }
+    expect(() => parseLaunchMonitorFile(
+      "shots.json", '[{"\\ud83d\\ude00":1,"😀":2}]',
+    )).toThrow(/duplicate JSON field/);
+  });
 });

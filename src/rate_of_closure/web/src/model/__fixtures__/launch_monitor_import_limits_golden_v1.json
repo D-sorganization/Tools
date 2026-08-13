@@ -10,6 +10,11 @@
     {"name": "multibyte_at", "character": "é", "repeat": 32768, "accepted": true},
     {"name": "multibyte_above", "character": "é", "repeat": 32769, "accepted": false}
   ],
+  "unicode_scalar_cases": [
+    {"name": "lone_high", "json_escape": "\\ud800", "accepted": false},
+    {"name": "lone_low", "json_escape": "\\udc00", "accepted": false},
+    {"name": "valid_pair", "json_escape": "\\ud83d\\ude00", "accepted": true, "value": "😀"}
+  ],
   "resource_cases": [
     {"name": "row_excess", "rows": 250001, "columns": 1, "error": "rows"},
     {"name": "union_column_excess", "rows": 1, "columns": 257, "error": "columns"},

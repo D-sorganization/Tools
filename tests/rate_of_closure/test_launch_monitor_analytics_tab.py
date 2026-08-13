@@ -255,6 +255,33 @@ def test_json_keys_and_string_scalars_share_the_field_byte_cap(tmp_path) -> None
         read_launch_monitor_frame(invalid_value)
 
 
+def test_json_keys_and_strings_require_well_formed_unicode_scalars(tmp_path) -> None:
+    cases = _import_limits_golden()["unicode_scalar_cases"]
+    assert isinstance(cases, list)
+    for case in cases:
+        assert isinstance(case, dict)
+        escaped = str(case["json_escape"])
+        for position, body in (
+            ("key", f'[{{"{escaped}":1}}]'),
+            ("value", f'[{{"x":"{escaped}"}}]'),
+        ):
+            path = tmp_path / f"{case['name']}-{position}.json"
+            path.write_text(body, encoding="ascii")
+            if case["accepted"]:
+                frame = read_launch_monitor_frame(path)
+                expected = str(case["value"])
+                observed = frame.columns[0] if position == "key" else frame.iloc[0, 0]
+                assert observed == expected
+            else:
+                with pytest.raises(ValueError, match="well-formed Unicode"):
+                    read_launch_monitor_frame(path)
+
+    duplicate = tmp_path / "normalized-duplicate.json"
+    duplicate.write_text('[{"\\ud83d\\ude00":1,"😀":2}]', encoding="utf-8")
+    with pytest.raises(ValueError, match="Duplicate JSON field"):
+        read_launch_monitor_frame(duplicate)
+
+
 def test_successful_dataset_replacement_resets_all_bound_controls(qtbot) -> None:  # type: ignore[no-untyped-def]
     tab = LaunchMonitorAnalyticsTab()
     qtbot.addWidget(tab)

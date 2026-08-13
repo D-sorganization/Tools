@@ -22,11 +22,36 @@ MAX_IMPORT_COLUMNS = 256
 MAX_IMPORT_CELLS = 2_000_000
 
 
-def _validate_import_field(value: str) -> None:
-    if len(value.encode("utf-8")) > MAX_IMPORT_FIELD_UTF8_BYTES:
+def _normalize_unicode_scalar(value: str) -> str:
+    normalized: list[str] = []
+    index = 0
+    while index < len(value):
+        codepoint = ord(value[index])
+        if 0xD800 <= codepoint <= 0xDBFF:
+            if index + 1 >= len(value):
+                raise ValueError("Launch-monitor text must be well-formed Unicode")
+            low = ord(value[index + 1])
+            if not 0xDC00 <= low <= 0xDFFF:
+                raise ValueError("Launch-monitor text must be well-formed Unicode")
+            normalized.append(
+                chr(0x10000 + ((codepoint - 0xD800) << 10) + low - 0xDC00)
+            )
+            index += 2
+            continue
+        if 0xDC00 <= codepoint <= 0xDFFF:
+            raise ValueError("Launch-monitor text must be well-formed Unicode")
+        normalized.append(value[index])
+        index += 1
+    return "".join(normalized)
+
+
+def _validate_import_field(value: str) -> str:
+    normalized = _normalize_unicode_scalar(value)
+    if len(normalized.encode("utf-8")) > MAX_IMPORT_FIELD_UTF8_BYTES:
         raise ValueError(
             f"Launch-monitor field exceeds {MAX_IMPORT_FIELD_UTF8_BYTES} UTF-8 bytes"
         )
+    return normalized
 
 
 def _validate_csv_field_bytes(text: str) -> None:
@@ -93,9 +118,15 @@ def _reject_nonstandard_json_constant(value: str) -> None:
 def _strict_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
     for key, value in pairs:
-        if key in result:
-            raise ValueError(f"Duplicate JSON field name is not permitted: {key}")
-        result[key] = value
+        normalized_key = _validate_import_field(key)
+        normalized_value = (
+            _validate_import_field(value) if isinstance(value, str) else value
+        )
+        if normalized_key in result:
+            raise ValueError(
+                f"Duplicate JSON field name is not permitted: {normalized_key}"
+            )
+        result[normalized_key] = normalized_value
     return result
 
 

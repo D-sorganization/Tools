@@ -1,5 +1,13 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Unicode-scalar import parity correction
+
+- Both import authorities reject lone UTF-16 high or low surrogates in JSON
+  keys and string scalars before UTF-8 field-byte accounting.
+- Valid surrogate pairs remain accepted as one supplementary Unicode scalar;
+  Python normalizes them before duplicate-key checks. SPEC is 1.16.83.
+- Evidence remains diagnostic and #4433 stays open.
+
 ## 2026-08-13 #4433 linked-scatter import-limit parity correction
 
 - A Python-owned golden defines the shared 65,536-byte UTF-8 field limit for

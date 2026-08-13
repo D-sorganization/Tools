@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter Unicode-scalar parity closure (#4433)
+
+Version 1.16.83 requires well-formed Unicode scalar text before shared UTF-8
+field-byte accounting. JSON keys and string values reject lone high or low
+surrogates in both runtimes; valid supplementary characters remain accepted,
+and Python normalizes escaped surrogate pairs before duplicate-key detection.
+#4433 remains open and diagnostic evidence is not promoted.
+
 ## 2026-08-13 Linked-scatter import-limit parity closure (#4433)
 
 Version 1.16.82 defines a shared 65,536-byte UTF-8 limit for every imported

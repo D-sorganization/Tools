@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter Unicode-scalar parity correction (#4433)
+
+- Version 1.16.83 rejects unmatched UTF-16 high/low surrogates in JSON keys and
+  string values before applying the shared UTF-8 byte ceiling.
+- Valid supplementary Unicode remains accepted. Python combines escaped pairs
+  before duplicate-key detection, matching JavaScript string semantics.
+- The shared golden pins lone-high, lone-low, and valid-pair behavior. #4433
+  remains open; no diagnostic artifact becomes approved evidence.
+
 ## 2026-08-13 Linked-scatter import-limit parity correction (#4433)
 
 - Python and React consume one limits golden covering 65,536-byte UTF-8 field

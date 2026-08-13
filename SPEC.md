@@ -26,11 +26,21 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.82                                    |
-| **Spec Version**        | 1.16.82                                    |
+| **Current Version**     | 1.16.83                                    |
+| **Spec Version**        | 1.16.83                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Linked-scatter Unicode-scalar parity closure (#4433)
+
+Version 1.16.83 validates well-formed Unicode scalar text before UTF-8 field
+accounting. JSON keys and string scalars reject unmatched UTF-16 high or low
+surrogates in Python and React. Valid surrogate pairs remain accepted; Python
+normalizes an escaped pair into its supplementary scalar before duplicate-key
+detection, matching JavaScript semantics. The shared limits golden pins both
+invalid forms and one valid pair. This does not promote diagnostic evidence or
+close #4433.
 
 ### 2026-08-13 Linked-scatter import-limit parity closure (#4433)
 
@@ -4126,6 +4136,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
 | 2026-08-13 | 1.16.80 | fix(rate-of-closure, #4433): make the PyQt selected-state diagnostic use an exact tab-type boundary and direct preview access without changing the runtime contract. |
 | 2026-08-13 | 1.16.81 | fix(rate-of-closure, #4433): bound extreme plotting projection, strict retained-data resources, and generation-safe atomic dataset replacement across React and PyQt. |
+| 2026-08-13 | 1.16.83 | fix(rate-of-closure, #4433): reject malformed Unicode surrogate text before shared field-byte accounting while accepting normalized supplementary scalars. |
 | 2026-08-13 | 1.16.82 | fix(rate-of-closure, #4433): define shared UTF-8 field limits and direct row, union-column, and dense-cell cap evidence without process-global parser mutation. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |

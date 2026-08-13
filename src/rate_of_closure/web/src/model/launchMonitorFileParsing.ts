@@ -21,6 +21,18 @@ const assertTextBudget = (text: string): void => {
 };
 
 const assertFieldBudget = (value: string): void => {
+  for (let index = 0; index < value.length; index += 1) {
+    const codeUnit = value.charCodeAt(index);
+    if (codeUnit >= 0xd800 && codeUnit <= 0xdbff) {
+      const low = value.charCodeAt(index + 1);
+      if (!(low >= 0xdc00 && low <= 0xdfff)) {
+        throw new RangeError("Launch-monitor text must be well-formed Unicode");
+      }
+      index += 1;
+    } else if (codeUnit >= 0xdc00 && codeUnit <= 0xdfff) {
+      throw new RangeError("Launch-monitor text must be well-formed Unicode");
+    }
+  }
   if (new TextEncoder().encode(value).byteLength > MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES) {
     throw new RangeError(
       `Launch-monitor field exceeds ${MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES} UTF-8 bytes`,
