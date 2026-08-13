@@ -47,6 +47,7 @@ const completeGeometricInput = (): VariationPlotDefinitionInputTs => ({
   perturbationSourceKey: "swing_sim.swing.yaw_deg",
   perturbationBand: "upper",
   variableKeys: null,
+  showConfidenceEllipsoids: false,
 });
 
 const scatterInput = (): VariationPlotDefinitionInputTs => ({
@@ -58,6 +59,7 @@ const scatterInput = (): VariationPlotDefinitionInputTs => ({
   selectedTrialIndex: 1, cameraYawDeg: null, cameraPitchDeg: null,
   cameraZoom: null, outcomeFilter: null, phaseEndFraction: null,
   perturbationSourceKey: null, perturbationBand: null, variableKeys: null,
+  showConfidenceEllipsoids: null,
 });
 
 const matrixInput = (): VariationPlotDefinitionInputTs => ({
@@ -69,6 +71,7 @@ const matrixInput = (): VariationPlotDefinitionInputTs => ({
   cameraPitchDeg: null, cameraZoom: null, outcomeFilter: null,
   phaseEndFraction: null, perturbationSourceKey: null, perturbationBand: null,
   variableKeys: ["input:swing.speed", "output:carry_m"],
+  showConfidenceEllipsoids: null,
 });
 
 describe("variation plot definitions", () => {
@@ -97,9 +100,10 @@ describe("variation plot definitions", () => {
       perturbationSourceKey: "swing_motion.yaw_deg",
       perturbationBand: "upper",
       variableKeys: null,
+      showConfidenceEllipsoids: true,
     });
 
-    expect(definition.schemaVersion).toBe(2);
+    expect(definition.schemaVersion).toBe(3);
     expect(definition.resultId).toBe(swingResultFingerprint(ensemble));
     expect(JSON.parse(variationPlotDefinitionToJson(definition))).toEqual(definition);
     expect(parseVariationPlotDefinition(variationPlotDefinitionToJson(definition))).toEqual(definition);
@@ -130,7 +134,7 @@ describe("variation plot definitions", () => {
     const migrated = parseVariationPlotDefinition(JSON.stringify(legacy));
 
     expect(migrated).toMatchObject({
-      schemaVersion: 2,
+      schemaVersion: 3,
       dispersionMetric: "rms-radius",
       dispersionUnit: "m",
       quietThreshold: 0.005,
@@ -141,6 +145,17 @@ describe("variation plot definitions", () => {
     expect(() => parseVariationPlotDefinition(JSON.stringify({
       ...legacy, variableKeys: ["input:a", "output:b"],
     }))).toThrow(/applicable/);
+  });
+
+  it("strictly migrates v2 with ellipsoid surfaces disabled", () => {
+    const current = makeVariationPlotDefinition(runSwingVariation(plan(2)), matrixInput());
+    const legacy = { ...current } as Record<string, unknown>;
+    delete legacy.showConfidenceEllipsoids;
+    const migrated = parseVariationPlotDefinition(JSON.stringify({
+      ...legacy, schemaVersion: 2,
+    }));
+    expect(migrated.schemaVersion).toBe(3);
+    expect(migrated.showConfidenceEllipsoids).toBeNull();
   });
 
   it.each([
@@ -180,6 +195,7 @@ describe("variation plot definitions", () => {
       outcomeFilter: null, phaseEndFraction: null,
       perturbationSourceKey: null, perturbationBand: null,
       variableKeys: ["input:swing_sim.swing.yaw_deg", "output:carry_m"],
+      showConfidenceEllipsoids: null,
     });
     expect(() => parseVariationPlotDefinition(JSON.stringify({
       ...definition, unexpected: true,
@@ -204,6 +220,7 @@ describe("variation plot definitions", () => {
       outcomeFilter: null, phaseEndFraction: null,
       perturbationSourceKey: null, perturbationBand: null,
       variableKeys: null,
+      showConfidenceEllipsoids: null,
     })).toThrow(/greater than zero/);
   });
 
@@ -219,6 +236,7 @@ describe("variation plot definitions", () => {
       outcomeFilter: null, phaseEndFraction: null,
       perturbationSourceKey: null, perturbationBand: null,
       variableKeys: ["input:swing_sim.swing.yaw_deg", "output:carry_m"],
+      showConfidenceEllipsoids: null,
     });
     expect(definition.variableKeys).toHaveLength(2);
   });

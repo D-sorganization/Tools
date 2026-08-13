@@ -89,7 +89,7 @@ def test_scatter_view_exposes_inputs_impact_and_shot_axes(qtbot, tmp_path) -> No
     assert view._table.rowCount() == 3
     assert view._table.accessibleName() == "Selected scatter trial data"
     definition = json.loads(definition_path.read_text(encoding="utf-8"))
-    assert definition["schema_version"] == 2
+    assert definition["schema_version"] == 3
 
 
 def test_landing_canvas_counts_only_paired_finite_coordinates(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -167,7 +167,19 @@ def test_arc_overlay_draws_every_valid_trial_and_reference(qtbot, tmp_path) -> N
     assert "mm³" in view._quiet_threshold.suffix()
     assert "Gaussian position-content region" in view._status.text()
     assert "not a confidence region for the mean" in view._status.text()
-    assert "Sparse 2σ principal-axis glyphs" in view._status.text()
+    assert "Sparse yellow 2σ principal-axis glyphs" in view._status.text()
+    assert not view._ellipsoid_mesh.isChecked()
+    assert view._ellipsoid_mesh.isEnabled()
+    view._ellipsoid_mesh.setChecked(True)
+    assert "Gaussian position-content ellipsoids" in view._status.text()
+    enabled_path = tmp_path / "ellipsoids.plot.json"
+    view._exports.write_definition(enabled_path)
+    assert (
+        json.loads(enabled_path.read_text(encoding="utf-8"))[
+            "show_confidence_ellipsoids"
+        ]
+        is True
+    )
 
     view._filters._source.setCurrentIndex(1)
     view._filters._band.setCurrentIndex(1)
@@ -249,6 +261,10 @@ def test_dispersion_controls_have_accessible_names_and_label_buddies(qtbot) -> N
         "Quiet Threshold": (view._quiet_threshold, "Quiet-zone metric threshold"),
         "Min Duration": (view._min_duration, "Minimum quiet duration seconds"),
         "Min Samples": (view._min_samples, "Minimum quiet samples"),
+        "Ellipsoid Surfaces": (
+            view._ellipsoid_mesh,
+            "Show confidence ellipsoid surfaces",
+        ),
     }
 
     labels = {label.text(): label for label in view.findChildren(QLabel)}

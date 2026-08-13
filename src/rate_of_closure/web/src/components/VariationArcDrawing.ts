@@ -1,4 +1,5 @@
 import type { Vec3 } from "../model/simulation";
+import type { ConfidenceEllipsoidMeshTs } from "../model/confidenceEllipsoidMesh";
 import type {
   GeometricVariabilityTs,
   SwingTraceRowTs,
@@ -15,6 +16,7 @@ export function drawVariationArcScene(
   camera: VariationCameraState,
   stride: number,
   selectedTrialIndex: number | null,
+  ellipsoidMesh: ConfidenceEllipsoidMeshTs | null,
 ): void {
   context.clearRect(0, 0, width, height);
   context.fillStyle = "#07101f";
@@ -25,15 +27,24 @@ export function drawVariationArcScene(
     context.fillText("No evaluated swing traces", width / 2, height / 2);
     return;
   }
-  const allPoints = traces.flatMap((trace) => trace.points);
-  const center = boundsCenter(allPoints);
-  const radius = Math.max(...allPoints.map((point) => distance(point, center)), 1e-6);
+  const renderStride = Math.max(1, Math.floor(stride));
+  const bounds = sceneBounds(traces, ellipsoidMesh);
+  const center = boundsCenter(bounds);
+  const radius = boundsRadius(bounds);
   const project = (point: Vec3): [number, number] => {
     const rotated = rotatePoint(point, center, camera);
     const scale = 0.42 * Math.min(width, height) * camera.zoom / radius;
     return [width / 2 + rotated[0] * scale, height / 2 - rotated[1] * scale];
   };
   drawAxes(context, center, radius, project);
+  if (ellipsoidMesh !== null) {
+    drawConfidenceEllipsoids(
+      context,
+      ellipsoidMesh,
+      project,
+      (point) => rotatePoint(point, center, camera)[2],
+    );
+  }
   traces.forEach((trace) => {
     const selected = trace.trialIndex === selectedTrialIndex;
     context.beginPath();
@@ -41,7 +52,7 @@ export function drawVariationArcScene(
     context.globalAlpha = selectedTrialIndex === null ? 0.28 : selected ? 1 : 0.1;
     context.lineWidth = selected ? 3 : 1;
     trace.points.forEach((point, index) => {
-      if (index % stride !== 0 && index !== trace.points.length - 1) return;
+      if (!isRenderedSample(index, trace.points.length, renderStride)) return;
       const [x, y] = project(point);
       if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
     });
@@ -54,7 +65,7 @@ export function drawVariationArcScene(
   context.globalAlpha = 0.95;
   context.lineWidth = 2.4;
   median.forEach((point, index) => {
-    if (index % stride !== 0 && index !== median.length - 1) return;
+    if (!isRenderedSample(index, median.length, renderStride)) return;
     const [x, y] = project(point);
     if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
   });
@@ -63,10 +74,39 @@ export function drawVariationArcScene(
   context.lineWidth = 3.4;
   variability.quietIntervals.forEach(({ startIndex, endIndex }) => {
     context.beginPath();
-    median.slice(startIndex, endIndex + 1).forEach((point, offset) => {
-      const [x, y] = project(point);
-      if (offset === 0) context.moveTo(x, y); else context.lineTo(x, y);
-    });
+    let started = false;
+    for (let index = startIndex; index <= endIndex && index < median.length; index += 1) {
+      if (index % renderStride !== 0 && index !== endIndex) continue;
+      const [x, y] = project(median[index]);
+      if (!started) context.moveTo(x, y); else context.lineTo(x, y);
+      started = true;
+    }
+    context.stroke();
+  });
+  context.globalAlpha = 1;
+}
+
+function drawConfidenceEllipsoids(
+  context: CanvasRenderingContext2D,
+  mesh: ConfidenceEllipsoidMeshTs,
+  project: (point: Vec3) => [number, number],
+  depth: (point: Vec3) => number,
+): void {
+  const triangles = mesh.triangles.map((indices) => {
+    const points = indices.map((index) => mesh.verticesM[index]) as [Vec3, Vec3, Vec3];
+    return { points, depth: points.reduce((sum, point) => sum + depth(point), 0) / 3 };
+  }).sort((left, right) => left.depth - right.depth);
+  context.fillStyle = "#22d3ee";
+  context.strokeStyle = "#67e8f9";
+  context.lineWidth = 0.35;
+  context.globalAlpha = 0.16;
+  triangles.forEach(({ points }) => {
+    context.beginPath();
+    context.moveTo(...project(points[0]));
+    context.lineTo(...project(points[1]));
+    context.lineTo(...project(points[2]));
+    context.closePath();
+    context.fill();
     context.stroke();
   });
   context.globalAlpha = 1;
@@ -107,15 +147,50 @@ function rotatePoint(point: Vec3, center: Vec3, camera: VariationCameraState): V
   return [yawX, cp * y - sp * yawZ, sp * y + cp * yawZ];
 }
 
-function boundsCenter(points: Vec3[]): Vec3 {
-  return [0, 1, 2].map((axis) => {
-    const values = points.map((point) => point[axis]);
-    return (Math.min(...values) + Math.max(...values)) / 2;
-  }) as Vec3;
+interface SceneBounds { min: Vec3; max: Vec3; count: number }
+
+function sceneBounds(
+  traces: SwingTraceRowTs[],
+  mesh: ConfidenceEllipsoidMeshTs | null,
+): SceneBounds {
+  const bounds: SceneBounds = {
+    min: [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
+    max: [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
+    count: 0,
+  };
+  traces.forEach((trace) => {
+    trace.points.forEach((point) => includePoint(bounds, point));
+  });
+  mesh?.verticesM.forEach((point) => includePoint(bounds, point));
+  return bounds;
 }
 
-const distance = (point: Vec3, center: Vec3): number => Math.hypot(
-  point[0] - center[0], point[1] - center[1], point[2] - center[2],
+function includePoint(bounds: SceneBounds, point: Vec3): void {
+  for (let axis = 0; axis < 3; axis += 1) {
+    bounds.min[axis] = Math.min(bounds.min[axis], point[axis]);
+    bounds.max[axis] = Math.max(bounds.max[axis], point[axis]);
+  }
+  bounds.count += 1;
+}
+
+function boundsCenter(bounds: SceneBounds): Vec3 {
+  if (bounds.count === 0) return [0, 0, 0];
+  return [0, 1, 2].map((axis) => (
+    bounds.min[axis] / 2 + bounds.max[axis] / 2
+  )) as Vec3;
+}
+
+function boundsRadius(bounds: SceneBounds): number {
+  if (bounds.count === 0) return 1e-6;
+  return Math.max(Math.hypot(
+    bounds.max[0] / 2 - bounds.min[0] / 2,
+    bounds.max[1] / 2 - bounds.min[1] / 2,
+    bounds.max[2] / 2 - bounds.min[2] / 2,
+  ), 1e-6);
+}
+
+const isRenderedSample = (index: number, count: number, stride: number): boolean => (
+  index % stride === 0 || index === count - 1
 );
 
 function medianTrace(traces: Vec3[][]): Vec3[] {

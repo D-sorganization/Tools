@@ -8,6 +8,7 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDoubleSpinBox,
     QHBoxLayout,
@@ -18,11 +19,15 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.ui.pyqt6.variation_arc_filters import ArcFilterControls
+from rate_of_closure.ui.pyqt6.variation_control_helpers import add_labeled_control
 from rate_of_closure.ui.pyqt6.variation_geometry_rendering import (
     clear_arc_views,
+    confidence_ellipsoid_legend,
     draw_arc_trials,
+    draw_confidence_ellipsoid_mesh,
     draw_principal_spread,
     draw_variability_timeline,
+    principal_spread_legend,
     set_app_frame_axes,
 )
 from rate_of_closure.ui.pyqt6.variation_plot_canvas import VariationPlotCanvas
@@ -37,6 +42,9 @@ from rate_of_closure.ui.pyqt6.variation_plot_helpers import (
 )
 from rate_of_closure.ui.pyqt6.variation_scatter_view import DatasetScatterView
 from rate_of_closure.ui.pyqt6.variation_trial_table import validated_trial_index
+from rate_of_closure.variation.confidence_ellipsoid_mesh import (
+    build_confidence_ellipsoid_mesh,
+)
 from rate_of_closure.variation.geometric_plot_data import (
     build_dispersion_metric_variability_view,
 )
@@ -71,19 +79,6 @@ _DEFAULT_THRESHOLDS = {
 }
 
 
-def _add_labeled_control(
-    layout: QHBoxLayout,
-    text: str,
-    control: QWidget,
-    stretch: int = 0,
-) -> None:
-    """Add one keyboard-associated label and its named control."""
-    label = QLabel(text)
-    label.setBuddy(control)
-    layout.addWidget(label)
-    layout.addWidget(control, stretch=stretch)
-
-
 class ArcOverlayView(QWidget):
     """Rotatable all-trial 3-D swing arcs with a median reference trace."""
 
@@ -110,6 +105,7 @@ class ArcOverlayView(QWidget):
         self._quiet_threshold = QDoubleSpinBox()
         self._min_duration = QDoubleSpinBox()
         self._min_samples = QSpinBox()
+        self._ellipsoid_mesh = QCheckBox()
         self._active_metric = RMS_RADIUS
         self._metric_thresholds = dict(_DEFAULT_THRESHOLDS)
         self._configure_dispersion_controls()
@@ -159,6 +155,11 @@ class ArcOverlayView(QWidget):
         self._min_samples.setToolTip(
             "Minimum number of common-grid samples in a quiet interval."
         )
+        self._ellipsoid_mesh.setAccessibleName("Show confidence ellipsoid surfaces")
+        self._ellipsoid_mesh.setToolTip(
+            "Render bounded Gaussian position-content surfaces for estimable samples."
+        )
+        self._ellipsoid_mesh.setEnabled(False)
 
     def _metric_changed(self) -> None:
         """Persist each metric's display threshold and update relevant controls."""
@@ -167,6 +168,9 @@ class ArcOverlayView(QWidget):
         self._active_metric = metric
         is_volume = metric == ELLIPSOID_VOLUME
         self._confidence.setEnabled(is_volume)
+        self._ellipsoid_mesh.setEnabled(is_volume)
+        if not is_volume:
+            self._ellipsoid_mesh.setChecked(False)
         self._quiet_threshold.blockSignals(True)
         self._quiet_threshold.setRange(0.001, 1.0e12 if is_volume else 1000.0)
         self._quiet_threshold.setDecimals(3 if is_volume else 2)
@@ -213,15 +217,16 @@ class ArcOverlayView(QWidget):
         selection_controls.addWidget(QLabel("Highlighted Trial"))
         selection_controls.addWidget(self._trial_combo, stretch=1)
         analysis_controls = QHBoxLayout()
-        _add_labeled_control(
+        add_labeled_control(
             analysis_controls, "Dispersion Metric", self._metric_combo, stretch=1
         )
-        _add_labeled_control(analysis_controls, "Confidence", self._confidence)
-        _add_labeled_control(
-            analysis_controls, "Quiet Threshold", self._quiet_threshold
+        add_labeled_control(analysis_controls, "Confidence", self._confidence)
+        add_labeled_control(analysis_controls, "Quiet Threshold", self._quiet_threshold)
+        add_labeled_control(analysis_controls, "Min Duration", self._min_duration)
+        add_labeled_control(analysis_controls, "Min Samples", self._min_samples)
+        add_labeled_control(
+            analysis_controls, "Ellipsoid Surfaces", self._ellipsoid_mesh
         )
-        _add_labeled_control(analysis_controls, "Min Duration", self._min_duration)
-        _add_labeled_control(analysis_controls, "Min Samples", self._min_samples)
         layout = QVBoxLayout(self)
         layout.addLayout(selection_controls)
         layout.addLayout(analysis_controls)
@@ -240,6 +245,7 @@ class ArcOverlayView(QWidget):
         self._quiet_threshold.valueChanged.connect(self._redraw)
         self._min_duration.valueChanged.connect(self._redraw)
         self._min_samples.valueChanged.connect(self._redraw)
+        self._ellipsoid_mesh.toggled.connect(self._redraw)
         self._trial_combo.currentIndexChanged.connect(self._selection_changed)
         self._filters.changed.connect(self._redraw)
 
@@ -257,6 +263,7 @@ class ArcOverlayView(QWidget):
             self._filters.phase_percent / 100.0,
             self._filters.perturbation_source_key,
             self._filters.perturbation_band,
+            self._ellipsoid_mesh.isChecked(),
         )
 
     def _variability_definition(self) -> PlotDefinition:
@@ -344,9 +351,19 @@ class ArcOverlayView(QWidget):
         self._canvas.apply_theme()
         draw_arc_trials(axes, overlay, self._selected_trial, _COHORT_COLORS)
         draw_principal_spread(axes, variability)
+        mesh = None
+        if self._ellipsoid_mesh.isChecked() and variability.metric == ELLIPSOID_VOLUME:
+            mesh = build_confidence_ellipsoid_mesh(
+                variability.mean_positions_m,
+                variability.principal_axes,
+                variability.confidence_semi_axis_lengths_m,
+                variability.adequacy,
+                variability.coordinate_frame,
+            )
+            draw_confidence_ellipsoid_mesh(axes, mesh)
         axes.set_title(f"All Trials — {point_label(overlay.point_id)}")
         set_app_frame_axes(axes)
-        equal_3d_axes(axes, overlay)
+        equal_3d_axes(axes, overlay, None if mesh is None else mesh.vertices_m)
         valid_trials = sum(bool(np.any(row)) for row in overlay.sample_valid)
         counts = variability.adequacy_counts
         ranked = (
@@ -377,10 +394,22 @@ class ArcOverlayView(QWidget):
             f"{variability.unavailable_count} unavailable. "
             f"Ranked intervals: {ranked}. {interpretation} "
             f"Frame: {overlay.coordinate_frame}; alignment: common simulation time. "
-            "Sparse 2σ principal-axis glyphs are not confidence ellipsoids. "
-            "Drag to rotate; scroll to zoom."
+            "Sparse yellow 2σ principal-axis glyphs are not confidence ellipsoids. "
+            + (
+                f"Cyan surfaces show {len(mesh.sample_indices)} estimable "
+                "Gaussian position-content ellipsoids (not mean CIs). "
+                if mesh is not None
+                else "Confidence-ellipsoid surfaces are off. "
+            )
+            + "Drag to rotate; scroll to zoom."
         )
-        axes.legend(loc="best", fontsize=8)
+        handles, labels = axes.get_legend_handles_labels()
+        handles.append(principal_spread_legend())
+        labels.append(handles[-1].get_label())
+        if mesh is not None and variability.confidence_level is not None:
+            handles.append(confidence_ellipsoid_legend(variability.confidence_level))
+            labels.append(handles[-1].get_label())
+        axes.legend(handles, labels, loc="best", fontsize=8)
         self._canvas.draw_idle()
         draw_variability_timeline(self._variability_canvas, variability)
 

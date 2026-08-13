@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
+
+- Normal merge order is approved localized-execution head
+  `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published mesh/policy
+  head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second.
+- Strict passive Worker/document authority, localized source presentation and
+  exports coexist with bounded confidence meshes, PyQt6/React surfaces,
+  constant-space camera bounds, schema-v3 plot persistence, and the narrowly
+  tested assertion-helper exemption.
+- `VariationArcOverlay` retains both orthogonal parent changes: readable
+  localized torque source labels and opt-in Gaussian-content ellipsoid surface
+  controls/rendering/legend/status/persistence.
+- Integrated gates pass 275/275 localized/variation Python, 167/167 shared
+  swing with one expected optional Rust-wheel skip, 74/74 mesh/assertion,
+  102/102 focused React, 874/874 full React, and 6/6 production Playwright.
+  Exact Python 3.12 + Mypy 1.13 passes all 10 changed production Python files;
+  Ruff/format, assertion policy, TypeScript, ESLint, build, docs, size, and
+  diff gates pass.
+- SPEC is 1.16.69. Prescribed-profile Worker/UI transport, Rust parity,
+  complete RK4 half-step history, cross-browser/AT evidence, approved visual
+  baselines, plot-definition import UI, protected publication, and remaining
+  #4142 scope stay open.
+
 ## 2026-08-13 React localized result-authority closure (#4142)
 
 - Worker and schema-v2 ensemble validation reject duplicate/off-grid RK4
@@ -70,6 +93,89 @@ SPEC 1.16.65 records this slice. Torque history is sampled on the state grid,
 not a complete RK4 half-step archive. Rust parity, cross-browser/assistive-
 technology evidence, approved visual baselines, protected publication,
 complete raw persistence, and remaining #4142 scope stay open.
+## 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
+
+- Normal merge order preserves approved mesh head
+  `45800feed2954d221e6a829f0430f87d9817d582` first and published assertion-policy
+  head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` second.
+- Bounded surface geometry/rendering, streamed camera bounds, strict immutable
+  Python mesh construction, schema-v3 persistence, and both toolkit test suites
+  remain intact. The exact constructor-helper assertion exemption and adjacent
+  real-test rejection regression are also retained.
+- SPEC is 1.16.68. No scientific, runtime, schema, UI, or policy behavior was
+  weakened. Evidence is 74 focused Python tests, all 868 React tests, five
+  production-Worker Chromium E2E tests, the exact assertion-policy check,
+  Python 3.12/MyPy 1.13 across 10 changed production files, Ruff/format,
+  TypeScript, ESLint, production build, docs governance, diff checks, and the
+  500-LOC changed-file budget. Protected exact-head CI, review, normal
+  publication, approved baselines, import UI, and remaining #4142 scope stay
+  open.
+
+## 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
+
+- React camera bounds now stream trace points and mesh
+  vertices into fixed-size extrema state. No full raw-trace `flatMap`,
+  per-axis copy, or variadic extrema call remains; 500 by 1,501 samples render
+  within the measured interactive budget without `RangeError`.
+- The public Python mesh constructor applies genuine built-in integer checks,
+  the global 48/2,976/5,760 caps, exact shape/index closure, finite real vertex
+  and integer triangle domains, and owned read-only arrays.
+- SPEC is 1.16.67. Evidence is 1,460 broad Rate/shared-variation Python and
+  868 React tests, 67/87 focused tests including maximum-scale performance,
+  strict isolated changed-source Python 3.12 MyPy, Ruff/format, TypeScript,
+  ESLint, docs governance, and a production Vite build. Cross-browser/
+  assistive-technology E2E, approved visual baselines, import UI, protected
+  publication, and remaining #4142 scope stay open.
+
+## 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
+
+- Both mesh authorities now require genuine integer budgets and enforce hard
+  12-by-6 tessellation and 48-ellipsoid/2,976-vertex/5,760-triangle maxima.
+  They compute counts and zero capacity before allocating sphere geometry.
+- TypeScript now rejects nonfinite transformed vertices, matching Python's
+  overflow behavior. Coercive, negative, fractional, and over-limit budget
+  inputs fail closed symmetrically.
+- The shared golden now uses a non-symmetric canonical orthonormal frame.
+  Captured PyQt and React rendering tests verify axis projection and
+  mesh-inclusive camera bounds rather than relying on labels alone.
+- SPEC is 1.16.66. Evidence is 1,441 broad Rate/shared-variation Python and
+  867 React tests, 48/86 focused tests including performance, strict isolated
+  changed-source Python 3.12 MyPy, Ruff/format, TypeScript, ESLint,
+  documentation governance, and a production Vite build. Cross-browser/
+  assistive-technology E2E, approved visual baselines, import UI, protected
+  publication, and remaining #4142 scope stay open.
+
+## 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
+
+- The PyQt6 Matplotlib and React canvas 3-D variation views now render actual
+  Gaussian position-content ellipsoid surfaces from the shared dispersion
+  authority. The toggle defaults off and is enabled only for confidence-
+  ellipsoid volume.
+- Mesh creation fails closed outside the exact app frame and renders only
+  finite, positive, orthonormal, full-rank estimable samples. Rank-deficient,
+  insufficient, invalid, or malformed samples produce no surfaces.
+- Both toolkits use the same 12-by-6 tessellation, shared golden orientation
+  fixture, and deterministic temporal decimation: no more than 48 ellipsoids,
+  2,976 vertices, or 5,760 triangles per view.
+- Accessible legends and status copy distinguish yellow sparse 2-sigma
+  principal-axis glyphs from cyan Gaussian content surfaces and state that the
+  latter are not confidence intervals for the mean. Existing point/filter/
+  phase/camera/selection linkage is preserved.
+- Plot-definition schema v3 strictly persists the surface toggle and migrates
+  exact v1/v2 definitions with it disabled. SPEC is 1.16.65. Cross-browser
+  E2E, approved visual baselines, import UI, publication, and remaining #4142
+  scope remain open. Evidence is 1,419 broad Rate/shared-variation Python and
+  845 React tests, strict isolated changed-source Python 3.12 MyPy,
+  Ruff/format, TypeScript, ESLint, and a Vite production build.
+## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+- The Changed Test Assertion Check now recognizes the exact constructor-only
+  plot-definition support module without inserting a fake assertion.
+- Its regression pins the exemption to that path and keeps an adjacent
+  assertion-light real test failing closed.
+- SPEC 1.16.65 records this CI-only correction. Scientific/runtime behavior,
+  protected exact-head CI, parent-first publication, and remaining #4142 scope
+  are unchanged.
 
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 

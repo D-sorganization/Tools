@@ -4,7 +4,7 @@ import type { SwingVariationResultTs } from "./variationSwingEnsemble";
 import type { VariationDatasetTs } from "./variation";
 import type { DispersionMetricTs } from "./variationGeometry";
 
-export const VARIATION_PLOT_DEFINITION_SCHEMA_VERSION = 2;
+export const VARIATION_PLOT_DEFINITION_SCHEMA_VERSION = 3;
 
 export type VariationPlotTypeTs =
   | "scalar_scatter"
@@ -13,7 +13,7 @@ export type VariationPlotTypeTs =
   | "distribution_matrix";
 
 export interface VariationPlotDefinitionTs {
-  schemaVersion: 2;
+  schemaVersion: 3;
   resultId: string;
   plotType: VariationPlotTypeTs;
   coordinateFrame: string | null;
@@ -37,6 +37,7 @@ export interface VariationPlotDefinitionTs {
   perturbationSourceKey: string | null;
   perturbationBand: string | null;
   variableKeys: string[] | null;
+  showConfidenceEllipsoids: boolean | null;
 }
 
 export type VariationPlotDefinitionInputTs = Omit<
@@ -54,14 +55,15 @@ const PERTURBATION_BANDS = [
   "lower", "middle", "upper",
   "Lower Half", "Upper Half", "Lower Third", "Middle Third", "Upper Third",
 ] as const;
-const V2_FIELDS = [
+const V3_FIELDS = [
   "schemaVersion", "resultId", "plotType", "coordinateFrame", "xVariableKey",
   "yVariableKey", "pointId", "positionUnit", "alignmentBasis", "dispersionMetric",
   "dispersionUnit", "quietThreshold", "confidenceLevel", "minQuietDurationS",
   "minQuietSamples", "selectedTrialIndex", "cameraYawDeg", "cameraPitchDeg",
   "cameraZoom", "outcomeFilter", "phaseEndFraction", "perturbationSourceKey",
-  "perturbationBand", "variableKeys",
+  "perturbationBand", "variableKeys", "showConfidenceEllipsoids",
 ] as const;
+const V2_FIELDS = V3_FIELDS.filter((field) => field !== "showConfidenceEllipsoids");
 const V1_FIELDS = [
   "schemaVersion", "resultId", "plotType", "coordinateFrame", "xVariableKey",
   "yVariableKey", "pointId", "positionUnit", "alignmentBasis", "quietThresholdM",
@@ -69,7 +71,7 @@ const V1_FIELDS = [
   "outcomeFilter", "phaseEndFraction", "perturbationSourceKey", "perturbationBand",
   "variableKeys",
 ] as const;
-const INPUT_FIELDS = V2_FIELDS.filter(
+const INPUT_FIELDS = V3_FIELDS.filter(
   (field) => field !== "schemaVersion" && field !== "resultId",
 );
 const LEGACY_RMS_THRESHOLD_M = 0.005;
@@ -82,6 +84,7 @@ const APPLICABLE_FIELDS: Readonly<Record<VariationPlotTypeTs, readonly string[]>
     "minQuietDurationS", "minQuietSamples", "selectedTrialIndex", "cameraYawDeg",
     "cameraPitchDeg", "cameraZoom", "outcomeFilter", "phaseEndFraction",
     "perturbationSourceKey", "perturbationBand",
+    "showConfidenceEllipsoids",
   ],
   geometric_variability: [
     "coordinateFrame", "pointId", "positionUnit", "alignmentBasis",
@@ -97,7 +100,7 @@ export function makeVariationPlotDefinition(
   input: VariationPlotDefinitionInputTs,
 ): VariationPlotDefinitionTs {
   exactFields(jsonRecord(input), INPUT_FIELDS);
-  return parseV2({
+  return parseV3({
     schemaVersion: VARIATION_PLOT_DEFINITION_SCHEMA_VERSION,
     resultId: variationResultFingerprint(result),
     ...input,
@@ -115,6 +118,15 @@ function validateDefinitionInput(input: VariationPlotDefinitionInputTs): void {
   if (input.plotType === "scalar_scatter"
     && (input.xVariableKey === null || input.yVariableKey === null)) {
     throw new Error("scalar scatter requires both variable keys");
+  }
+  if (input.plotType === "swing_arc_overlay") {
+    if (typeof input.showConfidenceEllipsoids !== "boolean") {
+      throw new Error("swing arc requires showConfidenceEllipsoids");
+    }
+    if (input.showConfidenceEllipsoids
+      && input.dispersionMetric !== "confidence-ellipsoid-volume") {
+      throw new Error("confidence surfaces require confidence-ellipsoid volume");
+    }
   }
   if ((input.plotType === "swing_arc_overlay" || input.plotType === "geometric_variability")
     && (input.pointId === null || input.coordinateFrame !== APP_FRAME_ID)) {
@@ -199,24 +211,25 @@ function validateDispersionState(input: VariationPlotDefinitionInputTs): void {
 
 export const variationPlotDefinitionToJson = (
   definition: VariationPlotDefinitionTs,
-): string => JSON.stringify(parseV2(jsonRecord(definition)), null, 2);
+): string => JSON.stringify(parseV3(jsonRecord(definition)), null, 2);
 
 export function parseVariationPlotDefinition(document: string): VariationPlotDefinitionTs {
   const root = jsonRecord(JSON.parse(document));
   const version = integer(root.schemaVersion, "schemaVersion");
-  if (version === 1) return parseV2(migrateV1(root));
+  if (version === 1) return parseV3(migrateV1(root));
+  if (version === 2) return parseV3(migrateV2(root));
   if (version !== VARIATION_PLOT_DEFINITION_SCHEMA_VERSION) {
     throw new Error("unsupported variation plot definition schema");
   }
-  return parseV2(root);
+  return parseV3(root);
 }
 
-function parseV2(root: Record<string, unknown>): VariationPlotDefinitionTs {
-  exactFields(root, V2_FIELDS);
-  if (integer(root.schemaVersion, "schemaVersion") !== 2) throw new Error("unsupported schema");
+function parseV3(root: Record<string, unknown>): VariationPlotDefinitionTs {
+  exactFields(root, V3_FIELDS);
+  if (integer(root.schemaVersion, "schemaVersion") !== 3) throw new Error("unsupported schema");
   const plotType = oneOf(root.plotType, PLOT_TYPES, "plotType");
   const definition: VariationPlotDefinitionTs = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     resultId: requiredString(root.resultId, "resultId"),
     plotType,
     coordinateFrame: nullableString(root.coordinateFrame, "coordinateFrame"),
@@ -240,6 +253,9 @@ function parseV2(root: Record<string, unknown>): VariationPlotDefinitionTs {
     perturbationSourceKey: nullableString(root.perturbationSourceKey, "perturbationSourceKey"),
     perturbationBand: nullableString(root.perturbationBand, "perturbationBand"),
     variableKeys: nullableStrings(root.variableKeys, "variableKeys"),
+    showConfidenceEllipsoids: nullableBoolean(
+      root.showConfidenceEllipsoids, "showConfidenceEllipsoids",
+    ),
   };
   validateDefinitionInput(definition);
   return definition;
@@ -261,13 +277,24 @@ function migrateV1(root: Record<string, unknown>): Record<string, unknown> {
   }
   return {
     ...migrated,
-    schemaVersion: 2,
+    schemaVersion: 3,
     dispersionMetric: geometric ? "rms-radius" : null,
     dispersionUnit: geometric ? "m" : null,
     quietThreshold: geometric ? threshold ?? LEGACY_RMS_THRESHOLD_M : null,
     confidenceLevel: null,
     minQuietDurationS: geometric ? 0 : null,
     minQuietSamples: geometric ? 1 : null,
+    showConfidenceEllipsoids: plotType === "swing_arc_overlay" ? false : null,
+  };
+}
+
+function migrateV2(root: Record<string, unknown>): Record<string, unknown> {
+  exactFields(root, V2_FIELDS);
+  const plotType = oneOf(root.plotType, PLOT_TYPES, "plotType");
+  return {
+    ...root,
+    schemaVersion: 3,
+    showConfidenceEllipsoids: plotType === "swing_arc_overlay" ? false : null,
   };
 }
 
@@ -293,6 +320,11 @@ function integer(value: unknown, name: string): number {
 
 function nullableInteger(value: unknown, name: string): number | null {
   return value === null ? null : integer(value, name);
+}
+
+function nullableBoolean(value: unknown, name: string): boolean | null {
+  if (value === null || typeof value === "boolean") return value;
+  throw new Error(`${name} must be null or boolean`);
 }
 
 function nullableNumber(value: unknown, name: string): number | null {

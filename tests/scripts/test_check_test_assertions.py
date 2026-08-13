@@ -84,6 +84,32 @@ def test_allowlisted_fixture_file_without_assertions_passes(tmp_path: Path) -> N
     assert violations == []
 
 
+def test_plot_definition_support_exemption_is_exact(tmp_path: Path) -> None:
+    module = _load_module()
+    patterns = module.load_allowlist(
+        Path(__file__).resolve().parents[2] / "scripts" / "test_assertion_allowlist.txt"
+    )
+    support_file = _write(
+        tmp_path
+        / "tests"
+        / "rate_of_closure"
+        / "_variation_plot_definition_support.py",
+        "def make_definition():\n    return {'schema': 2}\n",
+    )
+    real_test = _write(
+        tmp_path / "tests" / "rate_of_closure" / "test_plot_definition.py",
+        "def test_definition():\n    make_definition()\n",
+    )
+
+    violations = module.check_test_files(
+        [support_file, real_test],
+        allowlist_patterns=patterns,
+        root=tmp_path,
+    )
+
+    assert violations == [real_test]
+
+
 def test_non_test_python_file_is_not_checked(tmp_path: Path) -> None:
     module = _load_module()
     source_file = _write(tmp_path / "src" / "feature.py", "def run():\n    pass\n")

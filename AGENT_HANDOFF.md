@@ -3,6 +3,31 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
+
+Version 1.16.69 is a normal non-fast-forward merge with approved localized-
+execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published
+confidence-mesh head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second. It retains strict
+request/document input authority, passive localized RK4 execution and export,
+bounded confidence-ellipsoid generation, PyQt6/React surface rendering,
+constant-space camera bounds, schema-v3 plot persistence, and the exact
+constructor-helper assertion exemption.
+
+The sole overlapping production component preserves both accessible localized
+torque source labels and the optional confidence-ellipsoid surface controls,
+rendering, legend, status, and persistence. Neither parent implementation was
+weakened. Production Worker/UI prescribed-profile transport, Rust parity, full
+RK4 half-step torque history, cross-browser/AT evidence, approved visual
+baselines, plot-definition import UI, protected publication, and remaining
+#4142 work stay open.
+
+Integrated-tree evidence passes 275/275 localized/variation Python tests,
+167/167 shared swing tests with one expected optional Rust-wheel skip, 74/74
+mesh/assertion tests, 102/102 focused React tests, all 874/874 React tests, and
+6/6 production Playwright scenarios. Exact Python 3.12 + Mypy 1.13 covers the
+10 changed production Python files; Ruff/format, assertion policy, TypeScript,
+ESLint, Vite build, docs governance, module/file-size, and diff gates pass.
+
 ## 2026-08-13 React localized result-authority closure (#4142)
 
 Version 1.16.67 closes six adversarial Worker/export bypasses. Worker results
@@ -70,6 +95,107 @@ localized/variation Python tests (one expected Rust-wheel skip), 6/6 production
 Playwright tests, TypeScript, ESLint, and Vite build. Protected publication,
 WebKit/Firefox, assistive-technology automation, approved visual baselines,
 complete raw torque persistence, Rust parity, and remaining #4142 stay open.
+## 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
+
+This normal merge preserves approved confidence-ellipsoid rendering head
+`45800feed2954d221e6a829f0430f87d9817d582` as first parent and published
+dispersion-policy head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` as second parent. All mesh
+geometry, resource bounds, PyQt6/React rendering, camera streaming, public
+constructor hardening, tests, and schema-v3 persistence remain intact.
+
+The Changed Test Assertion Check also retains the exact exemption for the
+constructor-only plot-definition support helper and its regression proving an
+adjacent assertion-light real test still fails closed. No scientific, runtime,
+schema, UI, or assertion-policy contract was weakened. SPEC advances to
+1.16.68. Integration evidence is 74 focused Python tests, all 868 React tests,
+five production-Worker Chromium E2E tests, the exact assertion-policy check,
+Python 3.12/MyPy 1.13 across 10 changed production files, Ruff/format,
+TypeScript, ESLint, Vite production build, docs governance, diff checks, and
+the official 500-LOC changed-file budget. Protected exact-head CI, review,
+normal publication, approved visual baselines, import UI, and remaining #4142
+work stay open.
+
+## 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
+
+React camera bounds now stream trace points plus the bounded confidence mesh
+through fixed-size extrema state. The renderer no longer flattens raw traces or
+spreads unbounded arrays into `Math.min`/`Math.max`; a 500-trial by
+1,501-sample regression completes within the interactive budget without the
+prior V8 `RangeError`, while the surface remains inside the computed camera.
+
+The public Python `ConfidenceEllipsoidMesh` constructor now enforces the same
+named 48-ellipsoid, 2,976-vertex, and 5,760-triangle caps as its builder.
+Sample indices and per-surface counts must be genuine non-Boolean built-in
+integers, shapes and indices must close exactly, and owned finite numeric
+arrays are read-only. Direct construction can no longer bypass allocation
+limits or retain mutable caller storage.
+
+SPEC advances to 1.16.67. Evidence is 1,460 broad Rate/shared-variation
+Python tests, all 868 React tests, 67/87 focused Python/React tests including
+the maximum-scale render regression, strict isolated changed-source Python
+3.12 MyPy, Ruff/format, TypeScript, ESLint, documentation governance, and a
+production Vite build. Cross-browser/assistive-technology E2E, approved visual
+baselines, import UI, protected publication, and remaining #4142 gates remain
+open.
+
+## 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
+
+The Python and TypeScript mesh authorities now require genuine integer
+tessellation and allocation budgets and enforce named hard maxima: 12
+longitude segments, 6 latitude segments, 48 ellipsoids, 2,976 vertices, and
+5,760 triangles. Per-surface counts and zero capacity are resolved before unit
+sphere allocation. Boolean, fractional, negative, or over-limit values fail
+closed instead of bypassing limits or surfacing raw indexing errors.
+
+TypeScript now rejects nonfinite transformed vertices, matching Python when
+finite inputs overflow during world-coordinate assembly. The cross-toolkit
+golden uses a non-symmetric canonical orthonormal frame, so row/column mistakes
+cannot pass accidentally. Captured PyQt and React renderer tests pin app-frame
+orientation, display projection, and mesh-aware camera bounds. SPEC advances
+to 1.16.66. Evidence is 1,441 broad Rate/shared-variation Python tests, all 867
+React tests, 48/86 focused Python/React tests including performance, strict
+isolated changed-source Python 3.12 MyPy, Ruff/format, TypeScript, ESLint,
+documentation governance, and a production Vite build. The prior
+cross-browser, approved-baseline, import-UI, protected publication, and
+remaining #4142 gates stay open.
+
+## 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
+
+PyQt6 and React now render actual cyan Gaussian position-content surfaces from
+the existing confidence-ellipsoid authority. Rendering is default off and
+volume-metric-only. Exact app-frame orientation, full-rank estimable adequacy,
+positive semi-axes, and orthonormal frames are fail-closed prerequisites;
+rank-deficient, insufficient, and invalid samples are never meshed. The shared
+12-by-6 tessellation and deterministic temporal decimation cap each view at 48
+ellipsoids, 2,976 vertices, and 5,760 triangles.
+
+The yellow sparse 2-sigma largest-axis glyph and cyan translucent content
+surface have separate accessible legends and explicit copy: the surface is a
+plug-in Gaussian sample-position content region, not a confidence interval for
+the mean. Point, cohort/source filters, phase, camera, and selected-trial state
+remain on the existing linked view. Plot-definition schema v3 strictly
+persists the toggle and migrates exact v1/v2 documents with surfaces off.
+
+SPEC advances to 1.16.65. A Python/TypeScript golden fixture pins geometry,
+orientation, units, exclusion, and budgets. Evidence is 1,419 broad
+Rate/shared-variation Python tests and all 845 React tests, plus strict isolated
+changed-source Python 3.12 MyPy, Ruff/format, TypeScript, ESLint, and the Vite
+production build.
+Cross-browser/assistive-technology E2E,
+approved visual baselines, import UI, protected publication, and remaining
+#4142 scope remain open.
+## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+Version 1.16.65 explicitly classifies
+`tests/rate_of_closure/_variation_plot_definition_support.py` as the shared
+constructor-only support module it is. The Changed Test Assertion Check no
+longer requires a fabricated assertion in that helper. A policy regression
+pins the exemption to that exact path and proves an adjacent assertion-light
+real test still fails the gate.
+
+This correction changes no scientific or application behavior. Protected
+exact-head CI, review, parent-first publication, and the remaining #4142 scope
+stay open.
 
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 

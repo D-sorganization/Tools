@@ -40,13 +40,14 @@ def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:
         phase_end_fraction=0.75,
         perturbation_source_key="swing_sim.swing.yaw_deg",
         perturbation_band="Upper Third",
+        show_confidence_ellipsoids=True,
     )
     destination = tmp_path / "plot-definition.json"
 
     write_plot_definition(definition, destination)
 
     document = json.loads(destination.read_text(encoding="utf-8"))
-    assert document["schema_version"] == PLOT_DEFINITION_SCHEMA_VERSION == 2
+    assert document["schema_version"] == PLOT_DEFINITION_SCHEMA_VERSION == 3
     assert document["result_id"] == "ensemble-123"
     assert document["dispersion_metric"] == "confidence-ellipsoid-volume"
     assert document["dispersion_unit"] == "m^3"
@@ -91,11 +92,26 @@ def test_plot_definition_migrates_strict_v1_geometry_defaults() -> None:
     assert migrated.confidence_level is None
     assert migrated.min_quiet_duration_s == 0.0
     assert migrated.min_quiet_samples == 1
-    assert migrated.to_json_dict()["schema_version"] == 2
+    assert migrated.to_json_dict()["schema_version"] == 3
     with pytest.raises(ContractViolationError, match="applicable"):
         PlotDefinition.from_json_dict(
             {**document, "variable_keys": ["input:a", "output:b"]}
         )
+
+
+def test_plot_definition_migrates_exact_v2_with_surfaces_off() -> None:
+    current = matrix_definition().to_json_dict()
+    legacy = {
+        key: value
+        for key, value in current.items()
+        if key != "show_confidence_ellipsoids"
+    }
+    legacy["schema_version"] = 2
+
+    migrated = PlotDefinition.from_json_dict(legacy)
+
+    assert migrated.show_confidence_ellipsoids is None
+    assert migrated.to_json_dict()["schema_version"] == 3
 
 
 @pytest.mark.parametrize(

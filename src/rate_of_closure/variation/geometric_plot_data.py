@@ -21,6 +21,7 @@ from shared.python.swing_sim.variation import (
     LowVariabilityMetricCriteria,
     PositionDispersion,
     RankedLowVariabilityInterval,
+    build_confidence_ellipsoids,
     build_dispersion_metric_series,
     compute_position_dispersion_view,
     find_low_variability_intervals,
@@ -148,6 +149,7 @@ class DispersionMetricVariabilityData:
     mean_positions_m: np.ndarray = field(repr=False)
     principal_sigma_m: np.ndarray = field(repr=False)
     principal_axes: np.ndarray = field(repr=False)
+    confidence_semi_axis_lengths_m: np.ndarray = field(repr=False)
     metric_values: np.ndarray = field(repr=False)
     display_values: np.ndarray = field(repr=False)
     adequacy: tuple[str, ...]
@@ -169,6 +171,7 @@ class DispersionMetricVariabilityData:
             "mean_positions_m": (samples, 3),
             "principal_sigma_m": (samples, 3),
             "principal_axes": (samples, 3, 3),
+            "confidence_semi_axis_lengths_m": (samples, 3),
             "metric_values": (samples,),
             "display_values": (samples,),
             "quiet_mask": (samples,),
@@ -186,6 +189,7 @@ class DispersionMetricVariabilityData:
             ("mean_positions_m", float),
             ("principal_sigma_m", float),
             ("principal_axes", float),
+            ("confidence_semi_axis_lengths_m", float),
             ("metric_values", float),
             ("display_values", float),
             ("quiet_mask", bool),
@@ -230,6 +234,9 @@ def build_dispersion_metric_variability(
         criteria.metric,
         criteria.confidence_level,
     )
+    ellipsoids = build_confidence_ellipsoids(
+        dispersion, point_id, criteria.confidence_level
+    )
     point_index = dispersion.point_index(point_id)
     point_criteria = replace(criteria, point_ids=(point_id,))
     intervals = tuple(
@@ -263,6 +270,7 @@ def build_dispersion_metric_variability(
         mean_positions_m=dispersion.mean_positions_m[:, point_index],
         principal_sigma_m=sigma,
         principal_axes=dispersion.principal_axes[:, point_index],
+        confidence_semi_axis_lengths_m=ellipsoids.semi_axis_lengths_m,
         metric_values=series.values,
         display_values=series.values * scale,
         adequacy=series.adequacy,

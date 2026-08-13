@@ -6,7 +6,13 @@ from collections.abc import Mapping
 from typing import Any
 
 import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
+from rate_of_closure.variation.confidence_ellipsoid_mesh import (
+    ConfidenceEllipsoidMesh,
+)
 from rate_of_closure.variation.geometric_plot_data import (
     DispersionMetricVariabilityData,
 )
@@ -82,6 +88,48 @@ def draw_principal_spread(axes: Any, data: DispersionMetricVariabilityData) -> N
         )
 
 
+def draw_confidence_ellipsoid_mesh(axes: Any, mesh: ConfidenceEllipsoidMesh) -> None:
+    """Draw bounded Gaussian position-content surfaces in Matplotlib coordinates."""
+    if not mesh.triangles.size:
+        return
+    app_triangles = mesh.vertices_m[mesh.triangles]
+    display_triangles = app_triangles[:, :, (0, 2, 1)]
+    collection = Poly3DCollection(
+        display_triangles,
+        facecolor="#22d3ee",
+        edgecolor="#67e8f9",
+        linewidth=0.25,
+        alpha=0.16,
+        zsort="average",
+    )
+    collection.set_label("_nolegend_")
+    axes.add_collection3d(collection)
+
+
+def confidence_ellipsoid_legend(confidence_level: float) -> Patch:
+    """Return an accessible legend proxy for translucent 3-D surfaces."""
+    return Patch(
+        facecolor="#22d3ee",
+        edgecolor="#67e8f9",
+        alpha=0.35,
+        label=(
+            f"{100.0 * confidence_level:.1f}% Gaussian position-content ellipsoid "
+            "(not mean CI)"
+        ),
+    )
+
+
+def principal_spread_legend() -> Line2D:
+    """Return the explicit legend proxy for sparse two-sigma glyphs."""
+    return Line2D(
+        [0],
+        [0],
+        color="#fbbf24",
+        linewidth=1.1,
+        label="Sparse 2σ largest-principal-axis glyph",
+    )
+
+
 def draw_variability_timeline(
     canvas: Any, data: DispersionMetricVariabilityData
 ) -> None:
@@ -142,7 +190,10 @@ def clear_arc_views(main_canvas, variability_canvas) -> None:  # type: ignore[no
 __all__ = [
     "clear_arc_views",
     "draw_arc_trials",
+    "draw_confidence_ellipsoid_mesh",
     "draw_principal_spread",
     "draw_variability_timeline",
     "set_app_frame_axes",
+    "confidence_ellipsoid_legend",
+    "principal_spread_legend",
 ]

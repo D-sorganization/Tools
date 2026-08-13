@@ -44,6 +44,12 @@ def _strict_nullable_integer(value: object, name: str) -> int | None:
     return cast(int | None, value)
 
 
+def _strict_nullable_boolean(value: object, name: str) -> bool | None:
+    """Return null or one genuine JSON boolean."""
+    require(value is None or type(value) is bool, f"{name} must be null or boolean")
+    return cast(bool | None, value)
+
+
 def _normalize_nullable_real(value: object, name: str) -> float | None:
     """Normalize one finite constructor-domain real to JSON-native float."""
     require(
@@ -122,6 +128,7 @@ def _finite_float(value: object, name: str) -> float:
 
 __all__ = [
     "_strict_integer",
+    "_strict_nullable_boolean",
     "_normalize_nullable_integer",
     "_normalize_nullable_real",
     "_strict_nullable_integer",

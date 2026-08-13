@@ -16,3 +16,5 @@ src/movement_optimizer/tests/**/__init__.py
 src/movement_optimizer/tests/**/conftest.py
 # P1AM power-supply test construction helpers shared by split runtime tests.
 src/p1am_control_system/backend/tests/_power_supply_helpers.py
+# Shared constructors consumed by the strict variation plot-definition tests.
+tests/rate_of_closure/_variation_plot_definition_support.py

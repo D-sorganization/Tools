@@ -26,6 +26,7 @@ def complete_geometric_definition(**overrides: object) -> PlotDefinition:
         "phase_end_fraction": 0.75,
         "perturbation_source_key": "swing_sim.swing.yaw_deg",
         "perturbation_band": "Upper Third",
+        "show_confidence_ellipsoids": False,
     }
     values.update(overrides)
     return PlotDefinition(**values)  # type: ignore[arg-type]

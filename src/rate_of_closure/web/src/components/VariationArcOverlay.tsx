@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
+import { buildConfidenceEllipsoidMesh } from "../model/confidenceEllipsoidMesh";
 import type { SwingTrialStatusTs } from "../model/variationSwingEnsemble";
 import {
   geometricVariability,
@@ -58,6 +59,7 @@ export function VariationArcOverlay({
     "confidence-ellipsoid-volume": 1_000,
   });
   const [confidencePercent, setConfidencePercent] = useState(95);
+  const [showConfidenceEllipsoids, setShowConfidenceEllipsoids] = useState(false);
   const [minQuietDurationS, setMinQuietDurationS] = useState(0);
   const [minQuietSamples, setMinQuietSamples] = useState(1);
   const [outcomeFilter, setOutcomeFilter] = useState<"all" | SwingTrialStatusTs>("all");
@@ -97,6 +99,16 @@ export function VariationArcOverlay({
     () => geometricVariability(traces, criteria),
     [criteria, traces],
   );
+  const ellipsoidMesh = useMemo(() => (
+    showConfidenceEllipsoids && dispersionMetric === "confidence-ellipsoid-volume"
+      ? buildConfidenceEllipsoidMesh({
+        centersM: variability.meanPositionsM,
+        principalFrames: variability.principalFrames,
+        semiAxisLengthsM: variability.confidenceSemiAxisLengthsM,
+        adequacy: variability.adequacy,
+        coordinateFrame: variability.coordinateFrame,
+      }) : null
+  ), [dispersionMetric, showConfidenceEllipsoids, variability]);
   const validCount = traces.length;
   const rawVertices = traces.reduce((total, trace) => total + trace.points.length, 0);
   const stride = Math.max(1, Math.ceil(rawVertices / MAX_VERTICES));
@@ -114,8 +126,9 @@ export function VariationArcOverlay({
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     drawVariationArcScene(
       context, width, height, traces, variability, camera, stride, selectedTrialIndex,
+      ellipsoidMesh,
     );
-  }, [camera, selectedTrialIndex, stride, traces, variability]);
+  }, [camera, ellipsoidMesh, selectedTrialIndex, stride, traces, variability]);
 
   const rotate = (dx: number, dy: number) => setCamera((current) => ({
     ...current,
@@ -149,7 +162,11 @@ export function VariationArcOverlay({
             aria-label="Dispersion metric"
             className={INPUT_CLASS}
             value={dispersionMetric}
-            onChange={(event) => setDispersionMetric(event.target.value as DispersionMetricTs)}
+            onChange={(event) => {
+              const metric = event.target.value as DispersionMetricTs;
+              setDispersionMetric(metric);
+              if (metric !== "confidence-ellipsoid-volume") setShowConfidenceEllipsoids(false);
+            }}
           >
             {Object.entries(METRIC_LABELS).map(([metric, label]) => (
               <option key={metric} value={metric}>{label}</option>
@@ -193,6 +210,16 @@ export function VariationArcOverlay({
               }
             }}
           />
+        </label>
+        <label className="flex min-w-52 items-center gap-2 text-xs text-slate-300">
+          <input
+            aria-label="Show confidence ellipsoid surfaces"
+            type="checkbox"
+            checked={showConfidenceEllipsoids}
+            disabled={dispersionMetric !== "confidence-ellipsoid-volume"}
+            onChange={(event) => setShowConfidenceEllipsoids(event.target.checked)}
+          />
+          Show Gaussian content ellipsoids
         </label>
         <label className="min-w-40 flex-1 text-xs text-slate-300">
           <span className="mb-1 block">Min Quiet Duration [s]</span>
@@ -267,8 +294,12 @@ export function VariationArcOverlay({
         </button>
       </div>
       <p className="text-xs text-slate-400" aria-live="polite">
-        {validCount}/{ensemble.runs.length} trials shown · {Math.ceil(rawVertices / stride).toLocaleString()}/{rawVertices.toLocaleString()} vertices · {variability.quietMask.filter(Boolean).length}/{variability.quietMask.length} quiet samples · {METRIC_LABELS[variability.metric]} ≤ {thresholds[dispersionMetric].toLocaleString()} {variability.displayUnit} · adequacy: {variability.adequacyCounts.estimable} estimable, {variability.adequacyCounts["rank-deficient"]} rank-deficient, {variability.adequacyCounts["insufficient-samples"]} insufficient, {variability.adequacyCounts["invalid-covariance"]} invalid; {variability.unavailableCount} unavailable · ranked intervals: {variability.quietIntervals.length === 0 ? "none" : variability.quietIntervals.slice(0, 3).map((interval) => `#${interval.rank} ${interval.startTimeS.toFixed(3)}–${interval.endTimeS.toFixed(3)} s`).join(", ")} · {variability.confidenceLevel === null ? "Sample-position dispersion; confidence does not apply." : `${(100 * variability.confidenceLevel).toFixed(1)}% Gaussian position-content region (plug-in sample covariance; not a confidence region for the mean).`} Sparse 2σ principal-axis glyphs are not confidence ellipsoids. Frame: {ensemble.coordinateFrame}; alignment: common simulation time. Drag to rotate; scroll or use +/− to zoom.
+        {validCount}/{ensemble.runs.length} trials shown · {Math.ceil(rawVertices / stride).toLocaleString()}/{rawVertices.toLocaleString()} vertices · {variability.quietMask.filter(Boolean).length}/{variability.quietMask.length} quiet samples · {METRIC_LABELS[variability.metric]} ≤ {thresholds[dispersionMetric].toLocaleString()} {variability.displayUnit} · adequacy: {variability.adequacyCounts.estimable} estimable, {variability.adequacyCounts["rank-deficient"]} rank-deficient, {variability.adequacyCounts["insufficient-samples"]} insufficient, {variability.adequacyCounts["invalid-covariance"]} invalid; {variability.unavailableCount} unavailable · ranked intervals: {variability.quietIntervals.length === 0 ? "none" : variability.quietIntervals.slice(0, 3).map((interval) => `#${interval.rank} ${interval.startTimeS.toFixed(3)}–${interval.endTimeS.toFixed(3)} s`).join(", ")} · {variability.confidenceLevel === null ? "Sample-position dispersion; confidence does not apply." : `${(100 * variability.confidenceLevel).toFixed(1)}% Gaussian position-content region (plug-in sample covariance; not a confidence region for the mean).`} Sparse yellow 2σ principal-axis glyphs are not confidence ellipsoids. {ellipsoidMesh === null ? "Confidence-ellipsoid surfaces are off." : `Cyan surfaces show ${ellipsoidMesh.sampleIndices.length} estimable Gaussian position-content ellipsoids (not mean CIs).`} Frame: {ensemble.coordinateFrame}; alignment: common simulation time. Drag to rotate; scroll or use +/− to zoom.
       </p>
+      <div aria-label="Arc visualization legend" className="flex flex-wrap gap-4 text-xs text-slate-300">
+        <span><span aria-hidden="true" className="mr-1 text-amber-300">━</span>Sparse 2σ principal-axis glyph</span>
+        {ellipsoidMesh !== null && <span><span aria-hidden="true" className="mr-1 text-cyan-300">■</span>{confidencePercent.toFixed(1)}% Gaussian position-content ellipsoid (not mean CI)</span>}
+      </div>
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
@@ -315,6 +346,8 @@ export function VariationArcOverlay({
               perturbationSourceKey: sourceKey === "all" ? null : sourceKey,
               perturbationBand: sourceBand === "all" ? null : sourceBand,
               variableKeys: null,
+              showConfidenceEllipsoids: showConfidenceEllipsoids
+                && dispersionMetric === "confidence-ellipsoid-volume",
             })),
             "application/json",
           )}
