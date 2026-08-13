@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque authoring review hardening (#4142)
+
+Localized PyQt controls are split into small editor/locus helpers, leaving the
+changed tab and row modules at 482 and 292 lines. The locus editor keeps loaded
+start/end authority separately, so an edit to either endpoint does not round or
+replace the untouched high-precision endpoint. React plan decoding now rejects
+numeric strings, booleans, and non-finite/non-integral values in every numeric
+variation field before construction, matching the strict Python contract.
+
+Evidence is 173 focused Python/PyQt/core tests, all 763 React tests, TS
+type/lint/build, Ruff/format, changed-source MyPy, official file-size,
+docs-governance, and diff gates. Browser localized execution/results/export,
+Rust parity, raw persistence, visual E2E, protected publication, and remaining
+#4142 work are still open.
+
 ## 2026-08-12 Localized torque authoring parity (#4142)
 
 The PyQt Variation tab now exposes shoulder/wrist commanded-torque offsets only

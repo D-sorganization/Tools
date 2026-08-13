@@ -9,40 +9,29 @@ the 500-line budget.
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import cast
 
 from PyQt6.QtWidgets import (
-    QAbstractSpinBox,
     QCheckBox,
     QComboBox,
     QDoubleSpinBox,
     QHBoxLayout,
-    QLabel,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
 
+from rate_of_closure.ui.pyqt6.variation_editor_widgets import make_spin
+from rate_of_closure.ui.pyqt6.variation_locus_editor import LocalizedLocusEditor
 from rate_of_closure.ui.pyqt6.variation_results import short_label
 from shared.python.swing_sim.variation import (
     DISTRIBUTIONS,
-    LOCALIZED_TORQUE_VARIABLE_JOINTS,
     NoiseSpec,
     keys_for_mode,
     variable_registry,
 )
 
 __all__ = ["NoiseRow", "make_spin"]
-
-
-def make_spin(lo: float, hi: float, value: float, decimals: int) -> QDoubleSpinBox:
-    """A no-arrow, typed QDoubleSpinBox in the app's input style."""
-    spin = QDoubleSpinBox()
-    spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
-    spin.setKeyboardTracking(False)
-    spin.setDecimals(decimals)
-    spin.setRange(lo, hi)
-    spin.setValue(value)
-    return spin
 
 
 class NoiseRow(QWidget):
@@ -64,6 +53,7 @@ class NoiseRow(QWidget):
         self._locus_reset = False
         self._loaded_spec: NoiseSpec | None = None
         self._loaded_editor_state: tuple[object, ...] | None = None
+        self._loaded_locus_state: tuple[float, float, object] | None = None
         self.variable = QComboBox()
         self.variable.setToolTip(
             "Which registry variable varies run to run. Grouped by "
@@ -105,37 +95,16 @@ class NoiseRow(QWidget):
         layout.addWidget(self.clip_high, stretch=1)
         layout.addWidget(remove)
 
-        self.locus_widget = QWidget()
-        locus_layout = QHBoxLayout(self.locus_widget)
-        locus_layout.setContentsMargins(0, 0, 0, 0)
-        locus_layout.addWidget(QLabel("Half-open window [start, end)"))
-        self.window_start = make_spin(0.0, duration_s, 0.0, 9)
-        self.window_start.setAccessibleName("Localized torque window start")
-        self.window_start.setToolTip(
-            "Inclusive start time [s] for the required half-open [start, end) window."
-        )
-        self.window_end = make_spin(0.0, duration_s, min(0.1, duration_s), 9)
-        self.window_end.setAccessibleName("Localized torque window end")
-        self.window_end.setToolTip(
-            "Exclusive end time [s] for the required half-open [start, end) window."
-        )
-        self.joint_selector = QComboBox()
-        self.joint_selector.setAccessibleName("Localized torque topological joint")
-        self.joint_selector.setToolTip(
-            "Stable topological torque joint. joint.* IDs are not spatial swing.* "
-            "trace point IDs. The selected variable fixes this value."
-        )
-        self.joint_selector.setEnabled(False)
-        for widget in (self.window_start, self.window_end):
-            widget.setSuffix(" s")
-        locus_layout.addWidget(self.window_start)
-        locus_layout.addWidget(self.window_end)
-        locus_layout.addWidget(self.joint_selector)
+        self.locus_editor = LocalizedLocusEditor(duration_s)
+        self.locus_widget = self.locus_editor
+        self.window_start = self.locus_editor.window_start
+        self.window_end = self.locus_editor.window_end
+        self.joint_selector = self.locus_editor.joint_selector
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
         outer.addWidget(primary)
-        outer.addWidget(self.locus_widget)
+        outer.addWidget(self.locus_editor)
 
         self.variable.currentIndexChanged.connect(self._on_variable_changed)
         self.set_context(mode, localized_enabled, duration_s)
@@ -155,6 +124,7 @@ class NoiseRow(QWidget):
         self._duration_s = duration_s
         self._loaded_spec = None
         self._loaded_editor_state = None
+        self._loaded_locus_state = None
         current = self.key()
         self.variable.blockSignals(True)
         self.variable.clear()
@@ -168,8 +138,7 @@ class NoiseRow(QWidget):
         self.variable.blockSignals(False)
         index = self.variable.findData(current)
         self.variable.setCurrentIndex(max(index, 0))
-        for widget in (self.window_start, self.window_end):
-            widget.setMaximum(duration_s)
+        self.locus_editor.set_duration(duration_s)
         self._on_variable_changed()
 
     def set_mode(self, mode: str) -> None:
@@ -201,13 +170,7 @@ class NoiseRow(QWidget):
         half = 5.0 * definition.typical_scale
         self.clip_low.setValue(definition.default - half)
         self.clip_high.setValue(definition.default + half)
-        joint_id = LOCALIZED_TORQUE_VARIABLE_JOINTS.get(key)
-        self.locus_widget.setVisible(joint_id is not None)
-        self.joint_selector.clear()
-        if joint_id is not None:
-            self.joint_selector.addItem(joint_id, joint_id)
-            self.window_start.setValue(0.0)
-            self.window_end.setValue(min(0.1, self._duration_s))
+        self.locus_editor.set_variable(key)
 
     def to_spec(self) -> NoiseSpec:
         """Build the DbC-validated NoiseSpec described by this row."""
@@ -228,7 +191,12 @@ class NoiseRow(QWidget):
             and state[2] == prior[2]
         ):
             scale = loaded.scale
-        window, points = self._edited_locus(key, loaded, state)
+        window, points = self.locus_editor.merged_locus(
+            key,
+            loaded,
+            self._loaded_locus_state,
+            reset=self._locus_reset,
+        )
         return NoiseSpec(
             variable_key=key,
             distribution=self.distribution.currentText(),
@@ -255,12 +223,10 @@ class NoiseRow(QWidget):
             self.clip_low.setValue(spec.lower)
         if spec.upper is not None:
             self.clip_high.setValue(spec.upper)
-        if spec.variable_key in LOCALIZED_TORQUE_VARIABLE_JOINTS:
-            assert spec.time_window_s is not None
-            self.window_start.setValue(spec.time_window_s[0])
-            self.window_end.setValue(spec.time_window_s[1])
+        self.locus_editor.load_spec(spec)
         self._loaded_spec = spec
         self._loaded_editor_state = self._editor_state()
+        self._loaded_locus_state = self.locus_editor.state()
         self._locus_reset = False
 
     def accepts_numeric_range(self, spec: NoiseSpec) -> bool:
@@ -281,9 +247,7 @@ class NoiseRow(QWidget):
             self.clip.isChecked(),
             self.clip_low.value(),
             self.clip_high.value(),
-            self.window_start.value(),
-            self.window_end.value(),
-            self.joint_selector.currentData(),
+            *self.locus_editor.state(),
         )
 
     def accepts_locus(
@@ -294,54 +258,18 @@ class NoiseRow(QWidget):
         duration_s: float | None = None,
     ) -> bool:
         """Return whether this context can author the spec's exact locus."""
-        expected = LOCALIZED_TORQUE_VARIABLE_JOINTS.get(spec.variable_key)
-        if expected is None:
-            return True
-        window = spec.time_window_s
         enabled = (
             self._localized_enabled if localized_enabled is None else localized_enabled
         )
         duration = self._duration_s if duration_s is None else duration_s
-        return (
-            enabled
-            and window is not None
-            and spec.point_ids == (expected,)
-            and 0.0 <= window[0] < window[1] <= duration
+        return cast(
+            bool,
+            self.locus_editor.accepts(
+                spec,
+                localized_enabled=enabled,
+                duration_s=duration,
+            ),
         )
-
-    def _edited_locus(
-        self,
-        key: str,
-        loaded: NoiseSpec | None,
-        state: tuple[object, ...],
-    ) -> tuple[tuple[float, float] | None, tuple[str, ...]]:
-        """Return exact loaded locus unless its dedicated editors changed."""
-        expected = LOCALIZED_TORQUE_VARIABLE_JOINTS.get(key)
-        if expected is None:
-            if self._locus_reset:
-                return None, ()
-            return (
-                None if loaded is None else loaded.time_window_s,
-                () if loaded is None else loaded.point_ids,
-            )
-        start = self.window_start.value()
-        end = self.window_end.value()
-        if not 0.0 <= start < end <= self._duration_s:
-            raise ValueError(
-                "localized torque time window requires 0 <= start < end <= "
-                f"double-pendulum duration {self._duration_s:g} s"
-            )
-        prior = self._loaded_editor_state
-        if (
-            loaded is not None
-            and loaded.variable_key == key
-            and not self._locus_reset
-            and prior is not None
-            and state[6:8] == prior[6:8]
-        ):
-            assert loaded.time_window_s is not None
-            return loaded.time_window_s, (expected,)
-        return (start, end), (expected,)
 
     def _edited_bounds(
         self, loaded: NoiseSpec | None, state: tuple[object, ...]

@@ -26,11 +26,35 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.59                                    |
-| **Spec Version**        | 1.16.59                                    |
+| **Current Version**     | 1.16.60                                    |
+| **Spec Version**        | 1.16.60                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Localized torque authoring review hardening (#4142)
+
+Version 1.16.60 closes the independent review findings on localized torque
+authoring without broadening execution support. PyQt locus ownership now lives
+in focused editor helpers: the changed `variation_tab.py` and
+`variation_rows.py` modules are 482 and 292 lines respectively, below the
+official 500-line changed-module limit. Imported high-precision locus endpoints
+are tracked independently, so changing only the start preserves the exact
+loaded end and changing only the end preserves the exact loaded start.
+
+The React v2 plan decoder now validates numeric wire domains before model
+construction. Schema versions, run counts, seeds, scales, bounds, base values,
+time-window endpoints, and correlation-matrix entries require finite JavaScript
+numbers, with integer-only fields also rejecting booleans and non-integral
+values. Numeric strings and boolean stand-ins therefore fail closed instead of
+being coerced. Shared-fixture coverage remains the cross-runtime authority.
+
+Evidence is 173 focused Python/PyQt/core tests, all 763 React tests, TypeScript
+type/lint/build, scoped Ruff/format, changed-source MyPy, the official file-size
+gate, documentation governance, and diff checks. React localized dynamics,
+results, and export presentation remain fail-closed; Rust execution parity,
+complete raw persistence, cross-platform visual E2E, protected publication,
+and the remaining epic #4142 scope remain open.
 
 ### 2026-08-12 Localized torque authoring parity (#4142)
 
@@ -3430,6 +3454,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142): extract focused PyQt locus/row editor helpers to satisfy the 500-line changed-module gate; retain exact imported start/end authority independently; and make React v2 variation-plan numeric decoding strict and noncoercive across discriminators, parameters, loci, execution controls, base values, and correlation entries. |
 | 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142): add exact PyQt/React localized shoulder/wrist torque locus authoring with half-open time controls, constrained topological joint IDs, atomic validation, lossless grouped-plan persistence, and a shared cross-surface fixture; keep React dynamics execution and remaining presentation/export work fail-closed and open. |
 | 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
 | 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; and require a genuine non-Boolean integer outer variation-dataset schema discriminator. |

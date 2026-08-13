@@ -291,6 +291,33 @@ class TestPlanRoundTrip:
         assert rebuilt.noise[0].point_ids == ("joint.shoulder",)
         assert rebuilt.groups == plan.groups
 
+    @pytest.mark.parametrize("edited_field", ["start", "end"])
+    def test_locus_edit_preserves_unedited_high_precision_endpoint(
+        self, tab: VariationTab, edited_field: str
+    ) -> None:
+        exact_window = (0.123456789123, 0.456789123456)
+        spec = NoiseSpec(
+            _SHOULDER_TORQUE,
+            scale=1.0,
+            time_window_s=exact_window,
+            point_ids=("joint.shoulder",),
+        )
+        tab.load_plan(VariationPlan(mode="swing", noise=(spec,), n_runs=4))
+        row = tab._rows[0]
+
+        if edited_field == "start":
+            row.window_start.setValue(0.2)
+        else:
+            row.window_end.setValue(0.6)
+        rebuilt = tab.build_plan().noise[0]
+
+        expected = (
+            (0.2, exact_window[1])
+            if edited_field == "start"
+            else (exact_window[0], 0.6)
+        )
+        assert rebuilt.time_window_s == expected
+
     @pytest.mark.parametrize(
         ("window", "points", "message"),
         [

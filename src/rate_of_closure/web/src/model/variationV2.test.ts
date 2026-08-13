@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   CATEGORY_LAUNCH,
+  CATEGORY_SWING,
   planFromJson,
   planToJson,
   runVariation,
@@ -17,6 +18,20 @@ import localizedTorqueFixture from "./__fixtures__/localized_torque_authoring_v1
 
 const BALL = `${CATEGORY_LAUNCH}.ball_speed_mph`;
 const ANGLE = `${CATEGORY_LAUNCH}.launch_angle_deg`;
+
+interface VariationWireFixture {
+  schema_version: unknown;
+  base_variables: Record<string, unknown>;
+  noise: Array<{
+    scale: unknown;
+    lower: unknown;
+    upper: unknown;
+    time_window_s: unknown[];
+  }>;
+  n_runs: unknown;
+  seed: unknown;
+  groups: Array<{ matrix: unknown[][] }>;
+}
 
 const groupedPlan = (
   matrixKind: PerturbationGroupTs["matrixKind"] = "correlation",
@@ -100,6 +115,24 @@ describe("variation plan schema v2", () => {
     };
     payload.noise[0].time_window_s = window as number[] | null;
     payload.noise[0].point_ids = points as string[];
+    expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);
+  });
+
+  it.each([
+    ["string schema discriminator", (value: VariationWireFixture) => { value.schema_version = "2"; }, /schema_version.*integer/i],
+    ["Boolean schema discriminator", (value: VariationWireFixture) => { value.schema_version = true; }, /schema_version.*integer/i],
+    ["fractional schema discriminator", (value: VariationWireFixture) => { value.schema_version = 2.5; }, /schema_version.*integer/i],
+    ["string scale", (value: VariationWireFixture) => { value.noise[0].scale = "1"; }, /scale.*number/i],
+    ["string window endpoint", (value: VariationWireFixture) => { value.noise[0].time_window_s[0] = "0.1"; }, /time_window_s.*number/i],
+    ["string run count", (value: VariationWireFixture) => { value.n_runs = "4"; }, /n_runs.*integer/i],
+    ["Boolean seed", (value: VariationWireFixture) => { value.seed = false; }, /seed.*integer/i],
+    ["string base value", (value: VariationWireFixture) => { value.base_variables[`${CATEGORY_SWING}.yaw_deg`] = "1"; }, /base_variables.*number/i],
+    ["string lower bound", (value: VariationWireFixture) => { value.noise[0].lower = "0"; }, /lower.*number/i],
+    ["string upper bound", (value: VariationWireFixture) => { value.noise[0].upper = "2"; }, /upper.*number/i],
+    ["string group matrix value", (value: VariationWireFixture) => { value.groups[0].matrix[0][0] = "1"; }, /matrix.*number/i],
+  ])("rejects coercive wire input: %s", (_name, mutate, message) => {
+    const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as VariationWireFixture;
+    mutate(payload);
     expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);
   });
 

@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque authoring review hardening (#4142)
+
+Independent review corrections are complete. Focused PyQt editor helpers own
+locus controls and Variation-tab row operations, reducing the changed
+`variation_tab.py` and `variation_rows.py` modules to 482 and 292 lines under
+the official 500-line gate. Locus endpoints retain per-field exact authority:
+editing only one endpoint preserves the other endpoint's full imported value.
+
+React v2 decoding now rejects coercive numeric wire values before construction.
+Schema versions, scales, bounds, base values, windows, run counts, seeds, and
+correlation entries require strict finite numbers; integer fields additionally
+require integers. Evidence: 173 focused Python/PyQt/core tests, 763 full React
+tests, TypeScript type/lint/build, Ruff/format, changed-source MyPy, official
+file-size, docs-governance, and diff gates. React localized execution/results/
+export, Rust parity, complete raw persistence, visual E2E, protected publication,
+and epic completion remain open.
+
 ## 2026-08-12 Localized torque authoring parity (#4142)
 
 PyQt and React can now author the two registered localized commanded-torque

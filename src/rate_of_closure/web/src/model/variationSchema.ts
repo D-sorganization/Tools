@@ -7,6 +7,13 @@ import {
 } from "./variationRegistry";
 import { ballSetupFromJson, ballSetupToJson, type BallSetup } from "./ballSetup";
 import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
+import {
+  wireArray,
+  wireFiniteNumber,
+  wireInteger,
+  wireNumberArray,
+  wireRecord,
+} from "./wireValues";
 
 export const SCHEMA_VERSION = 2;
 export const MAX_RUNS = 500;
@@ -244,45 +251,62 @@ export function planToJson(plan: VariationPlanTs): string {
 
 /** Parse schema v2 or migrate a schema-v1 plan into normalized model fields. */
 export function planFromJson(text: string): VariationPlanTs {
-  const data = JSON.parse(text) as Record<string, unknown>;
-  const version = Number(data.schema_version ?? 1);
+  const data = wireRecord(JSON.parse(text) as unknown, "variation plan");
+  const version = wireInteger(data.schema_version ?? 1, "schema_version");
   if (version !== 1 && version !== SCHEMA_VERSION) {
     throw new Error(`unsupported schema_version ${version}`);
   }
-  const noiseRaw = (data.noise ?? []) as Array<Record<string, unknown>>;
+  const noiseRaw = wireArray(data.noise ?? [], "noise").map((entry, index) =>
+    wireRecord(entry, `noise[${index}]`),
+  );
   const groupsRaw = version === 1
     ? []
-    : ((data.groups ?? []) as Array<Record<string, unknown>>);
-  const baseRaw = (data.base_variables ?? {}) as Record<string, unknown>;
-  const ballRaw = data.ball_setup as Record<string, unknown> | undefined;
+    : wireArray(data.groups ?? [], "groups").map((entry, index) =>
+      wireRecord(entry, `groups[${index}]`),
+    );
+  const baseRaw = wireRecord(data.base_variables ?? {}, "base_variables");
+  const ballRaw = data.ball_setup;
   const plan: VariationPlanTs = {
     mode: String(data.mode) as VariationMode,
     baseVariables: Object.fromEntries(
-      Object.entries(baseRaw).map(([key, value]) => [key, Number(value)]),
+      Object.entries(baseRaw).map(([key, value]) => [
+        key,
+        wireFiniteNumber(value, `base_variables.${key}`),
+      ]),
     ),
-    noise: noiseRaw.map((spec) => ({
+    noise: noiseRaw.map((spec, index) => ({
       variableKey: String(spec.variable_key),
       distribution: String(spec.distribution ?? "normal") as Distribution,
-      scale: Number(spec.scale ?? 1),
-      lower: spec.lower === null || spec.lower === undefined ? null : Number(spec.lower),
-      upper: spec.upper === null || spec.upper === undefined ? null : Number(spec.upper),
+      scale: wireFiniteNumber(spec.scale ?? 1, `noise[${index}].scale`),
+      lower: spec.lower === null || spec.lower === undefined
+        ? null
+        : wireFiniteNumber(spec.lower, `noise[${index}].lower`),
+      upper: spec.upper === null || spec.upper === undefined
+        ? null
+        : wireFiniteNumber(spec.upper, `noise[${index}].upper`),
       specId: spec.spec_id === null || spec.spec_id === undefined
         ? String(spec.variable_key)
         : String(spec.spec_id),
       timeWindowS: spec.time_window_s === null || spec.time_window_s === undefined
         ? null
-        : (Array.from(spec.time_window_s as Iterable<unknown>, Number) as [number, number]),
+        : (wireNumberArray(
+          spec.time_window_s,
+          `noise[${index}].time_window_s`,
+        ) as [number, number]),
       pointIds: Array.from((spec.point_ids ?? []) as Iterable<unknown>, String),
     })),
-    nRuns: Number(data.n_runs ?? 200),
-    seed: Number(data.seed ?? 0),
+    nRuns: wireInteger(data.n_runs ?? 200, "n_runs"),
+    seed: wireInteger(data.seed ?? 0, "seed"),
     flightModel: String(data.flight_model ?? "waterloo_penner"),
-    groups: groupsRaw.map((group) => ({
+    groups: groupsRaw.map((group, groupIndex) => ({
       groupId: String(group.group_id),
       specIds: Array.from((group.spec_ids ?? []) as Iterable<unknown>, String),
       matrixKind: String(group.matrix_kind ?? "correlation") as MatrixKindTs,
-      matrix: Array.from(group.matrix as Iterable<Iterable<unknown>>, (row) =>
-        Array.from(row, Number),
+      matrix: wireArray(group.matrix, `groups[${groupIndex}].matrix`).map(
+        (row, rowIndex) => wireNumberArray(
+          row,
+          `groups[${groupIndex}].matrix[${rowIndex}]`,
+        ),
       ),
     })),
     ...(ballRaw === undefined ? {} : {

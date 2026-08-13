@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 localized torque authoring review hardening
+
+- Focused PyQt editor helpers reduce the changed Variation tab/row modules to
+  482/292 lines under the official 500-line changed-module gate.
+- Loaded start/end locus values retain separate exact authority; editing one
+  endpoint preserves the untouched high-precision endpoint.
+- React v2 plan import strictly validates every numeric variation wire field;
+  numeric strings, booleans, non-finite values, and non-integral integer fields
+  fail before construction instead of being coerced.
+- Evidence: 173 focused Python/PyQt/core tests; 763 full React tests; TS
+  type/lint/build; Ruff/format; changed-source MyPy; official file-size,
+  documentation-governance, and diff checks.
+- React localized execution/results/export, Rust parity, complete raw
+  persistence, visual E2E, protected publication, and epic completion remain
+  open.
+
 ## 2026-08-12 #4142 localized torque authoring parity
 
 - PyQt exposes shoulder/wrist commanded-torque offsets only for the executable
