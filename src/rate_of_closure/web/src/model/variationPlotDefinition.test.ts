@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { runSwingVariation } from "./variationSwingEnsemble";
 import {
   makeVariationPlotDefinition,
+  parseVariationPlotDefinition,
   swingResultFingerprint,
   variationPlotDefinitionToJson,
 } from "./variationPlotDefinition";
@@ -53,6 +54,68 @@ describe("variation plot definitions", () => {
     expect(definition.schemaVersion).toBe(2);
     expect(definition.resultId).toBe(swingResultFingerprint(ensemble));
     expect(JSON.parse(variationPlotDefinitionToJson(definition))).toEqual(definition);
+    expect(parseVariationPlotDefinition(variationPlotDefinitionToJson(definition))).toEqual(definition);
+  });
+
+  it("strictly migrates v1 geometric defaults", () => {
+    const migrated = parseVariationPlotDefinition(JSON.stringify({
+      schemaVersion: 1,
+      resultId: "ensemble-v1",
+      plotType: "geometric_variability",
+      coordinateFrame: "app_frame:x_target,y_up,z_right",
+      xVariableKey: null,
+      yVariableKey: null,
+      pointId: "swing.clubhead.reference",
+      positionUnit: "m",
+      alignmentBasis: "common_simulation_time_s",
+      quietThresholdM: null,
+      selectedTrialIndex: null,
+      cameraYawDeg: null,
+      cameraPitchDeg: null,
+      cameraZoom: null,
+      outcomeFilter: null,
+      phaseEndFraction: null,
+      perturbationSourceKey: null,
+      perturbationBand: null,
+      variableKeys: null,
+    }));
+
+    expect(migrated).toMatchObject({
+      schemaVersion: 2,
+      dispersionMetric: "rms-radius",
+      dispersionUnit: "m",
+      quietThreshold: 0.005,
+      confidenceLevel: null,
+      minQuietDurationS: 0,
+      minQuietSamples: 1,
+    });
+  });
+
+  it.each([true, 2.5, "2", 3])("rejects coercive or unknown schema %s", (schemaVersion) => {
+    expect(() => parseVariationPlotDefinition(JSON.stringify({ schemaVersion }))).toThrow();
+  });
+
+  it("rejects unknown fields", () => {
+    const definition = makeVariationPlotDefinition(runSwingVariation(plan(2)), {
+      plotType: "distribution_matrix", coordinateFrame: null,
+      xVariableKey: null, yVariableKey: null, pointId: null, positionUnit: null,
+      alignmentBasis: null, dispersionMetric: null, dispersionUnit: null,
+      quietThreshold: null, confidenceLevel: null,
+      minQuietDurationS: null, minQuietSamples: null, selectedTrialIndex: null,
+      cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
+      outcomeFilter: null, phaseEndFraction: null,
+      perturbationSourceKey: null, perturbationBand: null,
+      variableKeys: ["input:swing_sim.swing.yaw_deg", "output:carry_m"],
+    });
+    expect(() => parseVariationPlotDefinition(JSON.stringify({
+      ...definition, unexpected: true,
+    }))).toThrow(/fields/);
+    const missing = { ...definition } as Record<string, unknown>;
+    delete missing.cameraZoom;
+    expect(() => parseVariationPlotDefinition(JSON.stringify(missing))).toThrow(/fields/);
+    expect(() => parseVariationPlotDefinition(JSON.stringify({
+      ...definition, minQuietSamples: "1",
+    }))).toThrow(/integer/);
   });
 
   it("rejects an invalid quiet-zone threshold", () => {

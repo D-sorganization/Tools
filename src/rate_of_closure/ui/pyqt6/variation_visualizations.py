@@ -71,6 +71,19 @@ _DEFAULT_THRESHOLDS = {
 }
 
 
+def _add_labeled_control(
+    layout: QHBoxLayout,
+    text: str,
+    control: QWidget,
+    stretch: int = 0,
+) -> None:
+    """Add one keyboard-associated label and its named control."""
+    label = QLabel(text)
+    label.setBuddy(control)
+    layout.addWidget(label)
+    layout.addWidget(control, stretch=stretch)
+
+
 class ArcOverlayView(QWidget):
     """Rotatable all-trial 3-D swing arcs with a median reference trace."""
 
@@ -110,6 +123,7 @@ class ArcOverlayView(QWidget):
         """Configure metric-specific threshold, confidence, and continuity state."""
         for metric, label in _METRIC_LABELS.items():
             self._metric_combo.addItem(label, metric)
+        self._metric_combo.setAccessibleName("Dispersion metric")
         self._metric_combo.setToolTip(
             "Choose the shared statistical authority used for the timeline "
             "and quiet zones."
@@ -119,6 +133,7 @@ class ArcOverlayView(QWidget):
         self._confidence.setSuffix(" %")
         self._confidence.setValue(95.0)
         self._confidence.setEnabled(False)
+        self._confidence.setAccessibleName("Dispersion confidence percent")
         self._confidence.setToolTip(
             "Gaussian position-content probability; available only for "
             "ellipsoid volume."
@@ -127,17 +142,20 @@ class ArcOverlayView(QWidget):
         self._quiet_threshold.setDecimals(2)
         self._quiet_threshold.setSuffix(" mm")
         self._quiet_threshold.setValue(5.0)
+        self._quiet_threshold.setAccessibleName("Quiet-zone metric threshold")
         self._quiet_threshold.setToolTip(
             "Maximum selected dispersion value used to rank contiguous quiet zones."
         )
         self._min_duration.setRange(0.0, 10.0)
         self._min_duration.setDecimals(3)
         self._min_duration.setSuffix(" s")
+        self._min_duration.setAccessibleName("Minimum quiet duration seconds")
         self._min_duration.setToolTip(
             "Minimum common-grid duration for a qualifying quiet interval."
         )
         self._min_samples.setRange(1, 100_000)
         self._min_samples.setValue(1)
+        self._min_samples.setAccessibleName("Minimum quiet samples")
         self._min_samples.setToolTip(
             "Minimum number of common-grid samples in a quiet interval."
         )
@@ -195,16 +213,15 @@ class ArcOverlayView(QWidget):
         selection_controls.addWidget(QLabel("Highlighted Trial"))
         selection_controls.addWidget(self._trial_combo, stretch=1)
         analysis_controls = QHBoxLayout()
-        analysis_controls.addWidget(QLabel("Dispersion Metric"))
-        analysis_controls.addWidget(self._metric_combo, stretch=1)
-        analysis_controls.addWidget(QLabel("Confidence"))
-        analysis_controls.addWidget(self._confidence)
-        analysis_controls.addWidget(QLabel("Quiet Threshold"))
-        analysis_controls.addWidget(self._quiet_threshold)
-        analysis_controls.addWidget(QLabel("Min Duration"))
-        analysis_controls.addWidget(self._min_duration)
-        analysis_controls.addWidget(QLabel("Min Samples"))
-        analysis_controls.addWidget(self._min_samples)
+        _add_labeled_control(
+            analysis_controls, "Dispersion Metric", self._metric_combo, stretch=1
+        )
+        _add_labeled_control(analysis_controls, "Confidence", self._confidence)
+        _add_labeled_control(
+            analysis_controls, "Quiet Threshold", self._quiet_threshold
+        )
+        _add_labeled_control(analysis_controls, "Min Duration", self._min_duration)
+        _add_labeled_control(analysis_controls, "Min Samples", self._min_samples)
         layout = QVBoxLayout(self)
         layout.addLayout(selection_controls)
         layout.addLayout(analysis_controls)

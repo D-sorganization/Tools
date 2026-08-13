@@ -9,6 +9,7 @@ import pytest
 
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
+from PyQt6.QtWidgets import QLabel  # noqa: E402
 
 from rate_of_closure.club import get_club  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
@@ -237,6 +238,23 @@ def test_replacing_result_clears_and_bounds_linked_trial_selection(qtbot) -> Non
     for view in (scatter, arcs, matrix):
         with pytest.raises(ValueError, match="trial_index"):
             view.set_selected_trial(1)
+
+
+def test_dispersion_controls_have_accessible_names_and_label_buddies(qtbot) -> None:  # type: ignore[no-untyped-def]
+    view = ArcOverlayView()
+    qtbot.addWidget(view)
+    expected = {
+        "Dispersion Metric": (view._metric_combo, "Dispersion metric"),
+        "Confidence": (view._confidence, "Dispersion confidence percent"),
+        "Quiet Threshold": (view._quiet_threshold, "Quiet-zone metric threshold"),
+        "Min Duration": (view._min_duration, "Minimum quiet duration seconds"),
+        "Min Samples": (view._min_samples, "Minimum quiet samples"),
+    }
+
+    labels = {label.text(): label for label in view.findChildren(QLabel)}
+    for text, (control, accessible_name) in expected.items():
+        assert control.accessibleName() == accessible_name
+        assert labels[text].buddy() is control
 
 
 def test_distribution_matrix_draws_and_exports_selected_raw_rows(

@@ -26,11 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.59                                    |
-| **Spec Version**        | 1.16.59                                    |
+| **Current Version**     | 1.16.60                                    |
+| **Spec Version**        | 1.16.60                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Dispersion consumer review hardening (#4142 R12.1/R12.2)
+
+Version 1.16.60 makes displayed quiet-interval rank explicitly local to the
+selected modeled point on both UI surfaces. PyQt scopes shared multi-point
+criteria before ranking, and a two-point Python/TypeScript golden regression
+pins dense, stable point-local ranks.
+
+The React df=3 chi-square inverse now evaluates regularized-gamma lower and
+upper tails and uses a bracketed solver instead of an approximate complementary
+error function. SciPy-owned reference quantiles validate confidence radius and
+unit-covariance ellipsoid volume at `1e-12`, `1e-8`, 0.5, 0.9, 0.95, 0.99, and
+`0.999999999999`, and the closest binary64 value below one, spanning the
+declared confidence domain.
+
+Python and TypeScript expose strict plot-definition readers. Exact v2 documents
+round-trip; exact v1 documents migrate without implicit string/boolean/float-to-
+integer coercion. V1 geometric plots become RMS-radius definitions in metres,
+preserve a positive legacy threshold, default a null legacy threshold to 0.005
+m, and declare zero minimum duration plus one minimum sample. Unknown, missing,
+nonfinite, and coercively typed fields fail closed. PyQt's five new dispersion
+controls also expose accessible names and keyboard label buddies.
+
+This hardening does not add a rendered confidence-ellipsoid mesh, cross-browser
+E2E, protected publication, or complete #4142.
 
 ### 2026-08-12 Dispersion visualization consumers (#4142 R12.1/R12.2)
 
@@ -3429,6 +3454,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142 R12.1/R12.2): scope quiet-interval ranks to the selected point; replace approximate React chi-square tails with regularized-gamma bracketed inversion pinned to SciPy across the declared domain; add strict exact v2 readers and explicit v1 RMS/m migration defaults in Python and TypeScript; and associate accessible PyQt labels with every new dispersion control while preserving open mesh, E2E, publication, and epic gates. |
 | 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142 R12.1/R12.2): add parity PyQt6/React selectors for RMS radius, largest principal sigma, and Gaussian confidence-ellipsoid volume; preserve SI authority and readable mm/mm³ display units in plot-definition v2; expose adequacy, unavailable counts, and dense-ranked quiet intervals; and pin strict React grid/domain behavior to a Python-authority golden fixture without claiming a rendered ellipsoid mesh or cross-browser E2E. |
 | 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
 | 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; and require a genuine non-Boolean integer outer variation-dataset schema discriminator. |

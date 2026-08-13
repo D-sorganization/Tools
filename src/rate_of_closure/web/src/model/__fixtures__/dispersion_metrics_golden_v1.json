@@ -2,6 +2,16 @@
   "schema_id": "rate-dispersion-metrics-golden/v1",
   "authority": "shared.python.swing_sim.variation.dispersion_metrics",
   "confidence_level": 0.95,
+  "confidence_reference": [
+    {"probability": 1e-12, "quantile": 2.417987942718036e-8, "radius_scale": 0.00015549880844295996, "unit_covariance_volume": 1.5749610059969517e-11},
+    {"probability": 1e-8, "quantile": 1.122333097304999e-5, "radius_scale": 0.0033501240235325603, "unit_covariance_volume": 1.5749662974720188e-7},
+    {"probability": 0.5, "quantile": 2.365973884375337, "radius_scale": 1.5381722544550518, "unit_covariance_volume": 15.244161079810493},
+    {"probability": 0.9, "quantile": 6.251388631170325, "radius_scale": 2.5002777108094065, "unit_covariance_volume": 65.47166072874315},
+    {"probability": 0.95, "quantile": 7.814727903251179, "radius_scale": 2.7954834829151074, "unit_covariance_volume": 91.50807111868227},
+    {"probability": 0.99, "quantile": 11.344866730144373, "radius_scale": 3.3682141752187276, "unit_covariance_volume": 160.06180390043434},
+    {"probability": 0.999999999999, "quantile": 58.9198006659047, "radius_scale": 7.6759234405968835, "unit_covariance_volume": 1894.4385065295714},
+    {"probability": 0.9999999999999999, "quantile": 77.39631549062088, "radius_scale": 8.797517575465301, "unit_covariance_volume": 2852.1281738716234}
+  ],
   "times_s": [0.0, 0.01, 0.02, 0.03],
   "traces": [
     {"trial_index": 0, "status": "evaluated_hit", "points_m": [[-0.002, -0.001, 0.0], [0.0992, 0.1996, -0.1], [0.1984, 0.3992, -0.2], [0.2994, 0.5997, -0.3]]},
@@ -10,6 +20,24 @@
     {"trial_index": 3, "status": "evaluated_hit", "points_m": [[-0.001, 0.002, 0.002], [0.0996, 0.2008, -0.0992], [0.1992, 0.4016, -0.1984], [0.2997, 0.6006, -0.2994]]},
     {"trial_index": 4, "status": "evaluated_hit", "points_m": [[0.0, 0.0, -0.002], [0.1, 0.2, -0.1008], [0.2, 0.4, -0.2016], [0.3, 0.6, -0.3006]]}
   ],
+  "multi_point_ranking": {
+    "times_s": [0.0, 0.01, 0.02, 0.03, 0.04],
+    "threshold": 1.0,
+    "points": {
+      "point-a": [
+        [[-0.5, 0.0, 0.0], [-2.0, 0.0, 0.0], [-0.5, 0.0, 0.0], [-2.0, 0.0, 0.0], [-0.7, 0.0, 0.0]],
+        [[0.5, 0.0, 0.0], [2.0, 0.0, 0.0], [0.5, 0.0, 0.0], [2.0, 0.0, 0.0], [0.7, 0.0, 0.0]]
+      ],
+      "point-b": [
+        [[-2.0, 0.0, 0.0], [-0.1, 0.0, 0.0], [-2.0, 0.0, 0.0], [-2.0, 0.0, 0.0], [-2.0, 0.0, 0.0]],
+        [[2.0, 0.0, 0.0], [0.1, 0.0, 0.0], [2.0, 0.0, 0.0], [2.0, 0.0, 0.0], [2.0, 0.0, 0.0]]
+      ]
+    },
+    "expected": {
+      "point-a": [{"start_index": 0, "end_index": 0, "rank": 1}, {"start_index": 2, "end_index": 2, "rank": 1}, {"start_index": 4, "end_index": 4, "rank": 2}],
+      "point-b": [{"start_index": 1, "end_index": 1, "rank": 1}]
+    }
+  },
   "expected": {
     "rms-radius": {
       "unit": "m",

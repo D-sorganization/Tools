@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import type { DispersionMetricTs, SwingTraceRowTs } from "./variationGeometry";
 import { geometricVariability } from "./variationGeometry";
+import { confidenceRadiusScale } from "./variationDispersionMath";
 
 const criteria = (metric: DispersionMetricTs, maxValue: number) => ({
   metric,
@@ -114,5 +115,32 @@ describe("geometric variation plot data", () => {
     expect(() => geometricVariability(
       nonfinite, criteria("rms-radius", 1),
     )).toThrow(/finite/);
+  });
+
+  it("matches SciPy confidence radii and unit-covariance volumes over the domain", () => {
+    golden.confidence_reference.forEach((expected) => {
+      const radius = confidenceRadiusScale(expected.probability);
+      const volume = 4 * Math.PI / 3 * radius ** 3;
+      expect(radius / expected.radius_scale).toBeCloseTo(1, 11);
+      expect(volume / expected.unit_covariance_volume).toBeCloseTo(1, 10);
+    });
+  });
+
+  it("dense-ranks each modeled point independently", () => {
+    const fixture = golden.multi_point_ranking;
+    Object.entries(fixture.points).forEach(([pointId, positions]) => {
+      const pointTraces: SwingTraceRowTs[] = positions.map((points, trialIndex) => ({
+        trialIndex,
+        status: "evaluated_hit",
+        timesS: fixture.times_s,
+        points: points as SwingTraceRowTs["points"],
+      }));
+      const result = geometricVariability(
+        pointTraces, criteria("rms-radius", fixture.threshold),
+      );
+      expect(result.quietIntervals.map(({ startIndex, endIndex, rank }) => ({
+        start_index: startIndex, end_index: endIndex, rank,
+      }))).toEqual(fixture.expected[pointId as keyof typeof fixture.expected]);
+    });
   });
 });

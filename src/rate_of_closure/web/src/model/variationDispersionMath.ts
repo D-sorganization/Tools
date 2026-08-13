@@ -19,6 +19,12 @@ export interface SampleDispersionTs {
 
 const MIN_FULL_RANK_SAMPLES = 4;
 const EIGENVALUE_ROUNDOFF_FACTOR = 64;
+const GAMMA_SHAPE = 1.5;
+const LOG_GAMMA_THREE_HALVES = -0.12078223763524522;
+const GAMMA_EPSILON = 2e-15;
+const GAMMA_FLOOR = 1e-300;
+const MAX_GAMMA_ITERATIONS = 256;
+const MAX_BRACKET_ITERATIONS = 128;
 
 export function sampleDispersion(points: Vec3[]): SampleDispersionTs {
   const mean = vectorMean(points);
@@ -38,16 +44,33 @@ export function sampleDispersion(points: Vec3[]): SampleDispersionTs {
 }
 
 export function confidenceRadiusScale(probability: number): number {
-  const targetSurvival = 1 - probability;
+  if (!Number.isFinite(probability) || probability < 1e-12 || probability >= 1) {
+    throw new Error("probability must be finite and in [1e-12, 1)");
+  }
+  const useLowerTail = probability <= 0.5;
+  const target = useLowerTail ? probability : 1 - probability;
   let lower = 0;
   let upper = 1;
-  while (chiSquareThreeSurvival(upper) > targetSurvival) upper *= 2;
-  for (let iteration = 0; iteration < 96; iteration += 1) {
+  let bracketIterations = 0;
+  while (needsHigherBracket(upper, target, useLowerTail)) {
+    if (bracketIterations >= MAX_BRACKET_ITERATIONS) {
+      throw new Error("chi-square confidence bracket did not converge");
+    }
+    upper *= 2;
+    bracketIterations += 1;
+  }
+  for (let iteration = 0; iteration < 192; iteration += 1) {
     const midpoint = (lower + upper) / 2;
-    if (chiSquareThreeSurvival(midpoint) > targetSurvival) lower = midpoint;
+    const tail = tailProbability(midpoint, useLowerTail);
+    if ((useLowerTail && tail < target) || (!useLowerTail && tail > target)) lower = midpoint;
     else upper = midpoint;
   }
   return Math.sqrt((lower + upper) / 2);
+}
+
+function needsHigherBracket(upper: number, target: number, lower: boolean): boolean {
+  const tail = tailProbability(upper, lower);
+  return lower ? tail < target : tail > target;
 }
 
 const vectorMean = (points: Vec3[]): Vec3 => [0, 1, 2].map(
@@ -149,30 +172,53 @@ function classifyAdequacy(count: number, eigenvalues: Vec3): DispersionAdequacyT
     ? "rank-deficient" : "estimable";
 }
 
-function chiSquareThreeSurvival(value: number): number {
-  const root = Math.sqrt(value / 2);
-  return complementaryErrorFunction(root)
-    + Math.sqrt(2 * value / Math.PI) * Math.exp(-value / 2);
+function tailProbability(chiSquare: number, lower: boolean): number {
+  const [lowerGamma, upperGamma] = regularizedGammaPair(GAMMA_SHAPE, chiSquare / 2);
+  return lower ? lowerGamma : upperGamma;
 }
 
-function complementaryErrorFunction(value: number): number {
-  const scaled = 1 / (1 + 0.5 * Math.abs(value));
-  const polynomial = scaled * Math.exp(
-    -value * value - 1.26551223 + scaled * (
-      1.00002368 + scaled * (
-        0.37409196 + scaled * (
-          0.09678418 + scaled * (
-            -0.18628806 + scaled * (
-              0.27886807 + scaled * (
-                -1.13520398 + scaled * (
-                  1.48851587 + scaled * (-0.82215223 + scaled * 0.17087277)
-                )
-              )
-            )
-          )
-        )
-      )
-    ),
-  );
-  return value >= 0 ? polynomial : 2 - polynomial;
+function regularizedGammaPair(shape: number, value: number): [number, number] {
+  if (value === 0) return [0, 1];
+  const factor = Math.exp(-value + shape * Math.log(value) - LOG_GAMMA_THREE_HALVES);
+  if (value < shape + 1) {
+    let denominator = shape;
+    let term = 1 / shape;
+    let sum = term;
+    let converged = false;
+    for (let iteration = 1; iteration <= MAX_GAMMA_ITERATIONS; iteration += 1) {
+      denominator += 1;
+      term *= value / denominator;
+      sum += term;
+      if (Math.abs(term) <= Math.abs(sum) * GAMMA_EPSILON) {
+        converged = true;
+        break;
+      }
+    }
+    if (!converged) throw new Error("regularized-gamma series did not converge");
+    const lower = Math.min(1, sum * factor);
+    return [lower, Math.max(0, 1 - lower)];
+  }
+  let offset = value + 1 - shape;
+  let previous = 1 / GAMMA_FLOOR;
+  let current = 1 / offset;
+  let fraction = current;
+  let converged = false;
+  for (let iteration = 1; iteration <= MAX_GAMMA_ITERATIONS; iteration += 1) {
+    const coefficient = -iteration * (iteration - shape);
+    offset += 2;
+    current = coefficient * current + offset;
+    if (Math.abs(current) < GAMMA_FLOOR) current = GAMMA_FLOOR;
+    previous = offset + coefficient / previous;
+    if (Math.abs(previous) < GAMMA_FLOOR) previous = GAMMA_FLOOR;
+    current = 1 / current;
+    const delta = previous * current;
+    fraction *= delta;
+    if (Math.abs(delta - 1) <= GAMMA_EPSILON) {
+      converged = true;
+      break;
+    }
+  }
+  if (!converged) throw new Error("regularized-gamma fraction did not converge");
+  const upper = Math.min(1, factor * fraction);
+  return [Math.max(0, 1 - upper), upper];
 }

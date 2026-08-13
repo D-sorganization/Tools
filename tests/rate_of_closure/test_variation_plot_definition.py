@@ -9,6 +9,7 @@ import pytest
 from rate_of_closure.variation.plot_definition import (
     PLOT_DEFINITION_SCHEMA_VERSION,
     PlotDefinition,
+    read_plot_definition,
     write_plot_definition,
 )
 from shared.python.contracts import ContractViolationError
@@ -54,6 +55,76 @@ def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:
     assert document["min_quiet_samples"] == 3
     assert document["selected_trial_index"] == 2
     assert document["phase_end_fraction"] == pytest.approx(0.75)
+    assert PlotDefinition.from_json_dict(document) == definition
+    assert read_plot_definition(destination) == definition
+
+
+def test_plot_definition_migrates_strict_v1_geometry_defaults() -> None:
+    document = {
+        "schema_version": 1,
+        "result_id": "ensemble-v1",
+        "plot_type": "geometric_variability",
+        "coordinate_frame": "app_frame:x_target,y_up,z_right",
+        "x_variable_key": None,
+        "y_variable_key": None,
+        "point_id": "swing.clubhead.reference",
+        "position_unit": "m",
+        "alignment_basis": "common_simulation_time_s",
+        "quiet_threshold_m": None,
+        "selected_trial_index": None,
+        "camera_yaw_deg": None,
+        "camera_pitch_deg": None,
+        "camera_zoom": None,
+        "outcome_filter": None,
+        "phase_end_fraction": None,
+        "perturbation_source_key": None,
+        "perturbation_band": None,
+        "variable_keys": None,
+    }
+
+    migrated = PlotDefinition.from_json_dict(document)
+
+    assert migrated.dispersion_metric == "rms-radius"
+    assert migrated.dispersion_unit == "m"
+    assert migrated.quiet_threshold == pytest.approx(0.005)
+    assert migrated.confidence_level is None
+    assert migrated.min_quiet_duration_s == 0.0
+    assert migrated.min_quiet_samples == 1
+    assert migrated.to_json_dict()["schema_version"] == 2
+
+
+@pytest.mark.parametrize("schema_version", [True, 2.0, "2", 3])
+def test_plot_definition_reader_rejects_coercive_or_unknown_versions(
+    schema_version: object,
+) -> None:
+    with pytest.raises(ContractViolationError):
+        PlotDefinition.from_json_dict({"schema_version": schema_version})
+
+
+def test_plot_definition_reader_rejects_unknown_fields() -> None:
+    definition = PlotDefinition(
+        result_id="variation-17-3",
+        plot_type="distribution_matrix",
+        variable_keys=("input:speed", "output:carry_m"),
+    ).to_json_dict()
+    definition["unexpected"] = 1
+
+    with pytest.raises(ContractViolationError, match="fields"):
+        PlotDefinition.from_json_dict(definition)
+
+    definition.pop("unexpected")
+    definition.pop("camera_zoom")
+    with pytest.raises(ContractViolationError, match="fields"):
+        PlotDefinition.from_json_dict(definition)
+
+    definition = PlotDefinition(
+        result_id="variation-17-3",
+        plot_type="distribution_matrix",
+        variable_keys=("input:speed", "output:carry_m"),
+    ).to_json_dict()
+    definition["min_quiet_samples"] = "1"
+    with pytest.raises(ContractViolationError, match="integer"):
+        PlotDefinition.from_json_dict(definition)
 
 
 def test_distribution_matrix_definition_requires_unique_selected_variables() -> None:

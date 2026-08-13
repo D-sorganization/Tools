@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Dispersion consumer review hardening (#4142 R12.1/R12.2)
+
+Point-specific PyQt quiet intervals now dense-rank only within the selected
+modeled point, matching React even when the shared criteria originally names
+multiple points. A multi-point Python/TypeScript golden regression prevents
+other points from shifting the displayed ranks. React replaces the bounded
+erfc approximation with a regularized-gamma, bracketed chi-square inversion
+validated against SciPy from the declared `1e-12` lower confidence boundary to
+a near-one upper-tail case, including confidence radius and unit-covariance
+volume.
+
+Plot-definition readers now accept exact v2 documents or strictly migrate exact
+v1 documents. V1 geometric plots become RMS-radius/m definitions, preserve a
+positive legacy threshold, use 0.005 m when the legacy threshold is null, and
+default to zero minimum duration and one minimum sample; non-geometric fields
+remain null. Unknown, omitted, nonfinite, and coercively typed fields fail
+closed. New PyQt dispersion controls have explicit accessible names and label
+buddies. SPEC is 1.16.60; no ellipsoid mesh, cross-browser E2E, publication, or
+epic-completion claim is added.
+
 ## 2026-08-12 Dispersion-metric visualization consumers (#4142 R12.1/R12.2)
 
 PyQt6 and React variation geometry now select the shared RMS radius, largest

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 
 import numpy as np
@@ -231,9 +231,10 @@ def build_dispersion_metric_variability(
         criteria.confidence_level,
     )
     point_index = dispersion.point_index(point_id)
+    point_criteria = replace(criteria, point_ids=(point_id,))
     intervals = tuple(
         item
-        for item in find_ranked_low_variability_intervals(dispersion, criteria)
+        for item in find_ranked_low_variability_intervals(dispersion, point_criteria)
         if item.point_id == point_id
     )
     quiet = np.zeros(dispersion.sample_times_s.size, dtype=bool)
@@ -268,7 +269,7 @@ def build_dispersion_metric_variability(
         adequacy_counts=counts,
         quiet_mask=quiet,
         quiet_intervals=intervals,
-        criteria=criteria,
+        criteria=point_criteria,
     )
 
 

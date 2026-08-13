@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Dispersion reader, tail, and ranking hardening (#4142)
+
+- PyQt point ranks are now computed in the selected-point scope, with a
+  multi-point cross-runtime fixture pinning dense stable rank behavior.
+- React's df=3 chi-square inverse uses regularized-gamma lower/upper tails and a
+  bracketed solver. SciPy-owned reference cases cover `1e-12`, `1e-8`, 0.5,
+  0.9, 0.95, 0.99, `0.999999999999`, and the closest binary64 value below
+  one, including radii and volumes.
+- Strict Python and TypeScript readers reject unknown/coercive wire state and
+  migrate exact v1 geometry to v2 RMS/m state. A null v1 threshold explicitly
+  defaults to 0.005 m, zero minimum duration, and one minimum sample.
+- PyQt metric, confidence, threshold, duration, and sample controls now expose
+  accessible names and keyboard label buddies.
+
+SPEC 1.16.60 records these corrections. Full ellipsoid meshes, cross-browser
+E2E, protected publication, and remaining #4142 work stay open.
+
 ## 2026-08-12 Selectable dispersion metrics and ranked quiet zones (#4142)
 
 The Swing Geometry view now consumes the shared `dispersion_metrics` authority

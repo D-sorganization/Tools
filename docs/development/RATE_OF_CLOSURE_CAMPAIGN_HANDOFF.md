@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 dispersion consumer review corrections
+
+- Selected-point PyQt intervals now receive dense stable ranks within that
+  point only; a two-point Python/React golden case would fail under the former
+  cross-point ranking behavior.
+- TypeScript confidence scaling now evaluates regularized-gamma lower or upper
+  tails and bracket-solves the df=3 chi-square quantile. SciPy reference radii
+  and unit-covariance volumes cover the full declared confidence domain from
+  `1e-12` through a near-one upper-tail case.
+- Exact v2 plot-definition readers exist in Python and TypeScript. Exact v1
+  geometry migrates to RMS radius in metres, preserving a positive threshold
+  or explicitly defaulting null to 0.005 m, with zero duration and one sample.
+  Unknown, omitted, nonfinite, or coercively typed wire state is rejected.
+- Every new PyQt dispersion input has an accessible name and associated label
+  buddy. SPEC advances monotonically to 1.16.60.
+- This correction does not add a full ellipsoid mesh, cross-browser E2E,
+  protected publication, or close #4142.
+
 ## 2026-08-12 #4142 R12.1/R12.2 dispersion consumer slice
 
 - PyQt6 and React Swing Geometry selectors cover RMS radius, largest principal
