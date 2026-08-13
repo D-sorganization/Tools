@@ -10,6 +10,7 @@ from rate_of_closure.application.flight_execution_profiles import (
     FLIGHT_EXECUTION_PROFILE_REGISTRY_SCHEMA_VERSION,
     FlightExecutionProfileQualificationError,
     FlightExecutionQualificationReason,
+    build_qualified_flight_execution_input,
     qualify_flight_execution_input,
     recompute_qualified_flight_result,
     registered_flight_execution_profiles,
@@ -174,6 +175,23 @@ def test_qualified_boundary_returns_only_an_exact_digest_matched_result() -> Non
         qualified_input.trajectory_sha256
     )
     assert canonical_flight_result_sha256(result) == qualified_input.result_sha256
+
+
+def test_builder_returns_a_fresh_digest_bound_registered_input() -> None:
+    job = _job()
+
+    built = build_qualified_flight_execution_input(
+        job.launch.launch,
+        job.transfer,
+        model_id=job.flight.model_id,
+        model_version=job.flight.model_version,
+        settings=job.flight.settings,
+    )
+
+    evidence = qualify_flight_execution_input(job.launch.launch, job.transfer, built)
+    assert evidence.reason is FlightExecutionQualificationReason.QUALIFIED
+    assert built.trajectory_sha256 == evidence.recomputed_trajectory_sha256
+    assert built.result_sha256 == evidence.recomputed_result_sha256
 
 
 def test_unqualified_boundary_raises_typed_evidence_without_digest_text() -> None:

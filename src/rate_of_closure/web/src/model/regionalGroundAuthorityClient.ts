@@ -11,10 +11,17 @@ import {
   type RegionalGroundExecutionResult,
 } from "./regionalGroundExecutionResult";
 import {
+  MAX_REGIONAL_GROUND_EXECUTION_JOB_BYTES,
   parseRegionalGroundExecutionJob,
+  regionalGroundExecutionJobFromJson,
   stableRegionalGroundExecutionJobJson,
   type RegionalGroundExecutionJob,
 } from "./regionalGroundExecutionJob";
+import {
+  parseRegionalGroundJobPreparationRequest,
+  stableRegionalGroundJobPreparationRequestJson,
+  type RegionalGroundJobPreparationRequest,
+} from "./regionalGroundJobPreparationRequest";
 import {
   boolean,
   exact,
@@ -30,6 +37,8 @@ export const REGIONAL_GROUND_AUTHORITY_JOB_STATUS_SCHEMA =
   "rate-of-closure/regional-ground-authority-job-status/v1" as const;
 export const REGIONAL_GROUND_AUTHORITY_JOBS_PATH =
   "/api/rate-of-closure/v1/regional-ground/jobs" as const;
+export const REGIONAL_GROUND_JOB_PREPARATIONS_PATH =
+  "/api/rate-of-closure/v1/regional-ground/job-preparations" as const;
 export const MAX_REGIONAL_GROUND_AUTHORITY_STATUS_BYTES = 4_096;
 
 const STATUS_FIELDS = [
@@ -46,7 +55,8 @@ const FAILURE_STAGES = [
 ] as const;
 const REQUEST_ERROR_CODES = [
   "invalid_job", "body_too_large", "unsupported_media_type", "execution_unavailable",
-  "job_conflict", "job_not_found", "result_unavailable",
+  "job_conflict", "job_not_found", "result_unavailable", "invalid_preparation",
+  "preparation_unavailable", "preparation_failed",
 ] as const;
 type Fetcher = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
@@ -105,6 +115,15 @@ export interface RegionalGroundAuthorityClient {
     job: RegionalGroundExecutionJob,
     signal?: AbortSignal,
   ) => Promise<RegionalGroundExecutionResult>;
+}
+
+/** Complete v1 authority surface, including non-executing job preparation. */
+export interface RegionalGroundPreparationAuthorityClient
+  extends RegionalGroundAuthorityClient {
+  prepare: (
+    request: RegionalGroundJobPreparationRequest,
+    signal?: AbortSignal,
+  ) => Promise<RegionalGroundExecutionJob>;
 }
 
 const digest = (value: unknown, name: string): string => {
@@ -236,6 +255,9 @@ const requestError = (response: Response, source: string): RegionalGroundAuthori
       job_conflict: 409,
       job_not_found: 404,
       result_unavailable: 409,
+      invalid_preparation: 400,
+      preparation_unavailable: 503,
+      preparation_failed: 422,
     };
     if (validStatus[code] === response.status) {
       return new RegionalGroundAuthorityRequestError(response.status, code);
@@ -270,7 +292,7 @@ const requestInit = (
 /** Create an injectable same-origin client without claiming server availability. */
 export const createRegionalGroundAuthorityClient = (
   fetcher: Fetcher = fetch,
-): RegionalGroundAuthorityClient => {
+): RegionalGroundPreparationAuthorityClient => {
   const jobPath = (job: RegionalGroundExecutionJob): string =>
     `${REGIONAL_GROUND_AUTHORITY_JOBS_PATH}/${encodeURIComponent(job.job_id)}`;
   const readStatus = async (
@@ -287,6 +309,28 @@ export const createRegionalGroundAuthorityClient = (
   return Object.freeze({
     capability: (signal?: AbortSignal) =>
       fetchRegionalGroundAuthorityCapability(fetcher, signal),
+    prepare: async (
+      source: RegionalGroundJobPreparationRequest,
+      signal?: AbortSignal,
+    ) => {
+      const request = parseRegionalGroundJobPreparationRequest(source);
+      const response = await readBoundedText(
+        await fetcher(REGIONAL_GROUND_JOB_PREPARATIONS_PATH, requestInit(
+          "POST", signal, stableRegionalGroundJobPreparationRequestJson(request),
+        )),
+        MAX_REGIONAL_GROUND_EXECUTION_JOB_BYTES,
+      );
+      const job = regionalGroundExecutionJobFromJson(response);
+      if (job.job_id !== request.job_id ||
+          canonicalGroundJson(job.launch) !== canonicalGroundJson(request.launch) ||
+          canonicalGroundJson(job.variation_request) !==
+            canonicalGroundJson(request.variation_request)) {
+        throw new RangeError(
+          "prepared job must match the requested job_id, launch, and variation_request",
+        );
+      }
+      return job;
+    },
     submit: async (source: RegionalGroundExecutionJob, signal?: AbortSignal) => {
       const job = parseRegionalGroundExecutionJob(source);
       return readStatus(job, REGIONAL_GROUND_AUTHORITY_JOBS_PATH, requestInit(

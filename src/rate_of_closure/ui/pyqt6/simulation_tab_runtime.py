@@ -85,12 +85,14 @@ class SimulationTabRuntimeMixin:
         ):
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
         self._invalidate_source()
+        self._emit_config()
 
     def _on_joint_locks_changed(self, *_args: object) -> None:
         """Select the compatible kernel whenever an ideal lock is enabled."""
         if self._torque_profile_panel.joint_locks().has_locks:
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
         self._invalidate_source()
+        self._emit_config()
 
     def _reconcile_joint_locks_for_source(self, *_args: object) -> None:
         """Clear constraints when the user explicitly leaves the supported source."""
@@ -148,9 +150,9 @@ class SimulationTabRuntimeMixin:
     def _invalidate_source(self, *_args: object) -> None:
         self._source = None
         self._tau = None
+        self._mark_stale()
         if hasattr(self, "_scrub_label"):
             self._update_contact_controls()
-            self._mark_stale()
 
     def _scrub_time(self, value: int) -> float:
         source = self._ensure_source()
@@ -261,6 +263,7 @@ class SimulationTabRuntimeMixin:
         self._set_run_status(text, "miss")
 
     def _mark_stale(self) -> None:
+        self._run_current = False
         if not hasattr(self, "_run_status"):
             return
         self._set_run_status(

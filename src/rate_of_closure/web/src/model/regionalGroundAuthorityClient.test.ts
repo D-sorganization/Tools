@@ -10,9 +10,14 @@ import {
   regionalGroundAuthorityJobStatusFromJson,
   RegionalGroundAuthorityRequestError,
   REGIONAL_GROUND_AUTHORITY_JOBS_PATH,
+  REGIONAL_GROUND_JOB_PREPARATIONS_PATH,
   stableRegionalGroundAuthorityJobStatusJson,
 } from "./regionalGroundAuthorityClient";
 import { parseRegionalGroundExecutionJob } from "./regionalGroundExecutionJob";
+import {
+  REGIONAL_GROUND_JOB_PREPARATION_REQUEST_SCHEMA,
+  type RegionalGroundJobPreparationRequest,
+} from "./regionalGroundJobPreparationRequest";
 
 const job = parseRegionalGroundExecutionJob(jobFixture.job);
 const status = {
@@ -25,6 +30,13 @@ const status = {
   result_available: false,
   failure: null,
 };
+const preparationRequest: RegionalGroundJobPreparationRequest = {
+  schema_version: REGIONAL_GROUND_JOB_PREPARATION_REQUEST_SCHEMA,
+  unit_system: "SI",
+  job_id: job.job_id,
+  launch: job.launch,
+  variation_request: job.variation_request,
+};
 
 const jsonResponse = (value: unknown): Response => new Response(JSON.stringify(value), {
   status: 200,
@@ -32,6 +44,100 @@ const jsonResponse = (value: unknown): Response => new Response(JSON.stringify(v
 });
 
 describe("regional-ground authority REST contracts", () => {
+  it("prepares a strict job snapshot without submitting it", async () => {
+    const fetcher = vi.fn().mockResolvedValue(jsonResponse(jobFixture.job));
+    const client = createRegionalGroundAuthorityClient(fetcher);
+    const controller = new AbortController();
+
+    const result = await client.prepare(preparationRequest, controller.signal);
+
+    expect(result.job_id).toBe(preparationRequest.job_id);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher).toHaveBeenCalledWith(
+      REGIONAL_GROUND_JOB_PREPARATIONS_PATH,
+      expect.objectContaining({ method: "POST", signal: controller.signal }),
+    );
+    expect(JSON.parse(fetcher.mock.calls[0][1].body as string)).toEqual(preparationRequest);
+  });
+
+  it("fails closed on oversized, duplicate, invalid, or substituted prepared jobs", async () => {
+    const jobText = JSON.stringify(jobFixture.job);
+    const duplicate = jobText.replace(
+      `"job_id":"${job.job_id}"`,
+      `"job_id":"${job.job_id}","job_id":"${job.job_id}"`,
+    );
+    const responses = [
+      new Response("{}", {
+        status: 200,
+        headers: { "content-length": "1048577" },
+      }),
+      new Response(duplicate, { status: 200 }),
+      jsonResponse({ ...jobFixture.job, unexpected: true }),
+      jsonResponse(jobFixture.job),
+    ];
+    const requests: RegionalGroundJobPreparationRequest[] = [
+      preparationRequest,
+      preparationRequest,
+      preparationRequest,
+      { ...preparationRequest, job_id: "different-job" },
+    ];
+
+    for (const [index, response] of responses.entries()) {
+      const client = createRegionalGroundAuthorityClient(vi.fn().mockResolvedValue(response));
+      await expect(client.prepare(requests[index])).rejects.toThrow();
+    }
+  });
+
+  it.each([
+    [400, {
+      code: "invalid_preparation",
+      detail: "Regional-ground job preparation request is invalid.",
+    }, "invalid_preparation"],
+    [503, {
+      code: "preparation_unavailable",
+      detail: "Qualified regional-ground job preparation is unavailable.",
+    }, "preparation_unavailable"],
+    [422, {
+      code: "preparation_failed",
+      detail: "Qualified regional-ground job preparation failed.",
+    }, "preparation_failed"],
+  ])("types preparation HTTP %i failures", async (httpStatus, body, expectedCode) => {
+    const response = new Response(JSON.stringify(body), { status: httpStatus });
+    const client = createRegionalGroundAuthorityClient(vi.fn().mockResolvedValue(response));
+
+    const error = await client.prepare(preparationRequest).catch((reason: unknown) => reason);
+
+    expect(error).toBeInstanceOf(RegionalGroundAuthorityRequestError);
+    expect(error).toMatchObject({ httpStatus, code: expectedCode });
+  });
+
+  it("propagates preparation aborts without publishing a substituted job", async () => {
+    const controller = new AbortController();
+    const fetcher = vi.fn((_path: RequestInfo | URL, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => {
+          reject(new DOMException("aborted", "AbortError"));
+        }, { once: true });
+      }));
+    const client = createRegionalGroundAuthorityClient(fetcher);
+    const pending = client.prepare(preparationRequest, controller.signal);
+
+    controller.abort();
+
+    await expect(pending).rejects.toMatchObject({ name: "AbortError" });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+
+  it("validates preparation requests before performing network I/O", async () => {
+    const fetcher = vi.fn().mockResolvedValue(jsonResponse(jobFixture.job));
+    const client = createRegionalGroundAuthorityClient(fetcher);
+    const invalid = { ...preparationRequest, job_id: "../route-escape" };
+
+    await expect(client.prepare(invalid as RegionalGroundJobPreparationRequest))
+      .rejects.toThrow(/job_id/i);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it("matches every Python-produced golden status byte-for-byte and semantically", () => {
     expect(statusFixture.fixture_schema).toBe(
       "rate-of-closure/regional-ground-authority-job-status-golden/v1",

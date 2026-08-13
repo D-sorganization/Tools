@@ -13,7 +13,7 @@ interface RegionalGroundImportedJobPanelProps {
   readonly saveResult?: typeof downloadRegionalGroundExecutionResult;
 }
 
-const INITIAL_MESSAGE = "Import an exact execution job to begin.";
+const INITIAL_MESSAGE = "Import an exact execution job or prepare the current editors to begin.";
 
 const safeRequestMessage = (error: unknown): string => error instanceof RegionalGroundAuthorityRequestError
   ? `Local authority request failed (${error.code}). Reconcile before replacing or rerunning this job.`
@@ -23,6 +23,7 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
   const input = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState(INITIAL_MESSAGE);
   const [error, setError] = useState<string | null>(null);
+  const [preparing, setPreparing] = useState(false);
   const { workspace } = props;
   const { acceptedJob: job, authority, confirmed, execution, sourceName } = workspace;
   const active = execution.controls.statusEnabled;
@@ -37,6 +38,23 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
       setMessage(`Loaded ${file.name}. Review and confirm the exact imported authority before running.`);
     } catch {
       setError(`Could not import ${file.name}. The prior accepted job was preserved.`);
+    }
+  };
+
+  const prepareCurrentJob = async () => {
+    setPreparing(true);
+    setError(null);
+    try {
+      const outcome = await workspace.prepareCurrentJob();
+      setMessage(outcome === "accepted"
+        ? "Prepared the current editor snapshot. Review and confirm before running."
+        : "Editor values changed during preparation; the stale response was discarded.");
+    } catch (reason) {
+      setError(reason instanceof RegionalGroundAuthorityRequestError
+        ? `Current-editor preparation failed (${reason.code}). The prior accepted job was preserved.`
+        : "Current-editor preparation failed. The prior accepted job was preserved.");
+    } finally {
+      setPreparing(false);
     }
   };
 
@@ -80,7 +98,8 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
     } catch (reason) { setError(safeRequestMessage(reason)); }
   };
 
-  const canRun = job !== null && confirmed && execution.controls.submitEnabled;
+  const canRun = job !== null && confirmed && !workspace.preparedJobStale &&
+    execution.controls.submitEnabled;
   const visibleMessage = job !== null && message === INITIAL_MESSAGE
     ? `Loaded ${sourceName}. Review and confirm the exact imported authority before running.`
     : message;
@@ -88,12 +107,17 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
     <section aria-labelledby="regional-ground-imported-job-heading"
       className="rounded-xl border border-emerald-500/30 bg-emerald-950/10 p-4">
       <h3 id="regional-ground-imported-job-heading" className="font-semibold text-slate-100">
-        Imported study execution
+        Regional-ground study execution
       </h3>
       <p className="mt-1 text-sm text-slate-300">
-        Run only a complete Python-qualified regional-ground-execution-job/v1 file.
-        Exact validated job bytes go to the isolated local Python authority; this page
-        neither constructs jobs from editor state nor executes physics in the browser.
+        Import a complete regional-ground-execution-job/v1 file or ask the isolated
+        local Python authority to prepare one from the current Flight Explorer,
+        Variation, and Ground Surfaces editors. Preparing never submits or runs a study.
+      </p>
+      <p className="mt-2 text-xs text-amber-200">
+        Current-editor preparation uses the fixed Waterloo/Penner flight profile and
+        fixed transfer settings. Its transfer calibration provenance is unvalidated;
+        inspect the prepared authority and digests before confirmation.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <input ref={input} type="file" accept=".json,application/json" hidden
@@ -102,6 +126,15 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
         <button type="button" disabled={active} onClick={() => input.current?.click()}
           className="rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200 disabled:opacity-40">
           Import execution job…
+        </button>
+        <button type="button"
+          disabled={active || preparing || !workspace.preparationAvailable ||
+            authority.checking || !authority.capability.regional_ground_execution}
+          aria-describedby={!workspace.preparationAvailable
+            ? "regional-ground-preparation-unavailable" : undefined}
+          onClick={() => { void prepareCurrentJob(); }}
+          className="rounded-md border border-emerald-500/70 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-200 disabled:opacity-40">
+          {preparing ? "Preparing Current Job…" : "Prepare Current Job"}
         </button>
         <button type="button" disabled={job === null || active} onClick={clear}
           className="rounded-md border border-slate-600 px-3 py-2 text-sm disabled:opacity-40">
@@ -113,13 +146,20 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
           Save job JSON…
         </button>
       </div>
+      {!workspace.preparationAvailable && (
+        <p id="regional-ground-preparation-unavailable" role="status"
+          className="mt-2 text-xs text-amber-300">
+          Current-editor preparation is unavailable until the launch and variation
+          editors form one valid strict authority request.
+        </p>
+      )}
       <p className="mt-3 text-xs text-slate-400" aria-label="Local authority capability" aria-live="polite">
         Authority: {authority.checking ? "checking" : authority.capability.reason_code} — {authority.capability.detail}
       </p>
       {job !== null && <>
         <dl aria-label="Imported execution job summary"
           className="mt-3 grid gap-2 rounded border border-slate-700/80 p-3 text-xs sm:grid-cols-2 xl:grid-cols-4">
-          <div><dt className="text-slate-500">File</dt><dd>{sourceName}</dd></div>
+          <div><dt className="text-slate-500">Source</dt><dd>{sourceName}</dd></div>
           <div><dt className="text-slate-500">Job ID</dt><dd>{job.job_id}</dd></div>
           <div><dt className="text-slate-500">Schema</dt><dd>{job.schema_version}</dd></div>
           <div><dt className="text-slate-500">Model</dt><dd>{job.flight.model_id} {job.flight.model_version}</dd></div>
@@ -129,10 +169,17 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
           <div className="sm:col-span-2"><dt className="text-slate-500">Input SHA-256</dt><dd className="break-all">{job.input_sha256}</dd></div>
           <div className="sm:col-span-2"><dt className="text-slate-500">Qualified-plan SHA-256</dt><dd className="break-all">{job.qualified_plan_sha256}</dd></div>
         </dl>
+        {workspace.preparedJobStale && <p role="alert"
+          className="mt-3 rounded border border-amber-500/50 bg-amber-950/30 p-3 text-sm text-amber-100">
+          This prepared job is stale because a launch or variation request input changed.
+          Its preview is retained for comparison, but prepare the current job again before
+          confirming or running it.
+        </p>}
         <label className="mt-3 flex items-start gap-2 text-sm text-slate-200">
-          <input type="checkbox" checked={confirmed} disabled={active || execution.job !== null}
+          <input type="checkbox" checked={confirmed}
+            disabled={active || execution.job !== null || workspace.preparedJobStale}
             onChange={(event) => workspace.setConfirmed(event.currentTarget.checked)} />
-          I reviewed the imported job identity, model, trial count, provenance, and digests
+          I reviewed the accepted job identity, model, trial count, provenance, and digests
           and want the local Python authority to execute exactly this job.
         </label>
       </>}

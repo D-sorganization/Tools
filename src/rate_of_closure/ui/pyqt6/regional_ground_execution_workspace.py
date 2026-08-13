@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
+from typing import cast
 
 from PyQt6.QtWidgets import (
     QFileDialog,
@@ -46,6 +47,7 @@ from .regional_ground_execution_controller import (
 )
 
 Confirmation = Callable[[RegionalGroundExecutionJob], bool]
+Preparation = Callable[[], RegionalGroundExecutionJob]
 
 
 class RegionalGroundExecutionWorkspace(QWidget):
@@ -58,6 +60,7 @@ class RegionalGroundExecutionWorkspace(QWidget):
         capability: AuthorityCapability = DEFAULT_UNAVAILABLE_CAPABILITY,
         submitter: RegionalGroundExecutionSubmitter | None = None,
         confirmation: Confirmation | None = None,
+        preparation: Preparation | None = None,
     ) -> None:
         super().__init__(parent)
         if type(capability) is not AuthorityCapability:
@@ -66,16 +69,21 @@ class RegionalGroundExecutionWorkspace(QWidget):
             raise TypeError("submitter must be callable or None")
         if confirmation is not None and not callable(confirmation):
             raise TypeError("confirmation must be callable or None")
+        if preparation is not None and not callable(preparation):
+            raise TypeError("preparation must be callable or None")
         if capability.regional_ground_execution != (submitter is not None):
             raise ValueError("capability and submitter availability must agree")
         self._capability = capability
         self._confirmation = confirmation or self._confirm_imported_job
+        self._preparation = preparation
         self._controller = (
             None
             if submitter is None
             else RegionalGroundExecutionController(submitter, self)
         )
         self._job: RegionalGroundExecutionJob | None = None
+        self._prepared_from_editors = False
+        self._prepared_stale = False
         self._result: RegionalGroundExecutionResult | None = None
         self._recent_path: Path | None = None
         self._build_ui()
@@ -102,8 +110,9 @@ class RegionalGroundExecutionWorkspace(QWidget):
     def _build_ui(self) -> None:
         layout = QVBoxLayout(self)
         disclosure = QLabel(
-            "Import a complete, strict execution-job/v1 document, review its exact "
-            "identity, then explicitly confirm Python-authoritative execution. "
+            "Prepare a strict execution-job/v1 from current validated editors, or "
+            "import one. Review its exact identity, then explicitly confirm "
+            "Python-authoritative execution. Preparation never starts a study. "
             "The same immutable job may be rerun; each run is a new execution "
             "attempt, while the last complete result remains available until a "
             "new job is accepted or a later run succeeds."
@@ -116,20 +125,26 @@ class RegionalGroundExecutionWorkspace(QWidget):
         self.open_button = self._button(
             "Open Job…", "regionalGroundOpenJobButton", "Open execution job JSON"
         )
+        self.prepare_button = self._button(
+            "Prepare Current Job",
+            "regionalGroundPrepareJobButton",
+            "Prepare an execution job from current validated editors",
+        )
         self.save_job_button = self._button(
             "Save Job As…",
             "regionalGroundSaveJobButton",
             "Save canonical execution job JSON",
         )
         self.run_button = self._button(
-            "Run Imported Study",
+            "Run Accepted Study",
             "regionalGroundRunButton",
-            "Run the confirmed imported study",
+            "Run the confirmed accepted study",
         )
         self.cancel_button = self._button(
             "Cancel", "regionalGroundCancelButton", "Cancel running ground study"
         )
         for button in (
+            self.prepare_button,
             self.open_button,
             self.save_job_button,
             self.run_button,
@@ -137,16 +152,17 @@ class RegionalGroundExecutionWorkspace(QWidget):
         ):
             actions.addWidget(button)
         layout.addLayout(actions)
+        self.prepare_button.clicked.connect(self.prepare_current_job)
         self.open_button.clicked.connect(self.open_job)
         self.save_job_button.clicked.connect(self.save_job_as)
         self.run_button.clicked.connect(self.run_imported_job)
         self.cancel_button.clicked.connect(self.cancel)
 
-        evidence = QGroupBox("Imported authority")
+        evidence = QGroupBox("Accepted authority")
         form = QFormLayout(evidence)
         self.job_label = QLabel("No execution job loaded.")
         self.job_label.setWordWrap(True)
-        self.job_label.setAccessibleName("Imported execution job evidence")
+        self.job_label.setAccessibleName("Accepted execution job evidence")
         form.addRow("Job", self.job_label)
         self.capability_label = QLabel(self._capability.detail)
         self.capability_label.setWordWrap(True)
@@ -189,19 +205,33 @@ class RegionalGroundExecutionWorkspace(QWidget):
         button = QPushButton(text)
         button.setObjectName(object_name)
         button.setAccessibleName(accessible_name)
+        button.setToolTip(accessible_name)
         return button
 
-    def accept_job(self, job: RegionalGroundExecutionJob, *, source_name: str) -> None:
+    def accept_job(
+        self,
+        job: RegionalGroundExecutionJob,
+        *,
+        source_name: str,
+        prepared_from_editors: bool = False,
+    ) -> None:
         """Atomically replace the accepted job after complete validation."""
         if type(job) is not RegionalGroundExecutionJob:
             raise TypeError("job must be an exact RegionalGroundExecutionJob")
         job.__post_init__()
         if self.is_running:
             raise RuntimeError("cannot replace the execution job while running")
+        if type(prepared_from_editors) is not bool:
+            raise TypeError("prepared_from_editors must be an exact bool")
         self._job = job
+        self._prepared_from_editors = prepared_from_editors
+        self._prepared_stale = False
         self._result = None
         self.progress.setRange(0, job.execution_options.max_trials)
         self.progress.setValue(0)
+        flight_settings = ", ".join(
+            f"{name}={value:g}" for name, value in sorted(job.flight.settings.items())
+        )
         self.job_label.setText(
             f"{job.job_id} · plan {job.qualified_regional_plan.request_id} · "
             f"surface {job.qualified_regional_plan.base_surface.surface_id} · "
@@ -209,7 +239,16 @@ class RegionalGroundExecutionWorkspace(QWidget):
             f"{job.provenance.producer} {job.provenance.producer_version} · "
             f"source {job.provenance.source_revision} · input {job.input_sha256} · "
             f"qualified plan {job.qualified_plan_sha256} · job {job.job_sha256} · "
-            f"{job.execution_options.max_trials} trials"
+            f"{job.execution_options.max_trials} trials · capture "
+            f"{job.capture_speed_m_s:g} m/s · flight settings [{flight_settings}] · "
+            f"transfer max {job.transfer.max_time_s:g} s at "
+            f"{job.transfer.output_interval_s:g} s · calibration "
+            f"{job.transfer.calibration.kind.value} "
+            f"({job.transfer.calibration.confidence:g} confidence) · regional "
+            f"step {job.regional_execution_options.settings.integration_step_s:g} s, "
+            f"{job.regional_execution_options.settings.max_steps} steps, "
+            f"{job.regional_execution_options.settings.max_surface_transitions} "
+            "surface transitions"
         )
         self._set_status(f"Loaded {source_name}. No physics executed.", "ready")
         self._render_actions()
@@ -235,6 +274,56 @@ class RegionalGroundExecutionWorkspace(QWidget):
             )
             return
         self._recent_path = path
+
+    def prepare_current_job(self) -> None:
+        """Prepare and accept one exact editor snapshot without starting physics."""
+        preparation = self._preparation
+        if preparation is None:
+            self._set_status(
+                "Preparation unavailable: no qualified current-editor authority is "
+                "injected. Prior accepted evidence was preserved.",
+                "error",
+            )
+            self._render_actions()
+            return
+        if self.is_running:
+            self._set_status(
+                "Preparation unavailable while a study is running.", "error"
+            )
+            return
+        try:
+            candidate = preparation()
+            self.accept_job(
+                candidate,
+                source_name="current validated editors",
+                prepared_from_editors=True,
+            )
+        except Exception:
+            self._set_status(
+                "Preparation failed: current simulation, variation, and surface "
+                "editors must provide one compatible validated snapshot. Prior "
+                "accepted evidence was preserved.",
+                "error",
+            )
+            self._render_actions()
+            return
+        self._set_status(
+            "Prepared current validated editors. No physics executed; review the "
+            "identity and use Run Accepted Study separately.",
+            "ready",
+        )
+
+    def invalidate_prepared_job(self) -> None:
+        """Make a prepared snapshot unrunnable after any owning editor changes."""
+        if not self._prepared_from_editors or self._job is None:
+            return
+        self._prepared_stale = True
+        self._set_status(
+            "Stale prepared job: an owning editor changed. The frozen preview was "
+            "preserved; prepare again before running.",
+            "error",
+        )
+        self._render_actions()
 
     def run_imported_job(self) -> None:
         try:
@@ -269,8 +358,8 @@ class RegionalGroundExecutionWorkspace(QWidget):
     def _confirm_imported_job(self, job: RegionalGroundExecutionJob) -> bool:
         answer = QMessageBox.question(
             self,
-            "Run Imported Ground Study",
-            f"Run {job.execution_options.max_trials} trials from imported job "
+            "Run Accepted Ground Study",
+            f"Run {job.execution_options.max_trials} trials from accepted job "
             f"{job.job_id} ({job.job_sha256[:12]}…)?\n\n"
             "Rerunning this immutable job starts a new attempt against the same "
             "authority. The last complete result is retained unless this run succeeds.",
@@ -284,6 +373,8 @@ class RegionalGroundExecutionWorkspace(QWidget):
     ) -> tuple[RegionalGroundExecutionJob, RegionalGroundExecutionController]:
         if self._job is None:
             raise RuntimeError("no execution job is loaded")
+        if self._prepared_stale:
+            raise RuntimeError("prepared editor snapshot is stale")
         if self._controller is None or not self._capability.regional_ground_execution:
             raise RuntimeError(self._capability.detail)
         return self._job, self._controller
@@ -298,17 +389,20 @@ class RegionalGroundExecutionWorkspace(QWidget):
     def _on_progress(self, value: object) -> None:
         if type(value) is not GroundRegionalVariationProgress:
             return
-        self.progress.setValue(value.completed)
+        progress = cast(GroundRegionalVariationProgress, value)
+        self.progress.setValue(progress.completed)
         self._set_status(
-            f"Running — {value.completed} / {value.total} accepted trials.", "running"
+            f"Running — {progress.completed} / {progress.total} accepted trials.",
+            "running",
         )
 
     def _on_succeeded(self, value: object) -> None:
         if type(value) is not RegionalGroundExecutionResult or self._job is None:
             self._set_status("Execution returned invalid result evidence.", "error")
             return
+        result = cast(RegionalGroundExecutionResult, value)
         try:
-            value.assert_matches_job(self._job)
+            result.assert_matches_job(self._job)
         except (TypeError, ValueError):
             self._set_status(
                 "Execution returned result evidence for a different job. "
@@ -317,30 +411,33 @@ class RegionalGroundExecutionWorkspace(QWidget):
             )
             self._render_actions()
             return
-        self._result = value
+        self._result = result
         self.progress.setValue(self.progress.maximum())
         self._set_status(
-            f"Succeeded — {len(value.dataset.rows)} retained rows; dataset "
-            f"{value.dataset_sha256}.",
+            f"Succeeded — {len(result.dataset.rows)} retained rows; dataset "
+            f"{result.dataset_sha256}.",
             "success",
         )
         self._render_actions()
 
     def _on_cancelled(self, value: object) -> None:
         if type(value) is GroundRegionalVariationCancelled:
-            self.progress.setValue(value.completed)
+            cancelled = cast(GroundRegionalVariationCancelled, value)
+            self.progress.setValue(cancelled.completed)
             self._set_status(
-                f"Cancelled — {value.completed} / {value.total} accepted trials.",
+                f"Cancelled — {cancelled.completed} / {cancelled.total} "
+                "accepted trials.",
                 "ready",
             )
         self._render_actions()
 
     def _on_failed(self, value: object) -> None:
         if type(value) is GroundRegionalVariationFailed:
-            self.progress.setValue(value.completed)
+            failure = cast(GroundRegionalVariationFailed, value)
+            self.progress.setValue(failure.completed)
             self._set_status(
-                f"Failed ({value.stage.value}) — {value.completed} / "
-                f"{value.total} accepted trials. No partial result retained; "
+                f"Failed ({failure.stage.value}) — {failure.completed} / "
+                f"{failure.total} accepted trials. No partial result retained; "
                 "any prior complete result was preserved.",
                 "error",
             )
@@ -438,12 +535,25 @@ class RegionalGroundExecutionWorkspace(QWidget):
         executable = self._capability.regional_ground_execution
         self.open_button.setEnabled(not running)
         self.save_job_button.setEnabled(has_job and not running)
-        self.run_button.setEnabled(has_job and executable and not running)
+        self.run_button.setEnabled(
+            has_job and executable and not self._prepared_stale and not running
+        )
+        self.prepare_button.setEnabled(self._preparation is not None and not running)
         self.cancel_button.setEnabled(running)
         self.save_result_button.setEnabled(has_result and not running)
         self.export_csv_button.setEnabled(has_result and not running)
         reason = "" if executable else self._capability.detail
-        self.run_button.setToolTip(reason or "Confirm and run the imported job")
+        if self._prepared_stale:
+            self.run_button.setToolTip(
+                "Prepared editor snapshot is stale; prepare it again before running"
+            )
+        else:
+            self.run_button.setToolTip(reason or "Confirm and run the accepted job")
+        self.prepare_button.setToolTip(
+            "Prepare a job without running it"
+            if self._preparation is not None
+            else "No qualified current-editor preparation authority is injected"
+        )
         self.cancel_button.setToolTip(
             "Request cooperative cancellation" if running else "No study is running"
         )
@@ -454,4 +564,9 @@ class RegionalGroundExecutionWorkspace(QWidget):
             self._controller.shutdown(timeout_ms)
 
 
-__all__ = ["Confirmation", "QFileDialog", "RegionalGroundExecutionWorkspace"]
+__all__ = [
+    "Confirmation",
+    "Preparation",
+    "QFileDialog",
+    "RegionalGroundExecutionWorkspace",
+]

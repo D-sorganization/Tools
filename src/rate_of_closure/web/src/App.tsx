@@ -1,5 +1,7 @@
 /** Rate of Closure Impact Explorer — shareable web application shell. */
 
+import { useMemo } from "react";
+
 import { AppToolstrip } from "./components/AppToolstrip";
 import { PrimaryViewTabs } from "./components/PrimaryViewTabs";
 import { PrimaryWorkspacePanel } from "./components/PrimaryWorkspacePanel";
@@ -64,7 +66,15 @@ export default function App() {
   const workspace = useAppWorkspace();
   const model = useImpactAppModel();
   const regionalGroundVariation = useRegionalGroundVariationWorkspace();
-  const regionalGroundExecution = useRegionalGroundExecutionWorkspace();
+  const preparationSource = useMemo(() => model.flightPreparationLaunch === null
+    ? undefined
+    : ({
+        launch: model.flightPreparationLaunch,
+        variationRequestPort: regionalGroundVariation.requestPort,
+      }), [model.flightPreparationLaunch, regionalGroundVariation.requestPort]);
+  const regionalGroundExecution = useRegionalGroundExecutionWorkspace({
+    preparationSource,
+  });
   const active = workspace.viewState.active;
   const openGlossary = (term: string | undefined) => {
     model.setGlossaryTerm(term);

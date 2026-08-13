@@ -73,7 +73,8 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
         onAnalysisExecutionChange={regionalGroundVariation.replaceAnalysisExecution} />;
     case "flight":
       return <FlightExplorerPanel distanceUnit={model.units.distance}
-        spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
+        spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget}
+        draft={model.flightExplorerDraft} onDraftChange={model.setFlightExplorerDraft} />;
     case "regional-surfaces":
       return <RegionalSurfacePlanPanel
         draft={regionalGroundVariation.state.regionalDraft}
