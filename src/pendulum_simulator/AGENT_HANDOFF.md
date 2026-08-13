@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — pendulum_simulator
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-12
 
 ## Where This Tool Is Headed
 
@@ -12,8 +12,14 @@ pendulum, triple pendulum, and an 8-DOF closed-loop golfer upper-body model.
 See `src/pendulum_simulator/README.md` for the model topology writeup and
 `src/pendulum_simulator/FEATURES.md` for the feature inventory.
 
-No dedicated feature epic is currently open against this tool. Its primary
-current relevance is as an **upstream physics source for rate_of_closure**:
+UpstreamDrift epic
+[#8511](https://github.com/D-sorganization/UpstreamDrift/issues/8511) makes
+this tool the canonical interactive companion for the proximal–distal article
+and book. The active Tools branch is `feat/proximal-distal-workbench`: it adds
+one shared experiment/glossary catalog consumed by PyQt6 and React/Tauri,
+without importing either downstream publication repository.
+
+The tool also remains an **upstream physics source for rate_of_closure**:
 epic #4103 Phase 1 integrates this tool's double/triple pendulum models as
 `SwingSource` implementations, and epic #4120 V3's variation engine
 explicitly reuses this tool's `perturbation_analysis` machinery as one of
@@ -77,9 +83,8 @@ double-collect by also passing the embedded path.
 
 ## Roadmap (ordered)
 
-1. No dedicated feature epic open; treat this tool as a stable physics
-   provider. Prioritize keeping `pendulum-core` API stable for #4103's
-   `SwingSource` consumers.
+1. Land the shared companion catalog and both UI consumers for UpstreamDrift
+   #8511 while keeping the existing physics and `pendulum-core` API stable.
 2. If/when epic #4103 Phase 1 lands the double/triple pendulum
    `SwingSource` integration, expect a coordinated PR here exposing any
    additional bindings rate_of_closure needs.

@@ -36,6 +36,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -81,6 +82,11 @@
 >>>>>>> origin/codex/4378-static-inspection-runtime
 | **Last Spec Update**    | 2026-08-12                                 |
 >>>>>>> origin/codex/4369-authority-restart-recovery
+=======
+| **Current Version**     | 1.5.7                                      |
+| **Spec Version**        | 1.5.7                                      |
+| **Last Spec Update**    | 2026-08-12                                 |
+>>>>>>> origin/feat/proximal-distal-workbench
 
 ## 2. Purpose & Mission
 
@@ -98,6 +104,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1977,6 +1984,25 @@ high_mm)` exposes the face-curvature normal (gradient of the
   limits are specified in `docs/specs/GOLF_CLUB_SHAFT_PROFILES.md`.
 
 >>>>>>> origin/feat/4274-regional-surface-ui
+=======
+### 2026-08-12 Proximal–Distal Dynamics Companion
+
+- The existing pendulum simulator is the single shared implementation for the
+  double-, triple-, and closed-loop golfer companion; downstream publication
+  repositories consume it without copying GUI or physics code.
+- One package-data JSON catalog defines guided experiment IDs, hypotheses,
+  falsifiers, workflows, tips, observables, limitations, and glossary terms.
+  Python validates it for the PyQt6 guide and TypeScript validates the same
+  resource for React/Tauri.
+- Export metadata identifies the experiment, parameters, units, model version,
+  and exploratory scientific status. The companion does not claim that model
+  output is measured biomechanics or that a kinematic sequence alone proves
+  energy transfer.
+- The provider manifest exposes the canonical PyQt6 window through a dockable
+  entry point so UpstreamDrift can consume the Tools implementation without
+  maintaining a second launcher implementation.
+
+>>>>>>> origin/feat/proximal-distal-workbench
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
 - Shared golf-club assembly validation returns explicitly typed NumPy arrays
@@ -3680,6 +3706,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+| 2026-08-12 | 1.5.7 | feat(pendulum): add the shared proximal–distal experiment/glossary catalog, falsifiability and run-manifest contracts, searchable PyQt6 companion guide, responsive React/Tauri companion guide, package-data inclusion, and focused parity tests for UpstreamDrift epic #8511. |
+>>>>>>> origin/feat/proximal-distal-workbench
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======

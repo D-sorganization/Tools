@@ -6,7 +6,12 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## 2026-08-11 PR #4362 bounded Track Clubhead child
+=======
+> **Update this file with every PR and every push to main.**
+> Last updated: 2026-08-12
+>>>>>>> origin/feat/proximal-distal-workbench
 
 Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
 starts exactly at current published PR #4358 head
@@ -35,6 +40,7 @@ Accessible labels and visible state are present in both clients. Playback
 controls were
 extracted from the React canvas without changing their interaction contract.
 
+<<<<<<< HEAD
 Focused evidence is green: 32 Python/PyQt camera tests and 20 React
 model/component tests, including start/impact/end, wrap, matched manual orbit,
 native PyQt pan,
@@ -47,6 +53,15 @@ changed PyQt viewport is 499 lines; the parent `torque_profile_panel.py`
 persistence, other 3D
 surfaces, UpstreamDrift consumers, protected review, release, and
 #4284/#4218 completion remain open.
+=======
+| Epic                                                                          | Status (one line)                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 — Swing–Impact–Ball-Flight Simulation Platform                          | Phases 0-6 implemented on branch `feat/impact-simulation-platform`, consolidated into PR **#4119** (open, auto-merge armed, awaiting review). Phase 7 (WASM web parity swap, Pages CI) still open.                  |
+| #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help)   | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119).                                      |
+| #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
+| #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
+| UpstreamDrift #8511 — Interactive Proximal–Distal Dynamics Workbench          | Active on `feat/proximal-distal-workbench`; reuses the existing pendulum simulator and adds one canonical experiment/glossary contract for PyQt6 and React/Tauri consumers.                                           |
+>>>>>>> origin/feat/proximal-distal-workbench
 
 ## 2026-08-11 PR #4358 published camera-preset parity
 
