@@ -103,7 +103,7 @@ export function clubheadSpeedFromBackstroke(
 
 /** Stimp [ft] -> rolling-resistance coefficient. */
 export function stimpToRollingMu(stimpFt: number): number {
-  if (!(stimpFt >= 3 && stimpFt <= 16)) {
+  if (!Number.isFinite(stimpFt) || !(stimpFt >= 3 && stimpFt <= 16)) {
     throw new Error("stimpFt must be in [3, 16]");
   }
   return (
@@ -194,7 +194,22 @@ export function simulatePutt(
   if (!(launch.horizontalSpeedMps > 0)) {
     throw new Error("putt must start moving");
   }
-  const muSlide = green.muSlide ?? DEFAULT_SLIDING_MU;
+  const muSlide = green.muSlide === undefined ? DEFAULT_SLIDING_MU : green.muSlide;
+  if (
+    !Number.isFinite(green.gradePercent) ||
+    !(green.gradePercent >= 0 && green.gradePercent <= 10)
+  ) {
+    throw new Error("gradePercent must be in [0, 10]");
+  }
+  if (
+    !Number.isFinite(green.aspectDeg) ||
+    !(green.aspectDeg >= -360 && green.aspectDeg <= 360)
+  ) {
+    throw new Error("aspectDeg must be in [-360, 360]");
+  }
+  if (!Number.isFinite(muSlide) || !(muSlide > 0 && muSlide <= 1.5)) {
+    throw new Error("muSlide must be in (0, 1.5]");
+  }
   const muRoll = stimpToRollingMu(green.stimpFt);
   const aspect = (green.aspectDeg * Math.PI) / 180.0;
   const grade = green.gradePercent / 100.0;

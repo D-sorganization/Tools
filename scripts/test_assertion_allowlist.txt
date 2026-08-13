@@ -22,5 +22,7 @@ tests/rate_of_closure/_variation_plot_definition_support.py
 tests/rate_of_closure/pyqt_variation_render_probe.py
 # Subprocess entrypoint; lifecycle and geometry assertions live in the owning rendered test.
 tests/rate_of_closure/pyqt_variation_visual_state_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py
 # Subprocess entrypoint; semantic assertions live in the owning tab-visibility test.
 tests/rate_of_closure/pyqt_visualization_tab_probe.py

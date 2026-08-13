@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Putting synchronized sample inspector (#4433)
+
+- `putting_sample_inspector.py` and its TypeScript twin validate one accepted
+  result, calculate cumulative distance once, and retain <=1,024 exact samples
+  with mandatory endpoints/split/stable extrema. Selection cannot mutate the
+  plan or solver/export data.
+- React uses actual SVG screen transforms; PyQt uses Matplotlib `transData`.
+  Both apply a 12 px radius/lower-index tie and synchronize path/speed markers
+  plus exact raw-index/time/distance/x/y/speed/phase status. The only focusable
+  visual supports Left/Right/Home/End/Escape.
+- Exact accepted generation replacement clears selection; display-unit refresh
+  preserves selection, bounded error, and a visible complete producing context.
+  Atomic result/plan/summary validation rejects crossed or malformed evidence;
+  first failure stays honestly empty and retained failure keeps the immutable
+  prior bundle. Aligned editor limits cover all six scientific controls, while
+  raw indices remain runtime-local rather than cross-runtime solver identity.
+- Hosted workflow authority includes the new source, probe, rendered test, and
+  shared putting physics dependency. Seven diagnostic PNGs cover React selected
+  at three viewports and PyQt selected/error-prior at two DPI scales. React
+  failure authority remains unit-level because all production editors are bounded.
+  SPEC is 1.16.88;
+  #4433 remains open.
+
 ## 2026-08-13 Variation accepted-result prominence (#4433)
 
 - React schedules one post-commit reveal only for accepted pointer-eligible

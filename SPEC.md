@@ -26,11 +26,40 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.87                                    |
-| **Spec Version**        | 1.16.87                                    |
+| **Current Version**     | 1.16.88                                    |
+| **Spec Version**        | 1.16.88                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Putting synchronized sample inspector (#4433)
+
+Version 1.16.88 adds a matched React/PyQt inspector over one accepted putting
+result. One immutable O(raw) presentation plan retains exact zero-based solver
+indices, cumulative distance, time, path coordinates, speed, and skid/pure-roll
+phase while rendering at most 1,024 exact samples. Required endpoints, the
+first pure-roll sample, and stable path/speed extrema survive deterministic
+decimation; selection never replans, interpolates, reruns the solver, or changes
+exports. Pointer hit-testing uses rendered pixels with a 12 px radius and
+lower-index ties; Left/Right/Home/End/Escape navigate displayed samples and one
+selection drives both markers and the polite status. Scientific result
+replacement clears selection synchronously, while presentation-unit changes
+preserve selection and retained error. Result, fixed plan, coherent scalar/raw
+summary, complete producing context, and generation publish atomically; a
+failed replacement retains that immutable bundle and a first failure is honest
+empty state. The visible context identifies putter/spec, resolved pace, stimp,
+grade, aspect, hole, and kernel. TypeScript GreenConditions enforce Python
+domains; both editors expose speed 0.2-6 m/s, backstroke 5-100 cm, stimp 3-16 ft,
+grade 0-10%, aspect -360..360 degrees, and hole 0.1-40 m. A Python-owned golden
+pins explicit half-up decimation, planner semantics, and rendered-pixel ties;
+it does not claim that independent Python and TypeScript solver arrays are
+portable identities. Production evidence is three React selected-result PNGs
+(1440x900, 1280x720, 390x844) and four PyQt selected/error-prior PNGs at DPI
+1.0/1.5. React failure remains unit-level because bounded production editors do
+not expose a genuine failing dependency; no browser-only state injection is used.
+Automatic loading is not applicable because putting execution remains
+synchronous; approved cross-runtime raw-array goldens and broader tab coverage
+remain open under #4433.
 
 ### 2026-08-13 Variation accepted-result prominence (#4433)
 
@@ -4184,6 +4213,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |
 | 2026-08-13 | 1.16.86 | fix(ci, #4441): classify only the PyQt Variation lifecycle subprocess probe as assertion-free support while preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |
 | 2026-08-13 | 1.16.77 | fix(rate-of-closure, #4433): eliminate narrow command-strip document overflow and narrowly exempt the rendered PyQt subprocess probe from the changed-test assertion gate. |

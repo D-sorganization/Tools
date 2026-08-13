@@ -17,10 +17,7 @@ single ``_format_m`` chokepoint, ready for the units-quantity pass
 from __future__ import annotations
 
 import logging
-import math
 
-from matplotlib.figure import Figure
-from matplotlib.patches import Circle
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -37,16 +34,22 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.putting import PUTT_EXPLANATIONS, putter_specs
-from rate_of_closure.ui.pyqt6.figure_canvas import (
-    LifecycleSafeFigureCanvas as FigureCanvas,
+from rate_of_closure.putting_result_contract import (
+    AcceptedPuttingContext,
+    validate_putting_result_summary,
 )
-from rate_of_closure.ui.pyqt6.flight_view import distance_axis
+from rate_of_closure.putting_sample_inspector import (
+    PuttingSamplePlan,
+    PuttingSampleSeries,
+    plan_putting_samples,
+)
+from rate_of_closure.ui.pyqt6.putting_result_presentation import putting_result_values
+from rate_of_closure.ui.pyqt6.putting_visuals import PuttingPlotView
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.units import format_distance_m
 from shared.python.swing_sim.putting import (
     GreenConditions,
     PuttResult,
-    capture_speed_mps,
     clubhead_speed_from_backstroke,
     simulate_putt,
     strike,
@@ -79,6 +82,9 @@ class PuttingTab(QWidget):
         self._putters = putter_specs()
         self._rows: dict[str, ResultRow] = {}
         self._result: PuttResult | None = None
+        self._accepted_context: AcceptedPuttingContext | None = None
+        self._accepted_plan: PuttingSamplePlan | None = None
+        self._accepted_generation: object | None = None
 
         left = QWidget()
         left_layout = QVBoxLayout(left)
@@ -92,17 +98,12 @@ class PuttingTab(QWidget):
         scroll.setWidget(left)
         scroll.setMinimumWidth(300)
 
-        self._figure = Figure(figsize=(5.0, 6.0), layout="constrained")
-        self._canvas = FigureCanvas(self._figure)
-        self._canvas.setToolTip(
-            "Top-down green: orange = skid phase, green = pure roll, "
-            "black circle = hole, grey arrow = downhill. Below: ball "
-            "speed vs distance with the capture-speed bound at the hole."
-        )
+        self._plot_view = PuttingPlotView()
+        self._canvas = self._plot_view.canvas()
 
         splitter = QSplitter()
         splitter.addWidget(scroll)
-        splitter.addWidget(self._canvas)
+        splitter.addWidget(self._plot_view)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         layout = QVBoxLayout(self)
@@ -192,8 +193,8 @@ class PuttingTab(QWidget):
         form.addRow("Stroke pace", self._pace_stack)
 
         self._stimp_spin = self._spin(
-            4.0,
-            15.0,
+            3.0,
+            16.0,
             10.0,
             0.5,
             " ft",
@@ -206,7 +207,7 @@ class PuttingTab(QWidget):
 
         self._grade_spin = self._spin(
             0.0,
-            8.0,
+            10.0,
             0.0,
             0.25,
             " %",
@@ -217,8 +218,8 @@ class PuttingTab(QWidget):
         form.addRow("Slope grade", self._grade_spin)
 
         self._aspect_spin = self._spin(
-            -180.0,
-            180.0,
+            -360.0,
+            360.0,
             90.0,
             5.0,
             "°",
@@ -230,8 +231,8 @@ class PuttingTab(QWidget):
         form.addRow("Downhill direction", self._aspect_spin)
 
         self._distance_spin = self._spin(
-            0.5,
-            30.0,
+            0.1,
+            40.0,
             3.0,
             0.1,
             " m",
@@ -312,122 +313,73 @@ class PuttingTab(QWidget):
         """Re-render rows and axes in the distance display unit (H6)."""
         if self._result is not None:
             self._update_rows(self._result)
-            self._redraw(self._result)
+            if (
+                self._accepted_context is None
+                or self._accepted_plan is None
+                or self._accepted_generation is None
+            ):
+                raise RuntimeError("accepted putting display bundle is unavailable")
+            context = self._accepted_context
+            self._plot_view.set_result(
+                self._result,
+                self._accepted_plan,
+                generation=self._accepted_generation,
+                hole_x=context.hole_m,
+                grade=context.grade_percent,
+                aspect=context.aspect_deg,
+                context_text=context.label(),
+            )
 
     def _recompute(self) -> None:
         putter = self._putters[self._putter_combo.currentText()]
+        speed = self._clubhead_speed()
+        context = AcceptedPuttingContext(
+            putter.name,
+            putter.head_mass_kg,
+            putter.loft_deg,
+            putter.cor,
+            speed,
+            self._stimp_spin.value(),
+            self._grade_spin.value(),
+            self._aspect_spin.value(),
+            self._distance_spin.value(),
+        )
         try:
-            launch = strike(putter, self._clubhead_speed())
+            launch = strike(putter, speed)
             green = GreenConditions(
                 stimp_ft=self._stimp_spin.value(),
                 grade_percent=self._grade_spin.value(),
                 aspect_deg=self._aspect_spin.value(),
             )
             result = simulate_putt(launch, green, self._distance_spin.value())
-        except ValueError:
+            plan = plan_putting_samples(PuttingSampleSeries.from_result(result))
+            validate_putting_result_summary(result, plan)
+            row_values = putting_result_values(result, self._format_m)
+            generation = object()
+            self._plot_view.set_result(
+                result,
+                plan,
+                generation=generation,
+                hole_x=context.hole_m,
+                grade=context.grade_percent,
+                aspect=context.aspect_deg,
+                context_text=context.label(),
+            )
+        except Exception as error:
             logger.exception("putt inputs rejected")
+            self._plot_view.set_error(
+                f"Attempted configuration rejected ({context.label()}): {error}"
+            )
             return
         self._result = result
-        self._update_rows(result)
-        self._redraw(result)
+        self._accepted_plan = plan
+        self._accepted_context = context
+        self._accepted_generation = generation
+        self._publish_rows(row_values)
 
-    def _update_rows(self, result: PuttResult) -> None:
-        values = {
-            "putt_rollout_m": self._format_m(result.total_distance_m),
-            "putt_skid_m": self._format_m(result.skid_distance_m),
-            "putt_skid_pct": f"{100.0 * result.skid_fraction:.1f} %",
-            "putt_time_s": f"{result.time_s:.2f} s",
-            "putt_break_m": self._format_m(result.break_m),
-            "putt_speed_at_hole_mps": (
-                f"{result.speed_at_hole_mps:.2f} m/s"
-                if result.speed_at_hole_mps is not None
-                else "— (never reached)"
-            ),
-            "putt_margin": (
-                f"HOLED (+{result.margin_mps:.2f} m/s under bound)"
-                if result.holed and result.margin_mps is not None
-                else (
-                    f"miss by {self._format_m(result.miss_distance_m)}"
-                    if result.miss_distance_m is not None
-                    else "—"
-                )
-            ),
-        }
+    def _publish_rows(self, values: dict[str, str]) -> None:
         for field, text in values.items():
             self._rows[field].value_label.setText(text)
 
-    def _redraw(self, result: PuttResult) -> None:
-        self._figure.clear()
-        top, bottom = self._figure.subplots(
-            2, 1, height_ratios=[2.2, 1.0], sharex=False
-        )
-        hole_x = self._distance_spin.value()
-        split = result.skid_end_index
-        top.plot(
-            result.path_x_m[: split + 1],
-            result.path_y_m[: split + 1],
-            color="tab:orange",
-            linewidth=2.2,
-            label="Skid",
-        )
-        top.plot(
-            result.path_x_m[split:],
-            result.path_y_m[split:],
-            color="tab:green",
-            linewidth=2.2,
-            label="Pure roll",
-        )
-        top.add_patch(
-            Circle((hole_x, 0.0), 0.054, fill=False, color="black", linewidth=1.5)
-        )
-        grade = self._grade_spin.value()
-        if grade > 0.0:
-            aspect = math.radians(self._aspect_spin.value())
-            top.annotate(
-                "",
-                xy=(
-                    hole_x * 0.5 + 0.4 * math.cos(aspect),
-                    0.4 * math.sin(aspect),
-                ),
-                xytext=(hole_x * 0.5, 0.0),
-                arrowprops={"arrowstyle": "-|>", "color": "grey"},
-            )
-            top.text(
-                hole_x * 0.5,
-                0.05,
-                f"downhill {grade:.1f} %",
-                color="grey",
-                fontsize=8,
-            )
-        top.set_xlabel(f"Along putt line [{distance_axis(top, 'x')}]")
-        top.set_ylabel(f"Lateral [{distance_axis(top, 'y')}] (left +)")
-        top.set_title("Top-down green")
-        top.axis("equal")
-        top.legend(loc="best", fontsize=8)
-
-        distances = [0.0]
-        for i in range(1, len(result.path_x_m)):
-            step = math.hypot(
-                result.path_x_m[i] - result.path_x_m[i - 1],
-                result.path_y_m[i] - result.path_y_m[i - 1],
-            )
-            distances.append(distances[-1] + step)
-        bottom.plot(distances, result.speeds_mps, color="tab:blue")
-        bottom.axhline(
-            capture_speed_mps(),
-            color="tab:red",
-            linestyle="--",
-            linewidth=1.0,
-            label="Capture bound",
-        )
-        bottom.axvline(
-            distances[min(split, len(distances) - 1)],
-            color="tab:orange",
-            linestyle=":",
-            linewidth=1.0,
-            label="Skid → roll",
-        )
-        bottom.set_xlabel(f"Distance rolled [{distance_axis(bottom, 'x')}]")
-        bottom.set_ylabel("Speed [m/s]")
-        bottom.legend(loc="best", fontsize=8)
-        self._canvas.draw_idle()
+    def _update_rows(self, result: PuttResult) -> None:
+        self._publish_rows(putting_result_values(result, self._format_m))

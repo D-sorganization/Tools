@@ -78,8 +78,50 @@ describe("capture bound", () => {
 });
 
 describe("simulatePutt — Python parity", () => {
+  const launch = strike(PUTTER, 1.8);
+
+  it.each([
+    ["stimpFt", Number.NaN],
+    ["stimpFt", Number.POSITIVE_INFINITY],
+    ["stimpFt", Number.NEGATIVE_INFINITY],
+    ["stimpFt", 2.999999],
+    ["stimpFt", 16.000001],
+    ["gradePercent", Number.NaN],
+    ["gradePercent", Number.POSITIVE_INFINITY],
+    ["gradePercent", Number.NEGATIVE_INFINITY],
+    ["gradePercent", -0.000001],
+    ["gradePercent", 10.000001],
+    ["aspectDeg", Number.NaN],
+    ["aspectDeg", Number.POSITIVE_INFINITY],
+    ["aspectDeg", Number.NEGATIVE_INFINITY],
+    ["aspectDeg", -360.000001],
+    ["aspectDeg", 360.000001],
+    ["muSlide", Number.NaN],
+    ["muSlide", Number.POSITIVE_INFINITY],
+    ["muSlide", Number.NEGATIVE_INFINITY],
+    ["muSlide", 0],
+    ["muSlide", -0.000001],
+    ["muSlide", 1.500001],
+  ] as const)("rejects invalid GreenConditions %s=%s", (field, value) => {
+    const green = {
+      stimpFt: 10,
+      gradePercent: 0,
+      aspectDeg: 0,
+      muSlide: 0.2,
+      [field]: value,
+    };
+
+    expect(() => simulatePutt(launch, green, 3)).toThrow();
+  });
+
+  it.each([
+    { stimpFt: 3, gradePercent: 0, aspectDeg: -360, muSlide: 1e-6 },
+    { stimpFt: 16, gradePercent: 10, aspectDeg: 360, muSlide: 1.5 },
+  ])("accepts legal GreenConditions boundaries: %o", (green) => {
+    expect(() => simulatePutt(launch, green, 3)).not.toThrow();
+  });
+
   it("pins the breaking reference putt (stimp 10, 2 %, aspect 90)", () => {
-    const launch = strike(PUTTER, 1.8);
     const result = simulatePutt(
       launch,
       { stimpFt: 10, gradePercent: 2, aspectDeg: 90 },
@@ -139,5 +181,13 @@ describe("simulatePutt — Python parity", () => {
       0.3 * Math.sqrt(9.80665 / 0.889),
       12,
     );
+  });
+
+  it("rejects explicit null sliding friction instead of defaulting it", () => {
+    expect(() => simulatePutt(
+      strike(PUTTER, 2),
+      { stimpFt: 10, gradePercent: 0, aspectDeg: 0, muSlide: null } as never,
+      3,
+    )).toThrow(/muSlide/);
   });
 });

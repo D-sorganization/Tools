@@ -1,9 +1,15 @@
 /** Putting controls and an SVG green view with phase-coded roll-out. */
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { DecimalInput } from "./DecimalInput";
 import { PuttingVisuals } from "./PuttingVisuals";
+import {
+  planPuttingSamples, puttingSampleSource, type PuttingSamplePlan,
+  puttingContextLabel,
+  snapshotPuttingResult,
+  validatePuttingResultSummary,
+} from "../model/puttingSampleInspector";
 
 import { CLUB_LIBRARY } from "../model/club";
 import { FIELD_TO_TERM } from "../model/glossary";
@@ -12,6 +18,7 @@ import {
   MINIMAL_PUTTERS,
   type PutterSpec,
   DEFAULT_PUTTER_COR,
+  type PuttResult,
   simulatePutt,
   strike,
 } from "../model/putting";
@@ -101,9 +108,25 @@ interface PuttingPanelProps {
   onGlossary?: (term: string) => void;
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
+  /** Production computation authority; injectable for deterministic failure tests. */
+  executeStudy?: typeof simulatePutt;
 }
 
-export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelProps) {
+interface AcceptedStudy {
+  executor: typeof simulatePutt;
+  result: PuttResult;
+  plan: PuttingSamplePlan;
+  context: string;
+  holeX: number;
+  grade: number;
+  aspect: number;
+}
+
+export function PuttingPanel({
+  onGlossary,
+  distanceUnit = "yd",
+  executeStudy = simulatePutt,
+}: PuttingPanelProps) {
   const formatM = (value: number) => formatDistance(value, distanceUnit);
   const putters = useMemo(putterChoices, []);
   const [putterName, setPutterName] = useState(putters[0].name);
@@ -115,8 +138,12 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
   const [aspect, setAspect] = useState(90);
   const [distance, setDistance] = useState(3);
   const [explained, setExplained] = useState(ROWS[0].key);
+  const [selection, setSelection] = useState<{
+    accepted: AcceptedStudy; rawIndex: number;
+  } | null>(null);
+  const acceptedStudy = useRef<AcceptedStudy | null>(null);
 
-  const result = useMemo(() => {
+  const candidate = useMemo(() => {
     const putter =
       putters.find((p) => p.name === putterName) ?? putters[0];
     try {
@@ -124,15 +151,42 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
         paceMode === "backstroke"
           ? clubheadSpeedFromBackstroke(backstrokeCm / 100)
           : speed;
-      return simulatePutt(
+      const result = snapshotPuttingResult(executeStudy(
         strike(putter, clubheadSpeed),
         { stimpFt: stimp, gradePercent: grade, aspectDeg: aspect },
         distance,
+      ));
+      const plan = planPuttingSamples(puttingSampleSource(result));
+      validatePuttingResultSummary(result, plan);
+      const context = puttingContextLabel(
+        putter, clubheadSpeed, stimp, grade, aspect, distance,
       );
-    } catch {
-      return null;
+      const accepted: AcceptedStudy = {
+        executor: executeStudy, result, plan, context,
+        holeX: distance, grade, aspect,
+      };
+      return { accepted, error: null };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { accepted: null, error: message.slice(0, 512) };
     }
-  }, [putters, putterName, paceMode, speed, backstrokeCm, stimp, grade, aspect, distance]);
+  }, [
+    executeStudy, putters, putterName, paceMode, speed, backstrokeCm,
+    stimp, grade, aspect, distance,
+  ]);
+  const accepted = candidate.accepted ?? (
+    acceptedStudy.current?.executor === executeStudy ? acceptedStudy.current : null
+  );
+  useLayoutEffect(() => {
+    if (candidate.accepted !== null) acceptedStudy.current = candidate.accepted;
+  }, [candidate]);
+  const { error } = candidate;
+  const result = accepted?.result ?? null;
+  const plan = accepted?.plan ?? null;
+  const selectedRawIndex = selection?.accepted === accepted ? selection.rawIndex : null;
+  const selectSample = (rawIndex: number | null) => {
+    setSelection(rawIndex === null || accepted === null ? null : { accepted, rawIndex });
+  };
 
   const values: Record<string, string> = result
     ? {
@@ -162,6 +216,7 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
     step: number,
     title: string,
     suffix: string,
+    bounds?: readonly [min: number, max: number],
   ) => (
     <label className="mb-2 flex items-center justify-between gap-2 text-sm">
       <span className="text-slate-300">{label}</span>
@@ -169,6 +224,8 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
         <DecimalInput
           value={value}
           step={step}
+          min={bounds?.[0]}
+          max={bounds?.[1]}
           aria-label={`${label} ${suffix}`.trim()}
           title={title}
           onCommit={set}
@@ -223,6 +280,7 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
                 0.05,
                 "Clubhead speed at impact; 0.5-3 m/s covers putts inside 15 m (swing_sim.putting.impact)",
                 "m/s",
+                [0.2, 6],
               )
             : numberField(
                 "Backstroke",
@@ -231,6 +289,7 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
                 1,
                 "Backstroke arc length, converted with the simple-pendulum proxy v = A·sqrt(g/L); 10-60 cm typical",
                 "cm",
+                [5, 100],
               )}
           {numberField(
             "Green speed (stimp)",
@@ -239,6 +298,7 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
             0.5,
             "Stimpmeter reading; 7 slow - 13 tournament fast (USGA stimpmeter geometry, swing_sim.putting.roll)",
             "ft",
+            [3, 16],
           )}
           {numberField(
             "Slope grade",
@@ -247,6 +307,7 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
             0.25,
             "Uniform green slope grade; greens rarely exceed ~5 % (swing_sim.putting.green)",
             "%",
+            [0, 10],
           )}
           {numberField(
             "Downhill direction",
@@ -255,6 +316,7 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
             5,
             "Downhill direction relative to the putt line: 0° ahead, +90° low side left, 180° uphill",
             "°",
+            [-360, 360],
           )}
           {numberField(
             "Distance to hole",
@@ -263,6 +325,7 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
             0.1,
             "Ball-to-hole distance along the starting line; 1-15 m typical",
             "m",
+            [0.1, 40],
           )}
         </div>
 
@@ -312,7 +375,21 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
       </section>
 
       <section aria-label="Green view" className="order-first space-y-4 lg:order-none">
-        <PuttingVisuals result={result} holeX={distance} grade={grade} aspect={aspect} />
+        {error ? (
+          <p role="alert" className="rounded border border-red-500/60 bg-red-950/70 px-3 py-2 text-sm text-red-100">
+            Attempted putting configuration rejected: {error}. {accepted
+              ? "The accepted context below remains displayed."
+              : "No accepted putt is available."}
+          </p>
+        ) : null}
+        {accepted ? (
+          <p aria-label="Displayed putting result context" className="text-xs text-slate-400">
+            Displayed result: {accepted.context}
+          </p>
+        ) : null}
+        <PuttingVisuals result={result} plan={plan} selectedRawIndex={selectedRawIndex}
+          onSelectionChange={selectSample} holeX={accepted?.holeX ?? distance}
+          grade={accepted?.grade ?? grade} aspect={accepted?.aspect ?? aspect} />
       </section>
     </div>
   );

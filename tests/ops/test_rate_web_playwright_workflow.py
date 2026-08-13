@@ -25,6 +25,9 @@ PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/club/**",
     "src/rate_of_closure/model.py",
     "src/rate_of_closure/plotting/**",
+    "src/rate_of_closure/putting.py",
+    "src/rate_of_closure/putting_sample_inspector.py",
+    "src/rate_of_closure/putting_result_contract.py",
     "src/rate_of_closure/simulation/**",
     "src/rate_of_closure/variation/**",
     "src/rate_of_closure/variation_visual_state.py",
@@ -32,6 +35,9 @@ PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/visualization_tab_manifest.py",
     "src/rate_of_closure/visualization_tabs.v1.json",
     "src/shared/python/swing_sim/variation/**",
+    "src/shared/python/swing_sim/putting.py",
+    "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+    "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py",
     "tests/rate_of_closure/pyqt_variation_render_probe.py",
     "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
     "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
@@ -130,6 +136,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "python -m pytest "
         "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py "
         "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
+        "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
     assert (
@@ -142,6 +149,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     assert trusted_commands["Exercise protected PyQt tab visibility"] == (
         "python -m pytest "
         "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
+        "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
 

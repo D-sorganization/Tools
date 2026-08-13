@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Putting synchronized sample inspector (#4433)
+
+Version 1.16.88 adds fixed, bounded React/PyQt sample plans for one accepted
+putt. At most 1,024 exact raw samples retain endpoints, the first pure-roll
+sample, and stable x/y/speed extrema; the selected raw index synchronizes path
+and speed markers plus exact time, cumulative distance, coordinates, speed, and
+phase status. Pointer selection uses rendered pixels and a 12 px radius;
+keyboard navigation stays on displayed samples. Scientific replacement clears
+selection, presentation formatting preserves it, and failed recompute retains
+only an immutable, generation-bound accepted bundle. A visible context names
+the producing putter, resolved pace, green, hole, and kernel while exact raw
+samples and scalar summaries are validated as one coherent result. First-run
+failure is honestly empty; retained failure preserves selection, context, and
+error across unit refresh. TypeScript/PyQt editor limits align for speed,
+backstroke, stimp, grade, aspect, and hole distance. Seven viewport/DPI captures
+are diagnostic evidence: React records reachable selected results only, while
+PyQt also records a dependency-failure retained result. Runtime-local solver
+indices are not portable identity.
+
 ## 2026-08-13 Variation accepted-result prominence (#4433)
 
 Version 1.16.87 reveals the exact accepted React joint/individual visual once

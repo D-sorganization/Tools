@@ -1,5 +1,30 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Putting synchronized sample inspector
+
+- React and PyQt now build one immutable O(raw), <=1,024-point presentation
+  plan per accepted putt. Selection never inserts a row, replans, interpolates,
+  or reruns analysis/physics.
+- The exact runtime-local raw index drives synchronized path/speed markers and
+  a polite status containing time, cumulative distance, x/y, speed, and phase.
+  The first pure-roll sample is phase pure roll; split zero creates no skid.
+- Rendered-pixel pointer selection is bounded to 12 px with lower-index ties;
+  Left/Right/Home/End/Escape navigate only exact displayed samples. Successful
+  scientific replacement clears synchronously, unit formatting preserves, and
+  failure retains an immutable generation-bound accepted bundle, separate error,
+  selection status, and a visible full producing context. First failure stays
+  empty; unit refresh cannot erase a retained failure.
+- The Python-owned planner golden, real legal 30,001-row cases, three reachable
+  React selected viewport captures, and four PyQt selected/error-prior DPI
+  diagnostics are green. React failure authority remains unit-level because its
+  production editors enforce the accepted domains; no fake browser state is used.
+  Runtime-local row indices are not portable solver identity. SPEC is 1.16.88;
+  #4433 remains open for approved cross-runtime raw-array goldens/other tabs.
+- Planner publication also rejects nonfinite derived distance/display envelopes,
+  deterministic half-tie drift, mutable/crossed evidence, and scalar summaries
+  that contradict the exact raw samples. These are runtime-local evidence
+  guarantees, not a portable Python/TypeScript solver identity claim.
+
 ## 2026-08-13 #4433 Variation accepted-result prominence
 
 - React reveals only an accepted, below-threshold joint matrix or individual
