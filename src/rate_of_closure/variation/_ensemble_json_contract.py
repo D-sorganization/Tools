@@ -54,7 +54,7 @@ def numeric_matrix(
         all(len(row) == columns for row in parsed_rows),
         "numeric matrix column count is invalid",
     )
-    result = np.empty((rows, columns), dtype=float)
+    result: np.ndarray = np.empty((rows, columns), dtype=float)
     for row_index, row in enumerate(parsed_rows):
         result[row_index] = [
             math.nan if item is None and nullable else number(item, "matrix value")
@@ -65,8 +65,9 @@ def numeric_matrix(
 
 def number_vector(value: object, name: str) -> np.ndarray:
     """Parse one finite numeric vector."""
-    return np.array(
-        [number(item, name) for item in json_list(value, name)], dtype=float
+    return cast(
+        np.ndarray,
+        np.array([number(item, name) for item in json_list(value, name)], dtype=float),
     )
 
 
@@ -75,7 +76,7 @@ def bool_vector(value: object, length: int, name: str) -> np.ndarray:
     items = json_list(value, name)
     require(len(items) == length, f"{name} length is invalid")
     require(all(type(item) is bool for item in items), f"{name} must contain booleans")
-    return np.array(items, dtype=bool)
+    return cast(np.ndarray, np.array(items, dtype=bool))
 
 
 def bool_matrix(value: object, rows: int, columns: int, name: str) -> np.ndarray:
@@ -87,7 +88,7 @@ def bool_matrix(value: object, rows: int, columns: int, name: str) -> np.ndarray
         all(len(row) == columns for row in parsed_rows),
         f"{name} column count is invalid",
     )
-    result = np.empty((rows, columns), dtype=bool)
+    result: np.ndarray = np.empty((rows, columns), dtype=bool)
     for row_index, row in enumerate(parsed_rows):
         result[row_index] = bool_vector(row, columns, name)
     return result
@@ -97,7 +98,10 @@ def integer_vector(value: object, length: int, name: str) -> np.ndarray:
     """Parse an exact-length integer vector without boolean coercion."""
     items = json_list(value, name)
     require(len(items) == length, f"{name} length is invalid")
-    return np.array([integer(item, name) for item in items], dtype=int)
+    return cast(
+        np.ndarray,
+        np.array([integer(item, name) for item in items], dtype=int),
+    )
 
 
 def string_tuple(value: object, name: str) -> tuple[str, ...]:

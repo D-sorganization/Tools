@@ -2,6 +2,11 @@
 
 ## 2026-08-12 #4142 integrated persistence, dispersion, and React worker child
 
+- PR #4405's first protected `quality-gate` failed only its Mypy step under
+  Linux Python 3.12 / NumPy 2.3.5. Explicit NumPy array typing and normalized
+  `finfo` scalars close all eleven CI-only diagnostics. The exact Python 3.12,
+  Mypy 1.13.0, NumPy 2.3.5 combination now passes the nine changed production
+  modules locally; this is type-only and leaves scientific/wire behavior intact.
 - Final independent review closed the last typed/wire-domain asymmetry: complete
   trial outcomes reject booleans/non-real values and normalize accepted NumPy
   real scalars to finite built-in floats. Five new TDD cases prove constructor

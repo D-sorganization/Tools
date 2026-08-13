@@ -5,6 +5,12 @@
 
 ## 2026-08-12 Integrated variation authority and execution child (#4142)
 
+Protected PR #4405 exposed eleven Mypy diagnostics limited to NumPy 2.3.5's
+Python 3.12 stubs. Explicit array annotations/casts and normalized `finfo`
+scalars close those type-only boundaries. The exact CI combination of Python
+3.12, Mypy 1.13.0, and NumPy 2.3.5 now passes all nine changed production
+modules locally without changing runtime, scientific, or JSON contracts.
+
 Final independent review closed a typed/wire-domain symmetry gap. Available
 trial scalars must now be real, non-boolean, finite values; accepted NumPy real
 scalars are normalized to built-in floats before authority binding and export.

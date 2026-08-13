@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, replace
+from typing import cast
 
 import numpy as np
 from scipy.special import gammaincinv
@@ -60,8 +61,10 @@ def _chi_square_three_quantile(probability: float) -> float:
 
 def _eigenvalue_tolerance(eigenvalues: np.ndarray) -> float:
     """Return a scale-aware tolerance for roundoff-negative covariance roots."""
-    scale = max(float(np.max(np.abs(eigenvalues))), np.finfo(float).tiny)
-    return float(_EIGENVALUE_ROUNDOFF_FACTOR * np.finfo(float).eps * scale)
+    tiny = float(np.finfo(np.float64).tiny)
+    epsilon = float(np.finfo(np.float64).eps)
+    scale = max(float(np.max(np.abs(eigenvalues))), tiny)
+    return _EIGENVALUE_ROUNDOFF_FACTOR * epsilon * scale
 
 
 def _valid_eigensystem(
@@ -85,7 +88,9 @@ def _valid_eigensystem(
         rtol=_GEOMETRY_RELATIVE_TOLERANCE,
         atol=_GEOMETRY_RELATIVE_TOLERANCE,
     )
-    covariance_scale = max(float(np.max(np.abs(covariance))), np.finfo(float).tiny)
+    covariance_scale = max(
+        float(np.max(np.abs(covariance))), float(np.finfo(np.float64).tiny)
+    )
     covariance_tolerance = _GEOMETRY_RELATIVE_TOLERANCE * covariance_scale
     symmetric = np.allclose(
         covariance,
@@ -241,9 +246,10 @@ def _eligible(metric: str, series: DispersionMetricSeries) -> np.ndarray:
     """Return samples whose metric is statistically usable."""
     adequacy = np.asarray(series.adequacy)
     if metric == ELLIPSOID_VOLUME:
-        return np.asarray(adequacy == ESTIMABLE, dtype=bool)
-    return np.asarray(
-        (adequacy == ESTIMABLE) | (adequacy == RANK_DEFICIENT), dtype=bool
+        return cast(np.ndarray, np.asarray(adequacy == ESTIMABLE, dtype=bool))
+    return cast(
+        np.ndarray,
+        np.asarray((adequacy == ESTIMABLE) | (adequacy == RANK_DEFICIENT), dtype=bool),
     )
 
 

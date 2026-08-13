@@ -5,6 +5,14 @@
 
 ## 2026-08-12 Integrated variation persistence, dispersion, and React execution (#4142)
 
+Protected PR #4405 initially failed only its hosted `quality-gate` Mypy step:
+the Linux Python 3.12 / NumPy 2.3.5 stubs are stricter than the development
+runtime. NumPy array-return/allocation boundaries now carry explicit annotations
+or casts, and float epsilon/tiny values are normalized before arithmetic. The
+exact hosted combination (`mypy==1.13.0`, `numpy==2.3.5`, Python 3.12) passes all
+nine changed production modules locally; no numerical behavior or wire shape
+changed. One focused normal push is required to start exact-head protected CI.
+
 Final independent review found and closed the last typed/wire-domain asymmetry:
 `SimulationTrialOutcome` now rejects booleans and non-real scalar values, turns
 accepted NumPy real scalars into finite built-in floats, and therefore guarantees

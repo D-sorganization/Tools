@@ -26,11 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.51                                    |
-| **Spec Version**        | 1.16.51                                    |
+| **Current Version**     | 1.16.52                                    |
+| **Spec Version**        | 1.16.52                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Hosted NumPy typing boundary compatibility (#4142)
+
+Version 1.16.52 addresses the first protected PR #4405 quality-gate result.
+Python 3.12 with NumPy 2.3.5 exposes stricter array and `finfo` typing than the
+development runtime. Explicit annotations/casts now mark NumPy arrays returned
+from the bounded JSON primitives, while machine epsilon and minimum-normal
+values cross a built-in-float boundary before scientific arithmetic. The exact
+hosted combination of Python 3.12, Mypy 1.13.0, and NumPy 2.3.5 passes all nine
+changed production modules locally. Runtime values, numerical conventions, and
+the persistence wire representation are unchanged.
 
 ### 2026-08-12 Complete trial scalar wire-domain closure (#4142 R11.4)
 
@@ -3268,6 +3279,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |
 | 2026-08-12 | 1.16.51 | fix(rate-of-closure, #4142 R11.4): require complete trial output scalars to be finite real non-booleans; normalize accepted NumPy real scalars to built-in floats; and prove typed-object writer/reader domain closure with five TDD cases and 39 focused persistence tests. |
 | 2026-08-12 | 1.16.50 | fix(rate-of-closure, #4142): add the explicit Python `float` boundary required by CI-pinned Mypy 1.13 for the NumPy epsilon dispersion tolerance; record the exact integrated 1,200 Python/PyQt/shared and 743 React local gates while keeping protected publication and incomplete epic surfaces open. |
 | 2026-08-12 | 1.16.49 | fix(rate-of-closure, #4142 R11.4): centralize symmetric typed/reader/writer ensemble limits and authority binding; preflight sample/tensor axes before NumPy allocation; require strict finite size-bounded file output; normalize decoder resource errors; and clarify that outer v1 rejection is a future-migration policy, not a completed migration. |
