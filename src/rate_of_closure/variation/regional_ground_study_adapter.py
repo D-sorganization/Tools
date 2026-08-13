@@ -120,9 +120,10 @@ _COHORTS = (
 _NULL_VALUES: dict[str, float | None] = {variable.key: None for variable in _VARIABLES}
 
 
-def _qualified_ground_result(
+def qualified_regional_ground_result(
     outcome: RegionalGroundStudyOutcome,
 ) -> GroundSimulationResult | None:
+    """Return only complete regional ground evidence terminated at rest."""
     if not isinstance(outcome, FlightRegionalGroundPipelineResult):
         return None
     regional = outcome.regional_result
@@ -149,7 +150,7 @@ def apply_regional_ground_metrics(
         "inputs must be an exact FlightMetricInputs",
     )
     _require_outcome(outcome)
-    ground = _qualified_ground_result(outcome)
+    ground = qualified_regional_ground_result(outcome)
     if ground is None:
         return replace(inputs, ground_result=None)
     return inputs.with_ground_result(to_ground_model_result(ground))
@@ -167,7 +168,7 @@ def _cohort(outcome: RegionalGroundStudyOutcome) -> str:
     if isinstance(outcome, FlightGroundTransferError):
         return "unavailable"
     ground = outcome.ground_result
-    if _qualified_ground_result(outcome) is not None:
+    if qualified_regional_ground_result(outcome) is not None:
         return "complete"
     regional = outcome.regional_result
     if regional is not None:
@@ -190,7 +191,7 @@ def _qualification(outcome: RegionalGroundStudyOutcome) -> str:
     if isinstance(outcome, FlightGroundTransferError):
         return "unavailable"
     ground = outcome.ground_result
-    if _qualified_ground_result(outcome) is not None:
+    if qualified_regional_ground_result(outcome) is not None:
         return "complete_rest"
     regional = outcome.regional_result
     if regional is not None and regional.status in (
@@ -206,7 +207,7 @@ def _qualification(outcome: RegionalGroundStudyOutcome) -> str:
 
 
 def _values(outcome: RegionalGroundStudyOutcome) -> dict[str, float | None]:
-    ground = _qualified_ground_result(outcome)
+    ground = qualified_regional_ground_result(outcome)
     if ground is None or ground.summary is None:
         return dict(_NULL_VALUES)
     summary = ground.summary
@@ -223,7 +224,11 @@ def _values(outcome: RegionalGroundStudyOutcome) -> dict[str, float | None]:
     }
 
 
-def _attributes(outcome: RegionalGroundStudyOutcome) -> dict[str, str | None]:
+def regional_ground_evidence_attributes(
+    outcome: RegionalGroundStudyOutcome,
+) -> dict[str, str | None]:
+    """Return exact phase, reason, model, and digest evidence attributes."""
+    _require_outcome(outcome)
     if isinstance(outcome, FlightGroundTransferError):
         return {
             "source_kind": "transfer_failure",
@@ -300,7 +305,7 @@ def build_regional_ground_study_ensemble(
             _cohort(outcome),
             _values(outcome),
             series_id,
-            _attributes(outcome),
+            regional_ground_evidence_attributes(outcome),
         )
         for trial_index, outcome in enumerate(retained)
     )
@@ -325,4 +330,6 @@ __all__ = [
     "RegionalGroundStudyOutcome",
     "apply_regional_ground_metrics",
     "build_regional_ground_study_ensemble",
+    "qualified_regional_ground_result",
+    "regional_ground_evidence_attributes",
 ]

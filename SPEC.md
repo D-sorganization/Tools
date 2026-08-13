@@ -31,6 +31,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -53,6 +54,10 @@
 | **Current Version**     | 1.14.53                                    |
 | **Spec Version**        | 1.14.53                                    |
 >>>>>>> origin/codex/4274-ground-playback-propagation
+=======
+| **Current Version**     | 1.14.54                                    |
+| **Spec Version**        | 1.14.54                                    |
+>>>>>>> origin/codex/4192-ground-target-projection
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4274-regional-surface-ui
 
@@ -3183,6 +3188,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3193,6 +3199,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-11 | 1.14.45 | docs(rate-of-closure, #4358): publish the reviewed camera-preset parity implementation `c0584faae7e0fe113e01f8c3ed3582853dfaf803` as ready-for-review PR #4358 over exact #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; record the first mergeable/unstable protected snapshot with quality in progress, remaining substantive jobs queued, no failure, and no approval; preserve `not_released` truth and all remaining #4284/#4218 acceptance gaps. |
 | 2026-08-11 | 1.14.44 | feat(rate-of-closure, #4284): add one strict shared-golden Python/TypeScript camera-preset contract and matched accessible PyQt6 `Club3DView` / React `ClubCanvas` controls for canonical Isometric, explicit-side Face On, exact +x Down the Line, -y Overhead, zoom-preserving Reset, and geometry-bounded Auto Fit; retain manual orbit while scaling, pin representative-driver fixed/moving start-impact-end bounds, and suppress only each exact PyQt projection's collapsed depth axis while restoring all axes for Isometric/custom orbit; keep tracking, tracking suspension, recenter, workspace persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI rendered QA, protected integration, release, and issue completion open. |
 =======
+=======
+| 2026-08-11 | 1.14.54 | feat(ground-target, #4192 #4273 #4267): add a UI-neutral complete-rest-only projection from exact flight-through-regional-ground evidence to the existing `SpatialTarget`; record the sole `GroundFrame.TARGET`, retain final x/z, replace ball-center y exactly once with declared landing-surface elevation, reuse `SpatialTarget.miss` signs and geometry, type aerial targets as `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`, preserve every unqualified/censored outcome as null with exact phase/reason/digest evidence, and expose a bounded ordered target scalar ensemble while leaving UI, persistence, solver/capability, aerial-trajectory, compiled-runtime, protected-release, and issue completion open. |
+| 2026-08-11 | 1.14.53 | feat(ground-playback, #4274 #4267): add matched strict import-only PyQt6 and React ground-result playback with phase-safe absolute time, exact logarithmic step/frame lookup, play/pause/restart/loop/speed controls, locked-scale orbit/zoom/reset, bounded 2,048-point landmark-aware visuals, disclosed 256-row evidence windows with full-result retention, atomic standalone/regional imports, and honest partial-result terminology while leaving live flight synchronization, comparison, persistence, camera integration, rendered visual evidence, compiled physics, downstream parity, protected release, and issue completion open. |
+>>>>>>> origin/codex/4192-ground-target-projection
 | 2026-08-11 | 1.14.52 | chore(release, #4361 #4273 #4267): publish the independently reviewed qualified regional-ground study adapter as ready PR #4361 on exact #4360 head `74f1ceafd87f952a76917dc868baa6414f856144`; bind implementation commit `d71c43fdd729b35e1abe5573f41ed60201698608` while retaining protected review/check completion, solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, downstream release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.51 | feat(ground-study, #4273 #4267): add a UI-neutral strict adapter from the exact flight-through-regional-ground pipeline into the existing flight metric and scalar-ensemble contracts; admit canonical final ground metrics and bounce/skid detail only for regional complete plus ground complete/rest evidence, retain typed nullable cohorts and exact reasons/digests for partial, censored, cancelled, failed, non-settled, missing-summary, and transfer-failure outcomes, clear stale ground metric inputs on unavailable evidence, preserve carry versus total distance, and leave solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, protected release, and issue completion open. |
 | 2026-08-11 | 1.14.50 | chore(release, #4360 #4271 #4273 #4267): publish the qualified flight-through-regional-ground composition as ready PR #4360 on exact #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; bind implementation commit `090e835477d1f19614f37f978a1b8a0e2f50ae21` into the campaign handoff and manifest while retaining protected review/check completion, client integration, persistence, compiled-runtime parity, studies, downstream integration, and issue/epic completion as open. |

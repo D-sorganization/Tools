@@ -1,6 +1,7 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## 2026-08-11 PR #4362 bounded Track Clubhead child
 
 Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
@@ -84,6 +85,41 @@ surfaces, UpstreamDrift consumers, protected review, release, and
   are skipped, the quality gate is in progress, the remaining substantive jobs
   are queued, and no failure or approval is recorded.
 =======
+=======
+## 2026-08-11 PR #4364 post-ground spatial-target projection
+
+- Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)
+  is stacked on exact PR #4363 head
+  `ec50fdf059f91ca9e4664da891398af218e1ba65`; independently reviewed target
+  implementation commit `b480f17f11b86a57326622168e4c748efc77aaf3`
+  leaves inherited playback production code untouched. Its UI-neutral adapter accepts only exact
+  pipeline-or-transfer evidence and an exact existing `SpatialTarget`, while
+  reusing #4361's promoted complete-rest qualifier and evidence attributes.
+- Numerics exist only for regional `COMPLETE` plus ground `COMPLETE/REST` with
+  a summary. The output records the sole ground-v1 `GroundFrame.TARGET`
+  (x-downrange/y-up/z-right), retains final x/z, replaces terminal ball-center
+  y exactly once with the target's declared course-surface elevation, and then
+  delegates geometry and signed long/high/right residuals to
+  `SpatialTarget.miss`. App- and flight-authored targets are equivalent.
+- Aerial targets are typed `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`; transfer,
+  non-settled bounce, regional cancelled/failed/partial, non-rest,
+  `LEFT_SURFACE`, missing-summary, and censored outcomes retain null numerics
+  with exact availability/phase/reason/frame/model/digest evidence. A bounded
+  ordered scalar ensemble exposes hold, miss, downrange, elevation, and
+  lateral results with deterministic row identity and provenance.
+- RED captured the absent module. Sixteen new focused tests and seven parent
+  adapter tests pass; all 1,315 selected Rate/flight/ground tests pass with 14
+  environment-only Hypothesis collection warnings and one inherited
+  polynomial-generator legend warning. Strict MyPy, focused Ruff,
+  Bandit, campaign-manifest validation and eight tests, documentation,
+  blocking-quality, minimum-test, changed-Python, 400-line module-size,
+  changed-test assertion, placeholder, and diff gates pass. Fresh protected
+  current-head checks, dependency order, and ordinary merge gates remain; no
+  editor/UI, persistence, solver/capability,
+  aerial trajectory evaluation, compiled runtime, geometry, or physics is
+  claimed. Keep #4192, #4273, and #4267 open.
+
+>>>>>>> origin/codex/4192-ground-target-projection
 ## 2026-08-11 PR #4363 matched ground playback
 
 - Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
@@ -109,7 +145,6 @@ surfaces, UpstreamDrift consumers, protected review, release, and
 - Keep #4274/#4267 open for terrain meshes/changing normals, direct editor
   handoff, comparison, persistence, rendered visual QA, camera presets and
   tracking, downstream parity, and protected CI/review/release.
-
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 - Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)
