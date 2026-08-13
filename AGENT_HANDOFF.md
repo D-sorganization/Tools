@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React paired-study evidence hardening (#4142 R13.3)
+
+Version 1.16.78 closes the independent review findings on the React paired
+Worker boundary. Normalization now requires the source plan's `nRuns` to equal
+the exact `2N` pair roster. Result validation requires every evaluated trial to
+retain a finite three-coordinate state, every hit to retain all 17 finite
+outputs, and every no-impact outcome to retain exactly three finite contact
+values followed by 14 null impact/shot values. Recomputing a matching authority
+cannot make malformed trial evidence acceptable.
+
+Execution no longer converts arbitrary exceptions into scientific data. Only
+the explicit `LocalizedPairedNumericalExecutionError` marker becomes a typed
+`numerical_failure`; request, programming, projection, and contract defects fail
+the complete Worker job. Injected regressions distinguish both paths.
+
 ## 2026-08-13 Explicit React paired-study Worker (#4142 R13.3)
 
 Version 1.16.77 gives React a separate planted-intervention study for the

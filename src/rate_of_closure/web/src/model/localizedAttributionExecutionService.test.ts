@@ -4,7 +4,8 @@ import localizedPlan from "./__fixtures__/localized_torque_authoring_v1.json";
 import pythonGolden from "./__fixtures__/localized_attribution_python_golden_v1.json";
 import { planFromJson, planToJson } from "./variation";
 import {
-  executeLocalizedPairedWork, PAIRED_REQUEST_SCHEMA_ID,
+  executeLocalizedPairedWork, localizedAuthorityFromEvidence,
+  LocalizedPairedNumericalExecutionError, pairedSourcePlan, PAIRED_REQUEST_SCHEMA_ID,
   type LocalizedPairedRequestTs,
 } from "./localizedAttributionExecution";
 import {
@@ -168,6 +169,46 @@ describe("localized paired Worker protocol", () => {
     expect(errorWorker.terminateCount).toBe(1);
   });
 
+  it.each([
+    ["evaluated state", (trial: Record<string, unknown>) => ({ ...trial, state: null })],
+    ["hit output", (trial: Record<string, unknown>) => ({
+      ...trial, outputs: (trial.outputs as unknown[]).map((cell, index) =>
+        index === 16 ? null : cell),
+    })],
+    ["no-impact output", (trial: Record<string, unknown>) => ({
+      ...trial, status: "evaluated_no_impact",
+      outputs: (trial.outputs as unknown[]).map((cell, index) => index < 3 ? cell :
+        index === 3 ? 1 : null),
+    })],
+  ])("rejects forged %s despite a matching recomputed authority", async (_label, forge) => {
+    const valid = await executeLocalizedPairedWork(request(), () => undefined);
+    const trials = valid.trials.map((trial, index) => index === 0
+      ? forge(trial as unknown as Record<string, unknown>) : trial) as typeof valid.trials;
+    const authority = localizedAuthorityFromEvidence(
+      request(), pairedSourcePlan(request()), valid.explicitRows, trials, valid.designIdentity,
+    );
+    const worker = new FakeWorker();
+    const pending = service(worker).execute(request(), {
+      signal: new AbortController().signal, onProgress: vi.fn(),
+    });
+    [1, 2, 3, 4].forEach((completedRuns) => worker.emit({
+      kind: "progress", progress: { completedRuns, totalRuns: 4 },
+    }));
+    worker.emit({ kind: "result", result: { ...valid, trials, authority } });
+    await expect(pending).rejects.toThrow(/trial evidence/i);
+  });
+
+  it("propagates programming defects while typing recognized numerical failures", async () => {
+    await expect(executeLocalizedPairedWork(request(), () => undefined, () => {
+      throw new Error("projection invariant broke");
+    })).rejects.toThrow(/projection invariant broke/i);
+
+    const result = await executeLocalizedPairedWork(request(), () => undefined, () => {
+      throw new LocalizedPairedNumericalExecutionError("solver did not converge");
+    });
+    expect(result.trials.every((trial) => trial.status === "numerical_failure")).toBe(true);
+  });
+
   it("rejects malformed requests before constructing a Worker", async () => {
     const factory = vi.fn(() => new FakeWorker() as unknown as Worker);
     const invalid = { ...request(), stateTimeS: 1.501 };
@@ -175,5 +216,14 @@ describe("localized paired Worker protocol", () => {
       signal: new AbortController().signal, onProgress: vi.fn(),
     })).rejects.toThrow(/0\.\.1\.5 s/i);
     expect(factory).not.toHaveBeenCalled();
+  });
+
+  it("rejects a source plan whose run count is not the exact paired roster", async () => {
+    const malformed = { ...request(), sourcePlanJson: planToJson({
+      ...pairedSourcePlan(request()), nRuns: 200,
+    }) };
+    await expect(createLocalizedPairedExecutionService(vi.fn()).execute(malformed, {
+      signal: new AbortController().signal, onProgress: vi.fn(),
+    })).rejects.toThrow(/run count/i);
   });
 });

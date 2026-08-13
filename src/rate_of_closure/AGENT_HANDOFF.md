@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React paired Worker review corrections (#4142 R13.3)
+
+- Request normalization binds `nRuns` to the exact baseline/perturbed `2N`
+  roster before Worker construction.
+- Accepted evaluated evidence always has three finite state coordinates. Hits
+  require 17 finite output cells; no-impact trials require three finite contact
+  cells and 14 null impact/shot cells. A forged but internally recomputed
+  authority remains rejected.
+- Only `LocalizedPairedNumericalExecutionError` is mapped to typed numerical
+  unavailability. Unknown executor, contract, and projection exceptions abort
+  the whole study instead of becoming apparently valid scientific results.
+- Adversarial transport/executor tests pin every boundary. SPEC is 1.16.78.
+
 ## 2026-08-13 React localized paired-study execution (#4142 R13.3)
 
 - A dedicated React Worker executes exact baseline/one-source rows for one or

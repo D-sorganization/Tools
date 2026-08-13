@@ -1,5 +1,19 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 React paired-study evidence hardening
+
+- The source plan's declared run count must now equal its exact `2N` paired
+  roster before any Worker is constructed.
+- Evaluated trials require an exact finite three-coordinate state. Hit rows
+  require all 17 finite outputs; no-impact rows retain exactly three finite
+  contact values and 14 null impact/shot values. Tests rebuild matching forged
+  authorities and prove that malformed retained evidence still fails closed.
+- The executor catches only the explicit numerical-failure marker. Unexpected
+  programming, contract, or projection errors now reject the complete study;
+  they are never relabeled as a numerical observation.
+- SPEC advances to 1.16.78. The honest capability and browser cancellation
+  limitations recorded in 1.16.77 remain unchanged.
+
 ## 2026-08-13 #4142 explicit React paired-study Worker
 
 - React now explicitly runs the two registered localized shoulder/wrist torque

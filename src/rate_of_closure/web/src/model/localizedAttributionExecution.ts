@@ -1,6 +1,7 @@
 /** Genuine explicit baseline/one-source localized attribution execution. */
 
 import { runSimulation } from "./simulation";
+import type { SimulationInput, SimulationRunTs } from "./simulation";
 import { attributionAuthorityFromValue, type AttributionAuthorityTs } from "./localizedAttribution";
 import { record, stable, finite } from "./localizedAttributionContract";
 import { resolvedBase } from "./variationSampling";
@@ -13,6 +14,12 @@ export const PAIRED_REQUEST_SCHEMA_ID = "rate-of-closure/react-localized-paired-
 export const PAIRED_RESULT_SCHEMA_ID = "rate-of-closure/react-localized-paired-result";
 export const PAIRED_SCHEMA_VERSION = 1;
 export const MAX_PAIRED_SOURCES = 2;
+
+/** Explicit marker for a solver-declared numerical failure, never a contract defect. */
+export class LocalizedPairedNumericalExecutionError extends Error {
+  constructor(message: string) { super(message); this.name = "LocalizedPairedNumericalExecutionError"; }
+}
+export type LocalizedPairedTrialExecutor = (input: SimulationInput) => SimulationRunTs;
 
 export interface LocalizedPairedRequestTs {
   schemaId: typeof PAIRED_REQUEST_SCHEMA_ID;
@@ -97,6 +104,9 @@ export function normalizePairedRequest(value: unknown): LocalizedPairedRequestTs
       plan.noise.length < 1 || plan.noise.length > MAX_PAIRED_SOURCES) {
     throw new Error("paired study requires one or two ungrouped localized swing sources");
   }
+  if (plan.nRuns !== plan.noise.length * 2) {
+    throw new Error("paired study run count must equal two times the source count");
+  }
   const deltaRaw = record(raw.interventionDeltasNm,
     plan.noise.map(stableSpecId), "intervention delta roster");
   const deltas: Record<string, number> = {};
@@ -171,6 +181,7 @@ const targetRows = (request: LocalizedPairedRequestTs): Record<string, unknown>[
 const executeRows = (
   request: LocalizedPairedRequestTs,
   onProgress: (progress: LocalizedPairedProgressTs) => void,
+  executor: LocalizedPairedTrialExecutor,
 ): { trials: LocalizedPairedTrialEvidenceTs[]; rows: number[][]; plan: VariationPlanTs } => {
   const source = pairedSourcePlan(request);
   const plan = { ...source, nRuns: source.noise.length * 2, groups: [] };
@@ -185,19 +196,26 @@ const executeRows = (
   const trials = rows.map((row, trialIndex): LocalizedPairedTrialEvidenceTs => {
     const values = { ...base };
     source.noise.forEach((spec, column) => { values[spec.variableKey] = row[column]; });
+    const { input } = swingVariationInputForValues(
+      plan, values, defaultSwingVariationInput(plan.ballSetup),
+    );
+    let run: SimulationRunTs;
     try {
-      const { input } = swingVariationInputForValues(plan, values, defaultSwingVariationInput(plan.ballSetup));
-      const run = runSimulation(input);
-      const sample = run.swing.find((item) => item.t === request.stateTimeS);
-      const status = run.impactOutcome.status === "hit" ? "evaluated_hit" : "evaluated_no_impact";
-      onProgress({ completedRuns: trialIndex + 1, totalRuns: rows.length });
-      return { status, state: sample?.joints[sample.joints.length - 1] ?? null,
-        outputs: swingOutputRow(run, input) };
-    } catch {
+      run = executor(input);
+    } catch (error) {
+      if (!(error instanceof LocalizedPairedNumericalExecutionError)) throw error;
       onProgress({ completedRuns: trialIndex + 1, totalRuns: rows.length });
       return { status: "numerical_failure", state: null,
         outputs: SWING_VARIATION_OUTPUT_NAMES.map(() => null) };
     }
+    const sample = run.swing.find((item) => item.t === request.stateTimeS);
+    const status: SwingTrialStatusTs = run.impactOutcome.status === "hit"
+      ? "evaluated_hit" : "evaluated_no_impact";
+    const evidence: LocalizedPairedTrialEvidenceTs = {
+      status, state: sample?.joints[sample.joints.length - 1] ?? null,
+      outputs: swingOutputRow(run, input) };
+    onProgress({ completedRuns: trialIndex + 1, totalRuns: rows.length });
+    return evidence;
   });
   return { trials, rows, plan };
 };
@@ -222,9 +240,10 @@ const targetValue = (
 export async function executeLocalizedPairedWork(
   rawRequest: LocalizedPairedRequestTs,
   onProgress: (progress: LocalizedPairedProgressTs) => void,
+  executor: LocalizedPairedTrialExecutor = runSimulation,
 ): Promise<LocalizedPairedResultTs> {
   const request = normalizePairedRequest(rawRequest);
-  const { trials, rows, plan } = executeRows(request, onProgress);
+  const { trials, rows, plan } = executeRows(request, onProgress, executor);
   const requestIdentity = await pairedRequestIdentity(request);
   const designIdentity = await pairedDesignIdentity(request, requestIdentity);
   const authority = localizedAuthorityFromEvidence(

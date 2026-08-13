@@ -26,11 +26,27 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.77                                    |
-| **Spec Version**        | 1.16.77                                    |
+| **Current Version**     | 1.16.78                                    |
+| **Spec Version**        | 1.16.78                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 React paired-study evidence hardening (#4142 R13.3)
+
+Version 1.16.78 binds a paired request's declared run count to its exact `2N`
+roster and strengthens the retained-evidence boundary. Every evaluated trial
+must contain exactly three finite state coordinates. An evaluated hit requires
+all 17 finite output values; an evaluated no-impact outcome requires the three
+finite contact values followed by exactly 14 null impact/shot values. These
+rules apply before authority comparison, so an attacker cannot legitimize
+malformed evidence by recomputing a matching authority.
+
+The execution loop now catches only the explicit
+`LocalizedPairedNumericalExecutionError` marker as a typed numerical failure.
+Unknown executor defects and all request, contract, or projection exceptions
+reject the complete Worker job rather than entering the scientific dataset.
+The fixed capability and browser-cancellation limitations in 1.16.77 remain.
 
 ### 2026-08-13 Explicit React localized paired-study Worker (#4142 R13.3)
 
@@ -4076,6 +4092,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.78 | fix(rate-of-closure, #4142 R13.3): bind paired `nRuns` to exact `2N`, require status-specific finite/null trial evidence before authority comparison, and map only an explicit numerical exception to typed failure while rejecting unknown programming, contract, and projection defects as whole-job failures. |
 | 2026-08-13 | 1.16.77 | feat(rate-of-closure, #4142 R13.3): add a separate strict React paired-study Worker and accessible planted-intervention flow with exact `2N` rows, retained evidence, recomputed typed authority, progress/cancel/stale-generation safety, and production hashed-Worker run/export/rerun evidence while keeping Python solver/digest, prescribed, Rust, JSON-load, and browser click-cancel claims open. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4426): give the validated owned explicit-sample matrix an `NDArray[float64]` return boundary, closing hosted Mypy 1.13 `no-any-return` without changing numerical, ownership, request, producer, or archive behavior. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4142 R13.3): make paired production self-verifying by retaining and recomputing exact design/request/result/authority bindings; reject cross-design request swaps, authority relabeling, and pair payload tampering; close the producer Mypy no-any boundary. |

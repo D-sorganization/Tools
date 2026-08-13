@@ -73,7 +73,8 @@ export async function validateLocalizedPairedResult(
   const statuses = new Set(["evaluated_hit", "evaluated_no_impact", "numerical_failure"]);
   const trials = value.trials.map((trial) => {
     if (!isRecord(trial) || Object.keys(trial).sort().join("|") !==
-        ["status", "state", "outputs"].sort().join("|") || !statuses.has(String(trial.status)) ||
+        ["status", "state", "outputs"].sort().join("|") ||
+        typeof trial.status !== "string" || !statuses.has(trial.status) ||
         !Array.isArray(trial.outputs) || trial.outputs.length !== SWING_VARIATION_OUTPUT_NAMES.length ||
         trial.outputs.some((item) => item !== null &&
           (typeof item !== "number" || !Number.isFinite(item))) ||
@@ -81,9 +82,18 @@ export async function validateLocalizedPairedResult(
           trial.state.some((item) => typeof item !== "number" || !Number.isFinite(item))))) {
       return fail("trial evidence");
     }
-    if (trial.status === "numerical_failure" &&
-        (trial.state !== null || trial.outputs.some((item) => item !== null))) {
-      return fail("failure evidence");
+    const finiteState = Array.isArray(trial.state) && trial.state.length === 3 &&
+      trial.state.every((item) => typeof item === "number" && Number.isFinite(item));
+    const allFiniteOutputs = trial.outputs.every((item) =>
+      typeof item === "number" && Number.isFinite(item));
+    const noImpactOutputs = trial.outputs.slice(0, 3).every((item) =>
+      typeof item === "number" && Number.isFinite(item)) &&
+      trial.outputs.slice(3).every((item) => item === null);
+    if ((trial.status === "evaluated_hit" && (!finiteState || !allFiniteOutputs)) ||
+        (trial.status === "evaluated_no_impact" && (!finiteState || !noImpactOutputs)) ||
+        (trial.status === "numerical_failure" &&
+          (trial.state !== null || trial.outputs.some((item) => item !== null)))) {
+      return fail("trial evidence");
     }
     return Object.freeze({
       status: trial.status as "evaluated_hit" | "evaluated_no_impact" | "numerical_failure",
