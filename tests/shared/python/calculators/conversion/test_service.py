@@ -76,9 +76,9 @@ def test_factor_table_round_trip_exactness(service: UnitConversionService) -> No
                 back = service.convert(forward, other, base).value
             except (IncompatibleUnitsError, TypeError, ValueError, UnknownUnitError):
                 continue
-            assert back == pytest.approx(1.0, rel=1e-9), (
-                f"{category}: {base}->{other}->{base} lost precision"
-            )
+            assert back == pytest.approx(
+                1.0, rel=1e-9
+            ), f"{category}: {base}->{other}->{base} lost precision"
             checked += 1
     assert checked > 0
 
