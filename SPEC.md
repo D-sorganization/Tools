@@ -56,21 +56,51 @@ automation, PyQt interaction E2E, protected runner evidence, approved visual
 baselines, React localized dynamics/results/export, Rust parity, and complete
 raw persistence remain open.
 
+### 2026-08-12 Integrated localized torque and Playwright stack (#4142)
+
+Version 1.16.59 merges the exact localized-torque history at
+`10524cc2151c7b60c4a097939b29202158aff012` above the reviewed Playwright
+history at `6df0ed09388ba36630c5fc6be7a31a334a4b6243` with a normal two-parent merge.
+The strict Python localized-torque execution, validation, typed miss, and PyQt
+filtering contracts coexist with the trust-separated production-Worker browser
+gate; neither scientific nor browser authority is weakened. Protected
+publication, full R14.5 certification, localized locus authoring, additional
+sources, Rust parity, and complete state/event/torque persistence remain open.
+Integrated verification passes 171 localized changed-test cases, 18 Playwright
+workflow/security tests, and five real production-Worker Chromium tests, plus
+scoped Ruff/format, documentation governance, workflow validation, and diff
+hygiene.
+
 ### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
-The browser parent pins Playwright Test 1.62.1 and supplies deterministic
-Chromium coverage in two separate trust domains. Pull requests use only an
-ephemeral `ubuntu-latest` job. The trusted workflow runs only for pushes to
-`main`, checks out the push event commit, and has no pull-request or manual
-dispatch/ref seam. External actions are pinned to immutable commit SHAs, and
-reports, screenshots, traces, and videos use attempt-identified artifacts.
+Version 1.16.57 pins Playwright Test 1.62.1 inside the Rate web package and
+adds a dedicated deterministic Chromium configuration with separate trust
+domains. The pull-request workflow contains only one ephemeral `ubuntu-latest`
+job and no persistent-fleet or self-hosted reference. A separate trusted
+workflow runs only for pushes to `main` and checks out the push event commit.
+It has no PR or manual-dispatch workflow-definition ref seam. Every external
+action reference in both Playwright workflows is pinned to a full immutable
+commit SHA. The gate builds and previews the production Vite output. Role/label
+locators drive the real hashed module Worker through a seeded 24-run study,
+observe at least one strict intermediate progress value before completion, and
+prove an identical rerun. A 500-run swing/OAT cancellation observes Worker
+termination before two identical seeded reruns, proving the cancelled generation
+cannot publish a partial, late, or stale result. Primary-tab navigation also
+terminates active work before the Variation panel unmounts. The test context
+blocks service workers but not the tested dedicated module Worker.
 
-The production Vite bundle is served and driven with accessible role/label
-locators. Tests observe strict intermediate and terminal progress on the real
-hashed module Worker, deterministic seeded reruns, Worker termination before a
-post-cancel rerun, cleanup on primary-tab navigation, and zero document-level
-horizontal overflow at desktop and narrow viewports. This is a narrow R14.5
-foundation rather than complete browser or visual certification.
+Desktop 1440x1000 and narrow 390x844 projects enforce zero document-level
+horizontal overflow and attach deterministic full-page screenshots. Reports,
+failure screenshots, traces, and videos are retained as attempt-identified CI
+artifacts. Local
+evidence is 5/5 Playwright tests and 743/743 Vitest tests, with TypeScript,
+ESLint, and the Vite production build green.
+
+This is a narrow R14.5 foundation rather than R14.5 completion. The screenshots
+are review artifacts, not CI-authority or cross-platform pixel baselines. Only
+bundled Chromium is exercised; WebKit, Firefox, assistive-technology automation,
+PyQt interaction, protected runner execution, and an approved visual baseline
+remain open. No scientific, plan, result, or persistence contract changed.
 
 ### 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
 
@@ -3522,9 +3552,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142): extract focused PyQt locus/row editor helpers to satisfy the 500-line changed-module gate; retain exact imported start/end authority independently; and make React v2 variation-plan numeric decoding strict and noncoercive across discriminators, parameters, loci, execution controls, base values, and correlation entries. |
 | 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142): add exact PyQt/React localized shoulder/wrist torque locus authoring with half-open time controls, constrained topological joint IDs, atomic validation, lossless grouped-plan persistence, and a shared cross-surface fixture; keep React dynamics execution and remaining presentation/export work fail-closed and open. |
 | 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
-| 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; and require a genuine non-Boolean integer outer variation-dataset schema discriminator. |
-| 2026-08-12 | 1.16.56 | fix(rate-of-closure, #4142): reject localized torque offsets on unsupported manual/triple sources; validate run-config offset collections before tuple conversion; and require genuine non-Boolean integer variation-plan schema versions. |
-| 2026-08-12 | 1.16.55 | fix(rate-of-closure, #4142): fail closed on malformed localized numeric/collection domains; make the fixed-step effective RK4 duration authoritative for windows; and hide or atomically reject localized PyQt factors until locus authoring exists. |
+| 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; require a genuine non-Boolean integer outer variation-dataset schema discriminator; remove manual dispatch from the self-hosted Playwright workflow; observe strict intermediate production-Worker progress; and prove cancellation terminates the old Worker before deterministic reruns accept results. |
+| 2026-08-12 | 1.16.56 | fix(rate-of-closure, #4142): reject localized torque offsets on unsupported manual/triple sources; validate run-config offset collections before tuple conversion; require genuine non-Boolean integer variation-plan schema versions; split the ephemeral PR Playwright gate from the trusted main workflow; and pin all external actions to immutable SHAs. |
+| 2026-08-12 | 1.16.55 | fix(rate-of-closure, #4142): fail closed on malformed localized numeric/collection domains; make the fixed-step effective RK4 duration authoritative for windows; hide or atomically reject localized PyQt factors until locus authoring exists; and isolate pull-request browser execution on ephemeral hosted runners while retaining the locked production gate. |
 | 2026-08-12 | 1.16.54 | feat(rate-of-closure, #4142): execute additive shoulder/wrist commanded-torque offsets over strict half-open one-point loci at every Python RK4 stage; bind deterministic variation samples to exact topological joint IDs; fail closed on unsupported source, locus, duration, and Rust contracts; preserve typed no-impact and distinct spatial provenance while keeping UI, persistence, protected release, and epic completion open. |
 | 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
 | 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |

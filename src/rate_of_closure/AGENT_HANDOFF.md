@@ -19,12 +19,45 @@ assistive-technology automation, PyQt E2E, approved visual baselines, React
 localized execution/results/export, Rust parity, raw persistence, protected
 publication, and remaining #4142 work stay open.
 
+## 2026-08-12 Integrated localized torque and Playwright stack (#4142, 1.16.59)
+
+Normal two-parent integration preserves exact localized-torque head
+`10524cc2151c7b60c4a097939b29202158aff012` and reviewed Playwright head
+`6df0ed09388ba36630c5fc6be7a31a334a4b6243`. The localized Python execution,
+validation, typed no-impact, and current PyQt filtering contracts coexist with
+the trust-separated production-Worker Chromium gate. No scientific or wire
+contract was weakened. Protected publication, R14.5 completion, locus UI,
+additional sources, Rust parity, and complete archive authority remain open.
+Integrated evidence is 171/171 localized changed-test cases, 18/18 Playwright
+workflow/security tests, and 5/5 real Chromium tests. Scoped Ruff/format,
+documentation governance, workflow validation, and diff hygiene are green.
+
 ## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
-The browser parent pins Playwright 1.62.1, immutable workflow actions, and
-attempt-identified reports/screenshots/traces/videos. Its real production-
-Worker tests observe strict intermediate progress and Worker termination before
-post-cancel reruns; screenshots remain review artifacts, not golden baselines.
+Local branch `codex/4142-rate-web-playwright` starts from exact integrated
+commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The web package now owns a
+Playwright Test 1.62.1 pin/lock, deterministic Chromium config, and two
+path-filtered workflows which build and serve the production Vite output. The
+PR workflow is ephemeral `ubuntu-latest` only and contains no fleet/self-hosted
+reference. The separate trusted workflow has only a `main` push trigger and
+checks out that event commit; it has no PR or caller-selected manual workflow
+definition seam. All external actions in both Playwright workflows are pinned
+to immutable full SHAs, and artifacts identify both workflow run and attempt.
+
+Five role/label-driven browser tests exercise the hashed dedicated module Worker
+without mocks: a seeded 24-run study records strict intermediate progress,
+completion, and identical rerun; cancellation of a 500-run swing/OAT request
+observes Worker closure before two identical seeded reruns can complete, proving
+the cancelled generation cannot publish partial or late results. Navigation
+also proves Worker cleanup when Variation unmounts. Blocking service workers
+does not block the dedicated Worker. Desktop 1440x1000 and narrow 390x844
+layouts enforce zero document horizontal overflow and attach review screenshots.
+
+Local gates are 5/5 Playwright and 743/743 Vitest tests, TypeScript, ESLint, and
+Vite production build. This remains a foundation, not R14.5 completion:
+Chromium is the only browser, screenshots are review artifacts instead of
+cross-platform golden baselines, and PyQt/assistive-technology/protected-runner
+evidence remains open.
 
 ## 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
 

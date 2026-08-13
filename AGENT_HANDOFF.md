@@ -21,14 +21,51 @@ Firefox, assistive-technology automation, PyQt E2E, approved visual baselines,
 React localized results/export, Rust parity, complete raw persistence, protected
 publication, and epic completion remain open.
 
+## 2026-08-12 Integrated localized torque and Playwright stack (#4142, 1.16.59)
+
+This branch now preserves the complete histories of localized-torque head
+`10524cc2151c7b60c4a097939b29202158aff012` and reviewed Playwright head
+`6df0ed09388ba36630c5fc6be7a31a334a4b6243` in a normal two-parent merge.
+The localized Python execution/validation contracts and the Rate-web production
+Worker/browser gates coexist without changing either scientific or browser
+contract. Publication, protected CI, remaining localized UI/Rust/persistence
+work, and full R14.5 visual/browser certification remain open.
+Integrated local evidence is 171/171 localized changed-test cases, 18/18
+Playwright workflow/security tests, and 5/5 real Chromium tests, plus scoped
+Ruff, Ruff format, documentation governance, workflow validation, and diff
+hygiene.
+
 ## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
-The published browser parent pins Playwright Test 1.62.1 and builds/serves the
-production Vite output. Five Chromium tests drive the real hashed module Worker,
-observe intermediate and terminal progress, prove deterministic reruns and
-post-cancel generation isolation, verify unmount cleanup, and check desktop/
-narrow overflow. Screenshots and traces are retained review artifacts, not
-cross-platform golden authority.
+Local branch `codex/4142-rate-web-playwright` starts from exact integrated
+commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The Rate web package pins
+Playwright Test 1.62.1 in its own manifest/lock and owns a deterministic
+Chromium configuration across two path-filtered workflows. Every PR runs only
+on ephemeral `ubuntu-latest`; the PR YAML has no fleet/self-hosted reference.
+The separate trusted workflow runs only for pushes to `main`, checks out the
+push event commit, and has neither a PR nor manual-dispatch ref seam. Checkout,
+Node setup, and artifact upload actions are pinned to full immutable SHAs.
+Artifact names include the workflow run and attempt IDs.
+
+The gate builds and serves the Vite production bundle, then uses role/label
+locators against the actual bundled module Worker. It observes strict
+intermediate and terminal progress during a seeded 24-run study and proves a
+deterministic rerun. Cancellation of a 500-run swing/OAT job observes actual
+Worker termination before two identical seeded reruns, proving the cancelled
+generation cannot publish a partial or late result. Navigation terminates
+active work on primary-tab unmount, and every case rejects browser page errors.
+Blocking service workers in the
+test context does not replace or disable the dedicated module Worker; every
+lifecycle case observes the hashed production Worker chunk. Desktop 1440x1000
+and narrow 390x844 checks enforce zero document-level horizontal overflow and
+attach full-page screenshots to the retained Playwright report.
+
+This is a narrow R14.5 foundation, not R14.5 completion or complete visual
+certification. It covers bundled Chromium only; screenshots are review
+artifacts, not cross-platform golden baselines. WebKit, Firefox, assistive-
+technology automation, PyQt interaction, protected runner evidence, and a
+CI-authority visual baseline remain open. Local evidence is 5/5 Playwright and
+743/743 Vitest tests, plus TypeScript, ESLint, and the Vite production build.
 
 ## 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
 

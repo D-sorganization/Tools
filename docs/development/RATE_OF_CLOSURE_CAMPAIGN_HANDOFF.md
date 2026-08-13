@@ -17,15 +17,51 @@
   Rust parity, complete persistence, protected publication, and epic completion
   remain open.
 
-## 2026-08-12 #4142 real-browser variation Worker foundation (R14.5)
+## 2026-08-12 #4142 integrated localized torque and Playwright stack (1.16.59)
 
-- Playwright 1.62.1 is pinned in the Rate web package; workflows have separate
-  hosted-PR and trusted-main-push trust domains with immutable action SHAs.
-- The built Vite application is driven through the real hashed module Worker.
-  Intermediate progress, cancellation termination, deterministic reruns,
-  unmount cleanup, and responsive overflow are covered.
-- Screenshots/traces/videos are attempt-identified review artifacts, not
-  cross-platform visual authority; R14.5 remains incomplete.
+- Normal two-parent integration retains exact localized-torque head
+  `10524cc2151c7b60c4a097939b29202158aff012` and reviewed Playwright head
+  `6df0ed09388ba36630c5fc6be7a31a334a4b6243` without rebase or history rewrite.
+- Localized Python torque execution, validation, typed miss behavior, and PyQt
+  filtering remain intact beside the trust-separated production-Worker browser
+  workflows and real Chromium lifecycle evidence.
+- Protected publication, full R14.5 certification, localized locus authoring,
+  Rust parity, and complete state/event/torque persistence remain open.
+- Integrated evidence is 171/171 localized changed-test cases, 18/18 workflow
+  security/policy tests, and 5/5 real production-Worker Chromium tests, with
+  scoped Ruff/format, documentation governance, workflow validation, and diff
+  hygiene green.
+
+## 2026-08-12 #4142 R14.5 real-browser variation Worker foundation
+
+- Local branch `codex/4142-rate-web-playwright` starts from exact integrated
+  commit `11a699155588d3d948990c5f08b72c5cc8d2c746`.
+- The Rate web package pins Playwright Test 1.62.1 in its own manifest/lock;
+  the dedicated configuration serves the production Vite build in deterministic
+  Chromium desktop and narrow projects.
+- Every PR runs the equivalent locked production gate only on ephemeral
+  `ubuntu-latest`; its workflow file has no fleet/self-hosted reference. A
+  separate trusted workflow runs only for `main` pushes and checks out the
+  event commit. It exposes neither a PR trigger nor manual-dispatch definition
+  ref, so untrusted or caller-selected workflow code cannot reach the fleet.
+  Every external action in both Playwright workflows is pinned to a full
+  immutable SHA; evidence artifacts include the run and attempt IDs.
+- Role/label-driven tests observe the hashed production module Worker and prove
+  strict intermediate and terminal progress plus reproducible rerun for a
+  seeded 24-run study. Long-run cancellation observes Worker termination before
+  two identical seeded reruns, rejecting partial, late, or stale result
+  acceptance; navigation separately proves Worker termination on tab unmount.
+  `serviceWorkers: "block"` suppresses unrelated service-worker state only; the
+  tested dedicated module Worker remains active and is never mocked.
+- Desktop 1440x1000 and narrow 390x844 layouts have no document-level
+  horizontal overflow. Both full-page screenshots and all failure traces,
+  screenshots, and videos are retained in the Playwright report artifact.
+- Local evidence: 5/5 Playwright tests, 743/743 Vitest tests, TypeScript,
+  ESLint, and Vite production build. Chromium installed locally without error.
+- This is not R14.5 completion: screenshots are review artifacts rather than
+  CI-authority golden comparisons, and WebKit, Firefox, assistive-technology,
+  PyQt interaction, protected runner evidence, and cross-platform visual
+  baselines remain open.
 
 ## 2026-08-12 #4142 localized torque identity and 400-line policy closure
 
