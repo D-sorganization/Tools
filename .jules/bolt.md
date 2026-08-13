@@ -89,3 +89,6 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+## 2024-08-01 - Avoid chained map and join for CSV generation
+**Learning:** Using `headers.map().join()` and `row.map().join()` inside a loop for generating large CSV payloads creates massive GC pressure because it allocates an intermediate string array for every row in the dataset before joining them.
+**Action:** Always replace chained `.map().join()` calls with a single-pass `for` loop and direct string concatenation when building large text payloads (like CSV strings) to leverage V8's efficient ConsString representation and eliminate array allocations.
