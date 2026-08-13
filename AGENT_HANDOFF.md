@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Visualization tab first-screen contract (#4433)
+
+Version 1.16.74 adds `visualization-tab-visibility@1`, a shared packaged JSON
+authority covering all nine React and nine PyQt primary tabs. Every entry pins
+its classification, a content-bearing primary landmark, empty/loading/result/
+error presentation, and a desktop visible-height threshold. Governance tests
+compare the manifest to both actual tab registries.
+
+React Playwright opens every tab at 1440x900, 1280x720, and 390x844, requires
+at least 240 visible landmark pixels in both dimensions at desktop widths,
+manifest-owned narrow minimums, and no document horizontal overflow. PyQt subprocesses at 100%
+and 150% DPI resolve actual canvas leaves or nonblank semantic content, clip
+through ancestor/scroll visibility, require 240 visible pixels for visuals,
+and reject tab-bar or interactive-control overlap. Each tab produces a DPI-
+specific diagnostic PNG plus geometry JSON. Initial audit exposed
+below-fold Explorer/Simulation on desktop and Plots/Flight/Analytics/
+Variation/Putting on narrow layouts; visual-first responsive ordering,
+low-height chrome compaction, single-column plot presentation, and a real
+Variation workflow preview close those findings without deleting scientific
+content. Evidence JSON/screenshots remain diagnostic, not approved goldens.
+Formal axe/screen-reader/manual AT approval, pixel-diff baselines, and exhaustive
+loading/result/error-state geometry remain open.
+
 ## 2026-08-13 Hosted PyQt declared-plugin closure (#4422)
 
 Version 1.16.73 replaces the incomplete hand-selected PyQt test bootstrap with

@@ -16,7 +16,7 @@ function AppHeader() {
       <h1 className="bg-gradient-to-r from-sky-300 via-teal-200 to-emerald-300 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
         Rate of Closure Impact Explorer
       </h1>
-      <p className="mt-1 max-w-3xl text-sm text-slate-400">
+      <p className="mt-1 hidden max-w-3xl text-sm text-slate-400 sm:block [@media(max-height:800px)]:hidden">
         A rotating clubhead is a rigid body: the velocity of the impact point
         is v(P) = v(ref) + ω × r. Launch monitors track the reference point;
         the ball only feels the impact point. This explorer shows how far apart
@@ -71,7 +71,7 @@ export default function App() {
   };
   return (
     <div data-app-theme={workspace.theme}
-      className="mx-auto min-h-screen max-w-7xl p-5 text-slate-100 sm:p-8">
+      className="mx-auto min-h-screen max-w-7xl p-5 text-slate-100 sm:p-8 [@media(max-height:800px)]:py-2">
       <AppToolstrip moduleState={workspace.viewState} theme={workspace.theme}
         shortcutHelpOpen={workspace.shortcutHelpOpen}
         onModuleStateChange={workspace.setViewState}

@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 from typing import cast
 
-import numpy as np
 import pandas as pd
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -37,6 +36,10 @@ from rate_of_closure.launch_monitor_analysis import (
     analyze_launch_monitor_data,
     numeric_columns,
 )
+from rate_of_closure.ui.pyqt6.launch_monitor_preview import (
+    LaunchMonitorPreviewCanvas,
+    demo_frame,
+)
 from shared.python.swing_sim.conventions import (
     ConventionId,
     ParameterId,
@@ -44,35 +47,12 @@ from shared.python.swing_sim.conventions import (
 )
 
 
-def _demo_frame() -> pd.DataFrame:
-    index = np.arange(120)
-    club_speed = 38.0 + index * 0.11
-    attack_angle = -4.0 + (index % 17) * 0.4
-    club_path = -3.0 + (index % 13) * 0.5
-    face_angle = club_path * 0.65 + np.sin(index * 0.7) * 0.8
-    ball_speed = club_speed * 1.46 + attack_angle * 0.08 + np.sin(index) * 0.25
-    return pd.DataFrame(
-        {
-            "shot_id": [f"demo-{item + 1}" for item in index],
-            "session_id": np.where(index < 60, "demo-a", "demo-b"),
-            "monitor_vendor": np.where(index % 2, "FlightScope", "TrackMan"),
-            "observation_kind": "shot",
-            "club_speed": club_speed,
-            "attack_angle": attack_angle,
-            "club_path": club_path,
-            "face_angle": face_angle,
-            "ball_speed": ball_speed,
-            "carry_distance": ball_speed * 3.25 + attack_angle * 0.9,
-        }
-    )
-
-
 class LaunchMonitorAnalyticsTab(QWidget):
     """Import retained records and run arbitrary traceable analyses."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.frame = _demo_frame()
+        self.frame = demo_frame()
         self.source_name = "Built-In Demonstration Data"
         self.last_result: AnalysisResult | None = None
         self._build_ui()
@@ -172,6 +152,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         form.addRow("Minimum N:", self.min_samples_spin)
         form.addRow(self.run_button)
 
+        self.preview = LaunchMonitorPreviewCanvas()
         self.result_table = QTableWidget()
         self.result_table.setAccessibleName("Launch Monitor Statistical Results")
         self.result_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -179,9 +160,10 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.details.setReadOnly(True)
         self.details.setAccessibleName("Launch Monitor Analysis Traceability")
         output = QSplitter(Qt.Orientation.Vertical)
+        output.addWidget(self.preview)
         output.addWidget(self.result_table)
         output.addWidget(self.details)
-        output.setSizes([350, 300])
+        output.setSizes([320, 240, 160])
 
         body = QSplitter(Qt.Orientation.Horizontal)
         controls_widget = QWidget()
@@ -208,6 +190,8 @@ class LaunchMonitorAnalyticsTab(QWidget):
             self._refresh_convention_evidence
         )
         self.outcome_combo.currentTextChanged.connect(self._refresh_convention_evidence)
+        self.outcome_combo.currentTextChanged.connect(self._refresh_preview)
+        self.predictor_list.itemSelectionChanged.connect(self._refresh_preview)
 
     def _refresh_columns(self) -> None:
         numeric = numeric_columns(self.frame)
@@ -243,7 +227,12 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.export_result_button.setEnabled(False)
         self.result_table.clear()
         self.details.clear()
+        self._refresh_preview()
         self._refresh_convention_evidence()
+
+    def _refresh_preview(self) -> None:
+        selected = tuple(item.text() for item in self.predictor_list.selectedItems())
+        self.preview.set_frame(self.frame, self.outcome_combo.currentText(), selected)
 
     def _refresh_convention_evidence(self) -> None:
         convention = self.convention_combo.currentData()
@@ -270,7 +259,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self._refresh_columns()
 
     def load_demo(self) -> None:
-        self.set_frame(_demo_frame(), "Built-In Demonstration Data")
+        self.set_frame(demo_frame(), "Built-In Demonstration Data")
 
     def import_path(self, path: Path) -> None:
         suffix = path.suffix.lower()

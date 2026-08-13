@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths:
       - "src/rate_of_closure/web/**"
+      - "src/rate_of_closure/visualization_tabs.v1.json"
+      - "src/rate_of_closure/visualization_tab_manifest.py"
+      - "src/rate_of_closure/ui/pyqt6/**"
+      - "tests/rate_of_closure/pyqt_visualization_tab_probe.py"
+      - "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
       - ".github/workflows/rate-web-playwright.yml"
       - ".github/workflows/rate-web-playwright-trusted.yml"
 concurrency:
@@ -42,6 +47,17 @@ jobs:
       - name: Exercise production Worker lifecycle and layouts
         run: npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow
 
+      - name: Install declared PyQt render dependencies
+        working-directory: .
+        run: python -m pip install -e ".[gui,dev]"
+
+      - name: Exercise protected PyQt tab visibility
+        working-directory: .
+        env:
+          QT_QPA_PLATFORM: offscreen
+          RATE_PYQT_EVIDENCE_DIR: rate-pyqt-screenshots
+        run: python -m pytest tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0
+
       - name: Retain Playwright evidence
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -50,5 +66,6 @@ jobs:
           path: |
             src/rate_of_closure/web/playwright-report/
             src/rate_of_closure/web/test-results/
+            rate-pyqt-screenshots/
           if-no-files-found: error
           retention-days: 14

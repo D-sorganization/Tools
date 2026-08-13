@@ -119,7 +119,7 @@ class DerivationView(QWidget):
         layout.setContentsMargins(16, 12, 16, 12)
         layout.setSpacing(10)
 
-        intro = QLabel(
+        self._intro = QLabel(
             "Every number in the app traces to one of the sections "
             "below — the closure chain, the impact model, the active "
             "ball-flight model, and (when a pendulum source is "
@@ -130,8 +130,8 @@ class DerivationView(QWidget):
             "dossier, and the swing_sim impact/flight/reference "
             "derivations."
         )
-        intro.setWordWrap(True)
-        layout.addWidget(intro)
+        self._intro.setWordWrap(True)
+        layout.addWidget(self._intro)
 
         for section in derivation_sections(self._scenario, self._config):
             heading = QLabel(section.title)

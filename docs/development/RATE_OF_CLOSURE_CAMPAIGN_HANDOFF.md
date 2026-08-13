@@ -1,5 +1,27 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 visualization tab first-screen foundation
+
+- `visualization-tab-visibility@1` inventories all 18 primary tabs across
+  React and PyQt with identity, classification, content-bearing landmark,
+  four presentation states, reference viewport/DPI, and desktop minimum.
+- Registry-governance tests fail when either application registers a primary
+  tab without a manifest entry or the manifest retains an unregistered tab.
+- React opens all nine tabs at 1440x900, 1280x720, and 390x844. Both desktop
+  widths require 240 visible landmark pixels in both dimensions; narrow uses
+  explicit manifest-owned minimum dimensions and visual-before-control order.
+  intersection, and every size rejects horizontal document overflow.
+- PyQt opens all nine tabs in isolated 100%/150% DPI processes. Canvas leaves
+  are used for visual tabs; calculation, analytics, and glossary use nonblank
+  semantic content. Visibility is ancestor-clipped, not inferred from a tab or
+  scroll container, and the audit rejects tab-bar/control overlap.
+- Audit-driven changes put previews before long forms, compact low-height
+  chrome, keep managed plots single-column at the reference widths, and add an
+  explicit Variation workflow preview. Scientific guidance remains available.
+- All 18 PyQt tab/DPI screenshots and JSON are diagnostic only. Approved pixel goldens, formal
+  axe/screen-reader/manual AT evidence, and complete noninitial state geometry
+  remain #4433 work. SPEC advances to 1.16.74.
+
 ## 2026-08-13 #4422 hosted declared-plugin closure
 
 - The ephemeral PR PyQt bootstrap now installs editable `.[gui,dev]` as the

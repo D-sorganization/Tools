@@ -22,6 +22,7 @@ class VariationWorkspace(QWidget):
         if not isinstance(morris, MorrisScreeningTab):
             raise TypeError("morris must be a MorrisScreeningTab")
         super().__init__(parent)
+        self._landing = monte_carlo._landing
         self._tabs = QTabWidget()
         self._tabs.setAccessibleName("Variation workflow")
         self._tabs.addTab(monte_carlo, "Monte Carlo & Dispersion")

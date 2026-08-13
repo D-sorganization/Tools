@@ -141,7 +141,7 @@ export function SimulationDisplay({
   ]);
 
   return (
-    <section className="min-w-0 space-y-3">
+    <section className="order-first min-w-0 space-y-3 lg:order-none">
       <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
         <div className="mb-3 flex gap-2" role="tablist" aria-label="Display views (scale-separated)">
           {VIEWS.map((name) => (
@@ -174,6 +174,9 @@ export function SimulationDisplay({
             spatialTarget={spatialTarget} distanceUnit={distanceUnit} />
         </>}
         {view === "Swing" && <>
+          <canvas ref={canvasRef} width={860} height={480}
+            className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
+            aria-label="Simulation scene with selectable screw-axis motion glyph" />
           <SwingPlaybackControls run={run} playing={playing} setPlaying={setPlaying}
             time={time} setTime={setTime} loop={loop} setLoop={setLoop}
             rate={rate} setRate={setRate} toggles={[
@@ -222,9 +225,6 @@ export function SimulationDisplay({
               </p>
             </div>
           )}
-          <canvas ref={canvasRef} width={860} height={480}
-            className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
-            aria-label="Simulation scene with selectable screw-axis motion glyph" />
         </>}
       </div>
     </section>

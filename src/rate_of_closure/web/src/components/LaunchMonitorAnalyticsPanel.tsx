@@ -168,7 +168,7 @@ export function LaunchMonitorAnalyticsPanel() {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[340px_1fr]">
-        <div className={`${card} space-y-4`}>
+        <section aria-label="Analysis contract" className={`${card} space-y-4`}>
           <h3 className="font-semibold text-slate-200">Analysis Contract</h3>
           <label className="block text-sm text-slate-300">Interpretation Convention
             <select value={convention} title="Choose the documented parameter convention used to interpret canonical names"
@@ -235,9 +235,9 @@ export function LaunchMonitorAnalyticsPanel() {
           <button type="button" onClick={run} title="Run the selected traceable statistical analysis"
             className="w-full rounded-lg bg-emerald-600 px-4 py-3 font-semibold hover:bg-emerald-500">Run Analysis</button>
           {error && <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{error}</p>}
-        </div>
+        </section>
 
-        <div className="space-y-5">
+        <div className="order-first space-y-5 xl:order-none">
           <div className={card}>
             <h3 className="mb-3 font-semibold text-slate-200">Selected Relationship</h3>
             <ScatterPlot rows={rows} outcome={outcome} predictor={predictors[0] ?? ""} />

@@ -87,6 +87,7 @@ def build_result_tabs() -> tuple[
         (arcs, "All Swing Arcs"),
     ):
         tabs.addTab(widget, label)
+    tabs.setCurrentWidget(landing)
     return tabs, summary, sensitivity, spearman, landing, scatter, matrix, arcs
 
 

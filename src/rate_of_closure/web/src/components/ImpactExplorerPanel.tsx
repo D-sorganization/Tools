@@ -234,12 +234,12 @@ export function ImpactExplorerPanel(props: ImpactExplorerPanelProps) {
           onGenerate={props.setGeneratedHead} onSpecChange={props.setClubSpec} />
         <ScenarioCard scenario={props.scenario} units={props.units} onUpdate={update} />
       </section>
-      <section className="space-y-6">
+      <section className="order-first space-y-6 lg:order-none">
+        <ClubCanvas scenario={props.scenario} externalMesh={props.generatedHead.mesh}
+          hoselPoint={props.generatedHead.hosel} cogPoint={props.generatedHead.cog} />
         <ResultsCard scenario={props.scenario} units={props.units}
           explained={props.explained} onExplainedChange={props.onExplainedChange}
           onOpenGlossary={props.onOpenGlossary} />
-        <ClubCanvas scenario={props.scenario} externalMesh={props.generatedHead.mesh}
-          hoselPoint={props.generatedHead.hosel} cogPoint={props.generatedHead.cog} />
       </section>
     </div>
   );

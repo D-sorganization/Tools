@@ -338,7 +338,7 @@ export function FlightExplorerPanel({
         </div>
       </section>
 
-      <section className="min-w-0 space-y-3">
+      <section className="order-first min-w-0 space-y-3 lg:order-none">
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
           <FlightCanvases
             points={result?.points ?? []}

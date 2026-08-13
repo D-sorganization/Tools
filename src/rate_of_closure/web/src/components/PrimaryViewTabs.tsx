@@ -60,7 +60,7 @@ export function PrimaryViewTabs({
 
   return (
     <nav aria-label="Primary views" className="mb-5">
-      <p className="mb-2 text-xs text-slate-500">
+      <p className="mb-2 hidden text-xs text-slate-500 sm:block [@media(max-height:800px)]:hidden">
         Drag a tab to personalize this workspace. The order and active view are saved on this device.
       </p>
       <div

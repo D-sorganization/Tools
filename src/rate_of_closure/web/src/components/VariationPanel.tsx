@@ -186,7 +186,7 @@ export function VariationPanel({
       <VariationWorkflowPicker value={workflow} onChange={selectWorkflow}
         morrisDisabled={morrisBase === undefined} morrisUnavailableReason={morrisUnavailableReason} />
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-      <section aria-label="Variation setup" className="space-y-4">
+      <section aria-label="Variation setup" className="order-2 space-y-4 xl:order-none">
         {spatialTarget && (
           <p role="status" aria-label="Variation current spatial target"
             className={`rounded-lg border p-3 text-xs ${targetUse.diagnostic
@@ -230,13 +230,13 @@ export function VariationPanel({
           onDelete={deleteSelected}
         />
       </section>
-      <VariationResults
+      <div className="order-first min-w-0 xl:order-none"><VariationResults
         dataset={dataset}
         sensitivity={sensitivity}
         target={targetUse.targetRegion ?? undefined}
         distanceUnit={distanceUnit}
         ensemble={ensemble}
-      />
+      /></div>
       </div>
     </div>
   );

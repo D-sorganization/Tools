@@ -46,7 +46,7 @@ export function SimulationStatusHeader({
 }) {
   const activeModel = MODEL_DETAILS[sourceKind];
   return (
-    <header className="grid gap-4 rounded-xl border border-slate-700/80 bg-slate-900/80 px-5 py-4 shadow-lg shadow-black/20 sm:grid-cols-[minmax(220px,1fr)_minmax(260px,1.35fr)] lg:col-span-2 lg:grid-cols-[minmax(220px,0.8fr)_minmax(280px,1fr)_auto] lg:items-center">
+    <header className="order-2 grid gap-4 rounded-xl border border-slate-700/80 bg-slate-900/80 px-5 py-4 shadow-lg shadow-black/20 sm:grid-cols-[minmax(220px,1fr)_minmax(260px,1.35fr)] lg:order-first lg:col-span-2 lg:grid-cols-[minmax(220px,0.8fr)_minmax(280px,1fr)_auto] lg:items-center">
       <div>
         <p className="text-xs font-semibold uppercase tracking-wider text-sky-400">
           Simulation Workspace

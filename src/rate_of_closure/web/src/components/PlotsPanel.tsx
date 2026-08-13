@@ -372,7 +372,7 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
       </section>
       <section
         aria-label="Plot workspace"
-        className="grid min-w-0 gap-4 rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 xl:grid-cols-2"
+        className="order-first grid min-w-0 gap-4 rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 lg:order-none 2xl:grid-cols-2"
       >
         {computed.map((entry) => entry.data ? (
           <PlotCanvasCard

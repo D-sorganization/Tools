@@ -10,9 +10,15 @@ on:
       - "src/rate_of_closure/simulation/**"
       - "src/rate_of_closure/variation/**"
       - "src/rate_of_closure/ui/pyqt6/**"
+      - "src/rate_of_closure/visualization_tab_manifest.py"
+      - "src/rate_of_closure/visualization_tabs.v1.json"
       - "src/shared/python/swing_sim/variation/**"
       - "tests/rate_of_closure/pyqt_variation_render_probe.py"
       - "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py"
+      - "tests/rate_of_closure/pyqt_visualization_tab_probe.py"
+      - "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
+      - "tests/rate_of_closure/test_visualization_tab_manifest.py"
+      - "tests/rate_of_closure/test_visualization_tab_audit.py"
       - "tests/ops/test_rate_web_playwright_workflow.py"
       - "pyproject.toml"
       - ".github/workflows/rate-web-playwright.yml"
@@ -61,12 +67,15 @@ jobs:
         working-directory: .
         run: python -m pip install -e ".[gui,dev]" "scipy>=1.10,<1.18" "pytest-benchmark==5.2.3"
 
-      - name: Exercise PyQt rendered interactions at 100 and 150 percent DPI
+      - name: Exercise PyQt tab visibility at 100 and 150 percent DPI
         working-directory: .
         env:
           QT_QPA_PLATFORM: offscreen
           RATE_PYQT_EVIDENCE_DIR: rate-pyqt-screenshots
-        run: python -m pytest tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py -q -n 0
+        run: >-
+          python -m pytest
+          tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py
+          tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0
 
       - name: Retain Playwright evidence
         if: ${{ !cancelled() }}

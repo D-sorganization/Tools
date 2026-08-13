@@ -18,6 +18,7 @@ PLAYWRIGHT_EVIDENCE_PATHS = (
     "src/rate_of_closure/web/playwright-report/\n"
     "src/rate_of_closure/web/test-results/\n"
 )
+TRUSTED_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
 PR_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
 PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/club/**",
@@ -26,9 +27,15 @@ PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/simulation/**",
     "src/rate_of_closure/variation/**",
     "src/rate_of_closure/ui/pyqt6/**",
+    "src/rate_of_closure/visualization_tab_manifest.py",
+    "src/rate_of_closure/visualization_tabs.v1.json",
     "src/shared/python/swing_sim/variation/**",
     "tests/rate_of_closure/pyqt_variation_render_probe.py",
     "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
+    "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
+    "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
+    "tests/rate_of_closure/test_visualization_tab_manifest.py",
+    "tests/rate_of_closure/test_visualization_tab_audit.py",
     "tests/ops/test_rate_web_playwright_workflow.py",
     "pyproject.toml",
 }
@@ -110,15 +117,21 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         'python -m pip install -e ".[gui,dev]" "scipy>=1.10,<1.18" '
         '"pytest-benchmark==5.2.3"'
     )
-    assert pr_commands[
-        "Exercise PyQt rendered interactions at 100 and 150 percent DPI"
-    ] == (
+    assert pr_commands["Exercise PyQt tab visibility at 100 and 150 percent DPI"] == (
         "python -m pytest "
-        "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py -q -n 0"
+        "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py "
+        "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
     assert (
         trusted_commands["Exercise production Worker lifecycle and layouts"]
         == "npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow"
+    )
+    assert trusted_commands["Install declared PyQt render dependencies"] == (
+        'python -m pip install -e ".[gui,dev]"'
+    )
+    assert trusted_commands["Exercise protected PyQt tab visibility"] == (
+        "python -m pytest "
+        "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
 
 
@@ -146,7 +159,7 @@ def test_external_actions_are_immutable_and_artifacts_identify_attempts() -> Non
             expected_paths = (
                 PR_EVIDENCE_PATHS
                 if path == PR_WORKFLOW_PATH
-                else PLAYWRIGHT_EVIDENCE_PATHS
+                else TRUSTED_EVIDENCE_PATHS
             )
             assert artifact["with"]["path"] == expected_paths
 

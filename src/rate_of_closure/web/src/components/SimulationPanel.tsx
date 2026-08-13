@@ -205,7 +205,7 @@ export function SimulationPanel({
           run?.impactOutcome.status === "miss"
         }
       />
-      <section aria-label="Simulation setup" className="space-y-4">
+      <section aria-label="Simulation setup" className="order-3 space-y-4 lg:order-none">
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Simulation Setup

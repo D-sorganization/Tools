@@ -26,11 +26,34 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.73                                    |
-| **Spec Version**        | 1.16.73                                    |
+| **Current Version**     | 1.16.74                                    |
+| **Spec Version**        | 1.16.74                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Visualization tab first-screen contract (#4433)
+
+Version 1.16.74 defines `visualization-tab-visibility@1`, a packaged JSON
+authority for all 18 React/PyQt primary tabs. Entries declare exact tab
+identity, classification, content-bearing landmark type and locator, complete
+empty/loading/result/error presentation, reference viewport or DPI scale, and
+a meaningful desktop visible-height minimum. Registry governance prevents an
+undocumented primary tab from entering either application.
+
+React audits open every tab at 1440x900, 1280x720, and 390x844; the two desktop
+sizes require 240 visible landmark pixels in both dimensions; narrow uses
+explicit manifest minimum dimensions and exact visual-before-control ordering,
+with zero horizontal document overflow throughout. PyQt audits
+run at 100%/150% DPI, resolve actual canvas leaves or nonblank semantic content,
+clip visibility through ancestors and scroll viewports, enforce 240 pixels for
+visual landmarks, reject tab-bar/control overlap, and capture one diagnostic
+PNG per tab and DPI. The audit drove visual-
+first ordering, low-height chrome compaction, reference-width single-column
+plots, and an explicit Variation workflow preview without removing scientific
+text. Captured screenshots/JSON are diagnostic and are not approved visual
+goldens. Formal axe/screen-reader/manual AT evidence, pixel-diff baselines, and
+exhaustive loading/result/error-state geometry remain open.
 
 ### 2026-08-13 Hosted PyQt declared-plugin closure (#4422)
 
@@ -3992,6 +4015,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |
 | 2026-08-13 | 1.16.72 | fix(ci, #4422): install pinned pytest-benchmark for the repository-owned `--benchmark-disable` PyQt gate and exempt only the subprocess render-probe entrypoint from changed-test assertions, with exact regressions preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.71 | fix(ci, #4142 R14.5): bind the trusted fleet lane's Chromium-only install to explicit Chromium desktop/narrow projects and expand the ephemeral PR gate's path ownership across every imported club/model, plotting, simulation, variation, PyQt6, shared dispersion, dependency, harness, and workflow authority it exercises. |

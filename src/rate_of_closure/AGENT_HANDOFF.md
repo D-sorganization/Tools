@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Visualization tab first-screen contract (#4433)
+
+- A versioned shared manifest now covers all nine React and nine PyQt primary
+  tabs with exact identity, classification, landmark kind/locator, four UI
+  states, reference sizes, and desktop visible-height minimum.
+- React Playwright opens each tab at 1440x900, 1280x720, and 390x844, enforcing
+  240 visible landmark pixels in both dimensions at desktop widths, manifest-
+  owned narrow minimum dimensions and visual-before-control order,
+  and zero horizontal document overflow.
+- PyQt probes at 1.0/1.5 scale use real canvas leaves or nonblank semantic
+  content, ancestor-clipped regions, 240-pixel visual minimums, and tab/control
+  non-overlap. Each tab emits a DPI-specific diagnostic PNG. Blank tables and
+  scroll/container rectangles are not evidence.
+- Audit fixes reorder previews ahead of long controls, compact low-height
+  chrome, retain readable one-column managed plots at reference widths, and
+  introduce an explicit Variation empty-state workflow visual.
+- Evidence artifacts are diagnostic, not approved goldens. Formal AT/manual
+  screen-reader approval, pixel baselines, and all noninitial-state geometry
+  remain open. SPEC is 1.16.74.
+
 ## 2026-08-13 Hosted declared-plugin closure (#4422)
 
 - Ephemeral PR CI now installs editable `.[gui,dev]`, retaining the bounded
