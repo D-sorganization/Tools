@@ -43,6 +43,7 @@ class VariationTabRunMixin:
     _ensemble_scatter: Any
     _distribution_matrix: Any
     _arc_overlay: Any
+    _localized_attribution: Any
     _landing: Any
     _summary_table: Any
     _sensitivity_table: Any
@@ -208,6 +209,15 @@ class VariationTabRunMixin:
         self._ensemble_scatter.set_plot_dataset(plot_dataset)
         self._distribution_matrix.set_plot_dataset(plot_dataset)
         self._arc_overlay.set_plot_dataset(plot_dataset)
+        has_localized = any(not spec.is_global for spec in result.variation.plan.noise)
+        reason = (
+            "Attribution unavailable: this localized Monte Carlo result retains "
+            "perturbed traces and scalar outcomes, but not isolated baseline/"
+            "perturbed pairs. Scatter is not substituted for intervention authority."
+            if has_localized
+            else "No localized torque sources exist in this completed study."
+        )
+        self._localized_attribution.set_authority(None, reason)
 
     def _on_cancelled(self) -> None:
         self._status.setText("Cancelled.")
@@ -248,3 +258,4 @@ class VariationTabRunMixin:
         self._ensemble_scatter.clear_view()
         self._distribution_matrix.clear_view()
         self._arc_overlay.clear_view()
+        self._localized_attribution.set_authority(None)

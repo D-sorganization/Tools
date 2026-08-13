@@ -5,6 +5,9 @@ from __future__ import annotations
 import numpy as np
 from PyQt6.QtWidgets import QTabWidget
 
+from rate_of_closure.ui.pyqt6.localized_attribution_view import (
+    LocalizedAttributionView,
+)
 from rate_of_closure.ui.pyqt6.variation_distribution_matrix import (
     DistributionMatrixView,
 )
@@ -40,6 +43,7 @@ class VariationTabResultsMixin:
             self._ensemble_scatter,
             self._distribution_matrix,
             self._arc_overlay,
+            self._localized_attribution,
         ) = build_result_tabs()
         return tabs
 
@@ -53,6 +57,7 @@ def build_result_tabs() -> tuple[
     DatasetScatterView,
     DistributionMatrixView,
     ArcOverlayView,
+    LocalizedAttributionView,
 ]:
     """Build every result view and return stable widget references."""
     tabs = QTabWidget()
@@ -71,6 +76,7 @@ def build_result_tabs() -> tuple[
     scatter = DatasetScatterView()
     matrix = DistributionMatrixView()
     arcs = ArcOverlayView()
+    attribution = LocalizedAttributionView()
     scatter.selectionChanged.connect(arcs.set_selected_trial)
     scatter.selectionChanged.connect(matrix.set_selected_trial)
     arcs.selectionChanged.connect(scatter.set_selected_trial)
@@ -85,9 +91,20 @@ def build_result_tabs() -> tuple[
         (scatter, "Impact / Shot Scatter"),
         (matrix, "Scatter Matrix / Marginals"),
         (arcs, "All Swing Arcs"),
+        (attribution, "Localized Attribution"),
     ):
         tabs.addTab(widget, label)
-    return tabs, summary, sensitivity, spearman, landing, scatter, matrix, arcs
+    return (
+        tabs,
+        summary,
+        sensitivity,
+        spearman,
+        landing,
+        scatter,
+        matrix,
+        arcs,
+        attribution,
+    )
 
 
 def populate_result_views(

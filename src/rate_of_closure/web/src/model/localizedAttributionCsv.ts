@@ -1,0 +1,73 @@
+/** Formula-safe raw-row export for localized paired attribution. */
+
+import { spreadsheetSafeCsvCell } from "./csvSecurity";
+import {
+  ATTRIBUTION_AUTHORITY_SCHEMA_ID,
+  ATTRIBUTION_SCHEMA_VERSION,
+  attributionAuthorityToValue,
+  type AttributionAuthorityTs,
+} from "./localizedAttribution";
+
+const HEADER = [
+  "schema_id", "schema_version", "authority_id", "interpretation",
+  "source_spec_id", "source_variable", "source_unit", "joint_id",
+  "window_start_s", "window_end_s", "target_id", "target_kind", "target_name",
+  "target_unit", "target_frame", "target_convention", "target_time_s",
+  "target_point_id", "baseline_trial", "perturbed_trial", "baseline_status",
+  "perturbed_status", "baseline_source_value", "perturbed_source_value",
+  "baseline_target_value", "perturbed_target_value", "response", "availability",
+] as const;
+const FLOAT_COLUMNS = new Set([8, 9, 16, 22, 23, 24, 25, 26]);
+const NUMERIC_COLUMNS = new Set([1, 8, 9, 16, 18, 19, 22, 23, 24, 25, 26]);
+const quoteCsvText = (text: string): string =>
+  /[",\r\n]/u.test(text) ? `"${text.replace(/"/gu, '""')}"` : text;
+
+export const canonicalBinary64CsvText = (value: number): string => {
+  if (!Number.isFinite(value)) throw new Error("CSV binary64 value must be finite");
+  if (Object.is(value, -0)) return "-0.0";
+  const magnitude = Math.abs(value);
+  if (Number.isInteger(value) && magnitude < 1e16) return value.toFixed(1);
+  const text = magnitude >= 1e16 || (magnitude > 0 && magnitude < 1e-4)
+    ? value.toExponential() : String(value);
+  if (!text.includes("e")) return text;
+  const [mantissa, exponent] = text.split("e");
+  return `${mantissa}e${Number(exponent)}`;
+};
+
+const cell = (value: unknown): string => value === null ? "" : String(value);
+const rowCell = (value: unknown, column: number): string =>
+  typeof value === "number" && FLOAT_COLUMNS.has(column)
+    ? canonicalBinary64CsvText(value) : cell(value);
+
+export function attributionObservationsToRows(
+  authority: AttributionAuthorityTs,
+): string[][] {
+  attributionAuthorityToValue(authority);
+  const sources = new Map(authority.sources.map((source) => [source.specId, source]));
+  const targets = new Map(authority.targets.map((target) => [target.targetId, target]));
+  const rows = authority.observations.map((observation) => {
+    const source = sources.get(observation.sourceSpecId)!;
+    const target = targets.get(observation.targetId)!;
+    return [
+      ATTRIBUTION_AUTHORITY_SCHEMA_ID, ATTRIBUTION_SCHEMA_VERSION,
+      authority.authorityId, authority.interpretation, source.specId,
+      source.variableKey, source.unit, source.jointId, ...source.timeWindowS,
+      target.targetId, target.kind, target.name, target.unit, target.coordinateFrame,
+      target.convention, target.timeS, target.pointId, observation.baselineTrialIndex,
+      observation.perturbedTrialIndex, observation.baselineStatus,
+      observation.perturbedStatus, observation.baselineSourceValue,
+      observation.perturbedSourceValue, observation.baselineTargetValue,
+      observation.perturbedTargetValue, observation.response, observation.availability,
+    ].map(rowCell);
+  });
+  return [[...HEADER], ...rows];
+}
+
+export function attributionObservationsToCsv(
+  authority: AttributionAuthorityTs,
+): string {
+  return attributionObservationsToRows(authority).map((row, rowIndex) => row.map(
+    (value, column) => rowIndex > 0 && value !== "" && NUMERIC_COLUMNS.has(column)
+      ? quoteCsvText(value) : spreadsheetSafeCsvCell(value),
+  ).join(",")).join("\n") + "\n";
+}
