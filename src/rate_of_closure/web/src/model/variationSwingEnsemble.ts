@@ -140,6 +140,7 @@ export function defaultSwingVariationInput(ballSetup?: BallSetup): SimulationInp
 export function runSwingVariation(
   plan: VariationPlanTs,
   baseInput: SimulationInput = defaultSwingVariationInput(plan.ballSetup),
+  onTrialComplete?: () => void,
 ): SwingVariationResultTs {
   validatePlan(plan);
   if (plan.mode !== "swing") throw new Error("complete swing ensemble requires swing mode");
@@ -179,6 +180,7 @@ export function runSwingVariation(
       outputs.push(OUTPUT_NAMES.map(() => null));
       success.push(false);
     }
+    onTrialComplete?.();
   });
   return {
     dataset: {

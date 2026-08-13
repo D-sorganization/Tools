@@ -178,9 +178,14 @@ export interface VariationDatasetTs {
 }
 
 /** Execute a plan synchronously through the browser's scalar evaluator. */
-export function runVariation(plan: VariationPlanTs): VariationDatasetTs {
+export function runVariation(
+  plan: VariationPlanTs,
+  onTrialComplete?: () => void,
+): VariationDatasetTs {
   validatePlan(plan);
-  if (plan.mode === "swing") return runSwingVariation(plan).dataset;
+  if (plan.mode === "swing") {
+    return runSwingVariation(plan, undefined, onTrialComplete).dataset;
+  }
   if (plan.noise.some((spec) => spec.variableKey === TEE_HEIGHT_VARIATION_KEY)) {
     throw new Error(
       "Tee Height variation requires the complete Rate simulation ensemble; " +
@@ -213,6 +218,7 @@ export function runVariation(plan: VariationPlanTs): VariationDatasetTs {
       outputs.push(outputNames.map(() => null));
       success.push(false);
     }
+    onTrialComplete?.();
   }
   return { plan, inputNames, inputs, outputNames, outputs, success };
 }

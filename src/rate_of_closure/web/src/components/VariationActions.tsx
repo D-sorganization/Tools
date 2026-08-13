@@ -6,13 +6,17 @@ import {
   swingTracesToCsv,
   type SwingVariationResultTs,
 } from "../model/variationSwingEnsemble";
+import type { VariationExecutionProgress } from "../model/variationExecutionService";
 
 interface VariationActionsProps {
   plan: VariationPlanTs;
   dataset: VariationDatasetTs | null;
   ensemble: SwingVariationResultTs | null;
   status: string;
+  busy: boolean;
+  progress: VariationExecutionProgress | null;
   onRun: () => void;
+  onCancel: () => void;
   onImportText: (text: string) => void;
   onImportError: (message: string) => void;
 }
@@ -22,20 +26,33 @@ export function VariationActions({
   dataset,
   ensemble,
   status,
+  busy,
+  progress,
   onRun,
+  onCancel,
   onImportText,
   onImportError,
 }: VariationActionsProps): JSX.Element {
   return (
-    <div className={PANEL_CLASS}>
+    <div className={PANEL_CLASS} aria-busy={busy}>
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={onRun}
+          disabled={busy}
           title="Run only the analyses selected in Analysis Execution."
           className={`${BUTTON_CLASS} border-sky-500/60 text-sky-300`}
         >
           Run Variation Study
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={!busy}
+          title="Cancel the active worker and discard all partial results."
+          className={BUTTON_CLASS}
+        >
+          Cancel Variation Study
         </button>
         <button
           type="button"
@@ -120,6 +137,19 @@ export function VariationActions({
           />
         </label>
       </div>
+      {progress && (
+        <div className="mt-3">
+          <progress
+            aria-label="Variation execution progress"
+            className="h-2 w-full accent-sky-400"
+            max={progress.totalRuns}
+            value={progress.completedRuns}
+          />
+          <p className="mt-1 text-xs tabular-nums text-slate-500">
+            {progress.completedRuns}/{progress.totalRuns} evaluated runs complete
+          </p>
+        </div>
+      )}
       <p
         role="status"
         aria-label="Variation status"

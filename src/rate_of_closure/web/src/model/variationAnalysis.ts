@@ -81,13 +81,17 @@ export interface SensitivityResultTs {
 /** One-at-a-time sensitivity: rerun with a single spec active at a time. */
 export function oneAtATimeSensitivity(
   plan: VariationPlanTs,
+  onTrialComplete?: () => void,
 ): SensitivityResultTs {
   const rows: number[][] = [];
   let outputNames: string[] = [];
   for (const spec of plan.noise) {
     // A one-at-a-time study evaluates the selected marginal independently;
     // retaining a multi-member correlation group would leave dangling IDs.
-    const dataset = runVariation({ ...plan, noise: [spec], groups: [] });
+    const dataset = runVariation(
+      { ...plan, noise: [spec], groups: [] },
+      onTrialComplete,
+    );
     outputNames = dataset.outputNames;
     rows.push(
       dataset.outputNames.map((_name, j) => {

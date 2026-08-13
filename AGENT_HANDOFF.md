@@ -50,6 +50,29 @@ open.
   format, and MyPy. PyQt/React controls, rendering, serialized cross-runtime
   fixtures, protected CI/publication, and #4142 epic completion remain open.
 
+## 2026-08-12 React Monte Carlo worker execution (#4142 R14.3)
+
+The React Variation workspace no longer evaluates Monte Carlo studies in the
+click handler. Production browsers create one bounded module worker per study;
+the worker runs the unchanged seeded joint and OAT algorithms and reports
+determinate progress only after each model evaluation finishes. Run exposes a
+busy state and accessible progress meter, while Cancel terminates the worker,
+discards partial results, and permits an immediate rerun.
+
+An injected execution-service contract makes lifecycle behavior testable without
+changing the physical plan or result schemas. Abort signals, monotonic generation
+IDs, and unmount cleanup prevent a cancelled, superseded, or detached job from
+updating accepted results. Configuration and workflow changes invalidate active
+work. The same plan and seed produce the same datasets and sensitivity matrices
+as the prior synchronous authority.
+
+Verification: all 733 React tests pass, including production-path component
+coverage for run/progress, cancel/rerun, stale-generation suppression, and
+unmount abort. TypeScript, ESLint, and the Vite production build pass; the build
+emits the dedicated variation worker chunk. Browser/Playwright interaction and
+screenshot coverage remain an explicit R14.5 release gate. This slice does not
+complete #4142 or authorize the UpstreamDrift consumer pin.
+
 ## 2026-08-12 Integrated authority cross-review hardening (#4142)
 
 Protected #4404 CI found that Mypy 1.13 could not infer the dtype of the two

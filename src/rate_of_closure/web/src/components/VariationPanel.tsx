@@ -5,19 +5,9 @@ import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import {
   planFromJson,
   planToJson,
-  type VariationDatasetTs,
   type VariationPlanTs,
 } from "../model/variation";
-import {
-  executeVariationAnalyses,
-  type VariationAnalysisExecution,
-} from "../model/variationAnalysisPolicy";
-import type { SensitivityResultTs } from "../model/variationAnalysis";
-import { oneAtATimeSensitivity } from "../model/variationAnalysis";
-import {
-  runSwingVariation,
-  type SwingVariationResultTs,
-} from "../model/variationSwingEnsemble";
+import type { VariationAnalysisExecution } from "../model/variationAnalysisPolicy";
 import {
   deleteVariationPlan,
   duplicateVariationPlan,
@@ -40,6 +30,8 @@ import { BUTTON_CLASS, defaultVariationPlan } from "./variationUi";
 import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
 import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
+import type { VariationExecutionService } from "../model/variationExecutionService";
+import { useVariationExecution } from "./useVariationExecution";
 
 let generatedPlanId = 0;
 const createPlanId = (): string => {
@@ -58,6 +50,8 @@ export interface VariationPanelProps {
   morrisBase?: MorrisAuthorityBase;
   /** Honest fail-closed reason when current app context cannot round-trip. */
   morrisUnavailableReason?: string;
+  /** Injectable bounded execution authority for tests and embedded hosts. */
+  executionService?: VariationExecutionService;
 }
 
 export function VariationPanel({
@@ -67,6 +61,7 @@ export function VariationPanel({
   morrisClient = null,
   morrisBase,
   morrisUnavailableReason,
+  executionService,
 }: VariationPanelProps = {}): JSX.Element {
   const [workflow, setWorkflow] = useState<"variation" | "morris">("variation");
   const targetUse = spatialTarget
@@ -83,20 +78,31 @@ export function VariationPanel({
   }));
   const [analysisExecution, setAnalysisExecution] =
     useState<VariationAnalysisExecution>("both");
-  const [dataset, setDataset] = useState<VariationDatasetTs | null>(null);
-  const [sensitivity, setSensitivity] = useState<SensitivityResultTs | null>(null);
-  const [ensemble, setEnsemble] = useState<SwingVariationResultTs | null>(null);
   const [library, setLibrary] = useState<NamedVariationPlan[]>(initialLibrary.plans);
   const [selectedId, setSelectedId] = useState("");
   const [planName, setPlanName] = useState("");
-  const [status, setStatus] = useState(
+  const execution = useVariationExecution(
+    plan,
+    analysisExecution,
     initialLibrary.warnings.length > 0 ? initialLibrary.warnings.join(" ") : "Ready.",
+    executionService,
   );
+  const {
+    dataset,
+    sensitivity,
+    ensemble,
+    status,
+    setStatus,
+    busy,
+    progress,
+    run,
+    cancel,
+    invalidateResults: clearResults,
+  } = execution;
 
-  const clearResults = () => {
-    setDataset(null);
-    setSensitivity(null);
-    setEnsemble(null);
+  const selectWorkflow = (value: "variation" | "morris") => {
+    if (value !== workflow) clearResults();
+    setWorkflow(value);
   };
 
   const persistLibrary = (next: NamedVariationPlan[], message: string) => {
@@ -106,41 +112,6 @@ export function VariationPanel({
       setStatus(message);
     } catch (error) {
       setStatus(`Cannot update plan library: ${(error as Error).message}`);
-    }
-  };
-
-  const run = () => {
-    clearResults();
-    try {
-      const runTogether = analysisExecution !== "individual";
-      const traceResult = plan.mode === "swing" && runTogether
-        ? runSwingVariation(plan)
-        : null;
-      const result = executeVariationAnalyses(
-        plan,
-        analysisExecution,
-        traceResult === null
-          ? undefined
-          : {
-              runTogether: () => traceResult.dataset,
-              runIndividually: oneAtATimeSensitivity,
-            },
-      );
-      setDataset(result.dataset);
-      setSensitivity(result.sensitivity);
-      setEnsemble(traceResult);
-      if (result.dataset) {
-        const succeeded = result.dataset.success.filter(Boolean).length;
-        const failed = plan.nRuns - succeeded;
-        setStatus(
-          `Done: ${succeeded}/${plan.nRuns} joint runs${failed ? ` (${failed} failed)` : ""}` +
-            `${result.sensitivity ? "; one-at-a-time analysis also complete" : ""}.`,
-        );
-      } else {
-        setStatus("Done: one-at-a-time analysis complete; joint analysis was not requested.");
-      }
-    } catch (error) {
-      setStatus(`Cannot run: ${(error as Error).message}`);
     }
   };
 
@@ -201,14 +172,14 @@ export function VariationPanel({
 
   if (workflow === "morris" && morrisBase !== undefined) {
     return <div className="space-y-4">
-      <VariationWorkflowPicker value={workflow} onChange={setWorkflow} />
+      <VariationWorkflowPicker value={workflow} onChange={selectWorkflow} />
       <MorrisWorkflowPanel key={morrisAuthorityBaseIdentity(morrisBase)}
         client={morrisClient} base={morrisBase} />
     </div>;
   }
   return (
     <div className="space-y-4">
-      <VariationWorkflowPicker value={workflow} onChange={setWorkflow}
+      <VariationWorkflowPicker value={workflow} onChange={selectWorkflow}
         morrisDisabled={morrisBase === undefined} morrisUnavailableReason={morrisUnavailableReason} />
       <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
       <section aria-label="Variation setup" className="space-y-4">
@@ -236,7 +207,10 @@ export function VariationPanel({
           dataset={dataset}
           ensemble={ensemble}
           status={status}
-          onRun={run}
+          busy={busy}
+          progress={progress}
+          onRun={() => void run()}
+          onCancel={cancel}
           onImportText={importPlan}
           onImportError={(message) => setStatus(`Cannot read plan file: ${message}`)}
         />
