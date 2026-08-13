@@ -86,7 +86,8 @@ def test_ensemble_distinguishes_hit_miss_and_numerical_failure() -> None:
             raise RuntimeError("planted trial failure")
         return run_simulation(config)
 
-    result = run_simulation_ensemble(_request((hit, miss, failing)), executor)
+    request = _request((hit, miss, failing))
+    result = run_simulation_ensemble(request, executor)
 
     assert tuple(item.status for item in result.outcomes) == (
         EVALUATED_HIT,
@@ -101,6 +102,7 @@ def test_ensemble_distinguishes_hit_miss_and_numerical_failure() -> None:
     stats = {item.name: item for item in summary_stats(result.variation)}
     assert stats["closest_approach_m"].n == 2
     assert stats["clubhead_speed_mps"].n == 1
+    assert result.execution_metadata == request.execution_metadata
 
 
 def test_miss_retains_geometry_and_contact_but_nulls_impact_and_shot_metrics() -> None:

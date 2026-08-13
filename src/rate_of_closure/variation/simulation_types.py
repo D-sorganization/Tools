@@ -148,6 +148,7 @@ class SimulationEnsembleResult:
     outcomes: tuple[SimulationTrialOutcome, ...]
     variation: VariationDataset
     traces: EnsemblePositionTraces
+    execution_metadata: VariationExecutionMetadata | None = None
 
     def __post_init__(self) -> None:
         outcomes = tuple(self.outcomes)
@@ -206,6 +207,12 @@ class SimulationEnsembleResult:
         _require_outcome_scalar_binding(outcomes, self.variation)
         _require_trace_status_binding(outcomes, self.traces)
         object.__setattr__(self, "outcomes", outcomes)
+        if self.execution_metadata is not None:
+            resolution = resolve_execution_metadata(
+                self.variation.plan, self.execution_metadata
+            )
+            require(resolution.warning is None, "result metadata must be explicit")
+            object.__setattr__(self, "execution_metadata", resolution.metadata)
 
     @property
     def impact_output_names(self) -> tuple[str, ...]:

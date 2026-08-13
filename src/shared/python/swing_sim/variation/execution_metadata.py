@@ -17,14 +17,18 @@ from .registry import keys_for_mode, variable_registry
 from .spec import MAX_SAFE_INTEGER, SCHEMA_VERSION, VariationPlan
 
 EXECUTION_DOCUMENT_SCHEMA_ID = "rate-of-closure/variation-execution-document"
-EXECUTION_DOCUMENT_SCHEMA_VERSION = 1
+EXECUTION_DOCUMENT_SCHEMA_VERSION = 2
 EXECUTION_METADATA_SCHEMA_ID = "rate-of-closure/variation-execution-metadata"
-EXECUTION_METADATA_SCHEMA_VERSION = 1
+EXECUTION_METADATA_SCHEMA_VERSION = 2
 VARIABLE_REGISTRY_SCHEMA_ID = "swing-sim/variation-variable-registry"
 VARIABLE_REGISTRY_SCHEMA_VERSION = 1
 LEGACY_CURRENT_REGISTRY_WARNING = (
     "Legacy plan has no historical execution sidecar; resolved against the "
     "current variable registry. This is not evidence of historical reproducibility."
+)
+LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR = (
+    "Execution document schema @1 lacks RNG and solver identity; load its raw "
+    "plan and resolve a fresh @2 sidecar. Historical replay remains unproven."
 )
 
 _DOCUMENT_FIELDS = frozenset({"schema_id", "schema_version", "plan", "metadata"})
@@ -39,9 +43,29 @@ _METADATA_FIELDS = frozenset(
         "registry_schema_version",
         "registry_sha256",
         "resolved_variables",
+        "rng_identity",
+        "implementation_identity",
     }
 )
 _VARIABLE_FIELDS = frozenset({"variable_key", "value", "unit", "dimension"})
+_RNG_FIELDS = frozenset(
+    {
+        "algorithm_id",
+        "algorithm_version",
+        "stream_derivation_id",
+        "stream_derivation_version",
+    }
+)
+_IMPLEMENTATION_FIELDS = frozenset(
+    {
+        "runtime_id",
+        "runtime_version",
+        "executor_id",
+        "executor_version",
+        "solver_id",
+        "solver_version",
+    }
+)
 _PLAN_FIELDS = frozenset(
     {
         "schema_version",
@@ -77,6 +101,42 @@ class ResolvedVariableSnapshot:
 
 
 @dataclass(frozen=True)
+class RngExecutionIdentity:
+    algorithm_id: str
+    algorithm_version: int
+    stream_derivation_id: str
+    stream_derivation_version: int
+
+    def to_json_dict(self) -> dict[str, object]:
+        return {
+            "algorithm_id": self.algorithm_id,
+            "algorithm_version": self.algorithm_version,
+            "stream_derivation_id": self.stream_derivation_id,
+            "stream_derivation_version": self.stream_derivation_version,
+        }
+
+
+@dataclass(frozen=True)
+class ExecutionImplementationIdentity:
+    runtime_id: str
+    runtime_version: int
+    executor_id: str
+    executor_version: int
+    solver_id: str
+    solver_version: int
+
+    def to_json_dict(self) -> dict[str, object]:
+        return {
+            "runtime_id": self.runtime_id,
+            "runtime_version": self.runtime_version,
+            "executor_id": self.executor_id,
+            "executor_version": self.executor_version,
+            "solver_id": self.solver_id,
+            "solver_version": self.solver_version,
+        }
+
+
+@dataclass(frozen=True)
 class VariationExecutionMetadata:
     """Immutable sidecar binding a plan to current resolved registry state."""
 
@@ -85,6 +145,8 @@ class VariationExecutionMetadata:
     flight_model: str
     registry_sha256: str
     resolved_variables: tuple[ResolvedVariableSnapshot, ...]
+    rng_identity: RngExecutionIdentity
+    implementation_identity: ExecutionImplementationIdentity
     schema_id: str = EXECUTION_METADATA_SCHEMA_ID
     schema_version: int = EXECUTION_METADATA_SCHEMA_VERSION
     registry_schema_id: str = VARIABLE_REGISTRY_SCHEMA_ID
@@ -104,6 +166,8 @@ class VariationExecutionMetadata:
             "resolved_variables": [
                 item.to_json_dict() for item in self.resolved_variables
             ],
+            "rng_identity": self.rng_identity.to_json_dict(),
+            "implementation_identity": self.implementation_identity.to_json_dict(),
         }
 
 
@@ -211,6 +275,20 @@ def make_execution_metadata(plan: VariationPlan) -> VariationExecutionMetadata:
         flight_model=plan.flight_model,
         registry_sha256=_registry_sha256(plan),
         resolved_variables=_resolved_variables(plan),
+        rng_identity=RngExecutionIdentity(
+            algorithm_id="numpy-generator-pcg64",
+            algorithm_version=1,
+            stream_derivation_id="numpy-seedsequence-safe-seed-crc32-utf8-spec-id",
+            stream_derivation_version=1,
+        ),
+        implementation_identity=ExecutionImplementationIdentity(
+            runtime_id="rate-of-closure/python",
+            runtime_version=1,
+            executor_id="python-complete-simulation-ensemble",
+            executor_version=1,
+            solver_id="python-configured-simulation+scipy-rk45-flight",
+            solver_version=1,
+        ),
     )
 
 
@@ -243,6 +321,11 @@ def validate_execution_metadata(
     )
     require(
         metadata.registry_sha256 == expected.registry_sha256, "registry digest mismatch"
+    )
+    require(metadata.rng_identity == expected.rng_identity, "RNG identity mismatch")
+    require(
+        metadata.implementation_identity == expected.implementation_identity,
+        "implementation identity mismatch",
     )
     return metadata
 
@@ -322,6 +405,12 @@ def _metadata_from_json_dict(value: object) -> VariationExecutionMetadata:
     require(
         bool(_SHA256.fullmatch(plan_digest)), "plan_sha256 must be lowercase SHA-256"
     )
+    rng = _mapping(item["rng_identity"], "rng_identity", _RNG_FIELDS)
+    implementation = _mapping(
+        item["implementation_identity"],
+        "implementation_identity",
+        _IMPLEMENTATION_FIELDS,
+    )
     require(
         bool(_SHA256.fullmatch(registry_digest)),
         "registry_sha256 must be lowercase SHA-256",
@@ -338,6 +427,30 @@ def _metadata_from_json_dict(value: object) -> VariationExecutionMetadata:
         ),
         registry_sha256=registry_digest,
         resolved_variables=tuple(snapshots),
+        rng_identity=RngExecutionIdentity(
+            algorithm_id=_text(rng["algorithm_id"], "RNG algorithm_id"),
+            algorithm_version=_integer(
+                rng["algorithm_version"], "RNG algorithm_version"
+            ),
+            stream_derivation_id=_text(
+                rng["stream_derivation_id"], "RNG stream_derivation_id"
+            ),
+            stream_derivation_version=_integer(
+                rng["stream_derivation_version"], "RNG stream_derivation_version"
+            ),
+        ),
+        implementation_identity=ExecutionImplementationIdentity(
+            runtime_id=_text(implementation["runtime_id"], "runtime_id"),
+            runtime_version=_integer(
+                implementation["runtime_version"], "runtime_version"
+            ),
+            executor_id=_text(implementation["executor_id"], "executor_id"),
+            executor_version=_integer(
+                implementation["executor_version"], "executor_version"
+            ),
+            solver_id=_text(implementation["solver_id"], "solver_id"),
+            solver_version=_integer(implementation["solver_version"], "solver_version"),
+        ),
     )
 
 
@@ -347,9 +460,11 @@ def execution_document_from_json_dict(value: object) -> VariationExecutionDocume
     require(
         item["schema_id"] == EXECUTION_DOCUMENT_SCHEMA_ID, "document schema_id mismatch"
     )
+    document_version = _integer(item["schema_version"], "document schema_version")
+    if document_version == 1:
+        raise ValueError(LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR)
     require(
-        _integer(item["schema_version"], "document schema_version")
-        == EXECUTION_DOCUMENT_SCHEMA_VERSION,
+        document_version == EXECUTION_DOCUMENT_SCHEMA_VERSION,
         "document schema_version mismatch",
     )
     plan_item = _mapping(item["plan"], "plan", _PLAN_FIELDS)
@@ -372,9 +487,12 @@ __all__ = [
     "EXECUTION_METADATA_SCHEMA_ID",
     "EXECUTION_METADATA_SCHEMA_VERSION",
     "LEGACY_CURRENT_REGISTRY_WARNING",
+    "LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR",
     "VARIABLE_REGISTRY_SCHEMA_ID",
     "VARIABLE_REGISTRY_SCHEMA_VERSION",
     "ExecutionMetadataResolution",
+    "ExecutionImplementationIdentity",
+    "RngExecutionIdentity",
     "ResolvedVariableSnapshot",
     "VariationExecutionDocument",
     "VariationExecutionMetadata",

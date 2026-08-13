@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Runtime-specific replay sidecar (#4142)
+
+- Execution document/metadata schema @2 binds RNG algorithm/stream derivation
+  and runtime/executor/solver implementation IDs with explicit versions.
+- Python names PCG64 + SeedSequence safe-seed/CRC32-UTF-8 streams and its
+  configured-simulation/SciPy-RK45 path. React names mulberry32 + low32-seed
+  XOR FNV-1a-UTF-16 streams and mode-specific fixed-RK4 Waterloo paths.
+- Two goldens share plan/registry hashes while cross-runtime documents are
+  rejected. Same-runtime replay is pinned; portable replay is not claimed.
+- @1 strict documents fail with a fresh-@2 migration instruction. Live Python
+  results retain request metadata; archive/paired integration remains open.
+
+SPEC advances to 1.16.73.
+
 ## 2026-08-13 Canonical-number and strict-runtime correction (#4142)
 
 - Plan writers and execution sidecars normalize floating `-0.0` to `+0.0` in

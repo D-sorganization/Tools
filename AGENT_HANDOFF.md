@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Runtime-specific replay identity (#4142 R10.4)
+
+Version 1.16.73 advances strict execution documents/metadata to @2 with exact
+RNG algorithm, stream derivation, runtime, executor, and solver IDs/versions.
+Python records NumPy PCG64/SeedSequence plus configured simulation and SciPy
+RK45 flight. React records mulberry32/FNV-1a and its mode-specific fixed-RK4
+Waterloo path. Runtime-specific golden documents share plan/registry hashes but
+cross-runtime documents fail closed; only same-runtime replay is evidenced.
+
+@1 documents now provide an explicit fresh-@2 migration instruction and cannot
+prove historical replay. Live Python results carry request metadata in memory.
+Archive and paired-producer serialization remain open and must not synthesize
+identity for historical results.
+
 ## 2026-08-13 Execution metadata canonical-number correction (#4142 R10.4/R10.6)
 
 Version 1.16.72 closes three fail-open identity gaps in the versioned execution

@@ -37,15 +37,16 @@ const jointRequest = () => prepareVariationExecutionRequest(plan, "all_together"
 describe("variation execution authority", () => {
   it("preserves the existing deterministic results and reports completed evaluations", () => {
     const progress: VariationExecutionProgress[] = [];
-    const result = executeVariationWork(
-      prepareVariationExecutionRequest(plan, "both"),
-      (value) => progress.push(value),
-    );
+    const request = prepareVariationExecutionRequest(plan, "both");
+    const result = executeVariationWork(request, (value) => progress.push(value));
+    const replay = executeVariationWork(request, () => undefined);
     const expected = executeVariationAnalyses(plan, "both");
 
     expect(result.dataset).toEqual(expected.dataset);
     expect(result.sensitivity).toEqual(expected.sensitivity);
     expect(result.ensemble).toBeNull();
+    expect(replay).toEqual(result);
+    expect(result.executionMetadata).toEqual(request.executionMetadata);
     expect(plannedVariationRuns(plan, "both")).toBe(12);
     expect(progress[progress.length - 1]).toEqual({
       completedRuns: 12,

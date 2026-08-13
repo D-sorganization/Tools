@@ -26,11 +26,31 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.72                                    |
-| **Spec Version**        | 1.16.72                                    |
+| **Current Version**     | 1.16.73                                    |
+| **Spec Version**        | 1.16.73                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Runtime-specific replay identity (#4142 R10.4)
+
+Version 1.16.73 advances the strict sidecar to
+`rate-of-closure/variation-execution-document@2`. It records exact RNG
+algorithm and stream-derivation IDs/versions plus runtime, executor, and solver
+implementation IDs/versions. Python identifies NumPy Generator PCG64 streams
+derived through SeedSequence from the safe seed and CRC32 of UTF-8 spec ID;
+React identifies mulberry32 streams derived by low-32-bit seed XOR FNV-1a over
+JavaScript UTF-16 code units. Python configured simulation uses SciPy RK45
+flight; React records mode-specific fixed-RK4 Waterloo execution.
+
+These identities deliberately differ. Two golden @2 documents share exact plan
+and registry hashes but each runtime accepts only its own document. Tests pin
+same-runtime replay; portable Python/React RNG or numerical replay is not
+claimed. Strict @1 document import fails with instructions to resolve its raw
+plan into a fresh @2 sidecar; historical replay remains unproven. Live Python
+results retain request metadata in memory. Archive codecs and paired producers
+remain explicit later integration dependencies and do not gain metadata by
+inference.
 
 ### 2026-08-13 Execution metadata canonical-number correction (#4142)
 

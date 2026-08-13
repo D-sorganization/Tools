@@ -171,7 +171,12 @@ def run_simulation_ensemble_chunks(
     cancellation = cancel_event or threading.Event()
     times, point_ids = _trace_layout(request.configs[0], None)
     header = EnsembleStreamHeader(
-        request.plan, request.sampled_inputs, times, point_ids, APP_FRAME_ID
+        request.plan,
+        request.sampled_inputs,
+        times,
+        point_ids,
+        APP_FRAME_ID,
+        request.execution_metadata,
     )
     cells_per_trial = times.size * len(point_ids) * 3
     maximum_rows = MAX_CHUNK_POSITION_CELLS // cells_per_trial

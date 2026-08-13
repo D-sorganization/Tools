@@ -1,10 +1,13 @@
 import fixture from "./__fixtures__/variation_execution_document_v1.json";
 import edgeFixture from "./__fixtures__/variation_execution_document_edge_floats_v1.json";
+import pythonV2Fixture from "./__fixtures__/variation_execution_document_python_v2.json";
+import reactV2Fixture from "./__fixtures__/variation_execution_document_react_v2.json";
 import { describe, expect, it } from "vitest";
 
 import type { VariationPlanTs } from "./variationSchema";
 import {
   LEGACY_CURRENT_REGISTRY_WARNING,
+  LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR,
   makeVariationExecutionMetadata,
   parseVariationExecutionDocument,
   resolveVariationExecutionMetadata,
@@ -63,32 +66,45 @@ describe("variation execution metadata", () => {
 
     expect(metadata).toMatchObject({
       schemaId: "rate-of-closure/variation-execution-metadata",
-      schemaVersion: 1,
+      schemaVersion: 2,
       registrySchemaVersion: 1,
       mode: "launch",
       flightModel: "waterloo_penner",
     });
     expect(metadata.planSha256).toMatch(/^[0-9a-f]{64}$/);
     expect(metadata.registrySha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(metadata.rngIdentity.algorithmId).toBe("mulberry32-u32");
+    expect(metadata.implementationIdentity.runtimeId).toBe("rate-of-closure/react");
+    expect(metadata.implementationIdentity.solverId).toContain("waterloo-fixed-rk4-flight");
     expect(snapshots.get(BALL_SPEED)).toMatchObject({ value: 154.25, unit: "mph", dimension: "speed" });
     expect(snapshots.get(LAUNCH_ANGLE)).toMatchObject({ value: 12, unit: "deg", dimension: "angle" });
     expect(Object.isFrozen(metadata)).toBe(true);
     expect(Object.isFrozen(metadata.resolvedVariables)).toBe(true);
   });
 
-  it("matches and strictly reads the shared Python fixture", () => {
-    expect(variationExecutionDocument(plan())).toEqual(fixture);
-    expect(parseVariationExecutionDocument(JSON.stringify(fixture))).toEqual({
-      plan: plan(),
-      metadata: makeVariationExecutionMetadata(plan()),
-      warning: null,
-    });
+  it("fails closed on v1 with an explicit migration instruction", () => {
+    expect(() => parseVariationExecutionDocument(JSON.stringify(fixture))).toThrow(
+      /Historical replay remains unproven/,
+    );
+    expect(() => parseVariationExecutionDocument(JSON.stringify(edgeFixture))).toThrow(/@1/);
+    expect(LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR).toContain("fresh @2 sidecar");
   });
 
-  it("matches the shared signed-zero and edge-float fixture", () => {
-    expect(variationExecutionDocument(edgePlan())).toEqual(edgeFixture);
-    expect(parseVariationExecutionDocument(JSON.stringify(edgeFixture)).metadata.planSha256).toBe(
+  it("preserves signed-zero and edge-float digest under @2", () => {
+    expect(parseVariationExecutionDocument(
+      JSON.stringify(variationExecutionDocument(edgePlan())),
+    ).metadata.planSha256).toBe(
       "6d7c23bb72a53359faa36d1d57d95835c9808bcdb67e0919859893e1a0cd711a",
+    );
+  });
+
+  it("pins the React @2 golden and rejects the Python runtime document", () => {
+    expect(variationExecutionDocument(plan())).toEqual(reactV2Fixture);
+    expect(reactV2Fixture.metadata.plan_sha256).toBe(pythonV2Fixture.metadata.plan_sha256);
+    expect(reactV2Fixture.metadata.registry_sha256).toBe(pythonV2Fixture.metadata.registry_sha256);
+    expect(parseVariationExecutionDocument(JSON.stringify(reactV2Fixture)).plan).toEqual(plan());
+    expect(() => parseVariationExecutionDocument(JSON.stringify(pythonV2Fixture))).toThrow(
+      /RNG identity/i,
     );
   });
 
@@ -169,6 +185,11 @@ describe("variation execution metadata", () => {
       value.metadata.resolved_variables.push({ ...value.metadata.resolved_variables[0] });
     }],
     ["registry digest", (value) => { value.metadata.registry_sha256 = "0".repeat(64); }],
+    ["RNG identity", (value) => { value.metadata.rng_identity.algorithm_id = "other"; }],
+    ["implementation identity", (value) => { value.metadata.implementation_identity.solver_id = "other"; }],
+    ["rng_identity fields", (value) => {
+      Object.assign(value.metadata.rng_identity, { unexpected: true });
+    }],
     ["metadata fields", (value) => { Object.assign(value.metadata, { unexpected: true }); }],
     ["execution document fields", (value) => { Object.assign(value, { unexpected: true }); }],
   ];

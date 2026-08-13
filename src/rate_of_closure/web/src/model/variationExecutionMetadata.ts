@@ -8,14 +8,33 @@ import {
 import { resolvedBase } from "./variationSampling";
 
 export const EXECUTION_DOCUMENT_SCHEMA_ID = "rate-of-closure/variation-execution-document";
-export const EXECUTION_DOCUMENT_SCHEMA_VERSION = 1;
+export const EXECUTION_DOCUMENT_SCHEMA_VERSION = 2;
 export const EXECUTION_METADATA_SCHEMA_ID = "rate-of-closure/variation-execution-metadata";
-export const EXECUTION_METADATA_SCHEMA_VERSION = 1;
+export const EXECUTION_METADATA_SCHEMA_VERSION = 2;
 export const VARIABLE_REGISTRY_SCHEMA_ID = "swing-sim/variation-variable-registry";
 export const VARIABLE_REGISTRY_SCHEMA_VERSION = 1;
 export const LEGACY_CURRENT_REGISTRY_WARNING =
   "Legacy plan has no historical execution sidecar; resolved against the current variable registry. " +
   "This is not evidence of historical reproducibility.";
+export const LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR =
+  "Execution document schema @1 lacks RNG and solver identity; load its raw plan and resolve " +
+  "a fresh @2 sidecar. Historical replay remains unproven.";
+
+export interface RngExecutionIdentityTs {
+  readonly algorithmId: string;
+  readonly algorithmVersion: number;
+  readonly streamDerivationId: string;
+  readonly streamDerivationVersion: number;
+}
+
+export interface ExecutionImplementationIdentityTs {
+  readonly runtimeId: string;
+  readonly runtimeVersion: number;
+  readonly executorId: string;
+  readonly executorVersion: number;
+  readonly solverId: string;
+  readonly solverVersion: number;
+}
 
 export interface ResolvedVariableSnapshotTs {
   readonly variableKey: string;
@@ -34,6 +53,8 @@ export interface VariationExecutionMetadataTs {
   readonly registrySchemaVersion: typeof VARIABLE_REGISTRY_SCHEMA_VERSION;
   readonly registrySha256: string;
   readonly resolvedVariables: readonly ResolvedVariableSnapshotTs[];
+  readonly rngIdentity: RngExecutionIdentityTs;
+  readonly implementationIdentity: ExecutionImplementationIdentityTs;
 }
 
 export interface VariationExecutionResolutionTs {
@@ -60,6 +81,14 @@ interface MetadataWire {
     unit: string;
     dimension: string;
   }>;
+  rng_identity: {
+    algorithm_id: string; algorithm_version: number;
+    stream_derivation_id: string; stream_derivation_version: number;
+  };
+  implementation_identity: {
+    runtime_id: string; runtime_version: number; executor_id: string;
+    executor_version: number; solver_id: string; solver_version: number;
+  };
 }
 
 interface ExecutionDocumentWire {
@@ -74,14 +103,20 @@ const METADATA_FIELDS = [
   "flight_model", "mode", "plan_sha256", "registry_schema_id",
   "registry_schema_version", "registry_sha256", "resolved_variables",
   "schema_id", "schema_version",
-];
+  "rng_identity", "implementation_identity",
+].sort();
 const VARIABLE_FIELDS = ["dimension", "unit", "value", "variable_key"];
 const RUNTIME_METADATA_FIELDS = [
   "flightModel", "mode", "planSha256", "registrySchemaId",
   "registrySchemaVersion", "registrySha256", "resolvedVariables",
   "schemaId", "schemaVersion",
+  "rngIdentity", "implementationIdentity",
 ].sort();
 const RUNTIME_VARIABLE_FIELDS = ["dimension", "unit", "value", "variableKey"];
+const RNG_FIELDS = ["algorithm_id", "algorithm_version", "stream_derivation_id", "stream_derivation_version"];
+const IMPLEMENTATION_FIELDS = ["executor_id", "executor_version", "runtime_id", "runtime_version", "solver_id", "solver_version"];
+const RUNTIME_RNG_FIELDS = ["algorithmId", "algorithmVersion", "streamDerivationId", "streamDerivationVersion"];
+const RUNTIME_IMPLEMENTATION_FIELDS = ["executorId", "executorVersion", "runtimeId", "runtimeVersion", "solverId", "solverVersion"];
 const PLAN_FIELDS = [
   "base_variables", "flight_model", "groups", "mode", "n_runs", "noise",
   "schema_version", "seed",
@@ -181,6 +216,12 @@ const registryDigest = (plan: VariationPlanTs): string => digest({
   }),
 });
 
+const solverId = (mode: VariationMode): string => mode === "swing"
+  ? "rate-of-closure/react-swing-rk4+rigid-impact+waterloo-fixed-rk4-flight"
+  : mode === "delivery"
+    ? "rate-of-closure/react-rigid-impact+waterloo-fixed-rk4-flight"
+    : "rate-of-closure/react-launch+waterloo-fixed-rk4-flight";
+
 export const makeVariationExecutionMetadata = (
   plan: VariationPlanTs,
 ): VariationExecutionMetadataTs => Object.freeze({
@@ -193,6 +234,16 @@ export const makeVariationExecutionMetadata = (
   registrySchemaVersion: VARIABLE_REGISTRY_SCHEMA_VERSION,
   registrySha256: registryDigest(plan),
   resolvedVariables: snapshots(plan),
+  rngIdentity: Object.freeze({
+    algorithmId: "mulberry32-u32", algorithmVersion: 1,
+    streamDerivationId: "xor-low32-safe-seed-fnv1a-utf16-spec-id",
+    streamDerivationVersion: 1,
+  }),
+  implementationIdentity: Object.freeze({
+    runtimeId: "rate-of-closure/react", runtimeVersion: 1,
+    executorId: "react-inline-worker-variation", executorVersion: 1,
+    solverId: solverId(plan.mode), solverVersion: 1,
+  }),
 });
 
 const snapshotWire = (item: ResolvedVariableSnapshotTs) => ({
@@ -212,6 +263,20 @@ const metadataWire = (metadata: VariationExecutionMetadataTs): MetadataWire => (
   registry_schema_version: metadata.registrySchemaVersion,
   registry_sha256: metadata.registrySha256,
   resolved_variables: metadata.resolvedVariables.map(snapshotWire),
+  rng_identity: {
+    algorithm_id: metadata.rngIdentity.algorithmId,
+    algorithm_version: metadata.rngIdentity.algorithmVersion,
+    stream_derivation_id: metadata.rngIdentity.streamDerivationId,
+    stream_derivation_version: metadata.rngIdentity.streamDerivationVersion,
+  },
+  implementation_identity: {
+    runtime_id: metadata.implementationIdentity.runtimeId,
+    runtime_version: metadata.implementationIdentity.runtimeVersion,
+    executor_id: metadata.implementationIdentity.executorId,
+    executor_version: metadata.implementationIdentity.executorVersion,
+    solver_id: metadata.implementationIdentity.solverId,
+    solver_version: metadata.implementationIdentity.solverVersion,
+  },
 });
 
 const parseMetadata = (value: unknown): VariationExecutionMetadataTs => {
@@ -233,9 +298,13 @@ const parseMetadata = (value: unknown): VariationExecutionMetadataTs => {
   if (!/^[0-9a-f]{64}$/.test(planSha256) || !/^[0-9a-f]{64}$/.test(registrySha256)) {
     throw new Error("metadata digests must be lowercase SHA-256");
   }
+  const rng = exactRecord(item.rng_identity, RNG_FIELDS, "rng_identity");
+  const implementation = exactRecord(
+    item.implementation_identity, IMPLEMENTATION_FIELDS, "implementation_identity",
+  );
   return Object.freeze({
     schemaId: text(item.schema_id, "metadata schema_id") as typeof EXECUTION_METADATA_SCHEMA_ID,
-    schemaVersion: integer(item.schema_version, "metadata schema_version") as 1,
+    schemaVersion: integer(item.schema_version, "metadata schema_version") as 2,
     planSha256,
     mode: text(item.mode, "metadata mode") as VariationMode,
     flightModel: text(item.flight_model, "metadata flight_model"),
@@ -245,6 +314,20 @@ const parseMetadata = (value: unknown): VariationExecutionMetadataTs => {
     registrySchemaVersion: integer(item.registry_schema_version, "registry schema_version") as 1,
     registrySha256,
     resolvedVariables,
+    rngIdentity: Object.freeze({
+      algorithmId: text(rng.algorithm_id, "RNG algorithm_id"),
+      algorithmVersion: integer(rng.algorithm_version, "RNG algorithm_version"),
+      streamDerivationId: text(rng.stream_derivation_id, "RNG stream_derivation_id"),
+      streamDerivationVersion: integer(rng.stream_derivation_version, "RNG stream_derivation_version"),
+    }),
+    implementationIdentity: Object.freeze({
+      runtimeId: text(implementation.runtime_id, "runtime_id"),
+      runtimeVersion: integer(implementation.runtime_version, "runtime_version"),
+      executorId: text(implementation.executor_id, "executor_id"),
+      executorVersion: integer(implementation.executor_version, "executor_version"),
+      solverId: text(implementation.solver_id, "solver_id"),
+      solverVersion: integer(implementation.solver_version, "solver_version"),
+    }),
   });
 };
 
@@ -258,6 +341,8 @@ export const validateVariationExecutionMetadata = (
   runtime.resolvedVariables.forEach((item, index) => {
     exactRecord(item, RUNTIME_VARIABLE_FIELDS, `metadata resolvedVariables[${index}]`);
   });
+  exactRecord(runtime.rngIdentity, RUNTIME_RNG_FIELDS, "metadata rngIdentity");
+  exactRecord(runtime.implementationIdentity, RUNTIME_IMPLEMENTATION_FIELDS, "metadata implementationIdentity");
   const expected = makeVariationExecutionMetadata(plan);
   if (metadata.schemaId !== expected.schemaId) throw new Error("metadata schema ID mismatch");
   if (metadata.schemaVersion !== expected.schemaVersion) throw new Error("metadata schema version mismatch");
@@ -272,6 +357,12 @@ export const validateVariationExecutionMetadata = (
     throw new Error("resolved variable snapshot mismatch");
   }
   if (metadata.registrySha256 !== expected.registrySha256) throw new Error("registry digest mismatch");
+  if (JSON.stringify(metadata.rngIdentity) !== JSON.stringify(expected.rngIdentity)) {
+    throw new Error("RNG identity mismatch");
+  }
+  if (JSON.stringify(metadata.implementationIdentity) !== JSON.stringify(expected.implementationIdentity)) {
+    throw new Error("implementation identity mismatch");
+  }
   return metadata;
 };
 
@@ -297,8 +388,11 @@ export const parseVariationExecutionDocument = (
   textValue: string,
 ): ParsedVariationExecutionDocumentTs => {
   const root = exactRecord(JSON.parse(textValue) as unknown, DOCUMENT_FIELDS, "execution document");
-  if (root.schema_id !== EXECUTION_DOCUMENT_SCHEMA_ID ||
-      root.schema_version !== EXECUTION_DOCUMENT_SCHEMA_VERSION) {
+  if (root.schema_id !== EXECUTION_DOCUMENT_SCHEMA_ID) {
+    throw new Error("execution document schema mismatch");
+  }
+  if (root.schema_version === 1) throw new Error(LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR);
+  if (root.schema_version !== EXECUTION_DOCUMENT_SCHEMA_VERSION) {
     throw new Error("execution document schema mismatch");
   }
   const rawPlan = isRecord(root.plan) && "ball_setup" in root.plan

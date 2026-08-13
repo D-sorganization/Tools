@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 runtime-specific replay identity
+
+- Strict execution documents and metadata advance to @2 with versioned RNG,
+  stream-derivation, runtime, executor, and solver implementation identity.
+- Python identifies NumPy PCG64/SeedSequence with CRC32 over UTF-8 spec IDs and
+  configured simulation plus SciPy RK45 flight. React identifies mulberry32,
+  low32-seed XOR FNV-1a over UTF-16, and mode-specific fixed-RK4 Waterloo paths.
+- Python and React goldens have the same plan/registry hashes and deliberately
+  different execution identities; each runtime rejects the other's document.
+  Same-runtime replay is tested without claiming portable numerical parity.
+- @1 documents fail closed with explicit fresh-@2 migration guidance.
+  Live Python results bind request metadata in memory. Archive codecs and
+  paired producers remain later dependencies and historical metadata is never
+  inferred.
+- SPEC advances to 1.16.73.
+
 ## 2026-08-13 #4142 execution-metadata canonical-number correction
 
 - Python and React canonical plan writers, resolved snapshots, and digest
