@@ -54,6 +54,7 @@ from .direction import (
     migrate_launch_direction_mapping,
 )
 from .frames import from_flight_frame, to_flight_frame
+from .ground_bounce_execution import execute_repeated_bounce_from_flight
 from .ground_transfer import (
     FlightGroundTransferError,
     FlightGroundTransferSettings,
@@ -245,6 +246,7 @@ __all__ = [
     "compute_flight_metrics",
     "derive_launch_conditions",
     "derive_flight_metric_result",
+    "execute_repeated_bounce_from_flight",
     "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",

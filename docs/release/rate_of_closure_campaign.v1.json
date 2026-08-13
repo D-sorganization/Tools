@@ -324,7 +324,17 @@
       "pr": 4357,
       "branch": "feat/4270-repeated-bounce-execution",
       "base_branch": "feat/4270-repeated-bounce-request-wire",
-      "head_sha": "05dfd87f4eaff54f4820d440556674482e22cf58",
+      "head_sha": "c492b52f9f7615c5bc38e780965167cc8f64327c",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4359",
+      "pr": 4359,
+      "branch": "feat/4270-flight-bounce-execution",
+      "base_branch": "feat/4270-repeated-bounce-execution",
+      "head_sha": "869b626e2d3ebd4097ae76b8fc9720cda6696947",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -452,6 +462,27 @@
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md",
         "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-flight-bounce-local-869b",
+      "kind": "local",
+      "commit_sha": "869b626e2d3ebd4097ae76b8fc9720cda6696947",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests src/shared/python/swing_sim/ground/tests",
+        "python -m mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/flight/ground_bounce_execution.py",
+        "python -m ruff check src/shared/python/swing_sim/flight tests && python -m ruff format --check src/shared/python/swing_sim/flight tests",
+        "python scripts/rate_campaign_manifest.py"
+      ],
+      "summary": "The ready PR #4359 implementation passed 17 focused facade tests, all 365 flight-plus-ground tests, strict transfer-failure non-execution coverage, Ruff, MyPy, Bandit, documentation/governance, manifest, structural, and changed-file gates; protected review and checks remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/FLIGHT_TO_GROUND_CONTRACT.md",
+        "docs/specs/GROUND_IMPACT_BOUNCE.md"
       ]
     },
     {
@@ -1339,7 +1370,8 @@
         "pr-4354",
         "pr-4355",
         "pr-4356",
-        "pr-4357"
+        "pr-4357",
+        "pr-4359"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
@@ -1350,18 +1382,19 @@
       "evidence_ids": [
         "ground-impact-local-63a6",
         "ground-skid-roll-local-f475",
+        "ground-flight-bounce-local-869b",
         "ground-regional-local-1a48",
         "ground-regional-wire-local-74a0",
         "ground-regional-ui-local-cbb9",
         "ground-regional-ui-helper-local-d217",
         "ground-regional-io-local-8e1c"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, and UI-neutral repeated-bounce execution carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, and 4357. Published feature heads now include bounded raw-trajectory inspection/export, the strict 1 MiB Python/TypeScript RepeatedBounceResult prefix wire without browser physics, the #4356 strict repeated-bounce request envelope with canonical ground-request and joint-execution-input digests, exact request/result pairing, and adversarial capture-speed digest coverage, and the #4357 UI-neutral Python request-to-solver binding. Fresh completed protected evidence for the reconciled heads, UI request construction/invocation, persistence, interpolation/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, and flight-to-bounce composition carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, and 4359. Published feature heads now include bounded raw-trajectory inspection/export, the strict 1 MiB Python/TypeScript RepeatedBounceResult prefix wire without browser physics, the #4356 strict repeated-bounce request envelope with canonical ground-request and joint-execution-input digests, exact request/result pairing and adversarial capture-speed digest coverage, the #4357 UI-neutral Python request-to-solver binding, and the #4359 exact typed flight-transfer-to-request-to-execution facade. Fresh completed protected evidence for the reconciled heads, UI request construction/invocation, persistence, interpolation/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
-        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python regional execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; open PR #4353 adds bounded ground-event and regional-transition ledger inspection; open PR #4354 adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export; open PR #4355 adds strict import-only Python/TypeScript RepeatedBounceResult evidence serialization and parsing with exact nested invariants, a 1 MiB bound, and canonical SHA parity; open PR #4356 adds the strict paired request envelope; and open PR #4357 adds the UI-neutral Python request-to-solver binding. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI executor input construction or invocation, prefix persistence, trajectory interpolation/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
+        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python regional execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; open PR #4353 adds bounded ground-event and regional-transition ledger inspection; open PR #4354 adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export; open PR #4355 adds strict import-only Python/TypeScript RepeatedBounceResult evidence serialization and parsing with exact nested invariants, a 1 MiB bound, and canonical SHA parity; open PR #4356 adds the strict paired request envelope; open PR #4357 adds the UI-neutral Python request-to-solver binding; and open PR #4359 adds strict composition from qualified flight output through the existing transfer and request boundaries to that executor. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI executor input construction or invocation, prefix persistence, trajectory interpolation/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191

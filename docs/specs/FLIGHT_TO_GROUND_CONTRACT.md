@@ -130,6 +130,19 @@ ball data with reduced plane defaults. The older ground-only Rust flight API is
 retained as a compatibility path only where it can preserve the requested
 physics; unsupported tee transfer fails closed.
 
-This transfer still does not implement bounce, skid, or roll. UpstreamDrift
-terrain remains a one-way UpstreamDrift-to-Tools adapter concern; Tools must
-never import UpstreamDrift.
+The transfer itself still does not implement bounce, skid, or roll. The shared
+Python flight facade additionally exposes
+`execute_repeated_bounce_from_flight` as a narrow composition boundary. It
+requires exact `FlightResult`, `LaunchConditions`, and
+`FlightGroundTransferSettings` records, validates cancellation and capture
+inputs before transfer, delegates request construction to
+`build_ground_simulation_request`, wraps that exact request in the existing
+`RepeatedBounceRequest`, and delegates execution to
+`execute_repeated_bounce_request`. Typed transfer failures propagate unchanged,
+and the returned request/result pair retains the existing physical-request and
+joint execution-input digests. This adds no physics law or wire schema.
+
+UpstreamDrift terrain remains a one-way UpstreamDrift-to-Tools adapter concern;
+Tools must never import UpstreamDrift. UI invocation, persistence, playback,
+TypeScript/Rust/WASM execution, regional-material continuation, and final total
+distance remain separate work under #4267/#4270/#4271.

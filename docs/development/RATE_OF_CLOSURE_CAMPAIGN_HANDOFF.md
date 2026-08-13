@@ -1,5 +1,35 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4359 shared Python flight-to-bounce composition
+
+- Ready-for-review PR
+  [#4359](https://github.com/D-sorganization/Tools/pull/4359) on
+  `feat/4270-flight-bounce-execution` starts from exact clean published Tools
+  #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`; its reviewed implementation
+  commit is `869b626e2d3ebd4097ae76b8fc9720cda6696947`.
+- The public `execute_repeated_bounce_from_flight` seam validates exact flight,
+  launch, and transfer types plus callback and capture inputs before transfer,
+  then composes the existing request builder, strict repeated-bounce request,
+  and UI-neutral executor. It adds no physics and preserves typed transfer
+  failures and the existing identity/digest evidence.
+- RED-GREEN evidence captured the missing module/export first. Independent
+  follow-up coverage proves exact transfer-error messages, fields, and reasons
+  plus zero executor calls for no-contact, grazing, and missing-angular-state
+  paths. Seventeen focused tests and all 365 flight-plus-ground tests pass.
+  Ruff check/format, scoped
+  Black, protected and import-following MyPy, Bandit, placeholder/diff checks,
+  documentation and blocking-quality governance, minimum-test/test-assertion
+  contracts, changed-Python and module-size policies, the campaign manifest,
+  and 11 manifest/layout tests are green. Standalone Black retains one
+  inherited advisory in `test_contract_api.py`; authoritative Ruff is green
+  and its only delta is the public API entry. The committed changed-file size
+  gate is green with zero violations across four changed Python files.
+- The ready PR is mergeable, but protected checks and review are pending, so it
+  remains `not_released`. PyQt6/React UI,
+  TypeScript/Rust/WASM physics, persistence, playback, camera behavior,
+  regional chaining, skid/roll completion, final distance, protected evidence,
+  and #4270/#4267 completion remain explicitly open.
+
 ## 2026-08-11 PR #4357 repeated-bounce request execution binding
 
 - Ready-for-review PR

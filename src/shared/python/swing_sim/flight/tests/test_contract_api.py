@@ -112,6 +112,7 @@ EXPECTED_PUBLIC_API = {
     "compute_flight_metrics",
     "derive_launch_conditions",
     "derive_flight_metric_result",
+    "execute_repeated_bounce_from_flight",
     "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
