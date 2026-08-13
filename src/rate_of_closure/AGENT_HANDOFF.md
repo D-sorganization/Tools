@@ -1,5 +1,47 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4362 bounded Track Clubhead child
+
+Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
+starts exactly at current published PR #4358 head
+`d662b016eceed8cbfbce26c12a42ca2c326a684f`. Its independently reviewed
+implementation commit is `cb2bec4eb1b62a84dd617700052273787abba9ef`.
+The shared Python/TypeScript camera
+contract now adds stable `camera.track_clubhead`, `camera.recenter`,
+`camera.auto_fit_fallback`, and off/active/suspended state IDs under a new
+`camera_tracking_v1.json` golden. The original preset/v1 golden remains
+unchanged.
+
+Matched PyQt6 `Club3DView` and React `ClubCanvas` controls opt into tracking
+per viewport, center start/impact/end without changing zoom, limit normal target
+motion to 0.05 m per frame, and recenter exactly across the playback wrap.
+Scenario/replay phase reset recenters exactly only for active tracking;
+suspended tracking retains its manual target.
+Manual orbit suspends tracking in both clients; native PyQt pan also retains
+the visible target and suspends tracking. The explicit Re-center action resumes
+at the current clubhead. The separately opt-in Auto
+Fit fallback only reduces unsafe zoom to retain the existing 16% clearance and
+never silently zooms in. React projection now subtracts the camera target, so
+tracking changes the rendered camera instead of fit metadata alone. The
+fallback resolves before rasterization after discontinuous mode,
+geometry, or target changes, eliminating the prior one-frame stale-zoom clip.
+Accessible labels and visible state are present in both clients. Playback
+controls were
+extracted from the React canvas without changing their interaction contract.
+
+Focused evidence is green: 32 Python/PyQt camera tests and 20 React
+model/component tests, including start/impact/end, wrap, matched manual orbit,
+native PyQt pan,
+recenter, zoom preservation, fallback, and per-viewport isolation. Broad local
+qualification is also green: 944 Python Rate/PyQt tests, 757 React tests in 118
+files, Ruff check/format, focused MyPy, zero-warning ESLint, TypeScript/Vite
+production build, manifest validation, and the default module-size budget. The
+changed PyQt viewport is 499 lines; the parent `torque_profile_panel.py`
+612-line debt is unchanged. Rendered/HiDPI matrices, workspace camera
+persistence, other 3D
+surfaces, UpstreamDrift consumers, protected review, release, and
+#4284/#4218 completion remain open.
+
 ## 2026-08-11 PR #4358 published camera-preset parity
 
 Ready-for-review PR `#4358` publishes branch

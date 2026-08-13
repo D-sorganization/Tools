@@ -29,6 +29,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -43,6 +44,10 @@
 | **Current Version**     | 1.14.45                                    |
 | **Spec Version**        | 1.14.45                                    |
 >>>>>>> origin/feat/4284-camera-preset-parity
+=======
+| **Current Version**     | 1.14.46                                    |
+| **Spec Version**        | 1.14.46                                    |
+>>>>>>> origin/feat/4284-track-clubhead
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4274-regional-surface-ui
 
@@ -65,10 +70,36 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ### 2026-08-10 Regional Surface-Plan Editor First Slice
 =======
 =======
+=======
+### 2026-08-11 Matched Opt-In Clubhead Camera Tracking
+
+- The PyQt6 `Club3DView` and React `ClubCanvas` share stable Track Clubhead,
+  Re-center Clubhead, and Auto Fit fallback identifiers and expose a visible,
+  accessible tracking state (`off`, `active`, or `suspended`) per viewport.
+- Enabling tracking centers the current clubhead subject without changing
+  zoom. Playback advances the camera target by no more than 0.05 m per frame;
+  a loop wrap deliberately recenters instead of traversing the discontinuity.
+  A scenario/replay phase reset uses the same exact recenter only while
+  tracking is active; suspended tracking retains its manual target.
+- Manual orbit deterministically suspends tracking in both clients. Native
+  PyQt pan also preserves the user's visible target while suspending. Re-center
+  resumes active tracking at the current clubhead while preserving orientation
+  and zoom. React pan remains outside this child.
+- Continuous fitting is separately opt-in. It may only reduce an unsafe zoom
+  enough to retain the documented 16% clearance and never silently zoom in.
+  The correction is resolved before rasterizing the affected frame, including
+  after discontinuous mode, geometry, or target changes. The existing one-shot
+  Auto Fit command remains independent.
+- Tracking state is transient and local to one viewport. Workspace
+  persistence, remaining 3D surfaces, rendered browser/HiDPI matrices, and
+  protected issue/epic completion remain outside this child slice.
+
+>>>>>>> origin/feat/4284-track-clubhead
 ### 2026-08-11 Regional Trajectory Inspection and Canonical Evidence Export
 
 - Matched PyQt6 and React evidence surfaces expose the already-validated raw
@@ -3055,10 +3086,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.46 | chore(release, #4362 #4284 #4218): publish the independently reviewed bounded Track Clubhead continuation as ready PR #4362 on exact #4358 head `d662b016eceed8cbfbce26c12a42ca2c326a684f`; bind implementation `cb2bec4eb1b62a84dd617700052273787abba9ef`, including active-only loop/replay recenter, matched orbit suspension, native PyQt pan retention, target-relative React rendering, and same-frame reduction-only clearance, while retaining React pan, persistence, remaining 3D surfaces, full playback/rendered matrices, downstream parity, protected checks, dependency landing, release, and issue/epic completion as open. |
+>>>>>>> origin/feat/4284-track-clubhead
 | 2026-08-11 | 1.14.45 | docs(rate-of-closure, #4358): publish the reviewed camera-preset parity implementation `c0584faae7e0fe113e01f8c3ed3582853dfaf803` as ready-for-review PR #4358 over exact #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; record the first mergeable/unstable protected snapshot with quality in progress, remaining substantive jobs queued, no failure, and no approval; preserve `not_released` truth and all remaining #4284/#4218 acceptance gaps. |
 | 2026-08-11 | 1.14.44 | feat(rate-of-closure, #4284): add one strict shared-golden Python/TypeScript camera-preset contract and matched accessible PyQt6 `Club3DView` / React `ClubCanvas` controls for canonical Isometric, explicit-side Face On, exact +x Down the Line, -y Overhead, zoom-preserving Reset, and geometry-bounded Auto Fit; retain manual orbit while scaling, pin representative-driver fixed/moving start-impact-end bounds, and suppress only each exact PyQt projection's collapsed depth axis while restoring all axes for Isometric/custom orbit; keep tracking, tracking suspension, recenter, workspace persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI rendered QA, protected integration, release, and issue completion open. |
 | 2026-08-11 | 1.14.43 | docs(rate-of-closure, #4351-#4356): record exact published #4356 propagation head `345c329e6b6e3fc7a8fc981abf65795f356b94cf`, normal ready-for-review state for the exact #4351 through #4356 stack without base or history changes, and the first #4356 protected snapshot of one successful quality check, four skipped checks, twelve queued checks, no failure, and no review; preserve `not_released` truth and all implementation limitations. |

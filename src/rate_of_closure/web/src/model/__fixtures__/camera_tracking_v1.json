@@ -1,0 +1,29 @@
+{
+  "schema": "rate-of-closure-camera-tracking/v1",
+  "command_ids": [
+    "camera.track_clubhead",
+    "camera.recenter"
+  ],
+  "control_ids": [
+    "camera.auto_fit_fallback"
+  ],
+  "state_ids": [
+    "camera.tracking.off",
+    "camera.tracking.active",
+    "camera.tracking.suspended"
+  ],
+  "maximum_target_step_m": 0.05,
+  "minimum_clearance_fraction": 0.16,
+  "target_cases": [
+    {
+      "target_m": [0.0, 0.0, 0.0],
+      "subject_m": [0.2, 0.0, 0.0],
+      "expected_target_m": [0.05, 0.0, 0.0]
+    },
+    {
+      "target_m": [1.0, -2.0, 0.5],
+      "subject_m": [1.03, -1.96, 0.5],
+      "expected_target_m": [1.03, -1.96, 0.5]
+    }
+  ]
+}

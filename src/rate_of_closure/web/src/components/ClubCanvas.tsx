@@ -21,10 +21,17 @@ import { useEffect, useRef, useState } from "react";
 import { solve, type ImpactScenario } from "../model/impact";
 import {
   AUTO_FIT_CLEARANCE_FRACTION,
+  applyManualCameraOverride,
   applyCameraView,
   autoFitCamera,
   defaultCameraState,
+  enforceTrackingClearance,
+  recenterCamera,
+  setAutoFitFallback,
+  setCameraTracking,
   setFaceOnSide,
+  trackingStateId,
+  updateTrackingTarget,
   withCameraZoom,
   type CameraState,
   type CameraViewId,
@@ -32,27 +39,28 @@ import {
 } from "../model/cameraPresets";
 import { loadHeadMesh, type HeadMesh } from "../model/mesh";
 import { getChartColor } from "../model/theme";
-import { FIELD_GUIDANCE } from "../model/units";
 import {
   SHAFT_LEN,
   add,
   apply,
   headParts,
-  project,
+  projectAroundTarget,
   rodrigues,
   type Vec3,
 } from "./clubCanvasGeometry";
 import { drawEngineeringCgSymbol } from "./engineeringSymbols";
 import { ClubCameraControls } from "./ClubCameraControls";
+import {
+  ClubCanvasPlaybackControls,
+  VIEW_MODES,
+  type ViewMode,
+} from "./ClubCanvasPlaybackControls";
+
+export { VIEW_MODES } from "./ClubCanvasPlaybackControls";
+export type { ViewMode } from "./ClubCanvasPlaybackControls";
 
 const SPAN_MS = 8.0;
 const STEPS = 48;
-
-export const VIEW_MODES = [
-  "Head Fixed in Place",
-  "Head Moving Through Space",
-] as const;
-export type ViewMode = (typeof VIEW_MODES)[number];
 
 // H6 accent alignment (#4125): chart-palette accents come from the
 // shared model/theme.ts palette; only the neutral body tone is local.
@@ -95,6 +103,7 @@ export function ClubCanvas({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef(initialPhase);
+  const priorDrawPhaseRef = useRef(initialPhase);
   // Orbit camera state lives in refs so dragging never re-runs effects.
   const initialCamera = useRef(defaultCameraState());
   const [camera, setCamera] = useState<CameraState>(initialCamera.current);
@@ -104,8 +113,8 @@ export function ClubCanvas({
   const pitchRef = useRef(initialCamera.current.pitchRad);
   const zoomRef = useRef(initialCamera.current.zoom);
   const subjectRadiusRef = useRef(0.4);
+  const subjectRef = useRef<Vec3>([0, 0, 0]);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState(1.0);
   const [mode, setMode] = useState<ViewMode>(VIEW_MODES[1]);
@@ -113,15 +122,16 @@ export function ClubCanvas({
   const [meshError, setMeshError] = useState<string | null>(null);
   const [showCg, setShowCg] = useState(true);
 
+  const storeCamera = (next: CameraState) => {
+    cameraRef.current = next;
+    yawRef.current = next.yawRad;
+    pitchRef.current = next.pitchRad;
+    zoomRef.current = next.zoom;
+    setCamera(next);
+  };
+
   const updateCamera = (update: (current: CameraState) => CameraState) => {
-    setCamera((current) => {
-      const next = update(current);
-      cameraRef.current = next;
-      yawRef.current = next.yawRad;
-      pitchRef.current = next.pitchRad;
-      zoomRef.current = next.zoom;
-      return next;
-    });
+    storeCamera(update(cameraRef.current));
   };
 
   useEffect(() => {
@@ -188,10 +198,82 @@ export function ClubCanvas({
       const timeS = (phase * SPAN_MS) / 1000;
       const rot = rodrigues(omega, timeS);
       const offset: Vec3 = moving ? [speedMps * timeS, 0, 0] : [0, 0, 0];
+      subjectRef.current = offset;
+      const priorCamera = cameraRef.current;
+      const wrapped = phaseRef.current < priorDrawPhaseRef.current;
+      priorDrawPhaseRef.current = phaseRef.current;
+      const tracked = wrapped && priorCamera.trackingEnabled
+        && !priorCamera.trackingSuspended
+        ? recenterCamera(priorCamera, offset)
+        : updateTrackingTarget(priorCamera, offset);
+      if (tracked !== priorCamera) {
+        cameraRef.current = tracked;
+        yawRef.current = tracked.yawRad;
+        pitchRef.current = tracked.pitchRad;
+        zoomRef.current = tracked.zoom;
+        setCamera(tracked);
+      }
       const place = (p: Vec3): Vec3 => add(apply(rot, p), offset);
+
+      // Resolve every discontinuous geometry/target change before deriving the
+      // projection scale. The fallback must affect this frame, not the next.
+      let shift: Vec3 = [0, 0, 0];
+      if (mesh) {
+        let xMax = -Infinity;
+        for (const tri of mesh.triangles) {
+          for (const vertex of tri) if (vertex[0] > xMax) xMax = vertex[0];
+        }
+        shift = [scenario.comToFaceMm / 1000 - xMax, 0, 0];
+      }
+      const generated = mesh !== null && mesh === externalMesh;
+      let hosel = parts.hosel;
+      let shaftEnd = parts.shaftEnd;
+      if (generated && hoselPoint) {
+        hosel = add(hoselPoint, shift);
+        const lie = (scenario.lieAngleDeg * Math.PI) / 180;
+        shaftEnd = [
+          hosel[0],
+          hosel[1] + Math.sin(lie) * SHAFT_LEN,
+          hosel[2] - Math.cos(lie) * SHAFT_LEN,
+        ];
+      }
+      const fitPoints = mesh
+        ? mesh.triangles.flatMap((triangle) =>
+          triangle.map((point) => add(point, shift)))
+        : [...parts.face, ...parts.back];
+      fitPoints.push(hosel, shaftEnd, parts.impact);
+      subjectRadiusRef.current = Math.max(
+        1e-9,
+        ...fitPoints.map((point) => {
+          const placed = place(point);
+          const target = cameraRef.current.targetM;
+          return Math.hypot(
+            placed[0] - target[0],
+            placed[1] - target[1],
+            placed[2] - target[2],
+          );
+        }),
+      );
+      const cleared = enforceTrackingClearance(
+        cameraRef.current,
+        subjectRadiusRef.current,
+        moving ? 0.42 : 0.24,
+      );
+      if (cleared !== cameraRef.current) {
+        cameraRef.current = cleared;
+        zoomRef.current = cleared.zoom;
+        setCamera(cleared);
+      }
       const zoom = baseZoom * zoomRef.current;
       const yaw = yawRef.current;
       const pitch = pitchRef.current;
+      const frameFits = subjectRadiusRef.current * zoomRef.current
+        <= (moving ? 0.42 : 0.24) * (1 - AUTO_FIT_CLEARANCE_FRACTION) + 1e-12;
+      canvas.dataset.cameraRenderedZoom = zoomRef.current.toFixed(6);
+      canvas.dataset.cameraRenderedSubjectFits = String(frameFits);
+      const projectPoint = (point: Vec3) => projectAroundTarget(
+        point, cameraRef.current.targetM, w, h, zoom, yaw, pitch,
+      );
 
       const line = (pts: Vec3[], color: string, lw: number) => {
         ctx.strokeStyle = color;
@@ -200,7 +282,7 @@ export function ClubCanvas({
         ctx.lineJoin = "round";
         ctx.beginPath();
         pts.forEach((p, i) => {
-          const [px, py] = project(p, w, h, zoom, yaw, pitch);
+          const [px, py] = projectPoint(p);
           if (i === 0) ctx.moveTo(px, py);
           else ctx.lineTo(px, py);
         });
@@ -220,17 +302,7 @@ export function ClubCanvas({
         ctx.setLineDash([]);
       }
 
-      // Put the mesh's forward extent (its face plane) at com_to_face
-      // — exactly HEAD_DEPTH_M/2 for a normalized STL; parametric
-      // heads keep their mass-scaled, loft-tilted extent.
-      let shift: Vec3 = [0, 0, 0];
-      if (mesh) {
-        let xMax = -Infinity;
-        for (const tri of mesh.triangles) {
-          for (const v of tri) if (v[0] > xMax) xMax = v[0];
-        }
-        shift = [scenario.comToFaceMm / 1000 - xMax, 0, 0];
-      }
+      // Put the mesh's forward extent (its face plane) at com_to_face.
       if (mesh) {
         // Painter's algorithm: camera forward axis from the orbit
         // angles (same basis as project()); triangles sorted by
@@ -267,7 +339,7 @@ export function ClubCanvas({
           ctx.fillStyle = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
           ctx.beginPath();
           placed.forEach((p, i) => {
-            const [px, py] = project(p, w, h, zoom, yaw, pitch);
+            const [px, py] = projectPoint(p);
             if (i === 0) ctx.moveTo(px, py);
             else ctx.lineTo(px, py);
           });
@@ -281,37 +353,7 @@ export function ClubCanvas({
           line([place(p), place(parts.back[i])], COLORS.body, 0.8),
         );
       }
-      // Hosel-true shaft (H1): a generated head attaches the shaft
-      // line at its per-type hosel point, along the lie angle.
-      const generated = mesh !== null && mesh === externalMesh;
-      let hosel = parts.hosel;
-      let shaftEnd = parts.shaftEnd;
-      if (generated && hoselPoint) {
-        hosel = add(hoselPoint, shift);
-        const lie = (scenario.lieAngleDeg * Math.PI) / 180;
-        shaftEnd = [
-          hosel[0],
-          hosel[1] + Math.sin(lie) * SHAFT_LEN,
-          hosel[2] - Math.cos(lie) * SHAFT_LEN,
-        ];
-      }
-      const fitPoints = mesh
-        ? mesh.triangles.flatMap((triangle) =>
-          triangle.map((point) => add(point, shift)))
-        : [...parts.face, ...parts.back];
-      fitPoints.push(hosel, shaftEnd, parts.impact);
-      subjectRadiusRef.current = Math.max(
-        1e-9,
-        ...fitPoints.map((point) => {
-          const placed = place(point);
-          const target = cameraRef.current.targetM;
-          return Math.hypot(
-            placed[0] - target[0],
-            placed[1] - target[1],
-            placed[2] - target[2],
-          );
-        }),
-      );
+      // Hosel-true shaft (H1) was included in the pre-raster fit envelope.
       line([place(hosel), place(shaftEnd)], COLORS.shaft, 2.5);
 
       if (showCg) {
@@ -320,7 +362,7 @@ export function ClubCanvas({
         // is the spec CG location.
         const cgModel: Vec3 =
           generated && cogPoint ? add(cogPoint, shift) : [0, 0, 0];
-        const [cx, cy] = project(place(cgModel), w, h, zoom, yaw, pitch);
+        const [cx, cy] = projectPoint(place(cgModel));
         const r = 5 * dpr;
         drawEngineeringCgSymbol(ctx, cx, cy, r, COLORS.cog);
         ctx.fillStyle = COLORS.cog;
@@ -335,8 +377,8 @@ export function ClubCanvas({
           origin[1] + vec[1] * scale,
           origin[2] + vec[2] * scale,
         ];
-        const [ox, oy] = project(origin, w, h, zoom, yaw, pitch);
-        const [tx, ty] = project(tip, w, h, zoom, yaw, pitch);
+        const [ox, oy] = projectPoint(origin);
+        const [tx, ty] = projectPoint(tip);
         const angle = Math.atan2(ty - oy, tx - ox);
         const headLen = 11 * dpr;
         // Stop the shaft short so the filled head forms a clean point.
@@ -367,7 +409,7 @@ export function ClubCanvas({
       arrow(offset, [vRefMps, 0, 0], COLORS.vRef);
       arrow(place(parts.impact), result.pointVelocityMps, COLORS.vPoint);
 
-      const [ix, iy] = project(place(parts.impact), w, h, zoom, yaw, pitch);
+      const [ix, iy] = projectPoint(place(parts.impact));
       ctx.fillStyle = COLORS.impact;
       ctx.shadowColor = "rgba(255, 214, 10, 0.6)";
       ctx.shadowBlur = 8 * dpr;
@@ -392,97 +434,23 @@ export function ClubCanvas({
 
   return (
     <div className="space-y-2">
-      <div
-        aria-label="Playback controls"
-        className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-900/60 px-4 py-2.5 text-sm shadow-lg shadow-black/20 backdrop-blur"
-      >
-        <button
-          type="button"
-          onClick={() => setPlaying((p) => !p)}
-          title="Play or pause the impact animation"
-          className="w-16 rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
-        >
-          {playing ? "Pause" : "Play"}
-        </button>
-        <label className="flex items-center gap-2">
-          <span className="text-slate-400">Playback Speed</span>
-          <input
-            type="range"
-            min={0.1}
-            max={3}
-            step={0.1}
-            value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
-            aria-label="Playback speed multiplier"
-          />
-          <span className="w-8 text-slate-300">{speed.toFixed(1)}x</span>
-        </label>
-        <label className="flex items-center gap-2">
-          <span className="text-slate-400">Display</span>
-          <select
-            value={mode}
-            aria-label="Clubhead display mode"
-            title="Display mode: head fixed in place or moving through space"
-            onChange={(e) => setMode(e.target.value as ViewMode)}
-            className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
-          >
-            {VIEW_MODES.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        </label>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".stl"
-          className="hidden"
-          aria-hidden="true"
-          tabIndex={-1}
-          onChange={(e) => {
-            onStlChosen(e.target.files?.[0]);
-            e.target.value = "";
-          }}
-        />
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          title="Render a user-supplied STL clubhead mesh in place of the procedural wireframe (read locally, never uploaded)."
-          className="rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
-        >
-          Load Clubhead STL…
-        </button>
-        <label
-          title={FIELD_GUIDANCE.showCgMarker}
-          className="flex items-center gap-2 text-slate-300"
-        >
-          <input
-            type="checkbox"
-            checked={showCg}
-            onChange={(e) => setShowCg(e.target.checked)}
-            aria-label="Show CG"
-          />
-          Show CG
-        </label>
-        <button
-          type="button"
-          disabled={!mesh}
-          onClick={() => {
-            setMesh(null);
-            setMeshError(null);
-          }}
-          title="Return to the default wireframe head."
-          className="rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 font-medium transition-colors enabled:hover:border-sky-400 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
-        >
-          Procedural Head
-        </button>
-        {meshError && (
-          <span role="alert" className="text-xs text-rose-400">
-            STL load failed: {meshError}
-          </span>
-        )}
-      </div>
+      <ClubCanvasPlaybackControls
+        playing={playing}
+        speed={speed}
+        mode={mode}
+        showCg={showCg}
+        meshLoaded={mesh !== null}
+        meshError={meshError}
+        onPlayingChange={setPlaying}
+        onSpeedChange={setSpeed}
+        onModeChange={setMode}
+        onShowCgChange={setShowCg}
+        onStlChosen={onStlChosen}
+        onProceduralHead={() => {
+          setMesh(null);
+          setMeshError(null);
+        }}
+      />
       <ClubCameraControls
         state={camera}
         activeViewId={canonicalOrientation ? camera.presetId : null}
@@ -505,6 +473,16 @@ export function ClubCanvas({
           subjectRadiusRef.current,
           mode === VIEW_MODES[1] ? 0.42 : 0.24,
         ))}
+        onTrackingChange={(enabled) => updateCamera((current) =>
+          setCameraTracking(current, enabled, subjectRef.current))}
+        onAutoFitFallbackChange={(enabled) => updateCamera((current) =>
+          enforceTrackingClearance(
+            setAutoFitFallback(current, enabled),
+            subjectRadiusRef.current,
+            mode === VIEW_MODES[1] ? 0.42 : 0.24,
+          ))}
+        onRecenter={() => updateCamera((current) =>
+          recenterCamera(current, subjectRef.current))}
       />
       <canvas
         ref={canvasRef}
@@ -512,12 +490,16 @@ export function ClubCanvas({
         height={571}
         className="w-full cursor-grab touch-none rounded-xl border border-slate-800/80 bg-slate-950/80 shadow-lg shadow-black/30 active:cursor-grabbing"
         role="img"
-        aria-label="Animated 3D clubhead rotating under the scenario's angular velocity. Drag to orbit; scroll to zoom."
+        aria-label="Animated 3D clubhead rotating under the scenario's angular velocity. Drag to orbit; scroll to zoom; Track Clubhead follows motion."
         tabIndex={0}
         data-camera-view={canonicalOrientation ? camera.presetId : "custom"}
         data-camera-yaw={camera.yawRad.toFixed(12)}
         data-camera-pitch={camera.pitchRad.toFixed(12)}
         data-camera-zoom={camera.zoom.toFixed(6)}
+        data-camera-target={camera.targetM.map((value) => value.toFixed(12)).join(",")}
+        data-camera-subject={subjectRef.current.map((value) => value.toFixed(12)).join(",")}
+        data-camera-tracking-state={trackingStateId(camera)}
+        data-camera-auto-fit-fallback={String(camera.autoFitFallbackEnabled)}
         data-camera-subject-fits={String(
           subjectRadiusRef.current * camera.zoom
             <= (mode === VIEW_MODES[1] ? 0.42 : 0.24)
@@ -536,15 +518,11 @@ export function ClubCanvas({
           );
           dragRef.current = { x: e.clientX, y: e.clientY };
           setCanonicalOrientation(false);
-          setCamera((current) => {
-            const next = {
+          updateCamera((current) => applyManualCameraOverride({
               ...current,
               yawRad: yawRef.current,
               pitchRad: pitchRef.current,
-            };
-            cameraRef.current = next;
-            return next;
-          });
+            }));
         }}
         onPointerUp={(e) => {
           dragRef.current = null;
@@ -561,7 +539,8 @@ export function ClubCanvas({
         }}
       />
       <p className="text-xs text-slate-500">
-        Drag the view to orbit; scroll to zoom.
+        Drag to orbit (tracking pauses); scroll to zoom. Track Clubhead and
+        Re-center keep the moving head in view without changing zoom.
       </p>
     </div>
   );

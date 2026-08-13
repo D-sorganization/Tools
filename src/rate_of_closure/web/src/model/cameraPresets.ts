@@ -9,11 +9,24 @@ export const CAMERA_VIEW_IDS = [
   "camera.view.overhead",
 ] as const;
 export const CAMERA_ACTION_IDS = ["camera.reset_view", "camera.auto_fit"] as const;
-export const CAMERA_COMMAND_IDS = [...CAMERA_VIEW_IDS, ...CAMERA_ACTION_IDS] as const;
+export const CAMERA_TRACKING_COMMAND_IDS = [
+  "camera.track_clubhead", "camera.recenter",
+] as const;
+export const CAMERA_CONTROL_IDS = ["camera.auto_fit_fallback"] as const;
+export const CAMERA_TRACKING_STATE_IDS = [
+  "camera.tracking.off", "camera.tracking.active", "camera.tracking.suspended",
+] as const;
+export const CAMERA_PRESET_COMMAND_IDS = [
+  ...CAMERA_VIEW_IDS, ...CAMERA_ACTION_IDS,
+] as const;
+export const CAMERA_COMMAND_IDS = [
+  ...CAMERA_PRESET_COMMAND_IDS, ...CAMERA_TRACKING_COMMAND_IDS,
+] as const;
 
 export type CameraViewId = (typeof CAMERA_VIEW_IDS)[number];
 export type CameraActionId = (typeof CAMERA_ACTION_IDS)[number];
 export type CameraCommandId = (typeof CAMERA_COMMAND_IDS)[number];
+export type CameraTrackingStateId = (typeof CAMERA_TRACKING_STATE_IDS)[number];
 export type FaceOnSide = "right" | "left";
 
 export interface CameraPreset {
@@ -29,11 +42,15 @@ export interface CameraState {
   zoom: number;
   yawRad: number;
   pitchRad: number;
+  trackingEnabled: boolean;
+  trackingSuspended: boolean;
+  autoFitFallbackEnabled: boolean;
 }
 
 export const MIN_CAMERA_ZOOM = 0.3;
 export const MAX_CAMERA_ZOOM = 4;
 export const AUTO_FIT_CLEARANCE_FRACTION = 0.16;
+export const TRACKING_MAX_TARGET_STEP_M = 0.05;
 
 const ISOMETRIC_DIRECTION: Vec3 = [
   0.7071067811865476, -0.4082482904638631, -0.5773502691896258,
@@ -73,6 +90,9 @@ export function defaultCameraState(): CameraState {
     faceOnSide: "right",
     targetM: [0, 0, 0],
     zoom: 1,
+    trackingEnabled: false,
+    trackingSuspended: false,
+    autoFitFallbackEnabled: false,
     ...canvasAngles(preset),
   });
 }
@@ -113,6 +133,92 @@ export function autoFitCamera(
     state,
     baseHalfExtentM * (1 - clearanceFraction) / subjectRadiusM,
   );
+}
+
+export function setCameraTracking(
+  state: CameraState, enabled: boolean, subjectM: Vec3,
+): CameraState {
+  validateCameraState(state);
+  if (typeof enabled !== "boolean") throw new TypeError("enabled must be a Boolean");
+  validateVector(subjectM, "subjectM");
+  return {
+    ...state,
+    targetM: enabled ? [...subjectM] : state.targetM,
+    trackingEnabled: enabled,
+    trackingSuspended: false,
+  };
+}
+
+export function setAutoFitFallback(state: CameraState, enabled: boolean): CameraState {
+  validateCameraState(state);
+  if (typeof enabled !== "boolean") throw new TypeError("enabled must be a Boolean");
+  return { ...state, autoFitFallbackEnabled: enabled };
+}
+
+export function applyManualCameraOverride(
+  state: CameraState, targetM: Vec3 = state.targetM,
+): CameraState {
+  validateCameraState(state);
+  validateVector(targetM, "targetM");
+  return {
+    ...state,
+    targetM: [...targetM],
+    trackingSuspended: state.trackingEnabled,
+  };
+}
+
+export function recenterCamera(state: CameraState, subjectM: Vec3): CameraState {
+  validateCameraState(state);
+  validateVector(subjectM, "subjectM");
+  return { ...state, targetM: [...subjectM], trackingSuspended: false };
+}
+
+export function updateTrackingTarget(
+  state: CameraState,
+  subjectM: Vec3,
+  maxStepM = TRACKING_MAX_TARGET_STEP_M,
+): CameraState {
+  validateCameraState(state);
+  validateVector(subjectM, "subjectM");
+  if (!Number.isFinite(maxStepM) || maxStepM <= 0) {
+    throw new RangeError("maxStepM must be finite and positive");
+  }
+  if (!state.trackingEnabled || state.trackingSuspended) return state;
+  const delta: Vec3 = [
+    subjectM[0] - state.targetM[0],
+    subjectM[1] - state.targetM[1],
+    subjectM[2] - state.targetM[2],
+  ];
+  const distance = Math.hypot(...delta);
+  if (distance <= 1e-12) return state;
+  const fraction = Math.min(1, maxStepM / distance);
+  return {
+    ...state,
+    targetM: [
+      state.targetM[0] + fraction * delta[0],
+      state.targetM[1] + fraction * delta[1],
+      state.targetM[2] + fraction * delta[2],
+    ],
+  };
+}
+
+export function enforceTrackingClearance(
+  state: CameraState,
+  subjectRadiusM: number,
+  baseHalfExtentM: number,
+  clearanceFraction = AUTO_FIT_CLEARANCE_FRACTION,
+): CameraState {
+  const fitted = autoFitCamera(
+    state, subjectRadiusM, baseHalfExtentM, clearanceFraction,
+  );
+  return !state.autoFitFallbackEnabled || state.zoom <= fitted.zoom ? state : fitted;
+}
+
+export function trackingStateId(state: CameraState): CameraTrackingStateId {
+  validateCameraState(state);
+  if (!state.trackingEnabled) return "camera.tracking.off";
+  return state.trackingSuspended
+    ? "camera.tracking.suspended" : "camera.tracking.active";
 }
 
 function parseCameraViewId(value: string): CameraViewId {
@@ -162,6 +268,16 @@ export function validateCameraState(state: CameraState): CameraState {
   }
   if (!Number.isFinite(state.yawRad) || !Number.isFinite(state.pitchRad)) {
     throw new RangeError("camera angles must be finite");
+  }
+  for (const [value, name] of [
+    [state.trackingEnabled, "trackingEnabled"],
+    [state.trackingSuspended, "trackingSuspended"],
+    [state.autoFitFallbackEnabled, "autoFitFallbackEnabled"],
+  ] as const) {
+    if (typeof value !== "boolean") throw new TypeError(`${name} must be a Boolean`);
+  }
+  if (state.trackingSuspended && !state.trackingEnabled) {
+    throw new RangeError("tracking cannot be suspended while disabled");
   }
   return {
     ...state,

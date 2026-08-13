@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DEFAULT_SCENARIO } from "../model/impact";
@@ -93,6 +93,80 @@ describe("ClubCanvas canonical camera controls", () => {
     fireEvent.click(screen.getByRole("button", { name: "Overhead" }));
     expect(screen.getByRole("button", { name: "Overhead" }))
       .toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("tracks with visible suspension and explicit zoom-preserving recenter", async () => {
+    render(<ClubCanvas scenario={DEFAULT_SCENARIO} initialPhase={0} />);
+    const canvas = screen.getByRole("img", { name: /Animated 3D clubhead/i });
+    fireEvent.wheel(canvas, { deltaY: -1 });
+    fireEvent.click(screen.getByRole("checkbox", { name: "Track Clubhead" }));
+    await waitFor(() => expect(canvas)
+      .toHaveAttribute("data-camera-tracking-state", "camera.tracking.active"));
+    expect(screen.getByRole("status", { name: "Camera tracking state" }))
+      .toHaveTextContent("Tracking Clubhead");
+    expect(canvas).toHaveAttribute("data-camera-zoom", "1.100000");
+    fireEvent(canvas, new MouseEvent("pointerdown", {
+      bubbles: true, clientX: 100, clientY: 100,
+    }));
+    fireEvent(canvas, new MouseEvent("pointermove", {
+      bubbles: true, clientX: 130, clientY: 120,
+    }));
+    expect(canvas).toHaveAttribute(
+      "data-camera-tracking-state", "camera.tracking.suspended",
+    );
+    expect(screen.getByRole("status", { name: "Camera tracking state" }))
+      .toHaveTextContent("Tracking suspended");
+    fireEvent.click(screen.getByRole("button", { name: "Re-center Clubhead" }));
+    expect(canvas).toHaveAttribute(
+      "data-camera-tracking-state", "camera.tracking.active",
+    );
+    expect(canvas.getAttribute("data-camera-target"))
+      .toBe(canvas.getAttribute("data-camera-subject"));
+    expect(canvas).toHaveAttribute("data-camera-zoom", "1.100000");
+  });
+
+  it.each([0, 0.5, 1])(
+    "centers the tracked clubhead at phase %s without changing zoom",
+    async (phase) => {
+      render(<ClubCanvas scenario={DEFAULT_SCENARIO} initialPhase={phase} />);
+      fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+      const canvas = screen.getByRole("img", { name: /Animated 3D clubhead/i });
+      fireEvent.wheel(canvas, { deltaY: -1 });
+      fireEvent.click(screen.getByRole("checkbox", { name: "Track Clubhead" }));
+      await waitFor(() => expect(canvas.getAttribute("data-camera-target"))
+        .toBe(canvas.getAttribute("data-camera-subject")));
+      expect(canvas).toHaveAttribute("data-camera-zoom", "1.100000");
+    },
+  );
+
+  it("keeps tracking and fallback state isolated per canvas", async () => {
+    render(<><ClubCanvas scenario={DEFAULT_SCENARIO} /><ClubCanvas scenario={DEFAULT_SCENARIO} /></>);
+    const track = screen.getAllByRole("checkbox", { name: "Track Clubhead" });
+    const fallback = screen.getAllByRole("checkbox", { name: "Auto Fit fallback" });
+    fireEvent.click(track[0]);
+    fireEvent.click(fallback[0]);
+    const canvases = screen.getAllByRole("img", { name: /Animated 3D clubhead/i });
+    await waitFor(() => expect(canvases[0])
+      .toHaveAttribute("data-camera-tracking-state", "camera.tracking.active"));
+    expect(canvases[0]).toHaveAttribute("data-camera-auto-fit-fallback", "true");
+    expect(canvases[1]).toHaveAttribute(
+      "data-camera-tracking-state", "camera.tracking.off",
+    );
+    expect(canvases[1]).toHaveAttribute("data-camera-auto-fit-fallback", "false");
+  });
+
+  it("applies fallback before rasterizing the first frame after a mode change", async () => {
+    render(<ClubCanvas scenario={DEFAULT_SCENARIO} />);
+    fireEvent.click(screen.getByRole("button", { name: "Pause" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Auto Fit fallback" }));
+    fireEvent.change(screen.getByRole("combobox", { name: "Clubhead display mode" }), {
+      target: { value: "Head Fixed in Place" },
+    });
+    const canvas = screen.getByRole("img", { name: /Animated 3D clubhead/i });
+    await waitFor(() => expect(canvas)
+      .toHaveAttribute("data-camera-rendered-subject-fits", "true"));
+    expect(canvas.getAttribute("data-camera-rendered-zoom"))
+      .toBe(canvas.getAttribute("data-camera-zoom"));
   });
 
   it.each([

@@ -1,9 +1,4 @@
-"""Animated 3D clubhead view.
-
-The view renders procedural or STL geometry under the delivery transform,
-with playback, fixed/moving display modes, velocity vectors, hosel/shaft
-alignment, and an engineering-style center-of-gravity marker.
-"""
+"""Animated 3D clubhead view with playback and engineering overlays."""
 
 from __future__ import annotations
 
@@ -11,7 +6,6 @@ import logging
 
 import numpy as np
 from matplotlib.figure import Figure
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -29,6 +23,7 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.application.camera_presets import (
     CameraCommandId,
     CameraState,
+    CameraTrackingStateId,
     CameraViewId,
     FaceOnSide,
 )
@@ -45,6 +40,8 @@ from rate_of_closure.units import FIELD_GUIDANCE
 
 _SHAFT_STUB = club_view_geometry.SHAFT_STUB_M
 _display = club_view_geometry.display_points
+_draw_club_mesh = club_view_geometry.draw_mesh
+_axes_target_m = club_view_geometry.axes_target_m
 _head_shift = club_view_geometry.head_shift
 _head_wireframe = club_view_geometry.head_wireframe
 _rodrigues = club_view_geometry.rodrigues
@@ -63,20 +60,12 @@ _COL_IMPACT = "#FFD60A"
 _COL_GROUND = "#8b949e"
 _COL_COG = "#FF9F0A"
 
-_LIGHT_DIR = np.array([0.3, 0.8, 0.5]) / np.linalg.norm([0.3, 0.8, 0.5])
-_MESH_BASE_RGB = np.array([0.56, 0.62, 0.70])
-_MESH_AMBIENT = 0.22
-_MESH_SPECULAR = 0.32
-
 _ANIMATION_SPAN_MS = 8.0
 _ANIMATION_STEPS = 48
 _TIMER_INTERVAL_MS = 40
 
 #: Display modes for the 3D animation, in combo-box order.
-VIEW_MODES: tuple[str, ...] = (
-    "Head Fixed in Place",
-    "Head Moving Through Space",
-)
+VIEW_MODES = ("Head Fixed in Place", "Head Moving Through Space")
 
 
 class Club3DView(QWidget):
@@ -88,8 +77,12 @@ class Club3DView(QWidget):
         self._canvas = FigureCanvas(self._figure)
         self._axes = self._figure.add_subplot(111, projection="3d")
         self._subject_radius_m = 0.4
+        self._current_subject_m = (0.0, 0.0, 0.0)
         self._camera_controls_widget = ClubCameraControls(
-            self._on_camera_changed, self._camera_fit_bounds, self
+            self._on_camera_changed,
+            self._camera_fit_bounds,
+            self.camera_subject_m,
+            self,
         )
         self._axes.view_init(*self._camera_controls_widget.angles())
 
@@ -104,6 +97,7 @@ class Club3DView(QWidget):
         self._hosel: np.ndarray | None = None
         self._cog: np.ndarray | None = None
         self._phase = 0.0
+        self._recenter_on_next_draw = False
         self._speed = 1.0
         self._timer = QTimer(self)
         self._timer.setInterval(_TIMER_INTERVAL_MS)
@@ -174,6 +168,7 @@ class Club3DView(QWidget):
         """Adopt a new scenario without starting background animation."""
         self._scenario = scenario
         self._phase = 0.0
+        self._recenter_on_next_draw = True
         self._draw()
 
     def set_playback_speed(self, multiplier: float) -> None:
@@ -227,6 +222,26 @@ class Club3DView(QWidget):
     def set_face_on_side(self, side: FaceOnSide | str) -> None:
         """Select the explicit physical side used by Face On."""
         self._camera_controls_widget.set_face_on_side(side)
+
+    def set_camera_tracking(self, enabled: bool) -> None:
+        """Enable or disable opt-in bounded clubhead tracking."""
+        self._camera_controls_widget.set_tracking_enabled(enabled)
+
+    def set_auto_fit_fallback(self, enabled: bool) -> None:
+        """Enable or disable reduction-only tracking clearance protection."""
+        self._camera_controls_widget.set_auto_fit_fallback(enabled)
+
+    def recenter_camera(self) -> None:
+        """Center on the clubhead and resume an enabled tracker."""
+        self._camera_controls_widget.recenter()
+
+    def camera_tracking_state_id(self) -> CameraTrackingStateId:
+        """Return the stable visible tracking state for this viewport."""
+        return self._camera_controls_widget.tracking_state_id()
+
+    def camera_subject_m(self) -> tuple[float, float, float]:
+        """Return the current clubhead reference point in the application frame."""
+        return self._current_subject_m
 
     def camera_subject_fits(self, clearance_fraction: float = 0.16) -> bool:
         """Whether the current head and shaft clear every axis boundary."""
@@ -332,9 +347,12 @@ class Club3DView(QWidget):
         azimuth_delta = (
             float(self._axes.azim) - canonical_azim + 180.0
         ) % 360.0 - 180.0
-        if elevation_changed or abs(azimuth_delta) > 1e-8:
-            self._camera_controls_widget.mark_manual_orientation()
-            self._draw()
+        manual_target = _axes_target_m(self._axes)
+        target_changed = not np.allclose(
+            manual_target, self.camera_state().target_m, rtol=0.0, atol=1e-8
+        )
+        if elevation_changed or abs(azimuth_delta) > 1e-8 or target_changed:
+            self._camera_controls_widget.mark_manual_orientation(manual_target)
 
     def _camera_fit_bounds(self) -> tuple[float, float]:
         moving = self._mode_combo.currentText() == VIEW_MODES[1]
@@ -359,7 +377,9 @@ class Club3DView(QWidget):
         self._speed_label.setText(f"{self._speed:.1f}x")
 
     def _advance(self) -> None:
-        self._phase = (self._phase + self._speed / _ANIMATION_STEPS) % 1.0
+        next_phase = (self._phase + self._speed / _ANIMATION_STEPS) % 1.0
+        self._recenter_on_next_draw = next_phase < self._phase
+        self._phase = next_phase
         self._draw()
 
     def _draw(self) -> None:
@@ -373,6 +393,12 @@ class Club3DView(QWidget):
         moving = self._mode_combo.currentText() == VIEW_MODES[1]
         speed_mps = result.reference_speed_mph * 0.44704
         offset = np.array([speed_mps * time_s, 0.0, 0.0]) if moving else np.zeros(3)
+        self._current_subject_m = (float(offset[0]), float(offset[1]), float(offset[2]))
+        self._camera_controls_widget.advance_tracking(
+            self._current_subject_m,
+            recenter_on_wrap=self._recenter_on_next_draw,
+        )
+        self._recenter_on_next_draw = False
 
         parts = _head_wireframe(scenario)
         axes = self._axes
@@ -386,7 +412,7 @@ class Club3DView(QWidget):
             shaft_dir = np.array([0.0, np.sin(lie), -np.cos(lie)])
             shaft = np.vstack([attachment, attachment + shaft_dir * _SHAFT_STUB])
         if self._mesh is not None:
-            self._draw_mesh(self._mesh, scenario, rotation, offset)
+            _draw_club_mesh(axes, self._mesh, scenario, rotation, offset)
             pts = _display(shaft @ rotation.T + offset)
             axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=_COL_SHAFT, lw=2.0)
         else:
@@ -415,6 +441,7 @@ class Club3DView(QWidget):
         self._subject_radius_m = max(
             1e-9, float(np.linalg.norm(fit_placed - target, axis=1).max())
         )
+        self._camera_controls_widget.enforce_clearance()
         axes.scatter(*_display(impact), color=_COL_IMPACT, s=45, zorder=5)
         axes.scatter(*_display(offset), color=_COL_BODY, s=30)
         cg_point = self.cg_marker_point()
@@ -470,31 +497,3 @@ class Club3DView(QWidget):
         )
         axes.legend(loc="upper left", fontsize=8)
         self._canvas.draw_idle()
-
-    def _draw_mesh(
-        self,
-        mesh: HeadMesh,
-        scenario: ImpactScenario,
-        rotation: np.ndarray,
-        offset: np.ndarray,
-    ) -> None:
-        """Shaded STL head under the same transform as the wireframe.
-
-        The mesh is shifted by :meth:`_head_shift` so its face plane
-        sits at ``com_to_face``, then rotated about the reference point
-        and translated with the head. Shading is flat lambert-ish:
-        ``ambient + (1 - ambient) * |n . L|`` with a fixed world light
-        on the rotated normals; depth ordering is Poly3DCollection's
-        native painter's-algorithm z-sort.
-        """
-        tris = (mesh.triangles + self._head_shift(mesh, scenario)) @ rotation.T + offset
-        normals = mesh.normals @ rotation.T
-        lambert = np.abs(normals @ _LIGHT_DIR)
-        diffuse = (1.0 - _MESH_AMBIENT - _MESH_SPECULAR) * lambert
-        specular = _MESH_SPECULAR * lambert**20
-        intensity = _MESH_AMBIENT + diffuse + specular
-        colors = np.clip(intensity[:, None] * _MESH_BASE_RGB[None, :], 0.0, 1.0)
-        collection = Poly3DCollection(
-            _display(tris), facecolors=colors, edgecolors="none", linewidths=0.0
-        )
-        self._axes.add_collection3d(collection)

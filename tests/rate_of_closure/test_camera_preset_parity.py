@@ -12,17 +12,31 @@ pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
 from rate_of_closure.application.camera_presets import (  # noqa: E402
+    AUTO_FIT_CLEARANCE_FRACTION,
     CAMERA_COMMAND_IDS,
+    CAMERA_CONTROL_IDS,
+    CAMERA_PRESET_COMMAND_IDS,
+    CAMERA_TRACKING_COMMAND_IDS,
+    CAMERA_TRACKING_STATE_IDS,
+    TRACKING_MAX_TARGET_STEP_M,
     CameraCommandId,
     CameraPreset,
     CameraState,
+    CameraTrackingStateId,
     CameraViewId,
     FaceOnSide,
     apply_camera_view,
+    apply_manual_camera_override,
     auto_fit_camera,
     camera_preset,
     canvas_angles,
+    enforce_tracking_clearance,
     matplotlib_angles,
+    recenter_camera,
+    set_auto_fit_fallback,
+    set_camera_tracking,
+    tracking_state_id,
+    update_tracking_target,
 )
 from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.ui.pyqt6.club_view import VIEW_MODES, Club3DView  # noqa: E402
@@ -36,17 +50,73 @@ FIXTURE_PATH = (
     Path(__file__).parents[2]
     / "src/rate_of_closure/web/src/model/__fixtures__/camera_presets_v1.json"
 )
+TRACKING_FIXTURE_PATH = FIXTURE_PATH.with_name("camera_tracking_v1.json")
 
 
 def _fixture() -> dict[str, object]:
     return json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
 
 
+def _tracking_fixture() -> dict[str, object]:
+    return json.loads(TRACKING_FIXTURE_PATH.read_text(encoding="utf-8"))
+
+
+def test_tracking_ids_bounds_and_state_transitions_match_shared_fixture() -> None:
+    fixture = _tracking_fixture()
+    assert fixture["schema"] == "rate-of-closure-camera-tracking/v1"
+    assert list(CAMERA_TRACKING_COMMAND_IDS) == fixture["command_ids"]
+    assert list(CAMERA_CONTROL_IDS) == fixture["control_ids"]
+    assert list(CAMERA_TRACKING_STATE_IDS) == fixture["state_ids"]
+    assert TRACKING_MAX_TARGET_STEP_M == fixture["maximum_target_step_m"]
+    assert AUTO_FIT_CLEARANCE_FRACTION == fixture["minimum_clearance_fraction"]
+    state = set_camera_tracking(CameraState(zoom=2.5), True, (0.0, 0.0, 0.0))
+    assert tracking_state_id(state) is CameraTrackingStateId.ACTIVE
+    for case in fixture["target_cases"]:
+        assert isinstance(case, dict)
+        advanced = update_tracking_target(
+            CameraState(
+                target_m=tuple(case["target_m"]),
+                zoom=2.5,
+                tracking_enabled=True,
+            ),
+            tuple(case["subject_m"]),
+        )
+        assert advanced.target_m == pytest.approx(case["expected_target_m"])
+        assert advanced.zoom == pytest.approx(2.5)
+    suspended = apply_manual_camera_override(state)
+    assert tracking_state_id(suspended) is CameraTrackingStateId.SUSPENDED
+    assert update_tracking_target(suspended, (4.0, 0.0, 0.0)) == suspended
+    centered = recenter_camera(suspended, (4.0, 1.0, -2.0))
+    assert tracking_state_id(centered) is CameraTrackingStateId.ACTIVE
+    assert centered.target_m == (4.0, 1.0, -2.0)
+    assert centered.zoom == pytest.approx(2.5)
+
+
+def test_tracking_auto_fit_fallback_is_explicit_and_only_reduces_unsafe_zoom() -> None:
+    state = CameraState(zoom=1.2)
+    assert enforce_tracking_clearance(state, 0.3, 1.0) == state
+    enabled = set_auto_fit_fallback(state, True)
+    assert enforce_tracking_clearance(enabled, 0.3, 1.0) == enabled
+    unsafe = set_auto_fit_fallback(CameraState(zoom=4.0), True)
+    fitted = enforce_tracking_clearance(unsafe, 0.3, 1.0)
+    assert fitted.zoom == pytest.approx(2.8)
+    assert fitted.auto_fit_fallback_enabled
+
+
+def test_tracking_contract_rejects_invalid_flags_targets_and_steps() -> None:
+    with pytest.raises(ValueError, match="suspended"):
+        CameraState(tracking_suspended=True)
+    with pytest.raises(ValueError, match="finite"):
+        set_camera_tracking(CameraState(), True, (float("nan"), 0.0, 0.0))
+    with pytest.raises(ValueError, match="positive"):
+        update_tracking_target(CameraState(tracking_enabled=True), (1.0, 0.0, 0.0), 0.0)
+
+
 def test_exact_presets_and_adapters_match_one_shared_fixture() -> None:
     fixture = _fixture()
     assert fixture["schema"] == "rate-of-closure-camera-presets/v1"
     assert fixture["frame"] == {"x": "downrange", "y": "up", "z": "right"}
-    assert list(CAMERA_COMMAND_IDS) == fixture["command_ids"]
+    assert list(CAMERA_PRESET_COMMAND_IDS) == fixture["command_ids"]
     for case in fixture["presets"]:
         assert isinstance(case, dict)
         preset = camera_preset(case["command_id"], case["face_on_side"])
@@ -123,6 +193,161 @@ def test_pyqt_club_view_exposes_accessible_stable_commands(qtbot) -> None:  # ty
         assert widget.accessibleName()
         assert widget.toolTip()
         assert widget.focusPolicy().value != 0
+    assert (
+        controls.command_widgets()[
+            CameraCommandId.TRACK_CLUBHEAD.value
+        ].accessibleName()
+        == "Track Clubhead"
+    )
+    assert (
+        controls.command_widgets()[CameraCommandId.RECENTER.value].accessibleName()
+        == "Re-center Clubhead"
+    )
+    assert controls.tracking_status_label().accessibleName() == "Camera tracking state"
+    assert controls.tracking_status_label().text() == "Tracking off"
+    view.stop()
+
+
+@pytest.mark.parametrize("phase", [0.0, 0.5, 1.0])
+def test_pyqt_track_clubhead_is_bounded_zoom_preserving_and_recenterable(
+    qtbot, phase: float
+) -> None:  # type: ignore[no-untyped-def]
+    view = Club3DView()
+    qtbot.addWidget(view)
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+    view._phase = phase
+    view._draw()
+    view.set_zoom(2.0)
+    view.set_camera_tracking(True)
+    assert view.camera_state().target_m == pytest.approx(view.camera_subject_m())
+    assert view.zoom() == pytest.approx(2.0)
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.ACTIVE
+
+    view._phase = 1.0 if phase != 1.0 else 0.0
+    prior_target = np.asarray(view.camera_state().target_m)
+    view._draw()
+    target_step = np.linalg.norm(
+        np.asarray(view.camera_state().target_m) - prior_target
+    )
+    assert target_step <= TRACKING_MAX_TARGET_STEP_M + 1e-12
+    assert view.zoom() == pytest.approx(2.0)
+
+    view._axes.view_init(elev=31.0, azim=47.0)
+    view._on_orbit_release(None)
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.SUSPENDED
+    assert "suspended" in view.camera_controls().tracking_status_label().text().lower()
+    view.recenter_camera()
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.ACTIVE
+    assert view.camera_state().target_m == pytest.approx(view.camera_subject_m())
+    assert view.zoom() == pytest.approx(2.0)
+    view.stop()
+
+
+def test_pyqt_tracking_and_fallback_state_are_isolated_per_viewport(qtbot) -> None:  # type: ignore[no-untyped-def]
+    first = Club3DView()
+    second = Club3DView()
+    qtbot.addWidget(first)
+    qtbot.addWidget(second)
+    for view in (first, second):
+        view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+    first.set_zoom(4.0)
+    first.set_auto_fit_fallback(True)
+    first.set_camera_tracking(True)
+    assert first.camera_tracking_state_id() is CameraTrackingStateId.ACTIVE
+    assert first.camera_state().auto_fit_fallback_enabled
+    assert first.camera_subject_fits()
+    assert second.camera_tracking_state_id() is CameraTrackingStateId.OFF
+    assert not second.camera_state().auto_fit_fallback_enabled
+    first.stop()
+    second.stop()
+
+
+def test_pyqt_manual_pan_suspends_tracking_at_the_visible_target(qtbot) -> None:  # type: ignore[no-untyped-def]
+    view = Club3DView()
+    qtbot.addWidget(view)
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+    view.stop()
+    view.set_camera_tracking(True)
+    prior_target = view.camera_state().target_m
+    for getter, setter, shift in (
+        (view._axes.get_xlim3d, view._axes.set_xlim3d, 0.03),
+        (view._axes.get_ylim3d, view._axes.set_ylim3d, -0.02),
+        (view._axes.get_zlim3d, view._axes.set_zlim3d, 0.01),
+    ):
+        low, high = getter()
+        setter(low + shift, high + shift)
+    view._on_orbit_release(None)
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.SUSPENDED
+    assert view.camera_state().target_m == pytest.approx(
+        (prior_target[0] - 0.02, prior_target[1] + 0.01, prior_target[2] + 0.03)
+    )
+    view.stop()
+
+
+def test_pyqt_tracking_recenters_across_playback_wrap(qtbot) -> None:  # type: ignore[no-untyped-def]
+    view = Club3DView()
+    qtbot.addWidget(view)
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+    view.set_view_mode("Head Moving Through Space")
+    view.set_camera_tracking(True)
+    view._phase = 0.999
+    view._advance()
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.ACTIVE
+    assert view.camera_state().target_m == pytest.approx(view.camera_subject_m())
+    view.stop()
+
+
+def test_pyqt_playback_wrap_does_not_resume_suspended_tracking(qtbot) -> None:  # type: ignore[no-untyped-def]
+    view = Club3DView()
+    qtbot.addWidget(view)
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+    view.stop()
+    view.set_view_mode("Head Moving Through Space")
+    view.set_camera_tracking(True)
+    view._axes.view_init(elev=31.0, azim=47.0)
+    view._on_orbit_release(None)
+    manual_target = view.camera_state().target_m
+    view._phase = 0.999
+    view._advance()
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.SUSPENDED
+    assert view.camera_state().target_m == pytest.approx(manual_target)
+    view.stop()
+
+
+def test_pyqt_scenario_reset_recenters_active_tracking(qtbot) -> None:  # type: ignore[no-untyped-def]
+    view = Club3DView()
+    qtbot.addWidget(view)
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+    view.stop()
+    view.set_view_mode("Head Moving Through Space")
+    view._phase = 1.0
+    view._draw()
+    view.set_camera_tracking(True)
+    prior_target = view.camera_state().target_m
+
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=90.0))
+
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.ACTIVE
+    assert view.camera_state().target_m == pytest.approx(view.camera_subject_m())
+    assert view.camera_state().target_m != pytest.approx(prior_target)
+    view.stop()
+
+
+def test_pyqt_scenario_reset_preserves_suspended_tracking_target(qtbot) -> None:  # type: ignore[no-untyped-def]
+    view = Club3DView()
+    qtbot.addWidget(view)
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+    view.stop()
+    view.set_view_mode("Head Moving Through Space")
+    view.set_camera_tracking(True)
+    view._axes.view_init(elev=31.0, azim=47.0)
+    view._on_orbit_release(None)
+    manual_target = view.camera_state().target_m
+
+    view.set_scenario(ImpactScenario(clubhead_speed_mph=90.0))
+
+    assert view.camera_tracking_state_id() is CameraTrackingStateId.SUSPENDED
+    assert view.camera_state().target_m == pytest.approx(manual_target)
     view.stop()
 
 
