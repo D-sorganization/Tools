@@ -10,18 +10,19 @@ commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The web package now owns a
 Playwright Test 1.62.1 pin/lock, deterministic Chromium config, and two
 path-filtered workflows which build and serve the production Vite output. The
 PR workflow is ephemeral `ubuntu-latest` only and contains no fleet/self-hosted
-reference. The separate trusted workflow has only `main` push and manual
-triggers; push checkout uses its event SHA, while manual checkout is fixed to
-`main`. It has no PR trigger or caller-controlled ref. All external actions in
-both Playwright workflows are pinned to immutable full SHAs, and artifacts
-identify both workflow run and attempt.
+reference. The separate trusted workflow has only a `main` push trigger and
+checks out that event commit; it has no PR or caller-selected manual workflow
+definition seam. All external actions in both Playwright workflows are pinned
+to immutable full SHAs, and artifacts identify both workflow run and attempt.
 
 Five role/label-driven browser tests exercise the hashed dedicated module Worker
-without mocks: seeded progress/completion and identical rerun, cancellation of
-a 500-run swing/OAT request without partial or late results, and Worker cleanup
-when navigation unmounts Variation. Blocking service workers does not block the
-dedicated Worker. Desktop 1440x1000 and narrow 390x844 layouts enforce zero
-document horizontal overflow and attach review screenshots.
+without mocks: a seeded 24-run study records strict intermediate progress,
+completion, and identical rerun; cancellation of a 500-run swing/OAT request
+observes Worker closure before two identical seeded reruns can complete, proving
+the cancelled generation cannot publish partial or late results. Navigation
+also proves Worker cleanup when Variation unmounts. Blocking service workers
+does not block the dedicated Worker. Desktop 1440x1000 and narrow 390x844
+layouts enforce zero document horizontal overflow and attach review screenshots.
 
 Local gates are 5/5 Playwright and 743/743 Vitest tests, TypeScript, ESLint, and
 Vite production build. This remains a foundation, not R14.5 completion:

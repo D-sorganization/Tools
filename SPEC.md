@@ -26,28 +26,29 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.56                                    |
-| **Spec Version**        | 1.16.56                                    |
+| **Current Version**     | 1.16.57                                    |
+| **Spec Version**        | 1.16.57                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
-Version 1.16.56 pins Playwright Test 1.62.1 inside the Rate web package and
+Version 1.16.57 pins Playwright Test 1.62.1 inside the Rate web package and
 adds a dedicated deterministic Chromium configuration with separate trust
 domains. The pull-request workflow contains only one ephemeral `ubuntu-latest`
 job and no persistent-fleet or self-hosted reference. A separate trusted
-workflow runs only for pushes to `main` and manual dispatch. Push checkout uses
-the event SHA by default; manual checkout is fixed to `main`, with no PR trigger
-or caller-controlled ref. Every external action reference in both Playwright
-workflows is pinned to a full immutable commit SHA. The gate
-builds and previews the production Vite output. Role/label
-locators drive the real hashed module Worker through a seeded three-run study,
-completion and identical rerun, 500-run swing/OAT cancellation with no partial
-or late result, and primary-tab navigation which terminates active work before
-the Variation panel unmounts. The test context blocks service workers but not
-the tested dedicated module Worker.
+workflow runs only for pushes to `main` and checks out the push event commit.
+It has no PR or manual-dispatch workflow-definition ref seam. Every external
+action reference in both Playwright workflows is pinned to a full immutable
+commit SHA. The gate builds and previews the production Vite output. Role/label
+locators drive the real hashed module Worker through a seeded 24-run study,
+observe at least one strict intermediate progress value before completion, and
+prove an identical rerun. A 500-run swing/OAT cancellation observes Worker
+termination before two identical seeded reruns, proving the cancelled generation
+cannot publish a partial, late, or stale result. Primary-tab navigation also
+terminates active work before the Variation panel unmounts. The test context
+blocks service workers but not the tested dedicated module Worker.
 
 Desktop 1440x1000 and narrow 390x844 projects enforce zero document-level
 horizontal overflow and attach deterministic full-page screenshots. Reports,
@@ -3339,6 +3340,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142 R14.5): remove manual dispatch from the self-hosted Playwright workflow so only main-push-owned workflow definitions reach the trusted fleet; observe strict intermediate production-Worker progress; and prove cancellation terminates the old Worker before deterministic reruns can accept results. |
+| 2026-08-12 | 1.16.56 | ci(rate-of-closure, #4142 R14.5): split the ephemeral pull-request Playwright gate from the trusted main workflow and pin all external actions to immutable SHAs. |
+| 2026-08-12 | 1.16.55 | ci(rate-of-closure, #4142 R14.5): isolate fork-origin pull-request browser execution on ephemeral hosted runners while retaining the locked production gate. |
 | 2026-08-12 | 1.16.54 | test(rate-of-closure, #4142 R14.5): pin a Rate-web-local Playwright/Chromium contract; exercise the real production module Worker for seeded progress/completion/rerun, cancellation without stale results, and navigation/unmount cleanup; retain desktop/narrow screenshots as review artifacts while keeping golden cross-platform visual approval and full R14.5 completion open. |
 | 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
 | 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |

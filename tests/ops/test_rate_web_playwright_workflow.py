@@ -55,7 +55,7 @@ def test_pull_request_workflow_is_hosted_only_without_fleet_vocabulary() -> None
     assert workflow["jobs"]["production-worker-e2e"]["runs-on"] == "ubuntu-latest"
 
 
-def test_trusted_workflow_has_no_pull_request_or_untrusted_ref_seam() -> None:
+def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None:
     text = TRUSTED_WORKFLOW_PATH.read_text(encoding="utf-8")
     jobs = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]
 
@@ -66,13 +66,12 @@ def test_trusted_workflow_has_no_pull_request_or_untrusted_ref_seam() -> None:
     assert "${{ github.head_ref" not in text
     assert "${{ github.sha" not in text
     assert "\n  push:" in text
-    assert "workflow_dispatch:" in text
+    assert "workflow_dispatch" not in text
+    assert set(jobs) == {"push-production-worker-e2e"}
     assert all(job["runs-on"] == "d-sorg-fleet" for job in jobs.values())
 
     push_checkout = _checkout(jobs["push-production-worker-e2e"])
-    manual_checkout = _checkout(jobs["manual-production-worker-e2e"])
     assert "with" not in push_checkout or "ref" not in push_checkout["with"]
-    assert manual_checkout["with"]["ref"] == "main"
 
 
 def test_pr_and_trusted_jobs_run_the_same_locked_production_gate() -> None:

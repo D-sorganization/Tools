@@ -9,14 +9,16 @@
   Chromium desktop and narrow projects.
 - Every PR runs the equivalent locked production gate only on ephemeral
   `ubuntu-latest`; its workflow file has no fleet/self-hosted reference. A
-  separate trusted workflow runs only for `main` pushes and manual dispatches.
-  Push checkout uses the event SHA by default; manual checkout is fixed to
-  `main`, and the trusted workflow exposes no PR trigger or caller-selected ref.
+  separate trusted workflow runs only for `main` pushes and checks out the
+  event commit. It exposes neither a PR trigger nor manual-dispatch definition
+  ref, so untrusted or caller-selected workflow code cannot reach the fleet.
   Every external action in both Playwright workflows is pinned to a full
   immutable SHA; evidence artifacts include the run and attempt IDs.
 - Role/label-driven tests observe the hashed production module Worker and prove
-  seeded progress/completion/reproducible rerun, long-run cancellation without
-  partial or stale result acceptance, and Worker termination on tab unmount.
+  strict intermediate and terminal progress plus reproducible rerun for a
+  seeded 24-run study. Long-run cancellation observes Worker termination before
+  two identical seeded reruns, rejecting partial, late, or stale result
+  acceptance; navigation separately proves Worker termination on tab unmount.
   `serviceWorkers: "block"` suppresses unrelated service-worker state only; the
   tested dedicated module Worker remains active and is never mocked.
 - Desktop 1440x1000 and narrow 390x844 layouts have no document-level

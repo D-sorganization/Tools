@@ -10,17 +10,19 @@ commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The Rate web package pins
 Playwright Test 1.62.1 in its own manifest/lock and owns a deterministic
 Chromium configuration across two path-filtered workflows. Every PR runs only
 on ephemeral `ubuntu-latest`; the PR YAML has no fleet/self-hosted reference.
-The separate trusted workflow runs only for pushes to `main` and manual
-dispatch, using the push event checkout or fixed `main` checkout respectively.
-It has no PR trigger or caller-controlled ref seam. Checkout, Node setup, and
-artifact upload actions are pinned to full immutable SHAs. Artifact names
-include the workflow run and attempt IDs.
+The separate trusted workflow runs only for pushes to `main`, checks out the
+push event commit, and has neither a PR nor manual-dispatch ref seam. Checkout,
+Node setup, and artifact upload actions are pinned to full immutable SHAs.
+Artifact names include the workflow run and attempt IDs.
 
 The gate builds and serves the Vite production bundle, then uses role/label
-locators against the actual bundled module Worker. It proves seeded three-run
-progress/completion and deterministic rerun, cancels a 500-run swing/OAT job
-without accepting partial or late results, terminates active work on primary-
-tab unmount, and rejects browser page errors. Blocking service workers in the
+locators against the actual bundled module Worker. It observes strict
+intermediate and terminal progress during a seeded 24-run study and proves a
+deterministic rerun. Cancellation of a 500-run swing/OAT job observes actual
+Worker termination before two identical seeded reruns, proving the cancelled
+generation cannot publish a partial or late result. Navigation terminates
+active work on primary-tab unmount, and every case rejects browser page errors.
+Blocking service workers in the
 test context does not replace or disable the dedicated module Worker; every
 lifecycle case observes the hashed production Worker chunk. Desktop 1440x1000
 and narrow 390x844 checks enforce zero document-level horizontal overflow and
