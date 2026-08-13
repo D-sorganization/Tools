@@ -36,6 +36,8 @@ class ConfidenceEllipsoidMesh:
     triangles_per_ellipsoid: int
 
     def __post_init__(self) -> None:
+        require(isinstance(self.vertices_m, np.ndarray), "vertices must be an array")
+        require(isinstance(self.triangles, np.ndarray), "triangles must be an array")
         vertices = np.asarray(self.vertices_m)
         triangles = np.asarray(self.triangles)
         require(self.coordinate_frame == APP_FRAME_ID, "invalid coordinate frame")
@@ -43,9 +45,36 @@ class ConfidenceEllipsoidMesh:
             self.interpretation == GAUSSIAN_POSITION_CONTENT_REGION,
             "invalid interpretation",
         )
+        require(type(self.sample_indices) is tuple, "samples must be a tuple")
+        require(
+            all(type(index) is int and index >= 0 for index in self.sample_indices),
+            "samples must be genuine non-negative integers",
+        )
+        require(
+            len(self.sample_indices) <= MAX_RENDERED_ELLIPSOIDS,
+            "sample count exceeds the hard render cap",
+        )
+        _bounded_integer(
+            self.vertices_per_ellipsoid,
+            "vertices_per_ellipsoid",
+            1,
+            MAX_ELLIPSOID_VERTICES,
+        )
+        _bounded_integer(
+            self.triangles_per_ellipsoid,
+            "triangles_per_ellipsoid",
+            1,
+            MAX_ELLIPSOID_TRIANGLES,
+        )
         require(vertices.ndim == 2 and vertices.shape[1:] == (3,), "invalid vertices")
         require(
             triangles.ndim == 2 and triangles.shape[1:] == (3,), "invalid triangles"
+        )
+        require(vertices.shape[0] <= MAX_ELLIPSOID_VERTICES, "too many vertices")
+        require(triangles.shape[0] <= MAX_ELLIPSOID_TRIANGLES, "too many triangles")
+        require(
+            np.issubdtype(vertices.dtype, np.number) and np.isrealobj(vertices),
+            "vertices must be real numbers",
         )
         require(bool(np.all(np.isfinite(vertices))), "vertices must be finite")
         require(
@@ -71,8 +100,12 @@ class ConfidenceEllipsoidMesh:
             require(
                 int(triangles.max()) < vertices.shape[0], "triangle index out of range"
             )
-        object.__setattr__(self, "vertices_m", immutable_array(vertices, float))
-        object.__setattr__(self, "triangles", immutable_array(triangles, int))
+        with np.errstate(over="ignore", invalid="ignore"):
+            owned_vertices = immutable_array(vertices, float)
+            owned_triangles = immutable_array(triangles, int)
+        require(bool(np.all(np.isfinite(owned_vertices))), "vertices must be finite")
+        object.__setattr__(self, "vertices_m", owned_vertices)
+        object.__setattr__(self, "triangles", owned_triangles)
 
 
 def build_confidence_ellipsoid_mesh(

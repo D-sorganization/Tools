@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
+
+- React camera bounds now stream trace points and mesh
+  vertices into fixed-size extrema state. No full raw-trace `flatMap`,
+  per-axis copy, or variadic extrema call remains; 500 by 1,501 samples render
+  within the measured interactive budget without `RangeError`.
+- The public Python mesh constructor applies genuine built-in integer checks,
+  the global 48/2,976/5,760 caps, exact shape/index closure, finite real vertex
+  and integer triangle domains, and owned read-only arrays.
+- SPEC is 1.16.67. Evidence is 1,460 broad Rate/shared-variation Python and
+  868 React tests, 67/87 focused tests including maximum-scale performance,
+  strict isolated changed-source Python 3.12 MyPy, Ruff/format, TypeScript,
+  ESLint, docs governance, and a production Vite build. Cross-browser/
+  assistive-technology E2E, approved visual baselines, import UI, protected
+  publication, and remaining #4142 scope stay open.
+
 ## 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
 
 - Both mesh authorities now require genuine integer budgets and enforce hard

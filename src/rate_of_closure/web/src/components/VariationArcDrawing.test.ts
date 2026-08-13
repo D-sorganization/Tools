@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import type { ConfidenceEllipsoidMeshTs } from "../model/confidenceEllipsoidMesh";
 import type { GeometricVariabilityTs, SwingTraceRowTs } from "../model/variationGeometry";
@@ -68,5 +68,42 @@ describe("variation arc confidence surface projection", () => {
     expect(paths[0][2][0]).toBeCloseTo(25.7513, 3);
     expect(paths[0][2][1]).toBeCloseTo(74.2487, 3);
     expect(paths[0].flat().every((value) => value >= 0 && value <= 100)).toBe(true);
+  });
+
+  it("streams maximum-scale render bounds without materializing raw points", () => {
+    const paths: Array<Array<[number, number]>> = [];
+    const points: SwingTraceRowTs["points"] = Array.from(
+      { length: 1_501 },
+      (_, index) => [index / 1_500, Math.sin(index / 100), Math.cos(index / 100)],
+    );
+    const timesS = Array.from({ length: 1_501 }, (_, index) => index / 1_500);
+    const traces: SwingTraceRowTs[] = Array.from({ length: 500 }, (_, trialIndex) => ({
+      trialIndex, points, timesS, status: "evaluated_hit",
+    }));
+    const mesh: ConfidenceEllipsoidMeshTs = {
+      coordinateFrame: "app_frame:x_target,y_up,z_right",
+      interpretation: "gaussian-position-content-region", sampleIndices: [0],
+      verticesM: [[-2, 0, 0], [2, 0, 0], [0, 2, 0]], triangles: [[0, 1, 2]],
+      verticesPerEllipsoid: 3, trianglesPerEllipsoid: 1,
+    };
+
+    const started = performance.now();
+    const flatMapSpy = vi.spyOn(Array.prototype, "flatMap");
+    try {
+      expect(() => drawVariationArcScene(
+        capturingContext(paths), 400, 300, traces, variability,
+        { yaw: 0.2, pitch: -0.1, zoom: 1 }, 25, null, mesh,
+      )).not.toThrow();
+      expect(flatMapSpy).not.toHaveBeenCalled();
+    } finally {
+      flatMapSpy.mockRestore();
+    }
+    const elapsedMs = performance.now() - started;
+
+    expect(elapsedMs).toBeLessThan(2_000);
+    expect(paths).toHaveLength(1);
+    expect(paths[0].every(([x, y]) => (
+      Number.isFinite(x) && Number.isFinite(y) && x >= 0 && x <= 400 && y >= 0 && y <= 300
+    ))).toBe(true);
   });
 });

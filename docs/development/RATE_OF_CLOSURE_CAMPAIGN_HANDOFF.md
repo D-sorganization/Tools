@@ -1,5 +1,25 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 confidence-mesh render/constructor closure
+
+- React computes camera bounds incrementally from streamed trace points and
+  the bounded mesh. It no longer flattens 500-by-1,501 raw traces
+  or spreads them into variadic extrema calls, closing the V8 `RangeError`
+  and transient reference-array allocation.
+- The maximum-scale regression measures the complete render and verifies the
+  mesh remains projected with finite coordinates inside its linked camera.
+- Direct Python `ConfidenceEllipsoidMesh` construction now requires genuine
+  built-in integer sample indices/counts, exact shapes/index closure, no more
+  than 48 samples, 2,976 vertices, or 5,760 triangles, and owned read-only
+  finite arrays.
+- SPEC advances to 1.16.67. Evidence is 1,460 broad Rate/shared-variation
+  Python tests, all 868 React tests, 67/87 focused Python/React tests including
+  performance, strict isolated changed-source Python 3.12 MyPy, Ruff/format,
+  TypeScript, ESLint, documentation governance, and a production Vite build.
+- Cross-browser/assistive-technology E2E, approved visual baselines,
+  plot-definition import UI, protected publication, and remaining #4142 work
+  remain open.
+
 ## 2026-08-13 #4142 confidence-mesh contract hardening
 
 - Python and TypeScript reject Boolean, fractional, negative, and over-limit

@@ -17,13 +17,18 @@ from rate_of_closure.ui.pyqt6.variation_geometry_rendering import (
 from rate_of_closure.ui.pyqt6.variation_plot_helpers import equal_3d_axes
 from rate_of_closure.variation import confidence_ellipsoid_mesh as mesh_authority
 from rate_of_closure.variation.confidence_ellipsoid_mesh import (
+    APP_FRAME_ID,
     MAX_ELLIPSOID_TRIANGLES,
     MAX_ELLIPSOID_VERTICES,
     MAX_RENDERED_ELLIPSOIDS,
+    ConfidenceEllipsoidMesh,
     build_confidence_ellipsoid_mesh,
 )
 from shared.python.contracts import ContractViolationError
-from shared.python.swing_sim.variation import ESTIMABLE
+from shared.python.swing_sim.variation import (
+    ESTIMABLE,
+    GAUSSIAN_POSITION_CONTENT_REGION,
+)
 
 _FIXTURE = (
     Path(__file__).parents[2]
@@ -207,3 +212,84 @@ def test_transformed_vertex_overflow_fails_closed() -> None:
             (ESTIMABLE,),
             "app_frame:x_target,y_up,z_right",
         )
+
+
+def _direct_mesh(**overrides: object) -> ConfidenceEllipsoidMesh:
+    values: dict[str, object] = {
+        "coordinate_frame": APP_FRAME_ID,
+        "interpretation": GAUSSIAN_POSITION_CONTENT_REGION,
+        "sample_indices": (0,),
+        "vertices_m": np.asarray([[0.0, 0.0, 0.0]]),
+        "triangles": np.asarray([[0, 0, 0]]),
+        "vertices_per_ellipsoid": 1,
+        "triangles_per_ellipsoid": 1,
+    }
+    values.update(overrides)
+    return ConfidenceEllipsoidMesh(**values)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("vertices_m", [[0.0, 0.0, 0.0]]),
+        ("triangles", [[0, 0, 0]]),
+        ("sample_indices", (True,)),
+        ("sample_indices", [0]),
+        ("sample_indices", (np.int64(0),)),
+        ("sample_indices", (-1,)),
+        ("sample_indices", tuple(range(MAX_RENDERED_ELLIPSOIDS + 1))),
+        ("vertices_per_ellipsoid", True),
+        ("vertices_per_ellipsoid", np.int64(1)),
+        ("vertices_per_ellipsoid", 1.5),
+        ("vertices_per_ellipsoid", MAX_ELLIPSOID_VERTICES + 1),
+        ("triangles_per_ellipsoid", True),
+        ("triangles_per_ellipsoid", np.int64(1)),
+        ("triangles_per_ellipsoid", 1.5),
+        ("triangles_per_ellipsoid", MAX_ELLIPSOID_TRIANGLES + 1),
+    ],
+)
+def test_direct_mesh_constructor_rejects_invalid_domains(
+    field: str, value: object
+) -> None:
+    overrides = {field: value}
+    if field == "sample_indices" and isinstance(value, tuple) and len(value) > 1:
+        overrides.update(
+            vertices_m=np.zeros((len(value), 3)),
+            triangles=np.zeros((len(value), 3), dtype=int),
+        )
+    with pytest.raises(ContractViolationError):
+        _direct_mesh(**overrides)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("vertices_m", np.zeros((MAX_ELLIPSOID_VERTICES + 1, 3))),
+        ("triangles", np.zeros((MAX_ELLIPSOID_TRIANGLES + 1, 3), dtype=int)),
+        ("vertices_m", np.asarray([[np.inf, 0.0, 0.0]])),
+    ],
+)
+def test_direct_mesh_constructor_rejects_global_caps_and_nonfinite_arrays(
+    field: str, value: np.ndarray
+) -> None:
+    overrides: dict[str, object] = {field: value}
+    if field == "vertices_m":
+        overrides["vertices_per_ellipsoid"] = value.shape[0]
+    else:
+        overrides["triangles_per_ellipsoid"] = value.shape[0]
+    with pytest.raises(ContractViolationError):
+        _direct_mesh(**overrides)
+
+
+def test_direct_mesh_constructor_owns_read_only_arrays() -> None:
+    source_vertices = np.asarray([[0.0, 0.0, 0.0]])
+    source_triangles = np.asarray([[0, 0, 0]])
+    mesh = _direct_mesh(vertices_m=source_vertices, triangles=source_triangles)
+
+    source_vertices[0, 0] = 99.0
+    source_triangles[0, 0] = 99
+
+    assert mesh.vertices_m[0, 0] == 0.0
+    assert mesh.triangles[0, 0] == 0
+    assert not mesh.vertices_m.flags.writeable
+    assert not mesh.triangles.flags.writeable

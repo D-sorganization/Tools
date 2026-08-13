@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
+
+React camera bounds now stream trace points plus the bounded confidence mesh
+through fixed-size extrema state. The renderer no longer flattens raw traces or
+spreads unbounded arrays into `Math.min`/`Math.max`; a 500-trial by
+1,501-sample regression completes within the interactive budget without the
+prior V8 `RangeError`, while the surface remains inside the computed camera.
+
+The public Python `ConfidenceEllipsoidMesh` constructor now enforces the same
+named 48-ellipsoid, 2,976-vertex, and 5,760-triangle caps as its builder.
+Sample indices and per-surface counts must be genuine non-Boolean built-in
+integers, shapes and indices must close exactly, and owned finite numeric
+arrays are read-only. Direct construction can no longer bypass allocation
+limits or retain mutable caller storage.
+
+SPEC advances to 1.16.67. Evidence is 1,460 broad Rate/shared-variation
+Python tests, all 868 React tests, 67/87 focused Python/React tests including
+the maximum-scale render regression, strict isolated changed-source Python
+3.12 MyPy, Ruff/format, TypeScript, ESLint, documentation governance, and a
+production Vite build. Cross-browser/assistive-technology E2E, approved visual
+baselines, import UI, protected publication, and remaining #4142 gates remain
+open.
+
 ## 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
 
 The Python and TypeScript mesh authorities now require genuine integer

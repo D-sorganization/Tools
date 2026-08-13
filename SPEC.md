@@ -26,11 +26,31 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.66                                    |
-| **Spec Version**        | 1.16.66                                    |
+| **Current Version**     | 1.16.67                                    |
+| **Spec Version**        | 1.16.67                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
+
+Version 1.16.67 removes the last unbounded camera-bounds operation from the
+React variation renderer. Bounds are accumulated in constant auxiliary space
+by streaming trace points and bounded mesh vertices without flattening or
+variadic extrema calls. A maximum supported 500-trial by 1,501-sample regression
+measures the complete render, closes the former V8 variadic-argument
+`RangeError`, and verifies finite mesh projection within the linked camera.
+
+The public Python `ConfidenceEllipsoidMesh` constructor now applies the
+builder's named 48-ellipsoid, 2,976-vertex, and 5,760-triangle maxima. It
+requires genuine non-Boolean built-in integer sample indices and per-surface
+counts, exact tensor shapes and triangle-index closure, and finite real vertex
+and integer triangle arrays. Arrays are copied into read-only owned storage,
+so direct construction cannot retain mutable caller authority.
+
+This contract closure does not expand claims around cross-browser or
+assistive-technology E2E, approved visual baselines, plot-definition import
+UI, protected publication, or completion of the remaining #4142 scope.
 
 ### 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
 
@@ -3746,6 +3766,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142 R12.1): stream bounded React camera extrema at 500-by-1,501 scale and close public Python mesh-constructor cap, integer, shape, index, and immutable-array bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142 R12.1): enforce genuine integer and named hard mesh budgets before allocation; reject transformed TypeScript overflow; use a non-symmetric cross-toolkit frame golden; and verify captured PyQt/React projection and mesh-aware camera bounds. |
 | 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142 R12.1): render bounded full-rank Gaussian position-content ellipsoid surfaces with PyQt6/React parity; preserve exact frame, SI axes, deterministic temporal decimation, accessible distinct legends, and default-off controls; persist visibility in strict plot-definition v3 with exact v1/v2 migration. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
