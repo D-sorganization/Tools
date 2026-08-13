@@ -1,5 +1,25 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 confidence-mesh contract hardening
+
+- Python and TypeScript reject Boolean, fractional, negative, and over-limit
+  tessellation/allocation budgets against named 12-by-6 and
+  48/2,976/5,760 hard maxima.
+- Per-surface counts and zero-capacity selection are computed before unit
+  sphere allocation, closing raw-index and resource-bound bypasses.
+- TypeScript validates final world vertices after transformation, matching
+  Python's fail-closed behavior when finite arithmetic overflows.
+- A non-symmetric orthonormal golden frame detects row/column mistakes.
+  Captured PyQt and React renderer tests pin x-target/y-up/z-right projection
+  and surface-inclusive camera bounds. SPEC advances to 1.16.66.
+- Evidence is 1,441 broad Rate/shared-variation Python tests, all 867 React
+  tests, 48/86 focused Python/React tests including performance, strict
+  isolated changed-source Python 3.12 MyPy, Ruff/format, TypeScript, ESLint,
+  documentation governance, and a production Vite build.
+- Cross-browser/assistive-technology E2E, approved visual baselines,
+  plot-definition import UI, protected publication, and remaining #4142 work
+  remain open.
+
 ## 2026-08-13 #4142 bounded confidence-ellipsoid surfaces
 
 - PyQt6 and React render actual Gaussian sample-position content ellipsoids

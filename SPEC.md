@@ -26,11 +26,29 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.65                                    |
-| **Spec Version**        | 1.16.65                                    |
+| **Current Version**     | 1.16.66                                    |
+| **Spec Version**        | 1.16.66                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
+
+Version 1.16.66 makes the bounded surface contract enforceable on every public
+mesh-construction path. Python and TypeScript require genuine integer
+tessellation and allocation budgets and reject negative, fractional, Boolean,
+or over-limit values against named 12-longitude, 6-latitude,
+48-ellipsoid, 2,976-vertex, and 5,760-triangle maxima. Per-surface counts and
+zero capacity are determined before unit-sphere allocation.
+
+TypeScript validates final transformed world vertices so finite operands that
+overflow cannot poison projection or camera bounds. The shared cross-toolkit
+fixture now uses a non-symmetric canonical orthonormal frame, and captured
+PyQt and React renderer regressions verify coordinate projection and
+mesh-inclusive bounds. This hardening does not expand the prior claims around
+mean confidence intervals, cross-browser or assistive-technology E2E,
+approved screenshots, plot-definition import UI, protected publication, or
+completion of #4142.
 
 ### 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
 
@@ -3728,6 +3746,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142 R12.1): enforce genuine integer and named hard mesh budgets before allocation; reject transformed TypeScript overflow; use a non-symmetric cross-toolkit frame golden; and verify captured PyQt/React projection and mesh-aware camera bounds. |
 | 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142 R12.1): render bounded full-rank Gaussian position-content ellipsoid surfaces with PyQt6/React parity; preserve exact frame, SI axes, deterministic temporal decimation, accessible distinct legends, and default-off controls; persist visibility in strict plot-definition v3 with exact v1/v2 migration. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
 | 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |

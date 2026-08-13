@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
+
+The Python and TypeScript mesh authorities now require genuine integer
+tessellation and allocation budgets and enforce named hard maxima: 12
+longitude segments, 6 latitude segments, 48 ellipsoids, 2,976 vertices, and
+5,760 triangles. Per-surface counts and zero capacity are resolved before unit
+sphere allocation. Boolean, fractional, negative, or over-limit values fail
+closed instead of bypassing limits or surfacing raw indexing errors.
+
+TypeScript now rejects nonfinite transformed vertices, matching Python when
+finite inputs overflow during world-coordinate assembly. The cross-toolkit
+golden uses a non-symmetric canonical orthonormal frame, so row/column mistakes
+cannot pass accidentally. Captured PyQt and React renderer tests pin app-frame
+orientation, display projection, and mesh-aware camera bounds. SPEC advances
+to 1.16.66. Evidence is 1,441 broad Rate/shared-variation Python tests, all 867
+React tests, 48/86 focused Python/React tests including performance, strict
+isolated changed-source Python 3.12 MyPy, Ruff/format, TypeScript, ESLint,
+documentation governance, and a production Vite build. The prior
+cross-browser, approved-baseline, import-UI, protected publication, and
+remaining #4142 gates stay open.
+
 ## 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
 
 PyQt6 and React now render actual cyan Gaussian position-content surfaces from

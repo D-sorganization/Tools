@@ -56,5 +56,40 @@ describe("confidence ellipsoid mesh", () => {
     expect(() => buildConfidenceEllipsoidMesh({
       ...valid, semiAxisLengthsM: [[1, 0, 1]],
     })).toThrow(/positive/);
+    expect(() => buildConfidenceEllipsoidMesh({
+      ...valid,
+      centersM: [[1e308, 1e308, 1e308]],
+      semiAxisLengthsM: [[1e308, 1e308, 1e308]],
+    })).toThrow(/finite/);
+  });
+
+  it.each([
+    ["longitudeSegments", true], ["longitudeSegments", 2],
+    ["longitudeSegments", 12.5], ["longitudeSegments", 13],
+    ["latitudeSegments", true], ["latitudeSegments", 1],
+    ["latitudeSegments", 6.5], ["latitudeSegments", 7],
+    ["maxEllipsoids", true], ["maxEllipsoids", -1],
+    ["maxEllipsoids", 1.5], ["maxEllipsoids", 49],
+    ["maxVertices", true], ["maxVertices", -1],
+    ["maxVertices", 100.5], ["maxVertices", 2_977],
+    ["maxTriangles", true], ["maxTriangles", -1],
+    ["maxTriangles", 100.5], ["maxTriangles", 5_761],
+  ])("strictly hard caps %s", (field, value) => {
+    const budget = { ...fixture.budget, [field]: value };
+    expect(() => buildConfidenceEllipsoidMesh(
+      fixture as unknown as ConfidenceEllipsoidGeometryTs,
+      budget as never,
+    )).toThrow();
+  });
+
+  it("returns an empty mesh when the validated budget has zero capacity", () => {
+    const mesh = buildConfidenceEllipsoidMesh(
+      fixture as unknown as ConfidenceEllipsoidGeometryTs,
+      { ...fixture.budget, maxVertices: 0 },
+    );
+    expect(mesh.verticesM).toEqual([]);
+    expect(mesh.triangles).toEqual([]);
+    expect(mesh.verticesPerEllipsoid).toBe(6);
+    expect(mesh.trianglesPerEllipsoid).toBe(8);
   });
 });

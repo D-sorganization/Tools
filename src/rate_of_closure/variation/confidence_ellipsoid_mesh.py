@@ -14,8 +14,10 @@ from shared.python.swing_sim.variation import (
 from shared.python.swing_sim.variation.ensemble_types import immutable_array
 
 APP_FRAME_ID = "app_frame:x_target,y_up,z_right"
-ELLIPSOID_LONGITUDE_SEGMENTS = 12
-ELLIPSOID_LATITUDE_SEGMENTS = 6
+MAX_ELLIPSOID_LONGITUDE_SEGMENTS = 12
+MAX_ELLIPSOID_LATITUDE_SEGMENTS = 6
+ELLIPSOID_LONGITUDE_SEGMENTS = MAX_ELLIPSOID_LONGITUDE_SEGMENTS
+ELLIPSOID_LATITUDE_SEGMENTS = MAX_ELLIPSOID_LATITUDE_SEGMENTS
 MAX_RENDERED_ELLIPSOIDS = 48
 MAX_ELLIPSOID_VERTICES = 2_976
 MAX_ELLIPSOID_TRIANGLES = 5_760
@@ -87,27 +89,44 @@ def build_confidence_ellipsoid_mesh(
     max_triangles: int = MAX_ELLIPSOID_TRIANGLES,
 ) -> ConfidenceEllipsoidMesh:
     """Build finite surfaces for estimable samples within fixed geometry budgets."""
+    vertices_per_ellipsoid, triangles_per_ellipsoid = _validated_mesh_budget(
+        longitude_segments,
+        latitude_segments,
+        max_ellipsoids,
+        max_vertices,
+        max_triangles,
+    )
     centers = np.asarray(centers_m)
     axes = np.asarray(principal_axes)
     semi_axes = np.asarray(semi_axis_lengths_m)
     _validate_inputs(centers, axes, semi_axes, adequacy, coordinate_frame)
-    unit_vertices, unit_triangles = _unit_sphere(longitude_segments, latitude_segments)
     capacity = min(
         max_ellipsoids,
-        max_vertices // unit_vertices.shape[0],
-        max_triangles // unit_triangles.shape[0],
+        max_vertices // vertices_per_ellipsoid,
+        max_triangles // triangles_per_ellipsoid,
     )
-    require(capacity >= 0, "mesh budgets must be non-negative")
     eligible = tuple(
         index for index, state in enumerate(adequacy) if state == ESTIMABLE
     )
     selected = _decimated_indices(eligible, capacity)
-    vertices = tuple(
-        centers[index] + (axes[index] @ (semi_axes[index] * unit_vertices).T).T
-        for index in selected
-    )
-    offsets = tuple(index * unit_vertices.shape[0] for index in range(len(selected)))
-    triangles = tuple(unit_triangles + offset for offset in offsets)
+    vertices: tuple[np.ndarray, ...]
+    triangles: tuple[np.ndarray, ...]
+    if selected:
+        unit_vertices, unit_triangles = _unit_sphere(
+            longitude_segments, latitude_segments
+        )
+        with np.errstate(over="ignore", invalid="ignore"):
+            vertices = tuple(
+                centers[index] + (axes[index] @ (semi_axes[index] * unit_vertices).T).T
+                for index in selected
+            )
+        offsets = tuple(
+            index * vertices_per_ellipsoid for index in range(len(selected))
+        )
+        triangles = tuple(unit_triangles + offset for offset in offsets)
+    else:
+        vertices = ()
+        triangles = ()
     return ConfidenceEllipsoidMesh(
         coordinate_frame=coordinate_frame,
         interpretation=GAUSSIAN_POSITION_CONTENT_REGION,
@@ -116,9 +135,34 @@ def build_confidence_ellipsoid_mesh(
         triangles=(
             np.concatenate(triangles) if triangles else np.empty((0, 3), dtype=int)
         ),
-        vertices_per_ellipsoid=unit_vertices.shape[0],
-        triangles_per_ellipsoid=unit_triangles.shape[0],
+        vertices_per_ellipsoid=vertices_per_ellipsoid,
+        triangles_per_ellipsoid=triangles_per_ellipsoid,
     )
+
+
+def _validated_mesh_budget(
+    longitudes: int,
+    latitudes: int,
+    max_ellipsoids: int,
+    max_vertices: int,
+    max_triangles: int,
+) -> tuple[int, int]:
+    """Validate genuine integers and return allocation-free per-surface counts."""
+    _bounded_integer(
+        longitudes, "longitude_segments", 3, MAX_ELLIPSOID_LONGITUDE_SEGMENTS
+    )
+    _bounded_integer(latitudes, "latitude_segments", 2, MAX_ELLIPSOID_LATITUDE_SEGMENTS)
+    _bounded_integer(max_ellipsoids, "max_ellipsoids", 0, MAX_RENDERED_ELLIPSOIDS)
+    _bounded_integer(max_vertices, "max_vertices", 0, MAX_ELLIPSOID_VERTICES)
+    _bounded_integer(max_triangles, "max_triangles", 0, MAX_ELLIPSOID_TRIANGLES)
+    ring_count = latitudes - 1
+    return 2 + ring_count * longitudes, 2 * ring_count * longitudes
+
+
+def _bounded_integer(value: int, name: str, minimum: int, maximum: int) -> int:
+    require(type(value) is int, f"{name} must be an integer")
+    require(minimum <= value <= maximum, f"{name} exceeds its hard bounds")
+    return value
 
 
 def _validate_inputs(
@@ -160,15 +204,6 @@ def _validate_inputs(
 
 
 def _unit_sphere(longitudes: int, latitudes: int) -> tuple[np.ndarray, np.ndarray]:
-    require(
-        isinstance(longitudes, int) and not isinstance(longitudes, bool),
-        "invalid longitudes",
-    )
-    require(
-        isinstance(latitudes, int) and not isinstance(latitudes, bool),
-        "invalid latitudes",
-    )
-    require(longitudes >= 3 and latitudes >= 2, "insufficient tessellation")
     theta = np.pi * np.arange(1, latitudes) / latitudes
     phi = 2.0 * np.pi * np.arange(longitudes) / longitudes
     rings = np.stack(
@@ -219,6 +254,8 @@ def _decimated_indices(indices: tuple[int, ...], capacity: int) -> tuple[int, ..
 __all__ = [
     "APP_FRAME_ID",
     "ConfidenceEllipsoidMesh",
+    "MAX_ELLIPSOID_LATITUDE_SEGMENTS",
+    "MAX_ELLIPSOID_LONGITUDE_SEGMENTS",
     "MAX_ELLIPSOID_TRIANGLES",
     "MAX_ELLIPSOID_VERTICES",
     "MAX_RENDERED_ELLIPSOIDS",

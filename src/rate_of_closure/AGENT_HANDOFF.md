@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
+
+- Both mesh authorities now require genuine integer budgets and enforce hard
+  12-by-6 tessellation and 48-ellipsoid/2,976-vertex/5,760-triangle maxima.
+  They compute counts and zero capacity before allocating sphere geometry.
+- TypeScript now rejects nonfinite transformed vertices, matching Python's
+  overflow behavior. Coercive, negative, fractional, and over-limit budget
+  inputs fail closed symmetrically.
+- The shared golden now uses a non-symmetric canonical orthonormal frame.
+  Captured PyQt and React rendering tests verify axis projection and
+  mesh-inclusive camera bounds rather than relying on labels alone.
+- SPEC is 1.16.66. Evidence is 1,441 broad Rate/shared-variation Python and
+  867 React tests, 48/86 focused tests including performance, strict isolated
+  changed-source Python 3.12 MyPy, Ruff/format, TypeScript, ESLint,
+  documentation governance, and a production Vite build. Cross-browser/
+  assistive-technology E2E, approved visual baselines, import UI, protected
+  publication, and remaining #4142 scope stay open.
+
 ## 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
 
 - The PyQt6 Matplotlib and React canvas 3-D variation views now render actual

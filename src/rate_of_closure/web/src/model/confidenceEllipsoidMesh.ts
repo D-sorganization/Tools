@@ -6,8 +6,10 @@ import type { DispersionAdequacyTs } from "./variationGeometry";
 export const MAX_RENDERED_ELLIPSOIDS = 48;
 export const MAX_ELLIPSOID_VERTICES = 2_976;
 export const MAX_ELLIPSOID_TRIANGLES = 5_760;
-const LONGITUDE_SEGMENTS = 12;
-const LATITUDE_SEGMENTS = 6;
+export const MAX_ELLIPSOID_LONGITUDE_SEGMENTS = 12;
+export const MAX_ELLIPSOID_LATITUDE_SEGMENTS = 6;
+const LONGITUDE_SEGMENTS = MAX_ELLIPSOID_LONGITUDE_SEGMENTS;
+const LATITUDE_SEGMENTS = MAX_ELLIPSOID_LATITUDE_SEGMENTS;
 const APP_FRAME_ID = "app_frame:x_target,y_up,z_right";
 
 export interface ConfidenceEllipsoidMeshTs {
@@ -49,17 +51,24 @@ export function buildConfidenceEllipsoidMesh(
   budget: EllipsoidMeshBudgetTs = DEFAULT_BUDGET,
 ): ConfidenceEllipsoidMeshTs {
   validateGeometry(geometry);
-  const [unitVertices, unitTriangles] = unitSphere(budget);
+  const counts = validatedBudget(budget);
   const capacity = Math.min(
-    integerBudget(budget.maxEllipsoids, "maxEllipsoids"),
-    Math.floor(integerBudget(budget.maxVertices, "maxVertices") / unitVertices.length),
-    Math.floor(integerBudget(budget.maxTriangles, "maxTriangles") / unitTriangles.length),
+    budget.maxEllipsoids,
+    Math.floor(budget.maxVertices / counts.vertices),
+    Math.floor(budget.maxTriangles / counts.triangles),
   );
   const eligible = geometry.adequacy.flatMap((state, index) =>
     state === "estimable" ? [index] : []);
   const sampleIndices = decimatedIndices(eligible, capacity);
+  if (sampleIndices.length === 0) {
+    return emptyMesh(counts.vertices, counts.triangles);
+  }
+  const [unitVertices, unitTriangles] = unitSphere(
+    budget.longitudeSegments, budget.latitudeSegments,
+  );
   const verticesM = sampleIndices.flatMap((sample) => unitVertices.map((unit) =>
     transformVertex(geometry, sample, unit)));
+  if (!verticesM.every(finiteVec3)) throw new Error("transformed vertices must be finite");
   const triangles = sampleIndices.flatMap((_, meshIndex) => {
     const offset = meshIndex * unitVertices.length;
     return unitTriangles.map(([first, second, third]) =>
@@ -73,6 +82,15 @@ export function buildConfidenceEllipsoidMesh(
     triangles,
     verticesPerEllipsoid: unitVertices.length,
     trianglesPerEllipsoid: unitTriangles.length,
+  };
+}
+
+function emptyMesh(vertices: number, triangles: number): ConfidenceEllipsoidMeshTs {
+  return {
+    coordinateFrame: APP_FRAME_ID,
+    interpretation: "gaussian-position-content-region",
+    sampleIndices: [], verticesM: [], triangles: [],
+    verticesPerEllipsoid: vertices, trianglesPerEllipsoid: triangles,
   };
 }
 
@@ -97,11 +115,9 @@ function validateGeometry(geometry: ConfidenceEllipsoidGeometryTs): void {
 }
 
 function unitSphere(
-  budget: EllipsoidMeshBudgetTs,
+  longitudes: number,
+  latitudes: number,
 ): [Vec3[], Array<[number, number, number]>] {
-  const longitudes = integerBudget(budget.longitudeSegments, "longitudeSegments");
-  const latitudes = integerBudget(budget.latitudeSegments, "latitudeSegments");
-  if (longitudes < 3 || latitudes < 2) throw new Error("insufficient tessellation");
   const vertices: Vec3[] = [[0, 0, 1]];
   for (let latitude = 1; latitude < latitudes; latitude += 1) {
     const theta = Math.PI * latitude / latitudes;
@@ -165,7 +181,25 @@ function orthonormal(frame: [Vec3, Vec3, Vec3]): boolean {
   }));
 }
 
-function integerBudget(value: number, name: string): number {
-  if (!Number.isInteger(value) || value < 0) throw new Error(`${name} must be non-negative integer`);
+function validatedBudget(budget: EllipsoidMeshBudgetTs): { vertices: number; triangles: number } {
+  boundedInteger(
+    budget.longitudeSegments, "longitudeSegments", 3, MAX_ELLIPSOID_LONGITUDE_SEGMENTS,
+  );
+  boundedInteger(
+    budget.latitudeSegments, "latitudeSegments", 2, MAX_ELLIPSOID_LATITUDE_SEGMENTS,
+  );
+  boundedInteger(budget.maxEllipsoids, "maxEllipsoids", 0, MAX_RENDERED_ELLIPSOIDS);
+  boundedInteger(budget.maxVertices, "maxVertices", 0, MAX_ELLIPSOID_VERTICES);
+  boundedInteger(budget.maxTriangles, "maxTriangles", 0, MAX_ELLIPSOID_TRIANGLES);
+  const rings = budget.latitudeSegments - 1;
+  return {
+    vertices: 2 + rings * budget.longitudeSegments,
+    triangles: 2 * rings * budget.longitudeSegments,
+  };
+}
+
+function boundedInteger(value: number, name: string, minimum: number, maximum: number): number {
+  if (!Number.isSafeInteger(value)) throw new Error(`${name} must be an integer`);
+  if (value < minimum || value > maximum) throw new Error(`${name} exceeds its hard bounds`);
   return value;
 }
