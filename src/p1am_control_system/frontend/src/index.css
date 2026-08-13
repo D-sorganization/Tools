@@ -267,6 +267,11 @@ body {
   border-color: var(--text-muted);
 }
 
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--panel-bg), 0 0 0 4px var(--accent-cyan);
+}
+
 .btn-primary {
   background: var(--accent-cyan);
   border-color: var(--accent-cyan);
@@ -399,6 +404,12 @@ body {
 .tab-button.active-tab {
   color: var(--accent-cyan);
   border-bottom-color: var(--accent-cyan);
+}
+
+.tab-btn:focus-visible {
+  outline: none;
+  background: var(--cell-hover-bg);
+  border-radius: 4px;
 }
 
 /* --- Tuning & Comparison Grid --- */
