@@ -77,6 +77,20 @@ describe("LinePlot", () => {
       ?.getAttribute("d");
     // Two move commands -> the line is split into two segments.
     expect((d?.match(/M/g) ?? []).length).toBe(2);
+    expect(d).toMatch(/^M[^ ]+ M[^ ]+$/);
+    expect(d).not.toMatch(/^ | {2}| $/);
+  });
+
+  it("emits an empty path when every sample is non-finite", () => {
+    const { container } = render(
+      <LinePlot
+        width={300}
+        height={200}
+        series={[{ name: "invalid", points: [[NaN, Infinity]] }]}
+      />,
+    );
+
+    expect(container.querySelector("path.plot-line")?.getAttribute("d")).toBe("");
   });
 
   it("shows a hover crosshair with each series' value on pointer move", () => {

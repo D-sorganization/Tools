@@ -15,6 +15,7 @@ import React from "react";
 import { PlotFrame } from "./PlotFrame";
 import { finitePairs, makeProjector, type HoverSeries } from "./projection";
 import { colorForIndex } from "../../../lib/explorer/palette";
+import { buildPolylinePath } from "./polylinePath";
 
 export interface LineSeries {
   name: string;
@@ -58,26 +59,6 @@ function axisExtent(
   return [min, max];
 }
 
-/** Build an SVG path `d` string, breaking the line at non-finite points. */
-function buildPath(
-  points: [number, number][],
-  px: (v: number) => number,
-  py: (v: number) => number,
-): string {
-  const segments: string[] = [];
-  let penDown = false;
-  for (const [dx, dy] of points) {
-    if (!Number.isFinite(dx) || !Number.isFinite(dy)) {
-      penDown = false;
-      continue;
-    }
-    const cmd = penDown ? "L" : "M";
-    segments.push(`${cmd}${px(dx)},${py(dy)}`);
-    penDown = true;
-  }
-  return segments.join(" ");
-}
-
 /** Multi-series line plot. Forwards a ref to the root `<svg>`. */
 export const LinePlot = React.forwardRef<SVGSVGElement, LinePlotProps>(
   function LinePlot(props, ref) {
@@ -114,7 +95,7 @@ export const LinePlot = React.forwardRef<SVGSVGElement, LinePlotProps>(
           <path
             key={`line-${i}-${s.name}`}
             className="plot-line"
-            d={buildPath(s.points, x, y)}
+            d={buildPolylinePath(s.points, x, y)}
             fill="none"
             stroke={s.color ?? colorForIndex(i)}
             strokeWidth={s.width ?? 1.5}

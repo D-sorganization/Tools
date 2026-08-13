@@ -74,6 +74,28 @@ describe("ScatterPlot", () => {
     expect(container.querySelectorAll("path.plot-trendline")).toHaveLength(1);
   });
 
+  it("preserves trendline gaps without extra path separators", () => {
+    const { container } = render(
+      <ScatterPlot
+        width={300}
+        height={200}
+        series={series}
+        trendline={{
+          points: [
+            [0, 0],
+            [1, 1],
+            [NaN, 2],
+            [2, 4],
+          ],
+        }}
+      />,
+    );
+    const d = container.querySelector("path.plot-trendline")?.getAttribute("d");
+
+    expect(d?.match(/[ML]/g)).toEqual(["M", "L", "M"]);
+    expect(d).not.toMatch(/^ | {2}| $/);
+  });
+
   it("skips non-finite points", () => {
     const gapped = [
       {

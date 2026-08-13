@@ -2702,3 +2702,11 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 2026-08-12: Bounded SVG path construction
+
+- Line, scatter-trendline, and spectrum plots construct SVG path text in one
+  pass without retaining a separate command array.
+- Path-output contracts preserve segment breaks at invalid samples, command
+  order, and separator formatting; they do not claim engine-specific garbage
+  collection behavior.
