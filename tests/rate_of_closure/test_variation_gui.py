@@ -1,8 +1,7 @@
-"""PyQt Variation-tab construction and source-context tests."""
-
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -18,6 +17,9 @@ from rate_of_closure.ui.pyqt6.variation_tab_results import (  # noqa: E402
     VariationTabResultsMixin,
 )
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker  # noqa: E402
+from rate_of_closure.variation_visual_state import (  # noqa: E402
+    simulation_authority_identity,
+)
 from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_LAUNCH,
     CATEGORY_SWING,
@@ -150,10 +152,14 @@ class TestConstruction:
         tab._on_run()
         assert tab._worker is not None
         old_generation = tab._generation
+        old_worker = tab._worker
+        assert old_worker is not None
 
         tab._on_cancel()
-        tab._accept_succeeded(old_generation, run_variation(plan, n_workers=1), None)
-        tab._accept_failed(old_generation, "late failure")
+        tab._accept_succeeded(
+            old_generation, old_worker, run_variation(plan, n_workers=1), None
+        )
+        tab._accept_failed(old_generation, old_worker, "late failure")
 
         assert tab._generation == old_generation + 1
         assert tab.dataset() is accepted
@@ -163,6 +169,64 @@ class TestConstruction:
         )
         assert tab._active_authority_identity is None
         assert "late failure" not in tab._status.text()
+
+    def test_callbacks_require_exact_worker_and_captured_execution_authority(
+        self, tab: VariationTab
+    ) -> None:
+        plan = _fast_launch_plan(4)
+        config_a = tab._base_simulation_config
+        tab._active_plan = plan
+        tab._active_authority_identity = simulation_authority_identity(
+            plan, config_a, False
+        )
+        tab._on_succeeded(run_variation(plan, n_workers=1), None)
+        accepted_identity = tab._accepted_authority_identity
+        assert tab.dataset() is not None and accepted_identity is not None
+        config_b = replace(config_a, impact_time_offset_s=0.001)
+        worker_a = VariationWorker(
+            plan, compute_sensitivity=False, base_simulation_config=config_a
+        )
+        worker_b = VariationWorker(
+            plan, compute_sensitivity=False, base_simulation_config=config_b
+        )
+        assert worker_a.authority_identity == accepted_identity
+        assert worker_b.authority_identity != accepted_identity
+        tab._worker = worker_a
+        tab._active_plan = plan
+        tab._active_authority_identity = accepted_identity
+        tab._set_running(True)
+        dataset_b = run_variation(plan, n_workers=1)
+        generation = tab._generation
+        tab._accept_failed(generation, worker_b, "foreign failure")
+        tab._accept_finished(worker_b)
+        assert tab._worker is worker_a
+        assert "foreign failure" not in tab._status.text()
+        tab._accept_succeeded(generation, worker_a, dataset_b, None)
+        tab._accept_finished(worker_a)
+
+        tab._generation += 1
+        tab._worker = worker_b
+        tab._active_plan = plan
+        tab._active_authority_identity = accepted_identity
+        tab._set_running(True)
+        tab._accept_succeeded(tab._generation, worker_b, dataset_b, None)
+
+        assert tab.dataset() is dataset_b
+        assert tab._active_authority_identity is None
+        assert tab._visual_frame.property("visualOrigin") == "prior-accepted"
+        assert "authority mismatch" in tab._status.text()
+        assert not tab._export_json.isEnabled()
+        tab._accept_finished(worker_b)
+        assert tab._export_json.isEnabled()
+
+        tab._generation += 1
+        tab._worker = worker_a
+        tab._active_plan = plan
+        tab._active_authority_identity = worker_a.authority_identity
+        tab._set_running(True)
+        tab._accept_succeeded(tab._generation, worker_a, object(), None)
+        assert "invalid variation dataset" in tab._status.text()
+        assert not tab._export_json.isEnabled()
 
     @pytest.mark.parametrize(
         "edit",
@@ -295,8 +359,13 @@ class TestConstruction:
         assert tab._dataset is None
         assert tab._summary_table.rowCount() == 0
         expected_status = tab._status.text()
-        tab._accept_succeeded(old_generation, dataset, None)
-        tab._accept_failed(old_generation, "stale failure")
+        stale_worker = VariationWorker(
+            dataset.plan,
+            compute_sensitivity=False,
+            base_simulation_config=tab._base_simulation_config,
+        )
+        tab._accept_succeeded(old_generation, stale_worker, dataset, None)
+        tab._accept_failed(old_generation, stale_worker, "stale failure")
         assert tab._dataset is None
         assert tab._summary_table.rowCount() == 0
         assert tab._status.text() == expected_status
@@ -310,7 +379,7 @@ class TestConstruction:
         tab._worker = new_worker
         tab._set_running(True)
 
-        tab._accept_finished(1, old_worker)
+        tab._accept_finished(old_worker)
 
         assert tab._worker is new_worker
         assert not tab._run_button.isEnabled()

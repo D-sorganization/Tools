@@ -55,8 +55,10 @@ def test_variation_lifecycle_states_are_visible_without_occlusion(
     ]
     for state in manifest["states"]:
         assert state["bytes"] > 10_000
-        assert state["visible_content"][2] >= 640
+        assert state["visible_content"][2] >= 240
         assert state["visible_content"][3] >= 240
+        assert state["visible_content"][2] <= state["tab_size"][0]
+        assert state["visible_content"][3] <= state["tab_size"][1]
         assert not state["overlap"]
         assert not state["control_overlap"]
         assert state["status"]

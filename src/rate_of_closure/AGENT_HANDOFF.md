@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation worker authority binding correction (#4441)
+
+- Worker construction snapshots plan, resolved registry defaults, complete
+  simulation configuration, and sensitivity policy into an in-session identity.
+- All non-finished callbacks require the exact worker, generation, and identity.
+  Foreign callbacks are stale no-ops; a current-owner mismatch retains prior
+  accepted evidence and fails closed. Exact-owner finished alone releases the
+  worker slot and may re-enable only prior accepted exports.
+- Archive JSON still omits this full identity; portable replay remains open.
+  PyQt diagnostics now record actual hosted window/tab geometry and enforce the
+  manifest's 240x240 visible-landmark contract. SPEC is 1.16.85.
+
 ## 2026-08-13 Variation state-preserving visual shell (#4433)
 
 - Python and React consume one immutable transition matrix. Loading/failure

@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation worker authority binding correction (#4441)
+
+Version 1.16.85 gives each PyQt Variation worker an immutable in-session
+identity over its captured plan, resolved registry defaults, complete
+SimulationConfig, and sensitivity policy. Every progress/phase/ensemble/result/
+failure/cancel callback now requires the exact worker owner and generation;
+foreign or crossed-config evidence cannot mutate the accepted bundle. This is
+not archive/replay authority. Hosted PyQt diagnostics record actual offscreen
+viewport geometry and enforce the existing 240x240 visual landmark contract.
+
 ## 2026-08-13 Variation state-preserving visual shell (#4433)
 
 Version 1.16.84 gives the matched React/PyQt Variation surfaces one strict

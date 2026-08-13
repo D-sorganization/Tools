@@ -1,5 +1,15 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4441 Variation worker authority correction
+
+- Every PyQt worker callback now binds exact owner, generation, plan, resolved
+  registry defaults, complete SimulationConfig, and sensitivity policy.
+- Crossed-config/current-owner payloads fail closed and retain only the last
+  accepted visual/export bundle; foreign worker events cannot unlock controls.
+- This is an in-session envelope, not persisted archive/replay authority.
+  Hosted offscreen diagnostics record actual viewport geometry and enforce the
+  shared 240x240 visual minimum. SPEC is 1.16.85.
+
 ## 2026-08-13 #4433 Variation state-preserving visual shell
 
 - A shared strict state matrix controls matched React/PyQt Variation empty,

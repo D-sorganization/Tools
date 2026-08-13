@@ -73,6 +73,8 @@ def _capture(
             visible.width(),
             visible.height(),
         ],
+        "window_size": [window.width(), window.height()],
+        "tab_size": [tab.width(), tab.height()],
         "strip_visible": strip_visible,
         "overlap": strip.intersects(content) if strip_visible else False,
         "control_overlap": (

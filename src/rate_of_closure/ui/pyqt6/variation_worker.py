@@ -24,6 +24,7 @@ from rate_of_closure.variation import (
     build_simulation_ensemble_request,
     run_simulation_ensemble,
 )
+from rate_of_closure.variation_visual_state import simulation_authority_identity
 from shared.python.swing_sim.variation import (
     CancelledError,
     SensitivityResult,
@@ -73,6 +74,18 @@ class VariationWorker(QThread):
         self._n_workers = int(n_workers)
         self._cancel_event = threading.Event()
         self._base_simulation_config = base_simulation_config
+        self._authority_identity = (
+            simulation_authority_identity(
+                self._plan, base_simulation_config, self._compute_sensitivity
+            )
+            if base_simulation_config is not None
+            else None
+        )
+
+    @property
+    def authority_identity(self) -> object | None:
+        """Exact immutable in-session identity of captured execution inputs."""
+        return self._authority_identity
 
     @property
     def cancel_event(self) -> threading.Event:

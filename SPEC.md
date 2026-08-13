@@ -26,11 +26,23 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.84                                    |
-| **Spec Version**        | 1.16.84                                    |
+| **Current Version**     | 1.16.85                                    |
+| **Spec Version**        | 1.16.85                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Variation worker authority binding correction (#4441)
+
+Version 1.16.85 binds every in-session PyQt Variation callback to the exact
+worker owner, generation, and construction-time execution identity: plan,
+resolved registry defaults, complete simulation configuration, and sensitivity
+policy. Foreign callbacks are inert; a current-owner identity mismatch fails
+closed while retaining the prior accepted bundle. Dataset and ensemble archive
+schemas still do not persist this complete identity, so portable replay remains
+open. PyQt diagnostic geometry records the actual offscreen window/tab viewport
+and enforces the manifest-owned 240x240 visible landmark minimum rather than
+claiming the requested 1440 width was honored by every hosted platform.
 
 ### 2026-08-13 Variation state-preserving visual shell (#4433)
 
@@ -4152,6 +4164,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
 | 2026-08-13 | 1.16.80 | fix(rate-of-closure, #4433): make the PyQt selected-state diagnostic use an exact tab-type boundary and direct preview access without changing the runtime contract. |
 | 2026-08-13 | 1.16.81 | fix(rate-of-closure, #4433): bound extreme plotting projection, strict retained-data resources, and generation-safe atomic dataset replacement across React and PyQt. |
+| 2026-08-13 | 1.16.85 | fix(rate-of-closure, #4441): bind every PyQt Variation callback to its exact worker, generation, and captured execution identity; report honest hosted viewport geometry. |
 | 2026-08-13 | 1.16.84 | feat(rate-of-closure, #4433): retain only complete identity-bound Variation visuals across production loading/failure with atomic publication and diagnostic state evidence. |
 | 2026-08-13 | 1.16.83 | fix(rate-of-closure, #4433): reject malformed Unicode surrogate text before shared field-byte accounting while accepting normalized supplementary scalars. |
 | 2026-08-13 | 1.16.82 | fix(rate-of-closure, #4433): define shared UTF-8 field limits and direct row, union-column, and dense-cell cap evidence without process-global parser mutation. |

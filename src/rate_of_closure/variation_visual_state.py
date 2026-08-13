@@ -119,11 +119,14 @@ def _authority_value(value: object) -> object:
     if isinstance(value, Enum):
         return (type(value).__qualname__, _authority_value(value.value))
     if isinstance(value, np.ndarray):
+        flat_values: list[object] = []
+        for index in np.ndindex(value.shape):
+            flat_values.append(_authority_value(value[index]))
         return (
             "ndarray",
             value.dtype.str,
             tuple(value.shape),
-            tuple(_authority_value(item) for item in value.flat),
+            tuple(flat_values),
         )
     if is_dataclass(value) and not isinstance(value, type):
         return (
@@ -163,7 +166,7 @@ def simulation_authority_identity(
         raise TypeError("config must be a SimulationConfig")
     if type(compute_sensitivity) is not bool:
         raise TypeError("compute_sensitivity must be bool")
-    return _authority_value((plan, config, compute_sensitivity))
+    return _authority_value((plan, config, compute_sensitivity, plan.resolved_base()))
 
 
 __all__ = [

@@ -16,6 +16,7 @@ from rate_of_closure.variation_visual_state import (
     variation_visual_state,
 )
 from shared.python.swing_sim.variation import NoiseSpec, VariationPlan
+from shared.python.swing_sim.variation import registry as variation_registry
 
 _FIXTURE = Path(
     "src/rate_of_closure/web/src/model/__fixtures__/"
@@ -93,3 +94,20 @@ def test_complete_simulation_authority_identity_changes_for_nested_fields() -> N
         ),
         True,
     )
+
+
+def test_execution_identity_snapshots_resolved_registry_defaults(monkeypatch) -> None:
+    plan = _plan()
+    config = SimulationConfig(
+        scenario=ImpactScenario(clubhead_speed_mph=100.0),
+        club=get_club("Driver 10.5°"),
+    )
+    baseline = simulation_authority_identity(plan, config, False)
+    key = plan.noise[0].variable_key
+    monkeypatch.setitem(
+        variation_registry._REGISTRY,
+        key,
+        replace(variation_registry._REGISTRY[key], default=101.0),
+    )
+
+    assert simulation_authority_identity(plan, config, False) != baseline

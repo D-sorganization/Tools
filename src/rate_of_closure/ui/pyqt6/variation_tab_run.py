@@ -1,8 +1,4 @@
-"""Worker lifecycle and result-state authority for the PyQt Variation tab."""
-
-from __future__ import annotations
-
-from typing import Any
+"""Generation- and worker-bound lifecycle for the PyQt Variation tab."""
 
 from PyQt6.QtWidgets import QCheckBox, QLabel, QProgressBar, QPushButton
 
@@ -15,6 +11,7 @@ from rate_of_closure.ui.pyqt6.variation_worker import (
     MAX_WORKER_ERROR_LENGTH,
     VariationWorker,
 )
+from rate_of_closure.ui.pyqt6.visual_state_frame import VisualStateFrame
 from rate_of_closure.variation.plot_data import (
     EnsemblePlotDataset,
     build_ensemble_plot_dataset,
@@ -33,12 +30,8 @@ from shared.python.swing_sim.variation import (
     VariationPlan,
 )
 
-__all__ = ["VariationTabRunMixin"]
-
 
 class VariationTabRunMixin:
-    """Own one generation-safe worker and its scalar/ensemble result state."""
-
     _simulation_config_valid: bool
     _worker: VariationWorker | None
     _generation: int
@@ -62,15 +55,8 @@ class VariationTabRunMixin:
     _export_ensemble_json: QPushButton
     _progress: QProgressBar
     _status: QLabel
-    _ensemble_scatter: Any
-    _distribution_matrix: Any
-    _arc_overlay: Any
-    _landing: Any
-    _summary_table: Any
-    _sensitivity_table: Any
-    _spearman_table: Any
-    _visual_frame: Any
-    studyCompleted: Any  # Qt signal descriptor supplied by the concrete tab.
+    _visual_frame: VisualStateFrame
+    studyCompleted: object
 
     def build_plan(self) -> VariationPlan:
         raise NotImplementedError
@@ -106,32 +92,36 @@ class VariationTabRunMixin:
             base_simulation_config=self._base_simulation_config,
         )
         worker.progressed.connect(
-            lambda report, current=generation: self._accept_progress(current, report)
+            lambda report, current=generation, owner=worker: self._accept_progress(
+                current, owner, report
+            )
         )
         worker.phaseChanged.connect(
-            lambda phase, current=generation: self._accept_phase(current, phase)
+            lambda phase, current=generation, owner=worker: self._accept_phase(
+                current, owner, phase
+            )
         )
         worker.succeeded.connect(
-            lambda dataset, sensitivity, current=generation: self._accept_succeeded(
-                current, dataset, sensitivity
+            lambda dataset, sensitivity, current=generation, owner=worker: (
+                self._accept_succeeded(current, owner, dataset, sensitivity)
             )
         )
         worker.ensembleSucceeded.connect(
-            lambda result, current=generation: self._accept_ensemble_succeeded(
-                current, result
+            lambda result, current=generation, owner=worker: (
+                self._accept_ensemble_succeeded(current, owner, result)
             )
         )
         worker.cancelled.connect(
-            lambda current=generation: self._accept_cancelled(current)
-        )
-        worker.failed.connect(
-            lambda message, current=generation: self._accept_failed(current, message)
-        )
-        worker.finished.connect(
-            lambda current=generation, owner=worker: self._accept_finished(
+            lambda current=generation, owner=worker: self._accept_cancelled(
                 current, owner
             )
         )
+        worker.failed.connect(
+            lambda message, current=generation, owner=worker: self._accept_failed(
+                current, owner, message
+            )
+        )
+        worker.finished.connect(lambda owner=worker: self._accept_finished(owner))
         self._worker = worker
         self._progress.setRange(0, worker.total_runs)
         self._progress.setValue(0)
@@ -165,51 +155,73 @@ class VariationTabRunMixin:
                 else VariationVisualEvent.CANCEL_EMPTY,
                 "Cancelled: no partial variation result was accepted.",
             )
-            self._active_authority_identity = None
-            self._active_plan = None
-            self._active_compute_sensitivity = False
+            self._clear_active_authority()
 
-    def _is_current_generation(self, generation: int) -> bool:
-        return generation == self._generation
+    def _accepts_worker_event(self, generation: int, owner: VariationWorker) -> bool:
+        if generation != self._generation or owner is not self._worker:
+            return False
+        active = self._active_authority_identity
+        if active is None:
+            return False
+        if owner.authority_identity != active:
+            owner.cancel()
+            self._on_failed("Internal worker authority mismatch; result rejected.")
+            return False
+        return True
 
-    def _accept_progress(self, generation: int, report: object) -> None:
-        if self._is_current_generation(generation):
+    def _accept_progress(
+        self, generation: int, owner: VariationWorker, report: object
+    ) -> None:
+        if self._accepts_worker_event(generation, owner):
             self._on_progress(report)
 
-    def _accept_phase(self, generation: int, phase: str) -> None:
-        if self._is_current_generation(generation):
+    def _accept_phase(
+        self, generation: int, owner: VariationWorker, phase: str
+    ) -> None:
+        if self._accepts_worker_event(generation, owner):
             self._on_phase(phase)
 
     def _accept_succeeded(
-        self, generation: int, dataset: object, sensitivity: object
+        self,
+        generation: int,
+        owner: VariationWorker,
+        dataset: object,
+        sensitivity: object,
     ) -> None:
-        if self._is_current_generation(generation) and isinstance(
-            dataset, VariationDataset
-        ):
-            self._on_succeeded(dataset, sensitivity)
+        if not self._accepts_worker_event(generation, owner):
+            return
+        if not isinstance(dataset, VariationDataset):
+            owner.cancel()
+            self._on_failed("Internal worker returned an invalid variation dataset.")
+            return
+        self._on_succeeded(dataset, sensitivity)
 
-    def _accept_ensemble_succeeded(self, generation: int, result: object) -> None:
-        if self._is_current_generation(generation) and isinstance(
-            result, SimulationEnsembleResult
-        ):
-            self._on_ensemble_succeeded(result)
+    def _accept_ensemble_succeeded(
+        self, generation: int, owner: VariationWorker, result: object
+    ) -> None:
+        if not self._accepts_worker_event(generation, owner):
+            return
+        if not isinstance(result, SimulationEnsembleResult):
+            owner.cancel()
+            self._on_failed("Internal worker returned an invalid swing ensemble.")
+            return
+        self._on_ensemble_succeeded(result)
 
-    def _accept_cancelled(self, generation: int) -> None:
-        if self._is_current_generation(generation):
+    def _accept_cancelled(self, generation: int, owner: VariationWorker) -> None:
+        if self._accepts_worker_event(generation, owner):
             self._on_cancelled()
 
-    def _accept_failed(self, generation: int, message: str) -> None:
-        if self._is_current_generation(generation):
+    def _accept_failed(
+        self, generation: int, owner: VariationWorker, message: str
+    ) -> None:
+        if self._accepts_worker_event(generation, owner):
             self._on_failed(message)
 
-    def _accept_finished(self, generation: int, worker: VariationWorker) -> None:
-        owns_current_slot = worker is self._worker
-        if owns_current_slot:
-            self._worker = None
-        if self._is_current_generation(generation):
-            self._on_finished()
-        elif owns_current_slot:
-            self._set_running(False)
+    def _accept_finished(self, worker: VariationWorker) -> None:
+        if worker is not self._worker:
+            return
+        self._worker = None
+        self._on_finished()
 
     def _on_progress(self, report: object) -> None:
         iteration = int(getattr(report, "iteration", 0))
@@ -296,14 +308,11 @@ class VariationTabRunMixin:
             f"{dataset.elapsed_s:.1f} s{note}."
         )
         self._accepted_authority_identity = self._active_authority_identity
-        self._active_authority_identity = None
-        self._active_plan = None
-        self._active_compute_sensitivity = False
+        self._clear_active_authority()
         self._set_visual_event(VariationVisualEvent.SUCCEED, self._status.text())
-        self.studyCompleted.emit(dataset)
+        self.studyCompleted.emit(dataset)  # type: ignore[attr-defined]
 
     def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
-        """Populate complete-trace views before the scalar completion callback."""
         self._pending_ensemble_result = result
 
     def _on_cancelled(self) -> None:
@@ -317,9 +326,7 @@ class VariationTabRunMixin:
             else VariationVisualEvent.CANCEL_EMPTY,
             self._status.text(),
         )
-        self._active_authority_identity = None
-        self._active_plan = None
-        self._active_compute_sensitivity = False
+        self._clear_active_authority()
 
     def _on_failed(self, message: str) -> None:
         if self._active_authority_identity is None:
@@ -333,9 +340,7 @@ class VariationTabRunMixin:
             else VariationVisualEvent.FAIL_EMPTY,
             self._status.text(),
         )
-        self._active_authority_identity = None
-        self._active_plan = None
-        self._active_compute_sensitivity = False
+        self._clear_active_authority()
 
     def _on_finished(self) -> None:
         self._progress.setRange(0, max(self._progress.maximum(), 1))
@@ -347,9 +352,7 @@ class VariationTabRunMixin:
         if self._worker is not None and self._worker.isRunning():
             self._worker.cancel()
         self._clear_accepted_result()
-        self._active_authority_identity = None
-        self._active_plan = None
-        self._active_compute_sensitivity = False
+        self._clear_active_authority()
         self._accepted_authority_identity = None
         self._set_running(False)
         self._set_visual_event(
@@ -370,6 +373,11 @@ class VariationTabRunMixin:
         return simulation_authority_identity(
             plan, self._base_simulation_config, self._sens_check.isChecked()
         )
+
+    def _clear_active_authority(self) -> None:
+        self._active_authority_identity = None
+        self._active_plan = None
+        self._active_compute_sensitivity = False
 
     def _clear_accepted_result(self) -> None:
         self._dataset = None
