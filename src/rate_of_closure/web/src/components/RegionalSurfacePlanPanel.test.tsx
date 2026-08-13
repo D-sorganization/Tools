@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { useState } from "react";
 
 import {
   MAX_REGIONAL_SURFACE_EDITOR_ROWS,
@@ -15,6 +16,17 @@ import {
 } from "../model/groundRegionalPlan";
 import { RegionalSurfacePlanPanel } from "./RegionalSurfacePlanPanel";
 
+function TestRegionalSurfacePlanPanel() {
+  const [draft, setDraft] = useState(illustrativeRegionalSurfacePlanDraft);
+  const [importedRequest, setImportedRequest] =
+    useState<ReturnType<typeof buildGroundRegionalSurfacePlanRequest> | null>(null);
+  return <RegionalSurfacePlanPanel draft={draft} importedRequest={importedRequest}
+    onDraftChange={setDraft} onImport={(request) => {
+      setDraft(editorDraftFromGroundRegionalSurfacePlanRequest(request));
+      setImportedRequest(request);
+    }} />;
+}
+
 afterEach(() => vi.restoreAllMocks());
 
 describe("RegionalSurfacePlanPanel", () => {
@@ -28,7 +40,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("shows explicit qualification, SI units, and strict validated readback", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
 
     expect(screen.getByRole("note", { name: "Regional surface qualification" }))
       .toHaveTextContent(/illustrative.*unvalidated/i);
@@ -46,7 +58,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("invalidates a validated readback as soon as the draft changes", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
 
     fireEvent.click(screen.getByRole("button", { name: "Validate surface plan" }));
     expect(screen.getByRole("status", { name: "Regional surface plan readback" }))
@@ -59,7 +71,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("accepts the exact cross-runtime maximum precedence", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     fireEvent.change(screen.getByLabelText("Overlay 1 precedence"), {
       target: { value: String(Number.MAX_SAFE_INTEGER) },
     });
@@ -72,7 +84,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("rejects integer-valued material numbers beyond the cross-runtime safe range", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     fireEvent.change(screen.getByLabelText("Base Firmness (Pa)"), {
       target: { value: "10000000000000000" },
     });
@@ -85,7 +97,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("links invalid interval fields to an accessible error without clearing input", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     const lower = screen.getByLabelText("Overlay 1 lower coordinate (m)");
     fireEvent.change(lower, { target: { value: "160" } });
 
@@ -98,7 +110,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("keeps keyboard focus while a stable region identity is edited", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     const identity = screen.getByLabelText("Overlay 1 region ID");
     identity.focus();
 
@@ -109,7 +121,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("bounds overlay rows and never advertises execution or persistence", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     const add = screen.getByRole("button", { name: "Add regional overlay" });
     for (let index = 1; index < MAX_REGIONAL_SURFACE_EDITOR_ROWS; index += 1) {
       fireEvent.click(add);
@@ -142,7 +154,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("imports only after complete validation and retains the prior draft on error", async () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     const request = buildGroundRegionalSurfacePlanRequest({
       ...illustrativeRegionalSurfacePlanDraft(), request_id: "browser-opened-plan",
     });
@@ -178,7 +190,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("rejects non-editor qualification without populating the editor", async () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     const request = buildGroundRegionalSurfacePlanRequest(
       illustrativeRegionalSurfacePlanDraft(),
     );
@@ -198,7 +210,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("rejects oversized browser files before allocating their text", async () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     const input = screen.getByLabelText("Import regional surface plan JSON file");
     const text = vi.fn().mockResolvedValue("{}");
     const file = {
@@ -219,7 +231,7 @@ describe("RegionalSurfacePlanPanel", () => {
     Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createUrl });
     Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: revokeUrl });
     const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
 
     fireEvent.click(screen.getByRole("button", { name: "Download regional surface plan JSON" }));
 
@@ -229,7 +241,7 @@ describe("RegionalSurfacePlanPanel", () => {
   });
 
   it("treats an empty browser chooser as cancellation", () => {
-    render(<RegionalSurfacePlanPanel />);
+    render(<TestRegionalSurfacePlanPanel />);
     const input = screen.getByLabelText("Import regional surface plan JSON file");
 
     fireEvent.change(input, { target: { files: [] } });

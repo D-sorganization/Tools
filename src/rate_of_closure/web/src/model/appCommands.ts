@@ -9,6 +9,8 @@ export const APP_COMMAND_IDS = [
   "file.import_workspace",
   "file.export_workspace",
   "file.close_workspace",
+  "file.open_regional_ground_variation_request",
+  "file.save_regional_ground_variation_request_as",
   "view.manage_modules",
   "view.restore_default_workspace",
   "view.show_impact",
@@ -32,6 +34,10 @@ export const APP_COMMAND_ID = Object.freeze({
   fileImportWorkspace: "file.import_workspace",
   fileExportWorkspace: "file.export_workspace",
   fileCloseWorkspace: "file.close_workspace",
+  fileOpenRegionalGroundVariationRequest:
+    "file.open_regional_ground_variation_request",
+  fileSaveRegionalGroundVariationRequestAs:
+    "file.save_regional_ground_variation_request_as",
   viewManageModules: "view.manage_modules",
   viewRestoreDefaultWorkspace: "view.restore_default_workspace",
   viewShowImpact: "view.show_impact",
@@ -82,6 +88,16 @@ export const APP_COMMANDS: readonly AppCommand[] = Object.freeze([
   disabled(APP_COMMAND_ID.fileImportWorkspace, "file", "Import Workspace…", FILE_DISABLED_REASON),
   disabled(APP_COMMAND_ID.fileExportWorkspace, "file", "Export Workspace…", FILE_DISABLED_REASON),
   disabled(APP_COMMAND_ID.fileCloseWorkspace, "file", "Close Workspace", FILE_DISABLED_REASON),
+  enabled(
+    APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest,
+    "file",
+    "Open Regional-Ground Variation Request",
+  ),
+  enabled(
+    APP_COMMAND_ID.fileSaveRegionalGroundVariationRequestAs,
+    "file",
+    "Save Regional-Ground Variation Request As",
+  ),
   enabled(APP_COMMAND_ID.viewManageModules, "view", "Manage Modules"),
   enabled(APP_COMMAND_ID.viewRestoreDefaultWorkspace, "view", "Restore Default Workspace"),
   enabled(APP_COMMAND_ID.viewShowImpact, "view", "Impact"),

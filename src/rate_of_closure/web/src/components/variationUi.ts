@@ -1,11 +1,8 @@
-import {
-  keysForMode,
-  variableDef,
-  type NoiseSpecTs,
-  type VariationMode,
-  type VariationPlanTs,
-} from "../model/variation";
-import type { BallSetup } from "../model/ballSetup";
+import type { VariationMode } from "../model/variation";
+export {
+  defaultVariationPlan,
+  defaultVariationSpec as defaultSpec,
+} from "../model/variationDefaults";
 
 export const MODE_LABELS: Record<VariationMode, string> = {
   delivery: "Delivery → Impact → Flight",
@@ -19,35 +16,6 @@ export const INPUT_CLASS =
   "no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none";
 export const BUTTON_CLASS =
   "rounded border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-slate-500 disabled:opacity-40";
-
-export const defaultSpec = (
-  mode: VariationMode,
-  excluded: ReadonlySet<string> = new Set(),
-  ballSetup?: BallSetup,
-): NoiseSpecTs => {
-  const keys = keysForMode(mode, ballSetup);
-  const key = keys.find((candidate) => !excluded.has(candidate)) ?? keys[0];
-  return {
-    variableKey: key,
-    distribution: "normal",
-    scale: variableDef(key)?.typicalScale ?? 1,
-    lower: null,
-    upper: null,
-    specId: key,
-    timeWindowS: null,
-    pointIds: [],
-  };
-};
-
-export const defaultVariationPlan = (): VariationPlanTs => ({
-  mode: "delivery",
-  baseVariables: {},
-  noise: [defaultSpec("delivery")],
-  nRuns: 200,
-  seed: 0,
-  flightModel: "waterloo_penner",
-  groups: [],
-});
 
 export const downloadText = (name: string, text: string, type: string): void => {
   downloadBlob(name, new Blob([text], { type }));

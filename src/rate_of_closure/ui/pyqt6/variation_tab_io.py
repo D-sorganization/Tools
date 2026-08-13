@@ -186,6 +186,7 @@ class VariationTabIoMixin:
 
     def load_plan(self, plan: VariationPlan) -> None:
         """Drive all editors from a plan (used by Load Plan and tests)."""
+        self.require_plan_loadable(plan)
         self._mode_combo.setCurrentIndex(MODES.index(plan.mode))
         self._runs_spin.setValue(plan.n_runs)
         self._seed_spin.setValue(plan.seed)
@@ -197,6 +198,15 @@ class VariationTabIoMixin:
         for index, spec in enumerate(plan.noise):
             row = self._rows[0] if index == 0 else self._add_row()
             row.load_spec(spec)
+
+    def require_plan_loadable(self, plan: VariationPlan) -> None:
+        """Fail before mutation when a valid wire plan exceeds editor bounds."""
+        if type(plan) is not VariationPlan:
+            raise TypeError("plan must be an exact VariationPlan")
+        if plan.n_runs > self._runs_spin.maximum():
+            raise ValueError(
+                f"plan n_runs exceeds the editor maximum {self._runs_spin.maximum()}"
+            )
 
 
 __all__ = ["VariationTabIoMixin"]

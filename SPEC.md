@@ -32,6 +32,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -58,6 +59,10 @@
 | **Current Version**     | 1.14.54                                    |
 | **Spec Version**        | 1.14.54                                    |
 >>>>>>> origin/codex/4192-ground-target-projection
+=======
+| **Current Version**     | 1.14.59                                    |
+| **Spec Version**        | 1.14.59                                    |
+>>>>>>> origin/codex/4273-ground-variation-file-controls
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4274-regional-surface-ui
 
@@ -77,6 +82,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -112,6 +118,92 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 >>>>>>> origin/feat/4284-track-clubhead
 =======
+=======
+### 2026-08-11 Contextual Regional-Ground Variation File Controls
+
+- React and PyQt6 expose the same stable Open and Save As command IDs only
+  while Variation or Ground Surfaces is active. Both clients use the existing
+  App-owned combined request and Python application persistence contracts;
+  neither introduces a parallel workspace or physics model.
+- React strictly parses and canonically serializes the exact v1 envelope under
+  its 1 MiB UTF-8 bound. A Python-produced fixture is asserted by both
+  runtimes. Browser import applies only after complete validation and reports
+  failures accessibly. Download text explains that the browser controls the
+  destination, replacement, recent-file, and atomicity behavior.
+- PyQt6 native Open validates before either editor changes. Save validates the
+  current combined snapshot before showing a chooser and delegates to the
+  existing atomic writer. Cancellation changes nothing. An exact imported
+  request remains authoritative until either owning editor changes.
+- The disclosed illustrative regional draft cannot be saved until explicitly
+  validated. A valid wire plan outside the PyQt editor's run-count capacity is
+  rejected before mutation. This slice does not run physics or complete
+  pipeline, overlay, solver/capability, wind, compiled-runtime, downstream,
+  protected-release, #4273, or #4267 work.
+
+### 2026-08-11 React Regional-Ground Variation Workspace Ownership
+
+- One App-owned reducer now retains the complete physical variation-plan
+  editor, analysis-execution choice, regional-surface draft, and exact imported
+  regional request while the mutually exclusive workspace panels unmount.
+  `VariationPanel` and `RegionalSurfacePlanPanel` are controlled adapters; no
+  module-local fallback can silently replace the user's current request state.
+- A typed request port composes only the current editors and validates launch
+  mode, the two supported base-material keys, global explicit `[0, 1]` bounds,
+  base-plan equality, identifiers, row caps, and editor-qualified regional
+  evidence. Whole-request apply validates and derives every replacement field
+  before dispatch, so invalid input cannot partially mutate the workspace.
+  The disclosed illustrative regional draft is never eligible for composition
+  until the user explicitly edits it or imports qualified evidence.
+- The web registry names normal restitution and rolling resistance so an
+  applied request remains inspectable. The existing scalar browser runner
+  rejects those inputs visibly because the regional-ground pipeline has not
+  been integrated there; this slice changes no physics.
+- This session-state prerequisite excludes File-menu controls, upload/download
+  serialization, native dialogs, PyQt wiring, browser filesystem claims,
+  execution-pipeline integration, protected publication, and #4273/#4267
+  completion.
+
+### 2026-08-11 Seeded Regional-Ground Request Persistence
+
+- A strict v1 application envelope stores the existing immutable seeded
+  variation request: current `VariationPlan`, exact regional material plan,
+  result/source/optional-series identifiers, and maximum output rows. It does
+  not define another simulation or storage model.
+- Deterministic compact canonical JSON enforces cross-runtime-safe numbers,
+  Unicode scalar text, exact nested shapes, duplicate-key rejection, current
+  schema versions, and a 1 MiB UTF-8 limit. The same text is suitable for
+  browser downloads without claiming browser atomic replacement.
+- Native files reuse the shared sentinel-bounded UTF-8 reader and
+  flush/fsync/atomic-replace writer. Cancellation changes nothing, and failed
+  replacement preserves the prior file.
+- Loading explicitly registers the two Rate-owned ground variables before the
+  existing variation parser runs, constructs the existing exact request, and
+  never executes physics.
+- This slice excludes UI/editor wiring, workspace embedding, regional-overlay
+  variation, solver/capability use, wind, compiled/downstream parity, protected
+  release, and issue/epic completion.
+
+### 2026-08-11 Seeded Regional-Ground Material Variation
+
+- A UI-neutral adapter samples base-surface normal restitution and rolling
+  resistance with the shared versioned `VariationPlan` and subset-stable
+  sampling engine. Callers explicitly register these two extension variables,
+  so merely importing the adapter does not alter shared process state.
+- Every trial owns an immutable rebound regional plan, deterministic request
+  identity, canonical input SHA-256, and source revision. An injected exact
+  flight-through-regional-ground executor remains the sole physics authority.
+- The existing bounded scalar-ensemble contract aligns sampled material inputs
+  with only qualified complete-rest outputs. Censored and failed trials keep
+  their sampled inputs and typed-null ground metrics instead of fabricating
+  terminal values.
+- Inputs fail closed before execution for unsupported/missing keys, base-plan
+  mismatch, implicit/nonfinite/Boolean/out-of-range bounds, nonfinite scale or
+  samples, non-exact outcomes, plan/digest mismatch, and row-cap overflow.
+- This slice excludes region-overlay perturbation, an editor or UI, persistence,
+  wind, target/playback changes, solver/capability invocation, compiled-runtime
+  physics, downstream parity, and release. Issues #4273 and #4267 remain open.
+
+>>>>>>> origin/codex/4273-ground-variation-file-controls
 ### 2026-08-11 Matched Ground-Playback Inspection
 
 - PyQt6 and React expose additive `Ground Playback` workspaces without
@@ -3189,6 +3281,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3200,6 +3293,13 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-11 | 1.14.44 | feat(rate-of-closure, #4284): add one strict shared-golden Python/TypeScript camera-preset contract and matched accessible PyQt6 `Club3DView` / React `ClubCanvas` controls for canonical Isometric, explicit-side Face On, exact +x Down the Line, -y Overhead, zoom-preserving Reset, and geometry-bounded Auto Fit; retain manual orbit while scaling, pin representative-driver fixed/moving start-impact-end bounds, and suppress only each exact PyQt projection's collapsed depth axis while restoring all axes for Isometric/custom orbit; keep tracking, tracking suspension, recenter, workspace persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI rendered QA, protected integration, release, and issue completion open. |
 =======
 =======
+=======
+| 2026-08-11 | 1.14.59 | feat(ground-study, #4273): bind contextual React and PyQt6 Open/Save As commands to the App-owned seeded regional-ground request; add strict TypeScript v1 parsing and Python-parity canonical serialization, a shared golden payload, bounded transactional browser import, truthful browser download semantics, visible failures, native validate-before-dialog atomic persistence, exact-import retention until editor change, explicit illustrative-draft rejection, and cancel-safe dialogs; retain physics invocation, overlay variation, solver/capability and wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.58 | feat(ground-study, #4273): lift the React variation plan, execution policy, regional draft, and exact imported evidence into one App-owned transactional workspace; make both panels controlled across navigation; expose a typed compose/apply request port; register the two inspectable ground inputs while failing closed before unsupported scalar-browser execution; retain File controls, PyQt wiring, browser persistence, pipeline integration, protected release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.57 | feat(ground-study, #4273): add strict canonical bounded seeded regional-ground request persistence without UI or physics. |
+| 2026-08-11 | 1.14.56 | docs(ground-study, #4365): record ready publication of the seeded base-material variation runner at implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf`, stacked on exact #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; retain protected checks, UI/overlay/persistence, solver/wind, compiled/downstream parity, release, and #4273/#4267 completion as open. |
+| 2026-08-11 | 1.14.55 | feat(ground-study, #4273 #4267): add deterministic VariationPlan-driven base normal-restitution and rolling-resistance studies with immutable per-trial provenance, exact injected flight-through-regional-ground execution, bounded sampled-input scalar ensembles, typed-null unavailable rows, and fail-before-execution validation; retain region overlays, UI/persistence, solver/wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
+>>>>>>> origin/codex/4273-ground-variation-file-controls
 | 2026-08-11 | 1.14.54 | feat(ground-target, #4192 #4273 #4267): add a UI-neutral complete-rest-only projection from exact flight-through-regional-ground evidence to the existing `SpatialTarget`; record the sole `GroundFrame.TARGET`, retain final x/z, replace ball-center y exactly once with declared landing-surface elevation, reuse `SpatialTarget.miss` signs and geometry, type aerial targets as `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`, preserve every unqualified/censored outcome as null with exact phase/reason/digest evidence, and expose a bounded ordered target scalar ensemble while leaving UI, persistence, solver/capability, aerial-trajectory, compiled-runtime, protected-release, and issue completion open. |
 | 2026-08-11 | 1.14.53 | feat(ground-playback, #4274 #4267): add matched strict import-only PyQt6 and React ground-result playback with phase-safe absolute time, exact logarithmic step/frame lookup, play/pause/restart/loop/speed controls, locked-scale orbit/zoom/reset, bounded 2,048-point landmark-aware visuals, disclosed 256-row evidence windows with full-result retention, atomic standalone/regional imports, and honest partial-result terminology while leaving live flight synchronization, comparison, persistence, camera integration, rendered visual evidence, compiled physics, downstream parity, protected release, and issue completion open. |
 >>>>>>> origin/codex/4192-ground-target-projection

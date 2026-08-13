@@ -6,6 +6,7 @@ import {
   type AppCommandId,
 } from "../model/appCommands";
 import type { AppTheme } from "../model/appTheme";
+import type { RegionalGroundVariationRequestPort } from "../model/regionalGroundVariationWorkspace";
 import {
   PRIMARY_VIEWS,
   restorePrimaryViewDefaults,
@@ -13,6 +14,7 @@ import {
   shiftPrimaryView,
   type PrimaryViewState,
 } from "../model/viewPreferences";
+import { RegionalGroundVariationFileCommands } from "./RegionalGroundVariationFileCommands";
 
 interface AppToolstripProps {
   readonly moduleState: PrimaryViewState;
@@ -21,6 +23,8 @@ interface AppToolstripProps {
   readonly onModuleStateChange: (state: PrimaryViewState) => void;
   readonly onCommand: (command: AppCommandId) => void;
   readonly onShortcutHelpOpenChange: (open: boolean) => void;
+  /** Reserved typed seam for the subsequent contextual File-command slice. */
+  readonly regionalGroundVariationRequestPort?: RegionalGroundVariationRequestPort;
 }
 
 const MENU_CLASS =
@@ -91,12 +95,28 @@ function ShortcutDialog({ onClose }: { readonly onClose: () => void }) {
   );
 }
 
-function FileMenu() {
-  const fileCommands = commandsInGroup("file");
+const CONTEXTUAL_FILE_COMMANDS: readonly AppCommandId[] = [
+  APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest,
+  APP_COMMAND_ID.fileSaveRegionalGroundVariationRequestAs,
+];
+
+function FileMenu(props: {
+  readonly active: PrimaryViewState["active"];
+  readonly requestPort?: RegionalGroundVariationRequestPort;
+  readonly onCommand: (command: AppCommandId) => void;
+}) {
+  const fileCommands = commandsInGroup("file")
+    .filter(({ id }) => !CONTEXTUAL_FILE_COMMANDS.includes(id));
+  const contextual = props.requestPort !== undefined &&
+    (props.active === "variation" || props.active === "regional-surfaces");
+  const requestPort = contextual ? props.requestPort : undefined;
   return (
     <details className={MENU_CLASS}>
       <summary className={SUMMARY_CLASS}>File</summary>
       <div className={POPOVER_CLASS} role="group" aria-label="File commands">
+        {requestPort !== undefined && <RegionalGroundVariationFileCommands
+          requestPort={requestPort} onCommand={props.onCommand}
+          commandClassName={COMMAND_CLASS} />}
         {fileCommands.map((command) => (
           <button
             key={command.id}
@@ -219,6 +239,7 @@ export function AppToolstrip({
   onModuleStateChange,
   onCommand,
   onShortcutHelpOpenChange,
+  regionalGroundVariationRequestPort,
 }: AppToolstripProps) {
   const shortcutTrigger = useRef<HTMLButtonElement>(null);
   const run = (id: AppCommandId) => {
@@ -237,7 +258,8 @@ export function AppToolstrip({
         className="sticky top-0 z-30 mb-5 overflow-visible rounded-xl border border-slate-700/80 bg-slate-950/90 p-2 shadow-xl shadow-black/30 backdrop-blur"
       >
         <div className="flex flex-wrap items-start gap-2">
-          <FileMenu />
+          <FileMenu active={moduleState.active}
+            requestPort={regionalGroundVariationRequestPort} onCommand={onCommand} />
           <ViewMenu state={moduleState} onChange={onModuleStateChange} onCommand={onCommand} />
           <div className="flex max-w-full shrink-0 items-stretch gap-1 overflow-x-auto rounded-lg border border-slate-700/80 bg-slate-900/90 p-1">
             {([

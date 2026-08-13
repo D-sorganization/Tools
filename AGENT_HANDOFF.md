@@ -2,6 +2,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## 2026-08-11 PR #4362 bounded Track Clubhead child
 
 Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
@@ -85,6 +86,167 @@ Playwright/high-DPI rendered QA, full playback coverage, protected review,
 release, and issue/epic completion remain open.
 =======
 =======
+=======
+## 2026-08-11 local #4273 contextual regional-ground request File controls
+
+The unpublished `codex/4273-ground-variation-file-controls` child starts from
+exact ready PR #4367 head `0968a4ced5644aa8e2673ca278d261eeb92c31f8`.
+It turns that prerequisite's typed App-owned request port into matched,
+contextual File commands without introducing another request or physics model.
+
+React parses and serializes the exact Python-owned v1 combined envelope with
+strict JSON, nested validation, and the same 1 MiB UTF-8 bound. A
+Python-produced golden payload is asserted in both runtimes. In Variation and
+Ground Surfaces only, accessible Open and Save As commands import into or
+snapshot the App owner. Invalid imports preserve all prior state and expose an
+alert. Downloads disclose that the browser owns destination, overwrite, and
+atomicity semantics.
+
+PyQt6 exposes the same stable commands only in the two relevant modules.
+Native Open fully validates before applying both editors; Save validates before
+showing the chooser and uses the existing atomic writer. Cancellation changes
+nothing. Imported exact evidence remains authoritative until either editor
+changes. The untouched illustrative regional draft cannot be saved until it is
+explicitly validated, and oversized wire-valid run counts fail before editor
+mutation.
+
+This slice executes no physics and adds no illustrative fallback. All 782 React
+tests in 123 files, the 87-test focused Python/PyQt selection, and a 25-test
+post-fixture follow-up pass; type-check, ESLint, Vite build, Ruff, MyPy, and
+repository policy gates are green. The code, SPEC, manifest, and all canonical
+handoffs commit together as `SELF`; no push
+or GitHub write occurred. Keep #4273/#4267 open for pipeline invocation,
+overlay variation, solver/capability and wind integration, compiled/downstream
+parity, protected review, publication, and release.
+
+Publication audit note: the workflow-pinned Ruff 0.14.10 formatter normalized
+only `test_regional_ground_variation_request_io.py` after the implementation
+commit. This is a test-layout-only follow-up with no material handoff, runtime,
+wire, UI, or physics change; the focused gates were rerun before publication.
+
+Hosted-current-head audit then found one MyPy-only mixin boundary: the file
+controller requires a `QWidget` parent while the reusable mixin cannot prove its
+eventual `QMainWindow` base statically. The follow-up now performs an explicit
+TYPE_CHECKING-only `QWidget` cast at that construction boundary. The runtime
+object and behavior are unchanged; the exact hosted MyPy profile and focused
+file-control tests are required before treating the repair as green.
+
+## 2026-08-11 local #4273 React request-workspace ownership
+
+The unpublished `codex/4273-ground-variation-file-ui` branch starts from exact
+PR #4366 head `8dfb1189c13f0fce99901e1ffbba152d813f9006`. Its read-only integration audit
+found that PyQt already has a main-window owner for both editors, while React
+kept the variation plan and regional draft/import evidence in mutually
+exclusive panel-local state. Switching tabs destroyed one side of the request,
+so binding File commands at that boundary would have been misleading.
+
+This bounded prerequisite adds one App-owned reducer and hook. The variation
+plan, analysis-execution selection, regional draft, and exact imported request
+now survive panel unmount/remount; both panels are controlled adapters. A typed
+request port composes only current state and transactionally applies a complete
+request after validating the two ground keys, global bounded noise, plan/base
+equality, identities, caps, and editor-qualified regional evidence. Invalid
+apply leaves every prior field unchanged, and the disclosed illustrative
+regional draft cannot be composed until explicitly edited or imported. The
+toolstrip receives the reserved
+typed port but exposes no new command in this slice.
+
+React now names the existing Python-owned ground restitution and rolling-
+resistance keys so applied plans remain inspectable. The scalar browser runner
+rejects those inputs visibly instead of routing them into unrelated flight
+physics. No physics, file dialog, upload/download, PyQt, browser-persistence,
+or filesystem semantics changed. TDD captured the missing owner and navigation
+reset. The complete React suite passes 763 tests across 121 files; TypeScript,
+ESLint, and the production Vite build pass. The campaign manifest and its eight
+tests, documentation governance, blocking-quality policy, module-size budget,
+and diff checks also pass. Vite retains its inherited main-chunk warning.
+
+Keep #4273/#4267 open. The next bounded child may add strict browser
+serialization and contextual File controls plus the PyQt native controller,
+using this owner rather than an imperative registry or illustrative fallback.
+No push or GitHub write occurred from this branch.
+
+## 2026-08-11 local #4273 seeded-request persistence
+
+The unpublished `codex/4273-ground-variation-persistence` branch starts from
+exact published PR #4365 documentation head
+`27d2a68d3738d61307af9235f3f97f7bd400e0f3`. A read-only persistence audit
+found a clean composition seam: the existing immutable seeded request,
+`VariationPlan` and regional-plan object serializers, shared canonical numeric
+JSON, duplicate-key-rejecting ground parser, bounded UTF-8 snapshot reader, and
+native atomic text writer. No alternate storage or physics contract was needed.
+
+The new UI-neutral v1 envelope persists the exact variation plan, exact
+regional material plan, result/source/series identifiers, and row cap. It has a
+1 MiB UTF-8 bound and deterministic compact canonical text suitable for the
+existing browser-download model. Import requires exact fields and current
+schema versions before delegating nested objects to their existing parsers.
+Duplicate fields, nonfinite or cross-runtime-unsafe numbers, Boolean numeric
+substitutes, surrogate text, malformed identifiers/caps, oversized documents,
+and invalid nested plans fail closed. Import registers the two Rate extension
+variables explicitly; merely importing the module still does not mutate the
+shared registry.
+
+Native reads take one sentinel-bounded strict UTF-8 snapshot. Writes serialize
+and validate before reusing the existing flush/fsync/atomic-replace seam;
+cancellation is a no-op and a failed replacement preserves the last-known-good
+file. No UI, browser filesystem claim, or physics execution is added.
+
+RED captured the missing persistence module. Twenty-two focused tests and 82
+composition tests pass. The relevant Rate adapter/file plus complete shared
+flight/ground/variation selection passes 545 tests with six expected
+missing-Rust-wheel skips and one environment-only Hypothesis warning. Ruff,
+import-skipping MyPy, Bandit, campaign-manifest validation and its eight tests,
+documentation governance, blocking-quality, minimum-test, module-size,
+changed-test assertion, placeholder, structural, and diff gates are green.
+
+This is not a #4273/#4267 completion claim. UI/editor integration, workspace
+embedding, regional-overlay variation, solver/capability consumption, wind,
+compiled/downstream parity, protected review, publication, and release remain
+open. No branch was pushed and no GitHub state was changed.
+
+## 2026-08-11 PR #4365 seeded regional-ground material variation
+
+Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) is stacked
+on exact Tools PR #4364 head
+`f13f0908dd2a553cf4d114afd31bb474d1b967c7`; independently reviewed
+implementation commit `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf` follows.
+It adds one UI-neutral runner that samples only base-surface normal restitution
+and rolling resistance through the existing `VariationPlan`/`sample_inputs`
+authority, rebinds an immutable regional request for every trial, and delegates
+all flight, impact, bounce, and regional skid/roll physics to an injected exact
+pipeline executor. The adapter adds no alternate physics or UI path.
+
+The two adapter variables use the shared registry's explicit extension seam;
+importing the module does not mutate the process-global registry. Deterministic
+trial IDs and SHA-256 input provenance bind seed, plan, trial order, sampled
+values, and exact base-plan identity. Sampled values are aligned with qualified
+scalar metrics, while transfer failures and censored outcomes retain those
+inputs and typed null output metrics. Requests fail before execution for
+unsupported or missing keys, mismatched bases, implicit/nonfinite/Boolean/out-
+of-range bounds, nonfinite scales or samples, invalid exact types, and row-cap
+overflow.
+
+RED captured the missing module. Twelve focused tests pass, including byte-for-
+byte seed replay, subset-stable streams, changed-seed divergence, immutable
+identity/provenance/order, failure nulls, fail-before-execution boundaries, and
+a real-pipeline check that increased rolling resistance reduces qualified total
+distance. The focused adapter plus pinned-registry suite passes 43 tests; the
+complete relevant Rate adapters and shared flight/ground/variation selection
+passes 506 tests with six expected missing-Rust-wheel skips and one environment
+warning. Ruff, import-skipping MyPy, Bandit, campaign-manifest validation and
+its eight tests, documentation governance, blocking-quality, minimum-test,
+default module-size, changed-test assertion, 397-line new-module, placeholder,
+and diff gates are green. The stricter full variation-directory 400-line scan
+reports only the inherited 433-line `plot_data.py`, not this candidate.
+
+This is deliberately not a #4273 or #4267 completion claim. Regional overlay
+variation, UI/editor integration, persistence, wind coupling, solver/capability
+consumption, compiled/runtime parity, downstream UpstreamDrift parity,
+protected CI and release remain open. Publication does not promote this bounded
+slice to issue or epic completion.
+
+>>>>>>> origin/codex/4273-ground-variation-file-controls
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 
 Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)

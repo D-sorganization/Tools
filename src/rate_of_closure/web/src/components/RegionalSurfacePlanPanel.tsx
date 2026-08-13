@@ -138,10 +138,19 @@ function nextOverlay(draft: RegionalSurfacePlanDraft): RegionalOverlayDraft {
   };
 }
 
-export function RegionalSurfacePlanPanel() {
-  const [draft, setDraft] = useState(illustrativeRegionalSurfacePlanDraft);
-  const [importedRequest, setImportedRequest] =
-    useState<GroundRegionalMaterialPlanRequest | null>(null);
+export interface RegionalSurfacePlanPanelProps {
+  readonly draft: RegionalSurfacePlanDraft;
+  readonly importedRequest: GroundRegionalMaterialPlanRequest | null;
+  readonly onDraftChange: (draft: RegionalSurfacePlanDraft) => void;
+  readonly onImport: (request: GroundRegionalMaterialPlanRequest) => void;
+}
+
+export function RegionalSurfacePlanPanel({
+  draft,
+  importedRequest,
+  onDraftChange,
+  onImport,
+}: RegionalSurfacePlanPanelProps) {
   const [error, setError] = useState<string | null>(null);
   const [readback, setReadback] = useState<string | null>(null);
   const [fileStatus, setFileStatus] = useState<string | null>(null);
@@ -151,7 +160,7 @@ export function RegionalSurfacePlanPanel() {
   const updateDraft = (
     transform: (current: RegionalSurfacePlanDraft) => RegionalSurfacePlanDraft,
   ) => {
-    setDraft(transform);
+    onDraftChange(transform(draft));
     setError(null);
     setReadback(null);
     setFileStatus(null);
@@ -185,9 +194,8 @@ export function RegionalSurfacePlanPanel() {
     if (file === undefined) return;
     try {
       const request = await readRegionalSurfacePlanFile(file);
-      const importedDraft = editorDraftFromGroundRegionalSurfacePlanRequest(request);
-      setDraft(importedDraft);
-      setImportedRequest(request);
+      editorDraftFromGroundRegionalSurfacePlanRequest(request);
+      onImport(request);
       setValidationAttempted(false);
       setError(null);
       setReadback(`${request.schema_version} · exact imported provenance ${request.provenance.input_sha256}`);
