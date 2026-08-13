@@ -1,5 +1,25 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 genuine Python paired producer
+
+- Added a bounded Python service for a genuine planted localized intervention:
+  an exact baseline and one-source-only perturbation row per shoulder/wrist
+  source, never an observational multi-input scatter surrogate.
+- Exact rows flow through canonical request/config identity, complete
+  simulation, typed outcome, trace, cancellation, and progress authority.
+- Output is accepted by the strict paired consumer and retains source spec,
+  half-open window, topological joint, spatial point/time, impact/shot target,
+  complete pair roster, and typed hit/no-impact/failure availability.
+- Design/request SHA-256 values bind the normalized base config, authored
+  source plan, target registry declarations, explicit matrix, and authority ID.
+- Capability is Python/double-pendulum only and fail-closed for grouped/global
+  sources, pre-existing localized offsets, invalid state loci, incomplete
+  deltas, and resource overflow.
+- No automatic PyQt or React Worker execution was added. A UI must explicitly
+  request this separate paired study before supplying its authority to the
+  existing consumer. Persistence/document transport and Rust parity stay open.
+- SPEC advances to 1.16.74.
+
 ## 2026-08-13 #4142 R11 executor/config authority hardening
 
 - Every executor result must carry the exact normalized ordered-trial config;

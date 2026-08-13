@@ -80,6 +80,15 @@ def build_simulation_ensemble_request(
     is not modeled. This prevents an arc plot from implying that a scalar-only
     delivery perturbation changed the swing geometry.
     """
+    _validate_request_context(plan, base_config)
+    samples = sample_inputs(plan)
+    return build_simulation_ensemble_request_from_samples(plan, base_config, samples)
+
+
+def _validate_request_context(
+    plan: VariationPlan, base_config: SimulationConfig
+) -> None:
+    """Validate the common plan/config capability boundary once."""
     require(isinstance(plan, VariationPlan), "plan must be a VariationPlan")
     require(
         isinstance(base_config, SimulationConfig),
@@ -94,8 +103,43 @@ def build_simulation_ensemble_request(
     requested = {spec.variable_key for spec in plan.noise} | set(plan.base_variables)
     unsupported = sorted(requested - TRACE_CAPABLE_VARIABLE_KEYS)
     require(not unsupported, "variables are not trace-capable", unsupported)
+
+
+def _normalize_explicit_samples(
+    sampled_inputs: np.ndarray, plan: VariationPlan
+) -> np.ndarray:
+    """Own and validate an explicit design matrix before config allocation."""
+    samples = np.asarray(sampled_inputs)
+    require(
+        np.issubdtype(samples.dtype, np.number)
+        and not np.issubdtype(samples.dtype, np.bool_)
+        and not np.issubdtype(samples.dtype, np.complexfloating),
+        "sampled_inputs must contain real non-boolean numbers",
+    )
+    samples = np.array(samples, dtype=float, copy=True)
+    require(
+        samples.shape == (plan.n_runs, len(plan.noise)),
+        "sampled_inputs has invalid shape",
+        samples.shape,
+    )
+    require(bool(np.all(np.isfinite(samples))), "sampled_inputs must be finite")
+    return samples
+
+
+def build_simulation_ensemble_request_from_samples(
+    plan: VariationPlan,
+    base_config: SimulationConfig,
+    sampled_inputs: np.ndarray,
+) -> SimulationEnsembleRequest:
+    """Build a request from an explicit finite sample matrix.
+
+    This seam is for deterministic experimental designs whose rows are the
+    scientific authority (for example, planted baseline/perturbation pairs),
+    rather than pseudorandom Monte Carlo draws.
+    """
+    _validate_request_context(plan, base_config)
+    samples = _normalize_explicit_samples(sampled_inputs, plan)
     _validate_noise_loci(plan, base_config)
-    samples = sample_inputs(plan)
     configs = tuple(
         _apply_row(base_config, plan, row) for row in np.asarray(samples, dtype=float)
     )
@@ -305,4 +349,5 @@ __all__ = [
     "LOCALIZED_TORQUE_VARIABLE_JOINTS",
     "apply_global_simulation_values",
     "build_simulation_ensemble_request",
+    "build_simulation_ensemble_request_from_samples",
 ]

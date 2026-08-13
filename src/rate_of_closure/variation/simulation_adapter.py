@@ -123,8 +123,7 @@ def spatial_point_ids(run: SimulationRun) -> tuple[str, ...]:
     """
     require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
     source_kind = run.config.source_kind
-    require(source_kind in _POINT_IDS_BY_SOURCE, "unknown source_kind", source_kind)
-    point_ids = _point_ids_for_source(source_kind)
+    point_ids = spatial_point_ids_for_source(source_kind)
     expected_joint_columns = 0 if source_kind == "manual" else len(point_ids)
     require(
         run.swing_joints.shape[1] == expected_joint_columns,
@@ -271,12 +270,12 @@ def _trace_layout(
     """Return the canonical grid/IDs even when every execution failed."""
     if reference is not None:
         return reference.swing_times, spatial_point_ids(reference)
-    return configured_swing_sample_times(config), _point_ids_for_source(
+    return configured_swing_sample_times(config), spatial_point_ids_for_source(
         config.source_kind
     )
 
 
-def _point_ids_for_source(source_kind: str) -> tuple[str, ...]:
+def spatial_point_ids_for_source(source_kind: str) -> tuple[str, ...]:
     """Return the stable spatial schema for a validated source kind."""
     require(source_kind in _POINT_IDS_BY_SOURCE, "unknown source_kind", source_kind)
     return _POINT_IDS_BY_SOURCE[source_kind]
@@ -300,4 +299,5 @@ __all__ = [
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",
     "spatial_point_ids",
+    "spatial_point_ids_for_source",
 ]

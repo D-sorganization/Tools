@@ -26,11 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.73                                    |
-| **Spec Version**        | 1.16.73                                    |
+| **Current Version**     | 1.16.74                                    |
+| **Spec Version**        | 1.16.74                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Genuine Python paired localized-attribution producer (#4142)
+
+Version 1.16.74 adds the first production producer for the strict localized-
+attribution authority. A validated Python service converts authored shoulder
+and wrist loci into one exact one-at-a-time matrix: each source receives its
+own explicit baseline row and one row in which only that source changes by the
+declared nonzero torque delta. The matrix bypasses random sampling while still
+using the canonical `SimulationEnsembleRequest`, config projection, complete
+simulation executor, typed outcomes, cancellation, and progress contracts.
+
+The result retains stable source spec/window/topological-joint metadata,
+spatial target point and exact sample time, typed hit/no-impact/failure
+availability, and a complete source-pair-target observation matrix. SHA-256
+identities bind the normalized base config, source plan, target definitions,
+explicit sampled request, and final authority ID. This is planted-intervention
+response authority, not causal inference and not observational scatter.
+
+The service is deliberately fail-closed for non-double-pendulum sources,
+global or grouped noise, off-grid state times, unknown spatial points,
+pre-existing localized offsets, incomplete delta rosters, and resource-cap
+overflow. Automatic PyQt execution/persistence and React Worker production are
+not included: the existing consumers continue to show their explicit
+unavailable message until a caller intentionally runs and supplies this
+separate paired study. Rust parity also remains open.
 
 ### 2026-08-13 Executor/config authority hardening (#4142 R11)
 
@@ -4003,6 +4028,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4142 R13.3): add a deterministic Python service that executes explicit baseline/one-localized-source pairs through canonical ensemble authority and emits strict typed source-window/joint-to-state/impact/shot attribution with bound design/request identities, cancellation, progress, and resource caps; automatic PyQt/React production remains open. |
 | 2026-08-13 | 1.16.73 | fix(rate-of-closure, #4142 R13.3): preserve canonical binary64 strings through final TypeScript CSV serialization and prove exact Python/TypeScript export bytes with a shared extreme authority. |
 | 2026-08-13 | 1.16.72 | fix(rate-of-closure, #4142 R13.3): close numerical and cross-runtime parity findings with finite response arithmetic, nonzero interventions, normalized binary64 CSV text, Unicode code-point caps, accurate pair counts, and an exact pinned-Mypy typed boundary. |
 | 2026-08-13 | 1.16.71 | fix(rate-of-closure, #4142 R13.3): harden paired attribution with immutable source pair rosters, complete source-target-pair matrices, canonical target semantics, shared ULP response policy, resource bounds, deep-frozen TypeScript values, and enriched formula-safe parity CSV. |

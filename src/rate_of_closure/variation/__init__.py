@@ -21,7 +21,10 @@ from .morris_rate_adapter import (
     RateMorrisEvaluator,
     evaluate_rate_morris_design,
 )
-from .request_builder import apply_global_simulation_values
+from .request_builder import (
+    apply_global_simulation_values,
+    build_simulation_ensemble_request_from_samples,
+)
 from .simulation_adapter import (
     APP_FRAME_ID,
     CONTACT_OUTPUT_NAMES,
@@ -80,6 +83,7 @@ __all__ = [
     "apply_ball_setup_sample",
     "apply_global_simulation_values",
     "build_simulation_ensemble_request",
+    "build_simulation_ensemble_request_from_samples",
     "capture_simulation",
     "evaluate_rate_morris_design",
     "project_simulation_outcome",

@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized paired-attribution Python producer (#4142)
+
+- `variation/localized_attribution_producer.py` now owns a bounded explicit
+  OAT design/service. Stable trial order is baseline/perturbed for each
+  localized shoulder/wrist source; all other localized sources remain at their
+  declared base values.
+- `build_simulation_ensemble_request_from_samples` is the shared strict seam
+  for caller-owned finite design matrices. It reuses the same capability/locus
+  validation and config projection as pseudorandom ensembles.
+- The result includes strict paired authority plus request/design SHA-256
+  provenance. State targets require exact configured grid times and canonical
+  `swing.*` points. Misses preserve state while impact/shot values become typed
+  unavailable; numerical failures remain explicit across all targets.
+- Cancellation/progress/order come from the canonical ensemble executor.
+  Ambiguous pre-existing offsets, global/grouped sources, bad rosters/loci, and
+  resource overflow fail before simulation.
+- This is an explicit Python service, not automatic extra work in the Variation
+  worker. PyQt orchestration, React Worker production, persistence/document
+  authority, and Rust parity remain open. SPEC is 1.16.74.
+
 ## 2026-08-13 Executor/config authority hardening (#4142 R11)
 
 - `capture_simulation` verifies the complete normalized requested config before

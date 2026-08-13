@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Genuine Python paired localized-attribution producer (#4142)
+
+Version 1.16.74 adds `LocalizedAttributionDesign` and
+`produce_localized_attribution`. The service creates an explicit baseline plus
+one-source-changed row for every authored shoulder/wrist locus, builds a single
+canonical `SimulationEnsembleRequest` from that exact finite matrix, and runs
+the existing deterministic complete-simulation executor. It emits the strict
+consumer authority with source window/joint, exact state point/time, typed
+impact/shot unavailability, complete pair-target roster, and bound request and
+design SHA-256 identities. It never derives attribution from multi-input
+Monte Carlo scatter.
+
+The contract fails closed for incompatible source kinds, global/grouped
+factors, malformed delta rosters, pre-existing localized offsets, off-grid or
+unknown state loci, and resource overflow. Progress and cancellation use the
+canonical ensemble lifecycle and trial order is fixed as baseline/perturbed
+per source. The existing PyQt and React consumers are not automatically wired:
+this is an explicitly requested separate paired study, not hidden extra work
+after every Monte Carlo run. React Worker production, persistence/document
+embedding, Rust parity, and intentional UI orchestration remain open.
+
 ## 2026-08-13 Executor/config authority hardening (#4142 R11)
 
 Version 1.16.71 computes a canonical full-field digest for each normalized
