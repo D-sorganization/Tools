@@ -3,6 +3,8 @@ import { useState } from "react";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import {
+  GROUND_NORMAL_RESTITUTION_KEY,
+  GROUND_ROLLING_RESISTANCE_KEY,
   planFromJson,
   planToJson,
   type VariationDatasetTs,
@@ -30,9 +32,6 @@ import { VariationActions } from "./VariationActions";
 import { VariationPlanLibraryPanel } from "./VariationPlanLibraryPanel";
 import { VariationResults } from "./VariationResults";
 import { VariationSetup } from "./VariationSetup";
-import { defaultVariationPlan } from "./variationUi";
-import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
-import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
 
 let generatedPlanId = 0;
@@ -41,7 +40,20 @@ const createPlanId = (): string => {
   return `variation-plan-${Date.now()}-${generatedPlanId}`;
 };
 
+const GROUND_INPUTS = new Set([
+  GROUND_NORMAL_RESTITUTION_KEY,
+  GROUND_ROLLING_RESISTANCE_KEY,
+]);
+
+const hasRegionalGroundInput = (plan: VariationPlanTs): boolean =>
+  Object.keys(plan.baseVariables).some((key) => GROUND_INPUTS.has(key)) ||
+  plan.noise.some((spec) => GROUND_INPUTS.has(spec.variableKey));
+
 export interface VariationPanelProps {
+  readonly plan: VariationPlanTs;
+  readonly analysisExecution: VariationAnalysisExecution;
+  readonly onPlanChange: (plan: VariationPlanTs) => void;
+  readonly onAnalysisExecutionChange: (value: VariationAnalysisExecution) => void;
   spatialTarget?: SpatialTargetTs;
   distanceUnit?: string;
   /** Injectable persistent storage for tests, embedded hosts, and privacy modes. */
@@ -49,24 +61,18 @@ export interface VariationPanelProps {
 }
 
 export function VariationPanel({
+  plan,
+  analysisExecution,
+  onPlanChange,
+  onAnalysisExecutionChange,
   spatialTarget,
   distanceUnit = "yd",
   storage,
-}: VariationPanelProps = {}): JSX.Element {
+}: VariationPanelProps): JSX.Element {
   const targetUse = spatialTarget
     ? spatialTargetForGroundWorkflow(spatialTarget, "variation")
     : { targetRegion: null, diagnostic: null };
   const [initialLibrary] = useState(() => loadVariationPlanLibrary(storage));
-  const [initialBallSetup] = useState(() => loadBallSetupPreference(
-    storage,
-    { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M },
-  ).setup);
-  const [plan, setPlan] = useState<VariationPlanTs>(() => ({
-    ...defaultVariationPlan(),
-    ballSetup: initialBallSetup,
-  }));
-  const [analysisExecution, setAnalysisExecution] =
-    useState<VariationAnalysisExecution>("both");
   const [dataset, setDataset] = useState<VariationDatasetTs | null>(null);
   const [sensitivity, setSensitivity] = useState<SensitivityResultTs | null>(null);
   const [ensemble, setEnsemble] = useState<SwingVariationResultTs | null>(null);
@@ -95,6 +101,13 @@ export function VariationPanel({
 
   const run = () => {
     clearResults();
+    if (hasRegionalGroundInput(plan)) {
+      setStatus(
+        "Cannot run: regional-ground variation execution is not integrated " +
+        "into the browser scalar physics path.",
+      );
+      return;
+    }
     try {
       const runTogether = analysisExecution !== "individual";
       const traceResult = plan.mode === "swing" && runTogether
@@ -131,7 +144,7 @@ export function VariationPanel({
   const importPlan = (text: string) => {
     try {
       const loaded = planFromJson(text);
-      setPlan(loaded);
+      onPlanChange(loaded);
       clearResults();
       setStatus(`Plan loaded with ${loaded.noise.length} noise rows and ${loaded.groups?.length ?? 0} groups.`);
     } catch (error) {
@@ -151,7 +164,7 @@ export function VariationPanel({
   const loadSelectedPlan = () => {
     const selected = library.find((entry) => entry.id === selectedId);
     if (!selected) return;
-    setPlan(planFromJson(planToJson(selected.plan)));
+    onPlanChange(planFromJson(planToJson(selected.plan)));
     setPlanName(selected.name);
     clearResults();
     setStatus(`Loaded named plan “${selected.name}”.`);
@@ -197,10 +210,10 @@ export function VariationPanel({
         )}
         <VariationSetup
           plan={plan}
-          onPlanChange={setPlan}
+          onPlanChange={onPlanChange}
           analysisExecution={analysisExecution}
           onAnalysisExecutionChange={(value) => {
-            setAnalysisExecution(value);
+            onAnalysisExecutionChange(value);
             clearResults();
           }}
           onConfigurationChange={clearResults}

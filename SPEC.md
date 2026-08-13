@@ -41,6 +41,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -103,6 +104,10 @@
 | **Current Version**     | 1.14.57                                    |
 | **Spec Version**        | 1.14.57                                    |
 >>>>>>> origin/codex/4273-ground-variation-persistence
+=======
+| **Current Version**     | 1.14.58                                    |
+| **Spec Version**        | 1.14.58                                    |
+>>>>>>> origin/codex/4273-ground-variation-file-ui
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -133,6 +138,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
@@ -144,6 +150,31 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 =======
 =======
 =======
+=======
+### 2026-08-11 React Regional-Ground Variation Workspace Ownership
+
+- One App-owned reducer now retains the complete physical variation-plan
+  editor, analysis-execution choice, regional-surface draft, and exact imported
+  regional request while the mutually exclusive workspace panels unmount.
+  `VariationPanel` and `RegionalSurfacePlanPanel` are controlled adapters; no
+  module-local fallback can silently replace the user's current request state.
+- A typed request port composes only the current editors and validates launch
+  mode, the two supported base-material keys, global explicit `[0, 1]` bounds,
+  base-plan equality, identifiers, row caps, and editor-qualified regional
+  evidence. Whole-request apply validates and derives every replacement field
+  before dispatch, so invalid input cannot partially mutate the workspace.
+  The disclosed illustrative regional draft is never eligible for composition
+  until the user explicitly edits it or imports qualified evidence.
+- The web registry names normal restitution and rolling resistance so an
+  applied request remains inspectable. The existing scalar browser runner
+  rejects those inputs visibly because the regional-ground pipeline has not
+  been integrated there; this slice changes no physics.
+- This session-state prerequisite excludes File-menu controls, upload/download
+  serialization, native dialogs, PyQt wiring, browser filesystem claims,
+  execution-pipeline integration, protected publication, and #4273/#4267
+  completion.
+
+>>>>>>> origin/codex/4273-ground-variation-file-ui
 ### 2026-08-11 Seeded Regional-Ground Request Persistence
 
 - A strict v1 application envelope stores the existing immutable seeded
@@ -3276,6 +3307,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3292,6 +3324,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.58 | feat(ground-study, #4273): lift the React variation plan, execution policy, regional draft, and exact imported evidence into one App-owned transactional workspace; make both panels controlled across navigation; expose a typed compose/apply request port; register the two inspectable ground inputs while failing closed before unsupported scalar-browser execution; retain File controls, PyQt wiring, browser persistence, pipeline integration, protected release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.57 | feat(ground-study, #4273): add strict canonical bounded seeded regional-ground request persistence without UI or physics. |
+>>>>>>> origin/codex/4273-ground-variation-file-ui
 | 2026-08-11 | 1.14.56 | docs(ground-study, #4365): record ready publication of the seeded base-material variation runner at implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf`, stacked on exact #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; retain protected checks, UI/overlay/persistence, solver/wind, compiled/downstream parity, release, and #4273/#4267 completion as open. |
 | 2026-08-11 | 1.14.55 | feat(ground-study, #4273 #4267): add deterministic VariationPlan-driven base normal-restitution and rolling-resistance studies with immutable per-trial provenance, exact injected flight-through-regional-ground execution, bounded sampled-input scalar ensembles, typed-null unavailable rows, and fail-before-execution validation; retain region overlays, UI/persistence, solver/wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.54 | feat(ground-target, #4192 #4273 #4267): add a UI-neutral complete-rest-only projection from exact flight-through-regional-ground evidence to the existing `SpatialTarget`; record the sole `GroundFrame.TARGET`, retain final x/z, replace ball-center y exactly once with declared landing-surface elevation, reuse `SpatialTarget.miss` signs and geometry, type aerial targets as `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`, preserve every unqualified/censored outcome as null with exact phase/reason/digest evidence, and expose a bounded ordered target scalar ensemble while leaving UI, persistence, solver/capability, aerial-trajectory, compiled-runtime, protected-release, and issue completion open. |

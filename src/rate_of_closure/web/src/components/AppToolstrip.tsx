@@ -6,6 +6,7 @@ import {
   type AppCommandId,
 } from "../model/appCommands";
 import type { AppTheme } from "../model/appTheme";
+import type { RegionalGroundVariationRequestPort } from "../model/regionalGroundVariationWorkspace";
 import {
   PRIMARY_VIEWS,
   restorePrimaryViewDefaults,
@@ -21,6 +22,8 @@ interface AppToolstripProps {
   readonly onModuleStateChange: (state: PrimaryViewState) => void;
   readonly onCommand: (command: AppCommandId) => void;
   readonly onShortcutHelpOpenChange: (open: boolean) => void;
+  /** Reserved typed seam for the subsequent contextual File-command slice. */
+  readonly regionalGroundVariationRequestPort?: RegionalGroundVariationRequestPort;
 }
 
 const MENU_CLASS =

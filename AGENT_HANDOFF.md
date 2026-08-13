@@ -1,5 +1,40 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4273 React request-workspace ownership
+
+The unpublished `codex/4273-ground-variation-file-ui` branch starts from exact
+PR #4366 head `8dfb1189c13f0fce99901e1ffbba152d813f9006`. Its read-only integration audit
+found that PyQt already has a main-window owner for both editors, while React
+kept the variation plan and regional draft/import evidence in mutually
+exclusive panel-local state. Switching tabs destroyed one side of the request,
+so binding File commands at that boundary would have been misleading.
+
+This bounded prerequisite adds one App-owned reducer and hook. The variation
+plan, analysis-execution selection, regional draft, and exact imported request
+now survive panel unmount/remount; both panels are controlled adapters. A typed
+request port composes only current state and transactionally applies a complete
+request after validating the two ground keys, global bounded noise, plan/base
+equality, identities, caps, and editor-qualified regional evidence. Invalid
+apply leaves every prior field unchanged, and the disclosed illustrative
+regional draft cannot be composed until explicitly edited or imported. The
+toolstrip receives the reserved
+typed port but exposes no new command in this slice.
+
+React now names the existing Python-owned ground restitution and rolling-
+resistance keys so applied plans remain inspectable. The scalar browser runner
+rejects those inputs visibly instead of routing them into unrelated flight
+physics. No physics, file dialog, upload/download, PyQt, browser-persistence,
+or filesystem semantics changed. TDD captured the missing owner and navigation
+reset. The complete React suite passes 763 tests across 121 files; TypeScript,
+ESLint, and the production Vite build pass. The campaign manifest and its eight
+tests, documentation governance, blocking-quality policy, module-size budget,
+and diff checks also pass. Vite retains its inherited main-chunk warning.
+
+Keep #4273/#4267 open. The next bounded child may add strict browser
+serialization and contextual File controls plus the PyQt native controller,
+using this owner rather than an imperative registry or illustrative fallback.
+No push or GitHub write occurred from this branch.
+
 ## 2026-08-11 local #4273 seeded-request persistence
 
 The unpublished `codex/4273-ground-variation-persistence` branch starts from
