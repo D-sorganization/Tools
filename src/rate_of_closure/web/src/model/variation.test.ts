@@ -9,6 +9,7 @@
 
 import { describe, expect, it } from "vitest";
 
+import spearmanPairwiseFixture from "../../../../shared/fixtures/variation_spearman_pairwise_finite.json";
 import parityFixture from "./__fixtures__/variation_parity.json";
 import {
   CATEGORY_DELIVERY,
@@ -20,6 +21,7 @@ import {
   planToJson,
   runVariation,
   sampleInputs,
+  type VariationDatasetTs,
   type VariationPlanTs,
 } from "./variation";
 import {
@@ -168,6 +170,32 @@ describe("sensitivity", () => {
     const speed = dataset.inputNames.indexOf(SPEED);
     expect(Math.abs(rho[face][lat])).toBeGreaterThan(0.9);
     expect(Math.abs(rho[face][lat])).toBeGreaterThan(Math.abs(rho[speed][lat]));
+  });
+
+  it("uses pairwise finite rows with Python fixture parity", () => {
+    const fixture = spearmanPairwiseFixture;
+    const dataset: VariationDatasetTs = {
+      plan: launchPlan({ nRuns: fixture.success.length }),
+      inputNames: fixture.input_names,
+      inputs: fixture.inputs.map((row) =>
+        row.map((value) => value ?? Number.NaN),
+      ),
+      outputNames: fixture.output_names,
+      outputs: fixture.outputs,
+      success: fixture.success,
+    };
+
+    const actual = spearmanMatrix(dataset);
+
+    fixture.expected.forEach((row, inputIndex) => {
+      row.forEach((expected, outputIndex) => {
+        if (expected === null) {
+          expect(Number.isNaN(actual[inputIndex][outputIndex])).toBe(true);
+        } else {
+          expect(actual[inputIndex][outputIndex]).toBeCloseTo(expected, 12);
+        }
+      });
+    });
   });
 });
 

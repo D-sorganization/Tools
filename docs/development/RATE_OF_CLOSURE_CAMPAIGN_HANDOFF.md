@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.1 pairwise-finite attribution correction
+
+- Python `spearman_matrix` and React `spearmanMatrix` now form a fresh
+  successful-and-finite mask for every input/output cell before ranking. The
+  minimum is three paired observations; constant inputs/outputs and
+  insufficient cells remain `NaN` and therefore visibly unavailable.
+- Python OAT now mirrors the existing React per-output policy: evaluated finite
+  values are selected independently for each output and sample spread requires
+  two observations. Failed trials remain excluded and unavailable downstream
+  values do not invalidate an otherwise measurable output.
+- `variation_spearman_pairwise_finite.json` is the single parity authority for
+  hit/failure, independent missingness, constant columns, and minimum counts.
+  Focused Python and React tests consume that same fixture. No dataset schema,
+  UI status, public signature, or persistence contract changes.
+- This closes only the pairwise-finite local/rank attribution defect. Protected
+  current-head CI, dependency-ordered publication, raw Morris observations,
+  UpstreamDrift consumption, and the wider #4142 completion gate remain open.
+
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
 Branch `codex/4142-morris-workspace-integration` combines exact independently

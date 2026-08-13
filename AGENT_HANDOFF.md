@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Pairwise-finite OAT/Spearman parity (#4142 R13.1)
+
+- Shared Python and React sensitivity analysis now selects each input/output
+  pair independently from evaluated, finite observations. A miss, numerical
+  failure, or unavailable downstream value never contaminates another valid
+  pair and is never converted into a fabricated zero or rank.
+- Spearman remains unavailable (`NaN`) below three paired observations or when
+  either paired column is constant. OAT spread now applies the same per-output
+  finite policy and remains unavailable below two evaluated finite values.
+- One shared JSON fixture covers successful hits, a failed trial, independent
+  input/output gaps, constant columns, and below-minimum pairs in Python and
+  TypeScript. These semantics close the local/rank-correlation correctness
+  slice only; nonlinear Morris release, raw observations, UpstreamDrift
+  consumption, protected CI/merge, and epic completion remain open.
+
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
 Branch `codex/4142-morris-workspace-integration` combines exact independently

@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Pairwise-finite OAT/Spearman analysis (#4142 R13.1)
+
+The shared variation analyzer and React mirror now calculate Spearman from the
+successful rows where the selected input and selected output are both finite,
+rather than ranking whole matrices before filtering unavailable values. Each
+cell requires at least three paired observations and two non-constant rank
+columns; otherwise it stays explicitly unavailable (`NaN`). OAT standard
+deviation likewise uses each output's evaluated finite values independently
+and requires two values. One cross-runtime fixture pins hit/failure,
+per-column-unavailable, constant, and minimum-count behavior. Trial success
+semantics and all public result shapes remain unchanged. This is a correctness
+slice, not evidence that #4142, UpstreamDrift consumption, or protected release
+is complete.
+
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
 Branch `codex/4142-morris-workspace-integration` combines exact independently

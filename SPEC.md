@@ -26,11 +26,25 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.37                                    |
-| **Spec Version**        | 1.16.37                                    |
+| **Current Version**     | 1.16.38                                    |
+| **Spec Version**        | 1.16.38                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Pairwise-finite variation attribution (#4142 R13.1)
+
+Version 1.16.38 defines one missing-data policy for local OAT spread and
+Spearman rank attribution in Python and React. Every statistic is based on
+successful trials where the values required by that statistic are finite.
+OAT selects each output independently and requires two observations. Spearman
+selects each input/output pair independently, requires three paired
+observations, and reports `NaN` when either paired rank column is constant.
+Failed or unavailable trials remain evidence and cannot silently contribute a
+rank, zero, or cross-row pairing. A shared JSON fixture is the cross-runtime
+authority for hit/failure, independent missingness, constant columns, and
+minimum sample counts. Public matrix shapes and trial status semantics do not
+change.
 
 ### 2026-08-12 Lossless Morris workspace v1 (#4142 R13.8)
 
@@ -3032,6 +3046,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.38 | fix(rate-of-closure, #4142 R13.1): make Python and React OAT/Spearman attribution pairwise finite over successful trials; retain explicit `NaN` below two OAT or three paired Spearman observations and for constant rank columns; pin hit/failure, independent missingness, constants, and minimum counts to one cross-runtime fixture without changing status or public result shapes. Protected CI/merge, raw Morris observations, UpstreamDrift consumption, and epic completion remain open. |
 | 2026-08-12 | 1.16.37 | merge(rate-of-closure, #4142 R13.8): combine exact independently reviewed Python/PyQt Morris workspace commit `8968f6f3544203029fea8e07659ab494eb050c67` and React parity commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`; preserve one byte-identical fixture and exact limits, Unicode semantics, immutable evidence binding, atomic imports, archived-ID isolation, accessible pre-read browser defenses, fail-closed invalid draft execution, report caps, and formula-neutral aggregate CSV. Protected CI, dependency-ordered publication, raw-observation retention, UpstreamDrift consumption, and epic completion remain open. |
 | 2026-08-12 | 1.16.36 | fix(rate-of-closure, #4142 R13.8): align React workspace import with the canonical Python/PyQt edge profile: 2 MB bytes, depth/node and raw-text caps, C0/C1 rejection, decimal/exponent-only finite bounds within +/-1e9, trajectories 2..5000, signed-32-bit seed, exact synthesized invalid-row errors, and null error for valid disabled ground tee; recursively freeze imported setup/evidence; reject oversized browser files before FileReader and use a keyboard-focusable focus-visible import button. |
 | 2026-08-12 | 1.16.35 | feat(rate-of-closure, #4142 R13.8): add the dedicated lossless Morris workspace v1 contract and React import/export surface; preserve all canonical factor drafts including disabled invalid raw text, exact authority base and design controls, and only completed aggregate request/job evidence; enforce bounded duplicate-safe exact parsing and cross-layer identity checks before atomic install; label imports archived and unverified-live with inert IDs; export deterministic aggregate CSV with complete provenance and typed denominators; pin Python/React parity to one shared fixture. UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
