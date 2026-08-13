@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Selectable dispersion metrics and ranked quiet zones (#4142)
+
+The Swing Geometry view now consumes the shared `dispersion_metrics` authority
+for RMS radius, largest principal sigma, and confidence-ellipsoid volume. PyQt6
+and React expose parity controls for metric-specific SI thresholds, confidence
+only where relevant, minimum duration, and minimum sample count. Timelines use
+mm/mm³ display units, while plot-definition v2 exports the exact m/m³ authority
+values and all continuity settings. Status text accounts for every adequacy
+class and unavailable sample and lists the best dense-ranked quiet intervals.
+
+The React calculation is pinned to a Python-produced golden fixture and rejects
+unequal grids/nonfinite positions. Sparse 2σ principal-axis glyphs are not
+presented as confidence ellipsoids. Full ellipsoid mesh rendering, cross-browser
+E2E, protected publication, and the rest of #4142 remain open.
+
 ## 2026-08-12 Localized torque static-gate closure (#4142)
 
 Static cleanup now allows the full cumulative localized slice to pass the

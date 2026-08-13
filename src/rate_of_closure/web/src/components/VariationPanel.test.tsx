@@ -268,9 +268,9 @@ describe("VariationPanel analysis execution policy", () => {
       target: { value: "75" },
     });
     expect(screen.getByText(/Displayed Swing Phase: 0–75%/i)).toBeInTheDocument();
-    expect(screen.getByRole("spinbutton", { name: "Quiet-zone RMS threshold millimetres" })).toHaveValue(5);
+    expect(screen.getByRole("spinbutton", { name: "Quiet-zone metric threshold" })).toHaveValue(5);
     expect(screen.getByRole("img", { name: /interactive all-trial swing arcs/i })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: /RMS positional variability and quiet zones/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /rms-radius and ranked quiet zones/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Swing Arcs PNG" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Variability SVG" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Arc Plot Definition JSON" })).toBeEnabled();

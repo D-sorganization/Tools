@@ -2,8 +2,9 @@
 
 import type { SwingVariationResultTs } from "./variationSwingEnsemble";
 import type { VariationDatasetTs } from "./variation";
+import type { DispersionMetricTs } from "./variationGeometry";
 
-export const VARIATION_PLOT_DEFINITION_SCHEMA_VERSION = 1;
+export const VARIATION_PLOT_DEFINITION_SCHEMA_VERSION = 2;
 
 export type VariationPlotTypeTs =
   | "scalar_scatter"
@@ -12,7 +13,7 @@ export type VariationPlotTypeTs =
   | "distribution_matrix";
 
 export interface VariationPlotDefinitionTs {
-  schemaVersion: 1;
+  schemaVersion: 2;
   resultId: string;
   plotType: VariationPlotTypeTs;
   coordinateFrame: string | null;
@@ -21,7 +22,12 @@ export interface VariationPlotDefinitionTs {
   pointId: string | null;
   positionUnit: string | null;
   alignmentBasis: string | null;
-  quietThresholdM: number | null;
+  dispersionMetric: DispersionMetricTs | null;
+  dispersionUnit: "m" | "m^3" | null;
+  quietThreshold: number | null;
+  confidenceLevel: number | null;
+  minQuietDurationS: number | null;
+  minQuietSamples: number | null;
   selectedTrialIndex: number | null;
   cameraYawDeg: number | null;
   cameraPitchDeg: number | null;
@@ -42,9 +48,7 @@ export function makeVariationPlotDefinition(
   result: SwingVariationResultTs | VariationDatasetTs,
   input: VariationPlotDefinitionInputTs,
 ): VariationPlotDefinitionTs {
-  if (input.quietThresholdM !== null && input.quietThresholdM <= 0) {
-    throw new Error("quietThresholdM must be greater than zero");
-  }
+  validateDispersionState(input);
   if (input.selectedTrialIndex !== null && input.selectedTrialIndex < 0) {
     throw new Error("selectedTrialIndex must be non-negative");
   }
@@ -67,6 +71,40 @@ export function makeVariationPlotDefinition(
     resultId: variationResultFingerprint(result),
     ...input,
   };
+}
+
+function validateDispersionState(input: VariationPlotDefinitionInputTs): void {
+  const geometric = input.plotType === "swing_arc_overlay"
+    || input.plotType === "geometric_variability";
+  if (!geometric) return;
+  if (input.dispersionMetric === null) throw new Error("geometric plot requires dispersionMetric");
+  const expectedUnit = input.dispersionMetric === "confidence-ellipsoid-volume" ? "m^3" : "m";
+  if (input.dispersionUnit !== expectedUnit) throw new Error("invalid dispersionUnit");
+  if (input.quietThreshold === null
+    || !Number.isFinite(input.quietThreshold)
+    || input.quietThreshold <= 0) {
+    throw new Error("quietThreshold must be finite and greater than zero");
+  }
+  if (input.dispersionMetric === "confidence-ellipsoid-volume") {
+    if (input.confidenceLevel === null
+      || !Number.isFinite(input.confidenceLevel)
+      || input.confidenceLevel < 1e-12
+      || input.confidenceLevel >= 1) {
+      throw new Error("volume requires confidenceLevel in [1e-12, 1)");
+    }
+  } else if (input.confidenceLevel !== null) {
+    throw new Error("confidenceLevel applies only to confidence-ellipsoid volume");
+  }
+  if (input.minQuietDurationS === null
+    || !Number.isFinite(input.minQuietDurationS)
+    || input.minQuietDurationS < 0) {
+    throw new Error("minQuietDurationS must be finite and non-negative");
+  }
+  if (input.minQuietSamples === null
+    || !Number.isInteger(input.minQuietSamples)
+    || input.minQuietSamples < 1) {
+    throw new Error("minQuietSamples must be an integer >= 1");
+  }
 }
 
 export const variationPlotDefinitionToJson = (

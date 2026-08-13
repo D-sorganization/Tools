@@ -76,7 +76,9 @@ export function VariationDistributionMatrix({
           variationPlotDefinitionToJson(makeVariationPlotDefinition(result, {
             plotType: "distribution_matrix", coordinateFrame: ensemble?.coordinateFrame ?? null,
             xVariableKey: null, yVariableKey: null, pointId: null,
-            positionUnit: null, alignmentBasis: null, quietThresholdM: null,
+            positionUnit: null, alignmentBasis: null,
+            dispersionMetric: null, dispersionUnit: null, quietThreshold: null,
+            confidenceLevel: null, minQuietDurationS: null, minQuietSamples: null,
             selectedTrialIndex: null, cameraYawDeg: null, cameraPitchDeg: null,
             cameraZoom: null, outcomeFilter: null, phaseEndFraction: null,
             perturbationSourceKey: null, perturbationBand: null,

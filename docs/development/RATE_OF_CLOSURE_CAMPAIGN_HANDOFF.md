@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R12.1/R12.2 dispersion consumer slice
+
+- PyQt6 and React Swing Geometry selectors cover RMS radius, largest principal
+  sigma, and confidence-ellipsoid volume with metric-specific threshold,
+  minimum-duration, and minimum-sample controls.
+- Confidence is disabled for length metrics and enabled for volume. Both UIs
+  call it Gaussian position content derived from plug-in sample covariance, not
+  a confidence region for the population mean.
+- Shared/Python authority units remain m and m³; UI timelines and thresholds use
+  mm and mm³. Plot-definition schema v2 persists metric, authority unit,
+  threshold, confidence, duration, and sample count reproducibly.
+- Adequacy and unavailable counts remain explicit, and qualifying intervals are
+  displayed in dense rank order. React rejects unequal grids and nonfinite
+  points and is checked against a Python-authority golden fixture.
+- The sparse 2σ principal-axis glyphs remain exactly that. No full confidence-
+  ellipsoid mesh, cross-browser E2E, protected publication, or #4142 completion
+  is claimed by this bounded slice.
+
 ## 2026-08-12 #4142 localized torque static-gate closure
 
 - Explicit NumPy annotations on variation CSV input/success arrays close the

@@ -20,7 +20,27 @@ from rate_of_closure.variation.plot_definition import (
     PlotDefinition,
     write_plot_definition,
 )
-from shared.python.swing_sim.variation import VariationDataset
+from shared.python.swing_sim.variation import (
+    ELLIPSOID_VOLUME,
+    LowVariabilityMetricCriteria,
+    VariationDataset,
+)
+
+
+def _dispersion_definition_fields(
+    criteria: LowVariabilityMetricCriteria,
+) -> dict[str, object]:
+    """Return versioned authority-unit state shared by both geometric exports."""
+    return {
+        "dispersion_metric": criteria.metric,
+        "dispersion_unit": ("m^3" if criteria.metric == ELLIPSOID_VOLUME else "m"),
+        "quiet_threshold": criteria.max_value,
+        "confidence_level": (
+            criteria.confidence_level if criteria.metric == ELLIPSOID_VOLUME else None
+        ),
+        "min_quiet_duration_s": criteria.min_duration_s,
+        "min_quiet_samples": criteria.min_samples,
+    }
 
 
 def distribution_matrix_plot_definition(
@@ -104,7 +124,7 @@ def scatter_plot_definition(
 def arc_plot_definition(
     dataset: EnsemblePlotDataset | None,
     point_id: str,
-    quiet_threshold_m: float,
+    criteria: LowVariabilityMetricCriteria,
     selected_trial_index: int | None,
     camera_yaw_deg: float,
     camera_pitch_deg: float,
@@ -123,7 +143,7 @@ def arc_plot_definition(
         point_id=point_id,
         position_unit="m",
         alignment_basis="common_simulation_time_s",
-        quiet_threshold_m=quiet_threshold_m,
+        **_dispersion_definition_fields(criteria),
         selected_trial_index=selected_trial_index,
         camera_yaw_deg=camera_yaw_deg,
         camera_pitch_deg=camera_pitch_deg,
@@ -137,13 +157,13 @@ def arc_plot_definition(
 def geometric_variability_plot_definition(
     dataset: EnsemblePlotDataset | None,
     point_id: str,
-    quiet_threshold_m: float,
+    criteria: LowVariabilityMetricCriteria,
     outcome_filter: str | None,
     phase_end_fraction: float,
     perturbation_source_key: str | None,
     perturbation_band: str | None,
 ) -> PlotDefinition:
-    """Build a definition for the filtered RMS/quiet-zone timeline."""
+    """Build a definition for the selected dispersion/quiet-zone timeline."""
     if dataset is None:
         raise RuntimeError("no swing ensemble is loaded")
     return PlotDefinition(
@@ -153,7 +173,7 @@ def geometric_variability_plot_definition(
         point_id=point_id,
         position_unit="m",
         alignment_basis="common_simulation_time_s",
-        quiet_threshold_m=quiet_threshold_m,
+        **_dispersion_definition_fields(criteria),
         outcome_filter=outcome_filter,
         phase_end_fraction=phase_end_fraction,
         perturbation_source_key=perturbation_source_key,

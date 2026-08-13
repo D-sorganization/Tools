@@ -1,0 +1,43 @@
+{
+  "schema_id": "rate-dispersion-metrics-golden/v1",
+  "authority": "shared.python.swing_sim.variation.dispersion_metrics",
+  "confidence_level": 0.95,
+  "times_s": [0.0, 0.01, 0.02, 0.03],
+  "traces": [
+    {"trial_index": 0, "status": "evaluated_hit", "points_m": [[-0.002, -0.001, 0.0], [0.0992, 0.1996, -0.1], [0.1984, 0.3992, -0.2], [0.2994, 0.5997, -0.3]]},
+    {"trial_index": 1, "status": "evaluated_hit", "points_m": [[0.001, -0.002, 0.001], [0.1004, 0.1992, -0.0996], [0.2008, 0.3984, -0.1992], [0.3003, 0.5994, -0.2997]]},
+    {"trial_index": 2, "status": "evaluated_hit", "points_m": [[0.002, 0.001, -0.001], [0.1008, 0.2004, -0.1004], [0.2016, 0.4008, -0.2008], [0.3006, 0.6003, -0.3003]]},
+    {"trial_index": 3, "status": "evaluated_hit", "points_m": [[-0.001, 0.002, 0.002], [0.0996, 0.2008, -0.0992], [0.1992, 0.4016, -0.1984], [0.2997, 0.6006, -0.2994]]},
+    {"trial_index": 4, "status": "evaluated_hit", "points_m": [[0.0, 0.0, -0.002], [0.1, 0.2, -0.1008], [0.2, 0.4, -0.2016], [0.3, 0.6, -0.3006]]}
+  ],
+  "expected": {
+    "rms-radius": {
+      "unit": "m",
+      "values": [0.002449489742783178, 0.0009797958971132677, 0.0019595917942265353, 0.0007348469228349631],
+      "adequacy": ["estimable", "estimable", "estimable", "estimable"],
+      "threshold": 0.0015,
+      "intervals": [
+        {"start_index": 3, "end_index": 3, "rank": 1, "score": 0.4898979485566421},
+        {"start_index": 1, "end_index": 1, "rank": 2, "score": 0.6531972647421784}
+      ]
+    },
+    "largest-principal-sigma": {
+      "unit": "m",
+      "values": [0.0018139926722680261, 0.0007255970689072048, 0.0014511941378144097, 0.0005441978016804172],
+      "adequacy": ["estimable", "estimable", "estimable", "estimable"],
+      "threshold": 0.0016,
+      "intervals": [
+        {"start_index": 1, "end_index": 3, "rank": 1, "score": 0.5668727100837566}
+      ]
+    },
+    "confidence-ellipsoid-volume": {
+      "unit": "m^3",
+      "values": [3.4315526669505844e-7, 2.196193706848351e-8, 1.7569549654786807e-7, 9.265192200766964e-9],
+      "adequacy": ["estimable", "estimable", "estimable", "estimable"],
+      "threshold": 2.0e-8,
+      "intervals": [
+        {"start_index": 3, "end_index": 3, "rank": 1, "score": 0.4632596100383482}
+      ]
+    }
+  }
+}

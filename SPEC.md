@@ -26,11 +26,35 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.58                                    |
-| **Spec Version**        | 1.16.58                                    |
+| **Current Version**     | 1.16.59                                    |
+| **Spec Version**        | 1.16.59                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Dispersion visualization consumers (#4142 R12.1/R12.2)
+
+Version 1.16.59 wires the existing confidence-dispersion authority into both
+Rate of Closure variation surfaces. PyQt6 and React can select RMS radius,
+largest principal sigma, or confidence-ellipsoid volume and declare a
+metric-specific threshold, minimum duration, and minimum sample count.
+Confidence is selectable only for volume. Authority and plot-definition values
+remain m or m³, while visible controls and timelines convert to mm or mm³.
+Plot-definition schema v2 records the metric, authority unit, threshold,
+applicable confidence, duration, and sample count.
+
+Every timeline reports estimable, rank-deficient, insufficient-sample,
+invalid-covariance, and selected-metric unavailable counts. Quiet intervals use
+the shared dense ranking by mean-to-threshold score. Volume is described as a
+Gaussian position-content region obtained from plug-in sample covariance, not
+a confidence region for the unknown population mean. React uses a bounded 3-D
+eigensolver and chi-square inversion pinned to a Python-authority golden fixture
+and rejects unequal grids and nonfinite coordinates instead of truncating.
+
+The 3-D view continues to draw sparse two-sigma principal-axis glyphs and labels
+them accordingly. This slice does not claim a full confidence-ellipsoid mesh,
+cross-browser end-to-end validation, protected publication, or completion of
+the wider variation epic.
 
 ### 2026-08-12 Localized torque static-gate closure (#4142)
 
@@ -3405,6 +3429,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142 R12.1/R12.2): add parity PyQt6/React selectors for RMS radius, largest principal sigma, and Gaussian confidence-ellipsoid volume; preserve SI authority and readable mm/mm³ display units in plot-definition v2; expose adequacy, unavailable counts, and dense-ranked quiet intervals; and pin strict React grid/domain behavior to a Python-authority golden fixture without claiming a rendered ellipsoid mesh or cross-browser E2E. |
 | 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
 | 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; and require a genuine non-Boolean integer outer variation-dataset schema discriminator. |
 | 2026-08-12 | 1.16.56 | fix(rate-of-closure, #4142): reject localized torque offsets on unsupported manual/triple sources; validate run-config offset collections before tuple conversion; and require genuine non-Boolean integer variation-plan schema versions. |

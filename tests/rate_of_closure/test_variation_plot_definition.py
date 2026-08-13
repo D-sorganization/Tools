@@ -7,6 +7,7 @@ import json
 import pytest
 
 from rate_of_closure.variation.plot_definition import (
+    PLOT_DEFINITION_SCHEMA_VERSION,
     PlotDefinition,
     write_plot_definition,
 )
@@ -23,7 +24,12 @@ def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:
         point_id="swing.clubhead.reference",
         position_unit="m",
         alignment_basis="common_simulation_time_s",
-        quiet_threshold_m=0.005,
+        dispersion_metric="confidence-ellipsoid-volume",
+        dispersion_unit="m^3",
+        quiet_threshold=1.25e-7,
+        confidence_level=0.95,
+        min_quiet_duration_s=0.02,
+        min_quiet_samples=3,
         selected_trial_index=2,
         camera_yaw_deg=-37.0,
         camera_pitch_deg=22.0,
@@ -38,9 +44,14 @@ def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:
     write_plot_definition(definition, destination)
 
     document = json.loads(destination.read_text(encoding="utf-8"))
-    assert document["schema_version"] == 1
+    assert document["schema_version"] == PLOT_DEFINITION_SCHEMA_VERSION == 2
     assert document["result_id"] == "ensemble-123"
-    assert document["quiet_threshold_m"] == pytest.approx(0.005)
+    assert document["dispersion_metric"] == "confidence-ellipsoid-volume"
+    assert document["dispersion_unit"] == "m^3"
+    assert document["quiet_threshold"] == pytest.approx(1.25e-7)
+    assert document["confidence_level"] == pytest.approx(0.95)
+    assert document["min_quiet_duration_s"] == pytest.approx(0.02)
+    assert document["min_quiet_samples"] == 3
     assert document["selected_trial_index"] == 2
     assert document["phase_end_fraction"] == pytest.approx(0.75)
 
@@ -76,7 +87,27 @@ def test_distribution_matrix_definition_requires_unique_selected_variables() -> 
             "plot_type": "swing_arc_overlay",
             "point_id": "swing.wrist",
             "coordinate_frame": "app_frame:x_target,y_up,z_right",
-            "quiet_threshold_m": 0.0,
+            "dispersion_metric": "rms-radius",
+            "dispersion_unit": "m",
+            "quiet_threshold": 0.0,
+        },
+        {
+            "plot_type": "geometric_variability",
+            "point_id": "swing.wrist",
+            "coordinate_frame": "app_frame:x_target,y_up,z_right",
+            "dispersion_metric": "rms-radius",
+            "dispersion_unit": "m",
+            "quiet_threshold": 0.005,
+            "confidence_level": 0.95,
+        },
+        {
+            "plot_type": "geometric_variability",
+            "point_id": "swing.wrist",
+            "coordinate_frame": "app_frame:x_target,y_up,z_right",
+            "dispersion_metric": "confidence-ellipsoid-volume",
+            "dispersion_unit": "m^3",
+            "quiet_threshold": 1.0e-7,
+            "confidence_level": None,
         },
     ],
 )

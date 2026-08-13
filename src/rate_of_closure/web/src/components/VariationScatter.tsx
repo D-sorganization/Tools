@@ -130,7 +130,9 @@ function ScatterExports({ svgRef, model, dataset, ensemble, selectedTrialIndex }
   const definition = makeVariationPlotDefinition(ensemble ?? dataset, {
     plotType: "scalar_scatter", coordinateFrame: ensemble?.coordinateFrame ?? null,
     xVariableKey: model.xKey, yVariableKey: model.yKey, pointId: null,
-    positionUnit: null, alignmentBasis: null, quietThresholdM: null,
+    positionUnit: null, alignmentBasis: null,
+    dispersionMetric: null, dispersionUnit: null, quietThreshold: null,
+    confidenceLevel: null, minQuietDurationS: null, minQuietSamples: null,
     selectedTrialIndex, cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
     outcomeFilter: null, phaseEndFraction: null, perturbationSourceKey: null,
     perturbationBand: null, variableKeys: null,

@@ -10,6 +10,9 @@ from types import MappingProxyType
 import numpy as np
 import pytest
 
+from rate_of_closure.variation.geometric_plot_data import (
+    build_dispersion_metric_variability_view,
+)
 from rate_of_closure.variation.plot_data import (
     PlotBudget,
     ScalarVariableKind,
@@ -29,8 +32,10 @@ from rate_of_closure.variation.simulation_types import (
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
+    LARGEST_PRINCIPAL_SIGMA,
     EnsemblePositionTraces,
     LowVariabilityCriteria,
+    LowVariabilityMetricCriteria,
     NoiseSpec,
     VariationDataset,
     VariationPlan,
@@ -242,6 +247,32 @@ def test_geometric_variability_keeps_nonqualifying_samples_visible() -> None:
     assert variability.n_quiet_samples == 0
     assert variability.quiet_intervals == ()
     np.testing.assert_allclose(variability.rms_radius_m, 0.5)
+
+
+def test_geometric_variability_exposes_selected_authority_and_ranked_intervals() -> (
+    None
+):
+    plot = build_ensemble_plot_dataset(_result())
+    variability = build_dispersion_metric_variability_view(
+        plot.dispersion,
+        plot.result.traces,
+        _POINT,
+        LowVariabilityMetricCriteria(
+            metric=LARGEST_PRINCIPAL_SIGMA,
+            max_value=0.8,
+            min_duration_s=0.02,
+            min_samples=3,
+        ),
+    )
+
+    assert variability.metric == LARGEST_PRINCIPAL_SIGMA
+    assert variability.authority_unit == "m"
+    assert variability.display_unit == "mm"
+    np.testing.assert_allclose(variability.display_values, np.sqrt(0.5) * 1000.0)
+    assert variability.unavailable_count == 0
+    assert variability.adequacy_counts["rank-deficient"] == 5
+    assert variability.quiet_intervals[0].rank == 1
+    assert variability.quiet_intervals[0].n_samples == 5
 
 
 def test_plot_facade_accepts_all_supported_plan_topologies_and_partial_traces() -> None:

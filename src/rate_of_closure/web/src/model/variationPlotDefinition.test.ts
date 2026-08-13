@@ -33,7 +33,12 @@ describe("variation plot definitions", () => {
       pointId: "swing.clubhead.reference",
       positionUnit: "m",
       alignmentBasis: "common_simulation_time_s",
-      quietThresholdM: 0.005,
+      dispersionMetric: "confidence-ellipsoid-volume",
+      dispersionUnit: "m^3",
+      quietThreshold: 1.25e-7,
+      confidenceLevel: 0.95,
+      minQuietDurationS: 0.02,
+      minQuietSamples: 3,
       selectedTrialIndex: 1,
       cameraYawDeg: -37,
       cameraPitchDeg: 22,
@@ -45,7 +50,7 @@ describe("variation plot definitions", () => {
       variableKeys: null,
     });
 
-    expect(definition.schemaVersion).toBe(1);
+    expect(definition.schemaVersion).toBe(2);
     expect(definition.resultId).toBe(swingResultFingerprint(ensemble));
     expect(JSON.parse(variationPlotDefinitionToJson(definition))).toEqual(definition);
   });
@@ -55,7 +60,9 @@ describe("variation plot definitions", () => {
     expect(() => makeVariationPlotDefinition(ensemble, {
       plotType: "geometric_variability", coordinateFrame: ensemble.coordinateFrame,
       xVariableKey: null, yVariableKey: null, pointId: "swing.wrist", positionUnit: "m",
-      alignmentBasis: "common_simulation_time_s", quietThresholdM: 0,
+      alignmentBasis: "common_simulation_time_s",
+      dispersionMetric: "rms-radius", dispersionUnit: "m", quietThreshold: 0,
+      confidenceLevel: null, minQuietDurationS: 0, minQuietSamples: 1,
       selectedTrialIndex: null, cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
       outcomeFilter: null, phaseEndFraction: null,
       perturbationSourceKey: null, perturbationBand: null,
@@ -68,7 +75,9 @@ describe("variation plot definitions", () => {
     const definition = makeVariationPlotDefinition(ensemble, {
       plotType: "distribution_matrix", coordinateFrame: null,
       xVariableKey: null, yVariableKey: null, pointId: null, positionUnit: null,
-      alignmentBasis: null, quietThresholdM: null, selectedTrialIndex: null,
+      alignmentBasis: null, dispersionMetric: null, dispersionUnit: null,
+      quietThreshold: null, confidenceLevel: null,
+      minQuietDurationS: null, minQuietSamples: null, selectedTrialIndex: null,
       cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
       outcomeFilter: null, phaseEndFraction: null,
       perturbationSourceKey: null, perturbationBand: null,

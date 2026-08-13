@@ -7,9 +7,22 @@ from typing import Any
 
 import numpy as np
 
-from rate_of_closure.variation.geometric_plot_data import GeometricVariabilityData
+from rate_of_closure.variation.geometric_plot_data import (
+    DispersionMetricVariabilityData,
+)
 from rate_of_closure.variation.plot_data import ArcOverlayData
 from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
+from shared.python.swing_sim.variation import (
+    ELLIPSOID_VOLUME,
+    LARGEST_PRINCIPAL_SIGMA,
+    RMS_RADIUS,
+)
+
+_METRIC_LABELS = {
+    RMS_RADIUS: "RMS Position Radius",
+    LARGEST_PRINCIPAL_SIGMA: "Largest Principal Sigma",
+    ELLIPSOID_VOLUME: "Confidence Ellipsoid Volume",
+}
 
 
 def draw_arc_trials(
@@ -48,7 +61,7 @@ def draw_arc_trials(
     )
 
 
-def draw_principal_spread(axes, data: GeometricVariabilityData) -> None:  # type: ignore[no-untyped-def]
+def draw_principal_spread(axes: Any, data: DispersionMetricVariabilityData) -> None:
     """Draw sparse two-sigma principal-axis glyphs in the app frame."""
     count = data.sample_times_s.size
     stride = max(1, count // 14)
@@ -69,33 +82,39 @@ def draw_principal_spread(axes, data: GeometricVariabilityData) -> None:  # type
         )
 
 
-def draw_variability_timeline(canvas, data: GeometricVariabilityData) -> None:  # type: ignore[no-untyped-def]
-    """Draw RMS positional dispersion and declared quiet samples over time."""
+def draw_variability_timeline(
+    canvas: Any, data: DispersionMetricVariabilityData
+) -> None:
+    """Draw the selected display-unit metric and ranked quiet samples."""
     axes = canvas.axes
     axes.clear()
     canvas.apply_theme()
     times = data.sample_times_s
-    rms_mm = data.rms_radius_m * 1000.0
-    axes.plot(times, rms_mm, color="#38bdf8", linewidth=1.6, label="RMS Radius")
+    values = data.display_values
+    threshold = data.criteria.max_value * (
+        1_000_000_000.0 if data.authority_unit == "m^3" else 1_000.0
+    )
+    label = _METRIC_LABELS[data.metric]
+    axes.plot(times, values, color="#38bdf8", linewidth=1.6, label=label)
     axes.fill_between(
         times,
         0.0,
-        rms_mm,
+        values,
         where=data.quiet_mask,
         color="#34d399",
         alpha=0.28,
         label="Quiet Zone",
     )
     axes.axhline(
-        data.criteria.max_rms_radius_m * 1000.0,
+        threshold,
         color="#fbbf24",
         linestyle="--",
         linewidth=1.0,
         label="Quiet Threshold",
     )
     axes.set_xlabel("Common Simulation Time [s]")
-    axes.set_ylabel("RMS Position Radius [mm]")
-    axes.set_title("Geometric Variability and Quiet Zones")
+    axes.set_ylabel(f"{label} [{data.display_unit}]")
+    axes.set_title("Selected Dispersion Metric and Ranked Quiet Zones")
     axes.legend(loc="best", fontsize=8)
     canvas.draw_idle()
 

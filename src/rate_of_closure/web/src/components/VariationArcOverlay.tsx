@@ -5,6 +5,8 @@ import type { SwingTrialStatusTs } from "../model/variationSwingEnsemble";
 import {
   geometricVariability,
   swingTraceRows,
+  type DispersionCriteriaTs,
+  type DispersionMetricTs,
   type SwingPointKindTs,
 } from "../model/variationGeometry";
 import {
@@ -33,6 +35,11 @@ interface VariationArcOverlayProps {
 
 const INITIAL_CAMERA: VariationCameraState = { yaw: -0.65, pitch: 0.38, zoom: 1 };
 const MAX_VERTICES = 200_000;
+const METRIC_LABELS: Record<DispersionMetricTs, string> = {
+  "rms-radius": "RMS Radius",
+  "largest-principal-sigma": "Largest Principal σ",
+  "confidence-ellipsoid-volume": "Confidence-Ellipsoid Volume",
+};
 
 export function VariationArcOverlay({
   ensemble,
@@ -43,7 +50,15 @@ export function VariationArcOverlay({
   const variabilitySvgRef = useRef<SVGSVGElement>(null);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const [pointKind, setPointKind] = useState<SwingPointKindTs>("clubhead");
-  const [quietThresholdMm, setQuietThresholdMm] = useState(5);
+  const [dispersionMetric, setDispersionMetric] = useState<DispersionMetricTs>("rms-radius");
+  const [thresholds, setThresholds] = useState<Record<DispersionMetricTs, number>>({
+    "rms-radius": 5,
+    "largest-principal-sigma": 5,
+    "confidence-ellipsoid-volume": 1_000,
+  });
+  const [confidencePercent, setConfidencePercent] = useState(95);
+  const [minQuietDurationS, setMinQuietDurationS] = useState(0);
+  const [minQuietSamples, setMinQuietSamples] = useState(1);
   const [outcomeFilter, setOutcomeFilter] = useState<"all" | SwingTrialStatusTs>("all");
   const [phaseEndPercent, setPhaseEndPercent] = useState(100);
   const [sourceKey, setSourceKey] = useState("all");
@@ -69,9 +84,17 @@ export function VariationArcOverlay({
       return { ...row, points: row.points.slice(0, count), timesS: row.timesS.slice(0, count) };
     });
   }, [ensemble, outcomeFilter, phaseEndPercent, pointKind, sourceBand, sourceKey]);
+  const criteria = useMemo<DispersionCriteriaTs>(() => ({
+    metric: dispersionMetric,
+    maxValue: thresholds[dispersionMetric]
+      / (dispersionMetric === "confidence-ellipsoid-volume" ? 1e9 : 1e3),
+    confidenceLevel: confidencePercent / 100,
+    minDurationS: minQuietDurationS,
+    minSamples: minQuietSamples,
+  }), [confidencePercent, dispersionMetric, minQuietDurationS, minQuietSamples, thresholds]);
   const variability = useMemo(
-    () => geometricVariability(traces, quietThresholdMm / 1000),
-    [quietThresholdMm, traces],
+    () => geometricVariability(traces, criteria),
+    [criteria, traces],
   );
   const validCount = traces.length;
   const rawVertices = traces.reduce((total, trace) => total + trace.points.length, 0);
@@ -120,18 +143,83 @@ export function VariationArcOverlay({
           </select>
         </label>
         <label className="min-w-48 flex-1 text-xs text-slate-300">
-          <span className="mb-1 block">Quiet-Zone RMS Threshold [mm]</span>
+          <span className="mb-1 block">Dispersion Metric</span>
+          <select
+            aria-label="Dispersion metric"
+            className={INPUT_CLASS}
+            value={dispersionMetric}
+            onChange={(event) => setDispersionMetric(event.target.value as DispersionMetricTs)}
+          >
+            {Object.entries(METRIC_LABELS).map(([metric, label]) => (
+              <option key={metric} value={metric}>{label}</option>
+            ))}
+          </select>
+        </label>
+        <label className="min-w-48 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">
+            Quiet Threshold [{dispersionMetric === "confidence-ellipsoid-volume" ? "mm³" : "mm"}]
+          </span>
           <input
-            aria-label="Quiet-zone RMS threshold millimetres"
+            aria-label="Quiet-zone metric threshold"
             className={INPUT_CLASS}
             type="number"
-            min="0.01"
-            max="1000"
+            min="0.001"
             step="0.1"
-            value={quietThresholdMm}
+            value={thresholds[dispersionMetric]}
             onChange={(event) => {
               const value = Number(event.target.value);
-              if (Number.isFinite(value) && value > 0) setQuietThresholdMm(value);
+              if (Number.isFinite(value) && value > 0) {
+                setThresholds((current) => ({ ...current, [dispersionMetric]: value }));
+              }
+            }}
+          />
+        </label>
+        <label className="min-w-40 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Confidence [%]</span>
+          <input
+            aria-label="Dispersion confidence percent"
+            className={INPUT_CLASS}
+            type="number"
+            min="50"
+            max="99.9"
+            step="0.1"
+            value={confidencePercent}
+            disabled={dispersionMetric !== "confidence-ellipsoid-volume"}
+            onChange={(event) => {
+              const value = Number(event.target.value);
+              if (Number.isFinite(value) && value >= 50 && value <= 99.9) {
+                setConfidencePercent(value);
+              }
+            }}
+          />
+        </label>
+        <label className="min-w-40 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Min Quiet Duration [s]</span>
+          <input
+            aria-label="Minimum quiet duration seconds"
+            className={INPUT_CLASS}
+            type="number"
+            min="0"
+            step="0.001"
+            value={minQuietDurationS}
+            onChange={(event) => {
+              const value = Number(event.target.value);
+              if (Number.isFinite(value) && value >= 0) setMinQuietDurationS(value);
+            }}
+          />
+        </label>
+        <label className="min-w-36 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Min Samples</span>
+          <input
+            aria-label="Minimum quiet samples"
+            className={INPUT_CLASS}
+            type="number"
+            min="1"
+            step="1"
+            value={minQuietSamples}
+            onChange={(event) => {
+              const value = Number(event.target.value);
+              if (Number.isInteger(value) && value >= 1) setMinQuietSamples(value);
             }}
           />
         </label>
@@ -178,7 +266,7 @@ export function VariationArcOverlay({
         </button>
       </div>
       <p className="text-xs text-slate-400" aria-live="polite">
-        {validCount}/{ensemble.runs.length} trials shown · {Math.ceil(rawVertices / stride).toLocaleString()}/{rawVertices.toLocaleString()} vertices · {variability.quietMask.filter(Boolean).length}/{variability.quietMask.length} quiet samples · Frame: {ensemble.coordinateFrame}; alignment: common simulation time. Drag to rotate; scroll or use +/− to zoom.
+        {validCount}/{ensemble.runs.length} trials shown · {Math.ceil(rawVertices / stride).toLocaleString()}/{rawVertices.toLocaleString()} vertices · {variability.quietMask.filter(Boolean).length}/{variability.quietMask.length} quiet samples · {METRIC_LABELS[variability.metric]} ≤ {thresholds[dispersionMetric].toLocaleString()} {variability.displayUnit} · adequacy: {variability.adequacyCounts.estimable} estimable, {variability.adequacyCounts["rank-deficient"]} rank-deficient, {variability.adequacyCounts["insufficient-samples"]} insufficient, {variability.adequacyCounts["invalid-covariance"]} invalid; {variability.unavailableCount} unavailable · ranked intervals: {variability.quietIntervals.length === 0 ? "none" : variability.quietIntervals.slice(0, 3).map((interval) => `#${interval.rank} ${interval.startTimeS.toFixed(3)}–${interval.endTimeS.toFixed(3)} s`).join(", ")} · {variability.confidenceLevel === null ? "Sample-position dispersion; confidence does not apply." : `${(100 * variability.confidenceLevel).toFixed(1)}% Gaussian position-content region (plug-in sample covariance; not a confidence region for the mean).`} Sparse 2σ principal-axis glyphs are not confidence ellipsoids. Frame: {ensemble.coordinateFrame}; alignment: common simulation time. Drag to rotate; scroll or use +/− to zoom.
       </p>
       <div className="flex flex-wrap gap-2">
         <button
@@ -211,7 +299,12 @@ export function VariationArcOverlay({
               pointId: `swing.${pointKind === "clubhead" ? "clubhead.reference" : pointKind}`,
               positionUnit: "m",
               alignmentBasis: variability.alignmentBasis,
-              quietThresholdM: variability.quietThresholdM,
+              dispersionMetric: variability.metric,
+              dispersionUnit: variability.authorityUnit,
+              quietThreshold: variability.criteria.maxValue,
+              confidenceLevel: variability.confidenceLevel,
+              minQuietDurationS: variability.criteria.minDurationS,
+              minQuietSamples: variability.criteria.minSamples,
               selectedTrialIndex,
               cameraYawDeg: camera.yaw * 180 / Math.PI,
               cameraPitchDeg: camera.pitch * 180 / Math.PI,

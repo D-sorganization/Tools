@@ -22,7 +22,13 @@ describe("geometric variability scale budget", () => {
     });
 
     const started = performance.now();
-    const result = geometricVariability(traces, 0.005);
+    const result = geometricVariability(traces, {
+      metric: "rms-radius",
+      maxValue: 0.005,
+      confidenceLevel: 0.95,
+      minDurationS: 0,
+      minSamples: 1,
+    });
     const elapsedMs = performance.now() - started;
 
     expect(elapsedMs).toBeLessThan(2000);

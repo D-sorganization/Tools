@@ -30,6 +30,7 @@ from rate_of_closure.variation.simulation_adapter import (  # noqa: E402
 )
 from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_SWING,
+    ELLIPSOID_VOLUME,
     NoiseSpec,
     VariationDataset,
     VariationPlan,
@@ -87,7 +88,7 @@ def test_scatter_view_exposes_inputs_impact_and_shot_axes(qtbot, tmp_path) -> No
     assert view._table.rowCount() == 3
     assert view._table.accessibleName() == "Selected scatter trial data"
     definition = json.loads(definition_path.read_text(encoding="utf-8"))
-    assert definition["schema_version"] == 1
+    assert definition["schema_version"] == 2
 
 
 def test_landing_canvas_counts_only_paired_finite_coordinates(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -143,7 +144,11 @@ def test_arc_overlay_draws_every_valid_trial_and_reference(qtbot, tmp_path) -> N
     view._exports.write_definition(definition_path)
     definition = json.loads(definition_path.read_text(encoding="utf-8"))
     assert definition["coordinate_frame"] == "app_frame:x_target,y_up,z_right"
-    assert definition["quiet_threshold_m"] == pytest.approx(0.005)
+    assert definition["dispersion_metric"] == "rms-radius"
+    assert definition["dispersion_unit"] == "m"
+    assert definition["quiet_threshold"] == pytest.approx(0.005)
+    assert definition["confidence_level"] is None
+    assert definition["min_quiet_duration_s"] == pytest.approx(0.0)
     assert definition["camera_yaw_deg"] is not None
     timeline_svg = tmp_path / "variability.svg"
     timeline_definition = tmp_path / "variability.plot.json"
@@ -154,6 +159,14 @@ def test_arc_overlay_draws_every_valid_trial_and_reference(qtbot, tmp_path) -> N
         json.loads(timeline_definition.read_text(encoding="utf-8"))["plot_type"]
         == "geometric_variability"
     )
+
+    assert not view._confidence.isEnabled()
+    view._metric_combo.setCurrentIndex(view._metric_combo.findData(ELLIPSOID_VOLUME))
+    assert view._confidence.isEnabled()
+    assert "mm³" in view._quiet_threshold.suffix()
+    assert "Gaussian position-content region" in view._status.text()
+    assert "not a confidence region for the mean" in view._status.text()
+    assert "Sparse 2σ principal-axis glyphs" in view._status.text()
 
     view._filters._source.setCurrentIndex(1)
     view._filters._band.setCurrentIndex(1)

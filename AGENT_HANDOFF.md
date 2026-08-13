@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Dispersion-metric visualization consumers (#4142 R12.1/R12.2)
+
+PyQt6 and React variation geometry now select the shared RMS radius, largest
+principal sigma, or Gaussian confidence-ellipsoid volume authority. Controls
+persist metric, SI threshold/unit, applicable confidence, minimum duration, and
+minimum samples in plot-definition schema v2 while presenting length and volume
+as readable mm and mm³. Both surfaces report estimable, rank-deficient,
+insufficient, invalid, and unavailable sample counts plus dense-ranked quiet
+intervals. Confidence is enabled only for volume and is explicitly described as
+Gaussian position content from plug-in sample covariance, not uncertainty in
+the population mean.
+
+React mirrors the Python authority against one Python-owned golden fixture and
+fails closed on unequal time grids or nonfinite coordinates instead of
+truncating. The existing sparse yellow glyphs remain labeled as 2σ principal-
+axis indicators; this slice does not claim a rendered confidence-ellipsoid mesh,
+cross-browser E2E coverage, protected publication, or epic completion.
+
 ## 2026-08-12 Localized torque static-gate closure (#4142)
 
 The final cumulative changed-source MyPy blockers are closed without runtime
