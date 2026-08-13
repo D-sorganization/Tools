@@ -34,6 +34,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -68,6 +69,10 @@
 | **Current Version**     | 1.14.41                                    |
 | **Spec Version**        | 1.14.41                                    |
 >>>>>>> origin/feat/4271-repeated-bounce-wire
+=======
+| **Current Version**     | 1.14.42                                    |
+| **Spec Version**        | 1.14.42                                    |
+>>>>>>> origin/feat/4270-repeated-bounce-request-wire
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -3093,6 +3098,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3103,6 +3109,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.43 | docs(rate-of-closure, #4351-#4356): record exact published #4356 propagation head `345c329e6b6e3fc7a8fc981abf65795f356b94cf`, normal ready-for-review state for the exact #4351 through #4356 stack without base or history changes, and the first #4356 protected snapshot of one successful quality check, four skipped checks, twelve queued checks, no failure, and no review; preserve `not_released` truth and all implementation limitations. |
+| 2026-08-11 | 1.14.42 | merge(ground-roll, #4267 #4270 #4356): normally merge exact current repeated-bounce request-wire child `23897eac03e8a3edf4a37855f0ba05e8c2527986` first with exact published PR #4355 parent `a04d14e9308990e676e8c90ddb1d80e368dd1387` second without changing the `feat/4271-repeated-bounce-wire` base; preserve the complete strict cross-runtime `ground-repeated-bounce-request/v1` envelope, canonical ground-request and joint-execution-input digests, exact request/result identity pairing, shared golden corpus, and adversarial capture-speed digest follow-up together with the full repeated-bounce result-wire contract, cancellation evidence, both inherited explicit Boolean locals required by protected delta-MyPy, complete regional/ground ancestry, and all append-only handoff/SPEC/manifest history; keep UI request construction, executor invocation, persistence, playback, measured calibration, compiled and downstream parity, protected exact-head evidence, review, approval, dependency integration, release, and issue completion open. |
+| 2026-08-11 | 1.14.39 | feat(ground-impact, #4270): reuse the frozen `flight-to-ground-request/v1` authority inside a strict bounded Python/TypeScript `ground-repeated-bounce-request/v1` envelope; bind SI/frame/request/surface/model identities, canonical ground-request SHA-256, capture threshold, fixed model version, and joint execution-input SHA-256; add exact request/result identity pairing and shared golden parity while retaining Python as the only physics authority and leaving UI construction/invocation, persistence, compiled physics, downstream parity, protected evidence, release, and issue/epic completion open. |
+>>>>>>> origin/feat/4270-repeated-bounce-request-wire
 | 2026-08-11 | 1.14.41 | merge(ground-roll, #4267 #4271 #4355): normally merge exact current repeated-bounce result-wire child `b67af52226fa6334dd3570cf650aebeaf81912fc` first with exact published PR #4354 parent `97925e4803f4fbd72d576eb1c11c47f8e61b0b66` second without changing the `feat/4271-regional-trajectory-export` base; preserve the complete strict cross-runtime `ground-repeated-bounce-result/v1` evidence contract, canonical golden corpus, phase/chronology/energy invariants, and pre-contact cancellation follow-up together with matched regional trajectory inspection/export, both inherited explicit Boolean locals required by protected delta-MyPy, full regional execution and ground ancestry, and all append-only handoff/SPEC/manifest history; keep request construction, executor invocation, persistence, playback, measured calibration, compiled and downstream parity, protected exact-head evidence, review, approval, dependency integration, release, and issue completion open. |
 >>>>>>> origin/feat/4271-repeated-bounce-wire
 | 2026-08-11 | 1.14.40 | fix(rate-of-closure, #4354): make the regional evidence atomic-export return boundary stable under the protected changed-file MyPy profile by assigning the skipped imported helper result to an explicit Boolean local; match the inherited #4351 repair, avoid both `no-any-return` and a root-set-dependent redundant cast, and change no runtime behavior or canonical bytes. |
@@ -4195,3 +4206,35 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - This is an input/evidence boundary only. Request construction, executor
   invocation, persistence, playback, measured calibration, compiled and
   downstream parity, protected release, and #4267/#4271 completion remain open.
+
+## 2026-08-11 Repeated-bounce request and pairing wire boundary
+
+- Reused the existing strict `flight-to-ground-request/v1` record as the
+  physical request authority instead of defining a second surface, contact,
+  ball, calibration, or provenance schema.
+- Added bounded `ground-repeated-bounce-request/v1` Python and import-only
+  TypeScript envelopes with exact keys, SI target-frame identity, fixed
+  `tools-ground-impact-bounce@1.0.0` authority, and one configurable
+  `capture_speed_m_s`. Standard gravity and the numerical tolerances remain
+  fixed implementation details of that model version; the wire does not
+  expose alternate values.
+- Bound the embedded request to `ground_request_sha256`, then bound that digest,
+  the canonical capture threshold, schema, and model identity to
+  `execution_input_sha256`. Both runtimes reject unknown fields, duplicate
+  keys, over-1-MiB UTF-8 documents, non-finite/cross-runtime-unsafe values,
+  unsupported identities, nested request tampering, and digest mismatches.
+- Added an exact request/result pairing record that checks request, surface,
+  frame, model, version, and the result's existing ground-request fingerprint.
+  Result v1 does not carry `execution_input_sha256`, so an imported result alone
+  cannot prove which capture threshold produced it. A later executor envelope
+  must preserve the paired request or its joint digest; this slice does not
+  invoke the solver or claim that missing production evidence.
+- The shared request fixture pins ground-request SHA-256
+  `b185be04825814aaf5fa7c87ebc9d0613899fb0c9c3f977094963228a95cc255`,
+  joint execution-input SHA-256
+  `98553d20bfdbd4a218a798886a329a1e6c058ab86bf18a81626bd78c898bd99c`,
+  and canonical request-document SHA-256
+  `ec5f8e83fae479a3ffa070603baa6b9916a1c9808a5690beba9417f35a812424`.
+- Browser physics, UI request construction, executor invocation, file/workspace
+  persistence, compiled-runtime execution, downstream parity, protected CI,
+  release, and #4267/#4270 completion remain open.

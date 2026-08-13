@@ -1,6 +1,17 @@
 """Strict reusable flight-to-ground transfer and result contracts."""
 
 from .bounce_kinematics import interpolate_first_contact
+from .bounce_request_wire import (
+    MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES,
+    REPEATED_BOUNCE_REQUEST_SCHEMA_VERSION,
+    RepeatedBounceRequest,
+    RepeatedBounceRequestResultPair,
+    repeated_bounce_execution_input_sha256,
+    repeated_bounce_request_from_dict,
+    repeated_bounce_request_from_json,
+    repeated_bounce_request_to_dict,
+    repeated_bounce_request_to_json,
+)
 from .bounce_simulation import simulate_repeated_bounce
 from .bounce_types import (
     BounceAirSegment,
@@ -181,7 +192,11 @@ __all__ = [
     "SphereProperties",
     "RepeatedBounceResult",
     "MAX_REPEATED_BOUNCE_WIRE_BYTES",
+    "MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES",
+    "REPEATED_BOUNCE_REQUEST_SCHEMA_VERSION",
     "REPEATED_BOUNCE_SCHEMA_VERSION",
+    "RepeatedBounceRequest",
+    "RepeatedBounceRequestResultPair",
     "SkidRollEnergyLedger",
     "SkidRollExecution",
     "SkidRollResult",
@@ -216,5 +231,10 @@ __all__ = [
     "repeated_bounce_result_from_json",
     "repeated_bounce_result_to_dict",
     "repeated_bounce_result_to_json",
+    "repeated_bounce_execution_input_sha256",
+    "repeated_bounce_request_from_dict",
+    "repeated_bounce_request_from_json",
+    "repeated_bounce_request_to_dict",
+    "repeated_bounce_request_to_json",
     "simulate_skid_roll",
 ]

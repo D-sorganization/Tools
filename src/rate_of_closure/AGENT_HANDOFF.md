@@ -1,5 +1,38 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4356 published current-parent propagation
+
+Published ready-for-review PR #4356 keeps `feat/4270-repeated-bounce-request-wire`
+over `feat/4271-repeated-bounce-wire`. Exact current child
+`23897eac03e8a3edf4a37855f0ba05e8c2527986` is the first parent and exact
+published #4355 head `a04d14e9308990e676e8c90ddb1d80e368dd1387` is
+the second parent of normal no-ff merge
+`345c329e6b6e3fc7a8fc981abf65795f356b94cf`. The child's strict cross-runtime repeated-bounce request
+envelope, canonical ground-request and joint-execution-input digests, exact
+request/result identity pairing, shared golden corpus, adversarial
+capture-speed digest follow-up, and live-PR handoff remain intact alongside the
+complete #4355 result-wire and cancellation evidence, both typed-Boolean
+protected-MyPy repairs, and all regional/ground ancestry.
+
+Local qualification is complete: 1,099 Python tests, 116 React files with 738
+tests, complete Cargo workspace tests, focused 64-Python/53-React coverage,
+Ruff check/format and Black on all four child-delta Python files, protected
+MyPy on two child production modules plus the coherent 37-module ground
+profile, Bandit on both production modules, a clean placeholder scan,
+TypeScript, zero-warning ESLint, the 204-module Vite build, Rust
+formatting/clippy, both repository size budgets, the manifest validator and
+eight manifest tests, and every repository governance gate are green. All
+eight child feature/spec/test files remain byte-exact; the parent-only
+result-wire files and both inherited typed-Boolean repairs also remain exact.
+Known warnings remain the Hypothesis cache ignore, empty polynomial legend,
+Node local-storage flag, and 528.82 kB Vite chunk. Exact heads #4351 through
+#4356 are now ready for review without base or history changes. The first
+protected #4356 checkpoint had one successful quality check, four skipped
+checks, twelve queued checks, no failure, and no review. UI request
+construction, executor invocation, persistence, playback, measured
+calibration, compiled and downstream parity, protected completion, approval,
+dependency integration, release, and issue completion remain open.
+
 ## 2026-08-11 PR #4355 current-parent propagation candidate
 
 This local no-publish merge keeps `feat/4271-repeated-bounce-wire` over
@@ -1821,3 +1854,37 @@ remains. Independent
 review found four evidence-integrity blockers; all four were remediated with
 matched adversarial tests. A final independent review of the complete
 post-remediation diff remains required before any publication.
+
+## 2026-08-11 repeated-bounce request wire and pairing boundary
+
+Draft PR #4356 publishes branch `feat/4270-repeated-bounce-request-wire` at
+exact head `5f71bc2d8e3527bc76fe4c7f331f9f10203a6491`, stacked on exact
+published draft parent PR #4355 head
+`b67af52226fa6334dd3570cf650aebeaf81912fc`. It reuses the strict embedded
+`flight-to-ground-request/v1` rather than duplicating physical inputs and adds
+bounded `ground-repeated-bounce-request/v1` Python/TypeScript import contracts.
+Exact SI/frame/request/surface/model identities, canonical ground-request
+SHA-256, capture threshold, and joint execution-input SHA-256 are fail-closed.
+
+An exact pairing record checks the existing bounce result's request, surface,
+frame, model/version, and ground-request fingerprint. Result v1 does not carry
+the joint execution digest, so it cannot independently prove the capture
+threshold; later executor evidence must preserve the paired request or digest.
+The browser still runs no bounce physics. UI construction/invocation,
+persistence, compiled physics, downstream parity, protected evidence, release,
+and #4267/#4270 completion remain open. Protected CI for #4356 is pending.
+
+Exact prepublication implementation gates at `9da44ec98709dfb0d92a23591698ea3bf2be6e5c`
+are green: 183 Python ground tests; 114 React files / 731 tests; exact
+changed-source MyPy with hosted `--follow-imports=skip`; Ruff and format;
+TypeScript; zero-warning ESLint; the 204-module production build;
+campaign-manifest validation and eight manifest tests; docs governance;
+module-size budget; placeholder/quality scan; and diff checks. Published head
+`5f71bc2d8e3527bc76fe4c7f331f9f10203a6491` adds explicit finite
+capture-threshold digest-drift coverage; its focused request suites pass 21
+Python and 19 TypeScript tests. The inherited
+528.54 kB build advisory remains. A temporary whole-tree secret-baseline scan
+found no finding in this slice's changed paths, but still reported two
+parent-existing findings in unchanged regional-surface-plan tests while PR
+#4355's protected detect-secrets job remained pending. No protected or release
+claim is made.
