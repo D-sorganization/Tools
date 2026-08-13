@@ -3,9 +3,20 @@ import ReactDOM from "react-dom/client";
 
 import App from "./App";
 import "./index.css";
+import { applicationWebRuntime } from "./model/webRuntime";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+const root = ReactDOM.createRoot(document.getElementById("root")!);
+try {
+  const runtime = applicationWebRuntime(document);
+  root.render(
+    <React.StrictMode>
+      <App runtime={runtime} />
+    </React.StrictMode>,
+  );
+} catch {
+  root.render(
+    <main role="alert">
+      Rate of Closure cannot start because its runtime descriptor is invalid.
+    </main>,
+  );
+}

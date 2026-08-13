@@ -217,11 +217,20 @@ include = [
 exclude = [
     "*.tests*",
     "*tests*",
+    "*node_modules*",
 ]
 
 [tool.setuptools.package-data]
 # Include py.typed marker for PEP 561 type hint support
 "*" = ["py.typed"]
+"rate_of_closure" = [
+    "web/dist/index.html",
+    "web/dist/*.json",
+    "web/dist/assets/*",
+]
+
+[tool.setuptools.cmdclass]
+build_py = "build_hooks.RateWebBuildPy"
 
 # =============================================================================
 # Pytest Configuration

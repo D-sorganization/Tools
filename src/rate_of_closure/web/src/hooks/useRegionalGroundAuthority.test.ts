@@ -5,6 +5,7 @@ import {
   qualifiedRegionalGroundAuthorityCapability,
   type RegionalGroundAuthorityCapability,
 } from "../model/regionalGroundAuthority";
+import { STATIC_INSPECTION_WEB_RUNTIME } from "../model/webRuntime";
 import { useRegionalGroundAuthority } from "./useRegionalGroundAuthority";
 
 const capability = (detail: string): RegionalGroundAuthorityCapability => ({
@@ -28,6 +29,21 @@ afterEach(() => {
 });
 
 describe("regional-ground authority polling lifecycle", () => {
+  it("performs zero authority queries in static-inspection mode", async () => {
+    const query = vi.fn().mockResolvedValue(
+      qualifiedRegionalGroundAuthorityCapability(),
+    );
+    const { result } = renderHook(() => useRegionalGroundAuthority({
+      query,
+      runtime: STATIC_INSPECTION_WEB_RUNTIME,
+    }));
+
+    await waitFor(() => expect(result.current.checking).toBe(false));
+    expect(query).not.toHaveBeenCalled();
+    expect(result.current.capability.reason_code).toBe("static_inspection");
+    expect(result.current.controls.submitEnabled).toBe(false);
+  });
+
   it("keeps every execution control disabled while capability is false", async () => {
     const query = vi.fn().mockResolvedValue(capability("Unavailable."));
     const { result } = renderHook(() => useRegionalGroundAuthority({
