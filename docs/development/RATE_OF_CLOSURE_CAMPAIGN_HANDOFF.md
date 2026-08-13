@@ -1,5 +1,13 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 linked-scatter diagnostic static closure
+
+- The PyQt selected-state diagnostic uses an explicit analytics-tab type check
+  and direct preview access instead of a constant dynamic attribute lookup.
+- This closes the changed-file static gate only; no material interaction
+  contract, diagnostic evidence status, or open #4433 gap changed. SPEC is
+  1.16.80.
+
 ## 2026-08-13 #4433 linked launch-monitor scatter
 
 - A shared Python-owned golden now governs bounded linked-scatter planning:

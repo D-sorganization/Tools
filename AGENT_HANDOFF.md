@@ -3,6 +3,12 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter diagnostic static closure (#4433)
+
+Version 1.16.80 replaces a constant-name dynamic preview lookup in the PyQt
+diagnostic probe with an exact analytics-tab type boundary and direct access.
+No material linked-scatter contract, evidence status, or release gap changed.
+
 ## 2026-08-13 Linked launch-monitor scatter interaction (#4433)
 
 Version 1.16.79 adds matched React/PyQt linked-scatter planners and direct

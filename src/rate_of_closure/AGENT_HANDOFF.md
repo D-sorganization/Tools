@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter diagnostic static closure (#4433)
+
+- The selected-state PyQt diagnostic now proves the resolved tab is the exact
+  analytics type before direct preview access, satisfying the changed-file
+  static gate. No material runtime contract or evidence-status change was made.
+  SPEC is 1.16.80.
+
 ## 2026-08-13 Linked launch-monitor scatter interaction (#4433)
 
 - Python and React now share a strict decimal/flat-record contract and a

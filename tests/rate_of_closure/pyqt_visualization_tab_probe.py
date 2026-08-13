@@ -10,6 +10,9 @@ from PyQt6.QtCore import QRect, Qt
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QWidget
 
+from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (
+    LaunchMonitorAnalyticsTab,
+)
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow
 from rate_of_closure.ui.pyqt6.visualization_tab_audit import (
     interactive_overlaps,
@@ -77,7 +80,9 @@ def _audit_tab(
         raise RuntimeError(f"could not save {tab_id} diagnostic")
     selected_screenshot = ""
     if tab_id == "launch_monitor_analytics":
-        preview = getattr(tab, "preview")
+        if not isinstance(tab, LaunchMonitorAnalyticsTab):
+            raise TypeError("launch-monitor analytics tab has unexpected type")
+        preview = tab.preview
         QTest.keyClick(preview, Qt.Key.Key_End)
         QApplication.processEvents()
         selected = output / "tab-launch_monitor_analytics-selected.png"

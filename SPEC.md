@@ -26,11 +26,18 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.79                                    |
-| **Spec Version**        | 1.16.79                                    |
+| **Current Version**     | 1.16.80                                    |
+| **Spec Version**        | 1.16.80                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Linked-scatter diagnostic static closure (#4433)
+
+Version 1.16.80 gives the PyQt selected-state diagnostic an explicit
+analytics-tab type boundary and direct preview access. This is a static-gate
+correction only: it does not change linked-scatter behavior, promote diagnostic
+captures, or close any remaining #4433 release gap.
 
 ### 2026-08-13 Linked launch-monitor scatter interaction (#4433)
 
@@ -4088,6 +4095,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.77 | fix(rate-of-closure, #4433): eliminate narrow command-strip document overflow and narrowly exempt the rendered PyQt subprocess probe from the changed-test assertion gate. |
 | 2026-08-13 | 1.16.78 | fix(rate-of-closure, #4433): close the shared GUI extra over registered analytics, flight, and simulation tabs' bounded pandas/SciPy/SymPy runtimes. |
 | 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
+| 2026-08-13 | 1.16.80 | fix(rate-of-closure, #4433): make the PyQt selected-state diagnostic use an exact tab-type boundary and direct preview access without changing the runtime contract. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |
