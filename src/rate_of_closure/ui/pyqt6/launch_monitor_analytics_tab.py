@@ -224,15 +224,15 @@ class LaunchMonitorAnalyticsTab(QWidget):
 
     def _refresh_columns(self) -> None:
         numeric = numeric_columns(self.frame)
-        previous = self.outcome_combo.currentText()
         self.outcome_combo.clear()
         self.outcome_combo.addItems(numeric)
-        self.outcome_combo.setCurrentText(
-            previous if previous in numeric else "ball_speed"
-        )
+        outcome = "ball_speed" if "ball_speed" in numeric else numeric[0]
+        self.outcome_combo.setCurrentText(outcome)
         self.predictor_list.clear()
         self.predictor_list.addItems(numeric)
-        defaults = {"club_speed", "attack_angle"}
+        defaults = {"club_speed", "attack_angle"} - {outcome}
+        if not defaults.intersection(numeric):
+            defaults = {next(column for column in numeric if column != outcome)}
         for index in range(self.predictor_list.count()):
             item = self.predictor_list.item(index)
             if item is not None:
@@ -289,7 +289,19 @@ class LaunchMonitorAnalyticsTab(QWidget):
         """Replace all records without discarding any source columns."""
         if len(frame) > MAX_RETAINED_ROWS:
             raise ValueError(f"The retained-data limit is {MAX_RETAINED_ROWS} rows")
-        self.frame = frame.copy()
+        candidate = frame.copy()
+        if len(candidate) < 3 or len(numeric_columns(candidate)) < 2:
+            raise ValueError(
+                "The dataset needs at least three rows and two numeric columns"
+            )
+        try:
+            for column in candidate.columns:
+                candidate[column].nunique(dropna=True)
+        except TypeError as error:
+            raise ValueError(
+                "Launch-monitor records must contain flat scalar values"
+            ) from error
+        self.frame = candidate
         self.source_name = source_name
         self.preview_panel.reset_dataset()
         self._refresh_columns()

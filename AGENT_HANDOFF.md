@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter extreme/import contract closure (#4433)
+
+Version 1.16.81 normalizes every accepted finite plotting axis into a bounded
+unitless display without overflow, while keeping raw values in status. Strict
+CSV/JSON import now rejects duplicate fields, malformed/fatal UTF-8 input, and
+byte/row/column/dense-cell excess before dataset installation. Successful
+replacement resets every dataset-bound control atomically; failed or stale
+imports preserve the current evidence. Captures remain diagnostic, and #4433
+remains open for approved goldens, AT validation, and remaining visual work.
+
 ## 2026-08-13 Linked-scatter diagnostic static closure (#4433)
 
 Version 1.16.80 replaces a constant-name dynamic preview lookup in the PyQt

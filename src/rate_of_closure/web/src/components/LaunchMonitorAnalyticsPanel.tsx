@@ -5,7 +5,7 @@ import { LaunchMonitorLinkedScatter } from "./LaunchMonitorLinkedScatter";
 import {
   analyzeLaunchMonitorData,
   numericLaunchMonitorColumns,
-  parseLaunchMonitorFile,
+  readLaunchMonitorFile,
   type AnalysisMode,
   type CorrelationMethod,
   type LaunchMonitorAnalysisResult,
@@ -77,6 +77,7 @@ export function LaunchMonitorAnalyticsPanel() {
   const [error, setError] = useState<string | null>(null);
   const [selectedRawIndex, setSelectedRawIndex] = useState<number | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const importEpoch = useRef(0);
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
   const grouping = useMemo(() => {
     const columns = new Set(rows.flatMap((row) => Object.keys(row)));
@@ -101,8 +102,10 @@ export function LaunchMonitorAnalyticsPanel() {
   };
 
   const loadFile = async (file: File) => {
+    const epoch = ++importEpoch.current;
     try {
-      const next = parseLaunchMonitorFile(file.name, await file.text());
+      const next = await readLaunchMonitorFile(file);
+      if (epoch !== importEpoch.current) return;
       if (next.length > MAX_LINKED_SCATTER_ROWS) {
         throw new RangeError(`The retained-data limit is ${MAX_LINKED_SCATTER_ROWS} rows.`);
       }
@@ -110,12 +113,19 @@ export function LaunchMonitorAnalyticsPanel() {
       if (nextNumeric.length < 2) throw new RangeError("The file needs at least two numeric columns with three values each.");
       setRows(next);
       setSourceName(file.name);
-      setOutcome(nextNumeric[0]);
-      setPredictors([nextNumeric[1]]);
+      const nextOutcome = nextNumeric.includes("ball_speed") ? "ball_speed" : nextNumeric[0];
+      const nextPredictors = ["club_speed", "attack_angle"]
+        .filter((column) => nextNumeric.includes(column) && column !== nextOutcome);
+      setOutcome(nextOutcome);
+      setPredictors(nextPredictors.length ? nextPredictors : [
+        nextNumeric.find((column) => column !== nextOutcome) as string,
+      ]);
+      setGroupBy(next.some((row) => "monitor_vendor" in row) ? "monitor_vendor" : "");
       setResult(null);
       setSelectedRawIndex(null);
       setError(null);
     } catch (caught) {
+      if (epoch !== importEpoch.current) return;
       setError(caught instanceof Error ? caught.message : String(caught));
     }
   };
@@ -141,7 +151,7 @@ export function LaunchMonitorAnalyticsPanel() {
               onClick={() => input.current?.click()}
               className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold hover:bg-sky-500">Import Data</button>
             <button type="button" title="Restore the built-in non-vendor demonstration dataset"
-              onClick={() => { setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setResult(null); setSelectedRawIndex(null); setError(null); }}
+              onClick={() => { importEpoch.current += 1; setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setOutcome("ball_speed"); setPredictors(["club_speed", "attack_angle"]); setGroupBy("monitor_vendor"); setResult(null); setSelectedRawIndex(null); setError(null); }}
               className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Load Demo</button>
           </div>
         </div>

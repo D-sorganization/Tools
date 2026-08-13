@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any
+from typing import Any, overload
 
 import numpy as np
 import pandas as pd
@@ -15,8 +15,10 @@ from PyQt6.QtWidgets import QWidget
 from rate_of_closure.launch_monitor_analysis import numeric_columns
 from rate_of_closure.launch_monitor_linked_scatter import (
     LinkedScatterPlan,
+    NavigationCommand,
     navigate_linked_scatter,
     plan_linked_scatter,
+    project_plot_axis,
 )
 from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
 
@@ -31,7 +33,15 @@ class _FrameRows(Sequence[Mapping[str, Any]]):
     def __len__(self) -> int:
         return self._row_count
 
-    def __getitem__(self, index: int | slice) -> Mapping[str, Any]:
+    @overload
+    def __getitem__(self, index: int) -> Mapping[str, Any]: ...
+
+    @overload
+    def __getitem__(self, index: slice) -> Sequence[Mapping[str, Any]]: ...
+
+    def __getitem__(
+        self, index: int | slice
+    ) -> Mapping[str, Any] | Sequence[Mapping[str, Any]]:
         if isinstance(index, slice):
             raise TypeError("linked scatter row slices are not supported")
         return {field: values[index] for field, values in self._values.items()}
@@ -73,6 +83,8 @@ class LaunchMonitorPreviewCanvas(LifecycleSafeFigureCanvas):
             self.setParent(parent)
         self._axes = figure.add_subplot(111)
         self._plan: LinkedScatterPlan | None = None
+        self._plot_x: tuple[float, ...] = ()
+        self._plot_y: tuple[float, ...] = ()
         self.setAccessibleName("Launch Monitor Selected Relationship Preview")
         self.setToolTip(
             "Select the nearest displayed point. Left/Right and Home/End navigate; "
@@ -111,9 +123,27 @@ class LaunchMonitorPreviewCanvas(LifecycleSafeFigureCanvas):
         )
         self._plan = plan
         self._axes.clear()
+        if not plan.points:
+            self._plot_x = ()
+            self._plot_y = ()
+            self._axes.text(
+                0.5,
+                0.5,
+                "No jointly finite pairs for the selected axes.",
+                ha="center",
+                va="center",
+                transform=self._axes.transAxes,
+            )
+            self._axes.set_axis_off()
+            self.draw_idle()
+            return plan
+        x_projection = project_plot_axis(tuple(point.x for point in plan.points))
+        y_projection = project_plot_axis(tuple(point.y for point in plan.points))
+        self._plot_x = x_projection.coordinates
+        self._plot_y = y_projection.coordinates
         self._axes.scatter(
-            [point.x for point in plan.points],
-            [point.y for point in plan.points],
+            self._plot_x,
+            self._plot_y,
             s=18,
             alpha=0.7,
         )
@@ -122,17 +152,26 @@ class LaunchMonitorPreviewCanvas(LifecycleSafeFigureCanvas):
             None,
         )
         if selected is not None:
+            selected_position = next(
+                index
+                for index, point in enumerate(plan.points)
+                if point.raw_index == selected.raw_index
+            )
             self._axes.plot(
-                [selected.x],
-                [selected.y],
+                [self._plot_x[selected_position]],
+                [self._plot_y[selected_position]],
                 marker="o",
                 markersize=10,
                 markerfacecolor="none",
                 markeredgecolor="#f59e0b",
                 markeredgewidth=2.5,
             )
-        self._axes.set_xlabel(predictor)
-        self._axes.set_ylabel(outcome)
+        self._axes.set_xlabel(
+            f"{predictor} (unitless normalized display; raw in status)"
+        )
+        self._axes.set_ylabel(f"{outcome} (unitless normalized display; raw in status)")
+        self._axes.set_xlim(-1.05, 1.05)
+        self._axes.set_ylim(-1.05, 1.05)
         self._axes.set_title(f"{outcome} versus {predictor}")
         self._axes.grid(alpha=0.2)
         self.draw_idle()
@@ -148,30 +187,33 @@ class LaunchMonitorPreviewCanvas(LifecycleSafeFigureCanvas):
         event_y = getattr(event, "y", None)
         if event_x is None or event_y is None:
             return
-        nearest = min(
-            plan.points,
-            key=lambda point: sum(
+        nearest_index, nearest = min(
+            enumerate(plan.points),
+            key=lambda indexed: sum(
                 (projected - observed) ** 2
                 for projected, observed in zip(
-                    self._axes.transData.transform((point.x, point.y)),
+                    self._axes.transData.transform(
+                        (self._plot_x[indexed[0]], self._plot_y[indexed[0]])
+                    ),
                     (event_x, event_y),
                     strict=True,
                 )
             ),
         )
+        del nearest_index
         self.selection_changed.emit(nearest.raw_index)
 
     def keyPressEvent(self, event: QKeyEvent | None) -> None:  # noqa: N802
         if event is None or self._plan is None:
             return
-        commands = {
-            Qt.Key.Key_Left: "previous",
-            Qt.Key.Key_Right: "next",
-            Qt.Key.Key_Home: "home",
-            Qt.Key.Key_End: "end",
-            Qt.Key.Key_Escape: "clear",
+        commands: dict[int, NavigationCommand] = {
+            int(Qt.Key.Key_Left): "previous",
+            int(Qt.Key.Key_Right): "next",
+            int(Qt.Key.Key_Home): "home",
+            int(Qt.Key.Key_End): "end",
+            int(Qt.Key.Key_Escape): "clear",
         }
-        command = commands.get(event.key())
+        command = commands.get(int(event.key()))
         if command is None:
             super().keyPressEvent(event)
             return

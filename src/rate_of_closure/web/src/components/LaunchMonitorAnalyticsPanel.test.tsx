@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import * as analysis from "../model/launchMonitorAnalysis";
 import { LaunchMonitorAnalyticsPanel } from "./LaunchMonitorAnalyticsPanel";
 
 describe("LaunchMonitorAnalyticsPanel", () => {
@@ -68,5 +69,53 @@ describe("LaunchMonitorAnalyticsPanel", () => {
       target: { value: "10" },
     });
     expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("commits only the latest successful dataset replacement atomically", async () => {
+    const imported = Array.from({ length: 12 }, (_, index) => ({
+      x: index, y: index * index + 1,
+    }));
+    const reader = vi.spyOn(analysis, "readLaunchMonitorFile")
+      .mockResolvedValueOnce(imported);
+    render(<LaunchMonitorAnalyticsPanel />);
+    const input = screen.getByLabelText("Launch monitor CSV or JSON file");
+
+    fireEvent.change(input, { target: { files: [new File(["x,y"], "two.csv")] } });
+    await waitFor(() => expect(screen.getByText(/Source: two.csv/)).toBeVisible());
+    expect(screen.getByTitle("Select the numeric outcome variable")).toHaveValue("x");
+    expect(screen.getByLabelText("Predictor Variables")).toHaveValue(["y"]);
+    expect(screen.getByTitle("Optionally compute separate results for each group"))
+      .toHaveValue("");
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
+    expect(screen.getByRole("button", { name: "Export Analysis" })).toBeVisible();
+    reader.mockRestore();
+  });
+
+  it("preserves current evidence on failure and ignores stale import completion", async () => {
+    const reader = vi.spyOn(analysis, "readLaunchMonitorFile");
+    render(<LaunchMonitorAnalyticsPanel />);
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
+    fireEvent.keyDown(screen.getByRole("img", { name: /linked scatter plot/ }), {
+      key: "End",
+    });
+    expect(screen.getByText(/Retained row index 119/)).toBeVisible();
+
+    reader.mockRejectedValueOnce(new Error("malformed import"));
+    const input = screen.getByLabelText("Launch monitor CSV or JSON file");
+    fireEvent.change(input, { target: { files: [new File(["bad"], "bad.csv")] } });
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("malformed import"));
+    expect(screen.getByText(/Source: Built-In Demonstration Data/)).toBeVisible();
+    expect(screen.getByText(/Retained row index 119/)).toBeVisible();
+    expect(screen.getByRole("button", { name: "Export Analysis" })).toBeVisible();
+
+    let resolvePending!: (rows: analysis.LaunchMonitorRow[]) => void;
+    reader.mockReturnValueOnce(new Promise((resolve) => { resolvePending = resolve; }));
+    fireEvent.change(input, { target: { files: [new File(["x,y"], "late.csv")] } });
+    fireEvent.click(screen.getByRole("button", { name: "Load Demo" }));
+    await act(async () => resolvePending([{ x: 1, y: 2 }, { x: 2, y: 3 }, { x: 3, y: 4 }]));
+    expect(screen.getByText(/Source: Built-In Demonstration Data/)).toBeVisible();
+    expect(screen.getByText("No retained source row selected.")).toBeVisible();
+    expect(screen.queryByRole("alert")).toBeNull();
+    reader.mockRestore();
   });
 });

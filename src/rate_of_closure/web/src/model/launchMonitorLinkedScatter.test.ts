@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import fixture from "./__fixtures__/launch_monitor_linked_scatter_golden_v1.json";
-import { navigateLinkedScatter, planLinkedScatter } from "./launchMonitorLinkedScatter";
+import { navigateLinkedScatter, planLinkedScatter, projectPlotAxis } from "./launchMonitorLinkedScatter";
 import { finiteLaunchMonitorScalar } from "./launchMonitorAnalysisTypes";
 
 describe("launch-monitor linked scatter", () => {
@@ -45,5 +45,13 @@ describe("launch-monitor linked scatter", () => {
     const rows = fixture.numeric_grammar.values.map((value, index) => ({ x: value, y: index + 1 }));
     const plan = planLinkedScatter(rows, "x", "y");
     expect(plan.points.map(({ rawIndex }) => rawIndex)).toEqual(fixture.numeric_grammar.finite_indices);
+  });
+
+  it("projects extreme, constant, signed-zero, and subnormal axes to finite positions", () => {
+    for (const { values, expected } of Object.values(fixture.plot_projection_cases)) {
+      const coordinates = projectPlotAxis(values).coordinates;
+      expect(coordinates).toEqual(expected);
+      expect(coordinates.every((value) => value >= -1 && value <= 1)).toBe(true);
+    }
   });
 });

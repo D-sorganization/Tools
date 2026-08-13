@@ -27,5 +27,24 @@
   "numeric_grammar": {
     "values": ["1.5", " -2.5e1 ", ".75", "0x10", "0b10", "١٢", "NaN", "", null, true],
     "finite_indices": [0, 1, 2]
+  },
+  "plot_projection_cases": {
+    "crossing_extremes": {
+      "values": [-1.7976931348623157e308, 0, 1.7976931348623157e308],
+      "expected": [-1, 0, 1]
+    },
+    "constant_extreme": {
+      "values": [1.7976931348623157e308, 1.7976931348623157e308],
+      "expected": [0, 0]
+    },
+    "signed_zero_subnormal": {
+      "values": [-0.0, 0.0, 5e-324],
+      "expected": [-1, -1, 1]
+    },
+    "integer_values": {"values": [1, 2], "expected": [-1, 1]},
+    "near_max_ulp": {
+      "values": [1.7976931348623157e308, 1.7976931348623155e308],
+      "expected": [1, -1]
+    }
   }
 }

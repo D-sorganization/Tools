@@ -25,6 +25,28 @@ export interface LinkedScatterPlan {
   readonly points: readonly LinkedScatterPoint[];
 }
 
+export interface PlotAxisProjection {
+  readonly coordinates: readonly number[];
+  readonly scale: number;
+}
+
+export function projectPlotAxis(values: readonly number[]): PlotAxisProjection {
+  if (!Array.isArray(values) || values.length === 0 || values.some((value) => !Number.isFinite(value))) {
+    throw new RangeError("plot axis values must be a nonempty finite number sequence");
+  }
+  const scale = Math.max(...values.map(Math.abs));
+  if (scale === 0) return Object.freeze({ coordinates: Object.freeze(values.map(() => 0)), scale: 1 });
+  const low = Math.min(...values); const high = Math.max(...values);
+  if (low === high) {
+    return Object.freeze({ coordinates: Object.freeze(values.map(() => 0)), scale });
+  }
+  const basis = low < 0 && high > 0 ? values.map((value) => value / scale) : values;
+  const basisLow = Math.min(...basis); const span = Math.max(...basis) - basisLow;
+  return Object.freeze({
+    coordinates: Object.freeze(basis.map((value) => 2 * ((value - basisLow) / span) - 1)), scale,
+  });
+}
+
 const text = (value: unknown): string | null =>
   typeof value === "string" && value.length > 0 ? value : null;
 

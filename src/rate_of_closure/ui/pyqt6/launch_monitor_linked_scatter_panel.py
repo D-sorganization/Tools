@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 import pandas as pd
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
@@ -32,7 +34,17 @@ class LaunchMonitorLinkedScatterPanel(QWidget):
         self._frame: pd.DataFrame | None = None
         self._outcome = ""
         self._predictors: tuple[str, ...] = ()
-        self.preview.selection_changed.connect(self._select_raw_row)
+        self._selection_slot: Callable[[object], None] | None = None
+        self._connect_selection()
+
+    def _connect_selection(self) -> None:
+        generation = self._generation
+
+        def slot(raw_index: object) -> None:
+            self._select_raw_row(generation, raw_index)
+
+        self._selection_slot = slot
+        self.preview.selection_changed.connect(slot)
 
     @property
     def selected_raw_index(self) -> int | None:
@@ -45,6 +57,9 @@ class LaunchMonitorLinkedScatterPanel(QWidget):
         """Clear selection atomically when a new retained dataset is installed."""
         self._generation += 1
         self._selection = None
+        if self._selection_slot is not None:
+            self.preview.selection_changed.disconnect(self._selection_slot)
+        self._connect_selection()
 
     def set_frame(
         self, frame: pd.DataFrame, outcome: str, predictors: tuple[str, ...]
@@ -59,10 +74,14 @@ class LaunchMonitorLinkedScatterPanel(QWidget):
         self.status.setText(self._status_text(plan, self.selected_raw_index))
         return plan
 
-    def _select_raw_row(self, raw_index: object) -> None:
-        self._selection = (
-            None if raw_index is None else (self._generation, int(raw_index))
-        )
+    def _select_raw_row(self, generation: int, raw_index: object) -> None:
+        if generation != self._generation:
+            return
+        if raw_index is not None and (
+            isinstance(raw_index, bool) or not isinstance(raw_index, int)
+        ):
+            raise TypeError("selected raw row index must be an integer or None")
+        self._selection = None if raw_index is None else (self._generation, raw_index)
         if self._frame is not None:
             self.set_frame(self._frame, self._outcome, self._predictors)
 
@@ -73,6 +92,14 @@ class LaunchMonitorLinkedScatterPanel(QWidget):
             f"pairs from {plan.raw_count:,} retained rows. All rows remain retained "
             "for export; the selected missing-data policy controls analysis inclusion. "
         )
+        if plan.points:
+            prefix += (
+                f"Displayed-point {plan.x_field} range "
+                f"{min(point.x for point in plan.points):g} to "
+                f"{max(point.x for point in plan.points):g}; displayed-point "
+                f"{plan.y_field} range {min(point.y for point in plan.points):g} to "
+                f"{max(point.y for point in plan.points):g}. "
+            )
         point = next(
             (item for item in plan.points if item.raw_index == selected_raw_index),
             None,

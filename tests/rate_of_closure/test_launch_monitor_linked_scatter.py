@@ -13,6 +13,7 @@ from rate_of_closure.launch_monitor_analysis import numeric_columns
 from rate_of_closure.launch_monitor_linked_scatter import (
     navigate_linked_scatter,
     plan_linked_scatter,
+    project_plot_axis,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -82,3 +83,13 @@ def test_numeric_string_grammar_rejects_hex_and_accepts_decimal_exponents() -> N
 def test_invalid_caps_fail_closed(cap: object) -> None:
     with pytest.raises(ValueError, match="cap"):
         plan_linked_scatter([{"x": 1, "y": 2}], "x", "y", cap=cap)
+
+
+def test_python_owned_golden_pins_overflow_safe_plot_projection() -> None:
+    cases = _golden()["plot_projection_cases"]
+    assert isinstance(cases, dict)
+    for case in cases.values():
+        assert isinstance(case, dict)
+        projection = project_plot_axis(case["values"])
+        assert projection.coordinates == tuple(case["expected"])
+        assert all(-1 <= value <= 1 for value in projection.coordinates)

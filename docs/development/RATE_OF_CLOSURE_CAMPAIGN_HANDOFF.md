@@ -1,5 +1,20 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 linked-scatter extreme/import correction
+
+- Python and React share a bounded projection golden for extreme, constant,
+  signed-zero/subnormal, integer, and near-maximum finite axes. Display
+  coordinates stay finite and bounded; raw values remain visible in status.
+- Both import paths preflight supported formats and bounded resources, use
+  fatal UTF-8, reject malformed CSV, duplicate JSON fields, nonportable scalar
+  values, row/union-column/dense-cell excess, and never silently truncate.
+- Dataset replacement is atomic across axes/grouping/selection/results/errors.
+  Failed imports preserve prior evidence, stale browser reads and PyQt queued
+  selections cannot replace a newer generation, and external PyQt listeners
+  survive resets. SPEC is 1.16.81. Diagnostic captures are not approvals;
+  approved goldens, AT validation, archive coupling, and broader #4433 polish
+  remain open.
+
 ## 2026-08-13 #4433 linked-scatter diagnostic static closure
 
 - The PyQt selected-state diagnostic uses an explicit analytics-tab type check

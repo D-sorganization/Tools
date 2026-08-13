@@ -26,11 +26,27 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.80                                    |
-| **Spec Version**        | 1.16.80                                    |
+| **Current Version**     | 1.16.81                                    |
+| **Spec Version**        | 1.16.81                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Linked-scatter extreme/import contract closure (#4433)
+
+Version 1.16.81 makes accepted finite plotting values renderable at their
+extremes through a shared bounded unitless projection, while raw values remain
+visible in selected-row status. A Python-owned golden covers crossing maxima,
+constant maxima, signed zero/subnormal, integer, and near-maximum ULP inputs.
+CSV/JSON ingestion now validates suffix before reads, enforces eight MiB,
+250,000-row, 256-union-column, and two-million-dense-cell limits, decodes UTF-8
+fatally, and rejects malformed CSV, duplicate JSON keys, and nonportable
+scalars without truncation. Successful replacement resets all dataset-bound
+controls and evidence atomically; failed imports preserve current evidence,
+and stale browser reads or PyQt callbacks cannot overwrite a newer generation.
+This does not make runtime-local fingerprints portable or promote diagnostic
+captures. Approved goldens, AT validation, archive integration, and remaining
+#4433 visualization work remain open.
 
 ### 2026-08-13 Linked-scatter diagnostic static closure (#4433)
 
@@ -4096,6 +4112,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.78 | fix(rate-of-closure, #4433): close the shared GUI extra over registered analytics, flight, and simulation tabs' bounded pandas/SciPy/SymPy runtimes. |
 | 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
 | 2026-08-13 | 1.16.80 | fix(rate-of-closure, #4433): make the PyQt selected-state diagnostic use an exact tab-type boundary and direct preview access without changing the runtime contract. |
+| 2026-08-13 | 1.16.81 | fix(rate-of-closure, #4433): bound extreme plotting projection, strict retained-data resources, and generation-safe atomic dataset replacement across React and PyQt. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |

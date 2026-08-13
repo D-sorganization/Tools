@@ -5,6 +5,19 @@ import {
   type LaunchMonitorRow,
   type LaunchMonitorScalar,
 } from "./launchMonitorAnalysisTypes";
+import { parseUniqueJson } from "./strictJson";
+
+export const MAX_LAUNCH_MONITOR_IMPORT_BYTES = 8 * 1024 * 1024;
+export const MAX_LAUNCH_MONITOR_IMPORT_ROWS = 250_000;
+export const MAX_LAUNCH_MONITOR_IMPORT_COLUMNS = 256;
+export const MAX_LAUNCH_MONITOR_IMPORT_CELLS = 2_000_000;
+
+const assertTextBudget = (text: string): void => {
+  if (text.length > MAX_LAUNCH_MONITOR_IMPORT_BYTES ||
+      new TextEncoder().encode(text).byteLength > MAX_LAUNCH_MONITOR_IMPORT_BYTES) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_BYTES} bytes`);
+  }
+};
 
 const coerceCell = (value: string): LaunchMonitorScalar => {
   const trimmed = value.trim();
@@ -34,6 +47,9 @@ const parseCsvRows = (text: string): string[][] => {
       row.push(cell);
       cell = "";
       if (row.some((value) => value.length)) rows.push(row);
+      if (rows.length > MAX_LAUNCH_MONITOR_IMPORT_ROWS + 1) {
+        throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_ROWS} rows`);
+      }
       row = [];
     } else cell += character;
   }
@@ -47,13 +63,28 @@ const parseCsvRows = (text: string): string[][] => {
 
 export function parseLaunchMonitorFile(fileName: string, text: string): LaunchMonitorRow[] {
   const suffix = fileName.toLowerCase();
+  if (!suffix.endsWith(".csv") && !suffix.endsWith(".json")) {
+    throw new RangeError("Launch-monitor import supports CSV and JSON");
+  }
+  assertTextBudget(text);
   if (suffix.endsWith(".json")) {
-    const parsed: unknown = JSON.parse(text);
+    const parsed = parseUniqueJson(text, "launch-monitor JSON");
     if (!Array.isArray(parsed) || parsed.some((row) =>
       !row || typeof row !== "object" || Array.isArray(row))) {
       throw new RangeError("JSON launch-monitor data must be an array of record objects");
     }
     const rows = parsed as Record<string, unknown>[];
+    if (rows.length > MAX_LAUNCH_MONITOR_IMPORT_ROWS) {
+      throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_ROWS} rows`);
+    }
+    if (rows.some((row) => Object.keys(row).length > MAX_LAUNCH_MONITOR_IMPORT_COLUMNS)) {
+      throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_COLUMNS} columns`);
+    }
+    const union = new Set(rows.flatMap((row) => Object.keys(row)));
+    if (union.size > MAX_LAUNCH_MONITOR_IMPORT_COLUMNS ||
+        rows.length * union.size > MAX_LAUNCH_MONITOR_IMPORT_CELLS) {
+      throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_CELLS} dense cells`);
+    }
     if (rows.some((row) => Object.keys(row).some((key) => !key.trim()))) {
       throw new RangeError("JSON launch-monitor field names must be non-empty");
     }
@@ -66,12 +97,18 @@ export function parseLaunchMonitorFile(fileName: string, text: string): LaunchMo
     }
     return rows as LaunchMonitorRow[];
   }
-  if (!suffix.endsWith(".csv")) {
-    throw new RangeError("Launch-monitor import supports CSV and JSON");
-  }
   const parsed = parseCsvRows(text);
+  if (parsed.length > MAX_LAUNCH_MONITOR_IMPORT_ROWS + 1) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_ROWS} rows`);
+  }
   if (parsed.length < 2) throw new RangeError("CSV must contain a header and at least one row");
   const headers = parsed[0].map((header) => header.trim());
+  if (headers.length > MAX_LAUNCH_MONITOR_IMPORT_COLUMNS) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_COLUMNS} columns`);
+  }
+  if ((parsed.length - 1) * headers.length > MAX_LAUNCH_MONITOR_IMPORT_CELLS) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_CELLS} dense cells`);
+  }
   if (headers.some((header) => !header) || new Set(headers).size !== headers.length) {
     throw new RangeError("CSV headers must be non-empty and unique");
   }
@@ -83,4 +120,21 @@ export function parseLaunchMonitorFile(fileName: string, text: string): LaunchMo
       (header, index) => [header, coerceCell(values[index])],
     )) as LaunchMonitorRow;
   });
+}
+
+export async function readLaunchMonitorFile(file: File): Promise<LaunchMonitorRow[]> {
+  if (!/\.(csv|json)$/i.test(file.name)) {
+    throw new RangeError("Launch-monitor import supports CSV and JSON");
+  }
+  if (file.size > MAX_LAUNCH_MONITOR_IMPORT_BYTES) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_BYTES} bytes`);
+  }
+  const bytes = await file.arrayBuffer();
+  let text: string;
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    throw new RangeError("Launch-monitor import must be valid UTF-8");
+  }
+  return parseLaunchMonitorFile(file.name, text);
 }

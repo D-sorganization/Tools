@@ -27,3 +27,21 @@ it("does not inspect retained rows while axes are unavailable", () => {
 
   expect(screen.getByText("Select two populated variables.")).toBeVisible();
 });
+
+it("renders extreme finite axes and disjoint missingness without invalid SVG", () => {
+  const rendered = render(<LaunchMonitorLinkedScatter rows={[
+    { x: -Number.MAX_VALUE, y: Number.MAX_VALUE },
+    { x: 0, y: 0 },
+    { x: Number.MAX_VALUE, y: -Number.MAX_VALUE },
+  ]} xField="x" yField="y" selectedRawIndex={null} onSelectedRawIndex={vi.fn()} />);
+  for (const point of rendered.container.querySelectorAll("circle")) {
+    expect(point.getAttribute("cx")).not.toMatch(/NaN|Infinity/);
+    expect(point.getAttribute("cy")).not.toMatch(/NaN|Infinity/);
+  }
+
+  rendered.rerender(<LaunchMonitorLinkedScatter rows={[
+    { x: 1, y: null }, { x: 2, y: null }, { x: 3, y: null },
+    { x: null, y: 4 }, { x: null, y: 5 }, { x: null, y: 6 },
+  ]} xField="x" yField="y" selectedRawIndex={null} onSelectedRawIndex={vi.fn()} />);
+  expect(screen.getByText(/0 available/)).toBeVisible();
+});

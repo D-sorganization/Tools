@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   analyzeLaunchMonitorData,
   parseLaunchMonitorFile,
+  readLaunchMonitorFile,
   sha256Text,
   type LaunchMonitorRow,
 } from "./launchMonitorAnalysis";
@@ -149,6 +150,8 @@ describe("launch monitor flexible analysis", () => {
       .toThrow(/field names must be non-empty/);
     expect(() => parseLaunchMonitorFile("shots.txt", "x,y\n1,2\n"))
       .toThrow(/supports CSV and JSON/);
+    expect(() => parseLaunchMonitorFile("shots.json", '[{"x":1,"x":2,"y":3}]'))
+      .toThrow(/duplicate JSON field/);
   });
 
   it("shares CSV coercion and blank-line policy with the Python reader", () => {
@@ -159,5 +162,25 @@ describe("launch monitor flexible analysis", () => {
       { x: 150, y: 3, label: null },
       { x: "0x10", y: 4, label: "hex" },
     ]);
+  });
+
+  it("preflights file suffix and size before reading and decodes UTF-8 fatally", async () => {
+    const unread = {
+      name: "shots.txt", size: 1,
+      arrayBuffer: () => { throw new Error("must not read"); },
+    } as unknown as File;
+    await expect(readLaunchMonitorFile(unread)).rejects.toThrow(/supports CSV and JSON/);
+
+    const oversized = {
+      name: "shots.csv", size: 8 * 1024 * 1024 + 1,
+      arrayBuffer: () => { throw new Error("must not read"); },
+    } as unknown as File;
+    await expect(readLaunchMonitorFile(oversized)).rejects.toThrow(/exceeds .* bytes/);
+
+    const invalidUtf8 = {
+      name: "shots.csv", size: 2,
+      arrayBuffer: async () => new Uint8Array([0xff, 0xfe]).buffer,
+    } as unknown as File;
+    await expect(readLaunchMonitorFile(invalidUtf8)).rejects.toThrow(/valid UTF-8/);
   });
 });

@@ -12,6 +12,7 @@ pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
 from rate_of_closure.launch_monitor_import import (  # noqa: E402
+    MAX_IMPORT_BYTES,
     read_launch_monitor_frame,
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (  # noqa: E402
@@ -168,22 +169,101 @@ def test_import_coercion_and_json_edges_match_browser_policy(tmp_path) -> None:
         read_launch_monitor_frame(unsupported)
 
 
+def test_import_rejects_duplicate_keys_invalid_utf8_and_resource_excess(
+    tmp_path,
+) -> None:
+    duplicate = tmp_path / "duplicate.json"
+    duplicate.write_text('[{"x":1,"x":2,"y":3}]', encoding="utf-8")
+    invalid = tmp_path / "invalid.csv"
+    invalid.write_bytes(b"x,y\n1,\xff\n")
+    oversized = tmp_path / "oversized.json"
+    oversized.write_bytes(b"[" + b" " * MAX_IMPORT_BYTES + b"]")
+
+    with pytest.raises(ValueError, match="Duplicate JSON field"):
+        read_launch_monitor_frame(duplicate)
+    with pytest.raises(ValueError, match="valid UTF-8"):
+        read_launch_monitor_frame(invalid)
+    with pytest.raises(ValueError, match="exceeds .* bytes"):
+        read_launch_monitor_frame(oversized)
+
+    malformed = tmp_path / "malformed.csv"
+    malformed.write_text('x,y\n"unterminated,2', encoding="utf-8")
+    with pytest.raises(ValueError, match="CSV is malformed"):
+        read_launch_monitor_frame(malformed)
+
+    with pytest.raises(ValueError, match="supports CSV and JSON"):
+        read_launch_monitor_frame(tmp_path / "unreadable.txt")
+
+
+def test_successful_dataset_replacement_resets_all_bound_controls(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab()
+    qtbot.addWidget(tab)
+    tab.outcome_combo.setCurrentText("carry_distance")
+    tab.group_combo.setCurrentText("session_id")
+
+    tab.set_frame(
+        pd.DataFrame(
+            {
+                "x": list(range(12)),
+                "y": [value * value + 1 for value in range(12)],
+            }
+        ),
+        "two.csv",
+    )
+
+    assert tab.outcome_combo.currentText() == "x"
+    assert [item.text() for item in tab.predictor_list.selectedItems()] == ["y"]
+    assert tab.group_combo.currentText() == "(none)"
+    assert tab.run_analysis().request.group_by is None
+
+    tab.load_demo()
+    result = tab.run_analysis()
+    assert result.request.outcome == "ball_speed"
+    assert result.request.predictors == ("attack_angle", "club_speed")
+    assert result.request.group_by == "monitor_vendor"
+
+
+def test_failed_programmatic_replacement_preserves_current_dataset(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab()
+    qtbot.addWidget(tab)
+    original = tab.frame.copy()
+    with pytest.raises(ValueError, match="flat scalar"):
+        tab.set_frame(
+            pd.DataFrame(
+                {
+                    "x": [1, 2, 3],
+                    "y": [4, 5, 6],
+                    "nested": [{"bad": 1}, {"bad": 2}, {"bad": 3}],
+                }
+            )
+        )
+    pd.testing.assert_frame_equal(tab.frame, original)
+    assert tab.source_name == "Built-In Demonstration Data"
+
+
 def test_pointer_selection_uses_rendered_pixel_distance(qtbot) -> None:  # type: ignore[no-untyped-def]
     tab = LaunchMonitorAnalyticsTab()
     qtbot.addWidget(tab)
     tab.set_frame(pd.DataFrame({"x": [0.0, 10.0, 5.0], "y": [0.0, 100.0, 50.0]}))
     plan = tab.preview_panel.set_frame(tab.frame, "y", ("x",))
     tab.preview.draw()
+    display_by_raw = {
+        point.raw_index: (tab.preview._plot_x[index], tab.preview._plot_y[index])
+        for index, point in enumerate(plan.points)
+    }
     disagreement = None
-    for x_value in range(11):
-        for y_value in range(0, 101, 5):
+    for x_step in range(-10, 11):
+        for y_step in range(-10, 11):
+            x_value, y_value = x_step / 10, y_step / 10
             pixel = tab.preview._axes.transData.transform((x_value, y_value))
             rendered = min(
                 plan.points,
                 key=lambda point: sum(
                     (left - right) ** 2
                     for left, right in zip(
-                        tab.preview._axes.transData.transform((point.x, point.y)),
+                        tab.preview._axes.transData.transform(
+                            display_by_raw[point.raw_index]
+                        ),
                         pixel,
                         strict=True,
                     )
@@ -192,7 +272,8 @@ def test_pointer_selection_uses_rendered_pixel_distance(qtbot) -> None:  # type:
             normalized = min(
                 plan.points,
                 key=lambda point: (
-                    ((point.x - x_value) / 10) ** 2 + ((point.y - y_value) / 100) ** 2
+                    (display_by_raw[point.raw_index][0] - x_value) ** 2
+                    + (display_by_raw[point.raw_index][1] - y_value) ** 2
                 ),
             )
             if rendered.raw_index != normalized.raw_index:
@@ -205,7 +286,45 @@ def test_pointer_selection_uses_rendered_pixel_distance(qtbot) -> None:  # type:
 
     with qtbot.waitSignal(tab.preview.selection_changed) as blocker:
         tab.preview._select_nearest(
-            SimpleNamespace(xdata=1.0, ydata=1.0, x=pixel_x, y=pixel_y)
+            SimpleNamespace(xdata=0.0, ydata=0.0, x=pixel_x, y=pixel_y)
         )
 
     assert blocker.args == [expected]
+
+
+def test_generation_reset_preserves_external_listener_and_ignores_old_slot(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab()
+    qtbot.addWidget(tab)
+    external: list[object] = []
+    tab.preview.selection_changed.connect(external.append)
+    old_slot = tab.preview_panel._selection_slot
+    assert old_slot is not None
+
+    tab.preview_panel.reset_dataset()
+    old_slot(4)
+    assert tab.preview_panel.selected_raw_index is None
+
+    tab.preview.selection_changed.emit(5)
+    assert external == [5]
+    assert tab.preview_panel.selected_raw_index == 5
+
+
+def test_disjoint_numeric_axes_render_an_honest_empty_pair_state(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab()
+    qtbot.addWidget(tab)
+    frame = pd.DataFrame(
+        {
+            "x": [1.0, 2.0, 3.0, None, None, None],
+            "y": [None, None, None, 4.0, 5.0, 6.0],
+        }
+    )
+
+    plan = tab.preview_panel.set_frame(frame, "y", ("x",))
+
+    assert plan.finite_count == 0
+    assert "Displayed 0 of 0 finite pairs" in tab.preview_status.text()
+    assert any(
+        "No jointly finite pairs" in text.get_text() for text in tab.preview._axes.texts
+    )

@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter extreme/import correction (#4433)
+
+- A shared Python-owned projection golden covers crossing finite maxima,
+  constant maxima, signed zero/subnormal, integer, and near-maximum ULP axes;
+  both surfaces render only bounded finite display coordinates and retain raw
+  values in status.
+- CSV/JSON readers reject unsupported suffixes before reads, cap eight MiB,
+  250,000 rows, 256 union columns, and two million dense cells, decode UTF-8
+  fatally, and reject malformed CSV, duplicate JSON keys, and nonportable
+  scalar values without truncation.
+- Successful dataset replacement resets axes, grouping, selection, result, and
+  error together. Failed imports preserve current evidence; request epochs and
+  captured PyQt generations ignore stale completions/callbacks without
+  disconnecting external listeners. SPEC is 1.16.81; diagnostics remain
+  unapproved and the remaining #4433 work stays open.
+
 ## 2026-08-13 Linked-scatter diagnostic static closure (#4433)
 
 - The selected-state PyQt diagnostic now proves the resolved tab is the exact

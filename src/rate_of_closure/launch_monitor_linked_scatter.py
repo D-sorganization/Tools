@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from numbers import Real
 from typing import Any, Literal
 
 from rate_of_closure.launch_monitor_numeric import finite_launch_monitor_scalar
@@ -36,6 +38,46 @@ class LinkedScatterPlan:
     displayed_count: int
     selected_raw_index: int | None
     points: tuple[LinkedScatterPoint, ...]
+
+
+@dataclass(frozen=True)
+class PlotAxisProjection:
+    """Overflow-safe normalized positions plus their declared raw scale."""
+
+    coordinates: tuple[float, ...]
+    scale: float
+
+
+def project_plot_axis(values: Sequence[object]) -> PlotAxisProjection:
+    """Map finite values to [-1, 1] without subtracting extreme raw values."""
+    if not values:
+        raise ValueError("plot axis values must be a nonempty float sequence")
+    numeric_values: list[float] = []
+    try:
+        for value in values:
+            if isinstance(value, bool) or not isinstance(value, Real):
+                raise ValueError("plot axis values must be finite numbers")
+            numeric_values.append(float(value))
+    except OverflowError as error:
+        raise ValueError("plot axis values must be finite") from error
+    numeric = tuple(numeric_values)
+    if any(not math.isfinite(value) for value in numeric):
+        raise ValueError("plot axis values must be finite")
+    scale = max(abs(value) for value in numeric)
+    if scale == 0:
+        return PlotAxisProjection(tuple(0.0 for _ in numeric), 1.0)
+    low, high = min(numeric), max(numeric)
+    if low == high:
+        return PlotAxisProjection(tuple(0.0 for _ in values), scale)
+    if low < 0 < high:
+        basis = tuple(value / scale for value in numeric)
+    else:
+        basis = numeric
+    basis_low, basis_high = min(basis), max(basis)
+    span = basis_high - basis_low
+    return PlotAxisProjection(
+        tuple(2 * ((value - basis_low) / span) - 1 for value in basis), scale
+    )
 
 
 def _text(value: object) -> str | None:
@@ -142,8 +184,11 @@ def navigate_linked_scatter(
 __all__ = [
     "LinkedScatterPlan",
     "LinkedScatterPoint",
+    "PlotAxisProjection",
     "MAX_DISPLAY_POINTS",
     "MAX_RETAINED_ROWS",
+    "NavigationCommand",
     "navigate_linked_scatter",
     "plan_linked_scatter",
+    "project_plot_axis",
 ]

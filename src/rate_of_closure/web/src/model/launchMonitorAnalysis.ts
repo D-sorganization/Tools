@@ -11,7 +11,7 @@ import {
   type LaunchMonitorRow,
 } from "./launchMonitorAnalysisTypes";
 
-export { parseLaunchMonitorFile } from "./launchMonitorFileParsing";
+export { parseLaunchMonitorFile, readLaunchMonitorFile } from "./launchMonitorFileParsing";
 export { sha256Text } from "./launchMonitorFingerprint";
 export { LAUNCH_MONITOR_ANALYSIS_CONTRACT_VERSION } from "./launchMonitorAnalysisTypes";
 export type {

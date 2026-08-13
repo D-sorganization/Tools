@@ -4,6 +4,7 @@ import type { LaunchMonitorRow } from "../model/launchMonitorAnalysis";
 import {
   navigateLinkedScatter,
   planLinkedScatter,
+  projectPlotAxis,
   type LinkedScatterPlan,
   type LinkedScatterPoint,
 } from "../model/launchMonitorLinkedScatter";
@@ -11,18 +12,14 @@ import {
 const WIDTH = 640; const HEIGHT = 250;
 const LEFT = 52; const TOP = 18; const PLOT_WIDTH = 568; const PLOT_HEIGHT = 197;
 
-const range = (values: readonly number[]): [number, number] => {
-  const low = Math.min(...values); const high = Math.max(...values);
-  return low === high ? [low - 0.5, high + 0.5] : [low, high];
-};
-
 const coordinates = (plan: LinkedScatterPlan) => {
-  const [xMin, xMax] = range(plan.points.map((point) => point.x));
-  const [yMin, yMax] = range(plan.points.map((point) => point.y));
-  return plan.points.map((point) => ({
+  if (plan.points.length === 0) return [];
+  const x = projectPlotAxis(plan.points.map((point) => point.x));
+  const y = projectPlotAxis(plan.points.map((point) => point.y));
+  return plan.points.map((point, index) => ({
     point,
-    cx: LEFT + (point.x - xMin) / (xMax - xMin) * PLOT_WIDTH,
-    cy: TOP + (yMax - point.y) / (yMax - yMin) * PLOT_HEIGHT,
+    cx: LEFT + (x.coordinates[index] + 1) / 2 * PLOT_WIDTH,
+    cy: TOP + (1 - y.coordinates[index]) / 2 * PLOT_HEIGHT,
   }));
 };
 
@@ -82,8 +79,13 @@ export function LaunchMonitorLinkedScatter({
     event.preventDefault();
     onSelectedRawIndex(navigateLinkedScatter(plan, selectedRawIndex, command));
   };
-  if (!axesValid || plan.finiteCount < 2) {
+  if (!axesValid) {
     return <p className="text-sm text-slate-500">Select two populated variables.</p>;
+  }
+  if (plan.finiteCount < 2) {
+    return <p className="text-sm text-slate-500">
+      Selected variables need at least two jointly finite pairs ({plan.finiteCount} available).
+    </p>;
   }
   return <div>
     <p id="linked-scatter-instructions" className="mb-2 text-xs text-slate-400">
