@@ -18,6 +18,8 @@ const CANONICAL_COMMAND_IDS = [
   "file.import_workspace",
   "file.export_workspace",
   "file.close_workspace",
+  "file.open_regional_ground_variation_request",
+  "file.save_regional_ground_variation_request_as",
   "view.manage_modules",
   "view.restore_default_workspace",
   "view.show_impact",
@@ -53,7 +55,10 @@ describe("application command registry", () => {
   });
 
   it("keeps unavailable workspace-document commands truthfully disabled", () => {
-    const fileCommands = APP_COMMANDS.filter(({ group }) => group === "file");
+    const fileCommands = APP_COMMANDS.filter(({ group, id }) =>
+      group === "file" && id !== APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest &&
+      id !== APP_COMMAND_ID.fileSaveRegionalGroundVariationRequestAs,
+    );
     expect(fileCommands).toHaveLength(8);
     expect(fileCommands.every(({ enabled }) => !enabled)).toBe(true);
     expect(fileCommands.every(({ disabledReason }) =>

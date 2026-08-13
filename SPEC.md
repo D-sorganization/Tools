@@ -42,6 +42,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -108,6 +109,10 @@
 | **Current Version**     | 1.14.58                                    |
 | **Spec Version**        | 1.14.58                                    |
 >>>>>>> origin/codex/4273-ground-variation-file-ui
+=======
+| **Current Version**     | 1.14.63                                    |
+| **Spec Version**        | 1.14.63                                    |
+>>>>>>> origin/codex/4369-regional-ground-execution-job
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -139,6 +144,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
@@ -151,6 +157,50 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 =======
 =======
 =======
+=======
+### 2026-08-11 Regional-Ground Scalar Result Import
+
+- React can strictly import the two Python-owned regional
+  `scalar-ensemble/v1` result adapters without reimplementing flight, bounce,
+  skid, roll, or regional-surface physics. The adapter reuses the shared scalar
+  ensemble contract and regional execution evidence types.
+- The import boundary preserves the exact schema, model/provenance and input
+  digests, definitions, units, categories, stages, series identity, trial
+  order, cohorts, and censored outcomes. Partial, failed, cancelled, and
+  unavailable numeric outputs remain typed nulls and are never promoted to
+  zero.
+- A Python-produced four-cohort golden fixture is asserted by Python and
+  React. Strict JSON, field, identity, digest, finite-number, safe-integer,
+  Boolean, Unicode-surrogate, row-count, encoded-size, and fatal UTF-8 checks
+  fail closed. Browser file metadata is checked before reading but is not
+  trusted; the returned buffer is independently bounded.
+- This import-only slice accepts at most 100,000 rows and 8 MiB of encoded
+  JSON. It adds no browser physics, Run claim, result workspace, persistence,
+  overlay variation, solver/capability or wind integration, compiled-runtime
+  parity, downstream integration, protected evidence, or release.
+
+### 2026-08-11 Contextual Regional-Ground Variation File Controls
+
+- React and PyQt6 expose the same stable Open and Save As command IDs only
+  while Variation or Ground Surfaces is active. Both clients use the existing
+  App-owned combined request and Python application persistence contracts;
+  neither introduces a parallel workspace or physics model.
+- React strictly parses and canonically serializes the exact v1 envelope under
+  its 1 MiB UTF-8 bound. A Python-produced fixture is asserted by both
+  runtimes. Browser import applies only after complete validation and reports
+  failures accessibly. Download text explains that the browser controls the
+  destination, replacement, recent-file, and atomicity behavior.
+- PyQt6 native Open validates before either editor changes. Save validates the
+  current combined snapshot before showing a chooser and delegates to the
+  existing atomic writer. Cancellation changes nothing. An exact imported
+  request remains authoritative until either owning editor changes.
+- The disclosed illustrative regional draft cannot be saved until explicitly
+  validated. A valid wire plan outside the PyQt editor's run-count capacity is
+  rejected before mutation. This slice does not run physics or complete
+  pipeline, overlay, solver/capability, wind, compiled-runtime, downstream,
+  protected-release, #4273, or #4267 work.
+
+>>>>>>> origin/codex/4369-regional-ground-execution-job
 ### 2026-08-11 React Regional-Ground Variation Workspace Ownership
 
 - One App-owned reducer now retains the complete physical variation-plan
@@ -3308,6 +3358,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3325,6 +3376,13 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.63 | docs(ground-study, #4369): record that composed execution-job, complete-only batch-control, and browser result-import prerequisites remain non-executable until exact flight-profile/digest qualification, skid/roll settings and executor revision binding, launch-origin regional-surface translation, orchestration semantics, job-bound result evidence, cancellable Python authority, loopback host, and matched client controllers are implemented and tested. |
+| 2026-08-11 | 1.14.62 | feat(ground-study, #4369): add a strict bounded React import-only adapter for the two Python-owned regional `scalar-ensemble/v1` result variants; preserve exact schema, provenance/model/input digests, definitions, units, categories, stages, ordered identities, cohorts, and censored typed nulls; add a Python-produced four-cohort golden fixture asserted by both runtimes; reject duplicate/extra/version/nonfinite/unsafe/Boolean/surrogate/oversize/fatal-UTF-8 and forged identity/evidence inputs; retain browser physics, Run claims, result UI/persistence, overlays, solver/capability and wind integration, compiled/downstream parity, protected evidence, and release as open. |
+| 2026-08-11 | 1.14.61 | feat(ground-study, #4369 #4273 #4267): add a UI-neutral Python execution-control boundary for seeded regional-ground variation with immutable exact completed/total progress, cooperative cancellation immediately before and after every injected executor call, typed cancellation/executor/callback/publication terminal failures, and complete-only scalar-ensemble publication; preserve the existing executor signature, deterministic seed/trial identities, and byte-identical successful output while retaining job-to-executor binding, matched UI controllers, browser-capable qualified physics, result import/workspace integration, protected release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.60 | feat(ground-study, #4369 #4273 #4267): add a strict UI-neutral 1 MiB Python/TypeScript `regional-ground-execution-job/v1` authority with one shared canonical fixture; bind exact launch/ball setup, flight model/settings and trajectory/result digests, transfer surface/settings identity, capture and bounded orchestration controls, the existing seeded regional request, plus recomputed input/job digests; reject cross-contract model or launch-relative surface drift while retaining actual executor invocation, result/cancellation evidence, variable-wind scenario wire, UI execution, compiled/downstream parity, protected release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.59 | feat(ground-study, #4273): bind contextual React and PyQt6 Open/Save As commands to the App-owned seeded regional-ground request; add strict TypeScript v1 parsing and Python-parity canonical serialization, a shared golden payload, bounded transactional browser import, truthful browser download semantics, visible failures, native validate-before-dialog atomic persistence, exact-import retention until editor change, explicit illustrative-draft rejection, and cancel-safe dialogs; retain physics invocation, overlay variation, solver/capability and wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
+>>>>>>> origin/codex/4369-regional-ground-execution-job
 | 2026-08-11 | 1.14.58 | feat(ground-study, #4273): lift the React variation plan, execution policy, regional draft, and exact imported evidence into one App-owned transactional workspace; make both panels controlled across navigation; expose a typed compose/apply request port; register the two inspectable ground inputs while failing closed before unsupported scalar-browser execution; retain File controls, PyQt wiring, browser persistence, pipeline integration, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.57 | feat(ground-study, #4273): add strict canonical bounded seeded regional-ground request persistence without UI or physics. |
 >>>>>>> origin/codex/4273-ground-variation-file-ui

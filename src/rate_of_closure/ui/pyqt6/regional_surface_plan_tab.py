@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QComboBox,
     QFormLayout,
@@ -45,11 +46,14 @@ from shared.python.swing_sim.ground.regional_plan_records import (
 class RegionalSurfacePlanTab(QWidget):
     """Session-only regional surface editor with strict canonical readback."""
 
+    requestChanged = pyqtSignal()  # noqa: N815 - Qt convention
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._rows: list[RegionalOverlayRow] = []
         self._initial = illustrative_regional_surface_plan_draft()
         self._imported_request: GroundRegionalMaterialPlanRequest | None = None
+        self._validated_request: GroundRegionalMaterialPlanRequest | None = None
         self.file_actions = RegionalSurfacePlanFileActions(self, self)
         self._build_ui()
         self._connect_static_changes()
@@ -80,10 +84,12 @@ class RegionalSurfacePlanTab(QWidget):
 
     def _mark_dirty(self) -> None:
         """Remove stale validation evidence after any draft mutation."""
+        self._validated_request = None
         self.status_label.setText("Changes not validated")
         self.status_label.setAccessibleName("Regional surface plan validation pending")
         self.readback.clear()
         self.execution_evidence.clear()
+        self.requestChanged.emit()
 
     def _build_ui(self) -> None:
         """Build the scrollable form and always-visible validation output."""
@@ -283,6 +289,12 @@ class RegionalSurfacePlanTab(QWidget):
             self.draft(), self._imported_request
         )
 
+    def validated_request(self) -> GroundRegionalMaterialPlanRequest:
+        """Return explicit validation evidence, never the illustrative default."""
+        if self._validated_request is None:
+            raise ValueError("regional plan must be explicitly validated before saving")
+        return self._validated_request
+
     def apply_imported_request(
         self, request: GroundRegionalMaterialPlanRequest
     ) -> None:
@@ -301,6 +313,7 @@ class RegionalSurfacePlanTab(QWidget):
             self._append_row(region)
         self._update_row_actions()
         self._imported_request = request
+        self._validated_request = request
 
     def validate_plan(self) -> None:
         """Validate through the strict contract and render canonical readback."""
@@ -318,6 +331,7 @@ class RegionalSurfacePlanTab(QWidget):
         )
         self.status_label.setAccessibleName("Regional surface plan validation success")
         self.readback.setPlainText(request.to_json())
+        self._validated_request = request
 
 
 __all__ = ["RegionalSurfacePlanTab"]

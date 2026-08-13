@@ -22,6 +22,9 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.application.commands import AppCommandId, CommandAvailability
+from rate_of_closure.ui.pyqt6.regional_ground_file_menu import (
+    RegionalGroundFileCommandGroup,
+)
 from rate_of_closure.ui.pyqt6.workspace_navigation import PrimaryModuleEntry
 
 _PROJECT_DISABLED_REASON = (
@@ -47,6 +50,12 @@ class ToolstripHost(Protocol):
 
     def restore_default_workspace(self) -> None:
         """Restore the declared workspace defaults."""
+
+    def open_regional_ground_variation_request(self) -> None:
+        """Open a combined seeded regional-ground request."""
+
+    def save_regional_ground_variation_request_as(self) -> None:
+        """Save the combined current request to a chosen native path."""
 
 
 class ModuleManagerHost(Protocol):
@@ -76,6 +85,9 @@ class ApplicationToolstrip(QToolBar):
         self.setFloatable(False)
         self._host = host
         self._actions: dict[AppCommandId, QAction] = {}
+        self._regional_ground_files = RegionalGroundFileCommandGroup(
+            host, self, self._actions
+        )
         self._shortcut_dialog: QDialog | None = None
         self._tools_menu = QMenu("Tools", self)
         self._theme_button = self._make_theme_button()
@@ -105,6 +117,10 @@ class ApplicationToolstrip(QToolBar):
         placeholder.setVisible(False)
         self._apply_availability(placeholder, CommandAvailability.available())
         self._tools_menu.addMenu(menu)
+
+    def set_active_module(self, module_id: str) -> None:
+        """Enable combined request commands only in their relevant modules."""
+        self._regional_ground_files.set_active_module(module_id)
 
     def show_shortcut_help(self) -> None:
         """Show every supported application shortcut in one modeless dialog."""
@@ -137,6 +153,8 @@ class ApplicationToolstrip(QToolBar):
     def _build(self) -> None:
         """Assemble the top-level command groups and direct actions."""
         file_menu = QMenu("File", self)
+        self._regional_ground_files.add_to(file_menu)
+        file_menu.addSeparator()
         self._add_disabled_file_commands(file_menu)
         self._add_menu_button("File", "fileMenuButton", file_menu)
         self._build_view_menu()

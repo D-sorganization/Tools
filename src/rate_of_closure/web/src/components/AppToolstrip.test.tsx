@@ -3,6 +3,9 @@ import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { APP_COMMAND_ID } from "../model/appCommands";
+import goldenRequest from "../model/__fixtures__/regional_ground_variation_request_golden_v1.json";
+import { regionalGroundVariationRequestFromJson } from "../model/regionalGroundVariationRequestWire";
+import type { RegionalGroundVariationRequestPort } from "../model/regionalGroundVariationWorkspace";
 import {
   DEFAULT_PRIMARY_VIEW_STATE,
   type PrimaryViewState,
@@ -13,6 +16,7 @@ afterEach(cleanup);
 
 const renderToolstrip = (
   state: PrimaryViewState = DEFAULT_PRIMARY_VIEW_STATE,
+  requestPort?: RegionalGroundVariationRequestPort,
 ) => {
   const onStateChange = vi.fn();
   const onCommand = vi.fn();
@@ -25,6 +29,7 @@ const renderToolstrip = (
         shortcutHelpOpen={shortcutHelpOpen}
         onModuleStateChange={onStateChange}
         onCommand={onCommand}
+        regionalGroundVariationRequestPort={requestPort}
         onShortcutHelpOpenChange={setShortcutHelpOpen}
       />
     );
@@ -32,6 +37,14 @@ const renderToolstrip = (
   render(<Harness />);
   return { onCommand, onStateChange };
 };
+
+const requestPort = (): RegionalGroundVariationRequestPort => ({
+  snapshot: vi.fn(() => regionalGroundVariationRequestFromJson(JSON.stringify(goldenRequest))),
+  apply: vi.fn(),
+});
+
+const fileBytes = (text: string): ArrayBuffer =>
+  Uint8Array.from(new TextEncoder().encode(text)).buffer;
 
 describe("AppToolstrip", () => {
   it("exposes responsive File, View, and Tools command surfaces", () => {
@@ -103,5 +116,107 @@ describe("AppToolstrip", () => {
       APP_COMMAND_ID.viewShowSwing,
       APP_COMMAND_ID.viewShowFlight,
     ]);
+  });
+
+  it.each(["variation", "regional-surfaces"] as const)(
+    "exposes contextual combined request controls in %s",
+    (active) => {
+      const port = requestPort();
+      renderToolstrip({ ...DEFAULT_PRIMARY_VIEW_STATE, active }, port);
+
+      fireEvent.click(screen.getByText("File"));
+      expect(screen.getByRole("button", {
+        name: "Open Regional-Ground Variation Request",
+      })).toBeEnabled();
+      expect(screen.getByRole("button", {
+        name: "Save Regional-Ground Variation Request As",
+      })).toBeEnabled();
+    },
+  );
+
+  it("keeps combined request controls out of unrelated modules", () => {
+    renderToolstrip(DEFAULT_PRIMARY_VIEW_STATE, requestPort());
+    fireEvent.click(screen.getByText("File"));
+
+    expect(screen.queryByRole("button", {
+      name: "Open Regional-Ground Variation Request",
+    })).not.toBeInTheDocument();
+  });
+
+  it("imports only a completely valid selected request and treats no file as cancel", async () => {
+    const port = requestPort();
+    const { onCommand } = renderToolstrip(
+      { ...DEFAULT_PRIMARY_VIEW_STATE, active: "variation" }, port,
+    );
+    fireEvent.click(screen.getByText("File"));
+    fireEvent.click(screen.getByRole("button", {
+      name: "Open Regional-Ground Variation Request",
+    }));
+    expect(onCommand).toHaveBeenCalledWith(
+      APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest,
+    );
+    const input = screen.getByLabelText("Open Regional-Ground Variation Request file");
+
+    fireEvent.change(input, { target: { files: [] } });
+    expect(port.apply).not.toHaveBeenCalled();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    const duplicate = JSON.stringify(goldenRequest)
+      .replace('"max_rows":8', '"max_rows":8,"max_rows":9');
+    fireEvent.change(input, { target: { files: [{
+      name: "invalid.json", size: duplicate.length,
+      arrayBuffer: vi.fn().mockResolvedValue(fileBytes(duplicate)),
+    }] } });
+    expect(await screen.findByRole("alert")).toHaveTextContent(/duplicate/i);
+    expect(port.apply).not.toHaveBeenCalled();
+
+    const text = JSON.stringify(goldenRequest);
+    fireEvent.change(input, { target: { files: [{
+      name: "valid.json", size: text.length,
+      arrayBuffer: vi.fn().mockResolvedValue(fileBytes(text)),
+    }] } });
+    expect(await screen.findByRole("status")).toHaveTextContent(/imported valid.json/i);
+    expect(port.apply).toHaveBeenCalledOnce();
+  });
+
+  it("downloads canonical bytes with truthful browser semantics", () => {
+    const createUrl = vi.fn(() => "blob:combined-request");
+    const revokeUrl = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createUrl });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: revokeUrl });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const port = requestPort();
+    renderToolstrip({ ...DEFAULT_PRIMARY_VIEW_STATE, active: "regional-surfaces" }, port);
+    fireEvent.click(screen.getByText("File"));
+
+    fireEvent.click(screen.getByRole("button", {
+      name: "Save Regional-Ground Variation Request As",
+    }));
+
+    expect(port.snapshot).toHaveBeenCalledOnce();
+    expect(createUrl).toHaveBeenCalledOnce();
+    expect(click).toHaveBeenCalledOnce();
+    expect(revokeUrl).toHaveBeenCalledWith("blob:combined-request");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      /browser controls the destination and overwrite behavior/i,
+    );
+  });
+
+  it("shows snapshot failures and does not start a browser download", () => {
+    const createUrl = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createUrl });
+    const port: RegionalGroundVariationRequestPort = {
+      snapshot: vi.fn(() => { throw new RangeError("explicit regional evidence required"); }),
+      apply: vi.fn(),
+    };
+    renderToolstrip({ ...DEFAULT_PRIMARY_VIEW_STATE, active: "variation" }, port);
+    fireEvent.click(screen.getByText("File"));
+
+    fireEvent.click(screen.getByRole("button", {
+      name: "Save Regional-Ground Variation Request As",
+    }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/explicit regional evidence required/i);
+    expect(createUrl).not.toHaveBeenCalled();
   });
 });

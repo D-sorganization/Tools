@@ -127,7 +127,10 @@ const validateGroundPlan = (
   }
 };
 
-const validateRequest = (request: RegionalGroundVariationRequestTs): void => {
+/** Validate a complete combined request without changing workspace state. */
+export const validateRegionalGroundVariationRequest = (
+  request: RegionalGroundVariationRequestTs,
+): void => {
   nonblank(request.resultId, "resultId");
   nonblank(request.sourceProvenance, "sourceProvenance");
   if (!Number.isInteger(request.maxRows) || request.maxRows < 1 ||
@@ -170,7 +173,7 @@ export const composeRegionalGroundVariationRequest = (
     ),
     ...state.requestIdentity,
   };
-  validateRequest(request);
+  validateRegionalGroundVariationRequest(request);
   return request;
 };
 
@@ -179,7 +182,7 @@ export const applyRegionalGroundVariationRequest = (
   previous: RegionalGroundVariationWorkspaceState,
   request: RegionalGroundVariationRequestTs,
 ): RegionalGroundVariationWorkspaceState => {
-  validateRequest(request);
+  validateRegionalGroundVariationRequest(request);
   const draft = editorDraftFromGroundRegionalSurfacePlanRequest(request.regionalPlan);
   return {
     ...previous,

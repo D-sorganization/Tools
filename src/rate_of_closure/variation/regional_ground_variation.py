@@ -15,17 +15,9 @@ from rate_of_closure.variation.regional_ground_study_adapter import (
     RegionalGroundStudyOutcome,
     build_regional_ground_study_ensemble,
 )
-from rate_of_closure.variation.scalar_ensemble_contract import (
-    ScalarEnsembleDataset,
-    ScalarEnsembleProvenance,
-    ScalarEnsembleRow,
-    ScalarEnsembleStage,
-    ScalarVariableCategory,
-    ScalarVariableDefinition,
-)
+from rate_of_closure.variation.scalar_ensemble_contract import ScalarEnsembleDataset
 from shared.python.contracts import require
 from shared.python.swing_sim.flight import (
-    FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION,
     FlightGroundTransferError,
     FlightRegionalGroundPipelineResult,
 )
@@ -38,61 +30,68 @@ from shared.python.swing_sim.ground.regional_plan_records import (
 )
 from shared.python.swing_sim.variation.engine import sample_inputs
 from shared.python.swing_sim.variation.registry import (
-    CATEGORY_LAUNCH,
-    VariableDef,
     register_variable,
     variable_registry,
 )
 from shared.python.swing_sim.variation.spec import (
-    SCHEMA_VERSION,
     NoiseSpec,
     VariationPlan,
 )
 
-GROUND_NORMAL_RESTITUTION_KEY = f"{CATEGORY_LAUNCH}.ground_normal_restitution"
-GROUND_ROLLING_RESISTANCE_KEY = f"{CATEGORY_LAUNCH}.ground_rolling_resistance"
-INPUT_NORMAL_RESTITUTION_KEY = "input.ground.base.normal_restitution"
-INPUT_ROLLING_RESISTANCE_KEY = "input.ground.base.rolling_resistance"
+from .regional_ground_variation_control import (
+    GroundRegionalVariationCancelled as GroundRegionalVariationCancelled,
+)
+from .regional_ground_variation_control import (
+    GroundRegionalVariationFailed as GroundRegionalVariationFailed,
+)
+from .regional_ground_variation_control import (
+    GroundRegionalVariationFailureStage as GroundRegionalVariationFailureStage,
+)
+from .regional_ground_variation_control import (
+    GroundRegionalVariationHooks,
+)
+from .regional_ground_variation_control import (
+    GroundRegionalVariationProgress as GroundRegionalVariationProgress,
+)
+from .regional_ground_variation_control import (
+    GroundRegionalVariationTerminalError as GroundRegionalVariationTerminalError,
+)
+from .regional_ground_variation_dataset import (
+    GROUND_NORMAL_RESTITUTION_KEY as GROUND_NORMAL_RESTITUTION_KEY,
+)
+from .regional_ground_variation_dataset import (
+    GROUND_ROLLING_RESISTANCE_KEY as GROUND_ROLLING_RESISTANCE_KEY,
+)
+from .regional_ground_variation_dataset import (
+    INPUT_NORMAL_RESTITUTION_KEY as INPUT_NORMAL_RESTITUTION_KEY,
+)
+from .regional_ground_variation_dataset import (
+    INPUT_ROLLING_RESISTANCE_KEY as INPUT_ROLLING_RESISTANCE_KEY,
+)
+from .regional_ground_variation_dataset import (
+    REGIONAL_GROUND_VARIATION_ADAPTER_ID,
+    REGIONAL_GROUND_VARIATION_PRODUCER_VERSION,
+    VARIABLE_DEFINITIONS,
+    augment_regional_ground_variation_dataset,
+)
+from .regional_ground_variation_execution import (
+    CompleteBatchExecution,
+    execute_complete_batch,
+)
 
-REGIONAL_GROUND_VARIATION_ADAPTER_ID = "regional-ground-variation/scalar-ensemble/v1"
-REGIONAL_GROUND_VARIATION_PRODUCER_VERSION = "1.0.0"
-_INPUT_STAGE = ScalarEnsembleStage("ground_input", "Ground Material Input")
-_INPUT_CATEGORY = ScalarVariableCategory("ground_parameter", "Ground Parameter")
 _SUPPORTED_KEYS = frozenset(
     (GROUND_NORMAL_RESTITUTION_KEY, GROUND_ROLLING_RESISTANCE_KEY)
 )
-_OUTPUT_KEYS = {
-    GROUND_NORMAL_RESTITUTION_KEY: INPUT_NORMAL_RESTITUTION_KEY,
-    GROUND_ROLLING_RESISTANCE_KEY: INPUT_ROLLING_RESISTANCE_KEY,
-}
 _FIELD_NAMES = {
     GROUND_NORMAL_RESTITUTION_KEY: "normal_restitution",
     GROUND_ROLLING_RESISTANCE_KEY: "rolling_resistance",
 }
-_VARIABLE_DEFINITIONS = (
-    VariableDef(
-        GROUND_NORMAL_RESTITUTION_KEY,
-        "Restitution",
-        "1",
-        0.4,
-        0.05,
-        "Base-surface normal restitution.",
-    ),
-    VariableDef(
-        GROUND_ROLLING_RESISTANCE_KEY,
-        "Rolling Resistance",
-        "1",
-        0.04,
-        0.01,
-        "Base-surface rolling resistance.",
-    ),
-)
 
 
 def register_ground_variation_variables() -> None:
     """Register the adapter inputs through the shared extension seam."""
     registry = variable_registry()
-    for definition in _VARIABLE_DEFINITIONS:
+    for definition in VARIABLE_DEFINITIONS:
         existing = registry.get(definition.key)
         if existing is None:
             register_variable(definition)
@@ -304,89 +303,11 @@ def _validate_outcome(
     return outcome
 
 
-def _input_variables(plan: VariationPlan) -> tuple[ScalarVariableDefinition, ...]:
-    definitions = {item.key: item for item in _VARIABLE_DEFINITIONS}
-    return tuple(
-        ScalarVariableDefinition(
-            _OUTPUT_KEYS[spec.variable_key],
-            definitions[spec.variable_key].label,
-            definitions[spec.variable_key].unit,
-            _INPUT_STAGE.key,
-            _INPUT_CATEGORY.key,
-        )
-        for spec in plan.noise
-    )
-
-
-def _augmented_rows(
-    dataset: ScalarEnsembleDataset,
-    trials: tuple[GroundRegionalVariationTrial, ...],
-    plan: VariationPlan,
-) -> tuple[ScalarEnsembleRow, ...]:
-    rows = []
-    for row, trial in zip(dataset.rows, trials, strict=True):
-        values = dict(row.values)
-        for spec in plan.noise:
-            values[_OUTPUT_KEYS[spec.variable_key]] = trial.sampled_values[
-                spec.variable_key
-            ]
-        attributes = {} if row.attributes is None else dict(row.attributes)
-        attributes.update(
-            {
-                "variation_seed": str(plan.seed),
-                "variation_trial_index": str(trial.trial_index),
-                "variation_input_sha256": trial.input_sha256,
-                "variation_regional_plan_sha256": regional_plan_request_sha256(
-                    trial.regional_plan
-                ),
-            }
-        )
-        rows.append(replace(row, values=values, attributes=attributes))
-    return tuple(rows)
-
-
-def _augment_dataset(
-    dataset: ScalarEnsembleDataset,
+def _publish_complete_dataset(
     request: GroundRegionalVariationRequest,
     trials: tuple[GroundRegionalVariationTrial, ...],
+    outcomes: tuple[RegionalGroundStudyOutcome, ...],
 ) -> ScalarEnsembleDataset:
-    source_schema = (
-        f"variation-plan/v{SCHEMA_VERSION}+"
-        f"{FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION}"
-    )
-    return ScalarEnsembleDataset(
-        dataset.schema_version,
-        dataset.result_id,
-        ScalarEnsembleProvenance(
-            REGIONAL_GROUND_VARIATION_ADAPTER_ID,
-            source_schema,
-            request.source_provenance,
-        ),
-        (_INPUT_STAGE, *dataset.stages),
-        (_INPUT_CATEGORY, *dataset.categories),
-        (*_input_variables(request.plan), *dataset.variables),
-        dataset.cohorts,
-        _augmented_rows(dataset, trials, request.plan),
-    )
-
-
-def run_regional_ground_variation(
-    request: GroundRegionalVariationRequest,
-    executor: Callable[[GroundRegionalVariationTrial], RegionalGroundStudyOutcome],
-) -> ScalarEnsembleDataset:
-    """Execute deterministic sampled plans and retain qualified nullable metrics.
-
-    Args:
-        request: Exact validated study request.
-        executor: Injected owner of the flight-through-ground physics pipeline.
-    """
-    require(
-        type(request) is GroundRegionalVariationRequest,
-        "request must be an exact GroundRegionalVariationRequest",
-    )
-    require(callable(executor), "executor must be callable")
-    trials = _trials(request)
-    outcomes = tuple(_validate_outcome(trial, executor(trial)) for trial in trials)
     dataset = build_regional_ground_study_ensemble(
         outcomes,
         request.result_id,
@@ -394,4 +315,25 @@ def run_regional_ground_variation(
         request.max_rows,
         series_id=request.series_id,
     )
-    return _augment_dataset(dataset, request, trials)
+    return augment_regional_ground_variation_dataset(dataset, request, trials)
+
+
+def run_regional_ground_variation(
+    request: GroundRegionalVariationRequest,
+    executor: Callable[[GroundRegionalVariationTrial], RegionalGroundStudyOutcome],
+    hooks: GroundRegionalVariationHooks | None = None,
+) -> ScalarEnsembleDataset:
+    """Publish one complete deterministic dataset or typed terminal error."""
+    require(
+        type(request) is GroundRegionalVariationRequest,
+        "request must be an exact GroundRegionalVariationRequest",
+    )
+    require(callable(executor), "executor must be callable")
+    trials = _trials(request)
+    job = CompleteBatchExecution(
+        trials,
+        executor,
+        _validate_outcome,
+        lambda outcomes: _publish_complete_dataset(request, trials, outcomes),
+    )
+    return execute_complete_batch(job, hooks)

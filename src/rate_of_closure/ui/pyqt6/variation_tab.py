@@ -67,6 +67,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
     #: Emitted with the VariationDataset after a successful study
     #: (#4125 H7b: the course view overlays the landing scatter).
     studyCompleted = pyqtSignal(object)  # noqa: N815 — Qt convention
+    planChanged = pyqtSignal()  # noqa: N815 — Qt convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -119,6 +120,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             "or direct launch conditions into ball flight only."
         )
         self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
+        self._mode_combo.currentIndexChanged.connect(self.planChanged)
         form.addRow("Pipeline", self._mode_combo)
 
         self._base_combo = QComboBox()
@@ -128,6 +130,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             "defaults, or the current explorer scenario (clubhead speed "
             "and impact offsets carried over in delivery mode)."
         )
+        self._base_combo.currentIndexChanged.connect(self.planChanged)
         form.addRow("Base Scenario", self._base_combo)
 
         self._flight_combo = QComboBox()
@@ -137,6 +140,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             "Ball-flight model used for every run (kept on the plan so a "
             "saved study replays identically)."
         )
+        self._flight_combo.currentIndexChanged.connect(self.planChanged)
         form.addRow("Flight Model", self._flight_combo)
 
         self._runs_spin = QSpinBox()
@@ -147,6 +151,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             "well; the sensitivity pass repeats this count once per "
             "noise row."
         )
+        self._runs_spin.valueChanged.connect(self.planChanged)
         form.addRow("Runs", self._runs_spin)
 
         self._seed_spin = QSpinBox()
@@ -156,6 +161,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             "Master RNG seed — the same plan and seed always reproduce "
             "the exact same dataset (per-variable seeded streams)."
         )
+        self._seed_spin.valueChanged.connect(self.planChanged)
         form.addRow("Seed", self._seed_spin)
         return box
 
@@ -265,9 +271,11 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
 
     def _add_row(self) -> NoiseRow:
         row = NoiseRow(self.mode(), self._remove_row)
+        row.changed.connect(self.planChanged)
         self._rows.append(row)
         # Insert above the trailing "Add Variable" button.
         self._rows_layout.insertWidget(self._rows_layout.count() - 1, row)
+        self.planChanged.emit()
         return row
 
     def _remove_row(self, row: NoiseRow) -> None:
@@ -277,6 +285,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         self._rows.remove(row)
         row.setParent(None)
         row.deleteLater()
+        self.planChanged.emit()
 
     def _on_mode_changed(self, *_args: object) -> None:
         self._loaded_base.clear()

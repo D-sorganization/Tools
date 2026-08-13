@@ -1,5 +1,162 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 qualification audit after prerequisite composition
+
+The composed local head `915c80f38` is a contract/control/parser prerequisite,
+not a qualified executable authority. A real Waterloo/Penner recomputation did
+not match the execution-job golden fixture's synthetic flight trajectory/result
+digests, so that fixture remains serialization evidence only. The job also does
+not yet bind the physical skid/roll settings or executor revision, implement
+every declared orchestration option, or bind a completed scalar ensemble back
+to the job/input digests. Current editors express regional surfaces at zero
+height, while a teed launch requires an explicit launch-origin translation of
+the base and every overlay with provenance rebinding. Keep Run disabled until
+an exact Python model/profile registry, coordinate qualification adapter,
+complete-result envelope, cancellable authority, loopback host, and matched
+PyQt/React controllers prove these invariants end to end.
+
+## 2026-08-11 local #4369 regional-ground batch progress and cancellation
+
+The unpublished `codex/4369-regional-ground-execution-job` continuation starts
+from exact local execution-job contract commit
+`a5a1b99bfa6cb6400bc18b13139d7893471824f4`. It extends only the existing
+Python `run_regional_ground_variation()` application seam; it does not bind the
+new job envelope to launch/flight/ground execution and changes no physics.
+
+`GroundRegionalVariationHooks` exposes an immutable exact `(completed, total)`
+progress record and a zero-argument cooperative cancellation check. The runner
+polls immediately before and after each injected executor call and after each
+progress notification. A cancellation detected during an executor call drops
+that in-flight outcome. Typed terminal exceptions record accepted completed and
+total counts; failures also record the exact cancellation-callback, executor,
+progress-callback, or publication stage plus cause type/message. They never
+carry a partial dataset or row collection.
+
+The complete-batch helper retains outcomes privately and calls its publisher
+only after all trials are accepted. Callback defects and publisher failures
+therefore terminate without externally visible partial rows. The physics
+executor signature and outcome validator are unchanged, and the original
+successful scalar-ensemble JSON remains byte-identical at SHA-256
+`671e5fd6c59aa1c068f2a3bd608ff7ef58c585b7ee4897ca49ef4ae73743f6a0`.
+Sampling, trial ordering, request IDs, and input digests remain owned by the
+existing deterministic path.
+
+TDD RED captured the absent terminal types and hooks. Focused execution-job,
+variation, and control coverage passes 47 tests. The implementation is split
+into contract, complete-batch execution, and dataset-projection modules below
+400 lines. Ruff/format, focused MyPy, relevant ground/flight/variation
+regressions, campaign manifest, documentation, structural, assertion, and diff
+gates are required before local commit `SELF`; no push or GitHub write occurs.
+
+Keep #4369/#4273/#4267 open. This slice supplies no worker/thread, UI Run/Cancel
+controls, progress throttling, execution-job-to-physics binding, browser
+executor, partial scalar schema, result workspace/import, variable-wind wire,
+compiled/downstream parity, protected evidence, publication, or release.
+
+## 2026-08-11 local #4369 regional-ground execution-job contract
+
+The unpublished `codex/4369-regional-ground-execution-job` branch starts from
+exact PR #4368 head `7d2d155b35f2ae55842de120864c4a343a5ebcb6`.
+It adds the first UI-neutral prerequisite for real seeded regional-ground
+execution: a strict 1 MiB
+`rate-of-closure/regional-ground-execution-job/v1` envelope implemented with
+Python/TypeScript parity and one shared canonical golden fixture.
+
+The immutable job binds the exact SI constant-wind launch and ball setup,
+flight model identity plus bounded numeric settings, independently canonical
+trajectory and result SHA-256 identities, the complete existing
+flight-to-ground transfer surface/calibration/provenance/settings authority,
+capture threshold, bounded trial/parallelism/timeout/fail-fast options, and the
+existing seeded regional-ground variation request. Canonical input and complete
+job digests are recomputed on every import. The parser rejects duplicate or
+extra fields, wrong versions, nonfinite/cross-runtime-unsafe/Boolean numbers,
+surrogates, malformed digests, oversize text, mismatched trial counts, model
+identity drift, and any regional base surface not exactly equal to the
+launch-relative transfer surface.
+
+The contract reuses the existing canonical numeric JSON, strict JSON,
+ball-setup, transfer, surface, regional-plan, and seeded-request authorities.
+It does not duplicate physics, invoke a solver, invent browser execution,
+persist results, or prove that the supplied precomputed flight digests were
+produced by the declared model. Version 1 accepts the current resolved
+constant-wind launch contract; time/space-varying wind requires a separately
+qualified scenario wire contract. Keep #4369/#4273/#4267 open for executor
+binding, cancellation/result evidence, matched UI invocation, wind-scenario,
+compiled/downstream parity, protected publication, and release.
+
+TDD RED captured the absent Python and TypeScript modules. Focused Python and
+React parity suites, Ruff, TypeScript, ESLint, campaign-manifest validation,
+documentation governance, and repository structural gates are the required
+local evidence. The implementation, shared fixture, SPEC, campaign manifest,
+and all canonical handoffs commit together as `SELF`; no push or GitHub write
+occurred.
+## 2026-08-11 local #4369 regional scalar-result import prerequisite
+
+The unpublished `codex/4369-regional-result-parser` child starts exactly from
+published PR #4368 head `7d2d155b35f2ae55842de120864c4a343a5ebcb6`.
+It adds a React/TypeScript import-only boundary for the Python-owned study and
+variation `scalar-ensemble/v1` results. Strict parsing preserves exact schema,
+provenance/model/input digests, definitions, units, categories, stages, series
+identity, trial order, cohorts, and typed-null censored outputs; it never
+coerces unavailable evidence to zero. The parser rejects duplicate and extra
+fields, unsupported versions, nonfinite or unsafe numbers, Boolean numerics,
+Unicode surrogates, forged identities/evidence, unknown cohorts, oversize
+documents, and malformed UTF-8. A Python-produced complete/partial/failed/
+unavailable golden fixture is consumed by both runtimes.
+
+The boundary is capped at 8 MiB encoded JSON and 100,000 rows. Browser file
+metadata is checked before reading and the actual buffer is checked again.
+This is not a browser physics implementation or Run claim and adds no result
+workspace, persistence, overlays, solver/capability or wind integration,
+compiled/downstream parity, or release evidence. Focused React and Python,
+full React, TypeScript, ESLint, Vite, Ruff, manifest, and documentation gates
+are recorded in the commit evidence. Code, SPEC, manifest, and all handoffs
+commit together as `SELF`; no push or GitHub write occurred.
+
+## 2026-08-11 local #4273 contextual regional-ground request File controls
+
+The unpublished `codex/4273-ground-variation-file-controls` child starts from
+exact ready PR #4367 head `0968a4ced5644aa8e2673ca278d261eeb92c31f8`.
+It turns that prerequisite's typed App-owned request port into matched,
+contextual File commands without introducing another request or physics model.
+
+React parses and serializes the exact Python-owned v1 combined envelope with
+strict JSON, nested validation, and the same 1 MiB UTF-8 bound. A
+Python-produced golden payload is asserted in both runtimes. In Variation and
+Ground Surfaces only, accessible Open and Save As commands import into or
+snapshot the App owner. Invalid imports preserve all prior state and expose an
+alert. Downloads disclose that the browser owns destination, overwrite, and
+atomicity semantics.
+
+PyQt6 exposes the same stable commands only in the two relevant modules.
+Native Open fully validates before applying both editors; Save validates before
+showing the chooser and uses the existing atomic writer. Cancellation changes
+nothing. Imported exact evidence remains authoritative until either editor
+changes. The untouched illustrative regional draft cannot be saved until it is
+explicitly validated, and oversized wire-valid run counts fail before editor
+mutation.
+
+This slice executes no physics and adds no illustrative fallback. All 782 React
+tests in 123 files, the 87-test focused Python/PyQt selection, and a 25-test
+post-fixture follow-up pass; type-check, ESLint, Vite build, Ruff, MyPy, and
+repository policy gates are green. The code, SPEC, manifest, and all canonical
+handoffs commit together as `SELF`; no push
+or GitHub write occurred. Keep #4273/#4267 open for pipeline invocation,
+overlay variation, solver/capability and wind integration, compiled/downstream
+parity, protected review, publication, and release.
+
+Publication audit note: the workflow-pinned Ruff 0.14.10 formatter normalized
+only `test_regional_ground_variation_request_io.py` after the implementation
+commit. This is a test-layout-only follow-up with no material handoff, runtime,
+wire, UI, or physics change; the focused gates were rerun before publication.
+
+Hosted-current-head audit then found one MyPy-only mixin boundary: the file
+controller requires a `QWidget` parent while the reusable mixin cannot prove its
+eventual `QMainWindow` base statically. The follow-up now performs an explicit
+TYPE_CHECKING-only `QWidget` cast at that construction boundary. The runtime
+object and behavior are unchanged; the exact hosted MyPy profile and focused
+file-control tests are required before treating the repair as green.
+
 ## 2026-08-11 local #4273 React request-workspace ownership
 
 The unpublished `codex/4273-ground-variation-file-ui` branch starts from exact

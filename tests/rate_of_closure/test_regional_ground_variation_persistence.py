@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,10 @@ from rate_of_closure.application.regional_ground_variation_request import (
     regional_ground_variation_request_from_json,
     regional_ground_variation_request_to_json,
     write_regional_ground_variation_request_atomic,
+)
+from rate_of_closure.application.regional_surface_plan import (
+    illustrative_regional_surface_plan_draft,
+    validate_regional_surface_plan_draft,
 )
 from rate_of_closure.variation.regional_ground_variation import (
     GROUND_NORMAL_RESTITUTION_KEY,
@@ -73,6 +78,21 @@ def _payload() -> dict[str, object]:
     return json.loads(regional_ground_variation_request_to_json(_request()))
 
 
+def _editor_request() -> GroundRegionalVariationRequest:
+    request = _request()
+    regional = validate_regional_surface_plan_draft(
+        illustrative_regional_surface_plan_draft()
+    )
+    plan = replace(
+        request.plan,
+        base_variables={
+            GROUND_NORMAL_RESTITUTION_KEY: regional.base_surface.normal_restitution,
+            GROUND_ROLLING_RESISTANCE_KEY: regional.base_surface.rolling_resistance,
+        },
+    )
+    return replace(request, plan=plan, regional_plan=regional)
+
+
 def test_canonical_round_trip_is_exact_deterministic_and_composed() -> None:
     request = _request()
 
@@ -86,6 +106,23 @@ def test_canonical_round_trip_is_exact_deterministic_and_composed() -> None:
     assert payload["schema"] == REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA
     assert payload["variation_plan"] == request.plan.to_json_dict()
     assert payload["regional_plan"] == request.regional_plan.to_dict()
+
+
+def test_python_serializer_matches_the_react_golden_bytes() -> None:
+    fixture = (
+        Path(__file__).parents[2]
+        / "src"
+        / "rate_of_closure"
+        / "web"
+        / "src"
+        / "model"
+        / "__fixtures__"
+        / "regional_ground_variation_request_golden_v1.json"
+    )
+
+    assert fixture.read_text(encoding="utf-8").removesuffix("\n") == (
+        regional_ground_variation_request_to_json(_editor_request())
+    )
 
 
 def test_native_file_round_trip_writes_exact_canonical_bytes(tmp_path: Path) -> None:
