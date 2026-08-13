@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 linked launch-monitor scatter
+
+- A shared Python-owned golden now governs bounded linked-scatter planning:
+  strict finite decimal pairs, raw retained-row ordinal authority,
+  deterministic decimation, selected-point preservation, and navigation.
+- React and PyQt provide pointer plus Left/Right/Home/End/Escape interaction,
+  selected markers, present-only shot/session/vendor fields, polite/visible
+  status, and no statistical recomputation on selection-only changes. Any
+  analysis-contract/axis edit clears stale results and export until rerun.
+- CSV/JSON ingestion rejects ragged/nested/nonportable records and aligns
+  trimming, blank-line, numeric, supported-suffix, and field-name policy. Raw
+  rows remain retained/exportable; missing-data policy controls analysis use.
+- Display is capped at 2,000 points and retained input at 250,000 rows. Current
+  captures are diagnostic, not approved goldens. Analysis fingerprints remain
+  runtime-local trace values, not cross-runtime comparators; portable
+  canonicalization, AT validation, archive coupling, and remaining #4433 visual
+  work stay open. SPEC is 1.16.79.
+
 ## 2026-08-13 #4433 PyQt environment closure
 
 - The shared `gui` extra now declares bounded pandas, SciPy, and SymPy runtimes,

@@ -26,11 +26,31 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.78                                    |
-| **Spec Version**        | 1.16.78                                    |
+| **Current Version**     | 1.16.79                                    |
+| **Spec Version**        | 1.16.79                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Linked launch-monitor scatter interaction (#4433)
+
+Version 1.16.79 defines a matched React/PyQt presentation contract over the
+retained launch-monitor rows. A Python-owned golden pins strict decimal
+projection, finite-pair counts, stable zero-based retained ordinals,
+deterministic display capping at 2,000 points, selected-row preservation, and
+navigation. Each surface exposes one focusable direct-interaction scatter with
+pointer and Left/Right/Home/End/Escape controls, a selected marker, and status
+that reports only source fields actually present. Selection changes never
+rerun statistical analysis; analysis-contract/axis edits instead clear stale
+results and export until Run Analysis succeeds. Raw retained records remain available to
+analysis/export and the chosen missing-data policy controls analytical
+inclusion. Flat CSV/JSON import rejects ragged, nested, nonportable, or
+unsupported records and is capped before presentation at 250,000 retained
+rows. Evidence captures remain diagnostic. Analysis fingerprints are
+runtime-local trace values and must not be compared across runtimes. Portable
+fingerprint canonicalization, approved golden baselines, assistive-technology
+validation, archive integration, and the remaining #4433 visualization work
+are outside this bounded child and remain open.
 
 ### 2026-08-13 Full-window PyQt dependency closure (#4433)
 
@@ -4067,6 +4087,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |
 | 2026-08-13 | 1.16.77 | fix(rate-of-closure, #4433): eliminate narrow command-strip document overflow and narrowly exempt the rendered PyQt subprocess probe from the changed-test assertion gate. |
 | 2026-08-13 | 1.16.78 | fix(rate-of-closure, #4433): close the shared GUI extra over registered analytics, flight, and simulation tabs' bounded pandas/SciPy/SymPy runtimes. |
+| 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |

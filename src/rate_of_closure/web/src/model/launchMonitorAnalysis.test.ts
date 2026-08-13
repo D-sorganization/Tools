@@ -127,4 +127,37 @@ describe("launch monitor flexible analysis", () => {
       parseLaunchMonitorFile("shots.json", JSON.stringify([{ custom: 4.2 }])),
     ).toEqual([{ custom: 4.2 }]);
   });
+
+  it("uses strict decimal cells and rejects malformed retained record shapes", () => {
+    expect(parseLaunchMonitorFile(
+      "shots.csv", "x,y\n0x10,1\n0b10,2\n١٢,3\n1.5e2,4\n",
+    )).toEqual([
+      { x: "0x10", y: 1 }, { x: "0b10", y: 2 },
+      { x: "١٢", y: 3 }, { x: 150, y: 4 },
+    ]);
+    expect(() => parseLaunchMonitorFile("shots.csv", "x,y\n1,2,3\n"))
+      .toThrow(/match the header width/);
+    expect(() => parseLaunchMonitorFile("shots.json", '[{"x":{"nested":1}}]'))
+      .toThrow(/portable finite scalars/);
+    expect(() => parseLaunchMonitorFile("shots.json", '[{"x":1e1000}]'))
+      .toThrow(/portable finite scalars/);
+    expect(() => parseLaunchMonitorFile("shots.json", '[{"x":9007199254740992}]'))
+      .toThrow(/portable finite scalars/);
+    expect(() => parseLaunchMonitorFile("shots.json", '[{"x":1e20}]'))
+      .toThrow(/portable finite scalars/);
+    expect(() => parseLaunchMonitorFile("shots.json", '[{"":1,"y":2}]'))
+      .toThrow(/field names must be non-empty/);
+    expect(() => parseLaunchMonitorFile("shots.txt", "x,y\n1,2\n"))
+      .toThrow(/supports CSV and JSON/);
+  });
+
+  it("shares CSV coercion and blank-line policy with the Python reader", () => {
+    expect(parseLaunchMonitorFile(
+      "shots.csv", "x,y,label\n\n1,2, alpha \n1.5e2,3,\n0x10,4,hex\n",
+    )).toEqual([
+      { x: 1, y: 2, label: "alpha" },
+      { x: 150, y: 3, label: null },
+      { x: "0x10", y: 4, label: "hex" },
+    ]);
+  });
 });

@@ -9,6 +9,7 @@ import pytest
 from rate_of_closure.launch_monitor_analysis import (
     AnalysisRequest,
     analyze_launch_monitor_data,
+    numeric_columns,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -81,3 +82,46 @@ def test_pairwise_missingness_and_fail_closed_boundaries() -> None:
                 allow_aggregate=True,
             ),
         )
+
+
+def test_numeric_projection_uses_decimal_grammar_without_radix_or_unicode() -> None:
+    frame = pd.DataFrame(
+        {
+            "x": ["0x10", "0b10", "١٢", "1.5", "-2.5e1", ".75"],
+            "y": [1, 2, 3, 4, 5, 6],
+        }
+    )
+
+    assert numeric_columns(frame) == ["x", "y"]
+    result = analyze_launch_monitor_data(
+        frame,
+        AnalysisRequest(
+            outcome="y",
+            predictors=("x",),
+            analysis_mode="correlation",
+            min_samples=3,
+        ),
+    )
+    assert result.dataset.complete_row_count == 3
+    assert result.correlations[0].sample_count == 3
+
+
+def test_numeric_projection_treats_unrepresentable_integer_as_unavailable() -> None:
+    frame = pd.DataFrame(
+        {
+            "x": pd.Series([10**1000, 1, 2, 3], dtype="object"),
+            "y": [1, 2, 3, 4],
+        }
+    )
+
+    assert numeric_columns(frame) == ["x", "y"]
+    result = analyze_launch_monitor_data(
+        frame,
+        AnalysisRequest(
+            outcome="y",
+            predictors=("x",),
+            analysis_mode="correlation",
+            min_samples=3,
+        ),
+    )
+    assert result.correlations[0].sample_count == 3

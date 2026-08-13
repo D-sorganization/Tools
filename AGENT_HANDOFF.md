@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked launch-monitor scatter interaction (#4433)
+
+Version 1.16.79 adds matched React/PyQt linked-scatter planners and direct
+pointer/keyboard row selection. The bounded display retains stable zero-based
+row ordinals, never substitutes optional source fields for identity, and does
+not rerun statistical analysis when selection changes. Analysis-contract edits
+clear stale results and export until Run Analysis succeeds. Strict flat CSV/JSON
+ingestion and decimal projection are shared, while raw retained rows remain
+the analysis/export input. Current analysis fingerprints are runtime-local
+trace values and must not be compared across runtimes; portable fingerprint
+canonicalization, approved goldens, assistive-technology validation, and
+broader visualization polish remain open under #4433. Diagnostics are not
+approval evidence.
+
 ## 2026-08-13 Full-window PyQt dependency closure (#4433)
 
 Version 1.16.78 adds bounded pandas, SciPy, and SymPy runtimes to the shared GUI

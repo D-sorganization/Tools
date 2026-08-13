@@ -22,7 +22,6 @@ from PyQt6.QtWidgets import (
     QSpinBox,
     QSplitter,
     QTableWidget,
-    QTableWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -36,10 +35,15 @@ from rate_of_closure.launch_monitor_analysis import (
     analyze_launch_monitor_data,
     numeric_columns,
 )
-from rate_of_closure.ui.pyqt6.launch_monitor_preview import (
-    LaunchMonitorPreviewCanvas,
-    demo_frame,
+from rate_of_closure.launch_monitor_import import read_launch_monitor_frame
+from rate_of_closure.launch_monitor_linked_scatter import MAX_RETAINED_ROWS
+from rate_of_closure.ui.pyqt6.launch_monitor_analysis_results import (
+    render_analysis_result,
 )
+from rate_of_closure.ui.pyqt6.launch_monitor_linked_scatter_panel import (
+    LaunchMonitorLinkedScatterPanel,
+)
+from rate_of_closure.ui.pyqt6.launch_monitor_preview import demo_frame
 from shared.python.swing_sim.conventions import (
     ConventionId,
     ParameterId,
@@ -152,7 +156,9 @@ class LaunchMonitorAnalyticsTab(QWidget):
         form.addRow("Minimum N:", self.min_samples_spin)
         form.addRow(self.run_button)
 
-        self.preview = LaunchMonitorPreviewCanvas()
+        self.preview_panel = LaunchMonitorLinkedScatterPanel()
+        self.preview = self.preview_panel.preview
+        self.preview_status = self.preview_panel.status
         self.result_table = QTableWidget()
         self.result_table.setAccessibleName("Launch Monitor Statistical Results")
         self.result_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -160,7 +166,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.details.setReadOnly(True)
         self.details.setAccessibleName("Launch Monitor Analysis Traceability")
         output = QSplitter(Qt.Orientation.Vertical)
-        output.addWidget(self.preview)
+        output.addWidget(self.preview_panel)
         output.addWidget(self.result_table)
         output.addWidget(self.details)
         output.setSizes([320, 240, 160])
@@ -192,6 +198,29 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.outcome_combo.currentTextChanged.connect(self._refresh_convention_evidence)
         self.outcome_combo.currentTextChanged.connect(self._refresh_preview)
         self.predictor_list.itemSelectionChanged.connect(self._refresh_preview)
+        for signal in (
+            self.outcome_combo.currentTextChanged,
+            self.predictor_list.itemSelectionChanged,
+            self.mode_combo.currentTextChanged,
+            self.method_combo.currentTextChanged,
+            self.missing_combo.currentTextChanged,
+            self.group_combo.currentTextChanged,
+            self.confidence_spin.valueChanged,
+            self.min_samples_spin.valueChanged,
+        ):
+            signal.connect(self._invalidate_analysis)
+
+    def _invalidate_analysis(self) -> None:
+        """Prevent stale request results from remaining visible or exportable."""
+        if self.last_result is None:
+            return
+        self.last_result = None
+        self.export_result_button.setEnabled(False)
+        self.result_table.clearContents()
+        self.result_table.setRowCount(0)
+        self.details.setPlainText(
+            "Analysis contract changed. Run Analysis to refresh results."
+        )
 
     def _refresh_columns(self) -> None:
         numeric = numeric_columns(self.frame)
@@ -225,14 +254,19 @@ class LaunchMonitorAnalyticsTab(QWidget):
         )
         self.last_result = None
         self.export_result_button.setEnabled(False)
-        self.result_table.clear()
+        self.result_table.clearContents()
+        self.result_table.setRowCount(0)
         self.details.clear()
         self._refresh_preview()
         self._refresh_convention_evidence()
 
     def _refresh_preview(self) -> None:
         selected = tuple(item.text() for item in self.predictor_list.selectedItems())
-        self.preview.set_frame(self.frame, self.outcome_combo.currentText(), selected)
+        self.preview_panel.set_frame(
+            self.frame,
+            self.outcome_combo.currentText(),
+            selected,
+        )
 
     def _refresh_convention_evidence(self) -> None:
         convention = self.convention_combo.currentData()
@@ -253,27 +287,18 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self, frame: pd.DataFrame, source_name: str = "In-Memory Data"
     ) -> None:
         """Replace all records without discarding any source columns."""
-
+        if len(frame) > MAX_RETAINED_ROWS:
+            raise ValueError(f"The retained-data limit is {MAX_RETAINED_ROWS} rows")
         self.frame = frame.copy()
         self.source_name = source_name
+        self.preview_panel.reset_dataset()
         self._refresh_columns()
 
     def load_demo(self) -> None:
         self.set_frame(demo_frame(), "Built-In Demonstration Data")
 
     def import_path(self, path: Path) -> None:
-        suffix = path.suffix.lower()
-        if suffix == ".csv":
-            frame = pd.read_csv(path)
-        elif suffix == ".json":
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            if not isinstance(payload, list) or any(
-                not isinstance(row, dict) for row in payload
-            ):
-                raise ValueError("JSON launch-monitor data must be an array of records")
-            frame = pd.DataFrame.from_records(payload)
-        else:
-            raise ValueError("Launch-monitor import supports CSV and JSON")
+        frame = read_launch_monitor_frame(path)
         if len(frame) < 3 or len(numeric_columns(frame)) < 2:
             raise ValueError(
                 "The file needs at least three rows and two numeric columns"
@@ -288,7 +313,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
             return
         try:
             self.import_path(Path(selected))
-        except (OSError, ValueError, json.JSONDecodeError) as error:
+        except (OSError, ValueError) as error:
             QMessageBox.critical(self, "Import Failed", str(error))
 
     def _selected_predictors(self) -> tuple[str, ...]:
@@ -311,55 +336,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
                 min_samples=self.min_samples_spin.value(),
             ),
         )
-        rows: list[list[str]] = []
-        for correlation in result.correlations:
-            rows.append(
-                [
-                    correlation.predictor,
-                    "correlation",
-                    (
-                        "—"
-                        if correlation.coefficient is None
-                        else f"{correlation.coefficient:.6g}"
-                    ),
-                    (
-                        "—"
-                        if correlation.p_value is None
-                        else f"{correlation.p_value:.6g}"
-                    ),
-                    (
-                        "—"
-                        if correlation.adjusted_p_value is None
-                        else f"{correlation.adjusted_p_value:.6g}"
-                    ),
-                    str(correlation.sample_count),
-                ]
-            )
-        if result.regression:
-            for name, coefficient in result.regression.coefficients.items():
-                rows.append(
-                    [
-                        name,
-                        "OLS coefficient",
-                        f"{coefficient.estimate:.6g}",
-                        f"{coefficient.p_value:.6g}",
-                        (f"[{coefficient.ci_lower:.6g}, {coefficient.ci_upper:.6g}]"),
-                        str(result.regression.sample_count),
-                    ]
-                )
-        headers = ["Variable", "Statistic", "Estimate", "p", "Adjusted p / CI", "N"]
-        self.result_table.setColumnCount(len(headers))
-        self.result_table.setHorizontalHeaderLabels(headers)
-        self.result_table.setRowCount(len(rows))
-        for row_index, values in enumerate(rows):
-            for column_index, value in enumerate(values):
-                self.result_table.setItem(
-                    row_index, column_index, QTableWidgetItem(value)
-                )
-        self.result_table.resizeColumnsToContents()
-        self.details.setPlainText(
-            json.dumps(result.to_wire(), indent=2, sort_keys=True)
-        )
+        render_analysis_result(result, self.result_table, self.details)
         self.last_result = result
         self.export_result_button.setEnabled(True)
         return result

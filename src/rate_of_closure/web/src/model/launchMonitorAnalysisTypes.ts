@@ -87,6 +87,10 @@ export const finiteLaunchMonitorScalar = (
   if (value === null || value === undefined || value === "" || typeof value === "boolean") {
     return null;
   }
-  const converted = typeof value === "number" ? value : Number(value);
+  if (typeof value === "string" &&
+      !/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?$/.test(value.trim())) {
+    return null;
+  }
+  const converted = typeof value === "number" ? value : Number(value.trim());
   return Number.isFinite(converted) ? converted : null;
 };

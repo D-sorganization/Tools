@@ -9,6 +9,8 @@ from typing import cast
 
 import pandas as pd
 
+from rate_of_closure.launch_monitor_numeric import finite_launch_monitor_scalar
+
 from ._launch_monitor_analysis_statistics import correlations, regression
 from ._launch_monitor_analysis_types import (
     CONTRACT_VERSION,
@@ -46,7 +48,7 @@ def numeric_columns(frame: pd.DataFrame) -> list[str]:
     return sorted(
         str(column)
         for column in frame.columns
-        if pd.to_numeric(frame[column], errors="coerce").notna().sum() >= 3
+        if frame[column].map(finite_launch_monitor_scalar).notna().sum() >= 3
     )
 
 
@@ -94,7 +96,13 @@ def _validate_request(frame: pd.DataFrame, request: AnalysisRequest) -> pd.DataF
     missing = required - set(frame.columns)
     if missing:
         raise ValueError(f"Columns not present: {sorted(missing)}")
-    numeric = frame[list(selected)].apply(pd.to_numeric, errors="coerce")
+    projected = frame[list(selected)]
+    mapper = getattr(projected, "map", None)
+    numeric = (
+        mapper(finite_launch_monitor_scalar)
+        if callable(mapper)
+        else projected.applymap(finite_launch_monitor_scalar)
+    )
     constants = [
         column for column in selected if numeric[column].dropna().nunique() < 2
     ]
@@ -169,11 +177,17 @@ def analyze_launch_monitor_data(
     selected = (request.outcome, *request.predictors)
     numeric = _validate_request(frame, request)
     vendors, kinds, warnings = _validate_observation_scope(frame, request, selected)
+    projected = frame.copy()
+    projected[list(selected)] = numeric
     correlation_results = (
-        correlations(frame, request) if request.analysis_mode != "regression" else ()
+        correlations(projected, request)
+        if request.analysis_mode != "regression"
+        else ()
     )
     regression_result = (
-        regression(frame, request) if request.analysis_mode != "correlation" else None
+        regression(projected, request)
+        if request.analysis_mode != "correlation"
+        else None
     )
     return AnalysisResult(
         CONTRACT_VERSION,

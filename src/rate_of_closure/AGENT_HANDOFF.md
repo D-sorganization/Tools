@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked launch-monitor scatter interaction (#4433)
+
+- Python and React now share a strict decimal/flat-record contract and a
+  Python-owned planner golden for finite filtering, deterministic display
+  capping, selected-row insertion, and navigation.
+- Both surfaces expose one focusable scatter with pointer and
+  Left/Right/Home/End/Escape selection, a visible selected marker, exact
+  zero-based retained ordinal, and only source fields actually present.
+- Selection is presentation-only: raw retained rows still feed analysis and
+  export and selected missing-data policy governs analytical inclusion.
+  Selection changes do not rerun analysis; analysis-contract/axis edits clear
+  stale results and export until Run Analysis succeeds. Failed imports preserve the
+  current dataset/preview; successful import/demo resets selection.
+- The 2,000-point display and 250,000-row retained limits fail closed. Browser
+  and PyQt selected-state captures remain diagnostic only. Current analysis
+  fingerprints are runtime-local trace values, not portable comparisons;
+  portable canonicalization, approved goldens, AT validation, and remaining
+  #4433 tabs/polish are still open. SPEC is 1.16.79.
+
 ## 2026-08-13 PyQt dependency closure (#4433)
 
 - Bounded pandas, SciPy, and SymPy runtimes now belong to the shared GUI extra

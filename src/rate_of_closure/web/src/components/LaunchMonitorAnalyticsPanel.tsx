@@ -1,5 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 
+import { MAX_LINKED_SCATTER_ROWS } from "../model/launchMonitorLinkedScatter";
+import { LaunchMonitorLinkedScatter } from "./LaunchMonitorLinkedScatter";
 import {
   analyzeLaunchMonitorData,
   numericLaunchMonitorColumns,
@@ -59,34 +61,6 @@ function download(name: string, payload: unknown) {
   URL.revokeObjectURL(url);
 }
 
-function ScatterPlot({ rows, outcome, predictor }: {
-  rows: LaunchMonitorRow[]; outcome: string; predictor: string;
-}) {
-  const pairs = rows.map((row) => [Number(row[predictor]), Number(row[outcome])])
-    .filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
-  if (pairs.length < 2) return <p className="text-sm text-slate-500">Select two populated variables.</p>;
-  const xs = pairs.map(([x]) => x);
-  const ys = pairs.map(([, y]) => y);
-  const xMin = Math.min(...xs); const xMax = Math.max(...xs);
-  const yMin = Math.min(...ys); const yMax = Math.max(...ys);
-  const scale = (value: number, low: number, high: number, start: number, span: number) =>
-    start + (value - low) / Math.max(Number.EPSILON, high - low) * span;
-  return (
-    <svg viewBox="0 0 640 250" role="img" aria-label={`${outcome} versus ${predictor} scatter plot`}
-      className="h-64 min-h-[180px] w-full rounded-lg border border-slate-800 bg-slate-950">
-      <line x1="52" y1="215" x2="620" y2="215" stroke="#475569" />
-      <line x1="52" y1="18" x2="52" y2="215" stroke="#475569" />
-      {pairs.map(([x, y], index) => (
-        <circle key={index} cx={scale(x, xMin, xMax, 52, 568)}
-          cy={215 - scale(y, yMin, yMax, 0, 197)} r="3" fill="#38bdf8" opacity="0.72" />
-      ))}
-      <text x="336" y="242" textAnchor="middle" fill="#94a3b8" fontSize="12">{predictor}</text>
-      <text x="15" y="116" textAnchor="middle" fill="#94a3b8" fontSize="12"
-        transform="rotate(-90 15 116)">{outcome}</text>
-    </svg>
-  );
-}
-
 export function LaunchMonitorAnalyticsPanel() {
   const [rows, setRows] = useState<LaunchMonitorRow[]>(DEMO_ROWS);
   const [sourceName, setSourceName] = useState("Built-In Demonstration Data");
@@ -101,6 +75,7 @@ export function LaunchMonitorAnalyticsPanel() {
   const [convention, setConvention] = useState<ConventionId>("app_native");
   const [result, setResult] = useState<LaunchMonitorAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedRawIndex, setSelectedRawIndex] = useState<number | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
   const grouping = useMemo(() => {
@@ -109,6 +84,7 @@ export function LaunchMonitorAnalyticsPanel() {
   }, [rows]);
   const parameter = PARAMETER_IDS.includes(outcome as ParameterId) ? outcome as ParameterId : "club_speed";
   const definition = conventionRegistry().definition(convention, parameter);
+  const invalidate = () => { setResult(null); setError(null); };
 
   const run = () => {
     try {
@@ -127,6 +103,9 @@ export function LaunchMonitorAnalyticsPanel() {
   const loadFile = async (file: File) => {
     try {
       const next = parseLaunchMonitorFile(file.name, await file.text());
+      if (next.length > MAX_LINKED_SCATTER_ROWS) {
+        throw new RangeError(`The retained-data limit is ${MAX_LINKED_SCATTER_ROWS} rows.`);
+      }
       const nextNumeric = numericLaunchMonitorColumns(next);
       if (nextNumeric.length < 2) throw new RangeError("The file needs at least two numeric columns with three values each.");
       setRows(next);
@@ -134,6 +113,7 @@ export function LaunchMonitorAnalyticsPanel() {
       setOutcome(nextNumeric[0]);
       setPredictors([nextNumeric[1]]);
       setResult(null);
+      setSelectedRawIndex(null);
       setError(null);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
@@ -146,11 +126,12 @@ export function LaunchMonitorAnalyticsPanel() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold text-sky-200">Launch Monitor Analytics</h2>
-            <p className="mt-1 max-w-3xl text-sm text-slate-400">
-              Import CSV or JSON records without dropping source columns, then correlate, regress,
-              stratify, diagnose, and export any compatible numeric variables. Associations and fitted
-              models are not causal evidence.
-            </p>
+            <details className="mt-1 max-w-3xl text-sm text-slate-400">
+              <summary className="cursor-pointer text-slate-300">Scientific and import boundary</summary>
+              <p className="mt-2">Import CSV or JSON records without dropping source columns, then
+                correlate, regress, stratify, diagnose, and export any compatible numeric variables.
+                Associations and fitted models are not causal evidence.</p>
+            </details>
           </div>
           <div className="flex flex-wrap gap-2">
             <input ref={input} type="file" accept=".csv,.json,text/csv,application/json"
@@ -160,7 +141,7 @@ export function LaunchMonitorAnalyticsPanel() {
               onClick={() => input.current?.click()}
               className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold hover:bg-sky-500">Import Data</button>
             <button type="button" title="Restore the built-in non-vendor demonstration dataset"
-              onClick={() => { setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setResult(null); }}
+              onClick={() => { setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setResult(null); setSelectedRawIndex(null); setError(null); }}
               className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Load Demo</button>
           </div>
         </div>
@@ -172,7 +153,7 @@ export function LaunchMonitorAnalyticsPanel() {
           <h3 className="font-semibold text-slate-200">Analysis Contract</h3>
           <label className="block text-sm text-slate-300">Interpretation Convention
             <select value={convention} title="Choose the documented parameter convention used to interpret canonical names"
-              onChange={(event) => setConvention(event.target.value as ConventionId)} className={`${field} mt-1`}>
+              onChange={(event) => { setConvention(event.target.value as ConventionId); invalidate(); }} className={`${field} mt-1`}>
               {(["app_native", "trackman_comparable", "foresight_comparable"] as ConventionId[])
                 .map((id) => <option key={id} value={id}>{conventionLabel(id)}</option>)}
             </select>
@@ -184,52 +165,53 @@ export function LaunchMonitorAnalyticsPanel() {
           </div>
           <label className="block text-sm text-slate-300">Outcome
             <select value={outcome} title="Select the numeric outcome variable"
-              onChange={(event) => setOutcome(event.target.value)} className={`${field} mt-1`}>
+              onChange={(event) => { setOutcome(event.target.value); invalidate(); }} className={`${field} mt-1`}>
               {numeric.map((column) => <option key={column}>{column}</option>)}
             </select>
           </label>
           <label className="block text-sm text-slate-300">Predictors
             <select multiple value={predictors} title="Select one or more numeric predictor variables"
-              aria-label="Predictor Variables" onChange={(event) => setPredictors(
-                [...event.currentTarget.selectedOptions].map((option) => option.value),
-              )} className={`${field} mt-1 min-h-36`}>
+              aria-label="Predictor Variables" onChange={(event) => {
+                setPredictors([...event.currentTarget.selectedOptions].map((option) => option.value));
+                invalidate();
+              }} className={`${field} mt-1 min-h-36`}>
               {numeric.filter((column) => column !== outcome).map((column) => <option key={column}>{column}</option>)}
             </select>
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label className="text-sm text-slate-300">Mode
               <select value={mode} title="Choose correlation, regression, or both"
-                onChange={(event) => setMode(event.target.value as AnalysisMode)} className={`${field} mt-1`}>
+                onChange={(event) => { setMode(event.target.value as AnalysisMode); invalidate(); }} className={`${field} mt-1`}>
                 <option value="comprehensive">Comprehensive</option><option value="correlation">Correlation</option><option value="regression">Regression</option>
               </select>
             </label>
             <label className="text-sm text-slate-300">Correlation
               <select value={method} title="Choose the correlation estimator"
-                onChange={(event) => setMethod(event.target.value as CorrelationMethod)} className={`${field} mt-1`}>
+                onChange={(event) => { setMethod(event.target.value as CorrelationMethod); invalidate(); }} className={`${field} mt-1`}>
                 <option value="pearson">Pearson</option><option value="spearman">Spearman</option><option value="kendall">Kendall</option>
               </select>
             </label>
             <label className="text-sm text-slate-300">Missing Data
               <select value={missing} title="Choose how missing numeric values are handled"
-                onChange={(event) => setMissing(event.target.value as MissingPolicy)} className={`${field} mt-1`}>
+                onChange={(event) => { setMissing(event.target.value as MissingPolicy); invalidate(); }} className={`${field} mt-1`}>
                 <option value="pairwise">Pairwise</option><option value="listwise">Listwise</option><option value="fail">Fail Closed</option>
               </select>
             </label>
             <label className="text-sm text-slate-300">Group By
               <select value={groupBy} title="Optionally compute separate results for each group"
-                onChange={(event) => setGroupBy(event.target.value)} className={`${field} mt-1`}>
+                onChange={(event) => { setGroupBy(event.target.value); invalidate(); }} className={`${field} mt-1`}>
                 <option value="">No Grouping</option>{grouping.map((column) => <option key={column}>{column}</option>)}
               </select>
             </label>
             <label className="text-sm text-slate-300">Confidence
               <input type="number" min="0.51" max="0.999" step="0.01" value={confidence}
                 title="Set the confidence level for analytical intervals" aria-label="Confidence Level"
-                onChange={(event) => setConfidence(Number(event.target.value))} className={`${field} mt-1`} />
+                onChange={(event) => { setConfidence(Number(event.target.value)); invalidate(); }} className={`${field} mt-1`} />
             </label>
             <label className="text-sm text-slate-300">Minimum N
               <input type="number" min="3" step="1" value={minSamples}
                 title="Set the minimum observations per analysis" aria-label="Minimum Sample Count"
-                onChange={(event) => setMinSamples(Number(event.target.value))} className={`${field} mt-1`} />
+                onChange={(event) => { setMinSamples(Number(event.target.value)); invalidate(); }} className={`${field} mt-1`} />
             </label>
           </div>
           <button type="button" onClick={run} title="Run the selected traceable statistical analysis"
@@ -240,7 +222,9 @@ export function LaunchMonitorAnalyticsPanel() {
         <div className="order-first space-y-5 xl:order-none">
           <div className={card}>
             <h3 className="mb-3 font-semibold text-slate-200">Selected Relationship</h3>
-            <ScatterPlot rows={rows} outcome={outcome} predictor={predictors[0] ?? ""} />
+            <LaunchMonitorLinkedScatter rows={rows} yField={outcome}
+              xField={predictors[0] ?? ""} selectedRawIndex={selectedRawIndex}
+              onSelectedRawIndex={setSelectedRawIndex} />
           </div>
           {!result ? (
             <div className={`${card} text-center text-slate-500`}>Run the analysis to populate uncertainty, diagnostics, grouping, and lineage.</div>

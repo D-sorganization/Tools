@@ -6,7 +6,8 @@ import argparse
 import json
 from pathlib import Path
 
-from PyQt6.QtCore import QRect
+from PyQt6.QtCore import QRect, Qt
+from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QWidget
 
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow
@@ -74,6 +75,16 @@ def _audit_tab(
     screenshot = output / f"tab-{tab_id}.png"
     if not window.grab().save(str(screenshot), "PNG"):
         raise RuntimeError(f"could not save {tab_id} diagnostic")
+    selected_screenshot = ""
+    if tab_id == "launch_monitor_analytics":
+        preview = getattr(tab, "preview")
+        QTest.keyClick(preview, Qt.Key.Key_End)
+        QApplication.processEvents()
+        selected = output / "tab-launch_monitor_analytics-selected.png"
+        if not window.grab().save(str(selected), "PNG"):
+            raise RuntimeError("could not save selected linked-scatter diagnostic")
+        selected_screenshot = selected.name
+        QTest.keyClick(preview, Qt.Key.Key_Escape)
     return {
         "tab_id": tab_id,
         "locator": locator,
@@ -87,6 +98,7 @@ def _audit_tab(
         "visual_visible": visual.isVisible(),
         "screenshot": screenshot.name,
         "screenshot_bytes": screenshot.stat().st_size,
+        "selected_screenshot": selected_screenshot,
         "visual_class": type(visual).__name__,
         "semantic_text": _semantic_text(visual)
         if landmark_kind == "semantic-content"
