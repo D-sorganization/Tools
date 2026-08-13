@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import threading
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import Any, Protocol, cast
 
 from rate_of_closure.simulation import SimulationConfig
@@ -16,14 +19,44 @@ from shared.python.swing_sim.variation import (
     MorrisDesign,
     MorrisEvaluator,
     MorrisExecutionOptions,
+    MorrisObservationArchive,
     analyze_morris,
     evaluate_morris_design,
+    make_morris_observation_archive,
 )
 
 from .contracts import MorrisAuthorityRequest
 
 ProgressSink = Callable[[int, int], None]
 EvaluatorFactory = Callable[[MorrisDesign, SimulationConfig], MorrisEvaluator]
+
+
+@dataclass(frozen=True)
+class MorrisServiceResult:
+    """One unchanged report plus its separately versioned raw authority."""
+
+    report: dict[str, Any]
+    observations: MorrisObservationArchive
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.report, dict) or not isinstance(
+            self.observations, MorrisObservationArchive
+        ):
+            raise TypeError("report dictionary and observation archive are required")
+
+
+def morris_request_sha256(request: MorrisAuthorityRequest) -> str:
+    """Return the canonical digest used to bind observations to a request."""
+    if not isinstance(request, MorrisAuthorityRequest):
+        raise TypeError("request must be a MorrisAuthorityRequest")
+    request_bytes = json.dumps(
+        request.to_json_dict(),
+        ensure_ascii=False,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(request_bytes).hexdigest()
 
 
 class MorrisExecutionService(Protocol):
@@ -58,6 +91,15 @@ class RateMorrisService:
         progress: ProgressSink,
     ) -> dict[str, Any]:
         """Return the unchanged shared Morris report-v1 document."""
+        return self.execute_with_observations(request, cancel, progress).report
+
+    def execute_with_observations(
+        self,
+        request: MorrisAuthorityRequest,
+        cancel: threading.Event,
+        progress: ProgressSink,
+    ) -> MorrisServiceResult:
+        """Return report-v1 plus its separately versioned scalar observations."""
         if not isinstance(request, MorrisAuthorityRequest):
             raise TypeError("request must be a MorrisAuthorityRequest")
         if not isinstance(cancel, threading.Event) or not callable(progress):
@@ -73,10 +115,27 @@ class RateMorrisService:
         observations = evaluate_morris_design(
             design, RATE_MORRIS_OUTPUTS, evaluator, options
         )
-        return cast(
+        report_document = cast(
             dict[str, Any],
             analyze_morris(observations, request.minimum_effects).to_json_dict(),
         )
+        archive = make_morris_observation_archive(
+            observations,
+            study_id=request.request_id,
+            provenance={
+                "producer": "rate-of-closure-morris-authority",
+                "request_schema": "rate-of-closure/morris-request@1",
+                "request_sha256": morris_request_sha256(request),
+                "report_schema": "swing-sim/morris-global-sensitivity-report@1",
+            },
+        )
+        return MorrisServiceResult(report_document, archive)
 
 
-__all__ = ["MorrisExecutionService", "ProgressSink", "RateMorrisService"]
+__all__ = [
+    "MorrisExecutionService",
+    "MorrisServiceResult",
+    "morris_request_sha256",
+    "ProgressSink",
+    "RateMorrisService",
+]

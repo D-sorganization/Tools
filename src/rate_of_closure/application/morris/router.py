@@ -16,7 +16,11 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from rate_of_closure.application._workspace_validation import unique_json_object
-from shared.python.swing_sim.variation import CancelledError
+from shared.python.swing_sim.variation import (
+    CancelledError,
+    MorrisObservationArchive,
+    morris_design_sha256,
+)
 
 from .contracts import (
     JobStatus,
@@ -24,7 +28,11 @@ from .contracts import (
     MorrisJobEnvelope,
     parse_morris_request,
 )
-from .service import MorrisExecutionService
+from .service import (
+    MorrisExecutionService,
+    MorrisServiceResult,
+    morris_request_sha256,
+)
 
 _LOGGER = logging.getLogger(__name__)
 _TERMINAL = frozenset({"completed", "cancelled", "failed"})
@@ -38,6 +46,7 @@ class _Job:
     completed_samples: int = 0
     cancel_requested: bool = False
     report: dict[str, Any] | None = None
+    observations: MorrisObservationArchive | None = None
     error: dict[str, str] | None = None
     terminal_at: float | None = None
     cancel: threading.Event = field(default_factory=threading.Event)
@@ -53,6 +62,7 @@ class MorrisRegistryOptions:
     terminal_ttl_s: float = 900.0
     max_retained_jobs: int = 128
     max_total_study_workers: int = 64
+    max_retained_observation_cells: int = 2_000_000
 
     def __post_init__(self) -> None:
         if not 1 <= self.max_active_jobs <= 32:
@@ -63,6 +73,8 @@ class MorrisRegistryOptions:
             raise ValueError("retained job limit must cover active jobs")
         if self.max_total_study_workers < 1:
             raise ValueError("study worker budget must be positive")
+        if self.max_retained_observation_cells < 1:
+            raise ValueError("observation cell budget must be positive")
 
 
 _DEFAULT_REGISTRY_OPTIONS = MorrisRegistryOptions()
@@ -135,6 +147,15 @@ class MorrisJobRegistry:
                 self._terminal_locked(job, "cancelled")
             return self._envelope(job)
 
+    def observations(self, job_id: str) -> MorrisObservationArchive:
+        """Return a completed job's immutable raw authority or fail closed."""
+        with self._lock:
+            self._prune_locked()
+            job = self._known_locked(job_id)
+            if job.status != "completed" or job.observations is None:
+                raise RuntimeError("Morris observations are not available")
+            return job.observations
+
     def close(self) -> None:
         """Cancel outstanding work and release owned executor threads."""
         with self._lock:
@@ -152,10 +173,15 @@ class MorrisJobRegistry:
                 return
             job.status = "running"
         try:
-            report = self._service.execute(
-                job.request,
-                job.cancel,
-                lambda done, total: self._progress(job_id, done, total),
+
+            def progress(done: int, total: int) -> None:
+                self._progress(job_id, done, total)
+
+            extended = getattr(self._service, "execute_with_observations", None)
+            result = (
+                extended(job.request, job.cancel, progress)
+                if callable(extended)
+                else self._service.execute(job.request, job.cancel, progress)
             )
         except CancelledError:
             with self._lock:
@@ -166,7 +192,13 @@ class MorrisJobRegistry:
                 self._finish_failure_locked(job)
         else:
             with self._lock:
-                self._finish_success_locked(job, report)
+                try:
+                    self._finish_success_locked(job, result)
+                except Exception:
+                    _LOGGER.exception(
+                        "Morris result validation failed: job_id=%s", job_id
+                    )
+                    self._finish_failure_locked(job)
 
     def _finish_failure_locked(self, job: _Job) -> None:
         if job.cancel_requested:
@@ -178,13 +210,72 @@ class MorrisJobRegistry:
         }
         self._terminal_locked(job, "failed")
 
-    def _finish_success_locked(self, job: _Job, report: dict[str, Any]) -> None:
+    def _finish_success_locked(
+        self, job: _Job, result: dict[str, Any] | MorrisServiceResult
+    ) -> None:
         if job.cancel_requested:
             self._terminal_locked(job, "cancelled")
             return
         job.completed_samples = job.request.total_samples
-        job.report = report
+        if isinstance(result, MorrisServiceResult):
+            self._validate_extended_result(job, result)
+            job.report = dict(result.report)
+            job.observations = result.observations
+            self._enforce_observation_budget_locked(job)
+        else:
+            job.report = result
         self._terminal_locked(job, "completed")
+
+    @staticmethod
+    def _validate_extended_result(job: _Job, result: MorrisServiceResult) -> None:
+        """Bind an extended result to its exact asynchronous job request."""
+        request = job.request
+        archive = result.observations
+        design = request.design()
+        report_design = result.report.get("design")
+        expected_report_design = {
+            "trajectories": request.trajectories,
+            "levels": request.levels,
+            "seed": request.seed,
+            "total_samples": request.total_samples,
+        }
+        if (
+            archive.study_id != request.request_id
+            or archive.design_sha256 != morris_design_sha256(design)
+            or archive.provenance.get("request_sha256")
+            != morris_request_sha256(request)
+            or not isinstance(report_design, dict)
+            or any(
+                report_design.get(key) != value
+                for key, value in expected_report_design.items()
+            )
+        ):
+            raise ValueError("Morris service result does not match its job request")
+
+    def _enforce_observation_budget_locked(self, current: _Job) -> None:
+        """Evict oldest raw authorities until the weighted cell budget fits."""
+        assert current.observations is not None
+        candidates = sorted(
+            (
+                (job.terminal_at or float("inf"), job)
+                for job in self._jobs.values()
+                if job is not current and job.observations is not None
+            ),
+            key=lambda item: item[0],
+        )
+        total = sum(
+            job.observations.observation_cells
+            for job in self._jobs.values()
+            if job.observations is not None
+        )
+        for _terminal_at, job in candidates:
+            if total <= self._options.max_retained_observation_cells:
+                break
+            assert job.observations is not None
+            total -= job.observations.observation_cells
+            job.observations = None
+        if total > self._options.max_retained_observation_cells:
+            current.observations = None
 
     def _progress(self, job_id: str, done: int, total: int) -> None:
         with self._lock:
@@ -197,6 +288,7 @@ class MorrisJobRegistry:
         job.terminal_at = self._clock()
         if status != "completed":
             job.report = None
+            job.observations = None
 
     def _known_locked(self, job_id: str) -> _Job:
         if job_id not in self._jobs:

@@ -129,7 +129,17 @@ class RateMorrisEvaluator:
         config = apply_global_simulation_values(self.base_config, values)
         capture = capture_simulation(config, self.executor)
         outcome = project_simulation_outcome(sample.ordinal, capture)
-        return MorrisEvaluation(outcome.status.value, outcome.values)
+        failure_message = outcome.failure_message
+        if failure_message is not None:
+            failure_message = " ".join(failure_message.split())[:1024].strip()
+            if not failure_message:
+                failure_message = outcome.failure_type
+        return MorrisEvaluation(
+            outcome.status.value,
+            outcome.values,
+            outcome.failure_type,
+            failure_message,
+        )
 
 
 def _validate_base_config(config: SimulationConfig) -> None:

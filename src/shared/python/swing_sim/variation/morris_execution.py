@@ -67,6 +67,8 @@ class MorrisEvaluation:
 
     status: str
     values: Mapping[str, float | None]
+    failure_type: str | None = None
+    failure_message: str | None = None
 
     def __post_init__(self) -> None:
         status = str(getattr(self.status, "value", self.status))
@@ -84,6 +86,35 @@ class MorrisEvaluation:
             require(
                 all(value is None for value in normalized.values()),
                 "numerical failure outputs must all be unavailable",
+            )
+        diagnostics = (self.failure_type, self.failure_message)
+        require(
+            status == NUMERICAL_FAILURE_VALUE or diagnostics == (None, None),
+            "failure diagnostics are permitted only for numerical failures",
+            diagnostics,
+        )
+        require(
+            (self.failure_type is None) == (self.failure_message is None),
+            "failure type and message must be provided together",
+            diagnostics,
+        )
+        for value, name in zip(
+            diagnostics, ("failure_type", "failure_message"), strict=True
+        ):
+            require(
+                value is None
+                or (
+                    isinstance(value, str)
+                    and value == value.strip()
+                    and bool(value)
+                    and len(value) <= 1_024
+                    and all(
+                        ord(character) >= 32 and not 127 <= ord(character) <= 159
+                        for character in value
+                    )
+                ),
+                f"{name} must be a bounded nonempty trimmed string or None",
+                value,
             )
         object.__setattr__(self, "status", status)
         object.__setattr__(self, "values", MappingProxyType(normalized))
@@ -129,6 +160,8 @@ class _ExecutionContext:
     evaluator: MorrisEvaluator
     values: np.ndarray
     outcomes: np.ndarray
+    failure_types: np.ndarray
+    failure_messages: np.ndarray
     cancel_event: threading.Event
 
 
@@ -310,6 +343,8 @@ def _evaluate_one(context: _ExecutionContext, ordinal: int) -> str:
     validated = _validate_evaluation(evaluation, context.outputs)
     point = (sample.trajectory_index, sample.point_index)
     context.outcomes[point] = validated.status
+    context.failure_types[point] = validated.failure_type
+    context.failure_messages[point] = validated.failure_message
     context.values[point] = [
         (
             np.nan
@@ -365,7 +400,9 @@ def evaluate_morris_design(
         raise CancelledError("Morris execution cancelled before start")
     shape = (typed_design.trajectories, len(typed_design.factors) + 1)
     values = np.full(shape + (len(typed_outputs),), np.nan, dtype=float)
-    outcomes = np.empty(shape, dtype=object)
+    outcomes: np.ndarray = np.empty(shape, dtype=object)
+    failure_types: np.ndarray = np.full(shape, None, dtype=object)
+    failure_messages: np.ndarray = np.full(shape, None, dtype=object)
     physical_points = typed_design.physical_points
     physical_points.setflags(write=False)
     context = _ExecutionContext(
@@ -375,6 +412,8 @@ def evaluate_morris_design(
         typed_evaluator,
         values,
         outcomes,
+        failure_types,
+        failure_messages,
         event,
     )
     sample_count = shape[0] * shape[1]
@@ -384,7 +423,14 @@ def evaluate_morris_design(
         execution_options.n_workers,
         execution_options.progress_cb,
     )
-    return MorrisObservations(typed_design, typed_outputs, values, outcomes)
+    return MorrisObservations(
+        typed_design,
+        typed_outputs,
+        values,
+        outcomes,
+        failure_types,
+        failure_messages,
+    )
 
 
 __all__ = [

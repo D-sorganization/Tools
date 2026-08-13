@@ -331,6 +331,8 @@ class MorrisObservations:
     outputs: tuple[MorrisOutput, ...]
     values: np.ndarray = field(repr=False)
     outcomes: np.ndarray = field(repr=False)
+    failure_types: np.ndarray | None = field(default=None, repr=False)
+    failure_messages: np.ndarray | None = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
         outputs = tuple(self.outputs)
@@ -363,9 +365,52 @@ class MorrisObservations:
             "numerical-failure samples must not contain outputs",
         )
         _validate_noimpact_availability(outputs, values, outcomes)
+        failure_types = _normalize_diagnostics(
+            self.failure_types, expected_prefix, "failure_types"
+        )
+        failure_messages = _normalize_diagnostics(
+            self.failure_messages, expected_prefix, "failure_messages"
+        )
+        require(
+            np.array_equal(failure_types == None, failure_messages == None),  # noqa: E711
+            "failure type and message availability must agree",
+        )
+        nonfailure = outcomes != NUMERICAL_FAILURE_VALUE
+        require(
+            np.all(failure_types[nonfailure] == None),  # noqa: E711
+            "only numerical failures may carry diagnostics",
+        )
         object.__setattr__(self, "outputs", outputs)
         object.__setattr__(self, "values", immutable_array(values, float))
         object.__setattr__(self, "outcomes", immutable_array(outcomes, str))
+        object.__setattr__(self, "failure_types", failure_types)
+        object.__setattr__(self, "failure_messages", failure_messages)
+
+
+def _normalize_diagnostics(
+    values: np.ndarray | None, shape: tuple[int, int], name: str
+) -> np.ndarray:
+    """Own and freeze one bounded optional diagnostic matrix."""
+    result = (
+        np.full(shape, None, dtype=object)
+        if values is None
+        else np.array(values, dtype=object, copy=True)
+    )
+    require(result.shape == shape, f"{name} has invalid shape", result.shape)
+    for value in result.flat:
+        require(
+            value is None
+            or (
+                isinstance(value, str)
+                and bool(value)
+                and value == value.strip()
+                and len(value) <= 1_024
+            ),
+            f"{name} values must be bounded nonempty trimmed strings or None",
+            value,
+        )
+    result.setflags(write=False)
+    return result
 
 
 def _validate_noimpact_availability(

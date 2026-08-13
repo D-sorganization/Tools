@@ -197,6 +197,37 @@ def test_evaluator_normalizes_its_domain_failure_explicitly() -> None:
     assert np.all(np.isnan(observations.values))
 
 
+def test_failure_diagnostics_are_retained_without_leaking_to_successes() -> None:
+    def evaluate(sample: MorrisSample) -> MorrisEvaluation:
+        if sample.ordinal == 1:
+            return MorrisEvaluation(
+                "numerical_failure",
+                {"state": None, "impact": None, "carry": None},
+                failure_type="ConvergenceError",
+                failure_message="iteration limit reached",
+            )
+        return MorrisEvaluation(
+            "evaluated_hit", {"state": 1.0, "impact": 2.0, "carry": 3.0}
+        )
+
+    observations = evaluate_morris_design(_design(1), _outputs(), evaluate)
+
+    assert observations.failure_types.tolist() == [[None, "ConvergenceError", None]]
+    assert observations.failure_messages.tolist() == [
+        [None, "iteration limit reached", None]
+    ]
+
+
+def test_success_evaluation_rejects_failure_diagnostics() -> None:
+    with pytest.raises(ContractViolationError, match="only for numerical failures"):
+        MorrisEvaluation(
+            "evaluated_hit",
+            {"state": 1.0, "impact": 2.0, "carry": 3.0},
+            failure_type="Unexpected",
+            failure_message="must not survive",
+        )
+
+
 def test_domain_exception_requires_explicit_evaluator_adapter() -> None:
     class DomainError(Exception):
         pass

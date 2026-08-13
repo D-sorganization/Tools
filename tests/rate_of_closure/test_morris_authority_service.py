@@ -28,13 +28,31 @@ def test_service_returns_unchanged_v1_report_deterministically() -> None:
         evaluator_factory=lambda _design, _config: deterministic_evaluator
     )
 
-    first = service.execute(request, threading.Event(), lambda _done, _total: None)
-    second = service.execute(request, threading.Event(), lambda _done, _total: None)
+    first_report = service.execute(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    second_report = service.execute(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    first = service.execute_with_observations(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    second = service.execute_with_observations(
+        request, threading.Event(), lambda _done, _total: None
+    )
 
-    assert first == second
-    assert first["schema_id"] == "swing-sim/morris-global-sensitivity-report"
-    assert first["schema_version"] == 1
-    assert first["design"]["total_samples"] == 4  # type: ignore[index]
+    assert first_report == second_report == first.report
+    assert first.report == second.report
+    assert first.report["schema_id"] == "swing-sim/morris-global-sensitivity-report"
+    assert first.report["schema_version"] == 1
+    assert first.report["design"]["total_samples"] == 4  # type: ignore[index]
+    assert first.observations.study_id == request.request_id
+    assert first.observations.design_sha256 == second.observations.design_sha256
+    assert (
+        first.observations.provenance["request_sha256"]
+        == second.observations.provenance["request_sha256"]
+    )
+    assert first.observations.observations.outcomes.shape == (2, 2)
 
 
 def test_programming_failure_aborts_whole_service_call() -> None:

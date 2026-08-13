@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
+
+Branch `codex/4142-morris-observation-authority` starts from exact reviewed
+workspace head `ee4dfecb5e0acd1c8acd1a85d68c4d3b14113408`. It preserves the
+unchanged `morris-global-sensitivity-report@1` response while adding a separate
+`swing-sim/morris-observation-archive@1` authority contract.
+
+- Every design point retains canonical ordinal, trajectory/point coordinates,
+  a design-bound SHA-256 sample ID, declared physical factor values and units,
+  typed hit/no-impact/numerical-failure status, every declared output with null
+  availability, and bounded failure type/message diagnostics.
+- The exact parser rejects schema drift, crossed identities, reordered records,
+  fabricated no-impact outputs, nonfinite or altered design data, and incomplete
+  diagnostics. Parsed arrays are owned and read-only.
+- The public Rate service still returns the unchanged aggregate report. Its
+  explicit extended path returns raw scalar authority too; the job registry
+  retains it only for completed jobs under a weighted cell budget without
+  enlarging the existing job-envelope wire contract.
+- End-user raw transport/export remains open and must be separately bounded and
+  connected to both clients before the authority is called UI-discoverable.
+- This scalar-evidence layer is not complete R11.1 authority: full event ledgers,
+  impact/shot objects, and complete pre-impact state/torque traces remain open.
+
+Verification: 320 shared-variation and Morris application/PyQt tests pass;
+focused Ruff, format, and MyPy pass. Protected CI, independent review,
+publication, transport/UI integration, and UpstreamDrift remain release gates.
+
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
 Branch `codex/4142-morris-workspace-integration` combines exact independently

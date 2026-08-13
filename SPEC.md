@@ -26,11 +26,32 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.37                                    |
-| **Spec Version**        | 1.16.37                                    |
+| **Current Version**     | 1.16.38                                    |
+| **Spec Version**        | 1.16.38                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
+
+Version 1.16.38 adds the strict scalar-observation foundation contract
+`swing-sim/morris-observation-archive@1` without changing the existing
+Morris aggregate report or job-envelope schemas. Each raw design-point record
+is bound to the exact design digest and canonical ordinal and retains physical
+factor values/units, typed outcome, nullable outputs, and bounded failure
+diagnostics. The archive retains immutable design arrays and explicit
+request/report provenance; its exact-field parser rejects reordered, crossed,
+tampered, nonfinite, or scientifically fabricated data.
+
+The Rate Morris evaluator preserves canonical numerical-failure diagnostics.
+The public service keeps its report-dictionary return contract; an explicit
+extended service path and completed-job registry retain raw scalar authority
+under a weighted cell budget. This version
+does not yet expose the raw archive through the PyQt/React workspace or export
+surfaces; bounded transport/chunking and cross-runtime UI integration remain
+subsequent requirements. It is scalar evidence only: complete event ledgers,
+impact/shot objects, and pre-impact state/torque traces remain outside this
+contract and therefore R11.1 remains incomplete.
 
 ### 2026-08-12 Lossless Morris workspace v1 (#4142 R13.8)
 

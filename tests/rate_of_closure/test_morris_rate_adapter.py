@@ -219,10 +219,12 @@ def test_injected_hit_miss_and_failure_preserve_exact_availability() -> None:
     assert all(second.values[name] is None for name in ALL_OUTPUT_NAMES[3:])
 
     def failure(_config: SimulationConfig) -> SimulationRun:
-        raise FloatingPointError("planted numerical failure")
+        raise FloatingPointError("planted\n numerical\tfailure")
 
     failed = RateMorrisEvaluator(design, _base_config(), failure)(_sample(design, 0))
     assert failed.status == "numerical_failure"
+    assert failed.failure_type == "FloatingPointError"
+    assert failed.failure_message == "planted numerical failure"
     assert all(value is None for value in failed.values.values())
 
 

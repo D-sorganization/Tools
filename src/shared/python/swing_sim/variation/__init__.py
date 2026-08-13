@@ -67,6 +67,15 @@ from .morris_execution import (
     MorrisSample,
     evaluate_morris_design,
 )
+from .morris_observation_io import (
+    MORRIS_OBSERVATION_SCHEMA_ID,
+    MORRIS_OBSERVATION_SCHEMA_VERSION,
+    MorrisObservationArchive,
+    make_morris_observation_archive,
+    morris_design_sha256,
+    morris_observations_from_json_dict,
+    morris_observations_to_json_dict,
+)
 from .propagation import (
     CommonReferenceTrace,
     PairedIntervention,
@@ -116,6 +125,9 @@ __all__ = [
     "MorrisDesign",
     "MorrisEstimate",
     "MorrisEvaluation",
+    "MorrisObservationArchive",
+    "make_morris_observation_archive",
+    "morris_design_sha256",
     "MorrisEvaluator",
     "MorrisExecutionOptions",
     "MorrisFactor",
@@ -127,6 +139,8 @@ __all__ = [
     "MAX_MORRIS_SAMPLES",
     "MAX_MORRIS_WORKERS",
     "MORRIS_PROGRESS_INTERVAL",
+    "MORRIS_OBSERVATION_SCHEMA_ID",
+    "MORRIS_OBSERVATION_SCHEMA_VERSION",
     "MORRIS_REPORT_SCHEMA_ID",
     "MORRIS_REPORT_SCHEMA_VERSION",
     "NoiseSpec",
@@ -143,6 +157,8 @@ __all__ = [
     "dispersion_ellipse",
     "evaluate_morris_design",
     "analyze_morris",
+    "morris_observations_from_json_dict",
+    "morris_observations_to_json_dict",
     "analyze_paired_intervention",
     "compute_position_dispersion",
     "compute_position_dispersion_view",
