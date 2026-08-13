@@ -259,6 +259,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             n_runs=self._runs_spin.value(),
             seed=self._seed_spin.value(),
             flight_model=self._flight_combo.currentText(),
+            groups=self._loaded_groups,
         )
 
     def dataset(self) -> VariationDataset | None:
@@ -292,6 +293,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
 
     def _on_mode_changed(self, *_args: object) -> None:
         self._loaded_base.clear()
+        self._loaded_groups = ()
         for row in self._rows:
             row.set_mode(self.mode())
 

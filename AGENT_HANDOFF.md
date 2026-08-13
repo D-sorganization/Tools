@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142)
+
+Branch `codex/4142-pyqt-plan-roundtrip` starts from exact Morris workspace
+integration head `ee4dfecb5e0acd1c8acd1a85d68c4d3b14113408` and changes only the
+standalone PyQt variation-plan host, its focused tests, and canonical handoffs.
+
+- A loaded plan retains custom spec IDs, temporal/spatial locus metadata, and
+  complete correlation/covariance groups through build and Save Plan.
+- Noise rows retain exact source values while their visible controls are
+  untouched, avoiding precision loss from spin-box rendering. Intentional
+  visible edits preserve the unrepresented stable identity and locus fields.
+- Load Plan preflights every top-level selector and numeric editor range before
+  mutation. Unsupported run/seed ranges, flight models, variables, or numeric
+  values fail closed with the previously runnable editor state unchanged.
+- File parsing and editor application share the same guarded transaction;
+  validation errors are displayed and never escape after a partial load.
+- Focused evidence: 161 PyQt/shared-variation/request tests pass serially,
+  including exact correlated/localized save round trip and atomic failure.
+
+This slice does not add editors for group matrices or loci, does not change the
+shared schema, and does not complete #4142. Protected publication and the
+immutable UpstreamDrift consumer remain later dependency-ordered gates.
+
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
 Branch `codex/4142-morris-workspace-integration` combines exact independently

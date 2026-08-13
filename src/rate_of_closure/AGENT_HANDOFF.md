@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142)
+
+The isolated `codex/4142-pyqt-plan-roundtrip` branch starts at exact parent
+`ee4dfecb5e0acd1c8acd1a85d68c4d3b14113408`. `NoiseRow` retains the loaded
+`NoiseSpec` as application authority and reconstructs it exactly until a visible
+field changes; changed rows still carry custom `spec_id`, `time_window_s`, and
+`point_ids`. `VariationTab` similarly retains complete perturbation groups.
+
+`VariationTabIoMixin` validates run/seed ranges, flight-model availability,
+mode registry membership, and numeric control ranges before any widget changes.
+Both direct and file-based load failures therefore leave the prior plan intact.
+The UI intentionally does not invent partial group/locus editors: those fields
+remain lossless retained authority. Focused serial verification covers 161
+PyQt, shared variation, grouped-sampling, schema, parity, and request tests.
+
+Remaining gates are protected stack publication and later immutable-main
+UpstreamDrift consumption; this slice alone does not complete #4142.
+
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
 Branch `codex/4142-morris-workspace-integration` combines exact independently

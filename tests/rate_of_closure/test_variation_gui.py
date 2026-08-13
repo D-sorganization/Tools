@@ -26,6 +26,7 @@ from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_LAUNCH,
     CATEGORY_SWING,
     NoiseSpec,
+    PerturbationGroup,
     VariationPlan,
     keys_for_mode,
     run_variation,
@@ -180,6 +181,101 @@ class TestPlanRoundTrip:
         )
         tab.load_plan(plan)
         assert tab.build_plan() == plan
+
+    def test_v2_plan_round_trips_custom_ids_loci_groups_and_save(
+        self, tab: VariationTab, tmp_path: Path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        spin = f"{CATEGORY_LAUNCH}.spin_rpm"
+        plan = VariationPlan(
+            mode="launch",
+            base_variables={_BALL: 155.25, spin: 2_450.0},
+            noise=(
+                NoiseSpec(
+                    _BALL,
+                    scale=2.125,
+                    spec_id="launch-speed-window",
+                    time_window_s=(0.01, 0.025),
+                    point_ids=("ball.center",),
+                ),
+                NoiseSpec(
+                    spin,
+                    scale=175.5,
+                    spec_id="launch-spin-window",
+                    time_window_s=(0.01, 0.025),
+                    point_ids=("ball.center",),
+                ),
+            ),
+            groups=(
+                PerturbationGroup(
+                    group_id="speed-spin-correlation",
+                    spec_ids=("launch-speed-window", "launch-spin-window"),
+                    matrix=((1.0, -0.35), (-0.35, 1.0)),
+                ),
+            ),
+            n_runs=44,
+            seed=19,
+        )
+
+        tab.load_plan(plan)
+
+        assert tab.build_plan() == plan
+        target = tmp_path / "variation-plan-v2.json"
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.variation_tab.QFileDialog.getSaveFileName",
+            staticmethod(lambda *a, **k: (str(target), "JSON (*.json)")),
+        )
+        tab._on_save_plan()
+        assert VariationPlan.loads(target.read_text(encoding="utf-8")) == plan
+
+        tab._rows[0].scale.setValue(2.5)
+        edited = tab.build_plan()
+        assert edited.noise[0].scale == 2.5
+        assert edited.noise[0].spec_id == "launch-speed-window"
+        assert edited.noise[0].time_window_s == (0.01, 0.025)
+        assert edited.noise[0].point_ids == ("ball.center",)
+        assert edited.groups == plan.groups
+
+    def test_unrepresentable_plan_is_rejected_before_editor_mutation(
+        self, tab: VariationTab
+    ) -> None:
+        original = _fast_launch_plan(12)
+        tab.load_plan(original)
+        before = tab.build_plan()
+        unsupported = VariationPlan(
+            mode="launch",
+            noise=(NoiseSpec(_BALL, scale=1.0),),
+            n_runs=tab._runs_spin.maximum() + 1,
+            seed=91,
+        )
+
+        with pytest.raises(ValueError, match="n_runs"):
+            tab.load_plan(unsupported)
+
+        assert tab.build_plan() == before
+
+    def test_file_load_failure_is_atomic_and_reported(
+        self, tab: VariationTab, tmp_path: Path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        original = _fast_launch_plan(12)
+        tab.load_plan(original)
+        before = tab.build_plan()
+        unsupported = VariationPlan(
+            mode="launch",
+            noise=(NoiseSpec(_BALL, scale=1.0),),
+            n_runs=tab._runs_spin.maximum() + 1,
+            seed=91,
+        )
+        target = tmp_path / "unsupported-plan.json"
+        target.write_text(unsupported.dumps(), encoding="utf-8")
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.variation_tab.QFileDialog.getOpenFileName",
+            staticmethod(lambda *a, **k: (str(target), "JSON (*.json)")),
+        )
+
+        tab._on_load_plan()
+
+        assert tab.build_plan() == before
+        assert tab._status.text().startswith("Cannot load plan: plan n_runs")
 
     def test_explorer_scenario_base_carries_speed_and_offsets(
         self, tab: VariationTab

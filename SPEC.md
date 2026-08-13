@@ -26,11 +26,24 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.37                                    |
-| **Spec Version**        | 1.16.37                                    |
+| **Current Version**     | 1.16.38                                    |
+| **Spec Version**        | 1.16.38                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142 R10.4/R11.4)
+
+Version 1.16.38 makes the PyQt Variation plan editor a lossless host for the
+shared version-2 plan contract. Loading and rebuilding a plan preserves custom
+`spec_id` values, temporal `time_window_s`, spatial `point_ids`, and complete
+correlation/covariance groups. Numeric source authority that has more precision
+than a visible spin box is returned unchanged until the user intentionally
+edits that field; visible edits retain the source identity and locus metadata.
+Plan loads preflight run count, seed, flight model, registry membership, and
+numeric control ranges before mutating any editor. File-load validation errors
+therefore leave the prior runnable plan intact and are reported in the status
+surface instead of silently clamping, substituting, or partially applying data.
 
 ### 2026-08-12 Lossless Morris workspace v1 (#4142 R13.8)
 

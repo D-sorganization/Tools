@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142)
+
+- Isolated branch `codex/4142-pyqt-plan-roundtrip` is based on exact Morris
+  workspace integration head `ee4dfecb5e0acd1c8acd1a85d68c4d3b14113408`.
+- PyQt now round-trips plan-v2 custom spec IDs, localized time/point loci, and
+  correlation/covariance groups without projecting them into incomplete UI
+  controls. Unedited high-precision source values also remain exact.
+- All editor representability checks run before mutation. Invalid direct or
+  file loads preserve the prior plan and emit an actionable status error.
+- Focused local evidence is 161/161 serial PyQt/shared-variation/request tests.
+  Scoped Ruff, format, MyPy, file-size, and diff gates must remain green at the
+  implementation commit before publication.
+- This is a child implementation slice, not release completion. It must travel
+  through ordinary protected dependency order; no parent rewrite, retarget,
+  force push, admin merge, or UpstreamDrift pre-pin is permitted.
+
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
 Branch `codex/4142-morris-workspace-integration` combines exact independently
