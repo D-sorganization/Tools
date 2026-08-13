@@ -178,6 +178,10 @@ def test_cross_runtime_integer_and_text_edges_fail_closed() -> None:
         replace(_request(), max_events=10**1000)
     with pytest.raises(ValueError, match="safe range"):
         canonical_numeric_json(unsafe_integer)
+    with pytest.raises(ValueError, match="safe range"):
+        canonical_numeric_json(float(unsafe_integer))
+    with pytest.raises(ValueError, match="safe range"):
+        replace(_surface(), firmness_pa=float(unsafe_integer))
     with pytest.raises(ValueError, match="surrogate"):
         replace(_request(), request_id="\ud800")
     with pytest.raises(ValueError, match="surrogate"):

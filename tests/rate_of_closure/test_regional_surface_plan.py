@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from inspect import signature
+from pathlib import Path
 
 import pytest
 
@@ -12,8 +13,53 @@ from rate_of_closure.application.regional_surface_plan import (
     illustrative_regional_surface_plan_draft,
     validate_regional_surface_plan_draft,
 )
+from shared.python.swing_sim.canonical_numeric_json import (
+    MAX_CANONICAL_SAFE_INTEGER,
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def test_pyqt_number_input_spec_preserves_behavior_and_structural_bound(qtbot) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    pytest.importorskip("pytestqt")
+    from rate_of_closure.ui.pyqt6.engineering_number_input import (
+        NumberInputSpec,
+        engineering_number_input,
+    )
+
+    spec = NumberInputSpec(
+        suffix=" m",
+        step=0.25,
+        minimum=-2.0,
+        maximum=3.0,
+        decimals=11,
+    )
+    field = engineering_number_input("Test coordinate", 1.5, spec)
+    qtbot.addWidget(field)
+
+    assert NumberInputSpec.__dataclass_params__.frozen is True
+    assert len(signature(engineering_number_input).parameters) <= 4
+    assert field.accessibleName() == "Test coordinate"
+    assert field.value() == pytest.approx(1.5)
+    assert field.suffix() == " m"
+    assert field.singleStep() == pytest.approx(0.25)
+    assert field.minimum() == pytest.approx(-2.0)
+    assert field.maximum() == pytest.approx(3.0)
+    assert field.decimals() == 11
+    assert "Test coordinate" in field.toolTip()
+
+
+def test_pyqt_number_input_spec_rejects_invalid_configuration() -> None:
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6.engineering_number_input import NumberInputSpec
+
+    with pytest.raises(ValueError, match="step must be finite and positive"):
+        NumberInputSpec(suffix="", step=0.0, minimum=0.0, maximum=1.0)
+    with pytest.raises(ValueError, match="minimum must not exceed maximum"):
+        NumberInputSpec(suffix="", step=0.1, minimum=2.0, maximum=1.0)
+    with pytest.raises(ValueError, match="decimals must be an integer"):
+        NumberInputSpec(decimals=True)
 
 
 def test_illustrative_draft_delegates_to_regional_wire_contract() -> None:
@@ -62,39 +108,6 @@ def test_editor_region_limit_fails_before_wire_construction() -> None:
 
     with pytest.raises(ValueError, match=f"at most {MAX_EDITOR_REGIONS}"):
         validate_regional_surface_plan_draft(replace(draft, regions=repeated))
-
-
-def test_pyqt_number_input_spec_preserves_behavior_and_structural_bound(qtbot) -> None:  # type: ignore[no-untyped-def]
-    pytest.importorskip("PyQt6")
-    pytest.importorskip("pytestqt")
-    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
-        NumberInputSpec,
-        _number_input,
-    )
-
-    spec = NumberInputSpec(suffix=" m", step=0.25, minimum=-2.0, maximum=3.0)
-    field = _number_input("Test coordinate", 1.5, spec)
-    qtbot.addWidget(field)
-
-    assert NumberInputSpec.__dataclass_params__.frozen is True
-    assert len(signature(_number_input).parameters) <= 4
-    assert field.accessibleName() == "Test coordinate"
-    assert field.value() == pytest.approx(1.5)
-    assert field.suffix() == " m"
-    assert field.singleStep() == pytest.approx(0.25)
-    assert field.minimum() == pytest.approx(-2.0)
-    assert field.maximum() == pytest.approx(3.0)
-    assert "Test coordinate" in field.toolTip()
-
-
-def test_pyqt_number_input_spec_rejects_invalid_configuration() -> None:
-    pytest.importorskip("PyQt6")
-    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import NumberInputSpec
-
-    with pytest.raises(ValueError, match="step must be finite and positive"):
-        NumberInputSpec(suffix="", step=0.0, minimum=0.0, maximum=1.0)
-    with pytest.raises(ValueError, match="minimum must not exceed maximum"):
-        NumberInputSpec(suffix="", step=0.1, minimum=2.0, maximum=1.0)
 
 
 def test_pyqt_editor_exposes_warnings_units_and_validated_readback(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -155,3 +168,162 @@ def test_pyqt_editor_invalidates_validated_readback_after_draft_change(qtbot) ->
 
     assert tab.readback.toPlainText() == ""
     assert tab.status_label.text() == "Changes not validated"
+
+
+def test_pyqt_open_applies_only_a_fully_valid_editor_request(
+    qtbot, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6 import regional_surface_plan_io
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
+        RegionalSurfacePlanTab,
+    )
+
+    request = validate_regional_surface_plan_draft(
+        replace(illustrative_regional_surface_plan_draft(), request_id="opened-plan")
+    )
+    target = tmp_path / "opened.json"
+    target.write_text(request.to_json(), encoding="utf-8")
+    monkeypatch.setattr(
+        regional_surface_plan_io.QFileDialog,
+        "getOpenFileName",
+        lambda *_args: (str(target), "JSON files (*.json)"),
+    )
+    tab = RegionalSurfacePlanTab()
+    qtbot.addWidget(tab)
+
+    tab.open_button.click()
+
+    assert tab.request_id.text() == "opened-plan"
+    assert tab.file_actions.recent_path == target
+    assert "opened" in tab.status_label.text().lower()
+    assert tab.readback.toPlainText() == request.to_json()
+
+
+def test_pyqt_failed_open_rolls_back_editor_and_recent_path(
+    qtbot, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6 import regional_surface_plan_io
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
+        RegionalSurfacePlanTab,
+    )
+
+    target = tmp_path / "corrupt.json"
+    target.write_text('{"request_id":"one","request_id":"two"}', encoding="utf-8")
+    monkeypatch.setattr(
+        regional_surface_plan_io.QFileDialog,
+        "getOpenFileName",
+        lambda *_args: (str(target), "JSON files (*.json)"),
+    )
+    tab = RegionalSurfacePlanTab()
+    qtbot.addWidget(tab)
+    before = tab.draft()
+
+    tab.open_button.click()
+
+    assert tab.draft() == before
+    assert tab.file_actions.recent_path is None
+    assert "open failed" in tab.status_label.text().lower()
+    assert tab.status_label.accessibleName() == "Regional surface plan file error"
+
+
+def test_pyqt_save_as_preserves_imported_request_bytes(
+    qtbot, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6 import regional_surface_plan_io
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
+        RegionalSurfacePlanTab,
+    )
+
+    draft = illustrative_regional_surface_plan_draft()
+    request = validate_regional_surface_plan_draft(
+        replace(
+            draft,
+            request_id="saved-plan",
+            regions=(replace(draft.regions[0], precedence=MAX_CANONICAL_SAFE_INTEGER),),
+        )
+    )
+    source = tmp_path / "source.json"
+    destination = tmp_path / "copy.json"
+    source.write_text(request.to_json(), encoding="utf-8")
+    choices = iter(((str(source), "JSON files (*.json)"),))
+    monkeypatch.setattr(
+        regional_surface_plan_io.QFileDialog,
+        "getOpenFileName",
+        lambda *_args: next(choices),
+    )
+    monkeypatch.setattr(
+        regional_surface_plan_io.QFileDialog,
+        "getSaveFileName",
+        lambda *_args: (str(destination), "JSON files (*.json)"),
+    )
+    tab = RegionalSurfacePlanTab()
+    qtbot.addWidget(tab)
+
+    tab.open_button.click()
+    tab.save_button.click()
+
+    assert destination.read_bytes() == source.read_bytes()
+    assert tab.file_actions.recent_path == destination
+    assert tab.current_request() == request
+
+
+def test_pyqt_import_preserves_canonical_precision_and_large_si_values(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
+        RegionalSurfacePlanTab,
+    )
+
+    draft = illustrative_regional_surface_plan_draft()
+    request = validate_regional_surface_plan_draft(
+        replace(
+            draft,
+            upper_coordinate_m=1_000_000_000_000.0,
+            base_surface=replace(
+                draft.base_surface,
+                firmness_pa=0.00000000001,
+                grass_height_m=123.12345678901,
+                turf_density_kg_m3=20_000.12345678901,
+            ),
+        )
+    )
+    tab = RegionalSurfacePlanTab()
+    qtbot.addWidget(tab)
+
+    tab.apply_imported_request(request)
+
+    assert tab.current_request() is request
+
+
+def test_pyqt_cancelled_open_and_save_leave_status_and_recent_unchanged(
+    qtbot, monkeypatch: pytest.MonkeyPatch
+) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6 import regional_surface_plan_io
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
+        RegionalSurfacePlanTab,
+    )
+
+    monkeypatch.setattr(
+        regional_surface_plan_io.QFileDialog,
+        "getOpenFileName",
+        lambda *_args: ("", ""),
+    )
+    monkeypatch.setattr(
+        regional_surface_plan_io.QFileDialog,
+        "getSaveFileName",
+        lambda *_args: ("", ""),
+    )
+    tab = RegionalSurfacePlanTab()
+    qtbot.addWidget(tab)
+    status = tab.status_label.text()
+
+    tab.open_button.click()
+    tab.save_button.click()
+
+    assert tab.status_label.text() == status
+    assert tab.file_actions.recent_path is None

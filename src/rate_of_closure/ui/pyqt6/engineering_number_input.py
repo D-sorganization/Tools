@@ -16,6 +16,7 @@ class NumberInputSpec:
     step: float = 0.1
     minimum: float = -1e9
     maximum: float = 1e9
+    decimals: int = 6
 
     def __post_init__(self) -> None:
         """Reject unusable Qt ranges before a widget is constructed."""
@@ -25,6 +26,12 @@ class NumberInputSpec:
             raise ValueError("minimum and maximum must be finite")
         if self.minimum > self.maximum:
             raise ValueError("minimum must not exceed maximum")
+        if (
+            isinstance(self.decimals, bool)
+            or not isinstance(self.decimals, int)
+            or not 0 <= self.decimals <= 323
+        ):
+            raise ValueError("decimals must be an integer from zero through 323")
 
 
 def engineering_number_input(
@@ -35,7 +42,7 @@ def engineering_number_input(
     """Create one consistently configured accessible SI number input."""
     field = QDoubleSpinBox()
     field.setAccessibleName(name)
-    field.setDecimals(6)
+    field.setDecimals(spec.decimals)
     field.setRange(spec.minimum, spec.maximum)
     field.setSingleStep(spec.step)
     field.setSuffix(spec.suffix)

@@ -9,7 +9,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
 _FLOAT_QUANTUM = Decimal("0.00000000001")
-_MAX_SAFE_INTEGER = 9_007_199_254_740_991
+MAX_CANONICAL_SAFE_INTEGER = 9_007_199_254_740_991
 
 
 def _string_token(value: str) -> str:
@@ -18,9 +18,11 @@ def _string_token(value: str) -> str:
     return json.dumps(value, ensure_ascii=False)
 
 
-def _canonical_float_token(value: float) -> str:
+def _canonical_float_token(value: float, *, allow_extended_finite: bool = False) -> str:
     if not math.isfinite(value):
         raise ValueError("canonical JSON requires finite floats")
+    if not allow_extended_finite and abs(value) > MAX_CANONICAL_SAFE_INTEGER:
+        raise ValueError("canonical JSON number exceeds cross-runtime safe range")
     if value == 0 or value.is_integer():
         return "0" if value == 0 else str(int(value))
     rounded = Decimal.from_float(value).quantize(_FLOAT_QUANTUM, rounding=ROUND_HALF_UP)
@@ -34,16 +36,17 @@ def canonical_numeric_float(value: float) -> float:
     return float(_canonical_float_token(value))
 
 
-def canonical_numeric_json(value: Any) -> str:
-    """Serialize JSON-compatible data with stable fixed-point float tokens."""
+def _canonical_numeric_json(value: Any, *, allow_extended_finite: bool) -> str:
     if value is None:
         return "null"
     if isinstance(value, bool):
         return "true" if value else "false"
     if isinstance(value, float):
-        return _canonical_float_token(value)
+        return _canonical_float_token(
+            value, allow_extended_finite=allow_extended_finite
+        )
     if isinstance(value, int):
-        if abs(value) > _MAX_SAFE_INTEGER:
+        if abs(value) > MAX_CANONICAL_SAFE_INTEGER:
             raise ValueError("canonical JSON integer exceeds cross-runtime safe range")
         return str(value)
     if isinstance(value, str):
@@ -51,14 +54,37 @@ def canonical_numeric_json(value: Any) -> str:
     if isinstance(value, Mapping):
         if not all(isinstance(key, str) for key in value):
             raise TypeError("canonical JSON object keys must be strings")
-        items = (
-            f"{_string_token(key)}:{canonical_numeric_json(value[key])}"
-            for key in sorted(value)
-        )
+
+        def item_token(key: str) -> str:
+            token = _canonical_numeric_json(
+                value[key], allow_extended_finite=allow_extended_finite
+            )
+            return f"{_string_token(key)}:{token}"
+
+        items = (item_token(key) for key in sorted(value))
         return "{" + ",".join(items) + "}"
     if isinstance(value, (list, tuple)):
-        return "[" + ",".join(canonical_numeric_json(item) for item in value) + "]"
+        items = (
+            _canonical_numeric_json(item, allow_extended_finite=allow_extended_finite)
+            for item in value
+        )
+        return "[" + ",".join(items) + "]"
     raise TypeError(f"unsupported canonical JSON value: {type(value).__name__}")
 
 
-__all__ = ["canonical_numeric_float", "canonical_numeric_json"]
+def canonical_numeric_json(value: Any) -> str:
+    """Serialize JSON-compatible data within the shared runtime-safe range."""
+    return _canonical_numeric_json(value, allow_extended_finite=False)
+
+
+def canonical_numeric_json_extended_floats(value: Any) -> str:
+    """Serialize finite floats beyond the safe range while retaining safe integers."""
+    return _canonical_numeric_json(value, allow_extended_finite=True)
+
+
+__all__ = [
+    "MAX_CANONICAL_SAFE_INTEGER",
+    "canonical_numeric_float",
+    "canonical_numeric_json",
+    "canonical_numeric_json_extended_floats",
+]

@@ -6,6 +6,10 @@ from .commands import (
     CommandAvailability,
     CommandUnavailableError,
 )
+from .regional_surface_plan_files import (
+    read_regional_surface_plan_request,
+    write_regional_surface_plan_request_atomic,
+)
 from .workspace_document import (
     WORKSPACE_SCHEMA,
     WORKSPACE_SCHEMA_VERSION,
@@ -30,7 +34,9 @@ __all__ = [
     "WorkspaceLayout",
     "WorkspaceMetadata",
     "read_workspace",
+    "read_regional_surface_plan_request",
     "workspace_from_json",
     "workspace_to_json",
     "write_workspace_atomic",
+    "write_regional_surface_plan_request_atomic",
 ]
