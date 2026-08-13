@@ -7,6 +7,11 @@
 - The Rate web package pins Playwright Test 1.62.1 in its own manifest/lock;
   the dedicated configuration serves the production Vite build in deterministic
   Chromium desktop and narrow projects.
+- Same-repository PRs, pushes, and manual dispatches run on `d-sorg-fleet`.
+  Fork PRs run the equivalent locked production gate on ephemeral
+  `ubuntu-latest` and cannot execute on the persistent fleet. Every external
+  action in the Playwright workflow is pinned to a full immutable SHA; evidence
+  artifacts include the run and attempt IDs.
 - Role/label-driven tests observe the hashed production module Worker and prove
   seeded progress/completion/reproducible rerun, long-run cancellation without
   partial or stale result acceptance, and Worker termination on tab unmount.

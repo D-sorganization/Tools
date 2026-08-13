@@ -26,17 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.54                                    |
-| **Spec Version**        | 1.16.54                                    |
+| **Current Version**     | 1.16.55                                    |
+| **Spec Version**        | 1.16.55                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
-Version 1.16.54 pins Playwright Test 1.62.1 inside the Rate web package and
-adds a dedicated deterministic Chromium configuration and path-filtered fleet
-workflow. The gate builds and previews the production Vite output. Role/label
+Version 1.16.55 pins Playwright Test 1.62.1 inside the Rate web package and
+adds a dedicated deterministic Chromium configuration and path-filtered
+workflow. Same-repository pull requests, pushes, and manual runs execute on the
+trusted fleet. Fork pull requests execute the equivalent locked gate on an
+ephemeral GitHub-hosted runner and cannot reach the persistent fleet. Every
+external action reference in this Playwright workflow is pinned to a full
+immutable commit SHA. The gate
+builds and previews the production Vite output. Role/label
 locators drive the real hashed module Worker through a seeded three-run study,
 completion and identical rerun, 500-run swing/OAT cancellation with no partial
 or late result, and primary-tab navigation which terminates active work before
@@ -45,7 +50,8 @@ the tested dedicated module Worker.
 
 Desktop 1440x1000 and narrow 390x844 projects enforce zero document-level
 horizontal overflow and attach deterministic full-page screenshots. Reports,
-failure screenshots, traces, and videos are retained as CI artifacts. Local
+failure screenshots, traces, and videos are retained as attempt-identified CI
+artifacts. Local
 evidence is 5/5 Playwright tests and 743/743 Vitest tests, with TypeScript,
 ESLint, and the Vite production build green.
 

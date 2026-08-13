@@ -8,7 +8,11 @@
 Local branch `codex/4142-rate-web-playwright` starts from exact integrated
 commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The Rate web package pins
 Playwright Test 1.62.1 in its own manifest/lock and owns a deterministic
-Chromium configuration plus a path-filtered `d-sorg-fleet` CI workflow.
+Chromium configuration plus a path-filtered CI workflow. Same-repository PRs,
+pushes, and manual runs may use `d-sorg-fleet`; fork PRs run the equivalent
+locked gate on ephemeral `ubuntu-latest` and cannot reach the persistent
+fleet. Checkout, Node setup, and artifact upload actions are pinned to full
+immutable SHAs. Artifact names include the workflow run and attempt IDs.
 
 The gate builds and serves the Vite production bundle, then uses role/label
 locators against the actual bundled module Worker. It proves seeded three-run
