@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React localized execution review hardening (#4142)
+
+Version 1.16.66 closes the independent duration, Worker trust, and export
+findings. Localized windows are preflighted against the canonical rounded RK4
+duration, so off-grid end times cannot become per-trial numerical failures.
+Worker responses now bind exact deterministic samples and default passive
+inputs to the request and validate nested swing, flight, impact, torque,
+availability, source, and provenance domains before acceptance. Schema-v2
+ensemble JSON is a strict finite writer/parser; CSV neutralizes spreadsheet
+formula prefixes while preserving numeric negatives.
+
+Local correction evidence passes 846/846 Vitest, 290/290 selected Python tests
+with one expected missing-Rust-wheel skip, 6/6 Playwright, TypeScript, ESLint,
+and Vite production build.
+
+The browser kernel supports passive and prescribed additive torque, with both
+pinned by the Python golden. The current Variation request/UI and production
+Worker exercise passive execution only; prescribed profile transport is not
+claimed. Rust parity, full RK4 half-step history, cross-browser/AT evidence,
+approved visual baselines, protected publication, and remaining #4142 stay
+open.
+
 ## 2026-08-13 React localized-torque execution and export (#4142 R13.3/R14.3)
 
 The React production Worker now executes authored shoulder/wrist localized

@@ -15,6 +15,7 @@ import {
 import {
   runSwingVariation,
   localizedTorqueSourcesToCsv,
+  swingEnsembleFromJson,
   swingEnsembleToJson,
   swingTracesToCsv,
 } from "./variationSwingEnsemble";
@@ -170,6 +171,39 @@ describe("web swing variation ensemble", () => {
     expect(csv).toContain("spec_id,variable_key,joint_id,window_start_s,window_end_s,torque_nm,unit,provenance");
     expect(csv).toContain("drive.shoulder");
     expect(csv).not.toContain("swing.clubhead.reference");
+    const restored = swingEnsembleFromJson(swingEnsembleToJson(first), localizedPlan);
+    expect(JSON.parse(JSON.stringify(restored.dataset))).toEqual(
+      JSON.parse(JSON.stringify(first.dataset)),
+    );
+    expect(JSON.parse(JSON.stringify(restored.runs))).toEqual(
+      JSON.parse(JSON.stringify(first.runs)),
+    );
+
+    const hostilePlan: VariationPlanTs = {
+      ...localizedPlan,
+      noise: [{ ...localizedPlan.noise[0], specId: "=2+5" }],
+      baseVariables: { [SHOULDER_TORQUE]: 3 },
+    };
+    expect(localizedTorqueSourcesToCsv(runSwingVariation(hostilePlan)))
+      .toContain("'=2+5");
+
+    const nonfinite = runSwingVariation(localizedPlan);
+    nonfinite.runs[0].run!.swing[0].position[0] = Number.NaN;
+    expect(() => swingEnsembleToJson(nonfinite)).toThrow(/finite JSON/i);
+
+    const tampered = JSON.parse(swingEnsembleToJson(first));
+    tampered.trials[0].localizedTorqueCommands[0].torqueNm = "3";
+    expect(() => swingEnsembleFromJson(JSON.stringify(tampered), localizedPlan))
+      .toThrow(/trial 0/i);
+    expect(() => swingEnsembleFromJson(
+      swingEnsembleToJson(first).replace('{\n  "schemaVersion": 2,',
+        '{\n  "schemaVersion": 2,\n  "schemaVersion": 2,'),
+      localizedPlan,
+    )).toThrow(/duplicate JSON field/i);
+    const extraField = JSON.parse(swingEnsembleToJson(first));
+    extraField.trials[0].untrusted = true;
+    expect(() => swingEnsembleFromJson(JSON.stringify(extraField), localizedPlan))
+      .toThrow(/fields are invalid/i);
 
     const failures = runSwingVariation(localizedPlan, {
       ...baseInput(), doublePendulumInitialState: [Number.NaN, 0, 0, 0],
@@ -188,8 +222,57 @@ describe("web swing variation ensemble", () => {
     forgedInput.sourceKind = "manual";
     expect(() => validateResult(workerResult, request)).toThrow(/trials/i);
 
-    expect(() => runSwingVariation(localizedPlan, {
-      ...baseInput(), swingDurationS: 0.0025,
+    const expectWorkerTamperRejected = (mutate: (value: Record<string, unknown>) => void) => {
+      const candidate = structuredClone(executeVariationWork(request, () => undefined));
+      mutate(candidate as unknown as Record<string, unknown>);
+      expect(() => validateResult(candidate, request)).toThrow(/variation worker/i);
+    };
+    expectWorkerTamperRejected((value) => {
+      const ensemble = value.ensemble as Record<string, unknown>;
+      const runs = ensemble.runs as Array<Record<string, unknown>>;
+      (runs[0].input as Record<string, unknown>).swingDurationS = "1.5";
+    });
+    expectWorkerTamperRejected((value) => {
+      const ensemble = value.ensemble as Record<string, unknown>;
+      const runs = ensemble.runs as Array<Record<string, unknown>>;
+      const run = runs[0].run as Record<string, unknown>;
+      run.swing = "not-an-array";
+    });
+    expectWorkerTamperRejected((value) => {
+      const ensemble = value.ensemble as Record<string, unknown>;
+      const runs = ensemble.runs as Array<Record<string, unknown>>;
+      const run = runs[0].run as Record<string, unknown>;
+      const torque = run.torqueRun as Record<string, unknown>;
+      torque.appliedTorqueHistory = "forged";
+    });
+    expectWorkerTamperRejected((value) => {
+      const ensemble = value.ensemble as Record<string, unknown>;
+      const runs = ensemble.runs as Array<Record<string, unknown>>;
+      const run = runs[0].run as Record<string, unknown>;
+      (run.impactOutcome as Record<string, unknown>).closestApproachM = "0";
+    });
+    expectWorkerTamperRejected((value) => {
+      const dataset = value.dataset as Record<string, unknown>;
+      (dataset.inputs as unknown[][])[0][0] = "3";
+    });
+    expectWorkerTamperRejected((value) => {
+      const ensemble = value.ensemble as Record<string, unknown>;
+      const runs = ensemble.runs as Array<Record<string, unknown>>;
+      const commands = runs[0].localizedTorqueCommands as Array<Record<string, unknown>>;
+      commands[0].provenance = "forged";
+    });
+
+    const roundedDurationPlan: VariationPlanTs = {
+      ...localizedPlan,
+      noise: [{
+        ...localizedPlan.noise[0],
+        timeWindowS: [0.002, 0.0023],
+      }],
+      baseVariables: { [SHOULDER_TORQUE]: 3 },
+      nRuns: 2,
+    };
+    expect(() => runSwingVariation(roundedDurationPlan, {
+      ...baseInput(), swingDurationS: 0.0024,
     })).toThrow(/window exceeds run/i);
   });
 });

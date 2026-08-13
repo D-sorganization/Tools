@@ -54,6 +54,18 @@ export interface PendulumParams {
 export type PendulumState = [number, number, number, number];
 export type JointTorquesNm = readonly [number, number];
 
+export const DOUBLE_PENDULUM_DT_S = 1e-3;
+
+/** Match the fixed-step count used by the browser/Python reference pipeline. */
+export function effectiveDoublePendulumDurationS(durationS: number): number {
+  if (!Number.isFinite(durationS) || durationS <= 0) {
+    throw new Error("double-pendulum duration must be finite and > 0");
+  }
+  const steps = Math.round(durationS / DOUBLE_PENDULUM_DT_S);
+  if (steps < 1) throw new Error("double-pendulum duration must contain at least one RK4 step");
+  return steps * DOUBLE_PENDULUM_DT_S;
+}
+
 
 /** UpstreamDrift golf defaults — same segment formulas as the Rust kernel. */
 export function golfDefaultParams(): PendulumParams {

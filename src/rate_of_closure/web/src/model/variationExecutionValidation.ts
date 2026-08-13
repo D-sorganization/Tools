@@ -5,12 +5,13 @@ import {
   type VariationDatasetTs,
   type VariationPlanTs,
 } from "./variation";
-import { isGlobalSpec, stableSpecId } from "./variationSchema";
 import type { SensitivityResultTs } from "./variationAnalysis";
 import { SWING_VARIATION_OUTPUT_NAMES, type SwingVariationResultTs } from "./variationSwingEnsemble";
 import type { VariationExecutionRequest, VariationExecutionResult } from "./variationExecutionService";
-import { LOCALIZED_TORQUE_PROVENANCE, LOCALIZED_TORQUE_UNIT } from "./localizedTorque";
-import { localizedTorqueJointId } from "./variationRegistry";
+import { sampleInputs } from "./variationSampling";
+import {
+  validateLocalizedTrialCommands, validateSwingTrialPayload,
+} from "./variationSwingResultValidation";
 
 export const MAX_WORKER_ERROR_LENGTH = 512;
 
@@ -86,7 +87,13 @@ const validateDataset = (
       || outputNames.some((name, index) => name !== outputIdentity[index])) {
     return failProtocol("result output identity");
   }
-  matrix(value.inputs, request.plan.nRuns, inputNames.length, "result inputs", false);
+  const inputs = matrix(
+    value.inputs, request.plan.nRuns, inputNames.length, "result inputs", false,
+  );
+  const expectedSamples = sampleInputs(request.plan);
+  if (JSON.stringify(inputs) !== JSON.stringify(expectedSamples)) {
+    return failProtocol("result sampled inputs");
+  }
   const outputs = matrix(value.outputs, request.plan.nRuns, outputNames.length, "result outputs", true);
   if (!Array.isArray(value.success) || value.success.length !== request.plan.nRuns
       || !value.success.every((item) => typeof item === "boolean")) {
@@ -118,7 +125,7 @@ const validateSensitivity = (
   const validMatrix = (candidate: unknown) =>
     Array.isArray(candidate) && candidate.length === inputKeys.length
     && candidate.every((row) => Array.isArray(row) && row.length === outputNames.length
-      && row.every((item) => typeof item === "number" && ![Infinity, -Infinity].includes(item)));
+      && row.every((item) => typeof item === "number" && Number.isFinite(item)));
   if (!validMatrix(value.matrix) || !validMatrix(value.normalized)) {
     return failProtocol("sensitivity matrix");
   }
@@ -135,16 +142,39 @@ const validateEnsemble = (
       || value.runs.length !== request.plan.nRuns) {
     return failProtocol("swing ensemble");
   }
-  validateDataset(value.dataset, request);
+  const validatedDataset = validateDataset(value.dataset, request);
+  const ensembleDataset = value.dataset as Record<string, unknown>;
   const validStatuses = new Set(["evaluated_hit", "evaluated_no_impact", "numerical_failure"]);
-  const localizedSpecs = request.plan.noise.filter((spec) => !isGlobalSpec(spec));
   if (!value.runs.every((trial, index) => isRecord(trial)
       && trial.trialIndex === index && validStatuses.has(String(trial.status))
+      && validateTrialAvailability(trial, validatedDataset, index)
+      && validateSwingTrialPayload(trial, index, request.plan,
+        Array.isArray(ensembleDataset.inputs)
+          ? ensembleDataset.inputs[index]
+          : null)
       && validateTrialOutcome(trial)
-      && validateTrialCommands(trial, index, localizedSpecs, value.dataset))) {
+      && validateLocalizedTrialCommands(
+        trial, request.plan, ensembleDataset.inputNames,
+        Array.isArray(ensembleDataset.inputs) ? ensembleDataset.inputs[index] : null,
+      ))) {
     return failProtocol("swing ensemble trials");
   }
   return value as unknown as SwingVariationResultTs;
+};
+
+const validateTrialAvailability = (
+  trial: Record<string, unknown>,
+  dataset: VariationDatasetTs,
+  index: number,
+): boolean => {
+  const row = dataset.outputs[index];
+  if (dataset.success[index] !== (trial.status !== "numerical_failure")) return false;
+  if (trial.status === "numerical_failure") return row.every((cell) => cell === null);
+  if (trial.status === "evaluated_no_impact") {
+    return row.slice(0, 3).every((cell) => typeof cell === "number") &&
+      row.slice(3).every((cell) => cell === null);
+  }
+  return row.every((cell) => typeof cell === "number" && Number.isFinite(cell));
 };
 
 const validateTrialOutcome = (trial: Record<string, unknown>): boolean => {
@@ -160,37 +190,6 @@ const validateTrialOutcome = (trial: Record<string, unknown>): boolean => {
   const impactStatus = trial.run.impactOutcome.status;
   return trial.status === "evaluated_hit" ? impactStatus === "hit" : impactStatus === "miss";
 };
-
-const validateTrialCommands = (
-  trial: Record<string, unknown>,
-  trialIndex: number,
-  specs: VariationPlanTs["noise"],
-  datasetValue: unknown,
-): boolean => {
-  const commands = trial.localizedTorqueCommands;
-  if (!Array.isArray(commands) || !isRecord(datasetValue)) return false;
-  if (!Array.isArray(datasetValue.inputs)) return false;
-  const inputRow = datasetValue.inputs[trialIndex];
-  if (!Array.isArray(inputRow) || commands.length !== specs.length) return false;
-  return specs.every((spec, commandIndex) => {
-    const command = commands[commandIndex];
-    const inputIndex = requestInputIndex(spec.variableKey, datasetValue.inputNames);
-    return isRecord(command)
-      && command.specId === stableSpecId(spec)
-      && command.variableKey === spec.variableKey
-      && command.jointId === localizedTorqueJointId(spec.variableKey)
-      && Array.isArray(command.timeWindowS)
-      && command.timeWindowS.length === 2
-      && command.timeWindowS[0] === spec.timeWindowS?.[0]
-      && command.timeWindowS[1] === spec.timeWindowS?.[1]
-      && command.torqueNm === inputRow[inputIndex]
-      && command.unit === LOCALIZED_TORQUE_UNIT
-      && command.provenance === LOCALIZED_TORQUE_PROVENANCE;
-  });
-};
-
-const requestInputIndex = (variableKey: string, inputNames: unknown): number =>
-  Array.isArray(inputNames) ? inputNames.indexOf(variableKey) : -1;
 
 export const validateResult = (
   value: unknown,

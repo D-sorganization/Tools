@@ -1,5 +1,25 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 React localized execution review hardening
+
+- Canonical rounded RK4 duration now governs localized preflight before any
+  sampling or Worker trial; invalid off-grid ends are never typed as numerical
+  failures.
+- Worker acceptance binds request/sample/passive-input authority and validates
+  nested finite swing, flight, impact, torque-history, availability, and
+  localized provenance domains.
+- Schema-v2 ensemble JSON writes/parses strict finite authority with duplicate-
+  field rejection. Shared CSV cells neutralize formula prefixes while keeping
+  numeric negatives unchanged.
+- Kernel passive and prescribed additions retain Python golden/unit parity.
+  Current Variation request/UI and production Worker execute passive only;
+  prescribed profile transport is open and not claimed.
+- Local gates pass 846/846 Vitest, 290/290 selected Python tests with one
+  expected Rust-wheel skip, 6/6 Playwright, TypeScript, ESLint, and Vite build.
+- SPEC advances to 1.16.66. Rust parity, complete RK4 half-step history,
+  cross-browser/AT evidence, approved baselines, protected publication, and
+  remaining #4142 stay open.
+
 ## 2026-08-13 #4142 React localized-torque execution/export
 
 - The React TypeScript-reference double pendulum consumes sampled shoulder and

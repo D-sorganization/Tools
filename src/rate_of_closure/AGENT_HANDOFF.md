@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React localized execution review hardening (#4142)
+
+- Localized window preflight uses the rounded fixed-step RK4 duration, matching
+  Python/reference execution and failing invalid off-grid ends before trials.
+- Strict Worker acceptance binds deterministic samples/default passive inputs
+  to the request and validates nested numeric/shape/time/availability/source/
+  provenance fields.
+- Schema-v2 ensemble JSON rejects duplicate fields and nonfinite authority;
+  swing/source CSV formula-neutralizes hostile text prefixes.
+- Passive and prescribed additive kernel paths remain golden/unit tested. The
+  Variation request/UI and production Worker execute passive mode only;
+  prescribed profile transport is not yet implemented.
+- Local correction gates pass 846/846 Vitest, 290/290 selected Python tests
+  with one expected Rust-wheel skip, 6/6 Playwright, TypeScript, ESLint, and
+  Vite build.
+
+SPEC 1.16.66 records the correction. Rust parity, complete RK4 half-step
+history, cross-browser/AT evidence, approved baselines, protected publication,
+and remaining #4142 stay open.
+
 ## 2026-08-13 React localized-torque execution and export (#4142)
 
 - Browser swing ensembles now map each sampled authored shoulder/wrist factor

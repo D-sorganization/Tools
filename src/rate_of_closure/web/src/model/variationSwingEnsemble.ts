@@ -1,9 +1,6 @@
 /** Complete browser swing ensembles with retained traces, misses, and failures. */
 
-import { DRIVER_TEE_HEIGHT_M, type BallSetup } from "./ballSetup";
-import { golfDefaultParams, PASSIVE_DOUBLE_PENDULUM_RUN } from "./doublePendulum";
 import {
-  DEFAULT_IMPACT_CLUB,
   runSimulation,
   type SimulationInput,
   type SimulationRunTs,
@@ -11,18 +8,19 @@ import {
 import { deliveryDiagnostics } from "./impactPhysics";
 import { resolvedBase, sampleInputs } from "./variationSampling";
 import { validatePlan, type VariationPlanTs } from "./variationSchema";
-import {
-  CATEGORY_CLUB,
-  CATEGORY_DELIVERY,
-  CATEGORY_SWING,
-  TEE_HEIGHT_VARIATION_KEY,
-} from "./variationRegistry";
 import type { VariationDatasetTs } from "./variation";
-import {
-  localizedTorqueExecution,
-  type LocalizedTorqueExecutionTs,
-} from "./variationLocalizedTorque";
 import type { LocalizedTorqueCommandTs } from "./localizedTorque";
+import { spreadsheetSafeCsvCell } from "./csvSecurity";
+import {
+  defaultSwingVariationInput, swingVariationInputForValues,
+} from "./variationSwingInput";
+import {
+  SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION, swingEnsembleFromJson,
+  assertSwingEnsembleResult, swingEnsembleToJsonDocument,
+} from "./variationSwingDocument";
+
+export { defaultSwingVariationInput, swingVariationInputForValues } from "./variationSwingInput";
+export { SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION, swingEnsembleFromJson };
 
 export type SwingTrialStatusTs =
   | "evaluated_hit"
@@ -44,20 +42,12 @@ export interface SwingVariationResultTs {
   coordinateFrame: "app_frame:x_target,y_up,z_right";
 }
 
-export const SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION = 2;
-
 export function swingEnsembleToJson(result: SwingVariationResultTs): string {
-  return JSON.stringify({
-    schemaVersion: SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION,
-    coordinateFrame: result.coordinateFrame,
-    positionUnit: "m",
-    timeUnit: "s",
-    dataset: result.dataset,
-    trials: result.runs,
-  }, null, 2);
+  return swingEnsembleToJsonDocument(result);
 }
 
 export function swingTracesToCsv(result: SwingVariationResultTs): string {
+  assertSwingEnsembleResult(result);
   const rows = [[
     "trial", "status", "sample", "time_s", "point_id",
     "x_target_m", "y_up_m", "z_right_m", "is_impact_sample", "coordinate_frame",
@@ -81,10 +71,11 @@ export function swingTracesToCsv(result: SwingVariationResultTs): string {
       });
     });
   });
-  return rows.map((row) => row.map(csvCell).join(",")).join("\n") + "\n";
+  return rows.map((row) => row.map(spreadsheetSafeCsvCell).join(",")).join("\n") + "\n";
 }
 
 export function localizedTorqueSourcesToCsv(result: SwingVariationResultTs): string {
+  assertSwingEnsembleResult(result);
   const rows = [[
     "trial", "status", "spec_id", "variable_key", "joint_id",
     "window_start_s", "window_end_s", "torque_nm", "unit", "provenance",
@@ -96,24 +87,8 @@ export function localizedTorqueSourcesToCsv(result: SwingVariationResultTs): str
       String(command.torqueNm), command.unit, command.provenance,
     ]);
   }));
-  return rows.map((row) => row.map(csvCell).join(",")).join("\n") + "\n";
+  return rows.map((row) => row.map(spreadsheetSafeCsvCell).join(",")).join("\n") + "\n";
 }
-
-const csvCell = (value: string): string =>
-  /[",\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
-
-const key = (category: string, name: string): string => `${category}.${name}`;
-const YAW = key(CATEGORY_SWING, "yaw_deg");
-const SIDE_TILT = key(CATEGORY_SWING, "side_tilt_deg");
-const FORWARD_TILT = key(CATEGORY_SWING, "forward_tilt_deg");
-const IMPACT_TIME_OFFSET = key(CATEGORY_SWING, "impact_time_offset_s");
-const DAMPING_SHOULDER = key(CATEGORY_SWING, "damping_shoulder");
-const DAMPING_WRIST = key(CATEGORY_SWING, "damping_wrist");
-const TOE_OFFSET = key(CATEGORY_DELIVERY, "impact_offset_toe_mm");
-const HIGH_OFFSET = key(CATEGORY_DELIVERY, "impact_offset_high_mm");
-const HEAD_MASS = key(CATEGORY_CLUB, "head_mass_kg");
-const HEAD_MOI = key(CATEGORY_CLUB, "head_moi_kg_m2");
-const COR = key(CATEGORY_CLUB, "cor");
 
 export const SWING_VARIATION_OUTPUT_NAMES = [
   "candidate_time_s",
@@ -135,29 +110,6 @@ export const SWING_VARIATION_OUTPUT_NAMES = [
   "landing_angle_deg",
 ] as const;
 
-export function defaultSwingVariationInput(ballSetup?: BallSetup): SimulationInput {
-  return {
-    sourceKind: "double_pendulum",
-    clubheadSpeedMph: 30,
-    omegaDps: [0, 0, 0],
-    loftDeg: 10.5,
-    impactOffsetToeMm: 0,
-    impactOffsetHighMm: 0,
-    planeYawDeg: 0,
-    planeSideTiltDeg: -45,
-    planeForwardTiltDeg: 0,
-    impactTimeS: null,
-    impactTimeOffsetS: 0,
-    swingDurationS: 1.5,
-    pendulumParameters: golfDefaultParams(),
-    club: { ...DEFAULT_IMPACT_CLUB },
-    ballSetup: ballSetup ?? {
-      supportMode: "tee",
-      teeHeightM: DRIVER_TEE_HEIGHT_M,
-    },
-  };
-}
-
 export function runSwingVariation(
   plan: VariationPlanTs,
   baseInput: SimulationInput = defaultSwingVariationInput(plan.ballSetup),
@@ -170,13 +122,7 @@ export function runSwingVariation(
   }
   const inputs = sampleInputs(plan);
   const base = resolvedBase(plan);
-  localizedTorqueExecution(
-    plan,
-    base,
-    baseInput.swingDurationS,
-    baseInput.sourceKind,
-    baseInput.doublePendulumRun,
-  );
+  swingVariationInputForValues(plan, base, baseInput);
   const inputNames = plan.noise.map((spec) => spec.variableKey);
   const runs: SwingVariationTrialTs[] = [];
   const outputs: Array<Array<number | null>> = [];
@@ -184,16 +130,8 @@ export function runSwingVariation(
   inputs.forEach((row, trialIndex) => {
     const values = { ...base };
     inputNames.forEach((name, column) => { values[name] = row[column]; });
-    let input = applyValues(baseInput, values);
-    let localized: LocalizedTorqueExecutionTs = {
-      runConfig: input.doublePendulumRun ?? PASSIVE_DOUBLE_PENDULUM_RUN,
-      commands: Object.freeze([]),
-    };
+    const { input, localized } = swingVariationInputForValues(plan, values, baseInput);
     try {
-      localized = localizedTorqueExecution(
-        plan, values, input.swingDurationS, input.sourceKind, input.doublePendulumRun,
-      );
-      input = { ...input, doublePendulumRun: localized.runConfig };
       const run = runSimulation(input);
       const status = run.impactOutcome.status === "hit"
         ? "evaluated_hit"
@@ -229,43 +167,6 @@ export function runSwingVariation(
     },
     runs,
     coordinateFrame: "app_frame:x_target,y_up,z_right",
-  };
-}
-
-function applyValues(
-  base: SimulationInput,
-  values: Record<string, number>,
-): SimulationInput {
-  const parameters = base.pendulumParameters ?? golfDefaultParams();
-  const setup = base.ballSetup ?? { supportMode: "ground" as const, teeHeightM: 0 };
-  const teeHeight = values[TEE_HEIGHT_VARIATION_KEY];
-  if (teeHeight !== undefined && setup.supportMode !== "tee") {
-    throw new Error("Tee Height variation requires Tee support");
-  }
-  return {
-    ...base,
-    planeYawDeg: values[YAW] ?? base.planeYawDeg,
-    planeSideTiltDeg: values[SIDE_TILT] ?? base.planeSideTiltDeg,
-    planeForwardTiltDeg: values[FORWARD_TILT] ?? base.planeForwardTiltDeg,
-    impactTimeOffsetS: values[IMPACT_TIME_OFFSET] ?? base.impactTimeOffsetS ?? 0,
-    impactOffsetToeMm: values[TOE_OFFSET] ?? base.impactOffsetToeMm,
-    impactOffsetHighMm: values[HIGH_OFFSET] ?? base.impactOffsetHighMm,
-    pendulumParameters: {
-      ...parameters,
-      d1: values[DAMPING_SHOULDER] ?? parameters.d1,
-      d2: values[DAMPING_WRIST] ?? parameters.d2,
-    },
-    club: {
-      headMassKg: values[HEAD_MASS] ?? base.club?.headMassKg
-        ?? DEFAULT_IMPACT_CLUB.headMassKg,
-      moiAboutShaftKgM2: values[HEAD_MOI] ?? base.club?.moiAboutShaftKgM2
-        ?? DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2,
-      coefficientOfRestitution: values[COR] ?? base.club?.coefficientOfRestitution
-        ?? DEFAULT_IMPACT_CLUB.coefficientOfRestitution,
-    },
-    ballSetup: teeHeight === undefined
-      ? setup
-      : { supportMode: "tee", teeHeightM: teeHeight },
   };
 }
 

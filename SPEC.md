@@ -26,11 +26,37 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.65                                    |
-| **Spec Version**        | 1.16.65                                    |
+| **Current Version**     | 1.16.66                                    |
+| **Spec Version**        | 1.16.66                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 React localized execution review hardening (#4142)
+
+Version 1.16.66 makes `round(duration / 0.001 s) * 0.001 s` the canonical
+effective duration for localized browser preflight, matching the fixed-step
+Python/reference pipeline. A half-open window whose end exceeds that rounded
+duration fails before sampling or Worker trial execution.
+
+The Worker boundary now validates the request's exact deterministic sample
+matrix, reconstructs and binds every default passive trial input, and checks
+nested finite swing/flight vectors, rotations, monotonic times, torque history,
+impact/launch availability, typed result rows, and localized source provenance.
+Schema-v2 ensemble JSON has a strict finite writer and duplicate-field-aware
+parser, preventing JavaScript's nonfinite-to-null coercion. Swing and localized
+CSV exporters reuse formula-neutral cell serialization for `=`, `+`, `-`, `@`,
+tab, and carriage-return prefixes without changing numeric negative values.
+
+The TypeScript kernel supports passive and prescribed additive torques; Python-
+owned golden/unit coverage pins both. The Variation request/UI and production
+hashed Worker currently transport and exercise passive mode only. Prescribed
+profile Worker/UI transport, Rust parity, full raw RK4 half-step torque history,
+cross-browser/assistive-technology evidence, approved visual baselines,
+protected publication, and remaining #4142 remain open.
+Local correction evidence passes 846/846 Vitest, 290/290 selected Python tests
+with one expected missing-Rust-wheel skip, 6/6 Playwright, TypeScript, ESLint,
+and Vite production build.
 
 ### 2026-08-13 React localized-torque execution and export (#4142 R13.3/R14.3)
 
@@ -3740,6 +3766,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |
 | 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142): execute authored localized shoulder/wrist torque factors additively through the TypeScript-reference RK4 double pendulum; retain typed outcomes and plan/provenance authority in accessible results and schema-v2 JSON/CSV exports; pin passive/prescribed boundary behavior to a Python-owned golden and production-Worker cancel/rerun/export coverage. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
 | 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |

@@ -12,6 +12,7 @@ import {
 } from "./morrisAuthorityRequest";
 import { morrisJobToDocument } from "./morrisWireSerialization";
 import { parseUniqueJson } from "./strictJson";
+import { spreadsheetSafeCsvCell as morrisCsvCell } from "./csvSecurity";
 
 export const MORRIS_WORKSPACE_SCHEMA_ID = "rate-of-closure/morris-workspace" as const;
 export const MORRIS_WORKSPACE_SCHEMA_VERSION = 1 as const;
@@ -324,11 +325,7 @@ export const workspaceDraftsForEditor = (setup: MorrisWorkspaceSetup): readonly 
   });
 };
 
-export const morrisCsvCell = (value: unknown): string => {
-  let textValue = value === null ? "" : String(value);
-  if (typeof value === "string" && /^[=+\-@\t\r]/.test(textValue)) textValue = `'${textValue}`;
-  return /[",\r\n]/.test(textValue) ? `"${textValue.replace(/"/g, '""')}"` : textValue;
-};
+export { spreadsheetSafeCsvCell as morrisCsvCell } from "./csvSecurity";
 export function morrisWorkspaceReportToCsv(workspace: MorrisWorkspaceDocument): string {
   const evidence = workspace.completedEvidence;
   if (evidence === null || evidence.job.report === null) throw new RangeError("completed archived evidence is required for report CSV");
