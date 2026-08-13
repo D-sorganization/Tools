@@ -1,5 +1,122 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 PR #4365 seeded regional-ground material variation
+
+Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) is stacked
+on exact Tools PR #4364 head
+`f13f0908dd2a553cf4d114afd31bb474d1b967c7`; independently reviewed
+implementation commit `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf` follows.
+It adds one UI-neutral runner that samples only base-surface normal restitution
+and rolling resistance through the existing `VariationPlan`/`sample_inputs`
+authority, rebinds an immutable regional request for every trial, and delegates
+all flight, impact, bounce, and regional skid/roll physics to an injected exact
+pipeline executor. The adapter adds no alternate physics or UI path.
+
+The two adapter variables use the shared registry's explicit extension seam;
+importing the module does not mutate the process-global registry. Deterministic
+trial IDs and SHA-256 input provenance bind seed, plan, trial order, sampled
+values, and exact base-plan identity. Sampled values are aligned with qualified
+scalar metrics, while transfer failures and censored outcomes retain those
+inputs and typed null output metrics. Requests fail before execution for
+unsupported or missing keys, mismatched bases, implicit/nonfinite/Boolean/out-
+of-range bounds, nonfinite scales or samples, invalid exact types, and row-cap
+overflow.
+
+RED captured the missing module. Twelve focused tests pass, including byte-for-
+byte seed replay, subset-stable streams, changed-seed divergence, immutable
+identity/provenance/order, failure nulls, fail-before-execution boundaries, and
+a real-pipeline check that increased rolling resistance reduces qualified total
+distance. The focused adapter plus pinned-registry suite passes 43 tests; the
+complete relevant Rate adapters and shared flight/ground/variation selection
+passes 506 tests with six expected missing-Rust-wheel skips and one environment
+warning. Ruff, import-skipping MyPy, Bandit, campaign-manifest validation and
+its eight tests, documentation governance, blocking-quality, minimum-test,
+default module-size, changed-test assertion, 397-line new-module, placeholder,
+and diff gates are green. The stricter full variation-directory 400-line scan
+reports only the inherited 433-line `plot_data.py`, not this candidate.
+
+This is deliberately not a #4273 or #4267 completion claim. Regional overlay
+variation, UI/editor integration, persistence, wind coupling, solver/capability
+consumption, compiled/runtime parity, downstream UpstreamDrift parity,
+protected CI and release remain open. Publication does not promote this bounded
+slice to issue or epic completion.
+
+## 2026-08-11 PR #4364 post-ground spatial-target projection
+
+Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)
+is stacked on exact PR #4363 head
+`ec50fdf059f91ca9e4664da891398af218e1ba65`. Independently reviewed target
+implementation commit `b480f17f11b86a57326622168e4c748efc77aaf3`
+adds the UI-neutral `regional_ground_target_projection` boundary without
+modifying the inherited playback production code. The adapter accepts only an exact
+`FlightRegionalGroundPipelineResult | FlightGroundTransferError` and exact
+`SpatialTarget`. It reuses #4361's promoted complete-rest qualifier and exact
+evidence attributes instead of duplicating endpoint eligibility.
+
+Only regional `COMPLETE` plus ground `COMPLETE/REST` with a summary produces
+an endpoint, hold, or miss. Ground v1's sole `GroundFrame.TARGET` is recorded
+explicitly as x-downrange/y-up/z-right. Final x/z pass through unchanged; the
+terminal ball-center y is replaced exactly once by the target's declared
+course-surface elevation before delegating geometry and signed long/high/right
+residuals to `SpatialTarget.miss`. App- and flight-authored target points
+therefore give the same canonical result. Aerial targets return
+`AERIAL_REQUIRES_FLIGHT_TRAJECTORY` and are never flattened.
+
+Transfer failures, every non-settled bounce reason, regional cancellation,
+failure or partial execution, `LEFT_SURFACE`/non-rest termination, missing
+summaries, and all censored outcomes retain null target numerics with exact
+availability, phase, reason, frame, model, and digest attributes. The bounded
+ordered `ScalarEnsembleDataset` projection exposes hold, miss distance, and
+signed downrange/elevation/lateral values with deterministic row identity and
+source provenance.
+
+RED captured the missing module. Sixteen new focused tests plus all seven
+parent study-adapter tests pass; the complete Rate/flight/ground selection is
+green for 1,315 tests with 14 environment-only Hypothesis collection warnings
+and one inherited polynomial-generator legend warning.
+Strict MyPy, focused Ruff check/format, Bandit, campaign-manifest validation
+and its eight tests, documentation governance, blocking-quality,
+minimum-test, changed-Python, 400-line module-size, changed-test assertion,
+placeholder, and diff checks are green. Fresh protected current-head checks,
+dependency order, and ordinary merge gates remain. The PR adds no editor/UI,
+persistence, solver/capability invocation, aerial trajectory evaluation,
+compiled runtime, new physics, or geometry. Keep #4192, #4273, and #4267 open.
+
+
+## 2026-08-11 PR #4363 matched ground playback
+
+Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
+starts from exact published PR #4361 head
+`81de044075a4f72c6da8fedb972437df79a06ab8`; its independently reviewed
+implementation commit is `7f7d4b01d83d914ae5684715dc20c69388cf799f`.
+The bounded hand integration adds matched additive `Ground Playback` views to
+PyQt6 and React while preserving `Ground Surfaces`, its navigation state, and
+current help. No later historical 72-file chain was merged or cherry-picked.
+
+Both clients accept a strict standalone ground result or an explicitly
+validated regional-execution envelope, reuse its nested result, and reject
+null, cancelled, failed, empty-trajectory, or missing-summary evidence. The
+adapters delegate to existing parsers and do not invoke or duplicate physics.
+The shared absolute-time policy steps and jumps exactly and holds the lower
+sample across phase boundaries. Play, pause, restart, looping, granular speed,
+locked-scale 3D orbit/zoom/reset, honest carry/first-contact and observed-end
+language, and accessible summary/evidence inspection are matched.
+
+Playback hardening uses binary per-frame lookup, a deterministic 2,048-point
+landmark-aware visual path, and a disclosed 256-row evidence window while
+retaining the validated full result. RED first captured the absent timeline and
+UI. Local qualification passes all 1,125 Rate/shared-ground Python tests and
+all 119 React files / 754 tests. Ruff check/format, scoped Black, strict MyPy
+on all five new Python production modules, Bandit, ESLint, TypeScript
+type-check, production build, campaign-manifest validation, documentation
+governance, the 400-line new-module budget, and diff checks are green. Fresh
+protected current-head checks, dependency order, and ordinary merge gates
+remain required.
+
+Keep #4274 and #4267 open. Terrain mesh/changing-normal rendering, direct
+editor-to-playback handoff, comparison, persistence, rendered visual QA,
+camera presets/tracking, downstream UpstreamDrift/four-surface parity, and
+protected CI/review/release remain explicit follow-on work.
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)

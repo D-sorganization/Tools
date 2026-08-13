@@ -39,6 +39,7 @@ from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
 from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
 from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
+from rate_of_closure.ui.pyqt6.ground_playback_tab import GroundPlaybackTab
 from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (
     LaunchMonitorAnalyticsTab,
 )
@@ -126,6 +127,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._regional_surface_plan_tab = RegionalSurfacePlanTab()
+        self._ground_playback_tab = GroundPlaybackTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
         self._capability_optimization_tab = CapabilityOptimizationTab()
         self._variation_tab = VariationTab()
@@ -175,6 +177,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
             ("simulation", self._simulation_tab, "Simulation"),
             ("flight_explorer", self._flight_explorer_tab, "Flight Explorer"),
             ("regional_surfaces", self._regional_surface_plan_tab, "Ground Surfaces"),
+            ("ground_playback", self._ground_playback_tab, "Ground Playback"),
             (
                 "launch_monitor_analytics",
                 self._launch_monitor_analytics_tab,
@@ -396,5 +399,6 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab.stop()
         self._variation_tab.stop()
         self._flight_explorer_tab.stop()
+        self._ground_playback_tab.stop()
         self._capability_optimization_tab.stop()
         super().closeEvent(event)

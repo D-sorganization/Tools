@@ -39,6 +39,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -93,6 +94,10 @@
 | **Current Version**     | 1.14.52                                    |
 | **Spec Version**        | 1.14.52                                    |
 >>>>>>> origin/codex/4273-flight-ground-study-adapter
+=======
+| **Current Version**     | 1.14.56                                    |
+| **Spec Version**        | 1.14.56                                    |
+>>>>>>> origin/codex/4273-seeded-ground-variation
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -121,6 +126,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
@@ -130,6 +136,50 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 =======
 =======
 =======
+=======
+### 2026-08-11 Seeded Regional-Ground Material Variation
+
+- A UI-neutral adapter samples base-surface normal restitution and rolling
+  resistance with the shared versioned `VariationPlan` and subset-stable
+  sampling engine. Callers explicitly register these two extension variables,
+  so merely importing the adapter does not alter shared process state.
+- Every trial owns an immutable rebound regional plan, deterministic request
+  identity, canonical input SHA-256, and source revision. An injected exact
+  flight-through-regional-ground executor remains the sole physics authority.
+- The existing bounded scalar-ensemble contract aligns sampled material inputs
+  with only qualified complete-rest outputs. Censored and failed trials keep
+  their sampled inputs and typed-null ground metrics instead of fabricating
+  terminal values.
+- Inputs fail closed before execution for unsupported/missing keys, base-plan
+  mismatch, implicit/nonfinite/Boolean/out-of-range bounds, nonfinite scale or
+  samples, non-exact outcomes, plan/digest mismatch, and row-cap overflow.
+- This slice excludes region-overlay perturbation, an editor or UI, persistence,
+  wind, target/playback changes, solver/capability invocation, compiled-runtime
+  physics, downstream parity, and release. Issues #4273 and #4267 remain open.
+
+### 2026-08-11 Matched Ground-Playback Inspection
+
+- PyQt6 and React expose additive `Ground Playback` workspaces without
+  replacing the existing `Ground Surfaces` editor. Both import either a strict
+  standalone ground result or an explicit validated regional-execution
+  envelope, reusing the envelope's nested ground result without running or
+  reimplementing physics.
+- A shared phase-safe absolute-time policy holds the lower recorded sample
+  across discontinuities and supports exact step, phase jump, play, pause,
+  restart, loop, and speed behavior. Interactive 3D views preserve physical
+  axis scale while allowing orbit, zoom, and reset. Summary, warning,
+  calibration, provenance, event, transition, and trajectory evidence remains
+  inspectable with accessible names and honest observed-end terminology.
+- Large evidence remains bounded at the presentation layer: binary frame
+  lookup avoids full scans during playback, visual paths retain a deterministic
+  maximum of 2,048 landmark-aware samples, and tables disclose their 256-row
+  window while the validated full result remains available to the timeline.
+- This slice does not add terrain meshes or changing normals, direct editor to
+  playback handoff, multi-run comparison, persistence, rendered visual QA,
+  camera presets/tracking, physics, or downstream UpstreamDrift parity. Keep
+  #4274 and #4267 open until those acceptance and protected-release gates land.
+
+>>>>>>> origin/codex/4273-seeded-ground-variation
 ### 2026-08-11 Qualified Regional-Ground Study Adapter
 
 - The Rate-owned `regional_ground_study_adapter` projects the existing
@@ -3197,6 +3247,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3212,6 +3263,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.56 | docs(ground-study, #4365): record ready publication of the seeded base-material variation runner at implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf`, stacked on exact #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; retain protected checks, UI/overlay/persistence, solver/wind, compiled/downstream parity, release, and #4273/#4267 completion as open. |
+| 2026-08-11 | 1.14.55 | feat(ground-study, #4273 #4267): add deterministic VariationPlan-driven base normal-restitution and rolling-resistance studies with immutable per-trial provenance, exact injected flight-through-regional-ground execution, bounded sampled-input scalar ensembles, typed-null unavailable rows, and fail-before-execution validation; retain region overlays, UI/persistence, solver/wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.54 | feat(ground-target, #4192 #4273 #4267): add a UI-neutral complete-rest-only projection from exact flight-through-regional-ground evidence to the existing `SpatialTarget`; record the sole `GroundFrame.TARGET`, retain final x/z, replace ball-center y exactly once with declared landing-surface elevation, reuse `SpatialTarget.miss` signs and geometry, type aerial targets as `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`, preserve every unqualified/censored outcome as null with exact phase/reason/digest evidence, and expose a bounded ordered target scalar ensemble while leaving UI, persistence, solver/capability, aerial-trajectory, compiled-runtime, protected-release, and issue completion open. |
+| 2026-08-11 | 1.14.53 | feat(ground-playback, #4274 #4267): add matched strict import-only PyQt6 and React ground-result playback with phase-safe absolute time, exact logarithmic step/frame lookup, play/pause/restart/loop/speed controls, locked-scale orbit/zoom/reset, bounded 2,048-point landmark-aware visuals, disclosed 256-row evidence windows with full-result retention, atomic standalone/regional imports, and honest partial-result terminology while leaving live flight synchronization, comparison, persistence, camera integration, rendered visual evidence, compiled physics, downstream parity, protected release, and issue completion open. |
+>>>>>>> origin/codex/4273-seeded-ground-variation
 | 2026-08-11 | 1.14.52 | chore(release, #4361 #4273 #4267): publish the independently reviewed qualified regional-ground study adapter as ready PR #4361 on exact #4360 head `74f1ceafd87f952a76917dc868baa6414f856144`; bind implementation commit `d71c43fdd729b35e1abe5573f41ed60201698608` while retaining protected review/check completion, solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, downstream release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.51 | feat(ground-study, #4273 #4267): add a UI-neutral strict adapter from the exact flight-through-regional-ground pipeline into the existing flight metric and scalar-ensemble contracts; admit canonical final ground metrics and bounce/skid detail only for regional complete plus ground complete/rest evidence, retain typed nullable cohorts and exact reasons/digests for partial, censored, cancelled, failed, non-settled, missing-summary, and transfer-failure outcomes, clear stale ground metric inputs on unavailable evidence, preserve carry versus total distance, and leave solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, protected release, and issue completion open. |
 >>>>>>> origin/codex/4273-flight-ground-study-adapter

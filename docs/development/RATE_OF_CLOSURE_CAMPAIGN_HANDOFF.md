@@ -1,5 +1,98 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4365 seeded regional-ground material variation
+
+- Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) starts
+  from exact Tools PR #4364 head
+  `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; independently reviewed
+  implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf` follows.
+  It adds a UI-neutral, bounded seeded runner for only the base regional-plan
+  normal-restitution and rolling-resistance values. Sampling stays in the
+  existing `VariationPlan`/`sample_inputs` authority; physics stays in an
+  injected exact flight-through-regional-ground executor.
+- Each immutable trial carries stable seed/trial identity, sampled values, a
+  canonical input digest, and a rebound regional request/provenance record.
+  Qualified complete-rest outputs and all censored/transfer-failure typed-null
+  outcomes remain row-aligned with their sampled inputs in the existing scalar
+  ensemble contract. Explicit registry registration avoids import-time global
+  mutation.
+- DbC rejects unsupported/missing keys, mismatched base values, missing,
+  nonfinite, Boolean, or out-of-range bounds, forged nonfinite scales or
+  samples, invalid exact outcomes or plan identities, and row-cap overflow
+  before executor use where applicable.
+- RED captured the absent module. Twelve focused tests, 43 focused-plus-
+  registry tests, and 506 relevant Rate-adapter/shared-flight/ground/variation
+  tests pass. The broad set has six expected missing-Rust-wheel skips and one
+  environment warning. A real-pipeline test observes shorter qualified total
+  distance at higher rolling resistance. Ruff, import-skipping MyPy, Bandit,
+  campaign-manifest validation plus eight tests, documentation,
+  blocking-quality, minimum-test, default module-size, changed-test assertion,
+  the candidate's 397-line budget, placeholder, and diff gates pass. A strict
+  whole-directory 400-line scan reports only inherited 433-line
+  `plot_data.py`.
+- This published bounded candidate does not close #4273/#4267. Region
+  overlay variation, UI/persistence, solver/capability use, wind coupling,
+  compiled and downstream parity, protected CI/review, publication, and release
+  remain open, as do protected current-head checks and dependency integration.
+
+## 2026-08-11 PR #4364 post-ground spatial-target projection
+
+- Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)
+  is stacked on exact PR #4363 head
+  `ec50fdf059f91ca9e4664da891398af218e1ba65`; independently reviewed target
+  implementation commit `b480f17f11b86a57326622168e4c748efc77aaf3`
+  leaves inherited playback production code untouched. Its UI-neutral adapter accepts only exact
+  pipeline-or-transfer evidence and an exact existing `SpatialTarget`, while
+  reusing #4361's promoted complete-rest qualifier and evidence attributes.
+- Numerics exist only for regional `COMPLETE` plus ground `COMPLETE/REST` with
+  a summary. The output records the sole ground-v1 `GroundFrame.TARGET`
+  (x-downrange/y-up/z-right), retains final x/z, replaces terminal ball-center
+  y exactly once with the target's declared course-surface elevation, and then
+  delegates geometry and signed long/high/right residuals to
+  `SpatialTarget.miss`. App- and flight-authored targets are equivalent.
+- Aerial targets are typed `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`; transfer,
+  non-settled bounce, regional cancelled/failed/partial, non-rest,
+  `LEFT_SURFACE`, missing-summary, and censored outcomes retain null numerics
+  with exact availability/phase/reason/frame/model/digest evidence. A bounded
+  ordered scalar ensemble exposes hold, miss, downrange, elevation, and
+  lateral results with deterministic row identity and provenance.
+- RED captured the absent module. Sixteen new focused tests and seven parent
+  adapter tests pass; all 1,315 selected Rate/flight/ground tests pass with 14
+  environment-only Hypothesis collection warnings and one inherited
+  polynomial-generator legend warning. Strict MyPy, focused Ruff,
+  Bandit, campaign-manifest validation and eight tests, documentation,
+  blocking-quality, minimum-test, changed-Python, 400-line module-size,
+  changed-test assertion, placeholder, and diff gates pass. Fresh protected
+  current-head checks, dependency order, and ordinary merge gates remain; no
+  editor/UI, persistence, solver/capability,
+  aerial trajectory evaluation, compiled runtime, geometry, or physics is
+  claimed. Keep #4192, #4273, and #4267 open.
+
+## 2026-08-11 PR #4363 matched ground playback
+
+- Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
+  starts from exact published PR #4361 head
+  `81de044075a4f72c6da8fedb972437df79a06ab8`; independently reviewed
+  implementation commit `7f7d4b01d83d914ae5684715dc20c69388cf799f`
+  hand-integrates only the initial playback slice.
+- Additive matched PyQt6/React workspaces import strict standalone results or
+  explicit validated regional envelopes. They reuse the nested result, reject
+  null/cancelled/failed/empty/missing-summary evidence, and never run physics.
+- The phase-safe absolute-time policy holds the lower sample at discontinuous
+  boundaries and gives exact step/jump/play/pause/restart/loop/speed behavior.
+  Locked physical scale, orbit/zoom/reset, honest endpoint labels, and
+  accessible summary, warning, calibration, provenance, and evidence tables
+  are shared product behavior.
+- Large results use binary frame lookup, at most 2,048 landmark-aware visual
+  points, and disclosed 256-row tables while retaining the full validated
+  result. Local qualification passes all 1,125 Rate/shared-ground Python tests
+  and all 119 React files / 754 tests. Ruff/Black, strict scoped MyPy, Bandit,
+  ESLint, TypeScript type-check, production build, manifest, documentation,
+  400-line new-module budget, and diff gates are green. Fresh protected
+  current-head checks, dependency order, and ordinary merge gates remain.
+- Keep #4274/#4267 open for terrain meshes/changing normals, direct editor
+  handoff, comparison, persistence, rendered visual QA, camera presets and
+  tracking, downstream parity, and protected CI/review/release.
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 - Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)

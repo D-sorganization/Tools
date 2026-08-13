@@ -44,6 +44,7 @@ describe("PrimaryViewTabs", () => {
       "plots",
       "flight",
       "regional-surfaces",
+      "ground-playback",
       "launch-monitor-analytics",
       "capability-optimization",
       "variation",
