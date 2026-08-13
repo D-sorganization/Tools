@@ -209,6 +209,7 @@ def impact_kinematics_for_run(run: SimulationRun) -> ImpactKinematicSnapshot:
         angular_velocity_rad_s=_xyz(twist[:3]),
         shaft_axis_point_m=_xyz(shaft_point),
         shaft_axis_unit=_xyz(shaft_axis),
+        face_center_point_m=_xyz(face_center_point),
         contact_point_m=_xyz(reference + lever),
         face_normal_unit=_xyz(face_normal),
         leading_edge_tangent_unit=_xyz(leading_edge),

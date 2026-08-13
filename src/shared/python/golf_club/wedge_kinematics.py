@@ -13,6 +13,9 @@ _UNIT_TOLERANCE = 1e-9
 _ORTHOGONAL_TOLERANCE = 1e-9
 _SPEED_TOLERANCE_MPS = 1e-12
 _ANGULAR_SPEED_TOLERANCE_RAD_S = 1e-12
+SASHO_FACE_CENTER_ROTATION_METHOD_ID = (
+    "sasho_nearest_shaft_face_center_rotation_only_aoa_v1"
+)
 
 
 def _as_vector(value: Vector3) -> np.ndarray:
@@ -61,6 +64,7 @@ class WedgeKinematicState:
     angular_velocity_rad_s: Vector3
     shaft_axis_point_m: Vector3
     shaft_axis_unit: Vector3
+    face_center_point_m: Vector3
     contact_point_m: Vector3
     face_normal_unit: Vector3
     leading_edge_tangent_unit: Vector3
@@ -82,6 +86,7 @@ class WedgeKinematicState:
             "reference_velocity_mps",
             "angular_velocity_rad_s",
             "shaft_axis_point_m",
+            "face_center_point_m",
             "contact_point_m",
             "arc_tangent_rate_per_s",
         ):
@@ -123,6 +128,17 @@ class InstantaneousScrewAxis:
 
 
 @dataclass(frozen=True)
+class SashoFaceCenterRotationAoa:
+    """Descriptive face-center rotation metric about the nearest shaft point."""
+
+    method_id: str
+    nearest_shaft_point_m: Vector3
+    lever_arm_m: Vector3
+    velocity_mps: Vector3
+    aoa_deg: float | None
+
+
+@dataclass(frozen=True)
 class WedgeKinematicAnalysis:
     """Auditable impact-point decomposition and orientation-rate metrics."""
 
@@ -147,6 +163,7 @@ class WedgeKinematicAnalysis:
     leading_edge_ground_heading_rate_rad_s: float | None
     arc_ground_heading_rate_rad_s: float | None
     leading_edge_relative_arc_heading_rate_rad_s: float | None
+    sasho_face_center_rotation: SashoFaceCenterRotationAoa
     screw_axis: InstantaneousScrewAxis | None
 
 
@@ -164,6 +181,41 @@ def angle_of_attack_deg(velocity_mps: object, ground_up_unit: object) -> float |
     if horizontal_speed <= _SPEED_TOLERANCE_MPS:
         return None
     return math.degrees(math.atan2(vertical_speed, horizontal_speed))
+
+
+def sasho_face_center_rotation_aoa(
+    *,
+    angular_velocity_rad_s: object,
+    shaft_axis_point_m: object,
+    shaft_axis_unit: object,
+    face_center_point_m: object,
+    ground_up_unit: object,
+) -> SashoFaceCenterRotationAoa:
+    """Return Sasho's rotation-only face-center AoA about the shaft line.
+
+    This descriptive metric uses the complete club angular velocity and the
+    lever from the nearest point on the physical shaft line to face center. It
+    is not the shaft-axis-only counterfactual or a causal AoA contribution.
+    """
+    angular_velocity = _as_vector(
+        require_vector3(angular_velocity_rad_s, "angular_velocity_rad_s")
+    )
+    shaft_point = _as_vector(require_vector3(shaft_axis_point_m, "shaft_axis_point_m"))
+    shaft_axis = _as_vector(_require_unit_vector(shaft_axis_unit, "shaft_axis_unit"))
+    face_center = _as_vector(
+        require_vector3(face_center_point_m, "face_center_point_m")
+    )
+    offset = face_center - shaft_point
+    nearest = shaft_point + float(np.dot(offset, shaft_axis)) * shaft_axis
+    lever = face_center - nearest
+    velocity = np.cross(angular_velocity, lever)
+    return SashoFaceCenterRotationAoa(
+        method_id=SASHO_FACE_CENTER_ROTATION_METHOD_ID,
+        nearest_shaft_point_m=_tuple3(nearest),
+        lever_arm_m=_tuple3(lever),
+        velocity_mps=_tuple3(velocity),
+        aoa_deg=angle_of_attack_deg(velocity, ground_up_unit),
+    )
 
 
 def _heading_rate_rad_s(
@@ -293,6 +345,13 @@ def analyze_wedge_kinematics(state: WedgeKinematicState) -> WedgeKinematicAnalys
         if edge_heading is None or arc_heading is None
         else edge_heading - arc_heading
     )
+    sasho_rotation = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=state.angular_velocity_rad_s,
+        shaft_axis_point_m=state.shaft_axis_point_m,
+        shaft_axis_unit=state.shaft_axis_unit,
+        face_center_point_m=state.face_center_point_m,
+        ground_up_unit=state.ground_up_unit,
+    )
     return WedgeKinematicAnalysis(
         frame_id=state.frame_id,
         contact_velocity_mps=_tuple3(total_velocity),
@@ -319,14 +378,18 @@ def analyze_wedge_kinematics(state: WedgeKinematicState) -> WedgeKinematicAnalys
         leading_edge_ground_heading_rate_rad_s=edge_heading,
         arc_ground_heading_rate_rad_s=arc_heading,
         leading_edge_relative_arc_heading_rate_rad_s=relative_heading,
+        sasho_face_center_rotation=sasho_rotation,
         screw_axis=_instantaneous_screw_axis(state),
     )
 
 
 __all__ = [
     "InstantaneousScrewAxis",
+    "SASHO_FACE_CENTER_ROTATION_METHOD_ID",
+    "SashoFaceCenterRotationAoa",
     "WedgeKinematicAnalysis",
     "WedgeKinematicState",
     "analyze_wedge_kinematics",
     "angle_of_attack_deg",
+    "sasho_face_center_rotation_aoa",
 ]

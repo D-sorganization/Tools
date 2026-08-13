@@ -49,6 +49,14 @@ def format_impact_kinematics(snapshot: ImpactKinematicSnapshot) -> str:
             _number(analysis.shaft_counterfactual_aoa_delta_deg, "°"),
         ),
         (
+            "Shaft-Rotation Shapley AoA",
+            _number(analysis.shaft_shapley_aoa_deg, "°"),
+        ),
+        (
+            "Sasho Face-Center Rotation-Only AoA",
+            _number(analysis.sasho_face_center_rotation.aoa_deg, "°"),
+        ),
+        (
             "Shaft Rotation Rate",
             _degrees_per_second(analysis.shaft_rotation_rate_rad_s),
         ),
@@ -84,6 +92,9 @@ def format_impact_kinematics(snapshot: ImpactKinematicSnapshot) -> str:
         f"<b>{snapshot.event_label} Kinematics</b> at "
         f"{snapshot.event_time_s:.3f} s — {metric_html}<br>"
         f"<b>Geometry Basis:</b> {snapshot.geometry_basis}. "
+        "<b>AoA Method Options:</b> remove-shaft counterfactual, two-factor "
+        "Shapley attribution, and Sasho nearest-shaft face-center rotation-only "
+        "AoA are separate non-additive measures. "
         "<b>D-Plane Basis:</b> exact rigid-body face-center travel including "
         "ω × r versus the face-center normal; positive normal tilt is face-right "
         "and fade-side only under the current right-handed display convention. "

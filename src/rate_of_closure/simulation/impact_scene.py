@@ -18,7 +18,7 @@ __all__ = [
     "impact_scene_for_run",
 ]
 
-IMPACT_SCENE_FORMAT = "rate-of-closure.impact-scene/v2"
+IMPACT_SCENE_FORMAT = "rate-of-closure.impact-scene/v3"
 Vector3 = tuple[float, float, float]
 
 
@@ -211,6 +211,15 @@ def _metrics(run: SimulationRun) -> tuple[ImpactSceneMetric, ...]:
             attribution,
         ),
         _metric(
+            analysis.sasho_face_center_rotation.method_id,
+            "Sasho Face-Center Rotation-Only AoA",
+            analysis.sasho_face_center_rotation.aoa_deg,
+            "deg",
+            "AoA(omega x (face_center-nearest_shaft(face_center)))",
+            "Uses complete angular velocity about the nearest physical shaft-line "
+            "point; descriptive, non-additive, and not a causal attribution.",
+        ),
+        _metric(
             "other_shapley_aoa",
             "Other-Rotation Shapley AoA",
             analysis.non_shaft_shapley_aoa_deg,
@@ -310,6 +319,14 @@ def impact_scene_for_run(run: SimulationRun) -> ImpactScene:
             analysis.without_shaft_velocity_mps,
             "m/s",
             "Counterfactual contact velocity with the shaft component removed.",
+        ),
+        ImpactSceneVector(
+            "sasho_face_center_rotation",
+            "Sasho Face-Center Rotation",
+            snapshot.face_center_point_m,
+            analysis.sasho_face_center_rotation.velocity_mps,
+            "m/s",
+            "Full angular-velocity face-center velocity about the nearest shaft point.",
         ),
     )
     screw = analysis.screw_axis

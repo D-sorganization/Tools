@@ -1,5 +1,26 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4434 Sasho face-center rotation-only AoA option
+
+- Adds Sasho's suggested `omega x r` construction at face center, where `r`
+  runs from the nearest point on the declared physical shaft line to face
+  center. Signed AoA uses the resulting horizontal and vertical components.
+- Stable method ID
+  `sasho_nearest_shaft_face_center_rotation_only_aoa_v1` is pinned by a shared
+  Python/React golden. Shaft-line datum shifts and axis reversal leave the
+  result invariant.
+- React and PyQt6 expose this as a peer to the remove-shaft counterfactual and
+  two-factor Shapley methods, including a face-center velocity vector with
+  separate visibility controls. Impact-scene v3 exports the method ID and
+  complete geometry.
+- This is descriptive and non-additive, uses complete club angular velocity,
+  and does not alter contact or flight physics. It is tracked by #4434 under
+  shaft-rotation epic #4206 and current Rate goal #4135. SPEC is 1.16.70.
+- Evidence passes 1,222 Rate/PyQt tests, 170 shared golf-club tests with two
+  optional CAD skips, all 876 React tests, and exact Python 3.12/Mypy 1.13 on
+  seven changed production Python modules. Ruff/format, TypeScript, ESLint,
+  Vite build, docs, assertion, changed-source size, and diff gates pass.
+
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 
 - Normal non-fast-forward order is approved localized-execution head

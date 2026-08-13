@@ -12,7 +12,13 @@ _SETTINGS_ORG = "RateOfClosure"
 _SETTINGS_APP = "ImpactScene"
 _SETTINGS_KEY = "visible_layers_v1"
 _DEFAULT_LAYERS = frozenset(
-    {"face_normal", "face_center_travel", "dplane_normal", "spin_loft_sector"}
+    {
+        "face_normal",
+        "face_center_travel",
+        "dplane_normal",
+        "spin_loft_sector",
+        "sasho_face_center_rotation",
+    }
 )
 _LAYER_DEFINITIONS = (
     (
@@ -34,6 +40,11 @@ _LAYER_DEFINITIONS = (
         "spin_loft_sector",
         "Spin Loft",
         "Show the shaded exact 3D angle between face-center travel and normal.",
+    ),
+    (
+        "sasho_face_center_rotation",
+        "Sasho Rotation AoA",
+        "Show full-angular-velocity face-center motion about the nearest shaft point.",
     ),
 )
 

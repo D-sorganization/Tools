@@ -109,11 +109,14 @@ from .wedge_ground_serialization import (
     wedge_ground_clearance_to_json_dict,
 )
 from .wedge_kinematics import (
+    SASHO_FACE_CENTER_ROTATION_METHOD_ID,
     InstantaneousScrewAxis,
+    SashoFaceCenterRotationAoa,
     WedgeKinematicAnalysis,
     WedgeKinematicState,
     analyze_wedge_kinematics,
     angle_of_attack_deg,
+    sasho_face_center_rotation_aoa,
 )
 from .wedge_parameters import (
     Handedness,
@@ -149,6 +152,8 @@ __all__ = [
     "Handedness",
     "GroundPlane",
     "InstantaneousScrewAxis",
+    "SASHO_FACE_CENTER_ROTATION_METHOD_ID",
+    "SashoFaceCenterRotationAoa",
     "RigidTransform",
     "ReducedTurfContactResult",
     "SHAFT_PROFILE_FORMAT",
@@ -200,6 +205,7 @@ __all__ = [
     "analyze_wedge_kinematics",
     "analyze_wedge_ground_clearance",
     "angle_of_attack_deg",
+    "sasho_face_center_rotation_aoa",
     "assembly_from_json",
     "assembly_from_json_dict",
     "assembly_to_json",

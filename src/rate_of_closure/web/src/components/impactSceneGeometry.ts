@@ -26,7 +26,8 @@ const COLORS = {
   normal: "#22c55e", arc: "#a78bfa", screw: "#e879f9",
   travel: "#f59e0b", dplane: "#14b8a6", sector: "#22d3ee",
   total: "#fb7185", axisTranslation: "#38bdf8", shaftRotation: "#f97316",
-  otherRotation: "#c084fc", withoutShaft: "#94a3b8", ground: "#334155",
+  otherRotation: "#c084fc", withoutShaft: "#94a3b8",
+  sashoFaceCenterRotation: "#2dd4bf", ground: "#334155",
 };
 
 const centered = (point: Vec3, center: Vec3): Vec3 => sub(point, center);
@@ -115,7 +116,10 @@ export function impactSceneGeometry(
     lines.push({
       key: vector.key,
       label: vector.label,
-      points: [contact, scale(vector.vectorMps, 0.18 / maxSpeed)],
+      points: [
+        centered(vector.originM, center),
+        add(centered(vector.originM, center), scale(vector.vectorMps, 0.18 / maxSpeed)),
+      ],
       color: COLORS[vector.key],
       width: vector.key === "total" ? 3 : 2,
       dash: vector.key === "withoutShaft" ? [7, 5] : undefined,

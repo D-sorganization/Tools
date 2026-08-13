@@ -51,6 +51,9 @@ def test_scene_exposes_frame_explicit_geometry_and_velocity_identity() -> None:
     )
     np.testing.assert_allclose(reconstructed, vectors["total"].vector, atol=1e-12)
     assert all(vector.units == "m/s" for vector in scene.vectors)
+    assert vectors["sasho_face_center_rotation"].origin_m == pytest.approx(
+        scene.face_center_point_m
+    )
     expected_face_center_velocity = np.asarray(scene.face_center_velocity_mps)
     np.testing.assert_allclose(
         scene.face_center_dplane.travel_direction_unit,
@@ -67,11 +70,14 @@ def test_scene_metrics_are_self_describing_and_strict_json_safe() -> None:
     assert metrics["shaft_rotation_rate"].units == "deg/s"
     payload = scene.to_json_dict()
     assert json.dumps(payload, allow_nan=False)
-    assert payload["format"] == "rate-of-closure.impact-scene/v2"
+    assert payload["format"] == "rate-of-closure.impact-scene/v3"
     assert payload["face_center_dplane"]["status"] == "defined"
     assert metrics["spin_loft_3d"].units == "deg"
     assert metrics["spin_loft_planar"].equation
     assert metrics["spin_loft_residual"].assumptions
+    sasho = metrics["sasho_nearest_shaft_face_center_rotation_only_aoa_v1"]
+    assert sasho.label == "Sasho Face-Center Rotation-Only AoA"
+    assert "complete angular velocity" in sasho.assumptions
 
 
 def test_scene_contains_engineering_orientation_and_screw_geometry() -> None:

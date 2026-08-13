@@ -26,11 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.69                                    |
-| **Spec Version**        | 1.16.69                                    |
+| **Current Version**     | 1.16.70                                    |
+| **Spec Version**        | 1.16.70                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Sasho nearest-shaft face-center rotational AoA (#4434)
+
+Version 1.16.70 adds Sasho's proposed descriptive rotation-only AoA as a third
+peer method beside the existing remove-shaft counterfactual and two-factor
+Shapley attribution. For face center `F`, shaft line point `A`, unit shaft
+direction `s`, and complete club angular velocity `omega`, the authority uses
+`Q = A + s(s dot (F-A))`, `v = omega x (F-Q)`, and the standard signed AoA of
+`v`. The stable method ID is
+`sasho_nearest_shaft_face_center_rotation_only_aoa_v1`.
+
+Python and React share an exact golden, and PyQt6/React expose the scalar,
+definition, nearest-shaft geometry, and independently selectable velocity
+vector.
+Impact-scene export advances to v3 so the method ID, nearest point, lever,
+velocity, and AoA are retained. This metric uses complete angular velocity; it
+is descriptive, non-additive, and neither a causal claim nor interchangeable
+with the shaft-axis-only counterfactual or Shapley value. Issue #4434 is linked
+to shaft-rotation epic #4206 and current Rate goal #4135.
+
+Exact-tree evidence passes 1,222 Rate/PyQt tests, 170 shared golf-club tests
+(two optional `build123d` skips), and all 876 React tests. Python 3.12 with
+pinned Mypy 1.13 passes the seven changed production Python modules; Ruff,
+TypeScript, ESLint, Vite production build, docs governance, changed-test
+assertions, 400-line changed-source policy, and diff checks pass.
 
 ### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
@@ -3906,6 +3931,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4434): add Sasho nearest-shaft face-center rotation-only AoA as a separately labeled Python/React/PyQt metric and vector, exact cross-runtime golden, and strict impact-scene v3 export; retain explicit non-additive/noncausal distinction from counterfactual and Shapley methods. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |

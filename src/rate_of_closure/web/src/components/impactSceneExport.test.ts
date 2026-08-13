@@ -29,7 +29,10 @@ describe("impact scene data export", () => {
       { yaw: 2.62, pitch: 0.52, zoom: 2.2 },
     );
 
-    expect(payload.format).toBe("rate-of-closure.impact-scene/v2");
+    expect(payload.format).toBe("rate-of-closure.impact-scene/v3");
+    expect(payload.sashoFaceCenterRotation.methodId).toBe(
+      "sasho_nearest_shaft_face_center_rotation_only_aoa_v1",
+    );
     expect(payload.renderPreferences.visibleLayers).toEqual([
       "faceNormal", "spinLoftSector",
     ]);

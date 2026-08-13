@@ -44,6 +44,10 @@ export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
       equation: "AoA(v_contact − v_shaft)", detail: "Rigid-body counterfactual with only the angular-velocity component parallel to the shaft removed." },
     { label: "Shaft AoA Contribution", value: number(metrics.shaftAoaContributionDeg, "°"),
       equation: "AoA(v_contact) − AoA(v_contact − v_shaft)", detail: "Non-additive counterfactual delta; this is not an Euler-angle decomposition." },
+    { label: "Shaft-Rotation Shapley AoA", value: number(metrics.shaftShapleyAoaDeg, "°"),
+      equation: "mean marginal AoA across both factor orders", detail: "Order-independent two-factor attribution about shaft-axis translation; it remains a model attribution, not an independently measured cause." },
+    { label: "Sasho Face-Center Rotation-Only AoA", value: number(metrics.sashoFaceCenterRotation.aoaDeg, "°"),
+      equation: "AoA(ω × (F − nearest_shaft(F)))", detail: `Method ${metrics.sashoFaceCenterRotation.methodId}. Uses complete club angular velocity and the nearest point on the physical shaft line. It is descriptive and is not interchangeable with shaft-axis-only or Shapley attribution.` },
     { label: "Shaft Rotation Rate", value: number(metrics.shaftRotationRateDps, "°/s", 1),
       equation: "ω · ŝ", detail: "Signed projection of rigid-head angular velocity onto the declared physical shaft axis." },
     { label: "Shaft-Induced Vertical Velocity", value: number(metrics.shaftVerticalVelocityMps, "m/s", 3),
@@ -82,6 +86,11 @@ export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
           </div>
         </details>)}
       </div>
+      <p className="mt-2 rounded border border-cyan-400/20 bg-slate-950/40 p-2 text-xs text-slate-300">
+        <b>AoA method options:</b> compare the remove-shaft counterfactual,
+        two-factor Shapley attribution, and Sasho nearest-shaft face-center
+        rotation-only AoA. They answer different questions and are not additive.
+      </p>
       <p className="mt-2 text-xs text-slate-400">
         <b className="text-slate-300">Geometry Basis:</b> {metrics.geometryBasis}.{" "}
         <b className="text-slate-300">Model Boundary:</b> {metrics.modelLimitations}
