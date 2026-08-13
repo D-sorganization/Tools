@@ -26,11 +26,19 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.88                                    |
-| **Spec Version**        | 1.16.88                                    |
+| **Current Version**     | 1.16.89                                    |
+| **Spec Version**        | 1.16.89                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Putting hosted typing closure (#4443)
+
+Version 1.16.89 explicitly constructs the PyQt Matplotlib display-point tuple
+as `(raw index, float x, float y)` and narrows Qt scalar/text returns. This
+closes pinned MyPy 1.13 inference at binding boundaries without changing
+scientific identity, UI behavior, geometry, artifact status, or the remaining
+#4433 scope.
 
 ### 2026-08-13 Putting synchronized sample inspector (#4433)
 

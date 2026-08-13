@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Putting hosted typing closure (#4443)
+
+Version 1.16.89 replaces a variadic tuple expression at the Matplotlib
+display-coordinate boundary with an explicitly typed `(raw index, x, y)`
+construction and narrows Qt scalar/text returns. This closes the pinned Python
+3.12 / MyPy 1.13 diagnostics without changing sample identity, hit testing,
+rendering, or evidence status.
+
 ## 2026-08-13 Putting synchronized sample inspector (#4433)
 
 Version 1.16.88 adds fixed, bounded React/PyQt sample plans for one accepted

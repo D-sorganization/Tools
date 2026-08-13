@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Putting hosted typing closure (#4443)
+
+- The Matplotlib display-point adapter now names and converts its two
+  transformed coordinates explicitly, while Qt text/bool/float return seams
+  narrow their binding values, so pinned MyPy 1.13 retains exact contracts.
+- This is a static-only correction: selection, geometry, physics, artifacts,
+  and open #4433 limitations are unchanged. SPEC is 1.16.89.
+
 ## 2026-08-13 Putting synchronized sample inspector (#4433)
 
 - `putting_sample_inspector.py` and its TypeScript twin validate one accepted

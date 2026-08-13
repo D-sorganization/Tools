@@ -1,5 +1,13 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4443 Putting hosted typing closure
+
+- The PyQt display-coordinate adapter now constructs the exact raw-index/x/y
+  tuple explicitly and narrows Qt scalar/text return seams, closing the Python
+  3.12 / pinned MyPy 1.13 diagnostics.
+- No scientific, visual, interaction, artifact, or release-status claim changes.
+  SPEC is 1.16.89 and #4433 remains open.
+
 ## 2026-08-13 #4433 Putting synchronized sample inspector
 
 - React and PyQt now build one immutable O(raw), <=1,024-point presentation

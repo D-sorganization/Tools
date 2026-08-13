@@ -85,15 +85,15 @@ class PuttingPlotView(QWidget):
 
     def status_text(self) -> str:
         """Return the visible exact selected-sample status."""
-        return self._status.text()
+        return str(self._status.text())
 
     def error_text(self) -> str:
         """Return the separate bounded recompute error announcement."""
-        return self._error.text()
+        return str(self._error.text())
 
     def context_text(self) -> str:
         """Return the visible authority for the displayed result."""
-        return self._context.text()
+        return str(self._context.text())
 
     def selected_artists(self) -> tuple[Any, ...]:
         """Return synchronized path and speed marker artists."""
@@ -198,7 +198,7 @@ class PuttingPlotView(QWidget):
                     )
                 )
                 return True
-        return super().eventFilter(watched, event)
+        return bool(super().eventFilter(watched, event))
 
     def path_display_points(self) -> tuple[tuple[int, float, float], ...]:
         """Return actual Matplotlib display pixels for bounded path samples."""
@@ -225,10 +225,13 @@ class PuttingPlotView(QWidget):
             )
         else:
             return ()
-        return tuple(
-            (sample.raw_index, *map(float, axes.transData.transform(value)))
-            for sample, value in zip(self._plan.samples, values, strict=True)
-        )
+        points: list[tuple[int, float, float]] = []
+        for sample, value in zip(self._plan.samples, values, strict=True):
+            transformed = axes.transData.transform(value)
+            points.append(
+                (sample.raw_index, float(transformed[0]), float(transformed[1]))
+            )
+        return tuple(points)
 
     def _on_click(self, event: Any) -> None:
         if event.inaxes in (self._top, self._bottom):
