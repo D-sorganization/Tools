@@ -25,12 +25,12 @@ from rate_of_closure.variation.ensemble_io import (
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
+    LOCALIZED_TORQUE_VARIABLE_JOINTS,
     MODES,
     PerturbationGroup,
     VariationDataset,
     VariationPlan,
     keys_for_mode,
-    variable_registry,
 )
 from shared.python.swing_sim.variation.dataset_io import write_csv, write_json
 
@@ -60,6 +60,14 @@ class VariationTabIoMixin:
 
     def _remove_row(self, row: NoiseRow) -> None:
         """Remove a noise row; implemented by the concrete tab."""
+        raise NotImplementedError
+
+    def _localized_authoring_enabled(self, mode: str | None = None) -> bool:
+        """Return whether a mode/source pair can author localized torque."""
+        raise NotImplementedError
+
+    def _localized_duration_s(self) -> float:
+        """Return the authoritative fixed-step swing duration."""
         raise NotImplementedError
 
     def _build_export_box(self) -> QGroupBox:
@@ -230,15 +238,18 @@ class VariationTabIoMixin:
         legal = set(keys_for_mode(plan.mode))
         numeric_editor = self._rows[0]
         for spec in plan.noise:
-            definition = variable_registry().get(spec.variable_key)
-            if (
-                definition is not None
-                and definition.applicability == "localized_torque_only"
-            ):
-                raise ValueError(
-                    "localized torque requires a locus editor and is not "
-                    f"representable by this UI: {spec.variable_key}"
-                )
+            if spec.variable_key in LOCALIZED_TORQUE_VARIABLE_JOINTS:
+                if not numeric_editor.accepts_locus(
+                    spec,
+                    localized_enabled=self._localized_authoring_enabled(plan.mode),
+                    duration_s=self._localized_duration_s(),
+                ):
+                    expected = LOCALIZED_TORQUE_VARIABLE_JOINTS[spec.variable_key]
+                    raise ValueError(
+                        "localized torque requires a finite half-open time window "
+                        "within the double-pendulum duration and its exact "
+                        f"topological joint {expected}: {spec.variable_key}"
+                    )
             if spec.variable_key not in legal:
                 raise ValueError(
                     "noise variable is not representable in this mode: "

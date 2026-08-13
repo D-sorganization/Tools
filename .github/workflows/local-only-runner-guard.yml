@@ -29,12 +29,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up Python
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -69,6 +69,7 @@ jobs:
           }
           ALLOWLIST_JOBS = {
               ("ci-standard.yml", "quality-gate"),
+              ("rate-web-playwright.yml", "production-worker-e2e"),
           }
           HOSTED = re.compile(r"^(ubuntu|macos|windows)(-latest|-\d+)?$")
 
@@ -148,7 +149,8 @@ jobs:
               print(f"{len(violations)} workflow(s) leak to hosted runners.")
               print(
                   "Allowed: local-only-runner-guard.yml, runner-health-alert.yml, "
-                  "ci-standard.yml::quality-gate, and jobs literally named "
+                  "ci-standard.yml::quality-gate, "
+                  "rate-web-playwright.yml::production-worker-e2e, and jobs literally named "
                   "'Reject hosted runner routing'."
               )
               sys.exit(1)

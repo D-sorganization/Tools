@@ -4,11 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
 from shared.python.contracts import require
+
+from .identity_contracts import stable_id, stable_id_array, strict_string
 
 MATRIX_KINDS: tuple[str, ...] = ("correlation", "covariance")
 _MATRIX_TOLERANCE = 1e-12
@@ -21,24 +23,17 @@ def _as_matrix(value: object) -> np.ndarray:
     except (TypeError, ValueError) as exc:
         require(False, "matrix must be a numeric square matrix", value)
         raise ValueError("matrix must be a numeric square matrix") from exc
-    return result
+    return cast(np.ndarray, result)
 
 
 def _validate_group_ids(group_id: str, spec_ids: tuple[str, ...]) -> None:
     """Validate stable group/member identifiers."""
-    require(
-        isinstance(group_id, str) and bool(group_id) and group_id == group_id.strip(),
-        "group_id must be a non-empty, trimmed stable ID",
-        group_id,
-    )
+    stable_id(group_id, "group_id")
     require(
         len(spec_ids) >= 2, "correlation group needs at least two spec_ids", spec_ids
     )
-    valid_ids = all(
-        isinstance(spec_id, str) and bool(spec_id) and spec_id == spec_id.strip()
-        for spec_id in spec_ids
-    )
-    require(valid_ids, "spec_ids must be non-empty, trimmed stable IDs", spec_ids)
+    for spec_id in spec_ids:
+        stable_id(spec_id, "spec_ids")
     require(len(set(spec_ids)) == len(spec_ids), "spec_ids must be unique", spec_ids)
 
 
@@ -114,7 +109,7 @@ class PerturbationGroup:
         )
         matrix = np.asarray(self.matrix, dtype=float)
         if self.matrix_kind == "covariance":
-            return matrix.copy()
+            return cast(np.ndarray, matrix.copy())
         covariance: np.ndarray = (
             scale_array[:, np.newaxis] * matrix * scale_array[np.newaxis, :]
         )
@@ -133,12 +128,14 @@ class PerturbationGroup:
     def from_json_dict(cls, data: Mapping[str, Any]) -> PerturbationGroup:
         """Build a validated group from JSON-compatible data."""
         return cls(
-            group_id=str(data["group_id"]),
-            spec_ids=tuple(str(value) for value in data["spec_ids"]),
+            group_id=stable_id(data["group_id"], "group_id"),
+            spec_ids=stable_id_array(data["spec_ids"], "spec_ids"),
             matrix=tuple(
                 tuple(float(value) for value in row) for row in data["matrix"]
             ),
-            matrix_kind=str(data.get("matrix_kind", "correlation")),
+            matrix_kind=strict_string(
+                data.get("matrix_kind", "correlation"), "matrix_kind"
+            ),
         )
 
 

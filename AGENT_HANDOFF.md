@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
+
+Version 1.16.64 normally merges approved dispersion head
+`71634bf7393c8343a53f9acaa9f4db76cb4ac8db` as first parent with published
+localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda`
+as second parent. Both append-only histories, implementations, workflows, and
+feature tests remain present without rebase or rewrite. The one unexpected
+non-document conflict retained the locus persistence cases and the newer
+dispersion analysis block; two stale assertions in the locus-split analysis
+file now follow the approved metric-generic accessible names.
+
+Integrated local evidence is 338 combined dispersion/PyQt/shared variation
+tests, all 841 React tests, seven workflow/runner-policy tests, and the exact
+23-source Python 3.12/Mypy 1.13 cumulative delta. Ruff/format, TypeScript,
+ESLint, Vite production build, documentation governance, and the 500-line
+changed-file gate pass, as do all five production-Worker Chromium checks.
+
+Protected publication remains open, as do plot-definition import UI, full
+ellipsoid meshes, WebKit/Firefox and assistive-technology coverage, approved
+visual baselines, React localized execution/results/export, Rust parity,
+complete persistence, and the remaining #4142 scope.
+
 ## 2026-08-13 Plot-definition compatibility/static closure (#4142 R12.1/R12.2)
 
 The strict v2 contract now preserves one historically emitted v1 form without
@@ -101,6 +123,136 @@ fails closed on unequal time grids or nonfinite coordinates instead of
 truncating. The existing sparse yellow glyphs remain labeled as 2σ principal-
 axis indicators; this slice does not claim a rendered confidence-ellipsoid mesh,
 cross-browser E2E coverage, protected publication, or epic completion.
+
+## 2026-08-12 PR #4414 hosted MyPy hardening (#4142, 1.16.63)
+
+The localized-locus UI now narrows a nullable variable key before querying the
+stable variable-to-joint mapping and returns the locus editor's declared
+Boolean result directly instead of applying a redundant type cast. These are
+type-boundary corrections only; variable selection, locus visibility, joint
+identity, authoring precision, and runtime behavior are unchanged.
+
+Local evidence is the exact PR-base set of 15 changed source files under pinned
+MyPy 1.13.0 with redundant-cast warnings enabled, plus seven focused PyQt locus
+tests, Ruff, format, documentation governance, diff, and changed-file size
+checks. Protected current-head CI and ordinary publication remain open.
+
+## 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
+
+Normal merge version 1.16.62 preserves localized-locus head
+`05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent and published
+browser head `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` as second parent. The merge
+retains both implementations byte-for-byte; only the four durable handoff/spec
+documents are reconciled. Strict localized execution/authoring, Python/React
+wire parity, and the 400-line policy coexist with the trust-separated real
+production-Worker Playwright gates.
+
+The browser history retains hosted-only PR CI, main-push-only trusted CI,
+immutable action pins, real hashed-Worker progress/cancellation/rerun checks,
+and responsive desktop/narrow Chromium coverage. This remains an R14.5
+foundation, not complete certification: protected runner evidence, WebKit,
+Firefox, assistive-technology automation, PyQt E2E, approved visual baselines,
+React localized results/export, Rust parity, complete raw persistence, protected
+publication, and epic completion remain open.
+
+## 2026-08-12 Integrated localized torque and Playwright stack (#4142, 1.16.59)
+
+This branch now preserves the complete histories of localized-torque head
+`10524cc2151c7b60c4a097939b29202158aff012` and reviewed Playwright head
+`6df0ed09388ba36630c5fc6be7a31a334a4b6243` in a normal two-parent merge.
+The localized Python execution/validation contracts and the Rate-web production
+Worker/browser gates coexist without changing either scientific or browser
+contract. Publication, protected CI, remaining localized UI/Rust/persistence
+work, and full R14.5 visual/browser certification remain open.
+Integrated local evidence is 171/171 localized changed-test cases, 18/18
+Playwright workflow/security tests, and 5/5 real Chromium tests, plus scoped
+Ruff, Ruff format, documentation governance, workflow validation, and diff
+hygiene.
+
+## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
+
+Local branch `codex/4142-rate-web-playwright` starts from exact integrated
+commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The Rate web package pins
+Playwright Test 1.62.1 in its own manifest/lock and owns a deterministic
+Chromium configuration across two path-filtered workflows. Every PR runs only
+on ephemeral `ubuntu-latest`; the PR YAML has no fleet/self-hosted reference.
+The separate trusted workflow runs only for pushes to `main`, checks out the
+push event commit, and has neither a PR nor manual-dispatch ref seam. Checkout,
+Node setup, and artifact upload actions are pinned to full immutable SHAs.
+Artifact names include the workflow run and attempt IDs.
+
+The gate builds and serves the Vite production bundle, then uses role/label
+locators against the actual bundled module Worker. It observes strict
+intermediate and terminal progress during a seeded 24-run study and proves a
+deterministic rerun. Cancellation of a 500-run swing/OAT job observes actual
+Worker termination before two identical seeded reruns, proving the cancelled
+generation cannot publish a partial or late result. Navigation terminates
+active work on primary-tab unmount, and every case rejects browser page errors.
+Blocking service workers in the
+test context does not replace or disable the dedicated module Worker; every
+lifecycle case observes the hashed production Worker chunk. Desktop 1440x1000
+and narrow 390x844 checks enforce zero document-level horizontal overflow and
+attach full-page screenshots to the retained Playwright report.
+
+This is a narrow R14.5 foundation, not R14.5 completion or complete visual
+certification. It covers bundled Chromium only; screenshots are review
+artifacts, not cross-platform golden baselines. WebKit, Firefox, assistive-
+technology automation, PyQt interaction, protected runner evidence, and a
+CI-authority visual baseline remain open. Local evidence is 5/5 Playwright and
+743/743 Vitest tests, plus TypeScript, ESLint, and the Vite production build.
+
+## 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
+
+Python and React plan readers now reject coercive identity fields. Discriminator
+text must be a real string; spec/group/point/member IDs must also be nonempty,
+trimmed, C0/C1-control-free stable strings, and ID collections must be real
+arrays with unique entries. Numeric, scalar-string, control-bearing, and
+duplicate stand-ins fail before plan construction.
+
+PyQt worker lifecycle, registry mode policy, PyQt GUI test concerns, and React
+analysis tests now live in focused modules. Every cumulative changed Python/TS/
+TSX source or test is <=400 lines; official 500-line and explicit 400-line gates
+pass. Evidence: 190 focused Python/PyQt/core tests, 780 full React tests, TS
+type/lint/build, Ruff/format, 15-file MyPy, docs-governance, and diff/size checks.
+React localized execution/results/export, Rust parity, raw persistence, visual
+E2E, protected publication, and epic completion remain open.
+
+## 2026-08-12 Localized torque authoring review hardening (#4142)
+
+Independent review corrections are complete. Focused PyQt editor helpers own
+locus controls and Variation-tab row operations, reducing the changed
+`variation_tab.py` and `variation_rows.py` modules to 482 and 292 lines under
+the official 500-line gate. Locus endpoints retain per-field exact authority:
+editing only one endpoint preserves the other endpoint's full imported value.
+
+React v2 decoding now rejects coercive numeric wire values before construction.
+Schema versions, scales, bounds, base values, windows, run counts, seeds, and
+correlation entries require strict finite numbers; integer fields additionally
+require integers. Evidence: 173 focused Python/PyQt/core tests, 763 full React
+tests, TypeScript type/lint/build, Ruff/format, changed-source MyPy, official
+file-size, docs-governance, and diff gates. React localized execution/results/
+export, Rust parity, complete raw persistence, visual E2E, protected publication,
+and epic completion remain open.
+
+## 2026-08-12 Localized torque authoring parity (#4142)
+
+PyQt and React can now author the two registered localized commanded-torque
+variables. PyQt exposes them only in swing mode with a double-pendulum source
+and bounds windows to the effective RK4 duration. React exposes them only in
+its fixed 1.5 s double-pendulum swing workflow. Each row has finite half-open
+start/end controls and one disabled topological selector fixed to
+`joint.shoulder` or `joint.wrist`; tooltips explicitly distinguish these from
+spatial `swing.*` trace IDs. Global rows keep their prior compact layout.
+
+Load/edit/save/import retains custom spec IDs, exact high-precision locus and
+scale values, groups, and unrelated plan fields. Variable changes reset the
+locus atomically. Missing, reversed, off-duration, and mismatched loci fail
+visibly before execution or storage mutation. A shared v2 fixture is consumed
+by Python and TypeScript tests. Evidence: 49 focused Python/PyQt/core tests,
+752 full React tests, TS type/lint/build, Ruff/format, changed-source MyPy, and
+diff checks. React localized dynamics/results/export remain fail-closed; Rust
+parity, complete raw state/event/torque persistence, visual E2E, protected
+publication, and epic completion remain open.
 
 ## 2026-08-12 Localized torque static-gate closure (#4142)
 

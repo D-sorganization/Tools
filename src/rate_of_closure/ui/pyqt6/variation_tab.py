@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import logging
-
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -28,15 +26,12 @@ from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import SimulationConfig
 from rate_of_closure.ui.pyqt6 import variation_constants
 from rate_of_closure.ui.pyqt6.variation_rows import NoiseRow
+from rate_of_closure.ui.pyqt6.variation_tab_editors import VariationTabEditorsMixin
 from rate_of_closure.ui.pyqt6.variation_tab_io import VariationTabIoMixin
-from rate_of_closure.ui.pyqt6.variation_tab_results import (
-    VariationTabResultsMixin,
-    populate_result_views,
-)
+from rate_of_closure.ui.pyqt6.variation_tab_results import VariationTabResultsMixin
+from rate_of_closure.ui.pyqt6.variation_tab_run import VariationTabRunMixin
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker
-from rate_of_closure.variation.plot_data import build_ensemble_plot_dataset
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
-from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
@@ -47,12 +42,16 @@ from shared.python.swing_sim.variation import (
     keys_for_mode,
 )
 
-logger = logging.getLogger(__name__)
-
 __all__ = ["QFileDialog", "VariationTab"]
 
 
-class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
+class VariationTab(
+    VariationTabRunMixin,
+    VariationTabEditorsMixin,
+    VariationTabIoMixin,
+    VariationTabResultsMixin,
+    QWidget,
+):
     """Monte-Carlo variation tab (controls left, results right)."""
 
     #: Emitted after a successful study for landing-scatter overlays (#4125 H7b).
@@ -218,6 +217,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         if changed:
             self._invalidate_current_study()
         self._base_simulation_config = config
+        self._refresh_row_contexts()
         self._simulation_config_valid = True
         self._set_running(bool(self._worker and self._worker.isRunning()))
         if changed or not was_valid:
@@ -275,225 +275,3 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         if self._worker is not None:
             self._worker.cancel()
             self._worker.wait(10_000)
-
-    def _add_row(self) -> NoiseRow:
-        row = NoiseRow(self.mode(), self._remove_row)
-        self._rows.append(row)
-        # Insert above the trailing "Add Variable" button.
-        self._rows_layout.insertWidget(self._rows_layout.count() - 1, row)
-        return row
-
-    def _remove_row(self, row: NoiseRow) -> None:
-        if len(self._rows) <= 1:
-            self._status.setText("At least one noise row is required.")
-            return
-        self._rows.remove(row)
-        row.setParent(None)
-        row.deleteLater()
-
-    def _on_mode_changed(self, *_args: object) -> None:
-        self._loaded_base.clear()
-        self._loaded_groups = ()
-        for row in self._rows:
-            row.set_mode(self.mode())
-
-    # ── run / cancel ────────────────────────────────────────────────
-    def _on_run(self) -> None:
-        if not self._simulation_config_valid:
-            self._status.setText(
-                "Cannot run: current Simulation inputs are incomplete or invalid."
-            )
-            return
-        if self._worker is not None and self._worker.isRunning():
-            return
-        try:
-            plan = self.build_plan()
-        except (ContractViolationError, ValueError) as exc:
-            self._status.setText(f"Cannot run: {exc}")
-            return
-        self._dataset = None
-        self._sensitivity = None
-        self._ensemble_result = None
-        self._generation += 1
-        generation = self._generation
-        self._set_running(True)
-        worker = VariationWorker(
-            plan,
-            compute_sensitivity=self._sens_check.isChecked(),
-            base_simulation_config=self._base_simulation_config,
-        )
-        worker.progressed.connect(
-            lambda report, current=generation: self._accept_progress(current, report)
-        )
-        worker.phaseChanged.connect(
-            lambda phase, current=generation: self._accept_phase(current, phase)
-        )
-        worker.succeeded.connect(
-            lambda dataset, sensitivity, current=generation: self._accept_succeeded(
-                current, dataset, sensitivity
-            )
-        )
-        worker.ensembleSucceeded.connect(
-            lambda result, current=generation: self._accept_ensemble_succeeded(
-                current, result
-            )
-        )
-        worker.cancelled.connect(
-            lambda current=generation: self._accept_cancelled(current)
-        )
-        worker.failed.connect(
-            lambda message, current=generation: self._accept_failed(current, message)
-        )
-        worker.finished.connect(
-            lambda current=generation, owner=worker: self._accept_finished(
-                current, owner
-            )
-        )
-        self._worker = worker
-        self._progress.setRange(0, worker.total_runs)
-        self._progress.setValue(0)
-        self._status.setText("Running…")
-        worker.start()
-
-    def _set_running(self, running: bool) -> None:
-        self._run_button.setEnabled(not running and self._simulation_config_valid)
-        self._cancel_button.setEnabled(running)
-        self._export_csv.setEnabled(not running and self._dataset is not None)
-        self._export_json.setEnabled(not running and self._dataset is not None)
-        has_ensemble = self._ensemble_result is not None
-        self._export_trace_csv.setEnabled(not running and has_ensemble)
-        self._export_ensemble_json.setEnabled(not running and has_ensemble)
-
-    def _on_cancel(self) -> None:
-        if self._worker is not None:
-            self._worker.cancel()
-            self._status.setText("Cancelling…")
-
-    # ── worker callbacks (GUI thread) ───────────────────────────────
-    def _is_current_generation(self, generation: int) -> bool:
-        return generation == self._generation
-
-    def _accept_progress(self, generation: int, report: object) -> None:
-        if self._is_current_generation(generation):
-            self._on_progress(report)
-
-    def _accept_phase(self, generation: int, phase: str) -> None:
-        if self._is_current_generation(generation):
-            self._on_phase(phase)
-
-    def _accept_succeeded(
-        self, generation: int, dataset: object, sensitivity: object
-    ) -> None:
-        if self._is_current_generation(generation) and isinstance(
-            dataset, VariationDataset
-        ):
-            self._on_succeeded(dataset, sensitivity)
-
-    def _accept_ensemble_succeeded(self, generation: int, result: object) -> None:
-        if self._is_current_generation(generation) and isinstance(
-            result, SimulationEnsembleResult
-        ):
-            self._on_ensemble_succeeded(result)
-
-    def _accept_cancelled(self, generation: int) -> None:
-        if self._is_current_generation(generation):
-            self._on_cancelled()
-
-    def _accept_failed(self, generation: int, message: str) -> None:
-        if self._is_current_generation(generation):
-            self._on_failed(message)
-
-    def _accept_finished(self, generation: int, worker: VariationWorker) -> None:
-        owns_current_slot = worker is self._worker
-        if owns_current_slot:
-            self._worker = None
-        if self._is_current_generation(generation):
-            self._on_finished()
-        elif owns_current_slot:
-            self._set_running(False)
-
-    def _on_progress(self, report: object) -> None:
-        iteration = int(getattr(report, "iteration", 0))
-        failed = int(getattr(report, "cost", 0.0))
-        self._progress.setValue(min(iteration, self._progress.maximum()))
-        note = f", {failed} failed" if failed else ""
-        self._status.setText(
-            f"Run {iteration}/{self._progress.maximum()}{note} — "
-            f"{getattr(report, 'elapsed_s', 0.0):.1f} s"
-        )
-
-    def _on_phase(self, phase: str) -> None:
-        if phase.startswith("Sensitivity"):
-            self._progress.setRange(0, 0)  # busy while OAT sub-studies run
-        self._status.setText(phase)
-
-    def _on_succeeded(self, dataset: VariationDataset, sensitivity: object) -> None:
-        self._dataset = dataset
-        self._sensitivity = (
-            sensitivity if isinstance(sensitivity, SensitivityResult) else None
-        )
-        if self._ensemble_result is None:
-            self._ensemble_scatter.set_variation_dataset(dataset)
-            self._distribution_matrix.set_variation_dataset(dataset)
-        self._populate_results()
-        failures = dataset.plan.n_runs - dataset.n_success
-        note = f" ({failures} runs failed)" if failures else ""
-        self._status.setText(
-            f"Done: {dataset.n_success}/{dataset.plan.n_runs} runs in "
-            f"{dataset.elapsed_s:.1f} s{note}."
-        )
-        self.studyCompleted.emit(dataset)
-
-    def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
-        """Populate complete-trace views before the scalar completion callback."""
-        self._ensemble_result = result
-        self._landing.set_outcomes(tuple(outcome.status for outcome in result.outcomes))
-        self._export_trace_csv.setEnabled(True)
-        self._export_ensemble_json.setEnabled(True)
-        plot_dataset = build_ensemble_plot_dataset(result)
-        self._ensemble_scatter.set_plot_dataset(plot_dataset)
-        self._distribution_matrix.set_plot_dataset(plot_dataset)
-        self._arc_overlay.set_plot_dataset(plot_dataset)
-
-    def _on_cancelled(self) -> None:
-        self._status.setText("Cancelled.")
-
-    def _on_failed(self, message: str) -> None:
-        self._status.setText(f"Study failed: {message}")
-
-    def _on_finished(self) -> None:
-        self._progress.setRange(0, max(self._progress.maximum(), 1))
-        self._progress.setValue(self._progress.maximum())
-        self._set_running(False)
-
-    # ── results ─────────────────────────────────────────────────────
-    def _populate_results(self) -> None:
-        dataset = self._dataset
-        if dataset is None:
-            return
-        populate_result_views(
-            dataset,
-            self._sensitivity,
-            self._summary_table,
-            self._sensitivity_table,
-            self._spearman_table,
-            self._landing,
-        )
-
-    def _invalidate_current_study(self) -> None:
-        self._generation += 1
-        if self._worker is not None and self._worker.isRunning():
-            self._worker.cancel()
-        self._dataset = None
-        self._sensitivity = None
-        self._ensemble_result = None
-        self._summary_table.setRowCount(0)
-        for table in (self._sensitivity_table, self._spearman_table):
-            table.setRowCount(0)
-            table.setColumnCount(0)
-        self._landing.clear_view()
-        self._ensemble_scatter.clear_view()
-        self._distribution_matrix.clear_view()
-        self._arc_overlay.clear_view()
-
-    # ── export / plan IO ────────────────────────────────────────────

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   CATEGORY_LAUNCH,
+  CATEGORY_SWING,
   planFromJson,
   planToJson,
   runVariation,
@@ -13,9 +14,35 @@ import {
 import { datasetToJson, oneAtATimeSensitivity } from "./variationAnalysis";
 import { DRIVER_TEE_HEIGHT_M } from "./ballSetup";
 import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
+import localizedTorqueFixture from "./__fixtures__/localized_torque_authoring_v1.json";
 
 const BALL = `${CATEGORY_LAUNCH}.ball_speed_mph`;
 const ANGLE = `${CATEGORY_LAUNCH}.launch_angle_deg`;
+
+interface VariationWireFixture {
+  schema_version: unknown;
+  mode: unknown;
+  base_variables: Record<string, unknown>;
+  noise: Array<{
+    variable_key: unknown;
+    distribution: unknown;
+    scale: unknown;
+    lower: unknown;
+    upper: unknown;
+    spec_id: unknown;
+    time_window_s: unknown[];
+    point_ids: unknown;
+  }>;
+  n_runs: unknown;
+  seed: unknown;
+  flight_model: unknown;
+  groups: Array<{
+    group_id: unknown;
+    spec_ids: unknown;
+    matrix_kind: unknown;
+    matrix: unknown[][];
+  }>;
+}
 
 const groupedPlan = (
   matrixKind: PerturbationGroupTs["matrixKind"] = "correlation",
@@ -83,6 +110,67 @@ const sampleCorrelation = (rows: number[][]): number => {
 };
 
 describe("variation plan schema v2", () => {
+  it("shares the exact localized torque authoring fixture with PyQt", () => {
+    const decoded = planFromJson(JSON.stringify(localizedTorqueFixture));
+    expect(JSON.parse(planToJson(decoded))).toEqual(localizedTorqueFixture);
+  });
+
+  it.each([
+    ["missing window", null, ["joint.shoulder"], /finite half-open time window/],
+    ["reversed window", [0.4, 0.2], ["joint.shoulder"], /start < end/],
+    ["off-duration window", [0.2, 1.6], ["joint.shoulder"], /1\.5 s/],
+    ["spatial point ID", [0.2, 0.4], ["swing.wrist"], /topological joint.*spatial/],
+  ])("rejects a localized torque %s before use", (_name, window, points, message) => {
+    const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as {
+      noise: Array<{ time_window_s: number[] | null; point_ids: string[] }>;
+    };
+    payload.noise[0].time_window_s = window as number[] | null;
+    payload.noise[0].point_ids = points as string[];
+    expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);
+  });
+
+  it.each([
+    ["string schema discriminator", (value: VariationWireFixture) => { value.schema_version = "2"; }, /schema_version.*integer/i],
+    ["Boolean schema discriminator", (value: VariationWireFixture) => { value.schema_version = true; }, /schema_version.*integer/i],
+    ["fractional schema discriminator", (value: VariationWireFixture) => { value.schema_version = 2.5; }, /schema_version.*integer/i],
+    ["string scale", (value: VariationWireFixture) => { value.noise[0].scale = "1"; }, /scale.*number/i],
+    ["string window endpoint", (value: VariationWireFixture) => { value.noise[0].time_window_s[0] = "0.1"; }, /time_window_s.*number/i],
+    ["string run count", (value: VariationWireFixture) => { value.n_runs = "4"; }, /n_runs.*integer/i],
+    ["Boolean seed", (value: VariationWireFixture) => { value.seed = false; }, /seed.*integer/i],
+    ["string base value", (value: VariationWireFixture) => { value.base_variables[`${CATEGORY_SWING}.yaw_deg`] = "1"; }, /base_variables.*number/i],
+    ["string lower bound", (value: VariationWireFixture) => { value.noise[0].lower = "0"; }, /lower.*number/i],
+    ["string upper bound", (value: VariationWireFixture) => { value.noise[0].upper = "2"; }, /upper.*number/i],
+    ["string group matrix value", (value: VariationWireFixture) => { value.groups[0].matrix[0][0] = "1"; }, /matrix.*number/i],
+  ])("rejects coercive wire input: %s", (_name, mutate, message) => {
+    const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as VariationWireFixture;
+    mutate(payload);
+    expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);
+  });
+
+  it.each([
+    ["numeric spec ID", (value: VariationWireFixture) => { value.noise[0].spec_id = 7; }, /spec_id.*string/i],
+    ["empty spec ID", (value: VariationWireFixture) => { value.noise[0].spec_id = ""; }, /spec_id.*stable string/i],
+    ["control-bearing spec ID", (value: VariationWireFixture) => { value.noise[0].spec_id = "bad\u0000id"; }, /spec_id.*stable string/i],
+    ["scalar point IDs", (value: VariationWireFixture) => { value.noise[0].point_ids = "joint.shoulder"; }, /point_ids.*array/i],
+    ["numeric point ID", (value: VariationWireFixture) => { value.noise[0].point_ids = [7]; }, /point_ids.*string/i],
+    ["control-bearing point ID", (value: VariationWireFixture) => { value.noise[0].point_ids = ["joint.\u007fshoulder"]; }, /point_ids.*stable string/i],
+    ["duplicate point IDs", (value: VariationWireFixture) => { value.noise[0].point_ids = ["joint.shoulder", "joint.shoulder"]; }, /point_ids.*unique/i],
+    ["numeric variable key", (value: VariationWireFixture) => { value.noise[0].variable_key = 7; }, /variable_key.*string/i],
+    ["numeric distribution", (value: VariationWireFixture) => { value.noise[0].distribution = 7; }, /distribution.*string/i],
+    ["numeric mode", (value: VariationWireFixture) => { value.mode = 7; }, /mode.*string/i],
+    ["numeric flight model", (value: VariationWireFixture) => { value.flight_model = 7; }, /flight_model.*string/i],
+    ["numeric group ID", (value: VariationWireFixture) => { value.groups[0].group_id = 7; }, /group_id.*string/i],
+    ["control-bearing group ID", (value: VariationWireFixture) => { value.groups[0].group_id = "bad\u001fid"; }, /group_id.*stable string/i],
+    ["scalar group spec IDs", (value: VariationWireFixture) => { value.groups[0].spec_ids = "shoulder-window"; }, /spec_ids.*array/i],
+    ["numeric group spec ID", (value: VariationWireFixture) => { value.groups[0].spec_ids = [7, "wrist-window"]; }, /spec_ids.*string/i],
+    ["duplicate group spec IDs", (value: VariationWireFixture) => { value.groups[0].spec_ids = ["shoulder-window", "shoulder-window"]; }, /spec_ids.*unique/i],
+    ["numeric matrix kind", (value: VariationWireFixture) => { value.groups[0].matrix_kind = 7; }, /matrix_kind.*string/i],
+  ])("rejects coercive identity wire input: %s", (_name, mutate, message) => {
+    const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as VariationWireFixture;
+    mutate(payload);
+    expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);
+  });
+
   it("round-trips Tee Height only for an active Tee setup", () => {
     const teePlan = groupedPlan();
     teePlan.mode = "delivery";

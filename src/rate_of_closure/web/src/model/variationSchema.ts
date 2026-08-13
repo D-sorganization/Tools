@@ -1,7 +1,22 @@
 import { validateGroupMatrix } from "./variationGroups";
-import { keysForMode, type VariationMode } from "./variationRegistry";
+import {
+  LOCALIZED_TORQUE_DURATION_S,
+  keysForMode,
+  localizedTorqueJointId,
+  type VariationMode,
+} from "./variationRegistry";
 import { ballSetupFromJson, ballSetupToJson, type BallSetup } from "./ballSetup";
 import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
+import {
+  wireArray,
+  wireFiniteNumber,
+  wireInteger,
+  wireNumberArray,
+  wireRecord,
+  wireStableId,
+  wireStableIdArray,
+  wireString,
+} from "./wireValues";
 
 export const SCHEMA_VERSION = 2;
 export const MAX_RUNS = 500;
@@ -48,7 +63,12 @@ export const stableSpecId = (spec: NoiseSpecTs): string =>
   spec.specId ?? spec.variableKey;
 
 const isStableId = (value: string): boolean =>
-  value.length > 0 && value.trim() === value;
+  value.length > 0 &&
+  value.trim() === value &&
+  [...value].every((character) => {
+    const codePoint = character.codePointAt(0)!;
+    return codePoint >= 32 && !(codePoint >= 127 && codePoint <= 159);
+  });
 
 export const isGlobalSpec = (spec: NoiseSpecTs): boolean =>
   (spec.timeWindowS === undefined || spec.timeWindowS === null) &&
@@ -97,6 +117,26 @@ const validateNoiseSpec = (
     new Set(pointIds).size !== pointIds.length
   ) {
     throw new Error("pointIds must be unique, non-empty stable IDs");
+  }
+  const localizedJoint = localizedTorqueJointId(spec.variableKey);
+  if (localizedJoint !== null) {
+    if (mode !== "swing") {
+      throw new Error("localized torque variables require swing mode");
+    }
+    if (spec.timeWindowS === undefined || spec.timeWindowS === null) {
+      throw new Error("localized torque requires a finite half-open time window");
+    }
+    const [start, end] = spec.timeWindowS;
+    if (!(0 <= start && start < end && end <= LOCALIZED_TORQUE_DURATION_S)) {
+      throw new Error(
+        `localized torque window must satisfy 0 <= start < end <= ${LOCALIZED_TORQUE_DURATION_S} s`,
+      );
+    }
+    if (pointIds.length !== 1 || pointIds[0] !== localizedJoint) {
+      throw new Error(
+        `localized torque requires exact topological joint ${localizedJoint}; swing.* IDs are spatial`,
+      );
+    }
   }
 };
 
@@ -219,45 +259,71 @@ export function planToJson(plan: VariationPlanTs): string {
 
 /** Parse schema v2 or migrate a schema-v1 plan into normalized model fields. */
 export function planFromJson(text: string): VariationPlanTs {
-  const data = JSON.parse(text) as Record<string, unknown>;
-  const version = Number(data.schema_version ?? 1);
+  const data = wireRecord(JSON.parse(text) as unknown, "variation plan");
+  const version = wireInteger(data.schema_version ?? 1, "schema_version");
   if (version !== 1 && version !== SCHEMA_VERSION) {
     throw new Error(`unsupported schema_version ${version}`);
   }
-  const noiseRaw = (data.noise ?? []) as Array<Record<string, unknown>>;
+  const noiseRaw = wireArray(data.noise ?? [], "noise").map((entry, index) =>
+    wireRecord(entry, `noise[${index}]`),
+  );
   const groupsRaw = version === 1
     ? []
-    : ((data.groups ?? []) as Array<Record<string, unknown>>);
-  const baseRaw = (data.base_variables ?? {}) as Record<string, unknown>;
-  const ballRaw = data.ball_setup as Record<string, unknown> | undefined;
+    : wireArray(data.groups ?? [], "groups").map((entry, index) =>
+      wireRecord(entry, `groups[${index}]`),
+    );
+  const baseRaw = wireRecord(data.base_variables ?? {}, "base_variables");
+  const ballRaw = data.ball_setup;
   const plan: VariationPlanTs = {
-    mode: String(data.mode) as VariationMode,
+    mode: wireString(data.mode, "mode") as VariationMode,
     baseVariables: Object.fromEntries(
-      Object.entries(baseRaw).map(([key, value]) => [key, Number(value)]),
+      Object.entries(baseRaw).map(([key, value]) => [
+        key,
+        wireFiniteNumber(value, `base_variables.${key}`),
+      ]),
     ),
-    noise: noiseRaw.map((spec) => ({
-      variableKey: String(spec.variable_key),
-      distribution: String(spec.distribution ?? "normal") as Distribution,
-      scale: Number(spec.scale ?? 1),
-      lower: spec.lower === null || spec.lower === undefined ? null : Number(spec.lower),
-      upper: spec.upper === null || spec.upper === undefined ? null : Number(spec.upper),
+    noise: noiseRaw.map((spec, index) => ({
+      variableKey: wireString(spec.variable_key, `noise[${index}].variable_key`),
+      distribution: wireString(
+        spec.distribution ?? "normal",
+        `noise[${index}].distribution`,
+      ) as Distribution,
+      scale: wireFiniteNumber(spec.scale ?? 1, `noise[${index}].scale`),
+      lower: spec.lower === null || spec.lower === undefined
+        ? null
+        : wireFiniteNumber(spec.lower, `noise[${index}].lower`),
+      upper: spec.upper === null || spec.upper === undefined
+        ? null
+        : wireFiniteNumber(spec.upper, `noise[${index}].upper`),
       specId: spec.spec_id === null || spec.spec_id === undefined
-        ? String(spec.variable_key)
-        : String(spec.spec_id),
+        ? wireStableId(spec.variable_key, `noise[${index}].variable_key`)
+        : wireStableId(spec.spec_id, `noise[${index}].spec_id`),
       timeWindowS: spec.time_window_s === null || spec.time_window_s === undefined
         ? null
-        : (Array.from(spec.time_window_s as Iterable<unknown>, Number) as [number, number]),
-      pointIds: Array.from((spec.point_ids ?? []) as Iterable<unknown>, String),
+        : (wireNumberArray(
+          spec.time_window_s,
+          `noise[${index}].time_window_s`,
+        ) as [number, number]),
+      pointIds: wireStableIdArray(spec.point_ids ?? [], `noise[${index}].point_ids`),
     })),
-    nRuns: Number(data.n_runs ?? 200),
-    seed: Number(data.seed ?? 0),
-    flightModel: String(data.flight_model ?? "waterloo_penner"),
-    groups: groupsRaw.map((group) => ({
-      groupId: String(group.group_id),
-      specIds: Array.from((group.spec_ids ?? []) as Iterable<unknown>, String),
-      matrixKind: String(group.matrix_kind ?? "correlation") as MatrixKindTs,
-      matrix: Array.from(group.matrix as Iterable<Iterable<unknown>>, (row) =>
-        Array.from(row, Number),
+    nRuns: wireInteger(data.n_runs ?? 200, "n_runs"),
+    seed: wireInteger(data.seed ?? 0, "seed"),
+    flightModel: wireString(data.flight_model ?? "waterloo_penner", "flight_model"),
+    groups: groupsRaw.map((group, groupIndex) => ({
+      groupId: wireStableId(group.group_id, `groups[${groupIndex}].group_id`),
+      specIds: wireStableIdArray(
+        group.spec_ids ?? [],
+        `groups[${groupIndex}].spec_ids`,
+      ),
+      matrixKind: wireString(
+        group.matrix_kind ?? "correlation",
+        `groups[${groupIndex}].matrix_kind`,
+      ) as MatrixKindTs,
+      matrix: wireArray(group.matrix, `groups[${groupIndex}].matrix`).map(
+        (row, rowIndex) => wireNumberArray(
+          row,
+          `groups[${groupIndex}].matrix[${rowIndex}]`,
+        ),
       ),
     })),
     ...(ballRaw === undefined ? {} : {

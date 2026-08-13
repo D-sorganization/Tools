@@ -1,5 +1,6 @@
 import {
   keysForMode,
+  localizedTorqueJointId,
   variableDef,
   type NoiseSpecTs,
   type VariationMode,
@@ -27,6 +28,7 @@ export const defaultSpec = (
 ): NoiseSpecTs => {
   const keys = keysForMode(mode, ballSetup);
   const key = keys.find((candidate) => !excluded.has(candidate)) ?? keys[0];
+  const localizedJoint = localizedTorqueJointId(key);
   return {
     variableKey: key,
     distribution: "normal",
@@ -34,8 +36,8 @@ export const defaultSpec = (
     lower: null,
     upper: null,
     specId: key,
-    timeWindowS: null,
-    pointIds: [],
+    timeWindowS: localizedJoint === null ? null : [0, 0.1],
+    pointIds: localizedJoint === null ? [] : [localizedJoint],
   };
 };
 

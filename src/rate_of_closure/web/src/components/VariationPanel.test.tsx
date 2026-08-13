@@ -2,7 +2,13 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { CATEGORY_LAUNCH, planFromJson, planToJson, type VariationPlanTs } from "../model/variation";
+import {
+  CATEGORY_LAUNCH,
+  CATEGORY_SWING,
+  planFromJson,
+  planToJson,
+  type VariationPlanTs,
+} from "../model/variation";
 import { VARIATION_PLAN_LIBRARY_KEY } from "../model/variationPlanLibrary";
 import { VariationPanel } from "./VariationPanel";
 import { saveBallSetupPreference } from "../model/ballSetupPersistence";
@@ -24,6 +30,8 @@ class MemoryStorage implements Storage {
 
 const BALL = `${CATEGORY_LAUNCH}.ball_speed_mph`;
 const ANGLE = `${CATEGORY_LAUNCH}.launch_angle_deg`;
+const SHOULDER_TORQUE = `${CATEGORY_SWING}.shoulder_commanded_torque_offset_nm`;
+const WRIST_TORQUE = `${CATEGORY_SWING}.wrist_commanded_torque_offset_nm`;
 
 const importedPlan = (): VariationPlanTs => ({
   mode: "launch",
@@ -88,6 +96,139 @@ afterEach(() => {
 });
 
 describe("VariationPanel v2 plan persistence", () => {
+  it("authors exact half-open localized torque loci only in swing mode", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    expect(within(screen.getByLabelText("Variable 1")).queryByRole("option", {
+      name: "Shoulder Commanded Torque Offset",
+    })).not.toBeInTheDocument();
+
+    await user.selectOptions(screen.getByLabelText("Pipeline"), "swing");
+    const variable = screen.getByLabelText("Variable 1");
+    expect(within(variable).getByRole("option", {
+      name: "Shoulder Commanded Torque Offset",
+    })).toBeInTheDocument();
+    await user.selectOptions(variable, SHOULDER_TORQUE);
+
+    const joint = screen.getByRole("combobox", { name: "Shoulder Commanded Torque Offset topological joint" });
+    expect(joint).toHaveValue("joint.shoulder");
+    expect(joint).toBeDisabled();
+    expect(joint).toHaveAttribute("title", expect.stringMatching(/topological.*swing\.\*/i));
+    expect(screen.getByRole("textbox", { name: "Shoulder Commanded Torque Offset window start" }))
+      .toHaveAttribute("title", expect.stringMatching(/half-open/i));
+
+    fireEvent.change(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window start",
+    }), { target: { value: "0.125" } });
+    fireEvent.blur(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window start",
+    }));
+    fireEvent.change(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window end",
+    }), { target: { value: "0.375" } });
+    fireEvent.blur(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window end",
+    }));
+
+    await user.selectOptions(screen.getByLabelText("Variable 1"), WRIST_TORQUE);
+    expect(screen.getByRole("combobox", {
+      name: "Wrist Commanded Torque Offset topological joint",
+    })).toHaveValue("joint.wrist");
+    expect(screen.getByRole("textbox", {
+      name: "Wrist Commanded Torque Offset window start",
+    })).not.toHaveValue("0.125");
+  });
+
+  it("round-trips exact localized IDs, loci, groups, and untouched precision", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    const plan: VariationPlanTs = {
+      mode: "swing",
+      baseVariables: {},
+      noise: [
+        { variableKey: SHOULDER_TORQUE, distribution: "normal", scale: 1.123456789,
+          lower: null, upper: null, specId: "shoulder-window",
+          timeWindowS: [0.123456789, 0.456789123], pointIds: ["joint.shoulder"] },
+        { variableKey: WRIST_TORQUE, distribution: "normal", scale: 0.987654321,
+          lower: null, upper: null, specId: "wrist-window",
+          timeWindowS: [0.2, 0.6], pointIds: ["joint.wrist"] },
+      ],
+      groups: [{ groupId: "joint-torque-group", specIds: ["shoulder-window", "wrist-window"],
+        matrixKind: "correlation", matrix: [[1, 0.25], [0.25, 1]] }],
+      nRuns: 4, seed: 8, flightModel: "waterloo_penner",
+    };
+    await user.upload(screen.getByLabelText("Import variation plan JSON"), new File(
+      [planToJson(plan)], "localized.json", { type: "application/json" },
+    ));
+    expect(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window start",
+    })).toHaveValue("0.123456789");
+    fireEvent.change(screen.getByRole("textbox", { name: "Seed" }), {
+      target: { value: "9" },
+    });
+    fireEvent.blur(screen.getByRole("textbox", { name: "Seed" }));
+    await user.type(screen.getByRole("textbox", { name: "Plan name" }), "Localized");
+    await user.click(screen.getByRole("button", { name: "Save Named Plan" }));
+    const stored = JSON.parse(storage.getItem(VARIATION_PLAN_LIBRARY_KEY)!) as {
+      plans: Array<{ plan: VariationPlanTs }>;
+    };
+    const saved = planFromJson(JSON.stringify(stored.plans[0].plan));
+    expect(saved.seed).toBe(9);
+    expect(saved.noise[0]).toMatchObject({
+      specId: "shoulder-window", scale: 1.123456789,
+      timeWindowS: [0.123456789, 0.456789123], pointIds: ["joint.shoulder"],
+    });
+    expect(saved.groups).toEqual(plan.groups);
+  });
+
+  it("fails a reversed localized window visibly without mutating storage", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    await user.selectOptions(screen.getByLabelText("Pipeline"), "swing");
+    await user.selectOptions(screen.getByLabelText("Variable 1"), SHOULDER_TORQUE);
+    fireEvent.change(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window start",
+    }), { target: { value: "0.4" } });
+    fireEvent.blur(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window start",
+    }));
+    fireEvent.change(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window end",
+    }), { target: { value: "0.2" } });
+    fireEvent.blur(screen.getByRole("textbox", {
+      name: "Shoulder Commanded Torque Offset window end",
+    }));
+    await user.type(screen.getByRole("textbox", { name: "Plan name" }), "Invalid");
+    await user.click(screen.getByRole("button", { name: "Save Named Plan" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/0 ≤ start < end ≤ 1\.5 s/);
+    expect(screen.getByRole("status", { name: "Variation status" }))
+      .toHaveTextContent(/Cannot save plan.*start < end/i);
+    expect(storage.getItem(VARIATION_PLAN_LIBRARY_KEY)).toBeNull();
+  });
+
+  it("rejects a missing imported locus without replacing current controls", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    const invalid = JSON.parse(planToJson({
+      mode: "swing",
+      baseVariables: {},
+      noise: [{ variableKey: SHOULDER_TORQUE, distribution: "normal", scale: 1,
+        lower: null, upper: null, specId: "shoulder-window",
+        timeWindowS: [0.1, 0.2], pointIds: ["joint.shoulder"] }],
+      nRuns: 4, seed: 8, flightModel: "waterloo_penner", groups: [],
+    })) as { noise: Array<{ time_window_s: null }> };
+    invalid.noise[0].time_window_s = null;
+    await user.upload(screen.getByLabelText("Import variation plan JSON"), new File(
+      [JSON.stringify(invalid)], "invalid-localized.json", { type: "application/json" },
+    ));
+
+    expect(screen.getByRole("status", { name: "Variation status" }))
+      .toHaveTextContent(/Cannot load plan.*finite half-open time window/i);
+    expect(screen.getByLabelText("Pipeline")).toHaveValue("delivery");
+    expect(screen.getByLabelText("Variable 1")).not.toHaveValue(SHOULDER_TORQUE);
+  });
+
   it("explains why Morris is disabled when the current context cannot round-trip", () => {
     render(<VariationPanel morrisUnavailableReason="custom club loft is unsupported" />);
     expect(screen.getByRole("button", { name: "Morris Screening" })).toBeDisabled();
@@ -199,91 +340,5 @@ describe("VariationPanel v2 plan persistence", () => {
     await user.type(screen.getByRole("textbox", { name: "Plan name" }), "Recovered");
     await user.click(screen.getByRole("button", { name: "Save Named Plan" }));
     expect(storage.getItem(VARIATION_PLAN_LIBRARY_KEY)).toContain("Recovered");
-  });
-});
-
-describe("VariationPanel analysis execution policy", () => {
-  it("executes only the explicitly selected analyses", async () => {
-    const user = userEvent.setup();
-    render(<VariationPanel storage={storage} />);
-    const runs = screen.getByRole("textbox", { name: "Runs" });
-    fireEvent.change(runs, { target: { value: "2" } });
-    fireEvent.blur(runs);
-    const selector = screen.getByRole("combobox", { name: "Analysis execution" });
-
-    await user.selectOptions(selector, "all_together");
-    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-    expect(screen.getByText(/Summary — Dispersion/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Impact and Shot-Outcome Scatter/i })).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Scatter horizontal axis" })).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Scatter vertical axis" })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: /variation scatter/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Scatter Matrix and Marginal/i })).toBeInTheDocument();
-    expect(screen.getByRole("group", { name: /Scatter matrix with marginal histograms/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Matrix SVG" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Matrix Selected CSV" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Matrix Plot Definition JSON" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Scatter SVG" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Scatter Selected CSV" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Scatter Plot Definition JSON" })).toBeEnabled();
-    expect(screen.queryByText(/One-at-a-Time Sensitivity/i)).not.toBeInTheDocument();
-
-    await user.selectOptions(selector, "individual");
-    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-    expect(screen.queryByText(/Summary — Dispersion/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/One-at-a-Time Sensitivity/i)).toBeInTheDocument();
-
-    await user.selectOptions(selector, "both");
-    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-    expect(screen.getByText(/Summary — Dispersion/i)).toBeInTheDocument();
-    expect(screen.getByText(/One-at-a-Time Sensitivity/i)).toBeInTheDocument();
-  });
-
-  it("renders every swing trial in the interactive arc inspector", async () => {
-    const user = userEvent.setup();
-    render(<VariationPanel storage={storage} />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "Pipeline" }), "swing");
-    fireEvent.change(screen.getByRole("textbox", { name: "Runs" }), {
-      target: { value: "2" },
-    });
-    fireEvent.blur(screen.getByRole("textbox", { name: "Runs" }));
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Analysis execution" }),
-      "all_together",
-    );
-
-    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-
-    expect(screen.getByRole("heading", { name: /All Swing Arcs/i })).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Arc modeled point" })).toBeInTheDocument();
-    expect(screen.getByRole("combobox", { name: "Arc outcome cohort" })).toHaveValue("all");
-    const source = screen.getByRole("combobox", { name: "Arc perturbation source" });
-    const band = screen.getByRole("combobox", { name: "Arc perturbation band" });
-    expect(screen.getByText(/2\/2 trials shown/i)).toBeInTheDocument();
-    expect(band).toBeDisabled();
-    await user.selectOptions(source, "swing_sim.swing.yaw_deg");
-    expect(band).toBeEnabled();
-    await user.selectOptions(band, "lower");
-    fireEvent.change(screen.getByRole("slider", { name: "Arc phase end percent" }), {
-      target: { value: "75" },
-    });
-    expect(screen.getByText(/Displayed Swing Phase: 0–75%/i)).toBeInTheDocument();
-    expect(screen.getByRole("spinbutton", { name: "Quiet-zone metric threshold" })).toHaveValue(5);
-    expect(screen.getByRole("img", { name: /interactive all-trial swing arcs/i })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: /rms-radius and ranked quiet zones/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Swing Arcs PNG" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Variability SVG" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Arc Plot Definition JSON" })).toBeEnabled();
-    expect(screen.getByText(/1\/2 trials shown/i)).toBeInTheDocument();
-    expect(screen.getByText(/quiet samples .*common simulation time/i)).toBeInTheDocument();
-    await user.click(screen.getByText("Accessible Selected Matrix Data"));
-    await user.click(screen.getByRole("button", { name: "Select matrix trial 1" }));
-    expect(screen.getByRole("combobox", { name: "Highlighted trial" })).toHaveValue("0");
-    expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
-    await user.selectOptions(screen.getByRole("combobox", { name: "Highlighted trial" }), "0");
-    expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
-    expect(screen.getByRole("button", { name: "Swing Traces CSV" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Swing Ensemble JSON" })).toBeEnabled();
-    expect(screen.getByText(/Hits: .*Plotted landings: .*no fabricated landing/i)).toBeInTheDocument();
   });
 });

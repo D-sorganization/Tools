@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ..localized_torque import SHOULDER_JOINT_ID, WRIST_JOINT_ID
+
 
 @dataclass(frozen=True)
 class ContextualVariable:
@@ -16,6 +18,7 @@ class ContextualVariable:
     typical_scale: float
     guidance: str
     applicability: str
+    point_id: str
 
 
 LOCALIZED_TORQUE_VARIABLES = (
@@ -26,8 +29,9 @@ LOCALIZED_TORQUE_VARIABLES = (
         0.0,
         2.0,
         "Additive double-pendulum command over a required half-open time "
-        "window at joint.shoulder.",
+        f"window at {SHOULDER_JOINT_ID}.",
         "localized_torque_only",
+        SHOULDER_JOINT_ID,
     ),
     ContextualVariable(
         "wrist_commanded_torque_offset_nm",
@@ -36,8 +40,9 @@ LOCALIZED_TORQUE_VARIABLES = (
         0.0,
         1.0,
         "Additive double-pendulum command over a required half-open time "
-        "window at joint.wrist.",
+        f"window at {WRIST_JOINT_ID}.",
         "localized_torque_only",
+        WRIST_JOINT_ID,
     ),
 )
 

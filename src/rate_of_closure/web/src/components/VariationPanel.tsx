@@ -127,12 +127,16 @@ export function VariationPanel({
   };
 
   const saveNamedPlan = () => {
-    const id = library.some((entry) => entry.id === selectedId)
-      ? selectedId
-      : createPlanId();
-    const next = upsertVariationPlan(library, { id, name: planName.trim(), plan });
-    persistLibrary(next, `Saved named plan “${planName.trim()}”.`);
-    setSelectedId(id);
+    try {
+      const id = library.some((entry) => entry.id === selectedId)
+        ? selectedId
+        : createPlanId();
+      const next = upsertVariationPlan(library, { id, name: planName.trim(), plan });
+      persistLibrary(next, `Saved named plan “${planName.trim()}”.`);
+      setSelectedId(id);
+    } catch (error) {
+      setStatus(`Cannot save plan: ${(error as Error).message}`);
+    }
   };
 
   const loadSelectedPlan = () => {

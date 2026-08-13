@@ -13,6 +13,7 @@ export const CATEGORY_LAUNCH = "swing_sim.flight.launch";
 export const CATEGORY_SWING = "swing_sim.swing";
 export const CATEGORY_CLUB = "swing_sim.club";
 export const TEE_HEIGHT_VARIATION_KEY = "swing_sim.ball_setup.tee_height_m";
+export const LOCALIZED_TORQUE_DURATION_S = 1.5;
 
 export type VariationMode = "delivery" | "swing" | "launch";
 
@@ -23,7 +24,8 @@ export interface VariableDefTs {
   default: number;
   typicalScale: number;
   guidance: string;
-  applicability?: "tee_only";
+  applicability?: "tee_only" | "localized_torque_only";
+  localizedJointId?: "joint.shoulder" | "joint.wrist";
 }
 
 /** Mirror of the Python registry (delivery + launch categories). */
@@ -75,6 +77,26 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     default: 0.25,
     typicalScale: 0.05,
     guidance: "Typical variation: 0.02-0.1 N·m·s about the 0.25 golf default. Source: double-pendulum golf-swing literature parameters used by swing_sim.",
+  },
+  {
+    key: `${CATEGORY_SWING}.shoulder_commanded_torque_offset_nm`,
+    label: "Shoulder Commanded Torque Offset",
+    unit: "N·m",
+    default: 0,
+    typicalScale: 2,
+    guidance: "Additive double-pendulum command over a required half-open time window at joint.shoulder.",
+    applicability: "localized_torque_only",
+    localizedJointId: "joint.shoulder",
+  },
+  {
+    key: `${CATEGORY_SWING}.wrist_commanded_torque_offset_nm`,
+    label: "Wrist Commanded Torque Offset",
+    unit: "N·m",
+    default: 0,
+    typicalScale: 1,
+    guidance: "Additive double-pendulum command over a required half-open time window at joint.wrist.",
+    applicability: "localized_torque_only",
+    localizedJointId: "joint.wrist",
   },
   {
     key: `${CATEGORY_CLUB}.head_mass_kg`,
@@ -236,3 +258,8 @@ export const variableLabel = (key: string): string =>
 
 export const variableDef = (key: string): VariableDefTs | undefined =>
   REGISTRY_BY_KEY.get(key);
+
+export const localizedTorqueJointId = (
+  key: string,
+): "joint.shoulder" | "joint.wrist" | null =>
+  REGISTRY_BY_KEY.get(key)?.localizedJointId ?? null;
