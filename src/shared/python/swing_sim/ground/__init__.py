@@ -1,5 +1,6 @@
 """Strict reusable flight-to-ground transfer and result contracts."""
 
+from .bounce_execution import execute_repeated_bounce_request
 from .bounce_kinematics import interpolate_first_contact
 from .bounce_request_wire import (
     MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES,
@@ -209,6 +210,7 @@ __all__ = [
     "SurfaceRegionTransitionCrossing",
     "SurfaceResolver",
     "compose_ground_result",
+    "execute_repeated_bounce_request",
     "execute_regional_ground",
     "execution_input_sha256",
     "build_regional_material_plan_result",

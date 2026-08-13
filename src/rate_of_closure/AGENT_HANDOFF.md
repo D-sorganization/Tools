@@ -1,5 +1,40 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4357 repeated-bounce request execution binding
+
+Ready-for-review PR [#4357](https://github.com/D-sorganization/Tools/pull/4357)
+on `feat/4270-repeated-bounce-execution` starts exactly from published #4356
+head `2387430fc78baa92ba122c7ad008a498118bf62d` and is published at
+implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`.
+It adds one UI-neutral Python executor that requires the
+exact repeated-bounce request and callable-or-`None` cancellation, consumes the
+request-bound capture threshold through fixed-version settings, invokes the
+existing Python physics authority, and returns the existing identity-validated
+request/result pair. It changes no wire schema, physics law, TypeScript
+runtime, or PyQt6/React surface.
+
+TDD recorded the expected missing-public-executor failure. Qualification is
+green for 28 focused contract tests, all 189 ground tests, 11 campaign
+manifest/layout tests, Ruff check/format, Black, protected changed-file MyPy,
+Bandit, placeholder/diff checks, documentation and blocking-quality
+governance, minimum-test/test-assertion contracts, changed-Python policy,
+module-size policy, and campaign-manifest validation. A non-authoritative
+import-following MyPy probe reports three inherited redundant casts in
+unchanged ground modules; the protected `--follow-imports=skip` profile is
+green for the new production module.
+
+This remains `not_released`; protected checks and review are pending. UI request construction and
+invocation, persistence, playback, TypeScript/compiled physics,
+regional-material chaining, measured terrain calibration, downstream parity,
+protected exact-head evidence, review, approval, release, and issue/epic
+completion remain open.
+
+All exact open dependencies from #4203 through #4357 are now ready for review
+without base or history changes. No current-head check was failing at the
+release reconciliation snapshot, but protected queues and all approvals remain
+open. The manifest records the reconciled parent heads and #4357 without
+claiming protected completion or release.
+
 ## 2026-08-11 PR #4356 published current-parent propagation
 
 Published ready-for-review PR #4356 keeps `feat/4270-repeated-bounce-request-wire`
