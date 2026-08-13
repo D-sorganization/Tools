@@ -1,6 +1,17 @@
 """Strict reusable flight-to-ground transfer and result contracts."""
 
 from .bounce_kinematics import interpolate_first_contact
+from .bounce_request_wire import (
+    MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES,
+    REPEATED_BOUNCE_REQUEST_SCHEMA_VERSION,
+    RepeatedBounceRequest,
+    RepeatedBounceRequestResultPair,
+    repeated_bounce_execution_input_sha256,
+    repeated_bounce_request_from_dict,
+    repeated_bounce_request_from_json,
+    repeated_bounce_request_to_dict,
+    repeated_bounce_request_to_json,
+)
 from .bounce_simulation import simulate_repeated_bounce
 from .bounce_types import (
     BounceAirSegment,
@@ -8,6 +19,14 @@ from .bounce_types import (
     BounceTermination,
     BounceTerminationReason,
     RepeatedBounceResult,
+)
+from .bounce_wire import (
+    MAX_REPEATED_BOUNCE_WIRE_BYTES,
+    REPEATED_BOUNCE_SCHEMA_VERSION,
+    repeated_bounce_result_from_dict,
+    repeated_bounce_result_from_json,
+    repeated_bounce_result_to_dict,
+    repeated_bounce_result_to_json,
 )
 from .contract_records import GroundSimulationRequest, GroundSimulationResult
 from .contract_types import (
@@ -46,6 +65,25 @@ from .json_schema import (
     schema_json,
 )
 from .migration import migrate_request_to_current, migrate_result_to_current
+from .regional_execution import (
+    MAX_REGIONAL_EXECUTION_STEPS,
+    MAX_REGIONAL_EXECUTION_TRANSITIONS,
+    REGIONAL_GROUND_EXECUTOR_ID,
+    REGIONAL_GROUND_EXECUTOR_SOURCE,
+    REGIONAL_GROUND_EXECUTOR_VERSION,
+    RegionalGroundExecutionOptions,
+    execute_regional_ground,
+)
+from .regional_execution_records import (
+    MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES,
+    REGIONAL_GROUND_EXECUTION_LIMITATIONS,
+    REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION,
+    RegionalGroundExecutionFailureReason,
+    RegionalGroundExecutionResult,
+    RegionalGroundExecutionStatus,
+    execution_input_sha256,
+)
+from .regional_execution_wire import regional_ground_execution_result_from_json
 from .regional_plan_contract import (
     MAX_REGIONAL_PLAN_REGIONS,
     MAX_REGIONAL_PLAN_WIRE_BYTES,
@@ -138,9 +176,27 @@ __all__ = [
     "GroundRegionalMaterialPlanRequest",
     "GroundRegionalMaterialPlanResult",
     "GroundRegionalMaterialRegion",
+    "MAX_REGIONAL_EXECUTION_STEPS",
+    "MAX_REGIONAL_EXECUTION_TRANSITIONS",
+    "MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES",
+    "REGIONAL_GROUND_EXECUTION_LIMITATIONS",
+    "REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION",
+    "REGIONAL_GROUND_EXECUTOR_ID",
+    "REGIONAL_GROUND_EXECUTOR_SOURCE",
+    "REGIONAL_GROUND_EXECUTOR_VERSION",
+    "RegionalGroundExecutionFailureReason",
+    "RegionalGroundExecutionOptions",
+    "RegionalGroundExecutionResult",
+    "RegionalGroundExecutionStatus",
     "RigidMotion",
     "SphereProperties",
     "RepeatedBounceResult",
+    "MAX_REPEATED_BOUNCE_WIRE_BYTES",
+    "MAX_REPEATED_BOUNCE_REQUEST_WIRE_BYTES",
+    "REPEATED_BOUNCE_REQUEST_SCHEMA_VERSION",
+    "REPEATED_BOUNCE_SCHEMA_VERSION",
+    "RepeatedBounceRequest",
+    "RepeatedBounceRequestResultPair",
     "SkidRollEnergyLedger",
     "SkidRollExecution",
     "SkidRollResult",
@@ -153,12 +209,15 @@ __all__ = [
     "SurfaceRegionTransitionCrossing",
     "SurfaceResolver",
     "compose_ground_result",
+    "execute_regional_ground",
+    "execution_input_sha256",
     "build_regional_material_plan_result",
     "interpolate_first_contact",
     "request_from_json",
     "regional_material_plan_request_from_json",
     "regional_material_plan_result_from_json",
     "regional_plan_to_surface_resolver",
+    "regional_ground_execution_result_from_json",
     "request_json_schema",
     "result_from_json",
     "result_json_schema",
@@ -168,5 +227,14 @@ __all__ = [
     "to_ground_model_result",
     "resolve_sphere_plane_impact",
     "simulate_repeated_bounce",
+    "repeated_bounce_result_from_dict",
+    "repeated_bounce_result_from_json",
+    "repeated_bounce_result_to_dict",
+    "repeated_bounce_result_to_json",
+    "repeated_bounce_execution_input_sha256",
+    "repeated_bounce_request_from_dict",
+    "repeated_bounce_request_from_json",
+    "repeated_bounce_request_to_dict",
+    "repeated_bounce_request_to_json",
     "simulate_skid_roll",
 ]

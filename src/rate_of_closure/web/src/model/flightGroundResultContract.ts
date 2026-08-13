@@ -43,7 +43,7 @@ const RESULT_KEYS = [
   "trajectory", "unavailable_fields", "unit_system", "warnings",
 ] as const;
 
-const parsePoint = (value: unknown): GroundTrajectoryPoint => {
+export const parseGroundTrajectoryPoint = (value: unknown): GroundTrajectoryPoint => {
   const item = record(value, "trajectory point");
   exact(item, POINT_KEYS, "trajectory point");
   const state = parseContactState({
@@ -60,7 +60,7 @@ const parsePoint = (value: unknown): GroundTrajectoryPoint => {
   return Object.freeze({ ...state, phase });
 };
 
-const parseEvent = (value: unknown): GroundEvent => {
+export const parseGroundEvent = (value: unknown): GroundEvent => {
   const item = record(value, "ground event");
   exact(item, EVENT_KEYS, "ground event");
   const event: GroundEvent = Object.freeze({
@@ -306,8 +306,8 @@ export function parseFlightToGroundResultRecord(payload: unknown): FlightToGroun
     surface_id: text(item.surface_id, "surface_id"), model_id: text(item.model_id, "model_id"),
     model_version: text(item.model_version, "model_version"),
     status: oneOf(item.status, ["complete", "partial", "failed", "unavailable"] as const, "status"),
-    trajectory: Object.freeze(array(item.trajectory, "trajectory").map(parsePoint)),
-    events: Object.freeze(array(item.events, "events").map(parseEvent)),
+    trajectory: Object.freeze(array(item.trajectory, "trajectory").map(parseGroundTrajectoryPoint)),
+    events: Object.freeze(array(item.events, "events").map(parseGroundEvent)),
     summary: item.summary === null ? null : parseSummary(item.summary),
     termination: parseTermination(item.termination), calibration: parseCalibration(item.calibration),
     warnings: Object.freeze(array(item.warnings, "warnings").map(parseWarning)),

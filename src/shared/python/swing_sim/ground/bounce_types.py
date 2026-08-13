@@ -24,6 +24,9 @@ from .contract_types import (
 from .impact_types import ImpactImpulseResult
 from .request_identity import validate_request_fingerprint
 
+BOUNCE_EVIDENCE_ABSOLUTE_TOLERANCE = 1e-10
+BOUNCE_EVIDENCE_RELATIVE_TOLERANCE = 1e-10
+
 GROUND_IMPACT_MODEL_ID = "tools-ground-impact-bounce"
 GROUND_IMPACT_MODEL_VERSION = "1.0.0"
 BOUNCE_MATERIAL_LIMITATION = (
@@ -165,6 +168,8 @@ class RepeatedBounceResult:
         self._normalize_collections()
         self._validate_event_ledger()
         self._validate_trajectory()
+        self._validate_event_trajectory_alignment()
+        self._validate_termination()
         self._validate_handoff()
         self._validate_airborne_segments()
 
@@ -257,6 +262,8 @@ class RepeatedBounceResult:
             raise ValueError("a bounce prefix may contain only one terminal skid point")
 
     def _validate_handoff(self) -> None:
+        if self.termination.reason is _SETTLED_TO_SKID and self.handoff_state is None:
+            raise ValueError("settled bounce prefix requires a handoff state")
         if self.handoff_state is not None:
             if self.termination.reason is not _SETTLED_TO_SKID:
                 raise ValueError(
@@ -269,8 +276,49 @@ class RepeatedBounceResult:
             if not _state_matches_point(self.handoff_state, self.trajectory[-1]):
                 raise ValueError("handoff state must match the terminal skid point")
 
+    def _validate_event_trajectory_alignment(self) -> None:
+        if self.events and not self.trajectory:
+            raise ValueError("bounce events require trajectory evidence")
+        for index, (event, impact) in enumerate(
+            zip(self.events, self.impacts, strict=True)
+        ):
+            aligned = tuple(
+                point for point in self.trajectory if _close(point.time_s, event.time_s)
+            )
+            if len(aligned) != 1 or not _state_matches_point(
+                impact.state_after,
+                aligned[0],
+            ):
+                raise ValueError(
+                    "each bounce event requires one matching post-impact "
+                    "trajectory point"
+                )
+            expected_phase = (
+                GroundPhase.SKID
+                if impact.effective_restitution == 0.0
+                else GroundPhase.IMPACT
+                if index == 0
+                else GroundPhase.BOUNCE
+            )
+            if aligned[0].phase is not expected_phase:
+                raise ValueError("event-aligned trajectory phase is inconsistent")
+
+    def _validate_termination(self) -> None:
+        if self.trajectory and not _close(
+            self.termination.time_s,
+            self.trajectory[-1].time_s,
+        ):
+            raise ValueError("termination time must match the final trajectory point")
+        expected_elapsed = (
+            self.termination.time_s - self.events[0].time_s if self.events else 0.0
+        )
+        if expected_elapsed < 0.0 or not _close(
+            self.termination.elapsed_time_s,
+            expected_elapsed,
+        ):
+            raise ValueError("termination elapsed time must match bounce chronology")
+
     def _validate_airborne_segments(self) -> None:
-        tolerance = 1e-10
         completed_count = sum(
             segment.completed_at_contact for segment in self.airborne_segments
         )
@@ -285,30 +333,29 @@ class RepeatedBounceResult:
             if index >= len(self.events):
                 raise ValueError("airborne segment requires a preceding impact event")
             start_event = self.events[index]
-            if abs(segment.start_time_s - start_event.time_s) > tolerance:
+            if not _close(segment.start_time_s, start_event.time_s):
                 raise ValueError("airborne segment start must match its impact event")
             if not _positions_close(segment.start_position_m, start_event.position_m):
                 raise ValueError("airborne segment start position must match its event")
             if segment.completed_at_contact:
-                self._validate_completed_segment(index, segment, tolerance)
+                self._validate_completed_segment(index, segment)
             elif index != len(self.airborne_segments) - 1:
                 raise ValueError("only the final airborne segment may be partial")
         if (
             self.airborne_segments
             and not self.airborne_segments[-1].completed_at_contact
         ):
-            self._validate_partial_segment(self.airborne_segments[-1], tolerance)
+            self._validate_partial_segment(self.airborne_segments[-1])
 
     def _validate_completed_segment(
         self,
         index: int,
         segment: BounceAirSegment,
-        tolerance: float,
     ) -> None:
         if index + 1 >= len(self.events):
             raise ValueError("completed airborne segment requires a contact event")
         end_event = self.events[index + 1]
-        if abs(segment.end_time_s - end_event.time_s) > tolerance:
+        if not _close(segment.end_time_s, end_event.time_s):
             raise ValueError("completed segment end must match contact time")
         if not _positions_close(segment.end_position_m, end_event.position_m):
             raise ValueError("completed segment end must match contact position")
@@ -316,9 +363,8 @@ class RepeatedBounceResult:
     def _validate_partial_segment(
         self,
         segment: BounceAirSegment,
-        tolerance: float,
     ) -> None:
-        if abs(segment.end_time_s - self.termination.time_s) > tolerance:
+        if not _close(segment.end_time_s, self.termination.time_s):
             raise ValueError("partial segment end must match termination time")
         if not self.trajectory or not _positions_close(
             segment.end_position_m,
@@ -331,12 +377,37 @@ class RepeatedBounceResult:
         """Return accumulated x-z arc length of emitted airborne segments."""
         return sum(segment.horizontal_distance_m for segment in self.airborne_segments)
 
+    def to_dict(self) -> dict[str, object]:
+        """Return the exact versioned repeated-bounce evidence mapping."""
+        from .bounce_wire import repeated_bounce_result_to_dict
+
+        return repeated_bounce_result_to_dict(self)
+
+    def to_json(self) -> str:
+        """Return deterministic canonical repeated-bounce evidence JSON."""
+        from .bounce_wire import repeated_bounce_result_to_json
+
+        return repeated_bounce_result_to_json(self)
+
+    @classmethod
+    def from_dict(cls, payload: object) -> RepeatedBounceResult:
+        """Parse one exact versioned repeated-bounce evidence mapping."""
+        from .bounce_wire import repeated_bounce_result_from_dict
+
+        return repeated_bounce_result_from_dict(payload)
+
+
+def _close(left: float, right: float) -> bool:
+    return math.isclose(
+        left,
+        right,
+        rel_tol=BOUNCE_EVIDENCE_RELATIVE_TOLERANCE,
+        abs_tol=BOUNCE_EVIDENCE_ABSOLUTE_TOLERANCE,
+    )
+
 
 def _positions_close(left: Vector3, right: Vector3) -> bool:
-    return all(
-        math.isclose(a, b, rel_tol=1e-10, abs_tol=1e-10)
-        for a, b in zip(left, right, strict=True)
-    )
+    return all(_close(a, b) for a, b in zip(left, right, strict=True))
 
 
 def _event_matches_impact(
@@ -346,7 +417,7 @@ def _event_matches_impact(
     before = impact.state_before
     after = impact.state_after
     return (
-        math.isclose(event.time_s, before.time_s, abs_tol=1e-10)
+        _close(event.time_s, before.time_s)
         and _positions_close(event.position_m, before.position_m)
         and _positions_close(event.velocity_before_m_s, before.velocity_m_s)
         and _positions_close(event.velocity_after_m_s, after.velocity_m_s)
@@ -366,7 +437,7 @@ def _state_matches_point(
     point: GroundTrajectoryPoint,
 ) -> bool:
     return (
-        math.isclose(state.time_s, point.time_s, abs_tol=1e-10)
+        _close(state.time_s, point.time_s)
         and state.frame is point.frame
         and _positions_close(state.position_m, point.position_m)
         and _positions_close(state.velocity_m_s, point.velocity_m_s)
@@ -379,6 +450,8 @@ def _state_matches_point(
 
 __all__ = [
     "BOUNCE_HANDOFF_NOTICE",
+    "BOUNCE_EVIDENCE_ABSOLUTE_TOLERANCE",
+    "BOUNCE_EVIDENCE_RELATIVE_TOLERANCE",
     "BOUNCE_MATERIAL_LIMITATION",
     "BounceModelSettings",
     "BounceAirSegment",

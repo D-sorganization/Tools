@@ -14,12 +14,11 @@ from .impact_types import (
     ImpactRejectionReason,
     ImpactStateError,
     SphereProperties,
+    _energy_balance_tolerance_j,
 )
 
 _VELOCITY_TOLERANCE_M_S = 1e-12
 _IMPULSE_TOLERANCE_N_S = 1e-12
-_ENERGY_ABSOLUTE_TOLERANCE_J = 1e-10
-_ENERGY_RELATIVE_TOLERANCE = 1e-10
 _REGIME_STICKING = ImpactRegime("sticking")
 _REGIME_SLIDING = ImpactRegime("sliding")
 _REJECTION_GRAZING = ImpactRejectionReason("grazing")
@@ -70,7 +69,7 @@ def _kinetic_energy(
             state.angular_velocity_rad_s,
         )
     )
-    return translation + rotation
+    return float(translation + rotation)
 
 
 def _tangential_impulse(
@@ -99,10 +98,10 @@ def _energy_ledger(
     kinetic_after = _kinetic_energy(after, solution.body)
     boundary_work = dot(impulse_n_s, solution.surface.surface_velocity_m_s)
     dissipation = kinetic_before + boundary_work - kinetic_after
-    tolerance = _ENERGY_ABSOLUTE_TOLERANCE_J + _ENERGY_RELATIVE_TOLERANCE * max(
+    tolerance = _energy_balance_tolerance_j(
         kinetic_before,
         kinetic_after,
-        abs(boundary_work),
+        boundary_work,
     )
     if dissipation < -tolerance:
         raise ValueError("impact violates passive energy accounting")
@@ -196,7 +195,7 @@ def _friction_utilization(
         raise ValueError("impact tangential impulse exceeds the friction cone")
     if static_limit <= _IMPULSE_TOLERANCE_N_S:
         return 0.0
-    return tangent_magnitude / static_limit
+    return float(tangent_magnitude / static_limit)
 
 
 def _validate_records(

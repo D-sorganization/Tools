@@ -8,7 +8,6 @@ alignment, and an engineering-style center-of-gravity marker.
 from __future__ import annotations
 
 import logging
-from typing import cast
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -27,20 +26,34 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.application.camera_presets import (
+    CameraCommandId,
+    CameraState,
+    CameraViewId,
+    FaceOnSide,
+)
 from rate_of_closure.club.volumetrics import is_watertight, mesh_volume_centroid
 from rate_of_closure.mesh import HeadMesh, load_head_mesh
 from rate_of_closure.model import ImpactScenario, solve
+from rate_of_closure.ui.pyqt6 import club_view_geometry
+from rate_of_closure.ui.pyqt6.club_camera_controls import ClubCameraControls
 from rate_of_closure.ui.pyqt6.engineering_markers import draw_cg_marker
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
 from rate_of_closure.units import FIELD_GUIDANCE
 
+_SHAFT_STUB = club_view_geometry.SHAFT_STUB_M
+_display = club_view_geometry.display_points
+_head_shift = club_view_geometry.head_shift
+_head_wireframe = club_view_geometry.head_wireframe
+_rodrigues = club_view_geometry.rodrigues
+_shifted_point = club_view_geometry.shifted_point
+
 logger = logging.getLogger(__name__)
 
 __all__ = ["VIEW_MODES", "Club3DView"]
 
-# Fallback palette (theme-neutral, matches shared CHART_COLORS hues).
 _COL_FACE = "#0A84FF"
 _COL_BODY = "#8b949e"
 _COL_SHAFT = "#AC8E68"
@@ -50,14 +63,6 @@ _COL_IMPACT = "#FFD60A"
 _COL_GROUND = "#8b949e"
 _COL_COG = "#FF9F0A"
 
-# Simplified driver-head dimensions [m].
-_FACE_HALF_WIDTH = 0.058
-_FACE_HALF_HEIGHT = 0.028
-_BODY_DEPTH = 0.11
-_SHAFT_STUB = 0.35
-
-# STL-mesh shading: fixed world-frame light and a steel-gray base tint.
-# Kept identical to the web clone (src/components/ClubCanvas.tsx).
 _LIGHT_DIR = np.array([0.3, 0.8, 0.5]) / np.linalg.norm([0.3, 0.8, 0.5])
 _MESH_BASE_RGB = np.array([0.56, 0.62, 0.70])
 _MESH_AMBIENT = 0.22
@@ -74,69 +79,6 @@ VIEW_MODES: tuple[str, ...] = (
 )
 
 
-def _rodrigues(axis_omega: np.ndarray, dt: float) -> np.ndarray:
-    """Rotation matrix for spinning at ``axis_omega`` [rad/s] for ``dt`` s."""
-    theta = float(np.linalg.norm(axis_omega)) * dt
-    if abs(theta) < 1e-12:
-        return cast(np.ndarray, np.eye(3))
-    axis = axis_omega / np.linalg.norm(axis_omega)
-    k = np.array(
-        [
-            [0.0, -axis[2], axis[1]],
-            [axis[2], 0.0, -axis[0]],
-            [-axis[1], axis[0], 0.0],
-        ]
-    )
-    rotation = np.eye(3) + np.sin(theta) * k + (1.0 - np.cos(theta)) * (k @ k)
-    return cast(np.ndarray, rotation)
-
-
-def _head_wireframe(scenario: ImpactScenario) -> dict[str, np.ndarray]:
-    """Line strips describing the head at square impact, reference at origin.
-
-    AffineDrift frame: x along the target line, y up, z right of target
-    (toe side for a right-handed golfer).
-    """
-    d = scenario.com_to_face_mm / 1000.0
-    w, h = _FACE_HALF_WIDTH, _FACE_HALF_HEIGHT
-    face = np.array(
-        [
-            [d, -h, -w],
-            [d, -h, w],
-            [d, h, w],
-            [d, h, -w],
-            [d, -h, -w],
-        ]
-    )
-    back = face - np.array([_BODY_DEPTH, 0.0, 0.0])
-    shaft_dir = np.array(
-        [
-            0.0,
-            np.sin(np.radians(scenario.lie_angle_deg)),
-            -np.cos(np.radians(scenario.lie_angle_deg)),
-        ]
-    )
-    hosel = np.array([d - 0.02, h, -w])
-    shaft = np.vstack([hosel, hosel + shaft_dir * _SHAFT_STUB])
-    impact = np.array(
-        [
-            d,
-            scenario.impact_offset_high_mm / 1000.0,
-            scenario.impact_offset_toe_mm / 1000.0,
-        ]
-    )
-    return {"face": face, "back": back, "shaft": shaft, "impact": impact}
-
-
-def _display(points: np.ndarray) -> np.ndarray:
-    """Model frame (x target, y up, z right) -> matplotlib display axes.
-
-    Matplotlib draws its z axis vertically, so plot (z, x, y): right of
-    target across, target line into the page, up truly up.
-    """
-    return np.asarray(points)[..., [2, 0, 1]]
-
-
 class Club3DView(QWidget):
     """Animated 3D rendering of the rotating clubhead at impact."""
 
@@ -145,10 +87,16 @@ class Club3DView(QWidget):
         self._figure = Figure(figsize=(5, 5), tight_layout=True)
         self._canvas = FigureCanvas(self._figure)
         self._axes = self._figure.add_subplot(111, projection="3d")
+        self._subject_radius_m = 0.4
+        self._camera_controls_widget = ClubCameraControls(
+            self._on_camera_changed, self._camera_fit_bounds, self
+        )
+        self._axes.view_init(*self._camera_controls_widget.angles())
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._build_playback_bar())
+        layout.addWidget(self._camera_controls_widget)
         layout.addWidget(self._canvas)
 
         self._scenario: ImpactScenario | None = None
@@ -157,15 +105,13 @@ class Club3DView(QWidget):
         self._cog: np.ndarray | None = None
         self._phase = 0.0
         self._speed = 1.0
-        self._zoom = 1.0
         self._timer = QTimer(self)
         self._timer.setInterval(_TIMER_INTERVAL_MS)
         self._timer.timeout.connect(self._advance)
-        # Scroll-to-zoom; drag-to-orbit is native to Axes3D and the view
-        # angles are captured/restored across animation redraws.
+        # Scroll zoom and native Axes3D orbit survive animation redraws.
         self._canvas.mpl_connect("scroll_event", self._on_scroll)
+        self._canvas.mpl_connect("button_release_event", self._on_orbit_release)
 
-    # ── construction ────────────────────────────────────────────────
     def _build_playback_bar(self) -> QHBoxLayout:
         bar = QHBoxLayout()
         bar.setContentsMargins(4, 4, 4, 0)
@@ -224,7 +170,6 @@ class Club3DView(QWidget):
         bar.addWidget(self._show_cg_check)
         return bar
 
-    # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt a new scenario without starting background animation."""
         self._scenario = scenario
@@ -242,7 +187,8 @@ class Club3DView(QWidget):
 
     def is_playing(self) -> bool:
         """Whether the clubhead animation timer is running."""
-        return self._timer.isActive()
+        active: bool = self._timer.isActive()
+        return active
 
     def set_view_mode(self, mode: str) -> None:
         """Select a display mode by name (see :data:`VIEW_MODES`)."""
@@ -253,16 +199,41 @@ class Club3DView(QWidget):
 
     def view_mode(self) -> str:
         """The active display mode name."""
-        return self._mode_combo.currentText()
+        mode: str = self._mode_combo.currentText()
+        return mode
 
     def set_zoom(self, factor: float) -> None:
         """Set the camera zoom factor (0.3-4.0; larger = closer)."""
-        self._zoom = max(0.3, min(4.0, factor))
-        self._draw()
+        self._camera_controls_widget.set_zoom(factor)
 
     def zoom(self) -> float:
         """Current camera zoom factor."""
-        return self._zoom
+        return float(self._camera_controls_widget.state().zoom)
+
+    def camera_controls(self) -> ClubCameraControls:
+        """Return the accessible camera control bar."""
+        return self._camera_controls_widget
+
+    def camera_state(self) -> CameraState:
+        """Return this viewport's isolated immutable camera state."""
+        return self._camera_controls_widget.state()
+
+    def apply_camera_command(
+        self, command_id: CameraViewId | CameraCommandId | str
+    ) -> None:
+        """Apply a stable canonical camera command."""
+        self._camera_controls_widget.apply_command(command_id)
+
+    def set_face_on_side(self, side: FaceOnSide | str) -> None:
+        """Select the explicit physical side used by Face On."""
+        self._camera_controls_widget.set_face_on_side(side)
+
+    def camera_subject_fits(self, clearance_fraction: float = 0.16) -> bool:
+        """Whether the current head and shaft clear every axis boundary."""
+        _radius, base_half_extent = self._camera_fit_bounds()
+        return self._subject_radius_m * self.zoom() <= (
+            base_half_extent * (1.0 - clearance_fraction) + 1e-12
+        )
 
     def load_mesh(self, path: str) -> None:
         """Load an STL clubhead mesh and switch to photorealistic mode.
@@ -313,7 +284,8 @@ class Club3DView(QWidget):
         shifted with the mesh; ``None`` for the wireframe hosel."""
         if self._scenario is None or self._mesh is None or self._hosel is None:
             return None
-        return np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario))
+        attachment: np.ndarray = _shifted_point(self._hosel, self._mesh, self._scenario)
+        return attachment
 
     def cg_marker_point(self) -> np.ndarray | None:
         """Model-frame CG marker location, or ``None`` when hidden."""
@@ -321,13 +293,14 @@ class Club3DView(QWidget):
             return None
         if self._mesh is None or self._cog is None:
             return np.zeros(3)  # spec CG fallback: the reference point
-        return np.asarray(self._cog + self._head_shift(self._mesh, self._scenario))
+        marker: np.ndarray = _shifted_point(self._cog, self._mesh, self._scenario)
+        return marker
 
     @staticmethod
     def _head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
         """+x shift placing the mesh's face plane at GC-to-face."""
-        d = scenario.com_to_face_mm / 1000.0
-        return np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
+        shift: np.ndarray = _head_shift(mesh, scenario)
+        return shift
 
     def has_mesh(self) -> bool:
         """Whether an STL mesh is currently rendered."""
@@ -338,7 +311,6 @@ class Club3DView(QWidget):
         self._timer.stop()
         self._play_button.setChecked(False)
 
-    # ── internals ──────────────────────────────────────────────────
     def _on_load_mesh_clicked(self) -> None:
         path, _filter = QFileDialog.getOpenFileName(
             self, "Load Clubhead STL", "", "STL meshes (*.stl);;All files (*)"
@@ -352,7 +324,28 @@ class Club3DView(QWidget):
             QMessageBox.warning(self, "STL Load Failed", str(exc))
 
     def _on_scroll(self, event) -> None:  # type: ignore[no-untyped-def]
-        self.set_zoom(self._zoom * (1.1 if event.button == "up" else 1.0 / 1.1))
+        self.set_zoom(self.zoom() * (1.1 if event.button == "up" else 1.0 / 1.1))
+
+    def _on_orbit_release(self, _event) -> None:  # type: ignore[no-untyped-def]
+        canonical_elev, canonical_azim = self._camera_controls_widget.angles()
+        elevation_changed = abs(float(self._axes.elev) - canonical_elev) > 1e-8
+        azimuth_delta = (
+            float(self._axes.azim) - canonical_azim + 180.0
+        ) % 360.0 - 180.0
+        if elevation_changed or abs(azimuth_delta) > 1e-8:
+            self._camera_controls_widget.mark_manual_orientation()
+            self._draw()
+
+    def _camera_fit_bounds(self) -> tuple[float, float]:
+        moving = self._mode_combo.currentText() == VIEW_MODES[1]
+        return self._subject_radius_m, 0.42 if moving else 0.24
+
+    def _on_camera_changed(
+        self, _state: CameraState, orientation_changed: bool
+    ) -> None:
+        if orientation_changed:
+            self._axes.view_init(*self._camera_controls_widget.angles())
+        self._draw()
 
     def _on_play_toggled(self, playing: bool) -> None:
         self._play_button.setText("Pause" if playing else "Play")
@@ -386,30 +379,42 @@ class Club3DView(QWidget):
         # Preserve the user's orbit angles across the animation redraw.
         elev, azim = float(axes.elev), float(axes.azim)
         axes.clear()
+        shaft = parts["shaft"]
+        attachment = self.shaft_attachment()
+        if attachment is not None:
+            lie = np.radians(scenario.lie_angle_deg)
+            shaft_dir = np.array([0.0, np.sin(lie), -np.cos(lie)])
+            shaft = np.vstack([attachment, attachment + shaft_dir * _SHAFT_STUB])
         if self._mesh is not None:
             self._draw_mesh(self._mesh, scenario, rotation, offset)
-            shaft = parts["shaft"]
-            attachment = self.shaft_attachment()
-            if attachment is not None:
-                # Hosel-true shaft: attach at the per-type hosel point.
-                lie = np.radians(scenario.lie_angle_deg)
-                shaft_dir = np.array([0.0, np.sin(lie), -np.cos(lie)])
-                shaft = np.vstack([attachment, attachment + shaft_dir * _SHAFT_STUB])
             pts = _display(shaft @ rotation.T + offset)
             axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=_COL_SHAFT, lw=2.0)
         else:
             for key, color, width in (
                 ("face", _COL_FACE, 2.2),
                 ("back", _COL_BODY, 1.2),
-                ("shaft", _COL_SHAFT, 2.0),
             ):
                 pts = _display(parts[key] @ rotation.T + offset)
                 axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=color, lw=width)
+            pts = _display(shaft @ rotation.T + offset)
+            axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=_COL_SHAFT, lw=2.0)
             for a, b in zip(parts["face"], parts["back"], strict=True):
                 seg = _display(np.vstack([a, b]) @ rotation.T + offset)
                 axes.plot(seg[:, 0], seg[:, 1], seg[:, 2], color=_COL_BODY, lw=0.8)
 
         impact = parts["impact"] @ rotation.T + offset
+        if self._mesh is None:
+            fit_local = np.vstack(
+                [parts["face"], parts["back"], shaft, parts["impact"]]
+            )
+        else:
+            shifted_mesh = self._mesh.triangles + self._head_shift(self._mesh, scenario)
+            fit_local = np.vstack([shifted_mesh.reshape(-1, 3), shaft, parts["impact"]])
+        fit_placed = fit_local @ rotation.T + offset
+        target = np.asarray(self.camera_state().target_m)
+        self._subject_radius_m = max(
+            1e-9, float(np.linalg.norm(fit_placed - target, axis=1).max())
+        )
         axes.scatter(*_display(impact), color=_COL_IMPACT, s=45, zorder=5)
         axes.scatter(*_display(offset), color=_COL_BODY, s=30)
         cg_point = self.cg_marker_point()
@@ -445,14 +450,19 @@ class Club3DView(QWidget):
                 label=label,
             )
 
-        limit = (0.24 if not moving else 0.42) / self._zoom
-        axes.set_xlim(-limit, limit)
-        axes.set_ylim(-limit * 0.6, limit * 1.4)
-        axes.set_zlim(-limit * 0.6, limit * 1.4)
+        limit = (0.24 if not moving else 0.42) / self.zoom()
+        center = _display(np.asarray(self.camera_state().target_m))
+        axes.set_xlim(center[0] - limit, center[0] + limit)
+        axes.set_ylim(center[1] - limit, center[1] + limit)
+        axes.set_zlim(center[2] - limit, center[2] + limit)
+        axes.set_box_aspect((1.0, 1.0, 1.0))
         axes.view_init(elev=elev, azim=azim)
         axes.set_xlabel("z — right of target [m]")
         axes.set_ylabel("x — target line [m]")
         axes.set_zlabel("y — up [m]")
+        club_view_geometry.set_axis_visibility(
+            axes, self._camera_controls_widget.active_view_id()
+        )
         axes.set_title(
             f"Path Δ {result.path_deviation_deg:+.2f}°   "
             f"AoA Δ {result.aoa_deviation_deg:+.2f}°   "

@@ -1,0 +1,69 @@
+{
+  "schema": "rate-of-closure-camera-presets/v1",
+  "frame": {
+    "x": "downrange",
+    "y": "up",
+    "z": "right"
+  },
+  "default_face_on_side": "right",
+  "command_ids": [
+    "camera.view.isometric",
+    "camera.view.face_on",
+    "camera.view.down_the_line",
+    "camera.view.overhead",
+    "camera.reset_view",
+    "camera.auto_fit"
+  ],
+  "presets": [
+    {
+      "command_id": "camera.view.isometric",
+      "face_on_side": "right",
+      "view_direction": [0.7071067811865476, -0.4082482904638631, -0.5773502691896258],
+      "screen_up": [0.316227766016838, 0.9128709291752768, -0.2581988897471612],
+      "canvas_yaw_rad": -0.684719203002283,
+      "canvas_pitch_rad": -0.42053433528396517,
+      "matplotlib_elevation_deg": 24.094842552110705,
+      "matplotlib_azimuth_deg": -50.768479516407744
+    },
+    {
+      "command_id": "camera.view.face_on",
+      "face_on_side": "right",
+      "view_direction": [0.0, 0.0, -1.0],
+      "screen_up": [0.0, 1.0, 0.0],
+      "canvas_yaw_rad": -1.5707963267948966,
+      "canvas_pitch_rad": 0.0,
+      "matplotlib_elevation_deg": 0.0,
+      "matplotlib_azimuth_deg": 0.0
+    },
+    {
+      "command_id": "camera.view.face_on",
+      "face_on_side": "left",
+      "view_direction": [0.0, 0.0, 1.0],
+      "screen_up": [0.0, 1.0, 0.0],
+      "canvas_yaw_rad": 1.5707963267948966,
+      "canvas_pitch_rad": 0.0,
+      "matplotlib_elevation_deg": 0.0,
+      "matplotlib_azimuth_deg": -180.0
+    },
+    {
+      "command_id": "camera.view.down_the_line",
+      "face_on_side": "right",
+      "view_direction": [1.0, 0.0, 0.0],
+      "screen_up": [0.0, 1.0, 0.0],
+      "canvas_yaw_rad": 0.0,
+      "canvas_pitch_rad": 0.0,
+      "matplotlib_elevation_deg": 0.0,
+      "matplotlib_azimuth_deg": -90.0
+    },
+    {
+      "command_id": "camera.view.overhead",
+      "face_on_side": "right",
+      "view_direction": [0.0, -1.0, 0.0],
+      "screen_up": [1.0, 0.0, 0.0],
+      "canvas_yaw_rad": 0.0,
+      "canvas_pitch_rad": -1.5707963267948966,
+      "matplotlib_elevation_deg": 90.0,
+      "matplotlib_azimuth_deg": -90.0
+    }
+  ]
+}
