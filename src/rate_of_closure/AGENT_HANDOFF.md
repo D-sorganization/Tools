@@ -1,5 +1,35 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4355 current-parent propagation candidate
+
+This local no-publish merge keeps `feat/4271-repeated-bounce-wire` over
+`feat/4271-regional-trajectory-export`. Exact current child
+`b67af52226fa6334dd3570cf650aebeaf81912fc` is the first parent and exact
+published #4354 head `97925e4803f4fbd72d576eb1c11c47f8e61b0b66`
+is the second parent. The child's complete strict cross-runtime repeated-bounce
+result-wire contract, canonical golden corpus, phase/chronology/energy
+invariants, and pre-contact cancellation follow-up remain intact alongside
+regional trajectory inspection/export, both typed-Boolean protected-MyPy
+repairs, and the complete regional/ground ancestry.
+
+Local qualification is complete: 1,078 Python tests, 115 React files with 719
+tests, complete Cargo workspace tests, focused 43-Python/34-React coverage,
+Ruff check/format on all seven child-delta Python files, protected MyPy on five
+child production modules plus the coherent 36-module ground profile, Bandit on
+the five production modules, a clean placeholder scan, TypeScript,
+zero-warning ESLint, the 204-module Vite build, Rust formatting/clippy, both
+LOC budgets, the manifest validator and manifest tests, and every repository
+governance gate are green. All 12 child feature/test files and both inherited
+typed-Boolean repairs remain byte-exact. Standalone Black is non-authoritative
+by repository policy and reports one advisory formatting difference in the
+audited child `bounce_types.py`; authoritative Ruff is green, so that child
+file remains exact. Known warnings remain the Hypothesis cache ignore, Node
+local-storage flag, and 528.82 kB Vite chunk. The candidate is not published
+or released. Request construction, executor invocation, persistence,
+playback, measured calibration, compiled and downstream parity, protected
+exact-head evidence, review, approval, dependency integration, release, and
+issue completion remain open.
+
 ## 2026-08-11 PR #4354 current-parent propagation candidate
 
 This local no-publish merge keeps `feat/4271-regional-trajectory-export` over
@@ -1756,3 +1786,38 @@ zero-warning ESLint, the 204-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
 remains. Independent review is required before publication.
+
+## 2026-08-11 repeated-bounce evidence wire boundary
+
+Branch `feat/4271-repeated-bounce-wire` is a local, unpublished child of exact
+regional trajectory/export candidate
+`99b0739bdc3ece814ed6039e6ba31f7ac38c0227`. It adds the strict
+`ground-repeated-bounce-result/v1` executor-input evidence boundary that was
+missing between the qualified #4270 bounce solver and later #4271 regional
+execution. Python serializes and parses the complete `RepeatedBounceResult`;
+React provides an import-only parser and canonical serializer and executes no
+browser physics.
+
+The contract has exact keys at every level, rejects duplicate JSON object keys,
+enforces a 1 MiB UTF-8 bound, accepts only the frozen SI target frame, and
+validates request/model identities, the 64-character request fingerprint,
+event/impact/post-state trajectory correspondence, additive energy-ledger
+arithmetic, airborne segments, settled handoff, termination chronology, and
+warnings through the canonical record validators. A shared fixture pins
+byte-deterministic canonical numeric JSON and
+SHA-256 `d8e7400632215220d3c5b1ccd7c57040f6023ebd72470b380b48b8f8fa99b9f9`.
+
+This slice does not construct a ground request, execute bounce or regional
+physics, invoke an executor from either UI, persist files, interpolate or play
+back trajectories, or claim measured calibration, compiled parity, downstream
+parity, protected evidence, release, or #4267/#4271 completion. Local gates are
+green on the predecessor candidate: 162 Python ground tests, 113 React files /
+712 tests, focused pinned MyPy, Ruff/format, TypeScript type-check, zero-warning
+ESLint, and the 204-module production build. A narrow follow-up explicitly pins
+valid pre-contact cancellation with empty evidence ledgers and zero elapsed
+ground time; its focused Python/TypeScript and documentation/manifest gates pass
+without changing production behavior. The inherited 500 kB build advisory
+remains. Independent
+review found four evidence-integrity blockers; all four were remediated with
+matched adversarial tests. A final independent review of the complete
+post-remediation diff remains required before any publication.

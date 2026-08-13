@@ -9,6 +9,14 @@ from .bounce_types import (
     BounceTerminationReason,
     RepeatedBounceResult,
 )
+from .bounce_wire import (
+    MAX_REPEATED_BOUNCE_WIRE_BYTES,
+    REPEATED_BOUNCE_SCHEMA_VERSION,
+    repeated_bounce_result_from_dict,
+    repeated_bounce_result_from_json,
+    repeated_bounce_result_to_dict,
+    repeated_bounce_result_to_json,
+)
 from .contract_records import GroundSimulationRequest, GroundSimulationResult
 from .contract_types import (
     REQUEST_SCHEMA_VERSION,
@@ -172,6 +180,8 @@ __all__ = [
     "RigidMotion",
     "SphereProperties",
     "RepeatedBounceResult",
+    "MAX_REPEATED_BOUNCE_WIRE_BYTES",
+    "REPEATED_BOUNCE_SCHEMA_VERSION",
     "SkidRollEnergyLedger",
     "SkidRollExecution",
     "SkidRollResult",
@@ -202,5 +212,9 @@ __all__ = [
     "to_ground_model_result",
     "resolve_sphere_plane_impact",
     "simulate_repeated_bounce",
+    "repeated_bounce_result_from_dict",
+    "repeated_bounce_result_from_json",
+    "repeated_bounce_result_to_dict",
+    "repeated_bounce_result_to_json",
     "simulate_skid_roll",
 ]

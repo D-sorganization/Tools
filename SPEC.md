@@ -33,6 +33,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -63,6 +64,10 @@
 | **Current Version**     | 1.14.40                                    |
 | **Spec Version**        | 1.14.40                                    |
 >>>>>>> origin/feat/4271-regional-trajectory-export
+=======
+| **Current Version**     | 1.14.41                                    |
+| **Spec Version**        | 1.14.41                                    |
+>>>>>>> origin/feat/4271-repeated-bounce-wire
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -3087,6 +3092,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3096,6 +3102,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.41 | merge(ground-roll, #4267 #4271 #4355): normally merge exact current repeated-bounce result-wire child `b67af52226fa6334dd3570cf650aebeaf81912fc` first with exact published PR #4354 parent `97925e4803f4fbd72d576eb1c11c47f8e61b0b66` second without changing the `feat/4271-regional-trajectory-export` base; preserve the complete strict cross-runtime `ground-repeated-bounce-result/v1` evidence contract, canonical golden corpus, phase/chronology/energy invariants, and pre-contact cancellation follow-up together with matched regional trajectory inspection/export, both inherited explicit Boolean locals required by protected delta-MyPy, full regional execution and ground ancestry, and all append-only handoff/SPEC/manifest history; keep request construction, executor invocation, persistence, playback, measured calibration, compiled and downstream parity, protected exact-head evidence, review, approval, dependency integration, release, and issue completion open. |
+>>>>>>> origin/feat/4271-repeated-bounce-wire
 | 2026-08-11 | 1.14.40 | fix(rate-of-closure, #4354): make the regional evidence atomic-export return boundary stable under the protected changed-file MyPy profile by assigning the skipped imported helper result to an explicit Boolean local; match the inherited #4351 repair, avoid both `no-any-return` and a root-set-dependent redundant cast, and change no runtime behavior or canonical bytes. |
 | 2026-08-11 | 1.14.40 | merge(rate-of-closure, #4271 #4354): normally merge exact current regional-trajectory export child `99b0739bdc3ece814ed6039e6ba31f7ac38c0227` first with exact published PR #4353 parent `e0433adbc3c82272745d098867f261462a790d08` second without changing the `feat/4271-regional-event-inspection` base; preserve matched bounded PyQt6/React inspection and canonical semantic-lossless export of validated raw ground-trajectory samples, inherited ground-event and regional-transition ledger inspection, qualified result projection, the explicit Boolean local required by protected delta-MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep input construction, UI executor invocation, interpolation/playback, calibration workflows, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
 | 2026-08-11 | 1.14.38 | feat(ground-roll, #4267 #4271): add matched bounded PyQt6/React inspection of validated raw ground-trajectory samples with explicit SI units and frames, retain the complete accepted envelope while rendering at most 256 samples with exact truncation disclosure, and add canonical semantic-lossless evidence export using native atomic UTF-8 writes and browser downloads of the frozen serializer; preserve transactional import and partial-result censorship, execute no browser physics, and retain input construction, executor invocation, interpolation/playback, measured calibration, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
@@ -4166,3 +4175,23 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 2026-08-11 Repeated-bounce evidence wire boundary
+
+- Added strict versioned `ground-repeated-bounce-result/v1` Python
+  serializer/parser coverage for the complete validated `RepeatedBounceResult`
+  prefix, with exact nested keys, duplicate-key rejection, a 1 MiB UTF-8 bound,
+  frozen SI target frame, and canonical record reuse.
+- Added import-only TypeScript parser/serializer parity. Browser code validates
+  and re-exports evidence but never computes bounce or regional physics.
+- Bound each event and impact post-state to one phase-correct trajectory point,
+  settled handoff and termination chronology to terminal evidence when those
+  records exist, and energy dissipation to the additive passive-energy balance
+  under identical explicit cross-runtime tolerances. A valid pre-contact
+  cancellation has no trajectory, events, impacts, or airborne segments and
+  reports zero elapsed ground time.
+- Locked canonical cross-runtime JSON to SHA-256
+  `d8e7400632215220d3c5b1ccd7c57040f6023ebd72470b380b48b8f8fa99b9f9`.
+- This is an input/evidence boundary only. Request construction, executor
+  invocation, persistence, playback, measured calibration, compiled and
+  downstream parity, protected release, and #4267/#4271 completion remain open.
