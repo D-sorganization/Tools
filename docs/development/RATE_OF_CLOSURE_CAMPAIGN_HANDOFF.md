@@ -1,5 +1,37 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
+
+- Ready-for-review PR
+  [#4360](https://github.com/D-sorganization/Tools/pull/4360) on
+  `feat/4271-flight-regional-ground-pipeline` starts from exact published PR
+  #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; its reviewed implementation
+  commit is `090e835477d1f19614f37f978a1b8a0e2f50ae21`.
+- Audit showed the regional envelope cannot honestly represent bounce
+  time/event limits or no-recontact. The new UI-neutral composition validates
+  exact inputs, capture, and launch-relative plan/base equality before physics,
+  then delegates only to existing flight/bounce and regional-ground
+  authorities.
+- Its strict bounded versioned in-memory result retains the exact bounce pair,
+  ground and joint bounce-input digests, plan/digest/provenance, and optional
+  existing regional envelope. The envelope exists exactly for a settled
+  bounce; all five non-settled reasons remain native and skip regional physics.
+  Canonical plan hashing is centralized in the regional-plan authority.
+- RED captured missing module/result/exports; GREEN passed 17 pipeline/public
+  tests; REFACTOR passed 39 pipeline/public/regional tests. All 377 flight and
+  ground tests pass. Ruff check/format, scoped Black, protected and
+  import-following MyPy, Bandit, placeholder/diff checks, documentation,
+  blocking-quality, minimum-test, test-assertion, changed-Python, both LOC,
+  campaign-manifest, and 11 manifest/layout gates are green. Explicit casts at
+  dynamic wire-parser boundaries satisfy protected skipped-import MyPy without
+  runtime or canonical-byte changes. Standalone Black retains one inherited
+  preference in `test_contract_api.py`; authoritative Ruff is green and its
+  delta contains only required public API entries.
+- The ready PR remains `not_released` pending protected checks and review. No
+  wire/migration, clients, TypeScript/Rust/WASM, persistence, playback,
+  calibration, study integration, protected evidence, or release is claimed.
+  Keep #4271, #4273, and #4267 open.
+
 ## 2026-08-11 PR #4359 shared Python flight-to-bounce composition
 
 - Ready-for-review PR

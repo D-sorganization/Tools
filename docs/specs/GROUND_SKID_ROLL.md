@@ -216,6 +216,30 @@ and frozen base-result v1 compatibility remains a separate test. Null-result
 cancelled/failed envelopes require an empty transition ledger because no
 embedded result exists to substantiate transition evidence.
 
+### Flight-through-regional composition boundary
+
+The shared Python flight facade exposes `execute_regional_ground_from_flight`
+as the single composition from a qualified flight result to this regional
+executor. It validates exact contract types, bounce capture, and equality of
+the plan base surface with the canonically derived launch-relative transfer
+surface before bounce physics. One regional options record supplies both the
+bounce cancellation check and the skid/roll settings/cancellation boundary.
+
+The bounded in-memory `flight-regional-ground-pipeline/v1` result binds the
+exact bounce pair, ground-request digest, repeated-bounce execution-input
+digest, exact regional plan and canonical plan digest, and optional existing
+regional envelope. The optional envelope must exist exactly when the bounce
+prefix terminates `SETTLED_TO_SKID`; every other bounce reason forbids regional
+evidence and is retained without translation. Regional cancellation and
+internal failure remain represented by the existing regional envelope after
+that phase begins.
+
+This composition is not a new wire format. Existing strict bounded bounce,
+plan, regional-execution, and ground-result serializers remain authoritative,
+so there is no migration in this UI-neutral slice. #4271 physics qualification,
+#4273 study integration, #4267 completion, clients, persistence, playback,
+compiled parity, and downstream release remain open.
+
 ### Matched editor/readback boundary
 
 The standalone PyQt6 and React applications register a `Ground Surfaces`

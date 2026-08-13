@@ -16,6 +16,7 @@ from ... import flight
 
 EXPECTED_PUBLIC_API = {
     "DEFAULT_BACKSPIN_AXIS",
+    "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
     "AvailabilityReason",
     "BallFlightModel",
     "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
@@ -50,6 +51,7 @@ EXPECTED_PUBLIC_API = {
     "FlightMetricResult",
     "FlightMetricValue",
     "FlightResult",
+    "FlightRegionalGroundPipelineResult",
     "FlightGroundTransferError",
     "FlightGroundTransferSettings",
     "FlightStatePoint",
@@ -113,6 +115,7 @@ EXPECTED_PUBLIC_API = {
     "derive_launch_conditions",
     "derive_flight_metric_result",
     "execute_repeated_bounce_from_flight",
+    "execute_regional_ground_from_flight",
     "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
@@ -161,6 +164,7 @@ FROZEN_VALUE_TYPES = (
     flight.LaunchConditions,
     flight.TrajectoryPoint,
     flight.FlightResult,
+    flight.FlightRegionalGroundPipelineResult,
     flight.FlightGroundTransferSettings,
     flight.FlightStatePoint,
     flight.SurfaceFlightSimulationSettings,

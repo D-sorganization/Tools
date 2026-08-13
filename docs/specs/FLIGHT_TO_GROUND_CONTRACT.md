@@ -146,3 +146,28 @@ UpstreamDrift terrain remains a one-way UpstreamDrift-to-Tools adapter concern;
 Tools must never import UpstreamDrift. UI invocation, persistence, playback,
 TypeScript/Rust/WASM execution, regional-material continuation, and final total
 distance remain separate work under #4267/#4270/#4271.
+
+## Flight through regional ground composition
+
+`execute_regional_ground_from_flight` composes the existing Python authorities
+without changing this frozen transfer schema. Before bounce physics it requires
+exact flight, launch, transfer, plan, and regional-options records; validates
+the versioned bounce capture threshold; derives the launch-relative surface
+through `launch_relative_surface`; and requires the plan base surface to equal
+that exact derived surface. It then delegates to
+`execute_repeated_bounce_from_flight` and, only after
+`SETTLED_TO_SKID`, to `execute_regional_ground`.
+
+The versioned in-memory `FlightRegionalGroundPipelineResult` embeds the exact
+bounce pair and regional plan plus their physical-request, joint bounce-input,
+and plan digests. A settled prefix requires the existing strict regional
+envelope; every other bounce termination forbids one and remains available
+through `BounceTerminationReason`. This prevents cancellation, bounds, no
+recontact, or numerical failure from being translated into an incompatible
+regional enum or fabricated ground result.
+
+The composition adds no wire schema because no new serialized information is
+needed: its nested bounce, plan, regional, and ground contracts remain the
+serialization authorities. UI/runtime parity, persistence, playback,
+calibration, target/solver/variation studies, downstream consumers, and
+#4271/#4273/#4267 completion remain open.

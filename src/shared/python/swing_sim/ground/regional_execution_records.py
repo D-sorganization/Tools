@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 
@@ -21,6 +21,7 @@ from .contract_types import (
 from .regional_plan_records import (
     REGIONAL_PLAN_LIMITATIONS,
     GroundRegionalMaterialPlanRequest,
+    regional_plan_request_sha256,
 )
 from .regional_surface_types import SurfaceRegionTransition
 from .regional_transition_binding import validate_transition_against_plan
@@ -179,7 +180,7 @@ class RegionalGroundExecutionResult(_WireRecord):
 
     def _validate_plan_identity(self) -> None:
         plan = self.regional_plan
-        plan_digest = hashlib.sha256(plan.to_json().encode("utf-8")).hexdigest()
+        plan_digest = regional_plan_request_sha256(plan)
         if plan_digest != self.regional_plan_sha256:
             raise ValueError("regional_plan_sha256 must match the embedded plan")
         if self.plan_id != plan.request_id:
@@ -265,7 +266,10 @@ class RegionalGroundExecutionResult(_WireRecord):
         """Parse an exact regional execution mapping."""
         from .regional_execution_wire import regional_execution_result_from_dict
 
-        return regional_execution_result_from_dict(payload)
+        return cast(
+            RegionalGroundExecutionResult,
+            regional_execution_result_from_dict(payload),
+        )
 
 
 __all__ = [
