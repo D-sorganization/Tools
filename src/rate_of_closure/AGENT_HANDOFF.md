@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized attribution numerical/parity correction (#4142)
+
+- Response arithmetic rejects nonfinite expected/tolerance values; pair and
+  observation contracts reject zero source intervention deltas.
+- Python/TypeScript CSV uses normalized shortest-roundtrip binary64 text with
+  exponent and signed-zero parity goldens. TypeScript text caps count Unicode
+  code points at the astral 256/257 boundary.
+- PyQt displays immutable roster-pair count and uses a typed view-JSON result;
+  exact Python 3.12/Mypy 1.13 passes all eight production files.
+- Evidence: 258/258 selected Python, 892/892 React, 6/6 Playwright, plus static,
+  docs, parity, and size gates. SPEC is 1.16.72; paired production stays open.
+
 ## 2026-08-13 Localized attribution authority hardening (#4142)
 
 - Immutable per-source pair rosters and a required complete source-target-pair

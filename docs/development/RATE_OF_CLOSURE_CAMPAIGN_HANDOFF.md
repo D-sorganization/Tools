@@ -1,5 +1,18 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 attribution numerical/parity correction
+
+- Nonfinite expected response/tolerance and zero source interventions now fail
+  closed in Python and TypeScript.
+- CSV binary64 cells use normalized shortest-roundtrip text with shared
+  exponent and signed-zero rules; `1e20`, `-0.0`, and `1e-5` are parity goldens.
+- TypeScript stable-text caps count Unicode code points, matching Python at the
+  256/257 astral boundary.
+- PyQt reports roster pairs and its typed JSON boundary passes the exact pinned
+  eight-file Mypy gate without `Any` leakage or a redundant cast.
+- Gates pass 258/258 selected Python, 892/892 React, 6/6 Playwright, and all
+  static/docs/parity/size checks. SPEC advances to 1.16.72; producer gap stays open.
+
 ## 2026-08-13 #4142 localized attribution authority hardening
 
 - Every source has an immutable explicit trial-pair roster; authority requires

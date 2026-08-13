@@ -124,7 +124,7 @@ class LocalizedAttributionView(QWidget):
             self._set_controls_enabled(False)
             return
         self._status.setText(
-            f"Loaded {len(authority.observations)} retained pairs · {INTERPRETATION}."
+            f"Loaded {len(authority.pairs)} retained pairs · {INTERPRETATION}."
         )
         for source in authority.sources:
             self._source.addItem(source.spec_id, source.spec_id)
@@ -165,7 +165,7 @@ class LocalizedAttributionView(QWidget):
         if view is None or self._authority is None:
             return None
         pair = view.selected
-        return attribution_view_to_json(
+        encoded: str = attribution_view_to_json(
             AttributionViewDefinition(
                 self._authority.authority_id,
                 view.source.spec_id,
@@ -174,6 +174,7 @@ class LocalizedAttributionView(QWidget):
                 pair.perturbed_trial_index,
             )
         )
+        return encoded
 
     def _clear_combos(self) -> None:
         for combo in (self._source, self._target, self._pair):

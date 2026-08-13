@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized attribution numerical/parity correction (#4142)
+
+Version 1.16.72 closes the independent review findings on the hardened paired
+authority. Response validation now rejects nonfinite expected values and
+tolerances, and every retained pair/observation requires a genuine nonzero
+source intervention. Python and TypeScript share normalized shortest-roundtrip
+binary64 CSV text, including exponent normalization and signed negative zero;
+the parity goldens cover `1e20`, `-0.0`, and `1e-5`. TypeScript counts Unicode
+code points rather than UTF-16 units at the 256-character boundary.
+
+PyQt reports the immutable pair-roster count, and its JSON boundary uses an
+explicitly typed local result that passes the exact Python 3.12/Mypy 1.13
+eight-file gate without `Any` return or redundant cast. Gates pass 258/258
+selected Python, 892/892 React, and 6/6 Playwright plus all static, docs, parity,
+and size checks. The paired-producer gap remains unchanged and explicit.
+
 ## 2026-08-13 Localized attribution authority hardening (#4142)
 
 Version 1.16.71 closes the paired-attribution review blockers. Each source now

@@ -15,6 +15,7 @@ from ._localized_attribution_contract import (
     MAX_TEXT_LENGTH,
     TARGET_REGISTRY,
     require_authority_shape,
+    require_nonzero_intervention,
     response_matches,
 )
 
@@ -192,6 +193,9 @@ class AttributionObservation:
         require(baseline != perturbed, "baseline and perturbed trials must differ")
         _finite(self.baseline_source_value, "baseline source value")
         _finite(self.perturbed_source_value, "perturbed source value")
+        require_nonzero_intervention(
+            self.baseline_source_value, self.perturbed_source_value
+        )
         values = (self.baseline_target_value, self.perturbed_target_value)
         if self.availability is Availability.AVAILABLE:
             require(
@@ -216,8 +220,6 @@ class AttributionObservation:
 
 @dataclass(frozen=True)
 class AttributionPair:
-    """Immutable source-specific baseline/perturbed trial roster entry."""
-
     source_spec_id: str
     baseline_trial_index: int
     perturbed_trial_index: int
@@ -233,6 +235,9 @@ class AttributionPair:
         require(baseline != perturbed, "baseline and perturbed trials must differ")
         _finite(self.baseline_source_value, "baseline source value")
         _finite(self.perturbed_source_value, "perturbed source value")
+        require_nonzero_intervention(
+            self.baseline_source_value, self.perturbed_source_value
+        )
 
 
 @dataclass(frozen=True)
@@ -353,8 +358,6 @@ class AttributionViewDefinition:
 
 @dataclass(frozen=True)
 class AttributionDenominator:
-    """Typed availability ledger for one selected source/target."""
-
     total_pairs: int
     available_pairs: int
     typed_no_impact_pairs: int

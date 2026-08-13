@@ -20,10 +20,22 @@ const HEADER = [
 const FLOAT_COLUMNS = new Set([8, 9, 16, 22, 23, 24, 25, 26]);
 const NUMERIC_COLUMNS = new Set([1, 8, 9, 16, 18, 19, 22, 23, 24, 25, 26]);
 
+export const canonicalBinary64CsvText = (value: number): string => {
+  if (!Number.isFinite(value)) throw new Error("CSV binary64 value must be finite");
+  if (Object.is(value, -0)) return "-0.0";
+  const magnitude = Math.abs(value);
+  if (Number.isInteger(value) && magnitude < 1e16) return value.toFixed(1);
+  const text = magnitude >= 1e16 || (magnitude > 0 && magnitude < 1e-4)
+    ? value.toExponential() : String(value);
+  if (!text.includes("e")) return text;
+  const [mantissa, exponent] = text.split("e");
+  return `${mantissa}e${Number(exponent)}`;
+};
+
 const cell = (value: unknown): string => value === null ? "" : String(value);
 const rowCell = (value: unknown, column: number): string =>
-  typeof value === "number" && Number.isInteger(value) && FLOAT_COLUMNS.has(column)
-    ? value.toFixed(1) : cell(value);
+  typeof value === "number" && FLOAT_COLUMNS.has(column)
+    ? canonicalBinary64CsvText(value) : cell(value);
 
 export function attributionObservationsToRows(
   authority: AttributionAuthorityTs,

@@ -92,7 +92,17 @@ def require_authority_shape(
 def response_matches(actual: float, expected: float) -> bool:
     """Use the cross-runtime four-scaled-ULP response policy."""
     tolerance = RESPONSE_ULPS * sys.float_info.epsilon * max(1.0, abs(expected))
-    return math.isfinite(actual) and abs(actual - expected) <= tolerance
+    return (
+        math.isfinite(actual)
+        and math.isfinite(expected)
+        and math.isfinite(tolerance)
+        and abs(actual - expected) <= tolerance
+    )
+
+
+def require_nonzero_intervention(baseline: float, perturbed: float) -> None:
+    """Require a genuine planted source change."""
+    require(baseline != perturbed, "source intervention delta must be nonzero")
 
 
 __all__ = [
@@ -105,5 +115,6 @@ __all__ = [
     "TARGET_REGISTRY",
     "require_bounded_count",
     "require_authority_shape",
+    "require_nonzero_intervention",
     "response_matches",
 ]

@@ -1,7 +1,8 @@
 import {
   MAX_OBSERVATIONS, MAX_PAIRS, MAX_SOURCES, MAX_TARGETS, TARGET_REGISTRY,
   boundedArray, deepFreeze, finite, index, nullableFinite, record,
-  requireAuthorityShape, responseMatches, stable, type RecordValue,
+  requireAuthorityShape, requireNonzeroIntervention, responseMatches, stable,
+  type RecordValue,
 } from "./localizedAttributionContract";
 
 export const ATTRIBUTION_AUTHORITY_SCHEMA_ID =
@@ -19,15 +20,13 @@ type Availability = "available" | "no_impact_unavailable" | "numerical_failure" 
 type TargetKind = "state" | "impact" | "shot";
 
 export interface AttributionSourceTs {
-  specId: string;
-  variableKey: string;
+  specId: string; variableKey: string;
   jointId: "joint.shoulder" | "joint.wrist";
   timeWindowS: readonly [number, number];
   unit: "N·m";
 }
 export interface AttributionTargetTs {
-  targetId: string;
-  kind: TargetKind;
+  targetId: string; kind: TargetKind;
   name: string;
   unit: string;
   convention: string;
@@ -37,12 +36,9 @@ export interface AttributionTargetTs {
 }
 export interface AttributionPairTs {
   sourceSpecId: string;
-  baselineTrialIndex: number;
-  perturbedTrialIndex: number;
-  baselineStatus: TrialStatus;
-  perturbedStatus: TrialStatus;
-  baselineSourceValue: number;
-  perturbedSourceValue: number;
+  baselineTrialIndex: number; perturbedTrialIndex: number;
+  baselineStatus: TrialStatus; perturbedStatus: TrialStatus;
+  baselineSourceValue: number; perturbedSourceValue: number;
 }
 export interface AttributionObservationTs {
   sourceSpecId: string;
@@ -185,6 +181,9 @@ const observationFromValue = (value: unknown): AttributionObservationTs => {
     response: nullableFinite(raw.response, "response"),
     availability: raw.availability as Availability,
   };
+  requireNonzeroIntervention(
+    observation.baselineSourceValue, observation.perturbedSourceValue,
+  );
   if (observation.availability === "available") {
     if (observation.baselineTargetValue === null || observation.perturbedTargetValue === null ||
         observation.response === null || !responseMatches(observation.response,
@@ -209,13 +208,15 @@ const pairFromValue = (value: unknown): AttributionPairTs => {
   const baselineTrialIndex = index(raw.baseline_trial_index, "baseline_trial_index");
   const perturbedTrialIndex = index(raw.perturbed_trial_index, "perturbed_trial_index");
   if (baselineTrialIndex === perturbedTrialIndex) throw new Error("pair trials must differ");
-  return {
+  const pair = {
     sourceSpecId: stable(raw.source_spec_id, "source_spec_id"), baselineTrialIndex,
     perturbedTrialIndex, baselineStatus: raw.baseline_status as TrialStatus,
     perturbedStatus: raw.perturbed_status as TrialStatus,
     baselineSourceValue: finite(raw.baseline_source_value, "baseline source value"),
     perturbedSourceValue: finite(raw.perturbed_source_value, "perturbed source value"),
   };
+  requireNonzeroIntervention(pair.baselineSourceValue, pair.perturbedSourceValue);
+  return pair;
 };
 
 const expectedAvailability = (

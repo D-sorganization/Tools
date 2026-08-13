@@ -7,6 +7,10 @@ from pathlib import Path
 
 import pytest
 
+from rate_of_closure.variation._localized_attribution_contract import response_matches
+from rate_of_closure.variation._localized_attribution_csv import (
+    canonical_binary64_csv_text,
+)
 from rate_of_closure.variation.localized_attribution import (
     AttributionViewDefinition,
     attribution_authority_from_dict,
@@ -32,6 +36,14 @@ WEB_FIXTURE = (
 )
 CSV_ROWS_FIXTURE = (
     Path(__file__).parent / "fixtures" / "localized_attribution_csv_rows_v1.json"
+)
+FLOAT_TEXT_FIXTURE = (
+    Path(__file__).parent / "fixtures" / "localized_attribution_float_text_v1.json"
+)
+WEB_FLOAT_TEXT_FIXTURE = (
+    Path(__file__).parents[2]
+    / "src/rate_of_closure/web/src/model/__fixtures__"
+    / "localized_attribution_float_text_v1.json"
 )
 
 
@@ -200,6 +212,39 @@ def test_response_uses_shared_four_scaled_ulp_policy() -> None:
     payload["observations"][0]["response"] = expected + 2.0 * tolerance
     with pytest.raises(ContractViolationError, match="response"):
         attribution_authority_from_dict(payload)
+
+
+def test_response_rejects_overflowed_expected_value_and_zero_intervention() -> None:
+    assert not response_matches(0.0, float("inf"))
+    assert not response_matches(0.0, float("-inf"))
+    overflow = _payload()
+    overflow["observations"][0]["baseline_target_value"] = -float.fromhex(
+        "0x1.fffffffffffffp+1023"
+    )
+    overflow["observations"][0]["perturbed_target_value"] = float.fromhex(
+        "0x1.fffffffffffffp+1023"
+    )
+    overflow["observations"][0]["response"] = 0.0
+    with pytest.raises(ContractViolationError, match="response"):
+        attribution_authority_from_dict(overflow)
+    payload = _payload()
+    payload["pairs"][0]["perturbed_source_value"] = 0.0
+    for row in payload["observations"]:
+        if (
+            row["source_spec_id"] == "fixture.shoulder"
+            and row["perturbed_trial_index"] == 1
+        ):
+            row["perturbed_source_value"] = 0.0
+    with pytest.raises(ContractViolationError, match="nonzero"):
+        attribution_authority_from_dict(payload)
+
+
+def test_binary64_csv_text_is_cross_runtime_canonical() -> None:
+    golden = json.loads(FLOAT_TEXT_FIXTURE.read_text(encoding="utf-8"))
+    assert golden == json.loads(WEB_FLOAT_TEXT_FIXTURE.read_text(encoding="utf-8"))
+    assert [canonical_binary64_csv_text(row["value"]) for row in golden] == [
+        row["text"] for row in golden
+    ]
 
 
 def test_resource_caps_apply_before_element_construction() -> None:

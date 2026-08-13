@@ -12,6 +12,9 @@ import {
   type AttributionViewDefinitionTs,
 } from "./localizedAttribution";
 import csvRows from "./__fixtures__/localized_attribution_csv_rows_v1.json";
+import floatTextGolden from "./__fixtures__/localized_attribution_float_text_v1.json";
+import { responseMatches } from "./localizedAttributionContract";
+import { canonicalBinary64CsvText } from "./localizedAttributionCsv";
 
 const authority = () => attributionAuthorityFromValue(structuredClone(fixture));
 const definition = (
@@ -137,6 +140,34 @@ describe("localized attribution authority", () => {
     const oversized = structuredClone(fixture) as unknown as Record<string, unknown>;
     oversized.sources = Array.from({ length: 33 });
     expect(() => attributionAuthorityFromValue(oversized)).toThrow(/resource cap/);
+  });
+
+  it("rejects overflowed responses and zero source interventions", () => {
+    expect(responseMatches(0, Number.POSITIVE_INFINITY)).toBe(false);
+    expect(responseMatches(0, Number.NEGATIVE_INFINITY)).toBe(false);
+    const overflow = structuredClone(fixture);
+    overflow.observations[0].baseline_target_value = -Number.MAX_VALUE;
+    overflow.observations[0].perturbed_target_value = Number.MAX_VALUE;
+    overflow.observations[0].response = 0;
+    expect(() => attributionAuthorityFromValue(overflow)).toThrow(/response/);
+    const zero = structuredClone(fixture);
+    zero.pairs[0].perturbed_source_value = 0;
+    zero.observations.filter((row) => row.source_spec_id === "fixture.shoulder" &&
+      row.perturbed_trial_index === 1).forEach((row) => {
+      row.perturbed_source_value = 0;
+    });
+    expect(() => attributionAuthorityFromValue(zero)).toThrow(/nonzero/);
+  });
+
+  it("uses code-point text caps and canonical binary64 CSV text", () => {
+    const astral = structuredClone(fixture);
+    astral.authority_id = "😀".repeat(256);
+    expect(() => attributionAuthorityFromValue(astral)).not.toThrow();
+    astral.authority_id += "😀";
+    expect(() => attributionAuthorityFromValue(astral)).toThrow(/length cap/);
+    expect(floatTextGolden.map((row) => canonicalBinary64CsvText(row.value))).toEqual(
+      floatTextGolden.map((row) => row.text),
+    );
   });
 
   it("deep-freezes parsed authority and view values", () => {

@@ -57,7 +57,7 @@ export const stable = (value: unknown, label: string): string => {
     (character) => character.charCodeAt(0) < 32,
   );
   if (typeof value !== "string" || value.length === 0 || value.trim() !== value ||
-      value.length > MAX_TEXT_LENGTH || hasControl || /^[=+\-@]/u.test(value)) {
+      [...value].length > MAX_TEXT_LENGTH || hasControl || /^[=+\-@]/u.test(value)) {
     throw new Error(`${label} must be a stable safe ID within the length cap`);
   }
   return value;
@@ -98,8 +98,15 @@ export const requireAuthorityShape = (
   }
 };
 
-export const responseMatches = (actual: number, expected: number): boolean =>
-  Math.abs(actual - expected) <= 4 * Number.EPSILON * Math.max(1, Math.abs(expected));
+export const responseMatches = (actual: number, expected: number): boolean => {
+  const tolerance = 4 * Number.EPSILON * Math.max(1, Math.abs(expected));
+  return Number.isFinite(actual) && Number.isFinite(expected) &&
+    Number.isFinite(tolerance) && Math.abs(actual - expected) <= tolerance;
+};
+
+export const requireNonzeroIntervention = (baseline: number, perturbed: number): void => {
+  if (baseline === perturbed) throw new Error("source intervention delta must be nonzero");
+};
 
 export const deepFreeze = <T>(value: T): T => {
   if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import io
+import math
 
 from ._localized_attribution_types import (
     AUTHORITY_SCHEMA_ID,
@@ -43,10 +44,23 @@ CSV_HEADER = (
 )
 
 
+def canonical_binary64_csv_text(value: float) -> str:
+    """Render finite binary64 using normalized shortest round-trip text."""
+    if not math.isfinite(value):
+        raise ValueError("CSV binary64 value must be finite")
+    text = str(value)
+    if "e" not in text:
+        return text
+    mantissa, exponent = text.split("e")
+    return f"{mantissa}e{int(exponent)}"
+
+
 def _cell(value: object) -> str:
     if value is None:
         return ""
-    text = str(value)
+    text = (
+        canonical_binary64_csv_text(value) if isinstance(value, float) else str(value)
+    )
     if isinstance(value, str) and text.startswith(("=", "+", "-", "@", "\t", "\r")):
         return "'" + text
     return text
@@ -104,4 +118,8 @@ def attribution_observations_to_csv(authority: AttributionAuthority) -> str:
     return output.getvalue()
 
 
-__all__ = ["attribution_observations_to_csv", "attribution_observations_to_rows"]
+__all__ = [
+    "attribution_observations_to_csv",
+    "attribution_observations_to_rows",
+    "canonical_binary64_csv_text",
+]
