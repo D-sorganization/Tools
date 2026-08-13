@@ -268,9 +268,9 @@ def test_import_failure_leaves_db_intact(monkeypatch: pytest.MonkeyPatch) -> Non
 
     with Session(_test_engine) as s:
         tags = s.exec(select(TagDefinitionDb)).all()
-        assert any(t.name == "EXISTING_TAG" for t in tags), (
-            "import failure wiped the existing plant DB"
-        )
+        assert any(
+            t.name == "EXISTING_TAG" for t in tags
+        ), "import failure wiped the existing plant DB"
 
 
 def test_safe_extract_rejects_path_traversal(tmp_path) -> None:
