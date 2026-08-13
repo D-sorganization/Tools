@@ -104,6 +104,22 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "range and source.",
     ],
   },
+  "Ground Surfaces": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Build a strict regional-material request using one static coplanar SI base " +
+        "surface and up to eight bounded overlays. The loaded values are explicitly " +
+        "illustrative and unvalidated, not measured course data. Replace the base " +
+        "and overlay material values, supply stable identities and a source revision, " +
+        "and keep every metre interval inside the base domain.",
+      "Validate and preview delegates to the shared regional wire validator, which " +
+        "rejects duplicate identities or precedence, non-finite or out-of-range " +
+        "material values, invalid intervals, and unsupported geometry. The readback " +
+        "shows schema, SI units, source revision, and a digest bound to the actual " +
+        "draft. This first slice is session-only and does not run physics, playback, " +
+        "or workspace model-input persistence.",
+    ],
+  },
   "Launch Monitor Analytics": {
     title: "How to Use This Page",
     paragraphs: [

@@ -6,6 +6,7 @@ export const PRIMARY_VIEWS = [
   { id: "simulation", label: "Simulation", required: false },
   { id: "plots", label: "Plots", required: false },
   { id: "flight", label: "Flight Explorer", required: false },
+  { id: "regional-surfaces", label: "Ground Surfaces", required: false },
   { id: "launch-monitor-analytics", label: "Launch Monitor Analytics", required: false },
   { id: "capability-optimization", label: "Shot Optimizer", required: false },
   { id: "variation", label: "Variation", required: false },

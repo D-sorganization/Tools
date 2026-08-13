@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "b2baf6ef615b0d756a86ac4ca7eef2fc583210ee",
+      "head_sha": "18fe89201d657116bbca99922297c14968356c44",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "584e4e53a7990053a346938c4e45538786887ec7",
+      "head_sha": "6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "c39297d37a17d5d8d3520ed62c5563cdcc609cab",
+      "head_sha": "4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -194,7 +194,7 @@
       "pr": 4302,
       "branch": "feat/4270-ground-impact-bounce",
       "base_branch": "feat/4269-flight-ground-transfer",
-      "head_sha": "62beb3e1aa951645fd556a53f9cbae4bb46c47e5",
+      "head_sha": "cf6e72bad98e5f36f782254942e6895b8b71e670",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -204,7 +204,7 @@
       "pr": 4304,
       "branch": "feat/4271-ground-skid-roll",
       "base_branch": "feat/4270-ground-impact-bounce",
-      "head_sha": "3f861c1faaa7455faee92eaa7f813174667208e0",
+      "head_sha": "0ea6740965068542e9d8c7449e06ec07d88969e0",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -214,7 +214,7 @@
       "pr": 4332,
       "branch": "feat/4271-regional-surface-transitions",
       "base_branch": "feat/4271-ground-skid-roll",
-      "head_sha": "5ac3c1f233de30dd42eeac57073cbdb149bde652",
+      "head_sha": "04ccf08dd990de1cd056a3420e67772773a4be2e",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -225,6 +225,36 @@
       "branch": "feat/4271-regional-wire-contract",
       "base_branch": "feat/4271-regional-surface-transitions",
       "head_sha": "9e01ccc3e891cc45907293751a192624195a77a5",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4339",
+      "pr": 4339,
+      "branch": "feat/4274-regional-surface-ui",
+      "base_branch": "feat/4271-regional-wire-contract",
+      "head_sha": "db335937afc4b587d235eb705e315f577519c5e6",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4342",
+      "pr": 4342,
+      "branch": "feat/4274-regional-plan-io",
+      "base_branch": "feat/4274-regional-surface-ui",
+      "head_sha": "de66a851aa5dded680279cf9a2b25a5094966593",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4350",
+      "pr": 4350,
+      "branch": "feat/4271-regional-execution-binding",
+      "base_branch": "feat/4274-regional-plan-io",
+      "head_sha": "dfb4b97481f187ff3594eceb08c427f650aca4e3",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -393,6 +423,61 @@
         "src/rate_of_closure/AGENT_HANDOFF.md",
         "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
         "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-regional-ui-local-cbb9",
+      "kind": "local",
+      "commit_sha": "cbb9c0a6bdc6a50f59f7a661139b9d53e1892980",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q",
+        "npm test -- --run",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from ruff==0.14.10 ruff check src tests && uvx --from ruff==0.14.10 ruff format --check src tests",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The published PR #4339 regional editor child passed 870 Python/PyQt tests and 672 React tests, TypeScript, zero-warning ESLint, the 198-module production build, Ruff, MyPy, manifest and documentation governance, structural budgets, and rendered stale-validation qualification; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-regional-ui-helper-local-d217",
+      "kind": "local",
+      "commit_sha": "d21741e312b849a63f73cabf351a15d9de80fb94",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_regional_surface_plan.py tests/rate_of_closure/test_gui.py tests/rate_of_closure/test_layout_minsize.py -q",
+        "npm test -- --run",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from ruff==0.14.10 ruff check src/rate_of_closure tests/rate_of_closure && uvx --from ruff==0.14.10 ruff format --check src/rate_of_closure tests/rate_of_closure"
+      ],
+      "summary": "The current PR #4339 parent passed focused Python/PyQt and React qualification plus the complete 672-test React suite after replacing its six-parameter number-input helper with a frozen specification and three-parameter helper. This remains local evidence, not protected release evidence.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-regional-io-local-8e1c",
+      "kind": "local",
+      "commit_sha": "8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_regional_surface_plan.py tests/rate_of_closure/test_regional_surface_plan_io.py tests/rate_of_closure/test_workspace_files.py -q",
+        "npm test -- --run src/components/RegionalSurfacePlanPanel.test.tsx",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from ruff==0.14.10 ruff check src/rate_of_closure tests/rate_of_closure && uvx --from ruff==0.14.10 ruff format --check src/rate_of_closure tests/rate_of_closure"
+      ],
+      "summary": "The published PR #4342 child passed strict native atomic and bounded browser regional request I/O qualification, safe-number parity, bounded UTF-8 import, static analysis, build, and governance gates before parent reconciliation. Fresh protected evidence remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
       ]
     }
   ],
@@ -1174,11 +1259,13 @@
         "pr-4302",
         "pr-4304",
         "pr-4332",
-        "pr-4335"
+        "pr-4335",
+        "pr-4339",
+        "pr-4342"
       ],
       "supported_surfaces": {
-        "tools.pyqt6": "contract_only",
-        "tools.react": "contract_only",
+        "tools.pyqt6": "implemented_unverified",
+        "tools.react": "implemented_unverified",
         "upstreamdrift.pyqt6": "not_started",
         "upstreamdrift.react": "not_started"
       },
@@ -1186,14 +1273,17 @@
         "ground-impact-local-63a6",
         "ground-skid-roll-local-f475",
         "ground-regional-local-1a48",
-        "ground-regional-wire-local-74a0"
+        "ground-regional-wire-local-74a0",
+        "ground-regional-ui-local-cbb9",
+        "ground-regional-ui-helper-local-d217",
+        "ground-regional-io-local-8e1c"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, and regional-plan wire carriers are open. Issues #4270 and #4271 are published on draft PRs 4302, 4304, 4332, and 4335 with exact local evidence but no protected evidence. Changing normals, regional UI/compiled-runtime physics, internal transition-ledger export, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, and regional request-I/O carriers remain open on draft PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, and 4342. A local unprotected child adds a UI-neutral Python regional executor and separate cross-runtime result/provenance envelope with embedded-plan and transition-crossing validation. Fresh protected evidence for the reconciled heads, UI execution/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
-        "Published PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge. Open PR #4332 qualifies bounded coplanar material overlays, and open PR #4335 adds a separate strict Python/TypeScript plan request/result wire boundary with Python resolver binding. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, internal transition-ledger export, UI, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
+        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; and open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations. A local child adds UI-neutral Python execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI execution/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191

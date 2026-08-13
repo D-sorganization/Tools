@@ -28,10 +28,18 @@ EXPECTED_API = {
     "GROUND_SKID_ROLL_MODEL_VERSION",
     "MAX_REGIONAL_PLAN_REGIONS",
     "MAX_REGIONAL_PLAN_WIRE_BYTES",
+    "MAX_REGIONAL_EXECUTION_STEPS",
+    "MAX_REGIONAL_EXECUTION_TRANSITIONS",
+    "MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES",
     "REGIONAL_PLAN_GEOMETRY_MODEL",
     "REGIONAL_PLAN_LIMITATIONS",
     "REGIONAL_PLAN_REQUEST_SCHEMA_VERSION",
     "REGIONAL_PLAN_RESULT_SCHEMA_VERSION",
+    "REGIONAL_GROUND_EXECUTION_LIMITATIONS",
+    "REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION",
+    "REGIONAL_GROUND_EXECUTOR_ID",
+    "REGIONAL_GROUND_EXECUTOR_SOURCE",
+    "REGIONAL_GROUND_EXECUTOR_VERSION",
     "GroundCalibration",
     "GroundContactState",
     "GroundEvent",
@@ -42,6 +50,10 @@ EXPECTED_API = {
     "GroundRegionalMaterialPlanRequest",
     "GroundRegionalMaterialPlanResult",
     "GroundRegionalMaterialRegion",
+    "RegionalGroundExecutionFailureReason",
+    "RegionalGroundExecutionOptions",
+    "RegionalGroundExecutionResult",
+    "RegionalGroundExecutionStatus",
     "GroundResultStatus",
     "GroundSimulationRequest",
     "GroundSimulationResult",
@@ -78,6 +90,8 @@ EXPECTED_API = {
     "SurfaceRegionTransitionCrossing",
     "SurfaceResolver",
     "compose_ground_result",
+    "execute_regional_ground",
+    "execution_input_sha256",
     "build_regional_material_plan_result",
     "interpolate_first_contact",
     "request_from_json",
@@ -85,6 +99,7 @@ EXPECTED_API = {
     "regional_material_plan_request_from_json",
     "regional_material_plan_result_from_json",
     "regional_plan_to_surface_resolver",
+    "regional_ground_execution_result_from_json",
     "result_from_json",
     "result_json_schema",
     "schema_json",
@@ -178,6 +193,10 @@ def test_cross_runtime_integer_and_text_edges_fail_closed() -> None:
         replace(_request(), max_events=10**1000)
     with pytest.raises(ValueError, match="safe range"):
         canonical_numeric_json(unsafe_integer)
+    with pytest.raises(ValueError, match="safe range"):
+        canonical_numeric_json(float(unsafe_integer))
+    with pytest.raises(ValueError, match="safe range"):
+        replace(_surface(), firmness_pa=float(unsafe_integer))
     with pytest.raises(ValueError, match="surrogate"):
         replace(_request(), request_id="\ud800")
     with pytest.raises(ValueError, match="surrogate"):

@@ -168,18 +168,93 @@ canonical SHA-256, a descending-precedence/ascending-ID copy of the request's
 regions, producer provenance bound to that digest, and the same explicit
 limitations. Both Python and TypeScript reject reordered or changed region or
 surface records instead of accepting fabricated resolved materials. Python's
-`regional_plan_to_surface_resolver` is the only execution adapter in this
-slice; it constructs the existing qualified `SurfaceResolver` without changing
-its physics. TypeScript validates and serializes the plan but does not claim to
-run regional dynamics.
+`regional_plan_to_surface_resolver` constructs the existing qualified
+`SurfaceResolver` without changing its physics. TypeScript validates and
+serializes the plan but does not claim to run regional dynamics.
 
 These new schemas are deliberately separate from
 `flight-to-ground-request/v1` and `flight-to-ground-result/v1`; neither frozen
 contract is silently widened. The strict ground result continues to carry the
-legal transition event and qualified-domain warning, while its internal
-from/to transition ledger remains execution-scoped. A future explicitly
-versioned result contract is required before that ledger crosses a process
-boundary.
+legal transition event and qualified-domain warning.
+
+### Regional execution result boundary
+
+`execute_regional_ground` accepts one exact ground request, settled bounce
+prefix, regional plan request, and `RegionalGroundExecutionOptions`. Options
+contain only bounded `SkidRollSettings`, an optional cancellation check, and
+executor source revision; there is no resolver field. The executor requires
+`plan.base_surface == request.surface`, validates request/prefix identities and
+fingerprint, constructs the resolver solely from the plan, and calls the
+existing `simulate_skid_roll` and `compose_ground_result` authorities.
+
+The additive `ground-regional-execution-result/v1` envelope carries canonical
+SHA-256 identities for both inputs, the ground request/surface and plan IDs,
+the exact embedded regional plan and unchanged plan source provenance,
+executor provenance bound to the joint input digest, exact model ID/version,
+and the ordered internal transition ledger with from/to region and surface
+IDs. The plan digest is recomputed from the embedded plan; plan ID, base
+surface, and provenance must agree. Executor producer/version are the fixed v1
+authority while source revision remains variable evidence. Each ledger row
+must match one `SURFACE_TRANSITION` event by sequence, time, and position, and
+its coordinate/from/to identities must describe a real boundary crossing in
+the embedded plan. Empty ledgers still retain complete plan and executor
+provenance.
+
+Complete and partial outcomes embed an unchanged
+`flight-to-ground-result/v1`. Cancellation, step/transition bounds,
+unsupported surfaces, numerical failures, and composition failures cannot be
+encoded honestly by the frozen base result; the envelope therefore uses typed
+cancelled/failed status, reason, and `ground_result: null`. Python is the only
+physics executor. TypeScript strictly parses/serializes the envelope and shared
+golden fixture without implementing dynamics. Documents are capped at 8 MiB,
+reject duplicate/extra/malformed data, use the same canonical safe-number,
+integral JSON-number, nonblank-text, and vector policy in both runtimes, reject
+same-surface transitions, and declare the same coplanar/static limitations as
+the plan. The golden representable/cancelled/failed envelopes are produced by
+`execute_regional_ground`; an adversarial fixture pins cross-runtime rejection,
+and frozen base-result v1 compatibility remains a separate test. Null-result
+cancelled/failed envelopes require an empty transition ledger because no
+embedded result exists to substantiate transition evidence.
+
+### Matched editor/readback boundary
+
+The standalone PyQt6 and React applications register a `Ground Surfaces`
+primary module that presents one base interval and one to eight regional
+overlay rows. The editor exposes every `GroundSurfaceProfile` material field,
+stable request/region/surface IDs, unique precedence, metre interval bounds,
+and source revision. Geometry remains visibly fixed to the target frame,
+zero-height upward-normal plane, downrange tangent axis, and zero surface
+velocity. The interface labels metre, pascal, density, coefficient, and
+dimensionless-fraction quantities explicitly.
+
+Both clients load the same visibly **illustrative, unvalidated** discovery
+values. They hash the actual editor draft, including its calibration
+qualification, into provenance before delegating to the authoritative
+`ground-regional-material-plan-request/v1` validator. The presentation layer
+does not reimplement material or regional physics and does not soften unique
+identity, interval, finite-number, material-range, or geometry contracts.
+Errors remain associated with the editable draft; success exposes canonical
+schema, unit, provenance, and request readback.
+
+The regional v1 wire schema has no calibration record, so the editor does not
+invent one or widen that schema. `unvalidated` is explicit presentation/source
+qualification and is included in the source digest. PyQt6 native Open/Save As
+and React browser import/download persist only the canonical regional request;
+workspace model-input persistence remains a separate contract. Import is
+transactional and accepts only the editor producer/provider v1, fixed qualified
+axis/geometry, and editor row capacity. An unchanged import retains the exact
+request and provenance; editing rebinds the draft digest. Browser downloads
+cannot promise a native path, atomic replacement, or recent-file access.
+Wire numbers are bounded to the shared cross-runtime safe range. Native
+precedence entry preserves every nonnegative integer through
+9,007,199,254,740,991 exactly, so a qualified import cannot be silently narrowed
+before validation or Save As.
+Native import reads one binary handle with a one-byte overflow sentinel before
+strict UTF-8 decoding, so mutable files cannot bypass the 1 MiB allocation cap
+between a metadata check and content parsing.
+Neither client claims execution, result playback, or measured-course
+calibration. Those capabilities require separate contracts and acceptance
+evidence.
 
 Skid and roll distances are accumulated separately from centre speed relative
 to the moving surface. Collinear constant-acceleration segments use the exact
