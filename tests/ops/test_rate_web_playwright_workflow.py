@@ -19,6 +19,19 @@ PLAYWRIGHT_EVIDENCE_PATHS = (
     "src/rate_of_closure/web/test-results/\n"
 )
 PR_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
+PYQT_AUTHORITY_PATHS = {
+    "src/rate_of_closure/club/**",
+    "src/rate_of_closure/model.py",
+    "src/rate_of_closure/plotting/**",
+    "src/rate_of_closure/simulation/**",
+    "src/rate_of_closure/variation/**",
+    "src/rate_of_closure/ui/pyqt6/**",
+    "src/shared/python/swing_sim/variation/**",
+    "tests/rate_of_closure/pyqt_variation_render_probe.py",
+    "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
+    "tests/ops/test_rate_web_playwright_workflow.py",
+    "pyproject.toml",
+}
 
 
 def _workflow(path: Path) -> dict[str, Any]:
@@ -105,8 +118,13 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
     assert (
         trusted_commands["Exercise production Worker lifecycle and layouts"]
-        == "npm run test:e2e"
+        == "npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow"
     )
+
+
+def test_pr_trigger_tracks_every_pyqt_render_authority() -> None:
+    workflow = _workflow(PR_WORKFLOW_PATH)
+    assert PYQT_AUTHORITY_PATHS <= set(workflow[True]["pull_request"]["paths"])
 
 
 def test_external_actions_are_immutable_and_artifacts_identify_attempts() -> None:

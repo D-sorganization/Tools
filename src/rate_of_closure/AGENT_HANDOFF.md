@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Cross-browser workflow selection closure (#4142)
+
+- Trusted main-push CI installs Chromium and explicitly selects only the
+  desktop/narrow Chromium projects. Firefox/WebKit remain PR-only on an
+  ephemeral hosted runner, eliminating cold-cache failure and warm-cache
+  ambiguity on the persistent fleet.
+- PR path filters include imported club/model, plotting, simulation, variation,
+  PyQt6, and shared swing-variation authority, dependency metadata, both DPI-
+  render harnesses, and the workflow contract. Scientific or mesh changes
+  cannot skip the rendered gate.
+- Tests pin the exact runtime/project command and complete authority path set.
+  SPEC is 1.16.71; the 1.16.70 functional evidence and limitations are intact.
+- Correction gates pass 874/874 React, 9/9 all-engine Playwright, 7/7 trusted
+  Chromium, 20/20 focused PyQt/workflow/validator, and static/docs/size/diff.
+- Pinned actionlint 1.7.11 passes the workflow tree.
+
 ## 2026-08-13 Cross-browser and rendered PyQt interaction evidence (#4142)
 
 - Chromium, Firefox, and WebKit execute the same bounded production localized-

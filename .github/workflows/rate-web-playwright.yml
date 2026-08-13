@@ -4,9 +4,17 @@ on:
   pull_request:
     paths:
       - "src/rate_of_closure/web/**"
+      - "src/rate_of_closure/club/**"
+      - "src/rate_of_closure/model.py"
+      - "src/rate_of_closure/plotting/**"
+      - "src/rate_of_closure/simulation/**"
+      - "src/rate_of_closure/variation/**"
       - "src/rate_of_closure/ui/pyqt6/**"
+      - "src/shared/python/swing_sim/variation/**"
       - "tests/rate_of_closure/pyqt_variation_render_probe.py"
       - "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py"
+      - "tests/ops/test_rate_web_playwright_workflow.py"
+      - "pyproject.toml"
       - ".github/workflows/rate-web-playwright.yml"
       - ".github/workflows/rate-web-playwright-trusted.yml"
 

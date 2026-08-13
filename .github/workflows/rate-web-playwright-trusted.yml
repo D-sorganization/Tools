@@ -40,7 +40,7 @@ jobs:
         run: npx --no-install playwright install --with-deps chromium
 
       - name: Exercise production Worker lifecycle and layouts
-        run: npm run test:e2e
+        run: npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow
 
       - name: Retain Playwright evidence
         if: ${{ !cancelled() }}

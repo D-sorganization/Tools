@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Cross-browser workflow selection closure (#4142)
+
+Version 1.16.71 closes the R14.5 workflow review. The trusted main-push lane
+still installs Chromium only, but now explicitly selects `chromium-desktop`
+and `chromium-narrow`; it cannot select the Firefox/WebKit projects added to
+the shared config or depend on a warm fleet cache. The PR lane remains the
+only all-engine lane and stays on ephemeral `ubuntu-latest`.
+
+PR paths now include the club/model, plotting, simulation, variation, PyQt6,
+and shared swing-variation authorities imported by the render probe, plus
+dependency metadata, both harness files, and the workflow-contract test. Exact
+regressions bind the installed runtime to selected projects and prevent
+scientific/mesh/plot changes from skipping the rendered gate. The prior
+1.16.70 implementation and diagnostic artifact limitations remain unchanged.
+Correction gates pass 874/874 React, 9/9 all-engine Playwright, 7/7 explicit
+trusted-Chromium, 20/20 focused PyQt/workflow/validator, TypeScript, ESLint,
+build, strict harness Mypy, Ruff/format, workflow/docs, size, and diff checks.
+Pinned actionlint 1.7.11 passes the workflow tree.
+
 ## 2026-08-13 Cross-browser and rendered PyQt interaction evidence (#4142)
 
 Version 1.16.70 adds one bounded production-Worker scenario to Chromium,

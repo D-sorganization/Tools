@@ -26,11 +26,33 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.70                                    |
-| **Spec Version**        | 1.16.70                                    |
+| **Current Version**     | 1.16.71                                    |
+| **Spec Version**        | 1.16.71                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Cross-browser workflow selection closure (#4142 R14.5)
+
+Version 1.16.71 makes installed browser runtimes and selected Playwright
+projects an exact workflow contract. The persistent trusted main-push lane
+installs Chromium and explicitly runs only `chromium-desktop` and
+`chromium-narrow`; it can no longer accidentally select Firefox/WebKit from a
+shared configuration on a warm or cold runner cache. The untrusted PR lane
+continues to install and run all three engines only on `ubuntu-latest`.
+
+The PR path filter now follows every Python authority imported by the rendered
+probe: club/model inputs, plotting, simulation, variation, PyQt6 visualization,
+shared swing-variation science, dependency metadata, its harness, and the
+workflow-contract test. A math, mesh, plot-data, solver, or UI change cannot
+silently skip the rendered interaction gate. Regression tests pin both path
+ownership and the trusted Chromium-only command; no test scope, artifact
+semantics, or trust boundary was weakened.
+Correction gates pass 874/874 React tests, 9/9 all-engine Playwright scenarios,
+7/7 explicit trusted-Chromium scenarios, and 20/20 focused PyQt/workflow/
+validator tests, plus TypeScript, ESLint, Vite build, strict harness Mypy,
+Ruff/format, workflow validation, docs governance, size, and diff checks.
+Pinned actionlint 1.7.11 also passes all workflow files.
 
 ### 2026-08-13 Cross-browser and rendered PyQt interaction evidence (#4142 R14.5)
 
@@ -3935,6 +3957,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.71 | fix(ci, #4142 R14.5): bind the trusted fleet lane's Chromium-only install to explicit Chromium desktop/narrow projects and expand the ephemeral PR gate's path ownership across every imported club/model, plotting, simulation, variation, PyQt6, shared dispersion, dependency, harness, and workflow authority it exercises. |
 | 2026-08-13 | 1.16.70 | test(rate-of-closure, #4142 R14.5): add production Firefox/WebKit parity for localized variation, confidence-mesh gating, semantic keyboard camera/reset, and no-overlap checks; add deterministic PyQt6 rendered interaction artifacts/manifests at 100%/150% DPI; keep untrusted execution on ephemeral hosted runners and distinguish diagnostic screenshots from golden authority. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |

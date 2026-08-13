@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 cross-browser workflow selection closure
+
+- The trusted fleet workflow's Chromium-only install now pairs with explicit
+  `chromium-desktop` and `chromium-narrow` selection; Firefox/WebKit cannot be
+  selected accidentally or inherited from a persistent runner cache.
+- All-engine execution stays confined to the ephemeral PR `ubuntu-latest`
+  lane; the trust split and full-SHA action pins are unchanged.
+- PR path ownership now covers imported club/model, plotting, simulation,
+  variation, PyQt6, and shared swing-variation authorities, dependency
+  metadata, both render harnesses, and the workflow-contract test.
+- Workflow regressions pin exact install/selection consistency and path
+  coverage. SPEC advances to 1.16.71; 1.16.70 test/artifact claims and open
+  AT/golden/publication limitations are unchanged.
+- Correction gates pass 874/874 React, 9/9 all-engine Playwright, 7/7 explicit
+  trusted Chromium, 20/20 focused PyQt/workflow/validator, and all applicable
+  TypeScript/ESLint/build/Mypy/Ruff/docs/size/diff checks.
+- Pinned actionlint 1.7.11 passes the full workflow tree.
+
 ## 2026-08-13 #4142 cross-browser and rendered PyQt interaction evidence
 
 - A production localized-variation scenario now runs on Chromium, Firefox,
