@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from collections.abc import Mapping
 
 import numpy as np
@@ -10,8 +9,6 @@ import numpy as np
 from rate_of_closure.variation.simulation_types import (
     ALL_OUTPUT_NAMES,
     APP_FRAME_ID,
-    EVALUATED_HIT,
-    NUMERICAL_FAILURE,
     SimulationEnsembleResult,
     SimulationTrialOutcome,
     TrialEvaluationStatus,
@@ -44,11 +41,13 @@ from ._ensemble_json_contract import (
     string_tuple,
     validate_decoded_tree,
 )
-
-MAX_TRIALS = 100_000
-MAX_SAMPLES = 100_000
-MAX_POINTS = 256
-MAX_POSITION_CELLS = 5_000_000
+from ._ensemble_limits import (
+    MAX_POINTS,
+    MAX_POSITION_CELLS,
+    MAX_SAMPLES,
+    MAX_TRIALS,
+    require_ensemble_shape_limits,
+)
 
 _ROOT_FIELDS = {
     "schema_version",
@@ -116,8 +115,8 @@ def parse_ensemble_document(
     require(root["time_unit"] == "s", "time_unit must be s")
 
     variation = _parse_variation(root["variation"])
-    outcomes = _parse_outcomes(root["outcomes"], variation)
-    traces = _parse_traces(root, variation, outcomes)
+    outcomes = _parse_outcomes(root["outcomes"], variation.plan.n_runs)
+    traces = _parse_traces(root, variation)
     return SimulationEnsembleResult(outcomes, variation, traces)
 
 
@@ -218,11 +217,11 @@ def _validate_group_scalar_types(data: Mapping[str, object]) -> None:
 
 
 def _parse_outcomes(
-    value: object, variation: VariationDataset
+    value: object, trial_count: int
 ) -> tuple[SimulationTrialOutcome, ...]:
-    """Parse typed per-trial outcomes and bind them to scalar matrices."""
+    """Parse canonical typed per-trial outcomes."""
     entries = json_list(value, "outcomes")
-    require(len(entries) == variation.plan.n_runs, "outcomes must align to trials")
+    require(len(entries) == trial_count, "outcomes must align to trials")
     outcomes: list[SimulationTrialOutcome] = []
     for expected_index, entry in enumerate(entries):
         data = mapping(entry, "outcome")
@@ -250,50 +249,24 @@ def _parse_outcomes(
             failure_type=optional_string(data["failure_type"], "failure_type"),
             failure_message=optional_string(data["failure_message"], "failure_message"),
         )
-        _require_outcome_scalar_binding(outcome, variation)
         outcomes.append(outcome)
     return tuple(outcomes)
-
-
-def _require_outcome_scalar_binding(
-    outcome: SimulationTrialOutcome, variation: VariationDataset
-) -> None:
-    """Reject a valid outcome crossed with another scalar dataset."""
-    index = outcome.trial_index
-    expected_success = outcome.status is not NUMERICAL_FAILURE
-    require(
-        bool(variation.success[index]) == expected_success,
-        "outcome status must match variation success",
-    )
-    expected = np.array(
-        [
-            math.nan if outcome.value(name) is None else outcome.value(name)
-            for name in ALL_OUTPUT_NAMES
-        ],
-        dtype=float,
-    )
-    require(
-        bool(np.array_equal(variation.outputs[index], expected, equal_nan=True)),
-        "outcome values must match variation outputs",
-    )
 
 
 def _parse_traces(
     root: Mapping[str, object],
     variation: VariationDataset,
-    outcomes: tuple[SimulationTrialOutcome, ...],
 ) -> EnsemblePositionTraces:
-    """Parse bounded common-grid geometry and enforce typed availability."""
-    point_ids = string_tuple(root["point_ids"], "point_ids")
-    require_point_ids(point_ids)
-    times = number_vector(root["sample_times_s"], "sample_times_s")
-    validated_sample_times(times)
-    require(len(point_ids) <= MAX_POINTS, "point limit exceeded", len(point_ids))
-    require(times.size <= MAX_SAMPLES, "sample limit exceeded", times.size)
-    cell_count = variation.plan.n_runs * times.size * len(point_ids) * 3
-    require(
-        cell_count <= MAX_POSITION_CELLS, "position cell limit exceeded", cell_count
+    """Parse bounded common-grid geometry."""
+    raw_point_ids = json_list(root["point_ids"], "point_ids")
+    raw_times = json_list(root["sample_times_s"], "sample_times_s")
+    require_ensemble_shape_limits(
+        variation.plan.n_runs, len(raw_times), len(raw_point_ids)
     )
+    point_ids = string_tuple(raw_point_ids, "point_ids")
+    require_point_ids(point_ids)
+    times = number_vector(raw_times, "sample_times_s")
+    validated_sample_times(times)
     valid = bool_matrix(
         root["sample_valid"], variation.plan.n_runs, times.size, "sample_valid"
     )
@@ -302,7 +275,6 @@ def _parse_traces(
     )
     legal_impacts = (impacts == -1) | ((impacts >= 0) & (impacts < times.size))
     require(bool(np.all(legal_impacts)), "impact sample index is out of range")
-    _require_trace_status_binding(outcomes, times, valid, impacts)
     positions = _position_tensor(
         root["positions_m"], variation.plan.n_runs, times.size, len(point_ids), valid
     )
@@ -317,36 +289,6 @@ def _parse_traces(
     )
 
 
-def _require_trace_status_binding(
-    outcomes: tuple[SimulationTrialOutcome, ...],
-    times: np.ndarray,
-    valid: np.ndarray,
-    impacts: np.ndarray,
-) -> None:
-    """Bind hit/miss/failure status to full trace and impact availability."""
-    for index, outcome in enumerate(outcomes):
-        if outcome.status is NUMERICAL_FAILURE:
-            require(
-                not np.any(valid[index]), "numerical failure trace must be unavailable"
-            )
-            require(impacts[index] == -1, "numerical failure impact marker must be -1")
-        else:
-            require(np.all(valid[index]), "evaluated trial trace must be complete")
-            expected_impact = outcome.status is EVALUATED_HIT
-            require(
-                bool(impacts[index] >= 0) == expected_impact,
-                "impact marker must match typed trial status",
-            )
-            if expected_impact:
-                impact_time = outcome.value("impact_time_s")
-                assert impact_time is not None
-                expected_index = int(np.argmin(np.abs(times - impact_time)))
-                require(
-                    impacts[index] == expected_index,
-                    "impact marker must match impact-time provenance",
-                )
-
-
 def _position_tensor(
     value: object,
     trials: int,
@@ -357,16 +299,22 @@ def _position_tensor(
     """Validate exact tensor axes before allocating the NumPy authority."""
     trial_rows = json_list(value, "positions_m")
     require(len(trial_rows) == trials, "positions_m trial axis is invalid")
+    for trial_value in trial_rows:
+        sample_rows = json_list(trial_value, "positions_m trial")
+        require(len(sample_rows) == samples, "positions_m sample axis is invalid")
+        for sample_value in sample_rows:
+            point_rows = json_list(sample_value, "positions_m sample")
+            require(len(point_rows) == points, "positions_m point axis is invalid")
+            for point_value in point_rows:
+                coordinates = json_list(point_value, "position coordinates")
+                require(len(coordinates) == 3, "position must have three coordinates")
     result = np.full((trials, samples, points, 3), np.nan)
     for trial_index, trial_value in enumerate(trial_rows):
         sample_rows = json_list(trial_value, "positions_m trial")
-        require(len(sample_rows) == samples, "positions_m sample axis is invalid")
         for sample_index, sample_value in enumerate(sample_rows):
             point_rows = json_list(sample_value, "positions_m sample")
-            require(len(point_rows) == points, "positions_m point axis is invalid")
             for point_index, point_value in enumerate(point_rows):
                 coordinates = json_list(point_value, "position coordinates")
-                require(len(coordinates) == 3, "position must have three coordinates")
                 if valid[trial_index, sample_index]:
                     result[trial_index, sample_index, point_index] = [
                         number(component, "position coordinate")

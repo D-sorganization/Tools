@@ -26,16 +26,44 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.48                                    |
-| **Spec Version**        | 1.16.48                                    |
+| **Current Version**     | 1.16.49                                    |
+| **Spec Version**        | 1.16.49                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
+### 2026-08-12 Rate ensemble persistence contract hardening (#4142 R11.4)
+
+Version 1.16.49 makes the current-schema ensemble reader and writer symmetric.
+One shared scientific-limit contract now governs typed Rate results and decoded
+archives. The typed result binds canonical sampled-input/output columns, scalar
+outcomes, success status, trace availability, impact status, and nearest-sample
+impact provenance before either writer can observe it. Generic variation
+datasets continue to support pairwise-missing analysis inputs and partial
+evaluated traces; the stricter finite sampled-input rule belongs to the complete
+Rate ensemble boundary.
+
+Raw sample counts and all nested tensor axes are checked before corresponding
+NumPy allocation. File writes encode with standard finite JSON, measure the
+exact UTF-8 bytes that will be written, and fail before creating an unreadable
+file. Deep-recursion, oversized-integer, Unicode, and ordinary JSON decoder
+failures are normalized to the public contract exception. Boundary tests cover
+every scientific axis/cell limit, allocation order, writer byte/finite
+preflight, crossed typed authority, and decoder resource failures.
+
+This is strict outer-schema v1 persistence, not a migration implementation.
+Unknown outer versions remain rejected. A future schema change still requires
+an explicit reviewed migration and fixtures for its actual legacy origin.
+Local evidence is 245 passing shared-variation/Rate tests (14 known Hypothesis
+collection warnings), including 34 focused reader tests, plus scoped Ruff and
+MyPy. The broader 1,187-test Rate sweep had 1,186 passes and one unrelated
+Morris child-readiness timeout under 14-worker load; that exact test passed in
+3.96 seconds when rerun alone.
+
 ### 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
 
-Version 1.16.44 completes the typed Python reader and lossless JSON round trip
-for the existing complete Rate ensemble writer. The outer ensemble schema
+Version 1.16.44 introduced the typed Python reader and current-schema JSON
+round trip for the complete Rate ensemble writer. The outer ensemble schema
 remains version 1 and accepts only the exact current representation with an
 embedded lossless plan-v2 document; there is no implicit outer-schema or plan
 migration. Future versions require an explicit reviewed migration rather than
@@ -44,7 +72,7 @@ coercion or best-effort defaults.
 The reader retains stable plan/spec/group IDs, seed and sampled-input
 provenance, canonical trial order, typed hit/no-impact/numerical-failure
 availability, all scalar outputs, coordinate frame and units, point IDs,
-sample validity, impact markers, and complete position traces. It rejects
+sample validity, impact markers, and explicit available/unavailable traces. It rejects
 unknown or duplicate fields, noncanonical scalar types, nonfinite values,
 truncated/invalid UTF-8 JSON, crossed outcome/scalar/status/impact evidence,
 corrupt trace axes, and impact markers inconsistent with the recorded impact
@@ -53,7 +81,8 @@ cells are bounded before corresponding scientific arrays are materialized.
 All imported NumPy arrays are owned and read-only; `VariationDataset` now
 applies the same immutable-ownership rule to every construction path.
 
-This slice does not add a browser reader, UI import action, chunked streaming,
+This slice does not implement schema migration and does not add a browser
+reader, UI import action, chunked streaming,
 event ledgers, impact/shot objects beyond the existing scalar authority, or
 complete state/torque traces. Those broader R11/R14 requirements remain open.
 
@@ -3213,11 +3242,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.49 | fix(rate-of-closure, #4142 R11.4): centralize symmetric typed/reader/writer ensemble limits and authority binding; preflight sample/tensor axes before NumPy allocation; require strict finite size-bounded file output; normalize decoder resource errors; and clarify that outer v1 rejection is a future-migration policy, not a completed migration. |
 | 2026-08-12 | 1.16.48 | fix(rate-of-closure, #4142 R12.1/R12.2): fail closed on materially negative, unordered, nonfinite, nonorthonormal, or covariance-inconsistent eigensystems; retain roundoff-scale zero-rank directions; use cancellation-safe chi-square inversion over the explicit `[1e-12, 1)` domain; normalize strict real criteria; and correct unique-test evidence. |
 | 2026-08-12 | 1.16.47 | fix(rate-of-closure, #4142 R14.3): fail closed across React worker result/error/decoding/clone boundaries with single-settlement cleanup, exact progress sequencing, request-bound result validation, late-event safety, and direct injected-Worker transport tests while retaining browser/Playwright as an open R14.5 gate. |
 | 2026-08-12 | 1.16.46 | feat(rate-of-closure, #4142 R14.3): execute React Monte Carlo and OAT studies in a bounded worker with completed-evaluation progress, cooperative AbortSignal cancellation, immediate rerun, stale-generation suppression, unmount safety, and unchanged deterministic plan/result semantics. |
 | 2026-08-12 | 1.16.45 | feat(rate-of-closure, #4142 R12.1/R12.2): add immutable plot-ready confidence-scaled 3D Gaussian position-content ellipsoids with exact chi-square scaling, explicit full-rank/sample adequacy, selectable RMS/principal-sigma/ellipsoid-volume quiet metrics, and deterministic dimensionless interval scoring with stable dense ties; retain UI/parity serialization as open work. |
-| 2026-08-12 | 1.16.44 | feat(rate-of-closure, #4142 R11.4): add a strict bounded typed reader and lossless round trip for complete Rate ensemble JSON; retain plan/spec/group/trial/point provenance, typed hit/no-impact/failure availability and full traces; reject duplicate, corrupt, truncated, noncanonical, crossed, and resource-excess documents; make all `VariationDataset` arrays owned and read-only. |
+| 2026-08-12 | 1.16.44 | feat(rate-of-closure, #4142 R11.4): introduce a strict bounded current-v1 reader for complete Rate ensemble JSON; retain plan/spec/group/trial/point provenance, typed hit/no-impact/failure availability and trace validity; reject duplicate, corrupt, truncated, noncanonical, crossed, and resource-excess documents; make all `VariationDataset` arrays owned and read-only. |
 | 2026-08-12 | 1.16.43 | fix(rate-of-closure, #4142): make the Morris observation value-array types explicit for the protected Mypy 1.13 delta gate without changing runtime or wire contracts. |
 | 2026-08-12 | 1.16.42 | fix(rate-of-closure, #4142): retain PyQt numeric authority per field; bind raw Morris observations to exact recomputed aggregate reports outside the registry mutex; enforce symmetric pre-materialization archive limits; and preserve unavailable OAT dominance/normalization across Python and React. |
 | 2026-08-12 | 1.16.41 | fix(rate-of-closure, #4142 R13.1): make Python/React OAT and Spearman attribution pairwise finite with explicit minimum counts and constant-column unavailability, pinned by one shared missing-data fixture. |

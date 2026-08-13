@@ -3,12 +3,40 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Ensemble reader/writer contract hardening (#4142 R11.4)
+
+The isolated local branch `codex/4142-ensemble-reader-hardening` starts from
+exact integrated head `c1106926a037ba63bb14a4e84672686b8b06462f`; it is not
+pushed. It closes the adversarial review findings on the typed ensemble slice.
+
+- One shared limit contract now governs typed Rate results and parsed archives.
+  Typed results bind canonical columns, scalar outcomes, success, partial or
+  unavailable trace status, impact markers, and impact-time provenance before
+  serialization.
+- Raw sample counts and every nested tensor axis are checked before the
+  corresponding NumPy allocation. Strict finite JSON and the exact formatted
+  UTF-8 byte count are preflighted before file creation.
+- Deep JSON recursion, oversized JSON integers, Unicode, and normal syntax
+  failures become public contract errors. Boundary tests cover each scientific
+  limit, allocation order, crossed typed evidence, and writer preflight.
+- This remains exact outer v1 persistence. Rejection of unknown versions is a
+  fail-closed future-migration policy, not an implemented migration.
+
+Local evidence is 245 passing shared-variation/Rate tests (14 known Hypothesis
+collection warnings), including 34 focused reader tests, plus scoped Ruff and
+MyPy. The broader 1,187-test Rate sweep had 1,186 passes and one unrelated
+Morris child-readiness timeout under 14-worker load; that exact test passed in
+3.96 seconds when rerun alone. Repository-wide gates, integration, protected publication, UI import
+surfaces, cross-runtime reading, chunking, event ledgers, and complete
+state/torque authority remain open.
+
 ## 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
 
 Branch `codex/4142-typed-ensemble-reader-integrated` starts from exact current
 #4404 head `82e4c54c921f169227d25ece2935add4af3e721a` and remains local/unpublished.
-It adds the missing strict Python inverse for the existing complete Rate
-ensemble JSON writer without changing the version-1 wire representation.
+It introduced a strict Python reader for the existing complete Rate ensemble
+JSON writer without changing the version-1 wire representation; the symmetric
+writer/type hardening is recorded in the newer entry above.
 
 - Exact parsing preserves the complete plan-v2 graph, stable spec/group IDs,
   seed and sampled inputs, canonical trial indices, typed hit/no-impact/failure

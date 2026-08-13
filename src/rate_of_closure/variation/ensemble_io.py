@@ -12,10 +12,11 @@ from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.contracts import ContractViolationError, require
 from shared.python.swing_sim.variation.dataset_io import to_json_dict as dataset_json
 
+from ._ensemble_json_contract import validate_decoded_tree
+from ._ensemble_limits import MAX_ENSEMBLE_JSON_BYTES
 from ._ensemble_parser import parse_ensemble_document
 
 ENSEMBLE_EXPORT_SCHEMA_VERSION = 1
-MAX_ENSEMBLE_JSON_BYTES = 16_000_000
 
 
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -35,11 +36,12 @@ def _reject_nonfinite_constant(value: str) -> None:
 def loads(text: str) -> SimulationEnsembleResult:
     """Parse a bounded, duplicate-safe complete ensemble JSON document."""
     require(isinstance(text, str), "ensemble JSON must be text")
-    require(
-        len(text.encode("utf-8")) <= MAX_ENSEMBLE_JSON_BYTES,
-        "ensemble JSON byte limit exceeded",
-    )
     try:
+        encoded = text.encode("utf-8")
+        require(
+            len(encoded) <= MAX_ENSEMBLE_JSON_BYTES,
+            "ensemble JSON byte limit exceeded",
+        )
         document = json.loads(
             text,
             object_pairs_hook=_unique_object,
@@ -47,7 +49,7 @@ def loads(text: str) -> SimulationEnsembleResult:
         )
     except ContractViolationError:
         raise
-    except (UnicodeError, json.JSONDecodeError) as exc:
+    except (UnicodeError, RecursionError, ValueError, OverflowError) as exc:
         require(False, "ensemble document must be valid JSON", str(exc))
         raise AssertionError from exc
     return from_json_dict(document)
@@ -95,7 +97,7 @@ def to_json_dict(result: SimulationEnsembleResult) -> dict[str, Any]:
                     ]
                 )
         positions.append(trial)
-    return {
+    document = {
         "schema_version": ENSEMBLE_EXPORT_SCHEMA_VERSION,
         "coordinate_frame": traces.coordinate_frame,
         "position_unit": "m",
@@ -117,11 +119,30 @@ def to_json_dict(result: SimulationEnsembleResult) -> dict[str, Any]:
         ],
         "variation": dataset_json(result.variation),
     }
+    validate_decoded_tree(document)
+    return document
+
+
+def _encoded_document(result: SimulationEnsembleResult, indent: int) -> str:
+    """Encode one writer document under the reader's finite byte contract."""
+    document = to_json_dict(result)
+    try:
+        text = json.dumps(document, indent=indent, allow_nan=False)
+        encoded = text.encode("utf-8")
+    except (TypeError, ValueError, UnicodeError, OverflowError) as exc:
+        require(False, "ensemble document must contain strict finite JSON", str(exc))
+        raise AssertionError from exc
+    require(
+        len(encoded) <= MAX_ENSEMBLE_JSON_BYTES,
+        "ensemble JSON byte limit exceeded",
+    )
+    return text
 
 
 def write_json(result: SimulationEnsembleResult, path: str | Path) -> None:
     """Write the complete typed outcomes and common-grid position traces."""
-    Path(path).write_text(json.dumps(to_json_dict(result), indent=2), encoding="utf-8")
+    text = _encoded_document(result, indent=2)
+    Path(path).write_text(text, encoding="utf-8")
 
 
 def write_trace_csv(result: SimulationEnsembleResult, path: str | Path) -> None:

@@ -49,10 +49,13 @@ def numeric_matrix(
     """Parse an exact rectangular numeric matrix."""
     row_values = json_list(value, "numeric matrix")
     require(len(row_values) == rows, "numeric matrix row count is invalid")
+    parsed_rows = [json_list(raw_row, "numeric matrix row") for raw_row in row_values]
+    require(
+        all(len(row) == columns for row in parsed_rows),
+        "numeric matrix column count is invalid",
+    )
     result = np.empty((rows, columns), dtype=float)
-    for row_index, raw_row in enumerate(row_values):
-        row = json_list(raw_row, "numeric matrix row")
-        require(len(row) == columns, "numeric matrix column count is invalid")
+    for row_index, row in enumerate(parsed_rows):
         result[row_index] = [
             math.nan if item is None and nullable else number(item, "matrix value")
             for item in row
@@ -79,9 +82,14 @@ def bool_matrix(value: object, rows: int, columns: int, name: str) -> np.ndarray
     """Parse an exact rectangular boolean matrix."""
     items = json_list(value, name)
     require(len(items) == rows, f"{name} row count is invalid")
+    parsed_rows = [json_list(raw_row, name) for raw_row in items]
+    require(
+        all(len(row) == columns for row in parsed_rows),
+        f"{name} column count is invalid",
+    )
     result = np.empty((rows, columns), dtype=bool)
-    for row_index, raw_row in enumerate(items):
-        result[row_index] = bool_vector(raw_row, columns, name)
+    for row_index, row in enumerate(parsed_rows):
+        result[row_index] = bool_vector(row, columns, name)
     return result
 
 

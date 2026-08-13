@@ -1,13 +1,39 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R11.4 symmetric ensemble persistence hardening
+
+- Isolated local branch `codex/4142-ensemble-reader-hardening` starts from exact
+  integrated head `c1106926a037ba63bb14a4e84672686b8b06462f`; it is not
+  pushed.
+- Typed Rate results, the outer-v1 reader, and the writer share one scientific
+  shape/authority contract. Canonical sampled inputs and outputs, typed scalar
+  outcomes, success, partial/evaluated/failure trace availability, impact
+  status, and nearest-sample impact provenance are bound before serialization.
+- Sample and nested tensor axes are preflighted before corresponding NumPy
+  allocation. Standard finite JSON and exact formatted UTF-8 bytes are checked
+  before file creation, preventing successful writes that the reader rejects.
+- Deep-recursion, oversized-integer, Unicode, and syntax decoder failures are
+  normalized to public contract errors. Local evidence is 245 passing shared-
+  variation/Rate tests (14 known Hypothesis collection warnings), including 34
+  focused reader tests covering all scientific limits, allocation ordering,
+  crossed authority, and writer finite/byte preflight; scoped Ruff and MyPy pass.
+- The broader 1,187-test Rate sweep had 1,186 passes and one unrelated Morris
+  child-readiness timeout under 14-worker load; that exact test passed in 3.96
+  seconds when rerun alone.
+- This is strict current outer-v1 persistence, not a migration implementation.
+  A future schema must add an explicit reviewed migration and actual legacy
+  fixtures. Repository-wide gates, publication, UI imports, cross-runtime reading,
+  streaming, event ledgers, and complete state/torque authority remain open.
+
 ## 2026-08-12 #4142 R11.4 strict typed ensemble JSON reader
 
 - Local branch `codex/4142-typed-ensemble-reader-integrated` starts from exact
   current #4404 head `82e4c54c921f169227d25ece2935add4af3e721a`;
   it is not pushed.
-- The existing complete ensemble writer now has a strict typed inverse and
-  byte-for-document lossless semantic round trip. The v1 wire shape is
-  unchanged and only its exact embedded plan-v2 authority is accepted.
+- The slice introduced a strict typed reader and semantic current-v1 round trip
+  for archives inside the declared domain. The v1 wire shape is unchanged and
+  only its exact embedded plan-v2 authority is accepted; symmetric type/writer
+  hardening is recorded in the newer entry above.
 - Plan/spec/group identities, seed, samples, typed trial outcomes, all scalar
   availability, frame/unit/point provenance, sample masks, impact indices, and
   full position traces survive as immutable typed objects.

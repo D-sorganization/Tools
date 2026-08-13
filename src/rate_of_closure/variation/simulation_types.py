@@ -16,6 +16,8 @@ from shared.python.swing_sim.variation.engine import VariationDataset
 from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTraces
 from shared.python.swing_sim.variation.spec import VariationPlan
 
+from ._ensemble_limits import require_ensemble_shape_limits
+
 APP_FRAME_ID = "app_frame:x_target,y_up,z_right"
 
 CONTACT_OUTPUT_NAMES: tuple[str, ...] = (
@@ -138,18 +140,47 @@ class SimulationEnsembleResult:
     traces: EnsemblePositionTraces
 
     def __post_init__(self) -> None:
+        outcomes = tuple(self.outcomes)
         trial_count = len(self.variation.success)
-        require(len(self.outcomes) == trial_count, "outcomes must align to trials")
+        require(len(outcomes) == trial_count, "outcomes must align to trials")
         require(
-            tuple(outcome.trial_index for outcome in self.outcomes)
+            tuple(outcome.trial_index for outcome in outcomes)
             == tuple(range(trial_count)),
             "outcomes must be in canonical trial order",
+        )
+        require(
+            self.variation.output_names == ALL_OUTPUT_NAMES,
+            "variation output_names must be canonical",
+        )
+        expected_inputs = tuple(spec.variable_key for spec in self.variation.plan.noise)
+        require(
+            self.variation.input_names == expected_inputs,
+            "input_names must match plan provenance",
+        )
+        require(
+            bool(np.all(np.isfinite(self.variation.inputs))),
+            "ensemble sampled inputs must be finite",
+        )
+        require(
+            bool(
+                np.all(
+                    np.isfinite(self.variation.outputs)
+                    | np.isnan(self.variation.outputs)
+                )
+            ),
+            "ensemble outputs must be finite or unavailable NaN",
+        )
+        elapsed_s = float(self.variation.elapsed_s)
+        require(
+            math.isfinite(elapsed_s) and elapsed_s >= 0.0,
+            "elapsed_s must be finite and non-negative",
+            self.variation.elapsed_s,
         )
         require(
             all(
                 bool(self.variation.success[index])
                 == (outcome.status is not NUMERICAL_FAILURE)
-                for index, outcome in enumerate(self.outcomes)
+                for index, outcome in enumerate(outcomes)
             ),
             "outcome statuses must agree with variation success",
         )
@@ -157,6 +188,14 @@ class SimulationEnsembleResult:
             self.traces.variation is self.variation,
             "traces and result must share one VariationDataset",
         )
+        require_ensemble_shape_limits(
+            trial_count,
+            int(self.traces.sample_times_s.size),
+            len(self.traces.point_ids),
+        )
+        _require_outcome_scalar_binding(outcomes, self.variation)
+        _require_trace_status_binding(outcomes, self.traces)
+        object.__setattr__(self, "outcomes", outcomes)
 
     @property
     def impact_output_names(self) -> tuple[str, ...]:
@@ -224,6 +263,64 @@ def _validate_failure_metadata(outcome: SimulationTrialOutcome) -> None:
         outcome.failure_type is None and outcome.failure_message is None,
         "evaluated trials cannot carry failure metadata",
     )
+
+
+def _require_outcome_scalar_binding(
+    outcomes: tuple[SimulationTrialOutcome, ...], variation: VariationDataset
+) -> None:
+    """Bind every typed outcome to the canonical scalar matrix row."""
+    for outcome in outcomes:
+        expected = np.array(
+            [
+                math.nan if outcome.value(name) is None else outcome.value(name)
+                for name in ALL_OUTPUT_NAMES
+            ],
+            dtype=float,
+        )
+        require(
+            bool(
+                np.array_equal(
+                    variation.outputs[outcome.trial_index], expected, equal_nan=True
+                )
+            ),
+            "outcome values must match variation outputs",
+        )
+
+
+def _require_trace_status_binding(
+    outcomes: tuple[SimulationTrialOutcome, ...], traces: EnsemblePositionTraces
+) -> None:
+    """Bind typed trial status to trace availability and impact provenance."""
+    for outcome in outcomes:
+        index = outcome.trial_index
+        if outcome.status is NUMERICAL_FAILURE:
+            require(
+                not np.any(traces.sample_valid[index]),
+                "numerical failure trace must be unavailable",
+            )
+            require(
+                traces.impact_sample_indices[index] == -1,
+                "numerical failure impact marker must be -1",
+            )
+            continue
+        require(
+            np.any(traces.sample_valid[index]),
+            "evaluated trial trace must retain an available sample",
+        )
+        expected_impact = outcome.status is EVALUATED_HIT
+        impact_index = int(traces.impact_sample_indices[index])
+        require(
+            (impact_index >= 0) == expected_impact,
+            "impact marker must match typed trial status",
+        )
+        if expected_impact:
+            impact_time = outcome.value("impact_time_s")
+            assert impact_time is not None
+            nearest = int(np.argmin(np.abs(traces.sample_times_s - impact_time)))
+            require(
+                impact_index == nearest,
+                "impact marker must match impact-time provenance",
+            )
 
 
 __all__ = [

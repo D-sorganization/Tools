@@ -3,12 +3,38 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Symmetric ensemble persistence contract (#4142 R11.4)
+
+The isolated local branch `codex/4142-ensemble-reader-hardening` starts from
+exact integrated head `c1106926a037ba63bb14a4e84672686b8b06462f`; it is not
+pushed. The complete Rate result type, current-v1 reader, and writer now share
+one scientific-limit and authority-binding contract. Canonical columns,
+outcome/scalar/status alignment, partial/evaluated/failure trace availability,
+impact markers, and nearest-sample impact provenance are checked before export.
+
+The parser checks raw sample and tensor axes before NumPy allocation. The file
+writer produces only standard finite JSON, measures the exact formatted UTF-8
+payload, and fails before file creation when it exceeds the reader limit.
+Decoder recursion, oversized-integer, Unicode, and syntax failures consistently
+surface as contract errors. Local evidence is 245 passing shared-variation/Rate
+tests (14 known Hypothesis collection warnings), including 34 focused reader
+tests, plus scoped Ruff and MyPy. The broader 1,187-test Rate sweep had 1,186
+passes and one unrelated Morris child-readiness timeout under 14-worker load;
+that exact test passed in 3.96 seconds when rerun alone.
+
+This is strict current outer-v1 persistence, not migration. Unknown versions
+remain fail closed until a real successor schema supplies an explicit reviewed
+migration and legacy fixtures. Repository-wide gates, integration/publication, UI imports,
+browser parity, streaming, event ledgers, and complete state/torque authority
+remain open.
+
 ## 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
 
 The local child `codex/4142-typed-ensemble-reader-integrated` is based exactly
 on current #4404 head `82e4c54c921f169227d25ece2935add4af3e721a`.
-It adds the strict inverse of
-the complete Rate ensemble v1 writer and does not change that wire schema.
+It introduced the strict reader for the complete Rate ensemble v1 writer and
+did not change that wire schema; symmetric type/writer hardening is recorded in
+the newer entry above.
 
 The reader round-trips the complete plan-v2 provenance graph, sampled inputs,
 typed scalar outcomes, trace coordinates, validity, impact markers, stable
