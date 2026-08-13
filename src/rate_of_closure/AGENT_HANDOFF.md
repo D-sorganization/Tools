@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque static-gate closure (#4142)
+
+Static cleanup now allows the full cumulative localized slice to pass the
+repository's changed-source MyPy gate: shared dataset CSV arrays have explicit
+NumPy types and `_make_source` returns the source factory's declared
+`SwingSource` directly. Runtime/source/wire behavior is unchanged. Evidence is
+the exact 16-file delta MyPy command, 147 focused tests, and clean Ruff,
+formatting, and diff gates. Remaining UI, Rust, publication, and epic work stays
+open.
+
 ## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
 
 `make_source` validates `run_config` before fallback, accepting only `None` or

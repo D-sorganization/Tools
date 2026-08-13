@@ -1,5 +1,16 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 localized torque static-gate closure
+
+- Explicit NumPy annotations on variation CSV input/success arrays close the
+  cumulative changed-source MyPy findings.
+- The Rate pipeline removes the redundant cast around `make_source`, whose
+  public return contract is already `SwingSource`; runtime behavior is unchanged.
+- Evidence: exact 16-file delta MyPy, 147/147 focused localized tests, and
+  scoped Ruff/format/diff gates pass.
+- UI locus authoring, Rust parity, protected publication, and epic #4142 remain
+  open.
+
 ## 2026-08-12 #4142 source execution/dataset discriminator hardening
 
 - `make_source` validates the raw run config before defaulting; only exact

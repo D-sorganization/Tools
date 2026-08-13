@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque static-gate closure (#4142)
+
+The final cumulative changed-source MyPy blockers are closed without runtime
+changes: `dataset_io.read_csv` explicitly types its NumPy input/success arrays,
+and the Rate pipeline removes a redundant `SwingSource` cast around the already
+typed source factory return. The exact 16-file delta MyPy command, 147 focused
+localized tests, Ruff, formatting, and diff checks pass. UI, Rust, protected-
+publication, and #4142 completion gates remain open.
+
 ## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
 
 The source factory no longer uses `run_config or default`. It validates the

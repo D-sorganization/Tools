@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import cast
 
 import numpy as np
 
@@ -125,18 +124,15 @@ def _make_source(config: SimulationConfig) -> SwingSource:
     """Construct the configured app-frame swing source."""
     from rate_of_closure.simulation.sources import make_source
 
-    return cast(
-        SwingSource,
-        make_source(
-            config.source_kind,
-            config.scenario,
-            plane=config.plane,
-            duration=config.swing_duration_s,
-            run_config=config.swing_run_config,
-            torque_library=config.torque_library,
-            pendulum_parameters=config.pendulum_parameters,
-            manual_delivery=config.manual_delivery,
-        ),
+    return make_source(
+        config.source_kind,
+        config.scenario,
+        plane=config.plane,
+        duration=config.swing_duration_s,
+        run_config=config.swing_run_config,
+        torque_library=config.torque_library,
+        pendulum_parameters=config.pendulum_parameters,
+        manual_delivery=config.manual_delivery,
     )
 
 

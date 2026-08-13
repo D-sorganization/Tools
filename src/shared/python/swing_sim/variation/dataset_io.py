@@ -137,9 +137,9 @@ def read_csv(path: str | Path, plan: VariationPlan) -> VariationDataset:
     require(input_names == expected, "CSV input columns must match plan", input_names)
     body = rows[1:]
     require(len(body) == plan.n_runs, "CSV row count must match plan", len(body))
-    inputs = np.empty((plan.n_runs, n_inputs), dtype=float)
+    inputs: np.ndarray = np.empty((plan.n_runs, n_inputs), dtype=float)
     outputs = np.full((plan.n_runs, len(output_names)), np.nan)
-    success = np.zeros(plan.n_runs, dtype=bool)
+    success: np.ndarray = np.zeros(plan.n_runs, dtype=bool)
     for row in body:
         i = int(row[0])
         require(0 <= i < plan.n_runs, "run index out of range", i)

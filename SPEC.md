@@ -26,11 +26,24 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.57                                    |
-| **Spec Version**        | 1.16.57                                    |
+| **Current Version**     | 1.16.58                                    |
+| **Spec Version**        | 1.16.58                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Localized torque static-gate closure (#4142)
+
+Version 1.16.58 closes the final cumulative changed-source static-analysis
+findings without changing runtime behavior. The variation CSV reader explicitly
+types its input and success arrays as NumPy arrays, satisfying the repository's
+`follow-imports=skip` delta MyPy gate. The Rate simulation pipeline returns the
+already typed `SwingSource` from `make_source` directly instead of wrapping it
+in a redundant cast. Behavioral contracts and serialized data are unchanged.
+
+Evidence is the exact cumulative 16-file changed-source MyPy command, 147/147
+localized contract tests, and scoped Ruff/format/diff gates. UI locus authoring,
+Rust parity, protected publication, and epic completion remain open.
 
 ### 2026-08-12 Source execution and dataset discriminator hardening (#4142)
 
