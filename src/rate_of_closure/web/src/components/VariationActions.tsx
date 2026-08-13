@@ -8,6 +8,7 @@ import {
   type SwingVariationResultTs,
 } from "../model/variationSwingEnsemble";
 import type { VariationExecutionProgress } from "../model/variationExecutionService";
+import type { VariationVisualState } from "../model/variationVisualState";
 
 interface VariationActionsProps {
   plan: VariationPlanTs;
@@ -16,6 +17,7 @@ interface VariationActionsProps {
   status: string;
   busy: boolean;
   progress: VariationExecutionProgress | null;
+  visualState: VariationVisualState;
   onRun: () => void;
   onCancel: () => void;
   onImportText: (text: string) => void;
@@ -29,11 +31,18 @@ export function VariationActions({
   status,
   busy,
   progress,
+  visualState,
   onRun,
   onCancel,
   onImportText,
   onImportError,
 }: VariationActionsProps): JSX.Element {
+  let validPlanJson: string | null = null;
+  try {
+    validPlanJson = planToJson(plan);
+  } catch {
+    validPlanJson = null;
+  }
   return (
     <div className={PANEL_CLASS} aria-busy={busy}>
       <div className="flex flex-wrap gap-2">
@@ -122,10 +131,9 @@ export function VariationActions({
         </button>
         <button
           type="button"
-          onClick={() => downloadText(
-            "variation_plan.json",
-            planToJson(plan),
-            "application/json",
+          disabled={validPlanJson === null}
+          onClick={() => validPlanJson !== null && downloadText(
+            "variation_plan.json", validPlanJson, "application/json",
           )}
           title="Export the complete v2 physical plan as JSON."
           className={BUTTON_CLASS}
@@ -165,9 +173,9 @@ export function VariationActions({
         </div>
       )}
       <p
-        role="status"
+        role={visualState.announcementRole}
         aria-label="Variation status"
-        aria-live="polite"
+        aria-live={visualState.announcementRole === "alert" ? "assertive" : "polite"}
         className="mt-3 text-xs text-slate-400"
       >
         {status}

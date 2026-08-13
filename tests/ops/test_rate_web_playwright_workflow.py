@@ -27,6 +27,7 @@ PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/plotting/**",
     "src/rate_of_closure/simulation/**",
     "src/rate_of_closure/variation/**",
+    "src/rate_of_closure/variation_visual_state.py",
     "src/rate_of_closure/ui/pyqt6/**",
     "src/rate_of_closure/visualization_tab_manifest.py",
     "src/rate_of_closure/visualization_tabs.v1.json",
@@ -35,6 +36,8 @@ PYQT_AUTHORITY_PATHS = {
     "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
     "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
     "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
+    "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+    "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py",
     "tests/rate_of_closure/test_visualization_tab_manifest.py",
     "tests/rate_of_closure/test_visualization_tab_audit.py",
     "tests/ops/test_rate_web_playwright_workflow.py",
@@ -126,6 +129,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     assert pr_commands["Exercise PyQt tab visibility at 100 and 150 percent DPI"] == (
         "python -m pytest "
         "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py "
+        "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
     assert (
@@ -137,6 +141,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
     assert trusted_commands["Exercise protected PyQt tab visibility"] == (
         "python -m pytest "
+        "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
 

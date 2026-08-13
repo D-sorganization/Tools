@@ -256,6 +256,31 @@ describe("web swing variation ensemble", () => {
       (dataset.inputs as unknown[][])[0][0] = "3";
     });
     expectWorkerTamperRejected((value) => {
+      const dataset = structuredClone(value.dataset) as Record<string, unknown>;
+      value.dataset = dataset;
+      const outputs = dataset.outputs as Array<Array<number | null>>;
+      outputs[0][0] = (outputs[0][0] ?? 0) + 1;
+    });
+    const malformedSensitivity = structuredClone(executeVariationWork(
+      { ...request, analysisExecution: "both" }, () => undefined,
+    ));
+    if (malformedSensitivity.sensitivity === null) {
+      throw new Error("both policy did not return sensitivity");
+    }
+    malformedSensitivity.sensitivity.normalized[0][0] = 2;
+    expect(() => validateResult(
+      malformedSensitivity, { ...request, analysisExecution: "both" },
+    )).toThrow(/sensitivity matrix/i);
+    malformedSensitivity.sensitivity.normalized[0][0] = Number.NaN;
+    malformedSensitivity.sensitivity.matrix[0][0] = Number.NaN;
+    expect(() => validateResult(
+      malformedSensitivity, { ...request, analysisExecution: "both" },
+    )).not.toThrow();
+    malformedSensitivity.sensitivity.matrix[0][0] = Number.POSITIVE_INFINITY;
+    expect(() => validateResult(
+      malformedSensitivity, { ...request, analysisExecution: "both" },
+    )).toThrow(/sensitivity matrix/i);
+    expectWorkerTamperRejected((value) => {
       const ensemble = value.ensemble as Record<string, unknown>;
       const runs = ensemble.runs as Array<Record<string, unknown>>;
       const commands = runs[0].localizedTorqueCommands as Array<Record<string, unknown>>;

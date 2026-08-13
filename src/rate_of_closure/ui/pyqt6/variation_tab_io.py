@@ -70,6 +70,9 @@ class VariationTabIoMixin:
         """Return the authoritative fixed-step swing duration."""
         raise NotImplementedError
 
+    def _invalidate_current_study(self) -> None:
+        raise NotImplementedError
+
     def _build_export_box(self) -> QGroupBox:
         """Build dataset, trace, and reproducibility exports."""
         box = QGroupBox("Export / Reproduce")
@@ -212,6 +215,7 @@ class VariationTabIoMixin:
     def load_plan(self, plan: VariationPlan) -> None:
         """Atomically drive editors from a losslessly representable plan."""
         self._validate_plan_for_editors(plan)
+        self._invalidate_current_study()
         self._mode_combo.setCurrentIndex(MODES.index(plan.mode))
         self._runs_spin.setValue(plan.n_runs)
         self._seed_spin.setValue(plan.seed)

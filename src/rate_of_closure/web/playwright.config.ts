@@ -46,7 +46,7 @@ export default defineConfig({
     },
     {
       name: "chromium-narrow",
-      testMatch: /variation-layout\.spec\.ts/,
+      testMatch: /variation-(layout|visual-state)\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 390, height: 844 },

@@ -1,5 +1,19 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Variation state-preserving visual shell
+
+- A shared strict state matrix controls matched React/PyQt Variation empty,
+  loading, result, error, and cooperative-cancel presentation.
+- Full internal execution identity separates accepted evidence from current
+  editors. Same-identity reruns retain one complete visual; edits and invalid
+  transient plans clear result/export, and forged plan/ensemble/sensitivity or
+  view-publication failure cannot leak partial evidence.
+- Twelve React and twelve PyQt diagnostic PNGs plus semantic manifests cover
+  six states across desktop/narrow and two DPI scales. The React harness
+  deliberately scrolls the exact visual into view, proving inspectability but
+  not automatic prominence. SPEC is 1.16.84; portable archive/replay binding,
+  approved goldens, AT validation, and other #4433 tabs stay open.
+
 ## 2026-08-13 #4433 Unicode-scalar import parity correction
 
 - Both import authorities reject lone UTF-16 high or low surrogates in JSON

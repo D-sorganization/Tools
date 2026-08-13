@@ -67,6 +67,13 @@ class VariationTab(
         self._dataset: VariationDataset | None = None
         self._sensitivity: SensitivityResult | None = None
         self._ensemble_result: SimulationEnsembleResult | None = None
+        self._pending_ensemble_result: SimulationEnsembleResult | None = None
+        self._accepted_authority_identity: object | None = None
+        self._accepted_result_views = None
+        self._accepted_plot_dataset = None
+        self._active_authority_identity: object | None = None
+        self._active_plan: VariationPlan | None = None
+        self._active_compute_sensitivity = False
         self._base_simulation_config = SimulationConfig(
             scenario=self._scenario,
             club=get_club("Driver 10.5°"),
@@ -119,6 +126,7 @@ class VariationTab(
             "defaults, or the current explorer scenario (clubhead speed "
             "and impact offsets carried over in delivery mode)."
         )
+        self._base_combo.currentIndexChanged.connect(self._invalidate_current_study)
         form.addRow("Base Scenario", self._base_combo)
 
         self._flight_combo = QComboBox()
@@ -128,6 +136,7 @@ class VariationTab(
             "Ball-flight model used for every run (kept on the plan so a "
             "saved study replays identically)."
         )
+        self._flight_combo.currentIndexChanged.connect(self._invalidate_current_study)
         form.addRow("Flight Model", self._flight_combo)
 
         self._runs_spin = QSpinBox()
@@ -138,6 +147,7 @@ class VariationTab(
             "well; the sensitivity pass repeats this count once per "
             "noise row."
         )
+        self._runs_spin.valueChanged.connect(self._invalidate_current_study)
         form.addRow("Runs", self._runs_spin)
 
         self._seed_spin = QSpinBox()
@@ -147,6 +157,7 @@ class VariationTab(
             "Master RNG seed — the same plan and seed always reproduce "
             "the exact same dataset (per-variable seeded streams)."
         )
+        self._seed_spin.valueChanged.connect(self._invalidate_current_study)
         form.addRow("Seed", self._seed_spin)
         return box
 
@@ -177,6 +188,7 @@ class VariationTab(
             "output's spread to its inputs. Multiplies runtime by the "
             "number of rows + 1."
         )
+        self._sens_check.toggled.connect(self._invalidate_current_study)
         layout.addWidget(self._sens_check)
         row = QHBoxLayout()
         self._run_button = QPushButton("Run Variation Study")
@@ -205,6 +217,8 @@ class VariationTab(
 
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (base-source 'Explorer Scenario')."""
+        if scenario != self._scenario and self._base_combo.currentIndex() == 1:
+            self._invalidate_current_study()
         self._scenario = scenario
 
     def set_simulation_config(self, config: SimulationConfig) -> None:

@@ -34,7 +34,9 @@ from shared.python.swing_sim.variation import (
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["VariationWorker"]
+__all__ = ["MAX_WORKER_ERROR_LENGTH", "VariationWorker"]
+
+MAX_WORKER_ERROR_LENGTH = 512
 
 
 class VariationWorker(QThread):
@@ -128,7 +130,7 @@ class VariationWorker(QThread):
             self.cancelled.emit()
         except Exception as exc:  # noqa: BLE001 — surface engine failures
             logger.warning("variation run failed: %s", exc)
-            self.failed.emit(str(exc))
+            self.failed.emit(str(exc)[:MAX_WORKER_ERROR_LENGTH])
         else:
             if ensemble is not None:
                 self.ensembleSucceeded.emit(ensemble)

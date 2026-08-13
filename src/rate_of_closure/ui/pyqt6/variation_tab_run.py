@@ -7,10 +7,25 @@ from typing import Any
 from PyQt6.QtWidgets import QCheckBox, QLabel, QProgressBar, QPushButton
 
 from rate_of_closure.simulation import SimulationConfig
-from rate_of_closure.ui.pyqt6.variation_tab_results import populate_result_views
-from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker
-from rate_of_closure.variation.plot_data import build_ensemble_plot_dataset
+from rate_of_closure.ui.pyqt6.variation_tab_results import (
+    PreparedResultViews,
+    prepare_result_views,
+)
+from rate_of_closure.ui.pyqt6.variation_worker import (
+    MAX_WORKER_ERROR_LENGTH,
+    VariationWorker,
+)
+from rate_of_closure.variation.plot_data import (
+    EnsemblePlotDataset,
+    build_ensemble_plot_dataset,
+    scalar_plot_variables,
+)
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
+from rate_of_closure.variation_visual_state import (
+    VariationVisualEvent,
+    simulation_authority_identity,
+    variation_visual_state,
+)
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     SensitivityResult,
@@ -30,6 +45,13 @@ class VariationTabRunMixin:
     _dataset: VariationDataset | None
     _sensitivity: SensitivityResult | None
     _ensemble_result: SimulationEnsembleResult | None
+    _pending_ensemble_result: SimulationEnsembleResult | None
+    _accepted_authority_identity: object | None
+    _active_authority_identity: object | None
+    _active_plan: VariationPlan | None
+    _active_compute_sensitivity: bool
+    _accepted_result_views: PreparedResultViews | None
+    _accepted_plot_dataset: EnsemblePlotDataset | None
     _base_simulation_config: SimulationConfig
     _sens_check: QCheckBox
     _run_button: QPushButton
@@ -47,10 +69,10 @@ class VariationTabRunMixin:
     _summary_table: Any
     _sensitivity_table: Any
     _spearman_table: Any
+    _visual_frame: Any
     studyCompleted: Any  # Qt signal descriptor supplied by the concrete tab.
 
     def build_plan(self) -> VariationPlan:
-        """Return the concrete tab's validated plan."""
         raise NotImplementedError
 
     def _on_run(self) -> None:
@@ -66,9 +88,15 @@ class VariationTabRunMixin:
         except (ContractViolationError, ValueError) as exc:
             self._status.setText(f"Cannot run: {exc}")
             return
-        self._dataset = None
-        self._sensitivity = None
-        self._ensemble_result = None
+        authority_identity = self._current_authority_identity(plan)
+        retains_accepted = authority_identity == self._accepted_authority_identity
+        if not retains_accepted:
+            self._clear_accepted_result()
+            self._accepted_authority_identity = None
+        self._pending_ensemble_result = None
+        self._active_authority_identity = authority_identity
+        self._active_plan = plan
+        self._active_compute_sensitivity = self._sens_check.isChecked()
         self._generation += 1
         generation = self._generation
         self._set_running(True)
@@ -108,6 +136,12 @@ class VariationTabRunMixin:
         self._progress.setRange(0, worker.total_runs)
         self._progress.setValue(0)
         self._status.setText("Running…")
+        self._set_visual_event(
+            VariationVisualEvent.START_RETAINED
+            if retains_accepted
+            else VariationVisualEvent.START_EMPTY,
+            "Running…",
+        )
         worker.start()
 
     def _set_running(self, running: bool) -> None:
@@ -121,8 +155,19 @@ class VariationTabRunMixin:
 
     def _on_cancel(self) -> None:
         if self._worker is not None:
+            self._generation += 1
             self._worker.cancel()
-            self._status.setText("Cancelling…")
+            self._pending_ensemble_result = None
+            self._status.setText("Cancelled: no partial variation result was accepted.")
+            self._set_visual_event(
+                VariationVisualEvent.CANCEL_RETAINED
+                if self._retains_active_result()
+                else VariationVisualEvent.CANCEL_EMPTY,
+                "Cancelled: no partial variation result was accepted.",
+            )
+            self._active_authority_identity = None
+            self._active_plan = None
+            self._active_compute_sensitivity = False
 
     def _is_current_generation(self, generation: int) -> bool:
         return generation == self._generation
@@ -182,69 +227,155 @@ class VariationTabRunMixin:
         self._status.setText(phase)
 
     def _on_succeeded(self, dataset: VariationDataset, sensitivity: object) -> None:
-        self._dataset = dataset
-        self._sensitivity = (
+        active_plan = self._active_plan
+        if self._active_authority_identity is None or active_plan is None:
+            return
+        if dataset.plan != active_plan:
+            self._on_failed("Result plan does not match the active variation request.")
+            return
+        if self._active_compute_sensitivity != isinstance(
+            sensitivity, SensitivityResult
+        ):
+            self._on_failed(
+                "Sensitivity result availability does not match the active request."
+            )
+            return
+        pending_ensemble = self._pending_ensemble_result
+        if active_plan.mode == "swing":
+            if (
+                pending_ensemble is None
+                or pending_ensemble.variation.plan != active_plan
+                or dataset is not pending_ensemble.variation
+            ):
+                self._on_failed(
+                    "Swing ensemble does not match the active variation request."
+                )
+                return
+        elif pending_ensemble is not None:
+            self._on_failed("Unexpected swing ensemble for a scalar variation request.")
+            return
+        candidate_sensitivity = (
             sensitivity if isinstance(sensitivity, SensitivityResult) else None
         )
-        if self._ensemble_result is None:
-            self._ensemble_scatter.set_variation_dataset(dataset)
-            self._distribution_matrix.set_variation_dataset(dataset)
-        self._populate_results()
+        try:
+            prepared_views = prepare_result_views(dataset, candidate_sensitivity)
+            plot_dataset = (
+                build_ensemble_plot_dataset(pending_ensemble)
+                if pending_ensemble is not None
+                else None
+            )
+            if pending_ensemble is None:
+                scalar_plot_variables(dataset)
+        except Exception as exc:
+            self._on_failed(f"Could not prepare accepted result visuals: {exc}")
+            return
+        previous = (
+            self._dataset,
+            self._ensemble_result,
+            self._accepted_result_views,
+            self._accepted_plot_dataset,
+        )
+        try:
+            self._apply_prepared_result(  # type: ignore[attr-defined]
+                prepared_views, pending_ensemble, plot_dataset
+            )
+        except Exception as exc:
+            self._restore_prepared_result(previous)  # type: ignore[attr-defined]
+            self._on_failed(f"Could not publish accepted result visuals: {exc}")
+            return
+        self._dataset = dataset
+        self._sensitivity = candidate_sensitivity
+        self._ensemble_result = pending_ensemble
+        self._accepted_result_views = prepared_views
+        self._accepted_plot_dataset = plot_dataset
+        self._pending_ensemble_result = None
         failures = dataset.plan.n_runs - dataset.n_success
         note = f" ({failures} runs failed)" if failures else ""
         self._status.setText(
             f"Done: {dataset.n_success}/{dataset.plan.n_runs} runs in "
             f"{dataset.elapsed_s:.1f} s{note}."
         )
+        self._accepted_authority_identity = self._active_authority_identity
+        self._active_authority_identity = None
+        self._active_plan = None
+        self._active_compute_sensitivity = False
+        self._set_visual_event(VariationVisualEvent.SUCCEED, self._status.text())
         self.studyCompleted.emit(dataset)
 
     def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
         """Populate complete-trace views before the scalar completion callback."""
-        self._ensemble_result = result
-        self._landing.set_outcomes(tuple(outcome.status for outcome in result.outcomes))
-        self._export_trace_csv.setEnabled(True)
-        self._export_ensemble_json.setEnabled(True)
-        plot_dataset = build_ensemble_plot_dataset(result)
-        self._ensemble_scatter.set_plot_dataset(plot_dataset)
-        self._distribution_matrix.set_plot_dataset(plot_dataset)
-        self._arc_overlay.set_plot_dataset(plot_dataset)
+        self._pending_ensemble_result = result
 
     def _on_cancelled(self) -> None:
+        if self._active_authority_identity is None:
+            return
+        self._pending_ensemble_result = None
         self._status.setText("Cancelled.")
+        self._set_visual_event(
+            VariationVisualEvent.CANCEL_RETAINED
+            if self._retains_active_result()
+            else VariationVisualEvent.CANCEL_EMPTY,
+            self._status.text(),
+        )
+        self._active_authority_identity = None
+        self._active_plan = None
+        self._active_compute_sensitivity = False
 
     def _on_failed(self, message: str) -> None:
-        self._status.setText(f"Study failed: {message}")
+        if self._active_authority_identity is None:
+            return
+        self._pending_ensemble_result = None
+        bounded = str(message)[:MAX_WORKER_ERROR_LENGTH]
+        self._status.setText(f"Study failed: {bounded}")
+        self._set_visual_event(
+            VariationVisualEvent.FAIL_RETAINED
+            if self._retains_active_result()
+            else VariationVisualEvent.FAIL_EMPTY,
+            self._status.text(),
+        )
+        self._active_authority_identity = None
+        self._active_plan = None
+        self._active_compute_sensitivity = False
 
     def _on_finished(self) -> None:
         self._progress.setRange(0, max(self._progress.maximum(), 1))
         self._progress.setValue(self._progress.maximum())
         self._set_running(False)
 
-    def _populate_results(self) -> None:
-        dataset = self._dataset
-        if dataset is None:
-            return
-        populate_result_views(
-            dataset,
-            self._sensitivity,
-            self._summary_table,
-            self._sensitivity_table,
-            self._spearman_table,
-            self._landing,
-        )
-
     def _invalidate_current_study(self) -> None:
         self._generation += 1
         if self._worker is not None and self._worker.isRunning():
             self._worker.cancel()
+        self._clear_accepted_result()
+        self._active_authority_identity = None
+        self._active_plan = None
+        self._active_compute_sensitivity = False
+        self._accepted_authority_identity = None
+        self._set_running(False)
+        self._set_visual_event(
+            VariationVisualEvent.INVALIDATE,
+            "Ready: configuration changed; run again.",
+        )
+
+    def _set_visual_event(self, event: VariationVisualEvent, text: str) -> None:
+        self._visual_frame.set_state(variation_visual_state(event), text)
+
+    def _retains_active_result(self) -> bool:
+        return (
+            self._accepted_authority_identity is not None
+            and self._accepted_authority_identity == self._active_authority_identity
+        )
+
+    def _current_authority_identity(self, plan: VariationPlan) -> object:
+        return simulation_authority_identity(
+            plan, self._base_simulation_config, self._sens_check.isChecked()
+        )
+
+    def _clear_accepted_result(self) -> None:
         self._dataset = None
         self._sensitivity = None
         self._ensemble_result = None
-        self._summary_table.setRowCount(0)
-        for table in (self._sensitivity_table, self._spearman_table):
-            table.setRowCount(0)
-            table.setColumnCount(0)
-        self._landing.clear_view()
-        self._ensemble_scatter.clear_view()
-        self._distribution_matrix.clear_view()
-        self._arc_overlay.clear_view()
+        self._accepted_result_views = None
+        self._accepted_plot_dataset = None
+        self._pending_ensemble_result = None
+        self._clear_result_widgets()  # type: ignore[attr-defined]

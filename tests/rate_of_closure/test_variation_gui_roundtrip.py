@@ -18,6 +18,7 @@ from shared.python.swing_sim.variation import (  # noqa: E402
     NoiseSpec,
     PerturbationGroup,
     VariationPlan,
+    run_variation,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -45,6 +46,34 @@ def _fast_launch_plan(n_runs: int = 12) -> VariationPlan:
 
 
 class TestPlanRoundTrip:
+    def test_hidden_loaded_base_change_invalidates_accepted_evidence(
+        self, tab: VariationTab
+    ) -> None:
+        plan = _fast_launch_plan(4)
+        tab.load_plan(plan)
+        tab._active_plan = plan
+        tab._active_authority_identity = tab._current_authority_identity(plan)
+        tab._on_succeeded(run_variation(plan, n_workers=1), None)
+        tab._set_running(False)
+        generation = tab._generation
+        assert tab.dataset() is not None and tab._export_json.isEnabled()
+
+        tab.load_plan(
+            VariationPlan(
+                mode=plan.mode,
+                base_variables={_BALL: 160.0},
+                noise=plan.noise,
+                n_runs=plan.n_runs,
+                seed=plan.seed,
+                flight_model=plan.flight_model,
+            )
+        )
+
+        assert tab._generation > generation
+        assert tab.dataset() is None and tab.ensemble_result() is None
+        assert not tab._export_json.isEnabled()
+        assert tab._summary_table.rowCount() == 0
+
     def test_build_plan_reflects_the_editors(self, tab: VariationTab) -> None:
         tab._runs_spin.setValue(33)
         tab._seed_spin.setValue(7)

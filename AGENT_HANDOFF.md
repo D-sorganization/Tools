@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation state-preserving visual shell (#4433)
+
+Version 1.16.84 gives the matched React/PyQt Variation surfaces one strict
+empty/loading/result/error matrix. Same-authority reruns retain only the last
+fully accepted visual and export bundle; edits, cancellation, stale callbacks,
+forged result plans, malformed sensitivity, and partial publication fail
+closed. Diagnostics cover six lifecycle states at React desktop/narrow and
+PyQt 100/150% DPI. Browser captures scroll the exact landmark into view and
+therefore prove inspectability, not automatic post-Run viewport prominence.
+Portable replay/archive binding, approved goldens, AT validation, and broader
+#4433 tabs remain open.
+
 ## 2026-08-13 Linked-scatter Unicode-scalar parity closure (#4433)
 
 Version 1.16.83 requires well-formed Unicode scalar text before shared UTF-8

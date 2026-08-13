@@ -28,6 +28,10 @@ class VariationTabEditorsMixin:
         """Return the concrete tab's current pipeline mode."""
         raise NotImplementedError
 
+    def _invalidate_current_study(self) -> None:
+        """Invalidate the concrete tab's accepted result authority."""
+        raise NotImplementedError
+
     def _add_row(self) -> NoiseRow:
         row = NoiseRow(
             self.mode(),
@@ -36,7 +40,10 @@ class VariationTabEditorsMixin:
             duration_s=self._localized_duration_s(),
         )
         self._rows.append(row)
+        row.authorityChanged.connect(self._invalidate_current_study)
         self._rows_layout.insertWidget(self._rows_layout.count() - 1, row)
+        if len(self._rows) > 1:
+            self._invalidate_current_study()
         return row
 
     def _remove_row(self, row: NoiseRow) -> None:
@@ -44,10 +51,12 @@ class VariationTabEditorsMixin:
             self._status.setText("At least one noise row is required.")
             return
         self._rows.remove(row)
+        self._invalidate_current_study()
         row.setParent(None)
         row.deleteLater()
 
     def _on_mode_changed(self, *_args: object) -> None:
+        self._invalidate_current_study()
         self._loaded_base.clear()
         self._loaded_groups = ()
         self._refresh_row_contexts()

@@ -125,8 +125,11 @@ const validateSensitivity = (
   const validMatrix = (candidate: unknown) =>
     Array.isArray(candidate) && candidate.length === inputKeys.length
     && candidate.every((row) => Array.isArray(row) && row.length === outputNames.length
-      && row.every((item) => typeof item === "number" && Number.isFinite(item)));
-  if (!validMatrix(value.matrix) || !validMatrix(value.normalized)) {
+      && row.every((item) => typeof item === "number"
+        && (Number.isFinite(item) || Number.isNaN(item))));
+  if (!validMatrix(value.matrix) || !validMatrix(value.normalized)
+      || (value.normalized as number[][]).some((row) =>
+        row.some((item) => Number.isFinite(item) && (item < 0 || item > 1)))) {
     return failProtocol("sensitivity matrix");
   }
   return value as unknown as SensitivityResultTs;
@@ -209,6 +212,10 @@ export const validateResult = (
     ? null
     : validateSensitivity(value.sensitivity, request);
   const ensemble = value.ensemble === null ? null : validateEnsemble(value.ensemble, request);
+  if (dataset !== null && ensemble !== null
+      && JSON.stringify(dataset) !== JSON.stringify(ensemble.dataset)) {
+    return failProtocol("dataset and ensemble cohesion");
+  }
   return { dataset, sensitivity, ensemble };
 };
 

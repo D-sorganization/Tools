@@ -26,11 +26,27 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.83                                    |
-| **Spec Version**        | 1.16.83                                    |
+| **Current Version**     | 1.16.84                                    |
+| **Spec Version**        | 1.16.84                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Variation state-preserving visual shell (#4433)
+
+Version 1.16.84 defines one immutable empty/loading/result/error/cancel matrix
+for matched React and PyQt Variation views. A rerun retains at most the last
+fully accepted visual and export bundle, and only when complete internal
+execution identity still matches. Every scientific editor invalidates prior
+evidence; transient invalid editor values remain editable but cannot run or
+export. Result plan, ensemble plan, sensitivity policy/shapes, generation, and
+complete simulation authority are verified before staged presentation commit.
+Cancellation is operational status, not scientific error. Diagnostics cover
+six states at React desktop/narrow and PyQt 100/150% DPI; browser diagnostics
+scroll the exact visual into view, so they prove inspectability rather than
+automatic post-Run viewport prominence. Portable archive/replay identity,
+approved goldens, assistive-technology validation, and other #4433 tabs remain
+open.
 
 ### 2026-08-13 Linked-scatter Unicode-scalar parity closure (#4433)
 
@@ -4136,6 +4152,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
 | 2026-08-13 | 1.16.80 | fix(rate-of-closure, #4433): make the PyQt selected-state diagnostic use an exact tab-type boundary and direct preview access without changing the runtime contract. |
 | 2026-08-13 | 1.16.81 | fix(rate-of-closure, #4433): bound extreme plotting projection, strict retained-data resources, and generation-safe atomic dataset replacement across React and PyQt. |
+| 2026-08-13 | 1.16.84 | feat(rate-of-closure, #4433): retain only complete identity-bound Variation visuals across production loading/failure with atomic publication and diagnostic state evidence. |
 | 2026-08-13 | 1.16.83 | fix(rate-of-closure, #4433): reject malformed Unicode surrogate text before shared field-byte accounting while accepting normalized supplementary scalars. |
 | 2026-08-13 | 1.16.82 | fix(rate-of-closure, #4433): define shared UTF-8 field limits and direct row, union-column, and dense-cell cap evidence without process-global parser mutation. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |

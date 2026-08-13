@@ -15,6 +15,8 @@ import { VariationDistributionMatrix } from "./VariationDistributionMatrix";
 import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import { PANEL_CLASS, sensitivityHeat } from "./variationUi";
 import { VariationLocalizedSources } from "./VariationLocalizedSources";
+import { VisualStateFrame } from "./VisualStateFrame";
+import type { VariationVisualState } from "../model/variationVisualState";
 
 interface VariationResultsProps {
   dataset: VariationDatasetTs | null;
@@ -22,6 +24,8 @@ interface VariationResultsProps {
   target?: TargetRegionTs;
   distanceUnit: string;
   ensemble?: SwingVariationResultTs | null;
+  visualState?: VariationVisualState;
+  visualAnnouncement?: string;
 }
 
 interface TrialSelection {
@@ -36,6 +40,8 @@ export function VariationResults({
   target,
   distanceUnit,
   ensemble = null,
+  visualState = { phase: "empty", visualOrigin: "empty-preview", announcementRole: "status" },
+  visualAnnouncement = "Ready.",
 }: VariationResultsProps): JSX.Element {
   const [selection, setSelection] = useState<TrialSelection | null>(null);
   const trialCount = dataset?.plan.nRuns ?? ensemble?.dataset.plan.nRuns ?? 0;
@@ -62,7 +68,7 @@ export function VariationResults({
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
 
-  return (
+  return <VisualStateFrame state={visualState} announcement={visualAnnouncement}>
     <section aria-label="Variation results" className="min-w-0 space-y-6">
       {ensemble && <VariationLocalizedSources ensemble={ensemble} />}
       {dataset && (
@@ -261,5 +267,5 @@ export function VariationResults({
         </div>
       )}
     </section>
-  );
+  </VisualStateFrame>;
 }

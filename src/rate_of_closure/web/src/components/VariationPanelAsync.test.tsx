@@ -126,6 +126,39 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
       .toHaveTextContent(/done: 2\/2 joint runs/i);
   });
 
+  it("uses one assertive alert owner for first and retained failures", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+    await act(async () => service.calls[0].reject(new Error("first failure")));
+    expect(screen.getByRole("alert", { name: "Variation status" }))
+      .toHaveAttribute("aria-live", "assertive");
+    expect(screen.getAllByRole("alert")).toHaveLength(1);
+
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+    await act(async () => service.calls[1].resolve(completedResult(service.calls[1])));
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+    await act(async () => service.calls[2].reject(new Error("retained failure")));
+    expect(screen.getByRole("alert", { name: "Variation status" }))
+      .toHaveTextContent("retained failure");
+    expect(screen.getAllByRole("alert")).toHaveLength(1);
+  });
+
+  it("bounds failure announcements before they can displace the visual", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+    await act(async () => service.calls[0].reject(new Error("x".repeat(100_000))));
+    expect(screen.getByRole("alert", { name: "Variation status" }).textContent?.length)
+      .toBeLessThan(530);
+    expect(screen.getByRole("img", { name: "Variation analysis workflow preview" }))
+      .toBeVisible();
+  });
+
   it("suppresses a stale generation that resolves after its rerun", async () => {
     const user = userEvent.setup();
     const service = new DeferredExecutionService();
@@ -167,5 +200,72 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
       active.controls.onProgress({ completedRuns: 2, totalRuns: 2, phase: "joint" });
       active.resolve(completedResult(active));
     });
+  });
+
+  it("retains one accepted visual through same-authority loading and failure", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    const run = screen.getByRole("button", { name: "Run Variation Study" });
+    await user.click(run);
+    await act(async () => service.calls[0].resolve(completedResult(service.calls[0])));
+    const summary = screen.getByRole("heading", { name: /Summary — Dispersion/ });
+    expect(summary).toBeVisible();
+
+    await user.click(run);
+    const frame = screen.getByLabelText(/prior accepted result retained/i);
+    expect(frame).toHaveAttribute("data-phase", "loading");
+    expect(summary).toBeVisible();
+    await act(async () => service.calls[1].reject(new Error("bounded failure")));
+    expect(frame).toHaveAttribute("data-phase", "error");
+    expect(summary).toBeVisible();
+    expect(screen.getByLabelText("Variation visualization state"))
+      .toHaveTextContent(/prior accepted result retained.*bounded failure/i);
+    const strip = screen.getByLabelText("Variation visualization state");
+    expect(strip.compareDocumentPosition(summary) & Node.DOCUMENT_POSITION_FOLLOWING)
+      .toBeTruthy();
+    expect(strip).not.toHaveClass("absolute");
+  });
+
+  it("invalidates retained evidence for every scientific policy edit", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+    await act(async () => service.calls[0].resolve(completedResult(service.calls[0])));
+    expect(screen.getByRole("heading", { name: /Summary — Dispersion/ })).toBeVisible();
+
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Analysis execution" }), "both",
+    );
+
+    expect(screen.getByLabelText(/analysis preview/i)).toHaveAttribute("data-phase", "empty");
+    expect(screen.queryByRole("heading", { name: /Summary — Dispersion/ })).toBeNull();
+  });
+
+  it("keeps transient invalid bounds editable while invalidating accepted evidence", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+    await act(async () => service.calls[0].resolve(completedResult(service.calls[0])));
+
+    fireEvent.change(screen.getByRole("spinbutton", { name: /lower bound/i }), {
+      target: { value: "100" },
+    });
+    fireEvent.change(screen.getByRole("spinbutton", { name: /upper bound/i }), {
+      target: { value: "10" },
+    });
+
+    expect(screen.getByLabelText(/analysis preview/i)).toHaveAttribute("data-phase", "empty");
+    expect(screen.queryByRole("heading", { name: /Summary — Dispersion/ })).toBeNull();
+    expect(screen.getByRole("button", { name: "Export Plan JSON" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+    expect(screen.getByRole("alert", { name: "Variation status" }))
+      .toHaveTextContent(/cannot run/i);
+    expect(service.calls).toHaveLength(1);
   });
 });

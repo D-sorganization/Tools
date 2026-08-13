@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation state-preserving visual shell (#4433)
+
+- Python and React consume one immutable transition matrix. Loading/failure
+  keeps the last complete accepted visual only when full execution identity
+  matches; scientific edits invalidate it, cancellation never becomes a red
+  scientific error, and one bounded status owner announces the operation.
+- PyQt binds plan, sensitivity policy, complete simulation configuration, and
+  ensemble result before publication. All fallible presentation derivation is
+  staged, malformed/forged payloads fail closed, and publication rollback
+  retains the exact prior export source and visual.
+- Production worker/service lifecycle diagnostics capture empty,
+  loading-without-prior, first error, result, loading-with-prior, and retained
+  error at React desktop/narrow and PyQt 100/150% DPI. React evidence uses
+  explicit landmark scrolling, so automatic transition prominence remains an
+  open #4433 gap. Archive/replay authority, approved goldens, and AT validation
+  remain open. SPEC is 1.16.84.
+
 ## 2026-08-13 Linked-scatter Unicode-scalar parity correction (#4433)
 
 - Version 1.16.83 rejects unmatched UTF-16 high/low surrogates in JSON keys and

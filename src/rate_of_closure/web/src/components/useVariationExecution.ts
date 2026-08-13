@@ -11,6 +11,16 @@ import {
   type VariationExecutionResult,
   type VariationExecutionService,
 } from "../model/variationExecutionService";
+import {
+  MAX_WORKER_ERROR_LENGTH,
+  validateExecutionRequest,
+  validateResult,
+} from "../model/variationExecutionValidation";
+import {
+  variationExecutionIdentity,
+  variationVisualState,
+  type VariationVisualState,
+} from "../model/variationVisualState";
 
 interface VariationExecutionState {
   dataset: VariationDatasetTs | null;
@@ -20,6 +30,7 @@ interface VariationExecutionState {
   setStatus: (status: string) => void;
   busy: boolean;
   progress: VariationExecutionProgress | null;
+  visualState: VariationVisualState;
   run: () => Promise<void>;
   cancel: () => void;
   invalidateResults: () => void;
@@ -59,8 +70,13 @@ export function useVariationExecution(
   const [status, setStatus] = useState(initialStatus);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<VariationExecutionProgress | null>(null);
+  const [visualState, setVisualState] = useState(() => variationVisualState("invalidate"));
   const generation = useRef(0);
   const activeController = useRef<AbortController | null>(null);
+  const acceptedIdentity = useRef<string | null>(null);
+  const serviceIdentity = useRef(service);
+  const configurationIdentity = variationExecutionIdentity(plan, analysisExecution);
+  const previousConfigurationIdentity = useRef(configurationIdentity);
 
   const clearResultState = useCallback(() => {
     setDataset(null);
@@ -75,14 +91,29 @@ export function useVariationExecution(
     setBusy(false);
     setProgress(null);
     clearResultState();
+    acceptedIdentity.current = null;
+    setVisualState(variationVisualState("invalidate"));
     setStatus("Ready: configuration changed; run again.");
   }, [clearResultState]);
 
   const cancel = useCallback(() => {
     if (activeController.current === null) return;
+    const retainsAccepted = acceptedIdentity.current === configurationIdentity;
+    const acceptedDataset = dataset;
+    const acceptedSensitivity = sensitivity;
+    const acceptedEnsemble = ensemble;
     invalidateResults();
+    if (retainsAccepted) {
+      setDataset(acceptedDataset);
+      setSensitivity(acceptedSensitivity);
+      setEnsemble(acceptedEnsemble);
+      acceptedIdentity.current = configurationIdentity;
+    }
     setStatus("Cancelled: no partial variation result was accepted.");
-  }, [invalidateResults]);
+    setVisualState(variationVisualState(
+      retainsAccepted ? "cancel-retained" : "cancel-empty",
+    ));
+  }, [configurationIdentity, dataset, ensemble, invalidateResults, sensitivity]);
 
   const run = useCallback(async () => {
     const currentGeneration = generation.current + 1;
@@ -90,7 +121,8 @@ export function useVariationExecution(
     activeController.current?.abort();
     const controller = new AbortController();
     activeController.current = controller;
-    clearResultState();
+    const retainsAccepted = acceptedIdentity.current === configurationIdentity;
+    setVisualState(variationVisualState(retainsAccepted ? "start-retained" : "start-empty"));
     setBusy(true);
     const initialProgress: VariationExecutionProgress = {
       completedRuns: 0,
@@ -100,8 +132,10 @@ export function useVariationExecution(
     setProgress(initialProgress);
     setStatus(runningStatus(initialProgress));
     try {
-      const result = await service.execute(
-        { plan, analysisExecution },
+      const request = { plan, analysisExecution };
+      validateExecutionRequest(request);
+      const result = validateResult(await service.execute(
+        request,
         {
           signal: controller.signal,
           onProgress: (nextProgress) => {
@@ -110,23 +144,38 @@ export function useVariationExecution(
             setStatus(runningStatus(nextProgress));
           },
         },
-      );
+      ), request);
       if (generation.current !== currentGeneration || controller.signal.aborted) return;
       setDataset(result.dataset);
       setSensitivity(result.sensitivity);
       setEnsemble(result.ensemble);
+      acceptedIdentity.current = configurationIdentity;
+      setVisualState(variationVisualState("succeed"));
       setStatus(completionStatus(result, plan));
     } catch (error) {
       if (generation.current !== currentGeneration || controller.signal.aborted) return;
-      setStatus(`Cannot run: ${(error as Error).message}`);
+      const message = String((error as Error).message ?? error)
+        .slice(0, MAX_WORKER_ERROR_LENGTH);
+      setStatus(`Cannot run: ${message}`);
       setProgress(null);
+      setVisualState(variationVisualState(
+        retainsAccepted ? "fail-retained" : "fail-empty",
+      ));
     } finally {
       if (generation.current === currentGeneration) {
         activeController.current = null;
         setBusy(false);
       }
     }
-  }, [analysisExecution, clearResultState, plan, service]);
+  }, [analysisExecution, configurationIdentity, plan, service]);
+
+  useEffect(() => {
+    const configurationChanged = previousConfigurationIdentity.current !== configurationIdentity;
+    const serviceChanged = serviceIdentity.current !== service;
+    previousConfigurationIdentity.current = configurationIdentity;
+    serviceIdentity.current = service;
+    if (configurationChanged || serviceChanged) invalidateResults();
+  }, [configurationIdentity, invalidateResults, service]);
 
   useEffect(() => () => {
     generation.current += 1;
@@ -142,6 +191,7 @@ export function useVariationExecution(
     setStatus,
     busy,
     progress,
+    visualState,
     run,
     cancel,
     invalidateResults,

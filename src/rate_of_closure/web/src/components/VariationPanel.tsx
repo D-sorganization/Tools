@@ -95,6 +95,7 @@ export function VariationPanel({
     setStatus,
     busy,
     progress,
+    visualState,
     run,
     cancel,
     invalidateResults: clearResults,
@@ -213,6 +214,7 @@ export function VariationPanel({
           status={status}
           busy={busy}
           progress={progress}
+          visualState={visualState}
           onRun={() => void run()}
           onCancel={cancel}
           onImportText={importPlan}
@@ -236,6 +238,8 @@ export function VariationPanel({
         target={targetUse.targetRegion ?? undefined}
         distanceUnit={distanceUnit}
         ensemble={ensemble}
+        visualState={visualState}
+        visualAnnouncement={status}
       /></div>
       </div>
     </div>

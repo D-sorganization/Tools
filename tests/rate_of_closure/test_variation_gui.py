@@ -14,6 +14,9 @@ from rate_of_closure.club import get_club  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.simulation import SimulationConfig  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab  # noqa: E402
+from rate_of_closure.ui.pyqt6.variation_tab_results import (  # noqa: E402
+    VariationTabResultsMixin,
+)
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker  # noqa: E402
 from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_LAUNCH,
@@ -59,7 +62,131 @@ def _fast_launch_plan(n_runs: int = 12) -> VariationPlan:
     )
 
 
+def _install_accepted(tab: VariationTab, plan: VariationPlan) -> object:
+    tab._active_plan = plan
+    tab._active_compute_sensitivity = False
+    tab._active_authority_identity = tab._current_authority_identity(plan)
+    tab._on_succeeded(run_variation(plan, n_workers=1), None)
+    tab._set_running(False)
+    assert tab.dataset() is not None
+    return tab._accepted_authority_identity
+
+
 class TestConstruction:
+    def test_result_methods_resolve_to_results_mixin(self) -> None:
+        assert (
+            VariationTab._clear_result_widgets
+            is VariationTabResultsMixin._clear_result_widgets
+        )
+        assert (
+            VariationTab._apply_prepared_result
+            is VariationTabResultsMixin._apply_prepared_result
+        )
+
+    def test_visual_state_retains_only_same_authority_accepted_result(
+        self, tab: VariationTab
+    ) -> None:
+        plan = _fast_launch_plan(4)
+        identity = _install_accepted(tab, plan)
+        assert tab._visual_frame.property("visualPhase") == "result"
+        assert tab._summary_table.rowCount() > 0
+        landing = tab._landing
+
+        tab.build_plan = lambda: plan  # type: ignore[method-assign]
+        tab._on_run()
+        assert tab._active_authority_identity == identity
+        assert tab._landing is landing
+        assert tab._summary_table.rowCount() > 0
+        assert tab._visual_frame.property("visualOrigin") == "prior-accepted"
+        assert "prior accepted" in tab._visual_frame.accessibleName().lower()
+        assert tab._worker is not None
+        tab._worker.cancel()
+        tab._worker.wait(10_000)
+
+        tab._runs_spin.setValue(tab._runs_spin.value() + 1)
+        assert tab._summary_table.rowCount() == 0
+        assert tab._visual_frame.property("visualPhase") == "empty"
+
+    def test_failed_same_authority_rerun_keeps_exact_visual_and_export_source(
+        self, tab: VariationTab
+    ) -> None:
+        plan = _fast_launch_plan(4)
+        _install_accepted(tab, plan)
+        accepted = tab.dataset()
+        landing = tab._landing
+
+        tab._active_authority_identity = tab._accepted_authority_identity
+        tab._on_failed("diagnostic failure")
+
+        assert tab.dataset() is accepted
+        assert tab._landing is landing
+        assert tab._visual_frame.property("visualPhase") == "error"
+        assert tab._visual_frame.property("visualOrigin") == "prior-accepted"
+        assert tab._export_json.isEnabled()
+
+    def test_reserved_state_strip_never_overlaps_visual_content(
+        self, tab: VariationTab
+    ) -> None:
+        tab.resize(1200, 800)
+        tab.show()
+        tab._active_authority_identity = object()
+        tab._accepted_authority_identity = tab._active_authority_identity
+        tab._on_failed("diagnostic failure")
+
+        strip = tab._visual_frame._state_strip
+        strip_rect = strip.geometry()
+        content_rect = tab._visual_frame.content.geometry()
+        assert strip.isVisible()
+        assert not strip_rect.intersects(content_rect)
+        assert content_rect.height() >= 240
+
+    def test_cancel_advances_generation_and_blocks_all_late_partial_callbacks(
+        self, tab: VariationTab
+    ) -> None:
+        plan = _fast_launch_plan(4)
+        _install_accepted(tab, plan)
+        accepted = tab.dataset()
+        tab.build_plan = lambda: plan  # type: ignore[method-assign]
+        tab._on_run()
+        assert tab._worker is not None
+        old_generation = tab._generation
+
+        tab._on_cancel()
+        tab._accept_succeeded(old_generation, run_variation(plan, n_workers=1), None)
+        tab._accept_failed(old_generation, "late failure")
+
+        assert tab._generation == old_generation + 1
+        assert tab.dataset() is accepted
+        assert tab._visual_frame.property("visualOrigin") == "prior-accepted"
+        assert tab._status.text() == (
+            "Cancelled: no partial variation result was accepted."
+        )
+        assert tab._active_authority_identity is None
+        assert "late failure" not in tab._status.text()
+
+    @pytest.mark.parametrize(
+        "edit",
+        [
+            lambda tab: tab._runs_spin.setValue(tab._runs_spin.value() + 1),
+            lambda tab: tab._seed_spin.setValue(tab._seed_spin.value() + 1),
+            lambda tab: tab._flight_combo.setCurrentIndex(1),
+            lambda tab: tab._base_combo.setCurrentIndex(1),
+            lambda tab: tab._sens_check.setChecked(not tab._sens_check.isChecked()),
+            lambda tab: tab._rows[0].scale.setValue(tab._rows[0].scale.value() + 1),
+        ],
+    )
+    def test_every_editor_family_invalidates_accepted_visual_authority(
+        self, tab: VariationTab, edit
+    ) -> None:  # type: ignore[no-untyped-def]
+        plan = _fast_launch_plan(4)
+        _install_accepted(tab, plan)
+        assert tab._summary_table.rowCount() > 0
+
+        edit(tab)
+
+        assert tab._summary_table.rowCount() == 0
+        assert tab._visual_frame.property("visualPhase") == "empty"
+
     def test_every_input_carries_hover_guidance(self, tab: VariationTab) -> None:
         widgets = [
             tab._mode_combo,
@@ -152,9 +279,10 @@ class TestConstruction:
     def test_base_change_clears_results_and_ignores_stale_callbacks(
         self, tab: VariationTab
     ) -> None:
-        dataset = run_variation(_fast_launch_plan(4), n_workers=1)
-        tab._dataset = dataset
-        tab._populate_results()
+        plan = _fast_launch_plan(4)
+        _install_accepted(tab, plan)
+        dataset = tab.dataset()
+        assert dataset is not None
         assert tab._summary_table.rowCount() > 0
         old_generation = tab._generation
         replacement = SimulationConfig(

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -35,6 +36,8 @@ __all__ = ["NoiseRow", "make_spin"]
 
 class NoiseRow(QWidget):
     """One noise spec: variable, distribution, scale, optional clipping."""
+
+    authorityChanged = pyqtSignal()  # noqa: N815
 
     def __init__(
         self,
@@ -107,6 +110,12 @@ class NoiseRow(QWidget):
 
         self.variable.currentIndexChanged.connect(self._on_variable_changed)
         self.set_context(mode, localized_enabled, duration_s)
+        for combo in self.findChildren(QComboBox):
+            combo.currentIndexChanged.connect(self.authorityChanged.emit)
+        for spin in self.findChildren(QDoubleSpinBox):
+            spin.valueChanged.connect(self.authorityChanged.emit)
+        for checkbox in self.findChildren(QCheckBox):
+            checkbox.toggled.connect(self.authorityChanged.emit)
 
     def set_context(
         self, mode: str, localized_enabled: bool, duration_s: float
@@ -261,10 +270,12 @@ class NoiseRow(QWidget):
             self._localized_enabled if localized_enabled is None else localized_enabled
         )
         duration = self._duration_s if duration_s is None else duration_s
-        return self.locus_editor.accepts(
-            spec,
-            localized_enabled=enabled,
-            duration_s=duration,
+        return bool(
+            self.locus_editor.accepts(
+                spec,
+                localized_enabled=enabled,
+                duration_s=duration,
+            )
         )
 
     def _edited_bounds(
