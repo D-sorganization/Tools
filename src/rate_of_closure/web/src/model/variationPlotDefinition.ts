@@ -47,6 +47,13 @@ export type VariationPlotDefinitionInputTs = Omit<
 const PLOT_TYPES: VariationPlotTypeTs[] = [
   "scalar_scatter", "swing_arc_overlay", "geometric_variability", "distribution_matrix",
 ];
+const OUTCOME_FILTERS = [
+  "evaluated_hit", "evaluated_no_impact", "numerical_failure",
+] as const;
+const PERTURBATION_BANDS = [
+  "lower", "middle", "upper",
+  "Lower Half", "Upper Half", "Lower Third", "Middle Third", "Upper Third",
+] as const;
 const V2_FIELDS = [
   "schemaVersion", "resultId", "plotType", "coordinateFrame", "xVariableKey",
   "yVariableKey", "pointId", "positionUnit", "alignmentBasis", "dispersionMetric",
@@ -62,18 +69,21 @@ const V1_FIELDS = [
   "outcomeFilter", "phaseEndFraction", "perturbationSourceKey", "perturbationBand",
   "variableKeys",
 ] as const;
+const INPUT_FIELDS = V2_FIELDS.filter(
+  (field) => field !== "schemaVersion" && field !== "resultId",
+);
 const LEGACY_RMS_THRESHOLD_M = 0.005;
 
 export function makeVariationPlotDefinition(
   result: SwingVariationResultTs | VariationDatasetTs,
   input: VariationPlotDefinitionInputTs,
 ): VariationPlotDefinitionTs {
-  validateDefinitionInput(input);
-  return {
+  exactFields(jsonRecord(input), INPUT_FIELDS);
+  return parseV2({
     schemaVersion: VARIATION_PLOT_DEFINITION_SCHEMA_VERSION,
     resultId: variationResultFingerprint(result),
     ...input,
-  };
+  });
 }
 
 function validateDefinitionInput(input: VariationPlotDefinitionInputTs): void {
@@ -89,12 +99,43 @@ function validateDefinitionInput(input: VariationPlotDefinitionInputTs): void {
   if (input.selectedTrialIndex !== null && input.selectedTrialIndex < 0) {
     throw new Error("selectedTrialIndex must be non-negative");
   }
+  if (input.cameraPitchDeg !== null
+    && (input.cameraPitchDeg < -90 || input.cameraPitchDeg > 90)) {
+    throw new Error("cameraPitchDeg must be in [-90, 90]");
+  }
   if (input.cameraZoom !== null && input.cameraZoom <= 0) {
     throw new Error("cameraZoom must be greater than zero");
   }
   if (input.phaseEndFraction !== null
     && (input.phaseEndFraction <= 0 || input.phaseEndFraction > 1)) {
     throw new Error("phaseEndFraction must be in (0, 1]");
+  }
+  const geometric = input.plotType === "swing_arc_overlay"
+    || input.plotType === "geometric_variability";
+  if (geometric) {
+    if (input.positionUnit !== "m") throw new Error("geometric positionUnit must be m");
+    if (input.alignmentBasis !== "common_simulation_time_s") {
+      throw new Error("geometric alignmentBasis must be common_simulation_time_s");
+    }
+    if (input.outcomeFilter !== null && !OUTCOME_FILTERS.includes(
+      input.outcomeFilter as typeof OUTCOME_FILTERS[number],
+    )) throw new Error("unknown outcomeFilter");
+    if (input.perturbationBand !== null && !PERTURBATION_BANDS.includes(
+      input.perturbationBand as typeof PERTURBATION_BANDS[number],
+    )) throw new Error("unknown perturbationBand");
+    if (input.perturbationBand !== null && input.perturbationSourceKey === null) {
+      throw new Error("perturbationBand requires a perturbation source");
+    }
+  } else {
+    if ([input.dispersionMetric, input.dispersionUnit, input.quietThreshold,
+      input.confidenceLevel, input.minQuietDurationS, input.minQuietSamples]
+      .some((value) => value !== null)) {
+      throw new Error("non-geometric plots cannot contain dispersion state");
+    }
+    if ([input.outcomeFilter, input.phaseEndFraction, input.perturbationSourceKey,
+      input.perturbationBand].some((value) => value !== null)) {
+      throw new Error("non-geometric plots cannot contain arc filter state");
+    }
   }
   if (input.plotType === "distribution_matrix") {
     if (input.variableKeys === null
@@ -144,7 +185,7 @@ function validateDispersionState(input: VariationPlotDefinitionInputTs): void {
 
 export const variationPlotDefinitionToJson = (
   definition: VariationPlotDefinitionTs,
-): string => JSON.stringify(definition, null, 2);
+): string => JSON.stringify(parseV2(jsonRecord(definition)), null, 2);
 
 export function parseVariationPlotDefinition(document: string): VariationPlotDefinitionTs {
   const root = jsonRecord(JSON.parse(document));

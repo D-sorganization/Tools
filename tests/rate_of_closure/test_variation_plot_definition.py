@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 
 import pytest
 
@@ -15,6 +16,33 @@ from rate_of_closure.variation.plot_definition import (
 from shared.python.contracts import ContractViolationError
 
 pytestmark = pytest.mark.unit
+
+
+def _complete_geometric_definition(**overrides: object) -> PlotDefinition:
+    values: dict[str, object] = {
+        "result_id": "ensemble-contract",
+        "plot_type": "swing_arc_overlay",
+        "coordinate_frame": "app_frame:x_target,y_up,z_right",
+        "point_id": "swing.clubhead.reference",
+        "position_unit": "m",
+        "alignment_basis": "common_simulation_time_s",
+        "dispersion_metric": "rms-radius",
+        "dispersion_unit": "m",
+        "quiet_threshold": 0.005,
+        "confidence_level": None,
+        "min_quiet_duration_s": 0.0,
+        "min_quiet_samples": 1,
+        "selected_trial_index": 0,
+        "camera_yaw_deg": -37.0,
+        "camera_pitch_deg": 22.0,
+        "camera_zoom": 1.2,
+        "outcome_filter": "evaluated_hit",
+        "phase_end_fraction": 0.75,
+        "perturbation_source_key": "swing_sim.swing.yaw_deg",
+        "perturbation_band": "Upper Third",
+    }
+    values.update(overrides)
+    return PlotDefinition(**values)  # type: ignore[arg-type]
 
 
 def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:  # type: ignore[no-untyped-def]
@@ -146,6 +174,74 @@ def test_distribution_matrix_definition_requires_unique_selected_variables() -> 
             plot_type="distribution_matrix",
             variable_keys=("output:carry_m", "output:carry_m"),
         )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("result_id", " ensemble-contract"),
+        ("plot_type", "unknown"),
+        ("coordinate_frame", " "),
+        ("point_id", "swing.clubhead.reference "),
+        ("position_unit", "mm"),
+        ("alignment_basis", "sample-index"),
+        ("selected_trial_index", True),
+        ("selected_trial_index", 1.5),
+        ("camera_yaw_deg", True),
+        ("camera_yaw_deg", math.nan),
+        ("camera_yaw_deg", math.inf),
+        ("camera_pitch_deg", True),
+        ("camera_pitch_deg", -90.0001),
+        ("camera_pitch_deg", 90.0001),
+        ("camera_zoom", True),
+        ("camera_zoom", math.nan),
+        ("camera_zoom", math.inf),
+        ("phase_end_fraction", True),
+        ("phase_end_fraction", math.nan),
+        ("phase_end_fraction", math.inf),
+        ("phase_end_fraction", 1.0001),
+        ("outcome_filter", "hit"),
+        ("perturbation_source_key", " swing_sim.swing.yaw_deg"),
+        ("perturbation_band", "outer"),
+    ],
+)
+def test_plot_definition_constructor_rejects_malformed_full_object_state(
+    field: str,
+    value: object,
+) -> None:
+    with pytest.raises(ContractViolationError):
+        _complete_geometric_definition(**{field: value})
+
+
+def test_plot_definition_requires_a_source_for_a_perturbation_band() -> None:
+    with pytest.raises(ContractViolationError, match="source"):
+        _complete_geometric_definition(perturbation_source_key=None)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("result_id", " "),
+        ("selected_trial_index", True),
+        ("camera_yaw_deg", math.nan),
+        ("camera_pitch_deg", math.nan),
+        ("camera_zoom", math.nan),
+        ("outcome_filter", "hit"),
+    ],
+)
+def test_plot_definition_writer_revalidates_tampered_state(
+    tmp_path,
+    field: str,
+    value: object,
+) -> None:  # type: ignore[no-untyped-def]
+    definition = _complete_geometric_definition()
+    object.__setattr__(definition, field, value)
+    destination = tmp_path / "must-not-exist.json"
+
+    with pytest.raises(ContractViolationError):
+        write_plot_definition(definition, destination)
+
+    assert not destination.exists()
 
 
 @pytest.mark.parametrize(

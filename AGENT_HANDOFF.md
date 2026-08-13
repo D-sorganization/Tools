@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Dispersion plot-definition closure (#4142 R12.1/R12.2)
+
+Python and React now enforce the same complete plot-definition domain at both
+construction and write time. Exact plot kinds and stable trimmed identifiers,
+genuine non-Boolean trial indices, finite camera angles/zoom, bounded pitch and
+phase, canonical outcomes, geometric SI/frame-alignment declarations, and
+source/band relationships fail closed before serialization. Python revalidates
+then uses `allow_nan=False`; React reparses the typed object before
+`JSON.stringify`, preventing JavaScript from silently converting NaN or
+infinity to null. Exact v1 migration outputs satisfy these stronger v2
+invariants.
+
+React timeline copy now states the true persistence boundary: adequacy counts
+and ranked intervals are calculated results from the loaded ensemble, while
+only their selection criteria persist in a plot definition. Local evidence is
+1,138/1,138 Rate Python/PyQt tests, 786/786 React tests, the production web
+build, Ruff, MyPy, TypeScript, ESLint, and secret scanning. SPEC is 1.16.61.
+This correction does not add a plot-definition import UI, confidence-ellipsoid
+mesh, cross-browser E2E, protected publication, or epic-completion claim.
+
 ## 2026-08-12 Dispersion consumer review hardening (#4142 R12.1/R12.2)
 
 Point-specific PyQt quiet intervals now dense-rank only within the selected

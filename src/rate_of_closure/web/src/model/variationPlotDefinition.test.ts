@@ -5,6 +5,7 @@ import {
   makeVariationPlotDefinition,
   parseVariationPlotDefinition,
   swingResultFingerprint,
+  type VariationPlotDefinitionInputTs,
   variationPlotDefinitionToJson,
 } from "./variationPlotDefinition";
 import { CATEGORY_SWING, type VariationPlanTs } from "./variation";
@@ -21,6 +22,31 @@ const plan = (nRuns: number, seed = 0): VariationPlanTs => ({
   nRuns,
   seed,
   flightModel: "waterloo_penner",
+});
+
+const completeGeometricInput = (): VariationPlotDefinitionInputTs => ({
+  plotType: "swing_arc_overlay",
+  coordinateFrame: "app_frame:x_target,y_up,z_right",
+  xVariableKey: null,
+  yVariableKey: null,
+  pointId: "swing.clubhead.reference",
+  positionUnit: "m",
+  alignmentBasis: "common_simulation_time_s",
+  dispersionMetric: "rms-radius",
+  dispersionUnit: "m",
+  quietThreshold: 0.005,
+  confidenceLevel: null,
+  minQuietDurationS: 0,
+  minQuietSamples: 1,
+  selectedTrialIndex: 0,
+  cameraYawDeg: -37,
+  cameraPitchDeg: 22,
+  cameraZoom: 1.2,
+  outcomeFilter: "evaluated_hit",
+  phaseEndFraction: 0.75,
+  perturbationSourceKey: "swing_sim.swing.yaw_deg",
+  perturbationBand: "upper",
+  variableKeys: null,
 });
 
 describe("variation plot definitions", () => {
@@ -147,5 +173,65 @@ describe("variation plot definitions", () => {
       variableKeys: ["input:swing_sim.swing.yaw_deg", "output:carry_m"],
     });
     expect(definition.variableKeys).toHaveLength(2);
+  });
+
+  it.each([
+    ["plotType", "unknown"],
+    ["coordinateFrame", " "],
+    ["pointId", "swing.clubhead.reference "],
+    ["positionUnit", "mm"],
+    ["alignmentBasis", "sample-index"],
+    ["selectedTrialIndex", true],
+    ["selectedTrialIndex", 1.5],
+    ["cameraYawDeg", true],
+    ["cameraYawDeg", Number.NaN],
+    ["cameraYawDeg", Number.POSITIVE_INFINITY],
+    ["cameraPitchDeg", true],
+    ["cameraPitchDeg", -90.0001],
+    ["cameraPitchDeg", 90.0001],
+    ["cameraZoom", true],
+    ["cameraZoom", Number.NaN],
+    ["cameraZoom", Number.POSITIVE_INFINITY],
+    ["phaseEndFraction", true],
+    ["phaseEndFraction", Number.NaN],
+    ["phaseEndFraction", Number.POSITIVE_INFINITY],
+    ["phaseEndFraction", 1.0001],
+    ["outcomeFilter", "hit"],
+    ["perturbationSourceKey", " swing_sim.swing.yaw_deg"],
+    ["perturbationBand", "outer"],
+  ])("rejects malformed full-object field %s", (field, value) => {
+    const input = { ...completeGeometricInput(), [field]: value } as VariationPlotDefinitionInputTs;
+    expect(() => makeVariationPlotDefinition(runSwingVariation(plan(2)), input)).toThrow();
+  });
+
+  it("requires a source for a perturbation band", () => {
+    const input = { ...completeGeometricInput(), perturbationSourceKey: null };
+    expect(() => makeVariationPlotDefinition(runSwingVariation(plan(2)), input)).toThrow(/source/i);
+  });
+
+  it.each([
+    ["resultId", " "],
+    ["selectedTrialIndex", true],
+    ["cameraYawDeg", Number.NaN],
+    ["cameraPitchDeg", Number.NaN],
+    ["cameraZoom", Number.NaN],
+    ["outcomeFilter", "hit"],
+  ] as const)(
+    "validates tampered %s before JSON.stringify",
+    (field, value) => {
+      const definition = makeVariationPlotDefinition(
+        runSwingVariation(plan(2)), completeGeometricInput(),
+      );
+      const tampered = { ...definition, [field]: value };
+      expect(() => variationPlotDefinitionToJson(tampered)).toThrow();
+    },
+  );
+
+  it("rejects undeclared constructor fields that could override result identity", () => {
+    const input = {
+      ...completeGeometricInput(), resultId: "attacker-selected-result",
+    } as VariationPlotDefinitionInputTs;
+    expect(() => makeVariationPlotDefinition(runSwingVariation(plan(2)), input))
+      .toThrow(/fields/);
   });
 });

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import math
-from collections.abc import Mapping
 from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -16,6 +15,16 @@ from shared.python.swing_sim.variation import (
 )
 from shared.python.swing_sim.variation.dispersion_metric_types import (
     validated_confidence_level,
+)
+
+from ._plot_definition_contract import (
+    _strict_integer,
+    _strict_nullable_integer,
+    _strict_nullable_real,
+    _strict_nullable_string,
+    _strict_variable_keys,
+    _validate_exact_fields,
+    _validate_variable_keys_object,
 )
 
 PLOT_DEFINITION_SCHEMA_VERSION = 2
@@ -31,6 +40,21 @@ _PLOT_TYPES = {
     "swing_arc_overlay",
     "geometric_variability",
     "distribution_matrix",
+}
+_OUTCOME_FILTERS = {
+    "evaluated_hit",
+    "evaluated_no_impact",
+    "numerical_failure",
+}
+_PERTURBATION_BANDS = {
+    "lower",
+    "middle",
+    "upper",
+    "Lower Half",
+    "Upper Half",
+    "Lower Third",
+    "Middle Third",
+    "Upper Third",
 }
 _NULLABLE_STRING_FIELDS = {
     "coordinate_frame",
@@ -86,26 +110,68 @@ class PlotDefinition:
     variable_keys: tuple[str, ...] | None = None
 
     def __post_init__(self) -> None:
-        require(bool(self.result_id.strip()), "result_id must be non-empty")
+        self._validate_full_object()
+
+    def _validate_full_object(self) -> None:
+        """Fail closed for direct construction and pre-serialization reuse."""
+        result_id = _strict_nullable_string(self.result_id, "result_id")
+        require(result_id is not None, "result_id must be non-empty")
         require(
-            self.selected_trial_index is None or self.selected_trial_index >= 0,
+            isinstance(self.plot_type, str) and self.plot_type in _PLOT_TYPES,
+            "unknown plot_type",
+            self.plot_type,
+        )
+        for name in _NULLABLE_STRING_FIELDS:
+            _strict_nullable_string(getattr(self, name), name)
+        for name in _NULLABLE_REAL_FIELDS:
+            _strict_nullable_real(getattr(self, name), name)
+        for name in _NULLABLE_INTEGER_FIELDS:
+            _strict_nullable_integer(getattr(self, name), name)
+        _validate_variable_keys_object(self.variable_keys)
+        require(
+            self.selected_trial_index is None
+            or (
+                type(self.selected_trial_index) is int
+                and self.selected_trial_index >= 0
+            ),
             "selected_trial_index must be non-negative",
+        )
+        pitch = self.camera_pitch_deg
+        require(
+            pitch is None or -90.0 <= pitch <= 90.0,
+            "camera_pitch_deg must be in [-90, 90]",
+            pitch,
         )
         require(
             self.camera_zoom is None or self.camera_zoom > 0,
-            "camera_zoom must be greater than zero",
+            "camera_zoom must be finite and greater than zero",
         )
         require(
             self.phase_end_fraction is None or 0 < self.phase_end_fraction <= 1,
-            "phase_end_fraction must be in (0, 1]",
+            "phase_end_fraction must be finite and in (0, 1]",
         )
         if self.plot_type == "scalar_scatter":
-            require(bool(self.x_variable_key), "scatter requires x_variable_key")
-            require(bool(self.y_variable_key), "scatter requires y_variable_key")
-        if self.plot_type in {"swing_arc_overlay", "geometric_variability"}:
-            require(bool(self.point_id), "geometric plot requires point_id")
-            require(bool(self.coordinate_frame), "geometric plot requires a frame")
+            require(self.x_variable_key is not None, "scatter requires x_variable_key")
+            require(self.y_variable_key is not None, "scatter requires y_variable_key")
+        geometric = self.plot_type in {
+            "swing_arc_overlay",
+            "geometric_variability",
+        }
+        if geometric:
+            require(self.point_id is not None, "geometric plot requires point_id")
+            require(
+                self.coordinate_frame is not None,
+                "geometric plot requires a frame",
+            )
+            require(self.position_unit == "m", "geometric position_unit must be m")
+            require(
+                self.alignment_basis == "common_simulation_time_s",
+                "geometric alignment_basis must be common_simulation_time_s",
+            )
             self._validate_dispersion_state()
+            self._validate_geometric_filters()
+        else:
+            self._validate_non_geometric_state()
         if self.plot_type == "distribution_matrix":
             variable_keys = self.variable_keys
             require(
@@ -121,6 +187,46 @@ class PlotDefinition:
                     all(bool(key.strip()) for key in variable_keys),
                     "distribution matrix variable_keys must be non-empty",
                 )
+
+    def _validate_geometric_filters(self) -> None:
+        """Validate stable filter values that can reproduce the selected cohort."""
+        require(
+            self.outcome_filter is None or self.outcome_filter in _OUTCOME_FILTERS,
+            "unknown outcome_filter",
+            self.outcome_filter,
+        )
+        require(
+            self.perturbation_band is None
+            or self.perturbation_band in _PERTURBATION_BANDS,
+            "unknown perturbation_band",
+            self.perturbation_band,
+        )
+        require(
+            self.perturbation_band is None or self.perturbation_source_key is not None,
+            "perturbation_band requires a perturbation source",
+        )
+
+    def _validate_non_geometric_state(self) -> None:
+        """Reject geometric result/filter state on plots that cannot consume it."""
+        dispersion_fields = (
+            self.dispersion_metric,
+            self.dispersion_unit,
+            self.quiet_threshold,
+            self.confidence_level,
+            self.min_quiet_duration_s,
+            self.min_quiet_samples,
+        )
+        require(
+            all(value is None for value in dispersion_fields),
+            "non-geometric plots cannot contain dispersion state",
+        )
+        require(
+            self.outcome_filter is None
+            and self.phase_end_fraction is None
+            and self.perturbation_source_key is None
+            and self.perturbation_band is None,
+            "non-geometric plots cannot contain arc filter state",
+        )
 
     def _validate_dispersion_state(self) -> None:
         """Require complete metric-specific quiet-zone state for geometric plots."""
@@ -166,6 +272,7 @@ class PlotDefinition:
 
     def to_json_dict(self) -> dict[str, object]:
         """Return a versioned JSON-safe mapping, preserving explicit nulls."""
+        self._validate_full_object()
         return {"schema_version": PLOT_DEFINITION_SCHEMA_VERSION, **asdict(self)}
 
     @classmethod
@@ -180,65 +287,6 @@ class PlotDefinition:
             require(version == PLOT_DEFINITION_SCHEMA_VERSION, "unsupported schema")
         payload = _validated_v2_payload(root)
         return cls(**cast(dict[str, Any], payload))
-
-
-def _strict_integer(value: object, name: str) -> int:
-    """Return one genuine JSON integer, excluding booleans."""
-    require(type(value) is int, f"{name} must be an integer", value)
-    return cast(int, value)
-
-
-def _strict_nullable_string(value: object, name: str) -> str | None:
-    """Return null or one non-empty trimmed string."""
-    require(
-        value is None
-        or (isinstance(value, str) and bool(value) and value == value.strip()),
-        f"{name} must be null or a non-empty trimmed string",
-        value,
-    )
-    return cast(str | None, value)
-
-
-def _strict_nullable_real(value: object, name: str) -> float | None:
-    """Return null or one finite JSON real, excluding booleans."""
-    require(
-        value is None
-        or (
-            isinstance(value, (int, float))
-            and not isinstance(value, bool)
-            and math.isfinite(float(value))
-        ),
-        f"{name} must be null or a finite real number",
-        value,
-    )
-    return None if value is None else float(cast(float, value))
-
-
-def _strict_nullable_integer(value: object, name: str) -> int | None:
-    """Return null or one genuine JSON integer."""
-    require(value is None or type(value) is int, f"{name} must be null or integer")
-    return cast(int | None, value)
-
-
-def _strict_variable_keys(value: object) -> tuple[str, ...] | None:
-    """Return null or an exact string-array tuple."""
-    require(value is None or isinstance(value, list), "variable_keys must be an array")
-    if value is None:
-        return None
-    items = cast(list[object], value)
-    require(
-        all(
-            isinstance(item, str) and bool(item) and item == item.strip()
-            for item in items
-        ),
-        "variable_keys must contain non-empty trimmed strings",
-    )
-    return tuple(cast(list[str], items))
-
-
-def _validate_exact_fields(document: Mapping[str, object], expected: set[str]) -> None:
-    """Reject omitted and unknown wire fields symmetrically."""
-    require(set(document) == expected, "invalid plot definition fields")
 
 
 def _validated_v2_payload(document: dict[str, object]) -> dict[str, object]:
@@ -307,8 +355,13 @@ def _migrate_v1(document: dict[str, object]) -> dict[str, object]:
 
 def write_plot_definition(definition: PlotDefinition, path: str | Path) -> None:
     """Write a reproducible plot definition as UTF-8 JSON."""
+    require(
+        isinstance(definition, PlotDefinition),
+        "definition must be a PlotDefinition",
+    )
+    definition._validate_full_object()
     Path(path).write_text(
-        json.dumps(definition.to_json_dict(), indent=2),
+        json.dumps(definition.to_json_dict(), indent=2, allow_nan=False),
         encoding="utf-8",
     )
 

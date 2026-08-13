@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Plot-definition constructor/writer closure (#4142)
+
+- Direct Python and React constructors now traverse the same strict field parser
+  used by readers. Runtime type annotations can no longer admit Boolean trial
+  indices, nonfinite camera/phase values, whitespace IDs, invalid outcomes, or
+  a perturbation band without a source.
+- Geometric definitions require metres and common simulation time; pitch is
+  bounded to [-90°, 90°], zoom is finite and positive, and displayed phase is
+  finite in (0, 1]. Yaw remains periodic but must be finite.
+- Python validates immediately before `json.dumps(..., allow_nan=False)`.
+  TypeScript validates immediately before `JSON.stringify`, so nonfinite values
+  cannot become JSON nulls.
+- Timeline copy accurately distinguishes persisted selection criteria from
+  computed adequacy counts and ranked quiet-interval results.
+- Local gates pass 1,138 Rate Python/PyQt and 786 React tests, production build,
+  Ruff/format, scoped MyPy, TypeScript, ESLint, and secret scanning.
+
+SPEC 1.16.61 records these corrections. Plot-definition import UI, ellipsoid
+meshes, cross-browser E2E, protected publication, and remaining #4142 work stay
+open.
+
 ## 2026-08-12 Dispersion reader, tail, and ranking hardening (#4142)
 
 - PyQt point ranks are now computed in the selected-point scope, with a

@@ -65,7 +65,7 @@ export function VariationVariabilityTimeline({ data, svgRef }: Props): JSX.Eleme
       </svg>
       <p className="text-xs text-slate-500">
         Green bands satisfy the selected threshold; the dashed line is that threshold.
-        {` ${data.unavailableCount} samples are unavailable for this metric; adequacy and ranked intervals are retained in the plot definition.`}
+        {` ${data.unavailableCount} samples are unavailable for this metric; adequacy counts and ranked intervals are computed from the loaded ensemble, while selection criteria are retained in the plot definition.`}
       </p>
     </div>
   );

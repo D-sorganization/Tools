@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 plot-definition domain closure
+
+- Python and TypeScript validate complete objects at construction and again at
+  write time, not only when reading JSON. Exact identifiers, plot kinds,
+  applicability, numeric finiteness, index/pitch/zoom/phase bounds, canonical
+  outcome filters, and source/band relationships are enforced symmetrically.
+- Python JSON emission explicitly disables NaN. React validates before native
+  stringification, preventing NaN/infinity from being converted to null.
+- V1 migration still yields valid v2 RMS-radius defaults under the strengthened
+  contract.
+- React no longer claims adequacy counts or ranked interval results are stored
+  in plot definitions; only the criteria selecting those calculations persist.
+- Evidence: 1,138/1,138 Rate Python/PyQt and 786/786 React tests, production web
+  build, Ruff/format, scoped MyPy, TypeScript, ESLint, and secret scan pass.
+- SPEC advances monotonically to 1.16.61. Plot-definition import UI, full
+  ellipsoid rendering, cross-browser E2E, protected publication, and #4142
+  completion remain open.
+
 ## 2026-08-12 #4142 dispersion consumer review corrections
 
 - Selected-point PyQt intervals now receive dense stable ranks within that

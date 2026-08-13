@@ -46,6 +46,10 @@ describe("VariationArcOverlay dispersion controls", () => {
     expect(screen.getByText(/Gaussian position-content region/)).toBeInTheDocument();
     expect(screen.getByText(/not a confidence region for the mean/)).toBeInTheDocument();
     expect(screen.getByText(/Sparse 2σ principal-axis glyphs/)).toBeInTheDocument();
+    expect(screen.getByText(/selection criteria are retained in the plot definition/))
+      .toBeInTheDocument();
+    expect(screen.queryByText(/adequacy and ranked intervals are retained in the plot definition/))
+      .not.toBeInTheDocument();
 
     fireEvent.change(confidence, { target: { value: "" } });
     fireEvent.change(screen.getByLabelText("Minimum quiet duration seconds"), {

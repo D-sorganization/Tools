@@ -26,11 +26,37 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.60                                    |
-| **Spec Version**        | 1.16.60                                    |
+| **Current Version**     | 1.16.61                                    |
+| **Spec Version**        | 1.16.61                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Dispersion plot-definition domain closure (#4142 R12.1/R12.2)
+
+Version 1.16.61 applies the strict plot-definition domain to direct constructors
+and writers as well as JSON readers. Python and TypeScript require exact plot
+kinds; stable non-empty trimmed identifiers; canonical outcome filters; a
+source whenever a perturbation band is selected; metres and common simulation
+time for geometric state; genuine non-Boolean trial indices; finite yaw, pitch,
+zoom, and phase values; pitch in [-90°, 90°]; positive zoom; and displayed phase
+in (0, 1]. Exact v1 migration defaults satisfy the strengthened v2 contract.
+
+Python revalidates immediately before `json.dumps(..., allow_nan=False)`.
+TypeScript reparses the complete object before `JSON.stringify`, preventing
+JavaScript's native NaN/infinity-to-null conversion from creating a plausible
+but false document. Undeclared constructor fields cannot override generated
+result identity. React timeline copy now correctly says that selection criteria
+persist, while adequacy counts and ranked quiet intervals are recalculated from
+the loaded ensemble.
+
+Local verification passes 1,138 Rate Python/PyQt tests, 786 React tests, the
+production web build, Ruff/format, scoped MyPy, TypeScript, ESLint, and secret
+scanning. Black is not installed in this workspace; Ruff is the repository's
+available Python formatting authority.
+
+This correction does not add plot-definition import UI, a rendered confidence-
+ellipsoid mesh, cross-browser E2E, protected publication, or complete #4142.
 
 ### 2026-08-12 Dispersion consumer review hardening (#4142 R12.1/R12.2)
 
@@ -3454,6 +3480,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce complete Python/TypeScript plot-definition constructor and writer invariants; reject nonfinite, Boolean, unbounded, unstable, invalid outcome/source, or inapplicable state before NaN-safe serialization; and correct React copy to distinguish persisted selection criteria from computed adequacy and ranked-interval results. |
 | 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142 R12.1/R12.2): scope quiet-interval ranks to the selected point; replace approximate React chi-square tails with regularized-gamma bracketed inversion pinned to SciPy across the declared domain; add strict exact v2 readers and explicit v1 RMS/m migration defaults in Python and TypeScript; and associate accessible PyQt labels with every new dispersion control while preserving open mesh, E2E, publication, and epic gates. |
 | 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142 R12.1/R12.2): add parity PyQt6/React selectors for RMS radius, largest principal sigma, and Gaussian confidence-ellipsoid volume; preserve SI authority and readable mm/mm³ display units in plot-definition v2; expose adequacy, unavailable counts, and dense-ranked quiet intervals; and pin strict React grid/domain behavior to a Python-authority golden fixture without claiming a rendered ellipsoid mesh or cross-browser E2E. |
 | 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
