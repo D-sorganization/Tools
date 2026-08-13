@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React localized result-authority closure (#4142)
+
+Version 1.16.67 closes six adversarial Worker/export bypasses. Worker results
+and schema-v2 documents now reject duplicate RK4 times, shortened swing/torque
+histories, forged finite ball geometry, coercive localized torque magnitudes,
+and invalid topological joints. Validation requires the exact canonical RK4
+sample count/grid, recomputes the passive torque summary and deterministic
+contact geometry, and binds setup-derived ball position and total duration.
+
+Persisted ensembles reconstruct one invariant document-owned base input from
+trial zero, then reapply every deterministic sampled plan row. This retains
+legitimate custom input authority while preventing a parser from trusting each
+trial's unverified nested run configuration independently. Every passive run
+config, lock ID, localized offset field/window/joint/magnitude, command, plan,
+and sampled row is therefore bound before the document is accepted.
+
+Local correction evidence passes 846/846 Vitest, 274/274 selected Rate/
+localized Python tests, all 167 shared swing tests with one expected optional
+Rust-wheel skip, 6/6 Playwright, TypeScript, ESLint, and Vite production build.
+Production Worker/UI transport remains passive-only. Prescribed transport,
+Rust parity, full RK4 half-step history, cross-browser/AT evidence, approved
+visual baselines, protected publication, and remaining #4142 stay open.
+
 ## 2026-08-13 React localized execution review hardening (#4142)
 
 Version 1.16.66 closes the independent duration, Worker trust, and export

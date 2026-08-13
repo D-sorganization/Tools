@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React localized result-authority closure (#4142)
+
+- Worker and schema-v2 ensemble validation reject duplicate/off-grid RK4
+  times, shortened state/torque histories, and forged finite ball geometry.
+- Passive `doublePendulumRun` authority is strict through every lock and
+  localized offset field, finite magnitude, exact half-open window, and stable
+  `joint.shoulder`/`joint.wrist` ID. The sampled passive torque history is
+  recomputed rather than accepted by shape alone.
+- Persisted documents reconstruct one invariant base input, reapply each
+  deterministic sampled plan row, and bind resulting inputs, commands, plan,
+  and provenance. Custom base authority remains supported without trusting
+  independent per-trial nested configurations.
+- Canonical effective duration determines exact RK4 sample count/times and
+  total duration. Ball setup derives the immutable ball position; deterministic
+  contact fields are recomputed before acceptance.
+- Gates pass 846/846 Vitest, 274/274 selected Rate/localized Python tests, all
+  167 shared swing tests with one expected optional Rust-wheel skip, 6/6
+  Playwright, TypeScript, ESLint, and Vite production build.
+
+SPEC 1.16.67 records the correction. Production Worker/UI transport remains
+passive-only. Prescribed transport, Rust parity, complete RK4 half-step history,
+cross-browser/AT evidence, approved baselines, protected publication, and
+remaining #4142 stay open.
+
 ## 2026-08-13 React localized execution review hardening (#4142)
 
 - Localized window preflight uses the rounded fixed-step RK4 duration, matching

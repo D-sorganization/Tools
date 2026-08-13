@@ -1,5 +1,27 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 React localized result-authority closure
+
+- Strict Worker/document acceptance now rejects duplicate or truncated RK4
+  swing/torque histories and requires the canonical rounded-duration sample
+  count, exact `0.001 s` time grid, recomputed passive torque summary, and exact
+  total-duration relationship.
+- Ball setup derives immutable run/impact ball position. Fixed-contact geometry
+  is recomputed from the validated trace; delivery-inspection geometry is
+  reconstructed from its canonical policy rather than trusted as finite text.
+- Every passive run-config field, lock, localized offset, window, topological
+  joint, magnitude, plan command, and sampled row is bound. Coercive magnitudes
+  and spatial `swing.*` IDs in torque configuration fail closed.
+- Schema-v2 reading reconstructs one invariant document base from trial zero
+  and reapplies every sampled row, preserving legitimate custom base values
+  while rejecting independent per-trial configuration or initial-state drift.
+- Local gates pass 846/846 Vitest, 274/274 selected Rate/localized Python tests,
+  all 167 shared swing tests with one expected optional Rust-wheel skip, 6/6
+  Playwright, TypeScript, ESLint, and Vite production build.
+- SPEC advances to 1.16.67. Worker/UI prescribed-profile transport, Rust parity,
+  full RK4 half-step history, cross-browser/AT evidence, approved baselines,
+  protected publication, and remaining #4142 remain open.
+
 ## 2026-08-13 #4142 React localized execution review hardening
 
 - Canonical rounded RK4 duration now governs localized preflight before any

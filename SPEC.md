@@ -26,11 +26,39 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.66                                    |
-| **Spec Version**        | 1.16.66                                    |
+| **Current Version**     | 1.16.67                                    |
+| **Spec Version**        | 1.16.67                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 React localized result-authority closure (#4142)
+
+Version 1.16.67 makes accepted React swing ensembles a reconstruction of their
+declared authority rather than a collection of independently trusted finite
+objects. The Worker boundary binds default passive input to its request. The
+schema-v2 reader derives one invariant custom base input from trial zero and
+reapplies each deterministic sampled plan row; every resulting input must match
+exactly. This binds plan/spec IDs, sampled values, localized commands, initial
+state, run configuration, locks, and every finite offset magnitude/window/joint
+while preserving legitimate unvaried custom input authority.
+
+Each evaluated trial must contain exactly
+`round(duration / 0.001 s) + 1` state and torque samples at `index * 0.001 s`.
+The passive torque summary is recomputed from the validated configuration and
+time grid. Setup-derived ball position is immutable across run and impact
+records; fixed-contact geometry is recomputed from the trace and delivery-
+inspection geometry from its canonical policy. Miss total duration equals the
+effective swing duration; hit total duration equals that duration plus the
+validated flight time. Duplicate times, truncated histories, forged finite ball
+positions, numeric strings, and spatial `swing.*` torque joints fail closed.
+
+Local evidence passes 846/846 Vitest, 274/274 selected Rate/localized Python
+tests, all 167 shared swing tests with one expected optional Rust-wheel skip,
+6/6 Playwright, TypeScript, ESLint, and Vite production build. Production
+Worker/UI transport remains passive-only. Prescribed-profile transport, Rust
+parity, full RK4 half-step torque history, cross-browser/AT evidence, approved
+visual baselines, protected publication, and remaining #4142 remain open.
 
 ### 2026-08-13 React localized execution review hardening (#4142)
 
@@ -3766,6 +3794,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |
 | 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142): execute authored localized shoulder/wrist torque factors additively through the TypeScript-reference RK4 double pendulum; retain typed outcomes and plan/provenance authority in accessible results and schema-v2 JSON/CSV exports; pin passive/prescribed boundary behavior to a Python-owned golden and production-Worker cancel/rerun/export coverage. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |

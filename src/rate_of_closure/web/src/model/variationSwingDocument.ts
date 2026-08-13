@@ -6,7 +6,8 @@ import { sampleInputs } from "./variationSampling";
 import { parseUniqueJson } from "./strictJson";
 import type { SwingVariationResultTs } from "./variationSwingEnsemble";
 import {
-  assertJsonFinite, validateLocalizedTrialCommands, validateSwingTrialPayload,
+  assertJsonFinite, documentSwingInputAuthority,
+  validateLocalizedTrialCommands, validateSwingTrialPayload,
 } from "./variationSwingResultValidation";
 
 export const SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION = 2;
@@ -76,6 +77,11 @@ export function validateSwingEnsembleDocument(
   if (!Array.isArray(root.trials) || root.trials.length !== plan.nRuns) {
     throw new Error("swing ensemble trial count is invalid");
   }
+  const firstTrial = record(root.trials[0], "swing ensemble trial 0");
+  const baseInput = documentSwingInputAuthority(
+    firstTrial.input, plan, dataset.inputs[0],
+  );
+  if (baseInput === null) throw new Error("swing ensemble trial 0 input is invalid");
   root.trials.forEach((raw, index) => {
     const trial = record(raw, `swing ensemble trial ${index}`);
     exactFields(
@@ -94,7 +100,7 @@ export function validateSwingEnsembleDocument(
           : outputRow.every((cell) => typeof cell === "number" && Number.isFinite(cell)));
     if (trial.trialIndex !== index ||
         !available ||
-        !validateSwingTrialPayload(trial, index, plan, inputRow, false) ||
+        !validateSwingTrialPayload(trial, index, plan, inputRow, baseInput) ||
         !validateLocalizedTrialCommands(trial, plan, dataset.inputNames, inputRow)) {
       throw new Error(`swing ensemble trial ${index} is invalid`);
     }
