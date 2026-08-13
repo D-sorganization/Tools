@@ -1091,12 +1091,12 @@ class ChatDockWidget(QDockWidget):
         history_before = self._message_history
         snapshot_before = list(history_before)
         self._ai_settings_controller().switch_provider(name, model, thinking_level)
-        assert (
-            self._message_history is history_before
-        ), "switch_provider invariant: _message_history must remain the same list"
-        assert (
-            self._message_history == snapshot_before
-        ), "switch_provider invariant: _message_history contents must not change"
+        assert self._message_history is history_before, (
+            "switch_provider invariant: _message_history must remain the same list"
+        )
+        assert self._message_history == snapshot_before, (
+            "switch_provider invariant: _message_history contents must not change"
+        )
 
     # ── Terminal mode ───────────────────────────────────────────────
 

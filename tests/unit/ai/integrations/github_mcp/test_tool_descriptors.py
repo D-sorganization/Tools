@@ -45,13 +45,13 @@ def test_write_tools_require_confirmation() -> None:
     """Mutating tools must opt into ``requires_confirmation=True``."""
     for tool in GITHUB_MCP_TOOL_DESCRIPTORS:
         if tool.name in _EXPECTED_WRITE_TOOLS:
-            assert (
-                tool.requires_confirmation is True
-            ), f"write tool {tool.name} must require confirmation"
+            assert tool.requires_confirmation is True, (
+                f"write tool {tool.name} must require confirmation"
+            )
         else:
-            assert (
-                tool.requires_confirmation is False
-            ), f"read tool {tool.name} must not require confirmation"
+            assert tool.requires_confirmation is False, (
+                f"read tool {tool.name} must not require confirmation"
+            )
 
 
 def test_write_tool_names_helper() -> None:
