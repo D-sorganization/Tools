@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
+
+This normal merge preserves approved confidence-ellipsoid rendering head
+`45800feed2954d221e6a829f0430f87d9817d582` as first parent and published
+dispersion-policy head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` as second parent. All mesh
+geometry, resource bounds, PyQt6/React rendering, camera streaming, public
+constructor hardening, tests, and schema-v3 persistence remain intact.
+
+The Changed Test Assertion Check also retains the exact exemption for the
+constructor-only plot-definition support helper and its regression proving an
+adjacent assertion-light real test still fails closed. No scientific, runtime,
+schema, UI, or assertion-policy contract was weakened. SPEC advances to
+1.16.68. Integration evidence is 74 focused Python tests, all 868 React tests,
+five production-Worker Chromium E2E tests, the exact assertion-policy check,
+Python 3.12/MyPy 1.13 across 10 changed production files, Ruff/format,
+TypeScript, ESLint, Vite production build, docs governance, diff checks, and
+the official 500-LOC changed-file budget. Protected exact-head CI, review,
+normal publication, approved visual baselines, import UI, and remaining #4142
+work stay open.
+
 ## 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
 
 React camera bounds now stream trace points plus the bounded confidence mesh
@@ -72,6 +92,18 @@ production build.
 Cross-browser/assistive-technology E2E,
 approved visual baselines, import UI, protected publication, and remaining
 #4142 scope remain open.
+## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+Version 1.16.65 explicitly classifies
+`tests/rate_of_closure/_variation_plot_definition_support.py` as the shared
+constructor-only support module it is. The Changed Test Assertion Check no
+longer requires a fabricated assertion in that helper. A policy regression
+pins the exemption to that exact path and proves an adjacent assertion-light
+real test still fails the gate.
+
+This correction changes no scientific or application behavior. Protected
+exact-head CI, review, parent-first publication, and the remaining #4142 scope
+stay open.
 
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 

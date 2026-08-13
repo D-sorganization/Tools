@@ -26,11 +26,32 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.67                                    |
-| **Spec Version**        | 1.16.67                                    |
+| **Current Version**     | 1.16.68                                    |
+| **Spec Version**        | 1.16.68                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
+
+Version 1.16.68 normally merges approved confidence-mesh head
+`45800feed2954d221e6a829f0430f87d9817d582` first and published dispersion-policy
+head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` second. It retains the complete
+bounded Python/TypeScript mesh authority, PyQt6/React surface rendering,
+constant-auxiliary-space camera bounds, strict immutable public Python
+constructor, schema-v3 persistence, and their tests.
+
+The exact Changed Test Assertion Check exemption for the constructor-only
+plot-definition support helper and its adjacent-real-test fail-closed
+regression are retained without broadening. This merge changes no scientific,
+runtime, schema, UI, or policy contract and does not claim protected
+publication or completion of the remaining #4142 scope.
+
+Local integration evidence is 74 focused Python tests, all 868 React tests,
+five production-Worker Chromium E2E tests, the exact assertion-policy check,
+Python 3.12/MyPy 1.13 across 10 changed production files, Ruff/format,
+TypeScript, ESLint, production build, documentation governance, diff checks,
+and the official 500-LOC changed-file budget.
 
 ### 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
 
@@ -90,6 +111,12 @@ surface toggle and strictly migrates exact v1/v2 documents with surfaces off.
 This slice does not claim confidence regions for the mean, WebKit/Firefox or
 assistive-technology E2E, approved screenshot baselines, plot-definition
 import UI, protected publication, or completion of #4142.
+### 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+Version 1.16.65 adds one exact-path Changed Test Assertion Check exemption for
+the constructor-only variation plot-definition support module. The policy
+regression proves the exemption does not match an adjacent assertion-light
+real test. No scientific, runtime, schema, persistence, or UI contract changes.
 
 ### 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
@@ -3766,9 +3793,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.68 | merge(rate-of-closure, #4142): normally integrate approved confidence-mesh head `45800feed2954d221e6a829f0430f87d9817d582` first and published assertion-policy head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` second, preserving both implementation histories and exact policy boundaries. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142 R12.1): stream bounded React camera extrema at 500-by-1,501 scale and close public Python mesh-constructor cap, integer, shape, index, and immutable-array bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142 R12.1): enforce genuine integer and named hard mesh budgets before allocation; reject transformed TypeScript overflow; use a non-symmetric cross-toolkit frame golden; and verify captured PyQt/React projection and mesh-aware camera bounds. |
 | 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142 R12.1): render bounded full-rank Gaussian position-content ellipsoid surfaces with PyQt6/React parity; preserve exact frame, SI axes, deterministic temporal decimation, accessible distinct legends, and default-off controls; persist visibility in strict plot-definition v3 with exact v1/v2 migration. |
+| 2026-08-13 | 1.16.65 | fix(ci, #4142 #4415): classify the variation plot-definition constructor module as exact-path test support and prove the exemption cannot admit an adjacent assertion-light real test. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
 | 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |
 | 2026-08-12 | 1.16.62 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce a complete plot-type applicability/null matrix, exact application frame for current geometry, control-free stable identifiers, JSON-native Python constructor numerics, strict wire numerics, and non-geometric exporter/migration parity. |

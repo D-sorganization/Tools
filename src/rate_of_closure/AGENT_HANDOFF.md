@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
+
+- Normal merge order preserves approved mesh head
+  `45800feed2954d221e6a829f0430f87d9817d582` first and published assertion-policy
+  head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` second.
+- Bounded surface geometry/rendering, streamed camera bounds, strict immutable
+  Python mesh construction, schema-v3 persistence, and both toolkit test suites
+  remain intact. The exact constructor-helper assertion exemption and adjacent
+  real-test rejection regression are also retained.
+- SPEC is 1.16.68. No scientific, runtime, schema, UI, or policy behavior was
+  weakened. Evidence is 74 focused Python tests, all 868 React tests, five
+  production-Worker Chromium E2E tests, the exact assertion-policy check,
+  Python 3.12/MyPy 1.13 across 10 changed production files, Ruff/format,
+  TypeScript, ESLint, production build, docs governance, diff checks, and the
+  500-LOC changed-file budget. Protected exact-head CI, review, normal
+  publication, approved baselines, import UI, and remaining #4142 scope stay
+  open.
+
 ## 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
 
 - React camera bounds now stream trace points and mesh
@@ -59,6 +77,15 @@
   scope remain open. Evidence is 1,419 broad Rate/shared-variation Python and
   845 React tests, strict isolated changed-source Python 3.12 MyPy,
   Ruff/format, TypeScript, ESLint, and a Vite production build.
+## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+- The Changed Test Assertion Check now recognizes the exact constructor-only
+  plot-definition support module without inserting a fake assertion.
+- Its regression pins the exemption to that path and keeps an adjacent
+  assertion-light real test failing closed.
+- SPEC 1.16.65 records this CI-only correction. Scientific/runtime behavior,
+  protected exact-head CI, parent-first publication, and remaining #4142 scope
+  are unchanged.
 
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 

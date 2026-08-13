@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 integrated confidence mesh and #4415 policy correction
+
+- Normal merge order is approved mesh head `45800feed2954d221e6a829f0430f87d9817d582`
+  first and published assertion-policy head
+  `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` second.
+- The merge retains all bounded mesh generation/rendering, camera streaming,
+  strict public-constructor contracts, schema-v3 persistence, and PyQt6/React
+  tests, together with the exact helper-only assertion exemption and its
+  adjacent-real-test fail-closed regression.
+- SPEC advances to 1.16.68. No scientific, runtime, schema, UI, or policy
+  contract changes. Evidence is 74 focused Python tests, all 868 React tests,
+  five production-Worker Chromium E2E tests, the exact assertion-policy check,
+  Python 3.12/MyPy 1.13 over 10 changed production files, Ruff/format,
+  TypeScript, ESLint, production build, docs governance, diff checks, and the
+  500-LOC changed-file budget. Protected exact-head CI, review, normal
+  publication, approved baselines, import UI, and remaining #4142 work stay
+  open.
+
 ## 2026-08-13 #4142 confidence-mesh render/constructor closure
 
 - React computes camera bounds incrementally from streamed trace points and
@@ -63,6 +81,15 @@
   TypeScript, ESLint, and the Vite production build.
   Cross-browser/assistive-technology E2E, visual baselines, import UI,
   protected publication, and remaining #4142 work stay open.
+## 2026-08-13 #4415 changed-test assertion-gate correction
+
+- The constructor-only plot-definition test support module has one explicit,
+  exact-path assertion-gate exemption; no fake behavioral assertion is added.
+- A policy regression proves an adjacent assertion-light real test remains a
+  violation, preventing the exemption from broadening silently.
+- SPEC advances to 1.16.65 without scientific, runtime, schema, persistence,
+  or UI changes. Protected exact-head CI and the remaining #4142 work stay
+  open.
 
 ## 2026-08-13 #4142 integrated dispersion and localized-locus/browser stack
 
