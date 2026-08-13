@@ -1,5 +1,30 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 localized double-pendulum torque core
+
+- Local child `codex/4142-localized-double-torque-core` starts from exact
+  commit `11a699155588d3d948990c5f08b72c5cc8d2c746` and remains local/unpublished.
+- The first executable localized factors are additive shoulder and wrist
+  commanded torques. Their exact topological point IDs are `joint.shoulder`
+  and `joint.wrist`; spatial output IDs remain unchanged and cannot substitute
+  for a torque target.
+- Every command requires a finite half-open `[start, end)` window within the
+  run. The Python forced integrator evaluates offsets at each RK4 stage and
+  adds them to either passive zero commands or prescribed profile commands.
+- Request construction binds deterministic samples to one exact target locus.
+  Unsupported variables, missing/multiple/mismatched points or windows,
+  base-only localized use, wrong swing sources, and explicit Rust fail before
+  execution. `auto` selects Python when offsets exist.
+- Deterministic replay is invariant to ensemble chunk size; torque histories
+  pin the half-open boundary; valid misses remain typed no-impact data; and
+  spatial point provenance remains separate.
+- Evidence: 99/99 focused tests; 1,413/1,413 broader shared-swing/variation and
+  Rate tests with one expected Rust-wheel skip; Ruff, format, and changed-source
+  MyPy.
+- This closes only the narrow core execution seam. PyQt/React locus controls,
+  additional perturbation types and sources, Rust parity, complete raw state/
+  event/torque persistence, protected CI/publication, and #4142 remain open.
+
 ## 2026-08-12 #4142 R11.5 bounded ensemble chunk lifecycle foundation
 
 - Local child `codex/4142-ensemble-chunks` starts from exact published #4405

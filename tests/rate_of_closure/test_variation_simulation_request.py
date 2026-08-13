@@ -8,7 +8,11 @@ import pytest
 
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
-from rate_of_closure.simulation import BallSetup, BallSupportMode, SimulationConfig
+from rate_of_closure.simulation import (
+    BallSetup,
+    BallSupportMode,
+    SimulationConfig,
+)
 from rate_of_closure.variation.request_builder import (
     apply_global_simulation_values,
 )
@@ -38,6 +42,8 @@ _SIDE_TILT = _key(CATEGORY_SWING, "side_tilt_deg")
 _FORWARD_TILT = _key(CATEGORY_SWING, "forward_tilt_deg")
 _DAMPING_SHOULDER = _key(CATEGORY_SWING, "damping_shoulder")
 _DAMPING_WRIST = _key(CATEGORY_SWING, "damping_wrist")
+_SHOULDER_TORQUE_OFFSET = _key(CATEGORY_SWING, "shoulder_commanded_torque_offset_nm")
+_WRIST_TORQUE_OFFSET = _key(CATEGORY_SWING, "wrist_commanded_torque_offset_nm")
 _IMPACT_OFFSET = _key(CATEGORY_SWING, "impact_time_offset_s")
 _TOE = _key(CATEGORY_DELIVERY, "impact_offset_toe_mm")
 _HIGH = _key(CATEGORY_DELIVERY, "impact_offset_high_mm")
@@ -59,6 +65,22 @@ def _base_config() -> SimulationConfig:
 
 def _spec(variable_key: str, scale: float) -> NoiseSpec:
     return NoiseSpec(variable_key, distribution="uniform", scale=scale)
+
+
+def _localized_spec(
+    variable_key: str,
+    point_id: str,
+    *,
+    window: tuple[float, float] = (0.02, 0.04),
+    scale: float = 2.0,
+) -> NoiseSpec:
+    return NoiseSpec(
+        variable_key,
+        distribution="uniform",
+        scale=scale,
+        time_window_s=window,
+        point_ids=(point_id,),
+    )
 
 
 def test_builder_maps_supported_samples_into_complete_configs() -> None:
@@ -157,7 +179,7 @@ def test_global_value_seam_rejects_coercive_or_nonfinite_values(value: object) -
         apply_global_simulation_values(_base_config(), {_YAW: value})  # type: ignore[dict-item]
 
 
-def test_builder_rejects_non_global_or_unmapped_variables() -> None:
+def test_builder_rejects_unsupported_localized_or_unmapped_variables() -> None:
     localized = VariationPlan(
         mode="swing",
         noise=(
@@ -174,7 +196,7 @@ def test_builder_rejects_non_global_or_unmapped_variables() -> None:
         n_runs=2,
     )
 
-    with pytest.raises(ContractViolationError, match="global perturbations"):
+    with pytest.raises(ContractViolationError, match="localized"):
         build_simulation_ensemble_request(localized, _base_config())
     with pytest.raises(ContractViolationError, match="not trace-capable"):
         build_simulation_ensemble_request(unsupported, _base_config())

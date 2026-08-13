@@ -26,6 +26,7 @@ from shared.python.swing_sim.impact import (
     DeliveryDerived,
     PostImpactState,
 )
+from shared.python.swing_sim.localized_torque import require_offsets_within_duration
 from shared.python.swing_sim.run_config import (
     DOUBLE_PENDULUM_JOINT_IDS,
     DoublePendulumRunConfig,
@@ -137,6 +138,12 @@ class SimulationConfig:
                 "joint locks currently require the double-pendulum source",
                 self.source_kind,
             )
+        if self.swing_run_config.commanded_torque_offsets:
+            require(
+                self.source_kind == "double_pendulum",
+                "localized torque offsets require the double-pendulum source",
+                self.source_kind,
+            )
         FlightModelType(self.flight_model)
         _validate_optional_impact_time(self.impact_time_s)
         require(
@@ -147,6 +154,10 @@ class SimulationConfig:
         require(
             math.isfinite(self.swing_duration_s) and self.swing_duration_s > 0.0,
             "swing_duration_s must be finite and > 0",
+            self.swing_duration_s,
+        )
+        require_offsets_within_duration(
+            self.swing_run_config.commanded_torque_offsets,
             self.swing_duration_s,
         )
 

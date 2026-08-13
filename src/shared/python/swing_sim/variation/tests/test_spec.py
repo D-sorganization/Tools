@@ -54,6 +54,8 @@ class TestRegistryContract:
             "impact_time_offset_s",
             "damping_shoulder",
             "damping_wrist",
+            "shoulder_commanded_torque_offset_nm",
+            "wrist_commanded_torque_offset_nm",
         )
 
     def test_club_and_launch_categories_pin(self) -> None:

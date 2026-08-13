@@ -26,11 +26,37 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.53                                    |
-| **Spec Version**        | 1.16.53                                    |
+| **Current Version**     | 1.16.54                                    |
+| **Spec Version**        | 1.16.54                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Localized double-pendulum torque execution (#4142)
+
+Version 1.16.54 introduces the first dynamics-backed localized perturbation
+contract. A `LocalizedTorqueOffset` targets exactly one topological
+double-pendulum joint, `joint.shoulder` or `joint.wrist`, over a required finite
+half-open time window `[start_s, end_s)` wholly inside the run. The finite N.m
+value adds to passive or prescribed commanded torque at every Python RK4 stage.
+Topological torque IDs remain intentionally distinct from spatial output point
+IDs, including `swing.wrist`.
+
+Two registry variables map deterministic variation samples to those exact
+joint loci. Validation rejects unsupported variables, non-torque localized
+sources, absent/multiple/mismatched point IDs or windows, out-of-duration
+windows, base-only localized use, incompatible swing sources, and explicit Rust
+before simulation. Automatic backend selection uses Python whenever localized
+commands are present. Recorded torque history obeys the same half-open rule;
+chunk-size changes do not alter deterministic outcomes; and a physically valid
+miss remains typed no-impact data with closest-approach evidence.
+
+This version is a narrow core execution seam. PyQt and React authoring and
+presentation, other localized variables/source kinds, Rust parity, complete
+raw state/event/torque persistence, protected publication, and #4142 completion
+remain open. Evidence is 99 focused tests and 1,413 broader shared-swing,
+variation, and Rate tests with one expected missing-Rust-wheel skip, plus Ruff,
+format, and changed-source MyPy.
 
 ### 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
 
@@ -3309,6 +3335,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.54 | feat(rate-of-closure, #4142): execute additive shoulder/wrist commanded-torque offsets over strict half-open one-point loci at every Python RK4 stage; bind deterministic variation samples to exact topological joint IDs; fail closed on unsupported source, locus, duration, and Rust contracts; preserve typed no-impact and distinct spatial provenance while keeping UI, persistence, protected release, and epic completion open. |
 | 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
 | 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |
 | 2026-08-12 | 1.16.51 | fix(rate-of-closure, #4142 R11.4): require complete trial output scalars to be finite real non-booleans; normalize accepted NumPy real scalars to built-in floats; and prove typed-object writer/reader domain closure with five TDD cases and 39 focused persistence tests. |

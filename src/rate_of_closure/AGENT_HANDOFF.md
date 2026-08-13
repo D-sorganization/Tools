@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized joint-torque execution seam (#4142)
+
+Local child `codex/4142-localized-double-torque-core`, based on exact commit
+`11a699155588d3d948990c5f08b72c5cc8d2c746`, connects version-2 variation loci
+to actual double-pendulum dynamics for two commanded-torque variables.
+
+The only accepted targets are topological `joint.shoulder` and `joint.wrist`.
+Each requires one matching point ID and a finite half-open time window wholly
+inside `swing_duration_s`; values are additive N.m offsets evaluated at every
+Python RK4 stage over passive or prescribed commands. Constructor, request,
+and source validation reject missing/mismatched loci, invalid windows,
+unsupported variables/source kinds, base-only use, and explicit Rust before
+execution. Deterministic replay is chunk-size independent, torque-history IDs
+remain distinct from spatial trace IDs, and physically valid no-impact trials
+retain typed closest-approach evidence.
+
+Local evidence is 99 focused passes and 1,413 broader shared-swing/variation
+plus Rate passes with one expected missing-Rust-wheel skip. Ruff, format, and
+changed-source MyPy are green. UI authoring/presentation, additional localized
+variables and source types, Rust support, complete state/event/torque archive
+authority, protected release, and #4142 completion remain explicit follow-up
+work.
+
 ## 2026-08-12 Bounded complete-ensemble chunk execution seam (#4142 R11.5)
 
 Local child `codex/4142-ensemble-chunks` is based on exact #4405 head

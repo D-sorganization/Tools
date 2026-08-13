@@ -21,6 +21,7 @@ EXPECTED_PUBLIC_API = {
     "FitMetadata",
     "JointTorqueAssignment",
     "JointLockConfig",
+    "LocalizedTorqueOffset",
     "PendulumParameters",
     "PendulumState",
     "PlaneOrientation",

@@ -3,6 +3,35 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized double-pendulum torque execution (#4142)
+
+Local child `codex/4142-localized-double-torque-core` starts from exact commit
+`11a699155588d3d948990c5f08b72c5cc8d2c746`. It implements the first bounded
+localized-perturbation execution path without widening the UI surface.
+
+- Immutable `LocalizedTorqueOffset` commands use only the topological IDs
+  `joint.shoulder` and `joint.wrist`, a required finite half-open
+  `time_window_s = [start, end)`, and a finite additive torque in N.m. These IDs
+  remain deliberately distinct from spatial trace points such as
+  `swing.wrist`.
+- Passive and prescribed double-pendulum runs add every active command at each
+  Python RK4 stage. Recorded joint-torque samples use the same half-open rule;
+  exact shared boundaries cannot double-apply.
+- Rate variation requests map the two registered commanded-torque variables to
+  exact one-point loci and deterministic pre-sampled values. Missing, multiple,
+  mismatched, out-of-duration, base-only, wrong-source, and unsupported
+  localized specifications fail before trial execution.
+- Explicit Rust execution fails closed. `auto` selects the Python forced path
+  when localized commands are present. Valid misses remain typed
+  `evaluated_no_impact` results with closest-approach evidence.
+
+Exact local evidence is 99/99 focused tests and 1,413/1,413 broader shared-
+swing/variation and Rate tests (one expected Rust-wheel skip), plus Ruff, Ruff
+format, and changed-source MyPy. This is a narrow core seam: PyQt/React locus
+authoring and presentation, other source/locus kinds, Rust parity, complete
+state/event/torque persistence, protected CI/publication, and epic completion
+remain open.
+
 ## 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
 
 Local child `codex/4142-ensemble-chunks` starts from published #4405 head

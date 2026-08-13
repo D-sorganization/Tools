@@ -16,6 +16,7 @@ from types import MappingProxyType
 from shared.python.contracts import require
 
 from ..ball_setup import DEFAULT_DRIVER_TEE_HEIGHT_M
+from .contextual_registry import LOCALIZED_TORQUE_VARIABLES
 
 MODES: tuple[str, ...] = ("delivery", "swing", "launch")
 """Pipeline slices a plan can exercise (see :class:`VariationPlan`)."""
@@ -26,23 +27,19 @@ CATEGORY_CLUB = "swing_sim.club"
 CATEGORY_LAUNCH = "swing_sim.flight.launch"
 CATEGORY_BALL_SETUP = "swing_sim.ball_setup"
 
-APPLICABILITIES: tuple[str, ...] = ("always", "tee_only")
+APPLICABILITIES: tuple[str, ...] = (
+    "always",
+    "tee_only",
+    "localized_torque_only",
+)
 
 
 @dataclass(frozen=True)
 class VariableDef:
     """One registry entry: a variable other packages can perturb.
 
-    Attributes:
-        key: Namespaced registry key (``<category>.<name>``).
-        label: Title Case display label for UIs.
-        unit: Display unit suffix (e.g. ``"deg"``, ``"mph"``).
-        default: Base value used when a plan does not override it.
-        typical_scale: A sensible noise scale in the variable's unit
-            (seed for UI defaults and tooltips).
-        guidance: Sourced hover guidance in the FIELD_GUIDANCE style.
-        applicability: Context gate for variables that only have physical
-            meaning under a particular model configuration.
+    The fields bind a stable key to presentation metadata, a default and
+    typical scale, guidance, and any execution-context applicability gate.
     """
 
     key: str
@@ -317,6 +314,18 @@ def _register_builtins() -> None:
                 default=default,
                 typical_scale=scale,
                 guidance=guidance,
+            )
+        )
+    for definition in LOCALIZED_TORQUE_VARIABLES:
+        register_variable(
+            VariableDef(
+                key=f"{CATEGORY_SWING}.{definition.name}",
+                label=definition.label,
+                unit=definition.unit,
+                default=definition.default,
+                typical_scale=definition.typical_scale,
+                guidance=definition.guidance,
+                applicability=definition.applicability,
             )
         )
     register_variable(
