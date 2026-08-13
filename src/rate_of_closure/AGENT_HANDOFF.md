@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Paired producer identity hardening (#4142)
+
+- `LocalizedAttributionProduction` now retains design/request/result authority,
+  not only digest text. It recomputes the exact OAT request and both identities,
+  binds result plan/input rows, rebuilds the complete attribution authority,
+  and requires exact equality at construction.
+- `_localized_attribution_provenance.py` owns the canonical design digest and
+  request/result binding, keeping the producer below the 400-line policy.
+- Tests reject cross-design request/hash swaps, authority relabeling, and
+  synchronized pair/observation value tampering.
+- Scalar outcome reads cross an explicit finite-float boundary. Pinned Mypy
+  1.13 full-import checking has no producer diagnostic; unrelated existing
+  imported-module errors and the skip-import serializer crash remain external.
+- UI orchestration/React/Rust/persistence gaps are unchanged. SPEC is 1.16.75.
+
 ## 2026-08-13 Localized paired-attribution Python producer (#4142)
 
 - `variation/localized_attribution_producer.py` now owns a bounded explicit

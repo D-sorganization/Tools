@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
 import math
 import threading
 from collections.abc import Mapping
-from dataclasses import dataclass, replace
-from numbers import Real
+from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 from typing import cast
 
@@ -19,8 +16,13 @@ from rate_of_closure.simulation.pipeline import configured_swing_sample_times
 from rate_of_closure.variation._localized_attribution_contract import (
     require_authority_shape,
 )
+from rate_of_closure.variation._localized_attribution_provenance import (
+    canonical_design_identity,
+    finite_value,
+    require_result_matches_request,
+    stable_id,
+)
 from rate_of_closure.variation.ensemble_request_identity import (
-    config_identity_sha256,
     request_identity_sha256,
 )
 from rate_of_closure.variation.localized_attribution import (
@@ -52,31 +54,6 @@ from shared.python.swing_sim.solver.solve import ProgressCallback
 from shared.python.swing_sim.variation import NoiseSpec, VariationPlan
 
 
-def _finite(value: object, label: str) -> float:
-    require(
-        isinstance(value, Real) and not isinstance(value, (bool, np.bool_)),
-        f"{label} must be a real number excluding booleans",
-        value,
-    )
-    result = float(cast(float, value))
-    require(math.isfinite(result), f"{label} must be finite", result)
-    return result
-
-
-def _stable_id(value: object, label: str) -> str:
-    require(isinstance(value, str), f"{label} must be a string", value)
-    result = cast(str, value)
-    require(
-        bool(result)
-        and result == result.strip()
-        and len(result) <= 256
-        and not any(ord(char) < 32 for char in result),
-        f"{label} must be a stable ID",
-        value,
-    )
-    return result
-
-
 @dataclass(frozen=True)
 class LocalizedAttributionDesign:
     """One explicit one-at-a-time localized intervention experiment."""
@@ -88,7 +65,7 @@ class LocalizedAttributionDesign:
     intervention_deltas_nm: Mapping[str, float]
 
     def __post_init__(self) -> None:
-        design_id = _stable_id(self.design_id, "design_id")
+        design_id = stable_id(self.design_id, "design_id")
         require(isinstance(self.source_plan, VariationPlan), "invalid source_plan")
         require(isinstance(self.base_config, SimulationConfig), "invalid base_config")
         require(self.source_plan.mode == "swing", "source_plan must use swing mode")
@@ -109,7 +86,7 @@ class LocalizedAttributionDesign:
             "paired attribution supports only localized torque sources",
         )
         deltas = {
-            _stable_id(key, "intervention spec ID"): _finite(
+            stable_id(key, "intervention spec ID"): finite_value(
                 value, "intervention delta"
             )
             for key, value in self.intervention_deltas_nm.items()
@@ -144,11 +121,17 @@ class LocalizedAttributionProduction:
     """Authority plus immutable design/request provenance."""
 
     authority: AttributionAuthority
+    design: LocalizedAttributionDesign
+    request: SimulationEnsembleRequest = field(repr=False)
+    result: SimulationEnsembleResult = field(repr=False)
     design_identity: str
     request_identity: str
 
     def __post_init__(self) -> None:
         require(isinstance(self.authority, AttributionAuthority), "invalid authority")
+        require(isinstance(self.design, LocalizedAttributionDesign), "invalid design")
+        require(isinstance(self.request, SimulationEnsembleRequest), "invalid request")
+        require(isinstance(self.result, SimulationEnsembleResult), "invalid result")
         for value, label in (
             (self.design_identity, "design_identity"),
             (self.request_identity, "request_identity"),
@@ -159,9 +142,42 @@ class LocalizedAttributionProduction:
                 and all(char in "0123456789abcdef" for char in value),
                 f"{label} must be a lowercase SHA-256",
             )
+        actual_request_identity = request_identity_sha256(self.request)
+        require(
+            self.request_identity == actual_request_identity,
+            "request identity must match the retained exact request",
+        )
+        expected_request, _ = _pair_request(self.design)
+        require(
+            actual_request_identity == request_identity_sha256(expected_request),
+            "request must match the exact paired design",
+        )
+        require_result_matches_request(self.result, self.request)
+        expected_design_identity = canonical_design_identity(
+            self.design.design_id,
+            self.design.base_config,
+            self.design.source_plan,
+            self.design.targets,
+            self.design.intervention_deltas_nm,
+            actual_request_identity,
+        )
+        require(
+            self.design_identity == expected_design_identity,
+            "design identity must match the canonical retained design",
+        )
         require(
             self.authority.authority_id == f"paired-attribution.{self.design_identity}",
             "authority ID must bind the design identity",
+        )
+        expected_authority = _build_authority(
+            self.design,
+            self.result,
+            self.request.sampled_inputs,
+            expected_design_identity,
+        )
+        require(
+            self.authority == expected_authority,
+            "authority payload must match its design, request, and result",
         )
 
 
@@ -203,26 +219,6 @@ def _pair_request(
     return request, samples
 
 
-def _design_identity(design: LocalizedAttributionDesign, request_identity: str) -> str:
-    payload = {
-        "schema": "rate-of-closure/localized-attribution-design@1",
-        "design_id": design.design_id,
-        "base_config": config_identity_sha256(design.base_config),
-        "source_plan": design.source_plan.to_json_dict(),
-        "targets": [target.__dict__ for target in design.targets],
-        "intervention_deltas_nm": dict(sorted(design.intervention_deltas_nm.items())),
-        "request_identity": request_identity,
-    }
-    encoded = json.dumps(
-        payload,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-        allow_nan=False,
-    ).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
-
-
 def produce_localized_attribution(
     design: LocalizedAttributionDesign,
     *,
@@ -234,7 +230,14 @@ def produce_localized_attribution(
     require(isinstance(design, LocalizedAttributionDesign), "invalid design")
     request, samples = _pair_request(design)
     request_id = request_identity_sha256(request)
-    design_id = _design_identity(design, request_id)
+    design_id = canonical_design_identity(
+        design.design_id,
+        design.base_config,
+        design.source_plan,
+        design.targets,
+        design.intervention_deltas_nm,
+        request_id,
+    )
     result = run_simulation_ensemble(
         request,
         executor=executor,
@@ -242,7 +245,14 @@ def produce_localized_attribution(
         cancel_event=cancel_event,
     )
     authority = _build_authority(design, result, samples, design_id)
-    return LocalizedAttributionProduction(authority, design_id, request_id)
+    return LocalizedAttributionProduction(
+        authority,
+        design,
+        request,
+        result,
+        design_id,
+        request_id,
+    )
 
 
 def _build_authority(
@@ -339,7 +349,8 @@ def _target_value(
     if outcome.status is NUMERICAL_FAILURE:
         return None
     if target.kind != "state":
-        return outcome.value(target.name)
+        raw_value: object = outcome.value(target.name)
+        return None if raw_value is None else finite_value(raw_value, target.name)
     sample_index = int(np.flatnonzero(result.traces.sample_times_s == target.time_s)[0])
     if not result.traces.sample_valid[outcome.trial_index, sample_index]:
         return None

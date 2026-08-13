@@ -1,5 +1,19 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 paired producer provenance closure
+
+- Production records now retain normalized design, exact ensemble request,
+  typed result, strict authority, and both SHA-256 identities.
+- Construction regenerates the OAT request, recomputes request/design digests,
+  binds result plan/input rows, and rebuilds the complete authority. Cross-
+  design swaps, ID relabels, and pair/observation delta tampering fail closed.
+- The scalar outcome mapping has an explicit object-to-finite-float type seam.
+  Full-import pinned Mypy 1.13 reports no producer diagnostic; only unrelated
+  existing imported-module findings remain. The unchanged skip-import cache
+  serializer crash is not claimed green.
+- The Python-only and explicit-study UI limitations from 1.16.74 remain.
+- SPEC advances to 1.16.75.
+
 ## 2026-08-13 #4142 genuine Python paired producer
 
 - Added a bounded Python service for a genuine planted localized intervention:

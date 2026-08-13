@@ -26,11 +26,28 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.74                                    |
-| **Spec Version**        | 1.16.74                                    |
+| **Current Version**     | 1.16.75                                    |
+| **Spec Version**        | 1.16.75                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Paired producer provenance closure (#4142)
+
+Version 1.16.75 makes the paired production record self-verifying rather than
+accepting formatted digest strings on trust. It retains the normalized design,
+exact ensemble request, and exact typed result. Construction recomputes the
+request digest, regenerates the expected OAT request from the design, binds the
+result plan and sampled rows, recomputes the canonical design digest, and
+rebuilds the complete source/pair/target authority for exact comparison.
+Cross-design request swaps, authority-ID relabeling, and pair/observation delta
+tampering therefore fail at the public record boundary.
+
+The producer scalar projection now crosses the generic outcome mapping through
+an explicit object-to-finite-float boundary. Pinned Mypy 1.13 full-import
+checking reports no producer diagnostic; imported legacy modules retain their
+pre-existing diagnostics. The known `--follow-imports=skip` serializer crash on
+unchanged dependencies remains a tooling limitation, not a claimed pass.
 
 ### 2026-08-13 Genuine Python paired localized-attribution producer (#4142)
 
@@ -4028,6 +4045,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4142 R13.3): make paired production self-verifying by retaining and recomputing exact design/request/result/authority bindings; reject cross-design request swaps, authority relabeling, and pair payload tampering; close the producer Mypy no-any boundary. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4142 R13.3): add a deterministic Python service that executes explicit baseline/one-localized-source pairs through canonical ensemble authority and emits strict typed source-window/joint-to-state/impact/shot attribution with bound design/request identities, cancellation, progress, and resource caps; automatic PyQt/React production remains open. |
 | 2026-08-13 | 1.16.73 | fix(rate-of-closure, #4142 R13.3): preserve canonical binary64 strings through final TypeScript CSV serialization and prove exact Python/TypeScript export bytes with a shared extreme authority. |
 | 2026-08-13 | 1.16.72 | fix(rate-of-closure, #4142 R13.3): close numerical and cross-runtime parity findings with finite response arithmetic, nonzero interventions, normalized binary64 CSV text, Unicode code-point caps, accurate pair counts, and an exact pinned-Mypy typed boundary. |

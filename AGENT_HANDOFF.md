@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Paired producer provenance closure (#4142)
+
+Version 1.16.75 closes the producer review gap. A
+`LocalizedAttributionProduction` now owns its normalized design, exact ensemble
+request, typed result, authority, and both digests. Its constructor recomputes
+the exact request and request hash, binds result plan/rows, recomputes the
+canonical design hash, rebuilds the strict authority, and requires exact
+payload equality. Valid authority relabels and cross-design request/pair swaps
+can no longer reuse another experiment's evidence.
+
+Adversarial tests cover request-identity swaps, exact request swaps, authority
+ID relabeling, and synchronized pair/observation source-value tampering. The
+generic outcome mapping now uses an explicit finite-float boundary; full-import
+Mypy 1.13 has no producer diagnostic. Existing imported-module findings and the
+known `--follow-imports=skip` serializer crash remain documented tooling debt.
+PyQt/React orchestration remains intentionally open.
+
 ## 2026-08-13 Genuine Python paired localized-attribution producer (#4142)
 
 Version 1.16.74 adds `LocalizedAttributionDesign` and

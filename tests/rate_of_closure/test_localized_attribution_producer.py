@@ -17,7 +17,6 @@ from rate_of_closure.simulation import (
 from rate_of_closure.variation.localized_attribution import Availability, TrialStatus
 from rate_of_closure.variation.localized_attribution_producer import (
     LocalizedAttributionDesign,
-    LocalizedAttributionProduction,
     produce_localized_attribution,
 )
 from rate_of_closure.variation.request_builder import (
@@ -143,10 +142,67 @@ def test_producer_runs_deterministic_one_at_a_time_pairs_and_binds_identity() ->
         item.availability is Availability.AVAILABLE
         for item in first.authority.observations
     )
-    with pytest.raises(ContractViolationError, match="bind the design identity"):
-        LocalizedAttributionProduction(
-            first.authority, "0" * 64, first.request_identity
+    with pytest.raises(ContractViolationError, match="canonical retained design"):
+        replace(first, design_identity="0" * 64)
+
+
+def test_production_rejects_cross_design_request_and_identity_swaps() -> None:
+    first = produce_localized_attribution(_design())
+    second_design = replace(
+        _design(),
+        intervention_deltas_nm={
+            _design().source_plan.noise[0].spec_id: 3.0,
+        },
+    )
+    second = produce_localized_attribution(second_design)
+
+    with pytest.raises(ContractViolationError, match="request identity"):
+        replace(first, request_identity=second.request_identity)
+    with pytest.raises(ContractViolationError, match="exact paired design"):
+        replace(
+            first,
+            request=second.request,
+            request_identity=second.request_identity,
         )
+    with pytest.raises(ContractViolationError, match="result inputs"):
+        replace(first, result=second.result)
+
+
+def test_production_rejects_authority_relabel_and_pair_payload_tampering() -> None:
+    first = produce_localized_attribution(_design())
+    second_design = replace(
+        _design(),
+        intervention_deltas_nm={
+            _design().source_plan.noise[0].spec_id: 3.0,
+        },
+    )
+    second = produce_localized_attribution(second_design)
+
+    relabeled = replace(
+        second.authority,
+        authority_id=first.authority.authority_id,
+    )
+    with pytest.raises(ContractViolationError, match="authority payload"):
+        replace(first, authority=relabeled)
+
+    pair = first.authority.pairs[0]
+    tampered_pair = replace(
+        pair, perturbed_source_value=pair.perturbed_source_value + 1.0
+    )
+    tampered_observations = tuple(
+        replace(
+            observation,
+            perturbed_source_value=observation.perturbed_source_value + 1.0,
+        )
+        for observation in first.authority.observations
+    )
+    tampered = replace(
+        first.authority,
+        pairs=(tampered_pair,),
+        observations=tampered_observations,
+    )
+    with pytest.raises(ContractViolationError, match="authority payload"):
+        replace(first, authority=tampered)
 
 
 def test_no_impact_retains_state_and_types_impact_and_shot_unavailability() -> None:
