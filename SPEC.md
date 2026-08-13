@@ -32,6 +32,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -58,6 +59,10 @@
 | **Current Version**     | 1.14.39                                    |
 | **Spec Version**        | 1.14.39                                    |
 >>>>>>> origin/feat/4271-regional-event-inspection
+=======
+| **Current Version**     | 1.14.40                                    |
+| **Spec Version**        | 1.14.40                                    |
+>>>>>>> origin/feat/4271-regional-trajectory-export
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -82,11 +87,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
 =======
 =======
+=======
+### 2026-08-11 Regional Trajectory Inspection and Canonical Evidence Export
+
+- Matched PyQt6 and React evidence surfaces expose the already-validated raw
+  ground trajectory samples with explicit SI time, phase, position, linear
+  velocity, angular velocity, and coordinate frame. Both clients retain the
+  complete accepted envelope while rendering at most the first 256 samples
+  and disclose the exact validated total when presentation is truncated.
+- An accepted envelope can be exported without projection or recomputation.
+  Native export writes the canonical UTF-8 JSON atomically; browser export
+  downloads the same frozen canonical serialization and explicitly does not
+  claim filesystem atomicity. Cancelled native selection changes nothing, and
+  a failed export preserves the accepted evidence.
+- This remains inspection and persistence only. It does not run regional
+  physics in the browser, construct executor inputs, invoke the executor,
+  interpolate or play the trajectory, or relax partial-result censorship.
+
+>>>>>>> origin/feat/4271-regional-trajectory-export
 ### 2026-08-11 Regional Execution Ledger Inspection
 
 - Matched PyQt6 and React evidence surfaces inspect the strictly validated
@@ -3062,6 +3086,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3070,6 +3095,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.40 | fix(rate-of-closure, #4354): make the regional evidence atomic-export return boundary stable under the protected changed-file MyPy profile by assigning the skipped imported helper result to an explicit Boolean local; match the inherited #4351 repair, avoid both `no-any-return` and a root-set-dependent redundant cast, and change no runtime behavior or canonical bytes. |
+| 2026-08-11 | 1.14.40 | merge(rate-of-closure, #4271 #4354): normally merge exact current regional-trajectory export child `99b0739bdc3ece814ed6039e6ba31f7ac38c0227` first with exact published PR #4353 parent `e0433adbc3c82272745d098867f261462a790d08` second without changing the `feat/4271-regional-event-inspection` base; preserve matched bounded PyQt6/React inspection and canonical semantic-lossless export of validated raw ground-trajectory samples, inherited ground-event and regional-transition ledger inspection, qualified result projection, the explicit Boolean local required by protected delta-MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep input construction, UI executor invocation, interpolation/playback, calibration workflows, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
+| 2026-08-11 | 1.14.38 | feat(ground-roll, #4267 #4271): add matched bounded PyQt6/React inspection of validated raw ground-trajectory samples with explicit SI units and frames, retain the complete accepted envelope while rendering at most 256 samples with exact truncation disclosure, and add canonical semantic-lossless evidence export using native atomic UTF-8 writes and browser downloads of the frozen serializer; preserve transactional import and partial-result censorship, execute no browser physics, and retain input construction, executor invocation, interpolation/playback, measured calibration, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
+>>>>>>> origin/feat/4271-regional-trajectory-export
 | 2026-08-11 | 1.14.39 | merge(rate-of-closure, #4271 #4353): normally merge exact current regional-event inspection child `7fc00f43561c31923b74563bc2bf6caf89bbc9eb` first with exact published PR #4352 parent `12fc80798d2a15b44c0215688ffb031dd99cbdd1` second without changing the `feat/4271-regional-result-readback` base; preserve matched bounded PyQt6/React inspection of validated ground-event and regional-transition ledgers, the complete qualified result projection, the inherited explicit Boolean local required by protected delta-MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep trajectory-sample inspection, lossless export, UI executor invocation, playback, calibration workflows, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
 | 2026-08-11 | 1.14.37 | feat(ground-roll, #4267 #4271): add matched bounded PyQt6/React inspection of the already-validated ground-event and regional-transition ledgers with explicit SI units, frames, before/after linear and angular states, and from/to region/surface identities; retain the full accepted envelope while rendering at most 256 rows per ledger with exact truncation disclosure; keep null-result ledgers empty and partial endpoints censored; retain trajectory-sample inspection, lossless export, executor invocation, playback, calibration workflows, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
 >>>>>>> origin/feat/4271-regional-event-inspection

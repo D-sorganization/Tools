@@ -12,6 +12,7 @@ from shared.python.swing_sim.ground import (
     regional_ground_execution_result_from_json,
 )
 
+from .atomic_text_files import write_utf8_text_atomic
 from .bounded_text_files import read_bounded_utf8
 
 
@@ -226,6 +227,29 @@ def read_regional_execution_evidence(
     )
 
 
+def write_regional_execution_evidence_atomic(
+    result: RegionalGroundExecutionResult,
+    destination: str | Path | None,
+) -> bool:
+    """Atomically export one exact validated canonical execution envelope."""
+    if destination is None:
+        return False
+    if type(result) is not RegionalGroundExecutionResult:
+        raise TypeError("result must be an exact RegionalGroundExecutionResult")
+    text = result.to_json()
+    if len(text.encode("utf-8")) > MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES:
+        raise ValueError("regional execution evidence exceeds maximum wire size")
+    # The protected delta gate skips imported modules, so annotate this local
+    # boundary explicitly without a cast that becomes redundant when the
+    # helper is included in the same MyPy root set.
+    write_succeeded: bool = write_utf8_text_atomic(
+        text,
+        destination,
+        document_name="regional execution evidence",
+    )
+    return write_succeeded
+
+
 __all__ = [
     "RegionalExecutionEvidence",
     "RegionalExecutionEventReadback",
@@ -234,4 +258,5 @@ __all__ = [
     "RegionalExecutionWarningReadback",
     "read_regional_execution_evidence",
     "regional_execution_readback",
+    "write_regional_execution_evidence_atomic",
 ]

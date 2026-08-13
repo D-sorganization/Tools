@@ -1,5 +1,40 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4354 current-parent propagation candidate
+
+- PR `#4354` retains branch `feat/4271-regional-trajectory-export` and base
+  `feat/4271-regional-event-inspection`. Exact current child
+  `99b0739bdc3ece814ed6039e6ba31f7ac38c0227` is first and exact published PR
+  #4353 head `e0433adbc3c82272745d098867f261462a790d08` is second in a normal
+  no-ff merge.
+- The child retains matched bounded PyQt6/React raw-trajectory inspection and
+  canonical semantic-lossless evidence export while inheriting ground-event
+  and regional-transition ledger inspection, the complete qualified result
+  projection, the explicit Boolean local required by protected delta-MyPy,
+  embedded-plan execution/provenance and request-I/O boundaries, and complete
+  regional physics ancestry.
+- Local qualification is complete: 1,058 Python tests, 114 React files with
+  700 tests, complete Cargo workspace tests, focused 6-Python/8-React coverage,
+  Ruff check/format on the three child-delta Python files, protected MyPy on
+  two child production modules plus the coherent 35-module ground profile,
+  Bandit on the two child production modules, TypeScript, zero-warning ESLint,
+  the 204-module Vite build, Rust formatting/clippy, both LOC budgets, the
+  manifest validator and manifest tests, and every repository governance gate
+  are green. Protected delta-MyPy found the same skipped-import `no-any-return`
+  boundary as #4351 in the new evidence exporter; its helper result is now
+  assigned to an explicit Boolean local with no runtime or canonical-byte
+  change. The other seven child feature/test files and inherited Boolean-local
+  repair remain byte-exact. Standalone Black is non-authoritative by repository
+  policy and its Python 3.13 runner cannot safety-parse the inferred 3.14
+  target; authoritative Ruff is green. Known warnings remain the Hypothesis
+  cache ignore, empty polynomial legend, Node local-storage flag, and 528.82 kB
+  Vite chunk. The candidate has not been rebased, retargeted, rewritten,
+  force-pushed, or published and remains `not_released`.
+- Input construction, UI executor invocation, interpolation/playback,
+  calibration workflows, compiled regional physics, downstream parity,
+  protected exact-head evidence, review, approval, dependency integration,
+  release, and issue completion remain open.
+
 ## 2026-08-11 PR #4353 current-parent propagation candidate
 
 - PR `#4353` retains branch `feat/4271-regional-event-inspection` and base
@@ -2012,6 +2047,35 @@ release, and #4267/#4271 completion remain open.
 Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
 111 React files / 692 tests, strict MyPy, Ruff/format, TypeScript type-check,
 zero-warning ESLint, the 203-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains. Independent review is required before publication.
+
+## 2026-08-11 regional trajectory inspection and canonical export continuation
+
+Branch `feat/4271-regional-trajectory-export` is a local, unpublished child of
+exact published draft PR #4353 head
+`7fc00f43561c31923b74563bc2bf6caf89bbc9eb`. It adds matched PyQt6 and React
+inspection of the frozen envelope's already-validated raw ground trajectory:
+SI time, phase, position, linear velocity, angular velocity, and frame. Both
+clients retain the complete accepted envelope while presenting at most 256
+samples with exact count/truncation disclosure.
+
+Accepted evidence can be saved with the frozen canonical serializer. PyQt6
+uses a bounded UTF-8 native atomic write; React downloads the same canonical
+JSON and makes no atomic-filesystem claim. Export does not project, recompute,
+or alter evidence. Native cancellation is a no-op; import and export failures
+preserve the prior accepted evidence. No browser physics is introduced.
+
+This child has not been pushed and has no PR. Before any GitHub write, finish
+the recorded local gates and independent review. Ground-request and settled-
+bounce-prefix construction, UI executor invocation, interpolation/playback,
+measured calibration, compiled-runtime parity, downstream parity, protected
+CI/review, release, and #4267/#4271 completion remain open.
+
+Exact local gates are green: 209 expanded Python ground/plan/PyQt/layout tests,
+112 React files / 694 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 204-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
 remains. Independent review is required before publication.

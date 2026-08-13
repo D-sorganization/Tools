@@ -284,7 +284,17 @@
       "pr": 4353,
       "branch": "feat/4271-regional-event-inspection",
       "base_branch": "feat/4271-regional-result-readback",
-      "head_sha": "7fc00f43561c31923b74563bc2bf6caf89bbc9eb",
+      "head_sha": "e0433adbc3c82272745d098867f261462a790d08",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4354",
+      "pr": 4354,
+      "branch": "feat/4271-regional-trajectory-export",
+      "base_branch": "feat/4271-regional-event-inspection",
+      "head_sha": "99b0739bdc3ece814ed6039e6ba31f7ac38c0227",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -1294,7 +1304,9 @@
         "pr-4342",
         "pr-4350",
         "pr-4351",
-        "pr-4352"
+        "pr-4352",
+        "pr-4353",
+        "pr-4354"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
@@ -1311,12 +1323,12 @@
         "ground-regional-ui-helper-local-d217",
         "ground-regional-io-local-8e1c"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, and complete-result carriers remain open on draft PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, and 4352. A local unpublished child adds matched bounded inspection of the already-validated ground-event and regional-transition ledgers without browser physics. Fresh protected evidence for the reconciled heads, UI executor invocation, trajectory-sample tables, lossless export/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, and ledger-inspection carriers remain open on draft PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, and 4353. A local unpublished child adds matched bounded inspection of already-validated raw ground-trajectory samples and canonical semantic-lossless evidence export without browser physics. Fresh protected evidence for the reconciled heads, UI executor input construction and invocation, interpolation/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
-        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; and open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback. A local child adds bounded ground-event and regional-transition ledger inspection. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI executor invocation, trajectory-sample tables, lossless export/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
+        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; and open PR #4353 adds bounded ground-event and regional-transition ledger inspection. A local child adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI executor input construction or invocation, trajectory interpolation/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191
