@@ -5,6 +5,12 @@
 
 ## 2026-08-12 Integrated variation authority and execution child (#4142)
 
+Final independent review closed a typed/wire-domain symmetry gap. Available
+trial scalars must now be real, non-boolean, finite values; accepted NumPy real
+scalars are normalized to built-in floats before authority binding and export.
+Constructor rejection and NumPy-scalar writer/reader closure are covered by five
+new TDD cases; the combined focused persistence set passes 39/39.
+
 Local branch `codex/4142-react-mc-async-integrated` is based on exact #4404
 head `82e4c54c921f169227d25ece2935add4af3e721a`. The complete Rate result type,
 current-v1 reader, and writer share one scientific-limit and authority-binding

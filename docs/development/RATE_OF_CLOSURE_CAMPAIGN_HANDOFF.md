@@ -2,6 +2,10 @@
 
 ## 2026-08-12 #4142 integrated persistence, dispersion, and React worker child
 
+- Final independent review closed the last typed/wire-domain asymmetry: complete
+  trial outcomes reject booleans/non-real values and normalize accepted NumPy
+  real scalars to finite built-in floats. Five new TDD cases prove constructor
+  rejection and strict writer/reader closure; 39/39 focused persistence tests pass.
 - Local branch `codex/4142-react-mc-async-integrated` starts from exact #4404
   head `82e4c54c921f169227d25ece2935add4af3e721a` and integrates all reviewed
   reader/writer, dispersion, and browser-worker slices.

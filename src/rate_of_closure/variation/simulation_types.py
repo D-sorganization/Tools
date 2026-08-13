@@ -6,7 +6,9 @@ import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
+from numbers import Real
 from types import MappingProxyType
+from typing import cast
 
 import numpy as np
 
@@ -80,13 +82,12 @@ class SimulationTrialOutcome:
             "status must be a TrialEvaluationStatus",
             self.status,
         )
-        normalized = {name: self.values.get(name) for name in ALL_OUTPUT_NAMES}
         require(
             set(self.values) == set(ALL_OUTPUT_NAMES),
             "values must contain the canonical scalar output set",
             tuple(self.values),
         )
-        _validate_scalar_values(normalized)
+        normalized = _normalize_scalar_values(self.values)
         _validate_outcome_availability(self.status, normalized)
         _validate_failure_metadata(self)
         object.__setattr__(self, "values", MappingProxyType(normalized))
@@ -223,12 +224,27 @@ def _require_common_trace_contract(configs: tuple[SimulationConfig, ...]) -> Non
     )
 
 
-def _validate_scalar_values(values: Mapping[str, float | None]) -> None:
-    """Require each available scalar to be finite."""
-    require(
-        all(value is None or math.isfinite(value) for value in values.values()),
-        "available scalar outputs must be finite",
-    )
+def _normalize_scalar_values(values: Mapping[str, object]) -> dict[str, float | None]:
+    """Return finite built-in floats so typed outcomes are always wire-safe."""
+    normalized: dict[str, float | None] = {}
+    for name in ALL_OUTPUT_NAMES:
+        value = values[name]
+        if value is None:
+            normalized[name] = None
+            continue
+        require(
+            isinstance(value, Real) and not isinstance(value, (bool, np.bool_)),
+            "available scalar outputs must be real numbers excluding booleans",
+            (name, value),
+        )
+        numeric = float(cast(float, value))
+        require(
+            math.isfinite(numeric),
+            "available scalar outputs must be finite",
+            (name, numeric),
+        )
+        normalized[name] = numeric
+    return normalized
 
 
 def _validate_outcome_availability(

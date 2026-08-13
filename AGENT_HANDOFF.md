@@ -5,6 +5,12 @@
 
 ## 2026-08-12 Integrated variation persistence, dispersion, and React execution (#4142)
 
+Final independent review found and closed the last typed/wire-domain asymmetry:
+`SimulationTrialOutcome` now rejects booleans and non-real scalar values, turns
+accepted NumPy real scalars into finite built-in floats, and therefore guarantees
+that every constructed complete outcome can cross the strict JSON writer/reader
+boundary. Five new TDD cases and all 34 reader cases pass (39/39 focused).
+
 Local branch `codex/4142-react-mc-async-integrated` is based on exact #4404
 head `82e4c54c921f169227d25ece2935add4af3e721a`. It integrates the strict typed
 ensemble reader/writer, confidence-scaled dispersion metrics, and asynchronous

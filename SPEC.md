@@ -26,11 +26,21 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.50                                    |
-| **Spec Version**        | 1.16.50                                    |
+| **Current Version**     | 1.16.51                                    |
+| **Spec Version**        | 1.16.51                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Complete trial scalar wire-domain closure (#4142 R11.4)
+
+Version 1.16.51 closes the final independent-review finding on typed ensemble
+persistence. `SimulationTrialOutcome` accepts only finite real non-boolean
+available scalars and normalizes accepted Python/NumPy real values to built-in
+floats. A typed result can therefore no longer serialize a boolean that the
+strict reader rejects or retain a NumPy scalar the JSON writer cannot encode.
+Five TDD cases cover boolean and non-real rejection plus NumPy float/integer
+normalization and writer-reader closure; all 39 focused persistence tests pass.
 
 ### 2026-08-12 Integrated variation release-candidate typing boundary (#4142)
 
@@ -3258,6 +3268,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.51 | fix(rate-of-closure, #4142 R11.4): require complete trial output scalars to be finite real non-booleans; normalize accepted NumPy real scalars to built-in floats; and prove typed-object writer/reader domain closure with five TDD cases and 39 focused persistence tests. |
 | 2026-08-12 | 1.16.50 | fix(rate-of-closure, #4142): add the explicit Python `float` boundary required by CI-pinned Mypy 1.13 for the NumPy epsilon dispersion tolerance; record the exact integrated 1,200 Python/PyQt/shared and 743 React local gates while keeping protected publication and incomplete epic surfaces open. |
 | 2026-08-12 | 1.16.49 | fix(rate-of-closure, #4142 R11.4): centralize symmetric typed/reader/writer ensemble limits and authority binding; preflight sample/tensor axes before NumPy allocation; require strict finite size-bounded file output; normalize decoder resource errors; and clarify that outer v1 rejection is a future-migration policy, not a completed migration. |
 | 2026-08-12 | 1.16.48 | fix(rate-of-closure, #4142 R12.1/R12.2): fail closed on materially negative, unordered, nonfinite, nonorthonormal, or covariance-inconsistent eigensystems; retain roundoff-scale zero-rank directions; use cancellation-safe chi-square inversion over the explicit `[1e-12, 1)` domain; normalize strict real criteria; and correct unique-test evidence. |
