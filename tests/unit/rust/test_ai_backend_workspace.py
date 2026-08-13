@@ -21,9 +21,9 @@ REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 def test_ai_backend_in_cargo_workspace():
     """ai_backend must be a declared workspace member in the root Cargo.toml."""
     cargo_toml = (REPO_ROOT / "Cargo.toml").read_text(encoding="utf-8")
-    assert "ai_backend" in cargo_toml, (
-        "rust_core/ai_backend is not listed in the root workspace Cargo.toml members"
-    )
+    assert (
+        "ai_backend" in cargo_toml
+    ), "rust_core/ai_backend is not listed in the root workspace Cargo.toml members"
 
 
 @pytest.mark.unit
@@ -62,12 +62,12 @@ def test_maturin_ci_covers_all_platforms():
     for wf_path in candidates:
         content = wf_path.read_text(encoding="utf-8").lower()
         assert "windows" in content, f"{wf_path.name}: missing Windows runner"
-        assert "ubuntu" in content or "linux" in content, (
-            f"{wf_path.name}: missing Ubuntu/Linux runner"
-        )
-        assert "macos" in content or "mac" in content, (
-            f"{wf_path.name}: missing macOS runner"
-        )
+        assert (
+            "ubuntu" in content or "linux" in content
+        ), f"{wf_path.name}: missing Ubuntu/Linux runner"
+        assert (
+            "macos" in content or "mac" in content
+        ), f"{wf_path.name}: missing macOS runner"
 
 
 @pytest.mark.unit
@@ -79,9 +79,9 @@ def test_maturin_ci_covers_python_versions():
         + list(workflows_dir.glob("*ai_backend*"))
         + list(workflows_dir.glob("*ai-backend*"))
     )
-    assert candidates, (
-        "No maturin CI workflow found — cannot check Python version coverage."
-    )
+    assert (
+        candidates
+    ), "No maturin CI workflow found — cannot check Python version coverage."
 
     fleet_toolcache_limited = {
         "maturin-data-processor-core.yml",
@@ -94,9 +94,9 @@ def test_maturin_ci_covers_python_versions():
         for version in ["3.10", "3.11", "3.12"]:
             assert version in content, f"Python {version} not listed in {wf_path.name}"
         if wf_path.name in fleet_toolcache_limited:
-            assert "3.13" in content, (
-                f"{wf_path.name}: must document why Python 3.13 is not hard-gated"
-            )
+            assert (
+                "3.13" in content
+            ), f"{wf_path.name}: must document why Python 3.13 is not hard-gated"
             assert "toolcache" in content.lower(), (
                 f"{wf_path.name}: Python 3.13 deferral must cite runner "
                 "toolcache limits"
@@ -133,9 +133,9 @@ def test_ai_backend_cargo_toml_declares_local_embeddings_feature():
     crate_toml = (REPO_ROOT / "rust_core" / "ai_backend" / "Cargo.toml").read_text(
         encoding="utf-8"
     )
-    assert "local-embeddings" in crate_toml, (
-        "rust_core/ai_backend/Cargo.toml does not declare 'local-embeddings' feature."
-    )
+    assert (
+        "local-embeddings" in crate_toml
+    ), "rust_core/ai_backend/Cargo.toml does not declare 'local-embeddings' feature."
 
 
 @pytest.mark.unit

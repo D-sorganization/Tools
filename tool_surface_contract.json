@@ -178,6 +178,17 @@
       }
     },
     {
+      "id": "rate_of_closure",
+      "name": "Rate of Closure Impact Explorer",
+      "description": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps.",
+      "category": "Biomechanics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": true,
+        "legacy_gui": false
+      }
+    },
+    {
       "id": "rotation_converter",
       "name": "Rotation Converter",
       "description": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms.",

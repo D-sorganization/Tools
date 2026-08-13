@@ -1,0 +1,119 @@
+# Maturin CI — swing_core Python extension
+#
+# Builds the `swing-core` Rust crate (shared swing simulation kernel:
+# double-pendulum swing dynamics on an oriented swing plane, epic #4103 /
+# P0 #4104) as a maturin wheel and asserts the extension imports so
+# `from swing_core import swing` in
+# src/shared/python/swing_sim/_rust_facade.py resolves to the native backend
+# instead of raising.
+#
+# Unlike pendulum-core, swing-core IS a root Cargo workspace member, so
+# rustfmt/clippy/cargo-test coverage comes from ci-standard.yml's
+# rust-quality-gate. This workflow adds what the workspace gate cannot:
+# a per-Python-version wheel build, an import assertion, and the
+# Rust<->Python parity suite run non-skipped (it is `importorskip
+# swing_core` and so is silently skipped wherever the wheel is absent).
+#
+# Runner platforms: the d-sorg-fleet self-hosted pool spans linux, windows,
+# and macos hosts. Python versions 3.10, 3.11, and 3.12 are hard-gated here;
+# Python 3.13 coverage is deferred until all fleet runners have a 3.13
+# toolcache (same policy as maturin-pendulum-core.yml).
+
+name: Maturin — swing_core
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rust_core/swing-core/**"
+      - "src/shared/python/swing_sim/**"
+      - "rust_core/math-primitives/**"
+      - ".github/workflows/maturin-swing-core.yml"
+  pull_request:
+    paths:
+      - "rust_core/swing-core/**"
+      - "src/shared/python/swing_sim/**"
+      - "rust_core/math-primitives/**"
+      - ".github/workflows/maturin-swing-core.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: maturin-swing-core-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity-gate:
+    name: swing_core build + parity gate (Python ${{ matrix.python-version }})
+    runs-on: d-sorg-fleet
+    timeout-minutes: 30
+    env:
+      CARGO_TERM_COLOR: always
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+
+      - name: Install build + test deps
+        run: python -m pip install --upgrade pip maturin "numpy>=1.24" pytest
+
+      - name: Build swing_core wheel
+        run: python -m maturin build --release -m rust_core/swing-core/Cargo.toml --out dist
+
+      - name: Install the built wheel
+        shell: bash
+        run: |
+          WHEEL=$(ls dist/*.whl | head -1)
+          python -m pip install "$WHEEL"
+
+      - name: Assert the extension imports (hard fail — no silent fallback)
+        shell: bash
+        run: |
+          python - <<'PY'
+          # Runtime PyO3 submodule: attribute access, never `import swing_core.swing`.
+          from swing_core import swing
+          required = {
+              "PendulumParameters", "PendulumState",
+              "plane_rotation", "in_plane_gravity",
+              "mass_matrix", "step", "simulate", "total_energy",
+          }
+          missing = required - set(dir(swing))
+          assert not missing, f"swing_core.swing missing exports: {missing}"
+          print("swing_core OK:", sorted(required))
+          PY
+
+      - name: Assert the strict facade selects the Rust backend (gate)
+        shell: bash
+        env:
+          PYTHONPATH: src
+        run: |
+          python - <<'PY'
+          from shared.python.swing_sim import _rust_facade
+          assert _rust_facade.rust_available(), (
+              "swing_sim._rust_facade did not load the swing_core wheel"
+          )
+          print("swing_core backend gate OK: native loaded")
+          PY
+
+      - name: Run Rust<->Python parity suite (gate, non-skipped)
+        env:
+          PYTHONPATH: src
+          # This Rust-only lane must not import unrelated plugins cached on a
+          # self-hosted runner (for example pytest-qt without PyQt6 installed).
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
+        run: |
+          python -m pytest \
+            src/shared/python/swing_sim/tests/test_parity_rust.py \
+            -o addopts="" -p no:cacheprovider -v

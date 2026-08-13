@@ -19,6 +19,18 @@
             "path": "src/lower_body_model/launch_pyqt6.py",
             "type": "python",
             "desc": "Simulate and inspect lower-body MuJoCo kinematics and controls"
+        },
+        {
+            "name": "Rate of Closure Impact Explorer (PyQt6)",
+            "path": "src/rate_of_closure/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps."
+        },
+        {
+            "name": "Rate of Closure Impact Explorer (Web)",
+            "path": "src/rate_of_closure/launch_web.py",
+            "type": "python",
+            "desc": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps."
         }
     ],
     "Data Processing": [

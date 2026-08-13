@@ -199,6 +199,7 @@ include = [
     "web_applications*",
     "contracts*",
     "lower_body_model*",
+    "rate_of_closure*",
     "codemap*",
     "video_analyzer*",
 ]

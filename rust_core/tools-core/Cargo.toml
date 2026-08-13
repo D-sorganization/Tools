@@ -25,6 +25,7 @@ pyo3 = { workspace = true, optional = true }
 numpy = { workspace = true, optional = true }
 wasm-bindgen = { workspace = true, optional = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
 math-primitives = { path = "../math-primitives" }
 rand = "0.8"
 
@@ -34,7 +35,6 @@ getrandom = { version = "0.2", features = ["js"] }
 [dev-dependencies]
 proptest = { workspace = true }
 criterion = { workspace = true }
-serde_json = { workspace = true }
 
 [[bench]]
 name = "math_benchmarks"
