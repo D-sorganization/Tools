@@ -1,10 +1,4 @@
-"""Strict noncausal presentation contract for paired localized interventions.
-
-The contract accepts only explicitly retained baseline/perturbed observations.
-It never derives attribution from Monte Carlo scatter or correlation. Current
-Rate ensembles do not yet produce this authority; both UIs therefore fail
-closed until a future executor supplies genuine isolated pairs.
-"""
+"""Strict noncausal contract for explicitly retained intervention pairs."""
 
 from __future__ import annotations
 
@@ -16,6 +10,14 @@ from typing import cast
 
 from shared.python.contracts import require
 
+from ._localized_attribution_contract import (
+    MAX_SAFE_INTEGER,
+    MAX_TEXT_LENGTH,
+    TARGET_REGISTRY,
+    require_authority_shape,
+    response_matches,
+)
+
 AUTHORITY_SCHEMA_ID = "rate-of-closure/localized-attribution-authority"
 AUTHORITY_SCHEMA_VERSION = 1
 VIEW_SCHEMA_ID = "rate-of-closure/localized-attribution-view"
@@ -25,30 +27,6 @@ INTERPRETATION = "paired-planted-intervention-noncausal"
 _JOINT_BY_VARIABLE = {
     "swing_sim.swing.shoulder_commanded_torque_offset_nm": "joint.shoulder",
     "swing_sim.swing.wrist_commanded_torque_offset_nm": "joint.wrist",
-}
-_STATE_NAMES = {"position_x_m", "position_y_m", "position_z_m"}
-_IMPACT_NAMES = {
-    "impact_time_s",
-    "clubhead_speed_mps",
-    "spin_loft_deg",
-    "face_to_path_deg",
-    "spin_axis_tilt_deg",
-}
-_SHOT_NAMES = {
-    "ball_speed_mph",
-    "launch_angle_deg",
-    "launch_azimuth_deg",
-    "spin_rpm",
-    "carry_m",
-    "lateral_m",
-    "max_height_m",
-    "flight_time_s",
-    "landing_angle_deg",
-}
-_STATUS_VALUES = {
-    "evaluated_hit",
-    "evaluated_no_impact",
-    "numerical_failure",
 }
 _FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
 
@@ -74,6 +52,7 @@ def _stable_text(value: object, label: str) -> str:
     require(isinstance(value, str), f"{label} must be a string", value)
     text = cast(str, value)
     require(text and text == text.strip(), f"{label} must be a stable ID", text)
+    require(len(text) <= MAX_TEXT_LENGTH, f"{label} exceeds length cap", len(text))
     require(not any(ord(char) < 32 for char in text), f"{label} has controls", text)
     require(not text.startswith(_FORMULA_PREFIXES), f"{label} is unsafe", text)
     return text
@@ -92,8 +71,10 @@ def _finite(value: object, label: str) -> float:
 
 def _index(value: object, label: str) -> int:
     require(
-        isinstance(value, int) and not isinstance(value, bool) and value >= 0,
-        f"{label} must be a nonnegative integer",
+        isinstance(value, int)
+        and not isinstance(value, bool)
+        and 0 <= value <= MAX_SAFE_INTEGER,
+        f"{label} must be a nonnegative safe integer",
         value,
     )
     return cast(int, value)
@@ -143,6 +124,7 @@ class AttributionTarget:
     kind: str
     name: str
     unit: str
+    convention: str
     time_s: float | None
     point_id: str | None
     coordinate_frame: str | None
@@ -152,10 +134,21 @@ class AttributionTarget:
         _stable_text(self.name, "target name")
         _stable_text(self.unit, "target unit")
         require(
-            self.kind in {"state", "impact", "shot"}, "invalid target kind", self.kind
+            self.name in TARGET_REGISTRY, "target registry has no definition", self.name
+        )
+        definition = TARGET_REGISTRY[self.name]
+        require(
+            (self.kind, self.unit, self.convention, self.coordinate_frame)
+            == (
+                definition.kind,
+                definition.unit,
+                definition.convention,
+                definition.coordinate_frame,
+            ),
+            "target registry mismatch",
+            self.target_id,
         )
         if self.kind == "state":
-            require(self.name in _STATE_NAMES, "invalid state target", self.name)
             require(self.time_s is not None, "state target requires time_s")
             require(
                 _finite(self.time_s, "target time") >= 0.0, "target time must be >= 0"
@@ -165,13 +158,7 @@ class AttributionTarget:
                 _stable_text(self.point_id, "point_id").startswith("swing."),
                 "state point must be spatial swing.*",
             )
-            require(
-                self.coordinate_frame == "app_frame:x_target,y_up,z_right",
-                "invalid state frame",
-            )
             return
-        names = _IMPACT_NAMES if self.kind == "impact" else _SHOT_NAMES
-        require(self.name in names, f"invalid {self.kind} target", self.name)
         require(
             self.time_s is None
             and self.point_id is None
@@ -216,9 +203,7 @@ class AttributionObservation:
                 values[0], "baseline target"
             )
             require(
-                math.isclose(
-                    _finite(self.response, "response"), expected, abs_tol=1e-12
-                ),
+                response_matches(_finite(self.response, "response"), expected),
                 "response must equal perturbed minus baseline",
             )
         else:
@@ -230,16 +215,44 @@ class AttributionObservation:
 
 
 @dataclass(frozen=True)
+class AttributionPair:
+    """Immutable source-specific baseline/perturbed trial roster entry."""
+
+    source_spec_id: str
+    baseline_trial_index: int
+    perturbed_trial_index: int
+    baseline_status: TrialStatus
+    perturbed_status: TrialStatus
+    baseline_source_value: float
+    perturbed_source_value: float
+
+    def __post_init__(self) -> None:
+        _stable_text(self.source_spec_id, "source_spec_id")
+        baseline = _index(self.baseline_trial_index, "baseline_trial_index")
+        perturbed = _index(self.perturbed_trial_index, "perturbed_trial_index")
+        require(baseline != perturbed, "baseline and perturbed trials must differ")
+        _finite(self.baseline_source_value, "baseline source value")
+        _finite(self.perturbed_source_value, "perturbed source value")
+
+
+@dataclass(frozen=True)
 class AttributionAuthority:
     """Strict collection of retained localized paired observations."""
 
     authority_id: str
     sources: tuple[AttributionSource, ...]
     targets: tuple[AttributionTarget, ...]
+    pairs: tuple[AttributionPair, ...]
     observations: tuple[AttributionObservation, ...]
     interpretation: str = INTERPRETATION
 
     def __post_init__(self) -> None:
+        require_authority_shape(
+            len(self.sources),
+            len(self.targets),
+            len(self.pairs),
+            len(self.observations),
+        )
         _stable_text(self.authority_id, "authority_id")
         require(self.interpretation == INTERPRETATION, "invalid interpretation")
         source_ids = {source.spec_id for source in self.sources}
@@ -253,6 +266,19 @@ class AttributionAuthority:
             "target IDs must be unique and nonempty",
         )
         require(bool(self.observations), "observations must be nonempty")
+        pair_map = {
+            (
+                pair.source_spec_id,
+                pair.baseline_trial_index,
+                pair.perturbed_trial_index,
+            ): pair
+            for pair in self.pairs
+        }
+        require(len(pair_map) == len(self.pairs), "pair roster entries must be unique")
+        require(
+            {pair.source_spec_id for pair in self.pairs} == source_ids,
+            "pair matrix must include every source",
+        )
         keys: set[tuple[str, str, int, int]] = set()
         targets = {target.target_id: target for target in self.targets}
         for observation in self.observations:
@@ -260,6 +286,28 @@ class AttributionAuthority:
                 observation.source_spec_id in source_ids, "unknown observation source"
             )
             require(observation.target_id in target_ids, "unknown observation target")
+            pair_key = (
+                observation.source_spec_id,
+                observation.baseline_trial_index,
+                observation.perturbed_trial_index,
+            )
+            require(pair_key in pair_map, "observation is absent from pair roster")
+            pair = pair_map[pair_key]
+            require(
+                (
+                    observation.baseline_status,
+                    observation.perturbed_status,
+                    observation.baseline_source_value,
+                    observation.perturbed_source_value,
+                )
+                == (
+                    pair.baseline_status,
+                    pair.perturbed_status,
+                    pair.baseline_source_value,
+                    pair.perturbed_source_value,
+                ),
+                "observation conflicts with pair roster",
+            )
             _require_availability(observation, targets[observation.target_id])
             key = (
                 observation.source_spec_id,
@@ -269,6 +317,17 @@ class AttributionAuthority:
             )
             require(key not in keys, "duplicate attribution observation", key)
             keys.add(key)
+        expected = {
+            (
+                pair.source_spec_id,
+                target_id,
+                pair.baseline_trial_index,
+                pair.perturbed_trial_index,
+            )
+            for pair in self.pairs
+            for target_id in target_ids
+        }
+        require(keys == expected, "observation matrix must be complete")
 
 
 @dataclass(frozen=True)

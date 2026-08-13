@@ -26,11 +26,37 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.70                                    |
-| **Spec Version**        | 1.16.70                                    |
+| **Current Version**     | 1.16.71                                    |
+| **Spec Version**        | 1.16.71                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Localized attribution authority hardening (#4142)
+
+Version 1.16.71 makes paired authority structurally complete rather than
+observation-shaped. Every localized source declares an immutable roster of
+baseline/perturbed trial pairs. Exactly one observation is required for every
+source target and roster pair, even when the target is unavailable. Status and
+source values are invariant across targets. This rejects orphan entities,
+partial denominators, and cross-target pair drift.
+
+Target meaning is registry-owned by kind/name/unit/frame/convention; target IDs
+are opaque stable selectors and are not parsed for semantics. Trial IDs use the
+shared JavaScript-safe integer domain. Text and source/target/pair/observation
+arrays have explicit caps applied before element construction. Response uses
+the same four-scaled-ULP policy in Python and TypeScript. TypeScript parsed
+values are deeply frozen. Both UI pair selectors consume the immutable roster.
+Raw CSV carries schema/version/authority and complete source/target metadata,
+uses formula-safe serialization, and matches a shared cross-runtime parsed-row
+fixture. The current execution stack still lacks the
+genuine isolated paired producer and therefore continues to fail closed.
+
+Local evidence passes 256/256 selected Python tests, 890/890 React tests, and
+6/6 production Playwright scenarios. Exact hosted-policy Python 3.12 + Mypy
+1.13 passes eight changed production files. TypeScript, ESLint, Vite build,
+Ruff/format, assertion, docs, 400-line/module-size, fixture-parity, conflict-
+marker, and diff gates pass.
 
 ### 2026-08-13 Localized paired-attribution consumer contract (#4142)
 
@@ -3932,6 +3958,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.71 | fix(rate-of-closure, #4142 R13.3): harden paired attribution with immutable source pair rosters, complete source-target-pair matrices, canonical target semantics, shared ULP response policy, resource bounds, deep-frozen TypeScript values, and enriched formula-safe parity CSV. |
 | 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4142 R13.3): define strict Python/TypeScript paired planted-intervention attribution authority, typed source/target/pair observations and denominators, raw CSV and view JSON, and accessible PyQt6/React consumers that fail closed because current Monte Carlo results do not retain isolated baseline pairs. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |

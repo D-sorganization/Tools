@@ -12,6 +12,7 @@ from rate_of_closure.variation.localized_attribution import (
     attribution_authority_from_dict,
     attribution_authority_to_dict,
     attribution_observations_to_csv,
+    attribution_observations_to_rows,
     attribution_view_from_json,
     attribution_view_to_json,
     build_attribution_view,
@@ -28,6 +29,9 @@ WEB_FIXTURE = (
     / "model"
     / "__fixtures__"
     / "localized_attribution_authority_v1.json"
+)
+CSV_ROWS_FIXTURE = (
+    Path(__file__).parent / "fixtures" / "localized_attribution_csv_rows_v1.json"
 )
 
 
@@ -120,10 +124,89 @@ def test_raw_export_includes_provenance_caveat_and_typed_unavailability() -> Non
 
     csv_text = attribution_observations_to_csv(authority)
 
-    assert "interpretation,source_spec_id,joint_id,window_start_s" in csv_text
+    assert "schema_id,schema_version,authority_id,interpretation" in csv_text
+    assert "source_variable,source_unit" in csv_text
+    assert "target_unit,target_frame,target_convention" in csv_text
     assert "paired-planted-intervention-noncausal" in csv_text
     assert "no_impact_unavailable" in csv_text
     assert "numerical_failure" in csv_text
+    assert ",'-2.0," not in csv_text
+    assert ",-2.0," in csv_text
+    assert attribution_observations_to_rows(authority) == json.loads(
+        CSV_ROWS_FIXTURE.read_text(encoding="utf-8")
+    )
+
+
+def test_pair_roster_matrix_and_cross_target_identity_fail_closed() -> None:
+    for mutate, message in (
+        (lambda raw: raw["observations"].pop(), "matrix"),
+        (lambda raw: raw["pairs"].pop(), "matrix"),
+        (
+            lambda raw: raw["observations"][3].__setitem__(
+                "perturbed_status", "evaluated_no_impact"
+            ),
+            "pair roster",
+        ),
+        (
+            lambda raw: raw["observations"][3].__setitem__(
+                "perturbed_source_value", 99.0
+            ),
+            "pair roster",
+        ),
+    ):
+        payload = _payload()
+        mutate(payload)
+        with pytest.raises(ContractViolationError, match=message):
+            attribution_authority_from_dict(payload)
+
+
+def test_orphans_caps_safe_indices_and_target_registry_fail_closed() -> None:
+    cases = (
+        (
+            lambda raw: raw["sources"].append(
+                {**raw["sources"][0], "spec_id": "orphan"}
+            ),
+            "matrix",
+        ),
+        (lambda raw: raw["targets"][0].__setitem__("unit", "ft"), "target registry"),
+        (
+            lambda raw: raw["targets"][0].__setitem__("convention", "forged"),
+            "target registry",
+        ),
+        (
+            lambda raw: raw["pairs"][0].__setitem__(
+                "baseline_trial_index", 9007199254740992
+            ),
+            "safe integer",
+        ),
+        (lambda raw: raw.__setitem__("authority_id", "x" * 257), "length"),
+    )
+    for mutate, message in cases:
+        payload = _payload()
+        mutate(payload)
+        with pytest.raises(ContractViolationError, match=message):
+            attribution_authority_from_dict(payload)
+
+
+def test_response_uses_shared_four_scaled_ulp_policy() -> None:
+    payload = _payload()
+    expected = (
+        payload["observations"][0]["perturbed_target_value"]
+        - payload["observations"][0]["baseline_target_value"]
+    )
+    tolerance = 4.0 * 2.220446049250313e-16
+    payload["observations"][0]["response"] = expected + tolerance
+    attribution_authority_from_dict(payload)
+    payload["observations"][0]["response"] = expected + 2.0 * tolerance
+    with pytest.raises(ContractViolationError, match="response"):
+        attribution_authority_from_dict(payload)
+
+
+def test_resource_caps_apply_before_element_construction() -> None:
+    payload = _payload()
+    payload["sources"] = [None] * 33
+    with pytest.raises(ContractViolationError, match="resource cap"):
+        attribution_authority_from_dict(payload)
 
 
 @pytest.mark.parametrize(

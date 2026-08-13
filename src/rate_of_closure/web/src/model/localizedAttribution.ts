@@ -1,6 +1,8 @@
-/** Strict, noncausal presentation contract for retained intervention pairs. */
-
-import { spreadsheetSafeCsvCell } from "./csvSecurity";
+import {
+  MAX_OBSERVATIONS, MAX_PAIRS, MAX_SOURCES, MAX_TARGETS, TARGET_REGISTRY,
+  boundedArray, deepFreeze, finite, index, nullableFinite, record,
+  requireAuthorityShape, responseMatches, stable, type RecordValue,
+} from "./localizedAttributionContract";
 
 export const ATTRIBUTION_AUTHORITY_SCHEMA_ID =
   "rate-of-closure/localized-attribution-authority";
@@ -12,13 +14,9 @@ export const ATTRIBUTION_CAVEAT =
   "from Monte Carlo scatter or correlation.";
 
 type TrialStatus = "evaluated_hit" | "evaluated_no_impact" | "numerical_failure";
-type Availability =
-  | "available"
-  | "no_impact_unavailable"
-  | "numerical_failure"
-  | "nonfinite_unavailable";
+type Availability = "available" | "no_impact_unavailable" | "numerical_failure" |
+  "nonfinite_unavailable";
 type TargetKind = "state" | "impact" | "shot";
-type RecordValue = Record<string, unknown>;
 
 export interface AttributionSourceTs {
   specId: string;
@@ -27,17 +25,25 @@ export interface AttributionSourceTs {
   timeWindowS: readonly [number, number];
   unit: "N·m";
 }
-
 export interface AttributionTargetTs {
   targetId: string;
   kind: TargetKind;
   name: string;
   unit: string;
+  convention: string;
   timeS: number | null;
   pointId: string | null;
   coordinateFrame: string | null;
 }
-
+export interface AttributionPairTs {
+  sourceSpecId: string;
+  baselineTrialIndex: number;
+  perturbedTrialIndex: number;
+  baselineStatus: TrialStatus;
+  perturbedStatus: TrialStatus;
+  baselineSourceValue: number;
+  perturbedSourceValue: number;
+}
 export interface AttributionObservationTs {
   sourceSpecId: string;
   targetId: string;
@@ -52,15 +58,14 @@ export interface AttributionObservationTs {
   response: number | null;
   availability: Availability;
 }
-
 export interface AttributionAuthorityTs {
   authorityId: string;
   interpretation: typeof ATTRIBUTION_INTERPRETATION;
   sources: readonly AttributionSourceTs[];
   targets: readonly AttributionTargetTs[];
+  pairs: readonly AttributionPairTs[];
   observations: readonly AttributionObservationTs[];
 }
-
 export interface AttributionViewDefinitionTs {
   schemaId: typeof ATTRIBUTION_VIEW_SCHEMA_ID;
   schemaVersion: 1;
@@ -70,7 +75,6 @@ export interface AttributionViewDefinitionTs {
   baselineTrialIndex: number;
   perturbedTrialIndex: number;
 }
-
 export interface AttributionDenominatorTs {
   totalPairs: number;
   availablePairs: number;
@@ -79,7 +83,6 @@ export interface AttributionDenominatorTs {
   failedPairs: number;
   nonfinitePairs: number;
 }
-
 export interface AttributionViewTs {
   source: AttributionSourceTs;
   target: AttributionTargetTs;
@@ -87,63 +90,16 @@ export interface AttributionViewTs {
   observations: readonly AttributionObservationTs[];
   denominator: AttributionDenominatorTs;
 }
-
 const JOINT_BY_VARIABLE: Readonly<Record<string, AttributionSourceTs["jointId"]>> = {
   "swing_sim.swing.shoulder_commanded_torque_offset_nm": "joint.shoulder",
   "swing_sim.swing.wrist_commanded_torque_offset_nm": "joint.wrist",
 };
-const STATE_NAMES = new Set(["position_x_m", "position_y_m", "position_z_m"]);
-const IMPACT_NAMES = new Set([
-  "impact_time_s", "clubhead_speed_mps", "spin_loft_deg",
-  "face_to_path_deg", "spin_axis_tilt_deg",
-]);
-const SHOT_NAMES = new Set([
-  "ball_speed_mph", "launch_angle_deg", "launch_azimuth_deg", "spin_rpm",
-  "carry_m", "lateral_m", "max_height_m", "flight_time_s", "landing_angle_deg",
-]);
 const STATUSES = new Set<TrialStatus>([
   "evaluated_hit", "evaluated_no_impact", "numerical_failure",
 ]);
 const AVAILABILITIES = new Set<Availability>([
   "available", "no_impact_unavailable", "numerical_failure", "nonfinite_unavailable",
 ]);
-
-const record = (value: unknown, fields: readonly string[], label: string): RecordValue => {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    throw new Error(`${label} must be an object`);
-  }
-  const result = value as RecordValue;
-  if (Object.keys(result).sort().join("|") !== [...fields].sort().join("|")) {
-    throw new Error(`${label} has invalid fields`);
-  }
-  return result;
-};
-
-const stable = (value: unknown, label: string): string => {
-  const hasControl = typeof value === "string" && [...value].some(
-    (character) => character.charCodeAt(0) < 32,
-  );
-  if (typeof value !== "string" || value.length === 0 || value.trim() !== value ||
-      hasControl || /^[=+\-@]/u.test(value)) {
-    throw new Error(`${label} must be a stable safe ID`);
-  }
-  return value;
-};
-const finite = (value: unknown, label: string): number => {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    throw new Error(`${label} must be finite`);
-  }
-  return value;
-};
-const nullableFinite = (value: unknown, label: string): number | null =>
-  value === null ? null : finite(value, label);
-const index = (value: unknown, label: string): number => {
-  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
-    throw new Error(`${label} must be a nonnegative integer`);
-  }
-  return value;
-};
-
 const sourceFromValue = (value: unknown): AttributionSourceTs => {
   const raw = record(value, [
     "spec_id", "variable_key", "joint_id", "time_window_s", "unit",
@@ -165,10 +121,10 @@ const sourceFromValue = (value: unknown): AttributionSourceTs => {
     jointId: expectedJoint, timeWindowS: [start, end], unit: "N·m",
   };
 };
-
 const targetFromValue = (value: unknown): AttributionTargetTs => {
   const raw = record(value, [
-    "target_id", "kind", "name", "unit", "time_s", "point_id", "coordinate_frame",
+    "target_id", "kind", "name", "unit", "convention", "time_s", "point_id",
+    "coordinate_frame",
   ], "target");
   if (raw.kind !== "state" && raw.kind !== "impact" && raw.kind !== "shot") {
     throw new Error("invalid target kind");
@@ -178,25 +134,30 @@ const targetFromValue = (value: unknown): AttributionTargetTs => {
   const target: AttributionTargetTs = {
     targetId: stable(raw.target_id, "target_id"), kind, name,
     unit: stable(raw.unit, "target unit"),
+    convention: stable(raw.convention, "target convention"),
     timeS: nullableFinite(raw.time_s, "target time"),
     pointId: raw.point_id === null ? null : stable(raw.point_id, "point_id"),
     coordinateFrame: raw.coordinate_frame === null
       ? null : stable(raw.coordinate_frame, "coordinate_frame"),
   };
+  const definition = TARGET_REGISTRY[name];
+  if (!definition || definition.kind !== target.kind || definition.unit !== target.unit ||
+      definition.convention !== target.convention ||
+      definition.coordinateFrame !== target.coordinateFrame) {
+    throw new Error("target registry mismatch");
+  }
   if (kind === "state") {
-    if (!STATE_NAMES.has(name) || target.timeS === null || target.timeS < 0 ||
+    if (target.timeS === null || target.timeS < 0 ||
         !target.pointId?.startsWith("swing.") ||
-        target.coordinateFrame !== "app_frame:x_target,y_up,z_right") {
+        target.coordinateFrame === null) {
       throw new Error("invalid state target locus");
     }
   } else {
-    const names = kind === "impact" ? IMPACT_NAMES : SHOT_NAMES;
-    if (!names.has(name) || target.timeS !== null || target.pointId !== null ||
+    if (target.timeS !== null || target.pointId !== null ||
         target.coordinateFrame !== null) throw new Error(`invalid ${kind} target`);
   }
   return target;
 };
-
 const observationFromValue = (value: unknown): AttributionObservationTs => {
   const raw = record(value, [
     "source_spec_id", "target_id", "baseline_trial_index", "perturbed_trial_index",
@@ -226,8 +187,8 @@ const observationFromValue = (value: unknown): AttributionObservationTs => {
   };
   if (observation.availability === "available") {
     if (observation.baselineTargetValue === null || observation.perturbedTargetValue === null ||
-        observation.response === null || Math.abs(observation.response -
-          (observation.perturbedTargetValue - observation.baselineTargetValue)) > 1e-12) {
+        observation.response === null || !responseMatches(observation.response,
+          observation.perturbedTargetValue - observation.baselineTargetValue)) {
       throw new Error("response must equal perturbed minus baseline");
     }
   } else if (observation.response !== null ||
@@ -235,6 +196,26 @@ const observationFromValue = (value: unknown): AttributionObservationTs => {
     throw new Error("unavailable pair must retain null target/response");
   }
   return observation;
+};
+
+const pairFromValue = (value: unknown): AttributionPairTs => {
+  const raw = record(value, [
+    "source_spec_id", "baseline_trial_index", "perturbed_trial_index",
+    "baseline_status", "perturbed_status", "baseline_source_value",
+    "perturbed_source_value",
+  ], "pair roster");
+  if (!STATUSES.has(raw.baseline_status as TrialStatus) ||
+      !STATUSES.has(raw.perturbed_status as TrialStatus)) throw new Error("invalid status");
+  const baselineTrialIndex = index(raw.baseline_trial_index, "baseline_trial_index");
+  const perturbedTrialIndex = index(raw.perturbed_trial_index, "perturbed_trial_index");
+  if (baselineTrialIndex === perturbedTrialIndex) throw new Error("pair trials must differ");
+  return {
+    sourceSpecId: stable(raw.source_spec_id, "source_spec_id"), baselineTrialIndex,
+    perturbedTrialIndex, baselineStatus: raw.baseline_status as TrialStatus,
+    perturbedStatus: raw.perturbed_status as TrialStatus,
+    baselineSourceValue: finite(raw.baseline_source_value, "baseline source value"),
+    perturbedSourceValue: finite(raw.perturbed_source_value, "perturbed source value"),
+  };
 };
 
 const expectedAvailability = (
@@ -252,21 +233,35 @@ const expectedAvailability = (
 export function attributionAuthorityFromValue(value: unknown): AttributionAuthorityTs {
   const raw = record(value, [
     "schema_id", "schema_version", "authority_id", "interpretation",
-    "sources", "targets", "observations",
+    "sources", "targets", "pairs", "observations",
   ], "authority");
   if (raw.schema_id !== ATTRIBUTION_AUTHORITY_SCHEMA_ID ||
       raw.schema_version !== ATTRIBUTION_SCHEMA_VERSION ||
-      raw.interpretation !== ATTRIBUTION_INTERPRETATION ||
-      !Array.isArray(raw.sources) || !Array.isArray(raw.targets) ||
-      !Array.isArray(raw.observations)) throw new Error("invalid attribution authority schema");
-  const sources = raw.sources.map(sourceFromValue);
-  const targets = raw.targets.map(targetFromValue);
-  const observations = raw.observations.map(observationFromValue);
+      raw.interpretation !== ATTRIBUTION_INTERPRETATION) {
+    throw new Error("invalid attribution authority schema");
+  }
+  const sourceRows = boundedArray(raw.sources, MAX_SOURCES, "sources");
+  const targetRows = boundedArray(raw.targets, MAX_TARGETS, "targets");
+  const pairRows = boundedArray(raw.pairs, MAX_PAIRS, "pairs");
+  const observationRows = boundedArray(raw.observations, MAX_OBSERVATIONS, "observations");
+  requireAuthorityShape(
+    sourceRows.length, targetRows.length, pairRows.length, observationRows.length,
+  );
+  const sources = sourceRows.map(sourceFromValue);
+  const targets = targetRows.map(targetFromValue);
+  const pairs = pairRows.map(pairFromValue);
+  const observations = observationRows.map(observationFromValue);
   const sourceIds = new Set(sources.map((source) => source.specId));
   const targetMap = new Map(targets.map((target) => [target.targetId, target]));
   if (sourceIds.size !== sources.length || sourceIds.size === 0 ||
       targetMap.size !== targets.length || targetMap.size === 0) throw new Error("duplicate IDs");
   if (observations.length === 0) throw new Error("observations must be nonempty");
+  const pairMap = new Map(pairs.map((pair) => [[pair.sourceSpecId,
+    pair.baselineTrialIndex, pair.perturbedTrialIndex].join("|"), pair]));
+  if (pairMap.size !== pairs.length ||
+      new Set(pairs.map((pair) => pair.sourceSpecId)).size !== sourceIds.size) {
+    throw new Error("pair matrix must cover every source with unique pairs");
+  }
   const keys = new Set<string>();
   observations.forEach((observation) => {
     const target = targetMap.get(observation.targetId);
@@ -274,15 +269,30 @@ export function attributionAuthorityFromValue(value: unknown): AttributionAuthor
     if (observation.availability !== expectedAvailability(observation, target)) {
       throw new Error("availability does not match typed outcomes");
     }
+    const pair = pairMap.get([observation.sourceSpecId,
+      observation.baselineTrialIndex, observation.perturbedTrialIndex].join("|"));
+    if (!pair || pair.baselineStatus !== observation.baselineStatus ||
+        pair.perturbedStatus !== observation.perturbedStatus ||
+        pair.baselineSourceValue !== observation.baselineSourceValue ||
+        pair.perturbedSourceValue !== observation.perturbedSourceValue) {
+      throw new Error("observation conflicts with pair roster");
+    }
     const key = [observation.sourceSpecId, observation.targetId,
       observation.baselineTrialIndex, observation.perturbedTrialIndex].join("|");
     if (keys.has(key)) throw new Error("duplicate attribution observation");
     keys.add(key);
   });
-  return {
+  const expected = new Set(pairs.flatMap((pair) => targets.map((target) => [
+    pair.sourceSpecId, target.targetId, pair.baselineTrialIndex,
+    pair.perturbedTrialIndex,
+  ].join("|"))));
+  if (keys.size !== expected.size || [...expected].some((key) => !keys.has(key))) {
+    throw new Error("observation matrix must be complete");
+  }
+  return deepFreeze({
     authorityId: stable(raw.authority_id, "authority_id"),
-    interpretation: ATTRIBUTION_INTERPRETATION, sources, targets, observations,
-  };
+    interpretation: ATTRIBUTION_INTERPRETATION, sources, targets, pairs, observations,
+  });
 }
 
 export function attributionAuthorityToValue(authority: AttributionAuthorityTs): unknown {
@@ -295,7 +305,16 @@ export function attributionAuthorityToValue(authority: AttributionAuthorityTs): 
     })),
     targets: authority.targets.map((target) => ({
       target_id: target.targetId, kind: target.kind, name: target.name, unit: target.unit,
-      time_s: target.timeS, point_id: target.pointId, coordinate_frame: target.coordinateFrame,
+      convention: target.convention, time_s: target.timeS, point_id: target.pointId,
+      coordinate_frame: target.coordinateFrame,
+    })),
+    pairs: authority.pairs.map((pair) => ({
+      source_spec_id: pair.sourceSpecId,
+      baseline_trial_index: pair.baselineTrialIndex,
+      perturbed_trial_index: pair.perturbedTrialIndex,
+      baseline_status: pair.baselineStatus, perturbed_status: pair.perturbedStatus,
+      baseline_source_value: pair.baselineSourceValue,
+      perturbed_source_value: pair.perturbedSourceValue,
     })),
     observations: authority.observations.map((row) => ({
       source_spec_id: row.sourceSpecId, target_id: row.targetId,
@@ -366,30 +385,15 @@ export function attributionViewFromJson(text: string): AttributionViewDefinition
   const baselineTrialIndex = index(raw.baseline_trial_index, "baseline_trial_index");
   const perturbedTrialIndex = index(raw.perturbed_trial_index, "perturbed_trial_index");
   if (baselineTrialIndex === perturbedTrialIndex) throw new Error("pair trials must differ");
-  return {
+  return deepFreeze({
     schemaId: ATTRIBUTION_VIEW_SCHEMA_ID, schemaVersion: 1,
     authorityId: stable(raw.authority_id, "authority_id"),
     sourceSpecId: stable(raw.source_spec_id, "source_spec_id"),
     targetId: stable(raw.target_id, "target_id"), baselineTrialIndex, perturbedTrialIndex,
-  };
+  });
 }
 
-export function attributionObservationsToCsv(authority: AttributionAuthorityTs): string {
-  attributionAuthorityToValue(authority);
-  const header = ["interpretation", "source_spec_id", "joint_id", "window_start_s",
-    "window_end_s", "target_id", "target_kind", "target_name", "target_time_s",
-    "target_point_id", "baseline_trial", "perturbed_trial", "baseline_status",
-    "perturbed_status", "baseline_source_value", "perturbed_source_value",
-    "baseline_target_value", "perturbed_target_value", "response", "availability"];
-  const rows = authority.observations.map((row) => {
-    const source = authority.sources.find((item) => item.specId === row.sourceSpecId)!;
-    const target = authority.targets.find((item) => item.targetId === row.targetId)!;
-    return [authority.interpretation, source.specId, source.jointId,
-      ...source.timeWindowS, target.targetId, target.kind, target.name, target.timeS,
-      target.pointId, row.baselineTrialIndex, row.perturbedTrialIndex, row.baselineStatus,
-      row.perturbedStatus, row.baselineSourceValue, row.perturbedSourceValue,
-      row.baselineTargetValue, row.perturbedTargetValue, row.response, row.availability];
-  });
-  return [header, ...rows].map((row) => row.map((cell) =>
-    spreadsheetSafeCsvCell(cell === null ? "" : String(cell))).join(",")).join("\n") + "\n";
-}
+export {
+  attributionObservationsToCsv,
+  attributionObservationsToRows,
+} from "./localizedAttributionCsv";

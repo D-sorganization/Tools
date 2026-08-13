@@ -1,5 +1,22 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 localized attribution authority hardening
+
+- Every source has an immutable explicit trial-pair roster; authority requires
+  the complete source-target-pair matrix with typed unavailable observations.
+- Status and source values are pair invariants across targets. Orphans,
+  duplicates, incomplete matrices, unsafe IDs, and resource excess fail closed.
+- Registry-owned target kind/name/unit/frame/convention defines meaning; the
+  target ID is explicitly opaque. Both UIs present those semantics and read
+  retained pair choices directly from the immutable roster.
+- Python/TypeScript share four-scaled-ULP response boundaries, safe integers,
+  resource caps, enriched formula-safe CSV, and exact parsed-row fixtures.
+  TypeScript parsed authority/view objects are deeply frozen.
+- Gates pass 256/256 selected Python, 890/890 React, and 6/6 Playwright. Exact
+  Python 3.12 + Mypy 1.13 passes eight production files; TS, ESLint, build,
+  Ruff/format, assertion, docs, size, parity, conflict, and diff gates pass.
+- SPEC advances to 1.16.71. Paired producer/Worker/document wiring remains open.
+
 ## 2026-08-13 #4142 localized paired-attribution consumer contract
 
 - Strict Python/TypeScript schema-v1 parity now represents explicitly retained

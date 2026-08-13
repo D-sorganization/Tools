@@ -3,9 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized attribution authority hardening (#4142)
+
+Version 1.16.71 closes the paired-attribution review blockers. Each source now
+owns an immutable explicit baseline/perturbed roster, and the authority must
+contain the complete source-target-pair observation matrix, including typed
+unavailable rows. Trial statuses and source values must match the roster on
+every target. Orphan sources/targets, incomplete matrices, duplicate pairs,
+unsafe trial integers, oversized strings/arrays, and over-cap resources fail
+before dependent construction.
+
+A canonical target registry binds kind/name/unit/frame/convention while the
+stable target ID is explicitly opaque. Python and TypeScript share a four-
+scaled-ULP response policy and exact boundary tests. Parsed TypeScript
+authorities/views are deeply frozen. CSV now includes schema/version/authority,
+source variable/unit, target unit/frame/convention, and formula-safe cells;
+both runtimes match a shared parsed-row golden. PyQt6/React show convention and
+opaque-ID semantics; pair selectors consume the immutable roster directly.
+The honest producer gap from 1.16.70 remains unchanged.
+
+Local gates pass 256/256 selected localized/variation Python tests, 890/890
+React tests, and 6/6 production Playwright scenarios. Exact hosted-policy
+Python 3.12 + Mypy 1.13 passes eight changed production files; TypeScript,
+ESLint, build, Ruff/format, assertion, docs, 400-line/module-size, fixture-
+parity, conflict-marker, and diff gates pass.
+
 ## 2026-08-13 Localized paired-attribution consumer contract (#4142)
 
-Version 1.16.70 adds strict Python/TypeScript parity contracts and accessible
+Version 1.16.70 added strict Python/TypeScript parity contracts and accessible
 PyQt6/React consumers for source spec/topological joint/half-open window to
 state point/time, impact, and shot responses. The view selects one explicitly
 retained baseline/perturbed pair, keeps hit/no-impact/failure/nonfinite

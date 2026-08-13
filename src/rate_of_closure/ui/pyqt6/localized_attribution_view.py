@@ -59,7 +59,8 @@ class LocalizedAttributionView(QWidget):
         self._target.setAccessibleName("Localized attribution target")
         self._target.setToolTip(
             "State targets use spatial swing.* point/time; impact and shot targets "
-            "retain typed unavailability."
+            "retain typed unavailability. Target IDs are opaque stable selectors; "
+            "the registry-owned name/unit/frame/convention defines meaning."
         )
         self._pair = QComboBox()
         self._pair.setAccessibleName("Localized attribution retained pair")
@@ -186,29 +187,23 @@ class LocalizedAttributionView(QWidget):
         self._target.blockSignals(True)
         self._target.clear()
         if authority is not None and isinstance(source_id, str):
-            available = {
-                row.target_id
-                for row in authority.observations
-                if row.source_spec_id == source_id
-            }
             for target in authority.targets:
-                if target.target_id in available:
-                    self._target.addItem(
-                        f"{target.kind}: {target.name}", target.target_id
-                    )
+                self._target.addItem(f"{target.kind}: {target.name}", target.target_id)
         self._target.blockSignals(False)
         self._target_changed()
 
     def _target_changed(self) -> None:
         authority = self._authority
         source_id = self._source.currentData()
-        target_id = self._target.currentData()
         self._pair.blockSignals(True)
         self._pair.clear()
         if authority is not None:
-            for row in authority.observations:
-                if row.source_spec_id == source_id and row.target_id == target_id:
-                    pair = (row.baseline_trial_index, row.perturbed_trial_index)
+            for retained in authority.pairs:
+                if retained.source_spec_id == source_id:
+                    pair = (
+                        retained.baseline_trial_index,
+                        retained.perturbed_trial_index,
+                    )
                     self._pair.addItem(f"Trial {pair[0]} → {pair[1]}", pair)
         self._pair.blockSignals(False)
         self._refresh()
@@ -226,7 +221,8 @@ class LocalizedAttributionView(QWidget):
         )
         self._locus.setText(
             f"{source.joint_id} · [{source.time_window_s[0]}, "
-            f"{source.time_window_s[1]}) s · {source.unit} → {target_locus}"
+            f"{source.time_window_s[1]}) s · {source.unit} → {target_locus} · "
+            f"{target.convention} · opaque stable ID {target.target_id}"
         )
         values = (
             self._value(

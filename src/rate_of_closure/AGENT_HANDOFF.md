@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized attribution authority hardening (#4142)
+
+- Immutable per-source pair rosters and a required complete source-target-pair
+  matrix prevent partial denominators and cross-target status/source drift.
+- Canonical target kind/name/unit/frame/convention owns semantics; target IDs
+  remain opaque stable selectors. Both UI surfaces display this distinction
+  and source retained pair choices directly from the immutable roster.
+- Python/TypeScript share safe trial integers, bounded text/arrays, an exact
+  four-scaled-ULP response rule, enriched formula-safe CSV, and parsed-row
+  goldens. Parsed TypeScript authority and view objects are deeply frozen.
+- Gates pass 256/256 selected Python, 890/890 React, 6/6 Playwright, exact
+  Python 3.12 + Mypy 1.13 on eight production files, and all static/docs/size/
+  parity/conflict/diff checks.
+- SPEC 1.16.71 records the hardening. The isolated paired producer remains open,
+  so current production localized results continue to fail closed honestly.
+
 ## 2026-08-13 Localized paired-attribution consumer contract (#4142)
 
 - New strict Python/TypeScript schema-v1 authority binds one localized source

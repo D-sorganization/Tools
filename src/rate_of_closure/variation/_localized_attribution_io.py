@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-import csv
-import io
 import json
 from dataclasses import asdict
 from typing import Any, cast
 
 from shared.python.contracts import require
 
+from ._localized_attribution_contract import STATUS_VALUES, require_authority_shape
 from ._localized_attribution_types import (
-    _STATUS_VALUES,
     AUTHORITY_SCHEMA_ID,
     AUTHORITY_SCHEMA_VERSION,
     VIEW_SCHEMA_ID,
@@ -19,6 +17,7 @@ from ._localized_attribution_types import (
     AttributionAuthority,
     AttributionDenominator,
     AttributionObservation,
+    AttributionPair,
     AttributionSource,
     AttributionTarget,
     AttributionView,
@@ -52,7 +51,16 @@ def _source(raw: object) -> AttributionSource:
 def _target(raw: object) -> AttributionTarget:
     record = _exact(
         raw,
-        {"target_id", "kind", "name", "unit", "time_s", "point_id", "coordinate_frame"},
+        {
+            "target_id",
+            "kind",
+            "name",
+            "unit",
+            "convention",
+            "time_s",
+            "point_id",
+            "coordinate_frame",
+        },
         "target",
     )
     return AttributionTarget(
@@ -60,9 +68,37 @@ def _target(raw: object) -> AttributionTarget:
         cast(str, record["kind"]),
         cast(str, record["name"]),
         cast(str, record["unit"]),
+        cast(str, record["convention"]),
         None if record["time_s"] is None else _finite(record["time_s"], "target time"),
         cast(str | None, record["point_id"]),
         cast(str | None, record["coordinate_frame"]),
+    )
+
+
+def _pair(raw: object) -> AttributionPair:
+    fields = {
+        "source_spec_id",
+        "baseline_trial_index",
+        "perturbed_trial_index",
+        "baseline_status",
+        "perturbed_status",
+        "baseline_source_value",
+        "perturbed_source_value",
+    }
+    record = _exact(raw, fields, "pair roster")
+    require(
+        record["baseline_status"] in STATUS_VALUES
+        and record["perturbed_status"] in STATUS_VALUES,
+        "invalid pair roster status",
+    )
+    return AttributionPair(
+        cast(str, record["source_spec_id"]),
+        _index(record["baseline_trial_index"], "baseline_trial_index"),
+        _index(record["perturbed_trial_index"], "perturbed_trial_index"),
+        TrialStatus(cast(str, record["baseline_status"])),
+        TrialStatus(cast(str, record["perturbed_status"])),
+        _finite(record["baseline_source_value"], "baseline source value"),
+        _finite(record["perturbed_source_value"], "perturbed source value"),
     )
 
 
@@ -96,8 +132,8 @@ def _observation(raw: object) -> AttributionObservation:
         return None if record[name] is None else _finite(record[name], name)
 
     require(
-        record["baseline_status"] in _STATUS_VALUES
-        and record["perturbed_status"] in _STATUS_VALUES,
+        record["baseline_status"] in STATUS_VALUES
+        and record["perturbed_status"] in STATUS_VALUES,
         "invalid trial status",
     )
     return AttributionObservation(
@@ -127,6 +163,7 @@ def attribution_authority_from_dict(raw: object) -> AttributionAuthority:
             "interpretation",
             "sources",
             "targets",
+            "pairs",
             "observations",
         },
         "authority",
@@ -141,16 +178,20 @@ def attribution_authority_from_dict(raw: object) -> AttributionAuthority:
     require(
         isinstance(record["sources"], list)
         and isinstance(record["targets"], list)
+        and isinstance(record["pairs"], list)
         and isinstance(record["observations"], list),
         "authority arrays are required",
     )
     sources = cast(list[object], record["sources"])
     targets = cast(list[object], record["targets"])
+    pairs = cast(list[object], record["pairs"])
     observations = cast(list[object], record["observations"])
+    require_authority_shape(len(sources), len(targets), len(pairs), len(observations))
     return AttributionAuthority(
         cast(str, record["authority_id"]),
         tuple(_source(item) for item in sources),
         tuple(_target(item) for item in targets),
+        tuple(_pair(item) for item in pairs),
         tuple(_observation(item) for item in observations),
         cast(str, record["interpretation"]),
     )
@@ -173,6 +214,7 @@ def attribution_authority_to_dict(authority: AttributionAuthority) -> dict[str, 
         "interpretation": authority.interpretation,
         "sources": [wire(source) for source in authority.sources],
         "targets": [wire(target) for target in authority.targets],
+        "pairs": [wire(pair) for pair in authority.pairs],
         "observations": [wire(observation) for observation in authority.observations],
     }
 
@@ -274,61 +316,3 @@ def attribution_view_from_json(text: str) -> AttributionViewDefinition:
         _index(record["baseline_trial_index"], "baseline_trial_index"),
         _index(record["perturbed_trial_index"], "perturbed_trial_index"),
     )
-
-
-def attribution_observations_to_csv(authority: AttributionAuthority) -> str:
-    """Export every raw observation with source/target provenance intact."""
-    output = io.StringIO(newline="")
-    writer = csv.writer(output, lineterminator="\n")
-    writer.writerow(
-        (
-            "interpretation",
-            "source_spec_id",
-            "joint_id",
-            "window_start_s",
-            "window_end_s",
-            "target_id",
-            "target_kind",
-            "target_name",
-            "target_time_s",
-            "target_point_id",
-            "baseline_trial",
-            "perturbed_trial",
-            "baseline_status",
-            "perturbed_status",
-            "baseline_source_value",
-            "perturbed_source_value",
-            "baseline_target_value",
-            "perturbed_target_value",
-            "response",
-            "availability",
-        )
-    )
-    sources = {item.spec_id: item for item in authority.sources}
-    targets = {item.target_id: item for item in authority.targets}
-    for row in authority.observations:
-        source, target = sources[row.source_spec_id], targets[row.target_id]
-        writer.writerow(
-            (
-                authority.interpretation,
-                source.spec_id,
-                source.joint_id,
-                *source.time_window_s,
-                target.target_id,
-                target.kind,
-                target.name,
-                target.time_s,
-                target.point_id,
-                row.baseline_trial_index,
-                row.perturbed_trial_index,
-                row.baseline_status.value,
-                row.perturbed_status.value,
-                row.baseline_source_value,
-                row.perturbed_source_value,
-                row.baseline_target_value,
-                row.perturbed_target_value,
-                row.response,
-                row.availability.value,
-            )
-        )
-    return output.getvalue()

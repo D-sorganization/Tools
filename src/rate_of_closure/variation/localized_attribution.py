@@ -1,9 +1,12 @@
 """Public localized paired-attribution presentation contract."""
 
+from ._localized_attribution_csv import (
+    attribution_observations_to_csv,
+    attribution_observations_to_rows,
+)
 from ._localized_attribution_io import (
     attribution_authority_from_dict,
     attribution_authority_to_dict,
-    attribution_observations_to_csv,
     attribution_view_from_json,
     attribution_view_to_json,
     build_attribution_view,
@@ -17,6 +20,7 @@ from ._localized_attribution_types import (
     AttributionAuthority,
     AttributionDenominator,
     AttributionObservation,
+    AttributionPair,
     AttributionSource,
     AttributionTarget,
     AttributionView,
@@ -34,6 +38,7 @@ __all__ = [
     "AttributionAuthority",
     "AttributionDenominator",
     "AttributionObservation",
+    "AttributionPair",
     "AttributionSource",
     "AttributionTarget",
     "AttributionView",
@@ -43,6 +48,7 @@ __all__ = [
     "attribution_authority_from_dict",
     "attribution_authority_to_dict",
     "attribution_observations_to_csv",
+    "attribution_observations_to_rows",
     "attribution_view_from_json",
     "attribution_view_to_json",
     "build_attribution_view",

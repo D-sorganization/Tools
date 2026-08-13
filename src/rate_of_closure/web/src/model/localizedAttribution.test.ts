@@ -5,11 +5,13 @@ import {
   attributionAuthorityFromValue,
   attributionAuthorityToValue,
   attributionObservationsToCsv,
+  attributionObservationsToRows,
   attributionViewFromJson,
   attributionViewToJson,
   buildAttributionView,
   type AttributionViewDefinitionTs,
 } from "./localizedAttribution";
+import csvRows from "./__fixtures__/localized_attribution_csv_rows_v1.json";
 
 const authority = () => attributionAuthorityFromValue(structuredClone(fixture));
 const definition = (
@@ -47,7 +49,7 @@ describe("localized attribution authority", () => {
     empty.observations = [];
     expect(() => attributionAuthorityFromValue(empty)).toThrow(/observations/);
 
-    const forged = authority() as unknown as { authorityId: unknown };
+    const forged = structuredClone(authority()) as unknown as { authorityId: unknown };
     forged.authorityId = 42;
     expect(() => attributionAuthorityToValue(
       forged as unknown as ReturnType<typeof authority>,
@@ -98,10 +100,51 @@ describe("localized attribution authority", () => {
 
   it("exports raw typed observations with the noncausal interpretation", () => {
     const csv = attributionObservationsToCsv(authority());
-    expect(csv).toContain("interpretation,source_spec_id,joint_id,window_start_s");
+    expect(csv).toContain("schema_id,schema_version,authority_id,interpretation");
+    expect(csv).toContain("source_variable,source_unit");
+    expect(csv).toContain("target_unit,target_frame,target_convention");
     expect(csv).toContain("paired-planted-intervention-noncausal");
     expect(csv).toContain("no_impact_unavailable");
     expect(csv).toContain("numerical_failure");
+    expect(csv).toContain(",-2,");
+    expect(csv).not.toContain(",'-2,");
+    expect(attributionObservationsToRows(authority())).toEqual(csvRows);
+  });
+
+  it("enforces the complete pair roster matrix and cross-target identity", () => {
+    const missing = structuredClone(fixture);
+    missing.observations.pop();
+    expect(() => attributionAuthorityFromValue(missing)).toThrow(/matrix/);
+    const forged = structuredClone(fixture);
+    forged.observations[3].perturbed_source_value = 99;
+    expect(() => attributionAuthorityFromValue(forged)).toThrow(/pair roster/);
+  });
+
+  it("enforces safe resources, canonical targets, and shared response tolerance", () => {
+    const unsafe = structuredClone(fixture);
+    unsafe.pairs[0].baseline_trial_index = Number.MAX_SAFE_INTEGER + 1;
+    expect(() => attributionAuthorityFromValue(unsafe)).toThrow(/safe integer/);
+    const target = structuredClone(fixture);
+    target.targets[0].unit = "ft";
+    expect(() => attributionAuthorityFromValue(target)).toThrow(/target registry/);
+    const boundary = structuredClone(fixture);
+    const row = boundary.observations[0];
+    const expected = row.perturbed_target_value! - row.baseline_target_value!;
+    row.response = expected + 4 * Number.EPSILON;
+    expect(() => attributionAuthorityFromValue(boundary)).not.toThrow();
+    row.response = expected + 8 * Number.EPSILON;
+    expect(() => attributionAuthorityFromValue(boundary)).toThrow(/response/);
+    const oversized = structuredClone(fixture) as unknown as Record<string, unknown>;
+    oversized.sources = Array.from({ length: 33 });
+    expect(() => attributionAuthorityFromValue(oversized)).toThrow(/resource cap/);
+  });
+
+  it("deep-freezes parsed authority and view values", () => {
+    const decoded = authority();
+    expect(Object.isFrozen(decoded)).toBe(true);
+    expect(Object.isFrozen(decoded.sources[0].timeWindowS)).toBe(true);
+    const view = attributionViewFromJson(attributionViewToJson(definition()));
+    expect(Object.isFrozen(view)).toBe(true);
   });
 
   it.each([

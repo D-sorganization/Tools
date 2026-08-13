@@ -7,7 +7,7 @@ import {
   attributionViewToJson,
   buildAttributionView,
   type AttributionAuthorityTs,
-  type AttributionObservationTs,
+  type AttributionPairTs,
   type AttributionViewDefinitionTs,
 } from "../model/localizedAttribution";
 import { BUTTON_CLASS, PANEL_CLASS, downloadText } from "./variationUi";
@@ -24,7 +24,7 @@ interface Selection {
   perturbedTrialIndex: number;
 }
 
-const pairLabel = (row: AttributionObservationTs): string =>
+const pairLabel = (row: AttributionPairTs): string =>
   `Trial ${row.baselineTrialIndex} → ${row.perturbedTrialIndex}`;
 const valueLabel = (value: number | null, unit: string): string =>
   value === null ? "Unavailable" : `${value.toPrecision(7)} ${unit}`;
@@ -32,9 +32,8 @@ const valueLabel = (value: number | null, unit: string): string =>
 const firstPair = (
   authority: AttributionAuthorityTs,
   sourceSpecId: string,
-  targetId: string,
-): AttributionObservationTs | null => authority.observations.find((row) =>
-  row.sourceSpecId === sourceSpecId && row.targetId === targetId) ?? null;
+): AttributionPairTs | null => authority.pairs.find((row) =>
+  row.sourceSpecId === sourceSpecId) ?? null;
 
 const initialSelection = (authority: AttributionAuthorityTs): Selection => {
   const first = authority.observations[0];
@@ -75,22 +74,23 @@ export function LocalizedAttributionPanel({
 
   const chooseSource = (sourceSpecId: string): void => {
     if (!authority || !selection) return;
-    const row = authority.observations.find((item) => item.sourceSpecId === sourceSpecId);
-    if (!row) return;
+    const pair = firstPair(authority, sourceSpecId);
+    const target = authority.targets[0];
+    if (!pair || !target) return;
     setStored({ authority, selection: {
-      sourceSpecId, targetId: row.targetId,
-      baselineTrialIndex: row.baselineTrialIndex,
-      perturbedTrialIndex: row.perturbedTrialIndex,
+      sourceSpecId, targetId: target.targetId,
+      baselineTrialIndex: pair.baselineTrialIndex,
+      perturbedTrialIndex: pair.perturbedTrialIndex,
     } });
   };
   const chooseTarget = (targetId: string): void => {
     if (!authority || !selection) return;
-    const row = firstPair(authority, selection.sourceSpecId, targetId);
-    if (!row) return;
+    const pair = firstPair(authority, selection.sourceSpecId);
+    if (!pair) return;
     setStored({ authority, selection: {
       ...selection, targetId,
-      baselineTrialIndex: row.baselineTrialIndex,
-      perturbedTrialIndex: row.perturbedTrialIndex,
+      baselineTrialIndex: pair.baselineTrialIndex,
+      perturbedTrialIndex: pair.perturbedTrialIndex,
     } });
   };
   const choosePair = (pairKey: string): void => {
@@ -139,9 +139,7 @@ export function LocalizedAttributionPanel({
                 onChange={(event) => chooseTarget(event.target.value)}
                 className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-2 text-slate-200"
               >
-                {authority.targets.filter((target) => firstPair(
-                  authority, selection.sourceSpecId, target.targetId,
-                ) !== null).map((target) => (
+                {authority.targets.map((target) => (
                   <option key={target.targetId} value={target.targetId}>
                     {target.kind}: {target.name}
                   </option>
@@ -157,7 +155,8 @@ export function LocalizedAttributionPanel({
                 onChange={(event) => choosePair(event.target.value)}
                 className="mt-1 w-full rounded border border-slate-700 bg-slate-950 p-2 text-slate-200"
               >
-                {view.observations.map((row) => (
+                {authority.pairs.filter((row) =>
+                  row.sourceSpecId === selection.sourceSpecId).map((row) => (
                   <option
                     key={`${row.baselineTrialIndex}:${row.perturbedTrialIndex}`}
                     value={`${row.baselineTrialIndex}:${row.perturbedTrialIndex}`}
@@ -176,7 +175,8 @@ export function LocalizedAttributionPanel({
             <div><dt className="text-slate-500">Target locus</dt><dd className="text-slate-200">
               {view.target.kind === "state"
                 ? `${view.target.pointId} at ${view.target.timeS} s · ${view.target.coordinateFrame}`
-                : `${view.target.kind} outcome · ${view.target.name}`}
+                : `${view.target.kind} outcome · ${view.target.name}`} · {view.target.convention}
+              {` · opaque stable ID ${view.target.targetId}`}
             </dd></div>
             <div><dt className="text-slate-500">Baseline</dt><dd className="text-slate-200">
               {valueLabel(view.selected.baselineTargetValue, view.target.unit)} · {view.selected.baselineStatus}
