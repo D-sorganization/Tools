@@ -1,5 +1,32 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 integrated localized locus and Playwright browser stack
+
+- Version 1.16.62 is a normal two-parent merge: localized-locus head
+  `05d9d9bba22940b738d1d3d447ca5ab95642511d` is first parent and published
+  browser head `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` is second.
+- Implementation, tests, workflows, and trust policy from both parents are
+  retained byte-for-byte; resolution is limited to the four durable documents.
+- Hosted-only PR Playwright and main-push-only trusted Playwright coexist with
+  strict localized execution/authoring, symmetric wire parsing, and <=400-line
+  cumulative changed source/test policy.
+- Five Chromium tests exercise the production hashed Worker, progress,
+  cancellation, reruns, navigation cleanup, and desktop/narrow layout.
+- Protected runner evidence, WebKit/Firefox, assistive-technology automation,
+  PyQt E2E, approved visual baselines, React localized result/export surfaces,
+  Rust parity, complete persistence, protected publication, and epic completion
+  remain open.
+
+## 2026-08-12 #4142 real-browser variation Worker foundation (R14.5)
+
+- Playwright 1.62.1 is pinned in the Rate web package; workflows have separate
+  hosted-PR and trusted-main-push trust domains with immutable action SHAs.
+- The built Vite application is driven through the real hashed module Worker.
+  Intermediate progress, cancellation termination, deterministic reruns,
+  unmount cleanup, and responsive overflow are covered.
+- Screenshots/traces/videos are attempt-identified review artifacts, not
+  cross-platform visual authority; R14.5 remains incomplete.
+
 ## 2026-08-12 #4142 localized torque identity and 400-line policy closure
 
 - Python and React readers require real string discriminators and nonempty,

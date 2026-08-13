@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
+
+Version 1.16.62 normally merges localized-locus head
+`05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent with published
+browser head `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` as second. Implementation,
+tests, and workflows from both parents are retained without manual code
+resolution. The exact PyQt/React locus-authoring and strict wire contracts now
+coexist with hosted-only PR and main-push-only trusted Playwright workflows.
+
+Five bundled-Chromium tests drive the production hashed Worker through progress,
+cancellation, deterministic reruns, navigation cleanup, and responsive layout.
+This is still an R14.5 foundation: protected runner evidence, WebKit/Firefox,
+assistive-technology automation, PyQt E2E, approved visual baselines, React
+localized execution/results/export, Rust parity, raw persistence, protected
+publication, and remaining #4142 work stay open.
+
+## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
+
+The browser parent pins Playwright 1.62.1, immutable workflow actions, and
+attempt-identified reports/screenshots/traces/videos. Its real production-
+Worker tests observe strict intermediate progress and Worker termination before
+post-cancel reruns; screenshots remain review artifacts, not golden baselines.
+
 ## 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
 
 Variation-plan identities now have symmetric strict Python/React wire handling:

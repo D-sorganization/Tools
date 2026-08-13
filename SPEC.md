@@ -26,11 +26,51 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.61                                    |
-| **Spec Version**        | 1.16.61                                    |
+| **Current Version**     | 1.16.62                                    |
+| **Spec Version**        | 1.16.62                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
+
+Version 1.16.62 preserves the exact localized-locus UI head at
+`05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent and the exact
+published browser head at `8bcd055f5711c122ec5332b8da8c41d6a974dfcb`
+as second parent in a normal non-fast-forward merge. All scientific, UI, test,
+browser, workflow, and trust-policy implementations from both parents are
+retained without manual code resolution. Only the four durable handoff/spec
+documents are reconciled here, retaining both histories.
+
+The strict localized execution and authoring stack, symmetric Python/React wire
+contracts, and 400-line source/test policy now coexist with the trust-separated
+production-Worker Playwright foundation. The pull-request workflow remains
+hosted-only; the trusted workflow remains main-push-only. Five Chromium tests
+exercise the built Vite application's real hashed Worker, progress,
+cancellation, deterministic reruns, navigation cleanup, and responsive layout.
+
+Protected publication and full R14.5 certification remain open. The browser
+coverage is bundled Chromium only; screenshots are review artifacts rather
+than cross-platform golden baselines. WebKit, Firefox, assistive-technology
+automation, PyQt interaction E2E, protected runner evidence, approved visual
+baselines, React localized dynamics/results/export, Rust parity, and complete
+raw persistence remain open.
+
+### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
+
+The browser parent pins Playwright Test 1.62.1 and supplies deterministic
+Chromium coverage in two separate trust domains. Pull requests use only an
+ephemeral `ubuntu-latest` job. The trusted workflow runs only for pushes to
+`main`, checks out the push event commit, and has no pull-request or manual
+dispatch/ref seam. External actions are pinned to immutable commit SHAs, and
+reports, screenshots, traces, and videos use attempt-identified artifacts.
+
+The production Vite bundle is served and driven with accessible role/label
+locators. Tests observe strict intermediate and terminal progress on the real
+hashed module Worker, deterministic seeded reruns, Worker termination before a
+post-cancel rerun, cleanup on primary-tab navigation, and zero document-level
+horizontal overflow at desktop and narrow viewports. This is a narrow R14.5
+foundation rather than complete browser or visual certification.
 
 ### 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
 
@@ -3477,6 +3517,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.62 | merge(rate-of-closure, #4142): preserve exact localized-locus UI head `05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent and published browser head `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` as second parent; retain both implementations and histories while keeping protected publication and incomplete R14.5/localized surfaces open. |
 | 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142): reject coercive and control-bearing plan identity wires symmetrically in Python/React; require actual unique stable-ID arrays; and split PyQt lifecycle, registry policy, and GUI/React tests so every cumulative changed Python/TS/TSX source or test satisfies the 400-line policy. |
 | 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142): extract focused PyQt locus/row editor helpers to satisfy the 500-line changed-module gate; retain exact imported start/end authority independently; and make React v2 variation-plan numeric decoding strict and noncoercive across discriminators, parameters, loci, execution controls, base values, and correlation entries. |
 | 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142): add exact PyQt/React localized shoulder/wrist torque locus authoring with half-open time controls, constrained topological joint IDs, atomic validation, lossless grouped-plan persistence, and a shared cross-surface fixture; keep React dynamics execution and remaining presentation/export work fail-closed and open. |

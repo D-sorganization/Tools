@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
+
+Normal merge version 1.16.62 preserves localized-locus head
+`05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent and published
+browser head `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` as second parent. The merge
+retains both implementations byte-for-byte; only the four durable handoff/spec
+documents are reconciled. Strict localized execution/authoring, Python/React
+wire parity, and the 400-line policy coexist with the trust-separated real
+production-Worker Playwright gates.
+
+The browser history retains hosted-only PR CI, main-push-only trusted CI,
+immutable action pins, real hashed-Worker progress/cancellation/rerun checks,
+and responsive desktop/narrow Chromium coverage. This remains an R14.5
+foundation, not complete certification: protected runner evidence, WebKit,
+Firefox, assistive-technology automation, PyQt E2E, approved visual baselines,
+React localized results/export, Rust parity, complete raw persistence, protected
+publication, and epic completion remain open.
+
+## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
+
+The published browser parent pins Playwright Test 1.62.1 and builds/serves the
+production Vite output. Five Chromium tests drive the real hashed module Worker,
+observe intermediate and terminal progress, prove deterministic reruns and
+post-cancel generation isolation, verify unmount cleanup, and check desktop/
+narrow overflow. Screenshots and traces are retained review artifacts, not
+cross-platform golden authority.
+
 ## 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
 
 Python and React plan readers now reject coercive identity fields. Discriminator
