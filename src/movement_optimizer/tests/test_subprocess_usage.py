@@ -6,11 +6,7 @@ import ast
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PYTHON_SOURCES = (
-    PROJECT_ROOT / "scripts",
-    PROJECT_ROOT / "src",
-    PROJECT_ROOT / "tests",
-)
+PYTHON_SOURCES = (PROJECT_ROOT / "scripts", PROJECT_ROOT / "src", PROJECT_ROOT / "tests")
 
 
 def _subprocess_calls(tree: ast.AST) -> list[ast.Call]:
@@ -40,9 +36,7 @@ def test_subprocess_calls_do_not_use_shell_true() -> None:
                         and isinstance(keyword.value, ast.Constant)
                         and keyword.value.value is True
                     ):
-                        offenders.append(
-                            f"{source.relative_to(PROJECT_ROOT)}:{call.lineno}"
-                        )
+                        offenders.append(f"{source.relative_to(PROJECT_ROOT)}:{call.lineno}")
 
     assert offenders == []
 
@@ -56,11 +50,7 @@ def test_subprocess_calls_use_sequence_arguments() -> None:
                 if not call.args:
                     continue
                 first_arg = call.args[0]
-                if isinstance(first_arg, ast.Constant) and isinstance(
-                    first_arg.value, str
-                ):
-                    offenders.append(
-                        f"{source.relative_to(PROJECT_ROOT)}:{call.lineno}"
-                    )
+                if isinstance(first_arg, ast.Constant) and isinstance(first_arg.value, str):
+                    offenders.append(f"{source.relative_to(PROJECT_ROOT)}:{call.lineno}")
 
     assert offenders == []

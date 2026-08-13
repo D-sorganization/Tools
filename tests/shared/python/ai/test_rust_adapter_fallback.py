@@ -74,9 +74,9 @@ class TestRustAdapterFallbackWarning:
                 )
 
         all_text = " ".join(str(r.message) for r in caplog.records)
-        assert (
-            "rust_distribution.md" in all_text
-        ), f"Expected 'rust_distribution.md' in log output, got: {all_text!r}"
+        assert "rust_distribution.md" in all_text, (
+            f"Expected 'rust_distribution.md' in log output, got: {all_text!r}"
+        )
 
 
 class TestGracefulDegradation:

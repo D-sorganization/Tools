@@ -79,9 +79,9 @@ class StandalonePreferences:
     def __init__(self, store: Any = None) -> None:
         if store is None:
             store = _default_store()
-        assert hasattr(store, "get") and hasattr(
-            store, "set"
-        ), "store must implement get() and set()"
+        assert hasattr(store, "get") and hasattr(store, "set"), (
+            "store must implement get() and set()"
+        )
         self._store = store
 
     # ------------------------------------------------------------------
@@ -184,9 +184,9 @@ class StandalonePreferences:
         Postcondition: every key in ``COLOR_TOKEN_MAP`` that maps to a key
                        present in ``theme_colors`` appears in the result.
         """
-        assert (
-            isinstance(theme_colors, dict) and theme_colors
-        ), "theme_colors must be a non-empty dict"
+        assert isinstance(theme_colors, dict) and theme_colors, (
+            "theme_colors must be a non-empty dict"
+        )
         from theme.sidekick_tokens import COLOR_TOKEN_MAP, DEFAULT_SIDEKICK_TOKENS
 
         tokens: dict[str, str] = dict(DEFAULT_SIDEKICK_TOKENS)
@@ -194,9 +194,9 @@ class StandalonePreferences:
             if theme_key in theme_colors:
                 tokens[token_name] = theme_colors[theme_key]
 
-        assert all(
-            isinstance(v, str) for v in tokens.values()
-        ), "postcondition: all token values must be strings"
+        assert all(isinstance(v, str) for v in tokens.values()), (
+            "postcondition: all token values must be strings"
+        )
         return tokens
 
 

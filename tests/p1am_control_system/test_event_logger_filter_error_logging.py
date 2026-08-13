@@ -50,8 +50,8 @@ def test_db_failure_is_logged_not_swallowed(caplog) -> None:
     with caplog.at_level(logging.ERROR, logger=event_logger.__name__):
         event_logger.EventLogViewerWidget.update_event_types_combobox(widget)
 
-    assert any(
-        "event-type filter" in rec.getMessage() for rec in caplog.records
-    ), "DB failure must be logged"
+    assert any("event-type filter" in rec.getMessage() for rec in caplog.records), (
+        "DB failure must be logged"
+    )
     # Combobox still has the default 'All' entry and did not raise.
     assert widget.event_type_combo._items == ["All"]

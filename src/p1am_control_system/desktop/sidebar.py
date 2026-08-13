@@ -293,12 +293,12 @@ class InspectorSidebar(QWidget):
 
             # Update safety limits
             if tag_id < len(self.routing_config.interlocks):
-                self.routing_config.interlocks[tag_id].low_limit = (
-                    self.spin_low_limit.value()
-                )
-                self.routing_config.interlocks[tag_id].high_limit = (
-                    self.spin_high_limit.value()
-                )
+                self.routing_config.interlocks[
+                    tag_id
+                ].low_limit = self.spin_low_limit.value()
+                self.routing_config.interlocks[
+                    tag_id
+                ].high_limit = self.spin_high_limit.value()
 
             # Update PID loop configs
             if self.pid_group.isVisible() and self.pid_loop_index >= 0:

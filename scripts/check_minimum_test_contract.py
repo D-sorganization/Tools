@@ -50,17 +50,6 @@ def has_tests(pkg_key: str) -> bool:
         if local_tests:
             return True
 
-    # Shared packages commonly mirror their source hierarchy under tests/, for
-    # example src/shared/python/golf_club -> tests/shared/python/golf_club.
-    # Check that convention before falling back to token-based discovery.
-    mirrored_tests = ROOT / "tests" / Path(*pkg_key.split("/")[1:])
-    if mirrored_tests.exists():
-        mirrored_package_tests = list(mirrored_tests.rglob("test_*.py")) + list(
-            mirrored_tests.rglob("*_test.py")
-        )
-        if mirrored_package_tests:
-            return True
-
     token = Path(pkg_key.split("/")[-1]).stem
     package_tests = ROOT / "tests" / token
     if package_tests.exists():

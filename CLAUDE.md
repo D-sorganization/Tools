@@ -192,29 +192,3 @@ Open an issue in `Repository_Management`. If you must bypass once to land an urg
 Branch protection requires the CI `quality-gate` check on every PR. That check runs the same lint, format, type, and security gates as the hooks. `--no-verify` only delays feedback — it cannot land code that would have failed the hook.
 
 For the canonical hook contract, see [`Repository_Management/docs/FLEET_HOOK_STANDARDS.md`](https://github.com/D-sorganization/Repository_Management/blob/main/docs/FLEET_HOOK_STANDARDS.md).
-
-## Agent Handoff & PR Policy
-
-Fleet-wide policy from `Repository_Management#1390`, binding in this repo:
-
-1. **Full PRs, never drafts.** Every PR opens ready-for-review — do not use
-   `gh pr create --draft`.
-2. **Commit frequently.** Small, conventional commits saving progress as you
-   go; never batch a day's work into one commit.
-3. **Agent handoff documents, updated every PR and every push to main.**
-   - Root `AGENT_HANDOFF.md` — fleet/monorepo-wide view: active epics with
-     one-line status each, pointers to per-tool handoff docs, exact gate
-     commands, a do-not list, and the ordered short-term roadmap.
-   - Per-tool `src/<tool>/AGENT_HANDOFF.md` for actively developed tools
-     (minimum: `rate_of_closure`, `pendulum_simulator`, `rotation_converter`;
-     add one for any other tool once it has an active epic or sustained
-     agent traffic). Same structure as the root doc, scoped to that tool.
-   - New tools: copy `docs/AGENT_HANDOFF_TEMPLATE.md` to
-     `src/<new_tool>/AGENT_HANDOFF.md` and fill it in from the tool's actual
-     state — no placeholders.
-   - All handoff docs are current-state only, ≤150 lines — history lives in
-     git, not in a changelog inside the file.
-4. **SPEC.md stays current.** Per the existing `spec-check.yml` gate, any
-   PR touching `src/**` (including `AGENT_HANDOFF.md` files, since they live
-   under `src/<tool>/`) must add a dated row to SPEC.md §12 Change Log, or
-   carry the `spec-exempt` label.

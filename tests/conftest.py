@@ -131,7 +131,6 @@ try:
         if app is None:
             app = QApplication(sys.argv)
         yield app
-
 except ImportError:
     pass
 
