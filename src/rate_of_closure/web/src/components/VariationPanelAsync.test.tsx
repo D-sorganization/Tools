@@ -42,9 +42,15 @@ const completedResult = (
       outputs: dataset.outputs.map((row) => row.map(() => null)),
       success: dataset.success.map(() => false),
     };
-    return { dataset: failedDataset, sensitivity: null, ensemble: null };
+    return {
+      dataset: failedDataset, sensitivity: null, ensemble: null,
+      executionMetadata: call.request.executionMetadata,
+    };
   }
-  return { dataset, sensitivity: null, ensemble: null };
+  return {
+    dataset, sensitivity: null, ensemble: null,
+    executionMetadata: call.request.executionMetadata,
+  };
 };
 
 const configureTwoJointRuns = async (user: ReturnType<typeof userEvent.setup>) => {

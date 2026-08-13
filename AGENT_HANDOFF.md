@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation resolved-base execution identity (#4142 R10.4/R10.6)
+
+Version 1.16.71 leaves variation plan schema v2 unchanged and adds the separate,
+strict `rate-of-closure/variation-execution-document@1` contract. Its immutable
+metadata sidecar binds the canonical plan digest, mode and flight-model label to
+the current registry schema/digest plus every ordered resolved base value, unit,
+and stable physical dimension used by that runtime.
+
+Python complete-simulation requests and React inline/Worker requests create or
+validate this sidecar before execution. Worker results must return the exact
+request metadata. Cross-plan, default/value, unit/dimension, registry, schema,
+and digest drift fail closed; a shared launch-mode fixture proves exact Python /
+React writer-reader parity for their genuinely shared execution registry.
+
+Legacy schema-v1/v2 plan readers remain compatible. A raw plan is explicitly
+resolved against the current registry and surfaces a warning that this is not
+historical-reproducibility evidence; the plan JSON is never silently mutated.
+Strict execution-document imports verify the sidecar before replacing controls.
+Archive and paired-producer integration remain later dependencies, as do RNG /
+stream and solver-implementation identities and full cross-runtime replay.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 Version 1.16.69 is a normal non-fast-forward merge with approved localized-

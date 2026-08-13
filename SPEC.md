@@ -26,11 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.69                                    |
-| **Spec Version**        | 1.16.69                                    |
+| **Current Version**     | 1.16.71                                    |
+| **Spec Version**        | 1.16.71                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Variation resolved-base execution identity (#4142 R10.4/R10.6)
+
+Version 1.16.71 preserves canonical variation plan schema v2 and introduces a
+separate strict `rate-of-closure/variation-execution-document@1`. Its immutable
+metadata sidecar records a canonical plan SHA-256, mode and flight-model label,
+the variable-registry schema identity/version/digest, and every ordered resolved
+base value with registered unit and stable physical dimension. Exact-field
+readers reject cross-plan, value/default, unit/dimension, registry, schema, and
+digest drift before execution or import acceptance.
+
+Complete Python Rate requests and React inline/Worker requests construct or
+validate the sidecar. React Worker results must return the exact request
+metadata. One launch-mode golden document proves exact Python/React read-write
+parity for the registry surface both runtimes actually share; it is not a claim
+of complete swing/delivery physics or solver parity.
+
+Existing plan-v1/v2 documents remain readable without silent metadata insertion.
+Executing/importing a raw legacy plan explicitly resolves a fresh sidecar from
+the current registry and presents a warning that this cannot establish its
+historical resolved defaults. Strict execution-document imports validate the
+sidecar before replacing UI controls. Ensemble archives and paired producers
+are deliberately unchanged and must bind this contract in later slices. RNG
+algorithm/stream version, solver implementation identity, dimensional output
+provenance, and portable exact cross-runtime replay remain open.
 
 ### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
@@ -3906,6 +3931,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.71 | feat(rate-of-closure, #4142 R10.4/R10.6): add a separate strict variation execution document and immutable resolved-base/registry-unit sidecar; bind Python complete requests and React inline/Worker requests/results; provide exact shared launch-registry parity and explicit legacy current-registry warnings without changing plan schema v2, archives, paired producers, RNGs, solvers, sampling, or physics. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |

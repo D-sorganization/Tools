@@ -16,6 +16,10 @@ from rate_of_closure.simulation import SimulationConfig
 from shared.python.contracts import require
 from shared.python.swing_sim.variation.engine import VariationDataset
 from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTraces
+from shared.python.swing_sim.variation.execution_metadata import (
+    VariationExecutionMetadata,
+    resolve_execution_metadata,
+)
 from shared.python.swing_sim.variation.spec import VariationPlan
 
 from ._ensemble_limits import require_ensemble_shape_limits
@@ -105,9 +109,12 @@ class SimulationEnsembleRequest:
     plan: VariationPlan
     sampled_inputs: np.ndarray = field(repr=False)
     configs: tuple[SimulationConfig, ...]
+    execution_metadata: VariationExecutionMetadata | None = None
+    metadata_warning: str | None = field(init=False, default=None)
 
     def __post_init__(self) -> None:
         require(isinstance(self.plan, VariationPlan), "plan must be a VariationPlan")
+        resolution = resolve_execution_metadata(self.plan, self.execution_metadata)
         configs = tuple(self.configs)
         require(
             len(configs) == self.plan.n_runs,
@@ -130,6 +137,8 @@ class SimulationEnsembleRequest:
         samples.setflags(write=False)
         object.__setattr__(self, "configs", configs)
         object.__setattr__(self, "sampled_inputs", samples)
+        object.__setattr__(self, "execution_metadata", resolution.metadata)
+        object.__setattr__(self, "metadata_warning", resolution.warning)
 
 
 @dataclass(frozen=True)

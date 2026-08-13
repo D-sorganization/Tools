@@ -1,5 +1,26 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 resolved-base execution metadata
+
+- Added a separate strict `rate-of-closure/variation-execution-document@1`;
+  plan schema v2 and its legacy v1/v2 readers remain unchanged.
+- Metadata binds the canonical plan digest, mode/flight-model label, registry
+  schema/version/digest, and ordered resolved variable values, units, and
+  physical dimensions. Readers reject unknown fields and all identity drift.
+- Python complete Rate requests bind a fresh/validated sidecar. React does the
+  same before inline work or Worker construction/posting and rejects result
+  metadata that differs from the request.
+- A shared launch-mode fixture passes exact Python/React read-write parity. It
+  is intentionally limited to their genuinely common execution registry and
+  does not assert complete physics or solver parity.
+- Raw legacy plan imports resolve against today's registry with a visible
+  warning that historical reproducibility is unproven. Strict document imports
+  validate before controls change, and raw plan JSON is never rewritten.
+- Archive and paired-producer binding remain later integration dependencies.
+  RNG/stream algorithm/version, solver implementation identity, and portable
+  cross-runtime exact replay remain open R10.4/R10.6 work.
+- SPEC advances to 1.16.71.
+
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 
 - Normal non-fast-forward order is approved localized-execution head

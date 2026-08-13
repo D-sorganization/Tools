@@ -45,6 +45,24 @@ export {
   type VariationPlanTs,
 } from "./variationSchema";
 export { fnv1a, mulberry32, sampleInputs } from "./variationSampling";
+export {
+  EXECUTION_DOCUMENT_SCHEMA_ID,
+  EXECUTION_DOCUMENT_SCHEMA_VERSION,
+  EXECUTION_METADATA_SCHEMA_ID,
+  EXECUTION_METADATA_SCHEMA_VERSION,
+  LEGACY_CURRENT_REGISTRY_WARNING,
+  VARIABLE_REGISTRY_SCHEMA_ID,
+  VARIABLE_REGISTRY_SCHEMA_VERSION,
+  makeVariationExecutionMetadata,
+  parseVariationExecutionDocument,
+  resolveVariationExecutionMetadata,
+  validateVariationExecutionMetadata,
+  variationExecutionDocument,
+  type ParsedVariationExecutionDocumentTs,
+  type ResolvedVariableSnapshotTs,
+  type VariationExecutionMetadataTs,
+  type VariationExecutionResolutionTs,
+} from "./variationExecutionMetadata";
 
 export const DELIVERY_OUTPUTS = [
   "club_path_deg",

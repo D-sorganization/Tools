@@ -27,6 +27,7 @@ from shared.python.swing_sim.variation import (
     VariationPlan,
     sample_inputs,
 )
+from shared.python.swing_sim.variation.execution_metadata import make_execution_metadata
 
 
 def _key(category: str, name: str) -> str:
@@ -95,11 +96,14 @@ def build_simulation_ensemble_request(
     unsupported = sorted(requested - TRACE_CAPABLE_VARIABLE_KEYS)
     require(not unsupported, "variables are not trace-capable", unsupported)
     _validate_noise_loci(plan, base_config)
+    execution_metadata = make_execution_metadata(plan)
     samples = sample_inputs(plan)
     configs = tuple(
         _apply_row(base_config, plan, row) for row in np.asarray(samples, dtype=float)
     )
-    return SimulationEnsembleRequest(plan, samples, configs)
+    return SimulationEnsembleRequest(
+        plan, samples, configs, execution_metadata=execution_metadata
+    )
 
 
 def _apply_row(

@@ -7,6 +7,7 @@ import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import {
   createVariationExecutionService,
   plannedVariationRuns,
+  prepareVariationExecutionRequest,
   type VariationExecutionProgress,
   type VariationExecutionResult,
   type VariationExecutionService,
@@ -101,7 +102,7 @@ export function useVariationExecution(
     setStatus(runningStatus(initialProgress));
     try {
       const result = await service.execute(
-        { plan, analysisExecution },
+        prepareVariationExecutionRequest(plan, analysisExecution),
         {
           signal: controller.signal,
           onProgress: (nextProgress) => {

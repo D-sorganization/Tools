@@ -10,6 +10,7 @@ import {
   type VariationPlanTs,
 } from "../model/variation";
 import { VARIATION_PLAN_LIBRARY_KEY } from "../model/variationPlanLibrary";
+import { variationExecutionDocument } from "../model/variationExecutionMetadata";
 import { VariationPanel } from "./VariationPanel";
 import { saveBallSetupPreference } from "../model/ballSetupPersistence";
 import {
@@ -227,6 +228,42 @@ describe("VariationPanel v2 plan persistence", () => {
       .toHaveTextContent(/Cannot load plan.*finite half-open time window/i);
     expect(screen.getByLabelText("Pipeline")).toHaveValue("delivery");
     expect(screen.getByLabelText("Variable 1")).not.toHaveValue(SHOULDER_TORQUE);
+  });
+
+  it("warns that a raw imported plan resolves against the current registry", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+
+    await user.upload(screen.getByLabelText("Import variation plan JSON"), new File(
+      [planToJson(importedPlan())], "legacy-plan.json", { type: "application/json" },
+    ));
+
+    expect(screen.getByRole("status", { name: "Variation status" })).toHaveTextContent(
+      /current variable registry.*not evidence of historical reproducibility/i,
+    );
+  });
+
+  it("strictly verifies an execution document before replacing controls", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    const document = variationExecutionDocument(importedPlan());
+
+    await user.upload(screen.getByLabelText("Import variation plan JSON"), new File(
+      [JSON.stringify(document)], "execution.json", { type: "application/json" },
+    ));
+    expect(screen.getByRole("status", { name: "Variation status" })).toHaveTextContent(
+      /Execution sidecar verified against the current registry/i,
+    );
+    expect(screen.getByLabelText("Pipeline")).toHaveValue("launch");
+
+    document.metadata.resolved_variables[0].unit = "m/s";
+    await user.upload(screen.getByLabelText("Import variation plan JSON"), new File(
+      [JSON.stringify(document)], "tampered.json", { type: "application/json" },
+    ));
+    expect(screen.getByRole("status", { name: "Variation status" })).toHaveTextContent(
+      /Cannot load plan.*resolved variable snapshot/i,
+    );
+    expect(screen.getByLabelText("Pipeline")).toHaveValue("launch");
   });
 
   it("explains why Morris is disabled when the current context cannot round-trip", () => {

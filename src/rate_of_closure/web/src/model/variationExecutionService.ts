@@ -17,6 +17,10 @@ import {
   validateResult,
   workerError,
 } from "./variationExecutionValidation";
+import {
+  makeVariationExecutionMetadata,
+  type VariationExecutionMetadataTs,
+} from "./variationExecutionMetadata";
 
 export type VariationExecutionPhase = "joint" | "individual";
 
@@ -29,13 +33,24 @@ export interface VariationExecutionProgress {
 export interface VariationExecutionRequest {
   plan: VariationPlanTs;
   analysisExecution: VariationAnalysisExecution;
+  executionMetadata: VariationExecutionMetadataTs;
 }
 
 export interface VariationExecutionResult {
   dataset: VariationDatasetTs | null;
   sensitivity: SensitivityResultTs | null;
   ensemble: SwingVariationResultTs | null;
+  executionMetadata: VariationExecutionMetadataTs;
 }
+
+export const prepareVariationExecutionRequest = (
+  plan: VariationPlanTs,
+  analysisExecution: VariationAnalysisExecution,
+): VariationExecutionRequest => ({
+  plan,
+  analysisExecution,
+  executionMetadata: makeVariationExecutionMetadata(plan),
+});
 
 export interface VariationExecutionControls {
   signal: AbortSignal;
@@ -106,7 +121,7 @@ export function executeVariationWork(
   const sensitivity = runIndividual
     ? oneAtATimeSensitivity(plan, () => report("individual"))
     : null;
-  return { dataset, sensitivity, ensemble };
+  return { dataset, sensitivity, ensemble, executionMetadata: request.executionMetadata };
 }
 
 const abortError = (): DOMException =>

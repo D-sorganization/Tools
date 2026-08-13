@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Resolved-base and registry-unit sidecar (#4142 R10.4/R10.6)
+
+- Plan schema v2 remains byte-compatible; execution provenance is a separate
+  strict `variation-execution-document@1` wrapper and metadata sidecar.
+- The sidecar snapshots canonical plan SHA-256, mode, flight-model label,
+  registry schema/version/digest, and every ordered resolved value with its
+  registered unit and stable physical dimension.
+- Python `SimulationEnsembleRequest` and React inline/Worker request/result
+  paths validate this identity before execution or result acceptance.
+- Cross-plan, resolved-value/default, unit/dimension, registry, schema, and
+  digest drift fail closed. Launch-mode shared-fixture parity is exact; no
+  broader cross-runtime physics claim is made.
+- Raw legacy plans still load, resolve explicitly against the current registry,
+  and show a warning that historical reproducibility is unproven. Strict
+  execution-document imports validate before UI controls change.
+- Ensemble archives, paired producers, RNG/stream identity, solver identity,
+  and portable exact replay remain open follow-on dependencies.
+
+SPEC advances to 1.16.71.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 - Normal merge order is approved localized-execution head

@@ -31,6 +31,12 @@ import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
 import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
 import type { VariationExecutionService } from "../model/variationExecutionService";
+import {
+  EXECUTION_DOCUMENT_SCHEMA_ID,
+  parseVariationExecutionDocument,
+  resolveVariationExecutionMetadata,
+  type ParsedVariationExecutionDocumentTs,
+} from "../model/variationExecutionMetadata";
 import { useVariationExecution } from "./useVariationExecution";
 
 let generatedPlanId = 0;
@@ -117,10 +123,24 @@ export function VariationPanel({
 
   const importPlan = (text: string) => {
     try {
-      const loaded = planFromJson(text);
+      const parsed = JSON.parse(text) as unknown;
+      const isExecutionDocument = typeof parsed === "object" && parsed !== null &&
+        !Array.isArray(parsed) &&
+        (parsed as Record<string, unknown>).schema_id === EXECUTION_DOCUMENT_SCHEMA_ID;
+      let imported: ParsedVariationExecutionDocumentTs;
+      if (isExecutionDocument) {
+        imported = parseVariationExecutionDocument(text);
+      } else {
+        const legacyPlan = planFromJson(text);
+        imported = { plan: legacyPlan, ...resolveVariationExecutionMetadata(legacyPlan, null) };
+      }
+      const loaded = imported.plan;
       setPlan(loaded);
       clearResults();
-      setStatus(`Plan loaded with ${loaded.noise.length} noise rows and ${loaded.groups?.length ?? 0} groups.`);
+      setStatus(
+        `Plan loaded with ${loaded.noise.length} noise rows and ${loaded.groups?.length ?? 0} groups. ` +
+        (imported.warning ?? "Execution sidecar verified against the current registry."),
+      );
     } catch (error) {
       setStatus(`Cannot load plan: ${(error as Error).message}`);
     }
