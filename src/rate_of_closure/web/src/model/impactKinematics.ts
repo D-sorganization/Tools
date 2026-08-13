@@ -58,7 +58,7 @@ function shaftGeometry(sample: SwingSampleTs, scenario: ImpactScenario) {
     axis: frame(scenario.lieAngleDeg).shaft,
     basis: "scenario_shaft_line",
     limitations: "The shaft axis is assumed to pass through the tracked head " +
-      "reference point. The web mirror does not yet retain full head pose.",
+      "reference point; the retained rigid-head pose does not add a flexible-shaft model.",
   };
 }
 

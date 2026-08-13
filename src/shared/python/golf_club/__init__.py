@@ -59,6 +59,25 @@ from .wedge_export import (
     WedgeExportResult,
     export_wedge_artifacts,
 )
+from .wedge_geometry import (
+    WedgeContactCandidate,
+    WedgeContactFeature,
+    wedge_body_profile_m,
+    wedge_contact_candidates,
+    wedge_face_contact_point_m,
+)
+from .wedge_ground_contact import (
+    ContactSequence,
+    GroundPlane,
+    WedgeClearanceSample,
+    WedgeGroundClearanceAnalysis,
+    WedgeGroundContactEvent,
+    analyze_wedge_ground_clearance,
+)
+from .wedge_ground_serialization import (
+    WEDGE_GROUND_CLEARANCE_FORMAT,
+    wedge_ground_clearance_to_json_dict,
+)
 from .wedge_kinematics import (
     InstantaneousScrewAxis,
     WedgeKinematicAnalysis,
@@ -89,8 +108,10 @@ __all__ = [
     "ClubLengthMeasurement",
     "ComponentMassProperties",
     "ComponentRole",
+    "ContactSequence",
     "ExtrapolationPolicy",
     "Handedness",
+    "GroundPlane",
     "InstantaneousScrewAxis",
     "RigidTransform",
     "SHAFT_PROFILE_FORMAT",
@@ -103,10 +124,16 @@ __all__ = [
     "ShaftTipLoad",
     "ShaftTipResponse",
     "WedgeHeadParameters",
+    "WedgeClearanceSample",
+    "WedgeContactCandidate",
+    "WedgeContactFeature",
+    "WedgeGroundClearanceAnalysis",
+    "WedgeGroundContactEvent",
     "WedgeKinematicAnalysis",
     "WedgeKinematicState",
     "WedgeGeometryProvenance",
     "WEDGE_EXPORT_FORMAT",
+    "WEDGE_GROUND_CLEARANCE_FORMAT",
     "WedgeExportArtifact",
     "WedgeExportFormat",
     "WedgeExportRequest",
@@ -117,6 +144,7 @@ __all__ = [
     "WEDGE_PARAMETERS_FORMAT",
     "assemble_mass_properties",
     "analyze_wedge_kinematics",
+    "analyze_wedge_ground_clearance",
     "angle_of_attack_deg",
     "assembly_from_json",
     "assembly_from_json_dict",
@@ -135,6 +163,10 @@ __all__ = [
     "solve_shaft_bending_modes",
     "solve_cantilever_tip_response",
     "wedge_preset",
+    "wedge_body_profile_m",
+    "wedge_contact_candidates",
+    "wedge_face_contact_point_m",
+    "wedge_ground_clearance_to_json_dict",
     "wedge_parameters_from_json",
     "wedge_parameters_to_json",
 ]

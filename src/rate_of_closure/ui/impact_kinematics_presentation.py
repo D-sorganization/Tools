@@ -3,10 +3,24 @@
 from __future__ import annotations
 
 import math
+from html import escape
 
-from rate_of_closure.simulation import ImpactKinematicSnapshot
+from rate_of_closure.simulation import (
+    ImpactKinematicSnapshot,
+    RunGroundClearanceSnapshot,
+    SimulationRun,
+    ground_clearance_for_run,
+    impact_kinematics_for_run,
+    representative_wedge_parameters_for_club,
+)
+from shared.python.golf_club import GroundPlane
 
-__all__ = ["format_impact_kinematics"]
+__all__ = [
+    "format_impact_kinematics",
+    "format_simulation_engineering_readout",
+    "ground_clearance_snapshot_for_scene",
+    "simulation_ground_clearance_snapshot",
+]
 
 
 def _number(value: float | None, unit: str, decimals: int = 2) -> str:
@@ -54,4 +68,97 @@ def format_impact_kinematics(snapshot: ImpactKinematicSnapshot) -> str:
         f"{snapshot.event_time_s:.3f} s — {metric_html}<br>"
         f"<b>Geometry Basis:</b> {snapshot.geometry_basis}. "
         f"<b>Model Boundary:</b> {snapshot.model_limitations}"
+    )
+
+
+def _format_ground_clearance(snapshot: RunGroundClearanceSnapshot) -> str:
+    analysis = snapshot.analysis
+    first_contact = analysis.first_ground_contact
+    first_contact_text = (
+        "No Ground Contact"
+        if first_contact is None
+        else (
+            first_contact.feature.value.replace("_", " ").title()
+            + f" at {first_contact.time_s:.4f} s"
+        )
+    )
+    metrics = (
+        (
+            "Leading-Edge Clearance at Ball",
+            _number(analysis.leading_edge_clearance_at_ball_m, "m", 4),
+        ),
+        ("Sole-Entry Margin", _number(analysis.sole_entry_margin_m, "m", 4)),
+        (
+            "Ground After Ball Time Margin",
+            _number(analysis.ground_after_ball_time_margin_s, "s", 4),
+        ),
+        (
+            "Delivered Bounce",
+            _number(analysis.delivered_bounce_deg_at_ball, "°"),
+        ),
+        (
+            "Path-Projected Effective Bounce",
+            _number(
+                analysis.path_projected_effective_bounce_deg_at_ball,
+                "°",
+            ),
+        ),
+        (
+            "Bounce-Utilization Angle Margin",
+            _number(analysis.bounce_utilization_margin_deg, "°"),
+        ),
+        ("First Ground Contact", first_contact_text),
+    )
+    metric_html = " • ".join(f"<b>{label}:</b> {value}" for label, value in metrics)
+    sequence = analysis.sequence.value.replace("_", " ").title()
+    uncertainty = escape(snapshot.parameters.provenance.uncertainty_note)
+    limitations = escape(snapshot.model_limitations)
+    return (
+        f"<br><b>Wedge Ground-Clearance Sequence:</b> {sequence} — {metric_html}<br>"
+        f"<b>Wedge Geometry:</b> {uncertainty} "
+        f"<b>Ground-Clearance Boundary:</b> {limitations}"
+    )
+
+
+def simulation_ground_clearance_snapshot(
+    run: SimulationRun,
+) -> RunGroundClearanceSnapshot | None:
+    """Return the shared wedge snapshot used by text and scene presentation."""
+    parameters = representative_wedge_parameters_for_club(run.config.club)
+    if parameters is None:
+        return None
+    return ground_clearance_for_run(
+        run,
+        parameters,
+        GroundPlane(frame_id="app_frame:x_target,y_up,z_right"),
+    )
+
+
+def ground_clearance_snapshot_for_scene(
+    run: SimulationRun | None,
+) -> RunGroundClearanceSnapshot | None:
+    """Resolve optional scene geometry without letting invalid input break drawing."""
+    if run is None:
+        return None
+    try:
+        return simulation_ground_clearance_snapshot(run)
+    except ValueError:
+        return None
+
+
+def format_simulation_engineering_readout(run: SimulationRun) -> str:
+    """Format impact metrics and wedge-only swept ground-clearance metrics."""
+    impact_html = format_impact_kinematics(impact_kinematics_for_run(run))
+    try:
+        ground_snapshot = simulation_ground_clearance_snapshot(run)
+    except ValueError as error:
+        return (
+            impact_html
+            + "<br><b>Wedge Ground-Clearance:</b> Unavailable — "
+            + escape(str(error))
+        )
+    return (
+        impact_html
+        if ground_snapshot is None
+        else impact_html + _format_ground_clearance(ground_snapshot)
     )

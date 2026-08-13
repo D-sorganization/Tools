@@ -16,6 +16,8 @@ import { GOLF_BALL_RADIUS_M, type SimulationRunTs } from "../model/simulation";
 import { buildScrewGlyph, type Vec3 } from "../model/screwAnalysis";
 import { withAlpha } from "../model/theme";
 import { screwPresentation } from "./screwPresentation";
+import { drawWedgeGroundOverlay } from "./wedgeGroundOverlay";
+import type { WedgeGroundClearancePayloadTs } from "../model/wedgeGroundClearance";
 
 export interface SwingSceneOptions {
   time: number;
@@ -29,6 +31,7 @@ export interface SwingSceneOptions {
   showScrew: boolean;
   screwEntityId: string;
   layout?: CourseLayout;
+  wedgeClearance?: WedgeGroundClearancePayloadTs | null;
 }
 
 type ScreenPoint = [number, number];
@@ -88,7 +91,7 @@ export function drawSwingScene(
   run: SimulationRunTs | null,
   {
     time, showBall, showGround, showCourse, showFlight,
-    showScrew, screwEntityId, layout,
+    showScrew, screwEntityId, layout, wedgeClearance,
   }: SwingSceneOptions,
 ): void {
   const ctx = canvas.getContext("2d");
@@ -268,6 +271,13 @@ export function drawSwingScene(
       py(point[1] + 0.15 * point[2]),
     ];
     drawScrewOverlay(ctx, run, boundedTime, screwEntityId, Math.max(extentX, extentY), project);
+  }
+  if (wedgeClearance && !inFlight) {
+    const project = (point: Vec3): ScreenPoint => [
+      px(point[0] + 0.25 * point[2]),
+      py(point[1] + 0.15 * point[2]),
+    ];
+    drawWedgeGroundOverlay(ctx, wedgeClearance, boundedTime, project);
   }
 
   // Flight trajectory polyline: opt-in only (scale separation).

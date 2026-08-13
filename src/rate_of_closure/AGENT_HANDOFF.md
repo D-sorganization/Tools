@@ -2,7 +2,43 @@
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
+## 2026-08-11 pinned-Ruff parent propagation (#4173 → #4174)
 
+Exact child head `01ecf9a7b1922d1609fb99093226799a0b564704` is
+merged normally with exact parent `#4173` head
+`bd48852d303db6281ed5891d4a271d99e76a94e6`, while keeping the configured
+`feat/4163-impact-inspector` base. Parent Ruff `0.14.10` formatting and all
+prior handoff/spec history remain additive. No Rate or wedge runtime contract
+changes. Workflow-pinned Ruff check/format, 98 focused impact/kinetics/wedge/
+PyQt/layout tests, and repository documentation, minimum-test, SPEC-version,
+and diff gates are green. Protected checks and parent-first release order
+remain mandatory.
+
+## 2026-08-11 PR #4174 pinned-Ruff format repair
+
+Exact published head `525696e0c1080616eb5055e2cb1c93565f98672e`
+failed CI Standard run `31485402975`, job `93759519460`, because five changed
+Python files did not match Ruff `0.14.10`. They are now mechanically formatted
+with the workflow-pinned version. There is no material handoff or behavior
+change: physics, frames, DbC validation, public contracts, schemas, tests, and
+UI behavior remain unchanged. Workflow-mirrored Ruff, `git diff --check`, and
+71 focused impact, kinetics, PyQt, and layout tests are green. Protected checks
+and parent-first release order still apply.
+
+## 2026-08-10 Ground-Clearance Child Propagation
+
+Draft PR `#4174` (`feat/4161-wedge-ground-clearance`) keeps its
+`feat/4163-impact-inspector` base and normally merges original child head
+`880a6465fc872cf3d6650283db154ddc41793a31` with exact parent head
+`9ddaff3b6bca542fd7a2befc7d7b0ae53910a60a`. The inherited Python 3.10 UTC
+repair and AST guard remain intact beside the ground-clearance analysis.
+
+Combined verification is green: 56 focused and 703 scoped Python tests (two
+optional `build123d` skips), 345 React tests and all web gates, 12 Rust tests,
+real CPython 3.10.20 compile/UTC checks, scoped Ruff/Black/MyPy, and repository
+governance checks. The existing 17-error broad MyPy Qt/NumPy baseline across
+11 untouched files is documented, not expanded. Current-head protected CI and
+required review remain pending.
 ## 2026-08-10 Python 3.10 Repair Propagation
 
 Draft child PR `#4173` (`feat/4163-impact-inspector`) retains its

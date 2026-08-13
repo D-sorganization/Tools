@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.7                                     |
-| **Spec Version**        | 1.13.7                                     |
+| **Current Version**     | 1.13.9                                     |
+| **Spec Version**        | 1.13.9                                     |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -916,6 +916,31 @@ high_mm)` exposes the face-curvature normal (gradient of the
   angles; strict unit-vector and orthogonality contracts reject ambiguous input.
 - `docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md` documents equations, frames, the
   worked example, sign dependence, verification, and simulation-adapter limits.
+
+### 2026-08-05 Swept wedge ground-clearance analysis
+
+- `shared.python.golf_club` derives nine stable leading-edge and sole contact
+  candidates from the same canonical profile consumed by the exact CAD build.
+- Retained rigid-head poses are swept between samples; planar crossings are
+  refined, and first-contact feature, time, pose, normal velocity, tangential
+  velocity, low point, ball/ground sequence, and clearance margins are typed.
+- Ball-contact metrics distinguish leading-edge clearance, sole-entry margin,
+  delivered bounce, path-projected effective bounce, reference AoA, and the
+  explicitly geometric bounce-utilization angle margin.
+- Common-frame translation, time-origin, and linear timestep-refinement
+  invariants are regression tested alongside all hit/miss sequence classes.
+- The Rate adapter passes complete retained poses/twists and only a real impact
+  time, so closest approach remains an explicitly labeled miss.
+- A versioned, unit- and frame-explicit JSON payload carries the complete swept
+  envelope, event transform/velocity, sequence, metrics, and limitations to
+  React and PyQt without duplicating physics in presentation code.
+- The Rate adapter registers the canonical face point to its scenario lever and
+  shifts the retained twist to the wedge datum; the PyQt engineering readout
+  exposes the resulting sequence and margins only for wedge selections while
+  labeling its generic mid-bounce geometry and inherited contact limitations.
+- `docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md` specifies frames, algorithms,
+  metrics, test evidence, shortest-arc SLERP, and the strict boundary between
+  rigid geometric clearance and future turf-contact mechanics.
 
 ### 2026-08-05 Exact modern-wedge CAD foundation
 
@@ -2644,7 +2669,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-11 | 1.13.7 | fix(ci, #4167 #4173): propagate the workflow-pinned Ruff 0.14.10 five-file format repair normally into the impact-inspector child; no scientific, persistence, API, schema, test, or UI behavior changes, and the ordinary carrier/protected gates remain open. |
+| 2026-08-11 | 1.13.9 | fix(ci, #4167 #4173 #4174): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into swept wedge ground clearance while preserving the configured base, scientific behavior, and additive handoff/specification history. |
+| 2026-08-11 | 1.13.8 | fix(ci, #4167 #4173): propagate the workflow-pinned Ruff 0.14.10 five-file format repair normally into the impact-inspector child; no scientific, persistence, API, schema, test, or UI behavior changes, and the ordinary carrier/protected gates remain open. |
+| 2026-08-10 | 1.13.7 | fix(rate-of-closure, #4167 #4173 #4174): propagate the Python 3.10 UTC compatibility repair and source-wide AST guard through the impact-inspector parent into swept wedge ground clearance without rewriting the stacked child or changing its ground-contact contracts. |
 | 2026-08-10 | 1.13.6 | fix(rate-of-closure, #4167 #4173): propagate the Python 3.10 UTC compatibility repair into the impact-inspector child without rewriting its history; torque-profile persistence now uses the shared compatibility export and a source-wide AST guard prevents direct, aliased, or module-attribute `datetime.UTC` regressions. |
 | 2026-08-06 | 1.13.5 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |
 | 2026-08-05 | 1.13.4 | feat(rate_of_closure, golf-club, #4158 #4160 #4163): integrate frame-explicit wedge contact/shaft kinematics into retained Rate runs; add honest impact-or-closest-approach jump controls and engineering readouts to PyQt6 and React; restore manual web angular velocity; and select the documented 30 ms square pose for flat automatic speed plateaus. |

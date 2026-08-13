@@ -23,15 +23,16 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.simulation import (
     KineticsSeries,
+    RunGroundClearanceSnapshot,
     SimulationRun,
-    impact_kinematics_for_run,
 )
 from rate_of_closure.simulation.screw_analysis import (
     JointMotionSeries,
 )
 from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.impact_kinematics_presentation import (
-    format_impact_kinematics,
+    format_simulation_engineering_readout,
+    ground_clearance_snapshot_for_scene,
 )
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
@@ -54,7 +55,6 @@ except ImportError:  # pragma: no cover - theme package always ships in-repo
 
 
 logger = logging.getLogger(__name__)
-
 __all__ = ["RATE_PRESETS", "SimulationView"]
 
 _TIMER_INTERVAL_MS = 40
@@ -73,8 +73,8 @@ class SimulationView(QWidget):
         self._course_layout = CourseLayout()
         self._run: SimulationRun | None = None
         self._joint_motion: JointMotionSeries | None = None
-        # None = not resolved yet; False = source has no joint states.
         self._kinetics: KineticsSeries | None | bool = None
+        self._wedge_clearance: RunGroundClearanceSnapshot | None = None
         self._time = 0.0
         self._rendered_ball_center_m: np.ndarray | None = None
         self._tee_artist_count = 0
@@ -104,11 +104,12 @@ class SimulationView(QWidget):
             "border-radius: 5px; }"
         )
         self._impact_kinematics_readout.setAccessibleName(
-            "Impact Kinematics Engineering Readout"
+            "Impact and Wedge Engineering Readout"
         )
         self._impact_kinematics_readout.setToolTip(
             "Frame-explicit contact-point, shaft-rotation, face-normal, leading-edge, "
-            "and screw-axis metrics. Misses are evaluated only at closest approach."
+            "screw-axis, and wedge ground-clearance metrics. Misses are evaluated "
+            "only at closest approach; ground clearance remains geometry-only."
         )
         layout.addWidget(self._impact_kinematics_readout)
         layout.addWidget(self._canvas)
@@ -117,7 +118,6 @@ class SimulationView(QWidget):
         self._timer.setInterval(_TIMER_INTERVAL_MS)
         self._timer.timeout.connect(self._advance)
 
-    # ── construction ────────────────────────────────────────────────
     def _build_playback_bar(self) -> QHBoxLayout:
         bar = QHBoxLayout()
         bar.setContentsMargins(4, 4, 4, 0)
@@ -231,6 +231,7 @@ class SimulationView(QWidget):
         self._run = run
         self._joint_motion = None
         self._kinetics = None
+        self._wedge_clearance = ground_clearance_snapshot_for_scene(run)
         self._time = 0.0
         self._inspection_button.setEnabled(run is not None)
         self._inspection_button.setText(
@@ -239,7 +240,7 @@ class SimulationView(QWidget):
             else "Jump to Impact"
         )
         self._impact_kinematics_readout.setText(
-            format_impact_kinematics(impact_kinematics_for_run(run))
+            format_simulation_engineering_readout(run)
             if run is not None
             else "Run a simulation to inspect impact kinematics."
         )

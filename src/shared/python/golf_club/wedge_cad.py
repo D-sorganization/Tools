@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 
+from .wedge_geometry import wedge_body_profile_m
 from .wedge_parameters import Handedness, WedgeHeadParameters
 
 _MM_PER_M = 1_000.0
@@ -87,40 +88,9 @@ def _profile_wire(
 def _body_profile_mm(
     parameters: WedgeHeadParameters,
 ) -> tuple[tuple[float, float], ...]:
-    loft = math.radians(parameters.loft_deg)
-    bounce = math.radians(parameters.bounce_deg)
-    face_height = parameters.face_height_m * _MM_PER_M
-    sole_width = parameters.sole_width_m * _MM_PER_M
-    progression = parameters.face_progression_m * _MM_PER_M
-    leading_y = parameters.leading_edge_radius_m * _MM_PER_M
-    face_top = (
-        progression - face_height * math.sin(loft),
-        leading_y + face_height * math.cos(loft),
-    )
-    top_back = (
-        face_top[0] - parameters.topline_thickness_m * _MM_PER_M * math.cos(loft),
-        face_top[1] - parameters.topline_thickness_m * _MM_PER_M * math.sin(loft),
-    )
-    trailing = (
-        progression - sole_width * math.cos(bounce),
-        leading_y + sole_width * math.sin(bounce),
-    )
-    vertical_span = top_back[1] - trailing[1]
-    upper_control = (
-        top_back[0] - 0.12 * sole_width,
-        top_back[1] - 0.18 * vertical_span,
-    )
-    lower_control = (
-        trailing[0] - parameters.rear_curve_depth_fraction * sole_width,
-        trailing[1] + 0.32 * vertical_span,
-    )
-    return (
-        (progression, leading_y),
-        face_top,
-        top_back,
-        upper_control,
-        lower_control,
-        trailing,
+    return tuple(
+        (x_value * _MM_PER_M, y_value * _MM_PER_M)
+        for x_value, y_value in wedge_body_profile_m(parameters)
     )
 
 

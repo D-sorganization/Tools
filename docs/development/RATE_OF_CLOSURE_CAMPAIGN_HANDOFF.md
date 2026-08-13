@@ -1,5 +1,31 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 pinned-Ruff propagation into wedge ground clearance
+
+- Immediate child PR `#4174` keeps base `feat/4163-impact-inspector`.
+- Exact clean child head `01ecf9a7b1922d1609fb99093226799a0b564704`
+  normally merges exact parent `#4173` head
+  `bd48852d303db6281ed5891d4a271d99e76a94e6` without rewriting history.
+- Parent Ruff `0.14.10` formatting and all existing wedge, impact, variation,
+  handoff, and specification history remain additive. No scientific or UI
+  behavior changes. Workflow-pinned Ruff check/format, 98 focused tests, and
+  documentation, minimum-test, SPEC-version, and diff gates are green.
+  Protected current-head checks and parent-first release order remain open.
+
+## 2026-08-10 Propagation into wedge ground clearance
+
+- Immediate child PR `#4174` keeps base `feat/4163-impact-inspector`.
+- Its original head `880a6465fc872cf3d6650283db154ddc41793a31`
+  normally merges exact parent `#4173` head
+  `9ddaff3b6bca542fd7a2befc7d7b0ae53910a60a`; no branch rewrite, retarget, or
+  force push is permitted.
+- The Python 3.10 UTC repair and AST guard are inherited alongside the swept
+  wedge ground-clearance model, persistence, PyQt, and React surfaces.
+- Combined-stack verification is green: 56 focused and 703 scoped Python tests
+  (two optional CAD-dependency skips), 345 React tests and all web gates, 12
+  Rust tests, real CPython 3.10.20 checks, scoped static analysis, and
+  repository governance gates. The inherited 17-error broad MyPy Qt/NumPy
+  baseline in 11 untouched files remains outside scope.
 ## 2026-08-11 pinned-Ruff propagation into impact inspector
 
 - Exact repaired parent `#4167` head
@@ -10,7 +36,6 @@
   and variation behavior are unchanged.
 - Protected current-head checks and the later investigation-suite carrier into
   the root branch remain mandatory release gates.
-
 ## 2026-08-10 Propagation into impact inspector
 
 - Immediate child PR `#4173` keeps base `feat/4144-variation-visualizations`.

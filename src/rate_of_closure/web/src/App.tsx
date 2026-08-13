@@ -362,6 +362,7 @@ export default function App() {
             </div>
 
             <ClubPanel
+              initialSpec={clubSpec}
               onDriveScenario={driveScenarioFromClub}
               onGenerate={setGeneratedHead}
               onSpecChange={setClubSpec}

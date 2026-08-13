@@ -2,7 +2,51 @@
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
+## 2026-08-11 pinned-Ruff parent propagation (#4173 → #4174)
 
+- Child PR `#4174` remains on `feat/4161-wedge-ground-clearance`, based on
+  `feat/4163-impact-inspector`; neither branch nor PR base is rewritten.
+- Exact clean child head `01ecf9a7b1922d1609fb99093226799a0b564704`
+  is merged normally with exact parent head
+  `bd48852d303db6281ed5891d4a271d99e76a94e6`.
+- The inherited Ruff `0.14.10` formatting and parent handoff/spec history stay
+  additive to the existing swept wedge ground-clearance contracts. No physics,
+  frame, validation, API, schema, test, persistence, or UI behavior changes.
+- Workflow-pinned Ruff check/format and 98 focused impact, kinetics, wedge,
+  PyQt, and layout tests are green. Documentation, minimum-test, SPEC-version,
+  and diff gates are also green. Protected checks, review, and parent-first
+  release order remain gates.
+
+## 2026-08-11 PR #4174 pinned-Ruff format repair
+
+- Exact published head `525696e0c1080616eb5055e2cb1c93565f98672e`
+  failed CI Standard run `31485402975`, job `93759519460`, only because five
+  changed Python files did not match the workflow-pinned Ruff `0.14.10`
+  formatter.
+- The files are mechanically reformatted with that exact version. No physics,
+  frames, validation, public APIs, schemas, tests, or user-visible behavior
+  changes; this is not completion of wedge issue `#4161`.
+- No material handoff behavior changed. Workflow-mirrored Ruff, focused tests,
+  `git diff --check`, and 71 focused impact, kinetics, PyQt, and layout tests
+  are green. Protected checks and parent-first release order remain the gates.
+
+## 2026-08-10 Parent Repair Propagation (#4173 → #4174)
+
+- Child PR `#4174` remains on `feat/4161-wedge-ground-clearance`, based on
+  `feat/4163-impact-inspector`; neither branch nor PR base is rewritten.
+- Original child head `880a6465fc872cf3d6650283db154ddc41793a31` is
+  normally merged with exact parent head
+  `9ddaff3b6bca542fd7a2befc7d7b0ae53910a60a`, in that parent order.
+- The inherited Python 3.10 UTC repair and source-wide AST guard remain
+  additive to the swept wedge ground-clearance contracts.
+- Combined-stack verification is green: 56 focused Python tests; 703 scoped
+  Python tests with two optional `build123d` skips; 345 React tests plus
+  TypeScript, ESLint, and Vite production gates; 12 `swing-core` tests; real
+  CPython 3.10.20 compilation and UTC checks; Ruff/Black; focused pinned MyPy
+  1.13; docs, minimum-test, file-size, detect-secrets, and diff checks. The
+  inherited broad MyPy baseline is 17 Qt/NumPy typing findings in 11 untouched
+  files and remains outside this propagation scope. Protected CI and review
+  remain release gates.
 ## 2026-08-10 Parent Repair Propagation (#4167 → #4173)
 
 - Child PR `#4173` remains on `feat/4163-impact-inspector`, based on
