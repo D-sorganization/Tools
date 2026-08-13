@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation flight-model identity closure (#4142 R10.4/R10.6)
+
+Version 1.16.70 makes the existing `VariationPlan.flight_model` field an
+enforced execution identity instead of an unchecked label. Python accepts
+only the seven registered `FlightModelType` values, and the complete Rate
+request builder rejects a plan whose model differs from the immutable base
+`SimulationConfig` before sampling or execution.
+
+The browser currently implements only `waterloo_penner`, so plan validation,
+JSON import, saved-plan loading, in-process execution, and production-Worker
+preflight all reject any other or fabricated model explicitly. Unsupported
+saved entries are retained in storage but omitted from the runnable library
+with a visible edit-or-recreate warning; no silent model substitution occurs.
+
+This bounded correction does not change schema v2, archive formats, sampling,
+RNG streams, physics, or paired producers. Resolved-base snapshots, registry
+unit/version provenance, RNG/stream identity, solver identity, dimensional
+metadata, and cross-runtime exact replay remain open R10.4/R10.6 work.
+
+Local gates pass 1,473 scoped Rate/shared-variation Python tests and all 879
+React tests. Workflow-pinned Ruff 0.14.10, Black, exact Python 3.12 + NumPy
+2.3.5 + Mypy 1.13 on the changed production files, TypeScript, ESLint, Vite
+build, documentation, assertion, size, and diff gates also pass.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 Version 1.16.69 is a normal non-fast-forward merge with approved localized-

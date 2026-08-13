@@ -26,11 +26,40 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.69                                    |
-| **Spec Version**        | 1.16.69                                    |
+| **Current Version**     | 1.16.70                                    |
+| **Spec Version**        | 1.16.70                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Variation flight-model identity closure (#4142 R10.4/R10.6)
+
+Version 1.16.70 treats `VariationPlan.flight_model` as an executable contract.
+Python accepts exactly the seven `FlightModelType` registry values. Before a
+complete Rate swing ensemble samples any input, its builder requires the plan
+model to equal the immutable base `SimulationConfig.flight_model`; therefore
+the plan can no longer archive one model while its generated configurations
+execute another.
+
+Browser variation currently implements only `waterloo_penner`. One validation
+authority now rejects any other or fabricated identity during direct plan
+validation, schema-v1/v2 JSON import, saved-library load, inline execution,
+and production-Worker preflight. Stored unsupported entries are not deleted or
+silently relabeled: they remain in storage, are omitted from runnable choices,
+and surface an explicit warning naming the rejected identity, supported
+identity, and edit-or-recreate action.
+
+This is a bounded contract correction, not complete R10.4/R10.6 reproducible
+metadata. Variation schema v2, sampled matrices, physics, archive formats, and
+paired producers are unchanged. Immutable resolved-base/default snapshots,
+registry units and version/digest, RNG algorithm and stream version,
+solver/model implementation identity, dimensional provenance, and exact
+cross-runtime replay remain open.
+
+Required local evidence is 1,473 scoped Rate/shared-variation Python tests,
+all 879 React tests, workflow-pinned Ruff 0.14.10 and Black, exact Python 3.12
++ NumPy 2.3.5 + Mypy 1.13 over the changed production Python files,
+TypeScript, zero-warning ESLint, and the Vite production build.
 
 ### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
@@ -3906,6 +3935,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.70 | fix(rate-of-closure, #4142 R10.4/R10.6): require Python variation plans to use registered flight-model identities and fail complete Rate ensemble requests when plan/base models differ; restrict browser variation import/library/execution/Worker preflight to the actually implemented Waterloo/Penner model with explicit edit-or-recreate warnings and no silent migration, while leaving schema, RNG, archive, paired-producer, and physics contracts unchanged. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |
