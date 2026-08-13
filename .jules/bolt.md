@@ -89,6 +89,7 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+
 ## 2026-08-09 - Pre-allocate Arrays instead of Array.from in hot paths
 **Learning:** In JavaScript/TypeScript data-intensive hot paths (e.g., CSV parsing), using `Array.from({ length: X }, ...)` for initialization incurs significant overhead from iterability checks, iterator creation, and closure execution per element.
 **Action:** Always replace `Array.from({ length: X }, ...)` with pre-allocated arrays using `new Array(X)` and populate them with standard `for` loops in performance-critical code to eliminate GC pressure.
