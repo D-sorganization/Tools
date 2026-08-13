@@ -114,7 +114,11 @@ def test_plot_definition_support_exemption_is_exact(tmp_path: Path) -> None:
 
 @pytest.mark.parametrize(
     "probe_name",
-    ["pyqt_variation_render_probe.py", "pyqt_visualization_tab_probe.py"],
+    [
+        "pyqt_variation_render_probe.py",
+        "pyqt_variation_visual_state_probe.py",
+        "pyqt_visualization_tab_probe.py",
+    ],
 )
 def test_pyqt_render_probe_exemption_is_exact(tmp_path: Path, probe_name: str) -> None:
     module = _load_module()

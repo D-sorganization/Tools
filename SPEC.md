@@ -26,11 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.85                                    |
-| **Spec Version**        | 1.16.85                                    |
+| **Current Version**     | 1.16.86                                    |
+| **Spec Version**        | 1.16.86                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Variation lifecycle probe assertion-policy closure (#4441)
+
+Version 1.16.86 adds only
+`tests/rate_of_closure/pyqt_variation_visual_state_probe.py` to the explicit
+assertion-free support allowlist. The probe is a subprocess artifact producer;
+its owning rendered test remains responsible for lifecycle, geometry,
+artifact-size, and occlusion assertions. A parameterized policy regression
+proves the exact exemption does not admit an adjacent assertion-light test.
+This correction changes no runtime, scientific result, evidence approval, or
+automatic-prominence behavior.
 
 ### 2026-08-13 Variation worker authority binding correction (#4441)
 
@@ -4158,6 +4169,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.86 | fix(ci, #4441): classify only the PyQt Variation lifecycle subprocess probe as assertion-free support while preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |
 | 2026-08-13 | 1.16.77 | fix(rate-of-closure, #4433): eliminate narrow command-strip document overflow and narrowly exempt the rendered PyQt subprocess probe from the changed-test assertion gate. |
 | 2026-08-13 | 1.16.78 | fix(rate-of-closure, #4433): close the shared GUI extra over registered analytics, flight, and simulation tabs' bounded pandas/SciPy/SymPy runtimes. |

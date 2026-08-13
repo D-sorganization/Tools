@@ -1,5 +1,13 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4441 Variation lifecycle probe assertion-policy closure
+
+- The PyQt Variation lifecycle probe is now an exact-path assertion-policy
+  support exemption; it remains a subprocess artifact producer, not a test.
+- The owning rendered test keeps all behavioral and geometry assertions, while
+  the policy regression rejects an adjacent assertion-light test. No runtime,
+  scientific, or evidence-approval claim changed. SPEC is 1.16.86.
+
 ## 2026-08-13 #4441 Variation worker authority correction
 
 - Every PyQt worker callback now binds exact owner, generation, plan, resolved

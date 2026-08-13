@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation lifecycle probe assertion-policy closure (#4441)
+
+- The changed-test assertion allowlist now names only
+  `pyqt_variation_visual_state_probe.py`, an executable subprocess harness.
+- Semantic lifecycle, geometry, artifact-size, and occlusion assertions remain
+  in `test_pyqt_variation_visual_state_rendered.py`; the policy regression
+  proves an adjacent assertion-light test still fails. No runtime contract or
+  evidence status changed. SPEC is 1.16.86.
+
 ## 2026-08-13 Variation worker authority binding correction (#4441)
 
 - Worker construction snapshots plan, resolved registry defaults, complete

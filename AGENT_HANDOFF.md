@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation lifecycle probe assertion-policy closure (#4441)
+
+Version 1.16.86 classifies only the PyQt Variation lifecycle subprocess
+entrypoint as assertion-free test support. Its owning rendered test retains the
+state, geometry, artifact, and occlusion assertions, and a policy regression
+still rejects an adjacent assertion-light real test. No runtime, scientific,
+evidence-approval, or automatic-prominence contract changed.
+
 ## 2026-08-13 Variation worker authority binding correction (#4441)
 
 Version 1.16.85 gives each PyQt Variation worker an immutable in-session
