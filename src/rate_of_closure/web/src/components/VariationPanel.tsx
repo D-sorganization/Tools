@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
@@ -32,6 +32,9 @@ import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
 import type { VariationExecutionService } from "../model/variationExecutionService";
 import { useVariationExecution } from "./useVariationExecution";
+import { LocalizedPairedStudyPanel } from "./LocalizedPairedStudyPanel";
+import type { LocalizedPairedExecutionServiceTs } from "../model/localizedAttributionExecutionService";
+import type { AttributionAuthorityTs } from "../model/localizedAttribution";
 
 let generatedPlanId = 0;
 const createPlanId = (): string => {
@@ -52,6 +55,8 @@ export interface VariationPanelProps {
   morrisUnavailableReason?: string;
   /** Injectable bounded execution authority for tests and embedded hosts. */
   executionService?: VariationExecutionService;
+  /** Independent explicit paired-study authority; never reused by Monte Carlo. */
+  localizedPairedService?: LocalizedPairedExecutionServiceTs;
 }
 
 export function VariationPanel({
@@ -62,6 +67,7 @@ export function VariationPanel({
   morrisBase,
   morrisUnavailableReason,
   executionService,
+  localizedPairedService,
 }: VariationPanelProps = {}): JSX.Element {
   const [workflow, setWorkflow] = useState<"variation" | "morris">("variation");
   const targetUse = spatialTarget
@@ -81,6 +87,12 @@ export function VariationPanel({
   const [library, setLibrary] = useState<NamedVariationPlan[]>(initialLibrary.plans);
   const [selectedId, setSelectedId] = useState("");
   const [planName, setPlanName] = useState("");
+  const [localizedAuthority, setLocalizedAuthority] =
+    useState<AttributionAuthorityTs | null>(null);
+  const acceptLocalizedAuthority = useCallback(
+    (authority: AttributionAuthorityTs | null) => setLocalizedAuthority(authority),
+    [],
+  );
   const execution = useVariationExecution(
     plan,
     analysisExecution,
@@ -218,6 +230,8 @@ export function VariationPanel({
           onImportText={importPlan}
           onImportError={(message) => setStatus(`Cannot read plan file: ${message}`)}
         />
+        <LocalizedPairedStudyPanel plan={plan} service={localizedPairedService}
+          onAuthorityChange={acceptLocalizedAuthority} />
         <VariationPlanLibraryPanel
           plans={library}
           selectedId={selectedId}
@@ -236,6 +250,7 @@ export function VariationPanel({
         target={targetUse.targetRegion ?? undefined}
         distanceUnit={distanceUnit}
         ensemble={ensemble}
+        localizedAttributionAuthority={localizedAuthority}
       />
       </div>
     </div>

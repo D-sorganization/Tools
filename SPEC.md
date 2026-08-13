@@ -26,11 +26,33 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.76                                    |
-| **Spec Version**        | 1.16.76                                    |
+| **Current Version**     | 1.16.77                                    |
+| **Spec Version**        | 1.16.77                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Explicit React localized paired-study Worker (#4142 R13.3)
+
+Version 1.16.77 adds an explicitly invoked React planted-intervention study for
+the registered shoulder/wrist torque sources. A distinct strict protocol and
+production Worker execute deterministic baseline/perturbed `2N` rows with the
+TypeScript reference RK4, report monotonic progress, and retain complete typed
+state, impact, and shot attribution evidence. Main-thread validation binds the
+canonical sources, nonzero deltas, rows, and identities, validates evidence,
+and recomputes authority before acceptance. Monte Carlo is not reused.
+
+The accessible panel identifies exact topological joints, half-open windows,
+units, and state locus; holds globals at base; excludes groups; and uses
+explicit noncausal wording. Cancellation/failure preserves prior authority and
+generation guards reject late results. Production Playwright proves hashed-
+Worker run, CSV export, and deterministic rerun. Transport tests prove abort;
+browser click-cancel is not claimed because the real job completes too quickly.
+
+The Python golden pins semantic ordering only, not solver traces or digests.
+React remains passive, 1 ms/1.5 s, with React-specific identities. Prescribed
+production input, Python output/digest parity, Rust, and JSON loading remain
+open.
 
 ### 2026-08-13 Explicit-sample NumPy typing repair (#4426)
 
@@ -4054,6 +4076,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.77 | feat(rate-of-closure, #4142 R13.3): add a separate strict React paired-study Worker and accessible planted-intervention flow with exact `2N` rows, retained evidence, recomputed typed authority, progress/cancel/stale-generation safety, and production hashed-Worker run/export/rerun evidence while keeping Python solver/digest, prescribed, Rust, JSON-load, and browser click-cancel claims open. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4426): give the validated owned explicit-sample matrix an `NDArray[float64]` return boundary, closing hosted Mypy 1.13 `no-any-return` without changing numerical, ownership, request, producer, or archive behavior. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4142 R13.3): make paired production self-verifying by retaining and recomputing exact design/request/result/authority bindings; reject cross-design request swaps, authority relabeling, and pair payload tampering; close the producer Mypy no-any boundary. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4142 R13.3): add a deterministic Python service that executes explicit baseline/one-localized-source pairs through canonical ensemble authority and emits strict typed source-window/joint-to-state/impact/shot attribution with bound design/request identities, cancellation, progress, and resource caps; automatic PyQt/React production remains open. |

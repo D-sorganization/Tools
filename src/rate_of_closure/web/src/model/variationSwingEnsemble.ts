@@ -140,7 +140,7 @@ export function runSwingVariation(
         trialIndex, status, input, run, error: null,
         localizedTorqueCommands: localized.commands,
       });
-      outputs.push(outputRow(run, input));
+      outputs.push(swingOutputRow(run, input));
       success.push(true);
     } catch (error) {
       runs.push({
@@ -170,7 +170,10 @@ export function runSwingVariation(
   };
 }
 
-function outputRow(run: SimulationRunTs, input: SimulationInput): Array<number | null> {
+export function swingOutputRow(
+  run: SimulationRunTs,
+  input: SimulationInput,
+): Array<number | null> {
   const outcome = run.impactOutcome;
   if (run.impactTimeS === null || run.launch === null) {
     return [

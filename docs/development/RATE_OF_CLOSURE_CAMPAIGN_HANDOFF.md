@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 explicit React paired-study Worker
+
+- React now explicitly runs the two registered localized shoulder/wrist torque
+  factors as a separate baseline/perturbed `2N` study in a dedicated Worker.
+  Globals stay at base, groups are excluded, and Monte Carlo is not reused.
+- The protocol rejects unsupported loci, malformed deltas, forged evidence or
+  authority, identity mismatches, and stale generations; accepted typed state,
+  impact, and shot authority is recomputed from retained trial evidence.
+- The UI exposes exact joint/window/unit/state authority and noncausal wording.
+  Cancellation/failure preserves prior data. Production Playwright proves a
+  hashed-Worker run, CSV export, and deterministic rerun. Cancellation is unit-
+  tested but not asserted in-browser because the real job completes too fast.
+- The Python fixture pins semantic ordering only. React-specific identities and
+  TypeScript RK4 are not Python solver parity. Prescribed input, Rust, Python
+  digest/output parity, and JSON loading remain open. SPEC is 1.16.77.
+
 ## 2026-08-13 #4426 explicit-sample typing repair
 
 - The exact hosted quality-gate failure was Mypy 1.13 `no-any-return` at the

@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Explicit React paired-study Worker (#4142 R13.3)
+
+Version 1.16.77 gives React a separate planted-intervention study for the
+registered shoulder and wrist torque loci. A strict protocol owns the exact
+baseline/perturbed `2N` roster in a dedicated production Worker, reports
+monotonic progress, and retains trial evidence plus complete typed authority.
+Main-thread validation binds source/row identities, checks evidence, recomputes
+the authority, and rejects stale or forged results. Monte Carlo is not reused.
+
+The panel states the noncausal interpretation, fixes globals at base, excludes
+groups, shows exact joint/window authority, and preserves prior authority on
+cancellation or failure. Production Playwright proves hashed-Worker run, raw
+export, and deterministic rerun. Injected transport tests prove termination
+and late-message safety; the genuine two-to-four-trial job finishes too quickly
+for reliable browser click-cancel E2E, so browser cancellation is not claimed.
+
+The Python fixture pins semantic ordering only. React retains its TypeScript
+reference RK4, passive 1 ms/1.5 s capability, and React-specific identities;
+Python solver/digest parity, prescribed production input, Rust, and JSON loading
+remain open.
+
 ## 2026-08-13 Explicit-sample NumPy typing boundary (#4426)
 
 Version 1.16.76 repairs the exact hosted Mypy 1.13 `no-any-return` failure in

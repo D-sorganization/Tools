@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React localized paired-study execution (#4142 R13.3)
+
+- A dedicated React Worker executes exact baseline/one-source rows for one or
+  both registered shoulder/wrist loci; ordinary Monte Carlo remains separate.
+- Strict request/result validation binds loci, nonzero deltas, `2N` row order,
+  progress, identities, trial evidence, and recomputed complete authority.
+  Abort terminates the Worker; generation guards ignore stale callbacks and
+  cancellation/failure preserves prior authority.
+- Accessible controls state fixed globals, excluded groups, and noncausal
+  interpretation. Production Playwright proves hashed Worker run/export/rerun.
+  Browser click-cancel is not claimed because the genuine job finishes before
+  a stable click; injected transport tests cover cancellation.
+- The Python golden covers shared semantics, not solver/digest parity. Current
+  React production is passive, 1 ms/1.5 s, TypeScript-RK4 only. Prescribed,
+  Python parity, Rust, and JSON-load gaps remain. SPEC is 1.16.77.
+
 ## 2026-08-13 Explicit sample matrix typing repair (#4426)
 
 - `_normalize_explicit_samples` separates the untrusted `np.asarray` view from
