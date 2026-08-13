@@ -292,3 +292,76 @@ def test_source_factory_rejects_localized_torque_for_unsupported_source(
 
     with pytest.raises(ContractViolationError, match="torque offsets.*unsupported"):
         make_source(source_kind, _SCENARIO, run_config=run_config)
+
+
+@pytest.mark.parametrize(
+    "run_config",
+    [
+        {},
+        [],
+        0,
+        False,
+        "",
+        {"bad": 1},
+        [1],
+        pytest.param(object(), id="object"),
+    ],
+)
+def test_source_factory_rejects_wrong_and_falsey_non_config_objects(
+    run_config: object,
+) -> None:
+    from rate_of_closure.simulation.sources import make_source
+
+    with pytest.raises(ContractViolationError, match="run_config"):
+        make_source(  # type: ignore[arg-type]
+            "manual", _SCENARIO, run_config=run_config
+        )
+
+
+@pytest.mark.parametrize("source_kind", ["manual", "triple_pendulum"])
+@pytest.mark.parametrize(
+    ("run_config", "message"),
+    [
+        (
+            DoublePendulumRunConfig.prescribed("profile.test.v1"),
+            "execution.*unsupported",
+        ),
+        (
+            DoublePendulumRunConfig(joint_locks=JointLockConfig((WRIST_JOINT_ID,))),
+            "locks.*unsupported",
+        ),
+        (
+            DoublePendulumRunConfig(
+                commanded_torque_offsets=(
+                    LocalizedTorqueOffset(SHOULDER_JOINT_ID, (0.01, 0.02), 1.0),
+                )
+            ),
+            "torque offsets.*unsupported",
+        ),
+    ],
+)
+def test_source_factory_rejects_all_nondefault_execution_for_unsupported_sources(
+    source_kind: str,
+    run_config: DoublePendulumRunConfig,
+    message: str,
+) -> None:
+    from rate_of_closure.simulation.sources import make_source
+
+    with pytest.raises(ContractViolationError, match=message):
+        make_source(source_kind, _SCENARIO, run_config=run_config)
+
+
+@pytest.mark.parametrize("source_kind", ["manual", "triple_pendulum"])
+def test_source_factory_accepts_explicit_default_execution_for_every_source(
+    source_kind: str,
+) -> None:
+    from rate_of_closure.simulation.sources import make_source
+
+    source = make_source(
+        source_kind,
+        _SCENARIO,
+        duration=0.05,
+        run_config=DoublePendulumRunConfig(),
+    )
+
+    assert source.sample(0.0).pose.shape == (4, 4)

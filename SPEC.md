@@ -26,11 +26,29 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.56                                    |
-| **Spec Version**        | 1.16.56                                    |
+| **Current Version**     | 1.16.57                                    |
+| **Spec Version**        | 1.16.57                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Source execution and dataset discriminator hardening (#4142)
+
+Version 1.16.57 removes a truthiness-based source-configuration fallback.
+`make_source` now requires `run_config` to be `None` or an actual
+`DoublePendulumRunConfig` before constructing a default, so falsey and truthy
+wrong-type objects cannot silently select passive execution or reach incidental
+attribute errors. Manual and triple-pendulum sources accept only the default
+passive, profile-free, lock-free, localized-offset-free execution declaration;
+all non-default double-pendulum semantics fail before source construction.
+
+The outer variation dataset JSON reader now applies the same genuine
+non-Boolean integer schema discriminator used by `VariationPlan`. `True`,
+`1.5`, and `"1"` cannot select dataset schema v1 through coercion. The sibling
+Morris observation reader already performs an exact integer type check. Local
+evidence is 34/34 focused and 1,483/1,483 broader shared-swing, variation, and
+Rate tests, with one expected missing-Rust-wheel skip. UI locus authoring, Rust
+parity, protected publication, and epic completion remain open.
 
 ### 2026-08-12 Localized torque source and wire hardening (#4142)
 

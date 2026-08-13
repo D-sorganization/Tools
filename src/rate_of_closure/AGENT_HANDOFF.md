@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
+
+`make_source` validates `run_config` before fallback, accepting only `None` or
+the exact shared run-config type. Unsupported manual/triple source kinds reject
+every non-default double-pendulum execution semantic: prescribed mode/profile,
+locks, and localized torque offsets. Explicit default passive configuration and
+implicit `None` retain their existing behavior.
+
+The shared variation-dataset reader now rejects coercive outer schema versions
+just like the nested plan reader. Evidence is 34 focused and 1,483 broader
+passing shared-swing, variation, and Rate tests, with one expected Rust-wheel
+skip. UI locus authoring, Rust parity, protected publication, and the remainder
+of #4142 remain open.
+
 ## 2026-08-12 Localized torque source/wire hardening (#4142)
 
 `make_source` now rejects localized commanded-torque offsets for manual and

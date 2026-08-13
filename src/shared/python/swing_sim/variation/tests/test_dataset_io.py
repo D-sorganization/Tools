@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_LAUNCH,
     NoiseSpec,
@@ -14,8 +15,10 @@ from shared.python.swing_sim.variation import (
     run_variation,
 )
 from shared.python.swing_sim.variation.dataset_io import (
+    from_json_dict,
     read_csv,
     read_json,
+    to_json_dict,
     write_csv,
     write_json,
 )
@@ -52,6 +55,16 @@ class TestJsonRoundTrip:
         np.testing.assert_array_equal(loaded.outputs, dataset.outputs)
         np.testing.assert_array_equal(loaded.success, dataset.success)
         assert loaded.elapsed_s == dataset.elapsed_s
+
+    @pytest.mark.parametrize("schema_version", [True, 1.5, "1"])
+    def test_rejects_coercive_outer_schema_version(
+        self, dataset, schema_version: object
+    ) -> None:  # type: ignore[no-untyped-def]
+        document = to_json_dict(dataset)
+        document["schema_version"] = schema_version
+
+        with pytest.raises(ContractViolationError, match="schema_version"):
+            from_json_dict(document)
 
     def test_grouped_v2_plan_is_retained_in_dataset_json(self, tmp_path: Path) -> None:
         speed = f"{CATEGORY_LAUNCH}.ball_speed_mph"

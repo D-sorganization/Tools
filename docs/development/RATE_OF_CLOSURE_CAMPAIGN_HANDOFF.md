@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 source execution/dataset discriminator hardening
+
+- `make_source` validates the raw run config before defaulting; only exact
+  `None` selects a new default passive declaration, while falsey and truthy
+  wrong-type values fail with `ContractViolationError`.
+- Manual and triple-pendulum sources reject prescribed mode/profile, joint
+  locks, and localized torque offsets. Explicit default passive empty configs
+  remain supported.
+- The outer variation-dataset JSON schema version requires a genuine
+  non-Boolean integer. `True`, `1.5`, and `"1"` regressions fail without
+  coercion; the sibling Morris observation reader was confirmed already strict.
+- Evidence: 34/34 focused and 1,483/1,483 broader shared-swing, variation, and
+  Rate tests; one missing-Rust-wheel skip remains expected.
+- UI locus authoring, Rust parity, protected publication, and epic #4142 remain
+  open.
+
 ## 2026-08-12 #4142 localized torque source/wire hardening
 
 - Manual and triple-pendulum source discriminators now reject non-empty

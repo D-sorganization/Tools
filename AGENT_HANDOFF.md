@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
+
+The source factory no longer uses `run_config or default`. It validates the
+raw value as `None` or `DoublePendulumRunConfig`, then defaults only the exact
+`None` case. Manual and triple-pendulum sources reject prescribed mode/profile,
+joint locks, and localized offsets while preserving explicit or implicit
+default passive empty execution.
+
+The outer variation-dataset JSON schema version now requires a genuine
+non-Boolean integer before normalization. Boolean, float, and string lookalikes
+fail closed, consistent with the strict nested plan and sibling Morris reader
+contracts. Evidence is 34/34 focused and 1,483/1,483 broader shared-swing,
+variation, and Rate tests, with one expected missing-Rust-wheel skip. UI, Rust,
+protected-publication, and #4142 completion gates remain open.
+
 ## 2026-08-12 Localized torque source/wire hardening (#4142)
 
 The Rate source factory now enforces the same double-pendulum-only capability
