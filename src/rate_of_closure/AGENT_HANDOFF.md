@@ -1,5 +1,37 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4352 current-parent propagation candidate
+
+This local no-publish merge keeps `feat/4271-regional-result-readback` over
+`feat/4271-regional-execution-ui`. Exact current child
+`10fdac4860035fd5c845a621752e93688e2e674e` is the first parent and exact
+published #4351 head `4024c8a1ad2d3871c6b06ef6369250a873789c39`
+is the second parent. The child's complete matched PyQt6/React qualified result
+projection remains intact alongside bounded evidence import/readback, the
+explicit Boolean local required by protected delta-MyPy, embedded-plan
+execution/provenance and request-I/O boundaries, complete regional physics
+ancestry, the capability-only extended finite-float serializer, and the
+default ground safe-number boundary.
+
+Local qualification passes all `1,057` combined Rate/shared-ground Python
+tests, all `113` React files / `697` tests, the complete Cargo workspace, `76`
+focused Python result/readback/execution/I/O/capability tests, and `37` focused
+React tests. Pinned Ruff 0.14.10 check/format passes three child-delta Python
+files; isolated-import strict MyPy passes both child production modules and the
+coherent 35-module ground profile passes with inherited imports skipped and
+only the parent's documented `redundant-cast` code disabled; Bandit passes both
+production files. TypeScript, zero-warning ESLint, the 202-module Vite build,
+Rust format and warning-denied clippy, both LOC gates, campaign/manifest tests,
+docs/tool-manifest/blocking-gate/assertion/minimum-test governance, child-
+feature and inherited Boolean-local byte checks, marker scans, and diff checks
+pass. Existing Hypothesis ignored-cache, polynomial-generator empty-legend,
+Node local-storage option, and 523.34 kB Vite chunk warnings remain non-failing.
+
+The candidate is not published or released. UI executor invocation,
+trajectory/event tables, playback, calibration workflows, compiled regional
+physics, downstream parity, protected exact-head evidence, review, approval,
+dependency integration, release, and issue completion remain open.
+
 ## 2026-08-11 PR #4351 current-parent propagation candidate
 
 This local no-publish merge keeps `feat/4271-regional-execution-ui` over
@@ -1587,3 +1619,25 @@ remains. Independent review is still required before any GitHub write. Do not
 claim #4267/#4271 complete; UI executor inputs/invocation, playback, measured
 calibration, compiled regional physics, downstream parity, protected evidence,
 and release remain open.
+
+## 2026-08-11 Complete regional result readback
+
+Local unpublished `feat/4271-regional-result-readback` is an exact child of PR
+#4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`. Its matched PyQt6 and React
+evidence presenters now expose every qualified result summary field, final
+position, ground time, completion, bounce count, model/surface authority,
+calibration evidence, ordered phases, warnings, executor provenance, and
+limitations. Null-result states remain unavailable rather than fabricated;
+partial endpoints retain their warning.
+
+This remains import/readback only. Complete local gates and independent review
+before any GitHub write. Executor invocation, trajectory/event tables, export,
+playback, calibration workflows, compiled parity, downstream parity, protected
+evidence, release, and #4267/#4271 completion remain open.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 691 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 202-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains.

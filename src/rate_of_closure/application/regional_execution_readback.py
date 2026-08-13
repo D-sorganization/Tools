@@ -16,6 +16,15 @@ from .bounded_text_files import read_bounded_utf8
 
 
 @dataclass(frozen=True)
+class RegionalExecutionWarningReadback:
+    """Typed warning projection retained for matched client presentation."""
+
+    code: str
+    severity: str
+    message: str
+
+
+@dataclass(frozen=True)
 class RegionalExecutionReadback:
     """Small UI-neutral projection of one frozen execution envelope."""
 
@@ -23,13 +32,29 @@ class RegionalExecutionReadback:
     failure_reason: str | None
     plan_id: str
     surface_id: str
+    surface_provider_id: str
+    surface_provider_version: str
     model_id: str
     model_version: str
     termination_reason: str | None
+    ground_time_s: float | None
+    completed: bool | None
     transition_count: int
+    carry_distance_m: float | None
+    bounce_air_distance_m: float | None
     skid_distance_m: float | None
     roll_distance_m: float | None
+    surface_path_distance_m: float | None
     total_distance_m: float | None
+    final_downrange_m: float | None
+    final_offline_m: float | None
+    bounce_count: int | None
+    calibration_id: str | None
+    calibration_kind: str | None
+    calibration_source: str | None
+    calibration_confidence: float | None
+    observed_phases: tuple[str, ...]
+    warnings: tuple[RegionalExecutionWarningReadback, ...]
     executor_source_revision: str
     executor_input_sha256: str
     limitations: tuple[str, ...]
@@ -58,6 +83,23 @@ def regional_execution_readback(
         raise ValueError("execution evidence does not match the current regional plan")
     ground = result.ground_result
     summary = None if ground is None else ground.summary
+    phases = (
+        ()
+        if ground is None
+        else tuple(dict.fromkeys(point.phase.value for point in ground.trajectory))
+    )
+    warnings = (
+        ()
+        if ground is None
+        else tuple(
+            RegionalExecutionWarningReadback(
+                code=item.code,
+                severity=item.severity.value,
+                message=item.message,
+            )
+            for item in ground.warnings
+        )
+    )
     return RegionalExecutionReadback(
         status=result.status.value,
         failure_reason=None
@@ -65,13 +107,35 @@ def regional_execution_readback(
         else result.failure_reason.value,
         plan_id=result.plan_id,
         surface_id=result.surface_id,
+        surface_provider_id=result.regional_plan.base_surface.provider_id,
+        surface_provider_version=result.regional_plan.base_surface.provider_version,
         model_id=result.model_id,
         model_version=result.model_version,
         termination_reason=None if ground is None else ground.termination.reason.value,
+        ground_time_s=None if ground is None else ground.termination.time_s,
+        completed=None if ground is None else ground.termination.completed,
         transition_count=len(result.transitions),
+        carry_distance_m=None if summary is None else summary.carry_distance_m,
+        bounce_air_distance_m=(
+            None if summary is None else summary.bounce_air_distance_m
+        ),
         skid_distance_m=None if summary is None else summary.skid_distance_m,
         roll_distance_m=None if summary is None else summary.roll_distance_m,
+        surface_path_distance_m=(
+            None if summary is None else summary.surface_path_distance_m
+        ),
         total_distance_m=None if summary is None else summary.total_distance_m,
+        final_downrange_m=None if summary is None else summary.final_downrange_m,
+        final_offline_m=None if summary is None else summary.final_offline_m,
+        bounce_count=None if summary is None else summary.bounce_count,
+        calibration_id=None if ground is None else ground.calibration.calibration_id,
+        calibration_kind=None if ground is None else ground.calibration.kind.value,
+        calibration_source=None if ground is None else ground.calibration.source,
+        calibration_confidence=(
+            None if ground is None else ground.calibration.confidence
+        ),
+        observed_phases=phases,
+        warnings=warnings,
         executor_source_revision=result.executor_provenance.source_revision,
         executor_input_sha256=result.executor_provenance.input_sha256,
         limitations=result.limitations,
@@ -101,6 +165,7 @@ def read_regional_execution_evidence(
 __all__ = [
     "RegionalExecutionEvidence",
     "RegionalExecutionReadback",
+    "RegionalExecutionWarningReadback",
     "read_regional_execution_evidence",
     "regional_execution_readback",
 ]

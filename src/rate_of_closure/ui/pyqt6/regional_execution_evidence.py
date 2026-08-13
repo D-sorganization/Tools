@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QFormLayout,
     QGroupBox,
     QLabel,
+    QPlainTextEdit,
     QPushButton,
     QWidget,
 )
@@ -49,8 +50,9 @@ class RegionalExecutionEvidenceBox(QGroupBox):
         self.status_label = QLabel("No execution evidence loaded.")
         self.status_label.setWordWrap(True)
         self.status_label.setAccessibleName("Regional execution evidence status")
-        self.readback_label = QLabel("No accepted evidence")
-        self.readback_label.setWordWrap(True)
+        self.readback_label = QPlainTextEdit("No accepted evidence")
+        self.readback_label.setReadOnly(True)
+        self.readback_label.setMinimumHeight(180)
         self.readback_label.setAccessibleName("Regional execution evidence readback")
         layout = QFormLayout(self)
         layout.addRow(self.description)
@@ -60,7 +62,7 @@ class RegionalExecutionEvidenceBox(QGroupBox):
 
     def clear(self) -> None:
         """Remove evidence made stale by a visible plan edit."""
-        self.readback_label.setText("No accepted evidence")
+        self.readback_label.setPlainText("No accepted evidence")
         self.status_label.setText("Plan changed; execution evidence must be reloaded.")
 
     def open(self) -> None:
@@ -85,7 +87,7 @@ class RegionalExecutionEvidenceBox(QGroupBox):
             self.status_label.setAccessibleName("Regional execution evidence error")
             return
         self.recent_path = path
-        self.readback_label.setText(_format_readback(evidence.readback))
+        self.readback_label.setPlainText(_format_readback(evidence.readback))
         self.status_label.setText(f"Loaded {path.name}. No physics executed.")
         self.status_label.setAccessibleName("Regional execution evidence success")
 
@@ -96,16 +98,52 @@ def _metric(value: float | None) -> str:
 
 def _format_readback(value: RegionalExecutionReadback) -> str:
     terminal = value.termination_reason or value.failure_reason or "unavailable"
-    return (
-        f"{value.status} · {terminal} · plan {value.plan_id} · surface "
-        f"{value.surface_id} · model {value.model_id} {value.model_version} · "
+    lines = [
+        f"Status: {value.status} · termination: {terminal} · "
+        f"ground time: {_seconds(value.ground_time_s)}",
+        f"Plan: {value.plan_id} · surface: {value.surface_id} · "
+        f"provider: {value.surface_provider_id} {value.surface_provider_version} · "
+        f"model: {value.model_id} {value.model_version}",
+        f"Carry {_metric(value.carry_distance_m)} · "
+        f"bounce {_metric(value.bounce_air_distance_m)} · "
         f"skid {_metric(value.skid_distance_m)} · "
-        f"roll {_metric(value.roll_distance_m)} · "
+        f"roll {_metric(value.roll_distance_m)}",
+        f"Surface path {_metric(value.surface_path_distance_m)} · "
         f"total {_metric(value.total_distance_m)} · "
-        f"{value.transition_count} transition(s) · "
-        f"source {value.executor_source_revision} · "
-        f"input {value.executor_input_sha256} · "
-        f"limits {', '.join(value.limitations)}"
+        f"final downrange {_metric(value.final_downrange_m)} · "
+        f"final offline {_metric(value.final_offline_m)}",
+        f"Bounces: {_count(value.bounce_count)} · transitions: "
+        f"{value.transition_count} · phases: {_phases(value.observed_phases)}",
+        f"Calibration: {_calibration(value)}",
+        f"Executor source: {value.executor_source_revision} · "
+        f"input: {value.executor_input_sha256}",
+        f"Qualification limits: {', '.join(value.limitations)}",
+    ]
+    lines.extend(
+        f"Warning {item.code} [{item.severity}]: {item.message}"
+        for item in value.warnings
+    )
+    return "\n".join(lines)
+
+
+def _seconds(value: float | None) -> str:
+    return "unavailable" if value is None else f"{value:.3f} s"
+
+
+def _count(value: int | None) -> str:
+    return "unavailable" if value is None else str(value)
+
+
+def _phases(values: tuple[str, ...]) -> str:
+    return "unavailable" if not values else " -> ".join(values)
+
+
+def _calibration(value: RegionalExecutionReadback) -> str:
+    if value.calibration_kind is None:
+        return "unavailable"
+    return (
+        f"{value.calibration_kind} · {value.calibration_id} · "
+        f"{value.calibration_source} · confidence {value.calibration_confidence}"
     )
 
 

@@ -1,5 +1,40 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4352 current-parent propagation candidate
+
+- PR `#4352` retains branch `feat/4271-regional-result-readback` and base
+  `feat/4271-regional-execution-ui`. Exact current child
+  `10fdac4860035fd5c845a621752e93688e2e674e` is first and exact published PR
+  #4351 head `4024c8a1ad2d3871c6b06ef6369250a873789c39` is second in a normal
+  no-ff merge.
+- The child retains its complete matched PyQt6/React qualified result
+  projection while inheriting bounded evidence import/readback, the explicit
+  Boolean local required by protected delta-MyPy, embedded-plan execution and
+  provenance, request I/O, complete regional physics ancestry, the capability-
+  only extended finite-float serializer, and default ground safe-number
+  boundary.
+- Local qualification passes all `1,057` combined Rate/shared-ground Python
+  tests, all `113` React files / `697` tests, the complete Cargo workspace,
+  `76` focused Python result/readback/execution/I/O/capability tests, and `37`
+  focused React tests. Pinned Ruff 0.14.10 check/format passes three child-delta
+  Python files; isolated-import strict MyPy passes both child production
+  modules and the coherent 35-module ground profile passes with inherited
+  imports skipped and only the parent's documented `redundant-cast` code
+  disabled; Bandit passes both production files. TypeScript, zero-warning
+  ESLint, the 202-module Vite build, Rust format and warning-denied clippy, both
+  LOC gates, the campaign validator and eight manifest tests,
+  docs/tool-manifest/blocking-gate/assertion/minimum-test governance, child-
+  feature and inherited Boolean-local byte checks, marker scans, and diff
+  checks pass. Existing Hypothesis ignored-cache, polynomial-generator empty-
+  legend, Node local-storage option, and 523.34 kB Vite chunk warnings remain
+  non-failing.
+- The candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- UI executor invocation, trajectory/event tables, playback, calibration
+  workflows, compiled regional physics, downstream parity, protected exact-
+  head evidence, review, approval, dependency integration, release, and issue
+  completion remain open.
+
 ## 2026-08-11 PR #4351 current-parent propagation candidate
 
 - PR `#4351` retains branch `feat/4271-regional-execution-ui` and base
@@ -1902,3 +1937,26 @@ production build, manifest and eight manifest tests, docs governance,
 structural budgets, and diff checks. The inherited 500 kB build advisory
 remains. Complete an independent audit before publication; then create a normal
 stacked draft child without retargeting or rewriting PR #4350.
+
+## 2026-08-11 Complete regional result readback continuation
+
+Local branch `feat/4271-regional-result-readback` starts exactly at draft PR
+#4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`. The next bounded result-
+usability slice makes matched PyQt6/React evidence inspection complete for the
+existing frozen result: carry, bounce-air, skid, roll, surface path, total,
+final downrange/offline, bounce count, ground time, completion, model and
+surface-provider identities/versions, calibration evidence, ordered observed
+phases, typed warnings, executor provenance, and qualification limits.
+
+Cancellation/failure cannot fabricate ground-only values, and partial results
+remain visibly censored. React still executes no ground physics. Trajectory and
+event tables, export/playback, executor input construction/invocation, measured
+calibration, compiled parity, Upstream consumers, protected evidence, release,
+and issue completion remain open.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 691 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 202-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains. Independent review is required before publication.

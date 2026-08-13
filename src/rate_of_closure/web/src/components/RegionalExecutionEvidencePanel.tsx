@@ -1,4 +1,4 @@
-import { type ChangeEvent, useRef, useState } from "react";
+import { type ChangeEvent, type ReactNode, useRef, useState } from "react";
 
 import type { GroundRegionalMaterialPlanRequest } from "../model/groundRegionalPlan";
 import {
@@ -8,6 +8,12 @@ import {
 
 const metric = (value: number | null): string =>
   value === null ? "Unavailable" : `${value.toFixed(3)} m`;
+const seconds = (value: number | null): string =>
+  value === null ? "Unavailable" : `${value.toFixed(3)} s`;
+
+function ReadbackItem(props: { readonly label: string; readonly children: ReactNode }) {
+  return <div><dt className="text-slate-500">{props.label}</dt><dd>{props.children}</dd></div>;
+}
 
 export function RegionalExecutionEvidencePanel(props: {
   readonly currentPlan: () => GroundRegionalMaterialPlanRequest;
@@ -52,14 +58,44 @@ export function RegionalExecutionEvidencePanel(props: {
         className="mt-3 text-xs text-slate-400">{status}</p>
       {readback !== null && <dl aria-label="Regional execution evidence readback"
         className="mt-3 grid gap-2 text-sm sm:grid-cols-2 xl:grid-cols-4">
-        <div><dt className="text-slate-500">Status</dt><dd>{readback.status}</dd></div>
-        <div><dt className="text-slate-500">Termination</dt><dd>{readback.terminationReason ?? readback.failureReason ?? "Unavailable"}</dd></div>
-        <div><dt className="text-slate-500">Plan / surface</dt><dd>{readback.planId} / {readback.surfaceId}</dd></div>
-        <div><dt className="text-slate-500">Model</dt><dd>{readback.modelId} {readback.modelVersion}</dd></div>
-        <div><dt className="text-slate-500">Skid</dt><dd>{metric(readback.skidDistanceM)}</dd></div>
-        <div><dt className="text-slate-500">Roll</dt><dd>{metric(readback.rollDistanceM)}</dd></div>
-        <div><dt className="text-slate-500">Total</dt><dd>{metric(readback.totalDistanceM)}</dd></div>
-        <div><dt className="text-slate-500">Surface transitions</dt><dd>{readback.transitionCount}</dd></div>
+        <ReadbackItem label="Status">{readback.status}</ReadbackItem>
+        <ReadbackItem label="Termination">
+          {readback.terminationReason ?? readback.failureReason ?? "Unavailable"}
+        </ReadbackItem>
+        <ReadbackItem label="Ground time">{seconds(readback.groundTimeS)}</ReadbackItem>
+        <ReadbackItem label="Terminal completion">
+          {readback.completed === null ? "Unavailable" : readback.completed
+            ? "Completed" : "Observed endpoint"}
+        </ReadbackItem>
+        <ReadbackItem label="Plan / surface">
+          {readback.planId} / {readback.surfaceId}
+        </ReadbackItem>
+        <ReadbackItem label="Surface provider">
+          {readback.surfaceProviderId} {readback.surfaceProviderVersion}
+        </ReadbackItem>
+        <ReadbackItem label="Model">
+          {readback.modelId} {readback.modelVersion}
+        </ReadbackItem>
+        <ReadbackItem label="Carry">{metric(readback.carryDistanceM)}</ReadbackItem>
+        <ReadbackItem label="Bounce air">{metric(readback.bounceAirDistanceM)}</ReadbackItem>
+        <ReadbackItem label="Skid">{metric(readback.skidDistanceM)}</ReadbackItem>
+        <ReadbackItem label="Roll">{metric(readback.rollDistanceM)}</ReadbackItem>
+        <ReadbackItem label="Surface path">{metric(readback.surfacePathDistanceM)}</ReadbackItem>
+        <ReadbackItem label="Total">{metric(readback.totalDistanceM)}</ReadbackItem>
+        <ReadbackItem label="Final downrange">{metric(readback.finalDownrangeM)}</ReadbackItem>
+        <ReadbackItem label="Final offline">{metric(readback.finalOfflineM)}</ReadbackItem>
+        <ReadbackItem label="Bounces">{readback.bounceCount ?? "Unavailable"}</ReadbackItem>
+        <ReadbackItem label="Surface transitions">{readback.transitionCount}</ReadbackItem>
+        <ReadbackItem label="Calibration">
+          {readback.calibrationKind === null ? "Unavailable"
+            : `${readback.calibrationKind} · ${readback.calibrationId} · ` +
+              `${readback.calibrationSource} · confidence ` +
+              `${readback.calibrationConfidence}`}
+        </ReadbackItem>
+        <ReadbackItem label="Observed phases">
+          {readback.observedPhases.length === 0
+            ? "Unavailable" : readback.observedPhases.join(" → ")}
+        </ReadbackItem>
         <div className="sm:col-span-2 xl:col-span-4">
           <dt className="text-slate-500">Executor provenance</dt>
           <dd className="break-all">{readback.executorSourceRevision} · {readback.executorInputSha256}</dd>
@@ -68,6 +104,14 @@ export function RegionalExecutionEvidencePanel(props: {
           <dt className="text-slate-500">Qualification limits</dt>
           <dd>{readback.limitations.join(" · ")}</dd>
         </div>
+        {readback.warnings.length > 0 && <div className="sm:col-span-2 xl:col-span-4">
+          <dt className="text-slate-500">Warnings</dt>
+          <dd><ul className="list-disc space-y-1 pl-5">
+            {readback.warnings.map((warning, index) => <li key={`${warning.code}-${index}`}>
+              {warning.code} [{warning.severity}] — {warning.message}
+            </li>)}
+          </ul></dd>
+        </div>}
       </dl>}
     </section>
   );

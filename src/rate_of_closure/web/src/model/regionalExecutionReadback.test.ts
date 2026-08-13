@@ -16,10 +16,47 @@ describe("regional execution evidence readback", () => {
     expect(readback.status).toBe("partial");
     expect(readback.planId).toBe("regional-execution-plan-001");
     expect(readback.terminationReason).toBe("time_limit");
+    expect(readback.groundTimeS).toBeCloseTo(1.155);
+    expect(readback.completed).toBe(false);
     expect(readback.transitionCount).toBe(1);
+    expect(readback.carryDistanceM).toBeCloseTo(0);
+    expect(readback.bounceAirDistanceM).toBeCloseTo(0.04);
     expect(readback.skidDistanceM).toBeCloseTo(0);
     expect(readback.rollDistanceM).toBeCloseTo(0.25374857896);
+    expect(readback.surfacePathDistanceM).toBeCloseTo(0.25374857896);
     expect(readback.totalDistanceM).toBeCloseTo(0.2937485791);
+    expect(readback.finalDownrangeM).toBeCloseTo(0.2937485791);
+    expect(readback.finalOfflineM).toBeCloseTo(0);
+    expect(readback.bounceCount).toBe(1);
+    expect(readback.surfaceProviderId).toBe("tools.planar-surface");
+    expect(readback.surfaceProviderVersion).toBe("1.0.0");
+    expect(readback.calibrationId).toBe("literature-default-2026-08");
+    expect(readback.calibrationKind).toBe("literature");
+    expect(readback.calibrationSource).toBe("documented literature basis");
+    expect(readback.calibrationConfidence).toBeCloseTo(0.6);
+    expect(readback.observedPhases).toEqual(["impact", "skid", "roll"]);
+    expect(readback.warnings[readback.warnings.length - 1]).toEqual({
+      code: "CENSORED_ENDPOINT",
+      severity: "warning",
+      message: "Distance totals describe only the observed endpoint and are not projected final-rest metrics.",
+    });
+  });
+
+  it("does not fabricate metrics for null-result cancellation evidence", () => {
+    const cancelled = parseGroundRegionalExecutionResult(fixture.cancelled.result);
+    const readback = regionalExecutionReadback(cancelled, cancelled.regional_plan);
+
+    expect(readback.failureReason).toBe("cancelled");
+    expect(readback.groundTimeS).toBeNull();
+    expect(readback.completed).toBeNull();
+    expect(readback.carryDistanceM).toBeNull();
+    expect(readback.bounceCount).toBeNull();
+    expect(readback.calibrationKind).toBeNull();
+    expect(readback.calibrationId).toBeNull();
+    expect(readback.calibrationSource).toBeNull();
+    expect(readback.calibrationConfidence).toBeNull();
+    expect(readback.observedPhases).toEqual([]);
+    expect(readback.warnings).toEqual([]);
   });
 
   it("rejects evidence for a different plan and oversize browser files", async () => {

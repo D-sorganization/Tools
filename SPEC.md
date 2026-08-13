@@ -30,6 +30,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -48,6 +49,10 @@
 | **Current Version**     | 1.14.37                                    |
 | **Spec Version**        | 1.14.37                                    |
 >>>>>>> origin/feat/4271-regional-execution-ui
+=======
+| **Current Version**     | 1.14.38                                    |
+| **Spec Version**        | 1.14.38                                    |
+>>>>>>> origin/feat/4271-regional-result-readback
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -70,9 +75,28 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
+=======
+### 2026-08-11 Complete Regional Execution Result Readback
+
+- The matched PyQt6 and React evidence readers project every already-qualified
+  ground summary field without recomputation: carry, bounce-air, skid, roll,
+  surface-path, total, final downrange/offline, bounce count, ground time,
+  terminal completion, model and base-surface provider identities, calibration
+  evidence, ordered observed phases, typed warnings, executor provenance, and
+  qualification limitations.
+- Null-result cancellation/failure evidence keeps all ground-only values
+  unavailable and emits no fabricated phases, warnings, calibration, times, or
+  distances. Partial results retain their censored-endpoint warning and are not
+  presented as final-rest outcomes.
+- PyQt6 uses a readable scrollable readback while React uses an accessible
+  definition list and warning list. Both remain import-only consumers of the
+  frozen Python executor envelope; this slice does not add playback or physics.
+
+>>>>>>> origin/feat/4271-regional-result-readback
 ### 2026-08-11 Regional Execution Evidence Readback
 
 - Matched PyQt6 and React regional-plan surfaces can import a bounded strict
@@ -3012,12 +3036,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
 | 2026-08-11 | 1.14.29 | merge(ground-regional-wire, #4332 #4335): normally merge exact remote regional-wire child `9e01ccc3e891cc45907293751a192624195a77a5` first with exact current regional-surface parent `5ac3c1f233de30dd42eeac57073cbdb149bde652` second while preserving PR #4335's `feat/4271-regional-surface-transitions` base, strict Python/TypeScript regional-plan request/result schemas, canonical JSON/SHA-256 fixture evidence, fail-closed parsing, Python resolver binding, tests, limitations, and both append-only handoff/SPEC histories; inherit current regional, skid/roll, impact/bounce, and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping changing geometry or velocity, internal transition-ledger export, regional UI, compiled or TypeScript regional physics, downstream parity, protected exact-head CI, review, approval, and release open. |
 =======
 =======
+=======
+| 2026-08-11 | 1.14.38 | merge(rate-of-closure, #4271 #4352): normally merge exact current regional-result readback child `10fdac4860035fd5c845a621752e93688e2e674e` first with exact published PR #4351 parent `4024c8a1ad2d3871c6b06ef6369250a873789c39` second without changing the `feat/4271-regional-execution-ui` base; preserve the complete matched PyQt6/React qualified result projection, parent bounded evidence import/readback, the explicit Boolean local required by protected delta-MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep UI executor invocation, trajectory/event tables, playback, calibration workflows, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
+| 2026-08-11 | 1.14.36 | feat(ground-roll, #4267 #4271): complete the matched PyQt6/React import-only result projection with carry, bounce-air, skid, roll, surface-path, total, final position/offline, bounce count, ground time, terminal completion, model and surface-provider identity/version, calibration evidence, ordered observed phases, typed warnings, executor provenance, and qualification limits; preserve unavailable ground-only values for null-result cancellation/failure and keep partial censored endpoints explicit; retain UI executor invocation, trajectory/event tables, playback, calibration workflows, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
+>>>>>>> origin/feat/4271-regional-result-readback
 | 2026-08-11 | 1.14.37 | merge(rate-of-closure, #4271 #4351): normally merge exact current regional-execution UI child `351a3051e9093c6b80cabf0f1db04aeeb15abfac` first with exact published PR #4350 parent `98f86990e9225903fbe84cd1f267ed38ef0a15d8` second without changing the `feat/4271-regional-execution-binding` base; preserve matched bounded PyQt6/React evidence import and readback, the explicit Boolean local required by protected delta-MyPy, the embedded-plan execution/provenance boundary, request I/O, full regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep UI executor invocation, playback, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
 | 2026-08-11 | 1.14.36 | fix(rate-of-closure, #4351): make the regional request atomic-write return boundary stable under the protected changed-file MyPy profile by assigning the skipped imported helper result to an explicit Boolean local; avoid both `no-any-return` and a root-set-dependent redundant cast without changing runtime behavior. |
 >>>>>>> origin/feat/4271-regional-execution-ui
