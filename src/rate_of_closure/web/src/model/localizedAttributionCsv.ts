@@ -19,6 +19,8 @@ const HEADER = [
 ] as const;
 const FLOAT_COLUMNS = new Set([8, 9, 16, 22, 23, 24, 25, 26]);
 const NUMERIC_COLUMNS = new Set([1, 8, 9, 16, 18, 19, 22, 23, 24, 25, 26]);
+const quoteCsvText = (text: string): string =>
+  /[",\r\n]/u.test(text) ? `"${text.replace(/"/gu, '""')}"` : text;
 
 export const canonicalBinary64CsvText = (value: number): string => {
   if (!Number.isFinite(value)) throw new Error("CSV binary64 value must be finite");
@@ -65,8 +67,7 @@ export function attributionObservationsToCsv(
   authority: AttributionAuthorityTs,
 ): string {
   return attributionObservationsToRows(authority).map((row, rowIndex) => row.map(
-    (value, column) => spreadsheetSafeCsvCell(
-      rowIndex > 0 && value !== "" && NUMERIC_COLUMNS.has(column) ? Number(value) : value,
-    ),
+    (value, column) => rowIndex > 0 && value !== "" && NUMERIC_COLUMNS.has(column)
+      ? quoteCsvText(value) : spreadsheetSafeCsvCell(value),
   ).join(",")).join("\n") + "\n";
 }

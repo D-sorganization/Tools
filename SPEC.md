@@ -26,11 +26,21 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.72                                    |
-| **Spec Version**        | 1.16.72                                    |
+| **Current Version**     | 1.16.73                                    |
+| **Spec Version**        | 1.16.73                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Localized attribution CSV writer parity correction (#4142)
+
+Version 1.16.73 carries canonical binary64 text unchanged through the final
+TypeScript CSV writer instead of coercing it back to `Number`. Numeric cells
+receive CSV quoting only; nonnumeric cells retain formula-neutralization and
+quoting. A shared raw extreme authority plus exact CSV fixture verifies both
+runtimes emit identical bytes containing `-0.0`, `1e20`, and `1e-5`. Focused
+Python 20/20 and React 17/17 plus TypeScript, ESLint, documentation, size,
+fixture-parity, and diff gates pass. Paired production authority remains open.
 
 ### 2026-08-13 Localized attribution numerical/parity correction (#4142)
 
@@ -3973,6 +3983,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.73 | fix(rate-of-closure, #4142 R13.3): preserve canonical binary64 strings through final TypeScript CSV serialization and prove exact Python/TypeScript export bytes with a shared extreme authority. |
 | 2026-08-13 | 1.16.72 | fix(rate-of-closure, #4142 R13.3): close numerical and cross-runtime parity findings with finite response arithmetic, nonzero interventions, normalized binary64 CSV text, Unicode code-point caps, accurate pair counts, and an exact pinned-Mypy typed boundary. |
 | 2026-08-13 | 1.16.71 | fix(rate-of-closure, #4142 R13.3): harden paired attribution with immutable source pair rosters, complete source-target-pair matrices, canonical target semantics, shared ULP response policy, resource bounds, deep-frozen TypeScript values, and enriched formula-safe parity CSV. |
 | 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4142 R13.3): define strict Python/TypeScript paired planted-intervention attribution authority, typed source/target/pair observations and denominators, raw CSV and view JSON, and accessible PyQt6/React consumers that fail closed because current Monte Carlo results do not retain isolated baseline pairs. |

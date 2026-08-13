@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized attribution CSV writer parity correction (#4142)
+
+- Final TypeScript CSV serialization preserves canonical numeric strings while
+  continuing formula-safe quoting for nonnumeric text.
+- Shared raw extreme authority and exact CSV fixtures prove writer-level byte
+  parity for `-0.0`, `1e20`, and `1e-5` in Python and TypeScript.
+- Focused Python 20/20 and React 17/17, TS/ESLint, docs, size, parity, and diff
+  gates pass. SPEC is 1.16.73; the paired producer remains explicitly open.
+
 ## 2026-08-13 Localized attribution numerical/parity correction (#4142)
 
 - Response arithmetic rejects nonfinite expected/tolerance values; pair and

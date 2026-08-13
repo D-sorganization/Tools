@@ -1,5 +1,14 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 attribution CSV writer parity correction
+
+- TypeScript preserves canonical numeric strings through final CSV quoting;
+  it no longer round-trips them through `Number`.
+- Python and TypeScript parse the same extreme authority and match the same
+  exact CSV bytes for signed zero and large/small exponent forms.
+- Focused Python 20/20 and React 17/17 plus TS, ESLint, docs, size, parity, and
+  diff checks pass. SPEC advances to 1.16.73; producer work remains open.
+
 ## 2026-08-13 #4142 attribution numerical/parity correction
 
 - Nonfinite expected response/tolerance and zero source interventions now fail

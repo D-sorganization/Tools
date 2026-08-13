@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized attribution CSV writer parity correction (#4142)
+
+Version 1.16.73 fixes the final export-path coercion: TypeScript now writes
+already-canonical numeric cells without converting them back through `Number`,
+while nonnumeric text still uses the shared formula-safe CSV serializer. A
+shared extreme authority and exact CSV golden prove Python/TypeScript writer
+bytes retain `-0.0`, `1e20`, and `1e-5`. Focused Python 20/20 and React 17/17,
+TypeScript, ESLint, docs, size, parity, and diff gates pass. The isolated paired
+producer gap is unchanged.
+
 ## 2026-08-13 Localized attribution numerical/parity correction (#4142)
 
 Version 1.16.72 closes the independent review findings on the hardened paired

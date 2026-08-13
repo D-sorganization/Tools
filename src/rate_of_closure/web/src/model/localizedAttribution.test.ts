@@ -13,6 +13,8 @@ import {
 } from "./localizedAttribution";
 import csvRows from "./__fixtures__/localized_attribution_csv_rows_v1.json";
 import floatTextGolden from "./__fixtures__/localized_attribution_float_text_v1.json";
+import extremeCsvAuthorityText from "./__fixtures__/localized_attribution_extreme_csv_v1.json?raw";
+import extremeCsvBytes from "./__fixtures__/localized_attribution_extreme_csv_v1.csv?raw";
 import { responseMatches } from "./localizedAttributionContract";
 import { canonicalBinary64CsvText } from "./localizedAttributionCsv";
 
@@ -109,8 +111,8 @@ describe("localized attribution authority", () => {
     expect(csv).toContain("paired-planted-intervention-noncausal");
     expect(csv).toContain("no_impact_unavailable");
     expect(csv).toContain("numerical_failure");
-    expect(csv).toContain(",-2,");
-    expect(csv).not.toContain(",'-2,");
+    expect(csv).toContain(",-2.0,");
+    expect(csv).not.toContain(",'-2.0,");
     expect(attributionObservationsToRows(authority())).toEqual(csvRows);
   });
 
@@ -168,6 +170,12 @@ describe("localized attribution authority", () => {
     expect(floatTextGolden.map((row) => canonicalBinary64CsvText(row.value))).toEqual(
       floatTextGolden.map((row) => row.text),
     );
+  });
+
+  it("preserves canonical extreme binary64 text through the actual CSV writer", () => {
+    const decoded = attributionAuthorityFromValue(JSON.parse(extremeCsvAuthorityText));
+    expect(attributionObservationsToCsv(decoded)).toBe(extremeCsvBytes);
+    expect(extremeCsvBytes).toContain(",-0.0,1e20,-0.0,1e-5,1e-5,");
   });
 
   it("deep-freezes parsed authority and view values", () => {

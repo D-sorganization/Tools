@@ -45,6 +45,17 @@ WEB_FLOAT_TEXT_FIXTURE = (
     / "src/rate_of_closure/web/src/model/__fixtures__"
     / "localized_attribution_float_text_v1.json"
 )
+EXTREME_CSV_AUTHORITY = (
+    Path(__file__).parent / "fixtures/localized_attribution_extreme_csv_v1.json"
+)
+EXTREME_CSV_BYTES = (
+    Path(__file__).parent / "fixtures/localized_attribution_extreme_csv_v1.csv"
+)
+WEB_EXTREME_CSV_BYTES = (
+    Path(__file__).parents[2]
+    / "src/rate_of_closure/web/src/model/__fixtures__"
+    / "localized_attribution_extreme_csv_v1.csv"
+)
 
 
 def _payload() -> dict[str, object]:
@@ -245,6 +256,16 @@ def test_binary64_csv_text_is_cross_runtime_canonical() -> None:
     assert [canonical_binary64_csv_text(row["value"]) for row in golden] == [
         row["text"] for row in golden
     ]
+
+
+def test_extreme_binary64_csv_writer_matches_cross_runtime_bytes() -> None:
+    authority = attribution_authority_from_dict(
+        json.loads(EXTREME_CSV_AUTHORITY.read_text(encoding="utf-8"))
+    )
+    expected = EXTREME_CSV_BYTES.read_text(encoding="utf-8")
+    assert expected == WEB_EXTREME_CSV_BYTES.read_text(encoding="utf-8")
+    assert attribution_observations_to_csv(authority) == expected
+    assert ",-0.0,1e20,-0.0,1e-5,1e-5," in expected
 
 
 def test_resource_caps_apply_before_element_construction() -> None:
