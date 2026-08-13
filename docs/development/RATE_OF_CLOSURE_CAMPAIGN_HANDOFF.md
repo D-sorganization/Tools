@@ -1,5 +1,28 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 R11 pre-impact authority/archive foundation
+
+- Complete Rate chunks now own immutable application-frame poses/twists,
+  stable source-neutral generalized states, applied commanded torque, exact
+  typed contact/closest-approach events, and explicit pre-impact masks.
+- One-run projection removes the prior chunk-sized `TrialCapture` list. Any
+  valid samples after impact are labelled source open-loop continuation, not a
+  collision-coupled continuation.
+- The separate `ensemble-chunk-archive@1` binds the complete ordered request
+  and uses bounded little-endian payloads, SHA-256 chaining, atomic provisional
+  files, commit metadata, verified-prefix resume, one-chunk reading, and a
+  capped compatibility materializer.
+- Gates: 20/20 focused archive/authority/adversarial/RSS, 232/232 full
+  variation after the known stale diagnostic deselection, 96/96 simulation/
+  stream/request regressions, pinned Python 3.12 Mypy 1.13 on 17 changed
+  production files, Ruff/format/diff. RSS after eager request construction was
+  0.52 MiB for 16 chunks and 0.39 MiB for 128 chunks.
+- One unchanged broad-reader assertion expects `valid JSON` although the
+  hardened parser reports the more specific `JSON nesting depth exceeded`.
+- SPEC advances to 1.16.70. Eager request construction, full per-run solver
+  allocation, prefix verification at reader construction, legacy schema/UI
+  migration, publication, and remaining R11/#4142 acceptance stay open.
+
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 
 - Normal non-fast-forward order is approved localized-execution head

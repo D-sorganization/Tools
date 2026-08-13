@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Pre-impact authority and resumable ensemble archive (#4142 R11)
+
+Version 1.16.70 adds immutable application-frame pose/twist, source-neutral
+generalized state, applied commanded torque, exact contact/closest-approach
+event, and pre-impact mask authority to Rate result chunks. The accumulator
+projects one completed run at a time into preallocated chunk arrays rather than
+retaining a chunk list of full solver runs. Samples after impact are explicitly
+the source's open-loop continuation, not collision-coupled dynamics.
+
+`rate-of-closure/ensemble-chunk-archive@1` is a separate request-bound format
+with little-endian arrays, SHA-256 header/chunk chain and commit root, atomic
+provisional writes, verified-prefix resume, one-chunk-at-a-time reading, and a
+bounded legacy materializer. Cancellation, partial writes, bit flips, chunk
+splices, false filenames, input/config changes, and failure rows fail closed.
+
+Gates pass 20 focused authority/archive/adversarial/RSS tests, 232 full
+variation tests after the known stale diagnostic deselection, 96 simulation/
+chunk/request regressions, and pinned Python 3.12 + Mypy 1.13 over 17 changed
+production files, and Ruff/format/diff. Measured post-request sink RSS delta is
+0.52 MiB at 16 chunks and 0.39 MiB at 128 chunks. One unchanged reader test
+has stale wording (`valid JSON` versus the hardened `JSON nesting depth
+exceeded` diagnostic); it is not caused or changed by this slice.
+
+Do not call R11 complete: request creation and each solver run remain eager,
+reader construction verifies the committed prefix, legacy ensemble schemas/UI
+are not migrated, and protected publication remains open.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 Version 1.16.69 is a normal non-fast-forward merge with approved localized-

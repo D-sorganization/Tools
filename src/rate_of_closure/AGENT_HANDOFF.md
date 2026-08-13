@@ -3,6 +3,31 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Pre-impact authority and resumable archive (#4142 R11)
+
+- Rate chunks own immutable pose/twist, source-neutral generalized state,
+  applied commanded torque, exact contact/closest-approach event, and explicit
+  pre-impact validity. Post-impact swing samples are labelled open-loop source
+  continuation, not collision-coupled dynamics.
+- `ChunkAccumulator` projects one solver result immediately into bounded
+  preallocated arrays; it no longer retains a full-run capture list.
+- Separate `ensemble-chunk-archive@1` storage binds the ordered request and
+  layout, writes little-endian payloads atomically, SHA-256 chains every chunk,
+  resumes only a verified prefix, and exposes one chunk at a time. Legacy
+  materialization remains explicitly capped.
+- Evidence: 20 focused, 232 full-variation (after the known stale diagnostic
+  deselection), and 96 simulation/stream regression tests pass. Python 3.12
+  Mypy 1.13 is green on 17 changed sources; Ruff/format/diff pass. RSS delta
+  after eager request construction measured 0.52 MiB at 16 chunks and 0.39 MiB
+  at 128.
+- An unchanged broad reader assertion has stale diagnostic wording (`valid
+  JSON` instead of `JSON nesting depth exceeded`).
+
+SPEC is 1.16.70. R11 remains incomplete: request/config construction and each
+solver run are still eager, reader setup verifies the whole committed prefix,
+legacy JSON/CSV and UI do not yet use the new archive authority, and protected
+publication remains open.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 - Normal merge order is approved localized-execution head

@@ -36,6 +36,7 @@ from rate_of_closure.simulation.manual_delivery import (
     manual_reference_velocity,
 )
 from rate_of_closure.simulation.triple_pendulum import (
+    TRIPLE_PENDULUM_JOINT_IDS,
     TriplePendulumParameters,
     TriplePendulumSwing,
 )
@@ -45,7 +46,11 @@ from rate_of_closure.simulation.triple_pendulum import (
 from rate_of_closure.simulation.triple_pendulum import (
     triple_total_energy as triple_total_energy,
 )
-from shared.python.swing_sim.run_config import DoublePendulumRunConfig, SwingRunMode
+from shared.python.swing_sim.run_config import (
+    DOUBLE_PENDULUM_JOINT_IDS,
+    DoublePendulumRunConfig,
+    SwingRunMode,
+)
 from shared.python.swing_sim.swing_source import DoublePendulumSwing, SwingSource
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import (
@@ -63,11 +68,54 @@ __all__ = [
     "ManualSwingSource",
     "TriplePendulumParameters",
     "TriplePendulumSwing",
+    "commanded_torque_joint_ids",
+    "generalized_state_layout",
     "make_source",
 ]
 
 #: Swing-source kinds accepted by :func:`make_source`, in UI order.
 SOURCE_KINDS: tuple[str, ...] = ("manual", "double_pendulum", "triple_pendulum")
+
+_STATE_LAYOUTS: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
+    "manual": ((), ()),
+    "double_pendulum": (
+        (
+            "joint.shoulder.angle_rad",
+            "joint.wrist.relative_angle_rad",
+            "joint.shoulder.rate_rad_s",
+            "joint.wrist.relative_rate_rad_s",
+        ),
+        ("rad", "rad", "rad/s", "rad/s"),
+    ),
+    "triple_pendulum": (
+        (
+            "joint.shoulder.absolute_angle_rad",
+            "joint.elbow.absolute_angle_rad",
+            "joint.wrist.absolute_angle_rad",
+            "joint.shoulder.absolute_rate_rad_s",
+            "joint.elbow.absolute_rate_rad_s",
+            "joint.wrist.absolute_rate_rad_s",
+        ),
+        ("rad", "rad", "rad", "rad/s", "rad/s", "rad/s"),
+    ),
+}
+
+
+def generalized_state_layout(kind: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Return stable generalized-state IDs and units for a source kind."""
+    require(kind in _STATE_LAYOUTS, "unknown swing source kind", kind)
+    return _STATE_LAYOUTS[kind]
+
+
+def commanded_torque_joint_ids(kind: str) -> tuple[str, ...]:
+    """Return stable externally applied generalized-torque joint IDs."""
+    if kind == "double_pendulum":
+        return cast(tuple[str, ...], DOUBLE_PENDULUM_JOINT_IDS)
+    if kind == "triple_pendulum":
+        return cast(tuple[str, ...], TRIPLE_PENDULUM_JOINT_IDS)
+    require(kind == "manual", "unknown swing source kind", kind)
+    return ()
+
 
 #: Canonical duration of the manual source's centered inspection window [s].
 MANUAL_SWING_DURATION_S = 0.06
@@ -160,6 +208,38 @@ class AppFrameSwing:
         sampler = cast(Callable[[float], dict[str, float]], torque_sampler)
         return sampler(t)
 
+    @property
+    def generalized_state_ids(self) -> tuple[str, ...]:
+        """Forward frame-invariant generalized-state component IDs."""
+        if isinstance(self._inner, DoublePendulumSwing):
+            return generalized_state_layout("double_pendulum")[0]
+        identifiers = getattr(self._inner, "generalized_state_ids", ())
+        return tuple(cast(tuple[str, ...], identifiers))
+
+    @property
+    def generalized_state_units(self) -> tuple[str, ...]:
+        """Forward units aligned with generalized-state component IDs."""
+        if isinstance(self._inner, DoublePendulumSwing):
+            return generalized_state_layout("double_pendulum")[1]
+        units = getattr(self._inner, "generalized_state_units", ())
+        return tuple(cast(tuple[str, ...], units))
+
+    def generalized_state_at(self, t: float) -> np.ndarray:
+        """Forward generalized coordinates, which are frame invariant."""
+        if isinstance(self._inner, DoublePendulumSwing):
+            state = self._inner.state_at(t)
+            return np.asarray(
+                (state.theta1, state.theta2, state.omega1, state.omega2),
+                dtype=np.float64,
+            )
+        state_sampler = getattr(self._inner, "generalized_state_at", None)
+        require(
+            callable(state_sampler), "inner source has no generalized-state history"
+        )
+        sampler = cast(Callable[[float], object], state_sampler)
+        values: np.ndarray = np.asarray(sampler(t), dtype=np.float64)
+        return values
+
 
 class ManualSwingSource:
     """Constant-twist source built from an :class:`ImpactScenario` (app frame).
@@ -212,6 +292,21 @@ class ManualSwingSource:
     def uses_declared_head_pose(self) -> bool:
         """Declare that delivery extraction must honor this source's pose."""
         return True
+
+    @property
+    def generalized_state_ids(self) -> tuple[str, ...]:
+        """Manual rigid motion has no additional generalized coordinates."""
+        return ()
+
+    @property
+    def generalized_state_units(self) -> tuple[str, ...]:
+        """Return the empty units schema paired with the empty state."""
+        return ()
+
+    def generalized_state_at(self, t: float) -> np.ndarray:
+        """Validate ``t`` and return the empty manual generalized state."""
+        self.sample(t)
+        return np.empty((0,), dtype=np.float64)
 
     def sample(self, t: float) -> SwingSample:
         """Clubhead sample at ``t``; at the declared pose at window midpoint."""

@@ -202,6 +202,9 @@ class SimulationRun:
     swing_joints: np.ndarray
     swing_joint_ids: tuple[str, ...]
     swing_applied_torques_nm: np.ndarray
+    swing_state_ids: tuple[str, ...]
+    swing_state_units: tuple[str, ...]
+    swing_generalized_states: np.ndarray
     impact_outcome: ImpactOutcome
     impact_time_s: float | None
     delivery: DeliveryDerived | None
@@ -292,6 +295,27 @@ def _validate_swing_shapes(run: SimulationRun) -> None:
         run.swing_joints.shape,
     )
     _validate_torque_history(run, sample_count)
+    _validate_generalized_state_history(run, sample_count)
+    for name in (
+        "swing_times",
+        "swing_positions",
+        "swing_poses",
+        "swing_twists",
+        "swing_joints",
+        "swing_applied_torques_nm",
+        "swing_generalized_states",
+    ):
+        raw = np.asarray(getattr(run, name))
+        require(
+            np.issubdtype(raw.dtype, np.number)
+            and not np.issubdtype(raw.dtype, np.bool_)
+            and not np.issubdtype(raw.dtype, np.complexfloating),
+            f"{name} must contain real non-boolean numbers",
+        )
+        values = np.array(raw, dtype=np.float64, copy=True)
+        require(bool(np.all(np.isfinite(values))), f"{name} must be finite")
+        values.setflags(write=False)
+        object.__setattr__(run, name, values)
 
 
 def _validate_torque_history(run: SimulationRun, sample_count: int) -> None:
@@ -318,14 +342,45 @@ def _validate_torque_history(run: SimulationRun, sample_count: int) -> None:
         bool(np.all(np.isfinite(run.swing_applied_torques_nm))),
         "swing_applied_torques_nm must be finite",
     )
-    expected_joint_ids = (
-        DOUBLE_PENDULUM_JOINT_IDS if run.config.source_kind == "double_pendulum" else ()
-    )
+    expected_joint_ids: tuple[str, ...]
+    if run.config.source_kind == "double_pendulum":
+        expected_joint_ids = DOUBLE_PENDULUM_JOINT_IDS
+    elif run.config.source_kind == "triple_pendulum":
+        from rate_of_closure.simulation.triple_pendulum import (
+            TRIPLE_PENDULUM_JOINT_IDS,
+        )
+
+        expected_joint_ids = TRIPLE_PENDULUM_JOINT_IDS
+    else:
+        expected_joint_ids = ()
     require(
         run.swing_joint_ids == expected_joint_ids,
         "applied torque joint IDs are incompatible with the swing source",
         run.swing_joint_ids,
     )
+
+
+def _validate_generalized_state_history(run: SimulationRun, sample_count: int) -> None:
+    """Require stable component identity and a complete aligned state matrix."""
+    state_ids = tuple(run.swing_state_ids)
+    state_units = tuple(run.swing_state_units)
+    require(len(state_ids) == len(state_units), "state IDs and units must align")
+    require(
+        all(isinstance(value, str) and bool(value.strip()) for value in state_ids),
+        "swing_state_ids must contain nonempty stable identifiers",
+    )
+    require(len(set(state_ids)) == len(state_ids), "swing_state_ids must be unique")
+    require(
+        all(isinstance(value, str) and bool(value.strip()) for value in state_units),
+        "swing_state_units must contain nonempty units",
+    )
+    require(
+        run.swing_generalized_states.shape == (sample_count, len(state_ids)),
+        "swing_generalized_states must have shape (N, len(swing_state_ids))",
+        run.swing_generalized_states.shape,
+    )
+    object.__setattr__(run, "swing_state_ids", state_ids)
+    object.__setattr__(run, "swing_state_units", state_units)
 
 
 def _validate_flight_shapes(run: SimulationRun) -> None:
