@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+Version 1.16.65 explicitly classifies
+`tests/rate_of_closure/_variation_plot_definition_support.py` as the shared
+constructor-only support module it is. The Changed Test Assertion Check no
+longer requires a fabricated assertion in that helper. A policy regression
+pins the exemption to that exact path and proves an adjacent assertion-light
+real test still fails the gate.
+
+This correction changes no scientific or application behavior. Protected
+exact-head CI, review, parent-first publication, and the remaining #4142 scope
+stay open.
+
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
 Version 1.16.64 normally merges approved dispersion head

@@ -26,11 +26,18 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.64                                    |
-| **Spec Version**        | 1.16.64                                    |
+| **Current Version**     | 1.16.65                                    |
+| **Spec Version**        | 1.16.65                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+Version 1.16.65 adds one exact-path Changed Test Assertion Check exemption for
+the constructor-only variation plot-definition support module. The policy
+regression proves the exemption does not match an adjacent assertion-light
+real test. No scientific, runtime, schema, persistence, or UI contract changes.
 
 ### 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
@@ -3707,6 +3714,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.65 | fix(ci, #4142 #4415): classify the variation plot-definition constructor module as exact-path test support and prove the exemption cannot admit an adjacent assertion-light real test. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
 | 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |
 | 2026-08-12 | 1.16.62 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce a complete plot-type applicability/null matrix, exact application frame for current geometry, control-free stable identifiers, JSON-native Python constructor numerics, strict wire numerics, and non-geometric exporter/migration parity. |

@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+- The Changed Test Assertion Check now recognizes the exact constructor-only
+  plot-definition support module without inserting a fake assertion.
+- Its regression pins the exemption to that path and keeps an adjacent
+  assertion-light real test failing closed.
+- SPEC 1.16.65 records this CI-only correction. Scientific/runtime behavior,
+  protected exact-head CI, parent-first publication, and remaining #4142 scope
+  are unchanged.
+
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
 - Normal non-fast-forward integration keeps exact dispersion head

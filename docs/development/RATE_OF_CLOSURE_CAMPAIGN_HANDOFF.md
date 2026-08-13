@@ -1,5 +1,15 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4415 changed-test assertion-gate correction
+
+- The constructor-only plot-definition test support module has one explicit,
+  exact-path assertion-gate exemption; no fake behavioral assertion is added.
+- A policy regression proves an adjacent assertion-light real test remains a
+  violation, preventing the exemption from broadening silently.
+- SPEC advances to 1.16.65 without scientific, runtime, schema, persistence,
+  or UI changes. Protected exact-head CI and the remaining #4142 work stay
+  open.
+
 ## 2026-08-13 #4142 integrated dispersion and localized-locus/browser stack
 
 - Normal non-fast-forward integration retains approved dispersion head
