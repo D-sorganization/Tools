@@ -30,7 +30,24 @@ def _load_bootstrap() -> _BootstrapModule:
 _REPO_ROOT = _load_bootstrap().bootstrap(__file__)
 
 from rate_of_closure.gui_registration import GUI_INFO  # noqa: E402
+from rate_of_closure.web_authority.runtime import start_authority  # noqa: E402
 from shared.python.gui_launcher import launch_web_from_gui_info  # noqa: E402
 
+
+def main() -> int:
+    """Launch the isolated local authority and its proxied React client."""
+    runtime = start_authority(source_root=_REPO_ROOT / "src")
+    try:
+        return int(
+            launch_web_from_gui_info(
+                GUI_INFO,
+                __file__,
+                env_vars=runtime.vite_environment,
+            )
+        )
+    finally:
+        runtime.close()
+
+
 if __name__ == "__main__":
-    sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))
+    sys.exit(main())

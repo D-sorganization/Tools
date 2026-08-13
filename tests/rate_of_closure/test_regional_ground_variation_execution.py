@@ -18,6 +18,7 @@ from rate_of_closure.variation.regional_ground_variation import (
     register_ground_variation_variables,
     run_regional_ground_variation,
 )
+from shared.python.contracts import PreconditionError
 from tests.rate_of_closure.regional_ground_target_support import transfer_failure
 from tests.rate_of_closure.test_regional_ground_variation import (
     _json_bytes,
@@ -149,6 +150,32 @@ def test_executor_failure_is_typed_and_publishes_no_partial_dataset() -> None:
     assert attempted == [0, 1]
     assert [(item.completed, item.total) for item in reports] == [(1, 4)]
     assert not hasattr(failure, "dataset")
+
+
+def test_validator_failure_is_typed_and_publishes_no_partial_dataset() -> None:
+    attempted: list[int] = []
+    reports: list[GroundRegionalVariationProgress] = []
+
+    def executor(trial: GroundRegionalVariationTrial) -> object:
+        attempted.append(trial.trial_index)
+        if trial.trial_index == 1:
+            return object()
+        return transfer_failure()
+
+    hooks = GroundRegionalVariationHooks(progress_callback=reports.append)
+    with pytest.raises(GroundRegionalVariationFailed) as raised:
+        run_regional_ground_variation(_request(), executor, hooks=hooks)  # type: ignore[arg-type]
+
+    failure = raised.value
+    assert failure.stage is GroundRegionalVariationFailureStage.VALIDATION
+    assert (failure.completed, failure.total) == (1, 4)
+    assert failure.cause_type == "PreconditionError"
+    assert "executor must return an exact pipeline result" in failure.cause_message
+    assert isinstance(failure.__cause__, PreconditionError)
+    assert attempted == [0, 1]
+    assert [(item.completed, item.total) for item in reports] == [(1, 4)]
+    assert not hasattr(failure, "dataset")
+    assert not hasattr(failure, "rows")
 
 
 def test_publication_failure_is_typed_after_all_trials_without_partial_rows(

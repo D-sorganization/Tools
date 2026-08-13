@@ -60,7 +60,7 @@ class TestRegistryContract:
         club = tuple(d.name for d in variables_in_category(CATEGORY_CLUB))
         launch = tuple(d.name for d in variables_in_category(CATEGORY_LAUNCH))
         assert club == ("head_mass_kg", "head_moi_kg_m2", "cor")
-        assert launch == (
+        assert launch[:5] == (
             "ball_speed_mph",
             "launch_angle_deg",
             "launch_azimuth_deg",

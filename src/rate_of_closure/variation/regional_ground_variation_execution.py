@@ -99,7 +99,10 @@ def _execute_trial(
         raw_outcome = job.executor(trial)
     except Exception as error:
         monitor.fail(GroundRegionalVariationFailureStage.EXECUTOR, completed, error)
-    outcome = job.validator(trial, raw_outcome)
+    try:
+        outcome = job.validator(trial, raw_outcome)
+    except Exception as error:
+        monitor.fail(GroundRegionalVariationFailureStage.VALIDATION, completed, error)
     monitor.raise_if_cancelled(completed)
     return outcome
 
