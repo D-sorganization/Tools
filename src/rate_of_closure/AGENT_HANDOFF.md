@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 PyQt dependency closure (#4433)
+
+- Bounded pandas, SciPy, and SymPy runtimes now belong to the shared GUI extra
+  because registered analytics, flight, and simulation tabs import them at
+  full-window construction.
+- Both rendered workflows already install `.[gui,dev]`; a contract test pins
+  that common dependency path without widening to the full simulation extra.
+  Visualization evidence remains diagnostic only. SPEC is 1.16.78.
+
 ## 2026-08-13 Narrow hosted-CI correction (#4433)
 
 - The React command strip now shrinks within the 390x844 viewport and retains

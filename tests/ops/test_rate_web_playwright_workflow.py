@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import tomllib
 from pathlib import Path
 from typing import Any
 
@@ -39,9 +40,14 @@ PYQT_AUTHORITY_PATHS = {
     "tests/ops/test_rate_web_playwright_workflow.py",
     "pyproject.toml",
 }
+FULL_WINDOW_IMPORT_DEPENDENCIES = {
+    "pandas": "pandas>=2.0,<3",
+    "scipy": "scipy>=1.10.0,<1.18",
+    "sympy": "sympy>=1.12",
+}
 
 
-def _workflow(path: Path) -> dict[str, Any]:
+def _workflow(path: Path) -> dict[Any, Any]:
     loaded = yaml.safe_load(path.read_text(encoding="utf-8"))
     assert isinstance(loaded, dict)
     return loaded
@@ -133,6 +139,24 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "python -m pytest "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
+
+
+def test_full_pyqt_window_dependency_is_declared_by_shared_gui_extra() -> None:
+    """Both rendered lanes install the extra needed by every registered tab."""
+    project = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    gui_dependencies = project["project"]["optional-dependencies"]["gui"]
+
+    assert set(FULL_WINDOW_IMPORT_DEPENDENCIES.values()) <= set(gui_dependencies)
+    for path in (PR_WORKFLOW_PATH, TRUSTED_WORKFLOW_PATH):
+        job_name = (
+            "production-worker-e2e"
+            if path == PR_WORKFLOW_PATH
+            else "push-production-worker-e2e"
+        )
+        install_commands = "\n".join(
+            _run_steps(_workflow(path)["jobs"][job_name]).values()
+        )
+        assert ".[gui,dev]" in install_commands
 
 
 def test_pr_trigger_tracks_every_pyqt_render_authority() -> None:

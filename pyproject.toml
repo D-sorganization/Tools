@@ -80,6 +80,9 @@ gui = [
     "PyQt6>=6.5.0",
     "pyqtgraph>=0.13.7",
     "matplotlib>=3.7.0",
+    "pandas>=2.0,<3",
+    "scipy>=1.10.0,<1.18",
+    "sympy>=1.12",
 ]
 # Shared chat facade, WebSocket router, and optional Qt dock widget.
 chat = [

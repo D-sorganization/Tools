@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Full-window PyQt dependency closure (#4433)
+
+Version 1.16.78 adds bounded pandas, SciPy, and SymPy runtimes to the shared GUI
+extra. Registered analytics, flight, and simulation tabs import them during
+full-window construction, so both rendered workflows receive them through their
+existing `.[gui,dev]` installs. A packaging/workflow contract pins that closure
+without broadening either workflow to `all`/MuJoCo.
+
 ## 2026-08-13 Narrow command-strip/assertion-policy closure (#4433)
 
 Version 1.16.77 makes the narrow toolstrip row shrinkable and gives its direct

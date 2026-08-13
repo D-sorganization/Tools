@@ -1,5 +1,15 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 PyQt environment closure
+
+- The shared `gui` extra now declares bounded pandas, SciPy, and SymPy runtimes,
+  required when the full window constructs its registered Launch Monitor
+  Analytics, flight, and simulation tabs.
+- Both PR and trusted rendered lanes retain their `.[gui,dev]` installation;
+  an exact packaging/workflow test proves that common command receives pandas.
+- No `all`/MuJoCo dependency broadening or visualization evidence promotion was
+  introduced. SPEC is 1.16.78.
+
 ## 2026-08-13 #4433 hosted foundation correction
 
 - The narrow command toolbar contracts inside the application width and its
