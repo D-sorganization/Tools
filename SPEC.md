@@ -26,11 +26,20 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.75                                    |
-| **Spec Version**        | 1.16.75                                    |
+| **Current Version**     | 1.16.76                                    |
+| **Spec Version**        | 1.16.76                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Explicit-sample NumPy typing repair (#4426)
+
+Version 1.16.76 closes the hosted Mypy 1.13 `no-any-return` diagnostic at the
+explicit ensemble sample-matrix boundary. The adapter first validates the raw
+array view as real, non-boolean, non-complex input, then creates and returns an
+explicitly typed, owned `NDArray[float64]`. The repair preserves the existing
+shape and finite-value contracts, numerical conversion, copy ownership,
+configuration projection, producer authority, and archive semantics.
 
 ### 2026-08-13 Paired producer provenance closure (#4142)
 
@@ -4045,6 +4054,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4426): give the validated owned explicit-sample matrix an `NDArray[float64]` return boundary, closing hosted Mypy 1.13 `no-any-return` without changing numerical, ownership, request, producer, or archive behavior. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4142 R13.3): make paired production self-verifying by retaining and recomputing exact design/request/result/authority bindings; reject cross-design request swaps, authority relabeling, and pair payload tampering; close the producer Mypy no-any boundary. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4142 R13.3): add a deterministic Python service that executes explicit baseline/one-localized-source pairs through canonical ensemble authority and emits strict typed source-window/joint-to-state/impact/shot attribution with bound design/request identities, cancellation, progress, and resource caps; automatic PyQt/React production remains open. |
 | 2026-08-13 | 1.16.73 | fix(rate-of-closure, #4142 R13.3): preserve canonical binary64 strings through final TypeScript CSV serialization and prove exact Python/TypeScript export bytes with a shared extreme authority. |

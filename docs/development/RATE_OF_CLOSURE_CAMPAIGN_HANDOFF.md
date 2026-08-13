@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4426 explicit-sample typing repair
+
+- The exact hosted quality-gate failure was Mypy 1.13 `no-any-return` at the
+  normalized explicit-sample return boundary.
+- Raw input validation remains source-agnostic; the validated owned copy now
+  has an explicit `NDArray[float64]` contract. Scientific values, shape and
+  finite checks, copy ownership, producer behavior, and archive semantics are
+  unchanged.
+- Exact changed-source Mypy plus focused request/producer/archive tests are the
+  regression evidence. No CI retry is part of this local repair.
+- SPEC advances to 1.16.76.
+
 ## 2026-08-13 #4142 paired producer provenance closure
 
 - Production records now retain normalized design, exact ensemble request,

@@ -9,6 +9,7 @@ from numbers import Real
 from types import MappingProxyType
 
 import numpy as np
+import numpy.typing as npt
 
 from rate_of_closure.simulation import BallSetup, BallSupportMode, SimulationConfig
 from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
@@ -107,16 +108,18 @@ def _validate_request_context(
 
 def _normalize_explicit_samples(
     sampled_inputs: np.ndarray, plan: VariationPlan
-) -> np.ndarray:
+) -> npt.NDArray[np.float64]:
     """Own and validate an explicit design matrix before config allocation."""
-    samples = np.asarray(sampled_inputs)
+    raw_samples = np.asarray(sampled_inputs)
     require(
-        np.issubdtype(samples.dtype, np.number)
-        and not np.issubdtype(samples.dtype, np.bool_)
-        and not np.issubdtype(samples.dtype, np.complexfloating),
+        np.issubdtype(raw_samples.dtype, np.number)
+        and not np.issubdtype(raw_samples.dtype, np.bool_)
+        and not np.issubdtype(raw_samples.dtype, np.complexfloating),
         "sampled_inputs must contain real non-boolean numbers",
     )
-    samples = np.array(samples, dtype=float, copy=True)
+    samples: npt.NDArray[np.float64] = np.array(
+        raw_samples, dtype=np.float64, copy=True
+    )
     require(
         samples.shape == (plan.n_runs, len(plan.noise)),
         "sampled_inputs has invalid shape",

@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Explicit sample matrix typing repair (#4426)
+
+- `_normalize_explicit_samples` separates the untrusted `np.asarray` view from
+  its validated owned `float64` copy and returns an explicit typed ndarray.
+- This closes the hosted Mypy 1.13 `no-any-return` diagnostic without changing
+  sample validation, numerical values, memory ownership, or request behavior.
+- Exact changed-source Mypy and focused request/producer/archive tests protect
+  the boundary. SPEC is 1.16.76.
+
 ## 2026-08-13 Paired producer identity hardening (#4142)
 
 - `LocalizedAttributionProduction` now retains design/request/result authority,

@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Explicit-sample NumPy typing boundary (#4426)
+
+Version 1.16.76 repairs the exact hosted Mypy 1.13 `no-any-return` failure in
+`request_builder._normalize_explicit_samples`. Raw caller input remains
+validated before conversion, while the owned copy now crosses an explicit
+`NDArray[float64]` boundary. Shape, finite-value, real-number, copy-ownership,
+and runtime request behavior are unchanged. The exact changed-source Mypy lane
+and focused request/producer/archive tests are the regression gates.
+
 ## 2026-08-13 Paired producer provenance closure (#4142)
 
 Version 1.16.75 closes the producer review gap. A
