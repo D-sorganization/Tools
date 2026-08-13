@@ -36,9 +36,7 @@ class TestExportToExcel:
         wb = openpyxl.load_workbook(str(path))
         ws = wb["Summary"]
         non_empty_rows = [
-            row
-            for row in ws.iter_rows(values_only=True)
-            if any(v is not None for v in row)
+            row for row in ws.iter_rows(values_only=True) if any(v is not None for v in row)
         ]
         assert len(non_empty_rows) > 0
 
@@ -94,11 +92,7 @@ class TestExportToExcel:
         path = tmp_path / "meta.xlsx"
 
         export_to_excel(
-            result,
-            path,
-            exercise_name="Deadlift",
-            body_mass_kg=80.0,
-            body_height_m=1.82,
+            result, path, exercise_name="Deadlift", body_mass_kg=80.0, body_height_m=1.82
         )
 
         wb = openpyxl.load_workbook(str(path))
@@ -117,9 +111,7 @@ class TestExportToExcel:
 
         wb = openpyxl.load_workbook(str(path))
         ws = wb["Statistics"]
-        values = [
-            cell for row in ws.iter_rows(values_only=True) for cell in row if cell
-        ]
+        values = [cell for row in ws.iter_rows(values_only=True) for cell in row if cell]
         assert "Mean (N*m)" in values
         assert "Std dev (N*m)" in values
         assert "Min (N*m)" in values

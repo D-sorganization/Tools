@@ -104,22 +104,18 @@ export const TABS: readonly TabDef[] = [
 
 /** Default visibility map (all tabs visible) derived from {@link TABS}. */
 export function defaultTabVisibility(): Record<TabId, boolean> {
-  // ⚡ Bolt Optimization: Replace chained array operations (.reduce, .map) with single-pass loops to avoid callback and closure overhead.
-  const acc = {} as Record<TabId, boolean>;
-  for (let i = 0; i < TABS.length; i++) {
-    acc[TABS[i].id] = true;
-  }
-  return acc;
+  return TABS.reduce(
+    (acc, tab) => {
+      acc[tab.id] = true;
+      return acc;
+    },
+    {} as Record<TabId, boolean>,
+  );
 }
 
 /** The canonical tab id order as declared in {@link TABS}. */
 export function defaultTabOrder(): TabId[] {
-  // ⚡ Bolt Optimization: Replace array map with a single-pass loop to avoid callback and closure overhead.
-  const order = new Array<TabId>(TABS.length);
-  for (let i = 0; i < TABS.length; i++) {
-    order[i] = TABS[i].id;
-  }
-  return order;
+  return TABS.map((tab) => tab.id);
 }
 
 const ORDER_KEY = "p1am.tabOrder.v1";
