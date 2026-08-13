@@ -3,6 +3,32 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
+
+PyQt6 and React now render actual cyan Gaussian position-content surfaces from
+the existing confidence-ellipsoid authority. Rendering is default off and
+volume-metric-only. Exact app-frame orientation, full-rank estimable adequacy,
+positive semi-axes, and orthonormal frames are fail-closed prerequisites;
+rank-deficient, insufficient, and invalid samples are never meshed. The shared
+12-by-6 tessellation and deterministic temporal decimation cap each view at 48
+ellipsoids, 2,976 vertices, and 5,760 triangles.
+
+The yellow sparse 2-sigma largest-axis glyph and cyan translucent content
+surface have separate accessible legends and explicit copy: the surface is a
+plug-in Gaussian sample-position content region, not a confidence interval for
+the mean. Point, cohort/source filters, phase, camera, and selected-trial state
+remain on the existing linked view. Plot-definition schema v3 strictly
+persists the toggle and migrates exact v1/v2 documents with surfaces off.
+
+SPEC advances to 1.16.65. A Python/TypeScript golden fixture pins geometry,
+orientation, units, exclusion, and budgets. Evidence is 1,419 broad
+Rate/shared-variation Python tests and all 845 React tests, plus strict isolated
+changed-source Python 3.12 MyPy, Ruff/format, TypeScript, ESLint, and the Vite
+production build.
+Cross-browser/assistive-technology E2E,
+approved visual baselines, import UI, protected publication, and remaining
+#4142 scope remain open.
+
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
 Version 1.16.64 normally merges approved dispersion head

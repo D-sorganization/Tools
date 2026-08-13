@@ -15,7 +15,7 @@ _GEOMETRIC_PLOT_TYPES = {"swing_arc_overlay", "geometric_variability"}
 _HISTORICAL_FRAME_PLOT_TYPES = {"scalar_scatter", "distribution_matrix"}
 
 
-def migrate_v1(document: dict[str, object], v2_fields: set[str]) -> dict[str, object]:
+def migrate_v1(document: dict[str, object], v3_fields: set[str]) -> dict[str, object]:
     """Migrate one exact v1 document with declared legacy RMS defaults."""
     new_fields = {
         "dispersion_metric",
@@ -25,7 +25,10 @@ def migrate_v1(document: dict[str, object], v2_fields: set[str]) -> dict[str, ob
         "min_quiet_duration_s",
         "min_quiet_samples",
     }
-    expected = (v2_fields - new_fields) | {"schema_version", "quiet_threshold_m"}
+    expected = (v3_fields - new_fields - {"show_confidence_ellipsoids"}) | {
+        "schema_version",
+        "quiet_threshold_m",
+    }
     _validate_exact_fields(document, expected)
     legacy = dict(document)
     threshold = _strict_nullable_real(
@@ -44,7 +47,7 @@ def migrate_v1(document: dict[str, object], v2_fields: set[str]) -> dict[str, ob
             frame,
         )
         legacy["coordinate_frame"] = None
-    legacy["schema_version"] = 2
+    legacy["schema_version"] = 3
     geometric = plot_type in _GEOMETRIC_PLOT_TYPES
     legacy.update(
         dispersion_metric="rms-radius" if geometric else None,
@@ -57,8 +60,22 @@ def migrate_v1(document: dict[str, object], v2_fields: set[str]) -> dict[str, ob
         confidence_level=None,
         min_quiet_duration_s=0.0 if geometric else None,
         min_quiet_samples=1 if geometric else None,
+        show_confidence_ellipsoids=False if plot_type == "swing_arc_overlay" else None,
     )
     return legacy
 
 
-__all__ = ["migrate_v1"]
+def migrate_v2(document: dict[str, object], v3_fields: set[str]) -> dict[str, object]:
+    """Migrate one exact v2 document with surfaces explicitly disabled."""
+    _validate_exact_fields(
+        document, (v3_fields - {"show_confidence_ellipsoids"}) | {"schema_version"}
+    )
+    migrated = dict(document)
+    migrated["schema_version"] = 3
+    migrated["show_confidence_ellipsoids"] = (
+        False if migrated.get("plot_type") == "swing_arc_overlay" else None
+    )
+    return migrated
+
+
+__all__ = ["migrate_v1", "migrate_v2"]

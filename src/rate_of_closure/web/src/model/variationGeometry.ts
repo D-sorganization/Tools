@@ -58,6 +58,8 @@ export interface GeometricVariabilityTs {
   rmsRadiusM: number[];
   principalSigmaM: number[];
   principalAxes: Vec3[];
+  principalFrames: Array<[Vec3, Vec3, Vec3]>;
+  confidenceSemiAxisLengthsM: Vec3[];
   metric: DispersionMetricTs;
   authorityUnit: "m" | "m^3";
   displayUnit: "mm" | "mm³";
@@ -108,6 +110,7 @@ export function geometricVariability(
   const rmsRadiusM: number[] = [];
   const principalSigmaM: number[] = [];
   const principalAxes: Vec3[] = [];
+  const principalFrames: Array<[Vec3, Vec3, Vec3]> = [];
   const eigenvalues: Vec3[] = [];
   const adequacy: DispersionAdequacyTs[] = [];
   for (let sample = 0; sample < sampleTimesS.length; sample += 1) {
@@ -118,9 +121,17 @@ export function geometricVariability(
     eigenvalues.push(sampleResult.eigenvaluesM2);
     principalSigmaM.push(sampleResult.principalSigmaM);
     principalAxes.push(sampleResult.principalAxis);
+    principalFrames.push(sampleResult.principalFrame);
     adequacy.push(sampleResult.adequacy);
   }
   const metricValues = selectedMetricValues(criteria, rmsRadiusM, eigenvalues, adequacy);
+  const radiusScale = confidenceRadiusScale(criteria.confidenceLevel);
+  const confidenceSemiAxisLengthsM: Vec3[] = eigenvalues.map((values, index) => {
+    if (adequacy[index] !== "estimable") return [Number.NaN, Number.NaN, Number.NaN];
+    return values.map(
+      (value) => radiusScale * Math.sqrt(Math.max(value, 0)),
+    ) as Vec3;
+  });
   const quietIntervals = rankedQuietIntervals(
     sampleTimesS,
     metricValues,
@@ -143,6 +154,8 @@ export function geometricVariability(
     rmsRadiusM,
     principalSigmaM,
     principalAxes,
+    principalFrames,
+    confidenceSemiAxisLengthsM,
     metric: criteria.metric,
     authorityUnit,
     displayUnit: authorityUnit === "m^3" ? "mm³" : "mm",
@@ -306,7 +319,8 @@ function emptyVariability(criteria: DispersionCriteriaTs): GeometricVariabilityT
   const authorityUnit = criteria.metric === "confidence-ellipsoid-volume" ? "m^3" : "m";
   return {
     sampleTimesS: [], validTrialCount: [], meanPositionsM: [], rmsRadiusM: [],
-    principalSigmaM: [], principalAxes: [], metric: criteria.metric, authorityUnit,
+    principalSigmaM: [], principalAxes: [], principalFrames: [],
+    confidenceSemiAxisLengthsM: [], metric: criteria.metric, authorityUnit,
     displayUnit: authorityUnit === "m^3" ? "mm³" : "mm",
     confidenceLevel: criteria.metric === "confidence-ellipsoid-volume"
       ? criteria.confidenceLevel : null,

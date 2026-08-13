@@ -38,14 +38,21 @@ describe("VariationArcOverlay dispersion controls", () => {
     />);
 
     const confidence = screen.getByLabelText("Dispersion confidence percent");
+    const surfaces = screen.getByLabelText("Show confidence ellipsoid surfaces");
     expect(confidence).toBeDisabled();
+    expect(surfaces).toBeDisabled();
     fireEvent.change(screen.getByLabelText("Dispersion metric"), {
       target: { value: "confidence-ellipsoid-volume" },
     });
     expect(confidence).toBeEnabled();
+    expect(surfaces).toBeEnabled();
+    fireEvent.click(surfaces);
+    expect(screen.getByLabelText("Arc visualization legend")).toHaveTextContent(
+      /Gaussian position-content ellipsoid \(not mean CI\)/,
+    );
     expect(screen.getByText(/Gaussian position-content region/)).toBeInTheDocument();
     expect(screen.getByText(/not a confidence region for the mean/)).toBeInTheDocument();
-    expect(screen.getByText(/Sparse 2σ principal-axis glyphs/)).toBeInTheDocument();
+    expect(screen.getByText(/Sparse yellow 2σ principal-axis glyphs/)).toBeInTheDocument();
     expect(screen.getByText(/selection criteria are retained in the plot definition/))
       .toBeInTheDocument();
     expect(screen.queryByText(/adequacy and ranked intervals are retained in the plot definition/))

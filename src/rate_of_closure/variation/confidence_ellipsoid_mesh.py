@@ -1,0 +1,226 @@
+"""Deterministic bounded confidence-ellipsoid surface geometry."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+import numpy as np
+
+from shared.python.contracts import require
+from shared.python.swing_sim.variation import (
+    ESTIMABLE,
+    GAUSSIAN_POSITION_CONTENT_REGION,
+)
+from shared.python.swing_sim.variation.ensemble_types import immutable_array
+
+APP_FRAME_ID = "app_frame:x_target,y_up,z_right"
+ELLIPSOID_LONGITUDE_SEGMENTS = 12
+ELLIPSOID_LATITUDE_SEGMENTS = 6
+MAX_RENDERED_ELLIPSOIDS = 48
+MAX_ELLIPSOID_VERTICES = 2_976
+MAX_ELLIPSOID_TRIANGLES = 5_760
+
+
+@dataclass(frozen=True)
+class ConfidenceEllipsoidMesh:
+    """One bounded triangle mesh in SI units and the declared app frame."""
+
+    coordinate_frame: str
+    interpretation: str
+    sample_indices: tuple[int, ...]
+    vertices_m: np.ndarray = field(repr=False)
+    triangles: np.ndarray = field(repr=False)
+    vertices_per_ellipsoid: int
+    triangles_per_ellipsoid: int
+
+    def __post_init__(self) -> None:
+        vertices = np.asarray(self.vertices_m)
+        triangles = np.asarray(self.triangles)
+        require(self.coordinate_frame == APP_FRAME_ID, "invalid coordinate frame")
+        require(
+            self.interpretation == GAUSSIAN_POSITION_CONTENT_REGION,
+            "invalid interpretation",
+        )
+        require(vertices.ndim == 2 and vertices.shape[1:] == (3,), "invalid vertices")
+        require(
+            triangles.ndim == 2 and triangles.shape[1:] == (3,), "invalid triangles"
+        )
+        require(bool(np.all(np.isfinite(vertices))), "vertices must be finite")
+        require(
+            np.issubdtype(triangles.dtype, np.integer), "triangles must be integers"
+        )
+        require(
+            tuple(sorted(set(self.sample_indices))) == self.sample_indices,
+            "invalid samples",
+        )
+        require(self.vertices_per_ellipsoid > 0, "invalid vertex count")
+        require(self.triangles_per_ellipsoid > 0, "invalid triangle count")
+        require(
+            vertices.shape[0] == len(self.sample_indices) * self.vertices_per_ellipsoid,
+            "vertex count mismatch",
+        )
+        require(
+            triangles.shape[0]
+            == len(self.sample_indices) * self.triangles_per_ellipsoid,
+            "triangle count mismatch",
+        )
+        if triangles.size:
+            require(int(triangles.min()) >= 0, "triangle index must be non-negative")
+            require(
+                int(triangles.max()) < vertices.shape[0], "triangle index out of range"
+            )
+        object.__setattr__(self, "vertices_m", immutable_array(vertices, float))
+        object.__setattr__(self, "triangles", immutable_array(triangles, int))
+
+
+def build_confidence_ellipsoid_mesh(
+    centers_m: np.ndarray,
+    principal_axes: np.ndarray,
+    semi_axis_lengths_m: np.ndarray,
+    adequacy: tuple[str, ...],
+    coordinate_frame: str,
+    *,
+    longitude_segments: int = ELLIPSOID_LONGITUDE_SEGMENTS,
+    latitude_segments: int = ELLIPSOID_LATITUDE_SEGMENTS,
+    max_ellipsoids: int = MAX_RENDERED_ELLIPSOIDS,
+    max_vertices: int = MAX_ELLIPSOID_VERTICES,
+    max_triangles: int = MAX_ELLIPSOID_TRIANGLES,
+) -> ConfidenceEllipsoidMesh:
+    """Build finite surfaces for estimable samples within fixed geometry budgets."""
+    centers = np.asarray(centers_m)
+    axes = np.asarray(principal_axes)
+    semi_axes = np.asarray(semi_axis_lengths_m)
+    _validate_inputs(centers, axes, semi_axes, adequacy, coordinate_frame)
+    unit_vertices, unit_triangles = _unit_sphere(longitude_segments, latitude_segments)
+    capacity = min(
+        max_ellipsoids,
+        max_vertices // unit_vertices.shape[0],
+        max_triangles // unit_triangles.shape[0],
+    )
+    require(capacity >= 0, "mesh budgets must be non-negative")
+    eligible = tuple(
+        index for index, state in enumerate(adequacy) if state == ESTIMABLE
+    )
+    selected = _decimated_indices(eligible, capacity)
+    vertices = tuple(
+        centers[index] + (axes[index] @ (semi_axes[index] * unit_vertices).T).T
+        for index in selected
+    )
+    offsets = tuple(index * unit_vertices.shape[0] for index in range(len(selected)))
+    triangles = tuple(unit_triangles + offset for offset in offsets)
+    return ConfidenceEllipsoidMesh(
+        coordinate_frame=coordinate_frame,
+        interpretation=GAUSSIAN_POSITION_CONTENT_REGION,
+        sample_indices=selected,
+        vertices_m=(np.concatenate(vertices) if vertices else np.empty((0, 3))),
+        triangles=(
+            np.concatenate(triangles) if triangles else np.empty((0, 3), dtype=int)
+        ),
+        vertices_per_ellipsoid=unit_vertices.shape[0],
+        triangles_per_ellipsoid=unit_triangles.shape[0],
+    )
+
+
+def _validate_inputs(
+    centers: np.ndarray,
+    axes: np.ndarray,
+    semi_axes: np.ndarray,
+    adequacy: tuple[str, ...],
+    coordinate_frame: str,
+) -> None:
+    samples = centers.shape[0] if centers.ndim == 2 else -1
+    require(coordinate_frame == APP_FRAME_ID, "invalid coordinate frame")
+    require(centers.shape == (samples, 3), "invalid centers")
+    require(axes.shape == (samples, 3, 3), "invalid principal axes")
+    require(semi_axes.shape == (samples, 3), "invalid semi axes")
+    require(len(adequacy) == samples, "adequacy length mismatch")
+    for index, state in enumerate(adequacy):
+        if state != ESTIMABLE:
+            continue
+        require(
+            bool(np.all(np.isfinite(centers[index]))),
+            "estimable center must be finite",
+        )
+        require(
+            bool(np.all(np.isfinite(axes[index]))),
+            "estimable axes must be finite",
+        )
+        require(
+            bool(np.all(np.isfinite(semi_axes[index]))),
+            "estimable semi axes must be finite",
+        )
+        require(
+            bool(np.all(semi_axes[index] > 0)),
+            "estimable semi axes must be positive",
+        )
+        require(
+            np.allclose(axes[index].T @ axes[index], np.eye(3), rtol=0.0, atol=1e-10),
+            "estimable axes must be orthonormal",
+        )
+
+
+def _unit_sphere(longitudes: int, latitudes: int) -> tuple[np.ndarray, np.ndarray]:
+    require(
+        isinstance(longitudes, int) and not isinstance(longitudes, bool),
+        "invalid longitudes",
+    )
+    require(
+        isinstance(latitudes, int) and not isinstance(latitudes, bool),
+        "invalid latitudes",
+    )
+    require(longitudes >= 3 and latitudes >= 2, "insufficient tessellation")
+    theta = np.pi * np.arange(1, latitudes) / latitudes
+    phi = 2.0 * np.pi * np.arange(longitudes) / longitudes
+    rings = np.stack(
+        (
+            (np.sin(theta)[:, None] * np.cos(phi)[None, :]),
+            (np.sin(theta)[:, None] * np.sin(phi)[None, :]),
+            np.broadcast_to(np.cos(theta)[:, None], (latitudes - 1, longitudes)),
+        ),
+        axis=-1,
+    ).reshape(-1, 3)
+    vertices = np.vstack(([0.0, 0.0, 1.0], rings, [0.0, 0.0, -1.0]))
+    triangles: list[tuple[int, int, int]] = []
+    for longitude in range(longitudes):
+        next_index = (longitude + 1) % longitudes
+        triangles.append((0, 1 + longitude, 1 + next_index))
+    for latitude in range(latitudes - 2):
+        first = 1 + latitude * longitudes
+        second = first + longitudes
+        for longitude in range(longitudes):
+            next_index = (longitude + 1) % longitudes
+            triangles.extend(
+                (
+                    (first + longitude, second + longitude, second + next_index),
+                    (first + longitude, second + next_index, first + next_index),
+                )
+            )
+    south = vertices.shape[0] - 1
+    last_ring = 1 + (latitudes - 2) * longitudes
+    for longitude in range(longitudes):
+        next_index = (longitude + 1) % longitudes
+        triangles.append((south, last_ring + next_index, last_ring + longitude))
+    return vertices, np.asarray(triangles, dtype=int)
+
+
+def _decimated_indices(indices: tuple[int, ...], capacity: int) -> tuple[int, ...]:
+    if capacity <= 0 or not indices:
+        return ()
+    if len(indices) <= capacity:
+        return indices
+    if capacity == 1:
+        return (indices[0],)
+    positions = np.floor(
+        np.arange(capacity) * (len(indices) - 1) / (capacity - 1)
+    ).astype(int)
+    return tuple(indices[position] for position in positions)
+
+
+__all__ = [
+    "APP_FRAME_ID",
+    "ConfidenceEllipsoidMesh",
+    "MAX_ELLIPSOID_TRIANGLES",
+    "MAX_ELLIPSOID_VERTICES",
+    "MAX_RENDERED_ELLIPSOIDS",
+    "build_confidence_ellipsoid_mesh",
+]

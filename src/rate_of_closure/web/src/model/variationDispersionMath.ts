@@ -14,6 +14,7 @@ export interface SampleDispersionTs {
   eigenvaluesM2: Vec3;
   principalSigmaM: number;
   principalAxis: Vec3;
+  principalFrame: [Vec3, Vec3, Vec3];
   adequacy: DispersionAdequacyTs;
 }
 
@@ -39,6 +40,7 @@ export function sampleDispersion(points: Vec3[]): SampleDispersionTs {
     eigenvaluesM2: eigenpairs.values,
     principalSigmaM: Math.sqrt(Math.max(eigenpairs.values[0], 0)),
     principalAxis: eigenpairs.axes[0],
+    principalFrame: eigenpairs.axes,
     adequacy: classifyAdequacy(points.length, eigenpairs.values),
   };
 }

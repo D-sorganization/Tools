@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
+
+- The PyQt6 Matplotlib and React canvas 3-D variation views now render actual
+  Gaussian position-content ellipsoid surfaces from the shared dispersion
+  authority. The toggle defaults off and is enabled only for confidence-
+  ellipsoid volume.
+- Mesh creation fails closed outside the exact app frame and renders only
+  finite, positive, orthonormal, full-rank estimable samples. Rank-deficient,
+  insufficient, invalid, or malformed samples produce no surfaces.
+- Both toolkits use the same 12-by-6 tessellation, shared golden orientation
+  fixture, and deterministic temporal decimation: no more than 48 ellipsoids,
+  2,976 vertices, or 5,760 triangles per view.
+- Accessible legends and status copy distinguish yellow sparse 2-sigma
+  principal-axis glyphs from cyan Gaussian content surfaces and state that the
+  latter are not confidence intervals for the mean. Existing point/filter/
+  phase/camera/selection linkage is preserved.
+- Plot-definition schema v3 strictly persists the surface toggle and migrates
+  exact v1/v2 definitions with it disabled. SPEC is 1.16.65. Cross-browser
+  E2E, approved visual baselines, import UI, publication, and remaining #4142
+  scope remain open. Evidence is 1,419 broad Rate/shared-variation Python and
+  845 React tests, strict isolated changed-source Python 3.12 MyPy,
+  Ruff/format, TypeScript, ESLint, and a Vite production build.
+
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
 - Normal non-fast-forward integration keeps exact dispersion head

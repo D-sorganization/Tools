@@ -1,5 +1,29 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 bounded confidence-ellipsoid surfaces
+
+- PyQt6 and React render actual Gaussian sample-position content ellipsoids
+  from the established confidence/covariance authority, only for exact-frame,
+  full-rank estimable samples with finite centers, orthonormal axes, and
+  positive semi-axis lengths. Rank-deficient/insufficient/invalid samples do
+  not render.
+- The volume-only toggle defaults off. Camera, point, selected trial, phase,
+  outcome, perturbation source, and source-band state remain linked through
+  the existing filtered variability view.
+- Identical Python/TypeScript tessellation and a shared golden fixture pin SI
+  orientation. Deterministic first-to-last temporal decimation caps output at
+  48 ellipsoids, 2,976 vertices, and 5,760 triangles.
+- Yellow sparse 2-sigma largest-axis glyphs and cyan translucent content
+  surfaces have distinct accessible legends and copy. These are Gaussian
+  position-content regions, not confidence intervals for the mean.
+- Strict plot-definition v3 persists the rendered-surface toggle; exact v1/v2
+  definitions migrate with surfaces disabled. SPEC advances to 1.16.65.
+  Evidence is 1,419 broad Rate/shared-variation Python tests and 845 React
+  tests, plus strict isolated changed-source Python 3.12 MyPy, Ruff/format,
+  TypeScript, ESLint, and the Vite production build.
+  Cross-browser/assistive-technology E2E, visual baselines, import UI,
+  protected publication, and remaining #4142 work stay open.
+
 ## 2026-08-13 #4142 integrated dispersion and localized-locus/browser stack
 
 - Normal non-fast-forward integration retains approved dispersion head

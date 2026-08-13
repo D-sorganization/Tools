@@ -1,4 +1,5 @@
 import type { Vec3 } from "../model/simulation";
+import type { ConfidenceEllipsoidMeshTs } from "../model/confidenceEllipsoidMesh";
 import type {
   GeometricVariabilityTs,
   SwingTraceRowTs,
@@ -15,6 +16,7 @@ export function drawVariationArcScene(
   camera: VariationCameraState,
   stride: number,
   selectedTrialIndex: number | null,
+  ellipsoidMesh: ConfidenceEllipsoidMeshTs | null,
 ): void {
   context.clearRect(0, 0, width, height);
   context.fillStyle = "#07101f";
@@ -25,7 +27,10 @@ export function drawVariationArcScene(
     context.fillText("No evaluated swing traces", width / 2, height / 2);
     return;
   }
-  const allPoints = traces.flatMap((trace) => trace.points);
+  const allPoints = [
+    ...traces.flatMap((trace) => trace.points),
+    ...(ellipsoidMesh?.verticesM ?? []),
+  ];
   const center = boundsCenter(allPoints);
   const radius = Math.max(...allPoints.map((point) => distance(point, center)), 1e-6);
   const project = (point: Vec3): [number, number] => {
@@ -34,6 +39,14 @@ export function drawVariationArcScene(
     return [width / 2 + rotated[0] * scale, height / 2 - rotated[1] * scale];
   };
   drawAxes(context, center, radius, project);
+  if (ellipsoidMesh !== null) {
+    drawConfidenceEllipsoids(
+      context,
+      ellipsoidMesh,
+      project,
+      (point) => rotatePoint(point, center, camera)[2],
+    );
+  }
   traces.forEach((trace) => {
     const selected = trace.trialIndex === selectedTrialIndex;
     context.beginPath();
@@ -67,6 +80,32 @@ export function drawVariationArcScene(
       const [x, y] = project(point);
       if (offset === 0) context.moveTo(x, y); else context.lineTo(x, y);
     });
+    context.stroke();
+  });
+  context.globalAlpha = 1;
+}
+
+function drawConfidenceEllipsoids(
+  context: CanvasRenderingContext2D,
+  mesh: ConfidenceEllipsoidMeshTs,
+  project: (point: Vec3) => [number, number],
+  depth: (point: Vec3) => number,
+): void {
+  const triangles = mesh.triangles.map((indices) => {
+    const points = indices.map((index) => mesh.verticesM[index]) as [Vec3, Vec3, Vec3];
+    return { points, depth: points.reduce((sum, point) => sum + depth(point), 0) / 3 };
+  }).sort((left, right) => left.depth - right.depth);
+  context.fillStyle = "#22d3ee";
+  context.strokeStyle = "#67e8f9";
+  context.lineWidth = 0.35;
+  context.globalAlpha = 0.16;
+  triangles.forEach(({ points }) => {
+    context.beginPath();
+    context.moveTo(...project(points[0]));
+    context.lineTo(...project(points[1]));
+    context.lineTo(...project(points[2]));
+    context.closePath();
+    context.fill();
     context.stroke();
   });
   context.globalAlpha = 1;

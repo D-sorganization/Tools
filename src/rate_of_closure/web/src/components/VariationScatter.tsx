@@ -135,7 +135,7 @@ function ScatterExports({ svgRef, model, dataset, ensemble, selectedTrialIndex }
     confidenceLevel: null, minQuietDurationS: null, minQuietSamples: null,
     selectedTrialIndex, cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
     outcomeFilter: null, phaseEndFraction: null, perturbationSourceKey: null,
-    perturbationBand: null, variableKeys: null,
+    perturbationBand: null, variableKeys: null, showConfidenceEllipsoids: null,
   });
   const outcomes = ensemble?.runs.map((run) => run.status);
   return <div className="flex flex-wrap gap-2">

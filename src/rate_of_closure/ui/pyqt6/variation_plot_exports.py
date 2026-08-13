@@ -144,6 +144,7 @@ def arc_plot_definition(
     phase_end_fraction: float,
     perturbation_source_key: str | None,
     perturbation_band: str | None,
+    show_confidence_ellipsoids: bool,
 ) -> PlotDefinition:
     """Build a geometric definition from current selector and camera state."""
     if dataset is None:
@@ -163,6 +164,7 @@ def arc_plot_definition(
         phase_end_fraction=phase_end_fraction,
         perturbation_source_key=perturbation_source_key,
         perturbation_band=perturbation_band,
+        show_confidence_ellipsoids=show_confidence_ellipsoids,
     )
 
 

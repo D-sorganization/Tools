@@ -26,11 +26,32 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.64                                    |
-| **Spec Version**        | 1.16.64                                    |
+| **Current Version**     | 1.16.65                                    |
+| **Spec Version**        | 1.16.65                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
+
+Version 1.16.65 renders actual Gaussian position-content ellipsoid surfaces in
+the PyQt6 and React three-dimensional variation views. Both toolkits consume
+the existing covariance authority, require the exact application frame, and
+render only full-rank estimable samples. The default-off control is available
+only with confidence-ellipsoid volume; rank-deficient, insufficient, invalid,
+or malformed geometry never produces a surface.
+
+Python and TypeScript share a golden orientation/units fixture and identical
+12-by-6 tessellation and temporal decimation. Rendering is capped at 48
+ellipsoids, 2,976 vertices, and 5,760 triangles. Yellow sparse 2-sigma
+principal-axis glyphs remain distinct from cyan translucent content surfaces;
+the latter describe plug-in sample-position content and are not confidence
+intervals for a population mean. Plot-definition schema v3 persists the
+surface toggle and strictly migrates exact v1/v2 documents with surfaces off.
+
+This slice does not claim confidence regions for the mean, WebKit/Firefox or
+assistive-technology E2E, approved screenshot baselines, plot-definition
+import UI, protected publication, or completion of #4142.
 
 ### 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
@@ -3707,6 +3728,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142 R12.1): render bounded full-rank Gaussian position-content ellipsoid surfaces with PyQt6/React parity; preserve exact frame, SI axes, deterministic temporal decimation, accessible distinct legends, and default-off controls; persist visibility in strict plot-definition v3 with exact v1/v2 migration. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
 | 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |
 | 2026-08-12 | 1.16.62 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce a complete plot-type applicability/null matrix, exact application frame for current geometry, control-free stable identifiers, JSON-native Python constructor numerics, strict wire numerics, and non-geometric exporter/migration parity. |

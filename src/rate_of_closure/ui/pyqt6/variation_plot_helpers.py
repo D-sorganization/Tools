@@ -97,9 +97,17 @@ def draw_scalar_study_scatter(
     )
 
 
-def equal_3d_axes(axes: Any, overlay: ArcOverlayData) -> None:
-    """Set one physical scale across all three spatial axes."""
+def equal_3d_axes(
+    axes: Any, overlay: ArcOverlayData, extra_points_m: np.ndarray | None = None
+) -> None:
+    """Set one physical scale across arcs and optional bounded surface geometry."""
     finite = overlay.positions_m[np.isfinite(overlay.positions_m).all(axis=-1)]
+    if extra_points_m is not None:
+        extra = np.asarray(extra_points_m)
+        require_shape = extra.ndim == 2 and extra.shape[1:] == (3,)
+        if not require_shape or not np.all(np.isfinite(extra)):
+            raise ValueError("extra_points_m must contain finite Cartesian points")
+        finite = np.vstack((finite, extra))
     if finite.size == 0:
         return
     plot_xyz = finite[:, [0, 2, 1]]

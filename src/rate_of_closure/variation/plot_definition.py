@@ -21,6 +21,7 @@ from ._plot_definition_contract import (
     _normalize_nullable_integer,
     _normalize_nullable_real,
     _strict_integer,
+    _strict_nullable_boolean,
     _strict_nullable_integer,
     _strict_nullable_real,
     _strict_nullable_string,
@@ -28,10 +29,10 @@ from ._plot_definition_contract import (
     _validate_exact_fields,
     _validate_variable_keys_object,
 )
-from ._plot_definition_migration import migrate_v1
+from ._plot_definition_migration import migrate_v1, migrate_v2
 from .simulation_types import APP_FRAME_ID
 
-PLOT_DEFINITION_SCHEMA_VERSION = 2
+PLOT_DEFINITION_SCHEMA_VERSION = 3
 PlotType = Literal[
     "scalar_scatter",
     "swing_arc_overlay",
@@ -103,6 +104,7 @@ _APPLICABLE_FIELDS = {
         "phase_end_fraction",
         "perturbation_source_key",
         "perturbation_band",
+        "show_confidence_ellipsoids",
     },
     "geometric_variability": {
         "coordinate_frame",
@@ -151,6 +153,7 @@ class PlotDefinition:
     perturbation_source_key: str | None = None
     perturbation_band: str | None = None
     variable_keys: tuple[str, ...] | None = None
+    show_confidence_ellipsoids: bool | None = None
 
     def __post_init__(self) -> None:
         self._validate_full_object()
@@ -175,6 +178,11 @@ class PlotDefinition:
                 self, name, _normalize_nullable_integer(getattr(self, name), name)
             )
         _validate_variable_keys_object(self.variable_keys)
+        require(
+            self.show_confidence_ellipsoids is None
+            or type(self.show_confidence_ellipsoids) is bool,
+            "show_confidence_ellipsoids must be null or boolean",
+        )
         applicable = _APPLICABLE_FIELDS[cast(str, self.plot_type)]
         for item in fields(self):
             if item.name not in {"result_id", "plot_type"} | applicable:
@@ -224,6 +232,16 @@ class PlotDefinition:
             )
             self._validate_dispersion_state()
             self._validate_geometric_filters()
+        if self.plot_type == "swing_arc_overlay":
+            require(
+                type(self.show_confidence_ellipsoids) is bool,
+                "swing arc requires show_confidence_ellipsoids",
+            )
+            require(
+                not self.show_confidence_ellipsoids
+                or self.dispersion_metric == ELLIPSOID_VOLUME,
+                "confidence surfaces require confidence-ellipsoid volume",
+            )
         if self.plot_type == "distribution_matrix":
             variable_keys = self.variable_keys
             require(
@@ -310,24 +328,26 @@ class PlotDefinition:
 
     @classmethod
     def from_json_dict(cls, document: object) -> PlotDefinition:
-        """Strictly parse v2 or migrate one exact v1 document."""
+        """Strictly parse v3 or migrate one exact v1/v2 document."""
         require(isinstance(document, dict), "plot definition must be an object")
         root = cast(dict[str, object], document)
         version = _strict_integer(root.get("schema_version"), "schema_version")
         if version == 1:
             root = migrate_v1(root, {item.name for item in fields(cls)})
+        elif version == 2:
+            root = migrate_v2(root, {item.name for item in fields(cls)})
         else:
             require(version == PLOT_DEFINITION_SCHEMA_VERSION, "unsupported schema")
-        payload = _validated_v2_payload(root)
+        payload = _validated_v3_payload(root)
         return cls(**cast(dict[str, Any], payload))
 
 
-def _validated_v2_payload(document: dict[str, object]) -> dict[str, object]:
-    """Normalize one exact v2 payload without coercive conversions."""
+def _validated_v3_payload(document: dict[str, object]) -> dict[str, object]:
+    """Normalize one exact v3 payload without coercive conversions."""
     field_names = {item.name for item in fields(PlotDefinition)}
     _validate_exact_fields(document, field_names | {"schema_version"})
     require(
-        _strict_integer(document["schema_version"], "schema_version") == 2,
+        _strict_integer(document["schema_version"], "schema_version") == 3,
         "unsupported schema",
     )
     result_id = _strict_nullable_string(document["result_id"], "result_id")
@@ -342,6 +362,9 @@ def _validated_v2_payload(document: dict[str, object]) -> dict[str, object]:
     for name in _NULLABLE_INTEGER_FIELDS:
         payload[name] = _strict_nullable_integer(document[name], name)
     payload["variable_keys"] = _strict_variable_keys(document["variable_keys"])
+    payload["show_confidence_ellipsoids"] = _strict_nullable_boolean(
+        document["show_confidence_ellipsoids"], "show_confidence_ellipsoids"
+    )
     return payload
 
 

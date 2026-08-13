@@ -83,6 +83,7 @@ export function VariationDistributionMatrix({
             cameraZoom: null, outcomeFilter: null, phaseEndFraction: null,
             perturbationSourceKey: null, perturbationBand: null,
             variableKeys: selectedKeys,
+            showConfidenceEllipsoids: null,
           })),
           "application/json",
         )}>Matrix Plot Definition JSON</button>

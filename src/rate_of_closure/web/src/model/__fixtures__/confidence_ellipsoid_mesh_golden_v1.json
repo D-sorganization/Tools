@@ -1,0 +1,27 @@
+{
+  "centersM": [[1, 2, 3], [9, 9, 9], [0, 0, 0]],
+  "principalFrames": [
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    [[0, 1, 0], [1, 0, 0], [0, 0, -1]]
+  ],
+  "semiAxisLengthsM": [[1, 0.5, 0.25], [4, 4, 4], [2, 1, 0.5]],
+  "adequacy": ["estimable", "rank-deficient", "estimable"],
+  "coordinateFrame": "app_frame:x_target,y_up,z_right",
+  "budget": {
+    "longitudeSegments": 4,
+    "latitudeSegments": 2,
+    "maxEllipsoids": 4,
+    "maxVertices": 24,
+    "maxTriangles": 32
+  },
+  "sampleIndices": [0, 2],
+  "verticesM": [
+    [1, 2, 3.25], [2, 2, 3], [1, 2.5, 3], [0, 2, 3], [1, 1.5, 3], [1, 2, 2.75],
+    [0, 0, -0.5], [0, 2, 0], [1, 0, 0], [0, -2, 0], [-1, 0, 0], [0, 0, 0.5]
+  ],
+  "triangles": [
+    [0,1,2],[0,2,3],[0,3,4],[0,4,1],[5,2,1],[5,3,2],[5,4,3],[5,1,4],
+    [6,7,8],[6,8,9],[6,9,10],[6,10,7],[11,8,7],[11,9,8],[11,10,9],[11,7,10]
+  ]
+}
