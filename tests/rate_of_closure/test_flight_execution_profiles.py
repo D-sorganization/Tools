@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 from dataclasses import replace
 
 import pytest
@@ -20,7 +21,12 @@ from rate_of_closure.application.regional_ground_execution_job import (
     canonical_flight_result_sha256,
     canonical_flight_trajectory_sha256,
 )
-from shared.python.swing_sim.flight import FlightModelRegistry, FlightResult
+from shared.python.swing_sim.flight import (
+    FlightCancellationCallbackError,
+    FlightModelRegistry,
+    FlightResult,
+    FlightSimulationCancelled,
+)
 from tests.rate_of_closure.test_regional_ground_execution_job import _job
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -210,3 +216,55 @@ def test_unqualified_boundary_raises_typed_evidence_without_digest_text() -> Non
     )
     assert mismatched.trajectory_sha256 not in str(raised.value)
     assert mismatched.result_sha256 not in str(raised.value)
+
+
+def test_recomputation_cancellation_escapes_qualification_mapping() -> None:
+    job = _job()
+
+    with pytest.raises(FlightSimulationCancelled):
+        recompute_qualified_flight_result(
+            job.launch.launch,
+            job.transfer,
+            job.flight,
+            cancellation_requested=lambda: True,
+        )
+
+
+def test_recomputation_callback_defect_escapes_qualification_mapping() -> None:
+    job = _job()
+
+    with pytest.raises(FlightCancellationCallbackError):
+        recompute_qualified_flight_result(
+            job.launch.launch,
+            job.transfer,
+            job.flight,
+            cancellation_requested=lambda: 1,  # type: ignore[return-value]
+        )
+
+
+def test_always_false_recomputation_preserves_declared_digests() -> None:
+    job = _job()
+
+    result = recompute_qualified_flight_result(
+        job.launch.launch,
+        job.transfer,
+        job.flight,
+        cancellation_requested=lambda: False,
+    )
+
+    assert canonical_flight_trajectory_sha256(result) == job.flight.trajectory_sha256
+    assert canonical_flight_result_sha256(result) == job.flight.result_sha256
+
+
+def test_recomputation_cancellation_is_additive_and_keyword_only() -> None:
+    signature = inspect.signature(recompute_qualified_flight_result)
+
+    assert tuple(signature.parameters) == (
+        "launch",
+        "transfer",
+        "flight",
+        "cancellation_requested",
+    )
+    callback = signature.parameters["cancellation_requested"]
+    assert callback.kind is inspect.Parameter.KEYWORD_ONLY
+    assert callback.default is None

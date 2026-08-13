@@ -1,7 +1,7 @@
 {
   "schema_version": "rate-of-closure-campaign/v1",
   "repository": "D-sorganization/Tools",
-  "as_of": "2026-08-11",
+  "as_of": "2026-08-12",
   "default_branch": "main",
   "required_main_checks": [
     "quality-gate",
@@ -24,7 +24,7 @@
       "pr": 4119,
       "branch": "feat/impact-simulation-platform",
       "base_branch": "main",
-      "head_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c",
+      "head_sha": "bddac1b4bbcbcd2d83baf2b93cb5f6c9118cf61d",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -44,7 +44,7 @@
       "pr": 4167,
       "branch": "feat/4144-variation-visualizations",
       "base_branch": "feat/investigation-suite",
-      "head_sha": "edaa56358a9ccf47809533fcab28e6415b336771",
+      "head_sha": "91dc2174578a4fc472907d7141ca44c9ef36d3ab",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -54,7 +54,7 @@
       "pr": 4173,
       "branch": "feat/4163-impact-inspector",
       "base_branch": "feat/4144-variation-visualizations",
-      "head_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76",
+      "head_sha": "bd48852d303db6281ed5891d4a271d99e76a94e6",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -64,7 +64,7 @@
       "pr": 4179,
       "branch": "feat/4162-wedge-impact-visualization",
       "base_branch": "feat/4166-wedge-turf-physics",
-      "head_sha": "0eb804e70887c788421332369e42792411aff55a",
+      "head_sha": "7e5dfecf569b39dbbf8cc2101c7426cbc53a2771",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -74,7 +74,7 @@
       "pr": 4202,
       "branch": "feat/4189-dplane",
       "base_branch": "feat/4162-wedge-impact-visualization",
-      "head_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd",
+      "head_sha": "9f83cd379ce8ae2805aa4a5608b5645a529f9c3c",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -84,7 +84,7 @@
       "pr": 4203,
       "branch": "feat/4181-launch-monitor-registry",
       "base_branch": "feat/4189-dplane",
-      "head_sha": "7abce9ad767fe8311da66a1e5998b892ea3ca9de",
+      "head_sha": "1e29c6e52169de5d984144af29664c0419b51a21",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -104,7 +104,7 @@
       "pr": 4279,
       "branch": "feat/4218-toolstrip-workspace",
       "base_branch": "feat/4181-launch-monitor-registry",
-      "head_sha": "efbca84095b617b4018732f7802c2da3f0525387",
+      "head_sha": "983805d799b76e5e1ad1dbdc7a5ab28957d805c8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -114,7 +114,7 @@
       "pr": 4280,
       "branch": "feat/4144-variation-export-continuation",
       "base_branch": "feat/4218-toolstrip-workspace",
-      "head_sha": "e6c7460a01082631565fb9ed48aa32538bd7772c",
+      "head_sha": "7fb5d7f489db49742b7bc82ef009570ad2502456",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -124,7 +124,7 @@
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "9321c1d2e091b8c7e5a4a83aa9ad726290e7fb5a",
+      "head_sha": "73b7f6b45063ec71fa300a39d2185d3f935187b7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "3faf9e9493c9ba37168d9f65ab10cafeedc2a72f",
+      "head_sha": "51033696634c624f7c92c3822d98a66875ff90a0",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "584e4e53a7990053a346938c4e45538786887ec7",
+      "head_sha": "7a6f31b6cb36e05f903c591e207480d36f491c4d",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "c39297d37a17d5d8d3520ed62c5563cdcc609cab",
+      "head_sha": "8137621d7c77d9fa6941f5cd51d3fd161ebf4300",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -344,7 +344,7 @@
       "pr": 4360,
       "branch": "feat/4271-flight-regional-ground-pipeline",
       "base_branch": "feat/4270-flight-bounce-execution",
-      "head_sha": "090e835477d1f19614f37f978a1b8a0e2f50ae21",
+      "head_sha": "74f1ceafd87f952a76917dc868baa6414f856144",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -455,6 +455,16 @@
       "branch": "codex/4369-imported-job-ui",
       "base_branch": "codex/4369-ground-authority-capability",
       "head_sha": "cca7c839f8fcaeab57d43fcb9d6f3df3b428e3c4",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4374",
+      "pr": 4374,
+      "branch": "codex/4369-editor-job-preparation",
+      "base_branch": "codex/4369-imported-job-ui",
+      "head_sha": "e1da8708c15f966afc926e20eae3fdf084ba8a16",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -1690,9 +1700,9 @@
         "ground-regional-ui-helper-local-d217",
         "ground-regional-io-local-8e1c"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, matched ground-playback, post-ground target, and seeded base-material variation carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, 4363, 4364, 4365, 4366, 4367, 4368, 4370, 4371, 4372, and 4373. The #4369 continuation includes strict canonical request persistence, App-owned React editor state, matched File commands, execution job/result/status authorities, complete-only execution controls, the registered Waterloo/Penner flight profile and qualified production runner, authenticated loopback APIs and clients, and visible imported-job workflows. The current unpublished child adds strict Python-authoritative current-editor job preparation with exact request/response identity binding, current PyQt hit-staleness protection, and no enqueue or automatic execution. Durable restart recovery, static-host authority, frozen PyQt qualification, fresh protected evidence, regional-overlay variation, variable-wind scenario wire, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, cooperative cancellation inside preparation, compiled-runtime physics, and downstream parity remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, matched ground-playback, post-ground target, and seeded base-material variation carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, 4363, 4364, 4365, 4366, 4367, 4368, 4370, 4371, 4372, 4373, and 4374. The #4369 continuation includes strict canonical request persistence, App-owned React editor state, matched File commands, execution job/result/status authorities, complete-only execution controls, the registered Waterloo/Penner flight profile and qualified production runner, authenticated loopback APIs and clients, visible imported-job workflows, and strict Python-authoritative current-editor job preparation. The current unpublished child adds cooperative cancellation through qualified Waterloo/Penner integration, post-processing, and canonical evidence serialization. Durable restart recovery, static-host authority, frozen PyQt qualification, fresh protected evidence, regional-overlay variation, variable-wind scenario wire, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
-        "The strict imported-job child mounts visible React Run/Cancel/progress/reconciliation and canonical job/result/CSV downloads over one App-owned authenticated authority workspace. PyQt6 mounts a dedicated Ground Study using bounded import, exact evidence, explicit confirmation, QThread cancellation, and atomic job/result/CSV writes; the source standalone injects the direct qualified Python runner. The current unpublished child adds Python-authoritative current-editor preparation with strict bounded request/response binding, no enqueue or auto-run, exact Ground/Tee setup, current-hit staleness protection, and explicit UNVALIDATED calibration disclosure. It does not persist remote lifecycle across restart, enable static hosting, qualify frozen distributions, prove compiled/downstream parity, or complete protected release.",
+        "The strict imported-job child mounts visible React Run/Cancel/progress/reconciliation and canonical job/result/CSV downloads over one App-owned authenticated authority workspace. PyQt6 mounts a dedicated Ground Study using bounded import, exact evidence, explicit confirmation, QThread cancellation, and atomic job/result/CSV writes; the source standalone injects the direct qualified Python runner. PR #4374 adds Python-authoritative current-editor preparation with strict bounded request/response binding, no enqueue or auto-run, exact Ground/Tee setup, current-hit staleness protection, and explicit UNVALIDATED calibration disclosure. The current unpublished child makes qualified flight recomputation cooperatively cancellable without changing persisted jobs or callback-free preparation. It does not persist remote lifecycle across restart, enable static hosting, qualify frozen distributions, prove compiled/downstream parity, or complete protected release.",
         "Historical prerequisite: matched Python/TypeScript presentation models first exposed exact compact job/model/provenance/input-digest identity while their controls remained disabled and unmounted. The newer imported-job child supersedes that UI state with visible, strict, authority-bound workflows without adding current-editor job construction.",
         "Hosted PR #4372 quality-gate evidence at head e91ef8dcde8cdd8e6545ffc0ea7cb755058ec2fb found one pinned MyPy 1.13 redundant exact-bool cast after checkout, dependencies, Ruff, and formatting passed. The semantic-neutral correction at ff1310c09c066a32e57b50e4daee4da5a40d7bf3 passes the matching local profile and the protected quality gate; queued runner-selector, toolcache, and security jobs plus the ancestor stack remain unresolved.",
         "The composed #4369 authority continuation has a deterministically generated profile-qualified job/status/result fixture family, a qualified single-flight-solve seeded regional-ground runner, an authenticated real-loopback success path, and exact capability admission. The headless admission slice atomically binds that runner to an exact ready capability, validates readiness evidence, joins the manager worker on shutdown, and admits only exact qualified React controller evidence. Independent review adds deterministic submit-versus-close and exceptional-lifespan regressions plus exact cross-runtime reason, detail-length, and media-type validation; older no-runner statements are historical slice evidence. The newer imported-job child mounts visible authority-bound PyQt6 and React controls while live current-editor job construction and compiled parity remain open because the local interpreter has no swing_core wheel.",
@@ -1701,7 +1711,7 @@
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
         "Published open PR #4365 supports seeded variation only on the base surface; unpublished children add canonical request persistence, React session-state ownership, matched contextual File controls, and strict import-only React parsing of Python regional scalar results. Browser download destinations and replacement behavior remain browser-owned; result workspace/persistence, regional overlays, UI pipeline execution, browser physics/Run claims, and solver/capability consumption remain absent.",
-        "The local #4369 batch-control, PyQt port, authority manager, and qualified runner provide cooperative cancellation, typed progress/cancel/failure signals, complete-only publication, QThread lifecycle control around an injected submitter, one daemon authority worker, and a job-bound flight-through-regional-ground execution path. They cannot interrupt inside an uncooperative solver call; the imported-job child now exposes enabled controls only when the exact runtime capability is qualified.",
+        "The local #4369 batch-control, PyQt port, authority manager, and qualified runner provide cooperative cancellation, typed progress/cancel/failure signals, complete-only publication, QThread lifecycle control around an injected submitter, one daemon authority worker, and a job-bound flight-through-regional-ground execution path. The current unpublished child interrupts the registered Waterloo/Penner solver and its application-layer post-processing while preserving fail-closed behavior for any future uncooperative injected solver; the imported-job child exposes enabled controls only when the exact runtime capability is qualified.",
         "The local #4369 browser authority starts an authenticated isolated loopback process, uses an explicit fixed-host readiness probe, keeps the bearer token outside commands and responses, and exposes bounded submit/status/cancel/result endpoints. Runner cancellation/failure totals must match the submitted job and cannot regress observed progress. The default factory now atomically registers the qualified runner and exact service-level capability; this admits headless job execution but does not add a visible Run button or current-editor job constructor.",
         "The local #4369 production runner consumes one exact versioned Waterloo/Penner profile that binds strict settings to launch-relative planar-contact recomputation and releases flight only after both declared digests match. The generated canonical fixture qualifies, and the runner reuses one flight solve across seeded regional trials with typed cancellation/failure and complete-only job-bound publication. Default local injection and service capability are now qualified; per-job preflight remains authoritative.",
         "The local #4369 result envelope and authority result endpoint bind complete canonical scalar evidence to exact job/input identities and require result ID, trial count/order, and series identity matching. SHA-256 proves integrity/provenance, not authentication or that the declared physics executed; an explicit string local keeps isolated skipped-import and full PR-delta MyPy 1.13 roots clean; partial publication, persistence/restart recovery, compiled physics, and downstream parity remain absent.",

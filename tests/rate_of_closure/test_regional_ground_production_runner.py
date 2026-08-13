@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import threading
+import time
 from dataclasses import replace
 
 import pytest
 
+from rate_of_closure.application import flight_execution_profiles as profiles
 from rate_of_closure.application.regional_ground_execution_job import (
     FlightExecutionInput,
     RegionalGroundExecutionJob,
@@ -182,7 +185,7 @@ def test_solver_failure_is_mapped_without_exposing_internal_text(
             raise RuntimeError("solver-specific secret detail")
 
     monkeypatch.setattr(
-        "rate_of_closure.application.flight_execution_profiles."
+        "rate_of_closure.application._flight_execution_profile_runtime."
         "FlightModelRegistry.get_model",
         lambda _model_type: BrokenModel(),
     )
@@ -219,6 +222,97 @@ def test_cancellation_callback_defect_remains_typed_and_chained() -> None:
     assert failure.stage is GroundRegionalVariationFailureStage.CANCELLATION_CALLBACK
     assert (failure.completed, failure.total) == (0, 4)
     assert failure.__cause__ is cause
+
+
+def test_mid_flight_cancellation_is_typed_before_any_regional_trial(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    job = _job()
+    cancel = False
+    first_derivative_completed = False
+
+    def cancellation_requested() -> bool:
+        return cancel
+
+    def controlled_solve(derivatives, _bounds, initial, **_kwargs):  # type: ignore[no-untyped-def]
+        nonlocal cancel, first_derivative_completed
+        derivatives(0.0, initial)
+        first_derivative_completed = True
+        cancel = True
+        derivatives(0.01, initial)
+        raise AssertionError("second derivative must observe cancellation")
+
+    def forbidden(*_args: object, **_kwargs: object) -> object:
+        raise AssertionError("regional physics must not run after flight cancellation")
+
+    monkeypatch.setattr(
+        "rate_of_closure.web_authority.production_runner."
+        "execute_regional_ground_from_flight",
+        forbidden,
+    )
+    monkeypatch.setattr(
+        "shared.python.swing_sim.flight.models.solve_ivp",
+        controlled_solve,
+    )
+
+    with pytest.raises(GroundRegionalVariationCancelled) as raised:
+        run_regional_ground_production_job(
+            job,
+            GroundRegionalVariationHooks(
+                cancellation_requested=cancellation_requested,
+            ),
+        )
+
+    assert (raised.value.completed, raised.value.total) == (0, 4)
+    assert first_derivative_completed is True
+
+
+def test_mid_flight_callback_defect_maps_to_callback_stage_and_original_cause(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    cause = RuntimeError("private cancellation authority detail")
+    defect_enabled = False
+    first_derivative_completed = False
+
+    def cancellation_requested() -> bool:
+        if defect_enabled:
+            raise cause
+        return False
+
+    def controlled_solve(derivatives, _bounds, initial, **_kwargs):  # type: ignore[no-untyped-def]
+        nonlocal defect_enabled, first_derivative_completed
+        derivatives(0.0, initial)
+        first_derivative_completed = True
+        defect_enabled = True
+        derivatives(0.01, initial)
+        raise AssertionError("second derivative must observe callback defect")
+
+    def forbidden(*_args: object, **_kwargs: object) -> object:
+        raise AssertionError("regional physics must not run after callback failure")
+
+    monkeypatch.setattr(
+        "rate_of_closure.web_authority.production_runner."
+        "execute_regional_ground_from_flight",
+        forbidden,
+    )
+    monkeypatch.setattr(
+        "shared.python.swing_sim.flight.models.solve_ivp",
+        controlled_solve,
+    )
+
+    with pytest.raises(GroundRegionalVariationFailed) as raised:
+        run_regional_ground_production_job(
+            _job(),
+            GroundRegionalVariationHooks(
+                cancellation_requested=cancellation_requested,
+            ),
+        )
+
+    failure = raised.value
+    assert failure.stage is GroundRegionalVariationFailureStage.CANCELLATION_CALLBACK
+    assert (failure.completed, failure.total) == (0, 4)
+    assert failure.__cause__ is cause
+    assert first_derivative_completed is True
 
 
 def test_preflight_failure_is_typed_and_runs_no_physics(
@@ -264,6 +358,81 @@ def test_authority_manager_publishes_only_generic_preflight_failure() -> None:
     }
     with pytest.raises(AuthorityJobResultUnavailable):
         manager.result(job.job_id)
+
+
+def test_authority_close_interrupts_flight_preflight_and_joins_promptly(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    job = _job()
+    flight_entered = threading.Event()
+
+    def blocking_solve(derivatives, _bounds, initial, **_kwargs):  # type: ignore[no-untyped-def]
+        flight_entered.set()
+        while True:
+            derivatives(0.0, initial)
+            time.sleep(0.001)
+
+    monkeypatch.setattr(
+        "shared.python.swing_sim.flight.models.solve_ivp",
+        blocking_solve,
+    )
+    manager = AuthorityJobManager(runner=run_regional_ground_production_job)
+    manager.submit(job)
+    assert flight_entered.wait(timeout=1.0)
+
+    started = time.monotonic()
+    manager.close(timeout_s=1.0)
+    elapsed = time.monotonic() - started
+
+    terminal = manager.status(job.job_id)
+    assert terminal.status is AuthorityJobStatus.CANCELLED
+    assert (terminal.completed, terminal.total) == (0, 4)
+    assert terminal.result_available is False
+    assert elapsed < 1.0
+
+
+def test_authority_close_cancels_at_post_solve_digest_seam(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    job = _job()
+    digest_entered = threading.Event()
+    cancellation_observed = threading.Event()
+    release_digest = threading.Event()
+    close_finished = threading.Event()
+    original_digest = profiles.canonical_flight_evidence_sha256
+
+    def blocking_digest(result, *, cancellation_requested=None):  # type: ignore[no-untyped-def]
+        digest_entered.set()
+        assert cancellation_requested is not None
+        while not cancellation_requested():
+            time.sleep(0.001)
+        cancellation_observed.set()
+        assert release_digest.wait(timeout=1.0)
+        return original_digest(
+            result,
+            cancellation_requested=cancellation_requested,
+        )
+
+    monkeypatch.setattr(profiles, "canonical_flight_evidence_sha256", blocking_digest)
+    manager = AuthorityJobManager(runner=run_regional_ground_production_job)
+    manager.submit(job)
+    assert digest_entered.wait(timeout=2.0)
+
+    def close_manager() -> None:
+        manager.close(timeout_s=1.0)
+        close_finished.set()
+
+    closer = threading.Thread(target=close_manager)
+    closer.start()
+    assert cancellation_observed.wait(timeout=1.0)
+    release_digest.set()
+    closer.join(timeout=1.0)
+
+    assert close_finished.is_set()
+    terminal = manager.status(job.job_id)
+    assert terminal.status is AuthorityJobStatus.CANCELLED
+    assert (terminal.completed, terminal.total) == (0, 4)
+    assert terminal.result_available is False
 
 
 def test_qualified_job_reuses_one_flight_solve_and_publishes_bound_result(
@@ -315,15 +484,15 @@ def test_qualified_job_forwards_cancellation_into_physics_and_publishes_nothing(
 ) -> None:
     job = _job()
     observed_callbacks: list[object] = []
-    checks = 0
+    regional_execution_started = False
 
     def cancellation_requested() -> bool:
-        nonlocal checks
-        checks += 1
-        return checks >= 3
+        return regional_execution_started
 
     def observe(*args: object, **kwargs: object):
+        nonlocal regional_execution_started
         observed_callbacks.append(kwargs["options"].is_cancelled)
+        regional_execution_started = True
         return execute_regional_ground_from_flight(*args, **kwargs)
 
     monkeypatch.setattr(

@@ -15,6 +15,7 @@ from rate_of_closure.application.regional_ground_execution_job import (
     GroundExecutionOptions,
     RegionalGroundExecutionJob,
     build_regional_ground_execution_job,
+    canonical_flight_evidence_sha256,
     canonical_flight_result_sha256,
     canonical_flight_trajectory_sha256,
     regional_ground_execution_job_from_json,
@@ -27,6 +28,7 @@ from scripts.generate_regional_ground_authority_fixtures import (
     generated_fixture_texts,
 )
 from shared.python.swing_sim.ball_setup import BallSetup, BallSupportMode
+from shared.python.swing_sim.flight import FlightSimulationCancelled
 from shared.python.swing_sim.flight.tests._regional_ground_pipeline_support import (
     _crossing_result,
     _launch,
@@ -50,6 +52,34 @@ _FIXTURE = (
     / "__fixtures__"
     / "regional_ground_execution_job_golden_v1.json"
 )
+
+
+def test_trajectory_digest_polls_cancellation_during_large_serialization() -> None:
+    result = _crossing_result()
+    large_result = replace(result, trajectory=result.trajectory * 300)
+    checks = 0
+
+    def cancellation_requested() -> bool:
+        nonlocal checks
+        checks += 1
+        return checks == 2
+
+    with pytest.raises(FlightSimulationCancelled):
+        canonical_flight_trajectory_sha256(
+            large_result,
+            cancellation_requested=cancellation_requested,
+        )
+
+    assert checks == 2
+
+
+def test_paired_flight_evidence_preserves_both_individual_digests() -> None:
+    result = _crossing_result()
+
+    assert canonical_flight_evidence_sha256(result) == (
+        canonical_flight_trajectory_sha256(result),
+        canonical_flight_result_sha256(result),
+    )
 
 
 def _job() -> RegionalGroundExecutionJob:

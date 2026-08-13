@@ -2,31 +2,32 @@
 
 from __future__ import annotations
 
-import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import cast
 
+from rate_of_closure.application._flight_execution_profile_runtime import (
+    WATERLOO_SETTING_IDS,
+    WaterlooSettings,
+    parse_waterloo_settings,
+    recompute_waterloo,
+)
 from rate_of_closure.application._regional_ground_execution_job_values import (
     FlightExecutionInput,
     canonical_text,
     digest,
 )
-from rate_of_closure.application._workspace_validation import exact_mapping, stable_id
+from rate_of_closure.application._workspace_validation import stable_id
 from rate_of_closure.application.regional_ground_execution_job import (
-    canonical_flight_result_sha256,
-    canonical_flight_trajectory_sha256,
+    canonical_flight_evidence_sha256,
 )
 from shared.python.swing_sim.flight import (
+    CancellationCheck,
+    FlightCancellationCallbackError,
     FlightGroundTransferSettings,
-    FlightModelRegistry,
-    FlightModelType,
     FlightResult,
+    FlightSimulationCancelled,
     LaunchConditions,
-    SurfaceFlightSimulationSettings,
-    compute_flight_metrics,
-    launch_relative_surface,
 )
 
 FLIGHT_EXECUTION_PROFILE_REGISTRY_SCHEMA_VERSION = (
@@ -35,13 +36,7 @@ FLIGHT_EXECUTION_PROFILE_REGISTRY_SCHEMA_VERSION = (
 _WATERLOO_MODEL_ID = "waterloo_penner"
 _TOOLS_CORE_MODEL_VERSION = "tools-core/1.0.0"
 _WATERLOO_RECOMPUTATION_CONTRACT = "waterloo-penner-adaptive-rk45-planar-contact/v1"
-_SETTING_IDS = ("max_time_s", "sample_every", "step_s")
-_SETTING_FIELDS = frozenset(_SETTING_IDS)
-_MAX_TIME_S = 120.0
-_MIN_STEP_S = 0.0001
-_MAX_STEP_S = 0.1
-_MAX_SAMPLE_EVERY = 10_000
-_MAX_RETAINED_INTERVAL_S = 1.0
+_SETTING_IDS = WATERLOO_SETTING_IDS
 
 
 class FlightExecutionQualificationReason(StrEnum):
@@ -124,17 +119,6 @@ class FlightExecutionProfileQualificationError(RuntimeError):
         )
 
 
-@dataclass(frozen=True, slots=True)
-class _WaterlooSettings:
-    max_time_s: float
-    step_s: float
-    sample_every: int
-
-    @property
-    def retained_interval_s(self) -> float:
-        return self.step_s * self.sample_every
-
-
 _WATERLOO_PROFILE = FlightExecutionProfile(
     _WATERLOO_MODEL_ID,
     _TOOLS_CORE_MODEL_VERSION,
@@ -149,66 +133,11 @@ def registered_flight_execution_profiles() -> tuple[FlightExecutionProfile, ...]
     return tuple(_PROFILES[key] for key in sorted(_PROFILES))
 
 
-def _positive_bounded(value: object, name: str, maximum: float) -> float:
-    if type(value) not in (int, float):
-        raise ValueError(f"{name} must be a finite number")
-    number = float(cast(int | float, value))
-    if not math.isfinite(number):
-        raise ValueError(f"{name} must be a finite number")
-    if not 0.0 < number <= maximum:
-        raise ValueError(f"{name} lies outside its profile bound")
-    return number
-
-
-def _waterloo_settings(values: Mapping[str, float]) -> _WaterlooSettings:
-    data = exact_mapping(values, _SETTING_FIELDS, "flight profile settings")
-    max_time_s = _positive_bounded(data["max_time_s"], "max_time_s", _MAX_TIME_S)
-    step_s = _positive_bounded(data["step_s"], "step_s", _MAX_STEP_S)
-    if step_s < _MIN_STEP_S:
-        raise ValueError("step_s lies outside its profile bound")
-    sample_value = data["sample_every"]
-    if (
-        type(sample_value) not in (int, float)
-        or not math.isfinite(float(sample_value))
-        or not float(sample_value).is_integer()
-    ):
-        raise ValueError("sample_every must be a finite whole number")
-    sample_every = int(sample_value)
-    if not 1 <= sample_every <= _MAX_SAMPLE_EVERY:
-        raise ValueError("sample_every lies outside its profile bound")
-    settings = _WaterlooSettings(max_time_s, step_s, sample_every)
-    if settings.retained_interval_s > _MAX_RETAINED_INTERVAL_S:
-        raise ValueError("retained sample interval lies outside its profile bound")
-    return settings
-
-
-def _recompute_waterloo(
-    launch: LaunchConditions,
-    transfer: FlightGroundTransferSettings,
-    settings: _WaterlooSettings,
-) -> FlightResult:
-    surface = launch_relative_surface(
-        transfer.surface,
-        launch.ball_radius,
-        launch.ball_setup,
-    )
-    simulation = SurfaceFlightSimulationSettings(
-        surface,
-        settings.max_time_s,
-        settings.step_s,
-    )
-    model = FlightModelRegistry.get_model(FlightModelType.WATERLOO_PENNER)
-    raw = model.simulate_to_surface(launch, simulation)
-    retained = list(raw.trajectory[:: settings.sample_every])
-    if raw.trajectory and (not retained or retained[-1] is not raw.trajectory[-1]):
-        retained.append(raw.trajectory[-1])
-    return compute_flight_metrics(retained, raw.model_name)
-
-
 def _evaluate(
     launch: LaunchConditions,
     transfer: FlightGroundTransferSettings,
     flight: FlightExecutionInput,
+    cancellation_requested: CancellationCheck | None = None,
 ) -> tuple[FlightExecutionQualification, FlightResult | None]:
     qualification, result = _recompute_registered(
         launch,
@@ -216,10 +145,59 @@ def _evaluate(
         model_id=flight.model_id,
         model_version=flight.model_version,
         settings=flight.settings,
+        cancellation_requested=cancellation_requested,
     )
     if not qualification.qualified or result is None:
         return qualification, result
-    return (_compare_digests(flight, result), result)
+    return (_compare_digests(flight, qualification), result)
+
+
+def _unqualified(
+    reason: FlightExecutionQualificationReason,
+    model_id: str,
+    model_version: str,
+) -> tuple[FlightExecutionQualification, None]:
+    return FlightExecutionQualification(reason, model_id, model_version), None
+
+
+def _resolved_settings(
+    model_id: str,
+    model_version: str,
+    settings: Mapping[str, float],
+) -> tuple[FlightExecutionQualification | None, WaterlooSettings | None]:
+    if (model_id, model_version) not in _PROFILES:
+        return _unqualified(
+            FlightExecutionQualificationReason.PROFILE_NOT_REGISTERED,
+            model_id,
+            model_version,
+        )
+    try:
+        return None, parse_waterloo_settings(settings)
+    except (TypeError, ValueError):
+        return _unqualified(
+            FlightExecutionQualificationReason.SETTINGS_SCHEMA_INVALID,
+            model_id,
+            model_version,
+        )
+
+
+def _qualified_recomputation(
+    model_id: str,
+    model_version: str,
+    result: FlightResult,
+    cancellation_requested: CancellationCheck | None,
+) -> FlightExecutionQualification:
+    trajectory_sha256, result_sha256 = canonical_flight_evidence_sha256(
+        result,
+        cancellation_requested=cancellation_requested,
+    )
+    return FlightExecutionQualification(
+        FlightExecutionQualificationReason.QUALIFIED,
+        model_id,
+        model_version,
+        trajectory_sha256,
+        result_sha256,
+    )
 
 
 def _recompute_registered(
@@ -229,49 +207,40 @@ def _recompute_registered(
     model_id: str,
     model_version: str,
     settings: Mapping[str, float],
+    cancellation_requested: CancellationCheck | None = None,
 ) -> tuple[FlightExecutionQualification, FlightResult | None]:
     """Resolve and recompute one registered profile without declared digests."""
     stable_id(model_id, "profile model_id")
     canonical_text(model_version, "profile model_version")
-    profile = _PROFILES.get((model_id, model_version))
-    if profile is None:
-        return (
-            FlightExecutionQualification(
-                FlightExecutionQualificationReason.PROFILE_NOT_REGISTERED,
-                model_id,
-                model_version,
-            ),
-            None,
-        )
+    unqualified, resolved_settings = _resolved_settings(
+        model_id,
+        model_version,
+        settings,
+    )
+    if unqualified is not None or resolved_settings is None:
+        assert unqualified is not None
+        return unqualified, None
     try:
-        resolved_settings = _waterloo_settings(settings)
-    except (TypeError, ValueError):
-        return (
-            FlightExecutionQualification(
-                FlightExecutionQualificationReason.SETTINGS_SCHEMA_INVALID,
-                model_id,
-                model_version,
-            ),
-            None,
+        result = recompute_waterloo(
+            launch,
+            transfer,
+            resolved_settings,
+            cancellation_requested,
         )
-    try:
-        result = _recompute_waterloo(launch, transfer, resolved_settings)
+    except (FlightSimulationCancelled, FlightCancellationCallbackError):
+        raise
     except Exception:
-        return (
-            FlightExecutionQualification(
-                FlightExecutionQualificationReason.RECOMPUTATION_FAILED,
-                model_id,
-                model_version,
-            ),
-            None,
-        )
-    return (
-        FlightExecutionQualification(
-            FlightExecutionQualificationReason.QUALIFIED,
+        return _unqualified(
+            FlightExecutionQualificationReason.RECOMPUTATION_FAILED,
             model_id,
             model_version,
-            canonical_flight_trajectory_sha256(result),
-            canonical_flight_result_sha256(result),
+        )
+    return (
+        _qualified_recomputation(
+            model_id,
+            model_version,
+            result,
+            cancellation_requested,
         ),
         result,
     )
@@ -279,10 +248,12 @@ def _recompute_registered(
 
 def _compare_digests(
     flight: FlightExecutionInput,
-    result: FlightResult,
+    qualification: FlightExecutionQualification,
 ) -> FlightExecutionQualification:
-    trajectory_digest = canonical_flight_trajectory_sha256(result)
-    result_digest = canonical_flight_result_sha256(result)
+    trajectory_digest = qualification.recomputed_trajectory_sha256
+    result_digest = qualification.recomputed_result_sha256
+    if trajectory_digest is None or result_digest is None:
+        raise ValueError("qualified recomputation must include both digests")
     reason = FlightExecutionQualificationReason.QUALIFIED
     if trajectory_digest != flight.trajectory_sha256:
         reason = FlightExecutionQualificationReason.TRAJECTORY_DIGEST_MISMATCH
@@ -349,10 +320,19 @@ def recompute_qualified_flight_result(
     launch: LaunchConditions,
     transfer: FlightGroundTransferSettings,
     flight: FlightExecutionInput,
+    *,
+    cancellation_requested: CancellationCheck | None = None,
 ) -> FlightResult:
-    """Return recomputed flight only after both declared digests match."""
+    """Return one digest-matched flight or raise typed cancellation."""
     _validate_boundary_inputs(launch, transfer, flight)
-    qualification, result = _evaluate(launch, transfer, flight)
+    if cancellation_requested is not None and not callable(cancellation_requested):
+        raise TypeError("cancellation_requested must be callable or None")
+    qualification, result = _evaluate(
+        launch,
+        transfer,
+        flight,
+        cancellation_requested,
+    )
     if not qualification.qualified or result is None:
         raise FlightExecutionProfileQualificationError(qualification)
     return result
