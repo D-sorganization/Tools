@@ -3,30 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
-## 2026-08-12 Symmetric ensemble persistence contract (#4142 R11.4)
+## 2026-08-12 Integrated variation authority and execution child (#4142)
 
-The isolated local branch `codex/4142-ensemble-reader-hardening` starts from
-exact integrated head `c1106926a037ba63bb14a4e84672686b8b06462f`; it is not
-pushed. The complete Rate result type, current-v1 reader, and writer now share
-one scientific-limit and authority-binding contract. Canonical columns,
-outcome/scalar/status alignment, partial/evaluated/failure trace availability,
-impact markers, and nearest-sample impact provenance are checked before export.
+Local branch `codex/4142-react-mc-async-integrated` is based on exact #4404
+head `82e4c54c921f169227d25ece2935add4af3e721a`. The complete Rate result type,
+current-v1 reader, and writer share one scientific-limit and authority-binding
+contract. Canonical columns, outcome/scalar/status alignment, partial/evaluated/
+failure trace availability, impact markers, and nearest-sample impact provenance
+are checked before export.
 
 The parser checks raw sample and tensor axes before NumPy allocation. The file
 writer produces only standard finite JSON, measures the exact formatted UTF-8
 payload, and fails before file creation when it exceeds the reader limit.
 Decoder recursion, oversized-integer, Unicode, and syntax failures consistently
-surface as contract errors. Local evidence is 245 passing shared-variation/Rate
-tests (14 known Hypothesis collection warnings), including 34 focused reader
-tests, plus scoped Ruff and MyPy. The broader 1,187-test Rate sweep had 1,186
-passes and one unrelated Morris child-readiness timeout under 14-worker load;
-that exact test passed in 3.96 seconds when rerun alone.
+surface as contract errors. Confidence-scaled position ellipsoids and ranked
+quiet zones enforce finite PSD geometry and explicit statistical adequacy.
+React Monte Carlo studies execute in a validated, cancellable per-study worker
+with determinate progress and stale-result protection.
 
 This is strict current outer-v1 persistence, not migration. Unknown versions
 remain fail closed until a real successor schema supplies an explicit reviewed
-migration and legacy fixtures. Repository-wide gates, integration/publication, UI imports,
-browser parity, streaming, event ledgers, and complete state/torque authority
-remain open.
+migration and legacy fixtures. Exact integrated evidence is 1,200/1,200 Python/
+PyQt/shared tests and 743/743 React tests, plus Ruff, Ruff format, CI-pinned
+Mypy 1.13, TypeScript, ESLint, Vite production build, documentation governance,
+diff, assertion, and changed-file size gates. The explicit Python `float`
+boundary for NumPy epsilon is typing-only. Protected publication, UI imports and
+dispersion controls, browser reader parity, streaming, event ledgers, complete
+state/torque authority, localized perturbations, and Playwright visuals remain
+open.
 
 ## 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
 

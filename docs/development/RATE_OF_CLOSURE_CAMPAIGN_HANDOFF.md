@@ -1,10 +1,10 @@
 # Rate of Closure Campaign Handoff
 
-## 2026-08-12 #4142 R11.4 symmetric ensemble persistence hardening
+## 2026-08-12 #4142 integrated persistence, dispersion, and React worker child
 
-- Isolated local branch `codex/4142-ensemble-reader-hardening` starts from exact
-  integrated head `c1106926a037ba63bb14a4e84672686b8b06462f`; it is not
-  pushed.
+- Local branch `codex/4142-react-mc-async-integrated` starts from exact #4404
+  head `82e4c54c921f169227d25ece2935add4af3e721a` and integrates all reviewed
+  reader/writer, dispersion, and browser-worker slices.
 - Typed Rate results, the outer-v1 reader, and the writer share one scientific
   shape/authority contract. Canonical sampled inputs and outputs, typed scalar
   outcomes, success, partial/evaluated/failure trace availability, impact
@@ -13,17 +13,22 @@
   allocation. Standard finite JSON and exact formatted UTF-8 bytes are checked
   before file creation, preventing successful writes that the reader rejects.
 - Deep-recursion, oversized-integer, Unicode, and syntax decoder failures are
-  normalized to public contract errors. Local evidence is 245 passing shared-
-  variation/Rate tests (14 known Hypothesis collection warnings), including 34
-  focused reader tests covering all scientific limits, allocation ordering,
-  crossed authority, and writer finite/byte preflight; scoped Ruff and MyPy pass.
-- The broader 1,187-test Rate sweep had 1,186 passes and one unrelated Morris
-  child-readiness timeout under 14-worker load; that exact test passed in 3.96
-  seconds when rerun alone.
+  normalized to public contract errors. Confidence ellipsoids fail closed on
+  invalid eigensystems; ranked quiet zones expose three declared metrics.
+- React Monte Carlo execution uses a validated per-study worker with determinate
+  progress, cancellation, rerun, stale-generation protection, and complete
+  single-settlement cleanup across browser transport failures.
 - This is strict current outer-v1 persistence, not a migration implementation.
   A future schema must add an explicit reviewed migration and actual legacy
-  fixtures. Repository-wide gates, publication, UI imports, cross-runtime reading,
-  streaming, event ledgers, and complete state/torque authority remain open.
+  fixtures.
+- Exact integrated evidence is 1,200/1,200 Python/PyQt/shared tests and 743/743
+  React tests, plus Ruff, Ruff format, CI-pinned Mypy 1.13, TypeScript, ESLint,
+  Vite production build, documentation governance, diff, assertion, and
+  changed-file size gates. The explicit Python `float` boundary on NumPy epsilon
+  is typing-only and does not change scientific behavior.
+- Protected publication, UI import and dispersion controls, cross-runtime
+  reading, streaming, event ledgers, complete state/torque authority, localized
+  perturbation execution, and Playwright/screenshot coverage remain open.
 
 ## 2026-08-12 #4142 R11.4 strict typed ensemble JSON reader
 

@@ -3,11 +3,12 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
-## 2026-08-12 Ensemble reader/writer contract hardening (#4142 R11.4)
+## 2026-08-12 Integrated variation persistence, dispersion, and React execution (#4142)
 
-The isolated local branch `codex/4142-ensemble-reader-hardening` starts from
-exact integrated head `c1106926a037ba63bb14a4e84672686b8b06462f`; it is not
-pushed. It closes the adversarial review findings on the typed ensemble slice.
+Local branch `codex/4142-react-mc-async-integrated` is based on exact #4404
+head `82e4c54c921f169227d25ece2935add4af3e721a`. It integrates the strict typed
+ensemble reader/writer, confidence-scaled dispersion metrics, and asynchronous
+React Monte Carlo execution plus all three independent-review hardening passes.
 
 - One shared limit contract now governs typed Rate results and parsed archives.
   Typed results bind canonical columns, scalar outcomes, success, partial or
@@ -19,16 +20,23 @@ pushed. It closes the adversarial review findings on the typed ensemble slice.
 - Deep JSON recursion, oversized JSON integers, Unicode, and normal syntax
   failures become public contract errors. Boundary tests cover each scientific
   limit, allocation order, crossed typed evidence, and writer preflight.
+- Confidence ellipsoids reject invalid eigensystems and use a stable df=3
+  chi-square quantile. Quiet-zone ranking supports RMS radius, largest principal
+  sigma, and ellipsoid volume with explicit adequacy and deterministic ties.
+- React variation runs in a per-study worker with progress, cancellation,
+  immediate rerun, stale-generation protection, request/result validation, and
+  single-settlement cleanup for every browser-worker failure boundary.
 - This remains exact outer v1 persistence. Rejection of unknown versions is a
   fail-closed future-migration policy, not an implemented migration.
 
-Local evidence is 245 passing shared-variation/Rate tests (14 known Hypothesis
-collection warnings), including 34 focused reader tests, plus scoped Ruff and
-MyPy. The broader 1,187-test Rate sweep had 1,186 passes and one unrelated
-Morris child-readiness timeout under 14-worker load; that exact test passed in
-3.96 seconds when rerun alone. Repository-wide gates, integration, protected publication, UI import
-surfaces, cross-runtime reading, chunking, event ledgers, and complete
-state/torque authority remain open.
+Exact integrated local evidence is 1,200/1,200 Python/PyQt/shared tests and
+743/743 React tests, plus Ruff, Ruff format, CI-pinned Mypy 1.13, TypeScript,
+ESLint, Vite production build, documentation governance, diff, assertion, and
+changed-file size gates. The explicit Python `float` boundary on the NumPy
+epsilon tolerance is typing-only; scientific and runtime behavior are
+unchanged. Protected publication, UI import and dispersion controls,
+cross-runtime reading, chunking, event ledgers, complete state/torque authority,
+localized perturbation execution, and Playwright/screenshot gates remain open.
 
 ## 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
 

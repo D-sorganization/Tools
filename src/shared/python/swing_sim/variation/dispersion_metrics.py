@@ -61,7 +61,7 @@ def _chi_square_three_quantile(probability: float) -> float:
 def _eigenvalue_tolerance(eigenvalues: np.ndarray) -> float:
     """Return a scale-aware tolerance for roundoff-negative covariance roots."""
     scale = max(float(np.max(np.abs(eigenvalues))), np.finfo(float).tiny)
-    return _EIGENVALUE_ROUNDOFF_FACTOR * np.finfo(float).eps * scale
+    return float(_EIGENVALUE_ROUNDOFF_FACTOR * np.finfo(float).eps * scale)
 
 
 def _valid_eigensystem(
