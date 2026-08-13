@@ -40,6 +40,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -98,6 +99,10 @@
 | **Current Version**     | 1.14.56                                    |
 | **Spec Version**        | 1.14.56                                    |
 >>>>>>> origin/codex/4273-seeded-ground-variation
+=======
+| **Current Version**     | 1.14.57                                    |
+| **Spec Version**        | 1.14.57                                    |
+>>>>>>> origin/codex/4273-ground-variation-persistence
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -127,6 +132,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
@@ -137,6 +143,28 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 =======
 =======
 =======
+=======
+### 2026-08-11 Seeded Regional-Ground Request Persistence
+
+- A strict v1 application envelope stores the existing immutable seeded
+  variation request: current `VariationPlan`, exact regional material plan,
+  result/source/optional-series identifiers, and maximum output rows. It does
+  not define another simulation or storage model.
+- Deterministic compact canonical JSON enforces cross-runtime-safe numbers,
+  Unicode scalar text, exact nested shapes, duplicate-key rejection, current
+  schema versions, and a 1 MiB UTF-8 limit. The same text is suitable for
+  browser downloads without claiming browser atomic replacement.
+- Native files reuse the shared sentinel-bounded UTF-8 reader and
+  flush/fsync/atomic-replace writer. Cancellation changes nothing, and failed
+  replacement preserves the prior file.
+- Loading explicitly registers the two Rate-owned ground variables before the
+  existing variation parser runs, constructs the existing exact request, and
+  never executes physics.
+- This slice excludes UI/editor wiring, workspace embedding, regional-overlay
+  variation, solver/capability use, wind, compiled/downstream parity, protected
+  release, and issue/epic completion.
+
+>>>>>>> origin/codex/4273-ground-variation-persistence
 ### 2026-08-11 Seeded Regional-Ground Material Variation
 
 - A UI-neutral adapter samples base-surface normal restitution and rolling

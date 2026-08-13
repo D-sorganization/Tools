@@ -1,5 +1,33 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4273 seeded-request persistence
+
+- The unpublished `codex/4273-ground-variation-persistence` branch starts from
+  exact published PR #4365 docs head
+  `27d2a68d3738d61307af9235f3f97f7bd400e0f3`. Audit confirmed that the
+  immutable seeded request, existing nested serializers, canonical safe-number
+  JSON, strict duplicate-key parser, bounded reader, and atomic writer form a
+  complete persistence seam without a parallel schema or storage mechanism.
+- A UI-neutral v1 envelope persists the exact variation and regional plans,
+  result/source/series identities, and row cap as deterministic compact JSON.
+  The 1 MiB UTF-8 contract is portable to existing browser-download behavior;
+  native reads and writes reuse sentinel-bounded snapshots and atomic replace.
+- Exact field and current-version checks precede existing nested parsers.
+  Duplicate keys, unsafe/nonfinite/Boolean numbers, surrogate text, malformed
+  identities/caps, invalid nested contracts, and oversize payloads fail closed.
+  Parsing explicitly registers the Rate ground variables and never runs
+  physics.
+- RED captured the absent module. Twenty-two focused, 82 composition, and 545
+  relevant Rate/shared tests pass. The broad run has six expected missing-Rust-
+  wheel skips and one environment-only warning. Ruff, import-skipping MyPy,
+  Bandit, campaign manifest and eight tests, documentation, blocking-quality,
+  minimum-test, module-size, changed-test assertion, placeholder, structural,
+  and diff gates pass.
+- This candidate is local and unpushed. UI/editor wiring, workspace embedding,
+  browser filesystem claims, overlay variation, solver/capability use, wind,
+  compiled/downstream parity, protected review, publication, and release remain
+  open; #4273/#4267 are not complete.
+
 ## 2026-08-11 PR #4365 seeded regional-ground material variation
 
 - Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) starts
