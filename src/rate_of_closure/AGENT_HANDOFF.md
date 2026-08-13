@@ -3,6 +3,31 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Bounded complete-ensemble chunk execution seam (#4142 R11.5)
+
+Local child `codex/4142-ensemble-chunks` is based on exact #4405 head
+`2c923fdd94ede6064cffe4847cbb56088cd78896`. Complete Rate trials now project
+and release one bounded chunk of `SimulationRun` captures at a time into a
+coordinator-owned sink. Immutable headers/chunks enforce canonical contiguous
+trial order, exact sampled-input row and layout binding, strict Boolean-validity
+and representable integer-impact domains, canonical app-frame authority, typed
+failure/miss/hit traces, and named input/position-cell ceilings. Scientific
+arrays reject Boolean, string, and complex coercions before immutable copying.
+
+The public `run_simulation_ensemble` API remains compatible through a collecting
+sink. It checks cancellation before/after the executor and before acceptance,
+reports only accepted canonical-prefix progress, and aborts exactly once for
+cancellation or any executor/sink error. Chunk sizes 1/2/3/>n match the prior
+materialized result; 55 focused lifecycle/adapter tests, 330 broader
+Rate/shared-variation tests, and the exact hosted Python 3.12 / NumPy 2.3.5 /
+Mypy 1.13 type gate pass.
+
+This foundation does not yet make the compatibility collector streaming. It
+still constructs the final tensor, and sampled inputs/configs remain eager. A
+bounded work source, non-materializing production sink, durable chunk transport,
+resume/checksum semantics, full event/state/torque authority, and measured peak
+memory remain open before R11.5 can be called complete.
+
 ## 2026-08-12 Integrated variation authority and execution child (#4142)
 
 Protected PR #4405 exposed eleven Mypy diagnostics limited to NumPy 2.3.5's

@@ -9,6 +9,7 @@ MAX_TRIALS = 100_000
 MAX_SAMPLES = 100_000
 MAX_POINTS = 256
 MAX_POSITION_CELLS = 5_000_000
+MAX_INPUT_CELLS = 1_000_000
 
 
 def require_ensemble_shape_limits(
@@ -28,6 +29,7 @@ def require_ensemble_shape_limits(
 
 __all__ = [
     "MAX_ENSEMBLE_JSON_BYTES",
+    "MAX_INPUT_CELLS",
     "MAX_POINTS",
     "MAX_POSITION_CELLS",
     "MAX_SAMPLES",

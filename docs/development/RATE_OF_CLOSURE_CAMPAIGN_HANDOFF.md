@@ -1,5 +1,29 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R11.5 bounded ensemble chunk lifecycle foundation
+
+- Local child `codex/4142-ensemble-chunks` starts from exact published #4405
+  head `2c923fdd94ede6064cffe4847cbb56088cd78896`.
+- New immutable header/chunk/sink contracts enforce non-empty contiguous
+  canonical rows, exact sampled-input row and trace-layout binding, strict raw
+  real-number/Boolean-validity/representable-integer-impact domains, canonical
+  app-frame authority, typed hit/miss/failure trace availability, and named
+  input/position-cell ceilings before owned allocation.
+- The executor retains and projects one chunk of complete runs at a time. It
+  checks cancellation before/after each solver and before acceptance; progress
+  counts accepted prefix rows; every cancellation or executor/sink error aborts
+  once and exposes no committed result.
+- The existing materialized API is preserved through a compatibility collector.
+  Chunk sizes 1/2/3/>n produce the same outcomes, samples, scalars, validity,
+  impacts, and positions (wall-clock elapsed excluded).
+- Local evidence: 55/55 lifecycle/adapter tests; 330/330 broader Rate/shared-
+  variation tests; exact hosted Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing;
+  Ruff and Ruff format.
+- This is not a completed streaming archive. The collector still builds the
+  final tensor, request samples/configs remain eager, and durable chunks,
+  checksums/resume, full event/state/torque rows, a non-materializing production
+  sink, and measured peak-memory evidence remain open.
+
 ## 2026-08-12 #4142 integrated persistence, dispersion, and React worker child
 
 - PR #4405's first protected `quality-gate` failed only its Mypy step under

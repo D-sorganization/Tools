@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+from .ensemble_chunks import (
+    CollectingEnsembleSink,
+    EnsembleChunkSink,
+    EnsembleStreamHeader,
+    SimulationResultChunk,
+)
 from .morris_rate_adapter import (
     RATE_MORRIS_OUTPUTS,
     RATE_MORRIS_VARIABLE_KEYS,
@@ -25,6 +31,7 @@ from .simulation_adapter import (
     apply_ball_setup_sample,
     build_simulation_ensemble_request,
     run_simulation_ensemble,
+    run_simulation_ensemble_chunks,
     spatial_point_ids,
 )
 from .trial_projection import (
@@ -37,8 +44,11 @@ from .trial_projection import (
 __all__ = [
     "APP_FRAME_ID",
     "CONTACT_OUTPUT_NAMES",
+    "CollectingEnsembleSink",
     "EVALUATED_HIT",
     "EVALUATED_NO_IMPACT",
+    "EnsembleChunkSink",
+    "EnsembleStreamHeader",
     "IMPACT_OUTPUT_NAMES",
     "NUMERICAL_FAILURE",
     "RATE_MORRIS_OUTPUTS",
@@ -49,6 +59,7 @@ __all__ = [
     "SimulationEnsembleResult",
     "SimulationTrialOutcome",
     "SimulationExecutor",
+    "SimulationResultChunk",
     "TrialCapture",
     "TrialEvaluationStatus",
     "TEE_HEIGHT_VARIABLE_KEY",
@@ -59,5 +70,6 @@ __all__ = [
     "evaluate_rate_morris_design",
     "project_simulation_outcome",
     "run_simulation_ensemble",
+    "run_simulation_ensemble_chunks",
     "spatial_point_ids",
 ]

@@ -3,6 +3,37 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
+
+Local child `codex/4142-ensemble-chunks` starts from published #4405 head
+`2c923fdd94ede6064cffe4847cbb56088cd78896`. It introduces an in-process,
+immutable `EnsembleStreamHeader`/`SimulationResultChunk`/`EnsembleChunkSink`
+lifecycle and refactors the existing public complete-ensemble runner through a
+compatibility collector.
+
+- Execution retains at most one configured chunk of complete `SimulationRun`
+  captures before projection, rather than every run until the study ends.
+- Chunk rows are non-empty, contiguous, canonically indexed, resource-bounded,
+  immutable, and bound to the header's exact sampled-input rows plus typed
+  outcome/trace/impact availability. Scientific arrays require real numeric
+  domains; Boolean validity, representable integer impacts, the canonical app
+  frame, and input/position cell ceilings are enforced before conversion.
+- Cancellation is checked before and after each solver call and before sink
+  acceptance. Sink acceptance is provisional; only commit returns authority,
+  while cancellation, executor errors, or sink errors abort exactly once.
+- Progress counts the accepted canonical prefix. Chunk sizes 1/2/3/>n are
+  scientifically equivalent to the compatibility façade apart from elapsed
+  wall time.
+
+The collector intentionally still materializes the final four-dimensional trace
+tensor, and request sampling/config construction remains eager. This is the
+R11.5 execution seam, not completion of streaming persistence: a bounded source,
+durable chunk archive, resume/checksum policy, full event/state/torque rows, and
+measured execution-memory gate remain open. Exact local evidence is 55/55
+focused lifecycle/adapter tests and 330/330 broader Rate/shared-variation tests,
+plus the hosted Python 3.12 / NumPy 2.3.5 / Mypy 1.13 combination, Ruff, and
+Ruff format.
+
 ## 2026-08-12 Integrated variation persistence, dispersion, and React execution (#4142)
 
 Protected PR #4405 initially failed only its hosted `quality-gate` Mypy step:

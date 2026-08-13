@@ -26,11 +26,41 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.52                                    |
-| **Spec Version**        | 1.16.52                                    |
+| **Current Version**     | 1.16.53                                    |
+| **Spec Version**        | 1.16.53                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
+
+Version 1.16.53 adds a bounded in-process execution lifecycle for complete Rate
+ensembles. An immutable header announces the plan and spatial/time layout;
+immutable result chunks carry contiguous canonical trial rows; an injected sink
+accepts provisional chunks and exposes authority only on commit. Chunk-level
+contracts bind each row to the header's exact sampled inputs, typed outcomes,
+positions, validity, and impact markers while limiting each chunk to 500,000
+position cells. Validity and impact categorical arrays must have genuine
+Boolean and representable non-Boolean integer domains before immutable
+conversion. Sample inputs and positions require real, non-Boolean numeric
+domains; headers require the canonical app frame; named input and position-cell
+limits are checked before owned allocation.
+
+The compatibility runner now holds at most one chunk of complete simulation
+captures before projection. Cancellation is checked before and after every
+solver call and before sink acceptance. Cancellation and executor/sink errors
+abort once and do not commit partial authority; progress reports only the
+accepted canonical prefix. Chunk sizes 1, 2, 3, and larger-than-study values are
+semantically identical for the current result contract apart from elapsed wall
+time.
+
+This is an R11.5 foundation, not completion. The compatibility collector still
+materializes the final trace tensor, sampled inputs and configs remain eager,
+and no durable chunk archive, resume/checksum protocol, complete event/state/
+torque record, non-materializing production sink, or measured peak-memory gate
+is claimed. Exact evidence is 55 focused lifecycle/adapter tests, 330 broader
+Rate/shared-variation tests, the hosted Python 3.12 / NumPy 2.3.5 / Mypy 1.13
+type combination, and Ruff/format.
 
 ### 2026-08-12 Hosted NumPy typing boundary compatibility (#4142)
 
@@ -3279,6 +3309,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
 | 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |
 | 2026-08-12 | 1.16.51 | fix(rate-of-closure, #4142 R11.4): require complete trial output scalars to be finite real non-booleans; normalize accepted NumPy real scalars to built-in floats; and prove typed-object writer/reader domain closure with five TDD cases and 39 focused persistence tests. |
 | 2026-08-12 | 1.16.50 | fix(rate-of-closure, #4142): add the explicit Python `float` boundary required by CI-pinned Mypy 1.13 for the NumPy epsilon dispersion tolerance; record the exact integrated 1,200 Python/PyQt/shared and 743 React local gates while keeping protected publication and incomplete epic surfaces open. |

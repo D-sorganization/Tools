@@ -8,11 +8,11 @@ variation and ensemble-geometry contracts.
 
 from __future__ import annotations
 
-import math
 import threading
 import time
 from collections.abc import Mapping
 from types import MappingProxyType
+from typing import TypeVar
 
 import numpy as np
 
@@ -23,7 +23,6 @@ from rate_of_closure.simulation import (
 )
 from rate_of_closure.simulation.pipeline import configured_swing_sample_times
 from rate_of_closure.variation.simulation_types import (
-    ALL_OUTPUT_NAMES,
     APP_FRAME_ID,
     CONTACT_OUTPUT_NAMES,
     EVALUATED_HIT,
@@ -42,11 +41,16 @@ from shared.python.swing_sim.solver.solve import (
     ProgressCallback,
     ProgressReport,
 )
-from shared.python.swing_sim.variation.engine import VariationDataset
-from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTraces
 from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
 
+from .ensemble_chunks import (
+    MAX_CHUNK_POSITION_CELLS,
+    CollectingEnsembleSink,
+    EnsembleChunkSink,
+    EnsembleStreamHeader,
+    SimulationResultChunk,
+)
 from .request_builder import (
     apply_global_simulation_values,
     build_simulation_ensemble_request,
@@ -130,11 +134,33 @@ def run_simulation_ensemble(
     progress_cb: ProgressCallback | None = None,
     cancel_event: threading.Event | None = None,
 ) -> SimulationEnsembleResult:
-    """Execute complete configs and retain hits, misses, and failures.
+    """Materialize the legacy result through the bounded chunk executor."""
+    return run_simulation_ensemble_chunks(
+        request,
+        CollectingEnsembleSink(),
+        chunk_size=1,
+        executor=executor,
+        progress_cb=progress_cb,
+        cancel_event=cancel_event,
+    )
 
-    At least one trial must evaluate so its canonical sample grid can anchor
-    failed rows. All evaluated trials must expose the same time grid and point
-    IDs; resampling belongs in a later, explicit alignment layer.
+
+TChunkResult = TypeVar("TChunkResult")
+
+
+def run_simulation_ensemble_chunks(
+    request: SimulationEnsembleRequest,
+    sink: EnsembleChunkSink[TChunkResult],
+    *,
+    chunk_size: int | None = None,
+    executor: SimulationExecutor = run_simulation,
+    progress_cb: ProgressCallback | None = None,
+    cancel_event: threading.Event | None = None,
+) -> TChunkResult:
+    """Execute bounded canonical chunks into one coordinator-owned sink.
+
+    ``accept`` is provisional. Only ``commit`` returns a valid result; any
+    cancellation or exception aborts the sink exactly once before propagating.
     """
     require(
         isinstance(request, SimulationEnsembleRequest),
@@ -143,86 +169,90 @@ def run_simulation_ensemble(
     require(callable(executor), "executor must be callable")
     started = time.monotonic()
     cancellation = cancel_event or threading.Event()
-    captures: list[TrialCapture] = []
+    times, point_ids = _trace_layout(request.configs[0], None)
+    header = EnsembleStreamHeader(
+        request.plan, request.sampled_inputs, times, point_ids, APP_FRAME_ID
+    )
+    cells_per_trial = times.size * len(point_ids) * 3
+    maximum_rows = MAX_CHUNK_POSITION_CELLS // cells_per_trial
+    require(maximum_rows > 0, "one trace row exceeds the chunk cell limit")
+    rows_per_chunk = maximum_rows if chunk_size is None else chunk_size
+    require(
+        isinstance(rows_per_chunk, int)
+        and not isinstance(rows_per_chunk, bool)
+        and 0 < rows_per_chunk <= maximum_rows,
+        "chunk_size exceeds the bounded trace capacity",
+        rows_per_chunk,
+    )
     failed = 0
-    for index, config in enumerate(request.configs):
+    try:
+        sink.begin(header)
+        for start in range(0, request.plan.n_runs, rows_per_chunk):
+            stop = min(start + rows_per_chunk, request.plan.n_runs)
+            captures: list[TrialCapture] = []
+            for config in request.configs[start:stop]:
+                if cancellation.is_set():
+                    raise CancelledError
+                capture = capture_simulation(config, executor)
+                if cancellation.is_set():
+                    raise CancelledError
+                captures.append(capture)
+                failed += int(capture.run is None)
+            chunk = _result_chunk(request, header, start, tuple(captures))
+            if cancellation.is_set():
+                raise CancelledError
+            sink.accept(chunk)
+            if progress_cb is not None:
+                progress_cb(
+                    ProgressReport(
+                        iteration=stop,
+                        cost=float(failed),
+                        best_cost=0.0,
+                        improvement_pct=0.0,
+                        elapsed_s=time.monotonic() - started,
+                    )
+                )
         if cancellation.is_set():
             raise CancelledError
-        capture = capture_simulation(config, executor)
-        captures.append(capture)
-        failed += int(capture.run is None)
-        if progress_cb is not None:
-            progress_cb(
-                ProgressReport(
-                    iteration=index + 1,
-                    cost=float(failed),
-                    best_cost=0.0,
-                    improvement_pct=0.0,
-                    elapsed_s=time.monotonic() - started,
-                )
-            )
-    capture_tuple = tuple(captures)
-    reference = next((item.run for item in capture_tuple if item.run is not None), None)
-    outcomes = tuple(
-        project_simulation_outcome(index, capture)
-        for index, capture in enumerate(capture_tuple)
-    )
-    variation = _variation_dataset(request, outcomes, time.monotonic() - started)
-    traces = _ensemble_traces(request, variation, capture_tuple, reference)
-    return SimulationEnsembleResult(outcomes, variation, traces)
+        return sink.commit(time.monotonic() - started)
+    except BaseException as primary:
+        try:
+            sink.abort()
+        except BaseException as abort_error:
+            primary.add_note(f"sink abort also failed: {abort_error!r}")
+        raise
 
 
-def _variation_dataset(
+def _result_chunk(
     request: SimulationEnsembleRequest,
-    outcomes: tuple[SimulationTrialOutcome, ...],
-    elapsed_s: float,
-) -> VariationDataset:
-    """Build the scalar matrix while preserving sampled inputs."""
-    outputs = np.full((request.plan.n_runs, len(ALL_OUTPUT_NAMES)), np.nan)
-    success: np.ndarray = np.zeros(request.plan.n_runs, dtype=bool)
-    for outcome in outcomes:
-        outputs[outcome.trial_index] = [
-            math.nan if outcome.value(name) is None else outcome.value(name)
-            for name in ALL_OUTPUT_NAMES
-        ]
-        success[outcome.trial_index] = outcome.status is not NUMERICAL_FAILURE
-    return VariationDataset(
-        plan=request.plan,
-        input_names=tuple(spec.variable_key for spec in request.plan.noise),
-        inputs=request.sampled_inputs,
-        output_names=ALL_OUTPUT_NAMES,
-        outputs=outputs,
-        success=success,
-        elapsed_s=elapsed_s,
-    )
-
-
-def _ensemble_traces(
-    request: SimulationEnsembleRequest,
-    variation: VariationDataset,
+    header: EnsembleStreamHeader,
+    start_index: int,
     captures: tuple[TrialCapture, ...],
-    reference: SimulationRun | None,
-) -> EnsemblePositionTraces:
-    """Build common-grid positions, marking numerical failures invalid."""
-    times, point_ids = _trace_layout(request.configs[0], reference)
+) -> SimulationResultChunk:
+    """Project and release one bounded set of complete simulation captures."""
+    times = header.sample_times_s
+    point_ids = header.point_ids
     positions = np.full((len(captures), len(times), len(point_ids), 3), np.nan)
     valid: np.ndarray = np.zeros((len(captures), len(times)), dtype=bool)
     impacts: np.ndarray = np.full(len(captures), -1, dtype=int)
-    for index, capture in enumerate(captures):
+    outcomes = tuple(
+        project_simulation_outcome(start_index + offset, capture)
+        for offset, capture in enumerate(captures)
+    )
+    for offset, capture in enumerate(captures):
         run = capture.run
         if run is None:
             continue
-        if reference is not None:
-            _require_common_run(reference, run)
-        positions[index] = _spatial_positions(run)
-        valid[index] = True
+        _require_header_run(header, run)
+        positions[offset] = _spatial_positions(run)
+        valid[offset] = True
         if run.impact_time_s is not None:
-            impacts[index] = int(np.argmin(np.abs(times - run.impact_time_s)))
-    return EnsemblePositionTraces(
-        variation=variation,
-        sample_times_s=times,
-        coordinate_frame=APP_FRAME_ID,
-        point_ids=point_ids,
+            impacts[offset] = int(np.argmin(np.abs(times - run.impact_time_s)))
+    stop = start_index + len(captures)
+    return SimulationResultChunk(
+        start_index=start_index,
+        sampled_inputs=request.sampled_inputs[start_index:stop],
+        outcomes=outcomes,
         positions_m=positions,
         sample_valid=valid,
         impact_sample_indices=impacts,
@@ -259,14 +289,14 @@ def _point_ids_for_source(source_kind: str) -> tuple[str, ...]:
     return _POINT_IDS_BY_SOURCE[source_kind]
 
 
-def _require_common_run(reference: SimulationRun, run: SimulationRun) -> None:
-    """Require exact common time and stable-point coordinates."""
+def _require_header_run(header: EnsembleStreamHeader, run: SimulationRun) -> None:
+    """Require exact announced time and stable-point coordinates."""
     require(
-        np.array_equal(run.swing_times, reference.swing_times),
+        np.array_equal(run.swing_times, header.sample_times_s),
         "evaluated runs must share one sample-time grid",
     )
     require(
-        spatial_point_ids(run) == spatial_point_ids(reference),
+        spatial_point_ids(run) == header.point_ids,
         "evaluated runs must share stable spatial point IDs",
     )
 
@@ -287,5 +317,6 @@ __all__ = [
     "apply_ball_setup_sample",
     "build_simulation_ensemble_request",
     "run_simulation_ensemble",
+    "run_simulation_ensemble_chunks",
     "spatial_point_ids",
 ]
