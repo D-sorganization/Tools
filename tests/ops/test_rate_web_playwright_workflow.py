@@ -108,7 +108,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
     assert pr_commands["Install bounded PyQt render dependencies"] == (
         'python -m pip install -e ".[gui]" "scipy>=1.10,<1.18" pytest '
-        '"pytest-xdist>=3.6,<4"'
+        '"pytest-xdist>=3.6,<4" "pytest-benchmark==5.2.3"'
     )
     assert pr_commands[
         "Exercise PyQt rendered interactions at 100 and 150 percent DPI"

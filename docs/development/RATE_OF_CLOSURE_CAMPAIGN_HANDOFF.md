@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4422 hosted PyQt/assertion-policy closure
+
+- The ephemeral PR PyQt dependency step now installs pinned
+  `pytest-benchmark==5.2.3`, satisfying the repository-owned
+  `--benchmark-disable` option before collection.
+- The workflow contract pins that exact dependency; the hosted lane cannot
+  silently return to the unrecognized-option failure.
+- The assertion allowlist adds only
+  `tests/rate_of_closure/pyqt_variation_render_probe.py`. Semantic assertions
+  stay in its owning rendered-interaction test.
+- An exact policy test proves the helper is exempt while adjacent assertion-
+  light real tests fail. The changed set against published #4417 passes.
+- Correction gates pass 8/8 focused PyQt, 20/20 workflow/assertion/validator,
+  67 workflow validations, actionlint 1.7.11, Ruff/format/docs/size/diff.
+- SPEC advances to 1.16.72; all R14.5 trust/evidence limitations remain intact.
+
 ## 2026-08-13 #4142 cross-browser workflow selection closure
 
 - The trusted fleet workflow's Chromium-only install now pairs with explicit

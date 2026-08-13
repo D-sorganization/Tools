@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Hosted PyQt and assertion-policy closure (#4422)
+
+- Ephemeral PR CI installs pinned `pytest-benchmark==5.2.3`, supplying the
+  repository `--benchmark-disable` option for the focused PyQt render gate.
+- The assertion policy exempts exactly the subprocess render-probe path; its
+  owning test retains semantic DPI/layout/interaction assertions.
+- Regression coverage rejects an adjacent assertion-light PyQt test and pins
+  the workflow install. The published-#4417 changed assertion gate passes.
+- Gates pass 8/8 PyQt, 20/20 workflow/assertion/validator, all 67 workflows,
+  actionlint 1.7.11, and Ruff/format/docs/size/diff.
+- SPEC is 1.16.72; browser trust, diagnostic artifact, and AT gaps are unchanged.
+
 ## 2026-08-13 Cross-browser workflow selection closure (#4142)
 
 - Trusted main-push CI installs Chromium and explicitly selects only the

@@ -59,7 +59,7 @@ jobs:
 
       - name: Install bounded PyQt render dependencies
         working-directory: .
-        run: python -m pip install -e ".[gui]" "scipy>=1.10,<1.18" pytest "pytest-xdist>=3.6,<4"
+        run: python -m pip install -e ".[gui]" "scipy>=1.10,<1.18" pytest "pytest-xdist>=3.6,<4" "pytest-benchmark==5.2.3"
 
       - name: Exercise PyQt rendered interactions at 100 and 150 percent DPI
         working-directory: .

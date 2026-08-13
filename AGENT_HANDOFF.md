@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Hosted PyQt and assertion-policy closure (#4422)
+
+Version 1.16.72 adds pinned `pytest-benchmark==5.2.3` to the ephemeral PR
+workflow's bounded PyQt dependencies. This supplies the repository-configured
+`--benchmark-disable` option before collection; the workflow-contract test
+pins the exact install command.
+
+`scripts/test_assertion_allowlist.txt` now contains only the exact new render
+subprocess path. The helper writes diagnostic screenshots/manifests, while its
+owning test carries all semantic assertions. A policy regression proves the
+helper is exempt and an adjacent assertion-light real test is still rejected.
+The exact changed Python set against published #4417 passes the assertion
+gate. No trust, artifact, browser, or scientific contract changed.
+Correction evidence passes 8/8 focused PyQt, 20/20 workflow/assertion/
+validator tests, 67 workflow validations, actionlint 1.7.11, Ruff/format,
+docs governance, module-size, and diff checks.
+
 ## 2026-08-13 Cross-browser workflow selection closure (#4142)
 
 Version 1.16.71 closes the R14.5 workflow review. The trusted main-push lane

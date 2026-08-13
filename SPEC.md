@@ -26,11 +26,33 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.71                                    |
-| **Spec Version**        | 1.16.71                                    |
+| **Current Version**     | 1.16.72                                    |
+| **Spec Version**        | 1.16.72                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Hosted PyQt and assertion-policy closure (#4422)
+
+Version 1.16.72 closes two exact hosted-CI failures in the R14.5 evidence
+slice. The ephemeral PR workflow installs pinned `pytest-benchmark==5.2.3`,
+which owns the repository-level `--benchmark-disable` option consumed before
+the focused PyQt test runs. The workflow contract test binds this dependency
+to the install command so a reduced hosted environment cannot regress to an
+unrecognized pytest option.
+
+The changed-test assertion policy now exempts only
+`tests/rate_of_closure/pyqt_variation_render_probe.py`. That file is a
+subprocess entrypoint producing artifacts and a semantic manifest; behavioral
+assertions remain in its owning `test_pyqt_variation_rendered_interactions.py`.
+An adversarial policy regression proves this exact helper passes while an
+adjacent assertion-light `test_pyqt_render_smoke.py` still fails. The complete
+changed Python set against published #4417 passes the assertion gate; no glob
+or broader test exemption was introduced.
+Correction gates pass 8/8 focused PyQt, 20/20 workflow/assertion/validator
+tests, the exact published-#4417 changed-file assertion command, all 67
+workflow validations, pinned actionlint 1.7.11, Ruff/format, documentation
+governance, module-size, and diff checks.
 
 ### 2026-08-13 Cross-browser workflow selection closure (#4142 R14.5)
 
@@ -3957,6 +3979,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.72 | fix(ci, #4422): install pinned pytest-benchmark for the repository-owned `--benchmark-disable` PyQt gate and exempt only the subprocess render-probe entrypoint from changed-test assertions, with exact regressions preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.71 | fix(ci, #4142 R14.5): bind the trusted fleet lane's Chromium-only install to explicit Chromium desktop/narrow projects and expand the ephemeral PR gate's path ownership across every imported club/model, plotting, simulation, variation, PyQt6, shared dispersion, dependency, harness, and workflow authority it exercises. |
 | 2026-08-13 | 1.16.70 | test(rate-of-closure, #4142 R14.5): add production Firefox/WebKit parity for localized variation, confidence-mesh gating, semantic keyboard camera/reset, and no-overlap checks; add deterministic PyQt6 rendered interaction artifacts/manifests at 100%/150% DPI; keep untrusted execution on ephemeral hosted runners and distinguish diagnostic screenshots from golden authority. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |

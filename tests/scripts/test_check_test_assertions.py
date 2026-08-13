@@ -110,6 +110,29 @@ def test_plot_definition_support_exemption_is_exact(tmp_path: Path) -> None:
     assert violations == [real_test]
 
 
+def test_pyqt_render_probe_exemption_is_exact(tmp_path: Path) -> None:
+    module = _load_module()
+    patterns = module.load_allowlist(
+        Path(__file__).resolve().parents[2] / "scripts" / "test_assertion_allowlist.txt"
+    )
+    render_probe = _write(
+        tmp_path / "tests" / "rate_of_closure" / "pyqt_variation_render_probe.py",
+        "def main():\n    render_diagnostic_artifacts()\n",
+    )
+    adjacent_test = _write(
+        tmp_path / "tests" / "rate_of_closure" / "test_pyqt_render_smoke.py",
+        "def test_render():\n    render_widget()\n",
+    )
+
+    violations = module.check_test_files(
+        [render_probe, adjacent_test],
+        allowlist_patterns=patterns,
+        root=tmp_path,
+    )
+
+    assert violations == [adjacent_test]
+
+
 def test_non_test_python_file_is_not_checked(tmp_path: Path) -> None:
     module = _load_module()
     source_file = _write(tmp_path / "src" / "feature.py", "def run():\n    pass\n")
