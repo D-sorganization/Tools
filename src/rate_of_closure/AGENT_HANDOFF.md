@@ -1,5 +1,35 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4353 current-parent propagation candidate
+
+This local no-publish merge keeps `feat/4271-regional-event-inspection` over
+`feat/4271-regional-result-readback`. Exact current child
+`7fc00f43561c31923b74563bc2bf6caf89bbc9eb` is the first parent and exact
+published #4352 head `12fc80798d2a15b44c0215688ffb031dd99cbdd1`
+is the second parent. The child's matched bounded PyQt6/React inspection of
+validated ground-event and regional-transition ledgers remains intact
+alongside the complete qualified result projection, the explicit Boolean local
+required by protected delta-MyPy, embedded-plan execution/provenance and
+request-I/O boundaries, complete regional physics ancestry, the capability-
+only extended finite-float serializer, and the default ground safe-number
+boundary.
+
+Local qualification is complete: 1,057 Python tests, 113 React files with 698
+tests, complete Cargo workspace tests, focused 76-Python/38-React coverage,
+Ruff check/format on the three child-delta Python files, protected MyPy on two
+child production modules plus the coherent 35-module ground profile, Bandit on
+the two child production modules, TypeScript, zero-warning ESLint, the
+203-module Vite build, Rust formatting/clippy, both LOC budgets, the manifest
+validator and eight manifest tests, and every repository governance gate are
+green. Child feature bytes and the inherited Boolean-local repair are exact;
+conflict-marker and diff checks are clean. Non-failing warnings are limited to
+the known Hypothesis cache ignore, empty polynomial legend, Node local-storage
+flag, and 526.79 kB Vite chunk. The candidate is not published or released.
+Trajectory-sample inspection, lossless export, UI executor invocation,
+playback, calibration workflows, compiled regional physics, downstream
+parity, protected exact-head evidence, review, approval, dependency
+integration, release, and issue completion remain open.
+
 ## 2026-08-11 PR #4352 current-parent propagation candidate
 
 This local no-publish merge keeps `feat/4271-regional-result-readback` over
@@ -1638,6 +1668,29 @@ evidence, release, and #4267/#4271 completion remain open.
 Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
 111 React files / 691 tests, strict MyPy, Ruff/format, TypeScript type-check,
 zero-warning ESLint, the 202-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains.
+
+## 2026-08-11 Regional execution ledger inspection
+
+Local unpublished `feat/4271-regional-event-inspection` is an exact child of PR
+#4352 head `10fdac4860035fd5c845a621752e93688e2e674e`. Matched PyQt6 and React
+surfaces now inspect validated ground-event and regional-transition rows with
+explicit SI units, frames, before/after velocity and spin vectors, and bound
+from/to region and surface identities. Both retain the full accepted envelope,
+cap rendered ledgers at 256 rows, and disclose truncation. Null-result ledgers
+stay empty and partial endpoint warnings stay visible.
+
+This remains import/readback only. Trajectory-sample inspection, lossless
+export, executor invocation, playback, calibration workflows, compiled parity,
+downstream parity, protected evidence, release, and #4267/#4271 completion
+remain open. Complete local gates and independent review before any GitHub
+write.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 692 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 203-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
 remains.

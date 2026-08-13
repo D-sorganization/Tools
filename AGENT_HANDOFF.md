@@ -1,5 +1,36 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 PR #4353 current-parent propagation candidate
+
+This no-publish candidate keeps PR `#4353` on
+`feat/4271-regional-event-inspection` with base
+`feat/4271-regional-result-readback`. Exact current child
+`7fc00f43561c31923b74563bc2bf6caf89bbc9eb` is the first parent and exact
+published PR #4352 head `12fc80798d2a15b44c0215688ffb031dd99cbdd1`
+is the second parent of a normal no-ff merge. The child's matched bounded
+PyQt6/React inspection of validated ground-event and regional-transition
+ledgers remains intact while it inherits the complete qualified result
+projection, the explicit Boolean local required by protected delta-MyPy,
+embedded-plan execution/provenance and request-I/O boundaries, complete
+regional physics ancestry, capability-only extended finite-float serializer,
+and default ground safe-number boundary.
+
+Local qualification is complete: 1,057 Python tests, 113 React files with 698
+tests, complete Cargo workspace tests, focused 76-Python/38-React coverage,
+Ruff check/format on the three child-delta Python files, protected MyPy on two
+child production modules plus the coherent 35-module ground profile, Bandit on
+the two child production modules, TypeScript, zero-warning ESLint, the
+203-module Vite build, Rust formatting/clippy, both LOC budgets, the manifest
+validator and eight manifest tests, and every repository governance gate are
+green. Child feature bytes and the inherited Boolean-local repair are exact;
+conflict-marker and diff checks are clean. Non-failing warnings are limited to
+the known Hypothesis cache ignore, empty polynomial legend, Node local-storage
+flag, and 526.79 kB Vite chunk. No branch has been rebased, retargeted,
+rewritten, force-pushed, or published. Trajectory-sample inspection, lossless
+export, UI executor invocation, playback, calibration workflows, compiled
+regional physics, downstream parity, protected exact-head evidence, review,
+approval, dependency integration, release, and issue completion remain open.
+
 ## 2026-08-11 PR #4352 current-parent propagation candidate
 
 This no-publish candidate keeps PR `#4352` on
@@ -1183,3 +1214,27 @@ zero-warning ESLint, the 202-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The build retains the inherited
 500 kB chunk advisory. Independently review before any GitHub write.
+
+## 2026-08-11 regional execution ledger inspection continuation
+
+Branch `feat/4271-regional-event-inspection` is a local unpublished child of
+exact draft PR #4352 head
+`10fdac4860035fd5c845a621752e93688e2e674e`. It adds matched PyQt6 and React
+inspection tables for the frozen result's validated ground-event and regional-
+transition ledgers. Event rows show explicit SI time, position, before/after
+linear velocity and angular velocity, frame, sequence, and type. Transition
+rows show their bound event, SI time/position, and from/to region and surface.
+
+Both clients retain the complete accepted evidence while rendering at most 256
+rows per ledger with honest count/truncation text. Null-result evidence exposes
+empty tables. Partial endpoint warnings remain visible. No physics, trajectory-
+sample table, export, executor invocation, playback, calibration workflow,
+compiled parity, or downstream integration is added. Validate and independently
+review before any GitHub write.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 692 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 203-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The build retains the inherited
+500 kB chunk advisory.

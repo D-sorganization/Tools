@@ -31,6 +31,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -53,6 +54,10 @@
 | **Current Version**     | 1.14.38                                    |
 | **Spec Version**        | 1.14.38                                    |
 >>>>>>> origin/feat/4271-regional-result-readback
+=======
+| **Current Version**     | 1.14.39                                    |
+| **Spec Version**        | 1.14.39                                    |
+>>>>>>> origin/feat/4271-regional-event-inspection
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -76,10 +81,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
 =======
+=======
+### 2026-08-11 Regional Execution Ledger Inspection
+
+- Matched PyQt6 and React evidence surfaces inspect the strictly validated
+  discontinuity-event and plan-bound material-transition ledgers already held
+  in the frozen Python executor envelope. Event rows retain sequence, type,
+  time, frame, position, before/after linear velocity, and before/after angular
+  velocity; transition rows retain the matching event sequence, time,
+  position, and from/to region and surface identities.
+- Table headers declare SI units. Both clients retain the complete accepted
+  evidence but render no more than the first 256 rows of either ledger and
+  state the exact displayed and validated totals when the presentation bound
+  applies. Null-result evidence exposes empty ledgers rather than fabricated
+  events.
+- This is inspection-only. It does not execute physics, derive trajectory
+  samples, change partial-result censorship, or add export/playback.
+
+>>>>>>> origin/feat/4271-regional-event-inspection
 ### 2026-08-11 Complete Regional Execution Result Readback
 
 - The matched PyQt6 and React evidence readers project every already-qualified
@@ -3037,6 +3061,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3044,6 +3069,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 =======
+=======
+| 2026-08-11 | 1.14.39 | merge(rate-of-closure, #4271 #4353): normally merge exact current regional-event inspection child `7fc00f43561c31923b74563bc2bf6caf89bbc9eb` first with exact published PR #4352 parent `12fc80798d2a15b44c0215688ffb031dd99cbdd1` second without changing the `feat/4271-regional-result-readback` base; preserve matched bounded PyQt6/React inspection of validated ground-event and regional-transition ledgers, the complete qualified result projection, the inherited explicit Boolean local required by protected delta-MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep trajectory-sample inspection, lossless export, UI executor invocation, playback, calibration workflows, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
+| 2026-08-11 | 1.14.37 | feat(ground-roll, #4267 #4271): add matched bounded PyQt6/React inspection of the already-validated ground-event and regional-transition ledgers with explicit SI units, frames, before/after linear and angular states, and from/to region/surface identities; retain the full accepted envelope while rendering at most 256 rows per ledger with exact truncation disclosure; keep null-result ledgers empty and partial endpoints censored; retain trajectory-sample inspection, lossless export, executor invocation, playback, calibration workflows, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
+>>>>>>> origin/feat/4271-regional-event-inspection
 | 2026-08-11 | 1.14.38 | merge(rate-of-closure, #4271 #4352): normally merge exact current regional-result readback child `10fdac4860035fd5c845a621752e93688e2e674e` first with exact published PR #4351 parent `4024c8a1ad2d3871c6b06ef6369250a873789c39` second without changing the `feat/4271-regional-execution-ui` base; preserve the complete matched PyQt6/React qualified result projection, parent bounded evidence import/readback, the explicit Boolean local required by protected delta-MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep UI executor invocation, trajectory/event tables, playback, calibration workflows, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
 | 2026-08-11 | 1.14.36 | feat(ground-roll, #4267 #4271): complete the matched PyQt6/React import-only result projection with carry, bounce-air, skid, roll, surface-path, total, final position/offline, bounce count, ground time, terminal completion, model and surface-provider identity/version, calibration evidence, ordered observed phases, typed warnings, executor provenance, and qualification limits; preserve unavailable ground-only values for null-result cancellation/failure and keep partial censored endpoints explicit; retain UI executor invocation, trajectory/event tables, playback, calibration workflows, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
 >>>>>>> origin/feat/4271-regional-result-readback

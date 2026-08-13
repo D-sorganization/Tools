@@ -3,8 +3,9 @@ import { type ChangeEvent, type ReactNode, useRef, useState } from "react";
 import type { GroundRegionalMaterialPlanRequest } from "../model/groundRegionalPlan";
 import {
   readRegionalExecutionEvidenceFile,
-  type RegionalExecutionReadback,
+  type RegionalExecutionEvidence,
 } from "../model/regionalExecutionReadback";
+import { RegionalExecutionLedgerTables } from "./RegionalExecutionLedgerTables";
 
 const metric = (value: number | null): string =>
   value === null ? "Unavailable" : `${value.toFixed(3)} m`;
@@ -19,7 +20,8 @@ export function RegionalExecutionEvidencePanel(props: {
   readonly currentPlan: () => GroundRegionalMaterialPlanRequest;
 }) {
   const input = useRef<HTMLInputElement>(null);
-  const [readback, setReadback] = useState<RegionalExecutionReadback | null>(null);
+  const [evidence, setEvidence] = useState<RegionalExecutionEvidence | null>(null);
+  const readback = evidence?.readback ?? null;
   const [status, setStatus] = useState("No execution evidence loaded.");
   const [error, setError] = useState<string | null>(null);
   const importEvidence = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +30,7 @@ export function RegionalExecutionEvidencePanel(props: {
     if (file === undefined) return;
     try {
       const loaded = await readRegionalExecutionEvidenceFile(file, props.currentPlan());
-      setReadback(loaded.readback);
+      setEvidence(loaded);
       setError(null);
       setStatus(`Loaded ${file.name}; no browser physics executed.`);
     } catch (caught) {
@@ -76,6 +78,7 @@ export function RegionalExecutionEvidencePanel(props: {
         <ReadbackItem label="Model">
           {readback.modelId} {readback.modelVersion}
         </ReadbackItem>
+        <ReadbackItem label="Units">{readback.unitSystem}</ReadbackItem>
         <ReadbackItem label="Carry">{metric(readback.carryDistanceM)}</ReadbackItem>
         <ReadbackItem label="Bounce air">{metric(readback.bounceAirDistanceM)}</ReadbackItem>
         <ReadbackItem label="Skid">{metric(readback.skidDistanceM)}</ReadbackItem>
@@ -113,6 +116,8 @@ export function RegionalExecutionEvidencePanel(props: {
           </ul></dd>
         </div>}
       </dl>}
+      {readback !== null && <RegionalExecutionLedgerTables
+        events={readback.events} transitions={readback.transitions} />}
     </section>
   );
 }

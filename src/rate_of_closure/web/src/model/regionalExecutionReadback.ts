@@ -7,6 +7,7 @@ import {
   type GroundRegionalExecutionResult,
 } from "./groundRegionalExecution";
 import type { GroundRegionalMaterialPlanRequest } from "./groundRegionalPlan";
+import type { GroundVec3 } from "./flightGroundTypes";
 
 export interface RegionalExecutionReadback {
   readonly status: string;
@@ -35,7 +36,10 @@ export interface RegionalExecutionReadback {
   readonly calibrationSource: string | null;
   readonly calibrationConfidence: number | null;
   readonly observedPhases: readonly string[];
+  readonly events: readonly RegionalExecutionEventReadback[];
+  readonly transitions: readonly RegionalExecutionTransitionReadback[];
   readonly warnings: readonly RegionalExecutionWarningReadback[];
+  readonly unitSystem: "SI";
   readonly executorSourceRevision: string;
   readonly executorInputSha256: string;
   readonly limitations: readonly string[];
@@ -45,6 +49,28 @@ export interface RegionalExecutionWarningReadback {
   readonly code: string;
   readonly severity: string;
   readonly message: string;
+}
+
+export interface RegionalExecutionEventReadback {
+  readonly sequence: number;
+  readonly eventType: string;
+  readonly timeS: number;
+  readonly frame: string;
+  readonly positionM: GroundVec3;
+  readonly velocityBeforeMps: GroundVec3;
+  readonly velocityAfterMps: GroundVec3;
+  readonly angularVelocityBeforeRadS: GroundVec3;
+  readonly angularVelocityAfterRadS: GroundVec3;
+}
+
+export interface RegionalExecutionTransitionReadback {
+  readonly eventSequence: number;
+  readonly timeS: number;
+  readonly positionM: GroundVec3;
+  readonly fromRegionId: string | null;
+  readonly toRegionId: string | null;
+  readonly fromSurfaceId: string;
+  readonly toSurfaceId: string;
 }
 
 export interface RegionalExecutionEvidence {
@@ -76,6 +102,26 @@ export const regionalExecutionReadback = (
       severity: warning.severity,
       message: warning.message,
     })));
+  const events = Object.freeze((ground?.events ?? []).map((event) => Object.freeze({
+    sequence: event.sequence,
+    eventType: event.event_type,
+    timeS: event.time_s,
+    frame: event.frame,
+    positionM: event.position_m,
+    velocityBeforeMps: event.velocity_before_m_s,
+    velocityAfterMps: event.velocity_after_m_s,
+    angularVelocityBeforeRadS: event.angular_velocity_before_rad_s,
+    angularVelocityAfterRadS: event.angular_velocity_after_rad_s,
+  })));
+  const transitions = Object.freeze(result.transitions.map((item) => Object.freeze({
+    eventSequence: item.event_sequence,
+    timeS: item.time_s,
+    positionM: item.position_m,
+    fromRegionId: item.from_region_id,
+    toRegionId: item.to_region_id,
+    fromSurfaceId: item.from_surface_id,
+    toSurfaceId: item.to_surface_id,
+  })));
   return Object.freeze({
     status: result.status,
     failureReason: result.failure_reason,
@@ -103,7 +149,10 @@ export const regionalExecutionReadback = (
     calibrationSource: ground?.calibration.source ?? null,
     calibrationConfidence: ground?.calibration.confidence ?? null,
     observedPhases: phases,
+    events,
+    transitions,
     warnings,
+    unitSystem: result.unit_system,
     executorSourceRevision: result.executor_provenance.source_revision,
     executorInputSha256: result.executor_provenance.input_sha256,
     limitations: result.limitations,

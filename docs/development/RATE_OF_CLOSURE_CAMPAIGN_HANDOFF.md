@@ -1,5 +1,36 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4353 current-parent propagation candidate
+
+- PR `#4353` retains branch `feat/4271-regional-event-inspection` and base
+  `feat/4271-regional-result-readback`. Exact current child
+  `7fc00f43561c31923b74563bc2bf6caf89bbc9eb` is first and exact published PR
+  #4352 head `12fc80798d2a15b44c0215688ffb031dd99cbdd1` is second in a normal
+  no-ff merge.
+- The child retains matched bounded PyQt6/React inspection of validated ground-
+  event and regional-transition ledgers while inheriting the complete qualified
+  result projection, the explicit Boolean local required by protected delta-
+  MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete
+  regional physics ancestry, capability-only extended finite-float serializer,
+  and default ground safe-number boundary.
+- Local qualification is complete: 1,057 Python tests, 113 React files with
+  698 tests, complete Cargo workspace tests, focused 76-Python/38-React
+  coverage, Ruff check/format on the three child-delta Python files, protected
+  MyPy on two child production modules plus the coherent 35-module ground
+  profile, Bandit on the two child production modules, TypeScript,
+  zero-warning ESLint, the 203-module Vite build, Rust formatting/clippy, both
+  LOC budgets, the manifest validator and eight manifest tests, and every
+  repository governance gate are green. Child feature bytes and the inherited
+  Boolean-local repair are exact; conflict-marker and diff checks are clean.
+  Non-failing warnings are limited to the known Hypothesis cache ignore, empty
+  polynomial legend, Node local-storage flag, and 526.79 kB Vite chunk. The
+  candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- Trajectory-sample inspection, lossless export, UI executor invocation,
+  playback, calibration workflows, compiled regional physics, downstream
+  parity, protected exact-head evidence, review, approval, dependency
+  integration, release, and issue completion remain open.
+
 ## 2026-08-11 PR #4352 current-parent propagation candidate
 
 - PR `#4352` retains branch `feat/4271-regional-result-readback` and base
@@ -1957,6 +1988,30 @@ and issue completion remain open.
 Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
 111 React files / 691 tests, strict MyPy, Ruff/format, TypeScript type-check,
 zero-warning ESLint, the 202-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains. Independent review is required before publication.
+
+## 2026-08-11 Regional execution ledger inspection continuation
+
+Local branch `feat/4271-regional-event-inspection` starts exactly at draft PR
+#4352 head `10fdac4860035fd5c845a621752e93688e2e674e`. The bounded matched-
+client slice presents the already-validated ground-event and plan-bound
+regional-transition ledgers without running or approximating physics. Events
+retain sequence/type, frame, SI time/position, and before/after linear and
+angular velocities. Transitions retain the matching event, SI time/position,
+and from/to region and surface identities.
+
+The complete accepted envelope remains resident, while each table renders a
+maximum of 256 rows and discloses the exact total if truncated. Null results
+show empty ledgers and partial endpoints remain censored. Trajectory-sample
+inspection, lossless export, executor construction/invocation, playback,
+measured calibration, compiled parity, Upstream consumers, protected evidence,
+release, and #4267/#4271 completion remain open.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 692 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 203-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
 remains. Independent review is required before publication.
