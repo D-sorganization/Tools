@@ -308,7 +308,8 @@ describe("VariationPanel v2 plan persistence", () => {
       planFromJson(planToJson(importedPlan())),
     );
     await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-    expect(screen.getByRole("status")).toHaveTextContent(/global perturbations/i);
+    expect(screen.getByRole("alert", { name: "Variation status" }))
+      .toHaveTextContent(/global perturbations/i);
   });
 
   it("supports loading, duplicating, and deleting named plans", async () => {

@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -9,6 +9,7 @@ import type {
   VariationExecutionService,
 } from "../model/variationExecutionService";
 import { runVariation, type VariationDatasetTs } from "../model/variation";
+import { oneAtATimeSensitivity } from "../model/variationAnalysis";
 import { VariationPanel } from "./VariationPanel";
 
 interface PendingExecution {
@@ -58,8 +59,15 @@ const configureTwoJointRuns = async (user: ReturnType<typeof userEvent.setup>) =
   );
 };
 
+const pointerClick = (button: HTMLElement) => {
+  fireEvent.pointerDown(button, { pointerType: "mouse" });
+  fireEvent.click(button, { detail: 1 });
+};
+
 beforeEach(() => {
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
+  HTMLElement.prototype.scrollIntoView = vi.fn();
+  window.matchMedia = vi.fn().mockReturnValue({ matches: false });
 });
 
 afterEach(() => {
@@ -68,6 +76,126 @@ afterEach(() => {
 });
 
 describe("VariationPanel asynchronous Monte Carlo execution", () => {
+  it("reveals the exact joint visual once after an accepted pointer run", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    const run = screen.getByRole("button", { name: "Run Variation Study" });
+    pointerClick(run);
+    await act(async () => service.calls[0].resolve(completedResult(service.calls[0])));
+
+    await waitFor(() => expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledOnce());
+    const scroll = vi.mocked(HTMLElement.prototype.scrollIntoView);
+    expect(scroll.mock.instances[0]).toHaveAccessibleName(
+      "Scatter matrix with marginal histograms",
+    );
+    const returnButton = screen.getByRole("button", { name: "Return to variation controls" });
+    scroll.mockClear();
+    returnButton.focus();
+    fireEvent.click(returnButton, { detail: 1 });
+    expect(scroll).toHaveBeenCalledOnce();
+    expect(scroll.mock.instances[0]).toHaveAccessibleName("Variation run controls");
+    expect(document.activeElement).toBe(returnButton);
+
+    scroll.mockClear();
+    fireEvent.click(returnButton, { detail: 0 });
+    expect(scroll).toHaveBeenCalledOnce();
+    expect(document.activeElement).toBe(run);
+
+    const acceptedVisual = screen.getByRole("group", {
+      name: "Scatter matrix with marginal histograms",
+    });
+    scroll.mockClear();
+    pointerClick(run);
+    expect(screen.getByLabelText(/prior accepted result retained/i))
+      .toHaveAttribute("data-phase", "loading");
+    await user.click(screen.getByRole("button", { name: "Cancel Variation Study" }));
+    expect(screen.getByLabelText(/prior accepted result retained/i))
+      .toHaveAttribute("data-phase", "result");
+    expect(screen.getByRole("group", {
+      name: "Scatter matrix with marginal histograms",
+    })).toBe(acceptedVisual);
+    expect(run).toBeEnabled();
+    expect(scroll).not.toHaveBeenCalled();
+  });
+
+  it("skips keyboard success and targets individual-only sensitivity for pointer success", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Analysis execution" }), "individual",
+    );
+    const run = screen.getByRole("button", { name: "Run Variation Study" });
+    run.focus();
+    await user.keyboard("{Enter}");
+    await act(async () => service.calls[0].resolve({
+      dataset: null,
+      sensitivity: oneAtATimeSensitivity(service.calls[0].request.plan),
+      ensemble: null,
+    }));
+
+    expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(run);
+
+    run.blur();
+    pointerClick(run);
+    await act(async () => service.calls[1].resolve({
+      dataset: null,
+      sensitivity: oneAtATimeSensitivity(service.calls[1].request.plan),
+      ensemble: null,
+    }));
+    await waitFor(() => expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledOnce());
+    expect(vi.mocked(HTMLElement.prototype.scrollIntoView).mock.instances[0])
+      .toHaveAccessibleName("One-at-a-time sensitivity matrix");
+  });
+
+  it("never moves on loading, failure, cancellation, or a stale completion", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    const run = screen.getByRole("button", { name: "Run Variation Study" });
+    pointerClick(run);
+    const stale = service.calls[0];
+    expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Cancel Variation Study" }));
+    expect(run).toBeEnabled();
+    await act(async () => stale.resolve(completedResult(stale)));
+    expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+
+    pointerClick(run);
+    await act(async () => service.calls[1].reject(new Error("bounded failure")));
+    expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("conservatively skips a pointer click when the Run control is focus-visible", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    const run = screen.getByRole("button", { name: "Run Variation Study" });
+    vi.spyOn(run, "matches").mockImplementation((selector) => selector === ":focus-visible");
+    pointerClick(run);
+    await act(async () => service.calls[0].resolve(completedResult(service.calls[0])));
+    expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("clears stale pointer eligibility before keyboard activation", async () => {
+    const user = userEvent.setup();
+    const service = new DeferredExecutionService();
+    render(<VariationPanel executionService={service} />);
+    await configureTwoJointRuns(user);
+    const run = screen.getByRole("button", { name: "Run Variation Study" });
+    fireEvent.pointerDown(run, { pointerType: "mouse" });
+    fireEvent.pointerCancel(run, { pointerType: "mouse" });
+    run.focus();
+    await user.keyboard("{Enter}");
+    await act(async () => service.calls[0].resolve(completedResult(service.calls[0])));
+    expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+  });
+
   it("reports real completed work while the injected authority is busy", async () => {
     const user = userEvent.setup();
     const service = new DeferredExecutionService();

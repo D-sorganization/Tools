@@ -1,3 +1,5 @@
+import { useRef, type Ref } from "react";
+
 import { datasetToCsv, datasetToJson } from "../model/variationAnalysis";
 import { planToJson, type VariationDatasetTs, type VariationPlanTs } from "../model/variation";
 import { BUTTON_CLASS, PANEL_CLASS, downloadText, readFileText } from "./variationUi";
@@ -18,10 +20,12 @@ interface VariationActionsProps {
   busy: boolean;
   progress: VariationExecutionProgress | null;
   visualState: VariationVisualState;
-  onRun: () => void;
+  onRun: (allowAutomaticReveal: boolean) => void;
   onCancel: () => void;
   onImportText: (text: string) => void;
   onImportError: (message: string) => void;
+  runButtonRef?: Ref<HTMLButtonElement>;
+  actionsRef?: Ref<HTMLSpanElement>;
 }
 
 export function VariationActions({
@@ -36,7 +40,10 @@ export function VariationActions({
   onCancel,
   onImportText,
   onImportError,
+  runButtonRef,
+  actionsRef,
 }: VariationActionsProps): JSX.Element {
+  const pointerRevealEligible = useRef(false);
   let validPlanJson: string | null = null;
   try {
     validPlanJson = planToJson(plan);
@@ -59,9 +66,20 @@ export function VariationActions({
         >
           Localized Torque CSV
         </button>
-        <button
+        <span ref={actionsRef} role="group" className="flex gap-2"
+          aria-label="Variation run controls"><button
+          ref={runButtonRef}
           type="button"
-          onClick={onRun}
+          onPointerDown={(event) => {
+            pointerRevealEligible.current = !event.currentTarget.matches(":focus-visible");
+          }}
+          onPointerCancel={() => { pointerRevealEligible.current = false; }}
+          onKeyDown={() => { pointerRevealEligible.current = false; }}
+          onClick={() => {
+            const allowAutomaticReveal = pointerRevealEligible.current;
+            pointerRevealEligible.current = false;
+            onRun(allowAutomaticReveal);
+          }}
           disabled={busy}
           title="Run only the analyses selected in Analysis Execution."
           className={`${BUTTON_CLASS} border-sky-500/60 text-sky-300`}
@@ -76,7 +94,7 @@ export function VariationActions({
           className={BUTTON_CLASS}
         >
           Cancel Variation Study
-        </button>
+        </button></span>
         <button
           type="button"
           disabled={!ensemble}
@@ -159,19 +177,18 @@ export function VariationActions({
           />
         </label>
       </div>
-      {progress && (
-        <div className="mt-3">
+      <div className={`mt-3 h-10 overflow-hidden ${progress ? "" : "invisible"}`}
+        aria-hidden={!progress}>
           <progress
             aria-label="Variation execution progress"
             className="h-2 w-full accent-sky-400"
-            max={progress.totalRuns}
-            value={progress.completedRuns}
+            max={progress?.totalRuns ?? 1}
+            value={progress?.completedRuns ?? 0}
           />
           <p className="mt-1 text-xs tabular-nums text-slate-500">
-            {progress.completedRuns}/{progress.totalRuns} evaluated runs complete
+            {progress?.completedRuns ?? 0}/{progress?.totalRuns ?? 1} evaluated runs complete
           </p>
-        </div>
-      )}
+      </div>
       <p
         role={visualState.announcementRole}
         aria-label="Variation status"

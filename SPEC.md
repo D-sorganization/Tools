@@ -26,11 +26,26 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.86                                    |
-| **Spec Version**        | 1.16.86                                    |
+| **Current Version**     | 1.16.87                                    |
+| **Spec Version**        | 1.16.87                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Variation accepted-result prominence (#4433)
+
+Version 1.16.87 makes an accepted React Variation result reveal its actual
+joint matrix or individual sensitivity landmark once after an eligible pointer
+Run, but only when ancestor-clipped geometry is below the manifest-owned
+desktop or narrow threshold. Keyboard, focus-visible, stale, loading, failure,
+and cancel paths never trigger the reveal; reduced motion uses instant
+navigation, and automatic navigation never focuses a result. A persistent
+Return action restores the compact Run/Cancel group. Reserved state/progress
+slots prevent lifecycle changes from shifting that operational viewport.
+PyQt intentionally performs no motion because its production right pane is
+already at least 240x240; both DPI probes require identical visual geometry,
+splitter sizes, selected result tab, and editor focus before/after success.
+This presentation-only policy does not recompute or change accepted authority.
 
 ### 2026-08-13 Variation lifecycle probe assertion-policy closure (#4441)
 

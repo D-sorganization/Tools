@@ -31,10 +31,12 @@ interface VariationExecutionState {
   busy: boolean;
   progress: VariationExecutionProgress | null;
   visualState: VariationVisualState;
-  run: () => Promise<void>;
+  run: () => Promise<VariationRunOutcome>;
   cancel: () => void;
   invalidateResults: () => void;
 }
+
+export type VariationRunOutcome = "accepted" | "failed" | "stale";
 
 const completionStatus = (
   result: VariationExecutionResult,
@@ -145,15 +147,16 @@ export function useVariationExecution(
           },
         },
       ), request);
-      if (generation.current !== currentGeneration || controller.signal.aborted) return;
+      if (generation.current !== currentGeneration || controller.signal.aborted) return "stale";
       setDataset(result.dataset);
       setSensitivity(result.sensitivity);
       setEnsemble(result.ensemble);
       acceptedIdentity.current = configurationIdentity;
       setVisualState(variationVisualState("succeed"));
       setStatus(completionStatus(result, plan));
+      return "accepted";
     } catch (error) {
-      if (generation.current !== currentGeneration || controller.signal.aborted) return;
+      if (generation.current !== currentGeneration || controller.signal.aborted) return "stale";
       const message = String((error as Error).message ?? error)
         .slice(0, MAX_WORKER_ERROR_LENGTH);
       setStatus(`Cannot run: ${message}`);
@@ -161,6 +164,7 @@ export function useVariationExecution(
       setVisualState(variationVisualState(
         retainsAccepted ? "fail-retained" : "fail-empty",
       ));
+      return "failed";
     } finally {
       if (generation.current === currentGeneration) {
         activeController.current = null;

@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation accepted-result prominence (#4433)
+
+Version 1.16.87 reveals the exact accepted React joint/individual visual once
+after an eligible pointer Run only when clipped geometry is below strict
+manifest thresholds. Keyboard/focus-visible, loading, failure, cancellation,
+and stale completion do not move; reduced motion is honored, no result receives
+focus, and a persistent Return control exposes the compact Run/Cancel group.
+Reserved lifecycle slots prevent scroll anchoring shifts. PyQt remains an
+intentional no-op: two-DPI evidence proves its right-pane visual is already
+240x240 and success changes neither geometry, splitter, tab, nor focus.
+Scientific results and retained-result authority are unchanged.
+
 ## 2026-08-13 Variation lifecycle probe assertion-policy closure (#4441)
 
 Version 1.16.86 classifies only the PyQt Variation lifecycle subprocess

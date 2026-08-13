@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Variation accepted-result prominence
+
+- React reveals only an accepted, below-threshold joint matrix or individual
+  sensitivity landmark after an eligible pointer Run; keyboard/focus-visible,
+  loading, failure, cancel, and stale paths never initiate navigation.
+- Thresholds come from the strict visualization manifest. Reduced motion uses
+  instant navigation, result/status focus is never taken, and a persistent
+  Return action restores the compact Run/Cancel group without lifecycle shift.
+- PyQt performs no synthetic movement: both DPI probes prove the existing
+  right pane stays >=240x240 with exact before/after geometry, splitter, result
+  tab, and editor focus. This is presentation-only; SPEC is 1.16.87.
+
 ## 2026-08-13 #4441 Variation lifecycle probe assertion-policy closure
 
 - The PyQt Variation lifecycle probe is now an exact-path assertion-policy

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
@@ -32,6 +32,7 @@ import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
 import type { VariationExecutionService } from "../model/variationExecutionService";
 import { useVariationExecution } from "./useVariationExecution";
+import { scheduleMeaningfulVisualReveal } from "../model/variationVisualProminence";
 
 let generatedPlanId = 0;
 const createPlanId = (): string => {
@@ -81,6 +82,9 @@ export function VariationPanel({
   const [library, setLibrary] = useState<NamedVariationPlan[]>(initialLibrary.plans);
   const [selectedId, setSelectedId] = useState("");
   const [planName, setPlanName] = useState("");
+  const actionsRef = useRef<HTMLSpanElement>(null);
+  const prominenceRef = useRef<HTMLElement>(null);
+  const runButtonRef = useRef<HTMLButtonElement>(null);
   const execution = useVariationExecution(
     plan,
     analysisExecution,
@@ -215,10 +219,16 @@ export function VariationPanel({
           busy={busy}
           progress={progress}
           visualState={visualState}
-          onRun={() => void run()}
+          onRun={(allowAutomaticReveal) => void run().then((outcome) => {
+            if (outcome === "accepted" && allowAutomaticReveal) {
+              scheduleMeaningfulVisualReveal(() => prominenceRef.current);
+            }
+          })}
           onCancel={cancel}
           onImportText={importPlan}
           onImportError={(message) => setStatus(`Cannot read plan file: ${message}`)}
+          runButtonRef={runButtonRef}
+          actionsRef={actionsRef}
         />
         <VariationPlanLibraryPanel
           plans={library}
@@ -240,6 +250,15 @@ export function VariationPanel({
         ensemble={ensemble}
         visualState={visualState}
         visualAnnouncement={status}
+        prominenceRef={prominenceRef}
+        onReturnToControls={(focusRun) => {
+          actionsRef.current?.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto" : "smooth",
+            block: "center",
+          });
+          if (focusRun) runButtonRef.current?.focus({ preventScroll: true });
+        }}
       /></div>
       </div>
     </div>

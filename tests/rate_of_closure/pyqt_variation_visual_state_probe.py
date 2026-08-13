@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 
 from PyQt6.QtCore import QEventLoop, QPoint, QRect, QTimer
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication, QSplitter, QTabWidget
 
 from rate_of_closure.ui.pyqt6 import variation_worker
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow
@@ -100,6 +100,25 @@ def _wait(tab: VariationTab) -> None:
     QApplication.processEvents()
 
 
+def _prominence_snapshot(tab: VariationTab) -> dict[str, object]:
+    splitter = tab.findChild(QSplitter)
+    results = tab._visual_frame.content
+    if splitter is None or not isinstance(results, QTabWidget):
+        raise RuntimeError("Variation prominence geometry is unavailable")
+    visible = visible_intersection(tab._landing, tab)
+    return {
+        "splitter_sizes": splitter.sizes(),
+        "result_tab_index": results.currentIndex(),
+        "mode_control_has_focus": QApplication.focusWidget() is tab._mode_combo,
+        "meaningful_visual": [
+            visible.x(),
+            visible.y(),
+            visible.width(),
+            visible.height(),
+        ],
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
@@ -146,8 +165,12 @@ def main() -> int:
     variation_worker.run_variation = original_run
 
     tab.load_plan(_plan(4))
+    tab._mode_combo.setFocus()
+    QApplication.processEvents()
+    prominence_before = _prominence_snapshot(tab)
     tab._on_run()
     _wait(tab)
+    prominence_after = _prominence_snapshot(tab)
     evidence.append(_capture(window, tab, args.output, "result"))
     variation_worker.run_variation = blocking_run
     tab._on_run()
@@ -164,6 +187,11 @@ def main() -> int:
     document = {
         "artifact_policy": "diagnostic PNG; semantic manifest is test authority",
         "requested_scale": args.scale,
+        "success_prominence": {
+            "policy": "no motion: the production right pane already meets authority",
+            "before": prominence_before,
+            "after": prominence_after,
+        },
         "states": evidence,
     }
     (args.output / "manifest.json").write_text(

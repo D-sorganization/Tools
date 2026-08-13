@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Variation accepted-result prominence (#4433)
+
+- React schedules one post-commit reveal only for accepted pointer-eligible
+  runs and resolves the exact matrix/sensitivity leaf after result publication.
+- Ancestor clipping and manifest thresholds decide motion; keyboard,
+  focus-visible, loading/error/cancel/stale paths are no-ops. Fixed state and
+  progress slots preserve layout, while Return targets the compact Run/Cancel
+  group and only keyboard Return explicitly focuses Run.
+- PyQt remains motion-free because two-DPI production evidence proves the
+  meaningful right-pane visual already meets 240x240 without changing its
+  geometry, splitter, selected tab, or focus. Result identity and execution
+  authority are not modified. SPEC is 1.16.87.
+
 ## 2026-08-13 Variation lifecycle probe assertion-policy closure (#4441)
 
 - The changed-test assertion allowlist now names only

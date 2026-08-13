@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type Ref } from "react";
 
 import type { VariationDatasetTs } from "../model/variation";
 import {
@@ -23,6 +23,7 @@ interface Props {
   ensemble?: SwingVariationResultTs | null;
   selectedTrialIndex: number | null;
   onSelectedTrialChange: (trialIndex: number | null) => void;
+  primaryVisualRef?: Ref<HTMLDivElement>;
 }
 const SIZE = 150;
 const PAD = 14;
@@ -32,6 +33,7 @@ export function VariationDistributionMatrix({
   ensemble = null,
   selectedTrialIndex,
   onSelectedTrialChange,
+  primaryVisualRef,
 }: Props): JSX.Element {
   const variables = useMemo(() => buildScalarPlotVariables(dataset), [dataset]);
   const defaults = useMemo(() => {
@@ -89,7 +91,7 @@ export function VariationDistributionMatrix({
         )}>Matrix Plot Definition JSON</button>
       </div>
       <div className="overflow-auto">
-        <div className="grid min-w-max" style={{ gridTemplateColumns: `repeat(${selected.length}, ${SIZE}px)` }} role="group" aria-label="Scatter matrix with marginal histograms">
+        <div ref={primaryVisualRef} className="grid min-w-max" style={{ gridTemplateColumns: `repeat(${selected.length}, ${SIZE}px)` }} role="group" aria-label="Scatter matrix with marginal histograms">
           {selected.flatMap((row, rowIndex) => selected.map((column, columnIndex) => (
             <MatrixCell key={`${row.key}:${column.key}`} dataset={dataset} xKey={column.key} yKey={row.key} diagonal={rowIndex === columnIndex} outcomes={outcomes} selectedTrialIndex={selectedTrialIndex} onSelectedTrialChange={onSelectedTrialChange} />
           )))}

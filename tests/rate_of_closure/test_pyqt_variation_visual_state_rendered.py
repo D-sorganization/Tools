@@ -45,6 +45,24 @@ def test_variation_lifecycle_states_are_visible_without_occlusion(
     )
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["requested_scale"] == scale
+    prominence = manifest["success_prominence"]
+    assert (
+        prominence["before"]["splitter_sizes"] == prominence["after"]["splitter_sizes"]
+    )
+    assert (
+        prominence["before"]["result_tab_index"]
+        == prominence["after"]["result_tab_index"]
+    )
+    assert prominence["before"]["mode_control_has_focus"]
+    assert prominence["after"]["mode_control_has_focus"]
+    assert (
+        prominence["before"]["meaningful_visual"]
+        == prominence["after"]["meaningful_visual"]
+    )
+    assert prominence["before"]["meaningful_visual"][2] >= 240
+    assert prominence["before"]["meaningful_visual"][3] >= 240
+    assert prominence["after"]["meaningful_visual"][2] >= 240
+    assert prominence["after"]["meaningful_visual"][3] >= 240
     assert [state["state"] for state in manifest["states"]] == [
         "empty",
         "loading-no-prior",

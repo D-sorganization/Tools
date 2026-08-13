@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type RefObject } from "react";
 
 import type { TargetRegionTs } from "../model/targets";
 import { DISTANCE_UNITS } from "../model/units";
@@ -26,6 +26,8 @@ interface VariationResultsProps {
   ensemble?: SwingVariationResultTs | null;
   visualState?: VariationVisualState;
   visualAnnouncement?: string;
+  prominenceRef?: RefObject<HTMLElement>;
+  onReturnToControls?: (focusRun: boolean) => void;
 }
 
 interface TrialSelection {
@@ -42,6 +44,8 @@ export function VariationResults({
   ensemble = null,
   visualState = { phase: "empty", visualOrigin: "empty-preview", announcementRole: "status" },
   visualAnnouncement = "Ready.",
+  prominenceRef,
+  onReturnToControls,
 }: VariationResultsProps): JSX.Element {
   const [selection, setSelection] = useState<TrialSelection | null>(null);
   const trialCount = dataset?.plan.nRuns ?? ensemble?.dataset.plan.nRuns ?? 0;
@@ -67,18 +71,26 @@ export function VariationResults({
   };
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
+  const returnControl = visualState.visualOrigin !== "empty-preview" && onReturnToControls
+    ? <button type="button" onClick={(event) => onReturnToControls(event.detail === 0)}
+      className="mb-3 rounded-lg border border-sky-500/50 bg-slate-950 px-3 py-2 text-xs text-sky-200">
+      Return to variation controls
+    </button>
+    : null;
 
   return <VisualStateFrame state={visualState} announcement={visualAnnouncement}>
     <section aria-label="Variation results" className="min-w-0 space-y-6">
       {ensemble && <VariationLocalizedSources ensemble={ensemble} />}
       {dataset && (
         <div className={PANEL_CLASS}>
+          {returnControl}
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Scatter Matrix and Marginal Distributions</h2>
           <VariationDistributionMatrix
             dataset={dataset}
             ensemble={ensemble}
             selectedTrialIndex={validSelectedTrialIndex}
             onSelectedTrialChange={selectTrial}
+            primaryVisualRef={prominenceRef as RefObject<HTMLDivElement>}
           />
         </div>
       )}
@@ -149,10 +161,13 @@ export function VariationResults({
 
       {sensitivity && (
         <div className={PANEL_CLASS}>
+          {!dataset && returnControl}
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             One-at-a-Time Sensitivity — Which Input Drives Which Output
           </h2>
-          <div className="overflow-x-auto">
+          <div ref={!dataset ? prominenceRef as RefObject<HTMLDivElement> : undefined}
+            role="group" aria-label="One-at-a-time sensitivity matrix"
+            className="min-h-[180px] overflow-x-auto xl:min-h-[240px]">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="text-slate-500">
@@ -203,6 +218,20 @@ export function VariationResults({
 
       {!dataset && !sensitivity && (
         <div className={`${PANEL_CLASS} flex h-full min-h-[720px] flex-col`}>
+          <svg viewBox="0 0 720 190" role="img"
+            aria-label="Variation analysis workflow preview"
+            className="h-60 w-full rounded-xl border border-slate-800 bg-slate-950/45 p-3">
+            <defs><marker id="variation-preview-arrow" markerWidth="8" markerHeight="8"
+              refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#38bdf8" /></marker></defs>
+            {["Noise model", "Typed trials", "Linked geometry", "Impact & landing"].map((label, index) => (
+              <g key={label} transform={`translate(${20 + index * 178} 55)`}>
+                <rect width="150" height="74" rx="12" fill="#0f172a" stroke="#334155" />
+                <text x="75" y="43" textAnchor="middle" fill="#cbd5e1" fontSize="14">{label}</text>
+                {index < 3 && <line x1="150" y1="37" x2="174" y2="37" stroke="#38bdf8"
+                  strokeWidth="2" markerEnd="url(#variation-preview-arrow)" />}
+              </g>
+            ))}
+          </svg>
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-400">
               Analysis Workspace
@@ -216,21 +245,6 @@ export function VariationResults({
               through swing geometry, impact, and landing.
             </p>
           </div>
-
-          <svg viewBox="0 0 720 190" role="img"
-            aria-label="Variation analysis workflow preview"
-            className="mt-5 h-60 w-full rounded-xl border border-slate-800 bg-slate-950/45 p-3">
-            <defs><marker id="variation-preview-arrow" markerWidth="8" markerHeight="8"
-              refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#38bdf8" /></marker></defs>
-            {["Noise model", "Typed trials", "Linked geometry", "Impact & landing"].map((label, index) => (
-              <g key={label} transform={`translate(${20 + index * 178} 55)`}>
-                <rect width="150" height="74" rx="12" fill="#0f172a" stroke="#334155" />
-                <text x="75" y="43" textAnchor="middle" fill="#cbd5e1" fontSize="14">{label}</text>
-                {index < 3 && <line x1="150" y1="37" x2="174" y2="37" stroke="#38bdf8"
-                  strokeWidth="2" markerEnd="url(#variation-preview-arrow)" />}
-              </g>
-            ))}
-          </svg>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {[
