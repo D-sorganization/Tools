@@ -82,9 +82,7 @@ def test_imperial_foot_pound_units_use_shared_constants() -> None:
     prefs = UnitPreferences()
 
     prefs.set_unit(UnitCategory.TORQUE, "lbf·ft")
-    assert to_si(1.0, UnitCategory.TORQUE, prefs) == pytest.approx(
-        FOOT_POUND_TO_NEWTON_METER
-    )
+    assert to_si(1.0, UnitCategory.TORQUE, prefs) == pytest.approx(FOOT_POUND_TO_NEWTON_METER)
     assert from_si(
         to_si(1.0, UnitCategory.TORQUE, prefs), UnitCategory.TORQUE, prefs
     ) == pytest.approx(1.0, rel=1e-12)

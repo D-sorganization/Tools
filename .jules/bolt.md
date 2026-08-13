@@ -92,3 +92,6 @@
 ## 2026-07-28 - Optimize CSV Generator
 **Learning:** Chaining array `.map()` and `.join()` methods within loops allocated intermediate arrays and strings when manipulating very large string data, resulting in extensive memory usage on limited-resource devices.
 **Action:** Used a single-pass `for` loop, appending string characters together, reducing intermediate allocations and GC overhead.
+## 2026-08-13 - Fix UpstreamDrift cross-repo CI sparse checkout
+**Learning:** `sparse-checkout` operations require all parent path elements to be properly prefixed if they are part of a monorepo. Downstream tests failed because the `sparse_checkout` script was missing the `src/` directory prefix.
+**Action:** Always prepend paths with their full relative path (`src/`) when checking out tools for the `UpstreamDrift` consumer repository.

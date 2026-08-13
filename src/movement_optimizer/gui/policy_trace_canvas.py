@@ -93,9 +93,7 @@ class PolicyTraceCanvas(QWidget):
 
     def _top_margin(self) -> float:
         """Top inset for the plotted series, reserving room for the legend."""
-        return float(
-            self._legend_band_height() if self._legend_visible else self._MARGIN_PX
-        )
+        return float(self._legend_band_height() if self._legend_visible else self._MARGIN_PX)
 
     @staticmethod
     def _legend_entries() -> tuple[tuple[str, QColor], ...]:
@@ -154,9 +152,7 @@ class PolicyTraceCanvas(QWidget):
         """Return reserved bottom height for the trace x-axis label."""
         metrics = QFontMetrics(self.font())
         return (
-            self._AXIS_LABEL_TOP_PADDING_PX
-            + metrics.height()
-            + self._AXIS_LABEL_BOTTOM_PADDING_PX
+            self._AXIS_LABEL_TOP_PADDING_PX + metrics.height() + self._AXIS_LABEL_BOTTOM_PADDING_PX
         )
 
     def _minimum_height_for_width(self, width: int) -> int:
@@ -255,18 +251,13 @@ class PolicyTraceCanvas(QWidget):
         y = baseline
         for label, color in self._legend_entries():
             item_width = self._legend_item_width(label)
-            if (
-                x > self._MARGIN_PX
-                and x + item_width > self._MARGIN_PX + available_width
-            ):
+            if x > self._MARGIN_PX and x + item_width > self._MARGIN_PX + available_width:
                 x = self._MARGIN_PX
                 y += self._LEGEND_ROW_HEIGHT_PX
             painter.setPen(QPen(color, 2))
             painter.drawLine(x, y - 4, x + 12, y - 4)
             painter.setPen(QPen(color, 1))
-            painter.drawText(
-                x + self._LEGEND_LINE_PX + self._LEGEND_TEXT_GAP_PX, y, label
-            )
+            painter.drawText(x + self._LEGEND_LINE_PX + self._LEGEND_TEXT_GAP_PX, y, label)
             x += item_width
 
     def _iteration_label_rect(self) -> QRect:
@@ -291,9 +282,7 @@ class PolicyTraceCanvas(QWidget):
         return {
             "score_m": _trace_series(samples, lambda sample: sample.score_m),
             "best_score_m": _trace_series(samples, lambda sample: sample.best_score_m),
-            "frequency_hz": _trace_series(
-                samples, lambda sample: sample.parameters.frequency_hz
-            ),
+            "frequency_hz": _trace_series(samples, lambda sample: sample.parameters.frequency_hz),
             "hip_rate_amplitude_rad_s": _trace_series(
                 samples, lambda sample: sample.parameters.hip_rate_amplitude_rad_s
             ),
@@ -303,9 +292,7 @@ class PolicyTraceCanvas(QWidget):
             "knee_rate_ratio": _trace_series(
                 samples, lambda sample: sample.parameters.knee_rate_ratio
             ),
-            "phase_rad": _trace_series(
-                samples, lambda sample: sample.parameters.phase_rad
-            ),
+            "phase_rad": _trace_series(samples, lambda sample: sample.parameters.phase_rad),
         }
 
 

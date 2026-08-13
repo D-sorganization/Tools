@@ -25,9 +25,9 @@ def _json_themes() -> dict[str, dict[str, str]]:
 def test_fallback_theme_names_match_json() -> None:
     """The fallback exposes exactly the themes defined in themes.json."""
     json_themes = _json_themes()
-    assert set(colors._HARDCODED_BUILTIN_THEMES) == set(
-        json_themes
-    ), "Hardcoded fallback theme set drifted from themes.json"
+    assert set(colors._HARDCODED_BUILTIN_THEMES) == set(json_themes), (
+        "Hardcoded fallback theme set drifted from themes.json"
+    )
 
 
 def test_fallback_base_colors_match_json() -> None:
@@ -52,9 +52,9 @@ def test_chart_colors_fallback_matches_json() -> None:
     json_chart = colors._load_chart_colors_from_json()
     if json_chart is None:
         pytest.skip("themes.json not available in this environment")
-    assert (
-        colors._HARDCODED_CHART_COLORS == json_chart
-    ), "Hardcoded chart-color fallback drifted from themes.json"
+    assert colors._HARDCODED_CHART_COLORS == json_chart, (
+        "Hardcoded chart-color fallback drifted from themes.json"
+    )
 
 
 def test_builtin_themes_is_json_derived_when_available() -> None:
