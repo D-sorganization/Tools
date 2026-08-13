@@ -61,12 +61,9 @@ def _normalize_locus(
         "time_window_s must contain finite start < end",
         raw_window,
     )
-    window = (
-        None
-        if raw_window is None
-        else tuple(cast(tuple[object, object] | list[object], raw_window))
-    )
-    if window is not None:
+    normalized_window: tuple[float, float] | None = None
+    if raw_window is not None:
+        window = cast(tuple[object, object] | list[object], raw_window)
         start = finite_real(window[0], "time_window_s start")
         end = finite_real(window[1], "time_window_s end")
         require(
@@ -74,7 +71,7 @@ def _normalize_locus(
             "time_window_s must contain finite start < end",
             window,
         )
-        window = (start, end)
+        normalized_window = (start, end)
     points = tuple(point_ids)
     valid = all(
         isinstance(point, str) and bool(point) and point == point.strip()
@@ -85,7 +82,7 @@ def _normalize_locus(
         "point_ids must be unique, non-empty stable IDs",
         points,
     )
-    return window, points
+    return normalized_window, points
 
 
 @dataclass(frozen=True)
@@ -333,7 +330,11 @@ class VariationPlan:
     @classmethod
     def from_json_dict(cls, data: Mapping[str, Any]) -> VariationPlan:
         """Inverse of :meth:`to_json_dict` (DbC-validated)."""
-        version = int(data.get("schema_version", 1))
+        version = integer(
+            cast(object, data.get("schema_version", 1)),
+            "schema_version",
+            minimum=1,
+        )
         require(
             version in _SUPPORTED_SCHEMA_VERSIONS,
             "unsupported schema_version",

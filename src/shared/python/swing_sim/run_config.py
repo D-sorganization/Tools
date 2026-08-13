@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import cast
 
 from shared.python.contracts import require
 
@@ -90,18 +91,25 @@ class DoublePendulumRunConfig:
             "joint_locks must be a JointLockConfig",
             self.joint_locks,
         )
-        offsets = tuple(self.commanded_torque_offsets)
+        raw_offsets = cast(object, self.commanded_torque_offsets)
+        require(
+            isinstance(raw_offsets, (tuple, list)),
+            "commanded_torque_offsets must be a tuple or list",
+            raw_offsets,
+        )
+        offsets = tuple(cast(tuple[object, ...] | list[object], raw_offsets))
         require(
             all(isinstance(offset, LocalizedTorqueOffset) for offset in offsets),
             "commanded_torque_offsets must contain LocalizedTorqueOffset values",
             offsets,
         )
+        validated_offsets = cast(tuple[LocalizedTorqueOffset, ...], offsets)
         joint_order = {
             joint_id: index for index, joint_id in enumerate(DOUBLE_PENDULUM_JOINT_IDS)
         }
         canonical = tuple(
             sorted(
-                offsets,
+                validated_offsets,
                 key=lambda offset: (
                     joint_order[offset.joint_id],
                     offset.time_window_s,

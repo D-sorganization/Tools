@@ -26,11 +26,29 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.55                                    |
-| **Spec Version**        | 1.16.55                                    |
+| **Current Version**     | 1.16.56                                    |
+| **Spec Version**        | 1.16.56                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Localized torque source and wire hardening (#4142)
+
+Version 1.16.56 makes the double-pendulum-only localized-torque capability
+fail closed at every nearby public boundary. The source factory rejects a
+non-empty `commanded_torque_offsets` collection for both manual and triple-
+pendulum discriminators instead of silently dropping the command. The run
+configuration validates the raw collection as a tuple or list before
+canonical tuple conversion, so `None` and other malformed domains raise
+`ContractViolationError` rather than incidental `TypeError`.
+
+`VariationPlan.from_json_dict` now requires `schema_version` to be a genuine
+non-Boolean integer before normalization. Boolean, float, and string lookalikes
+cannot select a wire schema through coercion; emitted v2 and supported integer
+v1 migration documents retain their existing behavior. Evidence is 102/102
+focused tests and 1,464/1,464 broader shared-swing, variation, and Rate tests,
+with one expected missing-Rust-wheel skip. UI locus authoring, Rust parity,
+protected publication, and epic completion remain open.
 
 ### 2026-08-12 Localized torque adversarial corrections (#4142)
 

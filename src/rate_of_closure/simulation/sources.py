@@ -261,6 +261,11 @@ def make_source(
         "joint locks are unsupported outside the double-pendulum source",
         kind,
     )
+    require(
+        kind == "double_pendulum" or not execution.commanded_torque_offsets,
+        "localized torque offsets are unsupported outside the double-pendulum source",
+        kind,
+    )
     if kind == "manual":
         return ManualSwingSource(scenario, delivery=manual_delivery)
     if kind == "double_pendulum":

@@ -369,6 +369,14 @@ class TestVariationPlan:
         )
         assert restored.noise[0].scale == 2.0
 
+    @pytest.mark.parametrize("schema_version", [True, 2.5, "2"])
+    def test_json_rejects_coercive_schema_version(self, schema_version: object) -> None:
+        raw = self._plan().to_json_dict()
+        raw["schema_version"] = schema_version
+
+        with pytest.raises(ContractViolationError, match="schema_version"):
+            VariationPlan.from_json_dict(raw)
+
     def test_rejects_duplicate_spec_ids_and_duplicate_variable_keys(self) -> None:
         face = f"{CATEGORY_DELIVERY}.face_angle_deg"
         speed = f"{CATEGORY_DELIVERY}.clubhead_speed_mps"

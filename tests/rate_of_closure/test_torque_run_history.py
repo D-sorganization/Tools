@@ -26,6 +26,7 @@ from shared.python.swing_sim.run_config import (
     WRIST_JOINT_ID,
     DoublePendulumRunConfig,
     JointLockConfig,
+    LocalizedTorqueOffset,
 )
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.torque_profiles import (
@@ -275,3 +276,19 @@ def test_source_factory_rejects_joint_locks_for_unsupported_triple_source() -> N
                 joint_locks=JointLockConfig((WRIST_JOINT_ID,))
             ),
         )
+
+
+@pytest.mark.parametrize("source_kind", ["manual", "triple_pendulum"])
+def test_source_factory_rejects_localized_torque_for_unsupported_source(
+    source_kind: str,
+) -> None:
+    from rate_of_closure.simulation.sources import make_source
+
+    run_config = DoublePendulumRunConfig(
+        commanded_torque_offsets=(
+            LocalizedTorqueOffset(SHOULDER_JOINT_ID, (0.01, 0.02), 1.0),
+        )
+    )
+
+    with pytest.raises(ContractViolationError, match="torque offsets.*unsupported"):
+        make_source(source_kind, _SCENARIO, run_config=run_config)

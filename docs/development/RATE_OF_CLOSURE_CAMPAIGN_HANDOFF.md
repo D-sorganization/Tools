@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 localized torque source/wire hardening
+
+- Manual and triple-pendulum source discriminators now reject non-empty
+  localized torque commands, preserving the double-pendulum-only execution
+  capability instead of silently discarding unsupported input.
+- `DoublePendulumRunConfig` validates the raw offset collection before tuple
+  conversion, so malformed `None`/scalar/mapping/string domains fail with a
+  typed contract violation.
+- `VariationPlan` wire-schema selection requires a genuine non-Boolean integer;
+  `True`, `2.5`, and `"2"` regressions are rejected without coercion while
+  integer v1 migration and emitted v2 documents remain supported.
+- Evidence: 102/102 focused and 1,464/1,464 broader shared-swing, variation,
+  and Rate tests; one missing-Rust-wheel skip remains expected.
+- UI locus authoring, Rust parity, protected publication, and epic #4142 remain
+  open.
+
 ## 2026-08-12 #4142 localized torque adversarial corrections
 
 - Strict shared numeric validators reject raw Boolean/string/nonfinite

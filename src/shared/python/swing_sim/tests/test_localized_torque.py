@@ -122,6 +122,16 @@ def test_public_helpers_reject_malformed_offset_collections(offsets: object) -> 
         require_offsets_within_duration(offsets, 0.1)  # type: ignore[arg-type]
 
 
+@pytest.mark.parametrize("offsets", [None, 7, "bad", {"offset": "bad"}])
+def test_run_config_rejects_malformed_offset_collections_with_contract_error(
+    offsets: object,
+) -> None:
+    with pytest.raises(ContractViolationError, match="commanded_torque_offsets"):
+        DoublePendulumRunConfig(  # type: ignore[arg-type]
+            commanded_torque_offsets=offsets
+        )
+
+
 @pytest.mark.parametrize("duration", [True, "0.1", float("nan"), 0.0])
 def test_duration_helper_rejects_invalid_raw_domain(duration: object) -> None:
     offset = LocalizedTorqueOffset(SHOULDER_JOINT_ID, (0.02, 0.04), 1.0)

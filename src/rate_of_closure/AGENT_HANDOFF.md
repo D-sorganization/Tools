@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque source/wire hardening (#4142)
+
+`make_source` now rejects localized commanded-torque offsets for manual and
+triple-pendulum source kinds, matching the existing `SimulationConfig` and
+capability-registry contract that only the double pendulum can execute them.
+The shared run config validates malformed raw offset collections before
+canonicalization, and the shared `VariationPlan` JSON reader accepts only a
+genuine non-Boolean integer schema discriminator rather than coercing Boolean,
+float, or string lookalikes.
+
+Local evidence is 102 focused and 1,464 broader passing shared-swing,
+variation, and Rate tests, with one expected Rust-wheel skip. PyQt/React locus
+authoring, Rust parity, protected publication, and the remainder of #4142 stay
+open.
+
 ## 2026-08-12 Localized torque fail-closed correction (#4142)
 
 Rate request construction now validates localized windows against the same

@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque source/wire hardening (#4142)
+
+The Rate source factory now enforces the same double-pendulum-only capability
+already declared by `SimulationConfig`: manual and triple-pendulum source
+discriminators reject non-empty localized torque commands instead of silently
+discarding them. `DoublePendulumRunConfig` validates the raw command collection
+before tuple normalization, guaranteeing typed contract failures for `None`
+and other malformed collection domains.
+
+`VariationPlan.from_json_dict` no longer coerces its schema discriminator with
+`int(...)`; only a genuine non-Boolean integer may select supported v1/v2
+behavior. Regression evidence is 102/102 focused and 1,464/1,464 broader
+shared-swing, variation, and Rate tests, with one expected missing-Rust-wheel
+skip. The broader UI, Rust, protected-publication, and #4142 completion gates
+remain open.
+
 ## 2026-08-12 Localized torque adversarial corrections (#4142)
 
 The affected localized variation and helper seams now fail closed on their raw
