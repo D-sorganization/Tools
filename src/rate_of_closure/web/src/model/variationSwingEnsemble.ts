@@ -1,7 +1,7 @@
 /** Complete browser swing ensembles with retained traces, misses, and failures. */
 
 import { DRIVER_TEE_HEIGHT_M, type BallSetup } from "./ballSetup";
-import { golfDefaultParams } from "./doublePendulum";
+import { golfDefaultParams, PASSIVE_DOUBLE_PENDULUM_RUN } from "./doublePendulum";
 import {
   DEFAULT_IMPACT_CLUB,
   runSimulation,
@@ -18,6 +18,11 @@ import {
   TEE_HEIGHT_VARIATION_KEY,
 } from "./variationRegistry";
 import type { VariationDatasetTs } from "./variation";
+import {
+  localizedTorqueExecution,
+  type LocalizedTorqueExecutionTs,
+} from "./variationLocalizedTorque";
+import type { LocalizedTorqueCommandTs } from "./localizedTorque";
 
 export type SwingTrialStatusTs =
   | "evaluated_hit"
@@ -30,6 +35,7 @@ export interface SwingVariationTrialTs {
   input: SimulationInput;
   run: SimulationRunTs | null;
   error: string | null;
+  localizedTorqueCommands: readonly LocalizedTorqueCommandTs[];
 }
 
 export interface SwingVariationResultTs {
@@ -38,7 +44,7 @@ export interface SwingVariationResultTs {
   coordinateFrame: "app_frame:x_target,y_up,z_right";
 }
 
-export const SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION = 1;
+export const SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION = 2;
 
 export function swingEnsembleToJson(result: SwingVariationResultTs): string {
   return JSON.stringify({
@@ -75,6 +81,21 @@ export function swingTracesToCsv(result: SwingVariationResultTs): string {
       });
     });
   });
+  return rows.map((row) => row.map(csvCell).join(",")).join("\n") + "\n";
+}
+
+export function localizedTorqueSourcesToCsv(result: SwingVariationResultTs): string {
+  const rows = [[
+    "trial", "status", "spec_id", "variable_key", "joint_id",
+    "window_start_s", "window_end_s", "torque_nm", "unit", "provenance",
+  ]];
+  result.runs.forEach((trial) => trial.localizedTorqueCommands.forEach((command) => {
+    rows.push([
+      String(trial.trialIndex), trial.status, command.specId, command.variableKey,
+      command.jointId, String(command.timeWindowS[0]), String(command.timeWindowS[1]),
+      String(command.torqueNm), command.unit, command.provenance,
+    ]);
+  }));
   return rows.map((row) => row.map(csvCell).join(",")).join("\n") + "\n";
 }
 
@@ -147,12 +168,15 @@ export function runSwingVariation(
   if (baseInput.sourceKind !== "double_pendulum") {
     throw new Error("complete swing ensemble requires the double_pendulum source");
   }
-  const localized = plan.noise.filter((spec) =>
-    spec.timeWindowS != null || (spec.pointIds?.length ?? 0) > 0,
-  );
-  if (localized.length > 0) throw new Error("swing ensemble supports global perturbations only");
   const inputs = sampleInputs(plan);
   const base = resolvedBase(plan);
+  localizedTorqueExecution(
+    plan,
+    base,
+    baseInput.swingDurationS,
+    baseInput.sourceKind,
+    baseInput.doublePendulumRun,
+  );
   const inputNames = plan.noise.map((spec) => spec.variableKey);
   const runs: SwingVariationTrialTs[] = [];
   const outputs: Array<Array<number | null>> = [];
@@ -160,13 +184,24 @@ export function runSwingVariation(
   inputs.forEach((row, trialIndex) => {
     const values = { ...base };
     inputNames.forEach((name, column) => { values[name] = row[column]; });
-    const input = applyValues(baseInput, values);
+    let input = applyValues(baseInput, values);
+    let localized: LocalizedTorqueExecutionTs = {
+      runConfig: input.doublePendulumRun ?? PASSIVE_DOUBLE_PENDULUM_RUN,
+      commands: Object.freeze([]),
+    };
     try {
+      localized = localizedTorqueExecution(
+        plan, values, input.swingDurationS, input.sourceKind, input.doublePendulumRun,
+      );
+      input = { ...input, doublePendulumRun: localized.runConfig };
       const run = runSimulation(input);
       const status = run.impactOutcome.status === "hit"
         ? "evaluated_hit"
         : "evaluated_no_impact";
-      runs.push({ trialIndex, status, input, run, error: null });
+      runs.push({
+        trialIndex, status, input, run, error: null,
+        localizedTorqueCommands: localized.commands,
+      });
       outputs.push(outputRow(run, input));
       success.push(true);
     } catch (error) {
@@ -176,6 +211,7 @@ export function runSwingVariation(
         input,
         run: null,
         error: error instanceof Error ? error.message : String(error),
+        localizedTorqueCommands: localized.commands,
       });
       outputs.push(SWING_VARIATION_OUTPUT_NAMES.map(() => null));
       success.push(false);

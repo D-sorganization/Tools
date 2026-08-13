@@ -26,11 +26,44 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.64                                    |
-| **Spec Version**        | 1.16.64                                    |
+| **Current Version**     | 1.16.65                                    |
+| **Spec Version**        | 1.16.65                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 React localized-torque execution and export (#4142 R13.3/R14.3)
+
+Version 1.16.65 executes the two already-authored localized commanded-torque
+variables through the browser's TypeScript-reference double-pendulum kernel.
+Each sampled shoulder or wrist command is additive to passive or prescribed
+torque at its stable topological `joint.*` target and exact half-open
+`[start, end)` window. The command callback is evaluated at every classical
+RK4 substep. Non-double-pendulum sources and arbitrary spatial `swing.*` loci
+remain fail-closed through an explicit capability contract.
+
+Trial results retain `evaluated_hit`, `evaluated_no_impact`, and
+`numerical_failure` outcomes. Every trial also carries its stable spec ID,
+variable key, window, joint, `N*m` unit, sampled magnitude, and provenance.
+The result surface exposes those sources as accessible labels; schema-v2 swing
+ensemble JSON and a dedicated CSV preserve the same authority. The normal
+swing-trace export continues to use spatial `swing.*` point IDs, never torque
+joint IDs. Sampled on-grid torque history is retained, but RK4 half-step torque
+history is not represented as a complete raw archive.
+
+The numerical oracle is a Python-owned `shared.python.swing_sim.reference`
+golden covering passive and prescribed additive commands across exact window
+boundaries. TypeScript matches those states to 13 decimal places. The full
+React suite, strict Worker transport validation, deterministic seeded replay,
+typed misses/failures, TypeScript, ESLint, Vite production build, and a real
+hashed-Worker Chromium run/cancel/rerun/CSV+JSON export case are required gates.
+Local evidence passes 845/845 Vitest tests, 290/290 selected localized and
+variation Python tests with one expected missing-Rust-wheel skip, and 6/6
+production Playwright tests across deterministic desktop/narrow layouts and
+the hashed Worker lifecycle; TypeScript, ESLint, and Vite build also pass.
+Rust parity, full raw RK4-substep torque persistence, WebKit/Firefox,
+assistive-technology automation, approved visual baselines, protected
+publication, and complete #4142 remain open.
 
 ### 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
@@ -3707,6 +3740,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142): execute authored localized shoulder/wrist torque factors additively through the TypeScript-reference RK4 double pendulum; retain typed outcomes and plan/provenance authority in accessible results and schema-v2 JSON/CSV exports; pin passive/prescribed boundary behavior to a Python-owned golden and production-Worker cancel/rerun/export coverage. |
 | 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
 | 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |
 | 2026-08-12 | 1.16.62 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce a complete plot-type applicability/null matrix, exact application frame for current geometry, control-free stable identifiers, JSON-native Python constructor numerics, strict wire numerics, and non-geometric exporter/migration parity. |

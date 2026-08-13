@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React localized-torque execution and export (#4142)
+
+- Browser swing ensembles now map each sampled authored shoulder/wrist factor
+  into an additive TypeScript-reference RK4 command with exact half-open time
+  semantics and stable `joint.*` topology.
+- Passive and prescribed base torques are preserved. Manual/triple sources,
+  spatial `swing.*` loci, malformed commands, and off-duration windows fail
+  before dynamics execution.
+- Trial/export authority retains typed hit, no-impact, and numerical-failure
+  outcomes plus spec ID, variable, joint, window, `N*m`, magnitude, and
+  provenance. Result source labels are accessible and raw plan identity is
+  unchanged.
+- Python owns the passive/prescribed boundary-state golden. React deterministic
+  replay, strict Worker transport, cancellation isolation, and production
+  Worker CSV/JSON export are covered.
+- Local gates pass 845/845 Vitest, 290/290 selected localized/variation Python
+  tests with one expected Rust-wheel skip, 6/6 Playwright, TypeScript, ESLint,
+  and Vite build.
+
+SPEC 1.16.65 records this slice. Torque history is sampled on the state grid,
+not a complete RK4 half-step archive. Rust parity, cross-browser/assistive-
+technology evidence, approved visual baselines, protected publication,
+complete raw persistence, and remaining #4142 scope stay open.
+
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
 - Normal non-fast-forward integration keeps exact dispersion head

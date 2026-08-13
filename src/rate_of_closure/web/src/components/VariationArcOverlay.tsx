@@ -15,6 +15,7 @@ import {
   variationResultFingerprint,
 } from "../model/variationPlotDefinition";
 import { VariationVariabilityTimeline } from "./VariationVariabilityTimeline";
+import { localizedTorqueSourceLabel } from "./localizedTorquePresentation";
 import {
   drawVariationArcScene,
   type VariationCameraState,
@@ -232,7 +233,7 @@ export function VariationArcOverlay({
         <label className="min-w-48 flex-1 text-xs text-slate-300">
           <span className="mb-1 block">Perturbation Source</span>
           <select aria-label="Arc perturbation source" className={INPUT_CLASS} value={sourceKey} onChange={(event) => setSourceKey(event.target.value)}>
-            <option value="all">All Sources</option>{ensemble.dataset.inputNames.map((name) => <option key={name} value={name}>{name}</option>)}
+            <option value="all">All Sources</option>{ensemble.dataset.inputNames.map((name) => <option key={name} value={name}>{localizedTorqueSourceLabel(ensemble, name)}</option>)}
           </select>
         </label>
         <label className="min-w-40 flex-1 text-xs text-slate-300">

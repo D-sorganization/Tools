@@ -1,7 +1,16 @@
-import { outputsForMode, planToJson, validatePlan, type VariationDatasetTs, type VariationPlanTs } from "./variation";
+import {
+  outputsForMode,
+  planToJson,
+  validatePlan,
+  type VariationDatasetTs,
+  type VariationPlanTs,
+} from "./variation";
+import { isGlobalSpec, stableSpecId } from "./variationSchema";
 import type { SensitivityResultTs } from "./variationAnalysis";
 import { SWING_VARIATION_OUTPUT_NAMES, type SwingVariationResultTs } from "./variationSwingEnsemble";
 import type { VariationExecutionRequest, VariationExecutionResult } from "./variationExecutionService";
+import { LOCALIZED_TORQUE_PROVENANCE, LOCALIZED_TORQUE_UNIT } from "./localizedTorque";
+import { localizedTorqueJointId } from "./variationRegistry";
 
 export const MAX_WORKER_ERROR_LENGTH = 512;
 
@@ -128,12 +137,60 @@ const validateEnsemble = (
   }
   validateDataset(value.dataset, request);
   const validStatuses = new Set(["evaluated_hit", "evaluated_no_impact", "numerical_failure"]);
+  const localizedSpecs = request.plan.noise.filter((spec) => !isGlobalSpec(spec));
   if (!value.runs.every((trial, index) => isRecord(trial)
-      && trial.trialIndex === index && validStatuses.has(String(trial.status)))) {
+      && trial.trialIndex === index && validStatuses.has(String(trial.status))
+      && validateTrialOutcome(trial)
+      && validateTrialCommands(trial, index, localizedSpecs, value.dataset))) {
     return failProtocol("swing ensemble trials");
   }
   return value as unknown as SwingVariationResultTs;
 };
+
+const validateTrialOutcome = (trial: Record<string, unknown>): boolean => {
+  if (!isRecord(trial.input) || trial.input.sourceKind !== "double_pendulum") {
+    return false;
+  }
+  if (trial.status === "numerical_failure") {
+    return trial.run === null && typeof trial.error === "string";
+  }
+  if (!isRecord(trial.run) || trial.error !== null || !isRecord(trial.run.impactOutcome)) {
+    return false;
+  }
+  const impactStatus = trial.run.impactOutcome.status;
+  return trial.status === "evaluated_hit" ? impactStatus === "hit" : impactStatus === "miss";
+};
+
+const validateTrialCommands = (
+  trial: Record<string, unknown>,
+  trialIndex: number,
+  specs: VariationPlanTs["noise"],
+  datasetValue: unknown,
+): boolean => {
+  const commands = trial.localizedTorqueCommands;
+  if (!Array.isArray(commands) || !isRecord(datasetValue)) return false;
+  if (!Array.isArray(datasetValue.inputs)) return false;
+  const inputRow = datasetValue.inputs[trialIndex];
+  if (!Array.isArray(inputRow) || commands.length !== specs.length) return false;
+  return specs.every((spec, commandIndex) => {
+    const command = commands[commandIndex];
+    const inputIndex = requestInputIndex(spec.variableKey, datasetValue.inputNames);
+    return isRecord(command)
+      && command.specId === stableSpecId(spec)
+      && command.variableKey === spec.variableKey
+      && command.jointId === localizedTorqueJointId(spec.variableKey)
+      && Array.isArray(command.timeWindowS)
+      && command.timeWindowS.length === 2
+      && command.timeWindowS[0] === spec.timeWindowS?.[0]
+      && command.timeWindowS[1] === spec.timeWindowS?.[1]
+      && command.torqueNm === inputRow[inputIndex]
+      && command.unit === LOCALIZED_TORQUE_UNIT
+      && command.provenance === LOCALIZED_TORQUE_PROVENANCE;
+  });
+};
+
+const requestInputIndex = (variableKey: string, inputNames: unknown): number =>
+  Array.isArray(inputNames) ? inputNames.indexOf(variableKey) : -1;
 
 export const validateResult = (
   value: unknown,

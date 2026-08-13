@@ -3,6 +3,7 @@ import { planToJson, type VariationDatasetTs, type VariationPlanTs } from "../mo
 import { BUTTON_CLASS, PANEL_CLASS, downloadText, readFileText } from "./variationUi";
 import {
   swingEnsembleToJson,
+  localizedTorqueSourcesToCsv,
   swingTracesToCsv,
   type SwingVariationResultTs,
 } from "../model/variationSwingEnsemble";
@@ -36,6 +37,19 @@ export function VariationActions({
   return (
     <div className={PANEL_CLASS} aria-busy={busy}>
       <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={!ensemble?.runs.some((trial) => trial.localizedTorqueCommands.length > 0)}
+          onClick={() => ensemble && downloadText(
+            "variation_localized_torque_sources.csv",
+            localizedTorqueSourcesToCsv(ensemble),
+            "text/csv",
+          )}
+          title="Download trial-local spec IDs, half-open windows, topological joints, torque units, and provenance."
+          className={BUTTON_CLASS}
+        >
+          Localized Torque CSV
+        </button>
         <button
           type="button"
           onClick={onRun}

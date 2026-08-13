@@ -177,8 +177,8 @@ export function VariationSetup({
           </p>
         )}
         <p className={`mb-3 text-xs ${contextualCount > 0 ? "text-amber-300" : "text-slate-500"}`}>
-          Localized torque loci can be authored for the fixed 1.5 s double-pendulum swing.
-          The browser still fails closed at execution until its dynamics consume these commands.
+          Localized torque loci execute additively on the fixed 1.5 s TypeScript-reference
+          double-pendulum swing at every RK4 substep.
         </p>
         {retainedLocusCount > 0 && (
           <p className="mb-3 text-xs text-amber-300">

@@ -1,5 +1,28 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 React localized-torque execution/export
+
+- The React TypeScript-reference double pendulum consumes sampled shoulder and
+  wrist commands additively in passive and prescribed modes at every RK4
+  substep over exact half-open windows.
+- An explicit capability permits only double-pendulum execution and exact
+  `joint.shoulder`/`joint.wrist` topological loci; spatial `swing.*` output IDs
+  remain distinct and other sources/loci fail closed.
+- Every hit, no-impact, or numerical-failure trial retains command spec ID,
+  variable, window, joint, `N*m` unit, sampled magnitude, and provenance.
+  Accessible result-source labels, schema-v2 ensemble JSON, and dedicated CSV
+  expose the same authority without mutating the stored v2 plan.
+- Python-owned passive/prescribed golden states pin boundary behavior to 13
+  decimal places. The real hashed production Worker has localized
+  cancel/rerun/export coverage in Chromium.
+- Local evidence passes 845/845 Vitest, 290/290 selected localized/variation
+  Python tests with one expected missing-Rust-wheel skip, 6/6 production
+  Playwright tests, TypeScript, ESLint, and Vite build.
+- SPEC advances to 1.16.65. Sampled on-grid torque history is retained, not a
+  complete RK4 half-step archive. Rust parity, WebKit/Firefox, assistive-
+  technology automation, approved visual baselines, protected publication,
+  complete raw persistence, and remaining #4142 work stay open.
+
 ## 2026-08-13 #4142 integrated dispersion and localized-locus/browser stack
 
 - Normal non-fast-forward integration retains approved dispersion head

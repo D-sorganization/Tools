@@ -5,10 +5,29 @@ import {
   DOUBLE_PENDULUM_JOINT_IDS,
   DOUBLE_PENDULUM_MODEL_ID,
   JointLockConfig,
-  NO_JOINT_LOCKS,
   SHOULDER_JOINT_ID,
   WRIST_JOINT_ID,
 } from "./jointLocks";
+import {
+  addLocalizedTorqueOffsets,
+  normalizeLocalizedTorqueOffsets,
+} from "./localizedTorque";
+import {
+  PASSIVE_DOUBLE_PENDULUM_RUN,
+  type DoublePendulumRunConfig,
+} from "./doublePendulumRun";
+
+export type { LocalizedTorqueOffsetTs } from "./localizedTorque";
+export {
+  PASSIVE_DOUBLE_PENDULUM_RUN,
+  passiveDoublePendulumRun,
+  prescribedDoublePendulumRun,
+  summarizeDoublePendulumRun,
+  withJointLocks,
+  type AppliedTorqueSample,
+  type DoublePendulumRunConfig,
+  type DoublePendulumRunSummary,
+} from "./doublePendulumRun";
 
 export {
   DOUBLE_PENDULUM_JOINT_IDS,
@@ -35,90 +54,6 @@ export interface PendulumParams {
 export type PendulumState = [number, number, number, number];
 export type JointTorquesNm = readonly [number, number];
 
-export type DoublePendulumRunConfig =
-  | Readonly<{ mode: "passive"; jointLocks: JointLockConfig }>
-  | Readonly<{
-      mode: "prescribed";
-      profile: PrescribedTorqueProfile;
-      jointLocks: JointLockConfig;
-    }>;
-
-export interface DoublePendulumRunSummary {
-  mode: "passive" | "prescribed";
-  profileId: string | null;
-  lockedJointIds: readonly string[];
-  appliedTorqueHistory: readonly AppliedTorqueSample[];
-}
-
-export interface AppliedTorqueSample {
-  timeS: number;
-  torquesNm: Readonly<Record<string, number>>;
-}
-
-export const PASSIVE_DOUBLE_PENDULUM_RUN: DoublePendulumRunConfig =
-  Object.freeze({ mode: "passive", jointLocks: NO_JOINT_LOCKS });
-
-export function passiveDoublePendulumRun(
-  jointLocks: JointLockConfig = NO_JOINT_LOCKS,
-): DoublePendulumRunConfig {
-  return Object.freeze({ mode: "passive", jointLocks });
-}
-
-export function prescribedDoublePendulumRun(
-  profile: PrescribedTorqueProfile,
-  jointLocks: JointLockConfig = NO_JOINT_LOCKS,
-): DoublePendulumRunConfig {
-  if (!(profile instanceof PrescribedTorqueProfile)) {
-    throw new Error("prescribed mode requires a torque profile");
-  }
-  return Object.freeze({ mode: "prescribed", profile, jointLocks });
-}
-
-export function withJointLocks(
-  config: DoublePendulumRunConfig,
-  jointLocks: JointLockConfig,
-): DoublePendulumRunConfig {
-  return config.mode === "prescribed"
-    ? prescribedDoublePendulumRun(config.profile, jointLocks)
-    : passiveDoublePendulumRun(jointLocks);
-}
-
-export function summarizeDoublePendulumRun(
-  config: DoublePendulumRunConfig = PASSIVE_DOUBLE_PENDULUM_RUN,
-  sampleTimes: readonly number[] = [],
-): DoublePendulumRunSummary {
-  const history = (torqueAt: (timeS: number) => readonly [number, number]) =>
-    Object.freeze(sampleTimes.map((timeS) => {
-      const [shoulder, wrist] = torqueAt(timeS);
-      return Object.freeze({
-        timeS,
-        torquesNm: Object.freeze({
-          [SHOULDER_JOINT_ID]: shoulder,
-          [WRIST_JOINT_ID]: wrist,
-        }),
-      });
-    }));
-  if (config.mode === "passive") {
-    return {
-      mode: "passive",
-      profileId: null,
-      lockedJointIds: config.jointLocks.lockedJointIds,
-      appliedTorqueHistory: history(() => [0, 0]),
-    };
-  }
-  if (config.mode !== "prescribed" || !(config.profile instanceof PrescribedTorqueProfile)) {
-    throw new Error("invalid double-pendulum run configuration");
-  }
-  return {
-    mode: "prescribed",
-    profileId: config.profile.profileId,
-    lockedJointIds: config.jointLocks.lockedJointIds,
-    appliedTorqueHistory: history((timeS) => {
-      const values = config.profile.evaluate(timeS);
-      return [values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]];
-    }),
-  };
-}
 
 /** UpstreamDrift golf defaults — same segment formulas as the Rust kernel. */
 export function golfDefaultParams(): PendulumParams {
@@ -356,15 +291,26 @@ export function simulateConfiguredPendulum(
   if (locked[1] && initial[3] !== 0) {
     throw new Error("locked wrist initial relative velocity must be zero");
   }
-  if (config.mode === "passive" && !locked.some(Boolean)) {
+  if (
+    config.mode === "passive" &&
+    !locked.some(Boolean) &&
+    (config.commandedTorqueOffsets?.length ?? 0) === 0
+  ) {
     return simulatePendulum(params, initial, gravity, dt, nSteps);
   }
   const durationS = nSteps * dt;
+  const torqueOffsets = normalizeLocalizedTorqueOffsets(
+    config.commandedTorqueOffsets ?? [], durationS,
+  );
   if (config.mode === "prescribed") validateProfile(config.profile, durationS);
   const torqueAt = (timeS: number): JointTorquesNm => {
-    if (config.mode === "passive") return [0, 0];
-    const values = config.profile.evaluate(Math.min(Math.max(timeS, 0), durationS));
-    return [values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]];
+    const base: JointTorquesNm = config.mode === "passive"
+      ? [0, 0]
+      : (() => {
+          const values = config.profile.evaluate(Math.min(Math.max(timeS, 0), durationS));
+          return [values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]];
+        })();
+    return addLocalizedTorqueOffsets(base, torqueOffsets, timeS);
   };
   const output: PendulumState[] = [initial];
   let current = initial;

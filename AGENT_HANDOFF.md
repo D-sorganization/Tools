@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 React localized-torque execution and export (#4142 R13.3/R14.3)
+
+The React production Worker now executes authored shoulder/wrist localized
+torque factors through the TypeScript-reference double pendulum. Commands are
+additive to passive or prescribed torques at every RK4 substep over exact
+half-open windows. Capability negotiation permits only the double-pendulum
+source and exact topological `joint.shoulder`/`joint.wrist` IDs; spatial
+`swing.*` trace identities remain separate and unsupported loci fail closed.
+
+Typed hit, no-impact, and numerical-failure trials retain exact plan identity
+and command provenance. Accessible source labels plus schema-v2 ensemble JSON
+and dedicated CSV include spec ID, variable, window, joint, `N*m`, magnitude,
+and provenance. A Python-owned passive/prescribed boundary golden pins the
+browser states, while a real hashed production Worker proves localized
+cancel/rerun isolation and both exports. Sampled torque history is present;
+complete RK4 half-step history and Rust parity are not claimed.
+
+SPEC advances to 1.16.65. Local evidence is 845/845 Vitest, 290/290 selected
+localized/variation Python tests (one expected Rust-wheel skip), 6/6 production
+Playwright tests, TypeScript, ESLint, and Vite build. Protected publication,
+WebKit/Firefox, assistive-technology automation, approved visual baselines,
+complete raw torque persistence, Rust parity, and remaining #4142 stay open.
+
 ## 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
 
 Version 1.16.64 normally merges approved dispersion head

@@ -14,6 +14,7 @@ import { VariationArcOverlay } from "./VariationArcOverlay";
 import { VariationDistributionMatrix } from "./VariationDistributionMatrix";
 import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import { PANEL_CLASS, sensitivityHeat } from "./variationUi";
+import { VariationLocalizedSources } from "./VariationLocalizedSources";
 
 interface VariationResultsProps {
   dataset: VariationDatasetTs | null;
@@ -63,6 +64,7 @@ export function VariationResults({
 
   return (
     <section aria-label="Variation results" className="min-w-0 space-y-6">
+      {ensemble && <VariationLocalizedSources ensemble={ensemble} />}
       {dataset && (
         <div className={PANEL_CLASS}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Scatter Matrix and Marginal Distributions</h2>

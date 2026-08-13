@@ -31,9 +31,9 @@ export interface NoiseSpecTs {
   upper: number | null;
   /** Stable RNG/group identifier. Defaults to variableKey for v1 plans. */
   specId?: string;
-  /** Optional temporal locus; metadata only until a trajectory evaluator is available. */
+  /** Temporal locus; executable only for registered double-pendulum torque variables. */
   timeWindowS?: [number, number] | null;
-  /** Optional spatial locus; metadata only until a trajectory evaluator is available. */
+  /** Topological joint locus for torque variables; other loci remain fail-closed. */
   pointIds?: string[];
 }
 
