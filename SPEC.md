@@ -29,6 +29,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -43,6 +44,10 @@
 | **Current Version**     | 1.14.36                                    |
 | **Spec Version**        | 1.14.36                                    |
 >>>>>>> origin/feat/4271-regional-execution-binding
+=======
+| **Current Version**     | 1.14.37                                    |
+| **Spec Version**        | 1.14.37                                    |
+>>>>>>> origin/feat/4271-regional-execution-ui
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -64,8 +69,27 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
+=======
+### 2026-08-11 Regional Execution Evidence Readback
+
+- Matched PyQt6 and React regional-plan surfaces can import a bounded strict
+  `ground-regional-execution-result/v1` produced by the authoritative Python
+  executor and display status, termination/failure, model identity, skid,
+  roll, total distance, transition count, and executor provenance.
+- Evidence is accepted only when its embedded frozen plan exactly matches the
+  currently valid visible plan. Invalid, corrupt, oversized, differently
+  bound, or non-UTF-8 input cannot replace the prior accepted readback.
+- Editing or importing a plan invalidates stale execution readback. React is
+  an evidence parser/presenter only and explicitly does not execute,
+  approximate, or modify regional physics.
+- This slice does not construct the ground request or settled bounce prefix,
+  invoke the executor from either UI, add playback, or qualify measured
+  surfaces. Those remain separate work under #4267/#4271.
+
+>>>>>>> origin/feat/4271-regional-execution-ui
 ### 2026-08-11 Regional Ground Execution and Provenance
 
 - `execute_regional_ground(request, prefix, plan, options)` is the sole
@@ -2987,12 +3011,18 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
 | 2026-08-11 | 1.14.29 | merge(ground-regional-wire, #4332 #4335): normally merge exact remote regional-wire child `9e01ccc3e891cc45907293751a192624195a77a5` first with exact current regional-surface parent `5ac3c1f233de30dd42eeac57073cbdb149bde652` second while preserving PR #4335's `feat/4271-regional-surface-transitions` base, strict Python/TypeScript regional-plan request/result schemas, canonical JSON/SHA-256 fixture evidence, fail-closed parsing, Python resolver binding, tests, limitations, and both append-only handoff/SPEC histories; inherit current regional, skid/roll, impact/bounce, and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping changing geometry or velocity, internal transition-ledger export, regional UI, compiled or TypeScript regional physics, downstream parity, protected exact-head CI, review, approval, and release open. |
 =======
+=======
+| 2026-08-11 | 1.14.37 | merge(rate-of-closure, #4271 #4351): normally merge exact current regional-execution UI child `351a3051e9093c6b80cabf0f1db04aeeb15abfac` first with exact published PR #4350 parent `98f86990e9225903fbe84cd1f267ed38ef0a15d8` second without changing the `feat/4271-regional-execution-binding` base; preserve matched bounded PyQt6/React evidence import and readback, the explicit Boolean local required by protected delta-MyPy, the embedded-plan execution/provenance boundary, request I/O, full regional physics ancestry, default ground safe-number contract, capability-only extended finite-float policy, and all append-only handoff/SPEC/manifest history; keep UI executor invocation, playback, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
+| 2026-08-11 | 1.14.36 | fix(rate-of-closure, #4351): make the regional request atomic-write return boundary stable under the protected changed-file MyPy profile by assigning the skipped imported helper result to an explicit Boolean local; avoid both `no-any-return` and a root-set-dependent redundant cast without changing runtime behavior. |
+>>>>>>> origin/feat/4271-regional-execution-ui
 | 2026-08-11 | 1.14.36 | merge(ground-roll, #4271 #4350): normally merge exact current regional-execution child `dfb4b97481f187ff3594eceb08c427f650aca4e3` first with exact published PR #4342 parent `de66a851aa5dded680279cf9a2b25a5094966593` second without changing the `feat/4274-regional-plan-io` base; preserve the embedded-plan execution/provenance envelope, executor authority, transition-to-plan binding, cross-runtime fixtures, parent request I/O, matched editors, complete regional physics ancestry, default ground safe-number boundary, and capability-only extended finite-float serializer while retaining all append-only handoff, SPEC, and manifest history; keep execution UI/playback, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
+| 2026-08-11 | 1.14.35 | feat(ground-roll, #4267 #4271): add matched PyQt6 and React bounded strict import/readback for Python-produced regional execution evidence; require its embedded plan to exactly match the currently valid visible plan, preserve prior accepted evidence after failed imports, invalidate stale evidence after plan edits, expose status/termination/model/skid/roll/total/transitions/provenance, and state explicitly that React executes no regional physics; retain UI executor invocation, playback, measured calibration, compiled physics, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-11 | 1.14.35 | fix(rate-of-closure, #4342): retain the default canonical JSON encoder's JavaScript-safe numeric boundary for ground contracts while adding an explicit capability-observation-only extended finite-float policy that reuses the same recursive encoder; keep integers safe-range bounded, emit integral finite doubles such as `1e20` and `1e21` as exact exponent-free decimal tokens matching the TypeScript capability serializer, and preserve fail-closed non-finite handling with Python, TypeScript, ground-boundary, full-suite, static-analysis, build, and governance evidence. |
 | 2026-08-11 | 1.14.34 | chore(ground-roll, #4271): normally reconcile exact reviewed regional-execution child `012cdfc33ad1590f31a1cbb109f0b8bee8eee700` with exact newly published PR #4342 parent `c1f47f2ef68b3db102da5416aaac17a40f675207` without changing the intended `feat/4274-regional-plan-io` base or rewriting either branch; retain the remediated embedded-plan execution/provenance contract and executor-produced cross-runtime evidence together with canonical request I/O, the bounded engineering-input helper, and verbatim parent/child handoff and SPEC history; keep UI execution/playback, compiled regional physics, downstream parity, protected evidence, PR publication, release, and issue completion open. |
 | 2026-08-11 | 1.14.34 | merge(rate-of-closure, #4274 #4339 #4342): normally merge exact current regional request-I/O child `c1f47f2ef68b3db102da5416aaac17a40f675207` first with exact reviewed local regional-editor parent candidate `db335937afc4b587d235eb705e315f577519c5e6` second while preserving PR #4342's `feat/4274-regional-surface-ui` base, child-owned canonical request import/export, bounded UTF-8 and safe-number validation, native atomic save, browser-qualified download, tests, limitations, and all append-only handoff/SPEC history; inherit current editor, wire, regional-physics, and complete ground ancestry without rebase, retarget, rewrite, force-push, or publication, while keeping execution/playback, result interchange, measured calibration, model-input persistence, changing geometry or velocity, TypeScript/compiled regional physics, downstream parity, protected exact-head evidence, review, approval, dependency integration, and release open. |

@@ -254,7 +254,17 @@
       "pr": 4350,
       "branch": "feat/4271-regional-execution-binding",
       "base_branch": "feat/4274-regional-plan-io",
-      "head_sha": "dfb4b97481f187ff3594eceb08c427f650aca4e3",
+      "head_sha": "98f86990e9225903fbe84cd1f267ed38ef0a15d8",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4351",
+      "pr": 4351,
+      "branch": "feat/4271-regional-execution-ui",
+      "base_branch": "feat/4271-regional-execution-binding",
+      "head_sha": "351a3051e9093c6b80cabf0f1db04aeeb15abfac",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -1261,7 +1271,8 @@
         "pr-4332",
         "pr-4335",
         "pr-4339",
-        "pr-4342"
+        "pr-4342",
+        "pr-4350"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
@@ -1278,12 +1289,12 @@
         "ground-regional-ui-helper-local-d217",
         "ground-regional-io-local-8e1c"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, and regional request-I/O carriers remain open on draft PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, and 4342. A local unprotected child adds a UI-neutral Python regional executor and separate cross-runtime result/provenance envelope with embedded-plan and transition-crossing validation. Fresh protected evidence for the reconciled heads, UI execution/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, and regional execution carriers remain open on draft PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, and 4350. A local unpublished child adds matched PyQt6/React import-only readback of exact plan-bound Python execution evidence. Fresh protected evidence for the reconciled heads, UI executor invocation/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
-        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; and open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations. A local child adds UI-neutral Python execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI execution/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
+        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; and open PR #4350 adds UI-neutral Python execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings. A local child adds matched import-only execution evidence readback. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI executor invocation/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191

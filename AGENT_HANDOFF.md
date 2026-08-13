@@ -1,5 +1,40 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 PR #4351 current-parent propagation candidate
+
+This no-publish candidate keeps PR `#4351` on
+`feat/4271-regional-execution-ui` with base
+`feat/4271-regional-execution-binding`. Exact current child
+`351a3051e9093c6b80cabf0f1db04aeeb15abfac` is the first parent and exact
+published PR #4350 head `98f86990e9225903fbe84cd1f267ed38ef0a15d8`
+is the second parent of a normal no-ff merge. The child's matched bounded
+PyQt6/React evidence import and readback, including the explicit Boolean local
+required by protected delta-MyPy, remain intact while inheriting the parent's
+embedded-plan execution/provenance contract, request I/O, complete regional
+physics ancestry, capability-only extended finite-float serializer, and
+default ground safe-number boundary.
+
+Local qualification is green: all `1,056` combined Rate-of-Closure and shared-
+ground Python tests, all `113` React files / `696` tests, and the complete Cargo
+workspace pass. Focused evidence/readback/execution/I/O/capability coverage
+passes `75` Python and `36` React tests. Pinned Ruff 0.14.10 check/format passes
+all six child-delta Python files; isolated-import strict MyPy passes all five
+child production modules, preserving the Boolean-local repair; the coherent
+35-module ground profile passes with inherited imports skipped and only the
+parent's documented `redundant-cast` code disabled; and Bandit passes those
+five production files. TypeScript, zero-warning ESLint, the
+202-module Vite build, Rust format and warning-denied clippy, both 400- and
+500-LOC gates, the campaign validator and eight manifest tests,
+docs/tool-manifest/blocking-gate/assertion/minimum-test governance,
+child-feature byte checks, marker scans, and diff checks pass. Existing
+Hypothesis ignored-cache, polynomial-generator empty-legend, Node local-storage
+option, and 521.54 kB Vite chunk warnings remain non-failing.
+
+No branch has been rebased, retargeted, rewritten, force-pushed, or published.
+UI executor invocation, playback, compiled regional physics, downstream
+parity, protected exact-head evidence, review, approval, dependency
+integration, release, and issue completion remain open.
+
 ## 2026-08-11 PR #4350 current-parent propagation candidate
 
 This no-publish candidate keeps PR `#4350` on
@@ -104,6 +139,22 @@ Physics execution and playback, result interchange, measured calibration,
 model-input persistence, changing geometry or surface velocity,
 TypeScript/compiled regional physics, downstream parity, protected exact-head
 evidence, approval, dependency integration, and release remain open.
+
+
+## 2026-08-11 PR #4351 delta-MyPy boundary repair candidate
+
+Protected CI on exact PR #4351 head
+`fe463b5503a8c7b599a329da18bb690d008871cd` exposed a delta-root-dependent
+typing boundary in `write_regional_surface_plan_request_atomic`. The CI profile
+uses `MYPYPATH=src:src/python/src` and `--follow-imports=skip`, so the imported
+atomic writer resolves as `Any` when it is not itself a MyPy root. A typed local
+now preserves the declared Boolean return without reintroducing the cast that
+becomes redundant when both modules are roots. Runtime validation, atomic file
+semantics, canonical bytes, UI behavior, and physics are unchanged.
+
+This is a local no-publish repair candidate. It must propagate normally through
+descendants #4352, #4353, and #4354 after exact-head review; protected CI,
+review, dependency ordering, and release remain open.
 
 
 ## 2026-08-11 regional execution current-parent reconciliation candidate
@@ -1053,3 +1104,23 @@ Commit this narrow repair with all three canonical handoffs and push normally
 to `feat/4270-ground-impact-bounce`. Do not retry the unchanged failed run,
 amend history, or force-push. Descendant PRs #4304 and #4305 inherit this file
 and must later receive the parent by ordinary merge commits.
+
+## 2026-08-11 regional execution evidence UI continuation
+
+Branch `feat/4271-regional-execution-ui` is a local, unpublished child of
+exact published PR #4350 head
+`dfb4b97481f187ff3594eceb08c427f650aca4e3`. It adds matched PyQt6 and React
+import-only readback for strict Python-produced
+`ground-regional-execution-result/v1` evidence. Acceptance is transactional,
+bounded, strict, and requires the embedded plan to equal the currently valid
+visible plan. Plan edits clear stale evidence. React does not run physics.
+
+Local evidence is green: 207 expanded Python ground/plan/PyQt/layout tests and
+111 React files / 690 tests passed, with strict MyPy, Ruff/format, TypeScript,
+zero-warning ESLint, production build, manifest + eight manifest tests,
+documentation governance, structural budgets, and diff checks. The build
+retains the inherited 500 kB chunk advisory. Do not publish until an
+independent review is complete. UI construction of a qualified ground request
+and settled bounce prefix, executor invocation, playback, measured
+calibration, compiled regional physics, downstream parity, protected evidence,
+release, and issue completion remain open.
