@@ -26,11 +26,24 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.72                                    |
-| **Spec Version**        | 1.16.72                                    |
+| **Current Version**     | 1.16.73                                    |
+| **Spec Version**        | 1.16.73                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Hosted PyQt declared-plugin closure (#4422)
+
+Version 1.16.73 replaces the incomplete hand-selected hosted PyQt test
+bootstrap with editable `.[gui,dev]`, while retaining the bounded SciPy range
+and exact `pytest-benchmark==5.2.3` pin. The declared development extra is the
+repository authority for pytest-asyncio, pytest-qt, pytest-timeout, xdist, and
+the other plugins consumed by `pyproject.toml`. Consequently the ephemeral PR
+lane can interpret `asyncio_default_fixture_loop_scope` before collecting the
+rendered-interaction test. The workflow contract pins the exact install
+command. This is CI-only dependency closure: product behavior, scientific
+contracts, runner trust, evidence semantics, and open AT/golden limitations do
+not change.
 
 ### 2026-08-13 Hosted PyQt and assertion-policy closure (#4422)
 
@@ -3979,6 +3992,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |
 | 2026-08-13 | 1.16.72 | fix(ci, #4422): install pinned pytest-benchmark for the repository-owned `--benchmark-disable` PyQt gate and exempt only the subprocess render-probe entrypoint from changed-test assertions, with exact regressions preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.71 | fix(ci, #4142 R14.5): bind the trusted fleet lane's Chromium-only install to explicit Chromium desktop/narrow projects and expand the ephemeral PR gate's path ownership across every imported club/model, plotting, simulation, variation, PyQt6, shared dispersion, dependency, harness, and workflow authority it exercises. |
 | 2026-08-13 | 1.16.70 | test(rate-of-closure, #4142 R14.5): add production Firefox/WebKit parity for localized variation, confidence-mesh gating, semantic keyboard camera/reset, and no-overlap checks; add deterministic PyQt6 rendered interaction artifacts/manifests at 100%/150% DPI; keep untrusted execution on ephemeral hosted runners and distinguish diagnostic screenshots from golden authority. |

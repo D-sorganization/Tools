@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Hosted declared-plugin closure (#4422)
+
+- Ephemeral PR CI now installs editable `.[gui,dev]`, retaining the bounded
+  SciPy range and pinned `pytest-benchmark==5.2.3`.
+- The declared development extra supplies pytest-asyncio, pytest-qt,
+  pytest-timeout, xdist, and the other plugins consumed by repository pytest
+  configuration; the hosted config-key failure is no longer reproducible.
+- The workflow contract pins the exact bootstrap. No Rate product or
+  scientific behavior changed. SPEC is 1.16.73.
+
 ## 2026-08-13 Hosted PyQt and assertion-policy closure (#4422)
 
 - Ephemeral PR CI installs pinned `pytest-benchmark==5.2.3`, supplying the

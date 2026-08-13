@@ -3,6 +3,17 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Hosted PyQt declared-plugin closure (#4422)
+
+Version 1.16.73 replaces the incomplete hand-selected PyQt test bootstrap with
+editable `.[gui,dev]`, retaining the bounded SciPy range and exact
+`pytest-benchmark==5.2.3` pin. The repository's declared development authority
+now supplies pytest-asyncio, pytest-qt, pytest-timeout, xdist, and the other
+plugins required by `pyproject.toml`; the hosted test no longer fails on the
+`asyncio_default_fixture_loop_scope` configuration key. The workflow contract
+pins the exact install command. No product, scientific, runner-trust, or
+artifact behavior changed.
+
 ## 2026-08-13 Hosted PyQt and assertion-policy closure (#4422)
 
 Version 1.16.72 adds pinned `pytest-benchmark==5.2.3` to the ephemeral PR

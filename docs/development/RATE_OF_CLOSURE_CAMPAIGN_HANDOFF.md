@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4422 hosted declared-plugin closure
+
+- The ephemeral PR PyQt bootstrap now installs editable `.[gui,dev]` as the
+  repository-owned test-plugin authority, retaining the SciPy bound and pinned
+  `pytest-benchmark==5.2.3`.
+- This supplies pytest-asyncio, pytest-qt, pytest-timeout, xdist, and the other
+  declared plugins needed to interpret `pyproject.toml`; the exact-head hosted
+  failure on `asyncio_default_fixture_loop_scope` is closed locally.
+- The workflow contract pins the exact command. Product code, scientific
+  behavior, runner trust, diagnostic artifacts, and open AT/golden gaps are
+  unchanged. SPEC advances to 1.16.73.
+
 ## 2026-08-13 #4422 hosted PyQt/assertion-policy closure
 
 - The ephemeral PR PyQt dependency step now installs pinned
