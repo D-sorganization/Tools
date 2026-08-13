@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 plot-definition compatibility/static closure
+
+- V1 scalar-scatter and distribution-matrix documents historically emitted
+  with the exact application frame now migrate to the strict v2 null frame;
+  arbitrary legacy frames remain rejected in Python and TypeScript.
+- Python `to_json_dict()` canonicalizes tuple-backed variable keys to a JSON
+  array, allowing its direct dictionary result to pass the strict reader.
+- PyQt dispersion-definition kwargs have a precise `TypedDict`; the exact
+  Python 3.12/Mypy 1.13 hosted changed-source command passes.
+- Migration and contract tests are split by responsibility, keeping every
+  changed production/test module below 400 lines. Evidence is 1,163 Rate
+  Python/PyQt and 804 React tests, including focused 70-case Python and 58-case
+  TypeScript suites, plus Ruff and pinned Mypy. SPEC advances to 1.16.63.
+  Import UI, ellipsoid meshes, cross-browser E2E, publication, and #4142
+  completion remain open.
+
 ## 2026-08-12 #4142 plot-definition complete-domain hardening
 
 - Python and TypeScript share a fail-closed plot-type applicability matrix:

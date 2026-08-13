@@ -28,10 +28,10 @@ from ._plot_definition_contract import (
     _validate_exact_fields,
     _validate_variable_keys_object,
 )
+from ._plot_definition_migration import migrate_v1
 from .simulation_types import APP_FRAME_ID
 
 PLOT_DEFINITION_SCHEMA_VERSION = 2
-_LEGACY_RMS_THRESHOLD_M = 0.005
 PlotType = Literal[
     "scalar_scatter",
     "swing_arc_overlay",
@@ -303,7 +303,10 @@ class PlotDefinition:
     def to_json_dict(self) -> dict[str, object]:
         """Return a versioned JSON-safe mapping, preserving explicit nulls."""
         self._validate_full_object()
-        return {"schema_version": PLOT_DEFINITION_SCHEMA_VERSION, **asdict(self)}
+        payload: dict[str, object] = asdict(self)
+        if self.variable_keys is not None:
+            payload["variable_keys"] = list(self.variable_keys)
+        return {"schema_version": PLOT_DEFINITION_SCHEMA_VERSION, **payload}
 
     @classmethod
     def from_json_dict(cls, document: object) -> PlotDefinition:
@@ -312,7 +315,7 @@ class PlotDefinition:
         root = cast(dict[str, object], document)
         version = _strict_integer(root.get("schema_version"), "schema_version")
         if version == 1:
-            root = _migrate_v1(root)
+            root = migrate_v1(root, {item.name for item in fields(cls)})
         else:
             require(version == PLOT_DEFINITION_SCHEMA_VERSION, "unsupported schema")
         payload = _validated_v2_payload(root)
@@ -340,47 +343,6 @@ def _validated_v2_payload(document: dict[str, object]) -> dict[str, object]:
         payload[name] = _strict_nullable_integer(document[name], name)
     payload["variable_keys"] = _strict_variable_keys(document["variable_keys"])
     return payload
-
-
-def _migrate_v1(document: dict[str, object]) -> dict[str, object]:
-    """Migrate exact v1 state with declared legacy RMS defaults."""
-    v2_fields = {item.name for item in fields(PlotDefinition)}
-    new_fields = {
-        "dispersion_metric",
-        "dispersion_unit",
-        "quiet_threshold",
-        "confidence_level",
-        "min_quiet_duration_s",
-        "min_quiet_samples",
-    }
-    expected = (v2_fields - new_fields) | {"schema_version", "quiet_threshold_m"}
-    _validate_exact_fields(document, expected)
-    legacy = dict(document)
-    threshold = _strict_nullable_real(
-        legacy.pop("quiet_threshold_m"), "quiet_threshold_m"
-    )
-    require(
-        threshold is None or threshold > 0,
-        "quiet_threshold_m must be greater than zero",
-    )
-    legacy["schema_version"] = 2
-    geometric = legacy.get("plot_type") in {
-        "swing_arc_overlay",
-        "geometric_variability",
-    }
-    legacy.update(
-        dispersion_metric="rms-radius" if geometric else None,
-        dispersion_unit="m" if geometric else None,
-        quiet_threshold=(
-            threshold if threshold is not None else _LEGACY_RMS_THRESHOLD_M
-        )
-        if geometric
-        else None,
-        confidence_level=None,
-        min_quiet_duration_s=0.0 if geometric else None,
-        min_quiet_samples=1 if geometric else None,
-    )
-    return legacy
 
 
 def write_plot_definition(definition: PlotDefinition, path: str | Path) -> None:

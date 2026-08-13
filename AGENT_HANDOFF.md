@@ -1,7 +1,26 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-12
+> Last updated: 2026-08-13
+
+## 2026-08-13 Plot-definition compatibility/static closure (#4142 R12.1/R12.2)
+
+The strict v2 contract now preserves one historically emitted v1 form without
+weakening current applicability: scalar-scatter and distribution-matrix v1
+documents may carry the exact `APP_FRAME_ID`, which migration normalizes to
+null; any other legacy frame still fails closed. Authentic Python and
+TypeScript v1 fixtures pin both acceptance and rejection. Python dictionary
+serialization now emits `variable_keys` as a JSON list, so the returned
+document round-trips directly through the strict reader.
+
+PyQt dispersion export kwargs use a precise `TypedDict`, closing the pinned
+Python 3.12/Mypy 1.13 changed-source gate. Migration logic and the plot-
+definition contract tests were split into focused modules; every affected
+production and test module remains below 400 lines. Evidence is 1,163 Rate
+Python/PyQt and 804 React tests, including focused 70-case Python and 58-case
+TypeScript contract suites, plus Ruff and exact hosted-toolchain Mypy. SPEC is
+1.16.63. Import UI, ellipsoid meshes, cross-browser E2E, protected publication,
+and #4142 completion remain open.
 
 ## 2026-08-12 Plot-definition complete-domain hardening (#4142 R12.1/R12.2)
 

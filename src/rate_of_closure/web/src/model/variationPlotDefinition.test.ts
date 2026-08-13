@@ -143,6 +143,28 @@ describe("variation plot definitions", () => {
     }))).toThrow(/applicable/);
   });
 
+  it.each([
+    ["scalar_scatter", "input:speed", "output:carry_m", 2, null],
+    ["distribution_matrix", null, null, null, ["input:speed", "output:carry_m"]],
+  ] as const)("normalizes the authentic v1 %s frame", (
+    plotType, xVariableKey, yVariableKey, selectedTrialIndex, variableKeys,
+  ) => {
+    const legacy = {
+      schemaVersion: 1, resultId: "historical-v1", plotType,
+      coordinateFrame: "app_frame:x_target,y_up,z_right",
+      xVariableKey, yVariableKey, pointId: null, positionUnit: null,
+      alignmentBasis: null, quietThresholdM: null, selectedTrialIndex,
+      cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
+      outcomeFilter: null, phaseEndFraction: null, perturbationSourceKey: null,
+      perturbationBand: null, variableKeys,
+    };
+
+    expect(parseVariationPlotDefinition(JSON.stringify(legacy)).coordinateFrame).toBeNull();
+    expect(() => parseVariationPlotDefinition(JSON.stringify({
+      ...legacy, coordinateFrame: "other_frame",
+    }))).toThrow(/legacy coordinateFrame/);
+  });
+
   it.each([true, 2.5, "2", 3])("rejects coercive or unknown schema %s", (schemaVersion) => {
     expect(() => parseVariationPlotDefinition(JSON.stringify({ schemaVersion }))).toThrow();
   });

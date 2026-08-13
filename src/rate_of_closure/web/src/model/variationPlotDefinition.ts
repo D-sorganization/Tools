@@ -253,6 +253,12 @@ function migrateV1(root: Record<string, unknown>): Record<string, unknown> {
   const geometric = plotType === "swing_arc_overlay" || plotType === "geometric_variability";
   const migrated = { ...root };
   delete migrated.quietThresholdM;
+  if (plotType === "scalar_scatter" || plotType === "distribution_matrix") {
+    if (migrated.coordinateFrame !== null && migrated.coordinateFrame !== APP_FRAME_ID) {
+      throw new Error("legacy coordinateFrame is unsupported");
+    }
+    migrated.coordinateFrame = null;
+  }
   return {
     ...migrated,
     schemaVersion: 2,

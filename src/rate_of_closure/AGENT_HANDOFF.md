@@ -1,7 +1,25 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-12
+> Last updated: 2026-08-13
+
+## 2026-08-13 Plot-definition compatibility/static closure (#4142)
+
+- Exact-`APP_FRAME_ID` coordinate frames from authentic scalar-scatter and
+  distribution-matrix v1 documents migrate to null in Python and TypeScript;
+  other legacy frames remain contract violations.
+- Python dictionary serialization emits `variable_keys` as a JSON list and
+  round-trips through the strict reader without first encoding to text.
+- PyQt dispersion export fields are a precise `TypedDict`, verified with the
+  hosted Python 3.12/Mypy 1.13 changed-source command.
+- Migration and contract-domain tests are split into focused modules, leaving
+  all changed production and test files below 400 lines. Evidence is 1,163
+  Rate Python/PyQt and 804 React tests, including 70 focused Python and 58
+  focused TypeScript cases, plus Ruff and pinned Mypy.
+
+SPEC 1.16.63 records this compatibility/static closure. Import UI, full
+ellipsoid meshes, cross-browser E2E, protected publication, and remaining
+#4142 work stay open.
 
 ## 2026-08-12 Plot-definition complete-domain hardening (#4142)
 

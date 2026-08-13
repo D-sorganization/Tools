@@ -6,6 +6,7 @@ import csv
 from collections.abc import Callable
 from io import StringIO
 from pathlib import Path
+from typing import TypedDict
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -27,9 +28,20 @@ from shared.python.swing_sim.variation import (
 )
 
 
+class _DispersionDefinitionFields(TypedDict):
+    """Exact keyword shape consumed by geometric plot definitions."""
+
+    dispersion_metric: str
+    dispersion_unit: str
+    quiet_threshold: float
+    confidence_level: float | None
+    min_quiet_duration_s: float
+    min_quiet_samples: int
+
+
 def _dispersion_definition_fields(
     criteria: LowVariabilityMetricCriteria,
-) -> dict[str, object]:
+) -> _DispersionDefinitionFields:
     """Return versioned authority-unit state shared by both geometric exports."""
     return {
         "dispersion_metric": criteria.metric,

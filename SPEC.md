@@ -26,11 +26,31 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.62                                    |
-| **Spec Version**        | 1.16.62                                    |
-| **Last Spec Update**    | 2026-08-12                                 |
+| **Current Version**     | 1.16.63                                    |
+| **Spec Version**        | 1.16.63                                    |
+| **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Plot-definition compatibility/static closure (#4142 R12.1/R12.2)
+
+Version 1.16.63 preserves compatibility with an authentic historical v1 form
+while retaining the complete v2 applicability matrix. A v1 scalar-scatter or
+distribution-matrix document may contain the exact application frame emitted
+by the former writer; Python and TypeScript migration normalize that field to
+null. An arbitrary legacy frame remains invalid. Current v2 documents remain
+strict and cannot assign geometry fields to non-geometric plot types.
+
+Python dictionary serialization canonicalizes tuple-backed `variable_keys` to
+a JSON array, so its result round-trips directly through the strict dictionary
+reader. PyQt dispersion-definition kwargs now have a precise `TypedDict` and
+pass the exact Python 3.12/Mypy 1.13 hosted changed-source command. Migration
+and contract-domain tests are split by responsibility, keeping every changed
+production and test file below 400 lines. Verification passes 1,163 Rate
+Python/PyQt and 804 React tests, including focused 70-case Python and 58-case
+TypeScript suites, plus Ruff and pinned Mypy. This closure does not add plot-
+definition import UI, a rendered confidence-ellipsoid mesh, cross-browser E2E,
+protected publication, or complete #4142.
 
 ### 2026-08-12 Plot-definition complete-domain hardening (#4142 R12.1/R12.2)
 
@@ -3507,6 +3527,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |
 | 2026-08-12 | 1.16.62 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce a complete plot-type applicability/null matrix, exact application frame for current geometry, control-free stable identifiers, JSON-native Python constructor numerics, strict wire numerics, and non-geometric exporter/migration parity. |
 | 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce complete Python/TypeScript plot-definition constructor and writer invariants; reject nonfinite, Boolean, unbounded, unstable, invalid outcome/source, or inapplicable state before NaN-safe serialization; and correct React copy to distinguish persisted selection criteria from computed adequacy and ranked-interval results. |
 | 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142 R12.1/R12.2): scope quiet-interval ranks to the selected point; replace approximate React chi-square tails with regularized-gamma bracketed inversion pinned to SciPy across the declared domain; add strict exact v2 readers and explicit v1 RMS/m migration defaults in Python and TypeScript; and associate accessible PyQt labels with every new dispersion control while preserving open mesh, E2E, publication, and epic gates. |
