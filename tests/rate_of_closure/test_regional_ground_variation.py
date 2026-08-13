@@ -13,6 +13,8 @@ from rate_of_closure.variation.regional_ground_variation import (
     GROUND_ROLLING_RESISTANCE_KEY,
     INPUT_NORMAL_RESTITUTION_KEY,
     INPUT_ROLLING_RESISTANCE_KEY,
+    GroundRegionalVariationFailed,
+    GroundRegionalVariationFailureStage,
     GroundRegionalVariationRequest,
     GroundRegionalVariationTrial,
     register_ground_variation_variables,
@@ -260,11 +262,15 @@ def test_nonfinite_sample_and_row_cap_fail_before_execution() -> None:
 
 
 def test_executor_must_return_exact_outcome_bound_to_the_sampled_plan() -> None:
-    with pytest.raises(ContractViolationError, match="pipeline result or transfer"):
+    with pytest.raises(GroundRegionalVariationFailed) as wrong_type:
         run_regional_ground_variation(_request(), lambda _trial: object())
+    assert wrong_type.value.stage is GroundRegionalVariationFailureStage.VALIDATION
+    assert "pipeline result or transfer" in wrong_type.value.cause_message
 
     baseline = execute_regional_ground_from_flight(
         _crossing_result(), _launch(), _settings(), _plan(), capture_speed_m_s=3.0
     )
-    with pytest.raises(ContractViolationError, match="sampled regional plan"):
+    with pytest.raises(GroundRegionalVariationFailed) as wrong_plan:
         run_regional_ground_variation(_request(), lambda _trial: baseline)
+    assert wrong_plan.value.stage is GroundRegionalVariationFailureStage.VALIDATION
+    assert "sampled regional plan" in wrong_plan.value.cause_message

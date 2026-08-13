@@ -6,38 +6,25 @@ import {
   stableRegionalGroundVariationRequestJson,
 } from "./regionalGroundVariationRequestWire";
 import type { RegionalGroundVariationRequestTs } from "./regionalGroundVariationWorkspace";
+import {
+  readBoundedUtf8File,
+  type BoundedUtf8File,
+} from "./boundedUtf8File";
 
 export { MAX_REGIONAL_GROUND_VARIATION_REQUEST_BYTES };
 
-export interface RegionalGroundVariationRequestFile {
-  readonly name: string;
-  readonly size: number;
-  arrayBuffer(): Promise<ArrayBuffer>;
-}
-
-const decodeUtf8 = (buffer: ArrayBuffer): string => {
-  try {
-    return new TextDecoder("utf-8", { fatal: true }).decode(buffer);
-  } catch {
-    throw new RangeError("regional-ground variation request must be valid UTF-8");
-  }
-};
+export type RegionalGroundVariationRequestFile = BoundedUtf8File;
 
 /** Read one bounded browser-selected file and completely validate it. */
 export const readRegionalGroundVariationRequestFile = async (
   file: RegionalGroundVariationRequestFile,
 ): Promise<RegionalGroundVariationRequestTs> => {
-  if (!Number.isSafeInteger(file.size) || file.size < 0) {
-    throw new RangeError("regional-ground variation request file size must be nonnegative");
-  }
-  if (file.size > MAX_REGIONAL_GROUND_VARIATION_REQUEST_BYTES) {
-    throw new RangeError("regional-ground variation request exceeds maximum wire size");
-  }
-  const buffer = await file.arrayBuffer();
-  if (buffer.byteLength > MAX_REGIONAL_GROUND_VARIATION_REQUEST_BYTES) {
-    throw new RangeError("regional-ground variation request exceeds maximum wire size");
-  }
-  return regionalGroundVariationRequestFromJson(decodeUtf8(buffer));
+  const text = await readBoundedUtf8File(
+    file,
+    MAX_REGIONAL_GROUND_VARIATION_REQUEST_BYTES,
+    "regional-ground variation request",
+  );
+  return regionalGroundVariationRequestFromJson(text);
 };
 
 /** Start a canonical browser download; destination and replacement remain browser-owned. */

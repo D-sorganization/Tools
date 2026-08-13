@@ -1,0 +1,196 @@
+{
+  "categories": [
+    { "key": "ground_parameter", "label": "Ground Parameter" },
+    { "key": "flight_metric", "label": "Canonical Flight Metrics" },
+    { "key": "ground_detail", "label": "Ground Phase Detail" }
+  ],
+  "cohorts": [
+    { "key": "complete", "label": "Complete at Rest" },
+    { "key": "partial", "label": "Partial or Censored" },
+    { "key": "cancelled", "label": "Cancelled" },
+    { "key": "failed", "label": "Failed" },
+    { "key": "unavailable", "label": "Unavailable" }
+  ],
+  "provenance": {
+    "adapter_id": "regional-ground-variation/scalar-ensemble/v1",
+    "source_provenance": "pytest/exact-parent-f13f0908",
+    "source_schema_version": "variation-plan/v2+flight-regional-ground-pipeline/v1"
+  },
+  "result_id": "seeded-ground-study",
+  "rows": [
+    {
+      "attributes": {
+        "bounce_execution_input_sha256": "addb3047ccff38896111d1fe38fccb2b2c0f3dbcf4bd18321bc043c48241cad1",
+        "bounce_termination": "settled_to_skid",
+        "endpoint_qualification": "complete_rest",
+        "ground_model_id": "tools-ground-impact-bounce+tools-ground-skid-roll",
+        "ground_model_version": "1.0.0+1.1.0",
+        "ground_request_sha256": "a24b41adb745e8800ee55d639a7c55e4f4e4491f1771214b1a8929033f293f6c",
+        "ground_status": "complete",
+        "ground_termination": "rest",
+        "regional_failure_reason": null,
+        "regional_plan_sha256": "a4e215d12b00a9855a67fccb5e4ec090e15498a101dd0cd077240ea046afb208",
+        "regional_status": "complete",
+        "source_kind": "pipeline",
+        "transfer_field_id": null,
+        "transfer_reason": null,
+        "variation_input_sha256": "d4c20035b37b6576c38e8f41b49287a34bea5e34a59f653283dfec31c53952d1",
+        "variation_regional_plan_sha256": "a4e215d12b00a9855a67fccb5e4ec090e15498a101dd0cd077240ea046afb208",
+        "variation_seed": "1729",
+        "variation_trial_index": "0"
+      },
+      "cohort": "complete",
+      "row_id": "series:driver/trial:0",
+      "series_id": "driver",
+      "trial_index": 0,
+      "values": {
+        "ground.bounce_air_distance": 0.0,
+        "ground.final_downrange": 57.59687038434,
+        "ground.skid_distance": 8.09032893054,
+        "ground.surface_path_distance": 54.90159461069,
+        "input.ground.base.normal_restitution": 0.4579289801640136,
+        "input.ground.base.rolling_resistance": 0.028087701746599747,
+        "metric.bounce_count": 0.0,
+        "metric.carry_distance": 4.19702089478,
+        "metric.final_offline": 8.43065468567,
+        "metric.roll_distance": 46.81126568015,
+        "metric.total_distance": 58.21061257623
+      }
+    },
+    {
+      "attributes": {
+        "bounce_execution_input_sha256": "4bfe53e375c08bd5f63e4463864bd68ab0200d7b534972808445e79d2963e21e",
+        "bounce_termination": "settled_to_skid",
+        "endpoint_qualification": "censored",
+        "ground_model_id": "tools-ground-impact-bounce+tools-ground-skid-roll",
+        "ground_model_version": "1.0.0+1.1.0",
+        "ground_request_sha256": "c7a2fe95a52cfc25bc21a1a6c18c39079fe9f17f22874c13515da71be70b179a",
+        "ground_status": "partial",
+        "ground_termination": "time_limit",
+        "regional_failure_reason": null,
+        "regional_plan_sha256": "c72cd520d50d25fd91ec8de2a98569b98013fceb469d9e3b8af80eac9b111767",
+        "regional_status": "partial",
+        "source_kind": "pipeline",
+        "transfer_field_id": null,
+        "transfer_reason": null,
+        "variation_input_sha256": "2bde61037db7c86aef171f1fc4474154bc7ebb182789261052db071dad42555b",
+        "variation_regional_plan_sha256": "c72cd520d50d25fd91ec8de2a98569b98013fceb469d9e3b8af80eac9b111767",
+        "variation_seed": "1729",
+        "variation_trial_index": "1"
+      },
+      "cohort": "partial",
+      "row_id": "series:driver/trial:1",
+      "series_id": "driver",
+      "trial_index": 1,
+      "values": {
+        "ground.bounce_air_distance": null,
+        "ground.final_downrange": null,
+        "ground.skid_distance": null,
+        "ground.surface_path_distance": null,
+        "input.ground.base.normal_restitution": 0.4661239249712076,
+        "input.ground.base.rolling_resistance": 0.021958675168032467,
+        "metric.bounce_count": null,
+        "metric.carry_distance": null,
+        "metric.final_offline": null,
+        "metric.roll_distance": null,
+        "metric.total_distance": null
+      }
+    },
+    {
+      "attributes": {
+        "bounce_execution_input_sha256": "637a7f4ffba4a7fd2f9621fa3aa7c089df4cb146242cc7625e96dcda0640a3ae",
+        "bounce_termination": "settled_to_skid",
+        "endpoint_qualification": "failed",
+        "ground_model_id": null,
+        "ground_model_version": null,
+        "ground_request_sha256": "3432f0f57efb2c315f44dc5cc10b8911e6e67c65ac2d0a84ec01d9a2ea586b3f",
+        "ground_status": null,
+        "ground_termination": null,
+        "regional_failure_reason": "step_limit",
+        "regional_plan_sha256": "74f53b778c721abd510d414b4e490310bbd9a5c52ff89dddd922e602c9cb2038",
+        "regional_status": "failed",
+        "source_kind": "pipeline",
+        "transfer_field_id": null,
+        "transfer_reason": null,
+        "variation_input_sha256": "1cf54abc60dc11cfc30caae3432d3f6a64c5effb53290c8796bc34d064cf2f07",
+        "variation_regional_plan_sha256": "74f53b778c721abd510d414b4e490310bbd9a5c52ff89dddd922e602c9cb2038",
+        "variation_seed": "1729",
+        "variation_trial_index": "2"
+      },
+      "cohort": "failed",
+      "row_id": "series:driver/trial:2",
+      "series_id": "driver",
+      "trial_index": 2,
+      "values": {
+        "ground.bounce_air_distance": null,
+        "ground.final_downrange": null,
+        "ground.skid_distance": null,
+        "ground.surface_path_distance": null,
+        "input.ground.base.normal_restitution": 0.39876688203859045,
+        "input.ground.base.rolling_resistance": 0.03925735173913688,
+        "metric.bounce_count": null,
+        "metric.carry_distance": null,
+        "metric.final_offline": null,
+        "metric.roll_distance": null,
+        "metric.total_distance": null
+      }
+    },
+    {
+      "attributes": {
+        "bounce_execution_input_sha256": null,
+        "bounce_termination": null,
+        "endpoint_qualification": "unavailable",
+        "ground_model_id": null,
+        "ground_model_version": null,
+        "ground_request_sha256": null,
+        "ground_status": null,
+        "ground_termination": null,
+        "regional_failure_reason": null,
+        "regional_plan_sha256": null,
+        "regional_status": null,
+        "source_kind": "transfer_failure",
+        "transfer_field_id": "physical_contact_bracket",
+        "transfer_reason": "no_physical_contact",
+        "variation_input_sha256": "20a5277ee74966601b63e6a5fc4166a23ef61940bb2a4e245853d2c7b031d1ed",
+        "variation_regional_plan_sha256": "6215d739d4a1350e674ada9dcb4509b423e8c3c931eb5fbd3fbc04b0a09a65d6",
+        "variation_seed": "1729",
+        "variation_trial_index": "3"
+      },
+      "cohort": "unavailable",
+      "row_id": "series:driver/trial:3",
+      "series_id": "driver",
+      "trial_index": 3,
+      "values": {
+        "ground.bounce_air_distance": null,
+        "ground.final_downrange": null,
+        "ground.skid_distance": null,
+        "ground.surface_path_distance": null,
+        "input.ground.base.normal_restitution": 0.3670676217482649,
+        "input.ground.base.rolling_resistance": 0.0471434091353138,
+        "metric.bounce_count": null,
+        "metric.carry_distance": null,
+        "metric.final_offline": null,
+        "metric.roll_distance": null,
+        "metric.total_distance": null
+      }
+    }
+  ],
+  "schema_version": "scalar-ensemble/v1",
+  "stages": [
+    { "key": "ground_input", "label": "Ground Material Input" },
+    { "key": "ground_stop", "label": "Ground Stop" }
+  ],
+  "variables": [
+    { "category_key": "ground_parameter", "key": "input.ground.base.rolling_resistance", "label": "Rolling Resistance", "stage_key": "ground_input", "unit": "1" },
+    { "category_key": "ground_parameter", "key": "input.ground.base.normal_restitution", "label": "Restitution", "stage_key": "ground_input", "unit": "1" },
+    { "category_key": "flight_metric", "key": "metric.carry_distance", "label": "Carry Distance", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "ground_detail", "key": "ground.bounce_air_distance", "label": "Bounce Air Distance", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "ground_detail", "key": "ground.skid_distance", "label": "Skid Distance", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "flight_metric", "key": "metric.roll_distance", "label": "Roll Distance", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "ground_detail", "key": "ground.surface_path_distance", "label": "Surface Path Distance", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "flight_metric", "key": "metric.total_distance", "label": "Total Distance", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "ground_detail", "key": "ground.final_downrange", "label": "Final Downrange", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "flight_metric", "key": "metric.final_offline", "label": "Final Offline", "stage_key": "ground_stop", "unit": "m" },
+    { "category_key": "flight_metric", "key": "metric.bounce_count", "label": "Bounce Count", "stage_key": "ground_stop", "unit": "count" }
+  ]
+}
