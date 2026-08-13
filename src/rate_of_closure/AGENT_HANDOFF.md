@@ -3,6 +3,43 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Sasho AoA evidence closure (#4434)
+
+- PyQt6/React expose the method ID, complete club angular velocity, nearest
+  shaft point, face-center lever, induced velocity, and vertical/horizontal
+  components alongside the signed AoA.
+- Python impact-scene authority and React's exact impact sample retain the same
+  fields before strict impact-scene v3 export.
+- Contract tests close positive/negative/zero rotation, on-shaft face center,
+  shaft-line datum/direction invariance, rigid-frame equivariance, and invalid
+  finite/zero-axis boundaries.
+- SPEC is 1.16.71. Exact final gates pass 1,222 Rate/PyQt, 175 shared
+  golf-club with two optional CAD skips, and 877 React tests; Python 3.12/Mypy
+  1.13, Ruff/format, TypeScript, ESLint, production build, docs, assertions,
+  size, and diff checks pass.
+- This closes evidence visibility and contract boundaries only; the metric
+  remains descriptive, non-additive, noncausal, and separate from the existing
+  counterfactual and Shapley options.
+
+## 2026-08-13 Sasho nearest-shaft face-center AoA (#4434)
+
+- Shared Python and React compute nearest shaft point
+  `Q=A+s(s dot (F-A))`, rotation-only face-center velocity
+  `omega x (F-Q)`, and its signed AoA under stable ID
+  `sasho_nearest_shaft_face_center_rotation_only_aoa_v1`.
+- The complete angular velocity is intentional and matches the supplied Sasho
+  transcript. This is a descriptive peer option, not the existing shaft-axis-
+  only remove-shaft counterfactual and not two-factor Shapley attribution.
+- PyQt6/React readouts compare all three choices and render the Sasho velocity
+  from face center behind separate visibility controls. Impact-scene v3
+  persists the method ID, nearest point, lever, velocity, and AoA.
+- SPEC is 1.16.70. Collision/flight physics is unchanged; no causal,
+  additive, measured shaft-flex, or torsional-head-state claim is introduced.
+- Gates pass 1,222 Rate/PyQt, 170 shared golf-club (two optional CAD skips),
+  and 876 React tests; Python 3.12/Mypy 1.13 passes seven changed production
+  modules. Ruff/format, TypeScript, ESLint, production build, docs, assertion,
+  changed-source size, and diff gates pass.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 - Normal merge order is approved localized-execution head

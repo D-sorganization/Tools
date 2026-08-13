@@ -18,6 +18,7 @@ _VECTOR_COLORS = {
     "shaft_rotation": 3,
     "other_rotation": 6,
     "without_shaft": 8,
+    "sasho_face_center_rotation": 2,
 }
 
 
@@ -78,6 +79,7 @@ def draw_impact_scene_3d(
                 "face_center_travel",
                 "dplane_normal",
                 "spin_loft_sector",
+                "sasho_face_center_rotation",
             }
         )
         if visible_layers is None
@@ -215,6 +217,11 @@ def draw_impact_scene_3d(
     max_speed = max(float(np.linalg.norm(vector.vector)) for vector in scene.vectors)
     arrow_scale = 0.18 / max(max_speed, 1e-12)
     for vector in scene.vectors:
+        if (
+            vector.key == "sasho_face_center_rotation"
+            and "sasho_face_center_rotation" not in layers
+        ):
+            continue
         origin = np.asarray(vector.origin_m)
         tip = origin + arrow_scale * np.asarray(vector.vector)
         _line(

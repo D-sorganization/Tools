@@ -3,6 +3,43 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Sasho AoA evidence closure (#4434)
+
+Version 1.16.71 completes the published Sasho option with visible numerical
+provenance in both applications: method ID, complete club angular velocity,
+nearest shaft point, face-center lever, induced velocity, and its vertical and
+horizontal components. The Python impact-scene authority and React impact
+sample now retain that same evidence before strict impact-scene v3 export.
+
+Adversarial coverage pins positive, negative, and zero rotation, a face center
+on the shaft line, shaft-line datum and direction invariance, common rigid-frame
+equivariance, and invalid finite/zero-axis inputs. Exact final-tree evidence is
+1,222 Rate/PyQt tests, 175 shared golf-club tests with two optional CAD skips,
+and 877 React tests. Python 3.12 + Mypy 1.13, Ruff/format, TypeScript, ESLint,
+Vite production build, docs, assertion, changed-source size, and diff gates
+are green. The method remains descriptive, non-additive, and noncausal.
+
+## 2026-08-13 Sasho face-center rotational AoA option (#4434)
+
+Version 1.16.70 adds stable method
+`sasho_nearest_shaft_face_center_rotation_only_aoa_v1`. It projects face center
+to the nearest point on the physical shaft line, evaluates complete-club
+`omega x r` at that lever, and derives signed AoA from the resulting horizontal
+and vertical velocity. It is a separately labeled descriptive option beside
+the existing remove-shaft counterfactual and two-factor Shapley attribution.
+
+Python and TypeScript consume the same exact golden. React and PyQt6 show the
+metric, definition, limitation, and independently selectable velocity vector;
+impact-scene export is v3 and retains the stable ID and complete geometry. This
+does not make the three methods additive, establish causality, alter collision
+or flight physics, or claim a shaft-flex/torsion measurement. #4434 is recorded
+under #4206 and added to current Rate goal #4135.
+
+Evidence is 1,222 Rate/PyQt, 170 shared golf-club with two optional CAD skips,
+and 876 React tests. Exact Python 3.12 + Mypy 1.13 passes seven changed
+production Python modules; Ruff/format, TypeScript, ESLint, Vite build, docs,
+assertion, 400-line changed-source, and diff gates are green.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 Version 1.16.69 is a normal non-fast-forward merge with approved localized-

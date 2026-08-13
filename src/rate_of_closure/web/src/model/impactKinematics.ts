@@ -11,9 +11,20 @@ import { REFERENCE_PIPELINE_LIMITATION } from "./modelLimitations";
 
 const RAD_TO_DEG = 180 / Math.PI;
 const EPSILON = 1e-12;
+export const SASHO_FACE_CENTER_ROTATION_METHOD_ID =
+  "sasho_nearest_shaft_face_center_rotation_only_aoa_v1" as const;
+
+export interface SashoFaceCenterRotationTs {
+  methodId: typeof SASHO_FACE_CENTER_ROTATION_METHOD_ID;
+  nearestShaftPointM: Vec3;
+  leverArmM: Vec3;
+  velocityMps: Vec3;
+  aoaDeg: number | null;
+}
 
 export interface ImpactVectorTs {
-  key: "total" | "axisTranslation" | "shaftRotation" | "otherRotation" | "withoutShaft";
+  key: "total" | "axisTranslation" | "shaftRotation" | "otherRotation" |
+    "withoutShaft" | "sashoFaceCenterRotation";
   label: string;
   originM: Vec3;
   vectorMps: Vec3;
@@ -41,6 +52,7 @@ export interface ImpactKinematicsTs {
   faceCenterPointM: Vec3;
   faceCenterVelocityMps: Vec3;
   faceCenterNormalUnit: Vec3;
+  angularVelocityRadS: Vec3;
   faceNormalUnit: Vec3;
   leadingEdgeUnit: Vec3;
   arcTangentUnit: Vec3;
@@ -50,9 +62,11 @@ export interface ImpactKinematicsTs {
   contactAoaDeg: number | null;
   withoutShaftAoaDeg: number | null;
   shaftAoaContributionDeg: number | null;
+  shaftShapleyAoaDeg: number | null;
   shaftRotationRateDps: number;
   shaftVerticalVelocityMps: number;
   shaftVerticalVelocityShare: number | null;
+  sashoFaceCenterRotation: SashoFaceCenterRotationTs;
   faceNormalRateDps: number;
   leadingEdgeRateDps: number;
   referenceDPlane: DPlaneAnalysisTs;
@@ -66,6 +80,11 @@ const unit = (vector: Vec3, name: string): Vec3 => {
   return scale(vector, 1 / magnitude);
 };
 
+const finiteVector = (vector: Vec3, name: string): Vec3 => {
+  if (!vector.every(Number.isFinite)) throw new RangeError(`${name} must be finite`);
+  return vector;
+};
+
 const lerp = (first: Vec3, second: Vec3, alpha: number): Vec3 =>
   add(scale(first, 1 - alpha), scale(second, alpha));
 
@@ -75,6 +94,41 @@ const aoaDeg = (velocity: Vec3): number | null => {
     ? null
     : Math.atan2(velocity[1], horizontal) * RAD_TO_DEG;
 };
+
+const shaftShapleyAoa = (base: Vec3, shaft: Vec3, other: Vec3): number | null => {
+  const baseAoa = aoaDeg(base);
+  const shaftAoa = aoaDeg(add(base, shaft));
+  const otherAoa = aoaDeg(add(base, other));
+  const totalAoa = aoaDeg(add(add(base, shaft), other));
+  return baseAoa === null || shaftAoa === null || otherAoa === null || totalAoa === null
+    ? null
+    : 0.5 * ((shaftAoa - baseAoa) + (totalAoa - otherAoa));
+};
+
+export function sashoFaceCenterRotationAoa(
+  angularVelocityRadS: Vec3,
+  shaftAxisPointM: Vec3,
+  shaftAxis: Vec3,
+  faceCenterPointM: Vec3,
+): SashoFaceCenterRotationTs {
+  const omega = finiteVector(angularVelocityRadS, "angular velocity");
+  const shaftPoint = finiteVector(shaftAxisPointM, "shaft axis point");
+  const shaftAxisUnit = unit(finiteVector(shaftAxis, "shaft axis"), "shaft axis");
+  const faceCenter = finiteVector(faceCenterPointM, "face center point");
+  const offset = sub(faceCenter, shaftPoint);
+  const nearestShaftPointM = add(
+    shaftPoint, scale(shaftAxisUnit, dot(offset, shaftAxisUnit)),
+  );
+  const leverArmM = sub(faceCenter, nearestShaftPointM);
+  const velocityMps = finiteVector(cross(omega, leverArmM), "Sasho velocity");
+  return {
+    methodId: SASHO_FACE_CENTER_ROTATION_METHOD_ID,
+    nearestShaftPointM,
+    leverArmM,
+    velocityMps,
+    aoaDeg: aoaDeg(velocityMps),
+  };
+}
 
 export const exactEventSample = (run: SimulationRunTs): SwingSampleTs => {
   if (run.swing.length === 0) throw new RangeError("run must retain swing samples");
@@ -187,6 +241,9 @@ export function impactKinematics(
   const faceCenterVelocity = add(
     sample.velocity, cross(sample.angularVelocity, faceCenterLever),
   );
+  const sashoRotation = sashoFaceCenterRotationAoa(
+    sample.angularVelocity, shaft.point, shaft.axis, faceCenter,
+  );
   const axisVelocity = add(
     sample.velocity,
     cross(sample.angularVelocity, sub(shaft.point, sample.position)),
@@ -216,6 +273,7 @@ export function impactKinematics(
     { key: "shaftRotation", label: "Rotation About Shaft", originM: contact, vectorMps: shaftVelocity, meaning: "Contact velocity induced by angular velocity projected onto the shaft." },
     { key: "otherRotation", label: "Other Rotation", originM: contact, vectorMps: otherVelocity, meaning: "Contact velocity induced by angular velocity normal to the shaft." },
     { key: "withoutShaft", label: "Without Shaft Rotation", originM: contact, vectorMps: withoutShaft, meaning: "Counterfactual velocity after removing the shaft component." },
+    { key: "sashoFaceCenterRotation", label: "Sasho Face-Center Rotation", originM: faceCenter, vectorMps: sashoRotation.velocityMps, meaning: "Full angular-velocity contribution at face center about the nearest point on the physical shaft line; descriptive, not causal." },
   ];
   return {
     eventLabel: run.impactOutcome.status === "hit" ? "Impact" : "Closest Approach",
@@ -231,6 +289,7 @@ export function impactKinematics(
     faceCenterPointM: faceCenter,
     faceCenterVelocityMps: faceCenterVelocity,
     faceCenterNormalUnit: faceCenterNormal,
+    angularVelocityRadS: sample.angularVelocity,
     faceNormalUnit: faceNormal,
     leadingEdgeUnit: leadingEdge,
     arcTangentUnit: unit(sample.velocity, "arc tangent"),
@@ -241,10 +300,14 @@ export function impactKinematics(
     withoutShaftAoaDeg: noShaftAoa,
     shaftAoaContributionDeg:
       totalAoa === null || noShaftAoa === null ? null : totalAoa - noShaftAoa,
+    shaftShapleyAoaDeg: shaftShapleyAoa(
+      axisVelocity, shaftVelocity, otherVelocity,
+    ),
     shaftRotationRateDps: shaftRate * RAD_TO_DEG,
     shaftVerticalVelocityMps: shaftVelocity[1],
     shaftVerticalVelocityShare:
       Math.abs(totalVertical) <= EPSILON ? null : shaftVelocity[1] / totalVertical,
+    sashoFaceCenterRotation: sashoRotation,
     faceNormalRateDps: norm(cross(sample.angularVelocity, faceNormal)) * RAD_TO_DEG,
     leadingEdgeRateDps: norm(cross(sample.angularVelocity, leadingEdge)) * RAD_TO_DEG,
     referenceDPlane: analyzeDPlane(sample.velocity, faceCenterNormal),

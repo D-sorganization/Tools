@@ -13,7 +13,7 @@ import { impactSceneSvg } from "./impactSceneSvg";
 
 type Camera = ImpactCameraTs;
 const ISOMETRIC: Camera = { yaw: 2.62, pitch: 0.52, zoom: 2.2 };
-const VELOCITY_KEYS = ["total", "axisTranslation", "shaftRotation", "otherRotation", "withoutShaft"] as const;
+const VELOCITY_KEYS = ["total", "axisTranslation", "shaftRotation", "otherRotation", "withoutShaft", "sashoFaceCenterRotation"] as const;
 const DPLANE_LAYERS = [
   ["faceNormal", "Face-Center Normal", "Delivered face-center normal in the app frame."],
   ["faceCenterTravel", "Face-Center Travel", "Rigid-body face-center velocity direction including omega cross r."],

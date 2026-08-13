@@ -10,7 +10,7 @@ export function impactSceneExportPayload(
   camera: ImpactCameraTs,
 ) {
   return {
-    format: "rate-of-closure.impact-scene/v2",
+    format: "rate-of-closure.impact-scene/v3",
     ...scene,
     renderPreferences: {
       visibleLayers: [...visibleLayers].sort(),

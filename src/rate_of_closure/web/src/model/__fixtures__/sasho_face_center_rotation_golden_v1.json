@@ -1,0 +1,15 @@
+{
+  "schema_id": "rate-of-closure/sasho-face-center-rotation-golden@1",
+  "angular_velocity_rad_s": [2.0, 10.0, -4.0],
+  "shaft_axis_point_m": [0.0, 0.0, 0.0],
+  "shaft_axis_unit": [0.0, 1.0, 0.0],
+  "face_center_point_m": [0.02, 0.1, 0.03],
+  "ground_up_unit": [0.0, 1.0, 0.0],
+  "expected": {
+    "method_id": "sasho_nearest_shaft_face_center_rotation_only_aoa_v1",
+    "nearest_shaft_point_m": [0.0, 0.1, 0.0],
+    "lever_arm_m": [0.02, 0.0, 0.03],
+    "velocity_mps": [0.3, -0.14, -0.2],
+    "aoa_deg": -21.220700223593433
+  }
+}
