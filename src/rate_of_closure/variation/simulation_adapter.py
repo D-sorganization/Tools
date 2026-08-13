@@ -22,6 +22,10 @@ from rate_of_closure.simulation import (
     run_simulation,
 )
 from rate_of_closure.simulation.pipeline import configured_swing_sample_times
+from rate_of_closure.simulation.sources import (
+    commanded_torque_joint_ids,
+    generalized_state_layout,
+)
 from rate_of_closure.variation.simulation_types import (
     APP_FRAME_ID,
     CONTACT_OUTPUT_NAMES,
@@ -44,22 +48,24 @@ from shared.python.swing_sim.solver.solve import (
 from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
 
+from ._ensemble_limits import MAX_CHUNK_AUTHORITY_BYTES
+from .ensemble_archive_contracts import EnsembleResumeCursor
+from .ensemble_chunk_builder import ChunkAccumulator
 from .ensemble_chunks import (
     MAX_CHUNK_POSITION_CELLS,
     CollectingEnsembleSink,
     EnsembleChunkSink,
     EnsembleStreamHeader,
-    SimulationResultChunk,
 )
+from .ensemble_request_identity import request_identity_sha256
+from .ensemble_trace_authority import EnsembleAuthorityLayout
 from .request_builder import (
     apply_global_simulation_values,
     build_simulation_ensemble_request,
 )
 from .trial_projection import (
     SimulationExecutor,
-    TrialCapture,
     capture_simulation,
-    project_simulation_outcome,
 )
 
 TEE_HEIGHT_VARIABLE_KEY = f"{CATEGORY_BALL_SETUP}.tee_height_m"
@@ -170,11 +176,29 @@ def run_simulation_ensemble_chunks(
     started = time.monotonic()
     cancellation = cancel_event or threading.Event()
     times, point_ids = _trace_layout(request.configs[0], None)
+    state_ids, state_units = generalized_state_layout(request.configs[0].source_kind)
+    authority_layout = EnsembleAuthorityLayout(
+        state_ids,
+        state_units,
+        commanded_torque_joint_ids(request.configs[0].source_kind),
+    )
     header = EnsembleStreamHeader(
-        request.plan, request.sampled_inputs, times, point_ids, APP_FRAME_ID
+        request.plan,
+        request.sampled_inputs,
+        times,
+        point_ids,
+        APP_FRAME_ID,
+        authority_layout,
+        request_identity_sha256(request),
     )
     cells_per_trial = times.size * len(point_ids) * 3
-    maximum_rows = MAX_CHUNK_POSITION_CELLS // cells_per_trial
+    authority_bytes_per_trial = times.size * (
+        (16 + 6 + len(state_ids) + len(authority_layout.torque_joint_ids)) * 8 + 1
+    )
+    maximum_rows = min(
+        MAX_CHUNK_POSITION_CELLS // cells_per_trial,
+        MAX_CHUNK_AUTHORITY_BYTES // authority_bytes_per_trial,
+    )
     require(maximum_rows > 0, "one trace row exceeds the chunk cell limit")
     rows_per_chunk = maximum_rows if chunk_size is None else chunk_size
     require(
@@ -186,19 +210,37 @@ def run_simulation_ensemble_chunks(
     )
     failed = 0
     try:
-        sink.begin(header)
-        for start in range(0, request.plan.n_runs, rows_per_chunk):
+        resume = sink.begin(header)
+        require(
+            resume is None or isinstance(resume, EnsembleResumeCursor),
+            "sink begin must return EnsembleResumeCursor or None",
+        )
+        next_index = 0 if resume is None else resume.next_trial_index
+        failed = 0 if resume is None else resume.failure_count
+        require(next_index <= request.plan.n_runs, "resume cursor exceeds trial count")
+        require(failed <= next_index, "resume failure count exceeds completed trials")
+        if resume is not None and next_index > 0 and progress_cb is not None:
+            progress_cb(
+                ProgressReport(
+                    iteration=next_index,
+                    cost=float(failed),
+                    best_cost=0.0,
+                    improvement_pct=0.0,
+                    elapsed_s=time.monotonic() - started,
+                )
+            )
+        for start in range(next_index, request.plan.n_runs, rows_per_chunk):
             stop = min(start + rows_per_chunk, request.plan.n_runs)
-            captures: list[TrialCapture] = []
+            accumulator = ChunkAccumulator(request, header, start, stop)
             for config in request.configs[start:stop]:
                 if cancellation.is_set():
                     raise CancelledError
                 capture = capture_simulation(config, executor)
                 if cancellation.is_set():
                     raise CancelledError
-                captures.append(capture)
-                failed += int(capture.run is None)
-            chunk = _result_chunk(request, header, start, tuple(captures))
+                accumulator.append(capture)
+            failed += accumulator.failure_count
+            chunk = accumulator.finish()
             if cancellation.is_set():
                 raise CancelledError
             sink.accept(chunk)
@@ -223,55 +265,6 @@ def run_simulation_ensemble_chunks(
         raise
 
 
-def _result_chunk(
-    request: SimulationEnsembleRequest,
-    header: EnsembleStreamHeader,
-    start_index: int,
-    captures: tuple[TrialCapture, ...],
-) -> SimulationResultChunk:
-    """Project and release one bounded set of complete simulation captures."""
-    times = header.sample_times_s
-    point_ids = header.point_ids
-    positions = np.full((len(captures), len(times), len(point_ids), 3), np.nan)
-    valid: np.ndarray = np.zeros((len(captures), len(times)), dtype=bool)
-    impacts: np.ndarray = np.full(len(captures), -1, dtype=int)
-    outcomes = tuple(
-        project_simulation_outcome(start_index + offset, capture)
-        for offset, capture in enumerate(captures)
-    )
-    for offset, capture in enumerate(captures):
-        run = capture.run
-        if run is None:
-            continue
-        _require_header_run(header, run)
-        positions[offset] = _spatial_positions(run)
-        valid[offset] = True
-        if run.impact_time_s is not None:
-            impacts[offset] = int(np.argmin(np.abs(times - run.impact_time_s)))
-    stop = start_index + len(captures)
-    return SimulationResultChunk(
-        start_index=start_index,
-        sampled_inputs=request.sampled_inputs[start_index:stop],
-        outcomes=outcomes,
-        positions_m=positions,
-        sample_valid=valid,
-        impact_sample_indices=impacts,
-    )
-
-
-def _spatial_positions(run: SimulationRun) -> np.ndarray:
-    """Return ``(sample, point, xyz)`` positions in stable point order."""
-    if run.config.source_kind == "manual":
-        positions: np.ndarray = np.asarray(run.swing_positions, dtype=float)
-        return positions[:, np.newaxis, :]
-    require(
-        bool(np.allclose(run.swing_joints[:, -1], run.swing_positions, atol=1e-9)),
-        "last spatial point must be the clubhead reference trajectory",
-    )
-    joints: np.ndarray = np.asarray(run.swing_joints, dtype=float)
-    return joints
-
-
 def _trace_layout(
     config: SimulationConfig, reference: SimulationRun | None
 ) -> tuple[np.ndarray, tuple[str, ...]]:
@@ -287,18 +280,6 @@ def _point_ids_for_source(source_kind: str) -> tuple[str, ...]:
     """Return the stable spatial schema for a validated source kind."""
     require(source_kind in _POINT_IDS_BY_SOURCE, "unknown source_kind", source_kind)
     return _POINT_IDS_BY_SOURCE[source_kind]
-
-
-def _require_header_run(header: EnsembleStreamHeader, run: SimulationRun) -> None:
-    """Require exact announced time and stable-point coordinates."""
-    require(
-        np.array_equal(run.swing_times, header.sample_times_s),
-        "evaluated runs must share one sample-time grid",
-    )
-    require(
-        spatial_point_ids(run) == header.point_ids,
-        "evaluated runs must share stable spatial point IDs",
-    )
 
 
 __all__ = [

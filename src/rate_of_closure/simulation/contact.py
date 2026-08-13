@@ -70,6 +70,8 @@ class ImpactOutcome:
 
     def __post_init__(self) -> None:
         """Validate the immutable outcome and its signed-margin invariant."""
+        require(isinstance(self.mode, ContactMode), "mode must be ContactMode")
+        require(isinstance(self.status, ImpactStatus), "status must be ImpactStatus")
         require(
             math.isfinite(self.candidate_time_s) and self.candidate_time_s >= 0.0,
             "candidate_time_s must be finite and >= 0",
@@ -93,11 +95,32 @@ class ImpactOutcome:
             else ImpactStatus.MISS
         )
         require(self.status is expected_status, "status must agree with contact margin")
-        require(bool(self.frame), "frame metadata must be non-empty")
-        require(bool(self.geometry_model), "geometry_model must be non-empty")
+        ball = tuple(self.ball_position_m)
         require(
-            bool(self.geometry_limitations),
-            "geometry_limitations must be non-empty",
+            len(ball) == 3
+            and all(
+                isinstance(value, (int, float))
+                and not isinstance(value, bool)
+                and math.isfinite(float(value))
+                for value in ball
+            ),
+            "ball_position_m must contain three finite real values",
+        )
+        require(
+            isinstance(self.frame, str) and bool(self.frame),
+            "frame metadata must be non-empty text",
+        )
+        require(
+            isinstance(self.geometry_model, str) and bool(self.geometry_model),
+            "geometry_model must be non-empty text",
+        )
+        require(
+            isinstance(self.geometry_limitations, str)
+            and bool(self.geometry_limitations),
+            "geometry_limitations must be non-empty text",
+        )
+        object.__setattr__(
+            self, "ball_position_m", tuple(float(value) for value in ball)
         )
 
     @property

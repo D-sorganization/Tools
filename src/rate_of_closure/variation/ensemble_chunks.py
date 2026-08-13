@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass, field
-from typing import Protocol, TypeVar, cast
+from typing import Any, Protocol, TypeVar, cast
 
 import numpy as np
 
@@ -18,6 +19,12 @@ from shared.python.swing_sim.variation.ensemble_types import (
 from shared.python.swing_sim.variation.spec import VariationPlan
 
 from ._ensemble_limits import MAX_INPUT_CELLS, require_ensemble_shape_limits
+from .ensemble_archive_contracts import EnsembleResumeCursor
+from .ensemble_trace_authority import (
+    ChunkTraceAuthority,
+    EnsembleAuthorityLayout,
+    require_chunk_authority,
+)
 from .simulation_types import (
     ALL_OUTPUT_NAMES,
     APP_FRAME_ID,
@@ -30,7 +37,7 @@ from .simulation_types import (
 MAX_CHUNK_POSITION_CELLS = 500_000
 
 
-def _owned_array(value: object, dtype: object) -> np.ndarray:
+def _owned_array(value: object, dtype: Any) -> np.ndarray:
     result: np.ndarray = np.array(value, dtype=dtype, copy=True)
     result.setflags(write=False)
     return result
@@ -54,6 +61,8 @@ class EnsembleStreamHeader:
     sample_times_s: np.ndarray = field(repr=False)
     point_ids: tuple[str, ...]
     coordinate_frame: str
+    authority_layout: EnsembleAuthorityLayout | None = None
+    request_identity_sha256: str | None = None
 
     def __post_init__(self) -> None:
         require(isinstance(self.plan, VariationPlan), "plan must be a VariationPlan")
@@ -90,6 +99,16 @@ class EnsembleStreamHeader:
         object.__setattr__(self, "sampled_inputs", inputs)
         object.__setattr__(self, "sample_times_s", times)
         object.__setattr__(self, "point_ids", points)
+        require(
+            self.authority_layout is None
+            or isinstance(self.authority_layout, EnsembleAuthorityLayout),
+            "authority_layout must be an EnsembleAuthorityLayout",
+        )
+        require(
+            self.request_identity_sha256 is None
+            or re.fullmatch(r"[0-9a-f]{64}", self.request_identity_sha256) is not None,
+            "request_identity_sha256 must be lowercase SHA-256",
+        )
 
 
 @dataclass(frozen=True)
@@ -102,6 +121,7 @@ class SimulationResultChunk:
     positions_m: np.ndarray = field(repr=False)
     sample_valid: np.ndarray = field(repr=False)
     impact_sample_indices: np.ndarray = field(repr=False)
+    authority: ChunkTraceAuthority | None = None
 
     def __post_init__(self) -> None:
         outcomes = tuple(self.outcomes)
@@ -153,7 +173,7 @@ class SimulationResultChunk:
             and raw_impacts.dtype != np.dtype(bool),
             "impact indices must contain genuine integer values",
         )
-        impact_bounds = np.iinfo(np.dtype(int))
+        impact_bounds = np.iinfo(np.int64)
         require(
             bool(np.all(raw_impacts <= impact_bounds.max))
             and bool(np.all(raw_impacts >= impact_bounds.min)),
@@ -175,16 +195,16 @@ class SimulationResultChunk:
         for row, outcome in enumerate(outcomes):
             if outcome.status is NUMERICAL_FAILURE:
                 require(
-                    not np.any(valid[row])
-                    and np.all(np.isnan(positions[row]))
+                    not bool(np.any(valid[row]))
+                    and bool(np.all(np.isnan(positions[row])))
                     and impacts[row] == -1,
                     "numerical failure chunk trace must be unavailable",
                 )
                 continue
-            require(np.any(valid[row]), "evaluated chunk trace must be available")
+            require(bool(np.any(valid[row])), "evaluated chunk trace must be available")
             require(
-                np.all(np.isfinite(positions[row][valid[row]]))
-                and np.all(np.isnan(positions[row][~valid[row]])),
+                bool(np.all(np.isfinite(positions[row][valid[row]])))
+                and bool(np.all(np.isnan(positions[row][~valid[row]]))),
                 "chunk positions must agree with sample validity",
             )
             require(
@@ -196,6 +216,10 @@ class SimulationResultChunk:
         object.__setattr__(self, "positions_m", positions)
         object.__setattr__(self, "sample_valid", valid)
         object.__setattr__(self, "impact_sample_indices", impacts)
+        require(
+            self.authority is None or isinstance(self.authority, ChunkTraceAuthority),
+            "authority must be ChunkTraceAuthority when supplied",
+        )
 
 
 TCommit_co = TypeVar("TCommit_co", covariant=True)
@@ -204,7 +228,7 @@ TCommit_co = TypeVar("TCommit_co", covariant=True)
 class EnsembleChunkSink(Protocol[TCommit_co]):
     """Coordinator-thread lifecycle for provisional result chunks."""
 
-    def begin(self, header: EnsembleStreamHeader) -> None: ...
+    def begin(self, header: EnsembleStreamHeader) -> EnsembleResumeCursor | None: ...
 
     def accept(self, chunk: SimulationResultChunk) -> None: ...
 
@@ -240,6 +264,19 @@ def require_chunk_matches_header(
         == (header.sample_times_s.size, len(header.point_ids)),
         "chunk trace layout does not match header",
     )
+    require(
+        (chunk.authority is None) == (header.authority_layout is None),
+        "chunk authority presence must match the announced header",
+    )
+    if chunk.authority is not None:
+        assert header.authority_layout is not None
+        require_chunk_authority(
+            chunk.authority,
+            header.authority_layout,
+            chunk.outcomes,
+            chunk.sample_valid,
+            header.sample_times_s,
+        )
     for row, outcome in enumerate(chunk.outcomes):
         impact_index = int(chunk.impact_sample_indices[row])
         if outcome.status is not EVALUATED_HIT:
