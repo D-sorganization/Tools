@@ -6,8 +6,12 @@
   cumulative changed-source MyPy findings.
 - The Rate pipeline removes the redundant cast around `make_source`, whose
   public return contract is already `SwingSource`; runtime behavior is unchanged.
-- Evidence: exact 16-file delta MyPy, 147/147 focused localized tests, and
-  scoped Ruff/format/diff gates pass.
+- `make_source` uses its validated `DoublePendulumRunConfig | None` narrowing
+  directly instead of recasting the non-`None` branch.
+- SPEC change-log rows 1.16.55 through 1.16.58 restore the complete monotonic
+  audit trail without superseding their existing mission sections.
+- Evidence: pinned Python 3.12 / MyPy 1.13 exact 16-file delta MyPy, 147/147
+  focused localized tests, and scoped Ruff/format/diff gates pass.
 - UI locus authoring, Rust parity, protected publication, and epic #4142 remain
   open.
 

@@ -8,9 +8,13 @@
 The final cumulative changed-source MyPy blockers are closed without runtime
 changes: `dataset_io.read_csv` explicitly types its NumPy input/success arrays,
 and the Rate pipeline removes a redundant `SwingSource` cast around the already
-typed source factory return. The exact 16-file delta MyPy command, 147 focused
-localized tests, Ruff, formatting, and diff checks pass. UI, Rust, protected-
-publication, and #4142 completion gates remain open.
+typed source factory return. The source factory also relies on the validated
+`DoublePendulumRunConfig | None` narrowing instead of recasting its non-`None`
+branch. SPEC change-log rows 1.16.55 through 1.16.58 restore the monotonic audit
+trail without replacing any mission text. The exact pinned Python 3.12 / MyPy
+1.13 16-file delta command, 147 focused localized tests, Ruff, formatting, and
+diff checks pass. UI, Rust, protected-publication, and #4142 completion gates
+remain open.
 
 ## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
 

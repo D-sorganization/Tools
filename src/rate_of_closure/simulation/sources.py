@@ -260,11 +260,7 @@ def make_source(
         run_config,
     )
     require(kind in SOURCE_KINDS, f"unknown swing source kind {kind!r}", kind)
-    execution = (
-        DoublePendulumRunConfig()
-        if run_config is None
-        else cast(DoublePendulumRunConfig, run_config)
-    )
+    execution = DoublePendulumRunConfig() if run_config is None else run_config
     uses_default_mode = (
         execution.mode is SwingRunMode.PASSIVE
         and execution.prescribed_profile_id is None

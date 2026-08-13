@@ -39,7 +39,9 @@ findings without changing runtime behavior. The variation CSV reader explicitly
 types its input and success arrays as NumPy arrays, satisfying the repository's
 `follow-imports=skip` delta MyPy gate. The Rate simulation pipeline returns the
 already typed `SwingSource` from `make_source` directly instead of wrapping it
-in a redundant cast. Behavioral contracts and serialized data are unchanged.
+in a redundant cast. The source factory also uses the type narrowing guaranteed
+by its run-config contract instead of recasting the validated non-`None` branch.
+Behavioral contracts and serialized data are unchanged.
 
 Evidence is the exact cumulative 16-file changed-source MyPy command, 147/147
 localized contract tests, and scoped Ruff/format/diff gates. UI locus authoring,
@@ -3403,6 +3405,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
+| 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; and require a genuine non-Boolean integer outer variation-dataset schema discriminator. |
+| 2026-08-12 | 1.16.56 | fix(rate-of-closure, #4142): reject localized torque offsets on unsupported manual/triple sources; validate run-config offset collections before tuple conversion; and require genuine non-Boolean integer variation-plan schema versions. |
+| 2026-08-12 | 1.16.55 | fix(rate-of-closure, #4142): fail closed on malformed localized numeric/collection domains; make the fixed-step effective RK4 duration authoritative for windows; and hide or atomically reject localized PyQt factors until locus authoring exists. |
 | 2026-08-12 | 1.16.54 | feat(rate-of-closure, #4142): execute additive shoulder/wrist commanded-torque offsets over strict half-open one-point loci at every Python RK4 stage; bind deterministic variation samples to exact topological joint IDs; fail closed on unsupported source, locus, duration, and Rust contracts; preserve typed no-impact and distinct spatial provenance while keeping UI, persistence, protected release, and epic completion open. |
 | 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
 | 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |

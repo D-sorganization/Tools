@@ -8,10 +8,12 @@
 Static cleanup now allows the full cumulative localized slice to pass the
 repository's changed-source MyPy gate: shared dataset CSV arrays have explicit
 NumPy types and `_make_source` returns the source factory's declared
-`SwingSource` directly. Runtime/source/wire behavior is unchanged. Evidence is
-the exact 16-file delta MyPy command, 147 focused tests, and clean Ruff,
-formatting, and diff gates. Remaining UI, Rust, publication, and epic work stays
-open.
+`SwingSource` directly. `make_source` likewise uses the type narrowing already
+established by its run-config contract rather than a redundant config cast.
+SPEC rows 1.16.55 through 1.16.58 now preserve the complete append-only history.
+Runtime/source/wire behavior is unchanged. Evidence is the pinned Python 3.12 /
+MyPy 1.13 16-file delta command, 147 focused tests, and clean Ruff, formatting,
+and diff gates. Remaining UI, Rust, publication, and epic work stays open.
 
 ## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
 
