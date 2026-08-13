@@ -115,7 +115,14 @@ class SensitivityResult:
         """The input key whose variation most affects ``output_name``."""
         require(output_name in self.output_names, "unknown output column", output_name)
         column = self.matrix[:, self.output_names.index(output_name)]
-        return self.input_keys[int(np.argmax(column))]
+        finite = np.isfinite(column)
+        require(
+            np.any(finite),
+            "output has no available sensitivity values",
+            output_name,
+        )
+        masked = np.where(finite, np.abs(column), -np.inf)
+        return self.input_keys[int(np.argmax(masked))]
 
 
 def one_at_a_time_sensitivity(
@@ -159,16 +166,28 @@ def one_at_a_time_sensitivity(
         )
     assert outputs is not None  # plan.noise is non-empty (DbC)
     matrix = np.vstack(rows)
-    with np.errstate(invalid="ignore"):
-        col_max = np.nanmax(np.abs(matrix), axis=0)
-        safe = np.where(col_max > 0.0, col_max, 1.0)
-        normalized = np.abs(matrix) / safe
+    normalized = _normalize_sensitivity_matrix(matrix)
     return SensitivityResult(
         input_keys=tuple(spec.variable_key for spec in plan.noise),
         output_names=outputs,
         matrix=matrix,
         normalized=normalized,
     )
+
+
+def _normalize_sensitivity_matrix(matrix: np.ndarray) -> np.ndarray:
+    """Normalize finite cells while preserving per-cell unavailability."""
+    normalized: np.ndarray = np.full(matrix.shape, np.nan, dtype=float)
+    for output_index in range(matrix.shape[1]):
+        column = matrix[:, output_index]
+        finite = np.isfinite(column)
+        if not np.any(finite):
+            continue
+        maximum = float(np.max(np.abs(column[finite])))
+        normalized[finite, output_index] = (
+            np.abs(column[finite]) / maximum if maximum > 0.0 else 0.0
+        )
+    return normalized
 
 
 def _ranks(values: np.ndarray) -> np.ndarray:

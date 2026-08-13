@@ -165,8 +165,16 @@ def test_parser_rejects_oversized_output_matrix_before_allocation(
     parser = importlib.import_module(
         "shared.python.swing_sim.variation._morris_observation_parser"
     )
+    archive_io = importlib.import_module(
+        "shared.python.swing_sim.variation.morris_observation_io"
+    )
     document = _archive()
-    monkeypatch.setattr(parser, "MAX_MORRIS_OBSERVATION_CELLS", 7)
+    monkeypatch.setattr(archive_io, "MAX_MORRIS_OBSERVATION_CELLS", 7)
+    monkeypatch.setattr(
+        parser,
+        "_parse_output",
+        lambda _output: pytest.fail("output parsed before resource validation"),
+    )
     with pytest.raises(ContractViolationError, match="MAX_MORRIS_OBSERVATION_CELLS"):
         morris_observations_from_json_dict(document)
 
@@ -177,10 +185,44 @@ def test_parser_rejects_oversized_design_before_array_construction(
     parser = importlib.import_module(
         "shared.python.swing_sim.variation._morris_observation_parser"
     )
+    archive_io = importlib.import_module(
+        "shared.python.swing_sim.variation.morris_observation_io"
+    )
     document = _archive()
-    monkeypatch.setattr(parser, "MAX_MORRIS_SAMPLES", 3)
+    monkeypatch.setattr(archive_io, "MAX_MORRIS_SAMPLES", 3)
+    monkeypatch.setattr(
+        parser.np,
+        "asarray",
+        lambda *_args, **_kwargs: pytest.fail(
+            "design array constructed before resource validation"
+        ),
+    )
     with pytest.raises(ContractViolationError, match="MAX_MORRIS_SAMPLES"):
         morris_observations_from_json_dict(document)
+
+
+def test_archive_factories_enforce_parser_resource_limits(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    archive = morris_observations_from_json_dict(_archive())
+    archive_io = importlib.import_module(
+        "shared.python.swing_sim.variation.morris_observation_io"
+    )
+    monkeypatch.setattr(archive_io, "MAX_MORRIS_SAMPLES", 3)
+    with pytest.raises(ContractViolationError, match="MAX_MORRIS_SAMPLES"):
+        make_morris_observation_archive(
+            archive.observations, study_id="study", provenance={"producer": "test"}
+        )
+    with pytest.raises(ContractViolationError, match="MAX_MORRIS_SAMPLES"):
+        morris_observations_to_json_dict(
+            archive.observations, study_id="study", provenance={"producer": "test"}
+        )
+    monkeypatch.setattr(archive_io, "MAX_MORRIS_SAMPLES", 100_000)
+    monkeypatch.setattr(archive_io, "MAX_MORRIS_OBSERVATION_CELLS", 7)
+    with pytest.raises(ContractViolationError, match="MAX_MORRIS_OBSERVATION_CELLS"):
+        morris_observations_to_json_dict(
+            archive.observations, study_id="study", provenance={"producer": "test"}
+        )
 
 
 def test_serializer_rejects_shared_identifiers_that_are_not_wire_safe() -> None:

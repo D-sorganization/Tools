@@ -20,7 +20,6 @@ from ._morris_observation_validation import (
     stable_text,
 )
 from .morris_design import MorrisDesign, MorrisFactor, MorrisObservations, MorrisOutput
-from .morris_execution import MAX_MORRIS_OBSERVATION_CELLS, MAX_MORRIS_SAMPLES
 from .morris_observation_io import (
     _DESIGN_FIELDS,
     _FACTOR_FIELDS,
@@ -36,6 +35,8 @@ from .morris_observation_io import (
     MorrisObservationArchive,
     _canonical_bytes,
     _design_sha256,
+    _require_observation_counts,
+    _require_observation_shape,
     _sample_id,
     morris_observations_to_json_dict,
 )
@@ -86,13 +87,8 @@ def _parse_design(value: object) -> MorrisDesign:
         isinstance(raw_factors, list) and bool(raw_factors), "factors must be nonempty"
     )
     trajectories = nonnegative_integer(item["trajectories"], "trajectories")
-    sample_count = trajectories * (len(raw_factors) + 1)
-    require(
-        sample_count <= MAX_MORRIS_SAMPLES,
-        f"sample count must not exceed MAX_MORRIS_SAMPLES={MAX_MORRIS_SAMPLES}",
-        sample_count,
-    )
-    return MorrisDesign(
+    _require_observation_counts(trajectories, len(raw_factors), 0)
+    design = MorrisDesign(
         tuple(_parse_factor(factor) for factor in raw_factors),
         trajectories,
         nonnegative_integer(item["levels"], "levels"),
@@ -101,6 +97,7 @@ def _parse_design(value: object) -> MorrisDesign:
         np.asarray(item["changed_factor_indices"]),
         np.asarray(item["signed_steps"], dtype=float),
     )
+    return design
 
 
 def _bounded(value: object) -> None:
@@ -145,16 +142,10 @@ def parse_morris_observations(value: object) -> MorrisObservationArchive:
     require(
         isinstance(raw_outputs, list) and bool(raw_outputs), "outputs must be nonempty"
     )
+    sample_count = design.trajectories * (len(design.factors) + 1)
+    _require_observation_shape(design, len(raw_outputs))
     outputs = tuple(_parse_output(output) for output in raw_outputs)
     records = item["records"]
-    sample_count = design.trajectories * (len(design.factors) + 1)
-    observation_cells = sample_count * len(outputs)
-    require(
-        observation_cells <= MAX_MORRIS_OBSERVATION_CELLS,
-        "observation count must not exceed "
-        f"MAX_MORRIS_OBSERVATION_CELLS={MAX_MORRIS_OBSERVATION_CELLS}",
-        observation_cells,
-    )
     require(
         isinstance(records, list) and len(records) == sample_count,
         "records must cover design",

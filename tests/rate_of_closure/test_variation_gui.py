@@ -235,6 +235,28 @@ class TestPlanRoundTrip:
         assert edited.noise[0].point_ids == ("ball.center",)
         assert edited.groups == plan.groups
 
+    def test_unrelated_edit_preserves_each_unedited_numeric_authority(
+        self, tab: VariationTab
+    ) -> None:
+        precise = NoiseSpec(
+            _BALL,
+            distribution="normal",
+            scale=2.123456789,
+            lower=140.123456789,
+            upper=170.987654321,
+            spec_id="precise-launch-speed",
+        )
+        plan = VariationPlan(mode="launch", noise=(precise,), n_runs=12, seed=5)
+        tab.load_plan(plan)
+
+        tab._rows[0].distribution.setCurrentText("uniform")
+        rebuilt = tab.build_plan().noise[0]
+
+        assert rebuilt.distribution == "uniform"
+        assert rebuilt.scale == precise.scale
+        assert rebuilt.lower == precise.lower
+        assert rebuilt.upper == precise.upper
+
     def test_unrepresentable_plan_is_rejected_before_editor_mutation(
         self, tab: VariationTab
     ) -> None:

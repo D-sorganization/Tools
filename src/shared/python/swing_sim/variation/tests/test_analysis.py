@@ -10,11 +10,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
     NoiseSpec,
     PerturbationGroup,
+    SensitivityResult,
     VariationDataset,
     VariationPlan,
     dispersion_ellipse,
@@ -117,6 +119,30 @@ def _pairwise_fixture_dataset() -> tuple[VariationDataset, np.ndarray]:
 
 
 class TestSensitivity:
+    def test_dominant_input_ignores_unavailable_cells_and_rejects_empty_column(
+        self,
+    ) -> None:
+        matrix = np.asarray([[math.nan, math.nan], [2.0, math.nan]])
+        result = SensitivityResult(
+            ("unavailable", "measured"),
+            ("partial", "empty"),
+            matrix,
+            matrix.copy(),
+        )
+        assert result.dominant_input("partial") == "measured"
+        with pytest.raises(ContractViolationError, match="no available"):
+            result.dominant_input("empty")
+
+    def test_normalized_policy_preserves_unavailable_and_finite_zero_columns(
+        self,
+    ) -> None:
+        matrix = np.asarray([[math.nan, 0.0, math.nan], [math.nan, 0.0, 2.0]])
+        normalized = variation_analysis._normalize_sensitivity_matrix(matrix)
+        assert np.all(np.isnan(normalized[:, 0]))
+        assert np.array_equal(normalized[:, 1], np.asarray([0.0, 0.0]))
+        assert np.isnan(normalized[0, 2])
+        assert normalized[1, 2] == 1.0
+
     def test_planted_dominant_variable_is_identified(self) -> None:
         """Face-angle noise must dominate lateral landing; speed carry."""
         result = one_at_a_time_sensitivity(_planted_plan(), n_workers=4)

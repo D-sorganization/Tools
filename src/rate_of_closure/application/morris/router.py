@@ -19,6 +19,7 @@ from rate_of_closure.application._workspace_validation import unique_json_object
 from shared.python.swing_sim.variation import (
     CancelledError,
     MorrisObservationArchive,
+    analyze_morris,
     morris_design_sha256,
 )
 
@@ -183,6 +184,8 @@ class MorrisJobRegistry:
                 if callable(extended)
                 else self._service.execute(job.request, job.cancel, progress)
             )
+            if isinstance(result, MorrisServiceResult):
+                self._validate_extended_result(job, result)
         except CancelledError:
             with self._lock:
                 self._terminal_locked(job, "cancelled")
@@ -192,13 +195,7 @@ class MorrisJobRegistry:
                 self._finish_failure_locked(job)
         else:
             with self._lock:
-                try:
-                    self._finish_success_locked(job, result)
-                except Exception:
-                    _LOGGER.exception(
-                        "Morris result validation failed: job_id=%s", job_id
-                    )
-                    self._finish_failure_locked(job)
+                self._finish_success_locked(job, result)
 
     def _finish_failure_locked(self, job: _Job) -> None:
         if job.cancel_requested:
@@ -218,7 +215,6 @@ class MorrisJobRegistry:
             return
         job.completed_samples = job.request.total_samples
         if isinstance(result, MorrisServiceResult):
-            self._validate_extended_result(job, result)
             job.report = dict(result.report)
             job.observations = result.observations
             self._enforce_observation_budget_locked(job)
@@ -239,6 +235,9 @@ class MorrisJobRegistry:
             "seed": request.seed,
             "total_samples": request.total_samples,
         }
+        recomputed_report = analyze_morris(
+            archive.observations, request.minimum_effects
+        ).to_json_dict()
         if (
             archive.study_id != request.request_id
             or archive.design_sha256 != morris_design_sha256(design)
@@ -249,6 +248,7 @@ class MorrisJobRegistry:
                 report_design.get(key) != value
                 for key, value in expected_report_design.items()
             )
+            or result.report != recomputed_report
         ):
             raise ValueError("Morris service result does not match its job request")
 

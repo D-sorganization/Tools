@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Integrated authority cross-review hardening (#4142)
+
+Independent adversarial review of the combined raw-authority, PyQt plan-v2,
+and pairwise-finite attribution head identified and drove closure of precision,
+evidence-binding, allocation-order, unavailable-dominance, and cross-runtime
+normalization defects. The final local gate is 355 Python/PyQt tests and 728
+React tests, with production build, TypeScript, ESLint, Ruff, MyPy, diff, and
+changed-file size checks green. Protected current-head CI and normal stacked
+publication remain required; the broader open R10-R14 work is not complete.
+
 ## 2026-08-12 Pairwise-finite OAT/Spearman parity (#4142 R13.1)
 
 - Python and React now select every input/output pair independently from
@@ -10,7 +20,8 @@
   cells cannot fabricate a zero/rank or invalidate another measurable pair.
 - Spearman requires three paired observations and nonconstant paired columns;
   OAT spread requires two evaluated finite values per output. Unavailable
-  statistics remain explicit `NaN`.
+  statistics remain explicit `NaN`, cannot become a dominant input, and remain
+  distinct from a genuinely finite zero-sensitivity column.
 - Both runtimes consume one shared fixture covering failures, independent gaps,
   positive/negative monotonic pairs, constants, and insufficient counts.
 
@@ -22,7 +33,8 @@ localized attribution, complete raw trace authority, and #4142 remain open.
 The integrated PyQt plan editor retains the full shared version-2 authority:
 custom spec IDs, temporal/spatial locus metadata, exact unedited numeric values,
 and correlation/covariance groups survive build and Save Plan. Visible numeric
-edits preserve stable identity/locus fields. Load Plan preflights selectors,
+edits preserve stable identity/locus fields, while unrelated selector edits do
+not round any untouched numeric authority through visible controls. Load Plan preflights selectors,
 registry keys, flight models, and numeric ranges before mutating the editor, so
 unsupported plans fail closed with the prior runnable state intact.
 
@@ -45,12 +57,14 @@ unchanged `morris-global-sensitivity-report@1` response while adding a separate
 - The exact parser rejects schema drift, crossed identities, reordered records,
   fabricated no-impact outputs, nonfinite or altered design data, and incomplete
   diagnostics. It rejects designs above 100,000 samples and output matrices
-  above 1,000,000 cells before allocating observation arrays. Parsed arrays are
-  owned and read-only, and archive construction rejects incomplete hit outputs.
+  above 1,000,000 cells before parsing outputs or allocating observation arrays;
+  archive factories enforce the same bounds. Parsed arrays are owned and
+  read-only, and archive construction rejects incomplete hit outputs.
 - The public Rate service still returns the unchanged aggregate report. Its
   explicit extended path returns raw scalar authority too; the job registry
   retains it only for completed jobs under a weighted cell budget without
-  enlarging the existing job-envelope wire contract.
+  enlarging the existing job-envelope wire contract. Completion recomputes the
+  aggregate report outside the registry mutex, then rejects crossed evidence.
 - End-user raw transport/export remains open and must be separately bounded and
   connected to both clients before the authority is called UI-discoverable.
 - This scalar-evidence layer is not complete R11.1 authority: full event ledgers,

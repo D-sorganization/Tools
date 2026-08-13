@@ -23,6 +23,7 @@ from ._morris_observation_validation import (
     stable_text as _stable_text,
 )
 from .morris_design import MorrisDesign, MorrisFactor, MorrisObservations, MorrisOutput
+from .morris_execution import MAX_MORRIS_OBSERVATION_CELLS, MAX_MORRIS_SAMPLES
 
 MORRIS_OBSERVATION_SCHEMA_ID = "swing-sim/morris-observation-archive"
 MORRIS_OBSERVATION_SCHEMA_VERSION = 1
@@ -108,6 +109,9 @@ class MorrisObservationArchive:
             isinstance(self.observations, MorrisObservations),
             "observations must be MorrisObservations",
         )
+        _require_observation_shape(
+            self.observations.design, len(self.observations.outputs)
+        )
         _require_hit_availability(self.observations)
         failure_types = cast(np.ndarray, self.observations.failure_types)
         failure_messages = cast(np.ndarray, self.observations.failure_messages)
@@ -166,6 +170,30 @@ def _require_hit_availability(observations: MorrisObservations) -> None:
             np.all(np.isfinite(observations.values[hits][:, downstream])),
             "raw hit observations require every impact and shot output",
         )
+
+
+def _require_observation_shape(design: MorrisDesign, output_count: int) -> None:
+    """Enforce shared Morris allocation limits before archive materialization."""
+    _require_observation_counts(design.trajectories, len(design.factors), output_count)
+
+
+def _require_observation_counts(
+    trajectories: int, factor_count: int, output_count: int
+) -> None:
+    """Validate allocation products from scalar document dimensions."""
+    sample_count = trajectories * (factor_count + 1)
+    require(
+        sample_count <= MAX_MORRIS_SAMPLES,
+        f"sample count must not exceed MAX_MORRIS_SAMPLES={MAX_MORRIS_SAMPLES}",
+        sample_count,
+    )
+    observation_cells = sample_count * output_count
+    require(
+        observation_cells <= MAX_MORRIS_OBSERVATION_CELLS,
+        "observation count must not exceed "
+        f"MAX_MORRIS_OBSERVATION_CELLS={MAX_MORRIS_OBSERVATION_CELLS}",
+        observation_cells,
+    )
 
 
 def _factor_document(factor: MorrisFactor) -> dict[str, Any]:
@@ -252,6 +280,7 @@ def make_morris_observation_archive(
         isinstance(observations, MorrisObservations),
         "observations must be MorrisObservations",
     )
+    _require_observation_shape(observations.design, len(observations.outputs))
     return MorrisObservationArchive(
         _stable_text(study_id, "study_id"),
         _design_sha256(observations.design),
@@ -271,6 +300,7 @@ def morris_observations_to_json_dict(
         isinstance(observations, MorrisObservations),
         "observations must be MorrisObservations",
     )
+    _require_observation_shape(observations.design, len(observations.outputs))
     _require_hit_availability(observations)
     stable_study_id = _stable_text(study_id, "study_id")
     stable_provenance = _provenance(provenance)

@@ -137,10 +137,14 @@ class NoiseRow(QWidget):
         if loaded is not None and state == self._loaded_editor_state:
             return loaded
         lower, upper = self._edited_bounds(loaded, state)
+        scale = self.scale.value()
+        prior = self._loaded_editor_state
+        if loaded is not None and prior is not None and state[2] == prior[2]:
+            scale = loaded.scale
         return NoiseSpec(
             variable_key=key,
             distribution=self.distribution.currentText(),
-            scale=self.scale.value(),
+            scale=scale,
             lower=lower,
             upper=upper,
             spec_id=None if loaded is None else loaded.spec_id,
@@ -196,8 +200,8 @@ class NoiseRow(QWidget):
         upper: float | None = self.clip_high.value()
         prior = self._loaded_editor_state
         if loaded is not None and prior is not None:
-            if loaded.lower is None and state[4] == prior[4]:
-                lower = None
-            if loaded.upper is None and state[5] == prior[5]:
-                upper = None
+            if state[4] == prior[4]:
+                lower = loaded.lower
+            if state[5] == prior[5]:
+                upper = loaded.upper
         return lower, upper

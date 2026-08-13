@@ -26,11 +26,20 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.41                                    |
-| **Spec Version**        | 1.16.41                                    |
+| **Current Version**     | 1.16.42                                    |
+| **Spec Version**        | 1.16.42                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Variation authority cross-review hardening (#4142)
+
+Version 1.16.42 makes PyQt precision retention field-specific, binds every
+completed aggregate Morris report to recomputation from its raw observations
+outside the registry lifecycle mutex, applies symmetric sample/cell limits
+before parsing or serializing archive records, and prevents unavailable OAT
+cells from becoming dominant inputs or normalized zeroes. Python and React keep
+all-unavailable columns as `NaN` while genuine finite zero spread stays zero.
 
 ### 2026-08-12 Pairwise-finite variation attribution (#4142 R13.1)
 
@@ -41,7 +50,9 @@ independently and requires two observations. Spearman selects each input/output
 pair independently, requires three paired observations, and reports `NaN` for
 constant or insufficient columns. Failed or unavailable trials remain evidence
 and cannot silently contribute ranks, zeros, or cross-row pairings. One shared
-fixture is the cross-runtime authority; public shapes and statuses are unchanged.
+fixture is the cross-runtime authority. OAT dominance ignores unavailable cells,
+fails closed for an all-unavailable output, and distinguishes unavailable
+normalization from genuine zero sensitivity. Public shapes remain unchanged.
 
 ### 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142 R10.4/R11.4)
 
@@ -52,11 +63,13 @@ numeric authority, and complete correlation/covariance groups. Intentional
 visible edits retain stable identity and locus metadata. Plan loads preflight
 run count, seed, flight model, registry membership, and numeric control ranges
 before mutation, so invalid plans leave the previous runnable state intact.
+Per-field edit tracking keeps untouched scale and bound values exact when an
+unrelated distribution or selector changes.
 Group matrices and loci remain retained but are not yet editable in this UI.
 
 ### 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
 
-Version 1.16.39 hardens the strict scalar-observation foundation contract
+Version 1.16.38 introduced the strict scalar-observation foundation contract
 `swing-sim/morris-observation-archive@1` without changing the existing
 Morris aggregate report or job-envelope schemas. Each raw design-point record
 is bound to the exact design digest and canonical ordinal and retains physical
@@ -64,9 +77,15 @@ factor values/units, typed outcome, nullable outputs, and bounded failure
 diagnostics. The archive retains immutable design arrays and explicit
 request/report provenance; its exact-field parser rejects reordered, crossed,
 tampered, nonfinite, or scientifically fabricated data. It enforces the shared
-100,000-sample and 1,000,000-observation-cell limits before allocating parsed
-matrices, and all archive construction paths reject incomplete evaluated-hit
-impact or shot outputs.
+100,000-sample limit before constructing design arrays and the 1,000,000-cell
+limit before parsing output objects or allocating observation matrices; archive
+factories enforce the same limits.
+All archive construction paths reject incomplete evaluated-hit impact or shot
+outputs. The registry recomputes the aggregate report from raw observations
+outside its lifecycle mutex before completion, rejecting same-request crossed
+evidence.
+Version 1.16.39 added the pre-allocation bounds, archive-construction invariant,
+and exact aggregate/raw binding hardening while preserving the v1 wire schema.
 
 The Rate Morris evaluator preserves canonical numerical-failure diagnostics.
 The public service keeps its report-dictionary return contract; an explicit
@@ -3078,9 +3097,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.42 | fix(rate-of-closure, #4142): retain PyQt numeric authority per field; bind raw Morris observations to exact recomputed aggregate reports outside the registry mutex; enforce symmetric pre-materialization archive limits; and preserve unavailable OAT dominance/normalization across Python and React. |
 | 2026-08-12 | 1.16.41 | fix(rate-of-closure, #4142 R13.1): make Python/React OAT and Spearman attribution pairwise finite with explicit minimum counts and constant-column unavailability, pinned by one shared missing-data fixture. |
 | 2026-08-12 | 1.16.40 | fix(rate-of-closure, #4142 R10.4/R11.4): make PyQt plan-v2 load/build/save lossless for stable spec IDs, localized loci, unedited numeric authority, and dependence groups; preflight all editor representability before atomic mutation. |
 | 2026-08-12 | 1.16.39 | fix(rate-of-closure, #4142 R11): enforce Morris archive sample/output-cell limits before parser allocation and require scientifically complete impact/shot availability for every evaluated hit at the archive-construction invariant. |
+| 2026-08-12 | 1.16.38 | feat(rate-of-closure, #4142 R11): add the separate strict Morris scalar-observation archive foundation with stable sample/design identities, physical factor values and units, typed outcomes, nullable scalar outputs, bounded failure diagnostics, immutable parsed arrays, and weighted ephemeral registry retention without changing the aggregate report wire contract. |
 | 2026-08-12 | 1.16.37 | merge(rate-of-closure, #4142 R13.8): combine exact independently reviewed Python/PyQt Morris workspace commit `8968f6f3544203029fea8e07659ab494eb050c67` and React parity commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`; preserve one byte-identical fixture and exact limits, Unicode semantics, immutable evidence binding, atomic imports, archived-ID isolation, accessible pre-read browser defenses, fail-closed invalid draft execution, report caps, and formula-neutral aggregate CSV. Protected CI, dependency-ordered publication, raw-observation retention, UpstreamDrift consumption, and epic completion remain open. |
 | 2026-08-12 | 1.16.36 | fix(rate-of-closure, #4142 R13.8): align React workspace import with the canonical Python/PyQt edge profile: 2 MB bytes, depth/node and raw-text caps, C0/C1 rejection, decimal/exponent-only finite bounds within +/-1e9, trajectories 2..5000, signed-32-bit seed, exact synthesized invalid-row errors, and null error for valid disabled ground tee; recursively freeze imported setup/evidence; reject oversized browser files before FileReader and use a keyboard-focusable focus-visible import button. |
 | 2026-08-12 | 1.16.35 | feat(rate-of-closure, #4142 R13.8): add the dedicated lossless Morris workspace v1 contract and React import/export surface; preserve all canonical factor drafts including disabled invalid raw text, exact authority base and design controls, and only completed aggregate request/job evidence; enforce bounded duplicate-safe exact parsing and cross-layer identity checks before atomic install; label imports archived and unverified-live with inert IDs; export deterministic aggregate CSV with complete provenance and typed denominators; pin Python/React parity to one shared fixture. UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |

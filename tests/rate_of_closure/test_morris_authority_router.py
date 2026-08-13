@@ -9,6 +9,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from rate_of_closure.application.morris import router as morris_router
 from rate_of_closure.application.morris.contracts import parse_morris_request
 from rate_of_closure.application.morris.router import (
     MorrisJobRegistry,
@@ -252,6 +253,88 @@ def test_registry_rejects_crossed_extended_result_identity() -> None:
     assert envelope.report is None
     with pytest.raises(RuntimeError, match="not available"):
         registry.observations(job_id)
+    registry.close()
+
+
+def test_registry_rejects_report_crossed_with_same_request_observations() -> None:
+    request = parse_morris_request(request_document())
+
+    def service_with_scale(scale: float) -> RateMorrisService:
+        return RateMorrisService(
+            evaluator_factory=lambda _design, _config: (
+                lambda sample: MorrisEvaluation(
+                    "evaluated_hit",
+                    {name: scale * float(sample.ordinal) for name in ALL_OUTPUT_NAMES},
+                )
+            )
+        )
+
+    first = service_with_scale(1.0).execute_with_observations(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    second = service_with_scale(2.0).execute_with_observations(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    crossed = MorrisServiceResult(first.report, second.observations)
+
+    class CrossedService:
+        def execute(
+            self, _request: object, _cancel: object, _progress: object
+        ) -> dict[str, object]:
+            return crossed.report
+
+        def execute_with_observations(
+            self, _request: object, _cancel: object, _progress: object
+        ) -> MorrisServiceResult:
+            return crossed
+
+    registry = MorrisJobRegistry(CrossedService())
+    job_id = registry.create(request).job_id
+    for _index in range(100):
+        envelope = registry.status(job_id)
+        if envelope.status == "failed":
+            break
+        threading.Event().wait(0.001)
+    assert envelope.status == "failed"
+    assert envelope.report is None
+    with pytest.raises(RuntimeError, match="not available"):
+        registry.observations(job_id)
+    registry.close()
+
+
+def test_report_recomputation_does_not_hold_registry_lifecycle_lock(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    request = parse_morris_request(request_document())
+    service = RateMorrisService(
+        evaluator_factory=lambda _design, _config: (
+            lambda sample: MorrisEvaluation(
+                "evaluated_hit",
+                {name: float(sample.ordinal) for name in ALL_OUTPUT_NAMES},
+            )
+        )
+    )
+    entered = threading.Event()
+    release = threading.Event()
+    real_analyze = morris_router.analyze_morris
+
+    def delayed_analyze(*args: object, **kwargs: object) -> object:
+        entered.set()
+        release.wait(timeout=3)
+        return real_analyze(*args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(morris_router, "analyze_morris", delayed_analyze)
+    registry = MorrisJobRegistry(service)
+    job_id = registry.create(request).job_id
+    assert entered.wait(timeout=1)
+    assert registry.status(job_id).status == "running"
+    release.set()
+    for _index in range(100):
+        envelope = registry.status(job_id)
+        if envelope.status == "completed":
+            break
+        threading.Event().wait(0.001)
+    assert envelope.status == "completed"
     registry.close()
 
 

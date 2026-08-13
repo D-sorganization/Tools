@@ -1,10 +1,24 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 integrated authority cross-review hardening
+
+- Adversarial review closed PyQt per-field precision loss, same-request crossed
+  report/raw evidence, output parsing before resource caps, serializer/parser
+  cap asymmetry, unavailable OAT dominance, and React unavailable-as-zero drift.
+- Exact integrated local evidence is 355 Python/PyQt tests and 728 React tests;
+  production build, TypeScript, ESLint, Ruff, MyPy, diff, and changed-file size
+  gates pass.
+- The standalone PyQt app remains launched and the web app is available at
+  `http://localhost:5193/`. Protected CI/publication and remaining R10-R14
+  requirements are still open.
+
 ## 2026-08-12 #4142 R13.1 pairwise-finite attribution correction
 
 - Python `spearman_matrix` and React `spearmanMatrix` form a fresh evaluated,
   finite mask for every input/output cell before ranking. Three paired values
   and nonconstant columns are required; otherwise the statistic remains `NaN`.
+- OAT dominance ignores unavailable cells, fails closed for an all-unavailable
+  output, and keeps all-unavailable normalization distinct from finite zero.
 - Python OAT now selects evaluated finite values per output and requires two
   values for sample spread, matching the React scientific policy.
 - One shared parity fixture covers failure, independent missingness, constants,
@@ -16,6 +30,8 @@
 
 - The integrated PyQt host round-trips custom spec IDs, localized time/point
   loci, exact unedited numeric values, and correlation/covariance groups.
+- Per-field edit tracking prevents an unrelated distribution or selector edit
+  from rounding untouched scale/bound authority through visible spin boxes.
 - Every selector and numeric range is preflighted before editor mutation;
   unsupported direct or file loads preserve the prior runnable plan and report
   an actionable error.
@@ -38,12 +54,14 @@ unchanged `morris-global-sensitivity-report@1` response while adding a separate
 - The exact parser rejects schema drift, crossed identities, reordered records,
   fabricated no-impact outputs, nonfinite or altered design data, and incomplete
   diagnostics. It rejects designs above 100,000 samples and output matrices
-  above 1,000,000 cells before allocating observation arrays. Parsed arrays are
-  owned and read-only, and archive construction rejects incomplete hit outputs.
+  above 1,000,000 cells before parsing outputs or allocating observation arrays;
+  archive factories enforce the same bounds. Parsed arrays are owned and
+  read-only, and archive construction rejects incomplete hit outputs.
 - The public Rate service still returns the unchanged aggregate report. Its
   explicit extended path returns raw scalar authority too; the job registry
   retains it only for completed jobs under a weighted cell budget without
-  enlarging the existing job-envelope wire contract.
+  enlarging the existing job-envelope wire contract. Completion recomputes the
+  aggregate report outside the registry mutex, then rejects crossed evidence.
 - End-user raw transport/export remains open and must be separately bounded and
   connected to both clients before the authority is called UI-discoverable.
 - This scalar-evidence layer is not complete R11.1 authority: full event ledgers,

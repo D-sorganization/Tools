@@ -97,23 +97,40 @@ export function oneAtATimeSensitivity(
       }),
     );
   }
-  const normalized = rows.map((row) => row.slice());
-  for (let j = 0; j < outputNames.length; j += 1) {
-    let max = 0;
-    for (const row of rows) {
-      const v = Math.abs(row[j]);
-      if (Number.isFinite(v) && v > max) max = v;
-    }
-    for (let i = 0; i < rows.length; i += 1) {
-      normalized[i][j] = max > 0 ? Math.abs(rows[i][j]) / max : 0;
-    }
-  }
+  const normalized = normalizeSensitivityMatrix(rows, outputNames.length);
   return {
     inputKeys: plan.noise.map((s) => s.variableKey),
     outputNames,
     matrix: rows,
     normalized,
   };
+}
+
+export function normalizeSensitivityMatrix(
+  rows: number[][],
+  outputCount: number,
+): number[][] {
+  const normalized = rows.map((row) => row.slice());
+  for (let j = 0; j < outputCount; j += 1) {
+    let max = 0;
+    let finiteCount = 0;
+    for (const row of rows) {
+      const v = Math.abs(row[j]);
+      if (Number.isFinite(v)) {
+        finiteCount += 1;
+        if (v > max) max = v;
+      }
+    }
+    for (let i = 0; i < rows.length; i += 1) {
+      const value = rows[i][j];
+      normalized[i][j] = !Number.isFinite(value) || finiteCount === 0
+        ? Number.NaN
+        : max > 0
+          ? Math.abs(value) / max
+          : 0;
+    }
+  }
+  return normalized;
 }
 
 const ranks = (values: number[]): number[] => {

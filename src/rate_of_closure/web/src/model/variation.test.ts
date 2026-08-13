@@ -29,6 +29,7 @@ import {
   datasetToJson,
   dispersionEllipse,
   oneAtATimeSensitivity,
+  normalizeSensitivityMatrix,
   spearmanMatrix,
   summaryStats,
 } from "./variationAnalysis";
@@ -160,6 +161,17 @@ describe("sensitivity", () => {
     const speed = result.inputKeys.indexOf(SPEED);
     expect(result.matrix[face][lat]).toBeGreaterThan(10 * result.matrix[speed][lat]);
     expect(result.normalized[face][lat]).toBeCloseTo(1.0, 6);
+  });
+
+  it("keeps all-unavailable normalization distinct from finite zero spread", () => {
+    const normalized = normalizeSensitivityMatrix(
+      [[Number.NaN, 0, Number.NaN], [Number.NaN, 0, 2]],
+      3,
+    );
+    expect(normalized.every((row) => Number.isNaN(row[0]))).toBe(true);
+    expect(normalized.every((row) => row[1] === 0)).toBe(true);
+    expect(Number.isNaN(normalized[0][2])).toBe(true);
+    expect(normalized[1][2]).toBe(1);
   });
 
   it("spearman corroborates the dominance on the full dataset", () => {
