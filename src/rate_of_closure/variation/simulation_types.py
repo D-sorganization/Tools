@@ -141,6 +141,19 @@ class SimulationEnsembleResult:
         trial_count = len(self.variation.success)
         require(len(self.outcomes) == trial_count, "outcomes must align to trials")
         require(
+            tuple(outcome.trial_index for outcome in self.outcomes)
+            == tuple(range(trial_count)),
+            "outcomes must be in canonical trial order",
+        )
+        require(
+            all(
+                bool(self.variation.success[index])
+                == (outcome.status is not NUMERICAL_FAILURE)
+                for index, outcome in enumerate(self.outcomes)
+            ),
+            "outcome statuses must agree with variation success",
+        )
+        require(
             self.traces.variation is self.variation,
             "traces and result must share one VariationDataset",
         )

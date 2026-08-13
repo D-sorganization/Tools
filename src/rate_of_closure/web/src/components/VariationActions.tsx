@@ -1,10 +1,16 @@
 import { datasetToCsv, datasetToJson } from "../model/variationAnalysis";
 import { planToJson, type VariationDatasetTs, type VariationPlanTs } from "../model/variation";
 import { BUTTON_CLASS, PANEL_CLASS, downloadText } from "./variationUi";
+import {
+  swingEnsembleToJson,
+  swingTracesToCsv,
+  type SwingVariationResultTs,
+} from "../model/variationSwingEnsemble";
 
 interface VariationActionsProps {
   plan: VariationPlanTs;
   dataset: VariationDatasetTs | null;
+  ensemble: SwingVariationResultTs | null;
   status: string;
   onRun: () => void;
   onImportText: (text: string) => void;
@@ -22,6 +28,7 @@ const readFileText = (file: File): Promise<string> =>
 export function VariationActions({
   plan,
   dataset,
+  ensemble,
   status,
   onRun,
   onImportText,
@@ -37,6 +44,32 @@ export function VariationActions({
           className={`${BUTTON_CLASS} border-sky-500/60 text-sky-300`}
         >
           Run Variation Study
+        </button>
+        <button
+          type="button"
+          disabled={!ensemble}
+          onClick={() => ensemble && downloadText(
+            "variation_swing_traces.csv",
+            swingTracesToCsv(ensemble),
+            "text/csv",
+          )}
+          title="Download every trial, time sample, and modeled point in the explicit app frame."
+          className={BUTTON_CLASS}
+        >
+          Swing Traces CSV
+        </button>
+        <button
+          type="button"
+          disabled={!ensemble}
+          onClick={() => ensemble && downloadText(
+            "variation_swing_ensemble.json",
+            swingEnsembleToJson(ensemble),
+            "application/json",
+          )}
+          title="Download the complete plan, typed outcomes, scalar results, and swing traces."
+          className={BUTTON_CLASS}
+        >
+          Swing Ensemble JSON
         </button>
         <button
           type="button"

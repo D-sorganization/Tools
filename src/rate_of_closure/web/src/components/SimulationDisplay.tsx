@@ -13,6 +13,11 @@ import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
 import { TargetSection } from "./TargetSection";
 import { drawSwingScene } from "./swingSceneDraw";
+import {
+  screwEntityOptions,
+  screwExplanation,
+  screwPresentation,
+} from "./screwPresentation";
 
 const VIEWS = ["Strike", "Swing", "Kinetics", "Flight"] as const;
 type ViewName = (typeof VIEWS)[number];
@@ -21,6 +26,7 @@ const TOGGLE_GUIDANCE = {
   ball: FIELD_GUIDANCE.ballVisible,
   ground: FIELD_GUIDANCE.groundVisible,
   course: FIELD_GUIDANCE.courseVisible,
+  screw: FIELD_GUIDANCE.screwAxisVisible,
   flight: `Warning: expands the scene to flight scale, dwarfing the swing. ${FIELD_GUIDANCE.swingFlightToggle}`,
 };
 
@@ -52,9 +58,15 @@ export function SimulationDisplay({
   const [showBall, setShowBall] = useState(true);
   const [showGround, setShowGround] = useState(true);
   const [showCourse, setShowCourse] = useState(true);
+  const [showScrew, setShowScrew] = useState(true);
+  const [screwEntityId, setScrewEntityId] = useState("club");
   const [showFlight, setShowFlight] = useState(false);
   const [view, setView] = useState<ViewName>("Swing");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const screwEntities = useMemo(() => screwEntityOptions(run), [run]);
+  const screwData = useMemo(() =>
+    run && showScrew ? screwPresentation(run, time, screwEntityId) : null,
+  [run, time, showScrew, screwEntityId]);
 
   const targetLayout = useMemo<CourseLayout>(() =>
     target.kind === "green"
@@ -83,6 +95,7 @@ export function SimulationDisplay({
   useEffect(() => {
     setTime(0);
     setPlaying(false);
+    setScrewEntityId("club");
   }, [run]);
   useEffect(() => {
     if (!playing || !run) return undefined;
@@ -107,9 +120,13 @@ export function SimulationDisplay({
     if (canvasRef.current) {
       drawSwingScene(canvasRef.current, run, {
         time, showBall, showGround, showCourse, showFlight,
+        showScrew, screwEntityId,
       });
     }
-  }, [run, time, showBall, showGround, showCourse, showFlight, view]);
+  }, [
+    run, time, showBall, showGround, showCourse, showFlight,
+    showScrew, screwEntityId, view,
+  ]);
 
   return (
     <section className="min-w-0 space-y-3">
@@ -150,11 +167,42 @@ export function SimulationDisplay({
               ["Ball", showBall, setShowBall, TOGGLE_GUIDANCE.ball, "text-slate-300"],
               ["Ground", showGround, setShowGround, TOGGLE_GUIDANCE.ground, "text-slate-300"],
               ["Course Elements", showCourse, setShowCourse, TOGGLE_GUIDANCE.course, "text-slate-300"],
+              ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
               ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
             ]} />
+          {showScrew && (
+            <div className="mb-3 grid gap-3 rounded-lg border border-fuchsia-400/30 bg-fuchsia-950/10 p-3 md:grid-cols-[190px_1fr]">
+              <label className="text-sm font-medium text-fuchsia-200">
+                Screw Motion Entity
+                <select
+                  aria-label="Screw Motion Entity"
+                  value={screwEntityId}
+                  onChange={(event) => setScrewEntityId(event.target.value)}
+                  className="mt-1 w-full rounded-md border border-fuchsia-400/40 bg-slate-950 px-2 py-1.5 text-slate-100"
+                >
+                  {screwEntities.map((entity) => (
+                    <option key={entity.id} value={entity.id}>{entity.label}</option>
+                  ))}
+                </select>
+              </label>
+              <p
+                role="note"
+                aria-label="Screw Motion Explanation"
+                className="text-xs leading-relaxed text-slate-300"
+              >
+                {screwData
+                  ? screwExplanation(screwData, [
+                      Math.cos(effectiveLoftDeg * Math.PI / 180),
+                      Math.sin(effectiveLoftDeg * Math.PI / 180),
+                      0,
+                    ])
+                  : "Run a simulation to calculate the selected screw motion."}
+              </p>
+            </div>
+          )}
           <canvas ref={canvasRef} width={860} height={480}
             className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
-            aria-label="Simulation scene (side view, swing scale)" />
+            aria-label="Simulation scene with selectable screw-axis motion glyph" />
         </>}
       </div>
     </section>

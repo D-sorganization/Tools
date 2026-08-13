@@ -10,9 +10,11 @@ import type { BallSetup } from "./ballSetup";
 
 export const CATEGORY_DELIVERY = "swing_sim.impact.delivery";
 export const CATEGORY_LAUNCH = "swing_sim.flight.launch";
+export const CATEGORY_SWING = "swing_sim.swing";
+export const CATEGORY_CLUB = "swing_sim.club";
 export const TEE_HEIGHT_VARIATION_KEY = "swing_sim.ball_setup.tee_height_m";
 
-export type VariationMode = "delivery" | "launch";
+export type VariationMode = "delivery" | "swing" | "launch";
 
 export interface VariableDefTs {
   key: string;
@@ -26,6 +28,78 @@ export interface VariableDefTs {
 
 /** Mirror of the Python registry (delivery + launch categories). */
 export const VARIABLE_REGISTRY: VariableDefTs[] = [
+  {
+    key: `${CATEGORY_SWING}.yaw_deg`,
+    label: "Swing-Plane Yaw",
+    unit: "deg",
+    default: 0,
+    typicalScale: 1.5,
+    guidance: "Typical variation: 1-3 deg about vertical.",
+  },
+  {
+    key: `${CATEGORY_SWING}.side_tilt_deg`,
+    label: "Swing-Plane Side Tilt",
+    unit: "deg",
+    default: -45,
+    typicalScale: 1.5,
+    guidance: "Typical variation: 1-3 deg about plane lean.",
+  },
+  {
+    key: `${CATEGORY_SWING}.forward_tilt_deg`,
+    label: "Swing-Plane Forward Tilt",
+    unit: "deg",
+    default: 0,
+    typicalScale: 1.5,
+    guidance: "Typical variation: 1-3 deg toward or away from target.",
+  },
+  {
+    key: `${CATEGORY_SWING}.impact_time_offset_s`,
+    label: "Impact-Time Offset",
+    unit: "s",
+    default: 0,
+    typicalScale: 0.002,
+    guidance: "Typical timing jitter: 1-5 ms about peak speed.",
+  },
+  {
+    key: `${CATEGORY_SWING}.damping_shoulder`,
+    label: "Shoulder Damping",
+    unit: "N·m·s",
+    default: 0.4,
+    typicalScale: 0.05,
+    guidance: "Passive double-pendulum shoulder damping.",
+  },
+  {
+    key: `${CATEGORY_SWING}.damping_wrist`,
+    label: "Wrist Damping",
+    unit: "N·m·s",
+    default: 0.25,
+    typicalScale: 0.05,
+    guidance: "Passive double-pendulum wrist damping.",
+  },
+  {
+    key: `${CATEGORY_CLUB}.head_mass_kg`,
+    label: "Clubhead Mass",
+    unit: "kg",
+    default: 0.2,
+    typicalScale: 0.002,
+    guidance: "Manufacturing tolerance: a few grams about 200 g.",
+  },
+  {
+    key: `${CATEGORY_CLUB}.head_moi_kg_m2`,
+    label: "Clubhead MOI",
+    unit: "kg·m²",
+    default: 4.5e-4,
+    typicalScale: 2e-5,
+    guidance: "Scalar clubhead MOI about the shaft axis.",
+  },
+  {
+    key: `${CATEGORY_CLUB}.cor`,
+    label: "Coefficient of Restitution",
+    unit: "",
+    default: 0.83,
+    typicalScale: 0.005,
+    guidance: "Normal coefficient of restitution used by impact.",
+  },
   {
     key: TEE_HEIGHT_VARIATION_KEY,
     label: "Tee Height",
@@ -137,11 +211,21 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
 const REGISTRY_BY_KEY = new Map(VARIABLE_REGISTRY.map((d) => [d.key, d]));
 
 export function keysForMode(mode: VariationMode, ballSetup?: BallSetup): string[] {
-  const category = mode === "launch" ? CATEGORY_LAUNCH : CATEGORY_DELIVERY;
-  const keys = VARIABLE_REGISTRY.filter((d) => d.key.startsWith(category)).map(
-    (d) => d.key,
-  );
-  if (mode === "delivery" && ballSetup?.supportMode === "tee") {
+  const categories = mode === "launch"
+    ? [CATEGORY_LAUNCH]
+    : mode === "swing"
+      ? [CATEGORY_SWING, CATEGORY_CLUB]
+      : [CATEGORY_DELIVERY];
+  const keys = VARIABLE_REGISTRY.filter((definition) =>
+    categories.some((category) => definition.key.startsWith(category)),
+  ).map((definition) => definition.key);
+  if (mode === "swing") {
+    keys.push(
+      `${CATEGORY_DELIVERY}.impact_offset_toe_mm`,
+      `${CATEGORY_DELIVERY}.impact_offset_high_mm`,
+    );
+  }
+  if (mode !== "launch" && ballSetup?.supportMode === "tee") {
     keys.push(TEE_HEIGHT_VARIATION_KEY);
   }
   return keys;

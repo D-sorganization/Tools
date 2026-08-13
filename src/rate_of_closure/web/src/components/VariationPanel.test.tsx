@@ -83,6 +83,18 @@ afterEach(() => {
 });
 
 describe("VariationPanel v2 plan persistence", () => {
+  it("presents a complete results workspace before the first run", () => {
+    render(<VariationPanel storage={storage} />);
+
+    expect(screen.getByRole("region", { name: "Variation results" })).toHaveClass("min-w-0");
+    expect(screen.getByRole("heading", { name: "Ready to Analyze Variation" })).toBeVisible();
+    expect(screen.getByText("Distribution Matrix")).toBeVisible();
+    expect(screen.getByText("Swing Geometry")).toBeVisible();
+    expect(screen.getByText("Impact and Flight")).toBeVisible();
+    expect(screen.getByText("Sensitivity")).toBeVisible();
+    expect(screen.getByText(/fabricated landing coordinates/)).toBeVisible();
+  });
+
   it("offers Tee Height only for the persisted Tee support context", () => {
     saveBallSetupPreference({
       setup: { supportMode: "ground", teeHeightM: 0 },
@@ -173,6 +185,17 @@ describe("VariationPanel analysis execution policy", () => {
     await user.selectOptions(selector, "all_together");
     await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
     expect(screen.getByText(/Summary — Dispersion/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Impact and Shot-Outcome Scatter/i })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Scatter horizontal axis" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Scatter vertical axis" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /variation scatter/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Scatter Matrix and Marginal/i })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: /Scatter matrix with marginal histograms/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Matrix SVG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Matrix Selected CSV" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Matrix Plot Definition JSON" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Scatter SVG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Scatter Plot Definition JSON" })).toBeEnabled();
     expect(screen.queryByText(/One-at-a-Time Sensitivity/i)).not.toBeInTheDocument();
 
     await user.selectOptions(selector, "individual");
@@ -184,5 +207,53 @@ describe("VariationPanel analysis execution policy", () => {
     await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
     expect(screen.getByText(/Summary — Dispersion/i)).toBeInTheDocument();
     expect(screen.getByText(/One-at-a-Time Sensitivity/i)).toBeInTheDocument();
+  });
+
+  it("renders every swing trial in the interactive arc inspector", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Pipeline" }), "swing");
+    fireEvent.change(screen.getByRole("textbox", { name: "Runs" }), {
+      target: { value: "2" },
+    });
+    fireEvent.blur(screen.getByRole("textbox", { name: "Runs" }));
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Analysis execution" }),
+      "all_together",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+
+    expect(screen.getByRole("heading", { name: /All Swing Arcs/i })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Arc modeled point" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Arc outcome cohort" })).toHaveValue("all");
+    const source = screen.getByRole("combobox", { name: "Arc perturbation source" });
+    const band = screen.getByRole("combobox", { name: "Arc perturbation band" });
+    expect(screen.getByText(/2\/2 trials shown/i)).toBeInTheDocument();
+    expect(band).toBeDisabled();
+    await user.selectOptions(source, "swing_sim.swing.yaw_deg");
+    expect(band).toBeEnabled();
+    await user.selectOptions(band, "lower");
+    fireEvent.change(screen.getByRole("slider", { name: "Arc phase end percent" }), {
+      target: { value: "75" },
+    });
+    expect(screen.getByText(/Displayed Swing Phase: 0–75%/i)).toBeInTheDocument();
+    expect(screen.getByRole("spinbutton", { name: "Quiet-zone RMS threshold millimetres" })).toHaveValue(5);
+    expect(screen.getByRole("img", { name: /interactive all-trial swing arcs/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /RMS positional variability and quiet zones/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Swing Arcs PNG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Variability SVG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Arc Plot Definition JSON" })).toBeEnabled();
+    expect(screen.getByText(/1\/2 trials shown/i)).toBeInTheDocument();
+    expect(screen.getByText(/quiet samples .*common simulation time/i)).toBeInTheDocument();
+    await user.click(screen.getByText("Accessible Selected Matrix Data"));
+    await user.click(screen.getByRole("button", { name: "Select matrix trial 1" }));
+    expect(screen.getByRole("combobox", { name: "Highlighted trial" })).toHaveValue("0");
+    expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
+    await user.selectOptions(screen.getByRole("combobox", { name: "Highlighted trial" }), "0");
+    expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
+    expect(screen.getByRole("button", { name: "Swing Traces CSV" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Swing Ensemble JSON" })).toBeEnabled();
+    expect(screen.getByText(/Hits: .*Plotted landings: .*no fabricated landing/i)).toBeInTheDocument();
   });
 });

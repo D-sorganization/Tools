@@ -28,7 +28,7 @@ from shared.python.swing_sim.run_config import (
     SwingRunMode,
 )
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
-from shared.python.swing_sim.types import PlaneOrientation
+from shared.python.swing_sim.types import PendulumParameters, PlaneOrientation
 
 __all__ = ["BALL_POSITION_M", "SimulationConfig", "SimulationRun"]
 
@@ -53,6 +53,7 @@ class SimulationConfig:
     source_kind: str = "manual"
     plane: PlaneOrientation = field(default_factory=PlaneOrientation)
     impact_time_s: float | None = None
+    impact_time_offset_s: float = 0.0
     flight_model: str = "waterloo_penner"
     swing_duration_s: float = 1.5
     contact_mode: ContactMode = ContactMode.DELIVERY_INSPECTION
@@ -60,6 +61,9 @@ class SimulationConfig:
         default_factory=DoublePendulumRunConfig
     )
     torque_library: TorqueProfileLibrary | None = None
+    pendulum_parameters: PendulumParameters = field(
+        default_factory=PendulumParameters.golf_default
+    )
 
     def __post_init__(self) -> None:
         """Validate and normalize the immutable request."""
@@ -87,6 +91,11 @@ class SimulationConfig:
             self.swing_run_config,
         )
         require(
+            isinstance(self.pendulum_parameters, PendulumParameters),
+            "pendulum_parameters must be PendulumParameters",
+            self.pendulum_parameters,
+        )
+        require(
             self.torque_library is None
             or isinstance(self.torque_library, TorqueProfileLibrary),
             "torque_library must be a TorqueProfileLibrary",
@@ -111,6 +120,11 @@ class SimulationConfig:
         FlightModelType(self.flight_model)
         _validate_optional_impact_time(self.impact_time_s)
         require(
+            math.isfinite(self.impact_time_offset_s),
+            "impact_time_offset_s must be finite",
+            self.impact_time_offset_s,
+        )
+        require(
             math.isfinite(self.swing_duration_s) and self.swing_duration_s > 0.0,
             "swing_duration_s must be finite and > 0",
             self.swing_duration_s,
@@ -119,7 +133,8 @@ class SimulationConfig:
     @property
     def ball_position_m(self) -> np.ndarray:
         """Return a new ball-center vector for geometry calculations."""
-        return np.asarray(self.ball_setup.ball_center_m, dtype=float)
+        position: np.ndarray = np.asarray(self.ball_setup.ball_center_m, dtype=float)
+        return position
 
 
 def _default_ball_setup(club: ClubSpec) -> BallSetup:

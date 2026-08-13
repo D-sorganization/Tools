@@ -38,6 +38,7 @@ from .ensemble_geometry import (
     LowVariabilityInterval,
     PositionDispersion,
     compute_position_dispersion,
+    compute_position_dispersion_view,
     find_low_variability_intervals,
 )
 from .group_spec import PerturbationGroup
@@ -56,6 +57,7 @@ from .spec import (
     DISTRIBUTIONS,
     MODE_CATEGORIES,
     MODES,
+    SCHEMA_VERSION,
     SWING_DERIVED_KEYS,
     NoiseSpec,
     VariableDef,
@@ -78,6 +80,7 @@ __all__ = [
     "LAUNCH_OUTPUTS",
     "MODES",
     "MODE_CATEGORIES",
+    "SCHEMA_VERSION",
     "SWING_DERIVED_KEYS",
     "CancelledError",
     "CommonReferenceTrace",
@@ -99,6 +102,7 @@ __all__ = [
     "dispersion_ellipse",
     "analyze_paired_intervention",
     "compute_position_dispersion",
+    "compute_position_dispersion_view",
     "evaluate_run",
     "keys_for_mode",
     "find_low_variability_intervals",

@@ -9,6 +9,7 @@ import type { BallSetup } from "../model/ballSetup";
 
 export const MODE_LABELS: Record<VariationMode, string> = {
   delivery: "Delivery → Impact → Flight",
+  swing: "Pendulum Swing → Impact → Flight",
   launch: "Launch Conditions → Flight",
 };
 
@@ -49,12 +50,21 @@ export const defaultVariationPlan = (): VariationPlanTs => ({
 });
 
 export const downloadText = (name: string, text: string, type: string): void => {
-  const url = URL.createObjectURL(new Blob([text], { type }));
+  downloadBlob(name, new Blob([text], { type }));
+};
+
+export const downloadBlob = (name: string, blob: Blob): void => {
+  const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = name;
   anchor.click();
   URL.revokeObjectURL(url);
+};
+
+export const downloadSvgElement = (name: string, element: SVGSVGElement): void => {
+  const source = new XMLSerializer().serializeToString(element);
+  downloadText(name, source, "image/svg+xml;charset=utf-8");
 };
 
 export const sensitivityHeat = (fraction: number): string => {

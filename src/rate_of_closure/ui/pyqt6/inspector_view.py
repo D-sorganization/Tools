@@ -25,7 +25,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.simulation import SimulationRun, write_csv, write_json
+from rate_of_closure.simulation import (
+    SimulationRun,
+    write_csv,
+    write_json,
+    write_screw_csv,
+)
 from rate_of_closure.simulation.export import CSV_COLUMNS, series_rows
 
 logger = logging.getLogger(__name__)
@@ -94,6 +99,15 @@ class InspectorView(QWidget):
         self._export_csv_button.clicked.connect(self._on_export_csv)
         header.addWidget(self._export_csv_button)
 
+        self._export_screw_csv_button = QPushButton("Export Screw CSV…")
+        self._export_screw_csv_button.setToolTip(
+            "Write the club screw-axis decomposition, velocity components, "
+            "and reconstruction residual at every swing sample."
+        )
+        self._export_screw_csv_button.setEnabled(False)
+        self._export_screw_csv_button.clicked.connect(self._on_export_screw_csv)
+        header.addWidget(self._export_screw_csv_button)
+
         self._export_json_button = QPushButton("Export JSON…")
         self._export_json_button.setToolTip(
             "Write parameters, delivery/launch summaries, and the time "
@@ -115,6 +129,7 @@ class InspectorView(QWidget):
         """Populate (or clear, with ``None``) the inspector."""
         self._run = run
         self._export_csv_button.setEnabled(run is not None)
+        self._export_screw_csv_button.setEnabled(run is not None)
         self._export_json_button.setEnabled(run is not None)
         self._table.setSortingEnabled(False)
         self._table.setRowCount(0)
@@ -182,3 +197,21 @@ class InspectorView(QWidget):
 
     def _on_export_json(self) -> None:
         self._export("json")
+
+    def _on_export_screw_csv(self) -> None:
+        """Prompt for the dedicated screw-motion CSV destination."""
+        if self._run is None:
+            return
+        path, _selected = QFileDialog.getSaveFileName(
+            self,
+            "Export Club Screw Motion (CSV)",
+            "club_screw_motion.csv",
+            "CSV files (*.csv);;All files (*)",
+        )
+        if not path:
+            return
+        try:
+            write_screw_csv(self._run, path)
+        except OSError as exc:
+            logger.warning("screw export failed: %s", exc)
+            QMessageBox.warning(self, "Export Failed", str(exc))

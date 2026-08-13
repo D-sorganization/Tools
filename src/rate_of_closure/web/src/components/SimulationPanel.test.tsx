@@ -52,6 +52,28 @@ function displayedLaunchAngle(): number {
 }
 
 describe("SimulationPanel impact club", () => {
+  it("shows a selectable, explained screw-axis glyph for club and joints", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    expect(screen.getByRole("checkbox", { name: "Screw Axis" })).toBeChecked();
+    expect(screen.getByRole("combobox", { name: "Screw Motion Entity" }))
+      .toHaveValue("club");
+    expect(screen.getByRole("note", { name: "Screw Motion Explanation" }))
+      .toHaveTextContent(/pure translation.*axis is at infinity/i);
+
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Run Simulation" }));
+    const selector = screen.getByRole("combobox", { name: "Screw Motion Entity" });
+    expect(selector).toHaveTextContent("Shoulder Joint");
+    expect(selector).toHaveTextContent("Wrist Joint");
+    fireEvent.change(selector, { target: { value: "joint.shoulder" } });
+    expect(screen.getByRole("note", { name: "Screw Motion Explanation" }))
+      .toHaveTextContent(/Shoulder Joint.*contribution residual/i);
+    expect(screen.getByRole("note", { name: "Screw Motion Explanation" }))
+      .toHaveTextContent("total = orbital + axial");
+  });
+
   it("applies club defaults, preserves explicit overrides, and can restore the default", () => {
     const driver = getClub("Driver 10.5°");
     const view = renderPanel(driver);

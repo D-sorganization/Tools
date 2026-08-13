@@ -26,18 +26,22 @@ from typing import Any
 import numpy as np
 
 from rate_of_closure._contracts import require
+from rate_of_closure.simulation.screw_analysis import analyze_twist
 from rate_of_closure.simulation.session import SimulationRun
 from shared.python.swing_sim.ball_setup import BallSetup
 
 __all__ = [
     "CSV_COLUMNS",
+    "SCREW_CSV_COLUMNS",
     "TORQUE_CSV_COLUMNS",
     "ball_setup_from_json_dict",
     "run_to_json_dict",
     "series_rows",
+    "screw_series_rows",
     "torque_series_rows",
     "write_csv",
     "write_json",
+    "write_screw_csv",
     "write_torque_csv",
 ]
 
@@ -58,6 +62,28 @@ CSV_COLUMNS: tuple[str, ...] = (
 )
 
 TORQUE_CSV_COLUMNS: tuple[str, ...] = ("t_s", "joint_id", "applied_torque_nm")
+
+SCREW_CSV_COLUMNS: tuple[str, ...] = (
+    "t_s",
+    "motion_kind",
+    "angular_rate_rad_s",
+    "pitch_m_rad",
+    "axial_speed_m_s",
+    "r_isa_m",
+    "axis_x",
+    "axis_y",
+    "axis_z",
+    "axis_point_x_m",
+    "axis_point_y_m",
+    "axis_point_z_m",
+    "orbital_vx_m_s",
+    "orbital_vy_m_s",
+    "orbital_vz_m_s",
+    "axial_vx_m_s",
+    "axial_vy_m_s",
+    "axial_vz_m_s",
+    "reconstruction_residual_m_s",
+)
 
 
 def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
@@ -131,6 +157,32 @@ def torque_series_rows(run: SimulationRun) -> list[tuple[float, str, float]]:
     ]
 
 
+def screw_series_rows(run: SimulationRun) -> list[tuple[Any, ...]]:
+    """Return the typed club screw decomposition for every swing sample."""
+    rows: list[tuple[Any, ...]] = []
+    for time_s, point, twist in zip(
+        run.swing_times, run.swing_positions, run.swing_twists, strict=True
+    ):
+        motion = analyze_twist(twist, point)
+        axis_point = motion.axis_point_m
+        rows.append(
+            (
+                float(time_s),
+                motion.kind.value,
+                motion.angular_rate_rad_s,
+                motion.pitch_m_rad,
+                motion.axial_speed_m_s,
+                motion.radius_m,
+                *motion.axis_direction.tolist(),
+                *(axis_point.tolist() if axis_point is not None else (None,) * 3),
+                *motion.orbital_velocity_m_s.tolist(),
+                *motion.axial_velocity_m_s.tolist(),
+                motion.reconstruction_residual_m_s,
+            )
+        )
+    return rows
+
+
 def _contact_columns(
     run: SimulationRun,
 ) -> tuple[int, int, float | None, float, float, float]:
@@ -167,6 +219,15 @@ def write_torque_csv(run: SimulationRun, path: str | Path) -> None:
         writer = csv.writer(handle)
         writer.writerow(TORQUE_CSV_COLUMNS)
         writer.writerows(torque_series_rows(run))
+
+
+def write_screw_csv(run: SimulationRun, path: str | Path) -> None:
+    """Write a dedicated SI/app-frame club screw-motion time series."""
+    require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
+    with Path(path).open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(SCREW_CSV_COLUMNS)
+        writer.writerows(screw_series_rows(run))
 
 
 def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
@@ -225,6 +286,12 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
                 "unit": "N*m",
                 "joint_ids": list(run.swing_joint_ids),
                 "values": run.swing_applied_torques_nm.tolist(),
+            },
+            "club_screw_motion": {
+                "frame": "app/world",
+                "units": "SI",
+                "columns": list(SCREW_CSV_COLUMNS),
+                "rows": [list(row) for row in screw_series_rows(run)],
             },
         },
     }

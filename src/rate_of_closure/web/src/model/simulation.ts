@@ -33,6 +33,7 @@ import {
   summarizeDoublePendulumRun,
   type DoublePendulumRunConfig,
   type PendulumState,
+  type PendulumParams,
 } from "./doublePendulum";
 import {
   assessFixedContact,
@@ -49,6 +50,7 @@ import {
 import {
   MPH_PER_MPS,
   add,
+  cross,
   fromFlightFrame,
   norm,
   scale,
@@ -92,6 +94,10 @@ export interface SimulationInput {
   planeForwardTiltDeg: number;
   impactTimeS: number | null; // null = auto (max clubhead speed)
   swingDurationS: number;
+  /** Optional passive double-pendulum parameters for trace studies. */
+  pendulumParameters?: PendulumParams;
+  /** Offset from the automatic peak-speed inspection time [s]. */
+  impactTimeOffsetS?: number;
   club?: ImpactClubProperties;
   /** Defaults to delivery inspection for backward-compatible studies. */
   contactMode?: ContactMode;
@@ -107,6 +113,7 @@ export interface SwingSampleTs {
   t: number;
   position: Vec3; // app frame; aligned only in delivery-inspection mode
   velocity: Vec3;
+  angularVelocity: Vec3; // app frame, rad/s, for club screw-axis analysis
   joints: Vec3[]; // pivot -> articulated joints -> clubhead
 }
 
@@ -159,13 +166,14 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
         t,
         position: [speed * rel, 0, 0],
         velocity: [speed, 0, 0],
+        angularVelocity: omega,
         joints: [],
       });
     }
     return samples;
   }
   // Pendulum on the oriented plane (swing frame), adapted to app.
-  const doubleParameters = golfDefaultParams();
+  const doubleParameters = input.pendulumParameters ?? golfDefaultParams();
   const g = inPlaneGravity(
     rad(input.planeYawDeg),
     rad(input.planeSideTiltDeg),
@@ -203,6 +211,7 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
   const upAxisSwing: Vec3 = [cy * sf + sy * ss * cf, sy * sf - cy * ss * cf, cs * cf];
   const xAxis = fromFlightFrame(xAxisSwing);
   const upAxis = fromFlightFrame(upAxisSwing);
+  const planeNormal = cross(upAxis, xAxis);
   return states.map((state, index) => {
     const triple = golfTripleParameters();
     const angles = input.sourceKind === "double_pendulum"
@@ -231,6 +240,7 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
       t: index * dt,
       position: add(scale(xAxis, x), scale(upAxis, yLoc)),
       velocity: add(scale(xAxis, vx), scale(upAxis, vy)),
+      angularVelocity: scale(planeNormal, rates[rates.length - 1]),
       joints: [
         ...localJoints.map(([jointX, jointY]) =>
           add(scale(xAxis, jointX), scale(upAxis, jointY)),
@@ -245,6 +255,10 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   const ballSetup = resolveBallSetup(input.ballSetup);
   const ballPositionM = ballCenterPosition(ballSetup);
   const swing = swingSamples(input);
+  const impactTimeOffsetS = input.impactTimeOffsetS ?? 0;
+  if (!Number.isFinite(impactTimeOffsetS)) {
+    throw new Error("impactTimeOffsetS must be finite");
+  }
   const torqueRun = summarizeDoublePendulumRun(
     input.doublePendulumRun,
     input.sourceKind === "double_pendulum" ? swing.map((sample) => sample.t) : [],
@@ -266,6 +280,11 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       0,
       Math.min(input.impactTimeS, swing[swing.length - 1].t),
     );
+    impactIndex = Math.round(clamped / (swing[1].t - swing[0].t));
+  }
+  if (impactTimeOffsetS !== 0) {
+    const shifted = swing[impactIndex].t + impactTimeOffsetS;
+    const clamped = Math.max(0, Math.min(shifted, swing[swing.length - 1].t));
     impactIndex = Math.round(clamped / (swing[1].t - swing[0].t));
   }
   const impactSample = swing[impactIndex];

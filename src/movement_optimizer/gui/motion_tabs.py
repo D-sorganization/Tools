@@ -48,11 +48,11 @@ from movement_optimizer.models.swingset_forces import (
     swing_force_fields,
     swing_force_history,
 )
-from movement_optimizer.rendering import Palette, get_chart_color
 
 from . import plot_renderer
 from .motion_analysis_panel import MotionAnalysisPanel
 from .motion_controls import NumericControl, scrollable_control_panel
+from .motion_helpers import build_motion_colors, chain_path_length
 from .policy_trace_canvas import PolicyTraceCanvas, refresh_policy_trace_palette
 from .policy_worker import PolicyOptimizationWorker
 from .vector_overlay import (
@@ -65,23 +65,10 @@ from .vector_overlay import (
     draw_overlay_scene,
 )
 
-
 # Canvas colours are sourced from the fleet shared theme (via rendering.Palette
 # and the shared chart-colour cycle) so the swingset/chain canvases recolour with
 # the rest of the app. ``refresh_motion_palette`` rebinds these on theme change.
-def _build_motion_colors() -> dict[str, QColor]:
-    return {
-        "ACCENT": QColor(Palette.GREEN),
-        "CHAIN": QColor(Palette.FG_DIM),
-        "BODY": QColor(get_chart_color(0)),
-        "LEG": QColor(get_chart_color(1)),
-        "ARM": QColor(get_chart_color(2)),
-        "SURFACE": QColor(Palette.BG),
-        "GRID": QColor(Palette.BG_INPUT),
-    }
-
-
-_MOTION_COLORS = _build_motion_colors()
+_MOTION_COLORS = build_motion_colors()
 ACCENT = _MOTION_COLORS["ACCENT"]
 CHAIN = _MOTION_COLORS["CHAIN"]
 BODY = _MOTION_COLORS["BODY"]
@@ -94,7 +81,7 @@ GRID = _MOTION_COLORS["GRID"]
 def refresh_motion_palette() -> None:
     """Rebind the motion-canvas colours from the active theme palette."""
     global ACCENT, CHAIN, BODY, LEG, ARM, SURFACE, GRID
-    colors = _build_motion_colors()
+    colors = build_motion_colors()
     ACCENT = colors["ACCENT"]
     CHAIN = colors["CHAIN"]
     BODY = colors["BODY"]
@@ -221,7 +208,7 @@ class MotionCanvas(QWidget):
     ) -> None:
         self._chain_nodes = chain_nodes
         self._body_points = body_points or {}
-        self._path_length_m = self._compute_chain_path_length(chain_nodes)
+        self._path_length_m = chain_path_length(chain_nodes)
         self.update()
 
     def set_overlays(self, scene: OverlayScene) -> None:
@@ -291,14 +278,6 @@ class MotionCanvas(QWidget):
 
     def _chain_path_length(self) -> float:
         return self._path_length_m
-
-    @staticmethod
-    def _compute_chain_path_length(chain_nodes: list[tuple[float, float]]) -> float:
-        distances = [
-            np.hypot(end[0] - start[0], end[1] - start[1])
-            for start, end in pairwise(chain_nodes)
-        ]
-        return max(float(sum(distances)), 0.5)
 
     def _draw_grid(self, painter: QPainter) -> None:
         painter.setPen(QPen(GRID, 1))

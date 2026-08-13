@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from dataclasses import replace
 
 import numpy as np
@@ -17,6 +18,12 @@ from rate_of_closure.simulation import (
     SimulationRun,
     run_simulation,
 )
+from rate_of_closure.variation.ensemble_io import (
+    to_json_dict as ensemble_json_dict,
+)
+from rate_of_closure.variation.ensemble_io import (
+    write_trace_csv,
+)
 from rate_of_closure.variation.simulation_adapter import (
     APP_FRAME_ID,
     EVALUATED_HIT,
@@ -31,6 +38,7 @@ from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_BALL_SETUP,
     CATEGORY_DELIVERY,
+    CancelledError,
     NoiseSpec,
     VariationPlan,
     summary_stats,
@@ -125,6 +133,36 @@ def test_miss_retains_geometry_and_contact_but_nulls_impact_and_shot_metrics() -
     assert traces.impact_sample_indices[1] == -1
 
 
+def test_complete_ensemble_exports_typed_outcomes_and_long_form_traces(
+    tmp_path,
+) -> None:
+    result = run_simulation_ensemble(
+        _request(
+            (
+                _config(ContactMode.DELIVERY_INSPECTION),
+                _config(ContactMode.FIXED_BALL_CONTACT),
+            )
+        )
+    )
+
+    document = ensemble_json_dict(result)
+    assert document["coordinate_frame"] == APP_FRAME_ID
+    assert [item["status"] for item in document["outcomes"]] == [
+        "evaluated_hit",
+        "evaluated_no_impact",
+    ]
+    assert document["positions_m"][1][0][0] == pytest.approx(
+        result.traces.positions_m[1, 0, 0].tolist()
+    )
+
+    path = tmp_path / "traces.csv"
+    write_trace_csv(result, path)
+    lines = path.read_text(encoding="utf-8").splitlines()
+    assert lines[0].startswith("trial,status,sample,time_s,point_id,x_target_m")
+    assert len(lines) == 1 + 2 * 51 * 3
+    assert "evaluated_no_impact" in lines[-1]
+
+
 def test_numerical_failure_has_an_explicit_invalid_trace_row() -> None:
     good = _config(ContactMode.DELIVERY_INSPECTION)
     failing = replace(good, scenario=ImpactScenario(clubhead_speed_mph=99.0))
@@ -173,6 +211,27 @@ def test_unexpected_programming_error_is_not_hidden_as_a_trial_failure() -> None
 
     with pytest.raises(TypeError, match="programming defect"):
         run_simulation_ensemble(request, broken_executor)
+
+
+def test_complete_ensemble_reports_progress_and_honors_cancellation() -> None:
+    request = _request(
+        (
+            _config(ContactMode.DELIVERY_INSPECTION),
+            _config(ContactMode.FIXED_BALL_CONTACT),
+        )
+    )
+    reports: list[object] = []
+
+    result = run_simulation_ensemble(request, progress_cb=reports.append)
+
+    assert result.variation.plan.n_runs == 2
+    assert reports[-1].iteration == 2
+    assert reports[-1].cost == 0
+
+    cancelled = threading.Event()
+    cancelled.set()
+    with pytest.raises(CancelledError):
+        run_simulation_ensemble(request, cancel_event=cancelled)
 
 
 def test_all_failure_grid_matches_the_configured_source_duration() -> None:

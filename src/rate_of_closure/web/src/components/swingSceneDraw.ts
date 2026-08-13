@@ -13,7 +13,9 @@ import {
   type CourseLayout,
 } from "../model/course";
 import { GOLF_BALL_RADIUS_M, type SimulationRunTs } from "../model/simulation";
+import { buildScrewGlyph, type Vec3 } from "../model/screwAnalysis";
 import { withAlpha } from "../model/theme";
+import { screwPresentation } from "./screwPresentation";
 
 export interface SwingSceneOptions {
   time: number;
@@ -23,13 +25,71 @@ export interface SwingSceneOptions {
   showCourse: boolean;
   /** Opt-in flight display; off keeps the scene at swing scale. */
   showFlight: boolean;
+  /** Engineering screw glyph for the selected club or joint. */
+  showScrew: boolean;
+  screwEntityId: string;
   layout?: CourseLayout;
+}
+
+type ScreenPoint = [number, number];
+
+function strokePolyline(
+  ctx: CanvasRenderingContext2D,
+  points: Vec3[],
+  project: (point: Vec3) => ScreenPoint,
+  color: string,
+  width: number,
+): void {
+  if (points.length < 2) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  points.forEach((point, index) => {
+    const [x, y] = project(point);
+    if (index === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.lineWidth = 1;
+}
+
+function drawScrewOverlay(
+  ctx: CanvasRenderingContext2D,
+  run: SimulationRunTs,
+  time: number,
+  entityId: string,
+  extent: number,
+  project: (point: Vec3) => ScreenPoint,
+): void {
+  const presentation = screwPresentation(run, time, entityId);
+  const glyph = buildScrewGlyph(presentation.motion, extent);
+  if (glyph === null) {
+    if (presentation.motion.kind !== "translation") return;
+    const end: Vec3 = presentation.motion.referencePointM.map((value, index) =>
+      value + presentation.motion.axisDirection[index] * extent * 0.7) as Vec3;
+    strokePolyline(ctx, [presentation.motion.referencePointM, end], project, "#e879f9", 2.5);
+    return;
+  }
+  strokePolyline(ctx, glyph.axisLineM, project, "#e879f9", 2.6);
+  strokePolyline(ctx, glyph.helixM, project, "#fb923c", 2.1);
+  strokePolyline(ctx, glyph.radiusLineM, project, "#22d3ee", 1.4);
+  const [tipX, tipY] = project(glyph.axisLineM[1]);
+  ctx.fillStyle = "#e879f9";
+  ctx.beginPath();
+  ctx.arc(tipX, tipY, 4, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.fillStyle = "#f0abfc";
+  ctx.font = "600 12px sans-serif";
+  ctx.fillText(`${presentation.label} Screw Axis`, 12, 52);
 }
 
 export function drawSwingScene(
   canvas: HTMLCanvasElement,
   run: SimulationRunTs | null,
-  { time, showBall, showGround, showCourse, showFlight, layout }: SwingSceneOptions,
+  {
+    time, showBall, showGround, showCourse, showFlight,
+    showScrew, screwEntityId, layout,
+  }: SwingSceneOptions,
 ): void {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -200,6 +260,14 @@ export function drawSwingScene(
       12,
       34,
     );
+  }
+
+  if (showScrew && !inFlight) {
+    const project = (point: Vec3): ScreenPoint => [
+      px(point[0] + 0.25 * point[2]),
+      py(point[1] + 0.15 * point[2]),
+    ];
+    drawScrewOverlay(ctx, run, boundedTime, screwEntityId, Math.max(extentX, extentY), project);
   }
 
   // Flight trajectory polyline: opt-in only (scale separation).

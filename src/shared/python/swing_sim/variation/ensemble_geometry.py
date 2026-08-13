@@ -49,9 +49,34 @@ def compute_position_dispersion(ensemble: EnsemblePositionTraces) -> PositionDis
     invalid shot outcome may still have a valid swing trace. Only the explicit
     trace-level ``sample_valid`` mask controls geometric inclusion.
     """
-    positions = ensemble.positions_m
-    valid = ensemble.sample_valid[:, :, np.newaxis, np.newaxis]
-    counts_by_sample = np.count_nonzero(ensemble.sample_valid, axis=0)
+    return compute_position_dispersion_view(ensemble)
+
+
+def compute_position_dispersion_view(
+    ensemble: EnsemblePositionTraces,
+    trial_indices: np.ndarray | None = None,
+    sample_count: int | None = None,
+) -> PositionDispersion:
+    """Compute dispersion for a validated trial subset and leading time window."""
+    indices = (
+        np.arange(ensemble.positions_m.shape[0], dtype=int)
+        if trial_indices is None
+        else np.asarray(trial_indices, dtype=int)
+    )
+    require(indices.ndim == 1, "trial_indices must be one-dimensional")
+    require(indices.size >= 1, "trial_indices must select at least one trial")
+    require(np.all(indices >= 0), "trial_indices cannot be negative")
+    require(
+        np.all(indices < ensemble.positions_m.shape[0]),
+        "trial_indices exceed the ensemble",
+    )
+    require(np.unique(indices).size == indices.size, "trial_indices must be unique")
+    count = ensemble.sample_times_s.size if sample_count is None else sample_count
+    require(1 <= count <= ensemble.sample_times_s.size, "invalid sample_count")
+    positions = ensemble.positions_m[indices, :count]
+    sample_valid = ensemble.sample_valid[indices, :count]
+    valid = sample_valid[:, :, np.newaxis, np.newaxis]
+    counts_by_sample = np.count_nonzero(sample_valid, axis=0)
     counts = np.broadcast_to(
         counts_by_sample[:, np.newaxis], (positions.shape[1], positions.shape[2])
     ).copy()
@@ -76,7 +101,7 @@ def compute_position_dispersion(ensemble: EnsemblePositionTraces) -> PositionDis
     eigenvalues, principal_axes = _principal_components(covariance, counts)
 
     return PositionDispersion(
-        sample_times_s=immutable_array(ensemble.sample_times_s, float),
+        sample_times_s=immutable_array(ensemble.sample_times_s[:count], float),
         coordinate_frame=ensemble.coordinate_frame,
         point_ids=ensemble.point_ids,
         count=immutable_array(counts, int),
@@ -143,5 +168,6 @@ __all__ = [
     "LowVariabilityInterval",
     "PositionDispersion",
     "compute_position_dispersion",
+    "compute_position_dispersion_view",
     "find_low_variability_intervals",
 ]

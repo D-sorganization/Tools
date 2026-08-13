@@ -46,7 +46,8 @@ def swing_sample_times(duration_s: float) -> np.ndarray:
         duration_s,
     )
     sample_count = int(round(duration_s / SWING_SAMPLE_DT_S))
-    return np.linspace(0.0, duration_s, max(sample_count, 2) + 1)
+    times: np.ndarray = np.linspace(0.0, duration_s, max(sample_count, 2) + 1)
+    return times
 
 
 def configured_swing_sample_times(config: SimulationConfig) -> np.ndarray:
@@ -128,6 +129,7 @@ def _make_source(config: SimulationConfig) -> SwingSource:
         duration=config.swing_duration_s,
         run_config=config.swing_run_config,
         torque_library=config.torque_library,
+        pendulum_parameters=config.pendulum_parameters,
     )
 
 
@@ -171,7 +173,8 @@ def _sample_applied_torques(
             values,
         )
         rows.append([float(values[joint_id]) for joint_id in joint_ids])
-    return np.asarray(rows, dtype=np.float64)
+    samples: np.ndarray = np.asarray(rows, dtype=np.float64)
+    return samples
 
 
 def _select_contact(
@@ -210,7 +213,13 @@ def _inspection_time(
     if config.impact_time_s is not None:
         return min(max(float(config.impact_time_s), 0.0), float(source.duration))
     speeds = np.linalg.norm(swing.twists[:, 3:], axis=1)
-    return float(swing.times[int(np.argmax(speeds))])
+    peak_time_s = float(swing.times[int(np.argmax(speeds))])
+    return float(
+        min(
+            max(peak_time_s + config.impact_time_offset_s, 0.0),
+            float(source.duration),
+        )
+    )
 
 
 def _solve_hit(
@@ -248,7 +257,10 @@ def _face_normal_callable(config: SimulationConfig):  # type: ignore[no-untyped-
     """Return the club's bulge/roll normal callback for the impact solver."""
 
     def _normal(toe_m: float, high_m: float) -> np.ndarray:
-        return np.array(face_normal_at_offset(config.club, toe_m * 1e3, high_m * 1e3))
+        normal: np.ndarray = np.array(
+            face_normal_at_offset(config.club, toe_m * 1e3, high_m * 1e3)
+        )
+        return normal
 
     return _normal
 

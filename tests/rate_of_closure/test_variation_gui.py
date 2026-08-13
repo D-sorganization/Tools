@@ -16,11 +16,15 @@ import pytest
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
+from rate_of_closure.club import get_club  # noqa: E402
+from rate_of_closure.model import ImpactScenario  # noqa: E402
+from rate_of_closure.simulation import SimulationConfig  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker  # noqa: E402
 from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
+    CATEGORY_SWING,
     NoiseSpec,
     VariationPlan,
     keys_for_mode,
@@ -146,6 +150,12 @@ class TestRunAndResults:
         assert tab._summary_table.rowCount() == len(dataset.output_names)
         assert tab._sensitivity_table.rowCount() == 1
         assert tab._spearman_table.columnCount() == len(dataset.output_names)
+        assert tab._ensemble_scatter._canvas.axes.collections
+        scatter_keys = {
+            tab._ensemble_scatter._y_combo.itemData(index)
+            for index in range(tab._ensemble_scatter._y_combo.count())
+        }
+        assert "output:carry_m" in scatter_keys
 
     def test_cancel_before_start_reports_cancelled(
         self, qtbot, tab: VariationTab
@@ -155,6 +165,42 @@ class TestRunAndResults:
         with qtbot.waitSignal(worker.cancelled, timeout=15_000):
             worker.start()
         worker.wait(10_000)
+
+    def test_swing_study_populates_trace_scatter_and_arc_views(
+        self, qtbot, tab: VariationTab
+    ) -> None:  # type: ignore[no-untyped-def]
+        yaw = f"{CATEGORY_SWING}.yaw_deg"
+        tab.load_plan(
+            VariationPlan(
+                mode="swing",
+                noise=(NoiseSpec(yaw, distribution="uniform", scale=0.2),),
+                n_runs=3,
+                seed=2,
+            )
+        )
+        tab.set_simulation_config(
+            SimulationConfig(
+                scenario=ImpactScenario(clubhead_speed_mph=30.0),
+                club=get_club("Sand Wedge"),
+                source_kind="double_pendulum",
+                swing_duration_s=0.05,
+            )
+        )
+
+        with _wait_done(qtbot, tab):
+            pass
+
+        assert tab.ensemble_result() is not None
+        assert tab._sensitivity_table.rowCount() == 1
+        assert tab._ensemble_scatter._canvas.axes.collections
+        assert len(tab._arc_overlay._canvas.axes.lines) >= 4
+        assert tab._arc_overlay._variability_canvas.axes.lines
+        assert "3/3 trials" in tab._arc_overlay._status.text()
+        assert "Hits 3 · No Impact 0 · Failures 0 · Landings 3" in (
+            tab._landing._axes.get_title()
+        )
+        assert tab._export_trace_csv.isEnabled()
+        assert tab._export_ensemble_json.isEnabled()
 
     def test_export_json_round_trips_from_the_tab(
         self, qtbot, tab: VariationTab, tmp_path: Path, monkeypatch
