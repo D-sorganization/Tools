@@ -99,4 +99,40 @@ describe("ReferenceFrameConverter", () => {
       assertPayloadContainsOnlyExpectedFields("so3_so3_maps", ["so3_vector"]);
     });
   });
+
+  it("gives every dense numeric input a descriptive accessible name", () => {
+    render(<ReferenceFrameConverter />);
+
+    expect(screen.getByRole("combobox", { name: "Operation" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("spinbutton", {
+        name: "Transform matrix row 1, column 1",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("spinbutton", { name: "Twist angular velocity x" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("spinbutton", { name: "Twist linear velocity z" }),
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Operation" }), {
+      target: { value: "homogeneous_transform" },
+    });
+    expect(
+      screen.getByRole("spinbutton", {
+        name: "Rotation matrix row 3, column 3",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("spinbutton", { name: "Translation component y" }),
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Operation" }), {
+      target: { value: "so3_so3_maps" },
+    });
+    expect(
+      screen.getByRole("spinbutton", { name: "Rotation vector component z" }),
+    ).toBeInTheDocument();
+  });
 });

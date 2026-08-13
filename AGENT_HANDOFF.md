@@ -23,6 +23,22 @@ changed-file zero-warning ESLint and TypeScript pass, and the 1,589-module
 production build succeeds. Human review is approved; fresh final-head
 protected checks and ordinary non-admin merge behavior remain mandatory.
 
+## 2026-08-12 — PR #4389 Rotation-Converter Accessible Input Names
+
+Open PR #4389 on `palette-aria-labels-matrices-3953280844180552522`
+targets `main` with accessible names for every dense rotation and
+reference-frame numeric input. The continuation corrects the Palette note's
+date, replaces screen-reader-hostile Greek and Lie-algebra abbreviations with
+plain-language twist and rotation-vector names, and explicitly associates the
+operation, input-type, and Euler-convention labels with their controls. It also
+adds focused React contracts covering every conditional input family.
+
+Local exact-branch evidence: five focused component tests pass, including the
+initial red accessibility-name case; TypeScript, zero-warning ESLint, and the
+29-module production build pass. Human review is approved, but the final
+handoff head still requires fresh protected checks and ordinary non-admin merge
+behavior. No Rate of Closure behavior or public numerical contract changes.
+
 ## Where This Repo Is Headed
 
 Tools is the D-sorganization fleet's shared engineering-tools monorepo (45+
