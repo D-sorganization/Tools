@@ -11,11 +11,13 @@ from enum import Enum
 
 import numpy as np
 
+from rate_of_closure.simulation import SimulationConfig
 from shared.python.contracts import require
 
 from .simulation_types import SimulationEnsembleRequest
 
 REQUEST_IDENTITY_SCHEMA = "rate-of-closure/ensemble-request-identity@1"
+CONFIG_IDENTITY_SCHEMA = "rate-of-closure/simulation-config-identity@1"
 
 
 def _qualified_type(value: object) -> str:
@@ -69,6 +71,15 @@ def _canonical_json(value: object) -> bytes:
     ).encode("utf-8")
 
 
+def config_identity_sha256(config: SimulationConfig) -> str:
+    """Hash every field of one normalized simulation configuration."""
+    require(isinstance(config, SimulationConfig), "invalid simulation config")
+    digest = hashlib.sha256()
+    digest.update(CONFIG_IDENTITY_SCHEMA.encode("ascii"))
+    digest.update(_canonical_json(_canonical_value(config)))
+    return digest.hexdigest()
+
+
 def request_identity_sha256(request: SimulationEnsembleRequest) -> str:
     """Hash every plan, input, and per-trial configuration field in order."""
     require(isinstance(request, SimulationEnsembleRequest), "invalid request")
@@ -85,4 +96,9 @@ def request_identity_sha256(request: SimulationEnsembleRequest) -> str:
     return digest.hexdigest()
 
 
-__all__ = ["REQUEST_IDENTITY_SCHEMA", "request_identity_sha256"]
+__all__ = [
+    "CONFIG_IDENTITY_SCHEMA",
+    "REQUEST_IDENTITY_SCHEMA",
+    "config_identity_sha256",
+    "request_identity_sha256",
+]

@@ -228,9 +228,12 @@ class AppFrameSwing:
         """Forward generalized coordinates, which are frame invariant."""
         if isinstance(self._inner, DoublePendulumSwing):
             state = self._inner.state_at(t)
-            return np.asarray(
-                (state.theta1, state.theta2, state.omega1, state.omega2),
-                dtype=np.float64,
+            return cast(
+                np.ndarray,
+                np.asarray(
+                    (state.theta1, state.theta2, state.omega1, state.omega2),
+                    dtype=np.float64,
+                ),
             )
         state_sampler = getattr(self._inner, "generalized_state_at", None)
         require(

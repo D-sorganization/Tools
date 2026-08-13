@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 R11 executor/config authority hardening
+
+- Every injected executor result must now carry the exact normalized config
+  requested for that ordered trial before projection or archive acceptance.
+- Full-field deterministic config identity rejects contact-mode, source-kind,
+  scenario, timing, and reversed-order run substitution before commit.
+- Mismatch is a coordinator contract failure, not a numerical trial outcome.
+- Exact hosted Python 3.12/Mypy 1.13 passes all 18 changed production files;
+  the application-frame generalized-state NumPy return boundary is explicit.
+- SPEC advances to 1.16.71. Eager request/per-run allocation, prefix
+  verification, legacy schema/UI migration, and publication remain open.
+
 ## 2026-08-13 #4142 R11 pre-impact authority/archive foundation
 
 - Complete Rate chunks now own immutable application-frame poses/twists,

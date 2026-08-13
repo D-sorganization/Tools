@@ -3,6 +3,17 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Executor/config authority hardening (#4142 R11)
+
+- `capture_simulation` now verifies a returned run's complete normalized config
+  identity against the exact ordered request before projection.
+- Contact/source/scenario/timing substitutions and reversed executor results
+  fail before archive commit; they cannot be recorded as numerical failures.
+- Exact hosted Python 3.12/Mypy 1.13 passes 18 changed sources, including the
+  explicitly typed app-frame generalized-state NumPy boundary.
+
+SPEC is 1.16.71. The honest R11 limitations from 1.16.70 remain unchanged.
+
 ## 2026-08-13 Pre-impact authority and resumable archive (#4142 R11)
 
 - Rate chunks own immutable pose/twist, source-neutral generalized state,

@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Executor/config authority hardening (#4142 R11)
+
+Version 1.16.71 computes a canonical full-field digest for each normalized
+`SimulationConfig` and requires an injected executor's `SimulationRun.config`
+to match before any outcome, trace, event, or archive projection. Contact-mode,
+source-kind, scenario, timing, and trial-order substitution now fail as
+contract violations before commit rather than being hidden as a numerical
+trial failure.
+
+Four discriminator substitutions plus reversed ordered results are covered.
+The exact hosted Python 3.12/Mypy 1.13 command passes 18 changed production
+files; the app-frame generalized-state NumPy return is now explicitly typed.
+All 1.16.70 limitations remain open and unchanged.
+
 ## 2026-08-13 Pre-impact authority and resumable ensemble archive (#4142 R11)
 
 Version 1.16.70 adds immutable application-frame pose/twist, source-neutral

@@ -26,11 +26,26 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.70                                    |
-| **Spec Version**        | 1.16.70                                    |
+| **Current Version**     | 1.16.71                                    |
+| **Spec Version**        | 1.16.71                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Executor/config authority hardening (#4142 R11)
+
+Version 1.16.71 binds every injected executor result to the exact normalized
+`SimulationConfig` requested for that trial before scalar, trace, event, or
+archive projection. A deterministic full-field configuration digest prevents
+contact-mode, source-kind, scenario, timing, or ordered-trial substitution
+from being committed under the original request identity. Mismatches are
+contract failures rather than numerical trial outcomes.
+
+Adversarial coverage proves four independent configuration substitutions and
+reordered executor results fail before archive commit. Exact hosted Python
+3.12 with pinned Mypy 1.13 passes all 18 changed production files, including
+the explicit NumPy return boundary in the application-frame source wrapper.
+The R11 limitations recorded in 1.16.70 remain unchanged.
 
 ### 2026-08-13 Pre-impact ensemble authority and resumable archive foundation (#4142 R11)
 
@@ -3943,6 +3958,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.71 | fix(rate-of-closure, #4142 R11): require every injected executor result to match the exact normalized per-trial `SimulationConfig` before projection, preventing contact/source/scenario/timing/order substitution under a request digest; make the app-frame generalized-state NumPy return boundary explicit for hosted Mypy 1.13. |
 | 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4142 R11): add immutable source-neutral pre-impact state, commanded-torque, pose/twist, and exact contact-event chunk authority; replace chunk-sized solver-run retention with one-run projection; and add a separate request-bound, SHA-256-chained, atomic, resumable, bounded-memory ensemble archive while keeping eager request/solver allocation and legacy schema migration explicitly open. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |

@@ -3,17 +3,19 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
-from rate_of_closure.simulation import ContactMode
+from rate_of_closure.simulation import ContactMode, SimulationConfig, run_simulation
 from rate_of_closure.variation import ensemble_archive as archive_module
 from rate_of_closure.variation.ensemble_archive import (
     DurableEnsembleArchiveSink,
     DurableEnsembleChunkSource,
 )
 from rate_of_closure.variation.simulation_adapter import run_simulation_ensemble_chunks
+from rate_of_closure.variation.trial_projection import capture_simulation
 from shared.python.contracts import ContractViolationError
 
 from .test_variation_simulation_adapter import _config, _request
@@ -132,3 +134,43 @@ def test_resume_rejects_same_plan_with_different_config(tmp_path: Path) -> None:
         run_simulation_ensemble_chunks(
             changed, DurableEnsembleArchiveSink(path), chunk_size=1
         )
+
+
+@pytest.mark.parametrize(
+    "returned_config",
+    (
+        _config(ContactMode.FIXED_BALL_CONTACT),
+        _config(ContactMode.DELIVERY_INSPECTION, source_kind="manual"),
+        _config(ContactMode.DELIVERY_INSPECTION, speed_mph=101.0),
+        replace(_config(ContactMode.DELIVERY_INSPECTION), impact_time_offset_s=0.001),
+    ),
+    ids=("contact-mode", "source-kind", "scenario", "timing"),
+)
+def test_executor_cannot_substitute_a_run_from_another_config(
+    returned_config: SimulationConfig,
+) -> None:
+    requested = _config(ContactMode.DELIVERY_INSPECTION)
+    foreign_run = run_simulation(returned_config)
+
+    with pytest.raises(ContractViolationError, match="different simulation config"):
+        capture_simulation(requested, lambda _config: foreign_run)
+
+
+def test_archive_rejects_executor_run_reordering_before_commit(tmp_path: Path) -> None:
+    path = tmp_path / "ensemble"
+    configs = (
+        _config(ContactMode.DELIVERY_INSPECTION, speed_mph=100.0),
+        _config(ContactMode.DELIVERY_INSPECTION, speed_mph=101.0),
+    )
+    request = _request(configs)
+    returned = iter(tuple(run_simulation(config) for config in reversed(configs)))
+
+    with pytest.raises(ContractViolationError, match="different simulation config"):
+        run_simulation_ensemble_chunks(
+            request,
+            DurableEnsembleArchiveSink(path),
+            chunk_size=1,
+            executor=lambda _config: next(returned),
+        )
+
+    assert not (path / "commit.json").exists()

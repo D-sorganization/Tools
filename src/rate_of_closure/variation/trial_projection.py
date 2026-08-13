@@ -18,6 +18,8 @@ from rate_of_closure.variation.simulation_types import (
 )
 from shared.python.contracts import ContractViolationError, require
 
+from .ensemble_request_identity import config_identity_sha256
+
 logger = logging.getLogger(__name__)
 
 SimulationExecutor = Callable[[SimulationConfig], SimulationRun]
@@ -65,6 +67,10 @@ def capture_simulation(
         logger.debug("simulation trial failed: %s", error)
         return TrialCapture(None, error)
     require(isinstance(run, SimulationRun), "executor must return SimulationRun")
+    require(
+        config_identity_sha256(run.config) == config_identity_sha256(config),
+        "executor returned a run for a different simulation config",
+    )
     return TrialCapture(run, None)
 
 
