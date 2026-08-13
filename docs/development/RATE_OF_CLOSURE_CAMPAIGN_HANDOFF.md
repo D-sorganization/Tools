@@ -1,5 +1,25 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 localized torque authoring parity
+
+- PyQt exposes shoulder/wrist commanded-torque offsets only for the executable
+  double-pendulum swing source and bounds their required half-open windows to
+  the effective RK4 duration.
+- React provides the same variable-constrained start/end and topological joint
+  controls for its fixed 1.5 s double-pendulum swing workflow.
+- Disabled selectors use only `joint.shoulder` or `joint.wrist`; accessible
+  guidance distinguishes these from spatial `swing.*` trace points.
+- Plan import/load/save and unrelated edits retain custom spec IDs,
+  high-precision values, exact loci, groups, and other plan fields. Factor
+  changes reset the locus atomically while retaining custom group references.
+- Missing, reversed, off-duration, or mismatched loci fail visibly before run
+  or storage mutation. Python and TypeScript validate the same v2 JSON fixture.
+- Evidence: 49 focused Python/PyQt/core tests; 752 full React tests; TypeScript
+  type/lint/build; Ruff/format; changed-source MyPy; diff checks.
+- React localized dynamics/results/export, Rust parity, complete raw
+  state/event/torque persistence, cross-platform visual E2E, protected
+  publication, and epic completion remain open.
+
 ## 2026-08-12 #4142 localized torque static-gate closure
 
 - Explicit NumPy annotations on variation CSV input/success arrays close the

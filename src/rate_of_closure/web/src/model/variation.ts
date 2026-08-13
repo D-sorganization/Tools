@@ -24,6 +24,8 @@ export {
   CATEGORY_LAUNCH,
   CATEGORY_SWING,
   keysForMode,
+  LOCALIZED_TORQUE_DURATION_S,
+  localizedTorqueJointId,
   variableDef,
   variableLabel,
   VARIABLE_REGISTRY,

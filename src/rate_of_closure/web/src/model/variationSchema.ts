@@ -1,5 +1,10 @@
 import { validateGroupMatrix } from "./variationGroups";
-import { keysForMode, type VariationMode } from "./variationRegistry";
+import {
+  LOCALIZED_TORQUE_DURATION_S,
+  keysForMode,
+  localizedTorqueJointId,
+  type VariationMode,
+} from "./variationRegistry";
 import { ballSetupFromJson, ballSetupToJson, type BallSetup } from "./ballSetup";
 import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
 
@@ -97,6 +102,26 @@ const validateNoiseSpec = (
     new Set(pointIds).size !== pointIds.length
   ) {
     throw new Error("pointIds must be unique, non-empty stable IDs");
+  }
+  const localizedJoint = localizedTorqueJointId(spec.variableKey);
+  if (localizedJoint !== null) {
+    if (mode !== "swing") {
+      throw new Error("localized torque variables require swing mode");
+    }
+    if (spec.timeWindowS === undefined || spec.timeWindowS === null) {
+      throw new Error("localized torque requires a finite half-open time window");
+    }
+    const [start, end] = spec.timeWindowS;
+    if (!(0 <= start && start < end && end <= LOCALIZED_TORQUE_DURATION_S)) {
+      throw new Error(
+        `localized torque window must satisfy 0 <= start < end <= ${LOCALIZED_TORQUE_DURATION_S} s`,
+      );
+    }
+    if (pointIds.length !== 1 || pointIds[0] !== localizedJoint) {
+      throw new Error(
+        `localized torque requires exact topological joint ${localizedJoint}; swing.* IDs are spatial`,
+      );
+    }
   }
 };
 

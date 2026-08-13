@@ -21,6 +21,7 @@ from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.simulation import SimulationConfig  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker  # noqa: E402
+from shared.python.contracts import ContractViolationError  # noqa: E402
 from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
@@ -30,14 +31,25 @@ from shared.python.swing_sim.variation import (  # noqa: E402
     VariationPlan,
     keys_for_mode,
     run_variation,
-    variable_registry,
 )
 from shared.python.swing_sim.variation.dataset_io import read_json  # noqa: E402
+
+_LOCALIZED_FIXTURE = (
+    Path(__file__).parents[2]
+    / "src"
+    / "rate_of_closure"
+    / "web"
+    / "src"
+    / "model"
+    / "__fixtures__"
+    / "localized_torque_authoring_v1.json"
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 _BALL = f"{CATEGORY_LAUNCH}.ball_speed_mph"
 _SHOULDER_TORQUE = f"{CATEGORY_SWING}.shoulder_commanded_torque_offset_nm"
+_WRIST_TORQUE = f"{CATEGORY_SWING}.wrist_commanded_torque_offset_nm"
 
 
 @pytest.fixture
@@ -87,18 +99,58 @@ class TestConstruction:
         keys = tuple(row.variable.itemData(i) for i in range(row.variable.count()))
         assert keys == keys_for_mode("launch")
 
-    def test_swing_picker_hides_contextual_variables_without_locus_editor(
+    def test_swing_picker_authors_exact_contextual_joint_locus(
         self, tab: VariationTab
     ) -> None:
         tab._mode_combo.setCurrentIndex(1)  # swing
         row = tab._rows[0]
         keys = tuple(row.variable.itemData(i) for i in range(row.variable.count()))
 
-        assert _SHOULDER_TORQUE not in keys
-        assert all(
-            variable_registry()[key].applicability != "localized_torque_only"
-            for key in keys
+        assert _SHOULDER_TORQUE in keys
+        assert _WRIST_TORQUE in keys
+        row.variable.setCurrentIndex(row.variable.findData(_SHOULDER_TORQUE))
+        assert not row.locus_widget.isHidden()
+        assert row.joint_selector.currentData() == "joint.shoulder"
+        assert row.joint_selector.count() == 1
+        assert "topological" in row.joint_selector.toolTip().lower()
+        assert "half-open" in row.window_start.toolTip().lower()
+
+        row.window_start.setValue(0.125)
+        row.window_end.setValue(0.375)
+        spec = row.to_spec()
+        assert spec.time_window_s == (0.125, 0.375)
+        assert spec.point_ids == ("joint.shoulder",)
+
+        row.variable.setCurrentIndex(row.variable.findData(_WRIST_TORQUE))
+        changed = row.to_spec()
+        assert changed.point_ids == ("joint.wrist",)
+        assert changed.time_window_s != (0.125, 0.375)
+
+    def test_python_reads_the_shared_localized_authoring_fixture(self) -> None:
+        plan = VariationPlan.loads(_LOCALIZED_FIXTURE.read_text(encoding="utf-8"))
+
+        assert json.loads(plan.dumps()) == json.loads(
+            _LOCALIZED_FIXTURE.read_text(encoding="utf-8")
         )
+
+    def test_incompatible_source_hides_localized_variables(
+        self, tab: VariationTab
+    ) -> None:
+        tab._mode_combo.setCurrentIndex(1)  # swing
+        tab.set_simulation_config(
+            SimulationConfig(
+                scenario=ImpactScenario(clubhead_speed_mph=100.0),
+                club=get_club("Driver 10.5°"),
+                source_kind="manual",
+            )
+        )
+
+        keys = tuple(
+            tab._rows[0].variable.itemData(index)
+            for index in range(tab._rows[0].variable.count())
+        )
+        assert _SHOULDER_TORQUE not in keys
+        assert _WRIST_TORQUE not in keys
 
     def test_add_and_remove_rows_keeps_at_least_one(self, tab: VariationTab) -> None:
         tab._add_row()
@@ -197,27 +249,89 @@ class TestPlanRoundTrip:
         tab.load_plan(plan)
         assert tab.build_plan() == plan
 
-    def test_load_contextual_plan_fails_atomically_with_locus_editor_message(
+    def test_load_contextual_plan_round_trips_locus_groups_and_precision(
         self, tab: VariationTab
     ) -> None:
-        original = tab.build_plan()
         plan = VariationPlan(
             mode="swing",
             noise=(
                 NoiseSpec(
                     _SHOULDER_TORQUE,
-                    scale=1.0,
-                    time_window_s=(0.02, 0.04),
+                    scale=1.123456789,
+                    spec_id="shoulder-window",
+                    time_window_s=(0.123456789, 0.456789123),
                     point_ids=("joint.shoulder",),
+                ),
+                NoiseSpec(
+                    _WRIST_TORQUE,
+                    scale=0.987654321,
+                    spec_id="wrist-window",
+                    time_window_s=(0.2, 0.6),
+                    point_ids=("joint.wrist",),
+                ),
+            ),
+            groups=(
+                PerturbationGroup(
+                    group_id="joint-torque-group",
+                    spec_ids=("shoulder-window", "wrist-window"),
+                    matrix=((1.0, 0.25), (0.25, 1.0)),
                 ),
             ),
             n_runs=4,
         )
 
-        with pytest.raises(ValueError, match="locus editor.*not representable"):
-            tab.load_plan(plan)
+        tab.load_plan(plan)
 
+        assert tab.build_plan() == plan
+        tab._seed_spin.setValue(9)
+        rebuilt = tab.build_plan()
+        assert rebuilt.seed == 9
+        assert rebuilt.noise[0].scale == 1.123456789
+        assert rebuilt.noise[0].time_window_s == (0.123456789, 0.456789123)
+        assert rebuilt.noise[0].point_ids == ("joint.shoulder",)
+        assert rebuilt.groups == plan.groups
+
+    @pytest.mark.parametrize(
+        ("window", "points", "message"),
+        [
+            (None, ("joint.shoulder",), "time window"),
+            ((0.4, 0.2), ("joint.shoulder",), "start < end"),
+            ((0.2, 1.6), ("joint.shoulder",), "duration"),
+            ((0.2, 0.4), ("swing.wrist",), "topological joint"),
+        ],
+    )
+    def test_invalid_contextual_plan_fails_before_editor_mutation(
+        self,
+        tab: VariationTab,
+        window: tuple[float, float] | None,
+        points: tuple[str, ...],
+        message: str,
+    ) -> None:
+        original = tab.build_plan()
+        with pytest.raises((ContractViolationError, ValueError), match=message):
+            spec = NoiseSpec(
+                _SHOULDER_TORQUE,
+                scale=1.0,
+                time_window_s=window,
+                point_ids=points,
+            )
+            tab.load_plan(VariationPlan(mode="swing", noise=(spec,), n_runs=4))
         assert tab.build_plan() == original
+
+    def test_reversed_authored_window_blocks_run_with_visible_status(
+        self, tab: VariationTab
+    ) -> None:
+        tab._mode_combo.setCurrentIndex(1)
+        row = tab._rows[0]
+        row.variable.setCurrentIndex(row.variable.findData(_SHOULDER_TORQUE))
+        row.window_start.setValue(0.4)
+        row.window_end.setValue(0.2)
+
+        tab._on_run()
+
+        assert "Cannot run" in tab._status.text()
+        assert "start < end" in tab._status.text()
+        assert tab.dataset() is None
 
     def test_v2_plan_round_trips_custom_ids_loci_groups_and_save(
         self, tab: VariationTab, tmp_path: Path, monkeypatch

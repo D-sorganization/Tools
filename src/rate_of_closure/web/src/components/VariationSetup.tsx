@@ -1,7 +1,9 @@
 import { DecimalInput } from "./DecimalInput";
 import {
   MAX_RUNS,
+  LOCALIZED_TORQUE_DURATION_S,
   keysForMode,
+  localizedTorqueJointId,
   variableDef,
   variableLabel,
   type Distribution,
@@ -57,6 +59,7 @@ export function VariationSetup({
     const covarianceGrouped = (plan.groups ?? []).some(
       (group) => group.matrixKind === "covariance" && group.specIds.includes(previousId),
     );
+    const localizedJoint = localizedTorqueJointId(variableKey);
     updatePlan({
       noise: plan.noise.map((spec, rowIndex) =>
         rowIndex === index
@@ -67,6 +70,8 @@ export function VariationSetup({
               scale: covarianceGrouped
                 ? spec.scale
                 : variableDef(variableKey)?.typicalScale ?? spec.scale,
+              timeWindowS: localizedJoint === null ? null : [0, 0.1],
+              pointIds: localizedJoint === null ? [] : [localizedJoint],
             }
           : spec,
       ),
@@ -79,11 +84,15 @@ export function VariationSetup({
     });
   };
 
-  const localizedCount = plan.noise.filter(
+  const locusCount = plan.noise.filter(
     (spec) =>
       (spec.timeWindowS !== null && spec.timeWindowS !== undefined) ||
       (spec.pointIds?.length ?? 0) > 0,
   ).length;
+  const contextualCount = plan.noise.filter(
+    (spec) => localizedTorqueJointId(spec.variableKey) !== null,
+  ).length;
+  const retainedLocusCount = locusCount - contextualCount;
   const usedVariables = new Set(plan.noise.map((spec) => spec.variableKey));
   const legalKeys = keysForMode(plan.mode, plan.ballSetup);
   const canAdd = usedVariables.size < legalKeys.length;
@@ -167,10 +176,16 @@ export function VariationSetup({
             This plan contains {plan.groups!.length} grouped correlation or covariance definition(s).
           </p>
         )}
-        <p className={`mb-3 text-xs ${localizedCount > 0 ? "text-amber-300" : "text-slate-500"}`}>
-          Localized specs using time windows or point IDs are retained in files and the library,
-          but cannot yet execute in the scalar browser path.
+        <p className={`mb-3 text-xs ${contextualCount > 0 ? "text-amber-300" : "text-slate-500"}`}>
+          Localized torque loci can be authored for the fixed 1.5 s double-pendulum swing.
+          The browser still fails closed at execution until its dynamics consume these commands.
         </p>
+        {retainedLocusCount > 0 && (
+          <p className="mb-3 text-xs text-amber-300">
+            Imported locus metadata is retained losslessly but cannot yet execute through the
+            scalar browser path.
+          </p>
+        )}
         {plan.noise.map((spec, index) => {
           const definition = variableDef(spec.variableKey);
           const specId = spec.specId ?? spec.variableKey;
@@ -178,6 +193,8 @@ export function VariationSetup({
           const covarianceGrouped = (plan.groups ?? []).some(
             (group) => group.matrixKind === "covariance" && group.specIds.includes(specId),
           );
+          const localizedJoint = localizedTorqueJointId(spec.variableKey);
+          const localizedError = localizedLocusError(spec);
           return (
             <div
               key={spec.specId ?? `${spec.variableKey}-${index}`}
@@ -255,6 +272,48 @@ export function VariationSetup({
                   />
                 ))}
               </div>
+              {localizedJoint !== null && (
+                <div className="mt-2 grid grid-cols-1 gap-2 text-sm sm:grid-cols-3">
+                  <DecimalInput
+                    min={0}
+                    max={LOCALIZED_TORQUE_DURATION_S}
+                    step="any"
+                    value={spec.timeWindowS?.[0] ?? 0}
+                    aria-label={`${variableLabel(spec.variableKey)} window start`}
+                    onCommit={(value) => setSpec(index, {
+                      timeWindowS: [value, spec.timeWindowS?.[1] ?? 0.1],
+                    })}
+                    title="Inclusive start [s] of the required half-open [start, end) torque window."
+                    className={INPUT_CLASS}
+                  />
+                  <DecimalInput
+                    min={0}
+                    max={LOCALIZED_TORQUE_DURATION_S}
+                    step="any"
+                    value={spec.timeWindowS?.[1] ?? 0.1}
+                    aria-label={`${variableLabel(spec.variableKey)} window end`}
+                    onCommit={(value) => setSpec(index, {
+                      timeWindowS: [spec.timeWindowS?.[0] ?? 0, value],
+                    })}
+                    title="Exclusive end [s] of the required half-open [start, end) torque window."
+                    className={INPUT_CLASS}
+                  />
+                  <select
+                    aria-label={`${variableLabel(spec.variableKey)} topological joint`}
+                    value={localizedJoint}
+                    disabled
+                    title="Stable topological joint.* torque ID; it is distinct from spatial swing.* trace point IDs."
+                    className={INPUT_CLASS}
+                  >
+                    <option value={localizedJoint}>{localizedJoint}</option>
+                  </select>
+                  {localizedError !== null && (
+                    <p role="alert" className="text-xs text-amber-300 sm:col-span-3">
+                      {localizedError}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
@@ -273,3 +332,15 @@ export function VariationSetup({
     </>
   );
 }
+
+const localizedLocusError = (spec: NoiseSpecTs): string | null => {
+  if (localizedTorqueJointId(spec.variableKey) === null) return null;
+  const window = spec.timeWindowS;
+  if (window === undefined || window === null) {
+    return "A finite half-open torque time window is required.";
+  }
+  if (!(0 <= window[0] && window[0] < window[1] && window[1] <= LOCALIZED_TORQUE_DURATION_S)) {
+    return `Torque window must satisfy 0 ≤ start < end ≤ ${LOCALIZED_TORQUE_DURATION_S} s.`;
+  }
+  return null;
+};

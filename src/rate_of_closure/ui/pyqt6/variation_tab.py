@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import cast
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
@@ -38,6 +39,7 @@ from rate_of_closure.variation.plot_data import build_ensemble_plot_dataset
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.flight.registry import FlightModelType
+from shared.python.swing_sim.integration_grid import effective_rk4_duration
 from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
     MODES,
@@ -218,6 +220,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         if changed:
             self._invalidate_current_study()
         self._base_simulation_config = config
+        self._refresh_row_contexts()
         self._simulation_config_valid = True
         self._set_running(bool(self._worker and self._worker.isRunning()))
         if changed or not was_valid:
@@ -277,7 +280,12 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             self._worker.wait(10_000)
 
     def _add_row(self) -> NoiseRow:
-        row = NoiseRow(self.mode(), self._remove_row)
+        row = NoiseRow(
+            self.mode(),
+            self._remove_row,
+            localized_enabled=self._localized_authoring_enabled(),
+            duration_s=self._localized_duration_s(),
+        )
         self._rows.append(row)
         # Insert above the trailing "Add Variable" button.
         self._rows_layout.insertWidget(self._rows_layout.count() - 1, row)
@@ -294,8 +302,27 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
     def _on_mode_changed(self, *_args: object) -> None:
         self._loaded_base.clear()
         self._loaded_groups = ()
+        self._refresh_row_contexts()
+
+    def _localized_authoring_enabled(self, mode: str | None = None) -> bool:
+        """Return whether a mode/source pair can execute authored torque loci."""
+        return (
+            self.mode() if mode is None else mode
+        ) == "swing" and self._base_simulation_config.source_kind == "double_pendulum"
+
+    def _localized_duration_s(self) -> float:
+        """Return the source's exact fixed-step duration authority."""
+        return cast(
+            float,
+            effective_rk4_duration(self._base_simulation_config.swing_duration_s),
+        )
+
+    def _refresh_row_contexts(self) -> None:
+        """Update every row from one source/mode locus-authoring decision."""
+        enabled = self._localized_authoring_enabled()
+        duration_s = self._localized_duration_s()
         for row in self._rows:
-            row.set_mode(self.mode())
+            row.set_context(self.mode(), enabled, duration_s)
 
     # ── run / cancel ────────────────────────────────────────────────
     def _on_run(self) -> None:

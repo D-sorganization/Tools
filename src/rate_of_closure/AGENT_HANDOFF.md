@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque authoring parity (#4142)
+
+The PyQt Variation tab now exposes shoulder/wrist commanded-torque offsets only
+for a double-pendulum swing and renders required half-open start/end fields
+plus a variable-fixed `joint.shoulder`/`joint.wrist` selector. React mirrors
+the controls for its fixed 1.5 s swing workflow. Both explain that topological
+`joint.*` torque targets differ from spatial `swing.*` output points; global
+noise rows remain unchanged.
+
+Atomic preflight rejects incomplete, reversed, off-duration, and wrong-joint
+loci. Exact custom IDs, high-precision values, point IDs, groups, and unrelated
+plan authority survive import/load/save and unrelated edits. Changing a factor
+initializes the corresponding valid locus without breaking custom grouped IDs.
+Python and TypeScript consume one shared v2 parity fixture. Evidence is 49
+focused Python/PyQt/core and 752 full React passes plus TS type/lint/build,
+Ruff/format, changed-source MyPy, and diff checks. The browser does not yet
+execute localized dynamics or present/export their results. Rust parity,
+complete raw persistence, visual E2E, protected publication, and remaining
+#4142 work stay open.
+
 ## 2026-08-12 Localized torque static-gate closure (#4142)
 
 Static cleanup now allows the full cumulative localized slice to pass the

@@ -33,6 +33,8 @@ APPLICABILITIES: tuple[str, ...] = (
     "localized_torque_only",
 )
 
+LOCALIZED_TORQUE_VARIABLE_JOINTS: Mapping[str, str]
+
 
 @dataclass(frozen=True)
 class VariableDef:
@@ -346,6 +348,13 @@ def _register_builtins() -> None:
 
 _register_builtins()
 
+LOCALIZED_TORQUE_VARIABLE_JOINTS = MappingProxyType(
+    {
+        f"{CATEGORY_SWING}.{definition.name}": definition.point_id
+        for definition in LOCALIZED_TORQUE_VARIABLES
+    }
+)
+
 #: Registry categories whose variables are legal per pipeline mode.
 MODE_CATEGORIES: Mapping[str, tuple[str, ...]] = MappingProxyType(
     {
@@ -389,6 +398,7 @@ __all__ = [
     "CATEGORY_SWING",
     "MODES",
     "MODE_CATEGORIES",
+    "LOCALIZED_TORQUE_VARIABLE_JOINTS",
     "SWING_DERIVED_KEYS",
     "VariableDef",
     "keys_for_mode",

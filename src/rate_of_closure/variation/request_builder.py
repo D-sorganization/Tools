@@ -15,8 +15,6 @@ from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
 from shared.python.contracts import require
 from shared.python.swing_sim.integration_grid import effective_rk4_duration
 from shared.python.swing_sim.run_config import (
-    SHOULDER_JOINT_ID,
-    WRIST_JOINT_ID,
     LocalizedTorqueOffset,
 )
 from shared.python.swing_sim.types import PlaneOrientation
@@ -25,6 +23,7 @@ from shared.python.swing_sim.variation import (
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
     CATEGORY_SWING,
+    LOCALIZED_TORQUE_VARIABLE_JOINTS,
     VariationPlan,
     sample_inputs,
 )
@@ -40,8 +39,6 @@ _FORWARD_TILT = _key(CATEGORY_SWING, "forward_tilt_deg")
 _IMPACT_TIME_OFFSET = _key(CATEGORY_SWING, "impact_time_offset_s")
 _DAMPING_SHOULDER = _key(CATEGORY_SWING, "damping_shoulder")
 _DAMPING_WRIST = _key(CATEGORY_SWING, "damping_wrist")
-_SHOULDER_TORQUE_OFFSET = _key(CATEGORY_SWING, "shoulder_commanded_torque_offset_nm")
-_WRIST_TORQUE_OFFSET = _key(CATEGORY_SWING, "wrist_commanded_torque_offset_nm")
 _TOE_OFFSET = _key(CATEGORY_DELIVERY, "impact_offset_toe_mm")
 _HIGH_OFFSET = _key(CATEGORY_DELIVERY, "impact_offset_high_mm")
 _HEAD_MASS = _key(CATEGORY_CLUB, "head_mass_kg")
@@ -61,13 +58,6 @@ GLOBAL_TRACE_VARIABLE_KEYS = frozenset(
         _HEAD_MASS,
         _HEAD_MOI,
         _TEE_HEIGHT,
-    }
-)
-
-LOCALIZED_TORQUE_VARIABLE_JOINTS = MappingProxyType(
-    {
-        _SHOULDER_TORQUE_OFFSET: SHOULDER_JOINT_ID,
-        _WRIST_TORQUE_OFFSET: WRIST_JOINT_ID,
     }
 )
 

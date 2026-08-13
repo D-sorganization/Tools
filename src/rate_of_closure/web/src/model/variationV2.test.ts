@@ -13,6 +13,7 @@ import {
 import { datasetToJson, oneAtATimeSensitivity } from "./variationAnalysis";
 import { DRIVER_TEE_HEIGHT_M } from "./ballSetup";
 import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
+import localizedTorqueFixture from "./__fixtures__/localized_torque_authoring_v1.json";
 
 const BALL = `${CATEGORY_LAUNCH}.ball_speed_mph`;
 const ANGLE = `${CATEGORY_LAUNCH}.launch_angle_deg`;
@@ -83,6 +84,25 @@ const sampleCorrelation = (rows: number[][]): number => {
 };
 
 describe("variation plan schema v2", () => {
+  it("shares the exact localized torque authoring fixture with PyQt", () => {
+    const decoded = planFromJson(JSON.stringify(localizedTorqueFixture));
+    expect(JSON.parse(planToJson(decoded))).toEqual(localizedTorqueFixture);
+  });
+
+  it.each([
+    ["missing window", null, ["joint.shoulder"], /finite half-open time window/],
+    ["reversed window", [0.4, 0.2], ["joint.shoulder"], /start < end/],
+    ["off-duration window", [0.2, 1.6], ["joint.shoulder"], /1\.5 s/],
+    ["spatial point ID", [0.2, 0.4], ["swing.wrist"], /topological joint.*spatial/],
+  ])("rejects a localized torque %s before use", (_name, window, points, message) => {
+    const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as {
+      noise: Array<{ time_window_s: number[] | null; point_ids: string[] }>;
+    };
+    payload.noise[0].time_window_s = window as number[] | null;
+    payload.noise[0].point_ids = points as string[];
+    expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);
+  });
+
   it("round-trips Tee Height only for an active Tee setup", () => {
     const teePlan = groupedPlan();
     teePlan.mode = "delivery";

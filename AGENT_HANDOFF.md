@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque authoring parity (#4142)
+
+PyQt and React can now author the two registered localized commanded-torque
+variables. PyQt exposes them only in swing mode with a double-pendulum source
+and bounds windows to the effective RK4 duration. React exposes them only in
+its fixed 1.5 s double-pendulum swing workflow. Each row has finite half-open
+start/end controls and one disabled topological selector fixed to
+`joint.shoulder` or `joint.wrist`; tooltips explicitly distinguish these from
+spatial `swing.*` trace IDs. Global rows keep their prior compact layout.
+
+Load/edit/save/import retains custom spec IDs, exact high-precision locus and
+scale values, groups, and unrelated plan fields. Variable changes reset the
+locus atomically. Missing, reversed, off-duration, and mismatched loci fail
+visibly before execution or storage mutation. A shared v2 fixture is consumed
+by Python and TypeScript tests. Evidence: 49 focused Python/PyQt/core tests,
+752 full React tests, TS type/lint/build, Ruff/format, changed-source MyPy, and
+diff checks. React localized dynamics/results/export remain fail-closed; Rust
+parity, complete raw state/event/torque persistence, visual E2E, protected
+publication, and epic completion remain open.
+
 ## 2026-08-12 Localized torque static-gate closure (#4142)
 
 The final cumulative changed-source MyPy blockers are closed without runtime

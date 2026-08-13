@@ -26,11 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.58                                    |
-| **Spec Version**        | 1.16.58                                    |
+| **Current Version**     | 1.16.59                                    |
+| **Spec Version**        | 1.16.59                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Localized torque authoring parity (#4142)
+
+Version 1.16.59 exposes the two registered commanded-torque perturbations only
+where their complete locus can be authored. The PyQt swing editor makes them
+available only for the double-pendulum source and uses the source's effective
+RK4 duration. The React swing editor uses its fixed 1.5 s double-pendulum
+contract. Both surfaces provide required finite half-open start/end controls
+and a disabled, variable-constrained topological selector for
+`joint.shoulder` or `joint.wrist`; accessible guidance distinguishes those
+torque joints from spatial `swing.*` trace points.
+
+One shared v2 JSON fixture proves Python/TypeScript parity for exact custom
+spec IDs, high-precision windows/scales, point IDs, groups, and unrelated plan
+authority. Import validation and visible edit/save validation reject missing,
+reversed, off-duration, or mismatched loci before state/storage mutation.
+Changing a variable initializes its valid locus atomically while preserving
+group references to custom spec IDs. Global rows retain their compact layout.
+
+Evidence is 49 focused Python/PyQt/core tests, all 752 React tests, TypeScript
+type/lint/build, scoped Ruff/format, changed-source MyPy, and diff checks. The
+React browser still rejects localized dynamics execution, so localized result
+and export presentation there is not complete. Rust execution parity, complete
+raw state/event/torque persistence, cross-platform visual E2E, protected
+publication, and the rest of epic #4142 remain open.
 
 ### 2026-08-12 Localized torque static-gate closure (#4142)
 
@@ -3405,6 +3430,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142): add exact PyQt/React localized shoulder/wrist torque locus authoring with half-open time controls, constrained topological joint IDs, atomic validation, lossless grouped-plan persistence, and a shared cross-surface fixture; keep React dynamics execution and remaining presentation/export work fail-closed and open. |
 | 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
 | 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; and require a genuine non-Boolean integer outer variation-dataset schema discriminator. |
 | 2026-08-12 | 1.16.56 | fix(rate-of-closure, #4142): reject localized torque offsets on unsupported manual/triple sources; validate run-config offset collections before tuple conversion; and require genuine non-Boolean integer variation-plan schema versions. |
