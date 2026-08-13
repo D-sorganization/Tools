@@ -40,6 +40,14 @@ const positiveInteger = (value: unknown, context: string): number => {
   return value;
 };
 
+const deepFreeze = <T>(value: T): T => {
+  if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
+    Object.values(value).forEach((child) => deepFreeze(child));
+    Object.freeze(value);
+  }
+  return value;
+};
+
 const tuple = (value: unknown, context: string): [number, number] => {
   if (!Array.isArray(value) || value.length !== 2) throw new Error(`${context} must be a pair`);
   const result: [number, number] = [positiveInteger(value[0], context), positiveInteger(value[1], context)];
@@ -68,8 +76,9 @@ const parseEntry = (value: unknown): VisualizationTabEntry => {
   if (classification === "reference-utility" && landmarkKind !== "semantic-content") {
     throw new Error("reference utilities require semantic content");
   }
-  if (classification === "visual-first" && landmarkKind !== "visual") {
-    throw new Error("visual-first tabs require visual landmarks");
+  if (["visual-first", "form-led-live-preview", "form-led-evidence"].includes(classification) &&
+      landmarkKind !== "visual") {
+    throw new Error(`${classification} tabs require visual landmarks`);
   }
   const minimum = positiveInteger(entry.minimum_visible_height_px, "minimum visible height");
   if (minimum !== (landmarkKind === "visual" ? 240 : 1)) throw new Error("invalid landmark minimum");
@@ -98,7 +107,9 @@ const parseEntry = (value: unknown): VisualizationTabEntry => {
   };
 };
 
-const parseEnvironment = (value: unknown, responsive: boolean) => {
+const parseEnvironment = (
+  value: unknown, responsive: boolean, responsiveControlIds: readonly string[],
+) => {
   const keys = responsive
     ? ["viewport_px", "additional_viewports_px", "responsive_minimum_visible_height_px",
       "minimum_visible_width_px", "responsive_minimum_visible_width_px",
@@ -112,11 +123,10 @@ const parseEnvironment = (value: unknown, responsive: boolean) => {
   if (!Array.isArray(additional)) throw new Error("additional viewports must be an array");
   const controls = responsive
     ? Object.fromEntries(Object.entries(exactRecord(
-      environment.responsive_control_locators, ["explorer", "simulation", "plots", "flight",
-        "launch-monitor-analytics", "variation", "putting"], "responsive controls",
+      environment.responsive_control_locators, responsiveControlIds, "responsive controls",
     )).map(([tabId, locator]) => [tabId, text(locator, "control locator")]))
     : {};
-  return {
+  return deepFreeze({
     viewportPx: tuple(environment.viewport_px, "viewport"),
     additionalViewportsPx: additional.map((item) => tuple(item, "additional viewport")),
     responsiveMinimumVisibleHeightPx: responsive
@@ -126,7 +136,7 @@ const parseEnvironment = (value: unknown, responsive: boolean) => {
       ? positiveInteger(environment.responsive_minimum_visible_width_px, "responsive minimum width") : 1,
     responsiveControlLocators: controls,
     dpiScales: [...environment.dpi_scales],
-  };
+  });
 };
 
 export const parseVisualizationTabManifest = (value: unknown) => {
@@ -141,19 +151,22 @@ export const parseVisualizationTabManifest = (value: unknown) => {
   const entries = document.tabs.map(parseEntry);
   const identities = entries.map((entry) => `${entry.surface}:${entry.tabId}`);
   if (new Set(identities).size !== identities.length) throw new Error("duplicate tab identity");
-  return {
+  const reactVisualIds = entries.filter(
+    (entry) => entry.surface === "react" && entry.landmarkKind === "visual",
+  ).map((entry) => entry.tabId);
+  return deepFreeze({
     entries,
     environments: {
-      react: parseEnvironment(environments.react, true),
-      pyqt: parseEnvironment(environments.pyqt, false),
+      react: parseEnvironment(environments.react, true, reactVisualIds),
+      pyqt: parseEnvironment(environments.pyqt, false, []),
     },
-  };
+  });
 };
 
 const parsed = parseVisualizationTabManifest(manifestDocument);
 export const visualizationReferenceEnvironments = parsed.environments;
-export const visualizationTabs = (surface: VisualizationSurface): VisualizationTabEntry[] =>
-  parsed.entries.filter((entry) => entry.surface === surface);
+export const visualizationTabs = (surface: VisualizationSurface): readonly VisualizationTabEntry[] =>
+  deepFreeze(parsed.entries.filter((entry) => entry.surface === surface));
 
 export const auditRegisteredVisualizationTabs = (
   surface: VisualizationSurface, registered: readonly string[],

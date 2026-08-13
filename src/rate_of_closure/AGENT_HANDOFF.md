@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Visualization manifest authority hardening (#4433)
+
+- React responsive-control keys are exact and derived from React visual tabs;
+  PyQt cannot declare React-only responsive fields.
+- All pixel authorities are positive shared safe integers. Visual-first and
+  both form-led classifications require visual content; reference utilities
+  alone may declare semantic content.
+- Python and TypeScript readers return deeply immutable nested data, including
+  state/control maps and viewport/DPI collections.
+- Raw JSON, surface-field, numeric-bound, classification, mutation, clipping,
+  hidden-control, and interactive-control regressions fail closed. Diagnostic
+  artifacts remain non-golden and open AT/state gaps remain open. SPEC is
+  1.16.75.
+
 ## 2026-08-13 Visualization tab first-screen contract (#4433)
 
 - A versioned shared manifest now covers all nine React and nine PyQt primary

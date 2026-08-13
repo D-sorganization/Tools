@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import replace
+from pathlib import Path
+from types import MappingProxyType
 from unittest.mock import patch
 
 import pytest
@@ -15,6 +18,26 @@ from rate_of_closure.visualization_tab_manifest import (
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def _manifest_document() -> dict[str, object]:
+    path = (
+        Path(__file__).parents[2]
+        / "src"
+        / "rate_of_closure"
+        / "visualization_tabs.v1.json"
+    )
+    value = json.loads(path.read_text(encoding="utf-8"))
+    assert isinstance(value, dict)
+    return value
+
+
+def _load_document(value: object) -> object:
+    text = json.dumps(value)
+    resource = type("Resource", (), {"read_text": lambda self, **_kwargs: text})()
+    with patch("rate_of_closure.visualization_tab_manifest.files") as package:
+        package.return_value.joinpath.return_value = resource
+        return load_visualization_tab_manifest()
 
 
 def test_manifest_v1_covers_every_registered_pyqt_tab() -> None:
@@ -123,4 +146,101 @@ def test_classification_landmark_relationships_are_exact() -> None:
                 ),
                 *manifest.tabs[1:],
             ),
+        ).validate()
+
+
+def test_manifest_is_deeply_immutable() -> None:
+    manifest = load_visualization_tab_manifest()
+    assert isinstance(manifest.reference_environments, MappingProxyType)
+    assert isinstance(manifest.tabs[0].states, MappingProxyType)
+    assert isinstance(
+        manifest.reference_environments["react"].responsive_control_locators,
+        MappingProxyType,
+    )
+    with pytest.raises(TypeError):
+        manifest.tabs[0].states["empty"] = "tampered"  # type: ignore[index]
+
+
+def test_exact_react_control_map_and_classification_compatibility() -> None:
+    manifest = load_visualization_tab_manifest()
+    react = manifest.reference_environments["react"]
+    assert set(react.responsive_control_locators) == {
+        entry.tab_id
+        for entry in manifest.for_surface("react")
+        if entry.landmark_kind == "visual"
+    }
+    entry = next(
+        item for item in manifest.tabs if item.classification == "form-led-live-preview"
+    )
+    entries = list(manifest.tabs)
+    entries[entries.index(entry)] = replace(
+        entry, landmark_kind="semantic-content", minimum_visible_height_px=1
+    )
+    with pytest.raises(ManifestContractError, match="live-preview"):
+        replace(manifest, tabs=tuple(entries)).validate()
+
+    evidence = replace(entry, classification="form-led-evidence")
+    entries = list(manifest.tabs)
+    entries[entries.index(entry)] = replace(
+        evidence, landmark_kind="semantic-content", minimum_visible_height_px=1
+    )
+    with pytest.raises(ManifestContractError, match="form-led-evidence"):
+        replace(manifest, tabs=tuple(entries)).validate()
+
+
+@pytest.mark.parametrize("mutation", ["missing", "typo", "extra"])
+def test_reader_requires_exact_react_responsive_control_keys(mutation: str) -> None:
+    document = _manifest_document()
+    environments = document["reference_environments"]
+    assert isinstance(environments, dict)
+    react = environments["react"]
+    assert isinstance(react, dict)
+    controls = react["responsive_control_locators"]
+    assert isinstance(controls, dict)
+    if mutation == "missing":
+        controls.pop("putting")
+    elif mutation == "typo":
+        controls["puting"] = controls.pop("putting")
+    else:
+        controls["calculation"] = "section[aria-label='Calculation']"
+
+    with pytest.raises(ManifestContractError, match="exactly cover visual tabs"):
+        _load_document(document)
+
+
+def test_reader_rejects_responsive_fields_on_pyqt_environment() -> None:
+    document = _manifest_document()
+    environments = document["reference_environments"]
+    assert isinstance(environments, dict)
+    pyqt = environments["pyqt"]
+    assert isinstance(pyqt, dict)
+    pyqt["responsive_control_locators"] = {}
+
+    with pytest.raises(ManifestContractError, match="environment fields"):
+        _load_document(document)
+
+
+@pytest.mark.parametrize("value", [2**60, 2**53, True, 1.5, "240", float("inf")])
+def test_pixel_domains_reject_non_shared_safe_integers(value: object) -> None:
+    document = _manifest_document()
+    environments_document = document["reference_environments"]
+    assert isinstance(environments_document, dict)
+    react_document = environments_document["react"]
+    assert isinstance(react_document, dict)
+    react_document["responsive_minimum_visible_height_px"] = value
+    with pytest.raises(ManifestContractError):
+        _load_document(document)
+
+    manifest = load_visualization_tab_manifest()
+    entry = manifest.tabs[0]
+    entries = (replace(entry, minimum_visible_height_px=value), *manifest.tabs[1:])
+    with pytest.raises(ManifestContractError):
+        replace(manifest, tabs=entries).validate()
+
+    react = manifest.reference_environments["react"]
+    environments = dict(manifest.reference_environments)
+    environments["react"] = replace(react, minimum_visible_width_px=value)
+    with pytest.raises(ManifestContractError):
+        replace(
+            manifest, reference_environments=MappingProxyType(environments)
         ).validate()

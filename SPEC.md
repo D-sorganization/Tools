@@ -26,11 +26,28 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.74                                    |
-| **Spec Version**        | 1.16.74                                    |
+| **Current Version**     | 1.16.75                                    |
+| **Spec Version**        | 1.16.75                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Visualization manifest authority hardening (#4433)
+
+Version 1.16.75 makes `visualization-tab-visibility@1` a strict, immutable
+cross-runtime authority. React responsive-control locators must cover exactly
+the React visual entries derived from the same document; PyQt cannot carry
+React-only responsive fields. Every pixel value is a positive shared safe
+integer, with viewports additionally bounded to the practical 10,000-pixel
+domain. `visual-first`, `form-led-live-preview`, and `form-led-evidence` all
+require a 240-pixel visual landmark at reference desktop sizes;
+`reference-utility` is the only semantic-content classification. Both readers
+freeze or proxy every nested entry, state, viewport, environment, and locator
+map. Adversarial tests reject malformed/non-finite/duplicate JSON, exact-field
+and control-key drift, semantic downgrades, unsafe numbers, mutation, clipped
+slivers, hidden controls, and the full audited PyQt interactive-control set.
+This correction does not promote diagnostic captures to approved goldens or
+close the formal accessibility and noninitial-state evidence gaps.
 
 ### 2026-08-13 Visualization tab first-screen contract (#4433)
 
@@ -4015,6 +4032,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |
 | 2026-08-13 | 1.16.72 | fix(ci, #4422): install pinned pytest-benchmark for the repository-owned `--benchmark-disable` PyQt gate and exempt only the subprocess render-probe entrypoint from changed-test assertions, with exact regressions preserving rejection of adjacent assertion-light tests. |

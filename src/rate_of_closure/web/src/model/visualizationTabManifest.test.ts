@@ -45,7 +45,13 @@ describe("visualization tab manifest governance", () => {
 
   type MutableManifest = {
     tabs: Array<Record<string, unknown>>;
-    reference_environments: { react: { viewport_px: number[] } };
+    reference_environments: {
+      react: {
+        viewport_px: number[];
+        responsive_control_locators: Record<string, string>;
+      };
+      pyqt: Record<string, unknown>;
+    };
   };
   it.each([
     ["unknown surface", (value: MutableManifest) => { value.tabs[0].surface = "desktop"; }],
@@ -63,12 +69,46 @@ describe("visualization tab manifest governance", () => {
       value.tabs[0].landmark_kind = "semantic-content";
       value.tabs[0].minimum_visible_height_px = 1;
     }],
+    ["form-led evidence semantic downgrade", (value: MutableManifest) => {
+      value.tabs[0].classification = "form-led-evidence";
+      value.tabs[0].landmark_kind = "semantic-content";
+      value.tabs[0].minimum_visible_height_px = 1;
+    }],
     ["unbounded viewport", (value: MutableManifest) => {
       value.reference_environments.react.viewport_px[0] = Number.MAX_SAFE_INTEGER;
+    }],
+    ["missing responsive control", (value: MutableManifest) => {
+      delete value.reference_environments.react.responsive_control_locators.putting;
+    }],
+    ["typo responsive control", (value: MutableManifest) => {
+      const controls = value.reference_environments.react.responsive_control_locators;
+      controls.puting = controls.putting;
+      delete controls.putting;
+    }],
+    ["responsive PyQt field", (value: MutableManifest) => {
+      value.reference_environments.pyqt.responsive_control_locators = {};
     }],
   ])("rejects %s at the runtime boundary", (_label, tamper) => {
     const value: MutableManifest = structuredClone(manifestDocument);
     tamper(value);
     expect(() => parseVisualizationTabManifest(value)).toThrow();
+  });
+
+  it.each([2 ** 60, 2 ** 53, true, 1.5, "240", Number.POSITIVE_INFINITY])(
+    "rejects non-shared pixel-domain value %s", (minimum) => {
+      const value: MutableManifest = structuredClone(manifestDocument);
+      value.tabs[0].minimum_visible_height_px = minimum;
+      expect(() => parseVisualizationTabManifest(value)).toThrow();
+    },
+  );
+
+  it("returns deeply immutable entries and reference environments", () => {
+    const parsed = parseVisualizationTabManifest(manifestDocument);
+    expect(Object.isFrozen(parsed)).toBe(true);
+    expect(Object.isFrozen(parsed.entries)).toBe(true);
+    expect(Object.isFrozen(parsed.entries[0].states)).toBe(true);
+    expect(Object.isFrozen(parsed.environments.react.viewportPx)).toBe(true);
+    expect(Object.isFrozen(parsed.environments.react.responsiveControlLocators)).toBe(true);
+    expect(() => { parsed.entries[0].states.empty = "tampered"; }).toThrow();
   });
 });

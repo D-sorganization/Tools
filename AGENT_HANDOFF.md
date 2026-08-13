@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Visualization manifest authority hardening (#4433)
+
+Version 1.16.75 closes strict-reader gaps without widening the first-screen
+feature claim. Python and TypeScript now require React responsive-control keys
+to exactly match the manifest's visual tab identities and reject responsive
+fields on PyQt. All pixel authorities use the shared positive JavaScript-safe
+integer domain; visual-first and both form-led classifications require real
+visual landmarks, while reference utilities alone may use semantic content.
+Parsed entries, state maps, environments, viewport arrays, and control maps are
+deeply immutable. Raw duplicate/non-finite/malformed JSON, surface-field,
+classification, bounds, hidden-control, one-pixel clipping, and PyQt interactive
+control regressions retain those boundaries. Evidence remains diagnostic only.
+
 ## 2026-08-13 Visualization tab first-screen contract (#4433)
 
 Version 1.16.74 adds `visualization-tab-visibility@1`, a shared packaged JSON

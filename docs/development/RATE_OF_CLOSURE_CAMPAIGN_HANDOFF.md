@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 visualization manifest authority correction
+
+- React responsive-control locators now cover exactly the React visual entry
+  identities derived from the manifest; missing, typo, extra, and PyQt-hosted
+  responsive fields fail closed in both reader and validation paths.
+- Pixel values are positive shared safe integers. Visual-first and both
+  form-led classifications require visual landmarks; only reference utilities
+  may use the one-pixel semantic-content contract.
+- Python mapping proxies/tuples and recursive TypeScript freezing make the
+  parsed document deeply immutable, including states, environments, viewports,
+  DPI collections, and responsive control maps.
+- Adversarial coverage binds duplicate/non-finite/malformed JSON, per-surface
+  exact fields, unsafe values, semantic downgrade attempts, ancestor clipping,
+  hidden/null responsive controls, meaningful width, and PyQt item/slider/text
+  control overlap. Diagnostic/AT/golden limits are unchanged. SPEC is 1.16.75.
+
 ## 2026-08-13 #4433 visualization tab first-screen foundation
 
 - `visualization-tab-visibility@1` inventories all 18 primary tabs across

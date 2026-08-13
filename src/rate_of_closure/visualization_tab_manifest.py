@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from importlib.resources import files
+from types import MappingProxyType
 from typing import Any
 
 _SURFACES = {"react", "pyqt"}
@@ -17,6 +19,7 @@ _CLASSIFICATIONS = {
 }
 _LANDMARK_KINDS = {"visual", "semantic-content"}
 _STATE_KEYS = {"empty", "loading", "result", "error"}
+_MAX_SAFE_INTEGER = 9_007_199_254_740_991
 
 
 def _exact_keys(value: dict[str, Any], expected: set[str], context: str) -> None:
@@ -25,8 +28,13 @@ def _exact_keys(value: dict[str, Any], expected: set[str], context: str) -> None
 
 
 def _positive_int(value: object, context: str) -> int:
-    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
-        raise ManifestContractError(f"{context} must be a positive integer")
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int)
+        or value <= 0
+        or value > _MAX_SAFE_INTEGER
+    ):
+        raise ManifestContractError(f"{context} must be a positive safe integer")
     return value
 
 
@@ -69,7 +77,7 @@ class ReferenceEnvironment:
     responsive_minimum_visible_height_px: int | None
     minimum_visible_width_px: int
     responsive_minimum_visible_width_px: int | None
-    responsive_control_locators: dict[str, str]
+    responsive_control_locators: Mapping[str, str]
     dpi_scales: tuple[float, ...]
 
 
@@ -83,7 +91,7 @@ class VisualizationTabEntry:
     landmark_kind: str
     minimum_visible_height_px: int
     primary_visual_locator: str
-    states: dict[str, str]
+    states: Mapping[str, str]
 
 
 @dataclass(frozen=True)
@@ -93,7 +101,7 @@ class VisualizationTabManifest:
     schema_id: str
     schema_version: int
     artifact_policy: str
-    reference_environments: dict[str, ReferenceEnvironment]
+    reference_environments: Mapping[str, ReferenceEnvironment]
     tabs: tuple[VisualizationTabEntry, ...]
 
     def for_surface(self, surface: str) -> tuple[VisualizationTabEntry, ...]:
@@ -107,6 +115,44 @@ class VisualizationTabManifest:
             raise ManifestContractError("duplicate visualization tab identity")
         if any(set(entry.states) != _STATE_KEYS for entry in self.tabs):
             raise ManifestContractError("every tab must declare all four states")
+        if set(self.reference_environments) != _SURFACES:
+            raise ManifestContractError(
+                "reference environments must cover both surfaces"
+            )
+        for surface, environment in self.reference_environments.items():
+            if environment.viewport_px is None:
+                raise ManifestContractError(f"{surface} viewport is required")
+            for dimension in environment.viewport_px:
+                _dimension(dimension, f"{surface} viewport dimension")
+            for viewport in environment.additional_viewports_px:
+                if len(viewport) != 2:
+                    raise ManifestContractError("additional viewport must be a pair")
+                for dimension in viewport:
+                    _dimension(dimension, "additional viewport dimension")
+            _positive_int(
+                environment.minimum_visible_width_px,
+                f"{surface} minimum visible width",
+            )
+            for name, value in (
+                (
+                    "responsive minimum visible height",
+                    environment.responsive_minimum_visible_height_px,
+                ),
+                (
+                    "responsive minimum visible width",
+                    environment.responsive_minimum_visible_width_px,
+                ),
+            ):
+                if value is not None:
+                    _positive_int(value, name)
+            if any(
+                isinstance(scale, bool)
+                or not isinstance(scale, (int, float))
+                or not math.isfinite(scale)
+                or scale <= 0
+                for scale in environment.dpi_scales
+            ):
+                raise ManifestContractError("DPI scales must be positive numbers")
         for entry in self.tabs:
             if entry.surface not in _SURFACES:
                 raise ManifestContractError("unknown visualization surface")
@@ -122,12 +168,18 @@ class VisualizationTabManifest:
                     "reference utilities require semantic content"
                 )
             if (
-                entry.classification == "visual-first"
+                entry.classification
+                in {
+                    "visual-first",
+                    "form-led-live-preview",
+                    "form-led-evidence",
+                }
                 and entry.landmark_kind != "visual"
             ):
                 raise ManifestContractError(
-                    "visual-first tabs require visual landmarks"
+                    f"{entry.classification} tabs require visual landmarks"
                 )
+            _positive_int(entry.minimum_visible_height_px, "minimum visible height")
             expected = 240 if entry.landmark_kind == "visual" else 1
             if entry.minimum_visible_height_px != expected:
                 raise ManifestContractError("landmark minimum does not match its kind")
@@ -135,6 +187,22 @@ class VisualizationTabManifest:
                 ("_scroll", "_tabs", "_view")
             ):
                 raise ManifestContractError("PyQt locator must identify a content leaf")
+        expected_react_controls = {
+            entry.tab_id
+            for entry in self.tabs
+            if entry.surface == "react" and entry.landmark_kind == "visual"
+        }
+        if (
+            set(self.reference_environments["react"].responsive_control_locators)
+            != expected_react_controls
+        ):
+            raise ManifestContractError(
+                "React responsive control locators must exactly cover visual tabs"
+            )
+        if self.reference_environments["pyqt"].responsive_control_locators:
+            raise ManifestContractError(
+                "PyQt reference environment cannot declare responsive controls"
+            )
 
 
 def _environment(value: object, surface: str) -> ReferenceEnvironment:
@@ -199,10 +267,12 @@ def _environment(value: object, surface: str) -> ReferenceEnvironment:
         responsive_minimum_visible_height_px=responsive,
         minimum_visible_width_px=minimum_width,
         responsive_minimum_visible_width_px=responsive_width,
-        responsive_control_locators={
-            _text(key, "control tab id"): _text(locator, "control locator")
-            for key, locator in controls.items()
-        },
+        responsive_control_locators=MappingProxyType(
+            {
+                _text(key, "control tab id"): _text(locator, "control locator")
+                for key, locator in controls.items()
+            }
+        ),
         dpi_scales=tuple(float(scale) for scale in dpi),
     )
 
@@ -255,9 +325,9 @@ def load_visualization_tab_manifest() -> VisualizationTabManifest:
         schema_id=_text(raw["schema_id"], "schema id"),
         schema_version=_positive_int(raw["schema_version"], "schema version"),
         artifact_policy=_text(raw["artifact_policy"], "artifact policy"),
-        reference_environments={
-            key: _environment(value, key) for key, value in environments.items()
-        },
+        reference_environments=MappingProxyType(
+            {key: _environment(value, key) for key, value in environments.items()}
+        ),
         tabs=tuple(
             VisualizationTabEntry(
                 surface=_text(entry["surface"], "surface"),
@@ -270,10 +340,12 @@ def load_visualization_tab_manifest() -> VisualizationTabManifest:
                 primary_visual_locator=_text(
                     entry["primary_visual_locator"], "locator"
                 ),
-                states={
-                    key: _text(value, f"{key} state")
-                    for key, value in entry["states"].items()
-                },
+                states=MappingProxyType(
+                    {
+                        key: _text(value, f"{key} state")
+                        for key, value in entry["states"].items()
+                    }
+                ),
             )
             for entry in tabs
         ),
