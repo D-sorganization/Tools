@@ -46,9 +46,23 @@ open.
   confidence-ellipsoid volume with explicit units. Intervals score as
   mean/threshold, sort deterministically by score then stable point/time keys,
   and exactly equal scores share a dense rank.
-- Local evidence is 190 shared-variation/Rate geometry tests plus scoped Ruff,
-  format, and MyPy. PyQt/React controls, rendering, serialized cross-runtime
-  fixtures, protected CI/publication, and #4142 epic completion remain open.
+- Scientific adversarial review is resolved: only finite, descending,
+  positive-semidefinite eigenvalues with orthonormal axes that reconstruct a
+  finite symmetric covariance can supply plot geometry. Scale-aware numerical
+  roundoff below zero becomes a zero-variance direction; materially invalid,
+  unordered, inconsistent, or nonfinite evidence is unavailable and cannot
+  qualify as quiet.
+- Chi-square inversion uses SciPy's regularized-gamma inverse and remains
+  accurate through the representable upper probability tail; the public
+  supported domain is `[1e-12, 1)`. Criteria now
+  accept only real, non-boolean values, normalize NumPy real scalars to Python
+  floats, and reject malformed point IDs through the contract boundary.
+- Local evidence is 27 focused tests within 189 passing scientific tests. The
+  1,184-test shared-variation/full-Rate gate passed 1,183 tests with 29 known
+  warnings; its one Morris child readiness timeout passed immediately in the
+  permitted isolated retry. Scoped Ruff, format, and MyPy are green. PyQt/React
+  controls, rendering, serialized cross-runtime fixtures, protected
+  CI/publication, and #4142 epic completion remain open.
 
 ## 2026-08-12 React worker transport hardening (#4142 R14.3)
 

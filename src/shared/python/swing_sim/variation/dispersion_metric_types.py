@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 from numbers import Real
+from typing import cast
 
 import numpy as np
 
@@ -26,6 +27,7 @@ RANK_DEFICIENT = "rank-deficient"
 INSUFFICIENT_SAMPLES = "insufficient-samples"
 INVALID_COVARIANCE = "invalid-covariance"
 MIN_SAMPLES_FOR_FULL_3D_COVARIANCE = CARTESIAN_DIMENSIONS + 1
+MIN_CONFIDENCE_LEVEL = 1.0e-12
 GAUSSIAN_POSITION_CONTENT_REGION = "gaussian-position-content-region"
 CHI_SQUARE_DEGREES_OF_FREEDOM = CARTESIAN_DIMENSIONS
 _ADEQUACY_STATES = (
@@ -34,6 +36,29 @@ _ADEQUACY_STATES = (
     INSUFFICIENT_SAMPLES,
     INVALID_COVARIANCE,
 )
+_ORTHONORMAL_TOLERANCE = 1.0e-10
+
+
+def _validated_real(
+    value: object,
+    name: str,
+    *,
+    strictly_positive: bool,
+) -> float:
+    """Return one finite real scalar with the requested sign contract."""
+    require(
+        not isinstance(value, (bool, np.bool_)) and isinstance(value, Real),
+        f"{name} must be a real number",
+        value,
+    )
+    normalized = float(cast(float, value))
+    sign_is_valid = normalized > 0.0 if strictly_positive else normalized >= 0.0
+    require(
+        math.isfinite(normalized) and sign_is_valid,
+        f"{name} must be finite and {'> 0' if strictly_positive else '>= 0'}",
+        value,
+    )
+    return normalized
 
 
 def validated_confidence_level(confidence_level: float) -> float:
@@ -46,8 +71,8 @@ def validated_confidence_level(confidence_level: float) -> float:
     )
     value = float(confidence_level)
     require(
-        math.isfinite(value) and 0.0 < value < 1.0,
-        "confidence_level must be finite and in (0, 1)",
+        math.isfinite(value) and MIN_CONFIDENCE_LEVEL <= value < 1.0,
+        f"confidence_level must be finite and in [{MIN_CONFIDENCE_LEVEL}, 1)",
         confidence_level,
     )
     return value
@@ -131,6 +156,35 @@ class ConfidenceEllipsoidSeries:
             "valid_trial_count must be non-negative",
         )
         estimable = np.asarray(self.adequacy) == ESTIMABLE
+        rank_deficient = np.asarray(self.adequacy) == RANK_DEFICIENT
+        plot_ready = estimable | rank_deficient
+        centers = np.asarray(self.centers_m)
+        axes = np.asarray(self.principal_axes)
+        semi_axes = np.asarray(self.semi_axis_lengths_m)
+        require(
+            np.all(np.isfinite(centers[plot_ready])),
+            "estimable and rank-deficient centers must be finite",
+        )
+        require(
+            np.all(np.isfinite(axes[plot_ready])),
+            "estimable and rank-deficient principal axes must be finite",
+        )
+        gram = np.swapaxes(axes[plot_ready], 1, 2) @ axes[plot_ready]
+        require(
+            np.allclose(
+                gram,
+                np.eye(CARTESIAN_DIMENSIONS),
+                rtol=_ORTHONORMAL_TOLERANCE,
+                atol=_ORTHONORMAL_TOLERANCE,
+            ),
+            "estimable and rank-deficient principal axes must be orthonormal",
+        )
+        require(
+            np.all(np.isfinite(semi_axes[plot_ready]))
+            and np.all(semi_axes[plot_ready] >= 0.0)
+            and np.all(semi_axes[estimable] > 0.0),
+            "plot-ready semi-axis lengths must be finite and non-negative",
+        )
         require(
             np.all(np.isfinite(np.asarray(self.volume_m3)[estimable]))
             and np.all(np.asarray(self.volume_m3)[estimable] > 0.0),
@@ -204,20 +258,12 @@ class LowVariabilityMetricCriteria:
 
     def __post_init__(self) -> None:
         require(self.metric in LOW_VARIABILITY_METRICS, "unknown metric", self.metric)
-        require(
-            not isinstance(self.max_value, (bool, np.bool_))
-            and math.isfinite(float(self.max_value))
-            and float(self.max_value) > 0.0,
-            "max_value must be finite and > 0",
-            self.max_value,
-        )
-        validated_confidence_level(self.confidence_level)
-        require(
-            not isinstance(self.min_duration_s, (bool, np.bool_))
-            and math.isfinite(float(self.min_duration_s))
-            and float(self.min_duration_s) >= 0.0,
-            "min_duration_s must be finite and >= 0",
+        max_value = _validated_real(self.max_value, "max_value", strictly_positive=True)
+        confidence_level = validated_confidence_level(self.confidence_level)
+        min_duration_s = _validated_real(
             self.min_duration_s,
+            "min_duration_s",
+            strictly_positive=False,
         )
         require(
             not isinstance(self.min_samples, (bool, np.bool_))
@@ -229,10 +275,16 @@ class LowVariabilityMetricCriteria:
         points = tuple(self.point_ids)
         require(len(set(points)) == len(points), "point_ids must be unique", points)
         require(
-            all(bool(item) and item == item.strip() for item in points),
+            all(
+                isinstance(item, str) and bool(item) and item == item.strip()
+                for item in points
+            ),
             "point_ids must be non-empty and trimmed",
             points,
         )
+        object.__setattr__(self, "max_value", max_value)
+        object.__setattr__(self, "confidence_level", confidence_level)
+        object.__setattr__(self, "min_duration_s", min_duration_s)
         object.__setattr__(self, "point_ids", points)
 
 
@@ -296,6 +348,7 @@ __all__ = [
     "LARGEST_PRINCIPAL_SIGMA",
     "LOW_VARIABILITY_METRICS",
     "MIN_SAMPLES_FOR_FULL_3D_COVARIANCE",
+    "MIN_CONFIDENCE_LEVEL",
     "RANK_DEFICIENT",
     "RMS_RADIUS",
     "ConfidenceEllipsoidSeries",

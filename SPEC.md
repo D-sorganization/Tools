@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.47                                    |
-| **Spec Version**        | 1.16.47                                    |
+| **Current Version**     | 1.16.48                                    |
+| **Spec Version**        | 1.16.48                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -66,9 +66,10 @@ without changing array construction, runtime behavior, or either wire schema.
 ### 2026-08-12 Confidence-scaled dispersion and quiet metrics (#4142 R12.1/R12.2)
 
 Version 1.16.45 defines a UI-neutral 3D dispersion-ellipsoid contract for every
-modeled point and common-grid time sample. A caller declares an open-interval
-confidence level; semi-axis lengths equal the principal sample standard
-deviations multiplied by the square root of the exact chi-square quantile for
+modeled point and common-grid time sample. A caller declares a confidence
+level in the supported `[1e-12, 1)` numerical domain; semi-axis lengths equal
+the principal sample standard deviations multiplied by the square root of the
+exact chi-square quantile for
 three degrees of freedom. This is a Gaussian position-content region using the
 existing unbiased plug-in sample covariance, not a confidence region for the
 unknown population mean. The plot-ready immutable result retains center,
@@ -106,6 +107,29 @@ transport service, including cleanup and late-event behavior. These unit tests
 do not constitute browser/Playwright interaction or screenshot evidence; R14.5
 remains open. This release does not complete #4142 or authorize an UpstreamDrift
 consumer pin.
+
+### 2026-08-12 Dispersion scientific-boundary hardening (#4142 R12.1/R12.2)
+
+Version 1.16.48 hardens that scientific boundary after adversarial review.
+Plot-ready covariance evidence must be finite and symmetric, with descending
+positive-semidefinite eigenvalues and finite orthonormal principal axes that
+reconstruct the covariance within a scale-aware tolerance. Negative roots no
+larger than documented floating-point roundoff are normalized to zero-rank
+directions; materially negative, unordered, inconsistent, or nonfinite
+evidence is `invalid-covariance`, has unavailable geometry/metrics, and cannot
+qualify for quiet-zone ranking. Estimable and rank-deficient result objects
+independently require finite centers and orthonormal plot axes.
+
+The three-dimensional chi-square quantile now uses SciPy's regularized-gamma
+inverse, avoiding upper-tail cancellation through every representable
+confidence value below one; the explicit `1e-12` lower bound prevents an
+unrepresentable near-zero content region. Quiet criteria accept only finite real,
+non-boolean thresholds and durations, normalize supported NumPy real scalars
+to Python floats, and reject malformed point IDs through `ContractViolationError`.
+Local evidence is 27 focused tests within 189 passing scientific tests. The
+1,184-test shared-variation/full-Rate gate passed 1,183 tests with 29 known
+warnings; its one Morris child readiness timeout passed immediately in the
+permitted isolated retry. This evidence does not double-count focused subsets.
 
 ### 2026-08-12 React Monte Carlo worker execution (#4142 R14.3)
 
@@ -3189,6 +3213,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.48 | fix(rate-of-closure, #4142 R12.1/R12.2): fail closed on materially negative, unordered, nonfinite, nonorthonormal, or covariance-inconsistent eigensystems; retain roundoff-scale zero-rank directions; use cancellation-safe chi-square inversion over the explicit `[1e-12, 1)` domain; normalize strict real criteria; and correct unique-test evidence. |
 | 2026-08-12 | 1.16.47 | fix(rate-of-closure, #4142 R14.3): fail closed across React worker result/error/decoding/clone boundaries with single-settlement cleanup, exact progress sequencing, request-bound result validation, late-event safety, and direct injected-Worker transport tests while retaining browser/Playwright as an open R14.5 gate. |
 | 2026-08-12 | 1.16.46 | feat(rate-of-closure, #4142 R14.3): execute React Monte Carlo and OAT studies in a bounded worker with completed-evaluation progress, cooperative AbortSignal cancellation, immediate rerun, stale-generation suppression, unmount safety, and unchanged deterministic plan/result semantics. |
 | 2026-08-12 | 1.16.45 | feat(rate-of-closure, #4142 R12.1/R12.2): add immutable plot-ready confidence-scaled 3D Gaussian position-content ellipsoids with exact chi-square scaling, explicit full-rank/sample adequacy, selectable RMS/principal-sigma/ellipsoid-volume quiet metrics, and deterministic dimensionless interval scoring with stable dense ties; retain UI/parity serialization as open work. |

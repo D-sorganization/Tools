@@ -11,12 +11,16 @@ from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     ELLIPSOID_VOLUME,
     LARGEST_PRINCIPAL_SIGMA,
+    MIN_CONFIDENCE_LEVEL,
     RMS_RADIUS,
     LowVariabilityMetricCriteria,
     PositionDispersion,
     build_confidence_ellipsoids,
     build_dispersion_metric_series,
     find_ranked_low_variability_intervals,
+)
+from shared.python.swing_sim.variation.dispersion_metric_types import (
+    ConfidenceEllipsoidSeries,
 )
 
 
@@ -51,6 +55,37 @@ def _dispersion() -> PositionDispersion:
     )
 
 
+def _single_sample_dispersion(
+    *,
+    eigenvalues: np.ndarray | None = None,
+    mean_positions_m: np.ndarray | None = None,
+    covariance_m2: np.ndarray | None = None,
+    principal_axes: np.ndarray | None = None,
+) -> PositionDispersion:
+    values = (
+        np.array([4.0, 1.0, 0.25])
+        if eigenvalues is None
+        else np.asarray(eigenvalues, dtype=float)
+    )
+    return PositionDispersion(
+        sample_times_s=np.array([0.0]),
+        coordinate_frame="swing.world",
+        point_ids=("clubhead",),
+        count=np.array([[8]]),
+        mean_positions_m=(
+            np.zeros((1, 1, 3)) if mean_positions_m is None else mean_positions_m
+        ),
+        covariance_m2=(
+            np.array([[np.diag(values)]]) if covariance_m2 is None else covariance_m2
+        ),
+        eigenvalues_m2=values[np.newaxis, np.newaxis],
+        principal_axes=(
+            np.array([[np.eye(3)]]) if principal_axes is None else principal_axes
+        ),
+        rms_radius_m=np.array([[0.1]]),
+    )
+
+
 def test_confidence_ellipsoid_uses_exact_three_dimensional_chi_square_scale() -> None:
     result = build_confidence_ellipsoids(_dispersion(), "clubhead", 0.95)
 
@@ -75,7 +110,10 @@ def test_confidence_ellipsoid_uses_exact_three_dimensional_chi_square_scale() ->
     assert result.semi_axis_lengths_m.flags.writeable is False
 
 
-@pytest.mark.parametrize("confidence_level", [0.0, 1.0, -0.1, np.nan, True])
+@pytest.mark.parametrize(
+    "confidence_level",
+    [0.0, MIN_CONFIDENCE_LEVEL / 2.0, 1.0, -0.1, np.nan, True],
+)
 def test_confidence_ellipsoid_rejects_invalid_confidence_levels(
     confidence_level: object,
 ) -> None:
@@ -84,6 +122,94 @@ def test_confidence_ellipsoid_rejects_invalid_confidence_levels(
             _dispersion(),
             "clubhead",
             confidence_level,  # type: ignore[arg-type]
+        )
+
+
+def test_confidence_ellipsoid_is_accurate_in_the_representable_upper_tail() -> None:
+    confidence = math.nextafter(1.0, 0.0)
+
+    result = build_confidence_ellipsoids(_dispersion(), "clubhead", confidence)
+
+    assert result.chi_square_quantile == pytest.approx(77.39631549062088, rel=2e-14)
+
+
+@pytest.mark.parametrize(
+    "eigenvalues",
+    [
+        np.array([-1.0, -2.0, -3.0]),
+        np.array([0.1, 1.0, 0.5]),
+    ],
+)
+def test_invalid_eigensystems_cannot_qualify_as_quiet(
+    eigenvalues: np.ndarray,
+) -> None:
+    dispersion = _single_sample_dispersion(eigenvalues=eigenvalues)
+
+    ellipsoid = build_confidence_ellipsoids(dispersion, "clubhead")
+    sigma = build_dispersion_metric_series(
+        dispersion, "clubhead", LARGEST_PRINCIPAL_SIGMA
+    )
+    intervals = find_ranked_low_variability_intervals(
+        dispersion,
+        LowVariabilityMetricCriteria(
+            metric=LARGEST_PRINCIPAL_SIGMA,
+            max_value=10.0,
+        ),
+    )
+
+    assert ellipsoid.adequacy == ("invalid-covariance",)
+    assert np.isnan(ellipsoid.semi_axis_lengths_m[0]).all()
+    assert np.isnan(sigma.values[0])
+    assert intervals == ()
+
+
+def test_roundoff_scale_negative_eigenvalue_is_treated_as_zero_rank() -> None:
+    eigenvalues = np.array([1.0, 0.25, -4.0 * np.finfo(float).eps])
+    dispersion = _single_sample_dispersion(eigenvalues=eigenvalues)
+
+    result = build_confidence_ellipsoids(dispersion, "clubhead")
+
+    assert result.adequacy == ("rank-deficient",)
+    assert result.semi_axis_lengths_m[0, 2] == 0.0
+
+
+@pytest.mark.parametrize("invalid_field", ["center", "axes", "covariance"])
+def test_invalid_plot_geometry_is_never_marked_estimable(invalid_field: str) -> None:
+    overrides: dict[str, np.ndarray] = {}
+    if invalid_field == "center":
+        overrides["mean_positions_m"] = np.full((1, 1, 3), np.nan)
+    elif invalid_field == "axes":
+        axes = np.eye(3)
+        axes[0, 0] = 2.0
+        overrides["principal_axes"] = axes[np.newaxis, np.newaxis]
+    else:
+        overrides["covariance_m2"] = np.array([[np.diag([4.0, 1.0, 0.5])]])
+    dispersion = _single_sample_dispersion(**overrides)
+
+    result = build_confidence_ellipsoids(dispersion, "clubhead")
+
+    assert result.adequacy == ("invalid-covariance",)
+    assert np.isnan(result.volume_m3[0])
+
+
+def test_plot_ready_result_contract_rejects_nonorthonormal_estimable_axes() -> None:
+    with pytest.raises(ContractViolationError, match="orthonormal"):
+        ConfidenceEllipsoidSeries(
+            point_id="clubhead",
+            coordinate_frame="swing.world",
+            interpretation="gaussian-position-content-region",
+            confidence_level=0.95,
+            degrees_of_freedom=3,
+            chi_square_quantile=7.814727903251179,
+            radius_scale=math.sqrt(7.814727903251179),
+            minimum_samples_for_full_rank=4,
+            sample_times_s=np.array([0.0]),
+            valid_trial_count=np.array([8]),
+            centers_m=np.zeros((1, 3)),
+            principal_axes=np.array([np.diag([2.0, 1.0, 1.0])]),
+            semi_axis_lengths_m=np.ones((1, 3)),
+            volume_m3=np.array([4.0 * math.pi / 3.0]),
+            adequacy=("estimable",),
         )
 
 
@@ -193,3 +319,37 @@ def test_volume_metric_excludes_non_estimable_samples_from_quiet_intervals() -> 
 def test_metric_criteria_fail_closed(kwargs: dict[str, object], message: str) -> None:
     with pytest.raises(ContractViolationError, match=message):
         LowVariabilityMetricCriteria(**kwargs)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "message"),
+    [
+        ({"metric": RMS_RADIUS, "max_value": "1.0"}, "max_value"),
+        (
+            {"metric": RMS_RADIUS, "max_value": 1.0, "min_duration_s": "0.0"},
+            "min_duration_s",
+        ),
+        (
+            {"metric": RMS_RADIUS, "max_value": 1.0, "point_ids": (1,)},
+            "point_ids",
+        ),
+    ],
+)
+def test_metric_criteria_rejects_coercible_or_malformed_values(
+    kwargs: dict[str, object], message: str
+) -> None:
+    with pytest.raises(ContractViolationError, match=message):
+        LowVariabilityMetricCriteria(**kwargs)  # type: ignore[arg-type]
+
+
+def test_metric_criteria_normalizes_real_scalars() -> None:
+    criteria = LowVariabilityMetricCriteria(
+        metric=RMS_RADIUS,
+        max_value=np.float32(0.2),
+        confidence_level=np.float32(0.95),
+        min_duration_s=np.float32(0.1),
+    )
+
+    assert type(criteria.max_value) is float
+    assert type(criteria.confidence_level) is float
+    assert type(criteria.min_duration_s) is float

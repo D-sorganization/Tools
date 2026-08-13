@@ -7,9 +7,10 @@ the statistical conventions.
 from __future__ import annotations
 
 import math
-from dataclasses import replace
+from dataclasses import dataclass, replace
 
 import numpy as np
+from scipy.special import gammaincinv
 
 from shared.python.contracts import require
 
@@ -36,44 +37,92 @@ from .ensemble_types import (
 )
 
 _FOUR_THIRDS_PI = 4.0 * math.pi / 3.0
-_QUANTILE_ITERATIONS = 96
+_CHI_SQUARE_SHAPE = CARTESIAN_DIMENSIONS / 2.0
+_EIGENVALUE_ROUNDOFF_FACTOR = 64.0
+_GEOMETRY_RELATIVE_TOLERANCE = 1.0e-10
 
 
-def _chi_square_three_cdf(value: float) -> float:
-    """Return the exact chi-square CDF for three degrees of freedom."""
-    root = math.sqrt(value / 2.0)
-    return math.erf(root) - math.sqrt(2.0 * value / math.pi) * math.exp(-value / 2.0)
+@dataclass(frozen=True)
+class _SampleGeometry:
+    """Covariance evidence for one time sample and modeled point."""
+
+    count: int
+    center: np.ndarray
+    covariance: np.ndarray
+    eigenvalues: np.ndarray
+    principal_axes: np.ndarray
 
 
 def _chi_square_three_quantile(probability: float) -> float:
-    """Invert the 3-D chi-square CDF by deterministic monotone bisection."""
-    lower = 0.0
-    upper = 1.0
-    while _chi_square_three_cdf(upper) < probability:
-        upper *= 2.0
-    for _ in range(_QUANTILE_ITERATIONS):
-        midpoint = (lower + upper) / 2.0
-        if _chi_square_three_cdf(midpoint) < probability:
-            lower = midpoint
-        else:
-            upper = midpoint
-    return (lower + upper) / 2.0
+    """Return a stable 3-D chi-square quantile across the float probability range."""
+    return float(2.0 * gammaincinv(_CHI_SQUARE_SHAPE, probability))
 
 
-def _adequacy(count: int, eigenvalues: np.ndarray) -> str:
-    """Classify whether a sample supports a full three-dimensional ellipsoid."""
-    if count < MIN_TRIALS_FOR_COVARIANCE:
+def _eigenvalue_tolerance(eigenvalues: np.ndarray) -> float:
+    """Return a scale-aware tolerance for roundoff-negative covariance roots."""
+    scale = max(float(np.max(np.abs(eigenvalues))), np.finfo(float).tiny)
+    return _EIGENVALUE_ROUNDOFF_FACTOR * np.finfo(float).eps * scale
+
+
+def _valid_eigensystem(
+    covariance: np.ndarray,
+    eigenvalues: np.ndarray,
+    principal_axes: np.ndarray,
+) -> bool:
+    """Return whether eigenpairs reconstruct a finite symmetric PSD matrix."""
+    if not (
+        np.all(np.isfinite(covariance))
+        and np.all(np.isfinite(eigenvalues))
+        and np.all(np.isfinite(principal_axes))
+    ):
+        return False
+    eigenvalue_tolerance = _eigenvalue_tolerance(eigenvalues)
+    descending = np.all(np.diff(eigenvalues) <= eigenvalue_tolerance)
+    positive_semidefinite = bool(np.min(eigenvalues) >= -eigenvalue_tolerance)
+    orthonormal = np.allclose(
+        principal_axes.T @ principal_axes,
+        np.eye(CARTESIAN_DIMENSIONS),
+        rtol=_GEOMETRY_RELATIVE_TOLERANCE,
+        atol=_GEOMETRY_RELATIVE_TOLERANCE,
+    )
+    covariance_scale = max(float(np.max(np.abs(covariance))), np.finfo(float).tiny)
+    covariance_tolerance = _GEOMETRY_RELATIVE_TOLERANCE * covariance_scale
+    symmetric = np.allclose(
+        covariance,
+        covariance.T,
+        rtol=_GEOMETRY_RELATIVE_TOLERANCE,
+        atol=covariance_tolerance,
+    )
+    reconstructed = principal_axes @ np.diag(eigenvalues) @ principal_axes.T
+    consistent = np.allclose(
+        covariance,
+        reconstructed,
+        rtol=_GEOMETRY_RELATIVE_TOLERANCE,
+        atol=covariance_tolerance,
+    )
+    return bool(
+        descending
+        and positive_semidefinite
+        and orthonormal
+        and symmetric
+        and consistent
+    )
+
+
+def _adequacy(geometry: _SampleGeometry) -> str:
+    """Classify whether one sample has coherent plot-ready covariance geometry."""
+    if geometry.count < MIN_TRIALS_FOR_COVARIANCE:
         return INSUFFICIENT_SAMPLES
-    if eigenvalues.shape != (CARTESIAN_DIMENSIONS,) or not np.all(
-        np.isfinite(eigenvalues)
+    if not np.all(np.isfinite(geometry.center)) or not _valid_eigensystem(
+        geometry.covariance, geometry.eigenvalues, geometry.principal_axes
     ):
         return INVALID_COVARIANCE
-    largest = max(float(np.max(eigenvalues)), 0.0)
-    tolerance = np.finfo(float).eps * CARTESIAN_DIMENSIONS * largest
+    largest = float(geometry.eigenvalues[0])
+    tolerance = _eigenvalue_tolerance(geometry.eigenvalues)
     if (
-        count < MIN_SAMPLES_FOR_FULL_3D_COVARIANCE
+        geometry.count < MIN_SAMPLES_FOR_FULL_3D_COVARIANCE
         or largest == 0.0
-        or np.count_nonzero(eigenvalues > tolerance) < CARTESIAN_DIMENSIONS
+        or np.count_nonzero(geometry.eigenvalues > tolerance) < CARTESIAN_DIMENSIONS
     ):
         return RANK_DEFICIENT
     return ESTIMABLE
@@ -93,11 +142,28 @@ def build_confidence_ellipsoids(
     eigenvalues = dispersion.eigenvalues_m2[:, point_index]
     counts = dispersion.count[:, point_index]
     adequacy = tuple(
-        _adequacy(int(count), values)
-        for count, values in zip(counts, eigenvalues, strict=True)
+        _adequacy(
+            _SampleGeometry(
+                count=int(count),
+                center=center,
+                covariance=covariance,
+                eigenvalues=values,
+                principal_axes=axes,
+            )
+        )
+        for count, center, covariance, values, axes in zip(
+            counts,
+            dispersion.mean_positions_m[:, point_index],
+            dispersion.covariance_m2[:, point_index],
+            eigenvalues,
+            dispersion.principal_axes[:, point_index],
+            strict=True,
+        )
     )
     with np.errstate(invalid="ignore"):
         semi_axes = radius_scale * np.sqrt(np.maximum(eigenvalues, 0.0))
+    usable = np.isin(np.asarray(adequacy), (ESTIMABLE, RANK_DEFICIENT))
+    semi_axes = np.where(usable[:, np.newaxis], semi_axes, np.nan)
     volume = _FOUR_THIRDS_PI * np.prod(semi_axes, axis=1)
     volume = np.where(np.asarray(adequacy) == ESTIMABLE, volume, np.nan)
     return ConfidenceEllipsoidSeries(
@@ -137,15 +203,14 @@ def build_dispersion_metric_series(
         values = dispersion.rms_radius_m[:, point_index]
         unit = "m"
     elif metric == LARGEST_PRINCIPAL_SIGMA:
-        with np.errstate(invalid="ignore"):
-            values = np.sqrt(
-                np.maximum(dispersion.eigenvalues_m2[:, point_index, 0], 0.0)
-            )
+        values = ellipsoids.semi_axis_lengths_m[:, 0] / ellipsoids.radius_scale
         unit = "m"
     else:
         require(metric == ELLIPSOID_VOLUME, "unknown metric", metric)
         values = ellipsoids.volume_m3
         unit = "m^3"
+    invalid = np.asarray(ellipsoids.adequacy) == INVALID_COVARIANCE
+    values = np.where(invalid, np.nan, values)
     return DispersionMetricSeries(
         point_id=point_id,
         metric=metric,
