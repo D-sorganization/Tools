@@ -26,7 +26,7 @@ interface AppToolstripProps {
 const MENU_CLASS =
   "relative shrink-0 rounded-lg border border-slate-700/80 bg-slate-900/90 text-sm text-slate-200";
 const SUMMARY_CLASS =
-  "cursor-pointer list-none rounded-lg px-3 py-2 font-semibold hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400";
+  "cursor-pointer list-none rounded-lg px-2 py-2 font-semibold hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 sm:px-3";
 const POPOVER_CLASS =
   "absolute left-0 z-40 mt-1 min-w-64 rounded-xl border border-slate-700 bg-slate-950 p-3 shadow-2xl shadow-black/50";
 const COMMAND_CLASS =
@@ -236,7 +236,7 @@ export function AppToolstrip({
         aria-label="Application commands"
         className="sticky top-0 z-30 mb-5 overflow-visible rounded-xl border border-slate-700/80 bg-slate-950/90 p-2 shadow-xl shadow-black/30 backdrop-blur"
       >
-        <div className="flex flex-wrap items-start gap-2">
+        <div className="flex flex-nowrap items-start gap-1 sm:flex-wrap sm:gap-2">
           <FileMenu />
           <ViewMenu state={moduleState} onChange={onModuleStateChange} onCommand={onCommand} />
           <div className="flex max-w-full shrink-0 items-stretch gap-1 overflow-x-auto rounded-lg border border-slate-700/80 bg-slate-900/90 p-1">

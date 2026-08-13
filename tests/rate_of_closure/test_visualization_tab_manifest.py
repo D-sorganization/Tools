@@ -132,6 +132,7 @@ def test_reference_environments_reject_cross_surface_and_unbounded_fields() -> N
     }
     assert pyqt.responsive_control_locators == {}
     assert max(react.viewport_px or ()) <= 10_000
+    assert react.responsive_minimum_visible_height_px == 180
 
 
 def test_classification_landmark_relationships_are_exact() -> None:
@@ -217,6 +218,18 @@ def test_reader_rejects_responsive_fields_on_pyqt_environment() -> None:
     pyqt["responsive_control_locators"] = {}
 
     with pytest.raises(ManifestContractError, match="environment fields"):
+        _load_document(document)
+
+
+def test_reader_rejects_one_pixel_responsive_visual_height() -> None:
+    document = _manifest_document()
+    environments = document["reference_environments"]
+    assert isinstance(environments, dict)
+    react = environments["react"]
+    assert isinstance(react, dict)
+    react["responsive_minimum_visible_height_px"] = 1
+
+    with pytest.raises(ManifestContractError, match="meaningful visual height"):
         _load_document(document)
 
 

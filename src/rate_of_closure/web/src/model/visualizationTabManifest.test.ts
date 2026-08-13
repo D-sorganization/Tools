@@ -14,7 +14,7 @@ describe("visualization tab manifest governance", () => {
     expect(visualizationReferenceEnvironments.react).toEqual({
       viewportPx: [1440, 900],
       additionalViewportsPx: [[1280, 720], [390, 844]],
-      responsiveMinimumVisibleHeightPx: 1,
+      responsiveMinimumVisibleHeightPx: 180,
       minimumVisibleWidthPx: 240,
       responsiveMinimumVisibleWidthPx: 120,
       responsiveControlLocators: {
@@ -87,6 +87,10 @@ describe("visualization tab manifest governance", () => {
     }],
     ["responsive PyQt field", (value: MutableManifest) => {
       value.reference_environments.pyqt.responsive_control_locators = {};
+    }],
+    ["one-pixel responsive visual height", (value: MutableManifest) => {
+      const react = value.reference_environments.react as Record<string, unknown>;
+      react.responsive_minimum_visible_height_px = 1;
     }],
   ])("rejects %s at the runtime boundary", (_label, tamper) => {
     const value: MutableManifest = structuredClone(manifestDocument);

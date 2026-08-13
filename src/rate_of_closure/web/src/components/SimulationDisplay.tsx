@@ -175,7 +175,7 @@ export function SimulationDisplay({
         </>}
         {view === "Swing" && <>
           <canvas ref={canvasRef} width={860} height={480}
-            className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
+            className="min-h-[180px] w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60 sm:min-h-0"
             aria-label="Simulation scene with selectable screw-axis motion glyph" />
           <SwingPlaybackControls run={run} playing={playing} setPlaying={setPlaying}
             time={time} setTime={setTime} loop={loop} setLoop={setLoop}

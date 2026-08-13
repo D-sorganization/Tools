@@ -3,6 +3,17 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Meaningful narrow geometry and trusted trigger closure (#4433)
+
+Version 1.16.76 replaces the permissive one-pixel narrow visual height with a
+manifest-owned 180-pixel minimum and rejects lower responsive authorities in
+both readers. The rendered audit includes an explicit one-pixel-height sliver
+probe and all nine narrow tabs must satisfy the stronger threshold. The trusted
+main workflow now mirrors every PyQt rendered authority path owned by the PR
+lane, including club/model/plot/simulation/variation sources, shared variation,
+PyQt probes/tests, workflow contract, and dependency authority. This preserves
+Chromium-only trusted browser selection and diagnostic-only evidence status.
+
 ## 2026-08-13 Visualization manifest authority hardening (#4433)
 
 Version 1.16.75 closes strict-reader gaps without widening the first-screen

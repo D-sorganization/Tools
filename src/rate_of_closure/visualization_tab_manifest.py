@@ -20,6 +20,7 @@ _CLASSIFICATIONS = {
 _LANDMARK_KINDS = {"visual", "semantic-content"}
 _STATE_KEYS = {"empty", "loading", "result", "error"}
 _MAX_SAFE_INTEGER = 9_007_199_254_740_991
+_MIN_RESPONSIVE_VISUAL_HEIGHT = 180
 
 
 def _exact_keys(value: dict[str, Any], expected: set[str], context: str) -> None:
@@ -145,6 +146,14 @@ class VisualizationTabManifest:
             ):
                 if value is not None:
                     _positive_int(value, name)
+            responsive_height = environment.responsive_minimum_visible_height_px
+            if surface == "react" and (
+                responsive_height is None
+                or responsive_height < _MIN_RESPONSIVE_VISUAL_HEIGHT
+            ):
+                raise ManifestContractError(
+                    "React responsive minimum must preserve meaningful visual height"
+                )
             if any(
                 isinstance(scale, bool)
                 or not isinstance(scale, (int, float))

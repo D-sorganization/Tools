@@ -73,7 +73,7 @@ function ScatterPlot({ rows, outcome, predictor }: {
     start + (value - low) / Math.max(Number.EPSILON, high - low) * span;
   return (
     <svg viewBox="0 0 640 250" role="img" aria-label={`${outcome} versus ${predictor} scatter plot`}
-      className="h-64 w-full rounded-lg border border-slate-800 bg-slate-950">
+      className="h-64 min-h-[180px] w-full rounded-lg border border-slate-800 bg-slate-950">
       <line x1="52" y1="215" x2="620" y2="215" stroke="#475569" />
       <line x1="52" y1="18" x2="52" y2="215" stroke="#475569" />
       {pairs.map(([x, y], index) => (

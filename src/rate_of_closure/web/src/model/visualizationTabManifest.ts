@@ -126,11 +126,15 @@ const parseEnvironment = (
       environment.responsive_control_locators, responsiveControlIds, "responsive controls",
     )).map(([tabId, locator]) => [tabId, text(locator, "control locator")]))
     : {};
+  const responsiveMinimumVisibleHeightPx = responsive
+    ? positiveInteger(environment.responsive_minimum_visible_height_px, "responsive minimum") : 1;
+  if (responsive && responsiveMinimumVisibleHeightPx < 180) {
+    throw new Error("React responsive minimum must preserve meaningful visual height");
+  }
   return deepFreeze({
     viewportPx: tuple(environment.viewport_px, "viewport"),
     additionalViewportsPx: additional.map((item) => tuple(item, "additional viewport")),
-    responsiveMinimumVisibleHeightPx: responsive
-      ? positiveInteger(environment.responsive_minimum_visible_height_px, "responsive minimum") : 1,
+    responsiveMinimumVisibleHeightPx,
     minimumVisibleWidthPx: positiveInteger(environment.minimum_visible_width_px, "minimum width"),
     responsiveMinimumVisibleWidthPx: responsive
       ? positiveInteger(environment.responsive_minimum_visible_width_px, "responsive minimum width") : 1,

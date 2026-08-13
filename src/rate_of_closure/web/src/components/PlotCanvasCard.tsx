@@ -175,7 +175,7 @@ export function PlotCanvasCard({ data, label, selected, onSelect, onCanvas }: Pr
           event.preventDefault();
           changeZoom(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP);
         }}
-        className="h-auto w-full rounded-lg bg-slate-950/60"
+        className="h-auto min-h-[180px] w-full rounded-lg bg-slate-950/60 sm:min-h-0"
       />
     </article>
   );

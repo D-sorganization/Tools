@@ -26,11 +26,23 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.75                                    |
-| **Spec Version**        | 1.16.75                                    |
+| **Current Version**     | 1.16.76                                    |
+| **Spec Version**        | 1.16.76                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Meaningful narrow geometry and trusted trigger closure (#4433)
+
+Version 1.16.76 requires at least 180 visible vertical pixels for every visual
+landmark at the 390x844 reference viewport. Python and TypeScript reject a
+smaller responsive authority, and Playwright proves that a one-pixel-high
+clipped sliver is below the contract before auditing all nine tabs. The trusted
+main workflow's PyQt lane is now triggered by the same rendered source,
+dependency, probe, and test authorities as the ephemeral PR lane. Its browser
+install and selection remain explicitly Chromium-only. These closures improve
+sustained geometry evidence but do not establish approved goldens, formal AT
+evidence, or exhaustive noninitial-state geometry.
 
 ### 2026-08-13 Visualization manifest authority hardening (#4433)
 
@@ -4032,6 +4044,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |

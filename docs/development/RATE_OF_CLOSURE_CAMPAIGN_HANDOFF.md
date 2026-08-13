@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 narrow geometry/trusted trigger correction
+
+- Narrow React visuals now require 180 visible vertical pixels; both readers
+  reject a one-pixel authority and the rendered clipping regression proves a
+  one-pixel-high sliver fails the manifest threshold.
+- The trusted main PyQt trigger mirrors the PR lane's club/model/plotting/
+  simulation/variation, shared variation, PyQt UI, probe/test, workflow-test,
+  and dependency authorities. Chromium-only trusted browser execution is
+  unchanged.
+- Diagnostic-only, formal-AT, golden, and noninitial-state limitations remain
+  explicit. SPEC is 1.16.76.
+
 ## 2026-08-13 #4433 visualization manifest authority correction
 
 - React responsive-control locators now cover exactly the React visual entry

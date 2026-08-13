@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Meaningful narrow geometry/trusted trigger closure (#4433)
+
+- React visual landmarks require 180 visible vertical pixels at 390x844;
+  Python/TypeScript reject smaller authority values and Playwright rejects a
+  one-pixel clipped height.
+- Trusted-main PyQt execution now triggers for every rendered authority path
+  declared by the PR lane, while trusted browser execution remains Chromium-
+  only. Evidence limits are unchanged. SPEC is 1.16.76.
+
 ## 2026-08-13 Visualization manifest authority hardening (#4433)
 
 - React responsive-control keys are exact and derived from React visual tabs;

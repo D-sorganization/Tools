@@ -140,6 +140,11 @@ def test_pr_trigger_tracks_every_pyqt_render_authority() -> None:
     assert PYQT_AUTHORITY_PATHS <= set(workflow[True]["pull_request"]["paths"])
 
 
+def test_trusted_trigger_tracks_every_pyqt_render_authority() -> None:
+    workflow = _workflow(TRUSTED_WORKFLOW_PATH)
+    assert PYQT_AUTHORITY_PATHS <= set(workflow[True]["push"]["paths"])
+
+
 def test_external_actions_are_immutable_and_artifacts_identify_attempts() -> None:
     for path in (PR_WORKFLOW_PATH, TRUSTED_WORKFLOW_PATH):
         workflow = _workflow(path)

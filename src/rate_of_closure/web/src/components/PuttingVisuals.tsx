@@ -32,7 +32,7 @@ function GreenView({ result, holeX, grade, aspect }: {
   return <figure aria-label="Top-down green view: skid phase orange, pure roll green, hole circle, downhill arrow"
     className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
     <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Putt path on the green"
-      className="w-full rounded-lg bg-emerald-950/60">
+      className="min-h-[180px] w-full rounded-lg bg-emerald-950/60 sm:min-h-0">
       <polyline points={points(0, split + 1)} fill="none" stroke="#fb923c" strokeWidth={3} />
       <polyline points={points(split, xs.length)} fill="none" stroke="#4ade80" strokeWidth={3} />
       <circle cx={sx(holeX)} cy={sy(0)} r={Math.max(5, (0.054 / (maxX - minX)) * width)}

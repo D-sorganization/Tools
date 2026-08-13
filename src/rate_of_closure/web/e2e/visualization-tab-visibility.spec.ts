@@ -121,4 +121,11 @@ test("visible intersection clips a landmark through an overflow ancestor", async
   await page.setContent(`<div style="width:1px;overflow:hidden">
     <div data-landmark style="width:240px;height:240px"></div></div>`);
   expect((await intersection(page.locator("[data-landmark]"))).width).toBe(1);
+  await page.setContent(`<div style="height:1px;overflow:hidden">
+    <div data-landmark style="width:240px;height:240px"></div></div>`);
+  const height = (await intersection(page.locator("[data-landmark]"))).height;
+  expect(height).toBe(1);
+  expect(height).toBeLessThan(
+    visualizationReferenceEnvironments.react.responsiveMinimumVisibleHeightPx,
+  );
 });

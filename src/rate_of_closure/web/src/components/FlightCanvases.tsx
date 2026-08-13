@@ -375,7 +375,7 @@ export function FlightCanvases({
         width={SIDE_CANVAS_SIZE.width}
         height={SIDE_CANVAS_SIZE.height}
         style={responsiveCanvasStyle(SIDE_CANVAS_SIZE)}
-        className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
+        className="min-h-[180px] w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60 sm:min-h-0"
         aria-label="Flight side profile (height vs carry)"
         aria-description={targetDescription}
       />
@@ -384,7 +384,7 @@ export function FlightCanvases({
         width={TOP_CANVAS_SIZE.width}
         height={TOP_CANVAS_SIZE.height}
         style={responsiveCanvasStyle(TOP_CANVAS_SIZE)}
-        className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
+        className="min-h-[180px] w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60 sm:min-h-0"
         aria-label="Flight top-down view (lateral vs carry)"
         aria-description={targetDescription}
       />
