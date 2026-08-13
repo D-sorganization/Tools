@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Cross-browser and rendered PyQt interaction evidence (#4142)
+
+Version 1.16.70 adds one bounded production-Worker scenario to Chromium,
+Firefox, and WebKit for localized torque, actual confidence-volume surfaces,
+semantic camera movement/reset, keyboard activation, and no-overlap evidence.
+React exposes camera state as an accessible `output` so tests assert state,
+not pixels or downloads.
+
+PyQt6 subprocess probes run with exact 1.0/1.5 Qt scale factors and retain arc
+and managed-plot PNGs plus semantic manifests. They verify DPR/render size,
+ellipsoid toggle and metric, azimuth/elevation, zoom/auto-fit, legend hide/
+restore, and control overlap. Screenshots are diagnostic artifacts, not
+pixel-perfect goldens. The pull-request workflow remains `ubuntu-latest` only
+with immutable action SHAs; the persistent trusted workflow has no PR trigger.
+
+Local evidence passes all 874 React tests, 9/9 production Playwright scenarios,
+8/8 focused PyQt tests including both rendered subprocesses, and 7/7 workflow/
+runner-guard tests. Strict harness Mypy, TypeScript, ESLint, Vite build, Ruff,
+format, docs, size, and diff checks pass. No axe package was added; semantic
+keyboard smoke is covered, while formal AT/screen-reader certification,
+approved visual goldens, mobile cross-engine evidence, prescribed Worker
+transport, and protected publication remain open.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 Version 1.16.69 is a normal non-fast-forward merge with approved localized-

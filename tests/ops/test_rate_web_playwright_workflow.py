@@ -14,10 +14,11 @@ PR_WORKFLOW_PATH = WORKFLOW_DIR / "rate-web-playwright.yml"
 TRUSTED_WORKFLOW_PATH = WORKFLOW_DIR / "rate-web-playwright-trusted.yml"
 RUNNER_GUARD_PATH = WORKFLOW_DIR / "local-only-runner-guard.yml"
 FULL_ACTION_SHA = re.compile(r"^[^@]+@[0-9a-f]{40}$")
-EVIDENCE_PATHS = (
+PLAYWRIGHT_EVIDENCE_PATHS = (
     "src/rate_of_closure/web/playwright-report/\n"
     "src/rate_of_closure/web/test-results/\n"
 )
+PR_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
 
 
 def _workflow(path: Path) -> dict[str, Any]:
@@ -74,18 +75,37 @@ def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None
     assert "with" not in push_checkout or "ref" not in push_checkout["with"]
 
 
-def test_pr_and_trusted_jobs_run_the_same_locked_production_gate() -> None:
+def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> None:
     pr_job = _workflow(PR_WORKFLOW_PATH)["jobs"]["production-worker-e2e"]
-    trusted_jobs = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]
-    expected_commands = _run_steps(pr_job)
+    trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]["push-production-worker-e2e"]
+    pr_commands = _run_steps(pr_job)
+    trusted_commands = _run_steps(trusted_job)
 
-    assert all(_run_steps(job) == expected_commands for job in trusted_jobs.values())
-    assert expected_commands["Install locked web dependencies"] == "npm ci"
-    assert expected_commands["Install Playwright-pinned Chromium runtime"] == (
+    assert pr_commands["Install locked web dependencies"] == "npm ci"
+    assert trusted_commands["Install locked web dependencies"] == "npm ci"
+    assert pr_commands["Install Playwright-pinned browser runtimes"] == (
+        "npx --no-install playwright install --with-deps chromium firefox webkit"
+    )
+    assert trusted_commands["Install Playwright-pinned Chromium runtime"] == (
         "npx --no-install playwright install --with-deps chromium"
     )
-    assert expected_commands["Exercise production Worker lifecycle and layouts"] == (
-        "npm run test:e2e"
+    assert (
+        pr_commands["Exercise production Worker lifecycle, layouts, and browser parity"]
+        == "npm run test:e2e"
+    )
+    assert pr_commands["Install bounded PyQt render dependencies"] == (
+        'python -m pip install -e ".[gui]" "scipy>=1.10,<1.18" pytest '
+        '"pytest-xdist>=3.6,<4"'
+    )
+    assert pr_commands[
+        "Exercise PyQt rendered interactions at 100 and 150 percent DPI"
+    ] == (
+        "python -m pytest "
+        "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py -q -n 0"
+    )
+    assert (
+        trusted_commands["Exercise production Worker lifecycle and layouts"]
+        == "npm run test:e2e"
     )
 
 
@@ -105,7 +125,12 @@ def test_external_actions_are_immutable_and_artifacts_identify_attempts() -> Non
             name = artifact["with"]["name"]
             assert "${{ github.run_id }}" in name
             assert "${{ github.run_attempt }}" in name
-            assert artifact["with"]["path"] == EVIDENCE_PATHS
+            expected_paths = (
+                PR_EVIDENCE_PATHS
+                if path == PR_WORKFLOW_PATH
+                else PLAYWRIGHT_EVIDENCE_PATHS
+            )
+            assert artifact["with"]["path"] == expected_paths
 
 
 def test_touched_hosted_runner_guard_uses_only_immutable_actions() -> None:

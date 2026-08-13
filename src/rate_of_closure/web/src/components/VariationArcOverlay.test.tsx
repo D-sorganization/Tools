@@ -58,6 +58,15 @@ describe("VariationArcOverlay dispersion controls", () => {
     expect(screen.queryByText(/adequacy and ranked intervals are retained in the plot definition/))
       .not.toBeInTheDocument();
 
+    const camera = screen.getByLabelText("Arc camera state");
+    const initialYaw = camera.getAttribute("data-yaw-deg");
+    const canvas = screen.getByRole("img", { name: /Interactive all-trial swing arcs/ });
+    fireEvent.keyDown(canvas, { key: "ArrowRight" });
+    expect(camera).not.toHaveAttribute("data-yaw-deg", initialYaw);
+    fireEvent.click(screen.getByRole("button", { name: "Reset View" }));
+    expect(camera).toHaveAttribute("data-yaw-deg", initialYaw);
+    expect(surfaces).toBeChecked();
+
     fireEvent.change(confidence, { target: { value: "" } });
     fireEvent.change(screen.getByLabelText("Minimum quiet duration seconds"), {
       target: { value: "-1" },

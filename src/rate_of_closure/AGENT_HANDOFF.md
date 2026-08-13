@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Cross-browser and rendered PyQt interaction evidence (#4142)
+
+- Chromium, Firefox, and WebKit execute the same bounded production localized-
+  torque/Worker path plus a third geometric input, then verify nonzero full-
+  rank confidence surfaces, keyboard camera/reset, semantic legend, and no
+  control overlap.
+- `VariationArcOverlay` exposes accessible camera state for stable interaction
+  assertions; the test does not use image equality as a functional oracle.
+- PyQt6 runs in scale-isolated subprocesses at 1.0 and 1.5, validating Space-
+  activated ellipsoid controls, metric/camera state, managed plot zoom/auto-
+  fit, legend hide/restore, DPR/rendered dimensions, and overlap. Screenshots
+  and manifests are uploaded as diagnostic artifacts, not approved goldens.
+- Untrusted PR execution remains an ephemeral `ubuntu-latest` job with full-
+  SHA action pins. The persistent trusted workflow remains push-only.
+- No axe/AT-certification claim is made. Semantic roles/names/focus/keyboard
+  smoke is covered; formal screen-reader, mobile cross-engine, prescribed
+  Worker, approved baseline, protected publication, and remaining #4142 work
+  remain open. SPEC is 1.16.70.
+- Local gates pass 874/874 React, 9/9 production Playwright, 8/8 focused PyQt,
+  7/7 workflow/guard, strict harness Mypy, TypeScript, ESLint, build, Ruff/
+  format, docs, size, and diff checks.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 - Normal merge order is approved localized-execution head

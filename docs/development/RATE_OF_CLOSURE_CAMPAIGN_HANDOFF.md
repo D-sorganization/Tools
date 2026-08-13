@@ -1,5 +1,28 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 cross-browser and rendered PyQt interaction evidence
+
+- A production localized-variation scenario now runs on Chromium, Firefox,
+  and WebKit. It checks the hashed Worker, torque source/window identity,
+  confidence-volume controls, nonzero full-rank surface rendering,
+  keyboard camera/reset, linked legend, and positive-area control overlaps.
+- React camera state is an accessible semantic output, permitting stable state
+  assertions without a pixel or download oracle.
+- Isolated PyQt processes at 100%/150% DPI retain deterministic diagnostic
+  screenshots/manifests and validate DPR/dimensions, keyboard toggle/plot
+  buttons, metric, camera, zoom/reset, legend hide/restore, and no overlap.
+- PNGs and browser screenshots diagnose failures; semantic assertions are the
+  authority. This is not a pixel-perfect or approved-baseline claim.
+- PR execution is confined to `ubuntu-latest`; no untrusted code reaches the
+  trusted fleet workflow. Action uses remain full-SHA pinned.
+- No axe package was introduced. Named roles, focus, Enter/Space, and camera
+  keys are covered; formal AT/screen-reader, mobile cross-engine, prescribed
+  Worker, approved golden, publication, and remaining #4142 work stay open.
+- Local evidence passes 874/874 React tests, 9/9 production Playwright, 8/8
+  focused PyQt, 7/7 workflow/guard, strict harness Mypy, TypeScript, ESLint,
+  build, Ruff/format, docs, size, and diff checks.
+- SPEC advances to 1.16.70.
+
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 
 - Normal non-fast-forward order is approved localized-execution head

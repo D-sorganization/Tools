@@ -292,6 +292,15 @@ export function VariationArcOverlay({
         >
           Reset View
         </button>
+        <output
+          aria-label="Arc camera state"
+          className="self-end text-xs text-slate-400"
+          data-pitch-deg={(camera.pitch * 180 / Math.PI).toFixed(6)}
+          data-yaw-deg={(camera.yaw * 180 / Math.PI).toFixed(6)}
+          data-zoom={camera.zoom.toFixed(6)}
+        >
+          Camera: yaw {(camera.yaw * 180 / Math.PI).toFixed(1)}°, pitch {(camera.pitch * 180 / Math.PI).toFixed(1)}°, zoom {camera.zoom.toFixed(2)}×
+        </output>
       </div>
       <p className="text-xs text-slate-400" aria-live="polite">
         {validCount}/{ensemble.runs.length} trials shown · {Math.ceil(rawVertices / stride).toLocaleString()}/{rawVertices.toLocaleString()} vertices · {variability.quietMask.filter(Boolean).length}/{variability.quietMask.length} quiet samples · {METRIC_LABELS[variability.metric]} ≤ {thresholds[dispersionMetric].toLocaleString()} {variability.displayUnit} · adequacy: {variability.adequacyCounts.estimable} estimable, {variability.adequacyCounts["rank-deficient"]} rank-deficient, {variability.adequacyCounts["insufficient-samples"]} insufficient, {variability.adequacyCounts["invalid-covariance"]} invalid; {variability.unavailableCount} unavailable · ranked intervals: {variability.quietIntervals.length === 0 ? "none" : variability.quietIntervals.slice(0, 3).map((interval) => `#${interval.rank} ${interval.startTimeS.toFixed(3)}–${interval.endTimeS.toFixed(3)} s`).join(", ")} · {variability.confidenceLevel === null ? "Sample-position dispersion; confidence does not apply." : `${(100 * variability.confidenceLevel).toFixed(1)}% Gaussian position-content region (plug-in sample covariance; not a confidence region for the mean).`} Sparse yellow 2σ principal-axis glyphs are not confidence ellipsoids. {ellipsoidMesh === null ? "Confidence-ellipsoid surfaces are off." : `Cyan surfaces show ${ellipsoidMesh.sampleIndices.length} estimable Gaussian position-content ellipsoids (not mean CIs).`} Frame: {ensemble.coordinateFrame}; alignment: common simulation time. Drag to rotate; scroll or use +/− to zoom.

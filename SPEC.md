@@ -26,11 +26,40 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.69                                    |
-| **Spec Version**        | 1.16.69                                    |
+| **Current Version**     | 1.16.70                                    |
+| **Spec Version**        | 1.16.70                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Cross-browser and rendered PyQt interaction evidence (#4142 R14.5)
+
+Version 1.16.70 adds a bounded production-Worker Playwright scenario for
+Chromium, Firefox, and WebKit. It exercises localized shoulder/wrist torque,
+a third independent geometric input, accessible keyboard activation, actual
+full-rank confidence-surface rendering, camera movement/reset, legend
+semantics, and positive-area control-overlap checks. The public React camera
+state is a semantic `output`, so interaction tests verify state instead of
+relying on pixels or a download side effect.
+
+PyQt6 interaction evidence runs in separate Qt processes at exact 100% and
+150% scale factors. It checks keyboard activation, ellipsoid toggle/metric,
+explicit 3-D camera orientation, plot zoom/auto-fit, legend hide/restore,
+device-pixel ratio, rendered dimensions, and control overlap. PNGs and
+Playwright screenshots are retained as diagnostic artifacts; deterministic
+state assertions and manifests are the test authority. They are deliberately
+not approved pixel-perfect goldens.
+
+Untrusted pull-request code runs only on `ubuntu-latest`; it never reaches the
+persistent fleet workflow. External workflow actions remain immutable-SHA
+pinned. No axe dependency was added: this bounded slice covers semantic roles,
+accessible names, focus, Enter/Space, and camera keyboard controls, but does
+not claim screen-reader/AT certification, pixel identity, mobile Firefox/
+WebKit, prescribed-profile Worker transport, or protected publication.
+Local gates pass all 874 React unit tests, 9/9 production Playwright scenarios,
+8/8 focused PyQt tests including both DPI subprocesses, 7/7 workflow/runner-
+guard tests, strict Mypy for the new Python harnesses, TypeScript, ESLint,
+Vite build, Ruff/format, documentation governance, and size/diff checks.
 
 ### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
@@ -3906,6 +3935,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.70 | test(rate-of-closure, #4142 R14.5): add production Firefox/WebKit parity for localized variation, confidence-mesh gating, semantic keyboard camera/reset, and no-overlap checks; add deterministic PyQt6 rendered interaction artifacts/manifests at 100%/150% DPI; keep untrusted execution on ephemeral hosted runners and distinguish diagnostic screenshots from golden authority. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |

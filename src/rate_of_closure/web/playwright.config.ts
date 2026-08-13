@@ -1,6 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const previewUrl = "http://127.0.0.1:4173";
+const chromiumArgs = [
+  "--disable-background-networking",
+  "--disable-component-update",
+  "--disable-default-apps",
+  "--disable-features=MediaRouter,Translate",
+  "--force-color-profile=srgb",
+];
 
 export default defineConfig({
   testDir: "./e2e",
@@ -27,25 +34,34 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
-    launchOptions: {
-      args: [
-        "--disable-background-networking",
-        "--disable-component-update",
-        "--disable-default-apps",
-        "--disable-features=MediaRouter,Translate",
-        "--force-color-profile=srgb",
-      ],
-    },
   },
   projects: [
     {
       name: "chromium-desktop",
-      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 1000 } },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 1000 },
+        launchOptions: { args: chromiumArgs },
+      },
     },
     {
       name: "chromium-narrow",
       testMatch: /variation-layout\.spec\.ts/,
-      use: { ...devices["Desktop Chrome"], viewport: { width: 390, height: 844 } },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 390, height: 844 },
+        launchOptions: { args: chromiumArgs },
+      },
+    },
+    {
+      name: "firefox-desktop",
+      testMatch: /variation-crossbrowser\.spec\.ts/,
+      use: { ...devices["Desktop Firefox"], viewport: { width: 1440, height: 1000 } },
+    },
+    {
+      name: "webkit-desktop",
+      testMatch: /variation-crossbrowser\.spec\.ts/,
+      use: { ...devices["Desktop Safari"], viewport: { width: 1440, height: 1000 } },
     },
   ],
   webServer: {
