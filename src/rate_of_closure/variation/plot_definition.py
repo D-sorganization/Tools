@@ -18,6 +18,8 @@ from shared.python.swing_sim.variation.dispersion_metric_types import (
 )
 
 from ._plot_definition_contract import (
+    _normalize_nullable_integer,
+    _normalize_nullable_real,
     _strict_integer,
     _strict_nullable_integer,
     _strict_nullable_real,
@@ -26,6 +28,7 @@ from ._plot_definition_contract import (
     _validate_exact_fields,
     _validate_variable_keys_object,
 )
+from .simulation_types import APP_FRAME_ID
 
 PLOT_DEFINITION_SCHEMA_VERSION = 2
 _LEGACY_RMS_THRESHOLD_M = 0.005
@@ -79,6 +82,46 @@ _NULLABLE_REAL_FIELDS = {
     "phase_end_fraction",
 }
 _NULLABLE_INTEGER_FIELDS = {"min_quiet_samples", "selected_trial_index"}
+_APPLICABLE_FIELDS = {
+    "scalar_scatter": {"x_variable_key", "y_variable_key", "selected_trial_index"},
+    "swing_arc_overlay": {
+        "coordinate_frame",
+        "point_id",
+        "position_unit",
+        "alignment_basis",
+        "dispersion_metric",
+        "dispersion_unit",
+        "quiet_threshold",
+        "confidence_level",
+        "min_quiet_duration_s",
+        "min_quiet_samples",
+        "selected_trial_index",
+        "camera_yaw_deg",
+        "camera_pitch_deg",
+        "camera_zoom",
+        "outcome_filter",
+        "phase_end_fraction",
+        "perturbation_source_key",
+        "perturbation_band",
+    },
+    "geometric_variability": {
+        "coordinate_frame",
+        "point_id",
+        "position_unit",
+        "alignment_basis",
+        "dispersion_metric",
+        "dispersion_unit",
+        "quiet_threshold",
+        "confidence_level",
+        "min_quiet_duration_s",
+        "min_quiet_samples",
+        "outcome_filter",
+        "phase_end_fraction",
+        "perturbation_source_key",
+        "perturbation_band",
+    },
+    "distribution_matrix": {"variable_keys"},
+}
 
 
 @dataclass(frozen=True)
@@ -124,10 +167,21 @@ class PlotDefinition:
         for name in _NULLABLE_STRING_FIELDS:
             _strict_nullable_string(getattr(self, name), name)
         for name in _NULLABLE_REAL_FIELDS:
-            _strict_nullable_real(getattr(self, name), name)
+            object.__setattr__(
+                self, name, _normalize_nullable_real(getattr(self, name), name)
+            )
         for name in _NULLABLE_INTEGER_FIELDS:
-            _strict_nullable_integer(getattr(self, name), name)
+            object.__setattr__(
+                self, name, _normalize_nullable_integer(getattr(self, name), name)
+            )
         _validate_variable_keys_object(self.variable_keys)
+        applicable = _APPLICABLE_FIELDS[cast(str, self.plot_type)]
+        for item in fields(self):
+            if item.name not in {"result_id", "plot_type"} | applicable:
+                require(
+                    getattr(self, item.name) is None,
+                    f"{item.name} is not applicable to {self.plot_type}",
+                )
         require(
             self.selected_trial_index is None
             or (
@@ -160,8 +214,8 @@ class PlotDefinition:
         if geometric:
             require(self.point_id is not None, "geometric plot requires point_id")
             require(
-                self.coordinate_frame is not None,
-                "geometric plot requires a frame",
+                self.coordinate_frame == APP_FRAME_ID,
+                f"geometric coordinate_frame must equal {APP_FRAME_ID}",
             )
             require(self.position_unit == "m", "geometric position_unit must be m")
             require(
@@ -170,8 +224,6 @@ class PlotDefinition:
             )
             self._validate_dispersion_state()
             self._validate_geometric_filters()
-        else:
-            self._validate_non_geometric_state()
         if self.plot_type == "distribution_matrix":
             variable_keys = self.variable_keys
             require(
@@ -204,28 +256,6 @@ class PlotDefinition:
         require(
             self.perturbation_band is None or self.perturbation_source_key is not None,
             "perturbation_band requires a perturbation source",
-        )
-
-    def _validate_non_geometric_state(self) -> None:
-        """Reject geometric result/filter state on plots that cannot consume it."""
-        dispersion_fields = (
-            self.dispersion_metric,
-            self.dispersion_unit,
-            self.quiet_threshold,
-            self.confidence_level,
-            self.min_quiet_duration_s,
-            self.min_quiet_samples,
-        )
-        require(
-            all(value is None for value in dispersion_fields),
-            "non-geometric plots cannot contain dispersion state",
-        )
-        require(
-            self.outcome_filter is None
-            and self.phase_end_fraction is None
-            and self.perturbation_source_key is None
-            and self.perturbation_band is None,
-            "non-geometric plots cannot contain arc filter state",
         )
 
     def _validate_dispersion_state(self) -> None:

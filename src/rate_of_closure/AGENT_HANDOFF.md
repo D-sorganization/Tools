@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Plot-definition complete-domain hardening (#4142)
+
+- A shared Python/TypeScript applicability matrix requires null for every field
+  not consumed by its plot type. Scatter persists x/y plus selected trial;
+  distribution persists only variable keys; geometric definitions persist
+  only their declared geometry, dispersion, filters, and applicable camera
+  state. Geometric variable keys cannot leak into a plausible document.
+- Geometry requires the exact current `APP_FRAME_ID`. Result, point, source,
+  variable, and sibling stable IDs reject C0/C1/DEL controls.
+- Python constructors normalize supported finite `Real`/`Integral` inputs to
+  built-in JSON-safe values, while JSON readers reject Python-only numeric
+  objects. TypeScript retains primitive, finite, non-coercive numeric checks.
+- Non-geometric PyQt/React exporters emit null coordinate frames; v1 migration
+  rejects fields that are inapplicable under the v2 matrix.
+- Local evidence: 1,160 Rate Python/PyQt tests and 802 React tests pass, along
+  with focused 67-case Python and 56-case TypeScript plot-definition suites,
+  Ruff/format, scoped MyPy, TypeScript, ESLint, and the production web build.
+
+SPEC 1.16.62 records these corrections. Import UI, full ellipsoid meshes,
+cross-browser E2E, protected publication, and remaining #4142 work stay open.
+
 ## 2026-08-12 Plot-definition constructor/writer closure (#4142)
 
 - Direct Python and React constructors now traverse the same strict field parser

@@ -26,11 +26,38 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.61                                    |
-| **Spec Version**        | 1.16.61                                    |
+| **Current Version**     | 1.16.62                                    |
+| **Spec Version**        | 1.16.62                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Plot-definition complete-domain hardening (#4142 R12.1/R12.2)
+
+Version 1.16.62 defines a complete, symmetric applicability domain for every
+plot-definition kind. Scalar scatter permits x/y variable keys and its selected
+trial; distribution matrix permits only its bounded unique variable-key list;
+geometric plots permit their declared point/frame/unit/alignment, dispersion,
+cohort filters, and plot-specific camera/selection state. Every other nullable
+field must be null, including `variable_keys` on geometric plots. Current
+geometric definitions require the exact application-frame identifier
+`app_frame:x_target,y_up,z_right`, rather than accepting an arbitrary label.
+
+All stable persisted strings reject C0, C1, and DEL controls as well as empty,
+leading-whitespace, and trailing-whitespace forms. Python direct constructors
+normalize supported finite `numbers.Real` and `numbers.Integral` values,
+including covered NumPy and `Fraction` cases, to built-in float/int values
+before serialization. The Python reader remains a strict JSON wire-domain
+parser and rejects non-JSON numeric objects; TypeScript likewise requires
+primitive finite numbers and genuine integer fields. PyQt and React exporters
+emit null coordinate frames for non-geometric plots, and exact v1 migration
+rejects fields that are inapplicable under v2 validation.
+
+Local verification passes 1,160 Rate Python/PyQt tests and 802 React tests,
+including 67 Python and 56 TypeScript plot-definition contract cases, plus
+Ruff/format, scoped MyPy, TypeScript, ESLint, and the production web build. This
+hardening does not add plot-definition import UI, a rendered confidence-
+ellipsoid mesh, cross-browser E2E, protected publication, or complete #4142.
 
 ### 2026-08-12 Dispersion plot-definition domain closure (#4142 R12.1/R12.2)
 
@@ -3480,6 +3507,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.62 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce a complete plot-type applicability/null matrix, exact application frame for current geometry, control-free stable identifiers, JSON-native Python constructor numerics, strict wire numerics, and non-geometric exporter/migration parity. |
 | 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce complete Python/TypeScript plot-definition constructor and writer invariants; reject nonfinite, Boolean, unbounded, unstable, invalid outcome/source, or inapplicable state before NaN-safe serialization; and correct React copy to distinguish persisted selection criteria from computed adequacy and ranked-interval results. |
 | 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142 R12.1/R12.2): scope quiet-interval ranks to the selected point; replace approximate React chi-square tails with regularized-gamma bracketed inversion pinned to SciPy across the declared domain; add strict exact v2 readers and explicit v1 RMS/m migration defaults in Python and TypeScript; and associate accessible PyQt labels with every new dispersion control while preserving open mesh, E2E, publication, and epic gates. |
 | 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142 R12.1/R12.2): add parity PyQt6/React selectors for RMS radius, largest principal sigma, and Gaussian confidence-ellipsoid volume; preserve SI authority and readable mm/mm³ display units in plot-definition v2; expose adequacy, unavailable counts, and dense-ranked quiet intervals; and pin strict React grid/domain behavior to a Python-authority golden fixture without claiming a rendered ellipsoid mesh or cross-browser E2E. |

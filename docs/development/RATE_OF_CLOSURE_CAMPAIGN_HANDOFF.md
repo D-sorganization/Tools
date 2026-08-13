@@ -1,5 +1,24 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 plot-definition complete-domain hardening
+
+- Python and TypeScript share a fail-closed plot-type applicability matrix:
+  scatter x/y plus selected-trial state, distribution variable keys, and only
+  the declared geometric point/frame/unit/alignment, dispersion, filter, and
+  applicable camera fields. Every other field must be null.
+- Current geometry requires the exact application frame identifier. Arbitrary
+  frame labels and geometric `variable_keys` are rejected.
+- Every stable result/point/source/variable identifier rejects C0/C1/DEL
+  controls. Python constructors normalize supported finite NumPy/Fraction
+  numeric inputs to built-in JSON scalars; readers remain strict wire parsers.
+- PyQt and React emit null frames for scatter/distribution definitions. Exact
+  v1 migration rejects inapplicable legacy fields during v2 validation.
+- Evidence: 1,160/1,160 Rate Python/PyQt and 802/802 React tests plus focused
+  Python/TypeScript contract suites, Ruff/format, scoped MyPy, TypeScript,
+  ESLint, and the production web build. SPEC advances to 1.16.62. Import UI,
+  ellipsoid meshes, cross-browser E2E, publication, and #4142 completion remain
+  open.
+
 ## 2026-08-12 #4142 plot-definition domain closure
 
 - Python and TypeScript validate complete objects at construction and again at

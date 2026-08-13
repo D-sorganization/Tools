@@ -74,7 +74,7 @@ export function VariationDistributionMatrix({
         <button type="button" className={BUTTON_CLASS} onClick={() => downloadText(
           `${resultId}-distribution-matrix.plot.json`,
           variationPlotDefinitionToJson(makeVariationPlotDefinition(result, {
-            plotType: "distribution_matrix", coordinateFrame: ensemble?.coordinateFrame ?? null,
+            plotType: "distribution_matrix", coordinateFrame: null,
             xVariableKey: null, yVariableKey: null, pointId: null,
             positionUnit: null, alignmentBasis: null,
             dispersionMetric: null, dispersionUnit: null, quietThreshold: null,

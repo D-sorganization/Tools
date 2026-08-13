@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import json
 import math
+from fractions import Fraction
 
+import numpy as np
 import pytest
 
 from rate_of_closure.variation.plot_definition import (
@@ -40,6 +42,28 @@ def _complete_geometric_definition(**overrides: object) -> PlotDefinition:
         "phase_end_fraction": 0.75,
         "perturbation_source_key": "swing_sim.swing.yaw_deg",
         "perturbation_band": "Upper Third",
+    }
+    values.update(overrides)
+    return PlotDefinition(**values)  # type: ignore[arg-type]
+
+
+def _scatter_definition(**overrides: object) -> PlotDefinition:
+    values: dict[str, object] = {
+        "result_id": "scatter-contract",
+        "plot_type": "scalar_scatter",
+        "x_variable_key": "input:swing.speed",
+        "y_variable_key": "output:carry_m",
+        "selected_trial_index": 1,
+    }
+    values.update(overrides)
+    return PlotDefinition(**values)  # type: ignore[arg-type]
+
+
+def _matrix_definition(**overrides: object) -> PlotDefinition:
+    values: dict[str, object] = {
+        "result_id": "matrix-contract",
+        "plot_type": "distribution_matrix",
+        "variable_keys": ("input:swing.speed", "output:carry_m"),
     }
     values.update(overrides)
     return PlotDefinition(**values)  # type: ignore[arg-type]
@@ -119,6 +143,10 @@ def test_plot_definition_migrates_strict_v1_geometry_defaults() -> None:
     assert migrated.min_quiet_duration_s == 0.0
     assert migrated.min_quiet_samples == 1
     assert migrated.to_json_dict()["schema_version"] == 2
+    with pytest.raises(ContractViolationError, match="applicable"):
+        PlotDefinition.from_json_dict(
+            {**document, "variable_keys": ["input:a", "output:b"]}
+        )
 
 
 @pytest.mark.parametrize("schema_version", [True, 2.0, "2", 3])
@@ -182,6 +210,7 @@ def test_distribution_matrix_definition_requires_unique_selected_variables() -> 
         ("result_id", " ensemble-contract"),
         ("plot_type", "unknown"),
         ("coordinate_frame", " "),
+        ("coordinate_frame", "app_frame:x_target,z_up,y_right"),
         ("point_id", "swing.clubhead.reference "),
         ("position_unit", "mm"),
         ("alignment_basis", "sample-index"),
@@ -219,14 +248,116 @@ def test_plot_definition_requires_a_source_for_a_perturbation_band() -> None:
 
 
 @pytest.mark.parametrize(
+    ("factory", "field", "value"),
+    [
+        (_scatter_definition, "coordinate_frame", "app_frame:x_target,y_up,z_right"),
+        (_scatter_definition, "point_id", "swing.clubhead.reference"),
+        (_scatter_definition, "camera_zoom", 1.0),
+        (_scatter_definition, "variable_keys", ("input:a", "output:b")),
+        (_matrix_definition, "coordinate_frame", "app_frame:x_target,y_up,z_right"),
+        (_matrix_definition, "x_variable_key", "input:swing.speed"),
+        (_matrix_definition, "selected_trial_index", 0),
+        (_complete_geometric_definition, "x_variable_key", "input:swing.speed"),
+        (_complete_geometric_definition, "variable_keys", ("input:a", "output:b")),
+    ],
+)
+def test_plot_definition_rejects_inapplicable_fields(
+    factory, field: str, value: object
+) -> None:  # type: ignore[no-untyped-def]
+    with pytest.raises(ContractViolationError, match="applicable"):
+        factory(**{field: value})
+
+
+@pytest.mark.parametrize(
+    ("factory", "field", "value"),
+    [
+        (_complete_geometric_definition, "result_id", "ensemble\x00contract"),
+        (_complete_geometric_definition, "point_id", "swing\x1fclubhead"),
+        (
+            _complete_geometric_definition,
+            "perturbation_source_key",
+            "swing_sim\x80yaw",
+        ),
+        (_scatter_definition, "x_variable_key", "input\x7fspeed"),
+        (_matrix_definition, "variable_keys", ("input:a", "output:\x81b")),
+    ],
+)
+def test_plot_definition_rejects_control_characters_in_stable_ids(
+    factory, field: str, value: object
+) -> None:  # type: ignore[no-untyped-def]
+    with pytest.raises(ContractViolationError, match="control"):
+        factory(**{field: value})
+
+
+def test_python_constructor_normalizes_supported_real_scalars_before_json(
+    tmp_path,
+) -> None:  # type: ignore[no-untyped-def]
+    definition = _complete_geometric_definition(
+        quiet_threshold=Fraction(1, 200),
+        min_quiet_duration_s=np.float32(0.02),
+        min_quiet_samples=np.int64(2),
+        selected_trial_index=np.int64(3),
+        camera_yaw_deg=Fraction(-37, 1),
+        camera_pitch_deg=np.float32(22),
+        camera_zoom=Fraction(6, 5),
+        phase_end_fraction=Fraction(3, 4),
+    )
+
+    assert type(definition.quiet_threshold) is float
+    assert type(definition.min_quiet_duration_s) is float
+    assert type(definition.min_quiet_samples) is int
+    assert type(definition.selected_trial_index) is int
+    assert type(definition.camera_yaw_deg) is float
+    assert type(definition.camera_pitch_deg) is float
+    assert type(definition.camera_zoom) is float
+    assert type(definition.phase_end_fraction) is float
+    destination = tmp_path / "normalized.json"
+    write_plot_definition(definition, destination)
+    assert json.loads(destination.read_text(encoding="utf-8"))["camera_zoom"] == 1.2
+
+
+@pytest.mark.parametrize("value", [Fraction(1, 2), np.float64(0.5)])
+def test_plot_definition_parser_rejects_non_json_numeric_objects(value: object) -> None:
+    document = _complete_geometric_definition().to_json_dict()
+    document["camera_zoom"] = value
+    with pytest.raises(ContractViolationError):
+        PlotDefinition.from_json_dict(document)
+
+
+def test_python_numeric_conversion_overflow_fails_as_contract_violation() -> None:
+    huge = 10**400
+    with pytest.raises(ContractViolationError, match="finite JSON"):
+        _complete_geometric_definition(camera_zoom=huge)
+
+    document = _complete_geometric_definition().to_json_dict()
+    document["camera_zoom"] = huge
+    with pytest.raises(ContractViolationError, match="finite JSON"):
+        PlotDefinition.from_json_dict(document)
+
+
+def test_plot_definition_parser_rejects_control_and_inapplicable_state() -> None:
+    document = _complete_geometric_definition().to_json_dict()
+    document["point_id"] = "swing\x00clubhead"
+    with pytest.raises(ContractViolationError, match="control"):
+        PlotDefinition.from_json_dict(document)
+
+    document = _complete_geometric_definition().to_json_dict()
+    document["variable_keys"] = ["input:a", "output:b"]
+    with pytest.raises(ContractViolationError, match="applicable"):
+        PlotDefinition.from_json_dict(document)
+
+
+@pytest.mark.parametrize(
     ("field", "value"),
     [
         ("result_id", " "),
+        ("result_id", "result\x00id"),
         ("selected_trial_index", True),
         ("camera_yaw_deg", math.nan),
         ("camera_pitch_deg", math.nan),
         ("camera_zoom", math.nan),
         ("outcome_filter", "hit"),
+        ("variable_keys", ("input:a", "output:b")),
     ],
 )
 def test_plot_definition_writer_revalidates_tampered_state(

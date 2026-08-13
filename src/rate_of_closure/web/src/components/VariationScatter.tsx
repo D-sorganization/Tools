@@ -128,7 +128,7 @@ function ScatterExports({ svgRef, model, dataset, ensemble, selectedTrialIndex }
   { svgRef: React.RefObject<SVGSVGElement>; model: ScatterViewModel }
   & Omit<VariationScatterProps, "onSelectedTrialChange">): JSX.Element {
   const definition = makeVariationPlotDefinition(ensemble ?? dataset, {
-    plotType: "scalar_scatter", coordinateFrame: ensemble?.coordinateFrame ?? null,
+    plotType: "scalar_scatter", coordinateFrame: null,
     xVariableKey: model.xKey, yVariableKey: model.yKey, pointId: null,
     positionUnit: null, alignmentBasis: null,
     dispersionMetric: null, dispersionUnit: null, quietThreshold: null,

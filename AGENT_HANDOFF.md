@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Plot-definition complete-domain hardening (#4142 R12.1/R12.2)
+
+Plot definitions now use one explicit applicability matrix on both runtimes.
+Scalar scatter accepts its x/y keys and selected-trial state; distribution
+matrix accepts only its variable-key list; geometric plots accept only their
+declared point/frame/unit/alignment, dispersion, filter, and applicable camera
+state. Every inapplicable field must be null, and geometric variable keys are
+therefore impossible. Geometric definitions require the exact current
+`APP_FRAME_ID`, not an arbitrary non-empty frame label.
+
+All persisted IDs and variable keys reject C0/C1/DEL controls in addition to
+whitespace instability. Python direct constructors normalize supported finite
+`Real`/`Integral` values, including NumPy and `Fraction` cases, to built-in
+JSON-safe float/int values; strict readers still reject non-JSON object-domain
+numerics. PyQt and React exporters no longer attach a coordinate frame to
+non-geometric plots, and v1 migration rejects contradictory legacy state.
+Evidence is 1,160/1,160 Rate Python/PyQt tests, 802/802 React tests, and focused
+Python/TypeScript contract tests, plus Ruff/format, scoped MyPy, TypeScript,
+ESLint, and the production web build. SPEC is 1.16.62. This does not add
+plot-definition import UI,
+ellipsoid meshes, cross-browser E2E, protected publication, or #4142 closure.
+
 ## 2026-08-12 Dispersion plot-definition closure (#4142 R12.1/R12.2)
 
 Python and React now enforce the same complete plot-definition domain at both

@@ -73,6 +73,24 @@ const INPUT_FIELDS = V2_FIELDS.filter(
   (field) => field !== "schemaVersion" && field !== "resultId",
 );
 const LEGACY_RMS_THRESHOLD_M = 0.005;
+const APP_FRAME_ID = "app_frame:x_target,y_up,z_right";
+const APPLICABLE_FIELDS: Readonly<Record<VariationPlotTypeTs, readonly string[]>> = {
+  scalar_scatter: ["xVariableKey", "yVariableKey", "selectedTrialIndex"],
+  swing_arc_overlay: [
+    "coordinateFrame", "pointId", "positionUnit", "alignmentBasis",
+    "dispersionMetric", "dispersionUnit", "quietThreshold", "confidenceLevel",
+    "minQuietDurationS", "minQuietSamples", "selectedTrialIndex", "cameraYawDeg",
+    "cameraPitchDeg", "cameraZoom", "outcomeFilter", "phaseEndFraction",
+    "perturbationSourceKey", "perturbationBand",
+  ],
+  geometric_variability: [
+    "coordinateFrame", "pointId", "positionUnit", "alignmentBasis",
+    "dispersionMetric", "dispersionUnit", "quietThreshold", "confidenceLevel",
+    "minQuietDurationS", "minQuietSamples", "outcomeFilter", "phaseEndFraction",
+    "perturbationSourceKey", "perturbationBand",
+  ],
+  distribution_matrix: ["variableKeys"],
+};
 
 export function makeVariationPlotDefinition(
   result: SwingVariationResultTs | VariationDatasetTs,
@@ -87,13 +105,19 @@ export function makeVariationPlotDefinition(
 }
 
 function validateDefinitionInput(input: VariationPlotDefinitionInputTs): void {
+  const applicable = new Set(APPLICABLE_FIELDS[input.plotType]);
+  for (const field of INPUT_FIELDS) {
+    if (field !== "plotType" && !applicable.has(field) && input[field] !== null) {
+      throw new Error(`${field} is not applicable to ${input.plotType}`);
+    }
+  }
   validateDispersionState(input);
   if (input.plotType === "scalar_scatter"
     && (input.xVariableKey === null || input.yVariableKey === null)) {
     throw new Error("scalar scatter requires both variable keys");
   }
   if ((input.plotType === "swing_arc_overlay" || input.plotType === "geometric_variability")
-    && (input.pointId === null || input.coordinateFrame === null)) {
+    && (input.pointId === null || input.coordinateFrame !== APP_FRAME_ID)) {
     throw new Error("geometric plot requires pointId and coordinateFrame");
   }
   if (input.selectedTrialIndex !== null && input.selectedTrialIndex < 0) {
@@ -125,16 +149,6 @@ function validateDefinitionInput(input: VariationPlotDefinitionInputTs): void {
     )) throw new Error("unknown perturbationBand");
     if (input.perturbationBand !== null && input.perturbationSourceKey === null) {
       throw new Error("perturbationBand requires a perturbation source");
-    }
-  } else {
-    if ([input.dispersionMetric, input.dispersionUnit, input.quietThreshold,
-      input.confidenceLevel, input.minQuietDurationS, input.minQuietSamples]
-      .some((value) => value !== null)) {
-      throw new Error("non-geometric plots cannot contain dispersion state");
-    }
-    if ([input.outcomeFilter, input.phaseEndFraction, input.perturbationSourceKey,
-      input.perturbationBand].some((value) => value !== null)) {
-      throw new Error("non-geometric plots cannot contain arc filter state");
     }
   }
   if (input.plotType === "distribution_matrix") {
@@ -289,8 +303,12 @@ function requiredString(value: unknown, name: string): string {
 
 function nullableString(value: unknown, name: string): string | null {
   if (value === null) return null;
-  if (typeof value !== "string" || value.length === 0 || value.trim() !== value) {
-    throw new Error(`${name} must be a non-empty trimmed string`);
+  if (typeof value !== "string" || value.length === 0 || value.trim() !== value
+    || [...value].some((character) => {
+      const codePoint = character.codePointAt(0) ?? 0;
+      return codePoint <= 0x1f || (codePoint >= 0x7f && codePoint <= 0x9f);
+    })) {
+    throw new Error(`${name} must be a stable non-empty trimmed control-free string`);
   }
   return value;
 }

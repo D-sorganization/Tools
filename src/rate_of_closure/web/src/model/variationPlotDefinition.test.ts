@@ -49,6 +49,28 @@ const completeGeometricInput = (): VariationPlotDefinitionInputTs => ({
   variableKeys: null,
 });
 
+const scatterInput = (): VariationPlotDefinitionInputTs => ({
+  plotType: "scalar_scatter", coordinateFrame: null,
+  xVariableKey: "input:swing.speed", yVariableKey: "output:carry_m",
+  pointId: null, positionUnit: null, alignmentBasis: null,
+  dispersionMetric: null, dispersionUnit: null, quietThreshold: null,
+  confidenceLevel: null, minQuietDurationS: null, minQuietSamples: null,
+  selectedTrialIndex: 1, cameraYawDeg: null, cameraPitchDeg: null,
+  cameraZoom: null, outcomeFilter: null, phaseEndFraction: null,
+  perturbationSourceKey: null, perturbationBand: null, variableKeys: null,
+});
+
+const matrixInput = (): VariationPlotDefinitionInputTs => ({
+  plotType: "distribution_matrix", coordinateFrame: null,
+  xVariableKey: null, yVariableKey: null, pointId: null, positionUnit: null,
+  alignmentBasis: null, dispersionMetric: null, dispersionUnit: null,
+  quietThreshold: null, confidenceLevel: null, minQuietDurationS: null,
+  minQuietSamples: null, selectedTrialIndex: null, cameraYawDeg: null,
+  cameraPitchDeg: null, cameraZoom: null, outcomeFilter: null,
+  phaseEndFraction: null, perturbationSourceKey: null, perturbationBand: null,
+  variableKeys: ["input:swing.speed", "output:carry_m"],
+});
+
 describe("variation plot definitions", () => {
   it("pins a stable result fingerprint and complete geometric state", () => {
     const ensemble = runSwingVariation(plan(2, 19));
@@ -84,7 +106,7 @@ describe("variation plot definitions", () => {
   });
 
   it("strictly migrates v1 geometric defaults", () => {
-    const migrated = parseVariationPlotDefinition(JSON.stringify({
+    const legacy = {
       schemaVersion: 1,
       resultId: "ensemble-v1",
       plotType: "geometric_variability",
@@ -104,7 +126,8 @@ describe("variation plot definitions", () => {
       perturbationSourceKey: null,
       perturbationBand: null,
       variableKeys: null,
-    }));
+    };
+    const migrated = parseVariationPlotDefinition(JSON.stringify(legacy));
 
     expect(migrated).toMatchObject({
       schemaVersion: 2,
@@ -115,6 +138,9 @@ describe("variation plot definitions", () => {
       minQuietDurationS: 0,
       minQuietSamples: 1,
     });
+    expect(() => parseVariationPlotDefinition(JSON.stringify({
+      ...legacy, variableKeys: ["input:a", "output:b"],
+    }))).toThrow(/applicable/);
   });
 
   it.each([true, 2.5, "2", 3])("rejects coercive or unknown schema %s", (schemaVersion) => {
@@ -178,6 +204,7 @@ describe("variation plot definitions", () => {
   it.each([
     ["plotType", "unknown"],
     ["coordinateFrame", " "],
+    ["coordinateFrame", "app_frame:x_target,z_up,y_right"],
     ["pointId", "swing.clubhead.reference "],
     ["positionUnit", "mm"],
     ["alignmentBasis", "sample-index"],
@@ -233,5 +260,52 @@ describe("variation plot definitions", () => {
     } as VariationPlotDefinitionInputTs;
     expect(() => makeVariationPlotDefinition(runSwingVariation(plan(2)), input))
       .toThrow(/fields/);
+  });
+
+  it.each([
+    [scatterInput, "coordinateFrame", "app_frame:x_target,y_up,z_right"],
+    [scatterInput, "pointId", "swing.clubhead.reference"],
+    [scatterInput, "cameraZoom", 1],
+    [scatterInput, "variableKeys", ["input:a", "output:b"]],
+    [matrixInput, "coordinateFrame", "app_frame:x_target,y_up,z_right"],
+    [matrixInput, "xVariableKey", "input:swing.speed"],
+    [matrixInput, "selectedTrialIndex", 0],
+    [completeGeometricInput, "xVariableKey", "input:swing.speed"],
+    [completeGeometricInput, "variableKeys", ["input:a", "output:b"]],
+  ] as const)("rejects inapplicable %s state in %s", (factory, field, value) => {
+    const input = { ...factory(), [field]: value } as VariationPlotDefinitionInputTs;
+    expect(() => makeVariationPlotDefinition(runSwingVariation(plan(2)), input))
+      .toThrow(/applicable/);
+  });
+
+  it.each([
+    [completeGeometricInput, "pointId", "swing\u0000clubhead"],
+    [completeGeometricInput, "perturbationSourceKey", "swing_sim\u0080yaw"],
+    [scatterInput, "xVariableKey", "input\u007fspeed"],
+    [matrixInput, "variableKeys", ["input:a", "output:\u0081b"]],
+  ] as const)("rejects control characters in stable %s IDs", (factory, field, value) => {
+    const input = { ...factory(), [field]: value } as VariationPlotDefinitionInputTs;
+    expect(() => makeVariationPlotDefinition(runSwingVariation(plan(2)), input))
+      .toThrow(/control/);
+  });
+
+  it("rejects control and inapplicable state through parser and writer paths", () => {
+    const definition = makeVariationPlotDefinition(
+      runSwingVariation(plan(2)), completeGeometricInput(),
+    );
+    const controlled = { ...definition, resultId: "result\u001fidentity" };
+    expect(() => variationPlotDefinitionToJson(controlled)).toThrow(/control/);
+    expect(() => parseVariationPlotDefinition(JSON.stringify(controlled))).toThrow(/control/);
+
+    const inapplicable = { ...definition, variableKeys: ["input:a", "output:b"] };
+    expect(() => variationPlotDefinitionToJson(inapplicable)).toThrow(/applicable/);
+    expect(() => parseVariationPlotDefinition(JSON.stringify(inapplicable))).toThrow(/applicable/);
+  });
+
+  it("rejects boxed numeric objects rather than relying on JSON coercion", () => {
+    const input = {
+      ...completeGeometricInput(), cameraZoom: new Number(1.2),
+    } as VariationPlotDefinitionInputTs;
+    expect(() => makeVariationPlotDefinition(runSwingVariation(plan(2)), input)).toThrow();
   });
 });

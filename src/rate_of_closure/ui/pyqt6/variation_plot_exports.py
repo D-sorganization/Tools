@@ -58,7 +58,7 @@ def distribution_matrix_plot_definition(
             else f"variation-{variation.plan.seed}-{variation.plan.n_runs}"
         ),
         plot_type="distribution_matrix",
-        coordinate_frame=dataset.coordinate_frame if dataset is not None else None,
+        coordinate_frame=None,
         variable_keys=variable_keys,
     )
 
@@ -114,7 +114,7 @@ def scatter_plot_definition(
     return PlotDefinition(
         result_id=result_id,
         plot_type="scalar_scatter",
-        coordinate_frame=dataset.coordinate_frame if dataset else None,
+        coordinate_frame=None,
         x_variable_key=x_variable_key,
         y_variable_key=y_variable_key,
         selected_trial_index=selected_trial_index,
