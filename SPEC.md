@@ -26,11 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.39                                    |
-| **Spec Version**        | 1.16.39                                    |
+| **Current Version**     | 1.16.40                                    |
+| **Spec Version**        | 1.16.40                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142 R10.4/R11.4)
+
+Version 1.16.40 makes the PyQt Variation plan editor a lossless host for the
+shared version-2 plan contract. Loading and rebuilding a plan preserves custom
+`spec_id` values, temporal `time_window_s`, spatial `point_ids`, exact unedited
+numeric authority, and complete correlation/covariance groups. Intentional
+visible edits retain stable identity and locus metadata. Plan loads preflight
+run count, seed, flight model, registry membership, and numeric control ranges
+before mutation, so invalid plans leave the previous runnable state intact.
+Group matrices and loci remain retained but are not yet editable in this UI.
 
 ### 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
 
@@ -3056,6 +3067,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.40 | fix(rate-of-closure, #4142 R10.4/R11.4): make PyQt plan-v2 load/build/save lossless for stable spec IDs, localized loci, unedited numeric authority, and dependence groups; preflight all editor representability before atomic mutation. |
 | 2026-08-12 | 1.16.39 | fix(rate-of-closure, #4142 R11): enforce Morris archive sample/output-cell limits before parser allocation and require scientifically complete impact/shot availability for every evaluated hit at the archive-construction invariant. |
 | 2026-08-12 | 1.16.37 | merge(rate-of-closure, #4142 R13.8): combine exact independently reviewed Python/PyQt Morris workspace commit `8968f6f3544203029fea8e07659ab494eb050c67` and React parity commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`; preserve one byte-identical fixture and exact limits, Unicode semantics, immutable evidence binding, atomic imports, archived-ID isolation, accessible pre-read browser defenses, fail-closed invalid draft execution, report caps, and formula-neutral aggregate CSV. Protected CI, dependency-ordered publication, raw-observation retention, UpstreamDrift consumption, and epic completion remain open. |
 | 2026-08-12 | 1.16.36 | fix(rate-of-closure, #4142 R13.8): align React workspace import with the canonical Python/PyQt edge profile: 2 MB bytes, depth/node and raw-text caps, C0/C1 rejection, decimal/exponent-only finite bounds within +/-1e9, trajectories 2..5000, signed-32-bit seed, exact synthesized invalid-row errors, and null error for valid disabled ground tee; recursively freeze imported setup/evidence; reject oversized browser files before FileReader and use a keyboard-focusable focus-visible import button. |

@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142)
+
+- The integrated PyQt host round-trips custom spec IDs, localized time/point
+  loci, exact unedited numeric values, and correlation/covariance groups.
+- Every selector and numeric range is preflighted before editor mutation;
+  unsupported direct or file loads preserve the prior runnable plan and report
+  an actionable error.
+- The isolated implementation passed 161 PyQt/shared-variation/request tests
+  plus scoped Ruff, format, MyPy, size, and diff gates.
+- Matrix/locus authoring remains open. Protected publication and the immutable
+  UpstreamDrift consumer remain dependency-ordered later gates.
+
 ## 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
 
 Branch `codex/4142-morris-observation-authority` starts from exact reviewed

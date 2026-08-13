@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142)
+
+The integrated PyQt plan editor retains the full shared version-2 authority:
+custom spec IDs, temporal/spatial locus metadata, exact unedited numeric values,
+and correlation/covariance groups survive build and Save Plan. Visible numeric
+edits preserve stable identity/locus fields. Load Plan preflights selectors,
+registry keys, flight models, and numeric ranges before mutating the editor, so
+unsupported plans fail closed with the prior runnable state intact.
+
+Focused source evidence on the isolated slice was 161 PyQt/shared-variation/
+request tests. Group matrices and loci remain retained application authority,
+not editable controls. This slice does not complete #4142 or authorize an
+UpstreamDrift pin before the protected Tools dependency chain lands.
+
 ## 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
 
 Branch `codex/4142-morris-observation-authority` starts from exact reviewed

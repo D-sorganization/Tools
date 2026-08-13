@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from typing import cast
 
 from PyQt6.QtWidgets import (
@@ -25,7 +24,13 @@ from rate_of_closure.variation.ensemble_io import (
 )
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.contracts import ContractViolationError
-from shared.python.swing_sim.variation import MODES, VariationDataset, VariationPlan
+from shared.python.swing_sim.variation import (
+    MODES,
+    PerturbationGroup,
+    VariationDataset,
+    VariationPlan,
+    keys_for_mode,
+)
 from shared.python.swing_sim.variation.dataset_io import write_csv, write_json
 
 
@@ -41,6 +46,7 @@ class VariationTabIoMixin:
     _flight_combo: QComboBox
     _base_combo: QComboBox
     _loaded_base: dict[str, float]
+    _loaded_groups: tuple[PerturbationGroup, ...] = ()
     _rows: list[NoiseRow]
 
     def build_plan(self) -> VariationPlan:
@@ -82,11 +88,15 @@ class VariationTabIoMixin:
         self._export_ensemble_json.clicked.connect(self._on_export_ensemble_json)
         save_plan = QPushButton("Save Plan")
         save_plan.setToolTip(
-            "Save just the plan as JSON — the schema the web tab also reads."
+            "Save just the plan as JSON — including retained v2 stable IDs, "
+            "loci, and correlation/covariance groups."
         )
         save_plan.clicked.connect(self._on_save_plan)
         load_plan = QPushButton("Load Plan")
-        load_plan.setToolTip("Load a plan JSON back into the editors.")
+        load_plan.setToolTip(
+            "Load a plan JSON atomically. V2 metadata is retained losslessly; "
+            "values outside the editor ranges are rejected before controls change."
+        )
         load_plan.clicked.connect(self._on_load_plan)
         exports = (
             self._export_csv,
@@ -178,25 +188,56 @@ class VariationTabIoMixin:
         try:
             with open(path, encoding="utf-8") as handle:
                 plan = VariationPlan.loads(handle.read())
-        except (ContractViolationError, ValueError, json.JSONDecodeError) as exc:
+            self.load_plan(plan)
+        except (
+            ContractViolationError,
+            OSError,
+            KeyError,
+            TypeError,
+            ValueError,
+        ) as exc:
             self._status.setText(f"Cannot load plan: {exc}")
             return
-        self.load_plan(plan)
         self._status.setText(f"Plan loaded from {path}.")
 
     def load_plan(self, plan: VariationPlan) -> None:
-        """Drive all editors from a plan (used by Load Plan and tests)."""
+        """Atomically drive editors from a losslessly representable plan."""
+        self._validate_plan_for_editors(plan)
         self._mode_combo.setCurrentIndex(MODES.index(plan.mode))
         self._runs_spin.setValue(plan.n_runs)
         self._seed_spin.setValue(plan.seed)
         self._flight_combo.setCurrentText(plan.flight_model)
         self._base_combo.setCurrentIndex(0)
         self._loaded_base = dict(plan.base_variables)
+        self._loaded_groups = plan.groups
         while len(self._rows) > 1:
             self._remove_row(self._rows[-1])
         for index, spec in enumerate(plan.noise):
             row = self._rows[0] if index == 0 else self._add_row()
             row.load_spec(spec)
+
+    def _validate_plan_for_editors(self, plan: VariationPlan) -> None:
+        """Fail before mutation when a plan would be clamped or substituted."""
+        if not isinstance(plan, VariationPlan):
+            raise TypeError("plan must be a VariationPlan")
+        if not self._runs_spin.minimum() <= plan.n_runs <= self._runs_spin.maximum():
+            raise ValueError("plan n_runs is outside the editor range")
+        if not self._seed_spin.minimum() <= plan.seed <= self._seed_spin.maximum():
+            raise ValueError("plan seed is outside the editor range")
+        if self._flight_combo.findText(plan.flight_model) < 0:
+            raise ValueError("plan flight_model is not available in this editor")
+        legal = set(keys_for_mode(plan.mode))
+        numeric_editor = self._rows[0]
+        for spec in plan.noise:
+            if spec.variable_key not in legal:
+                raise ValueError(
+                    "noise variable is not representable in this mode: "
+                    f"{spec.variable_key}"
+                )
+            if not numeric_editor.accepts_numeric_range(spec):
+                raise ValueError(
+                    f"noise values exceed the editor range: {spec.spec_id}"
+                )
 
 
 __all__ = ["VariationTabIoMixin"]
