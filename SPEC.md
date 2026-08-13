@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.44                                    |
-| **Spec Version**        | 1.16.44                                    |
+| **Current Version**     | 1.16.45                                    |
+| **Spec Version**        | 1.16.45                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -62,6 +62,34 @@ complete state/torque traces. Those broader R11/R14 requirements remain open.
 Version 1.16.43 explicitly types both Morris observation value-array
 allocations as NumPy arrays. This satisfies the protected Mypy 1.13 delta gate
 without changing array construction, runtime behavior, or either wire schema.
+
+### 2026-08-12 Confidence-scaled dispersion and quiet metrics (#4142 R12.1/R12.2)
+
+Version 1.16.45 defines a UI-neutral 3D dispersion-ellipsoid contract for every
+modeled point and common-grid time sample. A caller declares an open-interval
+confidence level; semi-axis lengths equal the principal sample standard
+deviations multiplied by the square root of the exact chi-square quantile for
+three degrees of freedom. This is a Gaussian position-content region using the
+existing unbiased plug-in sample covariance, not a confidence region for the
+unknown population mean. The plot-ready immutable result retains center,
+canonical principal directions, semi-axis lengths, confidence, quantile,
+coordinate frame, count, adequacy, and volume.
+
+Sample adequacy is explicit. Fewer than two valid trials is
+`insufficient-samples`; nonfinite covariance evidence is `invalid-covariance`;
+otherwise a sample is `rank-deficient` until it has at least four trials and
+three positive principal variances. Volume is finite only for an `estimable`
+full-rank 3D ellipsoid and is `NaN` for every other state.
+
+Quiet-zone analysis now selects one declared metric: RMS radius in metres,
+largest principal sigma in metres, or confidence-ellipsoid volume in cubic
+metres. Each interval retains metric, unit, optional confidence, bounds,
+duration evidence, mean, maximum, dimensionless mean/threshold score, and rank.
+Lower scores rank first; exactly equal IEEE-754 scores share a dense rank, while
+stable point ID and sample bounds determine presentation order. Insufficient or
+invalid evidence never qualifies, and volume additionally requires full-rank
+estimability. Existing RMS-only APIs remain unchanged. Python/PyQt/React UI
+selectors and renderers plus a serialized cross-runtime fixture remain open.
 
 ### 2026-08-12 Variation authority cross-review hardening (#4142)
 
@@ -3128,6 +3156,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.45 | feat(rate-of-closure, #4142 R12.1/R12.2): add immutable plot-ready confidence-scaled 3D Gaussian position-content ellipsoids with exact chi-square scaling, explicit full-rank/sample adequacy, selectable RMS/principal-sigma/ellipsoid-volume quiet metrics, and deterministic dimensionless interval scoring with stable dense ties; retain UI/parity serialization as open work. |
 | 2026-08-12 | 1.16.44 | feat(rate-of-closure, #4142 R11.4): add a strict bounded typed reader and lossless round trip for complete Rate ensemble JSON; retain plan/spec/group/trial/point provenance, typed hit/no-impact/failure availability and full traces; reject duplicate, corrupt, truncated, noncanonical, crossed, and resource-excess documents; make all `VariationDataset` arrays owned and read-only. |
 | 2026-08-12 | 1.16.43 | fix(rate-of-closure, #4142): make the Morris observation value-array types explicit for the protected Mypy 1.13 delta gate without changing runtime or wire contracts. |
 | 2026-08-12 | 1.16.42 | fix(rate-of-closure, #4142): retain PyQt numeric authority per field; bind raw Morris observations to exact recomputed aggregate reports outside the registry mutex; enforce symmetric pre-materialization archive limits; and preserve unavailable OAT dominance/normalization across Python and React. |

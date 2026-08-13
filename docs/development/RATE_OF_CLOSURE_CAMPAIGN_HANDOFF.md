@@ -22,6 +22,25 @@
   transport, full event ledgers, complete pre-impact state/torque traces,
   protected publication, and the remaining R10-R14 campaign stay open.
 
+## 2026-08-12 #4142 R12.1/R12.2 dispersion confidence and quiet metrics
+
+- The shared UI-neutral geometry layer now exposes immutable, plot-ready 3D
+  Gaussian position-content ellipsoids at any declared confidence level. Axis
+  lengths use the exact three-degree-of-freedom chi-square quantile and the
+  existing unbiased sample covariance; the contract explicitly distinguishes
+  this from a confidence region for the unknown population mean.
+- Every time sample declares `estimable`, `rank-deficient`,
+  `insufficient-samples`, or `invalid-covariance`. Full ellipsoid volume is
+  available only with at least four valid trials and three positive principal
+  variances; unavailable volume remains `NaN`.
+- Quiet-zone detection can select RMS radius, largest principal sigma, or
+  confidence-ellipsoid volume with explicit units. Intervals score as
+  mean/threshold, sort deterministically by score then stable point/time keys,
+  and exactly equal scores share a dense rank.
+- Local evidence is 190 shared-variation/Rate geometry tests plus scoped Ruff,
+  format, and MyPy. PyQt/React controls, rendering, serialized cross-runtime
+  fixtures, protected CI/publication, and #4142 epic completion remain open.
+
 ## 2026-08-12 #4142 integrated authority cross-review hardening
 
 - Protected #4404 CI exposed two Mypy 1.13 inference errors on the new Morris

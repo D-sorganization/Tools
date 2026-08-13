@@ -26,6 +26,25 @@ claimed. Complete local evidence is 1,157 passing Rate/shared-variation tests
 chunked streaming, complete event ledger and state/torque authority, protected
 publication, and full #4142 completion remain open.
 
+## 2026-08-12 Confidence-scaled dispersion and quiet metrics (#4142 R12.1/R12.2)
+
+- The shared UI-neutral geometry layer now exposes immutable, plot-ready 3D
+  Gaussian position-content ellipsoids at any declared confidence level. Axis
+  lengths use the exact three-degree-of-freedom chi-square quantile and the
+  existing unbiased sample covariance; the contract explicitly distinguishes
+  this from a confidence region for the unknown population mean.
+- Every time sample declares `estimable`, `rank-deficient`,
+  `insufficient-samples`, or `invalid-covariance`. Full ellipsoid volume is
+  available only with at least four valid trials and three positive principal
+  variances; unavailable volume remains `NaN`.
+- Quiet-zone detection can select RMS radius, largest principal sigma, or
+  confidence-ellipsoid volume with explicit units. Intervals score as
+  mean/threshold, sort deterministically by score then stable point/time keys,
+  and exactly equal scores share a dense rank.
+- Local evidence is 190 shared-variation/Rate geometry tests plus scoped Ruff,
+  format, and MyPy. PyQt/React controls, rendering, serialized cross-runtime
+  fixtures, protected CI/publication, and #4142 epic completion remain open.
+
 ## 2026-08-12 Integrated authority cross-review hardening (#4142)
 
 Protected #4404 CI found that Mypy 1.13 could not infer the dtype of the two
