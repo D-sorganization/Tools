@@ -399,7 +399,7 @@ def evaluate_morris_design(
     if event.is_set():
         raise CancelledError("Morris execution cancelled before start")
     shape = (typed_design.trajectories, len(typed_design.factors) + 1)
-    values = np.full(shape + (len(typed_outputs),), np.nan, dtype=float)
+    values: np.ndarray = np.full(shape + (len(typed_outputs),), np.nan, dtype=float)
     outcomes: np.ndarray = np.empty(shape, dtype=object)
     failure_types: np.ndarray = np.full(shape, None, dtype=object)
     failure_messages: np.ndarray = np.full(shape, None, dtype=object)

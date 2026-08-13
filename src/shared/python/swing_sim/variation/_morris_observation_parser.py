@@ -151,7 +151,7 @@ def parse_morris_observations(value: object) -> MorrisObservationArchive:
         "records must cover design",
     )
     shape = (design.trajectories, len(design.factors) + 1)
-    values = np.full(shape + (len(outputs),), np.nan, dtype=float)
+    values: np.ndarray = np.full(shape + (len(outputs),), np.nan, dtype=float)
     outcomes: np.ndarray = np.empty(shape, dtype=object)
     types: np.ndarray = np.full(shape, None, dtype=object)
     messages: np.ndarray = np.full(shape, None, dtype=object)

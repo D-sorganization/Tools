@@ -2,6 +2,11 @@
 
 ## 2026-08-12 #4142 integrated authority cross-review hardening
 
+- Protected #4404 CI exposed two Mypy 1.13 inference errors on the new Morris
+  observation NumPy allocations. Explicit `np.ndarray` annotations close that
+  delta-only gate without changing runtime behavior or schemas. The replacement
+  exact head still requires all protected checks before merge.
+
 - Adversarial review closed PyQt per-field precision loss, same-request crossed
   report/raw evidence, output parsing before resource caps, serializer/parser
   cap asymmetry, unavailable OAT dominance, and React unavailable-as-zero drift.

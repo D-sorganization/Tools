@@ -5,6 +5,12 @@
 
 ## 2026-08-12 Integrated authority cross-review hardening (#4142)
 
+Protected #4404 CI found that Mypy 1.13 could not infer the dtype of the two
+new Morris observation `values` allocations. Both allocations now carry an
+explicit `np.ndarray` annotation; the authority contract and wire output are
+unchanged. Re-run the exact quality gate at the new head before relying on the
+previous local green evidence.
+
 Independent adversarial review of the combined raw-authority, PyQt plan-v2,
 and pairwise-finite attribution head identified and drove closure of precision,
 evidence-binding, allocation-order, unavailable-dominance, and cross-runtime

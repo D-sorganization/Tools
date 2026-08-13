@@ -26,11 +26,17 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.42                                    |
-| **Spec Version**        | 1.16.42                                    |
+| **Current Version**     | 1.16.43                                    |
+| **Spec Version**        | 1.16.43                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Morris observation CI type contract (#4142)
+
+Version 1.16.43 explicitly types both Morris observation value-array
+allocations as NumPy arrays. This satisfies the protected Mypy 1.13 delta gate
+without changing array construction, runtime behavior, or either wire schema.
 
 ### 2026-08-12 Variation authority cross-review hardening (#4142)
 
@@ -3097,6 +3103,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.43 | fix(rate-of-closure, #4142): make the Morris observation value-array types explicit for the protected Mypy 1.13 delta gate without changing runtime or wire contracts. |
 | 2026-08-12 | 1.16.42 | fix(rate-of-closure, #4142): retain PyQt numeric authority per field; bind raw Morris observations to exact recomputed aggregate reports outside the registry mutex; enforce symmetric pre-materialization archive limits; and preserve unavailable OAT dominance/normalization across Python and React. |
 | 2026-08-12 | 1.16.41 | fix(rate-of-closure, #4142 R13.1): make Python/React OAT and Spearman attribution pairwise finite with explicit minimum counts and constant-column unavailability, pinned by one shared missing-data fixture. |
 | 2026-08-12 | 1.16.40 | fix(rate-of-closure, #4142 R10.4/R11.4): make PyQt plan-v2 load/build/save lossless for stable spec IDs, localized loci, unedited numeric authority, and dependence groups; preflight all editor representability before atomic mutation. |
