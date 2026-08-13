@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Atomic save and Explorer-scenario invalidation (#4142)
+
+- Authority JSON save now preflights canonical UTF-8 bytes against the 8 MiB
+  cap, stages beside the destination, flushes/fsyncs, and atomically replaces.
+  Every pre-replacement failure preserves the prior file and cleans its stage.
+- Effective Explorer-based delivery/swing scenario changes cancel both stale
+  result authority and any paired worker, advance the paired generation, clear
+  live production/authority with an explanation, and reject late callbacks.
+- Registry-default plans and Explorer changes to fields not consumed by the
+  current plan do not invalidate paired evidence. SPEC is 1.16.78; all
+  previously documented React/Rust/persistence/publication gaps remain open.
+
 ## 2026-08-13 Explicit PyQt paired-attribution execution (#4142)
 
 - `LocalizedAttributionRunDialog` filters the current swing plan to its

@@ -13,6 +13,7 @@ pytest.importorskip("pytestqt")
 
 from PyQt6.QtWidgets import QDialog  # noqa: E402
 
+from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab  # noqa: E402
 from rate_of_closure.variation.localized_attribution_producer import (  # noqa: E402
     produce_localized_attribution,
@@ -153,6 +154,81 @@ def test_mode_or_unavailable_simulation_fail_closed_and_clear_authority(
     )
 
 
+def test_explorer_scenario_change_cancels_and_rejects_late_success(
+    tab: VariationTab,
+) -> None:
+    prior = _authority()
+    production = produce_localized_attribution(_design())
+    tab._base_combo.setCurrentIndex(1)
+    tab._localized_attribution.set_authority(prior)
+    tab._attribution_production = production
+    generation = tab._attribution_generation
+    calls: list[str] = []
+
+    class RunningWorker:
+        def isRunning(self) -> bool:
+            return True
+
+        def cancel(self) -> None:
+            calls.append("cancel")
+
+        def wait(self, _timeout: int) -> bool:
+            return True
+
+    tab._attribution_worker = RunningWorker()  # type: ignore[assignment]
+    tab.set_scenario(ImpactScenario(clubhead_speed_mph=113.0, impact_offset_toe_mm=1.0))
+
+    assert calls == ["cancel"]
+    assert tab._attribution_generation == generation + 1
+    assert tab.attribution_production() is None
+    assert tab._localized_attribution.authority() is None
+    assert (
+        "Explorer scenario changed" in tab._localized_attribution._study_status.text()
+    )
+
+    tab._accept_attribution_succeeded(generation, production)
+    assert tab.attribution_production() is None
+    assert tab._localized_attribution.authority() is None
+    tab._attribution_worker = None
+
+    tab._localized_attribution.set_authority(prior)
+    tab._attribution_production = production
+    tab.set_scenario(ImpactScenario(clubhead_speed_mph=113.0, impact_offset_toe_mm=2.0))
+    assert tab.attribution_production() is None
+    assert tab._localized_attribution.authority() is None
+
+
+def test_scenario_change_does_not_invalidate_registry_based_plan(
+    tab: VariationTab,
+) -> None:
+    prior = _authority()
+    production = produce_localized_attribution(_design())
+    assert tab._base_combo.currentIndex() == 0
+    tab._localized_attribution.set_authority(prior)
+    tab._attribution_production = production
+    generation = tab._attribution_generation
+
+    tab.set_scenario(ImpactScenario(clubhead_speed_mph=114.0))
+
+    assert tab._attribution_generation == generation
+    assert tab.attribution_production() is production
+    assert tab._localized_attribution.authority() == prior
+
+
+def test_explorer_scenario_change_ignores_fields_outside_plan(
+    tab: VariationTab,
+) -> None:
+    prior = _authority()
+    tab._base_combo.setCurrentIndex(1)
+    tab._localized_attribution.set_authority(prior)
+    generation = tab._attribution_generation
+
+    tab.set_scenario(ImpactScenario(clubhead_speed_mph=113.0, omega_plane_dps=1800.0))
+
+    assert tab._attribution_generation == generation
+    assert tab._localized_attribution.authority() == prior
+
+
 def test_stop_cancels_and_joins_separate_worker(tab: VariationTab) -> None:
     calls: list[str] = []
 
@@ -209,3 +285,29 @@ def test_archive_load_is_atomic_and_visibly_unverified(
     assert "not rerun or provenance-verified" in (
         tab._localized_attribution._study_status.text()
     )
+
+
+def test_archive_save_failure_is_visible_and_preserves_authority(
+    tab: VariationTab, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    prior = _authority()
+    tab._localized_attribution.set_authority(prior)
+    destination = tmp_path / "authority.json"
+    monkeypatch.setattr(
+        "rate_of_closure.ui.pyqt6.variation_attribution_controller."
+        "QFileDialog.getSaveFileName",
+        staticmethod(lambda *_args, **_kwargs: (str(destination), "JSON (*.json)")),
+    )
+    monkeypatch.setattr(
+        "rate_of_closure.ui.pyqt6.variation_attribution_controller."
+        "write_authority_json",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(ValueError("byte cap")),
+    )
+
+    tab._on_save_attribution_authority()
+
+    assert tab._localized_attribution.authority() == prior
+    assert tab._localized_attribution._study_status.text() == (
+        "Cannot save paired authority: byte cap"
+    )
+    assert not destination.exists()

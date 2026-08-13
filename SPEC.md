@@ -26,11 +26,28 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.77                                    |
-| **Spec Version**        | 1.16.77                                    |
+| **Current Version**     | 1.16.78                                    |
+| **Spec Version**        | 1.16.78                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Paired-authority persistence and scenario closure (#4142)
+
+Version 1.16.78 makes authority-only saving match its durability claim. The
+writer serializes canonical UTF-8 bytes and enforces the 8 MiB cap before any
+filesystem mutation, stages in the destination directory, flushes and fsyncs,
+then atomically replaces the destination. Any staging, flush, or replacement
+failure removes the temporary file and leaves an existing destination intact.
+
+Changing the Explorer scenario now invalidates ordinary variation results and
+the separate paired-study generation only when fields consumed by the selected
+Explorer-based delivery or swing plan actually change. A running paired worker
+is cancelled, live production and displayed authority are cleared with a
+visible explanation, and late success cannot repopulate stale evidence.
+Registry-based plans and scenario fields outside the current plan do not incur
+false invalidation. The remaining React, full production-package persistence,
+Rust, publication, and epic gaps from 1.16.77 are unchanged.
 
 ### 2026-08-13 Explicit PyQt paired-attribution workflow (#4142)
 
@@ -4086,6 +4103,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.78 | fix(rate-of-closure, #4142): cap canonical authority bytes before mutation and use same-directory flushed/fsynced atomic replacement with failure cleanup; invalidate and cancel paired authority on effective Explorer-scenario plan changes while preserving registry-based and otherwise unaffected plan authority. |
 | 2026-08-13 | 1.16.77 | feat(rate-of-closure, #4142 R13.3): add an explicit separate PyQt paired-attribution workflow with exact source/joint/window/delta confirmation, canonical state/impact/shot targets, independent `2N` progress/cancellation/generation authority, stale-result and plan/config invalidation safety, atomic bounded authority-only JSON persistence with an archived-execution disclaimer, and proof that ordinary Monte Carlo never starts the producer; retain React Worker production, full production-package persistence, Rust parity, protected publication, and remaining epic gates as open. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4426): give the validated owned explicit-sample matrix an `NDArray[float64]` return boundary, closing hosted Mypy 1.13 `no-any-return` without changing numerical, ownership, request, producer, or archive behavior. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4142 R13.3): make paired production self-verifying by retaining and recomputing exact design/request/result/authority bindings; reject cross-design request swaps, authority relabeling, and pair payload tampering; close the producer Mypy no-any boundary. |

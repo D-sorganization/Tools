@@ -230,7 +230,7 @@ class VariationAttributionControllerMixin:
             return
         try:
             write_authority_json(path, authority)
-        except OSError as error:
+        except (ContractViolationError, OSError, TypeError, ValueError) as error:
             self._localized_attribution.set_study_status(
                 f"Cannot save paired authority: {error}"
             )

@@ -214,7 +214,25 @@ class VariationTab(
 
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (base-source 'Explorer Scenario')."""
+        prior_values = self._scenario_plan_values(self._scenario)
+        next_values = self._scenario_plan_values(scenario)
         self._scenario = scenario
+        if prior_values != next_values:
+            self._invalidate_current_study()
+            self._invalidate_attribution(
+                "Explorer scenario changed; prior paired authority was cleared."
+            )
+
+    def _scenario_plan_values(self, scenario: ImpactScenario) -> tuple[float, ...]:
+        """Return only Explorer-scenario fields that define the current plan."""
+        if self._base_combo.currentIndex() != 1:
+            return ()
+        offsets = (scenario.impact_offset_toe_mm, scenario.impact_offset_high_mm)
+        if self.mode() == "delivery":
+            return (scenario.clubhead_speed_mph, *offsets)
+        if self.mode() == "swing":
+            return offsets
+        return ()
 
     def set_simulation_config(self, config: SimulationConfig) -> None:
         """Set the complete base request used by trace-capable swing studies."""

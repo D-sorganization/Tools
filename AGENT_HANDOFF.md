@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Paired-authority persistence/scenario review closure (#4142)
+
+Version 1.16.78 caps canonical authority bytes before touching the destination,
+then writes a same-directory temporary file, flushes/fsyncs it, and completes
+with `os.replace`. Oversize, staging, flush, and replace failures preserve the
+prior destination and remove the temporary file.
+
+`VariationTab.set_scenario` now compares only Explorer fields that define the
+current plan. Effective Explorer delivery/swing changes invalidate ordinary
+results, cancel the paired worker, advance its generation, and visibly clear
+live production/authority so late success is ignored. Registry-based plans and
+unconsumed scenario fields retain valid authority. React and the other stated
+1.16.77 gaps remain open.
+
 ## 2026-08-13 Explicit PyQt paired-attribution workflow (#4142)
 
 Version 1.16.77 wires the genuine paired producer into PyQt as an explicitly

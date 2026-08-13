@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -66,8 +68,28 @@ def read_authority_json(path: str | Path) -> AttributionAuthority:
 
 
 def write_authority_json(path: str | Path, authority: AttributionAuthority) -> None:
-    """Write canonical authority-only JSON without claiming run provenance."""
-    Path(path).write_text(authority_to_json(authority), encoding="utf-8", newline="")
+    """Atomically write bounded authority JSON without claiming provenance."""
+    payload = authority_to_json(authority).encode("utf-8")
+    require(
+        len(payload) <= MAX_AUTHORITY_JSON_BYTES,
+        "authority JSON exceeds byte cap",
+    )
+    destination = Path(path)
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{destination.name}.",
+        suffix=".tmp",
+        dir=destination.parent,
+    )
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, destination)
+    except BaseException:
+        temporary.unlink(missing_ok=True)
+        raise
 
 
 __all__ = [

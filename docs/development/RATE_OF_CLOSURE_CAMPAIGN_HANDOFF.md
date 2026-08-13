@@ -1,5 +1,20 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 paired-workflow review closure
+
+- Authority-only JSON save is now genuinely bounded and atomic: canonical
+  bytes are capped before mutation, staged in the destination directory,
+  flushed/fsynced, then installed with atomic replacement. Interrupted flush
+  or replacement preserves the existing file and leaves no temporary stage.
+- When the Explorer-based plan consumes a changed scenario value, PyQt cancels
+  the separate paired study, advances its generation, clears its live
+  production/authority with a visible reason, and rejects late success. No
+  invalidation occurs for registry-based plans or unconsumed scenario fields.
+- The correction does not expand scope: React production execution, complete
+  production-package persistence, Rust parity, publication, and remaining
+  #4142 acceptance gates remain open.
+- SPEC advances to 1.16.78.
+
 ## 2026-08-13 #4142 explicit PyQt paired-study workflow
 
 - The PyQt Localized Attribution surface now requires an explicit

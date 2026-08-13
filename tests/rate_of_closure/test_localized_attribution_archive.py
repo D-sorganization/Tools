@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -50,6 +51,54 @@ def test_reader_rejects_oversized_bytes_before_json_parse(tmp_path: Path) -> Non
 
     with pytest.raises(ContractViolationError, match="byte cap"):
         read_authority_json(path)
+
+
+def test_writer_rejects_oversized_bytes_before_mutating_destination(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "authority.json"
+    path.write_bytes(b"prior")
+    monkeypatch.setattr(
+        "rate_of_closure.ui.pyqt6.localized_attribution_archive.authority_to_json",
+        lambda _authority: "x" * (MAX_AUTHORITY_JSON_BYTES + 1),
+    )
+
+    with pytest.raises(ContractViolationError, match="byte cap"):
+        write_authority_json(path, _authority())
+
+    assert path.read_bytes() == b"prior"
+    assert tuple(tmp_path.glob(".authority.json.*.tmp")) == ()
+
+
+@pytest.mark.parametrize("failure_point", ["flush", "replace"])
+def test_writer_failure_preserves_destination_and_removes_stage(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    failure_point: str,
+) -> None:
+    path = tmp_path / "authority.json"
+    path.write_bytes(b"prior")
+
+    if failure_point == "flush":
+        monkeypatch.setattr(
+            os,
+            "fsync",
+            lambda _descriptor: (_ for _ in ()).throw(OSError("interrupted flush")),
+        )
+    else:
+        monkeypatch.setattr(
+            os,
+            "replace",
+            lambda _source, _target: (_ for _ in ()).throw(
+                OSError("interrupted replace")
+            ),
+        )
+
+    with pytest.raises(OSError, match="interrupted"):
+        write_authority_json(path, _authority())
+
+    assert path.read_bytes() == b"prior"
+    assert tuple(tmp_path.glob(".authority.json.*.tmp")) == ()
 
 
 @pytest.mark.parametrize("text", ["not-json", '{"schema_id":NaN}'])
