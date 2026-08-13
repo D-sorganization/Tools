@@ -14,8 +14,6 @@ from .serialization import (
     assembly_to_json,
     assembly_to_json_dict,
 )
-<<<<<<< HEAD
-=======
 from .shaft_assembly import shaft_component_mass_properties
 from .shaft_dynamics import (
     ShaftModalResponse,
@@ -73,7 +71,6 @@ from .turf_variation import (
     TurfVariationPlan,
     turf_profiles_for_variation_plan,
 )
->>>>>>> origin/feat/4271-regional-surface-transitions
 from .types import (
     AssembledMassProperties,
     ClubComponent,
@@ -83,11 +80,6 @@ from .types import (
     ComponentRole,
     RigidTransform,
 )
-<<<<<<< HEAD
-
-__all__ = [
-    "CURRENT_FORMAT",
-=======
 from .wedge_cad import WedgeMeasuredMetrics, WedgeSolidResult, build_wedge_solid
 from .wedge_export import (
     WEDGE_EXPORT_FORMAT,
@@ -144,7 +136,6 @@ from .wedge_turf_interaction import (
 __all__ = [
     "CURRENT_FORMAT",
     "CATEGORY_TURF",
->>>>>>> origin/feat/4271-regional-surface-transitions
     "LEGACY_FORMAT",
     "AssembledMassProperties",
     "ClubAssembly",
@@ -153,16 +144,12 @@ __all__ = [
     "ClubLengthMeasurement",
     "ComponentMassProperties",
     "ComponentRole",
-<<<<<<< HEAD
     "RigidTransform",
-    "assemble_mass_properties",
-=======
     "ContactSequence",
     "ExtrapolationPolicy",
     "Handedness",
     "GroundPlane",
     "InstantaneousScrewAxis",
-    "RigidTransform",
     "ReducedTurfContactResult",
     "SHAFT_PROFILE_FORMAT",
     "ShaftProfile",
@@ -213,13 +200,10 @@ __all__ = [
     "analyze_wedge_kinematics",
     "analyze_wedge_ground_clearance",
     "angle_of_attack_deg",
->>>>>>> origin/feat/4271-regional-surface-transitions
     "assembly_from_json",
     "assembly_from_json_dict",
     "assembly_to_json",
     "assembly_to_json_dict",
-<<<<<<< HEAD
-=======
     "build_wedge_solid",
     "export_wedge_artifacts",
     "evaluate_turf_contact",
@@ -249,5 +233,4 @@ __all__ = [
     "wedge_ground_clearance_to_json_dict",
     "wedge_parameters_from_json",
     "wedge_parameters_to_json",
->>>>>>> origin/feat/4271-regional-surface-transitions
 ]

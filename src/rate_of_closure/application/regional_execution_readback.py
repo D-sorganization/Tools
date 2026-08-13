@@ -164,9 +164,9 @@ def regional_execution_readback(
     )
     return RegionalExecutionReadback(
         status=result.status.value,
-        failure_reason=None
-        if result.failure_reason is None
-        else result.failure_reason.value,
+        failure_reason=(
+            None if result.failure_reason is None else result.failure_reason.value
+        ),
         plan_id=result.plan_id,
         surface_id=result.surface_id,
         surface_provider_id=result.regional_plan.base_surface.provider_id,

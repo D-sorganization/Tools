@@ -296,9 +296,7 @@ class RepeatedBounceResult:
             expected_phase = (
                 GroundPhase.SKID
                 if impact.effective_restitution == 0.0
-                else GroundPhase.IMPACT
-                if index == 0
-                else GroundPhase.BOUNCE
+                else GroundPhase.IMPACT if index == 0 else GroundPhase.BOUNCE
             )
             if aligned[0].phase is not expected_phase:
                 raise ValueError("event-aligned trajectory phase is inconsistent")
