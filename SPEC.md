@@ -30,6 +30,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -48,6 +49,10 @@
 | **Current Version**     | 1.14.46                                    |
 | **Spec Version**        | 1.14.46                                    |
 >>>>>>> origin/feat/4284-track-clubhead
+=======
+| **Current Version**     | 1.14.53                                    |
+| **Spec Version**        | 1.14.53                                    |
+>>>>>>> origin/codex/4274-ground-playback-propagation
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4274-regional-surface-ui
 
@@ -67,6 +72,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -100,6 +106,95 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   protected issue/epic completion remain outside this child slice.
 
 >>>>>>> origin/feat/4284-track-clubhead
+=======
+### 2026-08-11 Matched Ground-Playback Inspection
+
+- PyQt6 and React expose additive `Ground Playback` workspaces without
+  replacing the existing `Ground Surfaces` editor. Both import either a strict
+  standalone ground result or an explicit validated regional-execution
+  envelope, reusing the envelope's nested ground result without running or
+  reimplementing physics.
+- A shared phase-safe absolute-time policy holds the lower recorded sample
+  across discontinuities and supports exact step, phase jump, play, pause,
+  restart, loop, and speed behavior. Interactive 3D views preserve physical
+  axis scale while allowing orbit, zoom, and reset. Summary, warning,
+  calibration, provenance, event, transition, and trajectory evidence remains
+  inspectable with accessible names and honest observed-end terminology.
+- Large evidence remains bounded at the presentation layer: binary frame
+  lookup avoids full scans during playback, visual paths retain a deterministic
+  maximum of 2,048 landmark-aware samples, and tables disclose their 256-row
+  window while the validated full result remains available to the timeline.
+- This slice does not add terrain meshes or changing normals, direct editor to
+  playback handoff, multi-run comparison, persistence, rendered visual QA,
+  camera presets/tracking, physics, or downstream UpstreamDrift parity. Keep
+  #4274 and #4267 open until those acceptance and protected-release gates land.
+
+### 2026-08-11 Qualified Regional-Ground Study Adapter
+
+- The Rate-owned `regional_ground_study_adapter` projects the existing
+  `FlightRegionalGroundPipelineResult` into the existing scalar-ensemble and
+  flight-metric contracts; it introduces neither a parallel study model nor
+  alternate ground physics.
+- Existing `metric.total_distance`, `metric.roll_distance`,
+  `metric.final_offline`, and `metric.bounce_count` IDs are populated only
+  after the existing strict `to_ground_model_result` boundary accepts a
+  regional `COMPLETE` plus ground `COMPLETE/REST` result with a summary.
+  Bounce-air, skid, surface-path, and final-downrange diagnostics use distinct
+  `ground.*` study keys. Carry remains a separate first-contact quantity and
+  is never relabeled as total distance.
+- Partial/time-limited and left-surface endpoints, missing summaries,
+  non-settled bounce outcomes, regional cancellation/failure, and typed flight
+  transfer failures retain null scalar values with exact cohort, status,
+  reason, model, and digest attributes. Applying any such outcome to flight
+  metric inputs clears stale ground output, so a solver cannot maximize a
+  censored observed endpoint as final-rest total distance.
+- This bounded child is Python and UI neutral. It adds no solver/capability
+  invocation, variation UI, wind strategy, persistence, TypeScript or compiled
+  implementation, four-surface parity, protected release evidence, or issue
+  completion. Keep #4273 and #4267 open.
+
+### 2026-08-11 Flight Through Regional Ground Pipeline
+
+- `execute_regional_ground_from_flight` is the UI-neutral Python composition
+  from exact flight output through the existing flight-to-ground transfer,
+  repeated-bounce executor, regional skid/roll executor, and ground-result
+  composer. It introduces no alternate physics.
+- Exact input records, the versioned capture threshold, and the plan's equality
+  to the launch-relative transfer surface are checked before bounce physics.
+  The optional regional execution callback is shared with bounce so preflight
+  cancellation cannot invoke skid/roll.
+- `FlightRegionalGroundPipelineResult` is a strict, bounded, versioned
+  in-memory composition record. It preserves the exact bounce request/result
+  pair, physical-request and joint bounce-input digests, exact regional plan
+  and canonical digest/provenance, and the existing regional envelope only
+  when bounce terminates `SETTLED_TO_SKID`.
+- Every other bounce termination remains its native typed reason and forbids a
+  fabricated regional result. The existing regional envelope remains
+  authoritative for regional cancellation/failure and complete/partial ground
+  results. No new wire schema or migration is warranted until a UI,
+  persistence, or cross-runtime consumer is designed.
+- #4271, #4273, and #4267 remain open. This child does not add clients,
+  TypeScript/Rust/WASM execution, profile calibration, persistence, playback,
+  target/solver/variation integration, downstream parity, or release evidence.
+
+### 2026-08-11 Shared Python Flight-to-Bounce Composition
+
+- `execute_repeated_bounce_from_flight` is the public UI-neutral Python seam
+  from exact flight output, launch conditions, transfer settings, capture
+  threshold, and optional cancellation into the existing repeated-bounce
+  request executor.
+- Exact nominal input types, callback shape, and the versioned capture-speed
+  constraint are checked before flight-to-ground transfer. The seam then
+  composes only `build_ground_simulation_request`, `RepeatedBounceRequest`, and
+  `execute_repeated_bounce_request`; it contains no copied physics.
+- Typed transfer errors propagate unchanged. Successful and cancelled runs
+  return the existing identity-validated request/result pair with its physical
+  request fingerprint and joint execution-input digest intact.
+- This child adds no UI/TypeScript/Rust/WASM work, persistence, playback,
+  camera behavior, regional-material chaining, skid/roll completion, or final
+  total-distance claim. Issues #4270 and #4267 remain open.
+
+>>>>>>> origin/codex/4274-ground-playback-propagation
 ### 2026-08-11 Regional Trajectory Inspection and Canonical Evidence Export
 
 - Matched PyQt6 and React evidence surfaces expose the already-validated raw
@@ -3087,6 +3182,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3096,6 +3192,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 >>>>>>> origin/feat/4284-track-clubhead
 | 2026-08-11 | 1.14.45 | docs(rate-of-closure, #4358): publish the reviewed camera-preset parity implementation `c0584faae7e0fe113e01f8c3ed3582853dfaf803` as ready-for-review PR #4358 over exact #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; record the first mergeable/unstable protected snapshot with quality in progress, remaining substantive jobs queued, no failure, and no approval; preserve `not_released` truth and all remaining #4284/#4218 acceptance gaps. |
 | 2026-08-11 | 1.14.44 | feat(rate-of-closure, #4284): add one strict shared-golden Python/TypeScript camera-preset contract and matched accessible PyQt6 `Club3DView` / React `ClubCanvas` controls for canonical Isometric, explicit-side Face On, exact +x Down the Line, -y Overhead, zoom-preserving Reset, and geometry-bounded Auto Fit; retain manual orbit while scaling, pin representative-driver fixed/moving start-impact-end bounds, and suppress only each exact PyQt projection's collapsed depth axis while restoring all axes for Isometric/custom orbit; keep tracking, tracking suspension, recenter, workspace persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI rendered QA, protected integration, release, and issue completion open. |
+=======
+| 2026-08-11 | 1.14.52 | chore(release, #4361 #4273 #4267): publish the independently reviewed qualified regional-ground study adapter as ready PR #4361 on exact #4360 head `74f1ceafd87f952a76917dc868baa6414f856144`; bind implementation commit `d71c43fdd729b35e1abe5573f41ed60201698608` while retaining protected review/check completion, solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, downstream release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.51 | feat(ground-study, #4273 #4267): add a UI-neutral strict adapter from the exact flight-through-regional-ground pipeline into the existing flight metric and scalar-ensemble contracts; admit canonical final ground metrics and bounce/skid detail only for regional complete plus ground complete/rest evidence, retain typed nullable cohorts and exact reasons/digests for partial, censored, cancelled, failed, non-settled, missing-summary, and transfer-failure outcomes, clear stale ground metric inputs on unavailable evidence, preserve carry versus total distance, and leave solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, protected release, and issue completion open. |
+| 2026-08-11 | 1.14.50 | chore(release, #4360 #4271 #4273 #4267): publish the qualified flight-through-regional-ground composition as ready PR #4360 on exact #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; bind implementation commit `090e835477d1f19614f37f978a1b8a0e2f50ae21` into the campaign handoff and manifest while retaining protected review/check completion, client integration, persistence, compiled-runtime parity, studies, downstream integration, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.49 | feat(ground-roll, #4271 #4273 #4267): add the UI-neutral `execute_regional_ground_from_flight` composition from exact flight output through the existing transfer, repeated-bounce, regional skid/roll, and ground-result authorities; validate exact inputs, capture, and launch-relative plan/base-surface identity before physics; add a strict bounded versioned in-memory result that preserves request/bounce/plan digests and provenance, requires regional execution exactly for `SETTLED_TO_SKID`, and retains every other bounce termination in its native typed contract without fabricated downstream evidence; centralize canonical regional-plan hashing while leaving wire schemas/migrations, UI/runtime parity, persistence, playback, calibration, target/solver/variation integration, protected evidence, release, and issue/epic completion open. |
+| 2026-08-11 | 1.14.48 | chore(release, #4359 #4270 #4267): publish the qualified flight-to-repeated-bounce composition as ready PR #4359 on exact #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`; bind its reviewed implementation commit `869b626e2d3ebd4097ae76b8fc9720cda6696947` into the campaign handoff and release manifest while retaining protected review/check completion, skid/roll, clients, compiled-runtime parity, downstream integration, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.47 | feat(ground-impact, #4270 #4267): add the public UI-neutral Python `execute_repeated_bounce_from_flight` composition facade with exact flight/launch/transfer types, callback and capture validation before transfer, unchanged typed transfer failures, and identity-safe delegation through the existing ground-request builder, repeated-bounce request, and executor; cover validation order, capture consumption, cancellation, identity/digests, and transfer failure without duplicating physics, while retaining UI/TypeScript/Rust/WASM work, persistence, playback, regional chaining, total distance, protected evidence, release, and issue/epic completion as open. |
+| 2026-08-11 | 1.14.46 | docs(rate-of-closure, #4203 #4279-#4282 #4285 #4288 #4302 #4304 #4332 #4335 #4339 #4342 #4350-#4357): reconcile the intact exact dependency heads and bases, record #4357 in the campaign carrier authority, and normalize every exact open dependency to ready-for-review without history changes; retain `not_released` truth because protected contexts remain queued and no approval is submitted. |
+| 2026-08-11 | 1.14.45 | docs(ground-impact, #4357): record ready-for-review publication of the UI-neutral repeated-bounce request executor at exact implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`, stacked on unchanged #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; retain `not_released` truth and leave protected checks, review, UI invocation, persistence, playback, compiled parity, regional chaining, downstream integration, and #4270/#4267 completion open. |
+| 2026-08-11 | 1.14.44 | feat(ground-impact, #4270): add the UI-neutral Python `execute_repeated_bounce_request` binding that accepts only an exact validated repeated-bounce request plus a callable-or-`None` cancellation check, consumes the request's capture threshold through its fixed-version settings, invokes the existing Python physics authority, and returns the existing identity-validated request/result pair; cover golden identity, capture behavior, preflight cancellation, canonical result round-trip pairing, and explicit public API while leaving schemas, UI construction and invocation, TypeScript/compiled physics, persistence, playback, regional chaining, downstream parity, protected evidence, release, and issue/epic completion open. |
+>>>>>>> origin/codex/4274-ground-playback-propagation
 | 2026-08-11 | 1.14.43 | docs(rate-of-closure, #4351-#4356): record exact published #4356 propagation head `345c329e6b6e3fc7a8fc981abf65795f356b94cf`, normal ready-for-review state for the exact #4351 through #4356 stack without base or history changes, and the first #4356 protected snapshot of one successful quality check, four skipped checks, twelve queued checks, no failure, and no review; preserve `not_released` truth and all implementation limitations. |
 | 2026-08-11 | 1.14.42 | merge(ground-roll, #4267 #4270 #4356): normally merge exact current repeated-bounce request-wire child `23897eac03e8a3edf4a37855f0ba05e8c2527986` first with exact published PR #4355 parent `a04d14e9308990e676e8c90ddb1d80e368dd1387` second without changing the `feat/4271-repeated-bounce-wire` base; preserve the complete strict cross-runtime `ground-repeated-bounce-request/v1` envelope, canonical ground-request and joint-execution-input digests, exact request/result identity pairing, shared golden corpus, and adversarial capture-speed digest follow-up together with the full repeated-bounce result-wire contract, cancellation evidence, both inherited explicit Boolean locals required by protected delta-MyPy, complete regional/ground ancestry, and all append-only handoff/SPEC/manifest history; keep UI request construction, executor invocation, persistence, playback, measured calibration, compiled and downstream parity, protected exact-head evidence, review, approval, dependency integration, release, and issue completion open. |
 | 2026-08-11 | 1.14.39 | feat(ground-impact, #4270): reuse the frozen `flight-to-ground-request/v1` authority inside a strict bounded Python/TypeScript `ground-repeated-bounce-request/v1` envelope; bind SI/frame/request/surface/model identities, canonical ground-request SHA-256, capture threshold, fixed model version, and joint execution-input SHA-256; add exact request/result identity pairing and shared golden parity while retaining Python as the only physics authority and leaving UI construction/invocation, persistence, compiled physics, downstream parity, protected evidence, release, and issue/epic completion open. |

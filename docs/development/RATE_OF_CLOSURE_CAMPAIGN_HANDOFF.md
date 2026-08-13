@@ -1,5 +1,6 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+<<<<<<< HEAD
 ## 2026-08-11 PR #4362 bounded Track Clubhead child
 
 Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
@@ -82,6 +83,156 @@ surfaces, UpstreamDrift consumers, protected review, release, and
 - The first protected snapshot is mergeable/unstable: two anti-phantom jobs
   are skipped, the quality gate is in progress, the remaining substantive jobs
   are queued, and no failure or approval is recorded.
+=======
+## 2026-08-11 PR #4363 matched ground playback
+
+- Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
+  starts from exact published PR #4361 head
+  `81de044075a4f72c6da8fedb972437df79a06ab8`; independently reviewed
+  implementation commit `7f7d4b01d83d914ae5684715dc20c69388cf799f`
+  hand-integrates only the initial playback slice.
+- Additive matched PyQt6/React workspaces import strict standalone results or
+  explicit validated regional envelopes. They reuse the nested result, reject
+  null/cancelled/failed/empty/missing-summary evidence, and never run physics.
+- The phase-safe absolute-time policy holds the lower sample at discontinuous
+  boundaries and gives exact step/jump/play/pause/restart/loop/speed behavior.
+  Locked physical scale, orbit/zoom/reset, honest endpoint labels, and
+  accessible summary, warning, calibration, provenance, and evidence tables
+  are shared product behavior.
+- Large results use binary frame lookup, at most 2,048 landmark-aware visual
+  points, and disclosed 256-row tables while retaining the full validated
+  result. Local qualification passes all 1,125 Rate/shared-ground Python tests
+  and all 119 React files / 754 tests. Ruff/Black, strict scoped MyPy, Bandit,
+  ESLint, TypeScript type-check, production build, manifest, documentation,
+  400-line new-module budget, and diff gates are green. Fresh protected
+  current-head checks, dependency order, and ordinary merge gates remain.
+- Keep #4274/#4267 open for terrain meshes/changing normals, direct editor
+  handoff, comparison, persistence, rendered visual QA, camera presets and
+  tracking, downstream parity, and protected CI/review/release.
+
+## 2026-08-11 PR #4361 qualified regional-ground study adapter
+
+- Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)
+  starts from exact published PR #4360 head
+  `74f1ceafd87f952a76917dc868baa6414f856144`; its independently reviewed
+  implementation commit is `d71c43fdd729b35e1abe5573f41ed60201698608`.
+- Contract and historical-worktree audits retained only the existing
+  complete-rest qualification invariant and scalar taxonomy. The adapter
+  reuses `to_ground_model_result`, `FlightMetricInputs`, and
+  `ScalarEnsembleDataset`; it does not import the stale parallel study model
+  or its numeric censored endpoints.
+- Regional complete plus ground complete/rest/summary evidence can populate
+  canonical total, roll, final-offline, and bounce-count metrics and distinct
+  bounce-air/skid/surface-path/final-downrange detail. Carry remains distinct.
+  Partial/left-surface, every non-settled bounce reason, regional
+  cancelled/failed, missing-summary, and typed transfer-error outcomes keep
+  null values with exact typed status/reason/model/digest attributes. An
+  unqualified outcome clears stale ground metric inputs.
+- Seven focused tests and 1,299 Rate/flight/ground tests pass. Ruff,
+  strict MyPy, pinned Bandit, manifest validation plus 8 manifest tests,
+  documentation governance, blocking-quality, minimum-test, default module
+  size, and diff gates pass. Inherited main-relative assertion and 400-line
+  findings do not include this 328-line production module or its
+  assertion-bearing test.
+- Solver/capability invocation, variation UI, wind strategy, persistence,
+  TypeScript/compiled and four-surface parity, protected CI/review,
+  protected release, and #4273/#4267 completion remain open.
+
+## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
+
+- Ready-for-review PR
+  [#4360](https://github.com/D-sorganization/Tools/pull/4360) on
+  `feat/4271-flight-regional-ground-pipeline` starts from exact published PR
+  #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; its reviewed implementation
+  commit is `090e835477d1f19614f37f978a1b8a0e2f50ae21`.
+- Audit showed the regional envelope cannot honestly represent bounce
+  time/event limits or no-recontact. The new UI-neutral composition validates
+  exact inputs, capture, and launch-relative plan/base equality before physics,
+  then delegates only to existing flight/bounce and regional-ground
+  authorities.
+- Its strict bounded versioned in-memory result retains the exact bounce pair,
+  ground and joint bounce-input digests, plan/digest/provenance, and optional
+  existing regional envelope. The envelope exists exactly for a settled
+  bounce; all five non-settled reasons remain native and skip regional physics.
+  Canonical plan hashing is centralized in the regional-plan authority.
+- RED captured missing module/result/exports; GREEN passed 17 pipeline/public
+  tests; REFACTOR passed 39 pipeline/public/regional tests. All 377 flight and
+  ground tests pass. Ruff check/format, scoped Black, protected and
+  import-following MyPy, Bandit, placeholder/diff checks, documentation,
+  blocking-quality, minimum-test, test-assertion, changed-Python, both LOC,
+  campaign-manifest, and 11 manifest/layout gates are green. Explicit casts at
+  dynamic wire-parser boundaries satisfy protected skipped-import MyPy without
+  runtime or canonical-byte changes. Standalone Black retains one inherited
+  preference in `test_contract_api.py`; authoritative Ruff is green and its
+  delta contains only required public API entries.
+- The ready PR remains `not_released` pending protected checks and review. No
+  wire/migration, clients, TypeScript/Rust/WASM, persistence, playback,
+  calibration, study integration, protected evidence, or release is claimed.
+  Keep #4271, #4273, and #4267 open.
+
+## 2026-08-11 PR #4359 shared Python flight-to-bounce composition
+
+- Ready-for-review PR
+  [#4359](https://github.com/D-sorganization/Tools/pull/4359) on
+  `feat/4270-flight-bounce-execution` starts from exact clean published Tools
+  #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`; its reviewed implementation
+  commit is `869b626e2d3ebd4097ae76b8fc9720cda6696947`.
+- The public `execute_repeated_bounce_from_flight` seam validates exact flight,
+  launch, and transfer types plus callback and capture inputs before transfer,
+  then composes the existing request builder, strict repeated-bounce request,
+  and UI-neutral executor. It adds no physics and preserves typed transfer
+  failures and the existing identity/digest evidence.
+- RED-GREEN evidence captured the missing module/export first. Independent
+  follow-up coverage proves exact transfer-error messages, fields, and reasons
+  plus zero executor calls for no-contact, grazing, and missing-angular-state
+  paths. Seventeen focused tests and all 365 flight-plus-ground tests pass.
+  Ruff check/format, scoped
+  Black, protected and import-following MyPy, Bandit, placeholder/diff checks,
+  documentation and blocking-quality governance, minimum-test/test-assertion
+  contracts, changed-Python and module-size policies, the campaign manifest,
+  and 11 manifest/layout tests are green. Standalone Black retains one
+  inherited advisory in `test_contract_api.py`; authoritative Ruff is green
+  and its only delta is the public API entry. The committed changed-file size
+  gate is green with zero violations across four changed Python files.
+- The ready PR is mergeable, but protected checks and review are pending, so it
+  remains `not_released`. PyQt6/React UI,
+  TypeScript/Rust/WASM physics, persistence, playback, camera behavior,
+  regional chaining, skid/roll completion, final distance, protected evidence,
+  and #4270/#4267 completion remain explicitly open.
+
+## 2026-08-11 PR #4357 repeated-bounce request execution binding
+
+- Ready-for-review PR
+  [#4357](https://github.com/D-sorganization/Tools/pull/4357) on
+  `feat/4270-repeated-bounce-execution` starts exactly from published #4356
+  head `2387430fc78baa92ba122c7ad008a498118bf62d` and is published at
+  implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`.
+- The candidate adds the UI-neutral Python
+  `execute_repeated_bounce_request` boundary. It accepts only the exact strict
+  request plus callable-or-`None` cancellation, consumes the request-bound
+  capture threshold through fixed-version settings, invokes the existing
+  Python physics authority, and returns the existing identity-validated
+  request/result pair. Schemas, physics, TypeScript, and UIs are unchanged.
+- TDD recorded the expected missing-public-executor failure. Qualification is
+  green for 28 focused contract tests, the complete 189-test ground suite, 11
+  campaign-manifest/layout tests, Ruff check/format, Black, protected
+  changed-file MyPy, Bandit, clean placeholder/diff checks, documentation and
+  blocking-quality governance, minimum-test/test-assertion contracts,
+  changed-Python policy, module-size policy, and campaign-manifest validation.
+  A non-authoritative import-following MyPy probe reports three inherited
+  redundant casts in unchanged ground modules; the protected
+  `--follow-imports=skip` profile is green for the new production module.
+- This remains `not_released`; protected checks and review are pending. UI request construction
+  and invocation, persistence, playback, TypeScript/compiled physics,
+  regional-material chaining, measured terrain calibration, downstream parity,
+  protected exact-head evidence, review, approval, release, and issue/epic
+  completion remain open.
+- Exact open dependencies #4203 through #4357 are now ready for review without
+  base or history changes. The release reconciliation found no current-head
+  failing check, but every open PR still had queued protected contexts and no
+  submitted approval. The manifest records the reconciled parent heads and
+  #4357 without claiming protected completion or release.
+>>>>>>> origin/codex/4274-ground-playback-propagation
 
 ## 2026-08-11 PR #4356 published current-parent propagation
 

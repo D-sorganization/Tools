@@ -84,7 +84,7 @@
       "pr": 4203,
       "branch": "feat/4181-launch-monitor-registry",
       "base_branch": "feat/4189-dplane",
-      "head_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
+      "head_sha": "7abce9ad767fe8311da66a1e5998b892ea3ca9de",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -104,7 +104,7 @@
       "pr": 4279,
       "branch": "feat/4218-toolstrip-workspace",
       "base_branch": "feat/4181-launch-monitor-registry",
-      "head_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
+      "head_sha": "efbca84095b617b4018732f7802c2da3f0525387",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -114,7 +114,7 @@
       "pr": 4280,
       "branch": "feat/4144-variation-export-continuation",
       "base_branch": "feat/4218-toolstrip-workspace",
-      "head_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
+      "head_sha": "e6c7460a01082631565fb9ed48aa32538bd7772c",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -124,7 +124,7 @@
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
+      "head_sha": "9321c1d2e091b8c7e5a4a83aa9ad726290e7fb5a",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "head_sha": "3faf9e9493c9ba37168d9f65ab10cafeedc2a72f",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059",
+      "head_sha": "584e4e53a7990053a346938c4e45538786887ec7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d",
+      "head_sha": "c39297d37a17d5d8d3520ed62c5563cdcc609cab",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -194,7 +194,7 @@
       "pr": 4302,
       "branch": "feat/4270-ground-impact-bounce",
       "base_branch": "feat/4269-flight-ground-transfer",
-      "head_sha": "cf6e72bad98e5f36f782254942e6895b8b71e670",
+      "head_sha": "62beb3e1aa951645fd556a53f9cbae4bb46c47e5",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -204,7 +204,7 @@
       "pr": 4304,
       "branch": "feat/4271-ground-skid-roll",
       "base_branch": "feat/4270-ground-impact-bounce",
-      "head_sha": "0ea6740965068542e9d8c7449e06ec07d88969e0",
+      "head_sha": "3f861c1faaa7455faee92eaa7f813174667208e0",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -214,7 +214,7 @@
       "pr": 4332,
       "branch": "feat/4271-regional-surface-transitions",
       "base_branch": "feat/4271-ground-skid-roll",
-      "head_sha": "04ccf08dd990de1cd056a3420e67772773a4be2e",
+      "head_sha": "5ac3c1f233de30dd42eeac57073cbdb149bde652",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -224,7 +224,7 @@
       "pr": 4335,
       "branch": "feat/4271-regional-wire-contract",
       "base_branch": "feat/4271-regional-surface-transitions",
-      "head_sha": "9e01ccc3e891cc45907293751a192624195a77a5",
+      "head_sha": "8f933ed8dcb29e55ece4ec6bb1e60813f6794d57",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -314,7 +314,37 @@
       "pr": 4356,
       "branch": "feat/4270-repeated-bounce-request-wire",
       "base_branch": "feat/4271-repeated-bounce-wire",
-      "head_sha": "345c329e6b6e3fc7a8fc981abf65795f356b94cf",
+      "head_sha": "2387430fc78baa92ba122c7ad008a498118bf62d",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4357",
+      "pr": 4357,
+      "branch": "feat/4270-repeated-bounce-execution",
+      "base_branch": "feat/4270-repeated-bounce-request-wire",
+      "head_sha": "c492b52f9f7615c5bc38e780965167cc8f64327c",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4359",
+      "pr": 4359,
+      "branch": "feat/4270-flight-bounce-execution",
+      "base_branch": "feat/4270-repeated-bounce-execution",
+      "head_sha": "e53c6fb1bd273292c02085ee5d0a2b5497820871",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4360",
+      "pr": 4360,
+      "branch": "feat/4271-flight-regional-ground-pipeline",
+      "base_branch": "feat/4270-flight-bounce-execution",
+      "head_sha": "090e835477d1f19614f37f978a1b8a0e2f50ae21",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -467,6 +497,48 @@
       "source_paths": [
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-flight-bounce-local-869b",
+      "kind": "local",
+      "commit_sha": "869b626e2d3ebd4097ae76b8fc9720cda6696947",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests src/shared/python/swing_sim/ground/tests",
+        "python -m mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/flight/ground_bounce_execution.py",
+        "python -m ruff check src/shared/python/swing_sim/flight tests && python -m ruff format --check src/shared/python/swing_sim/flight tests",
+        "python scripts/rate_campaign_manifest.py"
+      ],
+      "summary": "The ready PR #4359 implementation passed 17 focused facade tests, all 365 flight-plus-ground tests, strict transfer-failure non-execution coverage, Ruff, MyPy, Bandit, documentation/governance, manifest, structural, and changed-file gates; protected review and checks remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/FLIGHT_TO_GROUND_CONTRACT.md",
+        "docs/specs/GROUND_IMPACT_BOUNCE.md"
+      ]
+    },
+    {
+      "id": "ground-flight-regional-local-090e",
+      "kind": "local",
+      "commit_sha": "090e835477d1f19614f37f978a1b8a0e2f50ae21",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests src/shared/python/swing_sim/ground/tests",
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests/test_regional_ground_pipeline.py src/shared/python/swing_sim/flight/tests/test_contract_api.py src/shared/python/swing_sim/ground/tests/test_regional_execution.py",
+        "python -m mypy --no-incremental --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/flight/regional_ground_pipeline.py src/shared/python/swing_sim/ground/regional_execution.py src/shared/python/swing_sim/ground/regional_execution_records.py src/shared/python/swing_sim/ground/regional_plan_records.py",
+        "python -m ruff check src/shared/python/swing_sim/flight src/shared/python/swing_sim/ground && python -m ruff format --check src/shared/python/swing_sim/flight src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py"
+      ],
+      "summary": "The ready PR #4360 implementation passed all 377 flight-plus-ground tests, 39 focused pipeline/public/regional tests, an independent 28-test and strict-MyPy gate, static analysis, documentation/governance, manifest, assertion, and structural qualification; protected review and checks remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/FLIGHT_TO_GROUND_CONTRACT.md",
         "docs/specs/GROUND_SKID_ROLL.md"
       ]
     },
@@ -1333,6 +1405,14 @@
         {
           "kind": "repository_path",
           "value": "docs/specs/GROUND_SKID_ROLL.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/variation/regional_ground_study_adapter.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/simulation/ground_playback.py"
         }
       ],
       "tracked_issue_ids": [
@@ -1361,7 +1441,10 @@
         "pr-4353",
         "pr-4354",
         "pr-4355",
-        "pr-4356"
+        "pr-4356",
+        "pr-4357",
+        "pr-4359",
+        "pr-4360"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
@@ -1372,18 +1455,20 @@
       "evidence_ids": [
         "ground-impact-local-63a6",
         "ground-skid-roll-local-f475",
+        "ground-flight-bounce-local-869b",
+        "ground-flight-regional-local-090e",
         "ground-regional-local-1a48",
         "ground-regional-wire-local-74a0",
         "ground-regional-ui-local-cbb9",
         "ground-regional-ui-helper-local-d217",
         "ground-regional-io-local-8e1c"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, and repeated-bounce request-wire carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, and 4356. Published feature heads now include bounded raw-trajectory inspection/export, the strict 1 MiB Python/TypeScript RepeatedBounceResult prefix wire without browser physics, and the #4356 strict repeated-bounce request envelope with canonical ground-request and joint-execution-input digests, exact request/result pairing, and adversarial capture-speed digest coverage. Fresh completed protected evidence for the reconciled heads, UI request construction, executor invocation, persistence, interpolation/playback, workspace model-input persistence, measured calibration, changing geometry, compiled-runtime physics, and downstream parity remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, and matched ground-playback carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, and 4363. PR 4361 adds a UI-neutral complete-rest-only adapter into existing flight metrics and scalar ensembles while retaining partial, censored, cancelled, failed, non-settled, missing-summary, and transfer-failure outcomes as typed nullable rows. PR 4363 adds matched import-only PyQt6 and React playback with phase-safe absolute time, bounded presentation, and no physics. Fresh protected evidence, solver/capability invocation, variation UI, UI pipeline invocation, direct editor handoff, persistence, workspace model-input persistence, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
-        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; open PR #4353 adds bounded ground-event and regional-transition ledger inspection; open PR #4354 adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export; open PR #4355 adds strict import-only Python/TypeScript RepeatedBounceResult evidence serialization and parsing with exact nested invariants, a 1 MiB bound, and canonical SHA parity; and open PR #4356 adds the strict paired request envelope. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI executor input construction or invocation, prefix persistence, trajectory interpolation/playback, measured calibration, workspace model-input persistence, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
+        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python regional execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; open PR #4353 adds bounded ground-event and regional-transition ledger inspection; open PR #4354 adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export; open PR #4355 adds strict import-only Python/TypeScript RepeatedBounceResult evidence serialization and parsing with exact nested invariants, a 1 MiB bound, and canonical SHA parity; open PR #4356 adds the strict paired request envelope; open PR #4357 adds the UI-neutral Python request-to-solver binding; open PR #4359 adds strict composition from qualified flight output through the existing transfer and request boundaries to that executor; open PR #4360 composes the existing flight, bounce, regional skid/roll, and complete-result authorities behind one strict non-fabricating evidence contract; open PR #4361 adds a complete-rest-only Python adapter into existing metric and scalar-ensemble contracts without promoting censored numeric endpoints; and open PR #4363 adds strict phase-safe import-only playback to matched PyQt6/React workspaces. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, direct editor handoff, persistence, measured calibration, workspace model-input persistence, rendered visual QA, camera presets/tracking, compiled or TypeScript regional physics, solver/capability invocation, variation UI, wind strategy, and downstream surface adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191

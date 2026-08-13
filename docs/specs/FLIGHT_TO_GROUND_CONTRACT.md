@@ -130,6 +130,65 @@ ball data with reduced plane defaults. The older ground-only Rust flight API is
 retained as a compatibility path only where it can preserve the requested
 physics; unsupported tee transfer fails closed.
 
-This transfer still does not implement bounce, skid, or roll. UpstreamDrift
-terrain remains a one-way UpstreamDrift-to-Tools adapter concern; Tools must
-never import UpstreamDrift.
+The transfer itself still does not implement bounce, skid, or roll. The shared
+Python flight facade additionally exposes
+`execute_repeated_bounce_from_flight` as a narrow composition boundary. It
+requires exact `FlightResult`, `LaunchConditions`, and
+`FlightGroundTransferSettings` records, validates cancellation and capture
+inputs before transfer, delegates request construction to
+`build_ground_simulation_request`, wraps that exact request in the existing
+`RepeatedBounceRequest`, and delegates execution to
+`execute_repeated_bounce_request`. Typed transfer failures propagate unchanged,
+and the returned request/result pair retains the existing physical-request and
+joint execution-input digests. This adds no physics law or wire schema.
+
+UpstreamDrift terrain remains a one-way UpstreamDrift-to-Tools adapter concern;
+Tools must never import UpstreamDrift. UI invocation, persistence, playback,
+TypeScript/Rust/WASM execution, regional-material continuation, and final total
+distance remain separate work under #4267/#4270/#4271.
+
+## Flight through regional ground composition
+
+`execute_regional_ground_from_flight` composes the existing Python authorities
+without changing this frozen transfer schema. Before bounce physics it requires
+exact flight, launch, transfer, plan, and regional-options records; validates
+the versioned bounce capture threshold; derives the launch-relative surface
+through `launch_relative_surface`; and requires the plan base surface to equal
+that exact derived surface. It then delegates to
+`execute_repeated_bounce_from_flight` and, only after
+`SETTLED_TO_SKID`, to `execute_regional_ground`.
+
+The versioned in-memory `FlightRegionalGroundPipelineResult` embeds the exact
+bounce pair and regional plan plus their physical-request, joint bounce-input,
+and plan digests. A settled prefix requires the existing strict regional
+envelope; every other bounce termination forbids one and remains available
+through `BounceTerminationReason`. This prevents cancellation, bounds, no
+recontact, or numerical failure from being translated into an incompatible
+regional enum or fabricated ground result.
+
+The composition adds no wire schema because no new serialized information is
+needed: its nested bounce, plan, regional, and ground contracts remain the
+serialization authorities.
+
+## Qualified study metric boundary
+
+The UI-neutral Rate adapter consumes either the exact pipeline result or its
+typed `FlightGroundTransferError`. It may attach the existing
+`GroundModelResult` to `FlightMetricInputs` only when the regional envelope is
+`COMPLETE` and the embedded result is `COMPLETE`, terminates at `REST`, and has
+a summary. That path delegates to `to_ground_model_result`; it does not read a
+partial endpoint into an optimizer-eligible metric. Any other outcome clears
+the ground DTO so the existing canonical metrics remain typed unavailable.
+
+For downstream variation the adapter emits the existing
+`scalar-ensemble/v1` contract. Existing flight metric IDs remain under
+`metric.*`; bounce-air, skid, surface-path, and final-downrange detail use
+explicit `ground.*` keys. Partial/censored, cancelled, failed, non-settled,
+missing-summary, and transfer-failure rows contain null numeric values plus
+their available typed status, reason, model, and SHA-256 identity attributes.
+Carry remains first-contact distance and is never substituted for final total
+distance.
+
+UI/runtime parity, persistence, playback, calibration, target/solver and
+capability invocation, variation UI, wind strategy, downstream consumers, and
+#4271/#4273/#4267 completion remain open.

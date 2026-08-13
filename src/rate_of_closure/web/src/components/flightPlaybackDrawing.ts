@@ -1,6 +1,7 @@
 /** Dependency-free, scale-locked orthographic 3D ball-flight drawing. */
 
 import type { FlightPoint } from "../model/flight";
+import type { GroundTrajectoryPoint } from "../model/flightGroundTypes";
 import type { Vec3 } from "../model/simulation";
 import {
   spatialTargetHalfExtents,
@@ -56,9 +57,10 @@ function extents(
   points: readonly FlightPoint[],
   comparison: readonly FlightPoint[],
   target?: SpatialTargetTs,
+  includeOrigin = true,
 ): Bounds {
   const positions = [...points, ...comparison].map((point) => point.position);
-  positions.push([0, 0, 0]);
+  if (includeOrigin) positions.push([0, 0, 0]);
   if (target) {
     const center = target.point.appCoordinatesM;
     const half = spatialTargetHalfExtents(target);
@@ -80,8 +82,10 @@ function createProjection(
   width: number,
   height: number,
   target?: SpatialTargetTs,
+  minimumExtentM = MIN_EXTENT_M,
+  includeOrigin = true,
 ): Projection {
-  const bounds = extents(points, comparison, target);
+  const bounds = extents(points, comparison, target, includeOrigin);
   const center = bounds.min.map((value, axis) =>
     (value + bounds.max[axis]) / 2,
   ) as Vec3;
@@ -96,8 +100,8 @@ function createProjection(
   const maxX = Math.max(...rotated.map((point) => point.x));
   const minY = Math.min(...rotated.map((point) => point.y));
   const maxY = Math.max(...rotated.map((point) => point.y));
-  const scaleX = (width - 2 * PADDING_PX) / Math.max(maxX - minX, MIN_EXTENT_M);
-  const scaleY = (height - 2 * PADDING_PX) / Math.max(maxY - minY, MIN_EXTENT_M);
+  const scaleX = (width - 2 * PADDING_PX) / Math.max(maxX - minX, minimumExtentM);
+  const scaleY = (height - 2 * PADDING_PX) / Math.max(maxY - minY, minimumExtentM);
   const pixelsPerMeter = Math.min(scaleX, scaleY) * camera.zoom;
   const centerX = width / 2 - ((minX + maxX) / 2) * pixelsPerMeter;
   const centerY = height / 2 - ((minY + maxY) / 2) * pixelsPerMeter;
@@ -221,12 +225,12 @@ function drawGroundAxes(
   carryM: number,
   heightM: number,
   lateralM: number,
+  origin: Vec3 = [0, 0, 0],
 ): void {
-  const origin: Vec3 = [0, 0, 0];
   const axes: Array<[Vec3, string, string]> = [
-    [[carryM, 0, 0], "#38bdf8", "x target [m]"],
-    [[0, heightM, 0], "#f59e0b", "y up [m]"],
-    [[0, 0, lateralM], "#a78bfa", "z right [m]"],
+    [[origin[0] + carryM, origin[1], origin[2]], "#38bdf8", "x target [m]"],
+    [[origin[0], origin[1] + heightM, origin[2]], "#f59e0b", "y up [m]"],
+    [[origin[0], origin[1], origin[2] + lateralM], "#a78bfa", "z right [m]"],
   ];
   const start = projection.point(origin);
   axes.forEach(([endPosition, color, label]) => {
@@ -240,6 +244,91 @@ function drawGroundAxes(
     context.fillStyle = color;
     context.fillText(label, end.x + 4, end.y - 4);
   });
+}
+
+const GROUND_PHASE_COLORS = {
+  impact: "#ef476f",
+  bounce: "#a78bfa",
+  skid: "#f59e0b",
+  roll: "#34d399",
+  rest: "#60a5fa",
+} as const;
+const GROUND_MINIMUM_EXTENT_M = 0.05;
+
+/** Draw a strict phase-colored ground result with first-contact and end markers. */
+export function drawGroundPlayback(
+  canvas: HTMLCanvasElement,
+  points: readonly GroundTrajectoryPoint[],
+  ballPosition: Vec3,
+  camera: PlaybackCamera,
+  endLabel: string,
+): void {
+  const drawable = points.map((point) => ({
+    time: point.time_s,
+    position: point.position_m as Vec3,
+    velocity: point.velocity_m_s as Vec3,
+  }));
+  const context = canvasContext(canvas, FLIGHT_PLAYBACK_LOGICAL_SIZE);
+  if (!context || drawable.length === 0) return;
+  const { width, height } = FLIGHT_PLAYBACK_LOGICAL_SIZE;
+  context.clearRect(0, 0, width, height);
+  context.fillStyle = "#020617";
+  context.fillRect(0, 0, width, height);
+  const projection = createProjection(
+    drawable,
+    [],
+    camera,
+    width,
+    height,
+    undefined,
+    GROUND_MINIMUM_EXTENT_M,
+    false,
+  );
+  const bounds = extents(drawable, [], undefined, false);
+  const axisExtents = bounds.max.map((value, axis) =>
+    Math.max(GROUND_MINIMUM_EXTENT_M, Math.abs(value - bounds.min[axis])),
+  ) as Vec3;
+  drawGroundAxes(
+    context,
+    projection,
+    axisExtents[0],
+    axisExtents[1],
+    axisExtents[2],
+    points[0].position_m as Vec3,
+  );
+  points.slice(0, -1).forEach((point, index) => {
+    drawPath(
+      context,
+      drawable.slice(index, index + 2),
+      projection,
+      GROUND_PHASE_COLORS[point.phase],
+    );
+  });
+  const marker = (
+    position: Vec3,
+    color: string,
+    label: string | null,
+    offset: number,
+  ) => {
+    const screen = projection.point(position);
+    context.beginPath();
+    context.arc(screen.x, screen.y, 6, 0, 2 * Math.PI);
+    context.fillStyle = color;
+    context.fill();
+    if (label) {
+      context.fillStyle = "#e2e8f0";
+      context.fillText(label, screen.x + 8, screen.y + offset);
+    }
+  };
+  marker(points[0].position_m as Vec3, "#38bdf8", "Carry / first contact", -8);
+  marker(points[points.length - 1].position_m as Vec3, "#f8fafc", endLabel, 14);
+  marker(ballPosition, "#fb923c", null, -8);
+  context.fillStyle = "#cbd5e1";
+  context.fillText(
+    `Locked physical scale: ${projection.pixelsPerMeter.toFixed(2)} px/m`,
+    10,
+    height - 12,
+  );
 }
 
 /** Draw a rotatable orthographic view with one identical pixel scale per metre. */

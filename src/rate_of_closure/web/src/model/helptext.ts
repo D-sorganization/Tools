@@ -120,6 +120,13 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "or workspace model-input persistence.",
     ],
   },
+  "Ground Playback": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Import either one strict flight-to-ground-result/v1 result or one validated ground-regional-execution-result/v1 envelope with the explicit matching control. The viewer reuses the regional envelope's nested result and never executes physics. Failed, cancelled, empty, or summary-free evidence is rejected while the last valid result remains loaded.",
+      "Use Play, Pause, exact-frame steps, restart, the absolute-time scrubber, phase jumps, speed, and Loop. Drag to orbit, wheel to zoom, or reset the locked-scale view. Carry marks first contact; complete runs end at Rest or End / left surface, while partial runs say Observed end. Phase transitions hold the preceding exact sample, and neutral axes avoid claiming terrain geometry that result v1 does not contain.",
+    ],
+  },
   "Launch Monitor Analytics": {
     title: "How to Use This Page",
     paragraphs: [

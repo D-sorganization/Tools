@@ -216,6 +216,50 @@ and frozen base-result v1 compatibility remains a separate test. Null-result
 cancelled/failed envelopes require an empty transition ledger because no
 embedded result exists to substantiate transition evidence.
 
+### Flight-through-regional composition boundary
+
+The shared Python flight facade exposes `execute_regional_ground_from_flight`
+as the single composition from a qualified flight result to this regional
+executor. It validates exact contract types, bounce capture, and equality of
+the plan base surface with the canonically derived launch-relative transfer
+surface before bounce physics. One regional options record supplies both the
+bounce cancellation check and the skid/roll settings/cancellation boundary.
+
+The bounded in-memory `flight-regional-ground-pipeline/v1` result binds the
+exact bounce pair, ground-request digest, repeated-bounce execution-input
+digest, exact regional plan and canonical plan digest, and optional existing
+regional envelope. The optional envelope must exist exactly when the bounce
+prefix terminates `SETTLED_TO_SKID`; every other bounce reason forbids regional
+evidence and is retained without translation. Regional cancellation and
+internal failure remain represented by the existing regional envelope after
+that phase begins.
+
+This composition is not a new wire format. Existing strict bounded bounce,
+plan, regional-execution, and ground-result serializers remain authoritative,
+so there is no migration in this UI-neutral slice.
+
+### Qualified study projection
+
+The Rate-owned Python `regional_ground_study_adapter` is the only current
+projection from this pipeline into study data. It reuses `ScalarEnsembleDataset`
+and the canonical `GroundModelResult`; no parallel ground-study result exists.
+Canonical total distance, roll, final offline, and bounce count enter flight
+metrics only through `to_ground_model_result`, whose complete/rest/summary gate
+is unchanged. The scalar ensemble also exposes distinct bounce-air, skid,
+surface-path, and final-downrange details and keeps carry separate from total.
+
+Every non-final outcome is fail-closed. Partial and left-surface summaries are
+diagnostic censored evidence only; their observed endpoint numbers are null in
+the study row. Non-settled bounce, regional cancellation/failure, absent
+summary, and typed transfer failure are likewise nullable rows with exact
+status/reason and available identity digests in attributes. Reapplying an
+unqualified outcome clears any prior ground metric input, preventing stale or
+censored total distance from becoming an optimizer objective.
+
+#4271 physics qualification, remaining #4273 solver/capability and variation-UI
+integration, #4267 completion, clients, persistence, playback, wind strategy,
+compiled/four-surface parity, and downstream release remain open.
+
 ### Matched editor/readback boundary
 
 The standalone PyQt6 and React applications register a `Ground Surfaces`

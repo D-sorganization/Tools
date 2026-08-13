@@ -208,6 +208,49 @@ numbers, identity drift, digest drift, and UTF-8 documents over 1 MiB.
 The pairing record checks a validated `RepeatedBounceResult` against request,
 surface, frame, model, version, and the result's existing ground-request
 fingerprint. Because result v1 predates the joint execution digest, the result
-alone cannot prove the capture threshold that produced it. A later executor
-must preserve the request envelope or its `execution_input_sha256`; this slice
-does not execute physics, persist inputs, or widen the frozen result schema.
+alone cannot prove the capture threshold that produced it.
+
+## UI-neutral repeated-bounce execution binding
+
+`execute_repeated_bounce_request` is the single UI-neutral Python binding from
+the strict request envelope to the existing repeated-bounce solver. It accepts
+only an exact `RepeatedBounceRequest` and a callable-or-`None` cancellation
+check, derives `BounceModelSettings` from the request so the bound capture
+threshold is consumed, and returns a `RepeatedBounceRequestResultPair`. Pair
+construction revalidates request, surface, frame, model, version, and embedded
+ground-request fingerprint after execution. A preflight cancellation remains a
+valid pair with empty trajectory, event, impact, and airborne ledgers, no
+handoff, and zero elapsed ground time.
+
+The executor preserves the complete request object and therefore its
+`execution_input_sha256` alongside the result. It does not alter either frozen
+wire schema and does not add UI request construction, TypeScript or compiled
+physics, file persistence, playback, regional-material chaining, calibrated
+terrain response, or final total-distance claims.
+
+## Flight-to-bounce composition facade
+
+`execute_repeated_bounce_from_flight` is the single shared-Python composition
+path from an already-computed flight record to the repeated-bounce prefix. It
+accepts exact `FlightResult`, `LaunchConditions`, and
+`FlightGroundTransferSettings` records plus the capture threshold and an
+optional cancellation callback. Exact nominal types, callback shape, and the
+existing versioned `BounceModelSettings` capture constraint are checked before
+the physical transfer begins.
+
+After validation, the facade composes only existing authorities in order:
+
+1. `build_ground_simulation_request` qualifies physical contact and constructs
+   the frozen `flight-to-ground-request/v1` authority;
+2. `RepeatedBounceRequest` binds that request and the validated capture
+   threshold to the joint execution digest; and
+3. `execute_repeated_bounce_request` runs the existing Python solver and
+   returns its identity-validated request/result pair.
+
+No exception is translated: `FlightGroundTransferError` retains its typed
+field and reason, invalid input remains a contract error, and cancellation
+remains solver evidence. The facade introduces no copied impact, flight, or
+bounce calculations and no new serialization. It is UI-neutral and does not
+provide PyQt6/React invocation, TypeScript/Rust/WASM physics, persistence,
+playback, camera work, regional chaining, skid/roll completion, or total
+distance. Those boundaries remain open under #4267/#4270/#4271.

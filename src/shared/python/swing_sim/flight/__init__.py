@@ -54,6 +54,7 @@ from .direction import (
     migrate_launch_direction_mapping,
 )
 from .frames import from_flight_frame, to_flight_frame
+from .ground_bounce_execution import execute_repeated_bounce_from_flight
 from .ground_transfer import (
     FlightGroundTransferError,
     FlightGroundTransferSettings,
@@ -98,6 +99,11 @@ from .models import (
     WaterlooPennerModel,
 )
 from .pipeline import FlightSimulatorProtocol, simulate
+from .regional_ground_pipeline import (
+    FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION,
+    FlightRegionalGroundPipelineResult,
+    execute_regional_ground_from_flight,
+)
 from .registry import FlightModelRegistry, FlightModelType, compare_models
 from .result_contract import (
     AvailabilityReason,
@@ -150,6 +156,7 @@ from .wind_uncertainty import (
 
 __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
+    "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
     "AvailabilityReason",
     "BallFlightModel",
     "CapabilityEvaluator",
@@ -183,6 +190,7 @@ __all__ = [
     "FlightMetricResult",
     "FlightMetricValue",
     "FlightResult",
+    "FlightRegionalGroundPipelineResult",
     "FlightGroundTransferError",
     "FlightGroundTransferSettings",
     "FlightStatePoint",
@@ -245,6 +253,8 @@ __all__ = [
     "compute_flight_metrics",
     "derive_launch_conditions",
     "derive_flight_metric_result",
+    "execute_regional_ground_from_flight",
+    "execute_repeated_bounce_from_flight",
     "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
