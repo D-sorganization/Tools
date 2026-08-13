@@ -12,9 +12,13 @@ interface Props {
 const number = (value: number | null, unit: string, decimals = 2) =>
   value === null ? "Unavailable" : `${value.toFixed(decimals)} ${unit}`;
 
+const vector = (value: readonly number[], unit: string) =>
+  `[${value.map((component) => component.toFixed(4)).join(", ")}] ${unit}`;
+
 export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
   const metrics = impactKinematics(run, scenario, club);
   const dplane = metrics.faceCenterDPlane;
+  const sasho = metrics.sashoFaceCenterRotation;
   const entries = [
     { label: "Face-Center Club Path", value: number(dplane.clubPathDeg, "°"),
       equation: "atan2(v_face_center · right, v_face_center · target)", detail: "Horizontal heading of the rigid-body face-center velocity; positive is right/in-to-out in the app convention." },
@@ -91,6 +95,15 @@ export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
         two-factor Shapley attribution, and Sasho nearest-shaft face-center
         rotation-only AoA. They answer different questions and are not additive.
       </p>
+      <dl aria-label="Sasho nearest-shaft geometry"
+        className="mt-2 grid gap-x-4 gap-y-1 rounded border border-teal-400/20 bg-teal-950/10 p-2 text-xs sm:grid-cols-2">
+        <div><dt className="text-slate-400">Method ID</dt><dd>{sasho.methodId}</dd></div>
+        <div><dt className="text-slate-400">Nearest shaft point Q</dt><dd>{vector(sasho.nearestShaftPointM, "m")}</dd></div>
+        <div><dt className="text-slate-400">Perpendicular lever F − Q</dt><dd>{vector(sasho.leverArmM, "m")}</dd></div>
+        <div><dt className="text-slate-400">Complete angular velocity ω</dt><dd>{vector(metrics.angularVelocityRadS, "rad/s")}</dd></div>
+        <div><dt className="text-slate-400">Rotation-only velocity</dt><dd>{vector(sasho.velocityMps, "m/s")}</dd></div>
+        <div><dt className="text-slate-400">Vertical / horizontal speed</dt><dd>{number(sasho.velocityMps[1], "m/s", 4)} / {number(Math.hypot(sasho.velocityMps[0], sasho.velocityMps[2]), "m/s", 4)}</dd></div>
+      </dl>
       <p className="mt-2 text-xs text-slate-400">
         <b className="text-slate-300">Geometry Basis:</b> {metrics.geometryBasis}.{" "}
         <b className="text-slate-300">Model Boundary:</b> {metrics.modelLimitations}

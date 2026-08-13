@@ -26,11 +26,32 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.70                                    |
-| **Spec Version**        | 1.16.70                                    |
+| **Current Version**     | 1.16.71                                    |
+| **Spec Version**        | 1.16.71                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Sasho rotational-AoA evidence closure (#4434)
+
+Version 1.16.71 makes every term of the new option inspectable in PyQt6,
+React, and impact-scene v3: stable method ID, complete club angular velocity,
+nearest shaft point, face-center lever, induced linear velocity, vertical and
+horizontal speeds, and signed AoA. The Python impact scene and React impact
+sample retain the same authority rather than reconstructing display-only
+values.
+
+Contract tests cover positive, negative, and zero angular velocity, an on-axis
+face center, shaft-line point and direction invariance, rigid-frame
+equivariance, and finite/nonzero-axis rejection. These checks do not turn the
+descriptive construction into an additive or causal attribution and do not
+alter collision or flight physics.
+
+Exact final-tree evidence passes 1,222 Rate/PyQt tests, 175 shared golf-club
+tests (two optional `build123d` skips), and all 877 React tests. Python 3.12
+with pinned Mypy 1.13, Ruff/format, TypeScript, ESLint, Vite production build,
+docs governance, changed-test assertions, changed-source size, and diff checks
+pass.
 
 ### 2026-08-13 Sasho nearest-shaft face-center rotational AoA (#4434)
 
@@ -3931,6 +3952,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.71 | fix(rate-of-closure, #4434): retain and expose the complete Sasho method geometry and velocity evidence in Python, React, PyQt6, and impact-scene v3; close sign, zero-motion, on-axis, line-invariance, rigid-frame, and invalid-input contract boundaries. |
 | 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4434): add Sasho nearest-shaft face-center rotation-only AoA as a separately labeled Python/React/PyQt metric and vector, exact cross-runtime golden, and strict impact-scene v3 export; retain explicit non-additive/noncausal distinction from counterfactual and Shapley methods. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |

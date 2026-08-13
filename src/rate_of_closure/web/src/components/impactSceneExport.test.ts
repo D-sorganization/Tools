@@ -33,6 +33,8 @@ describe("impact scene data export", () => {
     expect(payload.sashoFaceCenterRotation.methodId).toBe(
       "sasho_nearest_shaft_face_center_rotation_only_aoa_v1",
     );
+    expect(payload.sashoFaceCenterRotation.nearestShaftPointM).toHaveLength(3);
+    expect(payload.angularVelocityRadS).toHaveLength(3);
     expect(payload.renderPreferences.visibleLayers).toEqual([
       "faceNormal", "spinLoftSector",
     ]);

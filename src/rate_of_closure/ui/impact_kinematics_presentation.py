@@ -34,6 +34,10 @@ def _degrees_per_second(value_rad_s: float | None) -> str:
     return _number(None if value_rad_s is None else math.degrees(value_rad_s), "°/s", 1)
 
 
+def _vector(value: tuple[float, float, float], unit: str) -> str:
+    return f"[{value[0]:.4f}, {value[1]:.4f}, {value[2]:.4f}] {unit}"
+
+
 def format_impact_kinematics(snapshot: ImpactKinematicSnapshot) -> str:
     """Return a compact, provenance-bearing engineering readout."""
     analysis = snapshot.analysis
@@ -41,6 +45,8 @@ def format_impact_kinematics(snapshot: ImpactKinematicSnapshot) -> str:
     screw_distance = (
         None if analysis.screw_axis is None else analysis.screw_axis.contact_distance_m
     )
+    sasho = analysis.sasho_face_center_rotation
+    sasho_horizontal = math.hypot(sasho.velocity_mps[0], sasho.velocity_mps[2])
     metrics = (
         ("Contact-Point AoA", _number(analysis.total_aoa_deg, "°")),
         ("Without Shaft Rotation", _number(analysis.without_shaft_aoa_deg, "°")),
@@ -95,6 +101,12 @@ def format_impact_kinematics(snapshot: ImpactKinematicSnapshot) -> str:
         "<b>AoA Method Options:</b> remove-shaft counterfactual, two-factor "
         "Shapley attribution, and Sasho nearest-shaft face-center rotation-only "
         "AoA are separate non-additive measures. "
+        f"<b>Sasho Geometry:</b> method {escape(sasho.method_id)}; nearest shaft "
+        f"point {_vector(sasho.nearest_shaft_point_m, 'm')}; perpendicular lever "
+        f"{_vector(sasho.lever_arm_m, 'm')}; complete angular velocity "
+        f"{_vector(snapshot.state.angular_velocity_rad_s, 'rad/s')}; rotation-only "
+        f"velocity {_vector(sasho.velocity_mps, 'm/s')}; vertical/horizontal "
+        f"{sasho.velocity_mps[1]:.4f}/{sasho_horizontal:.4f} m/s. "
         "<b>D-Plane Basis:</b> exact rigid-body face-center travel including "
         "ω × r versus the face-center normal; positive normal tilt is face-right "
         "and fade-side only under the current right-handed display convention. "

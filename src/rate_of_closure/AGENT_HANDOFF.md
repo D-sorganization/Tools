@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Sasho AoA evidence closure (#4434)
+
+- PyQt6/React expose the method ID, complete club angular velocity, nearest
+  shaft point, face-center lever, induced velocity, and vertical/horizontal
+  components alongside the signed AoA.
+- Python impact-scene authority and React's exact impact sample retain the same
+  fields before strict impact-scene v3 export.
+- Contract tests close positive/negative/zero rotation, on-shaft face center,
+  shaft-line datum/direction invariance, rigid-frame equivariance, and invalid
+  finite/zero-axis boundaries.
+- SPEC is 1.16.71. Exact final gates pass 1,222 Rate/PyQt, 175 shared
+  golf-club with two optional CAD skips, and 877 React tests; Python 3.12/Mypy
+  1.13, Ruff/format, TypeScript, ESLint, production build, docs, assertions,
+  size, and diff checks pass.
+- This closes evidence visibility and contract boundaries only; the metric
+  remains descriptive, non-additive, noncausal, and separate from the existing
+  counterfactual and Shapley options.
+
 ## 2026-08-13 Sasho nearest-shaft face-center AoA (#4434)
 
 - Shared Python and React compute nearest shaft point

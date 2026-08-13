@@ -214,6 +214,10 @@ class TestSimulationView:
             in view._impact_kinematics_readout.text()
         )
         assert "AoA Method Options" in view._impact_kinematics_readout.text()
+        assert (
+            "sasho_nearest_shaft_face_center_rotation_only_aoa_v1"
+            in view._impact_kinematics_readout.text()
+        )
         assert "Geometry Basis" in view._impact_kinematics_readout.text()
 
     def test_play_pause_and_loop_toggle(self, ran_tab, qtbot) -> None:  # type: ignore[no-untyped-def]

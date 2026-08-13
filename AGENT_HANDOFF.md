@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Sasho AoA evidence closure (#4434)
+
+Version 1.16.71 completes the published Sasho option with visible numerical
+provenance in both applications: method ID, complete club angular velocity,
+nearest shaft point, face-center lever, induced velocity, and its vertical and
+horizontal components. The Python impact-scene authority and React impact
+sample now retain that same evidence before strict impact-scene v3 export.
+
+Adversarial coverage pins positive, negative, and zero rotation, a face center
+on the shaft line, shaft-line datum and direction invariance, common rigid-frame
+equivariance, and invalid finite/zero-axis inputs. Exact final-tree evidence is
+1,222 Rate/PyQt tests, 175 shared golf-club tests with two optional CAD skips,
+and 877 React tests. Python 3.12 + Mypy 1.13, Ruff/format, TypeScript, ESLint,
+Vite production build, docs, assertion, changed-source size, and diff gates
+are green. The method remains descriptive, non-additive, and noncausal.
+
 ## 2026-08-13 Sasho face-center rotational AoA option (#4434)
 
 Version 1.16.70 adds stable method

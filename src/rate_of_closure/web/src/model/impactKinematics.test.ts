@@ -64,6 +64,22 @@ describe("impact kinematics", () => {
     )).toThrow(/shaft axis/i);
   });
 
+  it("pins Sasho sign and zero-velocity availability", () => {
+    const negative = sashoFaceCenterRotationAoa(
+      [-2, -10, 4], [0, 0, 0], [0, 1, 0], [0.02, 0.1, 0.03],
+    );
+    const zero = sashoFaceCenterRotationAoa(
+      [0, 0, 0], [0, 0, 0], [0, 1, 0], [0, 0.1, 0],
+    );
+
+    expect(negative.velocityMps).toEqual(expect.arrayContaining([
+      expect.closeTo(-0.3, 12), expect.closeTo(0.14, 12), expect.closeTo(0.2, 12),
+    ]));
+    expect(negative.aoaDeg).toBeCloseTo(21.220700223593433, 12);
+    expect(zero.velocityMps).toEqual([0, 0, 0]);
+    expect(zero.aoaDeg).toBeNull();
+  });
+
   it("reconciles the manual rigid-body point-velocity fixture", () => {
     const metrics = impactKinematics(
       runSimulation(input), scenario, getClub("Pitching Wedge"),

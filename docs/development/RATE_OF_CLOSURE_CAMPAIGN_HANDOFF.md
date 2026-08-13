@@ -1,5 +1,22 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4434 Sasho AoA evidence closure
+
+- PyQt6 and React now show the stable method ID, complete club angular
+  velocity, nearest shaft point, face-center lever, induced velocity, and
+  vertical/horizontal components, not only the final angle.
+- Python impact-scene authority and the exact React impact sample retain those
+  fields before strict impact-scene v3 export.
+- Adversarial tests cover positive/negative/zero rotation, an on-shaft face
+  center, shaft-line datum/direction invariance, rigid-frame equivariance, and
+  invalid finite/zero-axis inputs.
+- SPEC advances to 1.16.71. Final-tree evidence is 1,222 Rate/PyQt tests, 175
+  shared golf-club tests with two optional CAD skips, and 877 React tests;
+  Python 3.12/Mypy 1.13, Ruff/format, TypeScript, ESLint, Vite build, docs,
+  assertions, size, and diff gates pass.
+- The option remains a descriptive `omega x r` view. It is not additive,
+  causal, a shaft-axis-only counterfactual, or a two-factor Shapley value.
+
 ## 2026-08-13 #4434 Sasho face-center rotation-only AoA option
 
 - Adds Sasho's suggested `omega x r` construction at face center, where `r`

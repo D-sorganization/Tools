@@ -132,6 +132,70 @@ def test_sasho_face_center_rotation_is_invariant_to_shaft_line_datum() -> None:
 
 
 @pytest.mark.parametrize(
+    ("omega", "expected_velocity", "expected_aoa"),
+    (
+        ((2.0, 10.0, -4.0), (0.3, -0.14, -0.2), -21.220700223593433),
+        ((-2.0, -10.0, 4.0), (-0.3, 0.14, 0.2), 21.220700223593433),
+        ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), None),
+    ),
+)
+def test_sasho_rotation_sign_and_zero_availability(
+    omega: tuple[float, float, float],
+    expected_velocity: tuple[float, float, float],
+    expected_aoa: float | None,
+) -> None:
+    result = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=omega,
+        shaft_axis_point_m=(0.0, 0.0, 0.0),
+        shaft_axis_unit=(0.0, 1.0, 0.0),
+        face_center_point_m=(0.02, 0.1, 0.03),
+        ground_up_unit=(0.0, 1.0, 0.0),
+    )
+
+    assert result.velocity_mps == pytest.approx(expected_velocity)
+    if expected_aoa is None:
+        assert result.aoa_deg is None
+    else:
+        assert result.aoa_deg == pytest.approx(expected_aoa)
+
+
+def test_sasho_rotation_is_rigid_frame_equivariant() -> None:
+    rotation = np.array(((0.0, 0.0, 1.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0)))
+    arguments = {
+        "angular_velocity_rad_s": np.array((2.0, 10.0, -4.0)),
+        "shaft_axis_point_m": np.array((0.0, 0.0, 0.0)),
+        "shaft_axis_unit": np.array((0.0, 1.0, 0.0)),
+        "face_center_point_m": np.array((0.02, 0.1, 0.03)),
+        "ground_up_unit": np.array((0.0, 1.0, 0.0)),
+    }
+    original = sasho_face_center_rotation_aoa(**arguments)
+    transformed = sasho_face_center_rotation_aoa(
+        **{name: rotation @ value for name, value in arguments.items()}
+    )
+
+    assert transformed.nearest_shaft_point_m == pytest.approx(
+        rotation @ original.nearest_shaft_point_m
+    )
+    assert transformed.lever_arm_m == pytest.approx(rotation @ original.lever_arm_m)
+    assert transformed.velocity_mps == pytest.approx(rotation @ original.velocity_mps)
+    assert transformed.aoa_deg == pytest.approx(original.aoa_deg)
+
+
+def test_sasho_rotation_is_unavailable_when_face_center_is_on_shaft() -> None:
+    result = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=(2.0, 10.0, -4.0),
+        shaft_axis_point_m=(0.0, 0.0, 0.0),
+        shaft_axis_unit=(0.0, 1.0, 0.0),
+        face_center_point_m=(0.0, 0.1, 0.0),
+        ground_up_unit=(0.0, 1.0, 0.0),
+    )
+
+    assert result.lever_arm_m == pytest.approx((0.0, 0.0, 0.0))
+    assert result.velocity_mps == pytest.approx((0.0, 0.0, 0.0))
+    assert result.aoa_deg is None
+
+
+@pytest.mark.parametrize(
     ("field", "value", "message"),
     (
         (

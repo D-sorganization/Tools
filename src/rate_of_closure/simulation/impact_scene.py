@@ -8,6 +8,7 @@ from typing import Any
 
 from rate_of_closure.simulation.impact_kinematics import impact_kinematics_for_run
 from rate_of_closure.simulation.records import SimulationRun
+from shared.python.golf_club import SashoFaceCenterRotationAoa
 from shared.python.swing_sim.impact import DPlaneAnalysis, spin_loft_sector_directions
 
 __all__ = [
@@ -79,6 +80,7 @@ class ImpactScene:
     face_center_point_m: Vector3
     face_center_velocity_mps: Vector3
     face_center_normal_unit: Vector3
+    angular_velocity_rad_s: Vector3
     shaft_axis_point_m: Vector3
     shaft_axis_unit: Vector3
     face_normal_unit: Vector3
@@ -92,6 +94,7 @@ class ImpactScene:
     spin_loft_sector_unit: tuple[Vector3, ...]
     vectors: tuple[ImpactSceneVector, ...]
     metrics: tuple[ImpactSceneMetric, ...]
+    sasho_face_center_rotation: SashoFaceCenterRotationAoa
     screw_axis: ImpactSceneScrewAxis | None
 
     def to_json_dict(self) -> dict[str, Any]:
@@ -351,6 +354,7 @@ def impact_scene_for_run(run: SimulationRun) -> ImpactScene:
         face_center_point_m=snapshot.face_center_point_m,
         face_center_velocity_mps=snapshot.face_center_velocity_mps,
         face_center_normal_unit=snapshot.face_center_normal_unit,
+        angular_velocity_rad_s=state.angular_velocity_rad_s,
         shaft_axis_point_m=state.shaft_axis_point_m,
         shaft_axis_unit=state.shaft_axis_unit,
         face_normal_unit=state.face_normal_unit,
@@ -364,5 +368,6 @@ def impact_scene_for_run(run: SimulationRun) -> ImpactScene:
         spin_loft_sector_unit=spin_loft_sector_directions(snapshot.face_center_dplane),
         vectors=vectors,
         metrics=_metrics(run),
+        sasho_face_center_rotation=analysis.sasho_face_center_rotation,
         screw_axis=screw_scene,
     )

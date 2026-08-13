@@ -72,6 +72,10 @@ def test_scene_metrics_are_self_describing_and_strict_json_safe() -> None:
     assert json.dumps(payload, allow_nan=False)
     assert payload["format"] == "rate-of-closure.impact-scene/v3"
     assert payload["face_center_dplane"]["status"] == "defined"
+    assert payload["sasho_face_center_rotation"]["method_id"] == (
+        "sasho_nearest_shaft_face_center_rotation_only_aoa_v1"
+    )
+    assert payload["angular_velocity_rad_s"] == scene.angular_velocity_rad_s
     assert metrics["spin_loft_3d"].units == "deg"
     assert metrics["spin_loft_planar"].equation
     assert metrics["spin_loft_residual"].assumptions

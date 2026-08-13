@@ -52,6 +52,7 @@ export interface ImpactKinematicsTs {
   faceCenterPointM: Vec3;
   faceCenterVelocityMps: Vec3;
   faceCenterNormalUnit: Vec3;
+  angularVelocityRadS: Vec3;
   faceNormalUnit: Vec3;
   leadingEdgeUnit: Vec3;
   arcTangentUnit: Vec3;
@@ -288,6 +289,7 @@ export function impactKinematics(
     faceCenterPointM: faceCenter,
     faceCenterVelocityMps: faceCenterVelocity,
     faceCenterNormalUnit: faceCenterNormal,
+    angularVelocityRadS: sample.angularVelocity,
     faceNormalUnit: faceNormal,
     leadingEdgeUnit: leadingEdge,
     arcTangentUnit: unit(sample.velocity, "arc tangent"),
