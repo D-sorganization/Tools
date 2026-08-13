@@ -197,9 +197,9 @@ class TestMassMatrix:
         q = np.zeros(N_DOF)
         M = mass_matrix(q, golfer_params)
         eigenvalues = np.linalg.eigvalsh(M)
-        assert np.all(
-            eigenvalues >= -1e-10
-        ), f"M must be positive semi-definite, got eigenvalues {eigenvalues}"
+        assert np.all(eigenvalues >= -1e-10), (
+            f"M must be positive semi-definite, got eigenvalues {eigenvalues}"
+        )
 
     def test_depends_on_configuration(self, golfer_params: GolferParams) -> None:
         q1 = np.zeros(N_DOF)

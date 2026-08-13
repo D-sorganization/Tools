@@ -29,9 +29,7 @@ import pytest
 # ---------------------------------------------------------------------------
 
 
-def test_user_bubble_always_labelled_you(
-    qapp,
-) -> None:  # noqa: F811 - qapp is conftest fixture
+def test_user_bubble_always_labelled_you(qapp) -> None:  # noqa: F811 - qapp is conftest fixture
     from src.shared.python.chat._qt.bubbles import ChatMessageBubble
 
     bubble = ChatMessageBubble("user", "hi", agent_label="Agent (gpt-4o)")

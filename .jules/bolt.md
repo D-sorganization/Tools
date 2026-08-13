@@ -89,3 +89,7 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+
+## 2026-08-12 - Sparse Checkout Downstream Failures
+**Learning:** For downstream repositories that require `src/shared` (like `UpstreamDrift`), sparse checkouting `src/shared/python` will not satisfy the `src/shared` constraint if `build_hooks.py` relies on the parent folder.
+**Action:** Always ensure the required directory roots exactly match what downstream builds expect.

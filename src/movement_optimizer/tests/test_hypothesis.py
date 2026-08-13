@@ -24,9 +24,7 @@ from movement_optimizer.trajectory import (
     build_splines,
     eval_trajectory,
 )
-from movement_optimizer.trajectory.optimizer_constraints import (
-    joint_limit_constraint_values,
-)
+from movement_optimizer.trajectory.optimizer_constraints import joint_limit_constraint_values
 from movement_optimizer.trajectory.optimizer_cost import (
     compute_torque_cost,
     compute_torque_rate_cost,
@@ -88,9 +86,7 @@ class TestBodyModelProperties:
         to=st.floats(min_value=0.5, max_value=2.0),
     )
     @settings(max_examples=100)
-    def test_segment_multipliers_preserve_proportionality(
-        self, ll: float, ul: float, to: float
-    ):
+    def test_segment_multipliers_preserve_proportionality(self, ll: float, ul: float, to: float):
         """Segment lengths should scale linearly with multipliers."""
         base = BodyModel(75.0, 1.75)
         scaled = BodyModel(
@@ -226,9 +222,7 @@ class TestTrajectoryHelperProperties:
         def build_splines_fn(flat_x: np.ndarray):
             return build_splines(flat_x, q, q, None, t_ctrl, n_waypoints, 3)
 
-        constraints = joint_limit_constraint_values(
-            x, build_splines_fn, t_eval, q_bounds
-        )
+        constraints = joint_limit_constraint_values(x, build_splines_fn, t_eval, q_bounds)
 
         assert constraints.shape == (2 * len(t_eval) * 3,)
         assert np.all(constraints >= -1e-10)
@@ -237,18 +231,12 @@ class TestTrajectoryHelperProperties:
 class TestOptimizationCostProperties:
     @given(
         values=st.lists(
-            st.floats(
-                min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False
-            ),
+            st.floats(min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False),
             min_size=6,
             max_size=30,
         ),
-        dt=st.floats(
-            min_value=0.01, max_value=1.0, allow_nan=False, allow_infinity=False
-        ),
-        scale=st.floats(
-            min_value=0.0, max_value=5.0, allow_nan=False, allow_infinity=False
-        ),
+        dt=st.floats(min_value=0.01, max_value=1.0, allow_nan=False, allow_infinity=False),
+        scale=st.floats(min_value=0.0, max_value=5.0, allow_nan=False, allow_infinity=False),
     )
     @settings(max_examples=75)
     def test_torque_cost_scales_quadratically(
@@ -264,29 +252,17 @@ class TestOptimizationCostProperties:
         base_cost = compute_torque_cost(torques, dt)
         scaled_cost = compute_torque_cost(scale * torques, dt)
 
-        np.testing.assert_allclose(
-            scaled_cost, scale**2 * base_cost, rtol=1e-12, atol=1e-9
-        )
+        np.testing.assert_allclose(scaled_cost, scale**2 * base_cost, rtol=1e-12, atol=1e-9)
 
     @given(
         row=st.tuples(
-            st.floats(
-                min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False
-            ),
-            st.floats(
-                min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False
-            ),
-            st.floats(
-                min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False
-            ),
+            st.floats(min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False),
+            st.floats(min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False),
+            st.floats(min_value=-200.0, max_value=200.0, allow_nan=False, allow_infinity=False),
         ),
         n_eval=st.integers(min_value=2, max_value=20),
-        dt=st.floats(
-            min_value=0.01, max_value=1.0, allow_nan=False, allow_infinity=False
-        ),
-        weight=st.floats(
-            min_value=0.0, max_value=10.0, allow_nan=False, allow_infinity=False
-        ),
+        dt=st.floats(min_value=0.01, max_value=1.0, allow_nan=False, allow_infinity=False),
+        weight=st.floats(min_value=0.0, max_value=10.0, allow_nan=False, allow_infinity=False),
     )
     @settings(max_examples=75)
     def test_torque_rate_cost_zero_for_constant_torque(
@@ -344,9 +320,7 @@ class TestTrajectoryOptimizerProperties:
         bar_mass=st.floats(min_value=0.0, max_value=200.0),
     )
     @settings(max_examples=50)
-    def test_optimizer_produces_finite_cost(
-        self, body_mass: float, height: float, bar_mass: float
-    ):
+    def test_optimizer_produces_finite_cost(self, body_mass: float, height: float, bar_mass: float):
         """Optimizer should always produce a finite cost for valid inputs."""
         from movement_optimizer.models.exercise_configs import make_squat_config
         from movement_optimizer.trajectory import TrajectoryOptimizer
@@ -376,9 +350,7 @@ class TestTrajectoryOptimizerProperties:
         q2=st.floats(min_value=-1.0, max_value=1.0),
     )
     @settings(max_examples=50)
-    def test_cost_at_start_equals_end_for_static_pose(
-        self, q0: float, q1: float, q2: float
-    ):
+    def test_cost_at_start_equals_end_for_static_pose(self, q0: float, q1: float, q2: float):
         """Cost should be consistent for static start/end poses."""
         from movement_optimizer.models.exercise_configs import make_squat_config
         from movement_optimizer.trajectory import TrajectoryOptimizer

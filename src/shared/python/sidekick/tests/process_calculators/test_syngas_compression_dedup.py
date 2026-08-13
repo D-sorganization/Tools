@@ -41,9 +41,9 @@ def test_single_syngas_compression_engine_definition() -> None:
 def test_dead_syngas_compression_subpackage_removed() -> None:
     """The empty placeholder ``syngas_compression/`` subpackage is gone."""
     dead_dir = _PROCESS_CALCULATORS / "syngas_compression"
-    assert (
-        not dead_dir.exists()
-    ), "Dead placeholder subpackage should have been deleted (#3183)"
+    assert not dead_dir.exists(), (
+        "Dead placeholder subpackage should have been deleted (#3183)"
+    )
 
 
 def test_root_calculator_exposes_real_engine() -> None:

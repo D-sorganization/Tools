@@ -197,9 +197,9 @@ class TestGolferJointForces:
         # For each DOF with nonzero damping, sign(tau) = -sign(qdot)
         for i in range(N_DOF - 1):  # Skip club DOF (no damping)
             if abs(qdot[i]) > 0 and abs(tau[i]) > 0:
-                assert np.sign(tau[i]) == -np.sign(
-                    qdot[i]
-                ), f"Friction at DOF {i} does not oppose velocity"
+                assert np.sign(tau[i]) == -np.sign(qdot[i]), (
+                    f"Friction at DOF {i} does not oppose velocity"
+                )
 
     def test_zero_velocity_zero_friction(self, default_params: GolferParams) -> None:
         """Zero velocity must produce zero friction torque."""
@@ -257,9 +257,9 @@ class TestGolferDynamics:
 
         M = analytical_mass_matrix(random_state, default_params)
         eigenvalues = np.linalg.eigvalsh(M)
-        assert np.all(
-            eigenvalues >= -1e-10
-        ), f"Negative eigenvalue in mass matrix: {eigenvalues}"
+        assert np.all(eigenvalues >= -1e-10), (
+            f"Negative eigenvalue in mass matrix: {eigenvalues}"
+        )
 
     def test_mass_matrix_shape(
         self, default_params: GolferParams, zero_state: np.ndarray
