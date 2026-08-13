@@ -6,6 +6,8 @@ import { APP_COMMAND_ID } from "../model/appCommands";
 import goldenRequest from "../model/__fixtures__/regional_ground_variation_request_golden_v1.json";
 import { regionalGroundVariationRequestFromJson } from "../model/regionalGroundVariationRequestWire";
 import type { RegionalGroundVariationRequestPort } from "../model/regionalGroundVariationWorkspace";
+import type { RegionalGroundExecutionWorkspace } from "../hooks/useRegionalGroundExecutionWorkspace";
+import { qualifiedRegionalGroundAuthorityCapability } from "../model/regionalGroundAuthority";
 import {
   DEFAULT_PRIMARY_VIEW_STATE,
   type PrimaryViewState,
@@ -17,6 +19,7 @@ afterEach(cleanup);
 const renderToolstrip = (
   state: PrimaryViewState = DEFAULT_PRIMARY_VIEW_STATE,
   requestPort?: RegionalGroundVariationRequestPort,
+  executionWorkspace?: RegionalGroundExecutionWorkspace,
 ) => {
   const onStateChange = vi.fn();
   const onCommand = vi.fn();
@@ -30,6 +33,7 @@ const renderToolstrip = (
         onModuleStateChange={onStateChange}
         onCommand={onCommand}
         regionalGroundVariationRequestPort={requestPort}
+        regionalGroundExecutionWorkspace={executionWorkspace}
         onShortcutHelpOpenChange={setShortcutHelpOpen}
       />
     );
@@ -42,6 +46,25 @@ const requestPort = (): RegionalGroundVariationRequestPort => ({
   snapshot: vi.fn(() => regionalGroundVariationRequestFromJson(JSON.stringify(goldenRequest))),
   apply: vi.fn(),
 });
+
+const executionWorkspace = (): RegionalGroundExecutionWorkspace => {
+  const capability = qualifiedRegionalGroundAuthorityCapability();
+  return {
+    authority: {
+      capability, checking: false,
+      controls: { submitEnabled: true, statusEnabled: false, cancelEnabled: false, resultEnabled: false },
+    },
+    execution: {
+      phase: "idle", job: null, status: null, progress: null, failure: null, result: null, error: null,
+      controls: { submitEnabled: true, statusEnabled: false, cancelEnabled: false, resultEnabled: false },
+      submit: vi.fn(), recover: vi.fn(), cancel: vi.fn(), reconcile: vi.fn(), reset: vi.fn(),
+    },
+    acceptedJob: null, sourceName: null, confirmed: false,
+    importFile: vi.fn(), preparationAvailable: false, preparedJobStale: false,
+    prepareCurrentJob: vi.fn(),
+    setConfirmed: vi.fn(), clear: vi.fn(), run: vi.fn(), recover: vi.fn(),
+  };
+};
 
 const fileBytes = (text: string): ArrayBuffer =>
   Uint8Array.from(new TextEncoder().encode(text)).buffer;
@@ -138,6 +161,33 @@ describe("AppToolstrip", () => {
     renderToolstrip(DEFAULT_PRIMARY_VIEW_STATE, requestPort());
     fireEvent.click(screen.getByText("File"));
 
+    expect(screen.queryByRole("button", {
+      name: "Open Regional-Ground Variation Request",
+    })).not.toBeInTheDocument();
+  });
+
+  it("shows execution file commands only in Ground Playback with truthful availability", () => {
+    const workspace = executionWorkspace();
+    renderToolstrip(
+      { ...DEFAULT_PRIMARY_VIEW_STATE, active: "ground-playback" },
+      undefined,
+      workspace,
+    );
+    fireEvent.click(screen.getByText("File"));
+
+    expect(screen.getByRole("button", {
+      name: "Open Regional-Ground Execution Job",
+    })).toBeEnabled();
+    expect(screen.queryByLabelText("Open Regional-Ground Execution Job file"))
+      .not.toBeInTheDocument();
+    expect(screen.getByTestId("regional-ground-execution-job-menu-file-input"))
+      .toHaveAttribute("hidden");
+    expect(screen.getByRole("button", {
+      name: "Save Regional-Ground Execution Job As",
+    })).toBeDisabled();
+    expect(screen.getByRole("button", {
+      name: "Save Regional-Ground Execution Result As",
+    })).toBeDisabled();
     expect(screen.queryByRole("button", {
       name: "Open Regional-Ground Variation Request",
     })).not.toBeInTheDocument();

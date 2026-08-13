@@ -32,6 +32,16 @@ class AppCommandId(StrEnum):
     FILE_SAVE_REGIONAL_GROUND_VARIATION_REQUEST_AS = (
         "file.save_regional_ground_variation_request_as"
     )
+    FILE_OPEN_REGIONAL_GROUND_EXECUTION_JOB = "file.open_regional_ground_execution_job"
+    FILE_SAVE_REGIONAL_GROUND_EXECUTION_JOB_AS = (
+        "file.save_regional_ground_execution_job_as"
+    )
+    FILE_SAVE_REGIONAL_GROUND_EXECUTION_RESULT_AS = (
+        "file.save_regional_ground_execution_result_as"
+    )
+    FILE_EXPORT_REGIONAL_GROUND_EXECUTION_ROWS_CSV = (
+        "file.export_regional_ground_execution_rows_csv"
+    )
     VIEW_MANAGE_MODULES = "view.manage_modules"
     VIEW_RESTORE_DEFAULT_WORKSPACE = "view.restore_default_workspace"
     VIEW_SHOW_IMPACT = "view.show_impact"

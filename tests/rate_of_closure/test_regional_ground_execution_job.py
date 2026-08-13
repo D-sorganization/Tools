@@ -15,6 +15,7 @@ from rate_of_closure.application.regional_ground_execution_job import (
     GroundExecutionOptions,
     RegionalGroundExecutionJob,
     build_regional_ground_execution_job,
+    canonical_flight_evidence_sha256,
     canonical_flight_result_sha256,
     canonical_flight_trajectory_sha256,
     regional_ground_execution_job_from_json,
@@ -23,11 +24,20 @@ from rate_of_closure.application.regional_ground_execution_job import (
 from rate_of_closure.application.regional_ground_variation_request import (
     regional_ground_variation_request_from_json,
 )
+from scripts.generate_regional_ground_authority_fixtures import (
+    generated_fixture_texts,
+)
 from shared.python.swing_sim.ball_setup import BallSetup, BallSupportMode
+from shared.python.swing_sim.flight import FlightSimulationCancelled
 from shared.python.swing_sim.flight.tests._regional_ground_pipeline_support import (
     _crossing_result,
     _launch,
     _settings,
+)
+from shared.python.swing_sim.ground import (
+    REGIONAL_GROUND_EXECUTOR_SOURCE,
+    RegionalGroundExecutionOptions,
+    SkidRollSettings,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -42,6 +52,34 @@ _FIXTURE = (
     / "__fixtures__"
     / "regional_ground_execution_job_golden_v1.json"
 )
+
+
+def test_trajectory_digest_polls_cancellation_during_large_serialization() -> None:
+    result = _crossing_result()
+    large_result = replace(result, trajectory=result.trajectory * 300)
+    checks = 0
+
+    def cancellation_requested() -> bool:
+        nonlocal checks
+        checks += 1
+        return checks == 2
+
+    with pytest.raises(FlightSimulationCancelled):
+        canonical_flight_trajectory_sha256(
+            large_result,
+            cancellation_requested=cancellation_requested,
+        )
+
+    assert checks == 2
+
+
+def test_paired_flight_evidence_preserves_both_individual_digests() -> None:
+    result = _crossing_result()
+
+    assert canonical_flight_evidence_sha256(result) == (
+        canonical_flight_trajectory_sha256(result),
+        canonical_flight_result_sha256(result),
+    )
 
 
 def _job() -> RegionalGroundExecutionJob:
@@ -61,6 +99,11 @@ def test_shared_golden_round_trip_and_digest_parity() -> None:
     assert job.job_sha256 == fixture["job_sha256"]
     assert job.canonical_sha256 == fixture["canonical_sha256"]
     assert regional_ground_execution_job_from_json(text) == job
+
+
+def test_authority_fixture_family_is_deterministically_generated() -> None:
+    for path, expected in generated_fixture_texts().items():
+        assert path.read_text(encoding="utf-8") == expected
 
 
 def test_flight_digests_bind_every_canonical_result_field() -> None:
@@ -101,7 +144,11 @@ def test_builder_binds_exact_launch_setup_transfer_and_existing_request() -> Non
         flight=flight,
         transfer=_settings(),
         capture_speed_m_s=0.05,
-        execution_options=GroundExecutionOptions(4, 2, 120.0, False),
+        execution_options=GroundExecutionOptions(4),
+        regional_execution_options=RegionalGroundExecutionOptions(
+            settings=SkidRollSettings(max_steps=123_456),
+            source_revision=REGIONAL_GROUND_EXECUTOR_SOURCE,
+        ),
         variation_request=request,
         producer="tools.rate_of_closure",
         producer_version="1.0.0",
@@ -111,6 +158,13 @@ def test_builder_binds_exact_launch_setup_transfer_and_existing_request() -> Non
     assert job.launch.ball_setup == launch.ball_setup
     assert job.transfer.surface == _settings().surface
     assert job.variation_request == request
+    assert type(job.regional_execution_options) is RegionalGroundExecutionOptions
+    assert job.regional_execution_options.settings.max_steps == 123_456
+    assert job.regional_execution_options.is_cancelled is None
+    assert all(
+        region.surface.height_m == job.qualified_regional_plan.base_surface.height_m
+        for region in job.qualified_regional_plan.regions
+    )
     assert job.provenance.input_sha256 == job.input_sha256
     assert job.job_sha256 == job.expected_job_sha256
 
@@ -153,6 +207,9 @@ def test_nested_invalid_values_fail_closed(
         "transfer",
         "capture_speed_m_s",
         "execution_options",
+        "regional_execution_options",
+        "qualified_regional_plan",
+        "qualified_plan_sha256",
         "variation_request",
         "provenance",
         "input_sha256",
@@ -175,21 +232,26 @@ def test_tampering_with_any_bound_input_rejects_job_digest(field: str) -> None:
     elif field == "transfer":
         payload[field]["max_events"] += 1
     elif field == "execution_options":
-        payload[field]["timeout_s"] += 1.0
+        payload[field]["max_trials"] += 1
+    elif field == "regional_execution_options":
+        payload[field]["settings"]["integration_step_s"] = 0.002
+    elif field == "qualified_regional_plan":
+        payload[field]["regions"][0]["surface"]["rolling_resistance"] = 0.3
+    elif field == "qualified_plan_sha256":
+        payload[field] = "0" * 64
     else:
         payload[field]["result_id"] += "-changed"
 
-    with pytest.raises(ValueError, match="sha256|digest|authority"):
+    with pytest.raises(
+        ValueError,
+        match="sha256|digest|authority|n_runs|launch-origin translation",
+    ):
         regional_ground_execution_job_from_json(json.dumps(payload))
 
 
 def test_execution_bounds_and_cross_contract_invariants_fail_closed() -> None:
     payload = json.loads(regional_ground_execution_job_to_json(_job()))
-    cases = (
-        ("max_trials", 5, "n_runs"),
-        ("max_parallelism", 33, "parallelism"),
-        ("timeout_s", 3600.01, "timeout"),
-    )
+    cases = (("max_trials", 5, "n_runs"),)
     for field, value, message in cases:
         changed = json.loads(json.dumps(payload))
         changed["execution_options"][field] = value
@@ -201,6 +263,12 @@ def test_execution_bounds_and_cross_contract_invariants_fail_closed() -> None:
     with pytest.raises(ValueError, match="surface|sha256|digest"):
         regional_ground_execution_job_from_json(json.dumps(mismatch))
 
+    for unsupported in ("max_parallelism", "timeout_s", "fail_fast"):
+        changed = json.loads(json.dumps(payload))
+        changed["execution_options"][unsupported] = 1
+        with pytest.raises(ValueError, match="fields"):
+            regional_ground_execution_job_from_json(json.dumps(changed))
+
 
 def test_model_and_launch_relative_surface_authorities_must_align() -> None:
     job = _job()
@@ -210,8 +278,30 @@ def test_model_and_launch_relative_surface_authorities_must_align() -> None:
 
     shifted_surface = replace(job.transfer.surface, height_m=0.01)
     shifted_transfer = replace(job.transfer, surface=shifted_surface)
-    with pytest.raises(ValueError, match="launch-relative transfer surface"):
+    with pytest.raises(ValueError, match="source regional base surface"):
         replace(job, transfer=shifted_transfer)
+
+
+def test_builder_rejects_nonserializable_physical_cancellation_callback() -> None:
+    job = _job()
+    with pytest.raises(ValueError, match="cancellation callback"):
+        build_regional_ground_execution_job(
+            job_id=job.job_id,
+            launch=job.launch.launch,
+            flight=job.flight,
+            transfer=job.transfer,
+            capture_speed_m_s=job.capture_speed_m_s,
+            execution_options=job.execution_options,
+            regional_execution_options=RegionalGroundExecutionOptions(
+                settings=job.regional_execution_options.settings,
+                is_cancelled=lambda: False,
+                source_revision=job.regional_execution_options.source_revision,
+            ),
+            variation_request=job.variation_request,
+            producer=job.provenance.producer,
+            producer_version=job.provenance.producer_version,
+            source_revision=job.provenance.source_revision,
+        )
 
 
 @pytest.mark.parametrize(

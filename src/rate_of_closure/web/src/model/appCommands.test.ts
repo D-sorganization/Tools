@@ -20,6 +20,10 @@ const CANONICAL_COMMAND_IDS = [
   "file.close_workspace",
   "file.open_regional_ground_variation_request",
   "file.save_regional_ground_variation_request_as",
+  "file.open_regional_ground_execution_job",
+  "file.save_regional_ground_execution_job_as",
+  "file.save_regional_ground_execution_result_as",
+  "file.export_regional_ground_execution_rows_csv",
   "view.manage_modules",
   "view.restore_default_workspace",
   "view.show_impact",
@@ -55,10 +59,16 @@ describe("application command registry", () => {
   });
 
   it("keeps unavailable workspace-document commands truthfully disabled", () => {
+    const enabledContextual = new Set<(typeof APP_COMMAND_IDS)[number]>([
+      APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest,
+      APP_COMMAND_ID.fileSaveRegionalGroundVariationRequestAs,
+      APP_COMMAND_ID.fileOpenRegionalGroundExecutionJob,
+      APP_COMMAND_ID.fileSaveRegionalGroundExecutionJobAs,
+      APP_COMMAND_ID.fileSaveRegionalGroundExecutionResultAs,
+      APP_COMMAND_ID.fileExportRegionalGroundExecutionRowsCsv,
+    ]);
     const fileCommands = APP_COMMANDS.filter(({ group, id }) =>
-      group === "file" && id !== APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest &&
-      id !== APP_COMMAND_ID.fileSaveRegionalGroundVariationRequestAs,
-    );
+      group === "file" && !enabledContextual.has(id));
     expect(fileCommands).toHaveLength(8);
     expect(fileCommands.every(({ enabled }) => !enabled)).toBe(true);
     expect(fileCommands.every(({ disabledReason }) =>

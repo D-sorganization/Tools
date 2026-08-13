@@ -6,7 +6,7 @@
  */
 
 import { cleanup, render } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
 import { useRegionalGroundVariationWorkspace } from "../hooks/useRegionalGroundVariationWorkspace";
@@ -45,7 +45,14 @@ beforeAll(() => {
   );
 });
 
-afterEach(cleanup);
+beforeEach(() => {
+  vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(() => {})));
+});
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 function assertHints(container: HTMLElement, panel: string) {
   const interactive = container.querySelectorAll(

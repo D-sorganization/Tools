@@ -11,6 +11,10 @@ export const APP_COMMAND_IDS = [
   "file.close_workspace",
   "file.open_regional_ground_variation_request",
   "file.save_regional_ground_variation_request_as",
+  "file.open_regional_ground_execution_job",
+  "file.save_regional_ground_execution_job_as",
+  "file.save_regional_ground_execution_result_as",
+  "file.export_regional_ground_execution_rows_csv",
   "view.manage_modules",
   "view.restore_default_workspace",
   "view.show_impact",
@@ -38,6 +42,14 @@ export const APP_COMMAND_ID = Object.freeze({
     "file.open_regional_ground_variation_request",
   fileSaveRegionalGroundVariationRequestAs:
     "file.save_regional_ground_variation_request_as",
+  fileOpenRegionalGroundExecutionJob:
+    "file.open_regional_ground_execution_job",
+  fileSaveRegionalGroundExecutionJobAs:
+    "file.save_regional_ground_execution_job_as",
+  fileSaveRegionalGroundExecutionResultAs:
+    "file.save_regional_ground_execution_result_as",
+  fileExportRegionalGroundExecutionRowsCsv:
+    "file.export_regional_ground_execution_rows_csv",
   viewManageModules: "view.manage_modules",
   viewRestoreDefaultWorkspace: "view.restore_default_workspace",
   viewShowImpact: "view.show_impact",
@@ -98,6 +110,10 @@ export const APP_COMMANDS: readonly AppCommand[] = Object.freeze([
     "file",
     "Save Regional-Ground Variation Request As",
   ),
+  enabled(APP_COMMAND_ID.fileOpenRegionalGroundExecutionJob, "file", "Open Regional-Ground Execution Job"),
+  enabled(APP_COMMAND_ID.fileSaveRegionalGroundExecutionJobAs, "file", "Save Regional-Ground Execution Job As"),
+  enabled(APP_COMMAND_ID.fileSaveRegionalGroundExecutionResultAs, "file", "Save Regional-Ground Execution Result As"),
+  enabled(APP_COMMAND_ID.fileExportRegionalGroundExecutionRowsCsv, "file", "Export Regional-Ground Execution Rows CSV"),
   enabled(APP_COMMAND_ID.viewManageModules, "view", "Manage Modules"),
   enabled(APP_COMMAND_ID.viewRestoreDefaultWorkspace, "view", "Restore Default Workspace"),
   enabled(APP_COMMAND_ID.viewShowImpact, "view", "Impact"),

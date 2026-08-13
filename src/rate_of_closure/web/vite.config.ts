@@ -1,5 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { buildAuthorityProxyConfig } from "./authorityProxyConfig";
+
+const authorityProxy = buildAuthorityProxyConfig({
+  ROC_AUTHORITY_URL: process.env.ROC_AUTHORITY_URL,
+  ROC_AUTHORITY_TOKEN: process.env.ROC_AUTHORITY_TOKEN,
+});
 
 export default defineConfig({
   // Relative base so the built bundle works from any static-host subpath
@@ -17,7 +23,10 @@ export default defineConfig({
   server: {
     port: 5193,
     strictPort: true,
-    open: false
+    open: false,
+    proxy: authorityProxy === undefined
+      ? undefined
+      : { "/api/rate-of-closure": authorityProxy },
   },
   build: {
     outDir: "dist",

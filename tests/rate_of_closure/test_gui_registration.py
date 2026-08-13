@@ -38,7 +38,7 @@ class TestGuiRegistration:
 
     def test_pyqt6_block_is_complete(self, gui_info: dict) -> None:
         block = gui_info["pyqt6"]
-        assert block["class"] == "RateOfClosureMainWindow"
+        assert block["class"] == "RateOfClosureStandaloneMainWindow"
         assert "PyQt6" in block["dependencies"]
         assert block["settings_app"] == "RateOfClosure"
 

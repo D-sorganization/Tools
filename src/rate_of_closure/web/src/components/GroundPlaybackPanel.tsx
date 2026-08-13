@@ -15,6 +15,8 @@ import {
   MAX_GROUND_REGIONAL_EXECUTION_WIRE_BYTES,
 } from "../model/groundRegionalExecution";
 import { GroundPlayback3D } from "./GroundPlayback3D";
+import { RegionalGroundImportedJobPanel } from "./RegionalGroundImportedJobPanel";
+import type { RegionalGroundExecutionWorkspace } from "../hooks/useRegionalGroundExecutionWorkspace";
 
 const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 type ImportKind = "result" | "regional";
@@ -155,7 +157,9 @@ function LoadedResult({ result }: { readonly result: FlightToGroundResult }) {
   </>;
 }
 
-export function GroundPlaybackPanel() {
+export function GroundPlaybackPanel(props: {
+  readonly regionalGroundExecution?: RegionalGroundExecutionWorkspace;
+}) {
   const importGeneration = useRef(0);
   const [result, setResult] = useState<FlightToGroundResult | null>(null);
   const [message, setMessage] = useState("No result loaded.");
@@ -203,6 +207,8 @@ export function GroundPlaybackPanel() {
           Result v1 does not embed surface geometry, so neutral locked-scale axes are shown instead of a claimed terrain plane.
         </p>
       </header>
+      {props.regionalGroundExecution !== undefined &&
+        <RegionalGroundImportedJobPanel workspace={props.regionalGroundExecution} />}
       <label className="inline-flex cursor-pointer rounded border border-sky-500/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-200">
         Import Ground Result JSON…
         <input type="file" accept="application/json,.json" className="sr-only"

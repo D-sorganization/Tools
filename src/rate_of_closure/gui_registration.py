@@ -18,7 +18,7 @@ GUI_INFO = {
     "icon": "rotate",
     "pyqt6": {
         "module": "rate_of_closure.ui.pyqt6.main_window",
-        "class": "RateOfClosureMainWindow",
+        "class": "RateOfClosureStandaloneMainWindow",
         "dependencies": ["PyQt6", "matplotlib", "numpy"],
         "settings_app": "RateOfClosure",
         "min_size": [1024, 700],

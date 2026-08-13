@@ -82,6 +82,7 @@ class SimulationTab(
         super().__init__(parent)
         self._scenario = ImpactScenario(clubhead_speed_mph=113.0)
         self._run: SimulationRun | None = None
+        self._run_current = False
         self._tau: float | None = None  # None = auto (max clubhead speed)
         self._source = None  # cached app-frame source for live scrubbing
         self._rows: dict[str, ResultRow] = {}
@@ -165,6 +166,7 @@ class SimulationTab(
         """Adopt the explorer's scenario (drives the manual source)."""
         self._scenario = scenario
         self._invalidate_source()
+        self.configChanged.emit(self.derivation_config())
 
     def plane(self) -> PlaneOrientation:
         """The plane orientation described by the tilt inputs."""
@@ -269,6 +271,7 @@ class SimulationTab(
 
     def run_now(self) -> SimulationRun | None:
         """Run the simulation and populate the scene + inspector."""
+        self._run_current = False
         try:
             run = run_simulation(self.config())
         except Exception as exc:  # noqa: BLE001 — surface physics failures
@@ -287,6 +290,7 @@ class SimulationTab(
         self._update_spatial_target_after_run(run)
         self._update_outcome_labels(run)
         self._set_completed_status(run)
+        self._run_current = True
         if run.config.swing_run_config.prescribed_profile_id is not None:
             self._torque_profile_panel.set_execution_status(
                 "Prescribed profile executed in the double-pendulum dynamics kernel; "
@@ -332,6 +336,13 @@ class SimulationTab(
     def last_run(self) -> SimulationRun | None:
         """The most recent successful run, if any."""
         return self._run
+
+    def current_completed_hit(self) -> SimulationRun | None:
+        """Return only a successful hit that still matches every current editor."""
+        run = self._run
+        if not self._run_current or run is None or not run.impact_outcome.is_hit:
+            return None
+        return run
 
     def ball_setup_control(self) -> BallSetupControl:
         """Return the canonical Ground/Tee editor hosted by this session."""

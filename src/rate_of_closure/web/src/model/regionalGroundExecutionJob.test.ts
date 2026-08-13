@@ -25,6 +25,11 @@ describe("regional-ground execution job v1", () => {
     expect(job.flight.trajectory_sha256).toBe(
       fixture.job.flight.trajectory_sha256,
     );
+    expect(job.launch.ball_setup.support_mode).toBe("tee");
+    expect(job.qualified_regional_plan.regions.every((region) =>
+      region.surface.height_m === job.qualified_regional_plan.base_surface.height_m,
+    )).toBe(true);
+    expect(job.regional_execution_options.settings.max_steps).toBe(200_000);
   });
 
   it.each([
@@ -48,11 +53,11 @@ describe("regional-ground execution job v1", () => {
       nested(value, "execution_options").max_trials = 5;
       return value;
     }, /n_runs/i],
-    ["parallelism bound", () => {
+    ["unsupported parallelism policy", () => {
       const value = clone();
-      nested(value, "execution_options").max_parallelism = 33;
+      nested(value, "execution_options").max_parallelism = 1;
       return value;
-    }, /parallelism/i],
+    }, /fields/i],
     ["flight model mismatch", () => {
       const value = clone();
       nested(value, "flight").model_id = "nathan";
@@ -64,7 +69,20 @@ describe("regional-ground execution job v1", () => {
       setup.tee_height_m = 0.03;
       (setup.ball_center_m as number[])[1] = 0.051335;
       return value;
-    }, /launch-relative transfer surface/i],
+    }, /coplanar|launch-origin translation/i],
+    ["physical settings drift", () => {
+      const value = clone();
+      const options = nested(value, "regional_execution_options");
+      nested(options, "settings").max_steps = 100;
+      return value;
+    }, /input_sha256/i],
+    ["qualified overlay drift", () => {
+      const value = clone();
+      const plan = nested(value, "qualified_regional_plan");
+      const regions = plan.regions as Array<Record<string, unknown>>;
+      nested(regions[0], "surface").height_m = 0;
+      return value;
+    }, /coplanar|launch-origin translation/i],
   ])("rejects %s", (_label, build, message) => {
     expect(() => parseRegionalGroundExecutionJob(build())).toThrow(message);
   });

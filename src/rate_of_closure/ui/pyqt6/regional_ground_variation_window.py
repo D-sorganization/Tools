@@ -98,5 +98,21 @@ class RegionalGroundVariationWindowMixin:
         """Save the contextual combined request through a native dialog."""
         self._regional_ground_variation_files.save_as()
 
+    def open_regional_ground_execution_job(self) -> None:
+        """Open one strict imported execution job in the Ground Study workspace."""
+        self._regional_ground_execution_tab.open_job()  # type: ignore[attr-defined]
+
+    def save_regional_ground_execution_job_as(self) -> None:
+        """Save the accepted canonical execution job."""
+        self._regional_ground_execution_tab.save_job_as()  # type: ignore[attr-defined]
+
+    def save_regional_ground_execution_result_as(self) -> None:
+        """Save the retained canonical execution result."""
+        self._regional_ground_execution_tab.save_result_as()  # type: ignore[attr-defined]
+
+    def export_regional_ground_execution_rows_csv(self) -> None:
+        """Export every retained regional-ground scalar row."""
+        self._regional_ground_execution_tab.export_rows_csv()  # type: ignore[attr-defined]
+
 
 __all__ = ["RegionalGroundVariationWindowMixin"]

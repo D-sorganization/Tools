@@ -24,6 +24,11 @@ import {
   regionalGroundVariationRequestFromJson,
   stableRegionalGroundVariationRequestJson,
 } from "./regionalGroundVariationRequestWire";
+import {
+  parseQualifiedExecutionAuthority,
+  type RegionalExecutionOptionsWire,
+} from "./regionalGroundExecutionQualification";
+import type { GroundRegionalMaterialPlanRequest } from "./groundRegionalPlan";
 import { sha256Text } from "./sha256";
 import { parseUniqueJson } from "./strictJson";
 
@@ -32,8 +37,6 @@ export const REGIONAL_GROUND_EXECUTION_JOB_SCHEMA_VERSION =
 export const MAX_REGIONAL_GROUND_EXECUTION_JOB_BYTES = 1_048_576;
 const FLIGHT_FRAME = "flight_frame:x_forward,y_left,z_up" as const;
 const MAX_CAPTURE_SPEED_M_S = 100;
-const MAX_EXECUTION_TIMEOUT_S = 3_600;
-const MAX_EXECUTION_PARALLELISM = 32;
 type WireObject = Readonly<Record<string, unknown>>;
 
 export interface ExecutionJobLaunch {
@@ -75,9 +78,6 @@ export interface ExecutionJobTransfer {
 
 export interface GroundExecutionOptions {
   readonly max_trials: number;
-  readonly max_parallelism: number;
-  readonly timeout_s: number;
-  readonly fail_fast: boolean;
 }
 
 export interface RegionalGroundExecutionJob {
@@ -89,6 +89,9 @@ export interface RegionalGroundExecutionJob {
   readonly transfer: ExecutionJobTransfer;
   readonly capture_speed_m_s: number;
   readonly execution_options: GroundExecutionOptions;
+  readonly regional_execution_options: RegionalExecutionOptionsWire;
+  readonly qualified_regional_plan: GroundRegionalMaterialPlanRequest;
+  readonly qualified_plan_sha256: string;
   readonly variation_request: WireObject;
   readonly input_sha256: string;
   readonly provenance: GroundProvenance;
@@ -98,6 +101,8 @@ export interface RegionalGroundExecutionJob {
 const ROOT_FIELDS = [
   "schema_version", "unit_system", "job_id", "launch", "flight", "transfer",
   "capture_speed_m_s", "execution_options", "variation_request",
+  "regional_execution_options", "qualified_regional_plan",
+  "qualified_plan_sha256",
   "input_sha256", "provenance", "job_sha256",
 ] as const;
 const LAUNCH_FIELDS = [
@@ -117,9 +122,7 @@ const TRANSFER_FIELDS = [
   "output_interval_s", "max_events", "rotational_inertia_factor",
   "surface_sha256", "settings_sha256",
 ] as const;
-const EXECUTION_FIELDS = [
-  "max_trials", "max_parallelism", "timeout_s", "fail_fast",
-] as const;
+const EXECUTION_FIELDS = ["max_trials"] as const;
 
 const digest = (value: unknown, name: string): string => {
   const parsed = text(value, name);
@@ -161,7 +164,10 @@ const parseBallSetupWire = (value: unknown): WireObject => {
   return deepFreeze(ballSetupToJson(parsed));
 };
 
-const parseLaunch = (value: unknown): ExecutionJobLaunch => {
+/** Parse and deeply freeze the launch mapping shared by execution and preparation wires. */
+export const parseRegionalGroundExecutionLaunch = (
+  value: unknown,
+): ExecutionJobLaunch => {
   const item = record(value, "launch");
   exact(item, LAUNCH_FIELDS, "launch");
   const spinAxis = vector(item.spin_axis_unit, "spin_axis_unit");
@@ -261,13 +267,8 @@ const parseTransfer = (value: unknown): ExecutionJobTransfer => {
 const parseExecutionOptions = (value: unknown): GroundExecutionOptions => {
   const item = record(value, "execution_options");
   exact(item, EXECUTION_FIELDS, "execution_options");
-  const failFast = item.fail_fast;
-  if (typeof failFast !== "boolean") throw new TypeError("fail_fast must be a boolean");
   return Object.freeze({
     max_trials: integer(item.max_trials, "max_trials", 1),
-    max_parallelism: integer(item.max_parallelism, "max_parallelism", 1),
-    timeout_s: boundedPositive(item.timeout_s, "timeout_s", MAX_EXECUTION_TIMEOUT_S),
-    fail_fast: failFast,
   });
 };
 
@@ -282,6 +283,9 @@ const inputPayload = (job: RegionalGroundExecutionJob): WireObject => ({
   transfer: job.transfer,
   capture_speed_m_s: job.capture_speed_m_s,
   execution_options: job.execution_options,
+  regional_execution_options: job.regional_execution_options,
+  qualified_regional_plan: job.qualified_regional_plan,
+  qualified_plan_sha256: job.qualified_plan_sha256,
   variation_request: job.variation_request,
 });
 
@@ -303,22 +307,6 @@ const validateCrossContractAuthority = (job: RegionalGroundExecutionJob): void =
   if (variationPlan.flight_model !== job.flight.model_id) {
     throw new RangeError("flight model_id must match variation request flight_model");
   }
-  const regionalPlan = record(
-    job.variation_request.regional_plan,
-    "regional_plan",
-  );
-  const setup = record(job.launch.ball_setup, "ball_setup");
-  const expectedSurface = {
-    ...job.transfer.surface,
-    height_m: job.transfer.surface.height_m - job.launch.ball_radius_m -
-      finiteRaw(setup.tee_height_m, "tee_height_m"),
-  };
-  if (canonicalGroundJson(regionalPlan.base_surface) !==
-      canonicalGroundJson(expectedSurface)) {
-    throw new RangeError(
-      "regional base surface must match launch-relative transfer surface",
-    );
-  }
 };
 
 /** Parse and deeply freeze one exact job without executing any physics. */
@@ -333,10 +321,17 @@ export const parseRegionalGroundExecutionJob = (
   if (options.max_trials !== integer(variationPlan.n_runs, "variation n_runs", 1)) {
     throw new RangeError("max_trials must equal variation request n_runs");
   }
-  if (options.max_parallelism > options.max_trials ||
-      options.max_parallelism > MAX_EXECUTION_PARALLELISM) {
-    throw new RangeError("max_parallelism exceeds the bounded trial parallelism");
-  }
+  const launch = parseRegionalGroundExecutionLaunch(item.launch);
+  const transfer = parseTransfer(item.transfer);
+  const sourcePlan = record(variation.regional_plan, "regional_plan");
+  const qualified = parseQualifiedExecutionAuthority(
+    item.regional_execution_options,
+    item.qualified_regional_plan,
+    item.qualified_plan_sha256,
+    sourcePlan as unknown as GroundRegionalMaterialPlanRequest,
+    launch,
+    transfer.surface,
+  );
   const parsed = {
     schema_version: oneOf(
       item.schema_version,
@@ -345,15 +340,18 @@ export const parseRegionalGroundExecutionJob = (
     ),
     unit_system: oneOf(item.unit_system, ["SI"] as const, "unit_system"),
     job_id: stableId(item.job_id, "job_id"),
-    launch: parseLaunch(item.launch),
+    launch,
     flight: parseFlight(item.flight),
-    transfer: parseTransfer(item.transfer),
+    transfer,
     capture_speed_m_s: boundedPositive(
       item.capture_speed_m_s,
       "capture_speed_m_s",
       MAX_CAPTURE_SPEED_M_S,
     ),
     execution_options: options,
+    regional_execution_options: qualified.options,
+    qualified_regional_plan: qualified.plan,
+    qualified_plan_sha256: qualified.planSha256,
     variation_request: variation,
     input_sha256: digest(item.input_sha256, "input_sha256"),
     provenance: parseProvenance(item.provenance),

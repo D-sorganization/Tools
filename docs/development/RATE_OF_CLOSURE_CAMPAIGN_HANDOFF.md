@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## 2026-08-11 PR #4362 bounded Track Clubhead child
 
 Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
@@ -90,17 +91,562 @@ surfaces, UpstreamDrift consumers, protected review, release, and
 =======
 =======
 =======
+=======
+## 2026-08-12 #4369 durable loopback authority recovery
+
+Branch `codex/4369-authority-restart-recovery` starts exactly from approved
+Tools PR #4375 head `9561dae8c048a511722619a7dfdaf065bb1667c7` and must
+target `codex/4369-flight-recompute-cancellation`. Human review is approved;
+normal dependency order, protected checks, and non-admin merge behavior remain
+mandatory.
+
+The source-run React launcher now injects a private, fixed authority state root.
+The isolated Python authority owns a versioned SQLite/WAL store under a
+process-lifetime file lock. It transactionally retains canonical job, status,
+and complete-result bytes plus independent SHA-256 digests, rejects unknown
+schema/version, lock contention, integrity failure, digest substitution,
+impossible status/result pairs, and oversized state, and never persists the
+ephemeral bearer token, raw exceptions, callbacks, threads, or partial rows.
+Queued/running work recovered after process loss becomes terminal
+`execution_failed/authority_restart`; a recovered cancel request becomes
+cancelled. Startup never invokes or replays physics.
+
+The React Ground Study surface adds an explicit **Recover retained status**
+action for an exact accepted/imported job. Recovery performs capability,
+status, and complete-result reads only. It never POSTs a job, cancels work,
+restores confirmation, or substitutes browser physics. Completed result bytes
+and terminal evidence survive hard authority termination; ambiguous or corrupt
+state fails closed. PyQt continues using its direct worker, so this slice makes
+no PyQt restart-recovery claim.
+
+The `rate-of-closure-web` extra now declares the qualified SciPy and file-lock
+runtime dependencies, and the root wheel includes `rotation_converter`, which
+the installed authority import graph requires. A clean extra installation can
+import the durable authority store without relying on the development checkout.
+
+The first hosted #4376 quality gate exposed one pinned-MyPy-1.13-only inference
+gap in the deterministic status-fixture stage matrix. The corrective follow-up
+types that matrix against the shared wire literal union; fixture bytes and all
+runtime behavior remain unchanged. The exact pinned CI MyPy command, fixture
+check, Ruff/format, and manifest gates pass locally before the follow-up push.
+
+The next exact-head #4376 gate passed checkout, dependencies, Ruff, format,
+pinned MyPy, and quality policies, then Bandit rejected the retention cleanup's
+dynamically sized parameter-placeholder SQL. The correction reads bounded
+stored identifiers and deletes obsolete rows with one static parameterized
+statement via `executemany`; transaction rollback and retained-row identity
+remain covered. This is an actionable security-gate fix, not a CI retry.
+
+Local gates are green: 1,252 Rate-of-Closure Python/PyQt tests plus one
+Windows-skipped POSIX-permission test with eight workers; 137 React files and
+909 tests; TypeScript; zero-warning ESLint; the production Vite build; 74
+focused Python store/API/process tests plus the same POSIX skip; 49 focused
+React contract/controller/UI tests; deterministic fixture regeneration;
+Ruff check/format; changed-source MyPy; the 400-line module budget; and
+`git diff --check`. The inherited polynomial-generator empty-legend warning
+and existing Vite chunk-size advisory remain unchanged.
+
+The campaign manifest records PR #4375's exact carrier head. This child cannot
+self-record its future PR number. Static-host companion discovery, frozen
+runtime qualification, PyQt direct-worker recovery, measured calibration,
+compiled/TypeScript regional physics, UpstreamDrift parity, ancestor
+integration, protected release, and closure of #4369/#4273/#4267 remain open.
+
+
+## 2026-08-12 #4369 qualified flight-recompute cancellation
+
+Branch `codex/4369-flight-recompute-cancellation` starts exactly from Tools PR
+#4374 head `e1da8708c15f966afc926e20eae3fdf084ba8a16` and must target
+`codex/4369-editor-job-preparation`. Human review is approved for this campaign
+continuation; repository protections and required checks still apply.
+
+The Waterloo/Penner surface solver and registered profile recomputation now
+accept one optional keyword-only exact-Boolean cancellation callback. The job
+manager's existing cancellation event is polled before integration, on adaptive
+derivative boundaries, through dense-output materialization, after metrics,
+during chunked retained-trajectory construction, and during canonical evidence
+serialization. Cancellation publishes no partial result and maps to typed
+zero-of-total cancellation. Raising or non-Boolean callbacks preserve their
+original cause internally and map to the existing non-secret callback-failure
+stage. Callback-free and always-false paths preserve existing canonical flight
+digests and every job/wire schema.
+
+Independent review found and this branch closed the original post-solver latency
+gap, duplicate comparison-digest work, oversized profile module, and a SciPy-call-count
+coupled regression test. Deterministic tests cover solver, post-solver digest,
+manager shutdown, callback-defect, no-regional-physics, exact signature, facade,
+and digest-parity behavior. Final local evidence is 1,233 Rate of Closure tests
+with eight workers, 87 focused cancellation/profile/job/runner tests, manifest
+validation plus eight manifest tests, Ruff check/format, changed-source typing,
+module-size and `git diff --check` gates. This slice changes no React or PyQt
+visual surface, so the parent PR #4374 React/PyQt visual and build evidence
+remains the relevant UI gate.
+
+The campaign manifest now records parent PR #4374's exact head. This child must
+not self-record its future PR number; verify and add that carrier in the next
+implementation commit. Durable authority restart recovery, static-host and
+frozen-runtime qualification, measured regional calibration, compiled or
+TypeScript regional physics, downstream UpstreamDrift parity, ancestor-stack
+integration, protected release, and closure of #4369/#4273/#4267 remain open.
+
+
+
+## 2026-08-11 #4369 current-editor job preparation
+
+Local branch `codex/4369-editor-job-preparation` starts exactly from corrected
+PR #4373 head `cca7c839f8fcaeab57d43fcb9d6f3df3b428e3c4`. It adds a strict
+bounded preparation-request/v1 boundary and a Python-only registered-profile
+builder that recomputes flight evidence, derives canonical trajectory/result,
+input, provenance, qualified-plan, and job digests, and preserves the current
+Ground/Tee setup. The authenticated preparation endpoint returns a canonical
+job without retaining, enqueueing, or running it.
+
+PyQt6 now accepts only a current successful Simulation hit; any relevant editor
+change or failed/missed rerun preserves historical playback but invalidates that
+run as preparation authority. Ground Study can prepare, review, save, and then
+separately confirm/run the accepted job. Failures preserve the prior accepted
+job/result and suppress private causes. The preview discloses flight settings,
+transfer/capture bounds, callback-free regional settings, and the explicitly
+UNVALIDATED zero-confidence editor calibration.
+
+React owns and validates the same full launch snapshot, sends it with the exact
+validated variation/surface request through the same-origin authority client,
+strictly binds the returned job to the captured request, and transactionally
+accepts it with confirmation cleared. Browser code performs no preparation or
+execution physics, and preparation never auto-submits.
+
+Final local evidence is 1,223 Rate of Closure Python/PyQt tests with eight
+workers, 134 focused authority/profile/preparation/UI regressions, and a
+post-review 49-test PyQt preparation/simulation rerun. React is green across
+137 files and 905 tests, TypeScript, zero-warning ESLint, and a 229-module
+production build. Ruff, format, Python 3.11/MyPy 2.1 changed-source typing,
+module-size budget, manifest validation plus its eight tests, and `git diff
+--check` are green. An independent final review found no remaining P0, P1, or
+P2 findings. The default 14-worker full-suite stress run twice hit a loopback
+poll timeout on this loaded workstation; both isolated tests and the complete
+eight-worker suite passed. Compiled MyPy 1.13 under local Python 3.13 also hit
+an internal cache-serialization assertion, so the protected pinned CI check
+remains required. The campaign manifest records exact carrier heads through PR
+#4373.
+
+This child targets corrected PR #4373; verify its live PR number, exact head,
+and protected checks after publication rather than relying on this commit to
+self-record future GitHub state. Durable authority restart recovery,
+static-host execution, frozen-runtime qualification, cooperative cancellation
+inside flight recomputation, measured calibration, compiled/TypeScript regional
+physics, UpstreamDrift consumers, ancestor integration, protected release, and
+#4369/#4273/#4267 completion remain open.
+
+
+## 2026-08-11 #4369 imported-job accessibility correction
+
+Physical browser inspection of PR #4373 found that the hidden file inputs and
+their visible proxy buttons both appeared as import actions in the accessibility
+tree. The Ground Playback panel and contextual File menu now use truly hidden,
+programmatically activated inputs, leaving each visible button as the sole
+accessible action. Focused React coverage proves the single-action contract and
+preserves strict file-import behavior across workspace navigation.
+
+## 2026-08-11 #4369 PyQt6 toolstrip protocol correction
+
+Hosted PR #4373 quality-gate job 94021363392 found that the concrete main
+window implemented all regional-ground execution File callbacks while the
+`ToolstripHost` structural protocol declared only the variation callbacks.
+The protocol now includes Open Job, Save Job, Save Result, and Export Rows CSV;
+this is a typing-only correction with no runtime behavior change. Reproduce with
+the pinned MyPy 1.13 changed-source profile and `MYPYPATH=src:src/python/src`.
+
+## 2026-08-11 #4369 integrated web-launch repair
+
+Physical launch verification found that Vite 7 mutates each proxy adapter with
+internal routing fields. The strict authority proxy builder now validates the
+loopback URL and ephemeral token, then returns a fresh mutable server-owned
+adapter instead of a frozen object. The token remains confined to Vite and is
+not emitted to browser code. `authorityProxyConfig.test.ts` pins both validation
+and framework extensibility; use `src/rate_of_closure/launch_web.py` for the
+integrated authority-backed client. A physical launch returned HTTP 200 from
+`http://localhost:5193/` and the proxied capability endpoint returned the exact
+qualified `available=true`, `regional_ground_execution=true` v1 evidence.
+
+## 2026-08-11 #4369 imported-job execution surfaces
+
+React now owns one regional-ground execution workspace above workspace
+navigation. Ground Playback mounts a visible strict imported-job surface with
+exact identity/provenance/digest evidence, explicit confirmation, Run, Cancel,
+progress, typed failure, ambiguous-request reconciliation, canonical job/result
+downloads, and lossless scalar-row CSV export. Active or uncertain authority
+ownership prevents job replacement, the same immutable authority job cannot be
+silently resubmitted, and neither editor state nor TypeScript physics enters the
+job. Contextual File commands share the same App-owned state.
+
+PyQt6 now exposes a dedicated Ground Study module between Ground Surfaces and
+Ground Playback. It uses bounded strict UTF-8 import, QThread execution and
+cooperative cancellation, safe error presentation, exact job/result evidence,
+and native atomic job/result/CSV writes. Close blocks until its worker is
+cancelled and joined. Direct embedded construction remains unavailable unless
+an authority is injected; the source standalone launcher injects the qualified
+direct Python runner without Uvicorn, while frozen distributions remain
+explicitly unqualified.
+
+Focused evidence passes 76 PyQt navigation, toolstrip, controller, file,
+workspace, standalone, registration, and manifest tests. React passes its complete
+875-test suite across 135 files, strict TypeScript, zero-warning ESLint, and the
+production build. Ruff, Black, pinned MyPy 1.13, and diff hygiene pass for the
+Python delta. Current-editor job construction, restart recovery, static-host
+execution, frozen-runtime qualification, compiled/downstream parity, protected
+integration, release, #4369, #4273, and #4267 remain open.
+
+## 2026-08-11 #4369 qualified headless authority admission
+
+- Independent post-admission review verifies deterministic submit-versus-close
+  and exceptional-lifespan regression coverage, exact Python reason/detail
+  typing, and matching TypeScript detail/media-type enforcement. Earlier
+  no-runner statements are historical evidence, not current service state.
+- Default local authority construction now atomically couples the qualified
+  regional-ground runner with a strict ready capability; impossible flag,
+  reason, or manager/runner combinations fail closed.
+- Readiness validates the authenticated exact capability body, not status alone.
+  The manager cooperatively cancels and joins its one owned worker on shutdown.
+- React production admission accepts only the qualified v1 evidence and removes
+  its test-only bypass. No TypeScript physics or automatic execution is added.
+- The shared launch-registry test now pins built-ins as an ordered prefix, so
+  documented Rate extensions do not create xdist worker-order dependence.
+- Independent review reproduced and closed submit-versus-close and exceptional
+  lifespan-exit races. Python and React now share exact reason, detail-length,
+  media-type, and bounded-body capability validation.
+- Complete local qualification passes 2,014 Python/PyQt/shared-simulation
+  tests with one optional Rust-wheel parity skip and 860 React tests across
+  132 files. Pinned MyPy 1.13/Ruff 0.14.10, Ruff format, high-severity Bandit,
+  TypeScript, zero-warning ESLint, the 214-module production build,
+  deterministic fixtures, campaign-manifest, governance, and diff checks pass.
+- Visible controls remain unmounted/disabled until a strict imported job can be
+  selected, confirmed, run/cancelled, and explicitly saved. Direct editor
+  execution requires a later Python-authoritative job preparation boundary.
+- Static hosting, persistent recovery, packaged PyQt helper behavior, compiled
+  runtime parity, downstream parity, protected integration, and release remain
+  open. Do not close #4369, #4273, or #4267 from this headless service slice.
+
+## 2026-08-11 #4369 qualified fixture, runner, and matched presentation
+
+- Exact published source head before composition:
+  `ff1310c09c066a32e57b50e4daee4da5a40d7bf3`.
+- The checked fixture generator derives flight digests from the registered
+  profile and rebuilds all job/status/result identities deterministically.
+- Qualified jobs reuse one flight solve across seeded regional trials and
+  preserve cooperative cancellation, typed-null transfer rejection, typed
+  terminal defects, and complete-only job-bound publication.
+- Matched PyQt6/React presentation shows exact identity/provenance/progress/
+  failure/result evidence but offers no executing handler. At that earlier
+  fixture slice the default runner was unregistered and capability was false;
+  visible Run/Cancel remains disabled after the newer headless admission.
+- Consolidated evidence: 2,004 Python/PyQt/shared-simulation tests and 858 React
+  tests, real authenticated loopback success, deterministic fixture `--check`,
+  Ruff/format, MyPy, Bandit, TypeScript, zero-warning ESLint, 214-module build,
+  docs, manifest, and diff gates. The optional Rust parity test remains skipped
+  because the local interpreter has no `swing_core` wheel.
+
+## 2026-08-11 #4369 hosted MyPy 1.13 correction
+
+- Exact failing PR #4372 head:
+  `e91ef8dcde8cdd8e6545ffc0ea7cb755058ec2fb`.
+- Hosted quality-gate job `93999818041` passed checkout, dependency install,
+  Ruff, and formatting, then reported one pinned MyPy 1.13 `redundant-cast`
+  finding in the loopback submitter's exact-bool cancellation path.
+- The redundant cast and unused import are removed with no runtime or
+  capability change. The matching pinned MyPy 1.13 profile and 13-test
+  submitter suite pass locally; protected CI and ancestor integration remain
+  open.
+
+## 2026-08-11 #4369 composed authority continuation ready for PR #4372
+
+- Exact published parent head: `3571952c2344ca23ffa65121c606faab1b735a23`.
+- The composed continuation adds canonical cross-runtime status, typed
+  preflight, the authenticated PyQt client and real-process tests, a strict
+  digest-qualified Waterloo/Penner execution profile, and an abortable
+  one-active-job React controller.
+- The fixture's synthetic flight hashes failed deterministic recomputation at
+  that earlier continuation head, so production injected no runner and
+  capability was false. No visible execution control is promoted now.
+- Consolidated evidence: 1,148 Python/PyQt and 854 React tests, real loopback,
+  Ruff/format, focused MyPy, changed-file high-severity Bandit, TypeScript,
+  zero-warning ESLint, 214-module build, docs/manifest/structural governance,
+  and diff checks. Protected CI and the full ancestor stack remain mandatory.
+
+## 2026-08-11 local #4369 PyQt real-loopback qualification
+
+- Exact source parent: composed head
+  `f7342cae7296410f8cfd262fd9877363beb5dc63`.
+- Actual loopback Uvicorn/FastAPI processes validate the PyQt submitter's real
+  bearer HTTP path, canonical submit/status/cancel/result lifecycle, typed
+  production-preflight terminal, bounded close/join, and process reaping.
+- Wrong authentication exposes neither the ephemeral token nor model data. The
+  production false capability still constructs no submitter.
+- A bounded import-factory seam is the only runtime change; the default factory
+  and environment-only token path are unchanged. Test runners reject before
+  physics or wait only for cancellation, so no successful model or physics,
+  UI, persistence, protected, downstream, or release claim is added.
+- Code, tests, SPEC, manifest, and all handoffs commit atomically; exact focused,
+  composed, static, and governance evidence follows.
+## 2026-08-11 local #4369 versioned flight execution profile
+
+- Exact source parent: local composed head
+  `7e4069e891d8b4bde3f1d712b5b47897359a414e`.
+- One strict registry identity maps Waterloo/Penner `tools-core/1.0.0` to the
+  exact bounded `max_time_s`, `step_s`, and whole-number `sample_every`
+  settings schema.
+- The v1 recomputation authority binds default model coefficients, adaptive
+  RK45, launch-relative planar transfer-surface contact, base sampling,
+  deterministic decimation, and terminal retention. Only exact trajectory and
+  result digest matches can release the recomputed flight.
+- The canonical fixture deterministically fails trajectory/result hash
+  qualification because its declared flight evidence is synthetic. Preflight
+  reports a typed non-sensitive mismatch at zero trials; ground physics is not
+  invoked and no result is published.
+- Production runner injection, capability, visible client controls,
+  persistence, ground execution, protected integration, and downstream parity
+  remain open. Replace the fixture only with profile-produced evidence under a
+  pinned numerical runtime. Keep #4369/#4273/#4267 open.
+- TDD RED captured the missing registry. Evidence passes 20 focused
+  registry/preflight tests, 147 composed authority/contract/manifest/flight
+  tests, Ruff, Black, focused MyPy, Bandit, JSON/manifest validation, and
+  structural gates. No GitHub write occurred.
+## 2026-08-11 local #4369 React execution-controller prerequisite
+
+- Exact source parent: local composed head
+  `7e4069e891d8b4bde3f1d712b5b47897359a414e`; isolated branch
+  `codex/4369-authority-react-controller-v1`.
+- A UI-neutral hook validates the exact capability and execution job, admits at
+  most one active job, polls status one request at a time, exposes exact
+  completed/total progress and typed terminal failure, delegates POST cancel,
+  and requests a result only after succeeded status.
+- Result publication reuses the strict client's complete expected-job binding.
+  Abort signals, operation IDs, and run generations suppress late publication
+  after cancellation, reset, unmount, or a superseding request. React
+  StrictMode remount behavior has a dedicated regression.
+- At that earlier controller slice production admission was false and a named
+  admission override was confined to lifecycle tests. The newer headless
+  admission removes the override without adding visible controls, a qualified
+  UI physical runner, TypeScript physics, persistence, protected carrier,
+  downstream parity, or issue completion.
+- TDD RED captured both the missing controller and the StrictMode lifecycle
+  bug. Evidence passes 31 focused React authority tests, strict TypeScript,
+  zero-warning ESLint, the 214-module production build, manifest validation and
+  all eight manifest tests, and module/minimum-test governance. Implementation
+  and all durable handoffs are atomic; no push or GitHub write occurs.
+
+## 2026-08-11 local #4369 canonical authority status wire
+
+- Exact parent: published PR #4372 head
+  `3571952c2344ca23ffa65121c606faab1b735a23`.
+- The transport-neutral application contract owns strict Python construction,
+  parsing, source-job validation, and canonical serialization for all six
+  status states and every stable failure code/stage under 4,096 bytes.
+- The server manager consumes that contract. A Python-recreated shared golden
+  is parsed and canonically serialized byte-for-byte by React, with adversarial
+  duplicate, extra, typed, non-finite, unsafe-number, state-semantic, and
+  mismatched-job coverage in both runtimes.
+- This slice adds no physics, UI, persistence, transport adapter, capability
+  promotion, or execution claim. Keep #4369/#4273/#4267 open.
+## 2026-08-11 local #4369 production-runner preflight qualification
+
+- Exact source parent: published PR #4372 head
+  `3571952c2344ca23ffa65121c606faab1b735a23`.
+- Audit found no versioned authority mapping the job's generic numeric flight
+  settings, model version, and declared flight digests to exact solver and
+  surface-event semantics. The fixture's `sample_every` key is not consumed by
+  production flight code.
+- A typed runner preflight now distinguishes unknown model IDs from recognized
+  models lacking a qualified profile. It checks cancellation first and maps
+  callback defects or rejection to exact complete-only terminal failures.
+- Tests prove that preflight invokes neither flight nor regional-ground
+  physics; the manager publishes only a generic `preflight` failure with zero
+  completed trials and no result.
+- At that earlier preflight slice no profile was registered, the production
+  factory injected no runner, and capability was unavailable. The later
+  headless service qualification does not promote a client control or release.
+  The next physical UI slice must preserve the exact versioned input,
+  solver/surface, and digest-recomputation contract. Keep #4369/#4273/#4267
+  open.
+- TDD RED captured the missing module. Evidence passes 7 focused runner tests,
+  98 composed authority/contract/variation/manifest tests, 28 physical
+  pipeline regressions, Ruff, Black, focused MyPy, Bandit, and manifest
+  validation. The serial full Rate suite hit the 10-minute local command cap
+  without reporting a failure; root owns the nonredundant complete gate. No
+  GitHub write occurred.
+
+## 2026-08-11 local #4369 PyQt authenticated loopback submitter
+
+- Exact source parent: published PR #4372 head
+  `3571952c2344ca23ffa65121c606faab1b735a23`.
+- The widget-free application adapter sends canonical jobs through the existing
+  authenticated loopback runtime, validates the shared job-bound status wire,
+  polls with bounded timeout/backoff, forwards cooperative POST cancellation,
+  and retrieves only complete expected-job-bound results.
+- Client failures after acceptance attempt one bounded best-effort cancel;
+  callback/transport/status/result failures remain typed and non-secret, and
+  cancellation, shutdown, stale status, or late success cannot publish data.
+- At that earlier submitter slice the false capability returned no adapter.
+  The visible PyQt workflow still registers no submitter; no controls,
+  persistence,
+  scientific claim, protected carrier, downstream parity, or release is added.
+- Code, tests, SPEC, manifest, and all handoffs commit atomically as `SELF`;
+  exact local gate evidence follows.
+
+## 2026-08-11 #4369 authority terminal-count binding
+
+- Injected cancellation/failure terminals must match the submitted job total
+  and cannot regress observed progress. Mismatches retain the prior count and
+  become typed validation failures with no result publication.
+
+## 2026-08-11 #4369 result-digest typing stability
+
+- The result digest now crosses its helper boundary through an explicit string
+  local, keeping both isolated skipped-import and complete PR-delta MyPy 1.13
+  root sets clean without changing runtime bytes or canonical evidence.
+
+## 2026-08-11 local #4369 PyQt worker/controller prerequisite
+
+- Exact source parent: published PR #4372 head
+  `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`.
+- A widget-free QThread worker/controller accepts the exact qualified job and a
+  dependency-injected submitter. It forwards typed progress, cancellation, and
+  failure signals and prevents overlapping work or stale publication.
+- Success requires one complete execution-result envelope that passes the
+  existing expected-job identity, trial-count/order, and series binding.
+  Invalid or unbound results become typed validation failures; no partial rows
+  or dataset are exposed.
+- No physical submitter is registered, no visible control is wired, and the
+  authority capability remains unavailable. Browser submission, matched client
+  controls, protected integration, and release remain open.
+- TDD RED captured the absent port. Evidence passes 7 focused QThread tests, 79
+  job/result/qualification/variation regressions, all 1,068 Rate Python/PyQt
+  tests, Ruff, Black, focused MyPy, manifest validation/tests, docs governance,
+  and structural gates. The full suite's one empty-legend warning predates and
+  is unrelated to this slice.
+## 2026-08-11 local #4369 authority job manager and endpoints
+
+- Exact source parent: published PR #4372 head
+  `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`.
+- One thread-safe in-memory manager owns at most one active job and a bounded
+  oldest-first terminal/result set.
+- Authenticated submit/status/cancel/result endpoints reuse the exact job and
+  result contracts, disable caching, stream-cap requests at 1 MiB, and reject
+  encoded, mistyped, duplicate, malformed, and oversized bodies.
+- Cancellation is forwarded through existing variation hooks and prevents a
+  late result from being published. Typed failure evidence omits raw exception
+  and token text; only a complete result revalidated against its job is exposed.
+- Production has no injected runner, returns `execution_unavailable`, and
+  retains `regional_ground_execution=false`. This is an orchestration boundary,
+  not proof of physical execution or a browser Run feature.
+- TDD RED captured the absent manager. Green evidence includes 21 focused
+  manager/API tests, 88 related contract regressions, all 1,076 Rate of Closure
+  Python/PyQt tests, Ruff/format, focused MyPy, Black, changed-file Bandit,
+  manifest JSON/eight tests, placeholder, module-budget, and diff gates.
+- Code, tests, SPEC, manifest, and all handoffs commit together as `SELF` with
+  no push or GitHub write. Physical job invocation, full in-flight interruption,
+  client controllers, persistence/recovery, compiled/downstream parity,
+  protected evidence, and release remain open.
+## 2026-08-11 local #4369 React authority client contracts
+
+- Exact parent: published PR #4372 head
+  `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`; local branch
+  `codex/4369-authority-react-client-v1`.
+- React reserves strict same-origin canonical submit, job-bound status,
+  POST-cancel, and complete-result retrieval contracts. Responses are
+  byte-bounded, duplicate-safe, exact-shape validated, and bound to the source
+  job before state/result publication; invalid jobs produce no network I/O.
+- Status matches the authority API exactly: queued, running,
+  cancel-requested, succeeded, failed, and cancelled states; completed/total
+  progress; result availability; and a nullable stable failure code/stage.
+  Auth, unknown-job, unavailable, malformed-server-error, and abort behavior
+  are explicit and tested without publishing synthetic status.
+- Capability polling is one request at a time. Cleanup clears scheduled polls,
+  aborts active fetches, and prevents an earlier effect from publishing stale
+  capability state after its query changes or the component unmounts.
+- At that earlier client slice all submit/status/cancel/result flags were
+  disabled while the Python-owned capability was false. The newer qualified
+  headless API still is not visible Run integration and adds no browser
+  physics, visible controls, persistence,
+  downstream parity, protected evidence, or issue completion.
+- Complete local evidence passes 1,061 Python/PyQt and 841 React tests across
+  130 files, the 214-module production build, strict TypeScript, zero-warning
+  ESLint, manifest validation/tests, and module/minimum-test budgets. Existing
+  Hypothesis collection, polynomial empty-legend, Node local-storage, and Vite
+  chunk notices remain. No push or GitHub mutation is authorized for this
+  child.
+
+## 2026-08-11 local #4369 job-bound result envelope
+
+- Exact source parent: published PR #4370 head
+  `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+- The bounded Python/React execution-result v1 envelope carries job/input
+  identities, complete scalar evidence, and recomputed canonical dataset SHA.
+- Expected-job matching binds result ID, trial count, zero-based order, and
+  every series ID. SHA-256 provides integrity/provenance, not authentication.
+- Full local evidence passed 1,048 Python/PyQt and 818 React tests, production
+  build, static analysis, manifest, and module gates.
+- No executor, partial publication, UI/backend/storage, compiled physics, or
+  downstream parity. Keep #4369/#4273/#4267 open.
+- Hosted MyPy 1.13 remediation removed a redundant result-digest cast without
+  changing runtime behavior or canonical evidence.
+
+## 2026-08-11 #4369 execution qualification continuation
+
+- Exact source parent: published PR #4370 head
+  `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+- The job binds exact callback-free regional options, all skid/roll settings,
+  executor revision, source plan, and launch-origin execution plan.
+- Teed-driver tests prove the base, every overlay, and axis origin receive one
+  translation and that provenance/digests are recomputed in both runtimes.
+- V1 exposes only implemented `max_trials`; unsupported parallelism, timeout,
+  and configurable fail-fast fields are rejected.
+- Local evidence passed 243 Python regressions, 35 focused Python tests, all
+  804 React tests, static analysis, production build, manifest, and module
+  gates. No physics invocation, result binding, controller, or release claim.
+
+>>>>>>> origin/codex/4369-authority-restart-recovery
 ## 2026-08-11 local #4369 validator-failure hardening
 
 - Exact parent: published PR #4370 head
   `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
 - Outcome-validator exceptions now terminate through the same typed,
-  complete-only failure boundary as executor and callback defects, using the
-  stable `validation` stage and explicit exception chaining.
-- Counts include only accepted trials; no partial rows or dataset escape. The
-  existing successful-output SHA-256 regression remains authoritative.
-- Scope excludes execution authority, physics, job binding, backends, workers,
-  browsers, and matched UI. Keep #4369/#4273/#4267 open.
+  complete-only boundary as executor and callback defects, using stable stage
+  `validation` and explicit exception chaining.
+- Counts include only accepted trials; no partial rows or dataset escape, and
+  the successful-output SHA-256 regression remains authoritative.
+- Scope excludes authority, physics, job binding, backends, workers, browsers,
+  and matched UI. Keep #4369/#4273/#4267 open.
+
+## 2026-08-11 #4369 authenticated browser-authority capability boundary
+
+The local `codex/4369-ground-authority-capability` child starts from exact
+published prerequisite PR #4370 head
+`0a485958bd6ed46dce18e65fd3e3cd1fa797502a`. It adds an isolated,
+loopback-only FastAPI/Uvicorn process, an ephemeral bearer token passed only
+through the child and Vite dev-server environments, a same-origin Vite proxy
+that injects that token server-side, and strict Python/TypeScript
+`rate-of-closure/regional-ground-authority-capability/v1` contracts. The
+launcher owns and reaps the authority process. The browser converts unreachable,
+unauthenticated, malformed, oversized, or unqualified evidence into explicit
+non-executable capability states without exposing exception text or silently
+falling back to TypeScript physics.
+
+This slice is deliberately fail-closed: the only authority endpoint is the
+authenticated capability query, and it advertises
+`regional_ground_execution=false`. It adds no job submission, result polling,
+cancellation endpoint, qualified execution profile, Python model invocation,
+or Run-button enablement. Issue #4369 remains open until those contracts,
+matched PyQt6/React controllers, process isolation limits, job-bound result
+evidence, and protected integration are complete.
+
+Focused evidence is green: seven Python authority/launcher tests, six React
+capability/proxy tests, strict TypeScript, zero-warning ESLint, Ruff/format,
+focused MyPy, and a live isolated-process readiness/authentication/shutdown
+probe. The shared `node_modules` directory used for local React verification
+is an untracked junction and is not publication content.
+Hosted Bandit B310 remediation replaced generic URL opening in the readiness
+probe with an explicit fixed-host `HTTPConnection`; capability behavior and
+the loopback-only boundary are unchanged.
 
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 

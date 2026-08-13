@@ -204,6 +204,29 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "does not persist model inputs. Geometry is fixed to the target frame as "
         "flat, static, and coplanar because those are the regional v1 limits.</p>",
     ),
+    "regional_ground_execution": _entry(
+        "Ground Study",
+        "<h3>What this tab does</h3><p>Prepares one immutable "
+        "regional-ground-execution-job/v1 document from the current validated "
+        "editors, or strictly imports a complete job document. When an explicitly "
+        "qualified Python authority is injected, it executes the accepted job "
+        "outside the GUI thread.</p><h3>Workflow</h3><ol><li>Prepare the current "
+        "simulation, variation, and surface editors, or open an existing job.</li>"
+        "<li>Review the immutable model, provenance, input digest, job digest, "
+        "calibration status, numerical bounds, and trial count.</li>"
+        "<li>Choose Run and explicitly confirm the accepted authority.</li>"
+        "<li>Monitor accepted-trial progress or request cooperative "
+        "cancellation.</li><li>After success, atomically save the canonical "
+        "job-bound result or export every retained scalar row as CSV.</li></ol>"
+        "<h3>Tips and qualification</h3><p>Preparation and opening never execute "
+        "a study. If an owning editor changes, a prepared preview remains visible "
+        "but cannot run until it is prepared again. Current-editor preparation "
+        "uses an explicitly unvalidated, zero-confidence surface calibration; "
+        "review that limitation before execution. Direct main-window construction "
+        "is intentionally unavailable unless qualified preparation and submission "
+        "services are injected. This source workflow does not claim frozen or "
+        "packaged authority support.</p>",
+    ),
     "ground_playback": _entry(
         "Ground Playback",
         "<h3>What this tab does</h3><p>Imports either one strict "

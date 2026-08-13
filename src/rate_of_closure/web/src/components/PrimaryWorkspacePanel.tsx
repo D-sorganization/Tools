@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 
 import type { ImpactAppModel } from "../hooks/useImpactAppModel";
 import type { RegionalGroundVariationWorkspaceController } from "../hooks/useRegionalGroundVariationWorkspace";
+import type { RegionalGroundExecutionWorkspace } from "../hooks/useRegionalGroundExecutionWorkspace";
 import type { PrimaryViewId } from "../model/viewPreferences";
 import { Derivation } from "./Derivation";
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
@@ -29,6 +30,7 @@ interface WorkspacePanelProps {
   readonly active: PrimaryViewId;
   readonly model: ImpactAppModel;
   readonly regionalGroundVariation: RegionalGroundVariationWorkspaceController;
+  readonly regionalGroundExecution: RegionalGroundExecutionWorkspace;
   readonly onOpenGlossary: (term: string | undefined) => void;
 }
 
@@ -71,7 +73,8 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
         onAnalysisExecutionChange={regionalGroundVariation.replaceAnalysisExecution} />;
     case "flight":
       return <FlightExplorerPanel distanceUnit={model.units.distance}
-        spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
+        spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget}
+        draft={model.flightExplorerDraft} onDraftChange={model.setFlightExplorerDraft} />;
     case "regional-surfaces":
       return <RegionalSurfacePlanPanel
         draft={regionalGroundVariation.state.regionalDraft}
@@ -81,7 +84,7 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
     case "ground-playback":
       return (
         <Suspense fallback={<section role="status" aria-label="Ground playback loading">Loading…</section>}>
-          <LazyGroundPlaybackPanel />
+          <LazyGroundPlaybackPanel regionalGroundExecution={props.regionalGroundExecution} />
         </Suspense>
       );
     case "launch-monitor-analytics":

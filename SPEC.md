@@ -34,6 +34,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
@@ -70,6 +71,11 @@
 >>>>>>> origin/codex/4369-validator-failure-stage
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4274-regional-surface-ui
+=======
+| **Current Version**     | 1.14.93                                    |
+| **Spec Version**        | 1.14.93                                    |
+| **Last Spec Update**    | 2026-08-12                                 |
+>>>>>>> origin/codex/4369-authority-restart-recovery
 
 ## 2. Purpose & Mission
 
@@ -87,6 +93,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -126,6 +133,327 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 =======
 =======
 =======
+=======
+### 2026-08-12 Durable Source-Loopback Authority Recovery
+
+- The source-run React launcher injects an absolute private state directory into
+  its isolated Python child. The authority owns one fixed SQLite/WAL file under
+  a process-lifetime lock; job identifiers never determine filesystem paths.
+- Every accepted lifecycle transition is committed before it is exposed.
+  Retained records contain canonical bounded job/status/result bytes and
+  independent content digests. The store enforces its application identity,
+  schema version, table shape, integrity check, maximum size, record bound, and
+  single-active-job invariant before qualified readiness.
+- A succeeded job and its exact complete result survive normal or hard process
+  loss. Recovered queued/running work becomes terminal
+  `execution_failed/authority_restart`; recovered cancel-requested work becomes
+  cancelled. Recovery never invokes a runner, resumes physics, publishes a
+  partial result, or restores user confirmation.
+- React exposes an explicit read-only recovery action for an exact accepted job.
+  It calls status and, if complete, result endpoints only. A user must re-import
+  or otherwise possess the exact job; the API remains non-enumerable and the
+  browser does not persist large scientific jobs in local storage.
+- The ephemeral bearer token, URL/port, raw exceptions, callbacks, threads,
+  cancellation objects, and partial rows are never stored. Unknown versions,
+  lock conflicts, corruption, digest substitution, and persistence failure fail
+  closed; live capability becomes unavailable after a state-write failure.
+- The deterministic authority fixture generator types every generated failure
+  stage against the shared wire literal union, preserving pinned MyPy 1.13 and
+  newer-type-checker parity without changing canonical fixture bytes.
+- Durable retention removes obsolete jobs through one static parameterized
+  delete statement per stored identifier. SQL text never depends on retained
+  job count or identifiers, and the complete replacement remains atomic.
+- This qualification applies to the source-loopback authority only. Static-host
+  companion discovery, frozen executables, PyQt's direct worker, installed ACL
+  qualification, automatic replay, measured calibration, compiled regional
+  physics, downstream parity, and protected release remain non-goals here.
+
+### 2026-08-12 Cooperative Cancellation Through Qualified Flight Recompute
+
+- The registered Waterloo/Penner surface-flight boundary accepts an optional,
+  synchronous, exact-Boolean cancellation callback without changing persisted
+  settings, deterministic preparation, job wire shapes, solver arguments, or
+  callback-free callers.
+- Cancellation is polled before integration, at every adaptive derivative
+  boundary, during dense-output materialization, after metric calculation,
+  during bounded retained-trajectory construction, and while canonical flight
+  evidence is serialized. No partial trajectory, metric, qualification, or
+  regional-ground result is published.
+- A requested cancellation raises a dedicated control exception. A raising or
+  non-Boolean callback raises a separate typed callback defect chained from its
+  original cause. Production maps those signals to zero-of-total cancellation
+  or the existing non-secret cancellation-callback failure stage; ordinary
+  numerical failures retain the existing recomputation-failed mapping.
+- Authority shutdown uses the same job-owned cancellation event and can join a
+  worker interrupted during either ODE execution or post-solver digest work.
+  Always-false callbacks preserve the existing canonical trajectory and result
+  digests exactly.
+- Static-host and frozen-runtime qualification,
+  measured regional calibration, compiled/TypeScript regional physics,
+  downstream UpstreamDrift parity, ancestor integration, and protected release
+  remain open and keep #4369/#4273/#4267 incomplete.
+
+### 2026-08-11 Current-editor regional-ground job preparation
+
+- Python is the sole authority that turns an exact current launch and validated
+  regional-ground variation request into an executable job. It recomputes the
+  registered Waterloo/Penner surface-contact trajectory, derives both flight
+  digests, translates the regional surface into launch-origin coordinates, and
+  derives all job/provenance digests. Browser code validates and transports the
+  strict request and response but performs no preparation physics.
+- Preparation is distinct from execution. The authenticated preparation route
+  does not retain, enqueue, or run a job. Both clients install the fully
+  validated candidate for review, clear confirmation, and require the existing
+  explicit Run action before submission.
+- The versioned preparation profile visibly discloses its flight settings,
+  transfer limits, capture threshold, callback-free regional solver settings,
+  and explicitly unvalidated zero-confidence editor-surface calibration. It
+  does not claim measured calibration. Every identity and numerical bound is
+  validated when the immutable profile is constructed.
+- PyQt accepts only a successful Simulation result that is still current for
+  every editor. Configuration changes or failed/missed reruns preserve playback
+  history but remove that run's authority for job preparation. Ground/Tee setup
+  is preserved exactly in the prepared launch.
+- Both Python clients enforce the preparation postcondition: the returned job
+  must match the captured job ID, launch, and variation request exactly. React
+  additionally rejects a substituted response and turns an invalid editable
+  launch draft into an accessible unavailable-preparation state rather than an
+  application render failure.
+- The React meteorological-bearing adapter negates its angle only at the legacy
+  Python scalar-wind boundary, preserving the canonical flight-frame wind-to
+  vector for both right and left crosswinds.
+- Version 1 rejects unresolved variable-wind scenarios, unsupported flight
+  identities, illustrative or unvalidated regional editor state, mismatched
+  Simulation/variation models, and malformed, duplicate, non-SI, or oversized
+  request documents. Preparation failure preserves the previously accepted job
+  and result and exposes no private exception detail.
+- Durable authority restart recovery, static-host execution, frozen PyQt
+  qualification, cooperative cancellation during flight recomputation,
+  compiled/TypeScript regional physics, measured calibration, and downstream
+  UpstreamDrift parity remain outside this slice and keep #4369/#4273/#4267
+  open.
+
+### 2026-08-11 Qualified Local-Authority Admission
+
+- The isolated default Python authority now atomically registers the qualified
+  regional-ground production runner and advertises one strict service-level
+  ready capability. Available and executable flags must agree with the reason
+  discriminant and with the attached job manager; split-brain capability and
+  runner configurations fail during application construction.
+- Readiness requires an authenticated, bounded, duplicate-safe, exact v1
+  capability response rather than any HTTP 200. The in-memory manager owns its
+  worker, cooperatively cancels and joins it during application shutdown, and
+  rejects work after close.
+- React accepts the exact qualified capability and removes the test-only
+  production-admission bypass. The headless controller can therefore execute a
+  separately supplied strict job through Python; no browser physics is added.
+- The shared variation registry contract pins its five built-in launch entries
+  as an ordered prefix so a previously exercised documented extension seam
+  cannot make the combined parallel test suite depend on worker order.
+- Independent review reproduced and closed submit-versus-close and exceptional
+  lifespan-exit races. Python and React share exact runtime reason,
+  detail-length, media-type, and bounded-body capability validation.
+- Complete local qualification passes 2,014 Python/PyQt/shared-simulation
+  tests with one optional Rust-wheel parity skip and 860 React tests across
+  132 files, plus pinned type/lint/format/security checks, the 214-module
+  production build, deterministic fixtures, manifest, governance, and diff
+  gates.
+- Visible Run/Cancel controls remain unmounted or disabled because neither live
+  client yet constructs a complete execution job from current editor state.
+  Static hosting, restart persistence, direct editor handoff, packaged-helper
+  qualification, compiled/downstream parity, and protected release remain open.
+
+### 2026-08-11 Qualified Regional-Ground Execution and Matched Presentation
+
+- One deterministic generator recomputes the canonical job's flight evidence
+  through the registered Waterloo/Penner profile and rebuilds the dependent
+  status and result fixtures from the new job identities. Its check mode makes
+  manual or stale cross-fixture edits a test failure.
+- A qualified job now reuses that single recomputed flight across the seeded
+  regional-ground trials, forwards cooperative cancellation into physical
+  execution, preserves transfer failures as typed-null outcomes, and publishes
+  only a complete result that matches the job, trial order, and series.
+- PyQt6 and React share compact read-only presentation contracts for job,
+  model, producer, source revision, input digest, progress, cancellation,
+  stable failure stage, and result digest. Both continue to display disabled
+  Run and Cancel controls sourced from the false production capability.
+- That earlier slice proved the qualified executor and real-loopback success
+  path while leaving the default server unavailable. The newer admission slice
+  above promotes only the headless local service; it still exposes no runnable
+  editor surface or protected release/downstream-parity claim.
+- Consolidated evidence passes 2,004 Python/PyQt/shared-simulation tests and
+  858 React tests. The optional Rust parity test remains skipped because the
+  local interpreter has no `swing_core` wheel; no compiled-runtime claim is
+  made from the Python/TypeScript evidence.
+
+### 2026-08-11 PyQt Real-Loopback Authority Qualification
+
+- Process-level integration tests start the actual loopback-only Uvicorn and
+  FastAPI authority and exercise the real HTTP transport used by the PyQt
+  submitter. They prove bearer rejection and non-exposure, canonical job
+  submission/status binding, idempotent cancellation, unavailable-result
+  behavior, typed production-preflight propagation, bounded client shutdown,
+  and authority-process reaping.
+- The runtime gains a narrowly validated application-factory injection seam so
+  integration tests can attach only the fail-closed production preflight runner
+  or a cancellation-only non-physical runner. The default production factory,
+  command shape, loopback host, environment-only token, and lifecycle ownership
+  remain unchanged.
+- At that earlier loopback-only slice capability was false and the submitter
+  factory returned no production adapter. The newer headless admission does not
+  add a visible UI control or establish a protected-carrier,
+  downstream-parity, or release claim.
+### 2026-08-11 Versioned Flight Execution-Profile Registry
+
+- The application registry maps the exact `waterloo_penner` model ID and
+  `tools-core/1.0.0` model version to one strict settings schema:
+  `max_time_s` in `(0, 120]`, `step_s` in `[0.0001, 0.1]`, and whole-number
+  `sample_every` in `[1, 10000]`, with a retained interval no greater than one
+  second. Missing, extra, Boolean, fractional-count, non-finite, or out-of-bound
+  values fail before model resolution.
+- The profile binds Waterloo/Penner default coefficients, adaptive RK45,
+  launch-relative planar transfer-surface contact, `step_s` dense-output
+  sampling, deterministic `sample_every` decimation, and mandatory terminal
+  retention under recomputation contract
+  `waterloo-penner-adaptive-rk45-planar-contact/v1`.
+- Typed qualification distinguishes absent profiles, invalid schemas, failed
+  recomputation, trajectory-digest mismatch, result-digest mismatch, and exact
+  qualification. A physical `FlightResult` is released only after both
+  canonical digests match the submitted evidence.
+- The current canonical execution-job fixture recomputes deterministically but
+  its synthetic declared flight digests do not match the registered profile.
+  Runner preflight therefore remains failed with zero accepted trials; ground
+  physics, capability, client controls, persistence, and release stay disabled.
+### 2026-08-11 React Regional-Ground Execution Controller
+
+- A UI-neutral React hook now coordinates the existing strict authority client:
+  it validates the exact capability and execution job before submit, permits
+  only one active job, polls serially, preserves exact completed/total progress,
+  and exposes the server-owned typed terminal failure without synthesizing
+  status or physical output.
+- Every in-flight submit, status, cancellation, and result request receives an
+  `AbortSignal`. Reset, unmount, cancellation, and superseding operations abort
+  pending work; generation and operation identities prevent late responses from
+  publishing stale status or results. React StrictMode effect probing is
+  explicitly covered.
+- Cancellation delegates to the existing POST-cancel client. A result is fetched
+  only after an exact succeeded status and is published only after the client has
+  validated the complete envelope against the originating job.
+- In this earlier controller-only slice, production capability was an exact
+  false-only contract and a named injection seam exercised lifecycle behavior
+  in unit tests. The newer admission slice removes that seam and qualifies only
+  the headless local service; visible controls, TypeScript physics, persistence,
+  and release remain absent.
+
+### 2026-08-11 Canonical Regional-Ground Authority Status Wire
+
+- A transport-neutral Python application contract now owns the six authority
+  lifecycle states, the two stable failure codes, all eight stable failure
+  stages, exact status/failure wire shapes, and a 4,096-byte canonical JSON
+  boundary. The server manager imports these objects instead of defining a
+  private construction-only projection.
+- Python parsing rejects duplicate or extra fields, Booleans in numeric slots,
+  non-finite and cross-runtime-unsafe numbers, invalid failure identities,
+  impossible progress/result/failure semantics, and job ID, job digest, or
+  trial-total drift from the exact validated execution job.
+- A Python-recreated canonical fixture covers all six states, both failure
+  codes, and every failure stage. React parses and canonically reserializes each
+  case byte-for-byte and shares the same bounded JSON entry point, preventing
+  server construction and client parsing from drifting independently.
+- This contract performs no physics, transport, persistence, UI wiring,
+  capability promotion, or execution. At that contract-only slice production
+  capability was false; the newer headless admission does not mount visible
+  React execution controls.
+
+### 2026-08-11 Regional-Ground Production-Runner Preflight
+
+- The production-runner boundary now checks cooperative cancellation before
+  qualification and rejects an unknown flight model separately from a known
+  model without a registered versioned execution profile.
+- A recognized model identifier is not execution authority. The v1 generic
+  numeric settings, model-version string, and declared flight digests do not
+  yet bind exact solver arguments, sampling, surface-event semantics, or
+  recomputable trajectory and result bytes.
+- Preflight rejection publishes a typed zero-of-total terminal failure through
+  the canonical Python/React status contract and invokes neither flight nor
+  regional-ground physics. At this earlier preflight slice, no production
+  runner was injected, so capability and all execution controls remained
+  disabled pending profile qualification; the later qualified local-authority
+  admission supersedes only that service-level limitation.
+
+### 2026-08-11 PyQt Regional-Ground Loopback Submitter Adapter
+
+- A widget-free, dependency-injected Python adapter submits the existing
+  canonical execution-job bytes to the authenticated loopback authority,
+  validates every status against the exact job and canonical shared status
+  contract, polls with bounded timeout/backoff, posts cooperative cancellation,
+  and retrieves only a complete result that passes expected-job validation.
+- Client failures, malformed/stale status, invalid results, timeout, callback
+  errors, and shutdown publish only existing typed terminals. Once a job has
+  been accepted, client-side failures make one bounded best-effort cancellation
+  request and never publish late results. Transport exception and bearer-token
+  text is not exposed by the client error surface.
+- The transport is fixed to the runtime-owned loopback host, port, and bearer
+  token, rejects ambiguous paths and encoded/oversized responses, bounds each
+  request, and closes independently of the owned authority process.
+- The adapter remains unconstructed and unregistered in the visible PyQt
+  workflow. Although the isolated service capability is now qualified for
+  headless use, this adapter slice adds no widgets, visible controls,
+  persistence, protected carrier, or release evidence.
+
+### 2026-08-11 React Regional-Ground Authority Client Contracts
+
+- React reserves same-origin REST contracts for canonical job submission,
+  identity-bound status, POST cancellation, and complete-result retrieval. Submit
+  sends the existing canonical execution-job v1 bytes; result retrieval reuses
+  the existing strict result parser and expected-job assertion. No TypeScript
+  physics or alternate result authority is introduced.
+- The exact bounded job-status v1 contract carries job and job-digest identity,
+  queued/running/cancel-requested/succeeded/failed/cancelled state, completed
+  and total trials, result availability, and a typed nullable failure record
+  with stable code and stage. It rejects
+  duplicate/extra/oversized/mistyped responses, identity or trial-count drift,
+  impossible progress, incomplete complete states, and failures without codes.
+- A React capability hook keeps no more than one request active, schedules the
+  next poll only after the current request settles, passes an `AbortSignal`,
+  aborts and clears timers on cleanup, and cannot publish a response from an
+  obsolete effect generation. Every execution-control flag remains disabled
+  while the exact Python capability advertises execution as unavailable.
+- This is a client-contract prerequisite only. The separately composed Python
+  API provides matching authenticated routes, but its production capability
+  remains false because no qualified execution runner is attached. Visible
+  controls, model invocation, persistence, and downstream parity remain
+  unimplemented and disabled.
+
+### 2026-08-11 Imported Regional-Ground Study Execution
+
+- React owns one execution workspace above mutually exclusive navigation. It
+  strictly imports a bounded, fatal-UTF-8 `regional-ground-execution-job/v1`,
+  preserves the last accepted job on failure, displays model, provenance,
+  trial count and all job/input/qualified-plan digests, and requires explicit
+  confirmation before submitting the exact job to the authenticated local
+  Python authority. Active or ambiguous remote ownership blocks replacement;
+  ambiguous requests expose status reconciliation, and an immutable accepted
+  job cannot be submitted twice until a new job is imported.
+- React provides visible Run, Cancel, progress, typed terminal failure, compact
+  result identity, canonical job/result downloads, and lossless scalar-row CSV
+  export. File-menu commands and the visible workspace share the same App-owned
+  authority. Navigation cannot abort or discard the execution lifecycle. No
+  editor state enters the imported job and no physics executes in TypeScript.
+- PyQt6 adds a dedicated Ground Study workspace between Ground Surfaces and
+  Ground Playback. It performs bounded strict import, exact evidence readback,
+  explicit confirmation, QThread execution/cancellation, stable non-private
+  failure presentation, and native atomic job/result/CSV persistence. Window
+  shutdown cancels and joins the owned worker before QWidget destruction.
+- Direct `RateOfClosureMainWindow` construction remains injection-safe and
+  unavailable. The source standalone registration injects the qualified direct
+  Python production runner without a Uvicorn child. Frozen builds remain
+  explicitly unavailable until their complete numerical bundle is qualified.
+  Static React hosting, restart recovery, current-editor job construction,
+  compiled-runtime parity, downstream integration, protected merge, and
+  release remain open.
+
+>>>>>>> origin/codex/4369-authority-restart-recovery
 ### 2026-08-11 Regional-Ground Scalar Result Import
 
 - React can strictly import the two Python-owned regional
@@ -3312,6 +3640,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
 =======
@@ -3326,6 +3655,34 @@ Active development with stable core, continuous tool expansion, and web API in p
 =======
 =======
 | 2026-08-11 | 1.14.64 | fix(ground-study, #4369): make seeded regional-ground outcome validation a first-class typed terminal failure stage; preserve the original validator exception as the chained cause, report only previously accepted trial counts, expose no partial rows or dataset, and retain byte-identical successful scalar-ensemble output. |
+=======
+| 2026-08-12 | 1.14.90 | feat(ground-study, #4369): add exact cooperative cancellation through registered Waterloo/Penner integration, dense-output sampling, retained-trajectory construction, metric publication, and canonical evidence serialization; preserve callback-free digests and wire contracts, map cancellation and callback defects to existing typed production terminals, and prove authority shutdown at solver and post-solver seams while retaining restart/static/frozen/compiled/downstream/release limitations. |
+| 2026-08-11 | 1.14.89 | feat(ground-study, #4369): add a strict bounded current-editor preparation request, registered Python flight recomputation and canonical job construction, authenticated no-enqueue preparation API, transactional PyQt6 and React preparation/review workflows with explicit separate Run confirmation, complete current-hit staleness protection, bounded preparation profiles, substituted-response rejection, cross-runtime meteorological wind parity, render-safe invalid-editor handling, full numerical/calibration disclosure, and exact failure preservation; retain restart/static/frozen/compiled/downstream/release limitations. |
+| 2026-08-11 | 1.14.88 | fix(ground-study, #4369): leave each visible React import button as the sole accessible action by making its programmatically activated file input truly hidden, preserving strict import behavior and workspace state. |
+| 2026-08-11 | 1.14.87 | fix(ground-study, #4369): complete the PyQt6 toolstrip host protocol with the four strict execution-job/result file callbacks required by its contextual command group, restoring the pinned MyPy 1.13 changed-source gate without changing runtime behavior. |
+| 2026-08-11 | 1.14.86 | fix(web-authority, #4369): preserve strict loopback URL and ephemeral-token validation while returning the mutable proxy adapter required by Vite 7, restoring the integrated authority-backed web launcher without exposing the token to browser code. |
+| 2026-08-11 | 1.14.85 | feat(ground-study, #4369): add matched strict imported-job execution workflows with App-owned React Run/Cancel/reconciliation and canonical downloads, a dedicated source-qualified PyQt6 Ground Study workspace with QThread lifecycle and atomic JSON/CSV persistence, shared contextual File commands, and explicit static/frozen/editor-construction/restart/downstream/release limitations. |
+| 2026-08-11 | 1.14.83 | feat(ground-study, #4369): deterministically regenerate profile-qualified job/status/result fixtures; execute qualified jobs through one reused flight solve and seeded regional ground with typed cancellation/failure and complete-only publication; add matched disabled PyQt6/React identity, progress, failure, and result presentation while retaining false default capability and open protected/downstream gates. |
+| 2026-08-11 | 1.14.81 | chore(ground-study, #4369): record the fully composed authority continuation and consolidated 1,148-Python/PyQt plus 854-React release gate; retain false capability, disabled visible controls, and open protected/ancestor gates because the canonical synthetic flight digests do not qualify. |
+| 2026-08-11 | 1.14.82 | fix(ground-study, #4369): remove a redundant exact-bool cast rejected by the hosted pinned MyPy 1.13 delta gate; runtime cancellation semantics and the fail-closed capability boundary are unchanged. |
+| 2026-08-11 | 1.14.78 | test(ground-study, #4369): qualify the PyQt submitter against an actual authenticated loopback Uvicorn/FastAPI process, covering bearer secrecy, canonical submit/status/cancel/result behavior, typed fail-closed production preflight, bounded shutdown, and false-capability non-construction without running or claiming physics. |
+| 2026-08-11 | 1.14.77 | feat(ground-study, #4369): add a UI-neutral authenticated PyQt loopback submitter adapter with canonical job/status/result binding, bounded polling/backoff, cooperative cancellation, best-effort cleanup after accepted-job client failures, typed non-secret errors, stale/late suppression, and fail-closed construction while capability remains unavailable. |
+| 2026-08-11 | 1.14.79 | feat(ground-study, #4369): register one strict versioned Waterloo/Penner flight execution profile with bounded exact settings, launch-relative planar-contact recomputation, terminal-preserving deterministic sampling, and typed digest qualification; retain fail-closed runner behavior because the canonical fixture's synthetic flight digests do not recompute, and leave ground execution and capability disabled. |
+| 2026-08-11 | 1.14.80 | feat(ground-study, #4369): add a UI-neutral React execution controller over the strict authority client with exact capability/job admission, one-active-job serial polling, abort and stale-generation protection, exact progress and typed terminal failure, POST cancellation, and complete job-bound result publication; keep production capability and visible controls disabled with no TypeScript physics. |
+| 2026-08-11 | 1.14.76 | feat(ground-study, #4369): add a typed production-runner preflight that rejects unknown and unregistered versioned flight profiles before any physics; propagate the preflight terminal stage through the canonical Python/React status contract while leaving capability, execution controls, and model invocation disabled until solver and digest semantics are qualified. |
+| 2026-08-11 | 1.14.75 | feat(ground-study, #4369): centralize the six-state authority job-status wire in a transport-neutral strict Python parser/serializer, make the server consume it, and prove Python-produced canonical byte/semantic parity in React across every failure code and stage; keep physics, UI, capability promotion, persistence, and execution claims open. |
+| 2026-08-11 | 1.14.74 | feat(ground-study, #4369): add strict future-facing React submit/status/POST-cancel/result REST client contracts plus one-at-a-time capability polling with AbortController cleanup, obsolete-response suppression, bounded job-bound status/result validation, and every execution-control flag disabled while the Python authority remains unavailable; matching routes exist while a qualified runner, physics invocation, and visible Run integration remain open. |
+| 2026-08-11 | 1.14.73 | fix(ground-study, #4369): fail closed when an injected authority runner reports cancellation or failure counts that do not match the exact submitted job total or regress observed progress; retain prior progress and expose only a typed validation failure. |
+| 2026-08-11 | 1.14.72 | feat(ground-study, #4369): add a bounded in-memory authority job manager and authenticated submit/status/cancel/result endpoints; enforce one active job, strict 1 MiB request ingestion, bounded terminal retention, typed non-secret failure/status evidence, cooperative cancellation forwarding, and complete validated result-only publication while retaining the production execution capability as unavailable. |
+| 2026-08-11 | 1.14.71 | fix(ground-study, #4369): stabilize the result-digest type boundary under both the full PR-delta and isolated skipped-import MyPy 1.13 root sets by binding the helper result to an explicit string local, without changing runtime bytes or canonical evidence. |
+| 2026-08-11 | 1.14.70 | feat(ground-study, #4369): add a widget-free PyQt6 QThread worker/controller port for dependency-injected qualified regional-ground job submission; forward immutable typed progress, cooperative cancellation, and typed failures across Qt signals; reject overlapping jobs, stale signals, mismatched terminal counts, and non-job-bound results; publish only a complete validated execution-result envelope while retaining physical authority, visible controls, browser submission, protected integration, and release as open. |
+| 2026-08-11 | 1.14.69 | fix(ground-study, #4369): satisfy hosted MyPy 1.13 by removing a redundant result-digest cast without changing runtime behavior or canonical evidence. |
+| 2026-08-11 | 1.14.68 | feat(ground-study, #4369): add a strict bounded Python/React execution-result envelope binding job/input identities and canonical scalar-dataset SHA; require expected-job matching for result ID, trial count/order, and series identities. |
+| 2026-08-11 | 1.14.67 | feat(ground-study, #4369): qualify execution jobs with exact physical regional/skid-roll settings, executor revision, and recomputable source-to-launch-origin plan translation; expose only implemented serial fail-fast max-trials orchestration. |
+| 2026-08-11 | 1.14.66 | fix(ground-study, #4369): retain the authenticated loopback authority readiness contract while replacing generic URL opening with an explicit fixed-host HTTP connection for hosted Bandit B310 compliance. |
+| 2026-08-11 | 1.14.65 | fix(ground-study, #4369): make seeded regional-ground outcome validation a typed terminal failure stage; retain original exception chaining and accepted-trial counts, expose no partial rows or dataset, and preserve successful scalar-ensemble bytes. |
+| 2026-08-11 | 1.14.64 | feat(ground-study, #4369): add an isolated authenticated loopback authority process, server-side Vite token proxy, and strict fail-closed Python/React capability contract while advertising regional-ground execution as unavailable until the qualified job authority and matched controllers exist. |
+>>>>>>> origin/codex/4369-authority-restart-recovery
 | 2026-08-11 | 1.14.63 | docs(ground-study, #4369): record that composed execution-job, complete-only batch-control, and browser result-import prerequisites remain non-executable until exact flight-profile/digest qualification, skid/roll settings and executor revision binding, launch-origin regional-surface translation, orchestration semantics, job-bound result evidence, cancellable Python authority, loopback host, and matched client controllers are implemented and tested. |
 | 2026-08-11 | 1.14.62 | feat(ground-study, #4369): add a strict bounded React import-only adapter for the two Python-owned regional `scalar-ensemble/v1` result variants; preserve exact schema, provenance/model/input digests, definitions, units, categories, stages, ordered identities, cohorts, and censored typed nulls; add a Python-produced four-cohort golden fixture asserted by both runtimes; reject duplicate/extra/version/nonfinite/unsafe/Boolean/surrogate/oversize/fatal-UTF-8 and forged identity/evidence inputs; retain browser physics, Run claims, result UI/persistence, overlays, solver/capability and wind integration, compiled/downstream parity, protected evidence, and release as open. |
 | 2026-08-11 | 1.14.61 | feat(ground-study, #4369 #4273 #4267): add a UI-neutral Python execution-control boundary for seeded regional-ground variation with immutable exact completed/total progress, cooperative cancellation immediately before and after every injected executor call, typed cancellation/executor/callback/publication terminal failures, and complete-only scalar-ensemble publication; preserve the existing executor signature, deterministic seed/trial identities, and byte-identical successful output while retaining job-to-executor binding, matched UI controllers, browser-capable qualified physics, result import/workspace integration, protected release, and issue/epic completion as open. |

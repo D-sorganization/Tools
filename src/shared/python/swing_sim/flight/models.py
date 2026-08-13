@@ -6,13 +6,20 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Protocol
 
 import numpy as np
 from scipy.integrate import solve_ivp
 
 from shared.python.swing_sim.ground import GroundSurfaceProfile
 
+from ._cancellation import (
+    FlightCancellationCallbackError,
+    FlightSimulationCancelled,
+    raise_if_flight_cancelled,
+)
 from ._constants import MAX_GOLF_BALL_LIFT_COEFFICIENT
+from .capability_observation import CancellationCheck
 from .dynamics import ConstantCoefficientDynamics, WaterlooDynamics
 from .state import FlightStatePoint
 from .surface_simulation import (
@@ -34,6 +41,15 @@ class _OdeRun:
     max_time: float
     dt: float
     launch_relative_surface: GroundSurfaceProfile | None = None
+    cancellation_requested: CancellationCheck | None = None
+
+
+class _OdeSolution(Protocol):
+    """Structural subset of SciPy's integration result used here."""
+
+    t: np.ndarray
+    y: np.ndarray
+    sol: Callable[[float], np.ndarray]
 
 
 class BallFlightModel(ABC):
@@ -70,18 +86,37 @@ class BallFlightModel(ABC):
         self,
         launch: LaunchConditions,
         settings: SurfaceFlightSimulationSettings,
+        *,
+        cancellation_requested: CancellationCheck | None = None,
     ) -> FlightResult:
-        """Simulate until sphere contact with the configured planar surface."""
+        """Simulate to planar contact or raise typed cooperative cancellation.
+
+        Args:
+            launch: Exact physical launch conditions.
+            settings: Exact planar-contact integration settings.
+            cancellation_requested: Optional synchronous exact-bool callback.
+
+        Returns:
+            A complete flight result; partial results are never returned.
+
+        Raises:
+            FlightSimulationCancelled: Cancellation was requested.
+            FlightCancellationCallbackError: The callback raised or returned a
+                non-boolean value.
+        """
         if launch is None:
             raise ValueError("launch must be provided")
         if not isinstance(settings, SurfaceFlightSimulationSettings):
             raise ValueError("settings must be SurfaceFlightSimulationSettings")
+        if cancellation_requested is not None and not callable(cancellation_requested):
+            raise TypeError("cancellation_requested must be callable or None")
         run = _OdeRun(
             launch,
             self._build_dynamics(launch),
             settings.max_time_s,
             settings.output_interval_s,
             settings.launch_relative_surface,
+            cancellation_requested,
         )
         return self._run_ode_simulation(run)
 
@@ -111,49 +146,95 @@ class BallFlightModel(ABC):
 
         Preconditions: ``launch`` provided, ``max_time > 0``, ``0 < dt``.
         """
-        launch = run.launch
-        max_time = run.max_time
-        dt = run.dt
-        if launch is None:
-            raise ValueError("launch must be provided")
-        if not (math.isfinite(max_time) and max_time > 0.0):
-            raise ValueError(f"max_time must be finite and > 0; got {max_time!r}")
-        if not (math.isfinite(dt) and dt > 0.0):
-            raise ValueError(f"dt must be finite and > 0; got {dt!r}")
-        v0 = launch.get_initial_velocity()
+        self._validate_ode_run(run)
+        v0 = run.launch.get_initial_velocity()
         y0 = np.array([0.0, 0.0, 0.0, v0[0], v0[1], v0[2]])
+        derivatives = self._controlled_derivatives(run)
+        ground_event = self._ground_event(run)
 
-        def ground_ev(t: float, y: np.ndarray) -> float:
-            """Return the configured signed sphere gap for contact detection."""
-            if run.launch_relative_surface is not None:
-                return flight_ode_signed_gap_m(
-                    run.launch_relative_surface,
-                    launch.ball_radius,
-                    y,
-                )
-            return float(y[2] + launch.ball_setup.tee_height_m)
-
-        # Type-safe attribute assignment for solve_ivp
-        setattr(ground_ev, "terminal", True)  # noqa: B010
-        setattr(ground_ev, "direction", -1)  # noqa: B010
-
+        raise_if_flight_cancelled(run.cancellation_requested)
         sol = solve_ivp(
-            run.derivatives,
-            (0, max_time),
+            derivatives,
+            (0, run.max_time),
             y0,
             method="RK45",
-            events=ground_ev,
+            events=ground_event,
             dense_output=True,
             max_step=0.1,
         )
+        raise_if_flight_cancelled(run.cancellation_requested)
+        points = self._sample_solution(run, sol)
+        result = self._compute_metrics(points)
+        raise_if_flight_cancelled(run.cancellation_requested)
+        return result
 
-        t_eval = np.arange(0, sol.t[-1], dt)
+    @staticmethod
+    def _validate_ode_run(run: _OdeRun) -> None:
+        if run.launch is None:
+            raise ValueError("launch must be provided")
+        if not (math.isfinite(run.max_time) and run.max_time > 0.0):
+            raise ValueError(f"max_time must be finite and > 0; got {run.max_time!r}")
+        if not (math.isfinite(run.dt) and run.dt > 0.0):
+            raise ValueError(f"dt must be finite and > 0; got {run.dt!r}")
+
+    @staticmethod
+    def _controlled_derivatives(
+        run: _OdeRun,
+    ) -> Callable[[float, np.ndarray], np.ndarray]:
+        if run.cancellation_requested is None:
+            return run.derivatives
+
+        def controlled(time_s: float, state: np.ndarray) -> np.ndarray:
+            raise_if_flight_cancelled(run.cancellation_requested)
+            return run.derivatives(time_s, state)
+
+        return controlled
+
+    @staticmethod
+    def _ground_event(run: _OdeRun) -> Callable[[float, np.ndarray], float]:
+        def ground_event(_time_s: float, state: np.ndarray) -> float:
+            if run.launch_relative_surface is not None:
+                return float(
+                    flight_ode_signed_gap_m(
+                        run.launch_relative_surface,
+                        run.launch.ball_radius,
+                        state,
+                    )
+                )
+            return float(state[2] + run.launch.ball_setup.tee_height_m)
+
+        setattr(ground_event, "terminal", True)  # noqa: B010
+        setattr(ground_event, "direction", -1)  # noqa: B010
+        return ground_event
+
+    def _sample_solution(
+        self,
+        run: _OdeRun,
+        solution: _OdeSolution,
+    ) -> list[TrajectoryPoint]:
+        def controlled_state_point(
+            time_s: float, state: np.ndarray
+        ) -> FlightStatePoint:
+            raise_if_flight_cancelled(run.cancellation_requested)
+            return self._state_point(run.launch, time_s, state)
+
+        t_eval = np.arange(0, solution.t[-1], run.dt)
         points: list[TrajectoryPoint] = [
-            self._state_point(launch, float(t), sol.sol(t)) for t in t_eval
+            controlled_state_point(
+                float(time_s),
+                solution.sol(float(time_s)),
+            )
+            for time_s in t_eval
         ]
-        if sol.t[-1] not in t_eval:
-            points.append(self._state_point(launch, float(sol.t[-1]), sol.y[:, -1]))
-        return self._compute_metrics(points)
+        if solution.t[-1] not in t_eval:
+            points.append(
+                controlled_state_point(
+                    float(solution.t[-1]),
+                    solution.y[:, -1],
+                )
+            )
+        raise_if_flight_cancelled(run.cancellation_requested)
+        return points
 
 
 class WaterlooPennerModel(BallFlightModel):
@@ -278,6 +359,8 @@ __all__ = [
     "BallFlightModel",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
+    "FlightCancellationCallbackError",
+    "FlightSimulationCancelled",
     "MacDonaldHanzelyModel",
     "WaterlooPennerModel",
 ]
