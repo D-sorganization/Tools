@@ -26,11 +26,23 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.62                                    |
-| **Spec Version**        | 1.16.62                                    |
+| **Current Version**     | 1.16.63                                    |
+| **Spec Version**        | 1.16.63                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 PR #4414 hosted MyPy hardening (#4142)
+
+Version 1.16.63 closes the two actionable hosted MyPy 1.13 findings without
+changing runtime behavior. The localized locus editor now narrows its nullable
+variable key before querying the string-keyed variable-to-joint map. The noise
+row returns the locus editor's declared Boolean applicability result directly,
+removing a redundant type cast. The exact 15 changed source files relative to
+PR base `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` pass pinned MyPy 1.13.0 with
+redundant-cast warnings enabled. Focused locus tests and repository lint,
+format, documentation, diff, and size gates also pass. Protected current-head
+CI and publication remain open.
 
 ### 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
 
@@ -3547,6 +3559,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.63 | fix(rate-of-closure, #4142 #4414): narrow the nullable localized-locus variable key before stable joint lookup and remove a redundant Boolean cast so the exact 15-file PR source delta passes hosted-equivalent MyPy 1.13 without changing runtime behavior. |
 | 2026-08-12 | 1.16.62 | merge(rate-of-closure, #4142): preserve exact localized-locus UI head `05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent and published browser head `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` as second parent; retain both implementations and histories while keeping protected publication and incomplete R14.5/localized surfaces open. |
 | 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142): reject coercive and control-bearing plan identity wires symmetrically in Python/React; require actual unique stable-ID arrays; and split PyQt lifecycle, registry policy, and GUI/React tests so every cumulative changed Python/TS/TSX source or test satisfies the 400-line policy. |
 | 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142): extract focused PyQt locus/row editor helpers to satisfy the 500-line changed-module gate; retain exact imported start/end authority independently; and make React v2 variation-plan numeric decoding strict and noncoercive across discriminators, parameters, loci, execution controls, base values, and correlation entries. |

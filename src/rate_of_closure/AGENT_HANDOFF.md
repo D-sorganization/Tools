@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 PR #4414 hosted MyPy hardening (#4142, 1.16.63)
+
+- `LocalizedLocusEditor.set_variable()` explicitly handles `None` before the
+  string-keyed localized-torque joint lookup.
+- `NoiseRow.accepts_locus()` returns the editor's typed Boolean result without
+  the redundant `cast(bool, ...)` rejected by hosted MyPy 1.13.
+- No scientific, persistence, UI, or wire behavior changes. The exact 15-file
+  PR-base MyPy gate and seven focused locus tests pass locally, with Ruff,
+  format, docs governance, diff, and size checks.
+
+Protected current-head CI and normal publication remain open.
+
 ## 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
 
 Version 1.16.62 normally merges localized-locus head

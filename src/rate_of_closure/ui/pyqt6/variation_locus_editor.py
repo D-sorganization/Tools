@@ -57,7 +57,7 @@ class LocalizedLocusEditor(QWidget):
 
     def set_variable(self, key: str | None) -> None:
         """Select the variable's sole stable joint and initialize its window."""
-        joint_id = LOCALIZED_TORQUE_VARIABLE_JOINTS.get(key)
+        joint_id = None if key is None else LOCALIZED_TORQUE_VARIABLE_JOINTS.get(key)
         self.setVisible(joint_id is not None)
         self.joint_selector.clear()
         if joint_id is not None:

@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 PR #4414 hosted MyPy hardening (1.16.63)
+
+- The nullable locus variable key is narrowed before the stable string-keyed
+  joint-map lookup.
+- The row editor returns the locus editor's declared Boolean directly, removing
+  the redundant cast reported by hosted MyPy 1.13.
+- Runtime behavior and all scientific/UI/persistence contracts are unchanged.
+- Local evidence: pinned MyPy 1.13.0 passes the exact 15 changed source files
+  relative to PR base `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` with redundant-cast warnings;
+  seven focused locus tests, Ruff/format, docs governance, diff, and size gates
+  also pass. Protected current-head CI and publication remain open.
+
 ## 2026-08-12 #4142 integrated localized locus and Playwright browser stack
 
 - Version 1.16.62 is a normal two-parent merge: localized-locus head

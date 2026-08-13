@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 PR #4414 hosted MyPy hardening (#4142, 1.16.63)
+
+The localized-locus UI now narrows a nullable variable key before querying the
+stable variable-to-joint mapping and returns the locus editor's declared
+Boolean result directly instead of applying a redundant type cast. These are
+type-boundary corrections only; variable selection, locus visibility, joint
+identity, authoring precision, and runtime behavior are unchanged.
+
+Local evidence is the exact PR-base set of 15 changed source files under pinned
+MyPy 1.13.0 with redundant-cast warnings enabled, plus seven focused PyQt locus
+tests, Ruff, format, documentation governance, diff, and changed-file size
+checks. Protected current-head CI and ordinary publication remain open.
+
 ## 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
 
 Normal merge version 1.16.62 preserves localized-locus head

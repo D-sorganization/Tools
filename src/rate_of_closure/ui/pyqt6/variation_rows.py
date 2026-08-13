@@ -9,7 +9,6 @@ the 500-line budget.
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import cast
 
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -262,13 +261,10 @@ class NoiseRow(QWidget):
             self._localized_enabled if localized_enabled is None else localized_enabled
         )
         duration = self._duration_s if duration_s is None else duration_s
-        return cast(
-            bool,
-            self.locus_editor.accepts(
-                spec,
-                localized_enabled=enabled,
-                duration_s=duration,
-            ),
+        return self.locus_editor.accepts(
+            spec,
+            localized_enabled=enabled,
+            duration_s=duration,
         )
 
     def _edited_bounds(
