@@ -26,11 +26,24 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.81                                    |
-| **Spec Version**        | 1.16.81                                    |
+| **Current Version**     | 1.16.82                                    |
+| **Spec Version**        | 1.16.82                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Linked-scatter import-limit parity closure (#4433)
+
+Version 1.16.82 defines one 65,536-byte UTF-8 ceiling for every imported CSV
+header/cell and JSON key/string scalar. A Python-owned golden pins ASCII and
+multibyte boundaries, including an input above Python's implicit CSV field
+threshold. Python performs a local quoted-field byte preflight and does not
+mutate the process-global `csv.field_size_limit`; React validates the same
+decoded fields. Both runtimes also directly prove rejection above 250,000
+rows, 256 union columns, and two million dense cells without constructing
+oversized test datasets. This does not promote diagnostics or close #4433;
+approved baselines, AT validation, archive integration, and remaining visual
+work stay open.
 
 ### 2026-08-13 Linked-scatter extreme/import contract closure (#4433)
 
@@ -4113,6 +4126,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
 | 2026-08-13 | 1.16.80 | fix(rate-of-closure, #4433): make the PyQt selected-state diagnostic use an exact tab-type boundary and direct preview access without changing the runtime contract. |
 | 2026-08-13 | 1.16.81 | fix(rate-of-closure, #4433): bound extreme plotting projection, strict retained-data resources, and generation-safe atomic dataset replacement across React and PyQt. |
+| 2026-08-13 | 1.16.82 | fix(rate-of-closure, #4433): define shared UTF-8 field limits and direct row, union-column, and dense-cell cap evidence without process-global parser mutation. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |

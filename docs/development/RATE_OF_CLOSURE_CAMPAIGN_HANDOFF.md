@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 linked-scatter import-limit parity correction
+
+- A Python-owned golden defines the shared 65,536-byte UTF-8 field limit for
+  CSV headers/cells and JSON keys/string scalars, with ASCII and multibyte
+  boundary cases plus an input above Python's implicit parser threshold.
+- Python performs a local quoted-field byte preflight without changing the
+  process-global CSV limit. React applies the same decoded-value contract.
+- Both runtimes directly prove the 250,000-row, 256-union-column, and
+  two-million-dense-cell ceilings. SPEC is 1.16.82. Evidence remains
+  diagnostic; approved baselines, AT validation, archive coupling, and broader
+  #4433 work remain open.
+
 ## 2026-08-13 #4433 linked-scatter extreme/import correction
 
 - Python and React share a bounded projection golden for extreme, constant,

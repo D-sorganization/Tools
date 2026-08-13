@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import csv
+import json
+from pathlib import Path
 from types import SimpleNamespace
 
 import pandas as pd
@@ -13,6 +16,8 @@ pytest.importorskip("pytestqt")
 
 from rate_of_closure.launch_monitor_import import (  # noqa: E402
     MAX_IMPORT_BYTES,
+    MAX_IMPORT_FIELD_UTF8_BYTES,
+    _validate_import_shape,
     read_launch_monitor_frame,
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (  # noqa: E402
@@ -20,6 +25,15 @@ from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (  # noqa: E40
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def _import_limits_golden() -> dict[str, object]:
+    path = (
+        Path(__file__).parents[2]
+        / "src/rate_of_closure/web/src/model/__fixtures__"
+        / "launch_monitor_import_limits_golden_v1.json"
+    )
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def test_demo_analysis_populates_results_and_traceability(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -193,6 +207,52 @@ def test_import_rejects_duplicate_keys_invalid_utf8_and_resource_excess(
 
     with pytest.raises(ValueError, match="supports CSV and JSON"):
         read_launch_monitor_frame(tmp_path / "unreadable.txt")
+
+
+def test_python_owned_import_limit_golden_pins_field_bytes_and_resource_shape(
+    tmp_path,
+) -> None:
+    fixture = _import_limits_golden()
+    assert fixture["max_field_utf8_bytes"] == MAX_IMPORT_FIELD_UTF8_BYTES
+    process_csv_limit = csv.field_size_limit()
+    cases = fixture["field_cases"]
+    assert isinstance(cases, list)
+    for case in cases:
+        assert isinstance(case, dict)
+        value = str(case["character"]) * int(case["repeat"])
+        path = tmp_path / f"{case['name']}.csv"
+        path.write_text(f"x,y\n{value},1\n", encoding="utf-8")
+        if case["accepted"]:
+            assert read_launch_monitor_frame(path).iloc[0, 0] == value
+        else:
+            with pytest.raises(ValueError, match="field exceeds .* UTF-8 bytes"):
+                read_launch_monitor_frame(path)
+        assert csv.field_size_limit() == process_csv_limit
+
+    resources = fixture["resource_cases"]
+    assert isinstance(resources, list)
+    for case in resources:
+        assert isinstance(case, dict)
+        with pytest.raises(ValueError, match=str(case["error"])):
+            _validate_import_shape(int(case["rows"]), int(case["columns"]))
+
+
+def test_json_keys_and_string_scalars_share_the_field_byte_cap(tmp_path) -> None:
+    at_limit = "é" * (MAX_IMPORT_FIELD_UTF8_BYTES // 2)
+    valid = tmp_path / "valid.json"
+    valid.write_text(json.dumps([{at_limit: at_limit}]), encoding="utf-8")
+    assert read_launch_monitor_frame(valid).columns.tolist() == [at_limit]
+
+    over_limit = at_limit + "é"
+    invalid_key = tmp_path / "invalid-key.json"
+    invalid_key.write_text(json.dumps([{over_limit: 1}]), encoding="utf-8")
+    with pytest.raises(ValueError, match="field exceeds .* UTF-8 bytes"):
+        read_launch_monitor_frame(invalid_key)
+
+    invalid_value = tmp_path / "invalid-value.json"
+    invalid_value.write_text(json.dumps([{"x": over_limit}]), encoding="utf-8")
+    with pytest.raises(ValueError, match="field exceeds .* UTF-8 bytes"):
+        read_launch_monitor_frame(invalid_value)
 
 
 def test_successful_dataset_replacement_resets_all_bound_controls(qtbot) -> None:  # type: ignore[no-untyped-def]

@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter import-limit parity closure (#4433)
+
+Version 1.16.82 defines a shared 65,536-byte UTF-8 limit for every imported
+field name and textual scalar, including CSV headers/cells and JSON keys/string
+values. Python preflights CSV locally without mutating the process-global CSV
+parser limit, so both runtimes reject the same oversized field. A shared golden
+also pins row, union-column, and dense-cell limits. #4433 remains open and no
+diagnostic evidence is promoted.
+
 ## 2026-08-13 Linked-scatter extreme/import contract closure (#4433)
 
 Version 1.16.81 normalizes every accepted finite plotting axis into a bounded

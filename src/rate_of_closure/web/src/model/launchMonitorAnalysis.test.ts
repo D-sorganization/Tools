@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import importLimits from "./__fixtures__/launch_monitor_import_limits_golden_v1.json";
 import {
   analyzeLaunchMonitorData,
   parseLaunchMonitorFile,
@@ -7,6 +8,10 @@ import {
   sha256Text,
   type LaunchMonitorRow,
 } from "./launchMonitorAnalysis";
+import {
+  assertLaunchMonitorImportShape,
+  MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES,
+} from "./launchMonitorFileParsing";
 
 const rows = (): LaunchMonitorRow[] =>
   Array.from({ length: 80 }, (_, index) => {
@@ -182,5 +187,33 @@ describe("launch monitor flexible analysis", () => {
       arrayBuffer: async () => new Uint8Array([0xff, 0xfe]).buffer,
     } as unknown as File;
     await expect(readLaunchMonitorFile(invalidUtf8)).rejects.toThrow(/valid UTF-8/);
+  });
+
+  it("matches the Python-owned field-byte and resource-shape limit golden", () => {
+    expect(importLimits.max_field_utf8_bytes)
+      .toBe(MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES);
+    for (const testCase of importLimits.field_cases) {
+      const value = testCase.character.repeat(testCase.repeat);
+      const parse = () => parseLaunchMonitorFile("shots.csv", `x,y\n${value},1\n`);
+      if (testCase.accepted) expect(parse()[0].x).toBe(value);
+      else expect(parse).toThrow(/field exceeds .* UTF-8 bytes/);
+    }
+    for (const testCase of importLimits.resource_cases) {
+      expect(() => assertLaunchMonitorImportShape(testCase.rows, testCase.columns))
+        .toThrow(new RegExp(testCase.error));
+    }
+  });
+
+  it("applies the field-byte cap to JSON keys and string scalar values", () => {
+    const atLimit = "é".repeat(MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES / 2);
+    expect(parseLaunchMonitorFile("shots.json", JSON.stringify([{ [atLimit]: atLimit }])))
+      .toEqual([{ [atLimit]: atLimit }]);
+    const overLimit = `${atLimit}é`;
+    expect(() => parseLaunchMonitorFile(
+      "shots.json", JSON.stringify([{ [overLimit]: 1 }]),
+    )).toThrow(/field exceeds .* UTF-8 bytes/);
+    expect(() => parseLaunchMonitorFile(
+      "shots.json", JSON.stringify([{ x: overLimit }]),
+    )).toThrow(/field exceeds .* UTF-8 bytes/);
   });
 });

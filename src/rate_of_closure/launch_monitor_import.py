@@ -7,6 +7,7 @@ import io
 import json
 import math
 from pathlib import Path
+from typing import cast
 
 import pandas as pd
 
@@ -16,8 +17,63 @@ from rate_of_closure.launch_monitor_numeric import finite_launch_monitor_scalar
 _SCALAR_TYPES = (str, int, float, bool, type(None))
 _MAX_SAFE_INTEGER = 9_007_199_254_740_991
 MAX_IMPORT_BYTES = 8 * 1024 * 1024
+MAX_IMPORT_FIELD_UTF8_BYTES = 64 * 1024
 MAX_IMPORT_COLUMNS = 256
 MAX_IMPORT_CELLS = 2_000_000
+
+
+def _validate_import_field(value: str) -> None:
+    if len(value.encode("utf-8")) > MAX_IMPORT_FIELD_UTF8_BYTES:
+        raise ValueError(
+            f"Launch-monitor field exceeds {MAX_IMPORT_FIELD_UTF8_BYTES} UTF-8 bytes"
+        )
+
+
+def _validate_csv_field_bytes(text: str) -> None:
+    """Preflight decoded CSV fields without mutating csv.field_size_limit()."""
+    byte_count = 0
+    quoted = False
+    index = 0
+    while index < len(text):
+        character = text[index]
+        if character == '"':
+            if quoted and index + 1 < len(text) and text[index + 1] == '"':
+                byte_count += 1
+                index += 2
+            else:
+                quoted = not quoted
+                index += 1
+        elif not quoted and character in {",", "\r", "\n"}:
+            byte_count = 0
+            index += 1
+        else:
+            byte_count += len(character.encode("utf-8"))
+            index += 1
+        if byte_count > MAX_IMPORT_FIELD_UTF8_BYTES:
+            raise ValueError(
+                "Launch-monitor field exceeds "
+                f"{MAX_IMPORT_FIELD_UTF8_BYTES} UTF-8 bytes"
+            )
+
+
+def _validate_import_shape(row_count: int, column_count: int) -> None:
+    if (
+        isinstance(row_count, bool)
+        or isinstance(column_count, bool)
+        or not isinstance(row_count, int)
+        or not isinstance(column_count, int)
+        or row_count < 0
+        or column_count < 0
+    ):
+        raise TypeError("launch-monitor import shape must use nonnegative integers")
+    if row_count > MAX_RETAINED_ROWS:
+        raise ValueError(f"Launch-monitor import exceeds {MAX_RETAINED_ROWS} rows")
+    if column_count > MAX_IMPORT_COLUMNS:
+        raise ValueError(f"Launch-monitor import exceeds {MAX_IMPORT_COLUMNS} columns")
+    if row_count * column_count > MAX_IMPORT_CELLS:
+        raise ValueError(
+            f"Launch-monitor import exceeds {MAX_IMPORT_CELLS} dense cells"
+        )
 
 
 def _coerce_csv_cell(value: str) -> str | float | None:
@@ -71,6 +127,7 @@ def read_launch_monitor_frame(path: Path) -> pd.DataFrame:
     except UnicodeDecodeError as error:
         raise ValueError("Launch-monitor import must be valid UTF-8") from error
     if suffix == ".csv":
+        _validate_csv_field_bytes(text)
         rows: list[list[str]] = []
         try:
             for row in csv.reader(io.StringIO(text, newline=""), strict=True):
@@ -90,14 +147,16 @@ def read_launch_monitor_frame(path: Path) -> pd.DataFrame:
         if len(rows) < 2:
             raise ValueError("CSV must contain a header and at least one row")
         headers = tuple(item.strip() for item in rows[0])
+        for value in headers:
+            _validate_import_field(value)
+        for row in rows[1:]:
+            for value in row:
+                _validate_import_field(value)
         if any(not item for item in headers) or len(set(headers)) != len(headers):
             raise ValueError("CSV headers must be non-empty and unique")
         if any(len(row) != len(headers) for row in rows[1:]):
             raise ValueError("Every CSV data row must match the header width")
-        if len(rows[1:]) * len(headers) > MAX_IMPORT_CELLS:
-            raise ValueError(
-                f"Launch-monitor import exceeds {MAX_IMPORT_CELLS} dense cells"
-            )
+        _validate_import_shape(len(rows) - 1, len(headers))
         return pd.DataFrame(
             [[_coerce_csv_cell(value) for value in row] for row in rows[1:]],
             columns=headers,
@@ -115,29 +174,34 @@ def read_launch_monitor_frame(path: Path) -> pd.DataFrame:
             not isinstance(row, dict) for row in payload
         ):
             raise ValueError("JSON launch-monitor data must be an array of records")
-        if len(payload) > MAX_RETAINED_ROWS:
-            raise ValueError(f"Launch-monitor import exceeds {MAX_RETAINED_ROWS} rows")
-        union = {key for row in payload for key in row}
-        if len(union) > MAX_IMPORT_COLUMNS:
-            raise ValueError(
-                f"Launch-monitor import exceeds {MAX_IMPORT_COLUMNS} columns"
-            )
-        if len(payload) * len(union) > MAX_IMPORT_CELLS:
-            raise ValueError(
-                f"Launch-monitor import exceeds {MAX_IMPORT_CELLS} dense cells"
-            )
-        if any(not key.strip() for row in payload for key in row):
+        records = cast(list[dict[str, object]], payload)
+        _validate_import_shape(len(records), 0)
+        union: set[str] = set()
+        for record in records:
+            union.update(record)
+            _validate_import_shape(0, len(union))
+        _validate_import_shape(len(records), len(union))
+        for record in records:
+            for key, imported_value in record.items():
+                _validate_import_field(key)
+                if isinstance(imported_value, str):
+                    _validate_import_field(imported_value)
+        if any(not key.strip() for record in records for key in record):
             raise ValueError("JSON launch-monitor field names must be non-empty")
         if any(
             not _json_scalar_is_portable(value)
-            for row in payload
-            for value in row.values()
+            for record in records
+            for value in record.values()
         ):
             raise ValueError(
                 "JSON launch-monitor record values must be portable finite scalars"
             )
-        return pd.DataFrame.from_records(payload)
+        return pd.DataFrame.from_records(records)
     raise AssertionError("validated launch-monitor suffix was not dispatched")
 
 
-__all__ = ["read_launch_monitor_frame"]
+__all__ = [
+    "MAX_IMPORT_BYTES",
+    "MAX_IMPORT_FIELD_UTF8_BYTES",
+    "read_launch_monitor_frame",
+]

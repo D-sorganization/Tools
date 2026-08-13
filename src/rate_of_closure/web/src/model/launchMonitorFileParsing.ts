@@ -8,6 +8,7 @@ import {
 import { parseUniqueJson } from "./strictJson";
 
 export const MAX_LAUNCH_MONITOR_IMPORT_BYTES = 8 * 1024 * 1024;
+export const MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES = 64 * 1024;
 export const MAX_LAUNCH_MONITOR_IMPORT_ROWS = 250_000;
 export const MAX_LAUNCH_MONITOR_IMPORT_COLUMNS = 256;
 export const MAX_LAUNCH_MONITOR_IMPORT_CELLS = 2_000_000;
@@ -18,6 +19,31 @@ const assertTextBudget = (text: string): void => {
     throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_BYTES} bytes`);
   }
 };
+
+const assertFieldBudget = (value: string): void => {
+  if (new TextEncoder().encode(value).byteLength > MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES) {
+    throw new RangeError(
+      `Launch-monitor field exceeds ${MAX_LAUNCH_MONITOR_IMPORT_FIELD_UTF8_BYTES} UTF-8 bytes`,
+    );
+  }
+};
+
+/** @internal Exact resource-shape authority used by both decoded formats and tests. */
+export function assertLaunchMonitorImportShape(rowCount: number, columnCount: number): void {
+  if (!Number.isSafeInteger(rowCount) || !Number.isSafeInteger(columnCount) ||
+      rowCount < 0 || columnCount < 0) {
+    throw new TypeError("launch-monitor import shape must use nonnegative safe integers");
+  }
+  if (rowCount > MAX_LAUNCH_MONITOR_IMPORT_ROWS) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_ROWS} rows`);
+  }
+  if (columnCount > MAX_LAUNCH_MONITOR_IMPORT_COLUMNS) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_COLUMNS} columns`);
+  }
+  if (rowCount * columnCount > MAX_LAUNCH_MONITOR_IMPORT_CELLS) {
+    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_CELLS} dense cells`);
+  }
+}
 
 const coerceCell = (value: string): LaunchMonitorScalar => {
   const trimmed = value.trim();
@@ -74,17 +100,17 @@ export function parseLaunchMonitorFile(fileName: string, text: string): LaunchMo
       throw new RangeError("JSON launch-monitor data must be an array of record objects");
     }
     const rows = parsed as Record<string, unknown>[];
-    if (rows.length > MAX_LAUNCH_MONITOR_IMPORT_ROWS) {
-      throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_ROWS} rows`);
+    assertLaunchMonitorImportShape(rows.length, 0);
+    const union = new Set<string>();
+    for (const row of rows) {
+      for (const [key, value] of Object.entries(row)) {
+        union.add(key);
+        assertLaunchMonitorImportShape(0, union.size);
+        assertFieldBudget(key);
+        if (typeof value === "string") assertFieldBudget(value);
+      }
     }
-    if (rows.some((row) => Object.keys(row).length > MAX_LAUNCH_MONITOR_IMPORT_COLUMNS)) {
-      throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_COLUMNS} columns`);
-    }
-    const union = new Set(rows.flatMap((row) => Object.keys(row)));
-    if (union.size > MAX_LAUNCH_MONITOR_IMPORT_COLUMNS ||
-        rows.length * union.size > MAX_LAUNCH_MONITOR_IMPORT_CELLS) {
-      throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_CELLS} dense cells`);
-    }
+    assertLaunchMonitorImportShape(rows.length, union.size);
     if (rows.some((row) => Object.keys(row).some((key) => !key.trim()))) {
       throw new RangeError("JSON launch-monitor field names must be non-empty");
     }
@@ -102,13 +128,9 @@ export function parseLaunchMonitorFile(fileName: string, text: string): LaunchMo
     throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_ROWS} rows`);
   }
   if (parsed.length < 2) throw new RangeError("CSV must contain a header and at least one row");
+  parsed[0].forEach(assertFieldBudget);
   const headers = parsed[0].map((header) => header.trim());
-  if (headers.length > MAX_LAUNCH_MONITOR_IMPORT_COLUMNS) {
-    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_COLUMNS} columns`);
-  }
-  if ((parsed.length - 1) * headers.length > MAX_LAUNCH_MONITOR_IMPORT_CELLS) {
-    throw new RangeError(`Launch-monitor import exceeds ${MAX_LAUNCH_MONITOR_IMPORT_CELLS} dense cells`);
-  }
+  assertLaunchMonitorImportShape(parsed.length - 1, headers.length);
   if (headers.some((header) => !header) || new Set(headers).size !== headers.length) {
     throw new RangeError("CSV headers must be non-empty and unique");
   }
@@ -116,6 +138,7 @@ export function parseLaunchMonitorFile(fileName: string, text: string): LaunchMo
     if (values.length !== headers.length) {
       throw new RangeError("Every CSV data row must match the header width");
     }
+    values.forEach(assertFieldBudget);
     return Object.fromEntries(headers.map(
       (header, index) => [header, coerceCell(values[index])],
     )) as LaunchMonitorRow;

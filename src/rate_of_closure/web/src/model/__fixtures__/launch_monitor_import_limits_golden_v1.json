@@ -1,0 +1,18 @@
+{
+  "schema_id": "rate-of-closure/launch-monitor-import-limits-golden",
+  "schema_version": 1,
+  "max_field_utf8_bytes": 65536,
+  "field_cases": [
+    {"name": "ascii_below", "character": "a", "repeat": 65535, "accepted": true},
+    {"name": "ascii_at", "character": "a", "repeat": 65536, "accepted": true},
+    {"name": "ascii_above", "character": "a", "repeat": 65537, "accepted": false},
+    {"name": "above_python_implicit", "character": "a", "repeat": 200000, "accepted": false},
+    {"name": "multibyte_at", "character": "é", "repeat": 32768, "accepted": true},
+    {"name": "multibyte_above", "character": "é", "repeat": 32769, "accepted": false}
+  ],
+  "resource_cases": [
+    {"name": "row_excess", "rows": 250001, "columns": 1, "error": "rows"},
+    {"name": "union_column_excess", "rows": 1, "columns": 257, "error": "columns"},
+    {"name": "dense_cell_excess", "rows": 7813, "columns": 256, "error": "dense cells"}
+  ]
+}

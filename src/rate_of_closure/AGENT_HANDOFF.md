@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Linked-scatter import-limit parity correction (#4433)
+
+- Python and React consume one limits golden covering 65,536-byte UTF-8 field
+  boundaries with ASCII and multibyte text, including a field beyond Python's
+  implicit CSV parser threshold.
+- The field limit applies to CSV headers/cells and JSON keys/string scalars.
+  Python uses a local quoted-field preflight and never mutates
+  `csv.field_size_limit`, retaining concurrency safety.
+- Direct contract probes pin rejection at 250,001 rows, 257 union columns, and
+  more than two million dense cells in both runtimes. SPEC is 1.16.82; approved
+  goldens, AT validation, and remaining #4433 work stay open.
+
 ## 2026-08-13 Linked-scatter extreme/import correction (#4433)
 
 - A shared Python-owned projection golden covers crossing finite maxima,
