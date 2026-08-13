@@ -89,3 +89,6 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+## 2024-07-28 - Avoid array methods for header setup during CSV parsing
+**Learning:** Using array mapping (like `.map()`) when parsing CSV header columns creates intermediate arrays, adding minor but unnecessary garbage collection pressure during the initialization phase of data visualizations.
+**Action:** Replace `.map()` calls with a single-pass `for` loop combined with pre-allocated arrays to parse dataset headers directly, minimizing closure and array allocation overhead.
