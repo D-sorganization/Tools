@@ -26,11 +26,26 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.57                                    |
-| **Spec Version**        | 1.16.57                                    |
+| **Current Version**     | 1.16.59                                    |
+| **Spec Version**        | 1.16.59                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Integrated localized torque and Playwright stack (#4142)
+
+Version 1.16.59 merges the exact localized-torque history at
+`10524cc2151c7b60c4a097939b29202158aff012` above the reviewed Playwright
+history at `6df0ed09388ba36630c5fc6be7a31a334a4b6243` with a normal two-parent merge.
+The strict Python localized-torque execution, validation, typed miss, and PyQt
+filtering contracts coexist with the trust-separated production-Worker browser
+gate; neither scientific nor browser authority is weakened. Protected
+publication, full R14.5 certification, localized locus authoring, additional
+sources, Rust parity, and complete state/event/torque persistence remain open.
+Integrated verification passes 171 localized changed-test cases, 18 Playwright
+workflow/security tests, and five real production-Worker Chromium tests, plus
+scoped Ruff/format, documentation governance, workflow validation, and diff
+hygiene.
 
 ### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
@@ -62,6 +77,101 @@ are review artifacts, not CI-authority or cross-platform pixel baselines. Only
 bundled Chromium is exercised; WebKit, Firefox, assistive-technology automation,
 PyQt interaction, protected runner execution, and an approved visual baseline
 remain open. No scientific, plan, result, or persistence contract changed.
+### 2026-08-12 Localized torque static-gate closure (#4142)
+
+Version 1.16.58 closes the final cumulative changed-source static-analysis
+findings without changing runtime behavior. The variation CSV reader explicitly
+types its input and success arrays as NumPy arrays, satisfying the repository's
+`follow-imports=skip` delta MyPy gate. The Rate simulation pipeline returns the
+already typed `SwingSource` from `make_source` directly instead of wrapping it
+in a redundant cast. The source factory also uses the type narrowing guaranteed
+by its run-config contract instead of recasting the validated non-`None` branch.
+Behavioral contracts and serialized data are unchanged.
+
+Evidence is the exact cumulative 16-file changed-source MyPy command, 147/147
+localized contract tests, and scoped Ruff/format/diff gates. UI locus authoring,
+Rust parity, protected publication, and epic completion remain open.
+
+### 2026-08-12 Source execution and dataset discriminator hardening (#4142)
+
+Version 1.16.57 removes a truthiness-based source-configuration fallback.
+`make_source` now requires `run_config` to be `None` or an actual
+`DoublePendulumRunConfig` before constructing a default, so falsey and truthy
+wrong-type objects cannot silently select passive execution or reach incidental
+attribute errors. Manual and triple-pendulum sources accept only the default
+passive, profile-free, lock-free, localized-offset-free execution declaration;
+all non-default double-pendulum semantics fail before source construction.
+
+The outer variation dataset JSON reader now applies the same genuine
+non-Boolean integer schema discriminator used by `VariationPlan`. `True`,
+`1.5`, and `"1"` cannot select dataset schema v1 through coercion. The sibling
+Morris observation reader already performs an exact integer type check. Local
+evidence is 34/34 focused and 1,483/1,483 broader shared-swing, variation, and
+Rate tests, with one expected missing-Rust-wheel skip. UI locus authoring, Rust
+parity, protected publication, and epic completion remain open.
+
+### 2026-08-12 Localized torque source and wire hardening (#4142)
+
+Version 1.16.56 makes the double-pendulum-only localized-torque capability
+fail closed at every nearby public boundary. The source factory rejects a
+non-empty `commanded_torque_offsets` collection for both manual and triple-
+pendulum discriminators instead of silently dropping the command. The run
+configuration validates the raw collection as a tuple or list before
+canonical tuple conversion, so `None` and other malformed domains raise
+`ContractViolationError` rather than incidental `TypeError`.
+
+`VariationPlan.from_json_dict` now requires `schema_version` to be a genuine
+non-Boolean integer before normalization. Boolean, float, and string lookalikes
+cannot select a wire schema through coercion; emitted v2 and supported integer
+v1 migration documents retain their existing behavior. Evidence is 102/102
+focused tests and 1,464/1,464 broader shared-swing, variation, and Rate tests,
+with one expected missing-Rust-wheel skip. UI locus authoring, Rust parity,
+protected publication, and epic completion remain open.
+
+### 2026-08-12 Localized torque adversarial corrections (#4142)
+
+Version 1.16.55 closes three fail-closed gaps in the initial localized torque
+core. `NoiseSpec` numeric scale, bounds, and time loci and `VariationPlan` base
+values reject Boolean, string, and nonfinite raw values; run count and seed
+require genuine non-Boolean integers. Normal JSON integer/float documents and
+v1 migration remain supported. Public localized helpers likewise validate base
+torques, command collections, sample times, and duration before use and report
+contract violations rather than coercion or incidental Python exceptions.
+
+A shared fixed-step grid function is now authoritative for effective RK4
+duration in request, configuration, source, and fallback trace-grid paths.
+Localized windows must fit that effective duration before sampling or trial
+execution. The existing PyQt variation picker excludes contextual localized
+torque entries because it has no locus editor; an imported localized plan fails
+atomically with an explicit unrepresentable/locus-editor explanation. This does
+not claim PyQt or React locus authoring. Evidence is 118 correction-focused and
+1,455 broader passing tests, with one expected missing-Rust-wheel skip.
+
+### 2026-08-12 Localized double-pendulum torque execution (#4142)
+
+Version 1.16.54 introduces the first dynamics-backed localized perturbation
+contract. A `LocalizedTorqueOffset` targets exactly one topological
+double-pendulum joint, `joint.shoulder` or `joint.wrist`, over a required finite
+half-open time window `[start_s, end_s)` wholly inside the run. The finite N.m
+value adds to passive or prescribed commanded torque at every Python RK4 stage.
+Topological torque IDs remain intentionally distinct from spatial output point
+IDs, including `swing.wrist`.
+
+Two registry variables map deterministic variation samples to those exact
+joint loci. Validation rejects unsupported variables, non-torque localized
+sources, absent/multiple/mismatched point IDs or windows, out-of-duration
+windows, base-only localized use, incompatible swing sources, and explicit Rust
+before simulation. Automatic backend selection uses Python whenever localized
+commands are present. Recorded torque history obeys the same half-open rule;
+chunk-size changes do not alter deterministic outcomes; and a physically valid
+miss remains typed no-impact data with closest-approach evidence.
+
+This version is a narrow core execution seam. PyQt and React authoring and
+presentation, other localized variables/source kinds, Rust parity, complete
+raw state/event/torque persistence, protected publication, and #4142 completion
+remain open. Evidence is 99 focused tests and 1,413 broader shared-swing,
+variation, and Rate tests with one expected missing-Rust-wheel skip, plus Ruff,
+format, and changed-source MyPy.
 
 ### 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
 
@@ -3340,10 +3450,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142 R14.5): remove manual dispatch from the self-hosted Playwright workflow so only main-push-owned workflow definitions reach the trusted fleet; observe strict intermediate production-Worker progress; and prove cancellation terminates the old Worker before deterministic reruns can accept results. |
-| 2026-08-12 | 1.16.56 | ci(rate-of-closure, #4142 R14.5): split the ephemeral pull-request Playwright gate from the trusted main workflow and pin all external actions to immutable SHAs. |
-| 2026-08-12 | 1.16.55 | ci(rate-of-closure, #4142 R14.5): isolate fork-origin pull-request browser execution on ephemeral hosted runners while retaining the locked production gate. |
-| 2026-08-12 | 1.16.54 | test(rate-of-closure, #4142 R14.5): pin a Rate-web-local Playwright/Chromium contract; exercise the real production module Worker for seeded progress/completion/rerun, cancellation without stale results, and navigation/unmount cleanup; retain desktop/narrow screenshots as review artifacts while keeping golden cross-platform visual approval and full R14.5 completion open. |
+| 2026-08-12 | 1.16.59 | merge(rate-of-closure, #4142): preserve the exact localized-torque and reviewed Playwright histories in a normal two-parent integration; retain strict localized scientific/source/UI contracts beside trust-separated production-Worker browser gates; and keep protected publication, full R14.5 certification, locus authoring, Rust parity, and complete archive authority open. |
+| 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
+| 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; require a genuine non-Boolean integer outer variation-dataset schema discriminator; remove manual dispatch from the self-hosted Playwright workflow; observe strict intermediate production-Worker progress; and prove cancellation terminates the old Worker before deterministic reruns accept results. |
+| 2026-08-12 | 1.16.56 | fix(rate-of-closure, #4142): reject localized torque offsets on unsupported manual/triple sources; validate run-config offset collections before tuple conversion; require genuine non-Boolean integer variation-plan schema versions; split the ephemeral PR Playwright gate from the trusted main workflow; and pin all external actions to immutable SHAs. |
+| 2026-08-12 | 1.16.55 | fix(rate-of-closure, #4142): fail closed on malformed localized numeric/collection domains; make the fixed-step effective RK4 duration authoritative for windows; hide or atomically reject localized PyQt factors until locus authoring exists; and isolate pull-request browser execution on ephemeral hosted runners while retaining the locked production gate. |
+| 2026-08-12 | 1.16.54 | feat(rate-of-closure, #4142): execute additive shoulder/wrist commanded-torque offsets over strict half-open one-point loci at every Python RK4 stage; bind deterministic variation samples to exact topological joint IDs; fail closed on unsupported source, locus, duration, and Rust contracts; preserve typed no-impact and distinct spatial provenance; and add a pinned real-browser production-Worker foundation with seeded lifecycle, cancellation, unmount, and review-screenshot evidence while keeping UI, persistence, visual certification, protected release, and epic completion open. |
 | 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
 | 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |
 | 2026-08-12 | 1.16.51 | fix(rate-of-closure, #4142 R11.4): require complete trial output scalars to be finite real non-booleans; normalize accepted NumPy real scalars to built-in floats; and prove typed-object writer/reader domain closure with five TDD cases and 39 focused persistence tests. |

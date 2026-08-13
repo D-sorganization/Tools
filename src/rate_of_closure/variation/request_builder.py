@@ -13,6 +13,12 @@ import numpy as np
 from rate_of_closure.simulation import BallSetup, BallSupportMode, SimulationConfig
 from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
 from shared.python.contracts import require
+from shared.python.swing_sim.integration_grid import effective_rk4_duration
+from shared.python.swing_sim.run_config import (
+    SHOULDER_JOINT_ID,
+    WRIST_JOINT_ID,
+    LocalizedTorqueOffset,
+)
 from shared.python.swing_sim.types import PlaneOrientation
 from shared.python.swing_sim.variation import (
     CATEGORY_BALL_SETUP,
@@ -34,13 +40,15 @@ _FORWARD_TILT = _key(CATEGORY_SWING, "forward_tilt_deg")
 _IMPACT_TIME_OFFSET = _key(CATEGORY_SWING, "impact_time_offset_s")
 _DAMPING_SHOULDER = _key(CATEGORY_SWING, "damping_shoulder")
 _DAMPING_WRIST = _key(CATEGORY_SWING, "damping_wrist")
+_SHOULDER_TORQUE_OFFSET = _key(CATEGORY_SWING, "shoulder_commanded_torque_offset_nm")
+_WRIST_TORQUE_OFFSET = _key(CATEGORY_SWING, "wrist_commanded_torque_offset_nm")
 _TOE_OFFSET = _key(CATEGORY_DELIVERY, "impact_offset_toe_mm")
 _HIGH_OFFSET = _key(CATEGORY_DELIVERY, "impact_offset_high_mm")
 _HEAD_MASS = _key(CATEGORY_CLUB, "head_mass_kg")
 _HEAD_MOI = _key(CATEGORY_CLUB, "head_moi_kg_m2")
 _TEE_HEIGHT = _key(CATEGORY_BALL_SETUP, "tee_height_m")
 
-TRACE_CAPABLE_VARIABLE_KEYS = frozenset(
+GLOBAL_TRACE_VARIABLE_KEYS = frozenset(
     {
         _YAW,
         _SIDE_TILT,
@@ -54,6 +62,17 @@ TRACE_CAPABLE_VARIABLE_KEYS = frozenset(
         _HEAD_MOI,
         _TEE_HEIGHT,
     }
+)
+
+LOCALIZED_TORQUE_VARIABLE_JOINTS = MappingProxyType(
+    {
+        _SHOULDER_TORQUE_OFFSET: SHOULDER_JOINT_ID,
+        _WRIST_TORQUE_OFFSET: WRIST_JOINT_ID,
+    }
+)
+
+TRACE_CAPABLE_VARIABLE_KEYS = frozenset(
+    GLOBAL_TRACE_VARIABLE_KEYS | set(LOCALIZED_TORQUE_VARIABLE_JOINTS)
 )
 
 
@@ -82,13 +101,10 @@ def build_simulation_ensemble_request(
         "trace ensembles currently require the double_pendulum source",
         base_config.source_kind,
     )
-    require(
-        all(spec.is_global for spec in plan.noise),
-        "trace ensembles currently support only global perturbations",
-    )
     requested = {spec.variable_key for spec in plan.noise} | set(plan.base_variables)
     unsupported = sorted(requested - TRACE_CAPABLE_VARIABLE_KEYS)
     require(not unsupported, "variables are not trace-capable", unsupported)
+    _validate_noise_loci(plan, base_config)
     samples = sample_inputs(plan)
     configs = tuple(
         _apply_row(base_config, plan, row) for row in np.asarray(samples, dtype=float)
@@ -102,9 +118,83 @@ def _apply_row(
     row: np.ndarray,
 ) -> SimulationConfig:
     """Apply one sampled row plus explicit plan bases to ``base``."""
-    values = dict(plan.base_variables)
-    values.update(zip((spec.variable_key for spec in plan.noise), row, strict=True))
-    return apply_global_simulation_values(base, values)
+    localized_keys = set(LOCALIZED_TORQUE_VARIABLE_JOINTS)
+    values = {
+        key: value
+        for key, value in plan.base_variables.items()
+        if key not in localized_keys
+    }
+    offsets: list[LocalizedTorqueOffset] = []
+    for spec, sampled_value in zip(plan.noise, row, strict=True):
+        if spec.variable_key not in localized_keys:
+            values[spec.variable_key] = float(sampled_value)
+            continue
+        offsets.append(
+            LocalizedTorqueOffset(
+                joint_id=LOCALIZED_TORQUE_VARIABLE_JOINTS[spec.variable_key],
+                time_window_s=spec.time_window_s or (0.0, 0.0),
+                torque_nm=float(sampled_value),
+            )
+        )
+    updated = apply_global_simulation_values(base, values)
+    run_config = updated.swing_run_config
+    return replace(
+        updated,
+        swing_run_config=replace(
+            run_config,
+            commanded_torque_offsets=run_config.commanded_torque_offsets
+            + tuple(offsets),
+        ),
+    )
+
+
+def _validate_noise_loci(plan: VariationPlan, base_config: SimulationConfig) -> None:
+    """Validate global variables and exact localized torque loci."""
+    localized_specs = {
+        spec.variable_key: spec
+        for spec in plan.noise
+        if spec.variable_key in LOCALIZED_TORQUE_VARIABLE_JOINTS
+    }
+    effective_duration_s = (
+        effective_rk4_duration(base_config.swing_duration_s)
+        if localized_specs
+        else base_config.swing_duration_s
+    )
+    base_only = (
+        set(plan.base_variables) & set(LOCALIZED_TORQUE_VARIABLE_JOINTS)
+    ) - set(localized_specs)
+    require(
+        not base_only,
+        "localized torque base variables require a matching noise specification",
+        sorted(base_only),
+    )
+    for spec in plan.noise:
+        expected_joint = LOCALIZED_TORQUE_VARIABLE_JOINTS.get(spec.variable_key)
+        if expected_joint is None:
+            require(
+                spec.is_global,
+                "localized perturbation is unsupported for this variable",
+                spec.spec_id,
+            )
+            continue
+        window = spec.time_window_s
+        require(
+            window is not None,
+            "localized torque perturbation requires time_window_s",
+            spec.spec_id,
+        )
+        require(
+            spec.point_ids == (expected_joint,),
+            "localized torque perturbation requires its exact topological joint point",
+            (spec.point_ids, expected_joint),
+        )
+        assert window is not None
+        start_s, end_s = window
+        require(
+            0.0 <= start_s < end_s <= effective_duration_s,
+            "localized torque time window must lie within the effective RK4 duration",
+            (window, effective_duration_s),
+        )
 
 
 def apply_global_simulation_values(
@@ -121,7 +211,7 @@ def apply_global_simulation_values(
         all(isinstance(key, str) for key in values),
         "global simulation value keys must be strings",
     )
-    unsupported = sorted(set(values) - TRACE_CAPABLE_VARIABLE_KEYS)
+    unsupported = sorted(set(values) - GLOBAL_TRACE_VARIABLE_KEYS)
     require(not unsupported, "variables are not trace-capable", unsupported)
     require(
         all(_is_real_scalar(value) for value in values.values()),
@@ -212,12 +302,17 @@ def _apply_tee(
 
 
 TRACE_CAPABILITIES = MappingProxyType(
-    {"mode": "swing", "source_kind": "double_pendulum"}
+    {
+        "mode": "swing",
+        "source_kind": "double_pendulum",
+        "localized_torque_offsets": tuple(LOCALIZED_TORQUE_VARIABLE_JOINTS.items()),
+    }
 )
 
 __all__ = [
     "TRACE_CAPABILITIES",
     "TRACE_CAPABLE_VARIABLE_KEYS",
+    "LOCALIZED_TORQUE_VARIABLE_JOINTS",
     "apply_global_simulation_values",
     "build_simulation_ensemble_request",
 ]

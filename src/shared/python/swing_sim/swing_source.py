@@ -11,13 +11,15 @@ wheel is absent) and sampled by linear interpolation afterwards.
 from __future__ import annotations
 
 import math
-from typing import Literal, Protocol, runtime_checkable
+from typing import Literal, Protocol, cast, runtime_checkable
 
 import numpy as np
 
 from shared.python.contracts import require
 
 from . import _rust_facade, reference
+from .integration_grid import DEFAULT_SWING_RK4_DT_S, effective_rk4_duration
+from .localized_torque import add_localized_offsets, require_offsets_within_duration
 from .run_config import (
     DOUBLE_PENDULUM_JOINT_IDS,
     DOUBLE_PENDULUM_MODEL_ID,
@@ -99,7 +101,7 @@ class SwingSource(Protocol):
 def _local_axis_rotation(angle: float) -> np.ndarray:
     """Rotation about the plane-local normal axis (local y) by ``angle``."""
     c, s = math.cos(angle), math.sin(angle)
-    return np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]])
+    return cast(np.ndarray, np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]]))
 
 
 class DoublePendulumSwing:
@@ -108,12 +110,8 @@ class DoublePendulumSwing:
     The trajectory is integrated once at construction on a uniform grid of
     step ``dt`` and sampled by linear interpolation of the joint state.
 
-    Backend policy (strict-Rust posture for hot loops):
-    - ``"rust"``: require the ``swing_core`` wheel; raise ``ImportError``
-      when absent.
-    - ``"python"``: always use the pure-Python reference (parity oracle).
-    - ``"auto"`` (default): use Rust when available, else fall back — this
-      constructor is a one-shot call, so the explicit fallback is allowed.
+    ``rust`` is strict, ``python`` is the parity oracle, and ``auto`` uses the
+    wheel when available. Python is mandatory for localized torque commands.
     """
 
     def __init__(
@@ -122,19 +120,13 @@ class DoublePendulumSwing:
         plane: PlaneOrientation | None = None,
         initial_state: PendulumState | None = None,
         duration: float = 1.5,
-        dt: float = 1e-3,
+        dt: float = DEFAULT_SWING_RK4_DT_S,
         gravity_m_s2: float = DEFAULT_GRAVITY_M_S2,
         backend: Backend = "auto",
         run_config: DoublePendulumRunConfig | None = None,
         torque_library: TorqueProfileLibrary | None = None,
     ) -> None:
-        require(
-            math.isfinite(duration) and duration > 0.0,
-            "duration must be finite and > 0",
-            duration,
-        )
-        require(math.isfinite(dt) and dt > 0.0, "dt must be finite and > 0", dt)
-        require(dt <= duration, "dt must not exceed duration", dt)
+        duration_on_grid = effective_rk4_duration(duration, dt)
         require(
             math.isfinite(gravity_m_s2) and gravity_m_s2 >= 0.0,
             "gravity_m_s2 must be finite and >= 0",
@@ -159,10 +151,12 @@ class DoublePendulumSwing:
             theta1=math.pi / 2.0, theta2=0.0, omega1=0.0, omega2=0.0
         )
         self._dt = float(dt)
-        self._n_steps = int(round(duration / dt))
-        self._duration = self._n_steps * self._dt
+        self._n_steps = int(round(duration_on_grid / self._dt))
+        self._duration = duration_on_grid
         self._run_config = config
         self._validate_locked_initial_velocity(config.joint_locks)
+        self._torque_offsets = config.commanded_torque_offsets
+        require_offsets_within_duration(self._torque_offsets, self._duration)
         self._torque_profile = _resolve_prescribed_profile(
             config, torque_library, self._duration
         )
@@ -173,14 +167,21 @@ class DoublePendulumSwing:
         self._g_inplane = reference.in_plane_gravity(self._plane_r, gravity_m_s2)
         self._backend: Backend
 
+        if self._torque_offsets:
+            require(
+                backend != "rust",
+                "localized commanded torque offsets are not supported by the "
+                "Rust backend",
+            )
+
         if config.joint_locks.has_locks:
             require(
                 backend != "rust",
                 "locked joint integration is not supported by the Rust backend",
             )
             torque_at = (
-                self._prescribed_torque_tuple
-                if self._torque_profile is not None
+                self._commanded_torque_tuple
+                if self._torque_profile is not None or self._torque_offsets
                 else _zero_joint_torques
             )
             self._states = reference.simulate_locked(
@@ -193,7 +194,7 @@ class DoublePendulumSwing:
                 config.joint_locks.mask,
             )
             self._backend = "python"
-        elif self._torque_profile is not None:
+        elif self._torque_profile is not None or self._torque_offsets:
             require(
                 backend != "rust",
                 "prescribed torque integration is not supported by the Rust backend",
@@ -204,7 +205,7 @@ class DoublePendulumSwing:
                 self._g_inplane,
                 self._dt,
                 self._n_steps,
-                self._prescribed_torque_tuple,
+                self._commanded_torque_tuple,
             )
             self._backend = "python"
         elif backend == "rust" or (backend == "auto" and _rust_facade.rust_available()):
@@ -276,6 +277,15 @@ class DoublePendulumSwing:
         values = profile.evaluate(sample_time)
         return values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]
 
+    def _commanded_torque_tuple(self, time_s: float) -> tuple[float, float]:
+        """Return profile commands plus every active localized offset."""
+        base_torques = (
+            self._prescribed_torque_tuple(time_s)
+            if self._torque_profile is not None
+            else (0.0, 0.0)
+        )
+        return add_localized_offsets(base_torques, self._torque_offsets, time_s)
+
     def _validate_locked_initial_velocity(self, locks: JointLockConfig) -> None:
         """Reject lock activation that would require an unmodelled impulse."""
         state = self._initial_state
@@ -299,9 +309,8 @@ class DoublePendulumSwing:
             t,
         )
         sample_time = min(max(t, 0.0), self._duration)
-        if self._torque_profile is None:
-            return {SHOULDER_JOINT_ID: 0.0, WRIST_JOINT_ID: 0.0}
-        return self._torque_profile.evaluate(sample_time)
+        shoulder_nm, wrist_nm = self._commanded_torque_tuple(sample_time)
+        return {SHOULDER_JOINT_ID: shoulder_nm, WRIST_JOINT_ID: wrist_nm}
 
     def _state_at(self, t: float) -> tuple[float, float, float, float]:
         """Linearly interpolate the joint state at time ``t``."""
@@ -342,7 +351,7 @@ class DoublePendulumSwing:
             math.sin(state.theta1) * x_axis - math.cos(state.theta1) * up_axis
         )
         tip = wrist + p.l2 * (math.sin(t12) * x_axis - math.cos(t12) * up_axis)
-        return np.vstack([np.zeros(3), wrist, tip])
+        return cast(np.ndarray, np.vstack([np.zeros(3), wrist, tip]))
 
     def sample(self, t: float) -> SwingSample:
         """Return the clubhead :class:`SwingSample` at time ``t``.

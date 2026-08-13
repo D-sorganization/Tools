@@ -30,6 +30,7 @@ from shared.python.swing_sim.variation import (
     VariationDataset,
     VariationPlan,
     keys_for_mode,
+    variable_registry,
 )
 from shared.python.swing_sim.variation.dataset_io import write_csv, write_json
 
@@ -229,6 +230,15 @@ class VariationTabIoMixin:
         legal = set(keys_for_mode(plan.mode))
         numeric_editor = self._rows[0]
         for spec in plan.noise:
+            definition = variable_registry().get(spec.variable_key)
+            if (
+                definition is not None
+                and definition.applicability == "localized_torque_only"
+            ):
+                raise ValueError(
+                    "localized torque requires a locus editor and is not "
+                    f"representable by this UI: {spec.variable_key}"
+                )
             if spec.variable_key not in legal:
                 raise ValueError(
                     "noise variable is not representable in this mode: "

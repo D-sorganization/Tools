@@ -45,7 +45,7 @@ from rate_of_closure.simulation.triple_pendulum import (
 from rate_of_closure.simulation.triple_pendulum import (
     triple_total_energy as triple_total_energy,
 )
-from shared.python.swing_sim.run_config import DoublePendulumRunConfig
+from shared.python.swing_sim.run_config import DoublePendulumRunConfig, SwingRunMode
 from shared.python.swing_sim.swing_source import DoublePendulumSwing, SwingSource
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import (
@@ -254,11 +254,31 @@ def make_source(
     Returns:
         A source whose samples are in the app frame.
     """
+    require(
+        run_config is None or isinstance(run_config, DoublePendulumRunConfig),
+        "run_config must be a DoublePendulumRunConfig or None",
+        run_config,
+    )
     require(kind in SOURCE_KINDS, f"unknown swing source kind {kind!r}", kind)
-    execution = run_config or DoublePendulumRunConfig()
+    execution = DoublePendulumRunConfig() if run_config is None else run_config
+    uses_default_mode = (
+        execution.mode is SwingRunMode.PASSIVE
+        and execution.prescribed_profile_id is None
+    )
+    require(
+        kind == "double_pendulum" or uses_default_mode,
+        "non-default execution policy is unsupported outside the "
+        "double-pendulum source",
+        kind,
+    )
     require(
         kind == "double_pendulum" or not execution.joint_locks.has_locks,
         "joint locks are unsupported outside the double-pendulum source",
+        kind,
+    )
+    require(
+        kind == "double_pendulum" or not execution.commanded_torque_offsets,
+        "localized torque offsets are unsupported outside the double-pendulum source",
         kind,
     )
     if kind == "manual":

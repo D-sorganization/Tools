@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Integrated localized torque and Playwright stack (#4142, 1.16.59)
+
+Normal two-parent integration preserves exact localized-torque head
+`10524cc2151c7b60c4a097939b29202158aff012` and reviewed Playwright head
+`6df0ed09388ba36630c5fc6be7a31a334a4b6243`. The localized Python execution,
+validation, typed no-impact, and current PyQt filtering contracts coexist with
+the trust-separated production-Worker Chromium gate. No scientific or wire
+contract was weakened. Protected publication, R14.5 completion, locus UI,
+additional sources, Rust parity, and complete archive authority remain open.
+Integrated evidence is 171/171 localized changed-test cases, 18/18 Playwright
+workflow/security tests, and 5/5 real Chromium tests. Scoped Ruff/format,
+documentation governance, workflow validation, and diff hygiene are green.
+
 ## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
 Local branch `codex/4142-rate-web-playwright` starts from exact integrated
@@ -29,6 +42,86 @@ Vite production build. This remains a foundation, not R14.5 completion:
 Chromium is the only browser, screenshots are review artifacts instead of
 cross-platform golden baselines, and PyQt/assistive-technology/protected-runner
 evidence remains open.
+
+## 2026-08-12 Localized torque static-gate closure (#4142)
+
+Static cleanup now allows the full cumulative localized slice to pass the
+repository's changed-source MyPy gate: shared dataset CSV arrays have explicit
+NumPy types and `_make_source` returns the source factory's declared
+`SwingSource` directly. `make_source` likewise uses the type narrowing already
+established by its run-config contract rather than a redundant config cast.
+SPEC rows 1.16.55 through 1.16.58 now preserve the complete append-only history.
+Runtime/source/wire behavior is unchanged. Evidence is the pinned Python 3.12 /
+MyPy 1.13 16-file delta command, 147 focused tests, and clean Ruff, formatting,
+and diff gates. Remaining UI, Rust, publication, and epic work stays open.
+
+## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
+
+`make_source` validates `run_config` before fallback, accepting only `None` or
+the exact shared run-config type. Unsupported manual/triple source kinds reject
+every non-default double-pendulum execution semantic: prescribed mode/profile,
+locks, and localized torque offsets. Explicit default passive configuration and
+implicit `None` retain their existing behavior.
+
+The shared variation-dataset reader now rejects coercive outer schema versions
+just like the nested plan reader. Evidence is 34 focused and 1,483 broader
+passing shared-swing, variation, and Rate tests, with one expected Rust-wheel
+skip. UI locus authoring, Rust parity, protected publication, and the remainder
+of #4142 remain open.
+
+## 2026-08-12 Localized torque source/wire hardening (#4142)
+
+`make_source` now rejects localized commanded-torque offsets for manual and
+triple-pendulum source kinds, matching the existing `SimulationConfig` and
+capability-registry contract that only the double pendulum can execute them.
+The shared run config validates malformed raw offset collections before
+canonicalization, and the shared `VariationPlan` JSON reader accepts only a
+genuine non-Boolean integer schema discriminator rather than coercing Boolean,
+float, or string lookalikes.
+
+Local evidence is 102 focused and 1,464 broader passing shared-swing,
+variation, and Rate tests, with one expected Rust-wheel skip. PyQt/React locus
+authoring, Rust parity, protected publication, and the remainder of #4142 stay
+open.
+
+## 2026-08-12 Localized torque fail-closed correction (#4142)
+
+Rate request construction now validates localized windows against the same
+rounded effective RK4 duration used by `SimulationConfig`, the source, and the
+fallback trace grid. A window that fits only the user-requested duration can no
+longer survive request construction and fail inside a trial. Shared variation
+numeric inputs and public localized helpers reject coercive Boolean/string and
+nonfinite domains with contract errors.
+
+The present PyQt variation row intentionally filters contextual localized
+torque registry entries because it has no locus editor. Loading an existing
+localized plan is atomic and fails with an explicit locus-editor/unrepresentable
+message. No PyQt/React authoring completion is claimed. Local evidence is 118
+focused and 1,455 broader passing tests with one expected Rust-wheel skip;
+protected release and the broader #4142 work remain open.
+
+## 2026-08-12 Localized joint-torque execution seam (#4142)
+
+Local child `codex/4142-localized-double-torque-core`, based on exact commit
+`11a699155588d3d948990c5f08b72c5cc8d2c746`, connects version-2 variation loci
+to actual double-pendulum dynamics for two commanded-torque variables.
+
+The only accepted targets are topological `joint.shoulder` and `joint.wrist`.
+Each requires one matching point ID and a finite half-open time window wholly
+inside `swing_duration_s`; values are additive N.m offsets evaluated at every
+Python RK4 stage over passive or prescribed commands. Constructor, request,
+and source validation reject missing/mismatched loci, invalid windows,
+unsupported variables/source kinds, base-only use, and explicit Rust before
+execution. Deterministic replay is chunk-size independent, torque-history IDs
+remain distinct from spatial trace IDs, and physically valid no-impact trials
+retain typed closest-approach evidence.
+
+Local evidence is 99 focused passes and 1,413 broader shared-swing/variation
+plus Rate passes with one expected missing-Rust-wheel skip. Ruff, format, and
+changed-source MyPy are green. UI authoring/presentation, additional localized
+variables and source types, Rust support, complete state/event/torque archive
+authority, protected release, and #4142 completion remain explicit follow-up
+work.
 
 ## 2026-08-12 Bounded complete-ensemble chunk execution seam (#4142 R11.5)
 

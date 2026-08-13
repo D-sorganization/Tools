@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Integrated localized torque and Playwright stack (#4142, 1.16.59)
+
+This branch now preserves the complete histories of localized-torque head
+`10524cc2151c7b60c4a097939b29202158aff012` and reviewed Playwright head
+`6df0ed09388ba36630c5fc6be7a31a334a4b6243` in a normal two-parent merge.
+The localized Python execution/validation contracts and the Rate-web production
+Worker/browser gates coexist without changing either scientific or browser
+contract. Publication, protected CI, remaining localized UI/Rust/persistence
+work, and full R14.5 visual/browser certification remain open.
+Integrated local evidence is 171/171 localized changed-test cases, 18/18
+Playwright workflow/security tests, and 5/5 real Chromium tests, plus scoped
+Ruff, Ruff format, documentation governance, workflow validation, and diff
+hygiene.
+
 ## 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
 Local branch `codex/4142-rate-web-playwright` starts from exact integrated
@@ -34,6 +48,101 @@ artifacts, not cross-platform golden baselines. WebKit, Firefox, assistive-
 technology automation, PyQt interaction, protected runner evidence, and a
 CI-authority visual baseline remain open. Local evidence is 5/5 Playwright and
 743/743 Vitest tests, plus TypeScript, ESLint, and the Vite production build.
+
+## 2026-08-12 Localized torque static-gate closure (#4142)
+
+The final cumulative changed-source MyPy blockers are closed without runtime
+changes: `dataset_io.read_csv` explicitly types its NumPy input/success arrays,
+and the Rate pipeline removes a redundant `SwingSource` cast around the already
+typed source factory return. The source factory also relies on the validated
+`DoublePendulumRunConfig | None` narrowing instead of recasting its non-`None`
+branch. SPEC change-log rows 1.16.55 through 1.16.58 restore the monotonic audit
+trail without replacing any mission text. The exact pinned Python 3.12 / MyPy
+1.13 16-file delta command, 147 focused localized tests, Ruff, formatting, and
+diff checks pass. UI, Rust, protected-publication, and #4142 completion gates
+remain open.
+
+## 2026-08-12 Source execution/dataset discriminator hardening (#4142)
+
+The source factory no longer uses `run_config or default`. It validates the
+raw value as `None` or `DoublePendulumRunConfig`, then defaults only the exact
+`None` case. Manual and triple-pendulum sources reject prescribed mode/profile,
+joint locks, and localized offsets while preserving explicit or implicit
+default passive empty execution.
+
+The outer variation-dataset JSON schema version now requires a genuine
+non-Boolean integer before normalization. Boolean, float, and string lookalikes
+fail closed, consistent with the strict nested plan and sibling Morris reader
+contracts. Evidence is 34/34 focused and 1,483/1,483 broader shared-swing,
+variation, and Rate tests, with one expected missing-Rust-wheel skip. UI, Rust,
+protected-publication, and #4142 completion gates remain open.
+
+## 2026-08-12 Localized torque source/wire hardening (#4142)
+
+The Rate source factory now enforces the same double-pendulum-only capability
+already declared by `SimulationConfig`: manual and triple-pendulum source
+discriminators reject non-empty localized torque commands instead of silently
+discarding them. `DoublePendulumRunConfig` validates the raw command collection
+before tuple normalization, guaranteeing typed contract failures for `None`
+and other malformed collection domains.
+
+`VariationPlan.from_json_dict` no longer coerces its schema discriminator with
+`int(...)`; only a genuine non-Boolean integer may select supported v1/v2
+behavior. Regression evidence is 102/102 focused and 1,464/1,464 broader
+shared-swing, variation, and Rate tests, with one expected missing-Rust-wheel
+skip. The broader UI, Rust, protected-publication, and #4142 completion gates
+remain open.
+
+## 2026-08-12 Localized torque adversarial corrections (#4142)
+
+The affected localized variation and helper seams now fail closed on their raw
+numeric domains. `NoiseSpec`/`VariationPlan` fields reject Boolean, string, and
+nonfinite values without coercion while preserving ordinary JSON integer/float
+plans and v1 migration. Localized helper functions validate command
+collections, base torque pairs, sample times, and durations with typed contract
+errors.
+
+One canonical fixed-step helper computes the effective RK4 duration used by
+Rate request validation, `SimulationConfig`, source construction, and fallback
+trace-grid construction. A locus inside the requested duration but outside the
+rounded integration grid is therefore rejected during request construction,
+not during a trial. The current PyQt variable picker hides
+`localized_torque_only` entries until a locus editor exists; loading such a
+plan remains fail-closed and atomic with an explicit locus-editor message.
+
+Local evidence is 118/118 correction-focused tests and 1,455/1,455 broader
+shared-swing/variation and Rate tests, with one expected missing-Rust-wheel
+skip. PyQt/React locus authoring, Rust parity, complete raw persistence,
+protected publication, and #4142 completion remain open.
+
+## 2026-08-12 Localized double-pendulum torque execution (#4142)
+
+Local child `codex/4142-localized-double-torque-core` starts from exact commit
+`11a699155588d3d948990c5f08b72c5cc8d2c746`. It implements the first bounded
+localized-perturbation execution path without widening the UI surface.
+
+- Immutable `LocalizedTorqueOffset` commands use only the topological IDs
+  `joint.shoulder` and `joint.wrist`, a required finite half-open
+  `time_window_s = [start, end)`, and a finite additive torque in N.m. These IDs
+  remain deliberately distinct from spatial trace points such as
+  `swing.wrist`.
+- Passive and prescribed double-pendulum runs add every active command at each
+  Python RK4 stage. Recorded joint-torque samples use the same half-open rule;
+  exact shared boundaries cannot double-apply.
+- Rate variation requests map the two registered commanded-torque variables to
+  exact one-point loci and deterministic pre-sampled values. Missing, multiple,
+  mismatched, out-of-duration, base-only, wrong-source, and unsupported
+  localized specifications fail before trial execution.
+- Explicit Rust execution fails closed. `auto` selects the Python forced path
+  when localized commands are present. Valid misses remain typed
+  `evaluated_no_impact` results with closest-approach evidence.
+
+Exact local evidence is 99/99 focused tests and 1,413/1,413 broader shared-
+swing/variation and Rate tests (one expected Rust-wheel skip), plus Ruff, Ruff
+format, and changed-source MyPy. This is a narrow core seam: PyQt/React locus
+authoring and presentation, other source/locus kinds, Rust parity, complete
+state/event/torque persistence, protected CI/publication, and epic completion
+remain open.
 
 ## 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
 

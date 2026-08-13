@@ -98,6 +98,8 @@ class NoiseRow(QWidget):
         self.variable.blockSignals(True)
         self.variable.clear()
         for key in keys_for_mode(mode):
+            if variable_registry()[key].applicability == "localized_torque_only":
+                continue
             self.variable.addItem(short_label(key), key)
         self.variable.blockSignals(False)
         index = self.variable.findData(current)

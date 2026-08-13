@@ -4,15 +4,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import cast
 
 from shared.python.contracts import require
 
 from ._torque_profile_validation import stable_id
+from .localized_torque import (
+    DOUBLE_PENDULUM_JOINT_IDS,
+    SHOULDER_JOINT_ID,
+    WRIST_JOINT_ID,
+    LocalizedTorqueOffset,
+)
 
 DOUBLE_PENDULUM_MODEL_ID = "model.double_pendulum.v1"
-SHOULDER_JOINT_ID = "joint.shoulder"
-WRIST_JOINT_ID = "joint.wrist"
-DOUBLE_PENDULUM_JOINT_IDS = (SHOULDER_JOINT_ID, WRIST_JOINT_ID)
 
 
 class SwingRunMode(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
@@ -76,6 +80,7 @@ class DoublePendulumRunConfig:
     mode: SwingRunMode = SwingRunMode.PASSIVE
     prescribed_profile_id: str | None = None
     joint_locks: JointLockConfig = field(default_factory=JointLockConfig)
+    commanded_torque_offsets: tuple[LocalizedTorqueOffset, ...] = ()
 
     def __post_init__(self) -> None:
         require(
@@ -86,6 +91,32 @@ class DoublePendulumRunConfig:
             "joint_locks must be a JointLockConfig",
             self.joint_locks,
         )
+        raw_offsets = cast(object, self.commanded_torque_offsets)
+        require(
+            isinstance(raw_offsets, (tuple, list)),
+            "commanded_torque_offsets must be a tuple or list",
+            raw_offsets,
+        )
+        offsets = tuple(cast(tuple[object, ...] | list[object], raw_offsets))
+        require(
+            all(isinstance(offset, LocalizedTorqueOffset) for offset in offsets),
+            "commanded_torque_offsets must contain LocalizedTorqueOffset values",
+            offsets,
+        )
+        validated_offsets = cast(tuple[LocalizedTorqueOffset, ...], offsets)
+        joint_order = {
+            joint_id: index for index, joint_id in enumerate(DOUBLE_PENDULUM_JOINT_IDS)
+        }
+        canonical = tuple(
+            sorted(
+                validated_offsets,
+                key=lambda offset: (
+                    joint_order[offset.joint_id],
+                    offset.time_window_s,
+                ),
+            )
+        )
+        object.__setattr__(self, "commanded_torque_offsets", canonical)
         if self.mode is SwingRunMode.PASSIVE:
             require(
                 self.prescribed_profile_id is None,
@@ -104,12 +135,14 @@ class DoublePendulumRunConfig:
         profile_id: str,
         *,
         joint_locks: JointLockConfig | None = None,
+        commanded_torque_offsets: tuple[LocalizedTorqueOffset, ...] = (),
     ) -> DoublePendulumRunConfig:
         """Build a prescribed-mode configuration for a stable profile ID."""
         return cls(
             mode=SwingRunMode.PRESCRIBED,
             prescribed_profile_id=profile_id,
             joint_locks=joint_locks or JointLockConfig(),
+            commanded_torque_offsets=commanded_torque_offsets,
         )
 
 
@@ -120,5 +153,6 @@ __all__ = [
     "WRIST_JOINT_ID",
     "DoublePendulumRunConfig",
     "JointLockConfig",
+    "LocalizedTorqueOffset",
     "SwingRunMode",
 ]
