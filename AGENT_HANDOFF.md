@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Narrow command-strip/assertion-policy closure (#4433)
+
+Version 1.16.77 makes the narrow toolstrip row shrinkable and gives its direct
+Impact/Swing/Flight group the remaining width plus internal horizontal scroll,
+removing the hosted 390x844 one-pixel document overflow without tolerance. The
+assertion gate now exempts only the visualization-tab subprocess probe path;
+the paired policy regression still rejects an adjacent assertion-light real
+test. Visualization artifacts remain diagnostic only.
+
 ## 2026-08-13 Meaningful narrow geometry and trusted trigger closure (#4433)
 
 Version 1.16.76 replaces the permissive one-pixel narrow visual height with a

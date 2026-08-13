@@ -26,11 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.76                                    |
-| **Spec Version**        | 1.16.76                                    |
+| **Current Version**     | 1.16.77                                    |
+| **Spec Version**        | 1.16.77                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Narrow command-strip and assertion-policy closure (#4433)
+
+Version 1.16.77 prevents the application command strip from contributing a
+one-pixel document overflow at the 390x844 authority viewport. Its narrow outer
+row now permits flex-item contraction while the Impact/Swing/Flight command
+group consumes the remaining width and owns its internal horizontal scroll.
+The assertion-quality gate also recognizes the exact PyQt visualization-tab
+subprocess probe as support code; a policy regression proves the neighboring
+assertion-light test remains rejected. This is a CI correction only and does
+not broaden the diagnostic-only visualization evidence claim.
 
 ### 2026-08-13 Meaningful narrow geometry and trusted trigger closure (#4433)
 
@@ -4045,6 +4056,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |
+| 2026-08-13 | 1.16.77 | fix(rate-of-closure, #4433): eliminate narrow command-strip document overflow and narrowly exempt the rendered PyQt subprocess probe from the changed-test assertion gate. |
 | 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
 | 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
 | 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |

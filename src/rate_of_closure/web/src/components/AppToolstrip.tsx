@@ -236,10 +236,10 @@ export function AppToolstrip({
         aria-label="Application commands"
         className="sticky top-0 z-30 mb-5 overflow-visible rounded-xl border border-slate-700/80 bg-slate-950/90 p-2 shadow-xl shadow-black/30 backdrop-blur"
       >
-        <div className="flex flex-nowrap items-start gap-1 sm:flex-wrap sm:gap-2">
+        <div className="flex min-w-0 flex-nowrap items-start gap-1 sm:flex-wrap sm:gap-2">
           <FileMenu />
           <ViewMenu state={moduleState} onChange={onModuleStateChange} onCommand={onCommand} />
-          <div className="flex max-w-full shrink-0 items-stretch gap-1 overflow-x-auto rounded-lg border border-slate-700/80 bg-slate-900/90 p-1">
+          <div className="flex min-w-0 max-w-full flex-1 items-stretch gap-1 overflow-x-auto rounded-lg border border-slate-700/80 bg-slate-900/90 p-1">
             {([
               [APP_COMMAND_ID.viewShowImpact, "Impact"],
               [APP_COMMAND_ID.viewShowSwing, "Swing"],

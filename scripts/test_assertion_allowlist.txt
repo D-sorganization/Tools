@@ -20,3 +20,5 @@ src/p1am_control_system/backend/tests/_power_supply_helpers.py
 tests/rate_of_closure/_variation_plot_definition_support.py
 # Subprocess entrypoint; semantic assertions live in the owning rendered test.
 tests/rate_of_closure/pyqt_variation_render_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning tab-visibility test.
+tests/rate_of_closure/pyqt_visualization_tab_probe.py

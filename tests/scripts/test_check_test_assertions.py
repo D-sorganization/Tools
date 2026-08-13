@@ -6,6 +6,8 @@ import importlib.util
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 SCRIPT_PATH = (
     Path(__file__).resolve().parents[2] / "scripts" / "check_test_assertions.py"
 )
@@ -110,17 +112,21 @@ def test_plot_definition_support_exemption_is_exact(tmp_path: Path) -> None:
     assert violations == [real_test]
 
 
-def test_pyqt_render_probe_exemption_is_exact(tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "probe_name",
+    ["pyqt_variation_render_probe.py", "pyqt_visualization_tab_probe.py"],
+)
+def test_pyqt_render_probe_exemption_is_exact(tmp_path: Path, probe_name: str) -> None:
     module = _load_module()
     patterns = module.load_allowlist(
         Path(__file__).resolve().parents[2] / "scripts" / "test_assertion_allowlist.txt"
     )
     render_probe = _write(
-        tmp_path / "tests" / "rate_of_closure" / "pyqt_variation_render_probe.py",
+        tmp_path / "tests" / "rate_of_closure" / probe_name,
         "def main():\n    render_diagnostic_artifacts()\n",
     )
     adjacent_test = _write(
-        tmp_path / "tests" / "rate_of_closure" / "test_pyqt_render_smoke.py",
+        tmp_path / "tests" / "rate_of_closure" / f"test_{probe_name}",
         "def test_render():\n    render_widget()\n",
     )
 

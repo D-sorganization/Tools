@@ -38,6 +38,7 @@ describe("AppToolstrip", () => {
     const { onCommand } = renderToolstrip();
     const toolbar = screen.getByRole("toolbar", { name: "Application commands" });
     expect(toolbar.querySelector(".overflow-x-auto")).not.toBeNull();
+    expect(toolbar.querySelector(".flex-1.min-w-0.overflow-x-auto")).not.toBeNull();
     expect(screen.getByText("File")).toBeInTheDocument();
     expect(screen.getByText("View")).toBeInTheDocument();
     expect(screen.getByText("Tools")).toBeInTheDocument();

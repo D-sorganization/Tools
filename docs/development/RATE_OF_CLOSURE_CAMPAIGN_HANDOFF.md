@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 hosted foundation correction
+
+- The narrow command toolbar contracts inside the application width and its
+  direct view-command group owns internal horizontal scrolling, closing the
+  hosted 390x844 one-pixel overflow in Variation and Glossary without relaxing
+  the zero-overflow assertion.
+- The changed-test assertion policy exempts the exact PyQt visualization-tab
+  subprocess helper. A parameterized regression proves both rendered helpers
+  pass while neighboring assertion-light real tests continue to fail.
+- No visualization evidence was promoted beyond diagnostic status. SPEC is
+  1.16.77.
+
 ## 2026-08-13 #4433 narrow geometry/trusted trigger correction
 
 - Narrow React visuals now require 180 visible vertical pixels; both readers

@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Narrow hosted-CI correction (#4433)
+
+- The React command strip now shrinks within the 390x844 viewport and retains
+  horizontal scrolling inside its direct view-command group, preserving the
+  exact zero document-overflow contract.
+- The assertion-quality allowlist adds only the PyQt tab-visibility subprocess
+  probe; policy tests keep adjacent assertion-light real tests rejected. The
+  diagnostic-only evidence boundary is unchanged. SPEC is 1.16.77.
+
 ## 2026-08-13 Meaningful narrow geometry/trusted trigger closure (#4433)
 
 - React visual landmarks require 180 visible vertical pixels at 390x844;
