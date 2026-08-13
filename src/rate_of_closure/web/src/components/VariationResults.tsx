@@ -15,6 +15,8 @@ import { VariationDistributionMatrix } from "./VariationDistributionMatrix";
 import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import { PANEL_CLASS, sensitivityHeat } from "./variationUi";
 import { VariationLocalizedSources } from "./VariationLocalizedSources";
+import { LocalizedAttributionPanel } from "./LocalizedAttributionPanel";
+import type { AttributionAuthorityTs } from "../model/localizedAttribution";
 
 interface VariationResultsProps {
   dataset: VariationDatasetTs | null;
@@ -22,6 +24,7 @@ interface VariationResultsProps {
   target?: TargetRegionTs;
   distanceUnit: string;
   ensemble?: SwingVariationResultTs | null;
+  localizedAttributionAuthority?: AttributionAuthorityTs | null;
 }
 
 interface TrialSelection {
@@ -36,6 +39,7 @@ export function VariationResults({
   target,
   distanceUnit,
   ensemble = null,
+  localizedAttributionAuthority = null,
 }: VariationResultsProps): JSX.Element {
   const [selection, setSelection] = useState<TrialSelection | null>(null);
   const trialCount = dataset?.plan.nRuns ?? ensemble?.dataset.plan.nRuns ?? 0;
@@ -61,10 +65,17 @@ export function VariationResults({
   };
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
+  const localizedRunAvailable = ensemble?.runs.some(
+    (trial) => trial.localizedTorqueCommands.length > 0,
+  ) ?? false;
 
   return (
     <section aria-label="Variation results" className="min-w-0 space-y-6">
       {ensemble && <VariationLocalizedSources ensemble={ensemble} />}
+      <LocalizedAttributionPanel
+        authority={localizedAttributionAuthority}
+        localizedRunAvailable={localizedRunAvailable}
+      />
       {dataset && (
         <div className={PANEL_CLASS}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Scatter Matrix and Marginal Distributions</h2>

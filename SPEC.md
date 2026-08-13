@@ -26,11 +26,37 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.69                                    |
-| **Spec Version**        | 1.16.69                                    |
+| **Current Version**     | 1.16.70                                    |
+| **Spec Version**        | 1.16.70                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Localized paired-attribution consumer contract (#4142)
+
+Version 1.16.70 defines a strict cross-runtime schema-v1 authority for genuine
+paired planted interventions. A source retains stable spec ID, localized
+variable, `joint.shoulder`/`joint.wrist`, finite half-open time window, and
+`N·m`; a target is either a spatial `swing.*` point at an exact state time, an
+impact scalar, or a shot scalar. Each raw observation binds baseline and
+perturbed trial IDs/statuses/source values/target values, response, and a typed
+availability reason. Response is exactly perturbed minus baseline when
+available; misses/failures/nonfinite values remain unavailable rather than zero.
+
+PyQt6 and React expose accessible source/target/pair selectors, provenance,
+selected raw values, typed denominator, raw CSV, and strict view-definition
+JSON where authority exists. Both explicitly label the result noncausal. The
+current Monte Carlo producer lacks isolated baseline pairs, so production
+results fail closed with an unavailable explanation; no scatter/correlation is
+promoted to attribution. Paired producer execution/transport/document import,
+prescribed/Rust parity, and live production exports remain future work.
+
+Local evidence passes 252/252 selected localized/variation Python tests,
+887/887 React tests, and all 6 production Playwright scenarios. The exact
+hosted Python 3.12 + Mypy 1.13 policy passes the six changed production Python
+files. TypeScript, ESLint, Vite build, Ruff/format, assertion, documentation,
+changed-source 400-line, module-size, fixture-parity, conflict-marker, and diff
+gates also pass.
 
 ### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
@@ -3906,6 +3932,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4142 R13.3): define strict Python/TypeScript paired planted-intervention attribution authority, typed source/target/pair observations and denominators, raw CSV and view JSON, and accessible PyQt6/React consumers that fail closed because current Monte Carlo results do not retain isolated baseline pairs. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |

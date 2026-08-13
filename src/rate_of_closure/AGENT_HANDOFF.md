@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized paired-attribution consumer contract (#4142)
+
+- New strict Python/TypeScript schema-v1 authority binds one localized source
+  spec/topological joint/half-open window to selectable state point/time,
+  impact, and shot targets through explicit baseline/perturbed observations.
+- PyQt6 and React consumers expose accessible source/target/pair selection,
+  raw baseline/perturbed/response values, typed denominators, raw CSV, strict
+  view JSON, and explicit planted-intervention/noncausal language.
+- Current Monte Carlo authority has no isolated baseline pairs. Production
+  consumers therefore show unavailable instead of using scatter/correlation;
+  the parity fixture verifies the consumer seam pending a genuine producer.
+- Local gates pass 252/252 selected Python, 887/887 React, and 6/6 production
+  Playwright. Exact hosted-policy Python 3.12 + Mypy 1.13 passes all six changed
+  production Python files; TS, ESLint, build, Ruff/format, assertion, docs,
+  size, fixture-parity, conflict-marker, and diff gates pass.
+
+SPEC 1.16.70 records the slice. Paired producer/Worker/ensemble-document
+wiring, prescribed/Rust parity, import and live authority exports remain open.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 - Normal merge order is approved localized-execution head

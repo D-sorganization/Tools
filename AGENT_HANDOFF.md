@@ -3,6 +3,32 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Localized paired-attribution consumer contract (#4142)
+
+Version 1.16.70 adds strict Python/TypeScript parity contracts and accessible
+PyQt6/React consumers for source spec/topological joint/half-open window to
+state point/time, impact, and shot responses. The view selects one explicitly
+retained baseline/perturbed pair, keeps hit/no-impact/failure/nonfinite
+availability and denominators typed, exports raw observations, and persists an
+exact schema-v1 view selection. Every surface says this is a paired planted-
+intervention response and does not infer causality from scatter or correlation.
+
+Current Monte Carlo results retain perturbed traces/scalars but no isolated
+baseline paired to each localized intervention. Both production UIs therefore
+show attribution unavailable instead of manufacturing a response; the strict
+authority fixture exercises the completed consumer contract until a future
+producer records genuine OAT pairs. Producer execution, Worker transport,
+ensemble-document embedding/import, prescribed/Rust parity, and live
+attribution export buttons remain open.
+
+Local evidence passes 252/252 selected localized/variation Python tests and
+887/887 React tests, including 13/13 Python and 11/11 TypeScript authority
+contract tests plus 3/3 PyQt6 and 2/2 React consumer tests. All 6 production
+Playwright scenarios pass. Exact hosted-policy Python 3.12 + Mypy 1.13 passes
+the six changed production Python files; TypeScript, ESLint, Vite build,
+Ruff/format, assertion, docs, changed-source 400-line, module-size, fixture-
+parity, conflict-marker, and diff gates pass.
+
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
 Version 1.16.69 is a normal non-fast-forward merge with approved localized-

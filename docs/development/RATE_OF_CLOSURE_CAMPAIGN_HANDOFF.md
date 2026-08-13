@@ -1,5 +1,26 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 localized paired-attribution consumer contract
+
+- Strict Python/TypeScript schema-v1 parity now represents explicitly retained
+  baseline/perturbed interventions from localized spec/joint/window through a
+  selected state point/time, impact scalar, or shot scalar.
+- Raw observations retain both trial statuses and values; response is exact
+  perturbed-minus-baseline only when available. Denominators separately report
+  available, typed no-impact, no-impact unavailable, failure, and nonfinite.
+- Accessible PyQt6/React consumers select source, target, and pair; show source
+  versus spatial-target loci; export raw CSV and exact view JSON when authority
+  exists; and carry explicit planted-intervention/noncausal language.
+- Current Monte Carlo ensembles do not retain an isolated baseline per source.
+  Both UIs fail closed visibly rather than infer attribution from scatter. The
+  strict authority fixture verifies the consumer contract; producer/Worker/
+  document wiring, prescribed/Rust parity, and live exports remain open.
+- Gates pass 252/252 selected localized/variation Python, 887/887 React, and
+  6/6 production Playwright. Exact hosted-policy Python 3.12 + Mypy 1.13 passes
+  six changed production files; TS, ESLint, build, Ruff/format, assertion,
+  docs, 400-line/module-size, fixture-parity, conflict-marker, and diff pass.
+- SPEC advances to 1.16.70.
+
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 
 - Normal non-fast-forward order is approved localized-execution head
