@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Sample/config and executor identity correction (#4142)
+
+Version 1.16.74 requires PCG64-identified Python requests to match the exact
+plan-derived sample matrix and config row/value order. Tampered, permuted, or
+subset samples and permuted configs fail before execution. Custom test executor
+injection is explicitly relabeled `test-injected-executor` with an unknown
+solver in headers/results; it can no longer inherit the production configured-
+simulation/SciPy-RK45 claim. Archive and paired integration remain open.
+
 ## 2026-08-13 Runtime-specific replay identity (#4142 R10.4)
 
 Version 1.16.73 advances strict execution documents/metadata to @2 with exact

@@ -136,6 +136,24 @@ class ExecutionImplementationIdentity:
         }
 
 
+PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY = ExecutionImplementationIdentity(
+    runtime_id="rate-of-closure/python",
+    runtime_version=1,
+    executor_id="python-complete-simulation-ensemble",
+    executor_version=1,
+    solver_id="python-configured-simulation+scipy-rk45-flight",
+    solver_version=1,
+)
+PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY = ExecutionImplementationIdentity(
+    runtime_id="rate-of-closure/python",
+    runtime_version=1,
+    executor_id="test-injected-executor",
+    executor_version=1,
+    solver_id="unknown",
+    solver_version=1,
+)
+
+
 @dataclass(frozen=True)
 class VariationExecutionMetadata:
     """Immutable sidecar binding a plan to current resolved registry state."""
@@ -281,19 +299,15 @@ def make_execution_metadata(plan: VariationPlan) -> VariationExecutionMetadata:
             stream_derivation_id="numpy-seedsequence-safe-seed-crc32-utf8-spec-id",
             stream_derivation_version=1,
         ),
-        implementation_identity=ExecutionImplementationIdentity(
-            runtime_id="rate-of-closure/python",
-            runtime_version=1,
-            executor_id="python-complete-simulation-ensemble",
-            executor_version=1,
-            solver_id="python-configured-simulation+scipy-rk45-flight",
-            solver_version=1,
-        ),
+        implementation_identity=PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
     )
 
 
 def validate_execution_metadata(
-    plan: VariationPlan, metadata: VariationExecutionMetadata
+    plan: VariationPlan,
+    metadata: VariationExecutionMetadata,
+    *,
+    expected_implementation_identity: ExecutionImplementationIdentity | None = None,
 ) -> VariationExecutionMetadata:
     """Reject any plan, resolved-value, unit, dimension, or registry drift."""
     expected = make_execution_metadata(plan)
@@ -323,8 +337,13 @@ def validate_execution_metadata(
         metadata.registry_sha256 == expected.registry_sha256, "registry digest mismatch"
     )
     require(metadata.rng_identity == expected.rng_identity, "RNG identity mismatch")
+    required_implementation = (
+        expected.implementation_identity
+        if expected_implementation_identity is None
+        else expected_implementation_identity
+    )
     require(
-        metadata.implementation_identity == expected.implementation_identity,
+        metadata.implementation_identity == required_implementation,
         "implementation identity mismatch",
     )
     return metadata
@@ -493,6 +512,8 @@ __all__ = [
     "ExecutionMetadataResolution",
     "ExecutionImplementationIdentity",
     "RngExecutionIdentity",
+    "PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY",
+    "PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY",
     "ResolvedVariableSnapshot",
     "VariationExecutionDocument",
     "VariationExecutionMetadata",

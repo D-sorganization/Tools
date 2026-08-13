@@ -11,6 +11,7 @@ from __future__ import annotations
 import threading
 import time
 from collections.abc import Mapping
+from dataclasses import replace
 from types import MappingProxyType
 from typing import TypeVar
 
@@ -40,6 +41,9 @@ from shared.python.swing_sim.solver.solve import (
     CancelledError,
     ProgressCallback,
     ProgressReport,
+)
+from shared.python.swing_sim.variation.execution_metadata import (
+    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
 )
 from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
@@ -170,13 +174,20 @@ def run_simulation_ensemble_chunks(
     started = time.monotonic()
     cancellation = cancel_event or threading.Event()
     times, point_ids = _trace_layout(request.configs[0], None)
+    execution_metadata = request.execution_metadata
+    if executor is not run_simulation:
+        assert execution_metadata is not None
+        execution_metadata = replace(
+            execution_metadata,
+            implementation_identity=PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
+        )
     header = EnsembleStreamHeader(
         request.plan,
         request.sampled_inputs,
         times,
         point_ids,
         APP_FRAME_ID,
-        request.execution_metadata,
+        execution_metadata,
     )
     cells_per_trial = times.size * len(point_ids) * 3
     maximum_rows = MAX_CHUNK_POSITION_CELLS // cells_per_trial

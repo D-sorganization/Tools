@@ -16,6 +16,8 @@ from shared.python.swing_sim.variation.ensemble_types import (
     require_point_ids,
 )
 from shared.python.swing_sim.variation.execution_metadata import (
+    PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
+    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
     VariationExecutionMetadata,
     validate_execution_metadata,
 )
@@ -96,10 +98,23 @@ class EnsembleStreamHeader:
         object.__setattr__(self, "sample_times_s", times)
         object.__setattr__(self, "point_ids", points)
         if self.execution_metadata is not None:
+            identity = self.execution_metadata.implementation_identity
+            require(
+                identity
+                in {
+                    PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
+                    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
+                },
+                "unsupported live implementation identity",
+            )
             object.__setattr__(
                 self,
                 "execution_metadata",
-                validate_execution_metadata(self.plan, self.execution_metadata),
+                validate_execution_metadata(
+                    self.plan,
+                    self.execution_metadata,
+                    expected_implementation_identity=identity,
+                ),
             )
 
 

@@ -14,13 +14,23 @@ import numpy as np
 
 from rate_of_closure.simulation import SimulationConfig
 from shared.python.contracts import require
-from shared.python.swing_sim.variation.engine import VariationDataset
+from shared.python.swing_sim.variation.engine import VariationDataset, sample_inputs
 from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTraces
 from shared.python.swing_sim.variation.execution_metadata import (
+    PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
+    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
     VariationExecutionMetadata,
     resolve_execution_metadata,
+    validate_execution_metadata,
 )
-from shared.python.swing_sim.variation.spec import VariationPlan
+from shared.python.swing_sim.variation.spec import (
+    CATEGORY_BALL_SETUP,
+    CATEGORY_CLUB,
+    CATEGORY_DELIVERY,
+    CATEGORY_SWING,
+    LOCALIZED_TORQUE_VARIABLE_JOINTS,
+    VariationPlan,
+)
 
 from ._ensemble_limits import require_ensemble_shape_limits
 
@@ -134,11 +144,79 @@ class SimulationEnsembleRequest:
             samples.shape,
         )
         require(bool(np.all(np.isfinite(samples))), "sampled_inputs must be finite")
+        expected_samples = np.asarray(sample_inputs(self.plan), dtype=float)
+        normalized_samples = np.where(samples == 0.0, 0.0, samples)
+        normalized_expected = np.where(expected_samples == 0.0, 0.0, expected_samples)
+        require(
+            np.array_equal(normalized_samples, normalized_expected),
+            "sampled_inputs must exactly match the plan-derived RNG stream and order",
+        )
+        samples = normalized_samples
+        _require_config_sample_binding(self.plan, normalized_samples, configs)
         samples.setflags(write=False)
         object.__setattr__(self, "configs", configs)
         object.__setattr__(self, "sampled_inputs", samples)
         object.__setattr__(self, "execution_metadata", resolution.metadata)
         object.__setattr__(self, "metadata_warning", resolution.warning)
+
+
+def _config_value(config: SimulationConfig, key: str) -> float:
+    values = {
+        f"{CATEGORY_SWING}.yaw_deg": config.plane.yaw_deg,
+        f"{CATEGORY_SWING}.side_tilt_deg": config.plane.side_tilt_deg,
+        f"{CATEGORY_SWING}.forward_tilt_deg": config.plane.forward_tilt_deg,
+        f"{CATEGORY_SWING}.impact_time_offset_s": config.impact_time_offset_s,
+        f"{CATEGORY_SWING}.damping_shoulder": config.pendulum_parameters.d1,
+        f"{CATEGORY_SWING}.damping_wrist": config.pendulum_parameters.d2,
+        f"{CATEGORY_DELIVERY}.impact_offset_toe_mm": (
+            config.scenario.impact_offset_toe_mm
+        ),
+        f"{CATEGORY_DELIVERY}.impact_offset_high_mm": (
+            config.scenario.impact_offset_high_mm
+        ),
+        f"{CATEGORY_CLUB}.head_mass_kg": config.club.head_mass_kg,
+        f"{CATEGORY_CLUB}.head_moi_kg_m2": config.club.moi_about_shaft_kg_m2,
+        f"{CATEGORY_BALL_SETUP}.tee_height_m": config.ball_setup.tee_height_m,
+    }
+    require(key in values, "config binding does not support variation variable", key)
+    return float(values[key])
+
+
+def _require_config_sample_binding(
+    plan: VariationPlan, samples: np.ndarray, configs: tuple[SimulationConfig, ...]
+) -> None:
+    """Bind each canonical sample row to the config executed at that index."""
+    localized = set(LOCALIZED_TORQUE_VARIABLE_JOINTS)
+    for row, config in zip(samples, configs, strict=True):
+        expected = dict(plan.base_variables)
+        expected.update(
+            (spec.variable_key, float(value))
+            for spec, value in zip(plan.noise, row, strict=True)
+            if spec.variable_key not in localized
+        )
+        for key, value in expected.items():
+            if key in localized:
+                continue
+            require(
+                _config_value(config, key) == value,
+                "config order/value does not match sampled_inputs",
+                key,
+            )
+        for spec, value in zip(plan.noise, row, strict=True):
+            joint_id = LOCALIZED_TORQUE_VARIABLE_JOINTS.get(spec.variable_key)
+            if joint_id is None:
+                continue
+            matches = tuple(
+                offset
+                for offset in config.swing_run_config.commanded_torque_offsets
+                if offset.joint_id == joint_id
+                and offset.time_window_s == spec.time_window_s
+            )
+            require(
+                len(matches) == 1 and matches[0].torque_nm == float(value),
+                "config order/value does not match localized sampled_inputs",
+                spec.variable_key,
+            )
 
 
 @dataclass(frozen=True)
@@ -208,11 +286,21 @@ class SimulationEnsembleResult:
         _require_trace_status_binding(outcomes, self.traces)
         object.__setattr__(self, "outcomes", outcomes)
         if self.execution_metadata is not None:
-            resolution = resolve_execution_metadata(
-                self.variation.plan, self.execution_metadata
+            identity = self.execution_metadata.implementation_identity
+            require(
+                identity
+                in {
+                    PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
+                    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
+                },
+                "unsupported result implementation identity",
             )
-            require(resolution.warning is None, "result metadata must be explicit")
-            object.__setattr__(self, "execution_metadata", resolution.metadata)
+            validated = validate_execution_metadata(
+                self.variation.plan,
+                self.execution_metadata,
+                expected_implementation_identity=identity,
+            )
+            object.__setattr__(self, "execution_metadata", validated)
 
     @property
     def impact_output_names(self) -> tuple[str, ...]:

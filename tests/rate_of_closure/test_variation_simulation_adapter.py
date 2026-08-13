@@ -38,15 +38,18 @@ from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_BALL_SETUP,
     CATEGORY_DELIVERY,
+    CATEGORY_SWING,
     CancelledError,
     NoiseSpec,
     VariationPlan,
+    sample_inputs,
     summary_stats,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 _FACE = f"{CATEGORY_DELIVERY}.face_angle_deg"
+_YAW = f"{CATEGORY_SWING}.yaw_deg"
 _TEE_HEIGHT = f"{CATEGORY_BALL_SETUP}.tee_height_m"
 _DRIVER = get_club("Driver 10.5°")
 
@@ -67,13 +70,19 @@ def _config(
 
 def _request(configs: tuple[SimulationConfig, ...]) -> SimulationEnsembleRequest:
     plan = VariationPlan(
-        mode="delivery",
-        noise=(NoiseSpec(_FACE, scale=1.0),),
+        mode="swing",
+        noise=(NoiseSpec(_YAW, scale=1.0),),
         n_runs=len(configs),
         seed=11,
     )
-    samples = np.linspace(-1.0, 1.0, len(configs)).reshape(-1, 1)
-    return SimulationEnsembleRequest(plan=plan, sampled_inputs=samples, configs=configs)
+    samples = sample_inputs(plan)
+    bound_configs = tuple(
+        replace(config, plane=replace(config.plane, yaw_deg=float(row[0])))
+        for config, row in zip(configs, samples, strict=True)
+    )
+    return SimulationEnsembleRequest(
+        plan=plan, sampled_inputs=samples, configs=bound_configs
+    )
 
 
 def test_ensemble_distinguishes_hit_miss_and_numerical_failure() -> None:
@@ -102,7 +111,15 @@ def test_ensemble_distinguishes_hit_miss_and_numerical_failure() -> None:
     stats = {item.name: item for item in summary_stats(result.variation)}
     assert stats["closest_approach_m"].n == 2
     assert stats["clubhead_speed_mps"].n == 1
-    assert result.execution_metadata == request.execution_metadata
+    assert request.execution_metadata is not None
+    assert result.execution_metadata is not None
+    assert request.execution_metadata.implementation_identity.executor_id == (
+        "python-complete-simulation-ensemble"
+    )
+    assert result.execution_metadata.implementation_identity.executor_id == (
+        "test-injected-executor"
+    )
+    assert result.execution_metadata.implementation_identity.solver_id == "unknown"
 
 
 def test_miss_retains_geometry_and_contact_but_nulls_impact_and_shot_metrics() -> None:

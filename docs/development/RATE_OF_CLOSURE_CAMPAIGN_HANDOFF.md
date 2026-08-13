@@ -1,5 +1,15 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 request/executor identity correction
+
+- Python PCG64 requests recompute and require the exact plan sample matrix and
+  bind each row to the global/localized config values executed at that index.
+- Sample tampering, permutation, subset, and config-order drift are rejected.
+- An injected executor is labeled `test-injected-executor@1` and solver
+  `unknown@1` in stream/result metadata. Only exact internal production
+  execution keeps the configured-simulation/SciPy-RK45 identity.
+- SPEC advances to 1.16.74. Archive and paired producers are unchanged.
+
 ## 2026-08-13 #4142 runtime-specific replay identity
 
 - Strict execution documents and metadata advance to @2 with versioned RNG,

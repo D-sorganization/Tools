@@ -26,11 +26,26 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.73                                    |
-| **Spec Version**        | 1.16.73                                    |
+| **Current Version**     | 1.16.74                                    |
+| **Spec Version**        | 1.16.74                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Sample/config and executor identity correction (#4142)
+
+Version 1.16.74 closes two provenance gaps in @2. A Python request carrying the
+PCG64/SeedSequence identity must contain the exact plan-derived sample matrix,
+including canonical row order and signed-zero normalization. Every sampled
+global or localized value must match the `SimulationConfig` executed at that
+row, rejecting value tampering, permutation, subset, and config-order drift.
+
+The canonical Python executor/solver identity is retained only when the exact
+internal `run_simulation` entry point executes the request. Dependency-injected
+test executors are relabeled `test-injected-executor@1` with `unknown@1` solver
+in the stream header and result. A forged production or unsupported live
+identity still fails closed. This remains an in-memory live-result contract;
+archive and paired-producer integration is unchanged.
 
 ### 2026-08-13 Runtime-specific replay identity (#4142 R10.4)
 

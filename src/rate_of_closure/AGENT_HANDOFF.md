@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Request/executor identity correction (#4142)
+
+- PCG64 identity now requires exact plan-derived samples, canonical ordering,
+  and row-wise binding to actual global/localized `SimulationConfig` values.
+- Value tampering, row permutation/subset, and config-order drift fail closed.
+- Injected test executors produce `test-injected-executor` / `unknown` solver
+  metadata; only the internal production executor retains the SciPy-RK45 ID.
+- SPEC advances to 1.16.74; archive and paired integration remains open.
+
 ## 2026-08-13 Runtime-specific replay sidecar (#4142)
 
 - Execution document/metadata schema @2 binds RNG algorithm/stream derivation

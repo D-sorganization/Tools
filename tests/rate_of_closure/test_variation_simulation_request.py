@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 
+import numpy as np
 import pytest
 
 from rate_of_closure.club import get_club
@@ -179,6 +180,28 @@ def test_request_rejects_cross_plan_execution_metadata() -> None:
             built.configs,
             execution_metadata=make_execution_metadata(first),
         )
+
+
+@pytest.mark.parametrize("mutation", ["value", "permutation", "subset", "config_order"])
+def test_identity_request_rejects_sample_or_config_order_drift(mutation: str) -> None:
+    plan = VariationPlan(mode="swing", noise=(_spec(_YAW, 0.1),), n_runs=3, seed=8)
+    built = build_simulation_ensemble_request(plan, _base_config())
+    samples = np.array(built.sampled_inputs, copy=True)
+    configs = built.configs
+    if mutation == "value":
+        samples[0, 0] += 0.01
+    elif mutation == "permutation":
+        samples = samples[::-1]
+    elif mutation == "subset":
+        samples = samples[:-1]
+        configs = configs[:-1]
+    else:
+        configs = configs[::-1]
+
+    with pytest.raises(
+        ContractViolationError, match="sampled_inputs|config order|configs must contain"
+    ):
+        SimulationEnsembleRequest(plan, samples, configs, built.execution_metadata)
 
 
 def test_global_value_seam_applies_every_fixed_contact_morris_variable() -> None:
