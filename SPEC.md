@@ -26,21 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.55                                    |
-| **Spec Version**        | 1.16.55                                    |
+| **Current Version**     | 1.16.56                                    |
+| **Spec Version**        | 1.16.56                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
 
-Version 1.16.55 pins Playwright Test 1.62.1 inside the Rate web package and
-adds a dedicated deterministic Chromium configuration and path-filtered
-workflow. Same-repository pull requests, pushes, and manual runs execute on the
-trusted fleet. Fork pull requests execute the equivalent locked gate on an
-ephemeral GitHub-hosted runner and cannot reach the persistent fleet. Every
-external action reference in this Playwright workflow is pinned to a full
-immutable commit SHA. The gate
+Version 1.16.56 pins Playwright Test 1.62.1 inside the Rate web package and
+adds a dedicated deterministic Chromium configuration with separate trust
+domains. The pull-request workflow contains only one ephemeral `ubuntu-latest`
+job and no persistent-fleet or self-hosted reference. A separate trusted
+workflow runs only for pushes to `main` and manual dispatch. Push checkout uses
+the event SHA by default; manual checkout is fixed to `main`, with no PR trigger
+or caller-controlled ref. Every external action reference in both Playwright
+workflows is pinned to a full immutable commit SHA. The gate
 builds and previews the production Vite output. Role/label
 locators drive the real hashed module Worker through a seeded three-run study,
 completion and identical rerun, 500-run swing/OAT cancellation with no partial

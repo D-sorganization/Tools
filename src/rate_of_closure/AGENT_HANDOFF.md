@@ -7,13 +7,14 @@
 
 Local branch `codex/4142-rate-web-playwright` starts from exact integrated
 commit `11a699155588d3d948990c5f08b72c5cc8d2c746`. The web package now owns a
-Playwright Test 1.62.1 pin/lock, deterministic Chromium config, and a dedicated
-path-filtered workflow which builds and serves the production Vite output.
-Same-repository PRs, pushes, and manual runs may use `d-sorg-fleet`; fork PRs
-run the same locked production gate on ephemeral `ubuntu-latest` and cannot
-reach the persistent fleet. All external actions in the Playwright workflow are
-pinned to immutable full SHAs, and artifacts identify both workflow run and
-attempt.
+Playwright Test 1.62.1 pin/lock, deterministic Chromium config, and two
+path-filtered workflows which build and serve the production Vite output. The
+PR workflow is ephemeral `ubuntu-latest` only and contains no fleet/self-hosted
+reference. The separate trusted workflow has only `main` push and manual
+triggers; push checkout uses its event SHA, while manual checkout is fixed to
+`main`. It has no PR trigger or caller-controlled ref. All external actions in
+both Playwright workflows are pinned to immutable full SHAs, and artifacts
+identify both workflow run and attempt.
 
 Five role/label-driven browser tests exercise the hashed dedicated module Worker
 without mocks: seeded progress/completion and identical rerun, cancellation of

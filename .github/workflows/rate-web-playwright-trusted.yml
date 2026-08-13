@@ -1,0 +1,96 @@
+name: Rate Web Playwright Trusted
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/rate_of_closure/web/**"
+      - ".github/workflows/rate-web-playwright.yml"
+      - ".github/workflows/rate-web-playwright-trusted.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: rate-web-playwright-trusted-main
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  push-production-worker-e2e:
+    name: Rate web production Worker E2E (trusted push)
+    if: github.event_name == 'push'
+    runs-on: d-sorg-fleet
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: src/rate_of_closure/web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/rate_of_closure/web/package-lock.json
+
+      - name: Install locked web dependencies
+        run: npm ci
+
+      - name: Install Playwright-pinned Chromium runtime
+        run: npx --no-install playwright install --with-deps chromium
+
+      - name: Exercise production Worker lifecycle and layouts
+        run: npm run test:e2e
+
+      - name: Retain Playwright evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rate-web-playwright-trusted-push-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            src/rate_of_closure/web/playwright-report/
+            src/rate_of_closure/web/test-results/
+          if-no-files-found: error
+          retention-days: 14
+
+  manual-production-worker-e2e:
+    name: Rate web production Worker E2E (trusted manual)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: d-sorg-fleet
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: src/rate_of_closure/web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/rate_of_closure/web/package-lock.json
+
+      - name: Install locked web dependencies
+        run: npm ci
+
+      - name: Install Playwright-pinned Chromium runtime
+        run: npx --no-install playwright install --with-deps chromium
+
+      - name: Exercise production Worker lifecycle and layouts
+        run: npm run test:e2e
+
+      - name: Retain Playwright evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rate-web-playwright-trusted-manual-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            src/rate_of_closure/web/playwright-report/
+            src/rate_of_closure/web/test-results/
+          if-no-files-found: error
+          retention-days: 14

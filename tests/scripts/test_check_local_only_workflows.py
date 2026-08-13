@@ -34,16 +34,16 @@ def test_guard_allows_only_hosted_ci_standard_quality_gate(tmp_path: Path) -> No
     assert rejected.returncode == 1
 
 
-def test_guard_allows_only_ephemeral_fork_playwright_job(tmp_path: Path) -> None:
+def test_guard_allows_only_ephemeral_pr_playwright_job(tmp_path: Path) -> None:
     allowed = _run_guard(
         tmp_path,
-        "jobs:\n  fork-production-worker-e2e:\n    runs-on: ubuntu-latest\n",
+        "jobs:\n  production-worker-e2e:\n    runs-on: ubuntu-latest\n",
         "rate-web-playwright.yml",
     )
     rejected = _run_guard(
         tmp_path,
-        "jobs:\n  trusted-production-worker-e2e:\n    runs-on: ubuntu-latest\n",
-        "rate-web-playwright.yml",
+        "jobs:\n  production-worker-e2e:\n    runs-on: ubuntu-latest\n",
+        "rate-web-playwright-trusted.yml",
     )
 
     assert allowed.returncode == 0

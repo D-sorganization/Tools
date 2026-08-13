@@ -33,7 +33,7 @@ LEGACY_HOSTED_RUNNER_ALLOWLIST = {
 }
 HOSTED_RUNNER_ALLOWLIST = {
     (".github/workflows/ci-standard.yml", "quality-gate"),
-    (".github/workflows/rate-web-playwright.yml", "fork-production-worker-e2e"),
+    (".github/workflows/rate-web-playwright.yml", "production-worker-e2e"),
 }
 HOSTED_RUNNER = re.compile(r"^(ubuntu|macos|windows)(-latest|-\d+(?:\.\d+)*)$")
 

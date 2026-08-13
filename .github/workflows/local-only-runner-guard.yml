@@ -69,7 +69,7 @@ jobs:
           }
           ALLOWLIST_JOBS = {
               ("ci-standard.yml", "quality-gate"),
-              ("rate-web-playwright.yml", "fork-production-worker-e2e"),
+              ("rate-web-playwright.yml", "production-worker-e2e"),
           }
           HOSTED = re.compile(r"^(ubuntu|macos|windows)(-latest|-\d+)?$")
 
@@ -150,7 +150,7 @@ jobs:
               print(
                   "Allowed: local-only-runner-guard.yml, runner-health-alert.yml, "
                   "ci-standard.yml::quality-gate, "
-                  "rate-web-playwright.yml::fork-production-worker-e2e, and jobs literally named "
+                  "rate-web-playwright.yml::production-worker-e2e, and jobs literally named "
                   "'Reject hosted runner routing'."
               )
               sys.exit(1)
