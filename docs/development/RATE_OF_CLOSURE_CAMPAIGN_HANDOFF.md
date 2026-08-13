@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 localized torque adversarial corrections
+
+- Strict shared numeric validators reject raw Boolean/string/nonfinite
+  variation values and non-integer run counts/seeds while retaining valid JSON
+  integer/float and v1 migration documents.
+- Public localized helpers validate base pairs, typed command collections,
+  sample times, and positive duration with contract errors.
+- One canonical effective-RK4-duration calculation is used by request,
+  `SimulationConfig`, source, and fallback trace-grid preflight. A command that
+  extends beyond the rounded grid now fails before sampling/trial execution.
+- The existing PyQt picker hides `localized_torque_only` factors until locus
+  controls exist. Imported contextual plans fail atomically with an explicit
+  locus-editor/unrepresentable message; no UI authoring completion is claimed.
+- Evidence: 118/118 focused tests and 1,455/1,455 broader shared-swing,
+  variation, and Rate tests; one missing-Rust-wheel skip remains expected.
+- React/PyQt locus authoring, Rust parity, complete raw persistence, protected
+  publication, and epic #4142 remain open.
+
 ## 2026-08-12 #4142 localized double-pendulum torque core
 
 - Local child `codex/4142-localized-double-torque-core` starts from exact

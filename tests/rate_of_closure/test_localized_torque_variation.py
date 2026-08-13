@@ -224,3 +224,21 @@ def test_simulation_config_rejects_other_source_kind_and_overlong_window() -> No
         )
     with pytest.raises(ContractViolationError, match="run duration"):
         dataclasses.replace(_base_config(), swing_run_config=overlong)
+
+
+def test_builder_rejects_locus_beyond_effective_rk4_grid_before_sampling() -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(
+            _localized_spec(
+                _SHOULDER_TORQUE_OFFSET,
+                SHOULDER_JOINT_ID,
+                window=(0.2, 0.2002),
+            ),
+        ),
+        n_runs=2,
+    )
+    base = dataclasses.replace(_base_config(), swing_duration_s=0.2004)
+
+    with pytest.raises(ContractViolationError, match="effective RK4 duration"):
+        build_simulation_ensemble_request(plan, base)

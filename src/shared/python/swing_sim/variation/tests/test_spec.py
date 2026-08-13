@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+import numpy as np
 import pytest
 
 from shared.python.contracts import ContractViolationError
@@ -129,6 +130,36 @@ class TestNoiseSpec:
                 variable_key=f"{CATEGORY_DELIVERY}.face_angle_deg",
                 lower=2.0,
                 upper=-2.0,
+            )
+
+    @pytest.mark.parametrize("value", [True, np.bool_(False), "1.0", float("inf")])
+    @pytest.mark.parametrize("field", ["scale", "lower", "upper"])
+    def test_rejects_coercive_or_nonfinite_numeric_fields(
+        self, field: str, value: object
+    ) -> None:
+        kwargs = {field: value}
+        with pytest.raises(ContractViolationError, match=field):
+            NoiseSpec(
+                f"{CATEGORY_DELIVERY}.face_angle_deg",
+                **kwargs,
+            )
+
+    @pytest.mark.parametrize(
+        "window",
+        [
+            (False, True),
+            (np.bool_(False), 0.1),
+            ("0.0", "0.1"),
+            (0.0, float("inf")),
+        ],
+    )
+    def test_rejects_coercive_or_nonfinite_time_locus(
+        self, window: tuple[object, object]
+    ) -> None:
+        with pytest.raises(ContractViolationError, match="time_window_s"):
+            NoiseSpec(
+                f"{CATEGORY_SWING}.yaw_deg",
+                time_window_s=window,
             )
 
     def test_json_round_trip(self) -> None:
@@ -301,6 +332,42 @@ class TestVariationPlan:
             VariationPlan(mode="delivery", noise=(spec, spec))
         with pytest.raises(ContractViolationError):
             VariationPlan(mode="delivery", noise=())
+
+    @pytest.mark.parametrize("value", [True, np.bool_(False), "48.0", float("inf")])
+    def test_rejects_coercive_or_nonfinite_base_values(self, value: object) -> None:
+        with pytest.raises(ContractViolationError, match="base value"):
+            VariationPlan(
+                mode="delivery",
+                base_variables={f"{CATEGORY_DELIVERY}.clubhead_speed_mps": value},
+                noise=(NoiseSpec(f"{CATEGORY_DELIVERY}.face_angle_deg"),),
+            )
+
+    @pytest.mark.parametrize("field", ["n_runs", "seed"])
+    @pytest.mark.parametrize("value", [True, np.bool_(False), "2", 2.0])
+    def test_rejects_non_integer_run_and_seed_domains(
+        self, field: str, value: object
+    ) -> None:
+        kwargs = {field: value}
+        with pytest.raises(ContractViolationError, match=field):
+            VariationPlan(
+                mode="delivery",
+                noise=(NoiseSpec(f"{CATEGORY_DELIVERY}.face_angle_deg"),),
+                **kwargs,
+            )
+
+    def test_json_integer_and_float_domains_remain_supported(self) -> None:
+        raw = self._plan().to_json_dict()
+        raw["base_variables"] = {f"{CATEGORY_DELIVERY}.clubhead_speed_mps": 48}
+        raw["noise"][0]["scale"] = 2
+
+        restored = VariationPlan.from_json_dict(raw)
+
+        assert restored.n_runs == 64
+        assert restored.seed == 7
+        assert (
+            restored.base_variables[f"{CATEGORY_DELIVERY}.clubhead_speed_mps"] == 48.0
+        )
+        assert restored.noise[0].scale == 2.0
 
     def test_rejects_duplicate_spec_ids_and_duplicate_variable_keys(self) -> None:
         face = f"{CATEGORY_DELIVERY}.face_angle_deg"

@@ -26,6 +26,7 @@ from shared.python.swing_sim.impact import (
     DeliveryDerived,
     PostImpactState,
 )
+from shared.python.swing_sim.integration_grid import effective_rk4_duration
 from shared.python.swing_sim.localized_torque import require_offsets_within_duration
 from shared.python.swing_sim.run_config import (
     DOUBLE_PENDULUM_JOINT_IDS,
@@ -156,9 +157,13 @@ class SimulationConfig:
             "swing_duration_s must be finite and > 0",
             self.swing_duration_s,
         )
+        offset_duration_s = (
+            effective_rk4_duration(self.swing_duration_s)
+            if self.swing_run_config.commanded_torque_offsets
+            else self.swing_duration_s
+        )
         require_offsets_within_duration(
-            self.swing_run_config.commanded_torque_offsets,
-            self.swing_duration_s,
+            self.swing_run_config.commanded_torque_offsets, offset_duration_s
         )
 
     @property

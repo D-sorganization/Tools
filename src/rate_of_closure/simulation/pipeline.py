@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
@@ -33,9 +34,13 @@ from shared.python.swing_sim.impact import (
     ImpactSolverAPI,
     PostImpactState,
 )
+from shared.python.swing_sim.integration_grid import (
+    DEFAULT_SWING_RK4_DT_S,
+    effective_rk4_duration,
+)
 from shared.python.swing_sim.swing_source import SwingSource
 
-SWING_SAMPLE_DT_S = 1e-3
+SWING_SAMPLE_DT_S = DEFAULT_SWING_RK4_DT_S
 
 
 def swing_sample_times(duration_s: float) -> np.ndarray:
@@ -54,9 +59,7 @@ def configured_swing_sample_times(config: SimulationConfig) -> np.ndarray:
     """Return the exact grid produced by a validated simulation config."""
     if config.source_kind == "manual":
         return swing_sample_times(MANUAL_SWING_DURATION_S)
-    source_duration_s = (
-        round(config.swing_duration_s / SWING_SAMPLE_DT_S) * SWING_SAMPLE_DT_S
-    )
+    source_duration_s = effective_rk4_duration(config.swing_duration_s)
     return swing_sample_times(source_duration_s)
 
 
@@ -122,15 +125,18 @@ def _make_source(config: SimulationConfig) -> SwingSource:
     """Construct the configured app-frame swing source."""
     from rate_of_closure.simulation.sources import make_source
 
-    return make_source(
-        config.source_kind,
-        config.scenario,
-        plane=config.plane,
-        duration=config.swing_duration_s,
-        run_config=config.swing_run_config,
-        torque_library=config.torque_library,
-        pendulum_parameters=config.pendulum_parameters,
-        manual_delivery=config.manual_delivery,
+    return cast(
+        SwingSource,
+        make_source(
+            config.source_kind,
+            config.scenario,
+            plane=config.plane,
+            duration=config.swing_duration_s,
+            run_config=config.swing_run_config,
+            torque_library=config.torque_library,
+            pendulum_parameters=config.pendulum_parameters,
+            manual_delivery=config.manual_delivery,
+        ),
     )
 
 

@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque adversarial corrections (#4142)
+
+The affected localized variation and helper seams now fail closed on their raw
+numeric domains. `NoiseSpec`/`VariationPlan` fields reject Boolean, string, and
+nonfinite values without coercion while preserving ordinary JSON integer/float
+plans and v1 migration. Localized helper functions validate command
+collections, base torque pairs, sample times, and durations with typed contract
+errors.
+
+One canonical fixed-step helper computes the effective RK4 duration used by
+Rate request validation, `SimulationConfig`, source construction, and fallback
+trace-grid construction. A locus inside the requested duration but outside the
+rounded integration grid is therefore rejected during request construction,
+not during a trial. The current PyQt variable picker hides
+`localized_torque_only` entries until a locus editor exists; loading such a
+plan remains fail-closed and atomic with an explicit locus-editor message.
+
+Local evidence is 118/118 correction-focused tests and 1,455/1,455 broader
+shared-swing/variation and Rate tests, with one expected missing-Rust-wheel
+skip. PyQt/React locus authoring, Rust parity, complete raw persistence,
+protected publication, and #4142 completion remain open.
+
 ## 2026-08-12 Localized double-pendulum torque execution (#4142)
 
 Local child `codex/4142-localized-double-torque-core` starts from exact commit

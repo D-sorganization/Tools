@@ -23,6 +23,7 @@ from typing import Any, cast
 import numpy as np
 
 from shared.python.contracts import require
+from shared.python.swing_sim._numeric_contracts import finite_real, integer
 
 from .group_spec import PerturbationGroup
 from .registry import (
@@ -53,16 +54,27 @@ def _normalize_locus(
     point_ids: tuple[str, ...],
 ) -> tuple[tuple[float, float] | None, tuple[str, ...]]:
     """Validate and normalize optional temporal/spatial locus metadata."""
-    window = None if time_window_s is None else tuple(time_window_s)
+    raw_window = cast(object, time_window_s)
+    require(
+        raw_window is None
+        or (isinstance(raw_window, (tuple, list)) and len(raw_window) == 2),
+        "time_window_s must contain finite start < end",
+        raw_window,
+    )
+    window = (
+        None
+        if raw_window is None
+        else tuple(cast(tuple[object, object] | list[object], raw_window))
+    )
     if window is not None:
+        start = finite_real(window[0], "time_window_s start")
+        end = finite_real(window[1], "time_window_s end")
         require(
-            len(window) == 2
-            and all(math.isfinite(float(value)) for value in window)
-            and float(window[0]) < float(window[1]),
+            start < end,
             "time_window_s must contain finite start < end",
             window,
         )
-        window = (float(window[0]), float(window[1]))
+        window = (start, end)
     points = tuple(point_ids)
     valid = all(
         isinstance(point, str) and bool(point) and point == point.strip()
@@ -113,23 +125,20 @@ class NoiseSpec:
             f"distribution must be one of {DISTRIBUTIONS}",
             self.distribution,
         )
-        require(
-            math.isfinite(self.scale) and self.scale > 0.0,
-            "scale must be finite and > 0",
-            self.scale,
-        )
+        scale = finite_real(cast(object, self.scale), "scale")
+        require(scale > 0.0, "scale must be finite and > 0", self.scale)
+        bounds: dict[str, float | None] = {}
         for name in ("lower", "upper"):
             value = getattr(self, name)
-            require(
-                value is None or math.isfinite(float(value)),
-                f"{name} must be finite when given",
-                value,
+            bounds[name] = (
+                None if value is None else finite_real(cast(object, value), name)
             )
-        if self.lower is not None and self.upper is not None:
+        lower, upper = bounds["lower"], bounds["upper"]
+        if lower is not None and upper is not None:
             require(
-                self.lower < self.upper,
+                lower < upper,
                 "truncation bounds must satisfy lower < upper",
-                (self.lower, self.upper),
+                (lower, upper),
             )
         stable_id = self.variable_key if self.spec_id is None else self.spec_id
         require(
@@ -140,6 +149,9 @@ class NoiseSpec:
             stable_id,
         )
         window, points = _normalize_locus(self.time_window_s, self.point_ids)
+        object.__setattr__(self, "scale", scale)
+        object.__setattr__(self, "lower", lower)
+        object.__setattr__(self, "upper", upper)
         object.__setattr__(self, "spec_id", stable_id)
         object.__setattr__(self, "time_window_s", window)
         object.__setattr__(self, "point_ids", points)
@@ -170,17 +182,13 @@ class NoiseSpec:
         return cls(
             variable_key=str(data["variable_key"]),
             distribution=str(data.get("distribution", "normal")),
-            scale=float(data.get("scale", 1.0)),
-            lower=None if data.get("lower") is None else float(data["lower"]),
-            upper=None if data.get("upper") is None else float(data["upper"]),
+            scale=cast(float, data.get("scale", 1.0)),
+            lower=cast(float | None, data.get("lower")),
+            upper=cast(float | None, data.get("upper")),
             spec_id=None if data.get("spec_id") is None else str(data["spec_id"]),
             time_window_s=cast(
                 tuple[float, float] | None,
-                (
-                    None
-                    if data.get("time_window_s") is None
-                    else tuple(float(value) for value in data["time_window_s"])
-                ),
+                data.get("time_window_s"),
             ),
             point_ids=tuple(str(value) for value in data.get("point_ids", [])),
         )
@@ -258,11 +266,14 @@ class VariationPlan:
 
     def __post_init__(self) -> None:
         require(self.mode in MODES, f"mode must be one of {MODES}", self.mode)
-        require(self.n_runs >= 1, "n_runs must be >= 1", self.n_runs)
-        require(self.seed >= 0, "seed must be >= 0", self.seed)
+        n_runs = integer(cast(object, self.n_runs), "n_runs", minimum=1)
+        seed = integer(cast(object, self.seed), "seed", minimum=0)
         require(len(self.noise) > 0, "plan must vary at least one variable", None)
         legal = set(keys_for_mode(self.mode))
-        base = {str(k): float(v) for k, v in self.base_variables.items()}
+        base = {
+            str(k): finite_real(cast(object, v), "base value")
+            for k, v in self.base_variables.items()
+        }
         for key, value in base.items():
             require(key in legal, f"base variable not legal in {self.mode} mode", key)
             require(math.isfinite(value), "base value must be finite", (key, value))
@@ -296,6 +307,8 @@ class VariationPlan:
         object.__setattr__(self, "base_variables", MappingProxyType(base))
         object.__setattr__(self, "noise", specs)
         object.__setattr__(self, "groups", groups)
+        object.__setattr__(self, "n_runs", n_runs)
+        object.__setattr__(self, "seed", seed)
 
     def resolved_base(self) -> dict[str, float]:
         """Full base mapping: registry defaults overlaid with overrides."""
@@ -328,15 +341,12 @@ class VariationPlan:
         )
         return cls(
             mode=str(data["mode"]),
-            base_variables={
-                str(k): float(v)
-                for k, v in dict(data.get("base_variables", {})).items()
-            },
+            base_variables=dict(data.get("base_variables", {})),
             noise=tuple(
                 NoiseSpec.from_json_dict(entry) for entry in data.get("noise", [])
             ),
-            n_runs=int(data.get("n_runs", 200)),
-            seed=int(data.get("seed", 0)),
+            n_runs=cast(int, data.get("n_runs", 200)),
+            seed=cast(int, data.get("seed", 0)),
             flight_model=str(data.get("flight_model", "waterloo_penner")),
             groups=(
                 ()

@@ -5,6 +5,10 @@ from __future__ import annotations
 import pytest
 
 from shared.python.contracts import ContractViolationError
+from shared.python.swing_sim.localized_torque import (
+    add_localized_offsets,
+    require_offsets_within_duration,
+)
 from shared.python.swing_sim.run_config import (
     SHOULDER_JOINT_ID,
     WRIST_JOINT_ID,
@@ -96,6 +100,33 @@ def test_offsets_add_to_passive_and_prescribed_commands() -> None:
     assert prescribed.joint_torques_at(0.03) == pytest.approx(
         {SHOULDER_JOINT_ID: 23.0, WRIST_JOINT_ID: -7.0}
     )
+
+
+@pytest.mark.parametrize(
+    "base",
+    [(True, 0.0), ("2.0", 0.0), (float("nan"), 0.0), (0.0,)],
+)
+def test_add_helper_rejects_coercive_nonfinite_or_malformed_base(
+    base: object,
+) -> None:
+    offset = LocalizedTorqueOffset(SHOULDER_JOINT_ID, (0.02, 0.04), 1.0)
+    with pytest.raises(ContractViolationError, match="base_torques_nm"):
+        add_localized_offsets(base, (offset,), 0.03)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("offsets", [["bad"], "bad", (None,)])
+def test_public_helpers_reject_malformed_offset_collections(offsets: object) -> None:
+    with pytest.raises(ContractViolationError, match="offsets"):
+        add_localized_offsets((0.0, 0.0), offsets, 0.03)  # type: ignore[arg-type]
+    with pytest.raises(ContractViolationError, match="offsets"):
+        require_offsets_within_duration(offsets, 0.1)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("duration", [True, "0.1", float("nan"), 0.0])
+def test_duration_helper_rejects_invalid_raw_domain(duration: object) -> None:
+    offset = LocalizedTorqueOffset(SHOULDER_JOINT_ID, (0.02, 0.04), 1.0)
+    with pytest.raises(ContractViolationError, match="duration"):
+        require_offsets_within_duration((offset,), duration)  # type: ignore[arg-type]
 
 
 def test_command_is_evaluated_at_every_rk4_substep(

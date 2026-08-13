@@ -18,6 +18,7 @@ import numpy as np
 from shared.python.contracts import require
 
 from . import _rust_facade, reference
+from .integration_grid import DEFAULT_SWING_RK4_DT_S, effective_rk4_duration
 from .localized_torque import add_localized_offsets, require_offsets_within_duration
 from .run_config import (
     DOUBLE_PENDULUM_JOINT_IDS,
@@ -119,19 +120,13 @@ class DoublePendulumSwing:
         plane: PlaneOrientation | None = None,
         initial_state: PendulumState | None = None,
         duration: float = 1.5,
-        dt: float = 1e-3,
+        dt: float = DEFAULT_SWING_RK4_DT_S,
         gravity_m_s2: float = DEFAULT_GRAVITY_M_S2,
         backend: Backend = "auto",
         run_config: DoublePendulumRunConfig | None = None,
         torque_library: TorqueProfileLibrary | None = None,
     ) -> None:
-        require(
-            math.isfinite(duration) and duration > 0.0,
-            "duration must be finite and > 0",
-            duration,
-        )
-        require(math.isfinite(dt) and dt > 0.0, "dt must be finite and > 0", dt)
-        require(dt <= duration, "dt must not exceed duration", dt)
+        duration_on_grid = effective_rk4_duration(duration, dt)
         require(
             math.isfinite(gravity_m_s2) and gravity_m_s2 >= 0.0,
             "gravity_m_s2 must be finite and >= 0",
@@ -156,8 +151,8 @@ class DoublePendulumSwing:
             theta1=math.pi / 2.0, theta2=0.0, omega1=0.0, omega2=0.0
         )
         self._dt = float(dt)
-        self._n_steps = int(round(duration / dt))
-        self._duration = self._n_steps * self._dt
+        self._n_steps = int(round(duration_on_grid / self._dt))
+        self._duration = duration_on_grid
         self._run_config = config
         self._validate_locked_initial_velocity(config.joint_locks)
         self._torque_offsets = config.commanded_torque_offsets

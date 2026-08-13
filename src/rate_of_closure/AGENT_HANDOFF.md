@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque fail-closed correction (#4142)
+
+Rate request construction now validates localized windows against the same
+rounded effective RK4 duration used by `SimulationConfig`, the source, and the
+fallback trace grid. A window that fits only the user-requested duration can no
+longer survive request construction and fail inside a trial. Shared variation
+numeric inputs and public localized helpers reject coercive Boolean/string and
+nonfinite domains with contract errors.
+
+The present PyQt variation row intentionally filters contextual localized
+torque registry entries because it has no locus editor. Loading an existing
+localized plan is atomic and fails with an explicit locus-editor/unrepresentable
+message. No PyQt/React authoring completion is claimed. Local evidence is 118
+focused and 1,455 broader passing tests with one expected Rust-wheel skip;
+protected release and the broader #4142 work remain open.
+
 ## 2026-08-12 Localized joint-torque execution seam (#4142)
 
 Local child `codex/4142-localized-double-torque-core`, based on exact commit

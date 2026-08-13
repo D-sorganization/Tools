@@ -13,6 +13,7 @@ import numpy as np
 from rate_of_closure.simulation import BallSetup, BallSupportMode, SimulationConfig
 from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
 from shared.python.contracts import require
+from shared.python.swing_sim.integration_grid import effective_rk4_duration
 from shared.python.swing_sim.run_config import (
     SHOULDER_JOINT_ID,
     WRIST_JOINT_ID,
@@ -154,6 +155,11 @@ def _validate_noise_loci(plan: VariationPlan, base_config: SimulationConfig) -> 
         for spec in plan.noise
         if spec.variable_key in LOCALIZED_TORQUE_VARIABLE_JOINTS
     }
+    effective_duration_s = (
+        effective_rk4_duration(base_config.swing_duration_s)
+        if localized_specs
+        else base_config.swing_duration_s
+    )
     base_only = (
         set(plan.base_variables) & set(LOCALIZED_TORQUE_VARIABLE_JOINTS)
     ) - set(localized_specs)
@@ -171,8 +177,9 @@ def _validate_noise_loci(plan: VariationPlan, base_config: SimulationConfig) -> 
                 spec.spec_id,
             )
             continue
+        window = spec.time_window_s
         require(
-            spec.time_window_s is not None,
+            window is not None,
             "localized torque perturbation requires time_window_s",
             spec.spec_id,
         )
@@ -181,11 +188,12 @@ def _validate_noise_loci(plan: VariationPlan, base_config: SimulationConfig) -> 
             "localized torque perturbation requires its exact topological joint point",
             (spec.point_ids, expected_joint),
         )
-        start_s, end_s = spec.time_window_s
+        assert window is not None
+        start_s, end_s = window
         require(
-            0.0 <= start_s < end_s <= base_config.swing_duration_s,
-            "localized torque time window must lie within the swing duration",
-            (spec.time_window_s, base_config.swing_duration_s),
+            0.0 <= start_s < end_s <= effective_duration_s,
+            "localized torque time window must lie within the effective RK4 duration",
+            (window, effective_duration_s),
         )
 
 

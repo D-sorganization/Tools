@@ -30,12 +30,14 @@ from shared.python.swing_sim.variation import (  # noqa: E402
     VariationPlan,
     keys_for_mode,
     run_variation,
+    variable_registry,
 )
 from shared.python.swing_sim.variation.dataset_io import read_json  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 _BALL = f"{CATEGORY_LAUNCH}.ball_speed_mph"
+_SHOULDER_TORQUE = f"{CATEGORY_SWING}.shoulder_commanded_torque_offset_nm"
 
 
 @pytest.fixture
@@ -84,6 +86,19 @@ class TestConstruction:
         row = tab._rows[0]
         keys = tuple(row.variable.itemData(i) for i in range(row.variable.count()))
         assert keys == keys_for_mode("launch")
+
+    def test_swing_picker_hides_contextual_variables_without_locus_editor(
+        self, tab: VariationTab
+    ) -> None:
+        tab._mode_combo.setCurrentIndex(1)  # swing
+        row = tab._rows[0]
+        keys = tuple(row.variable.itemData(i) for i in range(row.variable.count()))
+
+        assert _SHOULDER_TORQUE not in keys
+        assert all(
+            variable_registry()[key].applicability != "localized_torque_only"
+            for key in keys
+        )
 
     def test_add_and_remove_rows_keeps_at_least_one(self, tab: VariationTab) -> None:
         tab._add_row()
@@ -181,6 +196,28 @@ class TestPlanRoundTrip:
         )
         tab.load_plan(plan)
         assert tab.build_plan() == plan
+
+    def test_load_contextual_plan_fails_atomically_with_locus_editor_message(
+        self, tab: VariationTab
+    ) -> None:
+        original = tab.build_plan()
+        plan = VariationPlan(
+            mode="swing",
+            noise=(
+                NoiseSpec(
+                    _SHOULDER_TORQUE,
+                    scale=1.0,
+                    time_window_s=(0.02, 0.04),
+                    point_ids=("joint.shoulder",),
+                ),
+            ),
+            n_runs=4,
+        )
+
+        with pytest.raises(ValueError, match="locus editor.*not representable"):
+            tab.load_plan(plan)
+
+        assert tab.build_plan() == original
 
     def test_v2_plan_round_trips_custom_ids_loci_groups_and_save(
         self, tab: VariationTab, tmp_path: Path, monkeypatch

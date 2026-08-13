@@ -2,28 +2,16 @@
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
-from numbers import Real
 from typing import cast
 
 from shared.python.contracts import require
 
+from ._numeric_contracts import finite_real
+
 SHOULDER_JOINT_ID = "joint.shoulder"
 WRIST_JOINT_ID = "joint.wrist"
 DOUBLE_PENDULUM_JOINT_IDS = (SHOULDER_JOINT_ID, WRIST_JOINT_ID)
-
-
-def _finite_real(value: object, message: str) -> float:
-    """Normalize one strict non-boolean finite real scalar."""
-    require(
-        isinstance(value, Real) and not isinstance(value, bool),
-        message,
-        value,
-    )
-    normalized = float(cast(Real, value))
-    require(math.isfinite(normalized), message, value)
-    return normalized
 
 
 @dataclass(frozen=True)
@@ -52,32 +40,28 @@ class LocalizedTorqueOffset:
             raw_window,
         )
         window = cast(tuple[object, object] | list[object], raw_window)
-        start_s = _finite_real(
-            window[0], "localized torque time_window_s must contain two real values"
-        )
-        end_s = _finite_real(
-            window[1], "localized torque time_window_s must contain two real values"
-        )
+        start_s = finite_real(window[0], "localized torque time_window_s start")
+        end_s = finite_real(window[1], "localized torque time_window_s end")
         require(
             0.0 <= start_s < end_s,
             "localized torque time_window_s must satisfy 0 <= start < end",
             raw_window,
         )
-        torque_nm = _finite_real(
+        torque_nm = finite_real(
             cast(object, self.torque_nm),
-            "localized torque offset must be a finite real scalar",
+            "localized torque offset",
         )
         object.__setattr__(self, "time_window_s", (start_s, end_s))
         object.__setattr__(self, "torque_nm", torque_nm)
 
     def is_active(self, time_s: float) -> bool:
         """Return whether ``time_s`` lies in the declared half-open window."""
-        sample_time_s = _finite_real(
+        sample_time_s = finite_real(
             cast(object, time_s),
-            "localized torque sample time must be a finite real scalar",
+            "localized torque sample time",
         )
         start_s, end_s = self.time_window_s
-        return start_s <= sample_time_s < end_s
+        return bool(start_s <= sample_time_s < end_s)
 
 
 def add_localized_offsets(
@@ -86,9 +70,21 @@ def add_localized_offsets(
     time_s: float,
 ) -> tuple[float, float]:
     """Add all active offsets to one shoulder/wrist command pair."""
-    torques = [float(base_torques_nm[0]), float(base_torques_nm[1])]
-    for offset in offsets:
-        if offset.is_active(time_s):
+    raw_base = cast(object, base_torques_nm)
+    require(
+        isinstance(raw_base, (tuple, list)) and len(raw_base) == 2,
+        "base_torques_nm must contain two finite real values",
+        raw_base,
+    )
+    base = cast(tuple[object, object] | list[object], raw_base)
+    torques = [
+        finite_real(base[0], "base_torques_nm shoulder value"),
+        finite_real(base[1], "base_torques_nm wrist value"),
+    ]
+    commands = _validated_offsets(offsets)
+    sample_time_s = finite_real(cast(object, time_s), "localized torque sample time")
+    for offset in commands:
+        if offset.is_active(sample_time_s):
             torques[DOUBLE_PENDULUM_JOINT_IDS.index(offset.joint_id)] += (
                 offset.torque_nm
             )
@@ -99,12 +95,32 @@ def require_offsets_within_duration(
     offsets: tuple[LocalizedTorqueOffset, ...], duration_s: float
 ) -> None:
     """Require every half-open command window to lie inside one run."""
-    for offset in offsets:
+    commands = _validated_offsets(offsets)
+    duration = finite_real(cast(object, duration_s), "run duration")
+    require(duration > 0.0, "run duration must be > 0", duration_s)
+    for offset in commands:
         require(
-            offset.time_window_s[1] <= duration_s,
+            offset.time_window_s[1] <= duration,
             "localized torque time window must lie within the run duration",
-            (offset.time_window_s, duration_s),
+            (offset.time_window_s, duration),
         )
+
+
+def _validated_offsets(offsets: object) -> tuple[LocalizedTorqueOffset, ...]:
+    """Return one strictly typed command collection."""
+    require(
+        isinstance(offsets, (tuple, list)),
+        "offsets must be a tuple or list of LocalizedTorqueOffset values",
+        offsets,
+    )
+    raw_commands = cast(tuple[object, ...] | list[object], offsets)
+    commands = tuple(raw_commands)
+    require(
+        all(isinstance(offset, LocalizedTorqueOffset) for offset in commands),
+        "offsets must contain only LocalizedTorqueOffset values",
+        commands,
+    )
+    return cast(tuple[LocalizedTorqueOffset, ...], commands)
 
 
 __all__ = [

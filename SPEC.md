@@ -26,11 +26,30 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.54                                    |
-| **Spec Version**        | 1.16.54                                    |
+| **Current Version**     | 1.16.55                                    |
+| **Spec Version**        | 1.16.55                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Localized torque adversarial corrections (#4142)
+
+Version 1.16.55 closes three fail-closed gaps in the initial localized torque
+core. `NoiseSpec` numeric scale, bounds, and time loci and `VariationPlan` base
+values reject Boolean, string, and nonfinite raw values; run count and seed
+require genuine non-Boolean integers. Normal JSON integer/float documents and
+v1 migration remain supported. Public localized helpers likewise validate base
+torques, command collections, sample times, and duration before use and report
+contract violations rather than coercion or incidental Python exceptions.
+
+A shared fixed-step grid function is now authoritative for effective RK4
+duration in request, configuration, source, and fallback trace-grid paths.
+Localized windows must fit that effective duration before sampling or trial
+execution. The existing PyQt variation picker excludes contextual localized
+torque entries because it has no locus editor; an imported localized plan fails
+atomically with an explicit unrepresentable/locus-editor explanation. This does
+not claim PyQt or React locus authoring. Evidence is 118 correction-focused and
+1,455 broader passing tests, with one expected missing-Rust-wheel skip.
 
 ### 2026-08-12 Localized double-pendulum torque execution (#4142)
 
