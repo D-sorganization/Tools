@@ -1,5 +1,27 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R11.4 strict typed ensemble JSON reader
+
+- Local branch `codex/4142-typed-ensemble-reader-integrated` starts from exact
+  current #4404 head `82e4c54c921f169227d25ece2935add4af3e721a`;
+  it is not pushed.
+- The existing complete ensemble writer now has a strict typed inverse and
+  byte-for-document lossless semantic round trip. The v1 wire shape is
+  unchanged and only its exact embedded plan-v2 authority is accepted.
+- Plan/spec/group identities, seed, samples, typed trial outcomes, all scalar
+  availability, frame/unit/point provenance, sample masks, impact indices, and
+  full position traces survive as immutable typed objects.
+- Duplicate/unknown fields, noncanonical scalar coercions, nonfinite values,
+  invalid UTF-8/truncation, crossed scalar/status/trace evidence, corrupt axes,
+  and impact-time/index disagreement fail closed. Named byte, depth, node,
+  trial, sample, point, and position-cell bounds precede materialization.
+- Shared `VariationDataset` arrays are now copied, owned, and read-only on all
+  construction paths. Complete local evidence is 1,157 passing Rate/shared-
+  variation tests (15 known warnings), plus Ruff and MyPy.
+- Browser/PyQt import controls, cross-runtime reading, chunked large-ensemble
+  transport, full event ledgers, complete pre-impact state/torque traces,
+  protected publication, and the remaining R10-R14 campaign stay open.
+
 ## 2026-08-12 #4142 integrated authority cross-review hardening
 
 - Protected #4404 CI exposed two Mypy 1.13 inference errors on the new Morris

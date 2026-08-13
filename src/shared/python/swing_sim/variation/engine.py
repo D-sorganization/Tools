@@ -82,9 +82,9 @@ class VariationDataset:
     elapsed_s: float = 0.0
 
     def __post_init__(self) -> None:
-        inputs = np.asarray(self.inputs, dtype=float)
-        outputs = np.asarray(self.outputs, dtype=float)
-        success = np.asarray(self.success, dtype=bool)
+        inputs = np.array(self.inputs, dtype=float, copy=True)
+        outputs = np.array(self.outputs, dtype=float, copy=True)
+        success = np.array(self.success, dtype=bool, copy=True)
         n = self.plan.n_runs
         require(
             inputs.shape == (n, len(self.input_names)),
@@ -97,6 +97,9 @@ class VariationDataset:
             outputs.shape,
         )
         require(success.shape == (n,), "success must be (n_runs,)", success.shape)
+        inputs.setflags(write=False)
+        outputs.setflags(write=False)
+        success.setflags(write=False)
         object.__setattr__(self, "inputs", inputs)
         object.__setattr__(self, "outputs", outputs)
         object.__setattr__(self, "success", success)

@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
+
+The local child `codex/4142-typed-ensemble-reader-integrated` is based exactly
+on current #4404 head `82e4c54c921f169227d25ece2935add4af3e721a`.
+It adds the strict inverse of
+the complete Rate ensemble v1 writer and does not change that wire schema.
+
+The reader round-trips the complete plan-v2 provenance graph, sampled inputs,
+typed scalar outcomes, trace coordinates, validity, impact markers, stable
+trial/point IDs, explicit frame, and units. Exact allowlists, canonical numeric
+and boolean types, finite-value checks, outcome/output/success binding, and
+status/impact-time trace binding reject corrupt or crossed archives. The file
+boundary rejects duplicate keys, invalid UTF-8, truncated JSON, and payloads
+above 16,000,000 bytes; depth/node and scientific axis/cell limits prevent
+unbounded materialization. Imported NumPy arrays are copied, owned, and
+read-only, and `VariationDataset` now enforces that ownership generally.
+
+Only exact outer v1 plus embedded plan v2 is accepted; no implicit migration is
+claimed. Complete local evidence is 1,157 passing Rate/shared-variation tests
+(15 known warnings), plus Ruff and MyPy. The UI import surfaces, browser parity,
+chunked streaming, complete event ledger and state/torque authority, protected
+publication, and full #4142 completion remain open.
+
 ## 2026-08-12 Integrated authority cross-review hardening (#4142)
 
 Protected #4404 CI found that Mypy 1.13 could not infer the dtype of the two

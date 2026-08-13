@@ -9,9 +9,73 @@ from pathlib import Path
 from typing import Any
 
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
+from shared.python.contracts import ContractViolationError, require
 from shared.python.swing_sim.variation.dataset_io import to_json_dict as dataset_json
 
+from ._ensemble_parser import parse_ensemble_document
+
 ENSEMBLE_EXPORT_SCHEMA_VERSION = 1
+MAX_ENSEMBLE_JSON_BYTES = 16_000_000
+
+
+def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Construct one JSON object while rejecting duplicate field names."""
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        require(key not in result, "duplicate JSON field", key)
+        result[key] = value
+    return result
+
+
+def _reject_nonfinite_constant(value: str) -> None:
+    """Reject non-standard JSON NaN and infinity spellings."""
+    require(False, "JSON numbers must be finite", value)
+
+
+def loads(text: str) -> SimulationEnsembleResult:
+    """Parse a bounded, duplicate-safe complete ensemble JSON document."""
+    require(isinstance(text, str), "ensemble JSON must be text")
+    require(
+        len(text.encode("utf-8")) <= MAX_ENSEMBLE_JSON_BYTES,
+        "ensemble JSON byte limit exceeded",
+    )
+    try:
+        document = json.loads(
+            text,
+            object_pairs_hook=_unique_object,
+            parse_constant=_reject_nonfinite_constant,
+        )
+    except ContractViolationError:
+        raise
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        require(False, "ensemble document must be valid JSON", str(exc))
+        raise AssertionError from exc
+    return from_json_dict(document)
+
+
+def from_json_dict(data: object) -> SimulationEnsembleResult:
+    """Build an immutable typed ensemble from the exact v1 writer schema.
+
+    Version 1 is the only accepted outer schema and has no implicit migration.
+    Future schemas must add an explicit migration before this reader accepts
+    them; unknown, partial, or extra fields fail closed.
+    """
+    return parse_ensemble_document(data, ENSEMBLE_EXPORT_SCHEMA_VERSION)
+
+
+def read_json(path: str | Path) -> SimulationEnsembleResult:
+    """Read a size-bounded ensemble written by :func:`write_json`."""
+    source = Path(path)
+    require(
+        source.stat().st_size <= MAX_ENSEMBLE_JSON_BYTES,
+        "ensemble JSON byte limit exceeded",
+    )
+    try:
+        text = source.read_text(encoding="utf-8")
+    except UnicodeError as exc:
+        require(False, "ensemble document must be valid UTF-8", str(exc))
+        raise AssertionError from exc
+    return loads(text)
 
 
 def to_json_dict(result: SimulationEnsembleResult) -> dict[str, Any]:
@@ -110,6 +174,10 @@ def write_trace_csv(result: SimulationEnsembleResult, path: str | Path) -> None:
 
 __all__ = [
     "ENSEMBLE_EXPORT_SCHEMA_VERSION",
+    "MAX_ENSEMBLE_JSON_BYTES",
+    "from_json_dict",
+    "loads",
+    "read_json",
     "to_json_dict",
     "write_json",
     "write_trace_csv",

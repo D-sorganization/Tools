@@ -26,11 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.43                                    |
-| **Spec Version**        | 1.16.43                                    |
+| **Current Version**     | 1.16.44                                    |
+| **Spec Version**        | 1.16.44                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
+
+Version 1.16.44 completes the typed Python reader and lossless JSON round trip
+for the existing complete Rate ensemble writer. The outer ensemble schema
+remains version 1 and accepts only the exact current representation with an
+embedded lossless plan-v2 document; there is no implicit outer-schema or plan
+migration. Future versions require an explicit reviewed migration rather than
+coercion or best-effort defaults.
+
+The reader retains stable plan/spec/group IDs, seed and sampled-input
+provenance, canonical trial order, typed hit/no-impact/numerical-failure
+availability, all scalar outputs, coordinate frame and units, point IDs,
+sample validity, impact markers, and complete position traces. It rejects
+unknown or duplicate fields, noncanonical scalar types, nonfinite values,
+truncated/invalid UTF-8 JSON, crossed outcome/scalar/status/impact evidence,
+corrupt trace axes, and impact markers inconsistent with the recorded impact
+time. File bytes, decoded depth/nodes, trials, samples, points, and position
+cells are bounded before corresponding scientific arrays are materialized.
+All imported NumPy arrays are owned and read-only; `VariationDataset` now
+applies the same immutable-ownership rule to every construction path.
+
+This slice does not add a browser reader, UI import action, chunked streaming,
+event ledgers, impact/shot objects beyond the existing scalar authority, or
+complete state/torque traces. Those broader R11/R14 requirements remain open.
 
 ### 2026-08-12 Morris observation CI type contract (#4142)
 
@@ -3103,6 +3128,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.44 | feat(rate-of-closure, #4142 R11.4): add a strict bounded typed reader and lossless round trip for complete Rate ensemble JSON; retain plan/spec/group/trial/point provenance, typed hit/no-impact/failure availability and full traces; reject duplicate, corrupt, truncated, noncanonical, crossed, and resource-excess documents; make all `VariationDataset` arrays owned and read-only. |
 | 2026-08-12 | 1.16.43 | fix(rate-of-closure, #4142): make the Morris observation value-array types explicit for the protected Mypy 1.13 delta gate without changing runtime or wire contracts. |
 | 2026-08-12 | 1.16.42 | fix(rate-of-closure, #4142): retain PyQt numeric authority per field; bind raw Morris observations to exact recomputed aggregate reports outside the registry mutex; enforce symmetric pre-materialization archive limits; and preserve unavailable OAT dominance/normalization across Python and React. |
 | 2026-08-12 | 1.16.41 | fix(rate-of-closure, #4142 R13.1): make Python/React OAT and Spearman attribution pairwise finite with explicit minimum counts and constant-column unavailability, pinned by one shared missing-data fixture. |

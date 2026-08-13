@@ -3,6 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
+
+Branch `codex/4142-typed-ensemble-reader-integrated` starts from exact current
+#4404 head `82e4c54c921f169227d25ece2935add4af3e721a` and remains local/unpublished.
+It adds the missing strict Python inverse for the existing complete Rate
+ensemble JSON writer without changing the version-1 wire representation.
+
+- Exact parsing preserves the complete plan-v2 graph, stable spec/group IDs,
+  seed and sampled inputs, canonical trial indices, typed hit/no-impact/failure
+  outcomes, scalar availability, point/frame/unit IDs, sample validity, impact
+  markers, and all position traces.
+- The reader rejects unknown/duplicate fields, coercible booleans or strings,
+  nonfinite values, invalid UTF-8/truncated JSON, crossed outcome/scalar/success/
+  impact evidence, corrupt axes, and noncanonical ordering. Impact indices are
+  bound to typed status and the nearest recorded impact-time sample.
+- External JSON is capped at 16,000,000 UTF-8 bytes. Decoded depth/nodes,
+  trials, samples, points, and position cells have named pre-materialization
+  bounds. Parsed arrays are owned and read-only; shared `VariationDataset`
+  construction now provides the same immutable ownership everywhere.
+- Migration policy is fail closed: outer ensemble v1 with exact embedded plan
+  v2 only. A future schema must provide an explicit reviewed migration.
+
+The complete local Rate plus shared-variation gate is 1,157 passing tests (15
+known warnings), with Ruff and MyPy green. Final diff/size gates, independent
+integration review, protected publication, browser/PyQt import surfaces,
+streaming/chunking, event ledgers, and complete state/torque authority remain
+open.
+
 ## 2026-08-12 Integrated authority cross-review hardening (#4142)
 
 Protected #4404 CI found that Mypy 1.13 could not infer the dtype of the two
