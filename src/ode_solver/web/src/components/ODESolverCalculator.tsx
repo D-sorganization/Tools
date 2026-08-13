@@ -314,7 +314,13 @@ export function ODESolverCalculator() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Input Panel */}
-        <div className="space-y-4">
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault()
+            solve()
+          }}
+        >
           {/* Preset Selector */}
           <div className="bg-slate-800 rounded-lg p-4">
             <h2 className="text-lg font-semibold text-white mb-4">Preset Examples</h2>
@@ -432,8 +438,8 @@ export function ODESolverCalculator() {
           </div>
 
           <button
-            onClick={solve}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
           >
             Solve ODE System
           </button>
@@ -443,7 +449,7 @@ export function ODESolverCalculator() {
               {error}
             </div>
           )}
-        </div>
+        </form>
 
         {/* Results Panel */}
         <div className="lg:col-span-2 space-y-4">
