@@ -27,12 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 <<<<<<< HEAD
+<<<<<<< HEAD
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
 =======
 | **Current Version**     | 1.14.28                                    |
 | **Spec Version**        | 1.14.28                                    |
+=======
+| **Current Version**     | 1.14.29                                    |
+| **Spec Version**        | 1.14.29                                    |
+>>>>>>> origin/feat/4271-regional-wire-contract
 | **Last Spec Update**    | 2026-08-11                                 |
 >>>>>>> origin/feat/4271-regional-surface-transitions
 
@@ -3065,8 +3070,15 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 <<<<<<< HEAD
+<<<<<<< HEAD
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 =======
+=======
+| 2026-08-11 | 1.14.29 | merge(ground-regional-wire, #4332 #4335): normally merge exact remote regional-wire child `9e01ccc3e891cc45907293751a192624195a77a5` first with exact current regional-surface parent `5ac3c1f233de30dd42eeac57073cbdb149bde652` second while preserving PR #4335's `feat/4271-regional-surface-transitions` base, strict Python/TypeScript regional-plan request/result schemas, canonical JSON/SHA-256 fixture evidence, fail-closed parsing, Python resolver binding, tests, limitations, and both append-only handoff/SPEC histories; inherit current regional, skid/roll, impact/bounce, and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping changing geometry or velocity, internal transition-ledger export, regional UI, compiled or TypeScript regional physics, downstream parity, protected exact-head CI, review, approval, and release open. |
+| 2026-08-11 | 1.14.28 | chore(ground-regions, #4271 #4335): normally reconcile exact live regional-wire child `74a053d2d544da9f44a88007660ad28c0127f285` with exact newly published regional-surface parent `04ccf08dd990de1cd056a3420e67772773a4be2e` without changing the PR base or rewriting either branch; preserve the strict Python/TypeScript plan wire boundary and Python resolver binding together with the parent's reconciled coplanar regional physics and complete skid/roll ancestry, while retaining protected CI/review, UI, compiled or TypeScript regional physics, changing geometry/velocity, internal transition-ledger export, downstream parity, and release as open work. |
+| 2026-08-10 | 1.14.27 | feat(ground-roll, #4271): add separate strict Python/TypeScript `ground-regional-material-plan-request/v1` and result/v1 wire contracts with exact keys, SI units, explicit coplanar/static limitations, finite bounded base/overlay intervals, bounded region/document counts, unique region/precedence/surface identities, canonical cross-runtime JSON/SHA-256 evidence, fail-closed no-fabrication result binding, and a Python-only adapter into the existing regional resolver; preserve the frozen flight-to-ground v1 request/result and retain TypeScript/compiled regional physics, UI, changing geometry, internal transition-ledger export, downstream parity, protected CI, review, and release as open work. |
+| 2026-08-10 | 1.14.26 | feat(ground-roll, #4271): add bounded Python-reference support for finite coplanar material overlays with unique explicit precedence, exact quadratic boundary splitting, base-edge precedence, state/energy continuity, strict Python/TypeScript `surface_transition` events, internal from/to identity evidence, typed transition limits, and randomized piecewise-analytic qualification; reject changing normals, height/velocity discontinuities, and overlays owning the impact handoff rather than fabricating impulses or geometry transitions, while retaining UI, compiled regional physics, and downstream parity as open work. |
+>>>>>>> origin/feat/4271-regional-wire-contract
 | 2026-08-11 | 1.14.28 | merge(ground-regions, #4304 #4332): normally merge exact remote regional-surface child `04ccf08dd990de1cd056a3420e67772773a4be2e` first with exact current skid/roll parent `3f861c1faaa7455faee92eaa7f813174667208e0` second while preserving PR #4332's `feat/4271-ground-skid-roll` base, bounded coplanar material overlays, exact transition splitting and evidence, regional production, tests, fixtures, contracts, limitations, and both append-only handoff/SPEC histories; inherit current impact, bounce, skid, roll, and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping changing normals, discontinuous geometry or velocity, regional UI, compiled regional physics, downstream parity, protected exact-head CI, review, approval, and release open. |
 | 2026-08-11 | 1.14.27 | chore(ground-regions, #4271 #4332): normally reconcile exact live regional-surface child `1a48d749af508843fac2a5102f4dd56294429bda` with exact newly published skid/roll parent `0ea6740965068542e9d8c7449e06ec07d88969e0` without changing the PR base or rewriting either branch; preserve bounded coplanar material overlays, exact transition splitting and evidence, strict contracts, and all current parent physics while retaining changing normals, discontinuous geometry/velocity, UI, compiled regional physics, and downstream parity as open work. |
 | 2026-08-11 | 1.14.27 | merge(ground-roll, #4302 #4304): normally merge exact remote skid/roll child `0ea6740965068542e9d8c7449e06ec07d88969e0` first with exact current impact/bounce parent `62beb3e1aa951645fd556a53f9cbae4bb46c47e5` second while preserving PR #4304's `feat/4270-ground-impact-bounce` base, arbitrary-plane skid, static-feasible pure roll, rolling resistance, qualified rest, edge localization, strict result composition, passive ledgers, fixtures, tests, limitations, and both append-only histories; inherit current bounce and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping regional/changing-normal surfaces, deformation, torsional damping, roll-to-skid transitions, UI, compiled physics, protected exact-head CI, review, approval, downstream integration, and release open. |

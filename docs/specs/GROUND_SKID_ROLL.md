@@ -148,11 +148,38 @@ positive `max_surface_transitions` setting terminates with typed internal
 `SURFACE_TRANSITION_LIMIT` evidence before an unbounded regional sequence can
 run. The existing positive maximum-step bound remains independent.
 
-Region definitions and their source/destination identities remain execution-
-scoped non-wire inputs in this slice. The strict v1 result preserves the legal
-transition event and qualified-domain warning, but it does not serialize the
-regional plan or the internal identity ledger. A versioned wire request/result
-extension is required before regional plans can cross process boundaries.
+### Regional material plan wire boundary
+
+The additive `ground-regional-material-plan-request/v1` contract carries one
+finite base domain, its request-bound `GroundSurfaceProfile`, tangent axis and
+origin, one or more finite material overlays, provenance, SI units, the exact
+`coplanar_static_material_overlays` geometry model, and both fixed v1
+limitations. Region IDs, precedence values, and base/overlay surface IDs are
+unique. The region count is bounded at 4,096 and JSON documents at 1 MiB.
+Every numeric coordinate is finite, every interval is nonempty and lies inside
+the finite base interval, and every surface is stationary and shares the base
+frame, height, and normal. Unknown, missing, or extra keys; duplicate JSON
+keys; unsupported versions/units/limitations; and unbound material evidence
+fail before a resolver exists.
+
+`ground-regional-material-plan-result/v1` is validation evidence, not a ground
+trajectory or a second physics model. It embeds the exact request, its
+canonical SHA-256, a descending-precedence/ascending-ID copy of the request's
+regions, producer provenance bound to that digest, and the same explicit
+limitations. Both Python and TypeScript reject reordered or changed region or
+surface records instead of accepting fabricated resolved materials. Python's
+`regional_plan_to_surface_resolver` is the only execution adapter in this
+slice; it constructs the existing qualified `SurfaceResolver` without changing
+its physics. TypeScript validates and serializes the plan but does not claim to
+run regional dynamics.
+
+These new schemas are deliberately separate from
+`flight-to-ground-request/v1` and `flight-to-ground-result/v1`; neither frozen
+contract is silently widened. The strict ground result continues to carry the
+legal transition event and qualified-domain warning, while its internal
+from/to transition ledger remains execution-scoped. A future explicitly
+versioned result contract is required before that ledger crosses a process
+boundary.
 
 Skid and roll distances are accumulated separately from centre speed relative
 to the moving surface. Collinear constant-acceleration segments use the exact
@@ -230,3 +257,10 @@ refusal of non-rest complete results.
 
 Protected CI, independent review, normal parent integration, and explicit
 consumer/UI work remain release gates.
+
+The shared regional-plan fixture
+`src/rate_of_closure/web/src/model/__fixtures__/ground_regional_plan_golden_v1.json`
+pins Python/TypeScript canonical request SHA-256
+`a890b6fd544d73114ec5d0cd042f87aa2358d01ca85543a8c4d71ef2cb18cab1`
+and result SHA-256
+`8d9bc2f53897da241580f7b5fdaff7c6614077bed8a486cc6d7619d02b0e3e55`.

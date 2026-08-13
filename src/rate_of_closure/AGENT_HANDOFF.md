@@ -1,5 +1,30 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 Regional wire receives current regional-surface parent
+
+Open draft PR `#4335` retains `feat/4271-regional-wire-contract` over
+`feat/4271-regional-surface-transitions`. Exact remote regional-wire child
+`9e01ccc3e891cc45907293751a192624195a77a5` is merged first and exact current
+regional-surface parent `5ac3c1f233de30dd42eeac57073cbdb149bde652`
+second by an ordinary no-ff merge. Child-owned wire production, schemas,
+tests, canonical fixture evidence, resolver binding, and limitations remain
+intact while inheriting current regional, skid/roll, impact/bounce,
+flight-transfer, and strict-ground ancestry.
+
+Focused local qualification passes all `132` Python ground/regional-wire tests,
+`9` focused React regional/ground-contract tests, and all `137` `tools-core`
+Rust tests. TypeScript, zero-warning ESLint, the 190-module Vite build, Rust
+format and warning-denied clippy, pinned Ruff 0.14.10 across six changed Python
+files, pinned MyPy 1.13 and Bandit medium/high across four production files,
+the 500-LOC changed-file gate, manifest validation plus eight contracts,
+documentation governance, exact wire-tree preservation, history/marker, and
+diff checks are green.
+
+This candidate remains unpublished and `not_released`. Changing geometry or
+velocity, internal transition-ledger export, regional UI, compiled or
+TypeScript regional physics, UpstreamDrift parity, protected exact-head CI,
+review, approval, dependency integration, and release remain open.
+
 ## 2026-08-11 Regional surfaces receive current skid/roll parent
 
 Open draft PR `#4332` retains
@@ -103,6 +128,41 @@ to the new exact merge head only.
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
+
+## 2026-08-11 PR #4335 current-parent ancestry candidate
+
+The clean dedicated `feat/4271-regional-wire-contract` worktree starts from
+exact live PR #4335 child `74a053d2d544da9f44a88007660ad28c0127f285`
+and normally merges exact newly published PR #4332 parent
+`04ccf08dd990de1cd056a3420e67772773a4be2e` as its second parent. PR #4335
+keeps base `feat/4271-regional-surface-transitions`; neither branch is rebased,
+retargeted, rewritten, force-pushed, or published by this reconciliation.
+Production physics, wire contracts, golden fixtures, numerical ordering, and
+public APIs merge byte-exactly; only SPEC, manifest, and handoff records require
+truthful reconciliation.
+
+The child retains the strict cross-runtime regional-plan request/result wire
+contract, canonical JSON/SHA-256 evidence, fail-closed parsing, and Python
+resolver adapter. The parent retains bounded coplanar regional transitions and
+the complete reconciled impact/bounce/skid/roll ancestry. Changing normals,
+height or surface-velocity discontinuities, terrain deformation, torsional-spin
+damping, roll-to-skid transitions, internal transition-ledger export, regional
+UI, compiled or TypeScript regional physics, downstream parity, protected CI,
+review, normal stack integration, and main release remain open. This local
+merge is not release evidence and requires independent review before an
+ordinary fast-forward publication.
+
+Merged-tree qualification is `132` focused Python ground tests and `9`
+focused React regional/ground-contract tests passing. Pinned Ruff 0.14.10 check
+and format pass all `45` ground Python files. Pinned MyPy 1.13 passes the exact
+two-file isolated CI boundary and all `31` production modules under the coherent
+whole-package profile that disables only redundant-cast warnings; those casts
+remain required by the isolated protected profile. Bandit reports no
+medium/high finding. Documentation governance, manifest validation/layout and
+all `8` manifest contracts, changed-production and minimum-test policies, the
+official 500-LOC PR-delta gate (`6` files, zero violations), diff checks, and
+mandatory maxima of `392` module lines, `46` function lines, and `4` parameters
+all pass.
 
 ## 2026-08-11 PR #4332 current-parent ancestry candidate
 
@@ -211,6 +271,56 @@ the official changed-file 500-LOC budget, and mandatory production limits of
 400 lines per module, 50 lines per function, and four parameters all pass. The
 local merge is a PUBLISH candidate for independent review only; protected
 exact-head CI, approval, normal child propagation, and publication remain open.
+
+## 2026-08-10 PR #4335 isolated-MyPy return typing
+
+Protected CI at exact head `d382ca9928628a16fec7ddd4fa1b1cc144b4c490`
+found two `no-any-return` errors under its changed-file
+`--follow-imports=skip` profile. The strict text and JSON validators still
+perform the same runtime checks; their already validated return values now
+carry explicit local casts so the isolated CI type boundary remains precise.
+This correction changes no schema, digest, physics, numerical result, or API.
+Fresh exact-head CI and review remain required after the ordinary push.
+
+## 2026-08-10 issue #4271 regional-plan wire-contract local child
+
+Local branch `feat/4271-regional-wire-contract` starts from exact regional
+physics parent `1a48d749af508843fac2a5102f4dd56294429bda`. No GitHub write,
+protected evidence, review, merge, or release claim has been made for this
+child.
+
+Python and TypeScript now share separate strict
+`ground-regional-material-plan-request/v1` and result/v1 records without
+silently widening either frozen flight-to-ground v1 contract. The request
+requires a finite base interval and one or more finite in-domain overlays,
+exact SI/schema/geometry/limitation values, explicit provenance, stationary
+coplanar geometry, and unique region, precedence, and surface IDs. Counts are
+bounded at 4,096 regions and documents at 1 MiB. Duplicate JSON keys, unknown
+fields, nonfinite values, changed geometry/velocity, invalid intervals, and
+unsupported qualifications fail closed.
+
+The result embeds the exact request, its canonical SHA-256, the same regions
+in deterministic precedence/ID order, and producer provenance bound to the
+request digest. Both runtimes reject reordered or changed surface evidence.
+The Python adapter constructs the existing qualified `SurfaceResolver`;
+TypeScript validates and serializes only and does not claim regional physics.
+The shared golden request/result digests are
+`a890b6fd544d73114ec5d0cd042f87aa2358d01ca85543a8c4d71ef2cb18cab1`
+and
+`8d9bc2f53897da241580f7b5fdaff7c6614077bed8a486cc6d7619d02b0e3e55`.
+
+Local qualification is green: all 132 Python ground tests and all 107 React
+files / 666 tests pass; TypeScript, zero-warning ESLint, and the 190-module
+production build pass. Pinned Ruff 0.14.10 is clean over 45 ground files and
+pinned MyPy 1.13 is clean over 31 production modules. The campaign manifest
+and its eight contracts plus documentation governance pass. The changed
+production modules remain below 400 lines.
+
+This child remains `not_released`. Protected CI, independent review, normal
+stack integration, UI, TypeScript/Rust/PyO3/WASM regional physics, changing
+normals/heights/velocities, internal transition-ledger wire export,
+UpstreamDrift parity, and main release remain open.
+
 
 ## 2026-08-10 issue #4271 coplanar regional-material local child
 
