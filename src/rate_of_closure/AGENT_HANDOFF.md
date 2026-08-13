@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Canonical-number and strict-runtime correction (#4142)
+
+- Plan writers and execution sidecars normalize floating `-0.0` to `+0.0` in
+  JSON, resolved snapshots, and canonical digest input in Python and React.
+- A shared edge fixture binds signed zero, adjacent representable floats, and
+  the maximum JavaScript-safe integer seed to one exact plan SHA-256.
+- Plan v1/v2 readers remain compatible, but unsafe `seed`/`n_runs` integers
+  above `2^53 - 1` now fail explicitly. Migration requires choosing a safe
+  value and resolving a fresh sidecar, not relabeling old identity evidence.
+- React validates exact camel-case runtime metadata and snapshot fields before
+  inline/Worker execution and rejects extra fields returned by a Worker.
+- SPEC advances to 1.16.72. Archive, paired-producer, RNG, and solver identity
+  integration remain open as previously documented.
+
 ## 2026-08-13 Resolved-base and registry-unit sidecar (#4142 R10.4/R10.6)
 
 - Plan schema v2 remains byte-compatible; execution provenance is a separate

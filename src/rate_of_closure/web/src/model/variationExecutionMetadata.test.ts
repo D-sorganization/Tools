@@ -1,4 +1,5 @@
 import fixture from "./__fixtures__/variation_execution_document_v1.json";
+import edgeFixture from "./__fixtures__/variation_execution_document_edge_floats_v1.json";
 import { describe, expect, it } from "vitest";
 
 import type { VariationPlanTs } from "./variationSchema";
@@ -12,6 +13,7 @@ import {
 
 const BALL_SPEED = "swing_sim.flight.launch.ball_speed_mph";
 const LAUNCH_ANGLE = "swing_sim.flight.launch.launch_angle_deg";
+const LAUNCH_AZIMUTH = "swing_sim.flight.launch.launch_azimuth_deg";
 
 type MutableExecutionDocument = ReturnType<typeof variationExecutionDocument>;
 type ExecutionDocumentMutation = (value: MutableExecutionDocument) => void;
@@ -33,6 +35,25 @@ const plan = (seed = 17): VariationPlanTs => ({
   nRuns: 8,
   seed,
   flightModel: "waterloo_penner",
+});
+
+const edgePlan = (): VariationPlanTs => ({
+  ...plan(Number.MAX_SAFE_INTEGER),
+  baseVariables: {
+    [BALL_SPEED]: 154.00000000000003,
+    [LAUNCH_AZIMUTH]: -0,
+    "swing_sim.flight.launch.spin_axis_deg": 1.0000000000000002,
+  },
+  noise: [{
+    variableKey: LAUNCH_ANGLE,
+    distribution: "normal",
+    scale: 0.5000000000000001,
+    lower: null,
+    upper: null,
+    specId: "edge-angle",
+    timeWindowS: null,
+    pointIds: [],
+  }],
 });
 
 describe("variation execution metadata", () => {
@@ -64,6 +85,13 @@ describe("variation execution metadata", () => {
     });
   });
 
+  it("matches the shared signed-zero and edge-float fixture", () => {
+    expect(variationExecutionDocument(edgePlan())).toEqual(edgeFixture);
+    expect(parseVariationExecutionDocument(JSON.stringify(edgeFixture)).metadata.planSha256).toBe(
+      "6d7c23bb72a53359faa36d1d57d95835c9808bcdb67e0919859893e1a0cd711a",
+    );
+  });
+
   it("round-trips the React ball-setup extension without changing plan-v2", () => {
     const teePlan: VariationPlanTs = {
       ...plan(),
@@ -86,6 +114,48 @@ describe("variation execution metadata", () => {
     document.plan = Object.fromEntries(Object.entries(document.plan).reverse());
 
     expect(parseVariationExecutionDocument(JSON.stringify(document)).plan).toEqual(plan());
+  });
+
+  it("normalizes signed zero in the document, snapshot, and plan digest", () => {
+    const negative = {
+      ...plan(),
+      baseVariables: { ...plan().baseVariables, [LAUNCH_AZIMUTH]: -0 },
+    };
+    const positive = {
+      ...negative,
+      baseVariables: { ...negative.baseVariables, [LAUNCH_AZIMUTH]: 0 },
+    };
+    const document = variationExecutionDocument(negative);
+    const baseVariables = document.plan.base_variables as Record<string, number>;
+    const snapshot = document.metadata.resolved_variables.find(
+      (item) => item.variable_key === LAUNCH_AZIMUTH,
+    );
+
+    expect(Object.is(baseVariables[LAUNCH_AZIMUTH], -0)).toBe(false);
+    expect(Object.is(snapshot?.value, -0)).toBe(false);
+    expect(makeVariationExecutionMetadata(negative).planSha256).toBe(
+      makeVariationExecutionMetadata(positive).planSha256,
+    );
+  });
+
+  it("keeps maximum-safe seeds lossless and rejects unsafe plan integers", () => {
+    const maximum = plan(Number.MAX_SAFE_INTEGER);
+    const preceding = plan(Number.MAX_SAFE_INTEGER - 1);
+
+    expect(makeVariationExecutionMetadata(maximum).planSha256).not.toBe(
+      makeVariationExecutionMetadata(preceding).planSha256,
+    );
+    expect(() => makeVariationExecutionMetadata(plan(Number.MAX_SAFE_INTEGER + 1))).toThrow(
+      /safe integer/i,
+    );
+    expect(() => makeVariationExecutionMetadata({
+      ...plan(), nRuns: Number.MAX_SAFE_INTEGER + 1,
+    })).toThrow(/safe integer/i);
+    const firstUnsafe = 9_007_199_254_740_992;
+    const collidingUnsafe = Number("9007199254740993");
+    expect(collidingUnsafe).toBe(firstUnsafe);
+    expect(() => makeVariationExecutionMetadata(plan(firstUnsafe))).toThrow(/safe integer/i);
+    expect(() => makeVariationExecutionMetadata(plan(collidingUnsafe))).toThrow(/safe integer/i);
   });
 
   const driftCases: Array<[string, ExecutionDocumentMutation]> = [

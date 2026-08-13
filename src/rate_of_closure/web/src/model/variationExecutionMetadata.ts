@@ -76,6 +76,12 @@ const METADATA_FIELDS = [
   "schema_id", "schema_version",
 ];
 const VARIABLE_FIELDS = ["dimension", "unit", "value", "variable_key"];
+const RUNTIME_METADATA_FIELDS = [
+  "flightModel", "mode", "planSha256", "registrySchemaId",
+  "registrySchemaVersion", "registrySha256", "resolvedVariables",
+  "schemaId", "schemaVersion",
+].sort();
+const RUNTIME_VARIABLE_FIELDS = ["dimension", "unit", "value", "variableKey"];
 const PLAN_FIELDS = [
   "base_variables", "flight_model", "groups", "mode", "n_runs", "noise",
   "schema_version", "seed",
@@ -121,11 +127,13 @@ const float64Hex = (value: number): string => {
     view.getUint32(4, false).toString(16).padStart(8, "0");
 };
 
+const normalizedNumber = (value: number): number => Object.is(value, -0) ? 0 : value;
+
 const digestValue = (value: unknown): unknown => {
   if (value === null || typeof value === "boolean" || typeof value === "string") return value;
   if (typeof value === "number") {
     if (!Number.isFinite(value)) throw new Error("digest numbers must be finite");
-    return { $f64: float64Hex(value) };
+    return { $f64: float64Hex(normalizedNumber(value)) };
   }
   if (Array.isArray(value)) return value.map(digestValue);
   if (isRecord(value)) {
@@ -151,7 +159,7 @@ const snapshots = (plan: VariationPlanTs): readonly ResolvedVariableSnapshotTs[]
     if (definition === undefined) throw new Error(`unknown registry variable ${variableKey}`);
     return Object.freeze({
       variableKey,
-      value: values[variableKey],
+      value: normalizedNumber(values[variableKey]),
       unit: definition.unit,
       dimension: variableDimension(definition.unit),
     });
@@ -243,6 +251,13 @@ const parseMetadata = (value: unknown): VariationExecutionMetadataTs => {
 export const validateVariationExecutionMetadata = (
   plan: VariationPlanTs, metadata: VariationExecutionMetadataTs,
 ): VariationExecutionMetadataTs => {
+  const runtime = exactRecord(metadata, RUNTIME_METADATA_FIELDS, "metadata");
+  if (!Array.isArray(runtime.resolvedVariables)) {
+    throw new Error("metadata resolvedVariables must be an array");
+  }
+  runtime.resolvedVariables.forEach((item, index) => {
+    exactRecord(item, RUNTIME_VARIABLE_FIELDS, `metadata resolvedVariables[${index}]`);
+  });
   const expected = makeVariationExecutionMetadata(plan);
   if (metadata.schemaId !== expected.schemaId) throw new Error("metadata schema ID mismatch");
   if (metadata.schemaVersion !== expected.schemaVersion) throw new Error("metadata schema version mismatch");

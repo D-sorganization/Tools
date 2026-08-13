@@ -14,7 +14,7 @@ from typing import cast
 from shared.python.contracts import require
 
 from .registry import keys_for_mode, variable_registry
-from .spec import SCHEMA_VERSION, VariationPlan
+from .spec import MAX_SAFE_INTEGER, SCHEMA_VERSION, VariationPlan
 
 EXECUTION_DOCUMENT_SCHEMA_ID = "rate-of-closure/variation-execution-document"
 EXECUTION_DOCUMENT_SCHEMA_VERSION = 1
@@ -128,11 +128,19 @@ def _f64_hex(value: float) -> str:
     return struct.pack(">d", value).hex()
 
 
+def _normalized_float(value: float) -> float:
+    return 0.0 if value == 0.0 else value
+
+
 def _digest_value(value: object) -> object:
     if value is None or isinstance(value, (bool, str)):
         return value
-    if isinstance(value, (int, float)):
+    if isinstance(value, int):
+        require(abs(value) <= MAX_SAFE_INTEGER, "digest integer must be safe", value)
         numeric = float(value)
+        return {"$f64": _f64_hex(numeric)}
+    if isinstance(value, float):
+        numeric = _normalized_float(value)
         require(math.isfinite(numeric), "digest numbers must be finite", value)
         return {"$f64": _f64_hex(numeric)}
     if isinstance(value, Mapping):
@@ -166,7 +174,7 @@ def _resolved_variables(plan: VariationPlan) -> tuple[ResolvedVariableSnapshot, 
     return tuple(
         ResolvedVariableSnapshot(
             variable_key=key,
-            value=float(resolved[key]),
+            value=_normalized_float(float(resolved[key])),
             unit=registry[key].unit,
             dimension=registry[key].dimension,
         )

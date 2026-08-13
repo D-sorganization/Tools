@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Execution metadata canonical-number correction (#4142 R10.4/R10.6)
+
+Version 1.16.72 closes three fail-open identity gaps in the versioned execution
+sidecar. Python and React now canonicalize every floating signed zero to positive
+zero in plan JSON, resolved snapshots, and SHA-256 input. A shared golden
+document covers `-0.0`, adjacent representable floats, and the maximum safe
+integer seed with one exact cross-runtime digest.
+
+Plan v1/v2 readers remain schema-compatible, including signed-zero input, but
+`seed` and `n_runs` must now be integers no larger than `2^53 - 1`; this is the
+largest value represented exactly by both runtimes. Older unsafe-integer plans
+must be migrated by choosing a safe seed/run count and creating a fresh sidecar;
+they cannot claim historical cross-runtime identity. React runtime validators
+also reject unknown metadata or resolved-variable fields before inline work,
+Worker posting, or Worker-result acceptance.
+
 ## 2026-08-13 Variation resolved-base execution identity (#4142 R10.4/R10.6)
 
 Version 1.16.71 leaves variation plan schema v2 unchanged and adds the separate,

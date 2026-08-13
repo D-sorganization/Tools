@@ -26,11 +26,33 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.71                                    |
-| **Spec Version**        | 1.16.71                                    |
+| **Current Version**     | 1.16.72                                    |
+| **Spec Version**        | 1.16.72                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Execution metadata canonical-number correction (#4142)
+
+Version 1.16.72 defines canonical floating signed zero as positive zero for
+variation plan JSON, resolved-variable snapshots, and execution-metadata digest
+input in both Python and React. A second shared golden document exercises legal
+negative zero, adjacent representable binary64 values, and the maximum shared
+safe integer seed, proving one exact plan SHA-256 across the two implementations.
+
+Plan schema v2 is unchanged and v1/v2 readers continue accepting signed-zero
+input. `seed` and `n_runs` are now bounded to integers at or below `2^53 - 1`,
+the largest integer represented exactly by both runtimes. An unsafe legacy
+integer must be replaced explicitly and resolved into a fresh current-registry
+sidecar; it cannot support a historical or cross-runtime identity claim.
+Canonical digest encoding rejects integers outside this domain instead of
+coercing them to colliding binary64 values.
+
+React exact-field validation now applies to the camel-case in-memory metadata
+and every resolved-variable snapshot, not only JSON document parsing. Unknown
+fields therefore fail before inline execution or Worker posting and during
+Worker-result validation. Archive and paired-producer binding, RNG/stream
+identity, solver identity, and portable exact replay remain open.
 
 ### 2026-08-13 Variation resolved-base execution identity (#4142 R10.4/R10.6)
 
@@ -3931,6 +3953,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.72 | fix(rate-of-closure, #4142 R10.4/R10.6): canonicalize floating signed zero across plan JSON, snapshots, and digests; bound shared plan integers to the exact JavaScript-safe domain; reject out-of-domain digest integers and unknown React runtime metadata fields; add signed-zero/edge-float cross-runtime golden evidence without expanding archive, producer, RNG, solver, or replay claims. |
 | 2026-08-13 | 1.16.71 | feat(rate-of-closure, #4142 R10.4/R10.6): add a separate strict variation execution document and immutable resolved-base/registry-unit sidecar; bind Python complete requests and React inline/Worker requests/results; provide exact shared launch-registry parity and explicit legacy current-registry warnings without changing plan schema v2, archives, paired producers, RNGs, solvers, sampling, or physics. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |

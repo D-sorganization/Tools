@@ -34,6 +34,7 @@ export {
 } from "./variationRegistry";
 export {
   MAX_RUNS,
+  MAX_SAFE_PLAN_INTEGER,
   planFromJson,
   planToJson,
   SCHEMA_VERSION,

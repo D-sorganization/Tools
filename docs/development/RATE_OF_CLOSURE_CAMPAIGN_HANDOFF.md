@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4142 execution-metadata canonical-number correction
+
+- Python and React canonical plan writers, resolved snapshots, and digest
+  encoders normalize floating signed zero to positive zero.
+- The shared edge-number golden covers legal `launch_azimuth_deg = -0.0`, two
+  adjacent representable floats, and seed `9007199254740991` with one exact
+  Python/React SHA-256.
+- Both plan contracts reject unsafe integer `seed`/`n_runs` values above
+  `2^53 - 1`, preventing Python integer-to-float digest collisions. Existing
+  v1/v2 files remain readable when values are safe; unsafe legacy values require
+  an explicit safe replacement and fresh current-registry sidecar.
+- React runtime request/result validation now rejects unknown metadata and
+  resolved-variable fields, including inline and Worker boundaries.
+- SPEC advances to 1.16.72. This correction does not close the documented
+  archive, paired-producer, RNG-stream, solver-identity, or replay gaps.
+
 ## 2026-08-13 #4142 resolved-base execution metadata
 
 - Added a separate strict `rate-of-closure/variation-execution-document@1`;
