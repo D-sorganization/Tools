@@ -181,7 +181,9 @@ def test_build_triple_panel(mock_run, mock_set_perturb, qapp) -> Any:
 
     real_perturb._get_coeffs_for_preset_fn("Default")
 
-    panel.controls.PRESETS = {"Default": ["0", "0", "0", "0", "0", "0", "1.0, 2.0", "3.0", ""]}
+    panel.controls.PRESETS = {
+        "Default": ["0", "0", "0", "0", "0", "0", "1.0, 2.0", "3.0", ""]
+    }
     parsed = real_perturb._get_coeffs_for_preset_fn("Default")
     assert len(parsed) == 3
 

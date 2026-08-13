@@ -9,6 +9,7 @@ pub mod ball_flight;
 #[cfg(feature = "python")]
 pub mod electrode_advisor;
 pub mod engineering;
+pub mod flight_ground;
 pub mod math;
 pub mod reactor;
 pub mod rrt;
@@ -39,9 +40,27 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<ball_flight::EnvironmentalConditions>()?;
     m.add_class::<ball_flight::TrajectoryPoint>()?;
     m.add_class::<ball_flight::TrajectoryAnalysis>()?;
+    m.add_class::<flight_ground::FlightState>()?;
+    m.add_class::<flight_ground::python::PyFlightGroundPlane>()?;
+    m.add_class::<flight_ground::python::PyFlightGroundRequest>()?;
+    m.add_class::<flight_ground::python::PyFlightGroundResult>()?;
     m.add_class::<atmosphere::AtmosphereProperties>()?;
     m.add_class::<rrt::Obstacle>()?;
     m.add_class::<rrt::RRTPlanner>()?;
+    m.add_function(wrap_pyfunction!(ball_flight::py_simulate_trajectory, m)?)?;
+    m.add_function(wrap_pyfunction!(ball_flight::py_analyze_trajectory, m)?)?;
+    m.add_function(wrap_pyfunction!(
+        flight_ground::python::py_simulate_flight_to_ground,
+        m
+    )?)?;
+    m.add_function(wrap_pyfunction!(
+        flight_ground::python::py_validate_request_v1,
+        m
+    )?)?;
+    m.add_function(wrap_pyfunction!(
+        flight_ground::python::py_adapt_request_v1,
+        m
+    )?)?;
     m.add_function(wrap_pyfunction!(math::py_lerp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_clamp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_deg_to_rad, m)?)?;

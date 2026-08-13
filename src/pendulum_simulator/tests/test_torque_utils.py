@@ -57,7 +57,9 @@ class TestMakePolynomialTorque:
 
     def test_empty_coefficients_raises(self):
         """Each joint needs at least one coefficient."""
-        with pytest.raises((ValueError, TypeError), match="Need at least one coefficient"):
+        with pytest.raises(
+            (ValueError, TypeError), match="Need at least one coefficient"
+        ):
             make_polynomial_torque([])
 
     def test_returns_tuple(self):
@@ -71,3 +73,14 @@ class TestMakePolynomialTorque:
         tf = make_polynomial_torque([1.0, 2.0], [3.0, 4.0])
         result = tf(1.5)
         assert all(np.isfinite(v) for v in result)
+
+    def test_rejects_nonfinite_coefficients(self):
+        """Shared torque-profile contract rejects invalid coefficients."""
+        with pytest.raises((ValueError, TypeError)):
+            make_polynomial_torque([1.0, np.nan])
+
+    def test_rejects_nonfinite_time(self):
+        """Shared polynomial evaluator rejects invalid evaluation times."""
+        tf = make_polynomial_torque([1.0, 2.0])
+        with pytest.raises((ValueError, TypeError)):
+            tf(np.inf)
