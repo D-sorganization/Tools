@@ -20,6 +20,7 @@ from ._morris_observation_validation import (
     stable_text,
 )
 from .morris_design import MorrisDesign, MorrisFactor, MorrisObservations, MorrisOutput
+from .morris_execution import MAX_MORRIS_OBSERVATION_CELLS, MAX_MORRIS_SAMPLES
 from .morris_observation_io import (
     _DESIGN_FIELDS,
     _FACTOR_FIELDS,
@@ -84,9 +85,16 @@ def _parse_design(value: object) -> MorrisDesign:
     require(
         isinstance(raw_factors, list) and bool(raw_factors), "factors must be nonempty"
     )
+    trajectories = nonnegative_integer(item["trajectories"], "trajectories")
+    sample_count = trajectories * (len(raw_factors) + 1)
+    require(
+        sample_count <= MAX_MORRIS_SAMPLES,
+        f"sample count must not exceed MAX_MORRIS_SAMPLES={MAX_MORRIS_SAMPLES}",
+        sample_count,
+    )
     return MorrisDesign(
         tuple(_parse_factor(factor) for factor in raw_factors),
-        nonnegative_integer(item["trajectories"], "trajectories"),
+        trajectories,
         nonnegative_integer(item["levels"], "levels"),
         nonnegative_integer(item["seed"], "seed"),
         np.asarray(item["normalized_points"], dtype=float),
@@ -140,6 +148,13 @@ def parse_morris_observations(value: object) -> MorrisObservationArchive:
     outputs = tuple(_parse_output(output) for output in raw_outputs)
     records = item["records"]
     sample_count = design.trajectories * (len(design.factors) + 1)
+    observation_cells = sample_count * len(outputs)
+    require(
+        observation_cells <= MAX_MORRIS_OBSERVATION_CELLS,
+        "observation count must not exceed "
+        f"MAX_MORRIS_OBSERVATION_CELLS={MAX_MORRIS_OBSERVATION_CELLS}",
+        observation_cells,
+    )
     require(
         isinstance(records, list) and len(records) == sample_count,
         "records must cover design",

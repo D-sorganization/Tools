@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import importlib
 import json
 from collections.abc import Callable
 from typing import Any
@@ -19,6 +20,7 @@ from shared.python.swing_sim.variation import (
     analyze_morris,
     evaluate_morris_design,
     generate_morris_design,
+    make_morris_observation_archive,
     morris_observations_from_json_dict,
     morris_observations_to_json_dict,
 )
@@ -151,6 +153,34 @@ def test_serializer_rejects_hit_with_unavailable_downstream_value() -> None:
         morris_observations_to_json_dict(
             incomplete, study_id="study", provenance={"producer": "test"}
         )
+    with pytest.raises(ContractViolationError, match="every impact and shot"):
+        make_morris_observation_archive(
+            incomplete, study_id="study", provenance={"producer": "test"}
+        )
+
+
+def test_parser_rejects_oversized_output_matrix_before_allocation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    parser = importlib.import_module(
+        "shared.python.swing_sim.variation._morris_observation_parser"
+    )
+    document = _archive()
+    monkeypatch.setattr(parser, "MAX_MORRIS_OBSERVATION_CELLS", 7)
+    with pytest.raises(ContractViolationError, match="MAX_MORRIS_OBSERVATION_CELLS"):
+        morris_observations_from_json_dict(document)
+
+
+def test_parser_rejects_oversized_design_before_array_construction(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    parser = importlib.import_module(
+        "shared.python.swing_sim.variation._morris_observation_parser"
+    )
+    document = _archive()
+    monkeypatch.setattr(parser, "MAX_MORRIS_SAMPLES", 3)
+    with pytest.raises(ContractViolationError, match="MAX_MORRIS_SAMPLES"):
+        morris_observations_from_json_dict(document)
 
 
 def test_serializer_rejects_shared_identifiers_that_are_not_wire_safe() -> None:

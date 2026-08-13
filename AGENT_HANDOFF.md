@@ -16,7 +16,9 @@ unchanged `morris-global-sensitivity-report@1` response while adding a separate
   availability, and bounded failure type/message diagnostics.
 - The exact parser rejects schema drift, crossed identities, reordered records,
   fabricated no-impact outputs, nonfinite or altered design data, and incomplete
-  diagnostics. Parsed arrays are owned and read-only.
+  diagnostics. It rejects designs above 100,000 samples and output matrices
+  above 1,000,000 cells before allocating observation arrays. Parsed arrays are
+  owned and read-only, and archive construction rejects incomplete hit outputs.
 - The public Rate service still returns the unchanged aggregate report. Its
   explicit extended path returns raw scalar authority too; the job registry
   retains it only for completed jobs under a weighted cell budget without

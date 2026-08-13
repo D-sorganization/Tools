@@ -26,22 +26,25 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.38                                    |
-| **Spec Version**        | 1.16.38                                    |
+| **Current Version**     | 1.16.39                                    |
+| **Spec Version**        | 1.16.39                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
 
-Version 1.16.38 adds the strict scalar-observation foundation contract
+Version 1.16.39 hardens the strict scalar-observation foundation contract
 `swing-sim/morris-observation-archive@1` without changing the existing
 Morris aggregate report or job-envelope schemas. Each raw design-point record
 is bound to the exact design digest and canonical ordinal and retains physical
 factor values/units, typed outcome, nullable outputs, and bounded failure
 diagnostics. The archive retains immutable design arrays and explicit
 request/report provenance; its exact-field parser rejects reordered, crossed,
-tampered, nonfinite, or scientifically fabricated data.
+tampered, nonfinite, or scientifically fabricated data. It enforces the shared
+100,000-sample and 1,000,000-observation-cell limits before allocating parsed
+matrices, and all archive construction paths reject incomplete evaluated-hit
+impact or shot outputs.
 
 The Rate Morris evaluator preserves canonical numerical-failure diagnostics.
 The public service keeps its report-dictionary return contract; an explicit
@@ -3053,6 +3056,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.39 | fix(rate-of-closure, #4142 R11): enforce Morris archive sample/output-cell limits before parser allocation and require scientifically complete impact/shot availability for every evaluated hit at the archive-construction invariant. |
 | 2026-08-12 | 1.16.37 | merge(rate-of-closure, #4142 R13.8): combine exact independently reviewed Python/PyQt Morris workspace commit `8968f6f3544203029fea8e07659ab494eb050c67` and React parity commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`; preserve one byte-identical fixture and exact limits, Unicode semantics, immutable evidence binding, atomic imports, archived-ID isolation, accessible pre-read browser defenses, fail-closed invalid draft execution, report caps, and formula-neutral aggregate CSV. Protected CI, dependency-ordered publication, raw-observation retention, UpstreamDrift consumption, and epic completion remain open. |
 | 2026-08-12 | 1.16.36 | fix(rate-of-closure, #4142 R13.8): align React workspace import with the canonical Python/PyQt edge profile: 2 MB bytes, depth/node and raw-text caps, C0/C1 rejection, decimal/exponent-only finite bounds within +/-1e9, trajectories 2..5000, signed-32-bit seed, exact synthesized invalid-row errors, and null error for valid disabled ground tee; recursively freeze imported setup/evidence; reject oversized browser files before FileReader and use a keyboard-focusable focus-visible import button. |
 | 2026-08-12 | 1.16.35 | feat(rate-of-closure, #4142 R13.8): add the dedicated lossless Morris workspace v1 contract and React import/export surface; preserve all canonical factor drafts including disabled invalid raw text, exact authority base and design controls, and only completed aggregate request/job evidence; enforce bounded duplicate-safe exact parsing and cross-layer identity checks before atomic install; label imports archived and unverified-live with inert IDs; export deterministic aggregate CSV with complete provenance and typed denominators; pin Python/React parity to one shared fixture. UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |

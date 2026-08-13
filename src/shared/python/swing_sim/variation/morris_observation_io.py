@@ -108,6 +108,7 @@ class MorrisObservationArchive:
             isinstance(self.observations, MorrisObservations),
             "observations must be MorrisObservations",
         )
+        _require_hit_availability(self.observations)
         failure_types = cast(np.ndarray, self.observations.failure_types)
         failure_messages = cast(np.ndarray, self.observations.failure_messages)
         failures = self.observations.outcomes == "numerical_failure"
@@ -147,7 +148,24 @@ class MorrisObservationArchive:
             len(key.encode("utf-8")) + len(value.encode("utf-8"))
             for key, value in self.provenance.items()
         )
-        return numeric + (text_bytes + 7) // 8
+        return int(numeric + (text_bytes + 7) // 8)
+
+
+def _require_hit_availability(observations: MorrisObservations) -> None:
+    """Require every declared downstream result for each evaluated hit."""
+    hits = observations.outcomes == "evaluated_hit"
+    downstream = np.asarray(
+        [
+            output.target_kind in ("impact", "shot-outcome")
+            for output in observations.outputs
+        ],
+        dtype=bool,
+    )
+    if np.any(hits) and np.any(downstream):
+        require(
+            np.all(np.isfinite(observations.values[hits][:, downstream])),
+            "raw hit observations require every impact and shot output",
+        )
 
 
 def _factor_document(factor: MorrisFactor) -> dict[str, Any]:
@@ -253,6 +271,7 @@ def morris_observations_to_json_dict(
         isinstance(observations, MorrisObservations),
         "observations must be MorrisObservations",
     )
+    _require_hit_availability(observations)
     stable_study_id = _stable_text(study_id, "study_id")
     stable_provenance = _provenance(provenance)
     design = observations.design
@@ -265,17 +284,6 @@ def morris_observations_to_json_dict(
     for ordinal in range(design.trajectories * points_per_trajectory):
         trajectory, point = divmod(ordinal, points_per_trajectory)
         status = str(observations.outcomes[trajectory, point])
-        if status == "evaluated_hit":
-            downstream = [
-                observations.values[trajectory, point, index]
-                for index, output in enumerate(observations.outputs)
-                if output.target_kind in ("impact", "shot-outcome")
-            ]
-            require(
-                all(np.isfinite(value) for value in downstream),
-                "raw hit observations require every impact and shot output",
-                ordinal,
-            )
         if status == "numerical_failure":
             require(
                 failure_types[trajectory, point] is not None
