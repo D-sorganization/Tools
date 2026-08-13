@@ -26,6 +26,8 @@ from shared.python.contracts import require
 from shared.python.swing_sim._numeric_contracts import finite_real, integer
 
 from .group_spec import PerturbationGroup
+from .identity_contracts import stable_id as require_stable_id
+from .identity_contracts import stable_id_array, strict_string
 from .registry import (
     CATEGORY_BALL_SETUP,
     CATEGORY_CLUB,
@@ -74,12 +76,10 @@ def _normalize_locus(
         )
         normalized_window = (start, end)
     points = tuple(point_ids)
-    valid = all(
-        isinstance(point, str) and bool(point) and point == point.strip()
-        for point in points
-    )
+    for point in points:
+        require_stable_id(point, "point_ids")
     require(
-        valid and len(set(points)) == len(points),
+        len(set(points)) == len(points),
         "point_ids must be unique, non-empty stable IDs",
         points,
     )
@@ -138,19 +138,13 @@ class NoiseSpec:
                 "truncation bounds must satisfy lower < upper",
                 (lower, upper),
             )
-        stable_id = self.variable_key if self.spec_id is None else self.spec_id
-        require(
-            isinstance(stable_id, str)
-            and bool(stable_id)
-            and stable_id == stable_id.strip(),
-            "spec_id must be a non-empty, trimmed stable ID",
-            stable_id,
-        )
+        resolved_spec_id = self.variable_key if self.spec_id is None else self.spec_id
+        resolved_spec_id = require_stable_id(resolved_spec_id, "spec_id")
         window, points = _normalize_locus(self.time_window_s, self.point_ids)
         object.__setattr__(self, "scale", scale)
         object.__setattr__(self, "lower", lower)
         object.__setattr__(self, "upper", upper)
-        object.__setattr__(self, "spec_id", stable_id)
+        object.__setattr__(self, "spec_id", resolved_spec_id)
         object.__setattr__(self, "time_window_s", window)
         object.__setattr__(self, "point_ids", points)
 
@@ -178,17 +172,23 @@ class NoiseSpec:
     def from_json_dict(cls, data: Mapping[str, Any]) -> NoiseSpec:
         """Inverse of :meth:`to_json_dict` (DbC-validated)."""
         return cls(
-            variable_key=str(data["variable_key"]),
-            distribution=str(data.get("distribution", "normal")),
+            variable_key=strict_string(data["variable_key"], "variable_key"),
+            distribution=strict_string(
+                data.get("distribution", "normal"), "distribution"
+            ),
             scale=cast(float, data.get("scale", 1.0)),
             lower=cast(float | None, data.get("lower")),
             upper=cast(float | None, data.get("upper")),
-            spec_id=None if data.get("spec_id") is None else str(data["spec_id"]),
+            spec_id=(
+                None
+                if data.get("spec_id") is None
+                else require_stable_id(data["spec_id"], "spec_id")
+            ),
             time_window_s=cast(
                 tuple[float, float] | None,
                 data.get("time_window_s"),
             ),
-            point_ids=tuple(str(value) for value in data.get("point_ids", [])),
+            point_ids=stable_id_array(data.get("point_ids", []), "point_ids"),
         )
 
 
@@ -342,14 +342,16 @@ class VariationPlan:
             version,
         )
         return cls(
-            mode=str(data["mode"]),
+            mode=strict_string(data["mode"], "mode"),
             base_variables=dict(data.get("base_variables", {})),
             noise=tuple(
                 NoiseSpec.from_json_dict(entry) for entry in data.get("noise", [])
             ),
             n_runs=cast(int, data.get("n_runs", 200)),
             seed=cast(int, data.get("seed", 0)),
-            flight_model=str(data.get("flight_model", "waterloo_penner")),
+            flight_model=strict_string(
+                data.get("flight_model", "waterloo_penner"), "flight_model"
+            ),
             groups=(
                 ()
                 if version == 1

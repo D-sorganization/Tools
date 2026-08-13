@@ -21,16 +21,27 @@ const ANGLE = `${CATEGORY_LAUNCH}.launch_angle_deg`;
 
 interface VariationWireFixture {
   schema_version: unknown;
+  mode: unknown;
   base_variables: Record<string, unknown>;
   noise: Array<{
+    variable_key: unknown;
+    distribution: unknown;
     scale: unknown;
     lower: unknown;
     upper: unknown;
+    spec_id: unknown;
     time_window_s: unknown[];
+    point_ids: unknown;
   }>;
   n_runs: unknown;
   seed: unknown;
-  groups: Array<{ matrix: unknown[][] }>;
+  flight_model: unknown;
+  groups: Array<{
+    group_id: unknown;
+    spec_ids: unknown;
+    matrix_kind: unknown;
+    matrix: unknown[][];
+  }>;
 }
 
 const groupedPlan = (
@@ -131,6 +142,30 @@ describe("variation plan schema v2", () => {
     ["string upper bound", (value: VariationWireFixture) => { value.noise[0].upper = "2"; }, /upper.*number/i],
     ["string group matrix value", (value: VariationWireFixture) => { value.groups[0].matrix[0][0] = "1"; }, /matrix.*number/i],
   ])("rejects coercive wire input: %s", (_name, mutate, message) => {
+    const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as VariationWireFixture;
+    mutate(payload);
+    expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);
+  });
+
+  it.each([
+    ["numeric spec ID", (value: VariationWireFixture) => { value.noise[0].spec_id = 7; }, /spec_id.*string/i],
+    ["empty spec ID", (value: VariationWireFixture) => { value.noise[0].spec_id = ""; }, /spec_id.*stable string/i],
+    ["control-bearing spec ID", (value: VariationWireFixture) => { value.noise[0].spec_id = "bad\u0000id"; }, /spec_id.*stable string/i],
+    ["scalar point IDs", (value: VariationWireFixture) => { value.noise[0].point_ids = "joint.shoulder"; }, /point_ids.*array/i],
+    ["numeric point ID", (value: VariationWireFixture) => { value.noise[0].point_ids = [7]; }, /point_ids.*string/i],
+    ["control-bearing point ID", (value: VariationWireFixture) => { value.noise[0].point_ids = ["joint.\u007fshoulder"]; }, /point_ids.*stable string/i],
+    ["duplicate point IDs", (value: VariationWireFixture) => { value.noise[0].point_ids = ["joint.shoulder", "joint.shoulder"]; }, /point_ids.*unique/i],
+    ["numeric variable key", (value: VariationWireFixture) => { value.noise[0].variable_key = 7; }, /variable_key.*string/i],
+    ["numeric distribution", (value: VariationWireFixture) => { value.noise[0].distribution = 7; }, /distribution.*string/i],
+    ["numeric mode", (value: VariationWireFixture) => { value.mode = 7; }, /mode.*string/i],
+    ["numeric flight model", (value: VariationWireFixture) => { value.flight_model = 7; }, /flight_model.*string/i],
+    ["numeric group ID", (value: VariationWireFixture) => { value.groups[0].group_id = 7; }, /group_id.*string/i],
+    ["control-bearing group ID", (value: VariationWireFixture) => { value.groups[0].group_id = "bad\u001fid"; }, /group_id.*stable string/i],
+    ["scalar group spec IDs", (value: VariationWireFixture) => { value.groups[0].spec_ids = "shoulder-window"; }, /spec_ids.*array/i],
+    ["numeric group spec ID", (value: VariationWireFixture) => { value.groups[0].spec_ids = [7, "wrist-window"]; }, /spec_ids.*string/i],
+    ["duplicate group spec IDs", (value: VariationWireFixture) => { value.groups[0].spec_ids = ["shoulder-window", "shoulder-window"]; }, /spec_ids.*unique/i],
+    ["numeric matrix kind", (value: VariationWireFixture) => { value.groups[0].matrix_kind = 7; }, /matrix_kind.*string/i],
+  ])("rejects coercive identity wire input: %s", (_name, mutate, message) => {
     const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as VariationWireFixture;
     mutate(payload);
     expect(() => planFromJson(JSON.stringify(payload))).toThrow(message as RegExp);

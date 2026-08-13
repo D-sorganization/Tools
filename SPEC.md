@@ -26,11 +26,34 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.60                                    |
-| **Spec Version**        | 1.16.60                                    |
+| **Current Version**     | 1.16.61                                    |
+| **Spec Version**        | 1.16.61                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
+
+Version 1.16.61 makes variation-plan identity wires noncoercive on both shared
+Python and React readers. Mode, variable, distribution, flight-model, and
+matrix-kind fields must be actual strings. Spec, group, point, and group-member
+IDs must additionally be nonempty, trimmed, C0/C1-control-free stable strings;
+ID collections must be actual arrays and reject duplicates. Scalar strings,
+numbers, controls, and duplicate stand-ins fail before model construction.
+
+The remaining oversized cumulative localized-authoring files are split along
+their existing responsibilities. PyQt worker lifecycle is separate from tab
+construction, registry mode policy is separate from variable definitions, and
+PyQt/React test suites are divided by construction, persistence, execution, and
+analysis concerns. Every cumulative changed Python, TypeScript, or TSX source or
+test file is now at or below the repository's 400-line policy, while both the
+official 500-line gate and an explicit 400-line audit pass.
+
+Evidence is 190 focused Python/PyQt/core tests, all 780 React tests, TypeScript
+type/lint/build, scoped Ruff/format, 15-file changed-source MyPy, documentation
+governance, and diff/size checks. React localized dynamics/results/export,
+Rust parity, complete raw persistence, cross-platform visual E2E, protected
+publication, and remaining epic #4142 work remain open.
 
 ### 2026-08-12 Localized torque authoring review hardening (#4142)
 
@@ -3454,6 +3477,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142): reject coercive and control-bearing plan identity wires symmetrically in Python/React; require actual unique stable-ID arrays; and split PyQt lifecycle, registry policy, and GUI/React tests so every cumulative changed Python/TS/TSX source or test satisfies the 400-line policy. |
 | 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142): extract focused PyQt locus/row editor helpers to satisfy the 500-line changed-module gate; retain exact imported start/end authority independently; and make React v2 variation-plan numeric decoding strict and noncoercive across discriminators, parameters, loci, execution controls, base values, and correlation entries. |
 | 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142): add exact PyQt/React localized shoulder/wrist torque locus authoring with half-open time controls, constrained topological joint IDs, atomic validation, lossless grouped-plan persistence, and a shared cross-surface fixture; keep React dynamics execution and remaining presentation/export work fail-closed and open. |
 | 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |

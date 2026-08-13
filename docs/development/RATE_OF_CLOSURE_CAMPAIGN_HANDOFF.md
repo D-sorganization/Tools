@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 localized torque identity and 400-line policy closure
+
+- Python and React readers require real string discriminators and nonempty,
+  trimmed, control-free stable IDs; point/member ID collections require actual
+  arrays and unique entries, with no coercive scalar iteration.
+- PyQt worker lifecycle, registry mode policy, PyQt GUI test concerns, and
+  React analysis tests are split into focused modules.
+- Every cumulative changed Python/TypeScript source or test file is <=400 lines;
+  the official 500-line and explicit 400-line checks both pass.
+- Evidence: 190 focused Python/PyQt/core tests; 780 full React tests; TS
+  type/lint/build; Ruff/format; 15-file MyPy; documentation-governance and
+  diff/size checks.
+- React localized execution/results/export, Rust parity, complete raw
+  persistence, visual E2E, protected publication, and epic completion remain
+  open.
+
 ## 2026-08-12 #4142 localized torque authoring review hardening
 
 - Focused PyQt editor helpers reduce the changed Variation tab/row modules to

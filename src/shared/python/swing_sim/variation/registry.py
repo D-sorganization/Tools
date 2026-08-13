@@ -17,6 +17,8 @@ from shared.python.contracts import require
 
 from ..ball_setup import DEFAULT_DRIVER_TEE_HEIGHT_M
 from .contextual_registry import LOCALIZED_TORQUE_VARIABLES
+from .registry_mode_policy import keys_for_mode as resolve_keys_for_mode
+from .registry_mode_policy import mode_categories, swing_derived_keys
 
 MODES: tuple[str, ...] = ("delivery", "swing", "launch")
 """Pipeline slices a plan can exercise (see :class:`VariationPlan`)."""
@@ -356,37 +358,24 @@ LOCALIZED_TORQUE_VARIABLE_JOINTS = MappingProxyType(
 )
 
 #: Registry categories whose variables are legal per pipeline mode.
-MODE_CATEGORIES: Mapping[str, tuple[str, ...]] = MappingProxyType(
-    {
-        "delivery": (CATEGORY_DELIVERY, CATEGORY_CLUB, CATEGORY_BALL_SETUP),
-        "swing": (
-            CATEGORY_SWING,
-            CATEGORY_DELIVERY,
-            CATEGORY_CLUB,
-            CATEGORY_BALL_SETUP,
-        ),
-        "launch": (CATEGORY_LAUNCH,),
-    }
+MODE_CATEGORIES: Mapping[str, tuple[str, ...]] = mode_categories(
+    CATEGORY_DELIVERY,
+    CATEGORY_SWING,
+    CATEGORY_CLUB,
+    CATEGORY_BALL_SETUP,
+    CATEGORY_LAUNCH,
 )
 
 #: Delivery variables that are derived from the swing in ``swing`` mode
 #: (same set as ``solver.goals.SWING_DERIVED_VARIABLES``, namespaced).
-SWING_DERIVED_KEYS: tuple[str, ...] = (
-    f"{CATEGORY_DELIVERY}.clubhead_speed_mps",
-    f"{CATEGORY_DELIVERY}.club_path_deg",
-    f"{CATEGORY_DELIVERY}.attack_angle_deg",
-)
+SWING_DERIVED_KEYS = swing_derived_keys(CATEGORY_DELIVERY)
 
 
 def keys_for_mode(mode: str) -> tuple[str, ...]:
     """Registry keys legal as base/noise variables for a pipeline mode."""
-    require(mode in MODES, "unknown mode", mode)
-    keys: list[str] = []
-    for category in MODE_CATEGORIES[mode]:
-        keys.extend(d.key for d in variables_in_category(category))
-    if mode == "swing":
-        keys = [k for k in keys if k not in SWING_DERIVED_KEYS]
-    return tuple(keys)
+    return resolve_keys_for_mode(
+        mode, MODE_CATEGORIES, variables_in_category, SWING_DERIVED_KEYS
+    )
 
 
 __all__ = [

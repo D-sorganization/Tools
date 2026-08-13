@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
+
+Python and React plan readers now reject coercive identity fields. Discriminator
+text must be a real string; spec/group/point/member IDs must also be nonempty,
+trimmed, C0/C1-control-free stable strings, and ID collections must be real
+arrays with unique entries. Numeric, scalar-string, control-bearing, and
+duplicate stand-ins fail before plan construction.
+
+PyQt worker lifecycle, registry mode policy, PyQt GUI test concerns, and React
+analysis tests now live in focused modules. Every cumulative changed Python/TS/
+TSX source or test is <=400 lines; official 500-line and explicit 400-line gates
+pass. Evidence: 190 focused Python/PyQt/core tests, 780 full React tests, TS
+type/lint/build, Ruff/format, 15-file MyPy, docs-governance, and diff/size checks.
+React localized execution/results/export, Rust parity, raw persistence, visual
+E2E, protected publication, and epic completion remain open.
+
 ## 2026-08-12 Localized torque authoring review hardening (#4142)
 
 Independent review corrections are complete. Focused PyQt editor helpers own

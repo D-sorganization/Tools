@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
+
+Variation-plan identities now have symmetric strict Python/React wire handling:
+real strings only, with spec/group/point/member IDs additionally nonempty,
+trimmed, control-free, array-typed, and unique where collected. No `String(...)`
+or scalar iteration can silently replace raw authority.
+
+The PyQt tab/run lifecycle, registry mode policy, GUI test areas, and React
+analysis tests are split by responsibility. All cumulative changed Python/TS/
+TSX source and test files are <=400 lines. Evidence: 190 focused Python/PyQt/
+core and 780 React passes plus TS type/lint/build, Ruff/format, 15-file MyPy,
+docs-governance, and diff/size gates. Browser localized execution/results/
+export, Rust parity, raw persistence, visual E2E, protected publication, and
+remaining #4142 work stay open.
+
 ## 2026-08-12 Localized torque authoring review hardening (#4142)
 
 Localized PyQt controls are split into small editor/locus helpers, leaving the

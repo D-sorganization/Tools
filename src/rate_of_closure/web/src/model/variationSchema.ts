@@ -13,6 +13,9 @@ import {
   wireInteger,
   wireNumberArray,
   wireRecord,
+  wireStableId,
+  wireStableIdArray,
+  wireString,
 } from "./wireValues";
 
 export const SCHEMA_VERSION = 2;
@@ -60,7 +63,12 @@ export const stableSpecId = (spec: NoiseSpecTs): string =>
   spec.specId ?? spec.variableKey;
 
 const isStableId = (value: string): boolean =>
-  value.length > 0 && value.trim() === value;
+  value.length > 0 &&
+  value.trim() === value &&
+  [...value].every((character) => {
+    const codePoint = character.codePointAt(0)!;
+    return codePoint >= 32 && !(codePoint >= 127 && codePoint <= 159);
+  });
 
 export const isGlobalSpec = (spec: NoiseSpecTs): boolean =>
   (spec.timeWindowS === undefined || spec.timeWindowS === null) &&
@@ -267,7 +275,7 @@ export function planFromJson(text: string): VariationPlanTs {
   const baseRaw = wireRecord(data.base_variables ?? {}, "base_variables");
   const ballRaw = data.ball_setup;
   const plan: VariationPlanTs = {
-    mode: String(data.mode) as VariationMode,
+    mode: wireString(data.mode, "mode") as VariationMode,
     baseVariables: Object.fromEntries(
       Object.entries(baseRaw).map(([key, value]) => [
         key,
@@ -275,8 +283,11 @@ export function planFromJson(text: string): VariationPlanTs {
       ]),
     ),
     noise: noiseRaw.map((spec, index) => ({
-      variableKey: String(spec.variable_key),
-      distribution: String(spec.distribution ?? "normal") as Distribution,
+      variableKey: wireString(spec.variable_key, `noise[${index}].variable_key`),
+      distribution: wireString(
+        spec.distribution ?? "normal",
+        `noise[${index}].distribution`,
+      ) as Distribution,
       scale: wireFiniteNumber(spec.scale ?? 1, `noise[${index}].scale`),
       lower: spec.lower === null || spec.lower === undefined
         ? null
@@ -285,23 +296,29 @@ export function planFromJson(text: string): VariationPlanTs {
         ? null
         : wireFiniteNumber(spec.upper, `noise[${index}].upper`),
       specId: spec.spec_id === null || spec.spec_id === undefined
-        ? String(spec.variable_key)
-        : String(spec.spec_id),
+        ? wireStableId(spec.variable_key, `noise[${index}].variable_key`)
+        : wireStableId(spec.spec_id, `noise[${index}].spec_id`),
       timeWindowS: spec.time_window_s === null || spec.time_window_s === undefined
         ? null
         : (wireNumberArray(
           spec.time_window_s,
           `noise[${index}].time_window_s`,
         ) as [number, number]),
-      pointIds: Array.from((spec.point_ids ?? []) as Iterable<unknown>, String),
+      pointIds: wireStableIdArray(spec.point_ids ?? [], `noise[${index}].point_ids`),
     })),
     nRuns: wireInteger(data.n_runs ?? 200, "n_runs"),
     seed: wireInteger(data.seed ?? 0, "seed"),
-    flightModel: String(data.flight_model ?? "waterloo_penner"),
+    flightModel: wireString(data.flight_model ?? "waterloo_penner", "flight_model"),
     groups: groupsRaw.map((group, groupIndex) => ({
-      groupId: String(group.group_id),
-      specIds: Array.from((group.spec_ids ?? []) as Iterable<unknown>, String),
-      matrixKind: String(group.matrix_kind ?? "correlation") as MatrixKindTs,
+      groupId: wireStableId(group.group_id, `groups[${groupIndex}].group_id`),
+      specIds: wireStableIdArray(
+        group.spec_ids ?? [],
+        `groups[${groupIndex}].spec_ids`,
+      ),
+      matrixKind: wireString(
+        group.matrix_kind ?? "correlation",
+        `groups[${groupIndex}].matrix_kind`,
+      ) as MatrixKindTs,
       matrix: wireArray(group.matrix, `groups[${groupIndex}].matrix`).map(
         (row, rowIndex) => wireNumberArray(
           row,
