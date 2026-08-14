@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-platform accessibility inventory correction (#4433)
+
+- SPEC 1.17.03 records Qt's observed 160–161 registered-control envelope for
+  the Variation tab. Every actual visible semantic control is still audited
+  for a nonempty, bounded accessible name, and both counts remain in evidence.
+- No candidate pixels, scientific execution, or retained-result authority
+  changed.
+
 ## 2026-08-14 Visual-baseline candidate authority (#4433)
 
 - Protected React and PyQt lanes now emit exactly nine initial-state reference

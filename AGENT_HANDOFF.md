@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-platform accessibility inventory correction (#4433)
+
+Version 1.17.03 replaces one false exact Variation-widget count with the
+observed 160–161 Qt platform envelope. The audit still visits every actual
+visible, enabled, focusable semantic control and requires a bounded accessible
+name; its artifact records both the registered and visible counts. Candidate
+generation, scientific behavior, and retained evidence are unchanged.
+
 ## 2026-08-14 Visual-baseline candidate authority (#4433)
 
 Version 1.17.02 adds protected candidate generation for one deterministic
@@ -29,7 +37,7 @@ requires every visible, enabled, focusable semantic control to expose a
 bounded accessible name; missing plot/list/slider/spin/combo names are fixed.
 The protected PyQt artifact retains exact tab/control counts and zero-finding
 arrays with the GitHub SHA and Qt/PyQt versions.
-The audit separately pins the exact registered semantic-control inventory and
+The audit separately pins the bounded registered semantic-control inventory and
 records the visible audited count. This avoids treating platform-dependent
 native visibility as missing application authority while every visible control
 still requires a bounded name.

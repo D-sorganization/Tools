@@ -26,11 +26,20 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.02                                    |
-| **Spec Version**        | 1.17.02                                    |
+| **Current Version**     | 1.17.03                                    |
+| **Spec Version**        | 1.17.03                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Cross-platform accessibility inventory correction (#4433)
+
+Version 1.17.03 records the observed 160–161 registered semantic-control
+envelope for the PyQt Variation tab instead of asserting one platform-specific
+count. Every actual visible, enabled, focusable semantic control is still
+audited for a nonempty name bounded to 512 characters, and the protected
+artifact records both registered and visible counts. Candidate pixels,
+scientific behavior, and retained evidence are unchanged.
 
 ### 2026-08-14 Visual-baseline candidate authority (#4433)
 
@@ -4412,6 +4421,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.03 | fix(rate-of-closure, #4433): replace the platform-specific PyQt Variation registered-control count with the observed 160–161 envelope while preserving per-control accessible-name enforcement and evidence. |
 | 2026-08-14 | 1.17.02 | test(rate-of-closure, #4433): generate exact hosted React/PyQt initial-state visual-baseline candidates with deterministic environments and SHA-256 manifests while retaining explicit pre-approval status. |
 | 2026-08-14 | 1.17.01 | feat(rate-of-closure, #4433): add exact all-tab automated accessibility evidence, strict React axe and PyQt semantic-control gates, corrected action contrast and control names, plus a controlled but not-yet-executed human AT qualification protocol. |
 | 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |

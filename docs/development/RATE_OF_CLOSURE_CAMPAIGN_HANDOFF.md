@@ -1,5 +1,14 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Cross-platform accessibility inventory correction
+
+- Qt exposes 160 or 161 registered semantic controls on the Variation tab
+  across the supported hosted/local environments. SPEC 1.17.03 records that
+  narrow envelope while retaining the stronger requirement that every actual
+  visible, enabled, focusable control has a bounded accessible name.
+- Candidate capture, scientific execution, and accepted-result authority are
+  unchanged.
+
 ## 2026-08-14 #4433 Visual-baseline candidate authority
 
 - The protected browser and PyQt jobs now retain 18 stable initial-state
