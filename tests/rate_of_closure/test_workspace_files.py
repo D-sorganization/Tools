@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from rate_of_closure.application import workspace_files
+from rate_of_closure.application import atomic_text_files, workspace_files
 from rate_of_closure.application.workspace_document import (
     VersionedPayload,
     WorkspaceDocument,
@@ -103,7 +103,9 @@ def test_atomic_text_export_preserves_existing_file_on_replace_failure(
     def fail_replace(_source: str | Path, _target: str | Path) -> None:
         raise OSError("replace failed")
 
-    monkeypatch.setattr(workspace_files.os, "replace", fail_replace)
+    # write_text_atomic delegates to the shared atomic-text boundary, so the
+    # replace failure has to be injected where the replacement happens.
+    monkeypatch.setattr(atomic_text_files.os, "replace", fail_replace)
 
     with pytest.raises(OSError, match="replace failed"):
         workspace_files.write_text_atomic('{"new":true}\n', target)

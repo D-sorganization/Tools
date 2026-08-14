@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
@@ -46,6 +47,8 @@ _PYQT_TO_CANONICAL = {
     "calculation_description": "calculation",
     "simulation": "simulation",
     "flight_explorer": "flight",
+    "regional_surfaces": "regional-surfaces",
+    "ground_playback": "ground-playback",
     "launch_monitor_analytics": "launch-monitor-analytics",
     "capability_optimization": "capability-optimization",
     "variation": "variation",
@@ -53,6 +56,19 @@ _PYQT_TO_CANONICAL = {
     "glossary": "glossary",
 }
 _CANONICAL_TO_PYQT = {value: key for key, value in _PYQT_TO_CANONICAL.items()}
+#: PyQt6-only tabs with no React counterpart. They keep their own navigation
+#: state (QSettings) but are excluded from the cross-client workspace document,
+#: whose module list must match the React client's view set exactly.
+_UNSHARED_PYQT_TAB_IDS = frozenset({"regional_ground_execution"})
+
+
+def _canonical_module_ids(tab_ids: Iterable[str]) -> tuple[str, ...]:
+    """Map PyQt6 tab ids onto cross-client ids, dropping unshared tabs."""
+    return tuple(
+        _PYQT_TO_CANONICAL[item]
+        for item in tab_ids
+        if item not in _UNSHARED_PYQT_TAB_IDS
+    )
 
 
 class MainWindowFileCommandsMixin:
@@ -276,12 +292,17 @@ class MainWindowFileCommandsMixin:
         return True
 
     def _capture_workspace_state(self) -> ExplorerWorkspaceState:
-        module_order = tuple(
-            _PYQT_TO_CANONICAL[item] for item in self.primary_tab_ids()
-        )
-        visible = tuple(
-            _PYQT_TO_CANONICAL[item] for item in self.visible_primary_tab_ids()
-        )
+        module_order = _canonical_module_ids(self.primary_tab_ids())
+        visible = _canonical_module_ids(self.visible_primary_tab_ids())
+        active_tab = self.current_primary_module_id()
+        if active_tab in _UNSHARED_PYQT_TAB_IDS:
+            # An unshared tab cannot be the document's active module; fall back
+            # to the first visible shared module so the document stays valid.
+            active_tab = next(
+                item
+                for item in self.visible_primary_tab_ids()
+                if item not in _UNSHARED_PYQT_TAB_IDS
+            )
         return ExplorerWorkspaceState(
             scenario=self._controls.scenario(),
             club=self._controls.club_spec(),
@@ -294,7 +315,7 @@ class MainWindowFileCommandsMixin:
             ),
             module_order=module_order,
             visible_module_ids=visible,
-            active_module_id=_PYQT_TO_CANONICAL[self.current_primary_module_id()],
+            active_module_id=_PYQT_TO_CANONICAL[active_tab],
             view_workspace=self._simulation_tab.compositor().workspace(),
         )
 
@@ -307,8 +328,23 @@ class MainWindowFileCommandsMixin:
             raise
 
     def _apply_workspace_state_unchecked(self, state: ExplorerWorkspaceState) -> None:
-        order = tuple(_CANONICAL_TO_PYQT[item] for item in state.module_order)
-        visible = tuple(_CANONICAL_TO_PYQT[item] for item in state.visible_module_ids)
+        shared_order = tuple(_CANONICAL_TO_PYQT[item] for item in state.module_order)
+        shared_visible = tuple(
+            _CANONICAL_TO_PYQT[item] for item in state.visible_module_ids
+        )
+        # The document carries only cross-client modules, while native
+        # navigation requires every tab. Keep unshared PyQt6-only tabs where
+        # they currently sit rather than letting an import drop them.
+        unshared_order = tuple(
+            item for item in self.primary_tab_ids() if item in _UNSHARED_PYQT_TAB_IDS
+        )
+        unshared_visible = tuple(
+            item
+            for item in self.visible_primary_tab_ids()
+            if item in _UNSHARED_PYQT_TAB_IDS
+        )
+        order = shared_order + unshared_order
+        visible = shared_visible + unshared_visible
         active = _CANONICAL_TO_PYQT[state.active_module_id]
         self._controls.apply_workspace_state(
             state.scenario, state.club, dict(state.units)

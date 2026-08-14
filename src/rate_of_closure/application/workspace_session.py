@@ -60,12 +60,21 @@ EXPLORER_SESSION_SCHEMA = "rate_of_closure.explorer_session"
 CLUB_CONFIGURATION_SCHEMA = "rate_of_closure.club_configuration"
 SESSION_SCHEMA_VERSION = 5
 CLUB_CONFIGURATION_SCHEMA_VERSION = 1
+#: Cross-client module identities, in the same order as the React client's
+#: ``PRIMARY_VIEWS``. Both clients must agree exactly: the React
+#: ``validatedModules`` guard requires every one of its view ids, and the
+#: PyQt6 client maps its own tab ids onto these before writing a document.
+#: PyQt6-only tabs (the injected regional-ground execution workspace) are
+#: deliberately absent — they have no React counterpart, so they take no part
+#: in the cross-client layout contract.
 CANONICAL_MODULE_IDS = (
     "explorer",
     "calculation",
     "simulation",
     "plots",
     "flight",
+    "regional-surfaces",
+    "ground-playback",
     "launch-monitor-analytics",
     "capability-optimization",
     "variation",

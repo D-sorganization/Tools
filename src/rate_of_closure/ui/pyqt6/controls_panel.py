@@ -25,15 +25,26 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
+    QLabel,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
 
-from rate_of_closure.club import ClubSpec, club_names, get_club
+from rate_of_closure.club import (
+    ClubAssemblyBinding,
+    ClubSpec,
+    club_names,
+    get_club,
+)
 from rate_of_closure.model import _BOUNDS, ImpactScenario
 from rate_of_closure.presets import PRESETS, preset_names
 from rate_of_closure.ui.pyqt6.responsive_layout import HeightForWidthGroupBox
+from rate_of_closure.ui.pyqt6.club_artifact_ui import (
+    export_clubhead_engineering_sidecar,
+    export_clubhead_stl,
+    import_club_assembly_binding,
+)
 from rate_of_closure.units import (
     FIELD_GUIDANCE,
     QUANTITY_UNITS,
@@ -86,6 +97,8 @@ class ControlsPanel(QWidget):
     #: Emitted with the new unit when the Distance display unit changes
     #: (#4125 H6) so distance surfaces across the app re-render.
     distanceUnitChanged = pyqtSignal(str)  # noqa: N815 - Qt signal convention
+    #: Publishes only an exact selected-spec binding, or None on invalidation.
+    assemblyBindingChanged = pyqtSignal(object)  # noqa: N815 - Qt convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -96,6 +109,7 @@ class ControlsPanel(QWidget):
             quantity: next(iter(table)) for quantity, table in QUANTITY_UNITS.items()
         }
         self._updating = False
+        self._assembly_binding: ClubAssemblyBinding | None = None
         layout = QVBoxLayout(self)
         layout.addWidget(self._build_preset_box())
         layout.addWidget(self._build_club_box())
@@ -179,6 +193,45 @@ class ControlsPanel(QWidget):
         )
         self._generate_button.clicked.connect(self._on_generate_head)
         form.addRow(self._generate_button)
+
+        self._export_head_button = QPushButton("Export Selected Head STL…")
+        self._export_head_button.setToolTip(
+            "Save the selected club's deterministic parametric head as a "
+            "binary STL. The model computes in SI metres; exported unitless "
+            "STL coordinates are millimetres in the canonical head frame "
+            "(x target, y up, z toe)."
+        )
+        self._export_head_button.clicked.connect(self._on_export_head)
+        form.addRow(self._export_head_button)
+        self._import_assembly_button = QPushButton("Import Assembly Binding…")
+        self._import_assembly_button.setToolTip(
+            "Load a strict versioned binding for this exact selected club. "
+            "Only qualified measured, manufacturer, CAD-integrated, or "
+            "qualified-analysis sources can make complete CG and inertia "
+            "properties available; mismatched identities fail closed."
+        )
+        self._import_assembly_button.clicked.connect(self._on_import_assembly)
+        form.addRow(self._import_assembly_button)
+        self._binding_status = QLabel(
+            "No assembly binding loaded — complete CG and tensors unavailable."
+        )
+        self._binding_status.setWordWrap(True)
+        form.addRow(self._binding_status)
+        self._export_engineering_button = QPushButton("Export Engineering JSON…")
+        self._export_engineering_button.setToolTip(
+            "Save a versioned sidecar with the exact STL digest, frames, "
+            "mass provenance, and explicit unavailable CG/tensor capabilities."
+        )
+        self._export_engineering_button.clicked.connect(self._on_export_engineering)
+        form.addRow(self._export_engineering_button)
+        self._export_status = QLabel("")
+        self._export_status.setWordWrap(True)
+        form.addRow(self._export_status)
+
+        self._loft_spin.valueChanged.connect(self._clear_assembly_binding)
+        self._curvature_check.toggled.connect(self._clear_assembly_binding)
+        self._bulge_spin.valueChanged.connect(self._clear_assembly_binding)
+        self._roll_spin.valueChanged.connect(self._clear_assembly_binding)
 
         self._on_club_changed(self._club_combo.currentText())
         return box
@@ -373,6 +426,45 @@ class ControlsPanel(QWidget):
         get_club(name)  # fail closed before touching the current selection
         self._club_combo.setCurrentText(name)
 
+    def _clear_assembly_binding(self, _value: object = None) -> None:
+        """Discard a binding when any identity-defining selected input changes."""
+        self.clear_assembly_binding(
+            "Assembly binding cleared — selected club specification changed."
+        )
+
+    def clear_assembly_binding(self, reason: str) -> None:
+        """Discard the owned binding and publish one authoritative invalidation."""
+        if self._assembly_binding is None:
+            return
+        self._assembly_binding = None
+        self.assemblyBindingChanged.emit(None)
+        self._binding_status.setText(reason)
+
+    def _on_import_assembly(self) -> None:
+        """Import a qualified binding for the exact current club selection."""
+        binding = import_club_assembly_binding(
+            self, self.club_spec(), self._binding_status
+        )
+        if binding is not None:
+            self._assembly_binding = binding
+            self.assemblyBindingChanged.emit(binding)
+        else:
+            self._assembly_binding = None
+            self.assemblyBindingChanged.emit(None)
+
+    def _on_export_head(self) -> None:
+        """Export the complete current club specification as binary STL."""
+        export_clubhead_stl(self, self.club_spec(), self._export_status)
+
+    def _on_export_engineering(self) -> None:
+        """Export the selected head's strict engineering JSON sidecar."""
+        export_clubhead_engineering_sidecar(
+            self,
+            self.club_spec(),
+            self._export_status,
+            self._assembly_binding,
+        )
+
     def _on_club_changed(self, name: str) -> None:
         """Adopt a library club: loft/curvature defaults, scenario plumbing.
 
@@ -381,6 +473,7 @@ class ControlsPanel(QWidget):
         the representative GC-to-face distance); the spins stay fully
         editable afterwards, preserving user overrides.
         """
+        self._clear_assembly_binding()
         spec = get_club(name)
         self._loft_spin.setValue(spec.loft_deg)
         self._curvature_check.setChecked(spec.has_curved_face)

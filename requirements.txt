@@ -36,6 +36,7 @@ flask-limiter>=3.5.0  # Rate limiting for Flask apps (used by calculator API tes
 pydantic>=2.0.0  # Data validation using Python type annotations
 pydantic-settings>=2.0.0  # Settings management for Pydantic v2
 jsonschema>=4.23.0  # Validate the published ground-model request/result schemas in CI
+filelock>=3.16.0  # rate_of_closure.web_authority.job_store — imported by collected tests
 
 # Security & Encryption
 cryptography>=49.0.0  # Cryptographic recipes and primitives
