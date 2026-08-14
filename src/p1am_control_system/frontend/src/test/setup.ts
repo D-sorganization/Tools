@@ -18,37 +18,67 @@ if (typeof window !== "undefined" && typeof window.PointerEvent === "undefined")
   window.PointerEvent = PointerEventPolyfill as unknown as typeof PointerEvent;
 }
 
-// Web Storage: Node >= 22 exposes its own experimental `localStorage` global.
-// Because that global already exists on `globalThis`, vitest's jsdom
-// environment does not install jsdom's Storage over it, and the object Node
-// hands back without `--localstorage-file` implements NO Storage methods — so
-// `localStorage.clear()` throws and every layout-persistence suite fails on a
-// developer machine running a modern Node. The HMI genuinely persists operator
-// layout/theme in Web Storage, so the tests must have a working Storage
-// regardless of host Node version: install a spec-shaped in-memory one.
-function installMemoryStorage(): void {
-  const store = new Map<string, string>();
-  const storage: Storage = {
-    get length() {
-      return store.size;
+// Node 22+ defines `localStorage`/`sessionStorage` on globalThis, and vitest's
+// jsdom environment only copies a jsdom global over an already-present Node
+// global when the key appears in its own curated key list — which these two do
+// not. So jsdom's working Storage is never installed and Node's wins. Node's
+// `sessionStorage` is in-memory and behaves; its `localStorage` is backed by
+// `--localstorage-file`, and with no valid path it degrades to a bare object
+// with no getItem/setItem/removeItem/clear — hence "localStorage.clear is not a
+// function". The HMI genuinely persists operator layout/theme in Web Storage,
+// so every suite needs a working Storage regardless of host Node version.
+//
+// Installed unconditionally rather than behind a conformance probe: this file
+// only ever runs under the test runner, a fresh in-memory Storage per test file
+// is the isolation we want anyway, and merely READING Node's lazy `localStorage`
+// to probe it fires a `--localstorage-file` warning in every worker.
+
+/**
+ * A spec-shaped in-memory Storage: keys and values are coerced to strings,
+ * `getItem` yields null for absent keys, and `key(n)` follows insertion order.
+ * The one departure from the real thing is named property access
+ * (`localStorage.foo = "bar"`), which needs a Proxy and which nothing in this
+ * app uses — every call site goes through the documented methods.
+ */
+function createStorage(): Storage {
+  const entries = new Map<string, string>();
+  return {
+    get length(): number {
+      return entries.size;
     },
-    clear: () => store.clear(),
-    getItem: (key: string) => (store.has(key) ? (store.get(key) as string) : null),
-    key: (index: number) => Array.from(store.keys())[index] ?? null,
-    removeItem: (key: string) => void store.delete(key),
-    setItem: (key: string, value: string) => void store.set(String(key), String(value)),
+    key(index: number): string | null {
+      const at = Math.trunc(index);
+      if (!Number.isFinite(at) || at < 0 || at >= entries.size) return null;
+      return [...entries.keys()][at];
+    },
+    getItem(key: string): string | null {
+      const value = entries.get(String(key));
+      return value === undefined ? null : value;
+    },
+    setItem(key: string, value: string): void {
+      entries.set(String(key), String(value));
+    },
+    removeItem(key: string): void {
+      entries.delete(String(key));
+    },
+    clear(): void {
+      entries.clear();
+    },
   };
-  for (const target of [globalThis, window] as unknown as Record<string, unknown>[]) {
-    Object.defineProperty(target, "localStorage", {
-      value: storage,
-      configurable: true,
-      writable: true,
-    });
-  }
 }
 
-if (typeof localStorage === "undefined" || typeof localStorage.clear !== "function") {
-  installMemoryStorage();
+// Install on BOTH `globalThis` and `window`: under jsdom a component reaching
+// for a bare `localStorage` resolves it on `window`, so defining only the
+// globalThis property leaves `window.localStorage` as Node's broken object.
+// One shared instance so both names see the same entries.
+const memoryStorage = createStorage();
+for (const target of [globalThis, window] as unknown as Record<string, unknown>[]) {
+  Object.defineProperty(target, "localStorage", {
+    value: memoryStorage,
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  });
 }
 
 // Unmount React trees after every test so the jsdom document stays clean.
