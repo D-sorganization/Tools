@@ -1,0 +1,65 @@
+{
+  "profile": {
+    "clubs": [
+      {
+        "club_id": "iron-7",
+        "confidence": 0.9,
+        "matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+        "matrix_kind": "correlation",
+        "parameters": [
+          {"baseline": 50, "bias": 0, "evidence_lower_bound": 45, "evidence_upper_bound": 58, "lower_bound": 40, "parameter_id": "ball_speed", "standard_deviation": 1, "unit": "m/s", "upper_bound": 60},
+          {"baseline": 12, "bias": 0, "evidence_lower_bound": 8, "evidence_upper_bound": 20, "lower_bound": 5, "parameter_id": "launch_angle", "standard_deviation": 1, "unit": "deg", "upper_bound": 25},
+          {"baseline": 0, "bias": 0, "evidence_lower_bound": -4, "evidence_upper_bound": 4, "lower_bound": -8, "parameter_id": "launch_direction", "standard_deviation": 1, "unit": "deg", "upper_bound": 8}
+        ],
+        "provenance": "session:a"
+      },
+      {
+        "club_id": "driver",
+        "confidence": 0.8,
+        "matrix": [[1, 0.3, 0], [0.3, 1, 0], [0, 0, 1]],
+        "matrix_kind": "correlation",
+        "parameters": [
+          {"baseline": 50, "bias": 0, "evidence_lower_bound": 45, "evidence_upper_bound": 58, "lower_bound": 40, "parameter_id": "ball_speed", "standard_deviation": 1, "unit": "m/s", "upper_bound": 60},
+          {"baseline": 12, "bias": 0, "evidence_lower_bound": 8, "evidence_upper_bound": 20, "lower_bound": 5, "parameter_id": "launch_angle", "standard_deviation": 1, "unit": "deg", "upper_bound": 25},
+          {"baseline": 0, "bias": 0, "evidence_lower_bound": -4, "evidence_upper_bound": 4, "lower_bound": -8, "parameter_id": "launch_direction", "standard_deviation": 1, "unit": "deg", "upper_bound": 8}
+        ],
+        "provenance": "session:b"
+      }
+    ],
+    "confidence": 0.85,
+    "profile_id": "player-1",
+    "provenance": "fit-v1",
+    "schema_version": "player-capability-profile/v1"
+  },
+  "request": {
+    "alternatives_count": 4,
+    "candidate_budget": 10,
+    "club_ids": ["iron-7", "driver"],
+    "cvar_alpha": 0.8,
+    "ensemble_size": 12,
+    "minimum_success_fraction": 0.75,
+    "objective": "maximize_target_hold",
+    "problem_id": "robust-shot",
+    "schema_version": "capability-optimization-request/v1",
+    "seed": 17,
+    "target": {"band_half_length_m": 15, "distance_m": 105, "half_width_m": 16, "kind": "green", "lateral_m": 0, "radius_m": 8}
+  },
+  "expected": {
+    "best_club_id": "iron-7",
+    "mean_carry_m": 104.76578665071469,
+    "target_hold_probability": 1
+  },
+  "objective_expectations": {
+    "minimize_variability": {
+      "best_club_id": "iron-7",
+      "dispersion_rms_m": 2.4280232713346392,
+      "score": 2.4280232713346392
+    },
+    "minimize_downside": {
+      "best_club_id": "iron-7",
+      "cvar_miss_m": 3.438275017892135,
+      "downside_carry_m": 2.654986005748597,
+      "score": 6.093261023640732
+    }
+  }
+}
