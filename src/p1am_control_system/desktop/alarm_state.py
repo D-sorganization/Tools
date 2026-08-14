@@ -28,6 +28,7 @@ severity matches the firmware's (issue #4019).
 from __future__ import annotations
 
 import logging
+import math
 import time
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -103,14 +104,35 @@ class AlarmTransition:
 
 
 def _require_number(value: Any, name: str) -> float:
-    """Return ``value`` as a float.
+    """Return ``value`` as a finite float.
+
+    Non-finite input is rejected, not passed through. ``classify_value`` decides
+    the alarm band with four comparisons, and *every* comparison against NaN is
+    False — so a NaN reading would be classified as "inside the normal band" and
+    ``AlarmState.evaluate`` would emit ``cleared`` transitions and drop the tag
+    from both the active and unacknowledged sets. A garbled or unscaled register
+    would therefore silence a live High-High on the heater. ``json.loads``
+    accepts bare ``NaN``, so this is reachable straight off the wire.
+
+    Raising instead means ``_evaluate_alarms`` logs the tag and skips it, and
+    because ``evaluate`` is per-tag and clears nothing before this guard runs,
+    any alarm already latched for that tag stays latched — the fail-safe
+    direction.
 
     Raises:
         TypeError: If ``value`` is not a real number (``bool`` is rejected).
+        ValueError: If ``value`` is NaN or infinite.
     """
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise TypeError(f"{name} must be a real number, got {type(value).__name__}")
-    return float(value)
+    numeric = float(value)
+    if not math.isfinite(numeric):
+        raise ValueError(
+            f"{name} must be finite, got {numeric!r}; a non-finite reading is a "
+            "sensor fault, not a measurement, and must not be compared against "
+            "trip limits"
+        )
+    return numeric
 
 
 def _limits(interlock: Any) -> tuple[float, float, float, float]:

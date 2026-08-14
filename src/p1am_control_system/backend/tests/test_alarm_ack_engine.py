@@ -15,7 +15,7 @@ from typing import Any
 
 import pytest
 import scada_fallback
-from alarm_processing import process_alarm_events
+from alarm_processing import process_alarm_events, state_name
 from defaults import default_routing_config
 from models import InterlockConfig, RoutingConfig
 from state import SystemState
@@ -238,3 +238,73 @@ def test_fallback_and_rust_alarm_engines_share_the_ack_signature() -> None:
 
     assert engine.acknowledge_alarm(_TAG, "operator-jane") is True
     assert engine.get_active_alarms()[0]["acknowledged_by"] == "operator-jane"
+
+
+# ---------------------------------------------------------------------------
+# A snapshot without a `value` must not be replayed as a fabricated reading
+# ---------------------------------------------------------------------------
+
+
+def test_valueless_snapshot_record_does_not_clear_an_active_alarm() -> None:
+    """apply_config must never invent a reading to feed the alarm engine.
+
+    ``_restore_engine_alarms`` used to call ``update_tag(tag, float(entry.get(
+    "value", 0.0)))``. ``get_active_alarms()`` is only contracted to agree
+    between the Rust ``tools_core.scada`` engine and the pure-Python fallback on
+    the keys the restore path reads — not on carrying ``value`` at all. Where it
+    is absent, that substituted 0.0 resolved the tag to Normal, and because
+    ``apply_config`` clears ``active_alarms`` first and runs on every routing
+    deploy AND every reconnect-time ``_publish_active_config``, a live HiHi was
+    erased from both the engine and the live map by a number nothing measured.
+    """
+    state = _tripped_state()
+
+    # An engine whose active-alarm records carry no `value` key.
+    original_get_active = state.alarm_engine.get_active_alarms
+
+    def _valueless_records() -> list[dict[str, object]]:
+        stripped = []
+        for record in original_get_active():
+            trimmed = dict(record)
+            trimmed.pop("value", None)
+            stripped.append(trimmed)
+        return stripped
+
+    state.alarm_engine.get_active_alarms = _valueless_records  # type: ignore[method-assign]
+
+    state.apply_config(default_routing_config())
+
+    assert _TAG in state.active_alarms, (
+        "a snapshot record without a measured value must retain its alarm, not "
+        "be resolved to Normal by a substituted 0.0"
+    )
+    assert state.active_alarms[_TAG]["state"] == "HiHi"
+
+
+def test_non_finite_snapshot_value_does_not_clear_an_active_alarm() -> None:
+    """NaN is not a measurement either — it compares False against every limit."""
+    state = _tripped_state()
+
+    original_get_active = state.alarm_engine.get_active_alarms
+
+    def _nan_records() -> list[dict[str, object]]:
+        return [{**dict(r), "value": float("nan")} for r in original_get_active()]
+
+    state.alarm_engine.get_active_alarms = _nan_records  # type: ignore[method-assign]
+
+    state.apply_config(default_routing_config())
+
+    assert _TAG in state.active_alarms
+    assert state.active_alarms[_TAG]["state"] == "HiHi"
+
+
+def test_a_genuine_value_is_still_replayed_through_the_engine() -> None:
+    """The guard must not block the normal path: a real value re-evaluates."""
+    state = _tripped_state()
+
+    state.apply_config(default_routing_config())
+
+    # 150.0 is still HiHi under the redeployed limits, decided by the engine.
+    assert state.active_alarms[_TAG]["state"] == "HiHi"
+    engine_state = state.alarm_engine.get_alarm_state(_TAG)["state"]
+    assert state_name(engine_state) == "HiHi"

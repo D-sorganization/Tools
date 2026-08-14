@@ -39,9 +39,9 @@ def _firmware_full_scale_c() -> float:
             "be verified. If the constant was renamed, update this test."
         )
     unique = {float(value) for value in matches}
-    assert (
-        len(unique) == 1
-    ), f"firmware declares conflicting thermocouple full scales: {sorted(unique)}"
+    assert len(unique) == 1, (
+        f"firmware declares conflicting thermocouple full scales: {sorted(unique)}"
+    )
     return unique.pop()
 
 

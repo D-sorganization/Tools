@@ -349,13 +349,25 @@ class HMIHeader(QWidget):
             if value is not None and not isinstance(value, bool):
                 raise TypeError(f"{name} must be a bool, got {type(value).__name__}")
 
+        was_unacked = self._unacked_hl_alarms or self._unacked_hhll_alarms
+
         self._has_hl_alarms = bool(has_hl)
         self._has_hhll_alarms = bool(has_hhll)
         self._unacked_hl_alarms = bool(has_hl if unacked_hl is None else unacked_hl)
         self._unacked_hhll_alarms = bool(
             has_hhll if unacked_hhll is None else unacked_hhll
         )
-        self._flash_state = True
+        now_unacked = self._unacked_hl_alarms or self._unacked_hhll_alarms
+
+        # Restart the flash on the visible ON phase only when an alarm becomes
+        # unacknowledged. This method is called from _refresh_annunciator on
+        # EVERY telemetry frame (~10 Hz), so forcing the phase here
+        # unconditionally overwrote _toggle_flash's OFF phase within ~100 ms and
+        # rendered an unacknowledged alarm effectively steady — destroying the
+        # flash-vs-steady distinction this whole annunciator change exists to
+        # create (issue #4012).
+        if now_unacked and not was_unacked:
+            self._flash_state = True
         self._refresh_alarm_button()
 
     def _active_alarm_colors(self) -> tuple[str, str] | None:

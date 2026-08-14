@@ -383,7 +383,12 @@ class HMIMainWindow(QMainWindow):
                 continue
             try:
                 transitions = self.alarm_state.evaluate(tag_id, val, interlock)
-            except TypeError as exc:
+            except (TypeError, ValueError) as exc:
+                # ValueError == non-finite reading (sensor fault). Skipping the
+                # tag is the fail-safe outcome: `evaluate` validates before it
+                # clears anything, so an alarm already latched for this tag stays
+                # latched instead of being resolved by a NaN that compares False
+                # against every limit.
                 logger.error("Skipping tag %s with unusable value: %s", tag_id, exc)
                 continue
             for transition in transitions:

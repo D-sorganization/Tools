@@ -118,6 +118,44 @@ ROUTE_TIERS: dict[tuple[str, str], str] = {
     ("POST", "/api/alicats/{device_id}/setpoint"): ADMIN,
     ("POST", "/api/alicats/{device_id}/gas"): ADMIN,
     ("POST", "/api/project/import"): ADMIN,
+    # --- Power supply and heater --------------------------------------------#
+    # main.py mounts create_power_supply_router / create_temperature_router
+    # UNCONDITIONALLY, so these rows are never stale and must never be dropped:
+    # they are the DC supply's and the heater's own command surface, the most
+    # safety-relevant endpoints in the app. Deleting them let
+    # test_every_route_is_classified pass while the "a new endpoint cannot ship
+    # ungated" guarantee (issue #4028) silently stopped covering them.
+    ("GET", "/api/power_supply/config"): READ,
+    ("GET", "/api/power_supply/status"): READ,
+    ("GET", "/api/temperature/config"): READ,
+    ("GET", "/api/temperature/status"): READ,
+    ("PUT", "/api/power_supply/config"): ADMIN,
+    ("POST", "/api/power_supply/setpoint"): ADMIN,
+    ("POST", "/api/power_supply/permissive"): ADMIN,
+    ("POST", "/api/power_supply/acknowledge_trip"): ADMIN,
+    ("PUT", "/api/temperature/config"): ADMIN,
+    ("POST", "/api/temperature/setpoint"): ADMIN,
+    ("POST", "/api/temperature/permissive"): ADMIN,
+    ("POST", "/api/temperature/tc_type"): ADMIN,
+    ("POST", "/api/temperature/burnout_mode"): ADMIN,
+    ("POST", "/api/temperature/acknowledge_trip"): ADMIN,
+}
+
+#: Data Explorer rows, kept separate because main.py mounts that router only
+#: when its numeric stack imports. They are added to ROUTE_TIERS only when the
+#: app actually serves them, so the table stays exhaustive where numpy is
+#: present and free of stale rows where it is not — the two directions
+#: test_every_route_is_classified and test_table_has_no_stale_rows check.
+_EXPLORER_TIERS: dict[tuple[str, str], str] = {
+    ("GET", "/api/explorer/signals"): READ,
+    ("POST", "/api/explorer/dataset"): READ,
+    ("POST", "/api/explorer/statistics"): READ,
+    ("POST", "/api/explorer/correlation"): READ,
+    ("POST", "/api/explorer/spectrum"): READ,
+    ("POST", "/api/explorer/trendline"): READ,
+    ("POST", "/api/explorer/pca"): READ,
+    ("POST", "/api/explorer/histogram"): READ,
+    ("POST", "/api/explorer/export"): READ,
 }
 
 #: Concrete values substituted for path parameters when driving a request.
@@ -149,6 +187,14 @@ def _app_routes() -> set[tuple[str, str]]:
                 continue
             found.add((method, path))
     return found
+
+
+# Register the Data Explorer tiers only when the app actually mounted that
+# router. Done once at import, against the real app, so the contract is derived
+# from what is served rather than from an assumption about the environment.
+ROUTE_TIERS.update(
+    {row: tier for row, tier in _EXPLORER_TIERS.items() if row in _app_routes()}
+)
 
 
 def _headers(key: str | None) -> dict[str, str]:
@@ -204,9 +250,9 @@ def test_suite_is_actually_authenticated() -> None:
     from auth_config import resolve_auth_config
 
     resolved = resolve_auth_config()
-    assert (
-        resolved.dev_no_auth is False
-    ), "P1AM_DEV_NO_AUTH is active — this suite would pass vacuously."
+    assert resolved.dev_no_auth is False, (
+        "P1AM_DEV_NO_AUTH is active — this suite would pass vacuously."
+    )
     assert resolved.operator_key_configured is True
     assert resolved.admin_key_configured is True
     assert resolved.read_auth_required is True

@@ -91,6 +91,8 @@ def test_modbus_timeout_is_sized_to_the_scan_period() -> None:
 
     explicit = P1AMSettings(P1AM_MODBUS_TIMEOUT_S="0.05")
     assert explicit.resolved_modbus_timeout_s == 0.05
+
+
 def test_alicat_connection_type_defaults_to_mock() -> None:
     settings = P1AMSettings()
 

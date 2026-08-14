@@ -270,8 +270,15 @@ class TestConnectLoopShutdownLatency:
     @pytest.mark.asyncio
     async def test_connect_loop_wakes_immediately_on_shutdown(self) -> None:
         """The retry sleep must be interruptible, not a fixed blocking sleep."""
-        backend_main.shutdown_event.clear()
+        # Substitute a fresh Event instead of clearing the module-level one.
+        # `backend_main.shutdown_event` is constructed at import; asyncio binds
+        # an Event to a loop on first await, and earlier tests in this module
+        # already awaited it on their own (now-closed) per-test loop. Reusing it
+        # here raises "bound to a different event loop" before the assertion
+        # under test is ever reached. `modbus_connect_background` resolves the
+        # module global at call time, so patching the attribute is sufficient.
         with (
+            patch.object(backend_main, "shutdown_event", asyncio.Event()),
             patch.object(backend_main, "_connect_once", AsyncMock(return_value=None)),
             patch.object(backend_main.settings, "connect_retry_interval_s", 30.0),
         ):

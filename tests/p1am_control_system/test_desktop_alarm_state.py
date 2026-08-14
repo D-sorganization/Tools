@@ -41,9 +41,7 @@ from p1am_control_system.desktop.event_logger import EventLogger
 class _Interlock:
     """Minimal stand-in for ``backend.models.InterlockConfig``."""
 
-    def __init__(
-        self, lolo: float, low: float, high: float, hihi: float
-    ) -> None:  # noqa: D107
+    def __init__(self, lolo: float, low: float, high: float, hihi: float) -> None:  # noqa: D107
         self.lolo_limit = lolo
         self.low_limit = low
         self.high_limit = high
@@ -361,3 +359,47 @@ def test_event_logger_purge_rejects_negative_retention(tmp_path: Path) -> None:
         event_logger.purge_older_than(-1)
     with pytest.raises(TypeError):
         event_logger.purge_older_than("90")
+
+
+# ---------------------------------------------------------------------------
+# A non-finite reading is a sensor fault, never "inside the normal band"
+# ---------------------------------------------------------------------------
+
+
+def test_classify_value_rejects_a_non_finite_reading() -> None:
+    """NaN/inf must raise, not classify as normal.
+
+    classify_value decides the band with four comparisons, and EVERY comparison
+    against NaN is False — so a NaN would fall through to ``return None``, which
+    means "inside the normal band". json.loads accepts a bare ``NaN``, so a
+    garbled or unscaled register reaches this function straight off the wire.
+    """
+    for bad in (float("nan"), float("inf"), float("-inf")):
+        with pytest.raises(ValueError):
+            classify_value(bad, NARROW)
+
+
+def test_nan_reading_does_not_clear_an_active_high_high_alarm() -> None:
+    """The core invariant: a fabricated reading must not silence the heater HH.
+
+    Before the guard, feeding NaN after a genuine HH emitted a ``cleared``
+    transition and dropped the tag from both the active and unacknowledged sets,
+    so the annunciator went quiet while the plant was still over temperature.
+    """
+    machine = AlarmStateMachine()
+    raised = machine.evaluate(0, 98.0, NARROW)
+    assert [t.kind for t in raised] == ["raised"]
+    assert machine.annunciator_state().has_hhll is True
+
+    with pytest.raises(ValueError):
+        machine.evaluate(0, float("nan"), NARROW)
+
+    # Skipping the tag is fail-safe: the latch survives untouched.
+    after = machine.annunciator_state()
+    assert after.has_hhll is True
+    assert after.unacked_hhll is True
+
+    # A genuine return to normal still clears it.
+    cleared = machine.evaluate(0, 50.0, NARROW)
+    assert [t.kind for t in cleared] == ["cleared"]
+    assert machine.annunciator_state().has_hhll is False

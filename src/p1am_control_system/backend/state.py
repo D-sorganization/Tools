@@ -1,4 +1,5 @@
 import logging
+import math
 from collections.abc import Callable
 from datetime import datetime, timezone
 from typing import Any
@@ -22,6 +23,20 @@ DEFAULT_ACK_USER = "operator"
 
 def default_tag_values() -> dict[str, float]:
     return {f"TAG_{i}": 0.0 for i in range(32)}
+
+
+def _finite_or_none(value: object) -> float | None:
+    """Return ``value`` as a finite float, or ``None`` if it is not a reading.
+
+    Absent, non-numeric and non-finite values all mean "no measurement". They
+    are deliberately NOT coerced to a number: a NaN compares False against every
+    threshold and a substituted 0.0 sits below every high limit, so either one
+    silently resolves an active alarm to Normal instead of raising it.
+    """
+    if value is None or isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    numeric = float(value)
+    return numeric if math.isfinite(numeric) else None
 
 
 class SystemState:
@@ -173,6 +188,19 @@ class SystemState:
         the resulting state, because the new config may carry different limits.
         Tags the new config no longer defines raise ``KeyError`` from
         ``update_tag`` and are dropped.
+
+        A snapshot record carrying no usable ``value`` is replayed *without*
+        touching the engine, and keeps the state it was snapshotted in. Feeding
+        the engine a substituted ``0.0`` would resolve almost any alarm to
+        Normal, and this method runs on every routing deploy AND every
+        reconnect-time ``_publish_active_config`` — after ``active_alarms`` has
+        already been cleared. A live HiHi would therefore be erased from both
+        the engine and the live map by a fabricated reading, which is the exact
+        failure the poll loop's "only a real measurement may move the alarm
+        state machine" rule exists to prevent. ``get_active_alarms()`` is only
+        contracted to agree between the Rust and Python engines on the keys this
+        method reads, not on carrying ``value`` at all, so the absence of a
+        value is an expected shape, not an error.
         """
         if not snapshot:
             return
@@ -186,8 +214,32 @@ class SystemState:
             tag_id = str(entry.get("tag_id", ""))
             if not tag_id:
                 continue
+
+            snapshot_state = state_name(entry.get("state", "Normal"))
+            replay_value = _finite_or_none(entry.get("value"))
             try:
-                update(tag_id, float(entry.get("value", 0.0)))
+                if replay_value is None:
+                    # No measurement to replay: retain what we snapshotted
+                    # rather than inventing a reading that clears the alarm.
+                    if snapshot_state == "Normal":
+                        continue
+                    logger.warning(
+                        "Alarm snapshot for %r carries no usable value; "
+                        "retaining state %s across the rebuild without "
+                        "re-evaluating the engine.",
+                        tag_id,
+                        snapshot_state,
+                    )
+                    self.active_alarms[tag_id] = build_alarm_entry(
+                        tag_id,
+                        snapshot_state,
+                        timestamp=str(entry.get("timestamp") or stamp),
+                        acknowledged=bool(entry.get("acknowledged", False)),
+                        acknowledged_by=entry.get("acknowledged_by"),
+                    )
+                    continue
+
+                update(tag_id, replay_value)
                 if entry.get("acknowledged"):
                     self._engine_acknowledge(
                         tag_id, str(entry.get("acknowledged_by") or DEFAULT_ACK_USER)

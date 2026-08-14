@@ -76,6 +76,56 @@ def test_unacknowledged_alarm_still_flashes(qapp) -> None:
 
 
 @pytest.mark.gui
+def test_repeated_state_pushes_do_not_pin_the_flash_on(qapp) -> None:
+    """A telemetry frame must not restart the flash phase.
+
+    ``_refresh_annunciator`` calls ``set_alarms_state`` on EVERY frame (~10 Hz).
+    If that resets ``_flash_state`` to True, the timer's OFF phase is overwritten
+    within ~100 ms and an unacknowledged alarm renders steady — silently erasing
+    the flash-vs-steady distinction that tells an operator whether anyone has
+    seen the alarm. Only a transition INTO unacknowledged may restart the phase.
+    """
+    header = HMIHeader()
+    unacked = {
+        "has_hl": False,
+        "has_hhll": True,
+        "unacked_hl": False,
+        "unacked_hhll": True,
+    }
+    header.set_alarms_state(**unacked)
+
+    # Drop to the OFF phase, then let the stream push the same state repeatedly.
+    header._toggle_flash()
+    off_phase = header.ack_btn.styleSheet()
+    for _ in range(10):
+        header.set_alarms_state(**unacked)
+    assert header.ack_btn.styleSheet() == off_phase, (
+        "an unchanged alarm state re-pushed at frame rate must not restart the "
+        "flash cycle — the alarm would render effectively steady"
+    )
+
+    # The timer must still be able to alternate.
+    header._toggle_flash()
+    assert header.ack_btn.styleSheet() != off_phase
+
+
+@pytest.mark.gui
+def test_a_newly_unacknowledged_alarm_starts_on_the_visible_phase(qapp) -> None:
+    """A fresh alarm must annunciate immediately, not wait for the timer."""
+    header = HMIHeader()
+    header.set_alarms_state(
+        has_hl=False, has_hhll=True, unacked_hl=False, unacked_hhll=False
+    )
+    header._toggle_flash()  # acked+active is steady; phase is irrelevant here
+
+    header.set_alarms_state(
+        has_hl=False, has_hhll=True, unacked_hl=False, unacked_hhll=True
+    )
+    assert header._flash_state is True
+    assert "background-color" in header.ack_btn.styleSheet()
+
+
+@pytest.mark.gui
 def test_no_active_alarm_clears_the_button(qapp) -> None:
     header = HMIHeader()
     header.set_alarms_state(
