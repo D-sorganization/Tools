@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Any
 
 try:
     from datetime import UTC
@@ -7,7 +8,8 @@ except ImportError:
 
 import hardware
 from pydantic import BaseModel, field_validator
-from sqlalchemy import Index
+from sqlalchemy import DateTime, Index
+from sqlalchemy.types import TypeDecorator
 from sqlmodel import Field, SQLModel
 
 from shared.python.compatibility import StrEnum
@@ -57,6 +59,65 @@ DATA_SOURCE_SEVERITY: dict[str, int] = {
 }
 
 
+def ensure_utc(value: datetime) -> datetime:
+    """Normalize a datetime to an aware UTC instant.
+
+    A tz-naive value is *assumed* to already be UTC (that is what the historian
+    writes); an aware value is converted. This is the single place the codebase
+    decides what "naive means UTC" means — every timestamp crossing an API
+    boundary goes through it so no ``isoformat()`` can emit an offset-less
+    string (issue #4025).
+
+    Args:
+        value: The datetime to normalize.
+
+    Returns:
+        The same instant as an aware UTC ``datetime``.
+
+    Raises:
+        TypeError: If ``value`` is not a ``datetime``.
+    """
+    if not isinstance(value, datetime):
+        raise TypeError(f"value must be a datetime, got {type(value).__name__}")
+    if value.tzinfo is None:
+        return value.replace(tzinfo=UTC)
+    return value.astimezone(UTC)
+
+
+class UtcDateTime(TypeDecorator[datetime]):
+    """A ``DATETIME`` column that always round-trips an aware **UTC** instant.
+
+    SQLite has no native timestamp type: SQLAlchemy's SQLite ``DATETIME`` bind
+    processor formats the datetime's *wall-clock* fields and silently discards
+    ``tzinfo``, and its result processor hands back a tz-**naive** value. So a
+    plain ``DateTime(timezone=True)`` column is a lie on this dialect — an aware
+    ``05:00-07:00`` was stored as ``05:00`` and read back as ``05:00Z``, an
+    8-hour error, and every ``.isoformat()`` on the API boundary emitted an
+    offset-less string that the browser then re-parsed as *local* time.
+
+    This decorator closes both ends:
+        - bind: normalize to UTC before the dialect drops the offset, so the
+          stored wall clock is always UTC (byte-compatible with existing rows,
+          which the ``utc_now`` default already wrote as UTC).
+        - result: re-attach ``UTC`` so callers always receive aware datetimes.
+
+    Precondition: bound values must be ``datetime`` (or ``None``).
+    """
+
+    impl = DateTime
+    cache_ok = True
+
+    def process_bind_param(self, value: datetime | None, dialect: Any) -> Any:
+        if value is None:
+            return None
+        return ensure_utc(value)
+
+    def process_result_value(self, value: datetime | None, dialect: Any) -> Any:
+        if value is None:
+            return None
+        return ensure_utc(value)
+
+
 def _validate_loop_tag(value: str) -> str:
     """Validate a PID loop tag name against the firmware tag contract.
 
@@ -90,6 +151,9 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     from a bench simulation. Rows are only ever written for values that were
     actually measured (or deliberately simulated): a comms outage leaves a gap
     rather than a fabricated continuation of the last reading (issue #4004).
+
+    ``timestamp`` uses :class:`UtcDateTime` so reads return aware-UTC datetimes
+    and range bounds are compared in UTC whatever offset the caller supplied.
     """
 
     __table_args__ = (Index("ix_taglog_tag_name_timestamp", "tag_name", "timestamp"),)
@@ -101,6 +165,7 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     timestamp: datetime = Field(
         default_factory=utc_now,
         index=True,
+        sa_type=UtcDateTime,
     )
 
 
@@ -143,7 +208,11 @@ class TagDefinitionDb(SQLModel, table=True):  # type: ignore[call-arg]
 
 
 class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
-    """SQLModel representing an event or alarm log in the database."""
+    """SQLModel representing an event or alarm log in the database.
+
+    ``timestamp`` uses :class:`UtcDateTime` (see :class:`TagLog`) so the
+    age-based event retention pass compares real UTC instants.
+    """
 
     id: int | None = Field(default=None, primary_key=True)
     event_type: str = Field(index=True)  # ALARM, SYSTEM, ACKNOWLEDGE
@@ -152,6 +221,7 @@ class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
     timestamp: datetime = Field(
         default_factory=utc_now,
         index=True,
+        sa_type=UtcDateTime,
     )
 
 

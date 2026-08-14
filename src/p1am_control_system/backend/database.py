@@ -12,6 +12,9 @@ logger = logging.getLogger("dcs_backend.database")
 DB_FILE = "dcs_scada.db"
 DATABASE_URL = f"sqlite:///{DB_FILE}"
 
+# ``PRAGMA auto_vacuum`` result codes: 0 = NONE, 1 = FULL, 2 = INCREMENTAL.
+_AUTO_VACUUM_INCREMENTAL = 2
+
 
 def _synchronous_mode(settings: P1AMSettings | None = None) -> str:
     """Resolve PRAGMA synchronous from P1AM_SQLITE_SYNCHRONOUS (default NORMAL)."""
@@ -39,6 +42,12 @@ def _configure_sqlite_connection(dbapi_connection: Any, _record: Any) -> None:
     """
     cursor = dbapi_connection.cursor()
     try:
+        # auto_vacuum must be chosen before the file's first write, so it is set
+        # here (a no-op on an already-initialised file). INCREMENTAL lets the
+        # retention sweep return free pages in *bounded* chunks via
+        # ``PRAGMA incremental_vacuum(N)`` instead of a full VACUUM, which
+        # rewrites the whole file under an exclusive lock (issue #4006).
+        cursor.execute("PRAGMA auto_vacuum=INCREMENTAL")
         cursor.execute("PRAGMA journal_mode=WAL")
         cursor.execute(f"PRAGMA synchronous={_synchronous_mode()}")
         cursor.execute("PRAGMA busy_timeout=5000")
@@ -82,6 +91,7 @@ def init_db() -> None:
         SQLModel.metadata.create_all(engine)
         _migrate_taglog_quality_column()
         _migrate_historian_indexes()
+        _enable_incremental_autovacuum()
         _optimize_planner_statistics()
         logger.info("Database tables initialized successfully.")
     except Exception as e:
@@ -139,6 +149,37 @@ def _migrate_historian_indexes() -> None:
             conn.exec_driver_sql("PRAGMA wal_checkpoint(TRUNCATE)")
         except Exception as exc:  # pragma: no cover - best-effort reclaim
             logger.warning("WAL truncate checkpoint skipped: %s", exc)
+
+
+def _enable_incremental_autovacuum() -> None:
+    """Convert a legacy ``auto_vacuum=NONE`` historian to INCREMENTAL, once.
+
+    ``PRAGMA auto_vacuum`` can only be changed on an existing file by rewriting
+    it, so a DB created before this setting existed stays in NONE mode and
+    ``PRAGMA incremental_vacuum(N)`` is silently a no-op there. The retention
+    sweep relies on those bounded chunks instead of a full VACUUM (issue
+    #4006), so the one-off conversion is done **here at startup** — before the
+    poll loop and the HTTP surface are live — rather than mid-run where a
+    whole-file rewrite would hold an exclusive lock for tens of seconds.
+
+    Idempotent: returns immediately when the file is already INCREMENTAL.
+    Best-effort: a failure only warns, it never blocks boot of the controller.
+    """
+    try:
+        # AUTOCOMMIT from the first statement: VACUUM cannot run inside a
+        # transaction, and switching isolation on an already-begun connection
+        # is an error.
+        connection = engine.connect().execution_options(isolation_level="AUTOCOMMIT")
+        with connection as conn:
+            mode = int(conn.exec_driver_sql("PRAGMA auto_vacuum").scalar() or 0)
+            if mode == _AUTO_VACUUM_INCREMENTAL:
+                return
+            conn.exec_driver_sql("PRAGMA auto_vacuum=INCREMENTAL")
+            # The pragma only takes effect once the file is rewritten.
+            conn.exec_driver_sql("VACUUM")
+        logger.info("Historian converted to auto_vacuum=INCREMENTAL.")
+    except Exception as exc:  # pragma: no cover - best-effort maintenance
+        logger.warning("auto_vacuum=INCREMENTAL conversion skipped: %s", exc)
 
 
 def _optimize_planner_statistics() -> None:
