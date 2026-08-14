@@ -313,6 +313,7 @@ class VariationTabRunMixin:
         self.studyCompleted.emit(dataset)  # type: ignore[attr-defined]
 
     def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
+        """Stash the trace result; views are published only once accepted."""
         self._pending_ensemble_result = result
 
     def _on_cancelled(self) -> None:

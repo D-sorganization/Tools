@@ -1,0 +1,74 @@
+{
+  "schema_id": "rate-of-closure/localized-attribution-authority",
+  "schema_version": 1,
+  "authority_id": "fixture.localized-attribution.v1",
+  "interpretation": "paired-planted-intervention-noncausal",
+  "sources": [
+    {
+      "spec_id": "fixture.shoulder",
+      "variable_key": "swing_sim.swing.shoulder_commanded_torque_offset_nm",
+      "joint_id": "joint.shoulder",
+      "time_window_s": [0.001, 0.003],
+      "unit": "N·m"
+    },
+    {
+      "spec_id": "fixture.wrist",
+      "variable_key": "swing_sim.swing.wrist_commanded_torque_offset_nm",
+      "joint_id": "joint.wrist",
+      "time_window_s": [0.002, 0.004],
+      "unit": "N·m"
+    }
+  ],
+  "targets": [
+    {
+      "target_id": "state.clubhead.x.0_002",
+      "kind": "state",
+      "name": "position_x_m",
+      "unit": "m",
+      "convention": "app-frame-cartesian-v1",
+      "time_s": 0.002,
+      "point_id": "swing.clubhead.reference",
+      "coordinate_frame": "app_frame:x_target,y_up,z_right"
+    },
+    {
+      "target_id": "impact.clubhead_speed",
+      "kind": "impact",
+      "name": "clubhead_speed_mps",
+      "unit": "m/s",
+      "convention": "rate-of-closure-impact-v1",
+      "time_s": null,
+      "point_id": null,
+      "coordinate_frame": null
+    },
+    {
+      "target_id": "shot.carry",
+      "kind": "shot",
+      "name": "carry_m",
+      "unit": "m",
+      "convention": "rate-of-closure-flight-v1",
+      "time_s": null,
+      "point_id": null,
+      "coordinate_frame": null
+    }
+  ],
+  "pairs": [
+    {"source_spec_id":"fixture.shoulder","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":3.0},
+    {"source_spec_id":"fixture.shoulder","baseline_trial_index":0,"perturbed_trial_index":2,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_no_impact","baseline_source_value":0.0,"perturbed_source_value":-2.0},
+    {"source_spec_id":"fixture.shoulder","baseline_trial_index":0,"perturbed_trial_index":3,"baseline_status":"evaluated_hit","perturbed_status":"numerical_failure","baseline_source_value":0.0,"perturbed_source_value":4.0},
+    {"source_spec_id":"fixture.wrist","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":-2.0}
+  ],
+  "observations": [
+    {"source_spec_id":"fixture.shoulder","target_id":"state.clubhead.x.0_002","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":3.0,"baseline_target_value":1.0,"perturbed_target_value":1.2,"response":0.2,"availability":"available"},
+    {"source_spec_id":"fixture.shoulder","target_id":"state.clubhead.x.0_002","baseline_trial_index":0,"perturbed_trial_index":2,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_no_impact","baseline_source_value":0.0,"perturbed_source_value":-2.0,"baseline_target_value":1.0,"perturbed_target_value":1.1,"response":0.1,"availability":"available"},
+    {"source_spec_id":"fixture.shoulder","target_id":"state.clubhead.x.0_002","baseline_trial_index":0,"perturbed_trial_index":3,"baseline_status":"evaluated_hit","perturbed_status":"numerical_failure","baseline_source_value":0.0,"perturbed_source_value":4.0,"baseline_target_value":1.0,"perturbed_target_value":null,"response":null,"availability":"numerical_failure"},
+    {"source_spec_id":"fixture.shoulder","target_id":"impact.clubhead_speed","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":3.0,"baseline_target_value":50.0,"perturbed_target_value":51.5,"response":1.5,"availability":"available"},
+    {"source_spec_id":"fixture.shoulder","target_id":"impact.clubhead_speed","baseline_trial_index":0,"perturbed_trial_index":2,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_no_impact","baseline_source_value":0.0,"perturbed_source_value":-2.0,"baseline_target_value":50.0,"perturbed_target_value":null,"response":null,"availability":"no_impact_unavailable"},
+    {"source_spec_id":"fixture.shoulder","target_id":"impact.clubhead_speed","baseline_trial_index":0,"perturbed_trial_index":3,"baseline_status":"evaluated_hit","perturbed_status":"numerical_failure","baseline_source_value":0.0,"perturbed_source_value":4.0,"baseline_target_value":50.0,"perturbed_target_value":null,"response":null,"availability":"numerical_failure"},
+    {"source_spec_id":"fixture.shoulder","target_id":"shot.carry","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":3.0,"baseline_target_value":210.0,"perturbed_target_value":214.0,"response":4.0,"availability":"available"},
+    {"source_spec_id":"fixture.shoulder","target_id":"shot.carry","baseline_trial_index":0,"perturbed_trial_index":2,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_no_impact","baseline_source_value":0.0,"perturbed_source_value":-2.0,"baseline_target_value":210.0,"perturbed_target_value":null,"response":null,"availability":"no_impact_unavailable"},
+    {"source_spec_id":"fixture.shoulder","target_id":"shot.carry","baseline_trial_index":0,"perturbed_trial_index":3,"baseline_status":"evaluated_hit","perturbed_status":"numerical_failure","baseline_source_value":0.0,"perturbed_source_value":4.0,"baseline_target_value":210.0,"perturbed_target_value":null,"response":null,"availability":"numerical_failure"},
+    {"source_spec_id":"fixture.wrist","target_id":"state.clubhead.x.0_002","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":-2.0,"baseline_target_value":1.0,"perturbed_target_value":0.95,"response":-0.05,"availability":"available"},
+    {"source_spec_id":"fixture.wrist","target_id":"impact.clubhead_speed","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":-2.0,"baseline_target_value":50.0,"perturbed_target_value":49.5,"response":-0.5,"availability":"available"},
+    {"source_spec_id":"fixture.wrist","target_id":"shot.carry","baseline_trial_index":0,"perturbed_trial_index":1,"baseline_status":"evaluated_hit","perturbed_status":"evaluated_hit","baseline_source_value":0.0,"perturbed_source_value":-2.0,"baseline_target_value":210.0,"perturbed_target_value":208.0,"response":-2.0,"availability":"available"}
+  ]
+}

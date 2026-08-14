@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
@@ -33,6 +33,9 @@ import { spatialTargetSummary } from "./spatialTargetPresentation";
 import type { VariationExecutionService } from "../model/variationExecutionService";
 import { useVariationExecution } from "./useVariationExecution";
 import { scheduleMeaningfulVisualReveal } from "../model/variationVisualProminence";
+import { LocalizedPairedStudyPanel } from "./LocalizedPairedStudyPanel";
+import type { LocalizedPairedExecutionServiceTs } from "../model/localizedAttributionExecutionService";
+import type { AttributionAuthorityTs } from "../model/localizedAttribution";
 
 let generatedPlanId = 0;
 const createPlanId = (): string => {
@@ -53,6 +56,8 @@ export interface VariationPanelProps {
   morrisUnavailableReason?: string;
   /** Injectable bounded execution authority for tests and embedded hosts. */
   executionService?: VariationExecutionService;
+  /** Independent explicit paired-study authority; never reused by Monte Carlo. */
+  localizedPairedService?: LocalizedPairedExecutionServiceTs;
 }
 
 export function VariationPanel({
@@ -63,6 +68,7 @@ export function VariationPanel({
   morrisBase,
   morrisUnavailableReason,
   executionService,
+  localizedPairedService,
 }: VariationPanelProps = {}): JSX.Element {
   const [workflow, setWorkflow] = useState<"variation" | "morris">("variation");
   const targetUse = spatialTarget
@@ -85,6 +91,12 @@ export function VariationPanel({
   const actionsRef = useRef<HTMLSpanElement>(null);
   const prominenceRef = useRef<HTMLElement>(null);
   const runButtonRef = useRef<HTMLButtonElement>(null);
+  const [localizedAuthority, setLocalizedAuthority] =
+    useState<AttributionAuthorityTs | null>(null);
+  const acceptLocalizedAuthority = useCallback(
+    (authority: AttributionAuthorityTs | null) => setLocalizedAuthority(authority),
+    [],
+  );
   const execution = useVariationExecution(
     plan,
     analysisExecution,
@@ -230,6 +242,8 @@ export function VariationPanel({
           runButtonRef={runButtonRef}
           actionsRef={actionsRef}
         />
+        <LocalizedPairedStudyPanel plan={plan} service={localizedPairedService}
+          onAuthorityChange={acceptLocalizedAuthority} />
         <VariationPlanLibraryPanel
           plans={library}
           selectedId={selectedId}
@@ -251,6 +265,7 @@ export function VariationPanel({
         visualState={visualState}
         visualAnnouncement={status}
         prominenceRef={prominenceRef}
+        localizedAttributionAuthority={localizedAuthority}
         onReturnToControls={(focusRun) => {
           actionsRef.current?.scrollIntoView({
             behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches

@@ -7,6 +7,9 @@ from dataclasses import dataclass
 import numpy as np
 from PyQt6.QtWidgets import QSizePolicy, QTabWidget
 
+from rate_of_closure.ui.pyqt6.localized_attribution_view import (
+    LocalizedAttributionView,
+)
 from rate_of_closure.ui.pyqt6.variation_distribution_matrix import (
     DistributionMatrixView,
 )
@@ -65,6 +68,7 @@ class VariationTabResultsMixin:
             self._ensemble_scatter,
             self._distribution_matrix,
             self._arc_overlay,
+            self._localized_attribution,
         ) = build_result_tabs()
         self._visual_frame = VisualStateFrame(tabs)
         self._visual_frame.setSizePolicy(
@@ -89,6 +93,7 @@ class VariationTabResultsMixin:
             self._ensemble_scatter.set_plot_dataset(plot_dataset)
             self._distribution_matrix.set_plot_dataset(plot_dataset)
             self._arc_overlay.set_plot_dataset(plot_dataset)
+            self._explain_missing_attribution(ensemble)
         else:
             self._ensemble_scatter.set_variation_dataset(dataset)
             self._distribution_matrix.set_variation_dataset(dataset)
@@ -118,6 +123,30 @@ class VariationTabResultsMixin:
         except Exception:
             pass
 
+    def _explain_missing_attribution(
+        self, ensemble: SimulationEnsembleResult
+    ) -> None:
+        """State why a Monte Carlo result cannot supply paired attribution.
+
+        A completed ensemble retains perturbed traces and scalar outcomes but no
+        isolated baseline/perturbed pairs, so it is never promoted to attribution
+        authority. An explicit paired authority published elsewhere is never
+        overwritten by this explanation.
+        """
+        if self._localized_attribution.authority() is not None:
+            return
+        has_localized = any(
+            not spec.is_global for spec in ensemble.variation.plan.noise
+        )
+        reason = (
+            "Attribution unavailable: this localized Monte Carlo result retains "
+            "perturbed traces and scalar outcomes, but not isolated baseline/"
+            "perturbed pairs. Scatter is not substituted for intervention authority."
+            if has_localized
+            else "No localized torque sources exist in this completed study."
+        )
+        self._localized_attribution.set_authority(None, reason)
+
     def _clear_result_widgets(self) -> None:
         self._summary_table.setRowCount(0)
         for table in (self._sensitivity_table, self._spearman_table):
@@ -127,6 +156,8 @@ class VariationTabResultsMixin:
         self._ensemble_scatter.clear_view()
         self._distribution_matrix.clear_view()
         self._arc_overlay.clear_view()
+        # Explicit paired authority has its own lifecycle and is never produced
+        # or discarded as a hidden side effect of a Monte Carlo result reset.
 
 
 def build_result_tabs() -> tuple[
@@ -138,6 +169,7 @@ def build_result_tabs() -> tuple[
     DatasetScatterView,
     DistributionMatrixView,
     ArcOverlayView,
+    LocalizedAttributionView,
 ]:
     """Build every result view and return stable widget references."""
     tabs = QTabWidget()
@@ -156,6 +188,7 @@ def build_result_tabs() -> tuple[
     scatter = DatasetScatterView()
     matrix = DistributionMatrixView()
     arcs = ArcOverlayView()
+    attribution = LocalizedAttributionView()
     scatter.selectionChanged.connect(arcs.set_selected_trial)
     scatter.selectionChanged.connect(matrix.set_selected_trial)
     arcs.selectionChanged.connect(scatter.set_selected_trial)
@@ -170,10 +203,21 @@ def build_result_tabs() -> tuple[
         (scatter, "Impact / Shot Scatter"),
         (matrix, "Scatter Matrix / Marginals"),
         (arcs, "All Swing Arcs"),
+        (attribution, "Localized Attribution"),
     ):
         tabs.addTab(widget, label)
     tabs.setCurrentWidget(landing)
-    return tabs, summary, sensitivity, spearman, landing, scatter, matrix, arcs
+    return (
+        tabs,
+        summary,
+        sensitivity,
+        spearman,
+        landing,
+        scatter,
+        matrix,
+        arcs,
+        attribution,
+    )
 
 
 def prepare_result_views(

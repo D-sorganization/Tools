@@ -229,3 +229,54 @@ test("localized production Worker cancels, reruns, and exports command provenanc
     .toBe(true);
   expect(pageErrors).toEqual([]);
 });
+
+test("separate paired Worker runs, exports authority, and reruns", async ({ page }) => {
+  const pageErrors = capturePageErrors(page);
+  const workers = captureWorkers(page);
+  await openVariation(page);
+  await configureLocalizedSwing(page, "4");
+
+  const configure = page.getByRole("button", {
+    name: "Configure & Run Separate Paired Study…",
+  });
+  await configure.click();
+  await page.getByRole("spinbutton", { name: `Planted delta ${SHOULDER_TORQUE}` })
+    .fill("2");
+  await page.getByRole("spinbutton", { name: `Planted delta ${WRIST_TORQUE}` })
+    .fill("-1.5");
+  await page.getByRole("button", { name: "Confirm & Run 4 Explicit Trials" }).click();
+  await expect.poll(() => workers.length).toBe(1);
+  expect(workers[0].url()).toMatch(/localizedAttributionExecution\.worker-[\w-]+\.js$/);
+  await expect(page.getByRole("log", { name: "Paired study status" }))
+    .toContainText(/paired study complete: 2 sources, 4 explicit trials/i);
+  await expect(page.getByRole("region", { name: "Localized torque attribution" }))
+    .toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export Raw Observations CSV" }).click();
+  const downloadPath = await (await downloadPromise).path();
+  if (downloadPath === null) throw new Error("paired CSV download has no path");
+  const firstCsv = await readFile(downloadPath, "utf8");
+  expect(firstCsv).toContain("paired-planted-intervention-noncausal");
+  expect(firstCsv).toContain("joint.shoulder");
+
+  await configure.click();
+  await page.getByRole("spinbutton", { name: `Planted delta ${SHOULDER_TORQUE}` })
+    .fill("2");
+  await page.getByRole("spinbutton", { name: `Planted delta ${WRIST_TORQUE}` })
+    .fill("-1.5");
+  const secondWorkerPromise = page.waitForEvent("worker");
+  await page.getByRole("button", { name: "Confirm & Run 4 Explicit Trials" }).click();
+  await secondWorkerPromise;
+  await expect.poll(() => workers.length).toBe(2);
+  await expect(page.getByRole("log", { name: "Paired study status" }))
+    .toContainText(/paired study complete/i);
+  const secondDownload = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export Raw Observations CSV" }).click();
+  const secondPath = await (await secondDownload).path();
+  if (secondPath === null) throw new Error("paired rerun CSV download has no path");
+  expect(await readFile(secondPath, "utf8")).toBe(firstCsv);
+  expect(workers.every((worker) =>
+    /localizedAttributionExecution\.worker-[\w-]+\.js$/.test(worker.url()))).toBe(true);
+  expect(pageErrors).toEqual([]);
+});

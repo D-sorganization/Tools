@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+from .ensemble_archive import DurableEnsembleArchiveSink, DurableEnsembleChunkSource
+from .ensemble_archive_contracts import CommittedEnsembleArchive, EnsembleResumeCursor
 from .ensemble_chunks import (
     CollectingEnsembleSink,
     EnsembleChunkSink,
     EnsembleStreamHeader,
     SimulationResultChunk,
+)
+from .ensemble_trace_authority import (
+    ChunkTraceAuthority,
+    EnsembleAuthorityLayout,
+    TrialContactEvent,
 )
 from .morris_rate_adapter import (
     RATE_MORRIS_OUTPUTS,
@@ -14,7 +21,10 @@ from .morris_rate_adapter import (
     RateMorrisEvaluator,
     evaluate_rate_morris_design,
 )
-from .request_builder import apply_global_simulation_values
+from .request_builder import (
+    apply_global_simulation_values,
+    build_simulation_ensemble_request_from_samples,
+)
 from .simulation_adapter import (
     APP_FRAME_ID,
     CONTACT_OUTPUT_NAMES,
@@ -45,9 +55,15 @@ __all__ = [
     "APP_FRAME_ID",
     "CONTACT_OUTPUT_NAMES",
     "CollectingEnsembleSink",
+    "CommittedEnsembleArchive",
+    "ChunkTraceAuthority",
+    "DurableEnsembleArchiveSink",
+    "DurableEnsembleChunkSource",
     "EVALUATED_HIT",
     "EVALUATED_NO_IMPACT",
     "EnsembleChunkSink",
+    "EnsembleAuthorityLayout",
+    "EnsembleResumeCursor",
     "EnsembleStreamHeader",
     "IMPACT_OUTPUT_NAMES",
     "NUMERICAL_FAILURE",
@@ -61,11 +77,13 @@ __all__ = [
     "SimulationExecutor",
     "SimulationResultChunk",
     "TrialCapture",
+    "TrialContactEvent",
     "TrialEvaluationStatus",
     "TEE_HEIGHT_VARIABLE_KEY",
     "apply_ball_setup_sample",
     "apply_global_simulation_values",
     "build_simulation_ensemble_request",
+    "build_simulation_ensemble_request_from_samples",
     "capture_simulation",
     "evaluate_rate_morris_design",
     "project_simulation_outcome",

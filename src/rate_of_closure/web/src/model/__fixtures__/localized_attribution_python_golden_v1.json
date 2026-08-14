@@ -1,0 +1,21 @@
+{
+  "producer": "python",
+  "contract": "rate-of-closure/localized-attribution-authority@1",
+  "source_spec_id": "swing_sim.swing.shoulder_commanded_torque_offset_nm",
+  "variable_key": "swing_sim.swing.shoulder_commanded_torque_offset_nm",
+  "joint_id": "joint.shoulder",
+  "time_window_s": [0.02, 0.04],
+  "baseline_source_value": 0.0,
+  "perturbed_source_value": 2.0,
+  "pair_trials": [0, 1],
+  "interpretation": "paired-planted-intervention-noncausal",
+  "state_target": {
+    "name": "position_x_m",
+    "time_s": 0.02,
+    "point_id": "swing.clubhead.reference",
+    "unit": "m",
+    "coordinate_frame": "app_frame:x_target,y_up,z_right"
+  },
+  "typed_statuses": ["evaluated_hit", "evaluated_no_impact", "numerical_failure"],
+  "provenance_note": "Python-owned semantic golden generated from produce_localized_attribution(_design()). Identities and solver outputs are intentionally not cross-runtime golden because React uses its own explicitly labeled request identity and TypeScript reference RK4."
+}

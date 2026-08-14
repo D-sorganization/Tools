@@ -12,11 +12,18 @@ from shared.python.swing_sim import reference
 from shared.python.swing_sim.types import PlaneOrientation, SwingSample
 
 __all__ = [
+    "TRIPLE_PENDULUM_JOINT_IDS",
     "TriplePendulumParameters",
     "TriplePendulumSwing",
     "triple_derivatives",
     "triple_total_energy",
 ]
+
+TRIPLE_PENDULUM_JOINT_IDS = (
+    "joint.shoulder",
+    "joint.elbow",
+    "joint.wrist",
+)
 
 
 @dataclass(frozen=True)
@@ -241,6 +248,37 @@ class TriplePendulumSwing:
     def parameters(self) -> TriplePendulumParameters:
         """Pendulum parameters used for the integration."""
         return self._p
+
+    @property
+    def joint_ids(self) -> tuple[str, ...]:
+        """Stable ordering for the three generalized torque coordinates."""
+        return TRIPLE_PENDULUM_JOINT_IDS
+
+    @property
+    def generalized_state_ids(self) -> tuple[str, ...]:
+        """Stable component IDs for absolute angles and angular rates."""
+        return (
+            "joint.shoulder.absolute_angle_rad",
+            "joint.elbow.absolute_angle_rad",
+            "joint.wrist.absolute_angle_rad",
+            "joint.shoulder.absolute_rate_rad_s",
+            "joint.elbow.absolute_rate_rad_s",
+            "joint.wrist.absolute_rate_rad_s",
+        )
+
+    @property
+    def generalized_state_units(self) -> tuple[str, ...]:
+        """SI units aligned with :attr:`generalized_state_ids`."""
+        return ("rad", "rad", "rad", "rad/s", "rad/s", "rad/s")
+
+    def generalized_state_at(self, t: float) -> np.ndarray:
+        """Return the integrated absolute-angle state at ``t``."""
+        return self.state_at(t)
+
+    def joint_torques_at(self, t: float) -> dict[str, float]:
+        """Return the current passive model's zero commanded torque."""
+        self.state_at(t)
+        return {joint_id: 0.0 for joint_id in TRIPLE_PENDULUM_JOINT_IDS}
 
     @property
     def plane(self) -> PlaneOrientation:

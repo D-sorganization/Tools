@@ -279,6 +279,188 @@ format, docs, size, and diff checks pass. No axe package was added; semantic
 keyboard smoke is covered, while formal AT/screen-reader certification,
 approved visual goldens, mobile cross-engine evidence, prescribed Worker
 transport, and protected publication remain open.
+## 2026-08-13 React paired-study evidence hardening (#4142 R13.3)
+
+Version 1.16.78 closes the independent review findings on the React paired
+Worker boundary. Normalization now requires the source plan's `nRuns` to equal
+the exact `2N` pair roster. Result validation requires every evaluated trial to
+retain a finite three-coordinate state, every hit to retain all 17 finite
+outputs, and every no-impact outcome to retain exactly three finite contact
+values followed by 14 null impact/shot values. Recomputing a matching authority
+cannot make malformed trial evidence acceptable.
+
+Execution no longer converts arbitrary exceptions into scientific data. Only
+the explicit `LocalizedPairedNumericalExecutionError` marker becomes a typed
+`numerical_failure`; request, programming, projection, and contract defects fail
+the complete Worker job. Injected regressions distinguish both paths.
+
+## 2026-08-13 Explicit React paired-study Worker (#4142 R13.3)
+
+Version 1.16.77 gives React a separate planted-intervention study for the
+registered shoulder and wrist torque loci. A strict protocol owns the exact
+baseline/perturbed `2N` roster in a dedicated production Worker, reports
+monotonic progress, and retains trial evidence plus complete typed authority.
+Main-thread validation binds source/row identities, checks evidence, recomputes
+the authority, and rejects stale or forged results. Monte Carlo is not reused.
+
+The panel states the noncausal interpretation, fixes globals at base, excludes
+groups, shows exact joint/window authority, and preserves prior authority on
+cancellation or failure. Production Playwright proves hashed-Worker run, raw
+export, and deterministic rerun. Injected transport tests prove termination
+and late-message safety; the genuine two-to-four-trial job finishes too quickly
+for reliable browser click-cancel E2E, so browser cancellation is not claimed.
+
+The Python fixture pins semantic ordering only. React retains its TypeScript
+reference RK4, passive 1 ms/1.5 s capability, and React-specific identities;
+Python solver/digest parity, prescribed production input, Rust, and JSON loading
+remain open.
+
+## 2026-08-13 Explicit-sample NumPy typing boundary (#4426)
+
+Version 1.16.76 repairs the exact hosted Mypy 1.13 `no-any-return` failure in
+`request_builder._normalize_explicit_samples`. Raw caller input remains
+validated before conversion, while the owned copy now crosses an explicit
+`NDArray[float64]` boundary. Shape, finite-value, real-number, copy-ownership,
+and runtime request behavior are unchanged. The exact changed-source Mypy lane
+and focused request/producer/archive tests are the regression gates.
+
+## 2026-08-13 Paired producer provenance closure (#4142)
+
+Version 1.16.75 closes the producer review gap. A
+`LocalizedAttributionProduction` now owns its normalized design, exact ensemble
+request, typed result, authority, and both digests. Its constructor recomputes
+the exact request and request hash, binds result plan/rows, recomputes the
+canonical design hash, rebuilds the strict authority, and requires exact
+payload equality. Valid authority relabels and cross-design request/pair swaps
+can no longer reuse another experiment's evidence.
+
+Adversarial tests cover request-identity swaps, exact request swaps, authority
+ID relabeling, and synchronized pair/observation source-value tampering. The
+generic outcome mapping now uses an explicit finite-float boundary; full-import
+Mypy 1.13 has no producer diagnostic. Existing imported-module findings and the
+known `--follow-imports=skip` serializer crash remain documented tooling debt.
+PyQt/React orchestration remains intentionally open.
+
+## 2026-08-13 Genuine Python paired localized-attribution producer (#4142)
+
+Version 1.16.74 adds `LocalizedAttributionDesign` and
+`produce_localized_attribution`. The service creates an explicit baseline plus
+one-source-changed row for every authored shoulder/wrist locus, builds a single
+canonical `SimulationEnsembleRequest` from that exact finite matrix, and runs
+the existing deterministic complete-simulation executor. It emits the strict
+consumer authority with source window/joint, exact state point/time, typed
+impact/shot unavailability, complete pair-target roster, and bound request and
+design SHA-256 identities. It never derives attribution from multi-input
+Monte Carlo scatter.
+
+The contract fails closed for incompatible source kinds, global/grouped
+factors, malformed delta rosters, pre-existing localized offsets, off-grid or
+unknown state loci, and resource overflow. Progress and cancellation use the
+canonical ensemble lifecycle and trial order is fixed as baseline/perturbed
+per source. The existing PyQt and React consumers are not automatically wired:
+this is an explicitly requested separate paired study, not hidden extra work
+after every Monte Carlo run. React Worker production, persistence/document
+embedding, Rust parity, and intentional UI orchestration remain open.
+
+## 2026-08-13 Executor/config authority hardening (#4142 R11)
+
+Version 1.16.71 computes a canonical full-field digest for each normalized
+`SimulationConfig` and requires an injected executor's `SimulationRun.config`
+to match before any outcome, trace, event, or archive projection. Contact-mode,
+source-kind, scenario, timing, and trial-order substitution now fail as
+contract violations before commit rather than being hidden as a numerical
+trial failure. Four discriminator substitutions plus reversed ordered results
+are covered. Exact Python 3.12/Mypy 1.13 passes 18 production files. All R11
+limitations from the archive foundation remain open and unchanged.
+
+## 2026-08-13 Pre-impact authority and resumable ensemble archive (#4142 R11)
+
+Version 1.16.70 adds immutable application-frame pose/twist, source-neutral
+generalized state, applied commanded torque, exact contact/closest-approach
+event, and pre-impact mask authority. `ensemble-chunk-archive@1` binds the
+ordered request through little-endian arrays, SHA-256 chaining, atomic writes,
+verified-prefix resume, one-chunk reading, and a capped materializer. Evidence
+passes 20 focused, 232 variation, and 96 simulation/chunk/request tests; RSS
+after eager request construction measured 0.52 MiB at 16 chunks and 0.39 MiB
+at 128. Request/per-run allocation, reader prefix verification, legacy schema/
+UI migration, and publication remain open.
+
+## 2026-08-13 Localized attribution CSV writer parity correction (#4142)
+
+Version 1.16.73 fixes the final export-path coercion: TypeScript now writes
+already-canonical numeric cells without converting them back through `Number`,
+while nonnumeric text still uses the shared formula-safe CSV serializer. A
+shared extreme authority and exact CSV golden prove Python/TypeScript writer
+bytes retain `-0.0`, `1e20`, and `1e-5`. Focused Python 20/20 and React 17/17,
+TypeScript, ESLint, docs, size, parity, and diff gates pass. The isolated paired
+producer gap is unchanged.
+
+## 2026-08-13 Localized attribution numerical/parity correction (#4142)
+
+Version 1.16.72 closes the independent review findings on the hardened paired
+authority. Response validation now rejects nonfinite expected values and
+tolerances, and every retained pair/observation requires a genuine nonzero
+source intervention. Python and TypeScript share normalized shortest-roundtrip
+binary64 CSV text, including exponent normalization and signed negative zero;
+the parity goldens cover `1e20`, `-0.0`, and `1e-5`. TypeScript counts Unicode
+code points rather than UTF-16 units at the 256-character boundary.
+
+PyQt reports the immutable pair-roster count, and its JSON boundary uses an
+explicitly typed local result that passes the exact Python 3.12/Mypy 1.13
+eight-file gate without `Any` return or redundant cast. Gates pass 258/258
+selected Python, 892/892 React, and 6/6 Playwright plus all static, docs, parity,
+and size checks. The paired-producer gap remains unchanged and explicit.
+
+## 2026-08-13 Localized attribution authority hardening (#4142)
+
+Version 1.16.71 closes the paired-attribution review blockers. Each source now
+owns an immutable explicit baseline/perturbed roster, and the authority must
+contain the complete source-target-pair observation matrix, including typed
+unavailable rows. Trial statuses and source values must match the roster on
+every target. Orphan sources/targets, incomplete matrices, duplicate pairs,
+unsafe trial integers, oversized strings/arrays, and over-cap resources fail
+before dependent construction.
+
+A canonical target registry binds kind/name/unit/frame/convention while the
+stable target ID is explicitly opaque. Python and TypeScript share a four-
+scaled-ULP response policy and exact boundary tests. Parsed TypeScript
+authorities/views are deeply frozen. CSV now includes schema/version/authority,
+source variable/unit, target unit/frame/convention, and formula-safe cells;
+both runtimes match a shared parsed-row golden. PyQt6/React show convention and
+opaque-ID semantics; pair selectors consume the immutable roster directly.
+The honest producer gap from 1.16.70 remains unchanged.
+
+Local gates pass 256/256 selected localized/variation Python tests, 890/890
+React tests, and 6/6 production Playwright scenarios. Exact hosted-policy
+Python 3.12 + Mypy 1.13 passes eight changed production files; TypeScript,
+ESLint, build, Ruff/format, assertion, docs, 400-line/module-size, fixture-
+parity, conflict-marker, and diff gates pass.
+
+## 2026-08-13 Localized paired-attribution consumer contract (#4142)
+
+Version 1.16.70 added strict Python/TypeScript parity contracts and accessible
+PyQt6/React consumers for source spec/topological joint/half-open window to
+state point/time, impact, and shot responses. The view selects one explicitly
+retained baseline/perturbed pair, keeps hit/no-impact/failure/nonfinite
+availability and denominators typed, exports raw observations, and persists an
+exact schema-v1 view selection. Every surface says this is a paired planted-
+intervention response and does not infer causality from scatter or correlation.
+
+Current Monte Carlo results retain perturbed traces/scalars but no isolated
+baseline paired to each localized intervention. Both production UIs therefore
+show attribution unavailable instead of manufacturing a response; the strict
+authority fixture exercises the completed consumer contract until a future
+producer records genuine OAT pairs. Producer execution, Worker transport,
+ensemble-document embedding/import, prescribed/Rust parity, and live
+attribution export buttons remain open.
+
+Local evidence passes 252/252 selected localized/variation Python tests and
+887/887 React tests, including 13/13 Python and 11/11 TypeScript authority
+contract tests plus 3/3 PyQt6 and 2/2 React consumer tests. All 6 production
+Playwright scenarios pass. Exact hosted-policy Python 3.12 + Mypy 1.13 passes
+the six changed production Python files; TypeScript, ESLint, Vite build,
+Ruff/format, assertion, docs, changed-source 400-line, module-size, fixture-
+parity, conflict-marker, and diff gates pass.
 
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 

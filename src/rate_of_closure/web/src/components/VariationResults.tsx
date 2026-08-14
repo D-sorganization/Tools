@@ -17,6 +17,8 @@ import { PANEL_CLASS, sensitivityHeat } from "./variationUi";
 import { VariationLocalizedSources } from "./VariationLocalizedSources";
 import { VisualStateFrame } from "./VisualStateFrame";
 import type { VariationVisualState } from "../model/variationVisualState";
+import { LocalizedAttributionPanel } from "./LocalizedAttributionPanel";
+import type { AttributionAuthorityTs } from "../model/localizedAttribution";
 
 interface VariationResultsProps {
   dataset: VariationDatasetTs | null;
@@ -28,6 +30,7 @@ interface VariationResultsProps {
   visualAnnouncement?: string;
   prominenceRef?: RefObject<HTMLElement>;
   onReturnToControls?: (focusRun: boolean) => void;
+  localizedAttributionAuthority?: AttributionAuthorityTs | null;
 }
 
 interface TrialSelection {
@@ -46,6 +49,7 @@ export function VariationResults({
   visualAnnouncement = "Ready.",
   prominenceRef,
   onReturnToControls,
+  localizedAttributionAuthority = null,
 }: VariationResultsProps): JSX.Element {
   const [selection, setSelection] = useState<TrialSelection | null>(null);
   const trialCount = dataset?.plan.nRuns ?? ensemble?.dataset.plan.nRuns ?? 0;
@@ -77,10 +81,17 @@ export function VariationResults({
       Return to variation controls
     </button>
     : null;
+  const localizedRunAvailable = ensemble?.runs.some(
+    (trial) => trial.localizedTorqueCommands.length > 0,
+  ) ?? false;
 
   return <VisualStateFrame state={visualState} announcement={visualAnnouncement}>
     <section aria-label="Variation results" className="min-w-0 space-y-6">
       {ensemble && <VariationLocalizedSources ensemble={ensemble} />}
+      <LocalizedAttributionPanel
+        authority={localizedAttributionAuthority}
+        localizedRunAvailable={localizedRunAvailable}
+      />
       {dataset && (
         <div className={PANEL_CLASS}>
           {returnControl}

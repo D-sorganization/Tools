@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
@@ -72,6 +74,9 @@ class _SwingSeries:
     joints: np.ndarray
     joint_ids: tuple[str, ...]
     applied_torques_nm: np.ndarray
+    state_ids: tuple[str, ...]
+    state_units: tuple[str, ...]
+    generalized_states: np.ndarray
 
     @property
     def positions(self) -> np.ndarray:
@@ -92,6 +97,9 @@ class _SwingSeries:
             joints,
             self.joint_ids,
             self.applied_torques_nm,
+            self.state_ids,
+            self.state_units,
+            self.generalized_states,
         )
 
 
@@ -150,6 +158,14 @@ def _sample_swing(source: SwingSource) -> _SwingSeries:
     )
     joint_ids = tuple(getattr(source, "joint_ids", ()))
     applied_torques_nm = _sample_applied_torques(source, times, joint_ids)
+    state_ids = tuple(getattr(source, "generalized_state_ids", ()))
+    state_units = tuple(getattr(source, "generalized_state_units", ()))
+    state_sampler = getattr(source, "generalized_state_at", None)
+    require(callable(state_sampler), "swing source must expose generalized state")
+    sampler = cast(Callable[[float], object], state_sampler)
+    generalized_states = np.stack(
+        [np.asarray(sampler(float(time_s)), dtype=np.float64) for time_s in times]
+    )
     return _SwingSeries(
         times,
         poses,
@@ -157,6 +173,9 @@ def _sample_swing(source: SwingSource) -> _SwingSeries:
         joints,
         joint_ids,
         applied_torques_nm,
+        state_ids,
+        state_units,
+        generalized_states,
     )
 
 
@@ -355,6 +374,9 @@ def _assemble_run(
         swing_joints=swing.joints,
         swing_joint_ids=swing.joint_ids,
         swing_applied_torques_nm=swing.applied_torques_nm,
+        swing_state_ids=swing.state_ids,
+        swing_state_units=swing.state_units,
+        swing_generalized_states=swing.generalized_states,
         impact_outcome=outcome,
         impact_time_s=impact_time_s,
         delivery=products.delivery,
