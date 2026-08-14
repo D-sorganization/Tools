@@ -640,8 +640,15 @@ jobs:
             # Shared-library contracts and security primitives
             "tests/shared/python/test_contracts.py"
             "tests/shared/python/test_safe_eval.py"
-            # Architecture layer boundary enforcement
-            "tests/architecture/test_layer_boundaries.py"
+            # Architecture / import-boundary enforcement — the WHOLE directory,
+            # not a hand-picked file list. These guards assert properties of the
+            # tree as a whole, so the file a guard protects is almost never the
+            # guard's own file; under changed-file selection they only ran when
+            # someone happened to edit the guard itself. That blind spot let
+            # test_sidekick_external_imports_3316.py sit red against main until a
+            # cosmetic reformat enlisted it and blocked PR #4446. Directory entry
+            # (not a file list) so new guards are covered the day they land.
+            "tests/architecture/"
             # Core rotation math (shared library used across many tools)
             "tests/rotation_converter/test_rotation_core.py"
             # Process calculator constants (always fast, catches unit regressions)
