@@ -123,9 +123,7 @@ class VariationTabResultsMixin:
         except Exception:
             pass
 
-    def _explain_missing_attribution(
-        self, ensemble: SimulationEnsembleResult
-    ) -> None:
+    def _explain_missing_attribution(self, ensemble: SimulationEnsembleResult) -> None:
         """State why a Monte Carlo result cannot supply paired attribution.
 
         A completed ensemble retains perturbed traces and scalar outcomes but no
