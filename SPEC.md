@@ -26,67 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-| **Current Version**     | 1.5.6                                      |
-| **Spec Version**        | 1.5.6                                      |
-| **Last Spec Update**    | 2026-08-05                                 |
-=======
-| **Current Version**     | 1.14.31                                    |
-| **Spec Version**        | 1.14.31                                    |
-=======
-| **Current Version**     | 1.14.35                                    |
-| **Spec Version**        | 1.14.35                                    |
->>>>>>> origin/feat/4274-regional-plan-io
-=======
-| **Current Version**     | 1.14.45                                    |
-| **Spec Version**        | 1.14.45                                    |
->>>>>>> origin/feat/4284-camera-preset-parity
-=======
-| **Current Version**     | 1.14.46                                    |
-| **Spec Version**        | 1.14.46                                    |
->>>>>>> origin/feat/4284-track-clubhead
-=======
-| **Current Version**     | 1.14.53                                    |
-| **Spec Version**        | 1.14.53                                    |
->>>>>>> origin/codex/4274-ground-playback-propagation
-=======
-| **Current Version**     | 1.14.54                                    |
-| **Spec Version**        | 1.14.54                                    |
->>>>>>> origin/codex/4192-ground-target-projection
-=======
-| **Current Version**     | 1.14.59                                    |
-| **Spec Version**        | 1.14.59                                    |
->>>>>>> origin/codex/4273-ground-variation-file-controls
-=======
-| **Current Version**     | 1.14.64                                    |
-| **Spec Version**        | 1.14.64                                    |
->>>>>>> origin/codex/4369-validator-failure-stage
-| **Last Spec Update**    | 2026-08-11                                 |
->>>>>>> origin/feat/4274-regional-surface-ui
-=======
-| **Current Version**     | 1.14.93                                    |
-| **Spec Version**        | 1.14.93                                    |
-=======
-| **Current Version**     | 1.14.94                                    |
-| **Spec Version**        | 1.14.94                                    |
->>>>>>> origin/codex/4378-static-inspection-runtime
-| **Last Spec Update**    | 2026-08-12                                 |
->>>>>>> origin/codex/4369-authority-restart-recovery
-=======
-| **Current Version**     | 1.5.7                                      |
-| **Spec Version**        | 1.5.7                                      |
-| **Last Spec Update**    | 2026-08-12                                 |
->>>>>>> origin/feat/proximal-distal-workbench
+| **Current Version**     | 1.14.95                                    |
+| **Spec Version**        | 1.14.95                                    |
+| **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
 
@@ -104,21 +46,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 ### 2026-08-10 Regional Surface-Plan Editor First Slice
-=======
-=======
-=======
 ### 2026-08-11 Matched Opt-In Clubhead Camera Tracking
 
 - The PyQt6 `Club3DView` and React `ClubCanvas` share stable Track Clubhead,
@@ -142,12 +70,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   persistence, remaining 3D surfaces, rendered browser/HiDPI matrices, and
   protected issue/epic completion remain outside this child slice.
 
->>>>>>> origin/feat/4284-track-clubhead
-=======
-=======
-=======
-=======
-=======
 ### 2026-08-12 Deterministic Static-Inspection Distribution
 
 - The production Vite build is an explicit network-silent static-inspection
@@ -177,7 +99,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Windows ACL/reparse privacy, frozen executables, installers, signing,
   attestation/SBOM, and execution from a public static host remain non-goals.
 
->>>>>>> origin/codex/4378-static-inspection-runtime
 ### 2026-08-12 Durable Source-Loopback Authority Recovery
 
 - The source-run React launcher injects an absolute private state directory into
@@ -497,7 +418,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   compiled-runtime parity, downstream integration, protected merge, and
   release remain open.
 
->>>>>>> origin/codex/4369-authority-restart-recovery
 ### 2026-08-11 Regional-Ground Scalar Result Import
 
 - React can strictly import the two Python-owned regional
@@ -519,7 +439,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   overlay variation, solver/capability or wind integration, compiled-runtime
   parity, downstream integration, protected evidence, or release.
 
->>>>>>> origin/codex/4369-validator-failure-stage
 ### 2026-08-11 Contextual Regional-Ground Variation File Controls
 
 - React and PyQt6 expose the same stable Open and Save As command IDs only
@@ -604,7 +523,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   wind, target/playback changes, solver/capability invocation, compiled-runtime
   physics, downstream parity, and release. Issues #4273 and #4267 remain open.
 
->>>>>>> origin/codex/4273-ground-variation-file-controls
 ### 2026-08-11 Matched Ground-Playback Inspection
 
 - PyQt6 and React expose additive `Ground Playback` workspaces without
@@ -692,7 +610,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   camera behavior, regional-material chaining, skid/roll completion, or final
   total-distance claim. Issues #4270 and #4267 remain open.
 
->>>>>>> origin/codex/4274-ground-playback-propagation
 ### 2026-08-11 Regional Trajectory Inspection and Canonical Evidence Export
 
 - Matched PyQt6 and React evidence surfaces expose the already-validated raw
@@ -784,9 +701,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   representable/cancelled/failed envelopes are actual Python executor output;
   frozen `flight-to-ground-result/v1` bytes remain pinned separately.
 
->>>>>>> origin/feat/4284-camera-preset-parity
 ### 2026-08-10 Regional Surface-Plan Canonical Request I/O
->>>>>>> origin/feat/4274-regional-plan-io
 
 - The standalone PyQt6 and React shells expose matched `Ground Surfaces`
   modules for editing one SI base domain and one to eight coplanar static
@@ -1983,8 +1898,6 @@ high_mm)` exposes the face-curvature normal (gradient of the
 - The frame, validation behavior, formulas, interchange contract, and known
   limits are specified in `docs/specs/GOLF_CLUB_SHAFT_PROFILES.md`.
 
->>>>>>> origin/feat/4274-regional-surface-ui
-=======
 ### 2026-08-12 Proximal–Distal Dynamics Companion
 
 - The existing pendulum simulator is the single shared implementation for the
@@ -2002,7 +1915,6 @@ high_mm)` exposes the face-curvature normal (gradient of the
   entry point so UpstreamDrift can consume the Tools implementation without
   maintaining a second launcher implementation.
 
->>>>>>> origin/feat/proximal-distal-workbench
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
 - Shared golf-club assembly validation returns explicitly typed NumPy arrays
@@ -2024,13 +1936,6 @@ high_mm)` exposes the face-curvature normal (gradient of the
   collection overhead during high-frequency UI updates by replacing chained
   `.reduce()` iterations in `rSquared` and `linearFit.fit` with single-pass
   standard `for` loops. This eliminates intermediate callback allocations while
-
-### 2026-07-26 P1AM Control System Trend Crosshair Optimization
-
-- `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
-  garbage collection pressure during high-frequency pointer move events by
-  replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
-  This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
 
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
@@ -3697,34 +3602,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 | 2026-08-12 | 1.5.7 | feat(pendulum): add the shared proximal–distal experiment/glossary catalog, falsifiability and run-manifest contracts, searchable PyQt6 companion guide, responsive React/Tauri companion guide, package-data inclusion, and focused parity tests for UpstreamDrift epic #8511. |
->>>>>>> origin/feat/proximal-distal-workbench
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
-=======
-=======
-=======
-=======
 | 2026-08-11 | 1.14.46 | chore(release, #4362 #4284 #4218): publish the independently reviewed bounded Track Clubhead continuation as ready PR #4362 on exact #4358 head `d662b016eceed8cbfbce26c12a42ca2c326a684f`; bind implementation `cb2bec4eb1b62a84dd617700052273787abba9ef`, including active-only loop/replay recenter, matched orbit suspension, native PyQt pan retention, target-relative React rendering, and same-frame reduction-only clearance, while retaining React pan, persistence, remaining 3D surfaces, full playback/rendered matrices, downstream parity, protected checks, dependency landing, release, and issue/epic completion as open. |
->>>>>>> origin/feat/4284-track-clubhead
 | 2026-08-11 | 1.14.45 | docs(rate-of-closure, #4358): publish the reviewed camera-preset parity implementation `c0584faae7e0fe113e01f8c3ed3582853dfaf803` as ready-for-review PR #4358 over exact #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; record the first mergeable/unstable protected snapshot with quality in progress, remaining substantive jobs queued, no failure, and no approval; preserve `not_released` truth and all remaining #4284/#4218 acceptance gaps. |
 | 2026-08-11 | 1.14.44 | feat(rate-of-closure, #4284): add one strict shared-golden Python/TypeScript camera-preset contract and matched accessible PyQt6 `Club3DView` / React `ClubCanvas` controls for canonical Isometric, explicit-side Face On, exact +x Down the Line, -y Overhead, zoom-preserving Reset, and geometry-bounded Auto Fit; retain manual orbit while scaling, pin representative-driver fixed/moving start-impact-end bounds, and suppress only each exact PyQt projection's collapsed depth axis while restoring all axes for Isometric/custom orbit; keep tracking, tracking suspension, recenter, workspace persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI rendered QA, protected integration, release, and issue completion open. |
-=======
-=======
-=======
-=======
+| 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
+| 2026-08-11 | 1.14.29 | merge(ground-regional-wire, #4332 #4335): normally merge exact remote regional-wire child `9e01ccc3e891cc45907293751a192624195a77a5` first with exact current regional-surface parent `5ac3c1f233de30dd42eeac57073cbdb149bde652` second while preserving PR #4335's `feat/4271-regional-surface-transitions` base, strict Python/TypeScript regional-plan request/result schemas, canonical JSON/SHA-256 fixture evidence, fail-closed parsing, Python resolver binding, tests, limitations, and both append-only handoff/SPEC histories; inherit current regional, skid/roll, impact/bounce, and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping changing geometry or velocity, internal transition-ledger export, regional UI, compiled or TypeScript regional physics, downstream parity, protected exact-head CI, review, approval, and release open. |
 | 2026-08-11 | 1.14.64 | fix(ground-study, #4369): make seeded regional-ground outcome validation a first-class typed terminal failure stage; preserve the original validator exception as the chained cause, report only previously accepted trial counts, expose no partial rows or dataset, and retain byte-identical successful scalar-ensemble output. |
-=======
 | 2026-08-12 | 1.14.90 | feat(ground-study, #4369): add exact cooperative cancellation through registered Waterloo/Penner integration, dense-output sampling, retained-trajectory construction, metric publication, and canonical evidence serialization; preserve callback-free digests and wire contracts, map cancellation and callback defects to existing typed production terminals, and prove authority shutdown at solver and post-solver seams while retaining restart/static/frozen/compiled/downstream/release limitations. |
 | 2026-08-11 | 1.14.89 | feat(ground-study, #4369): add a strict bounded current-editor preparation request, registered Python flight recomputation and canonical job construction, authenticated no-enqueue preparation API, transactional PyQt6 and React preparation/review workflows with explicit separate Run confirmation, complete current-hit staleness protection, bounded preparation profiles, substituted-response rejection, cross-runtime meteorological wind parity, render-safe invalid-editor handling, full numerical/calibration disclosure, and exact failure preservation; retain restart/static/frozen/compiled/downstream/release limitations. |
 | 2026-08-11 | 1.14.88 | fix(ground-study, #4369): leave each visible React import button as the sole accessible action by making its programmatically activated file input truly hidden, preserving strict import behavior and workspace state. |
@@ -3751,21 +3636,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-11 | 1.14.66 | fix(ground-study, #4369): retain the authenticated loopback authority readiness contract while replacing generic URL opening with an explicit fixed-host HTTP connection for hosted Bandit B310 compliance. |
 | 2026-08-11 | 1.14.65 | fix(ground-study, #4369): make seeded regional-ground outcome validation a typed terminal failure stage; retain original exception chaining and accepted-trial counts, expose no partial rows or dataset, and preserve successful scalar-ensemble bytes. |
 | 2026-08-11 | 1.14.64 | feat(ground-study, #4369): add an isolated authenticated loopback authority process, server-side Vite token proxy, and strict fail-closed Python/React capability contract while advertising regional-ground execution as unavailable until the qualified job authority and matched controllers exist. |
->>>>>>> origin/codex/4369-authority-restart-recovery
 | 2026-08-11 | 1.14.63 | docs(ground-study, #4369): record that composed execution-job, complete-only batch-control, and browser result-import prerequisites remain non-executable until exact flight-profile/digest qualification, skid/roll settings and executor revision binding, launch-origin regional-surface translation, orchestration semantics, job-bound result evidence, cancellable Python authority, loopback host, and matched client controllers are implemented and tested. |
 | 2026-08-11 | 1.14.62 | feat(ground-study, #4369): add a strict bounded React import-only adapter for the two Python-owned regional `scalar-ensemble/v1` result variants; preserve exact schema, provenance/model/input digests, definitions, units, categories, stages, ordered identities, cohorts, and censored typed nulls; add a Python-produced four-cohort golden fixture asserted by both runtimes; reject duplicate/extra/version/nonfinite/unsafe/Boolean/surrogate/oversize/fatal-UTF-8 and forged identity/evidence inputs; retain browser physics, Run claims, result UI/persistence, overlays, solver/capability and wind integration, compiled/downstream parity, protected evidence, and release as open. |
 | 2026-08-11 | 1.14.61 | feat(ground-study, #4369 #4273 #4267): add a UI-neutral Python execution-control boundary for seeded regional-ground variation with immutable exact completed/total progress, cooperative cancellation immediately before and after every injected executor call, typed cancellation/executor/callback/publication terminal failures, and complete-only scalar-ensemble publication; preserve the existing executor signature, deterministic seed/trial identities, and byte-identical successful output while retaining job-to-executor binding, matched UI controllers, browser-capable qualified physics, result import/workspace integration, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.60 | feat(ground-study, #4369 #4273 #4267): add a strict UI-neutral 1 MiB Python/TypeScript `regional-ground-execution-job/v1` authority with one shared canonical fixture; bind exact launch/ball setup, flight model/settings and trajectory/result digests, transfer surface/settings identity, capture and bounded orchestration controls, the existing seeded regional request, plus recomputed input/job digests; reject cross-contract model or launch-relative surface drift while retaining actual executor invocation, result/cancellation evidence, variable-wind scenario wire, UI execution, compiled/downstream parity, protected release, and issue/epic completion as open. |
->>>>>>> origin/codex/4369-validator-failure-stage
 | 2026-08-11 | 1.14.59 | feat(ground-study, #4273): bind contextual React and PyQt6 Open/Save As commands to the App-owned seeded regional-ground request; add strict TypeScript v1 parsing and Python-parity canonical serialization, a shared golden payload, bounded transactional browser import, truthful browser download semantics, visible failures, native validate-before-dialog atomic persistence, exact-import retention until editor change, explicit illustrative-draft rejection, and cancel-safe dialogs; retain physics invocation, overlay variation, solver/capability and wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.58 | feat(ground-study, #4273): lift the React variation plan, execution policy, regional draft, and exact imported evidence into one App-owned transactional workspace; make both panels controlled across navigation; expose a typed compose/apply request port; register the two inspectable ground inputs while failing closed before unsupported scalar-browser execution; retain File controls, PyQt wiring, browser persistence, pipeline integration, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.57 | feat(ground-study, #4273): add strict canonical bounded seeded regional-ground request persistence without UI or physics. |
 | 2026-08-11 | 1.14.56 | docs(ground-study, #4365): record ready publication of the seeded base-material variation runner at implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf`, stacked on exact #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; retain protected checks, UI/overlay/persistence, solver/wind, compiled/downstream parity, release, and #4273/#4267 completion as open. |
 | 2026-08-11 | 1.14.55 | feat(ground-study, #4273 #4267): add deterministic VariationPlan-driven base normal-restitution and rolling-resistance studies with immutable per-trial provenance, exact injected flight-through-regional-ground execution, bounded sampled-input scalar ensembles, typed-null unavailable rows, and fail-before-execution validation; retain region overlays, UI/persistence, solver/wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
->>>>>>> origin/codex/4273-ground-variation-file-controls
 | 2026-08-11 | 1.14.54 | feat(ground-target, #4192 #4273 #4267): add a UI-neutral complete-rest-only projection from exact flight-through-regional-ground evidence to the existing `SpatialTarget`; record the sole `GroundFrame.TARGET`, retain final x/z, replace ball-center y exactly once with declared landing-surface elevation, reuse `SpatialTarget.miss` signs and geometry, type aerial targets as `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`, preserve every unqualified/censored outcome as null with exact phase/reason/digest evidence, and expose a bounded ordered target scalar ensemble while leaving UI, persistence, solver/capability, aerial-trajectory, compiled-runtime, protected-release, and issue completion open. |
 | 2026-08-11 | 1.14.53 | feat(ground-playback, #4274 #4267): add matched strict import-only PyQt6 and React ground-result playback with phase-safe absolute time, exact logarithmic step/frame lookup, play/pause/restart/loop/speed controls, locked-scale orbit/zoom/reset, bounded 2,048-point landmark-aware visuals, disclosed 256-row evidence windows with full-result retention, atomic standalone/regional imports, and honest partial-result terminology while leaving live flight synchronization, comparison, persistence, camera integration, rendered visual evidence, compiled physics, downstream parity, protected release, and issue completion open. |
->>>>>>> origin/codex/4192-ground-target-projection
 | 2026-08-11 | 1.14.52 | chore(release, #4361 #4273 #4267): publish the independently reviewed qualified regional-ground study adapter as ready PR #4361 on exact #4360 head `74f1ceafd87f952a76917dc868baa6414f856144`; bind implementation commit `d71c43fdd729b35e1abe5573f41ed60201698608` while retaining protected review/check completion, solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, downstream release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.51 | feat(ground-study, #4273 #4267): add a UI-neutral strict adapter from the exact flight-through-regional-ground pipeline into the existing flight metric and scalar-ensemble contracts; admit canonical final ground metrics and bounce/skid detail only for regional complete plus ground complete/rest evidence, retain typed nullable cohorts and exact reasons/digests for partial, censored, cancelled, failed, non-settled, missing-summary, and transfer-failure outcomes, clear stale ground metric inputs on unavailable evidence, preserve carry versus total distance, and leave solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, protected release, and issue completion open. |
 | 2026-08-11 | 1.14.50 | chore(release, #4360 #4271 #4273 #4267): publish the qualified flight-through-regional-ground composition as ready PR #4360 on exact #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; bind implementation commit `090e835477d1f19614f37f978a1b8a0e2f50ae21` into the campaign handoff and manifest while retaining protected review/check completion, client integration, persistence, compiled-runtime parity, studies, downstream integration, and issue/epic completion as open. |
@@ -3775,7 +3656,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-11 | 1.14.46 | docs(rate-of-closure, #4203 #4279-#4282 #4285 #4288 #4302 #4304 #4332 #4335 #4339 #4342 #4350-#4357): reconcile the intact exact dependency heads and bases, record #4357 in the campaign carrier authority, and normalize every exact open dependency to ready-for-review without history changes; retain `not_released` truth because protected contexts remain queued and no approval is submitted. |
 | 2026-08-11 | 1.14.45 | docs(ground-impact, #4357): record ready-for-review publication of the UI-neutral repeated-bounce request executor at exact implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`, stacked on unchanged #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; retain `not_released` truth and leave protected checks, review, UI invocation, persistence, playback, compiled parity, regional chaining, downstream integration, and #4270/#4267 completion open. |
 | 2026-08-11 | 1.14.44 | feat(ground-impact, #4270): add the UI-neutral Python `execute_repeated_bounce_request` binding that accepts only an exact validated repeated-bounce request plus a callable-or-`None` cancellation check, consumes the request's capture threshold through its fixed-version settings, invokes the existing Python physics authority, and returns the existing identity-validated request/result pair; cover golden identity, capture behavior, preflight cancellation, canonical result round-trip pairing, and explicit public API while leaving schemas, UI construction and invocation, TypeScript/compiled physics, persistence, playback, regional chaining, downstream parity, protected evidence, release, and issue/epic completion open. |
->>>>>>> origin/codex/4274-ground-playback-propagation
 | 2026-08-11 | 1.14.43 | docs(rate-of-closure, #4351-#4356): record exact published #4356 propagation head `345c329e6b6e3fc7a8fc981abf65795f356b94cf`, normal ready-for-review state for the exact #4351 through #4356 stack without base or history changes, and the first #4356 protected snapshot of one successful quality check, four skipped checks, twelve queued checks, no failure, and no review; preserve `not_released` truth and all implementation limitations. |
 | 2026-08-11 | 1.14.42 | merge(ground-roll, #4267 #4270 #4356): normally merge exact current repeated-bounce request-wire child `23897eac03e8a3edf4a37855f0ba05e8c2527986` first with exact published PR #4355 parent `a04d14e9308990e676e8c90ddb1d80e368dd1387` second without changing the `feat/4271-repeated-bounce-wire` base; preserve the complete strict cross-runtime `ground-repeated-bounce-request/v1` envelope, canonical ground-request and joint-execution-input digests, exact request/result identity pairing, shared golden corpus, and adversarial capture-speed digest follow-up together with the full repeated-bounce result-wire contract, cancellation evidence, both inherited explicit Boolean locals required by protected delta-MyPy, complete regional/ground ancestry, and all append-only handoff/SPEC/manifest history; keep UI request construction, executor invocation, persistence, playback, measured calibration, compiled and downstream parity, protected exact-head evidence, review, approval, dependency integration, release, and issue completion open. |
 | 2026-08-11 | 1.14.39 | feat(ground-impact, #4270): reuse the frozen `flight-to-ground-request/v1` authority inside a strict bounded Python/TypeScript `ground-repeated-bounce-request/v1` envelope; bind SI/frame/request/surface/model identities, canonical ground-request SHA-256, capture threshold, fixed model version, and joint execution-input SHA-256; add exact request/result identity pairing and shared golden parity while retaining Python as the only physics authority and leaving UI construction/invocation, persistence, compiled physics, downstream parity, protected evidence, release, and issue/epic completion open. |
@@ -3791,16 +3671,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-11 | 1.14.36 | fix(rate-of-closure, #4351): make the regional request atomic-write return boundary stable under the protected changed-file MyPy profile by assigning the skipped imported helper result to an explicit Boolean local; avoid both `no-any-return` and a root-set-dependent redundant cast without changing runtime behavior. |
 | 2026-08-11 | 1.14.36 | merge(ground-roll, #4271 #4350): normally merge exact current regional-execution child `dfb4b97481f187ff3594eceb08c427f650aca4e3` first with exact published PR #4342 parent `de66a851aa5dded680279cf9a2b25a5094966593` second without changing the `feat/4274-regional-plan-io` base; preserve the embedded-plan execution/provenance envelope, executor authority, transition-to-plan binding, cross-runtime fixtures, parent request I/O, matched editors, complete regional physics ancestry, default ground safe-number boundary, and capability-only extended finite-float serializer while retaining all append-only handoff, SPEC, and manifest history; keep execution UI/playback, compiled regional physics, downstream parity, protected exact-head evidence, review, approval, release, and issue completion open. |
 | 2026-08-11 | 1.14.35 | feat(ground-roll, #4267 #4271): add matched PyQt6 and React bounded strict import/readback for Python-produced regional execution evidence; require its embedded plan to exactly match the currently valid visible plan, preserve prior accepted evidence after failed imports, invalidate stale evidence after plan edits, expose status/termination/model/skid/roll/total/transitions/provenance, and state explicitly that React executes no regional physics; retain UI executor invocation, playback, measured calibration, compiled physics, downstream parity, protected evidence, release, and issue completion as open work. |
->>>>>>> origin/feat/4284-camera-preset-parity
 | 2026-08-11 | 1.14.35 | fix(rate-of-closure, #4342): retain the default canonical JSON encoder's JavaScript-safe numeric boundary for ground contracts while adding an explicit capability-observation-only extended finite-float policy that reuses the same recursive encoder; keep integers safe-range bounded, emit integral finite doubles such as `1e20` and `1e21` as exact exponent-free decimal tokens matching the TypeScript capability serializer, and preserve fail-closed non-finite handling with Python, TypeScript, ground-boundary, full-suite, static-analysis, build, and governance evidence. |
 | 2026-08-11 | 1.14.34 | chore(ground-roll, #4271): normally reconcile exact reviewed regional-execution child `012cdfc33ad1590f31a1cbb109f0b8bee8eee700` with exact newly published PR #4342 parent `c1f47f2ef68b3db102da5416aaac17a40f675207` without changing the intended `feat/4274-regional-plan-io` base or rewriting either branch; retain the remediated embedded-plan execution/provenance contract and executor-produced cross-runtime evidence together with canonical request I/O, the bounded engineering-input helper, and verbatim parent/child handoff and SPEC history; keep UI execution/playback, compiled regional physics, downstream parity, protected evidence, PR publication, release, and issue completion open. |
 | 2026-08-11 | 1.14.34 | merge(rate-of-closure, #4274 #4339 #4342): normally merge exact current regional request-I/O child `c1f47f2ef68b3db102da5416aaac17a40f675207` first with exact reviewed local regional-editor parent candidate `db335937afc4b587d235eb705e315f577519c5e6` second while preserving PR #4342's `feat/4274-regional-surface-ui` base, child-owned canonical request import/export, bounded UTF-8 and safe-number validation, native atomic save, browser-qualified download, tests, limitations, and all append-only handoff/SPEC history; inherit current editor, wire, regional-physics, and complete ground ancestry without rebase, retarget, rewrite, force-push, or publication, while keeping execution/playback, result interchange, measured calibration, model-input persistence, changing geometry or velocity, TypeScript/compiled regional physics, downstream parity, protected exact-head evidence, review, approval, dependency integration, and release open. |
-<<<<<<< HEAD
->>>>>>> origin/feat/4274-regional-plan-io
-=======
 | 2026-08-11 | 1.14.33 | fix(ground-roll, #4271): remediate independent review of the regional execution envelope by embedding and hashing the exact plan, enforcing fixed executor producer/version with variable source revision, binding ordered transition identities and coordinates to both ground events and real plan crossings, aligning Python wire safe-number/integral-number/nonblank-text/vector validation with TypeScript, rejecting same-surface and fabricated mappings or unsubstantiated null-result ledgers, replacing synthetic evidence with executor-produced representable/cancelled/failed fixtures, and adding a shared adversarial parity corpus; preserve frozen base-result v1 and retain UI, compiled physics, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-11 | 1.14.32 | feat(ground-roll, #4271): bind exact ground request, settled bounce prefix, and regional-plan request through a bounded UI-neutral Python executor that constructs its resolver only from the plan and delegates to the authoritative skid/roll solver and composer; add strict immutable cross-runtime `ground-regional-execution-result/v1` with canonical request/plan digests, plan/executor/model provenance, exact ordered from/to transition evidence, fixed coplanar/static limitations, frozen base-result embedding for representable outcomes, and typed null-result cancellation/failure without fabricated physics; retain UI/playback, compiled regional physics, downstream parity, protected evidence, release, and issue completion as open work. |
->>>>>>> origin/feat/4284-camera-preset-parity
 | 2026-08-11 | 1.14.31 | merge(rate-of-closure, #4274 #4335 #4339): normally merge exact current regional-editor child `d21741e312b849a63f73cabf351a15d9de80fb94` first with exact published regional-wire parent `8f933ed8dcb29e55ece4ec6bb1e60813f6794d57` second while preserving PR #4339's `feat/4271-regional-wire-contract` base, matched PyQt6/React editors, strict validation invalidation and readback, parent wire/resolver/regional-physics/ground ancestry, and both append-only handoff/SPEC histories; retain the extracted navigation-state contract with `regional_surfaces` in default and legacy migration order, without rebase, retarget, rewrite, force-push, or publication, while keeping execution/playback, result interchange, measured calibration, model-input persistence, changing geometry or velocity, TypeScript/compiled regional physics, downstream parity, protected exact-head evidence, review, approval, dependency integration, and release open. |
 | 2026-08-11 | 1.14.33 | docs(rate-of-closure, #4342): restore verbatim the omitted PR #4335, #4332, and #4304 current-parent ancestry sections in all three canonical handoffs and the parent's exact parallel-branch SPEC 1.14.29 and 1.14.28 reconciliation rows; record the historical version collision without rewriting either branch's append-only record; change no production code, tests, schemas, manifest state, PR base, protected evidence, or release status. |
 | 2026-08-11 | 1.14.32 | chore(rate-of-closure, #4274 #4342): normally reconcile exact published regional request-I/O child `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833` with exact newly published regional-editor parent `d21741e312b849a63f73cabf351a15d9de80fb94` without changing PR #4342's base; preserve native atomic and browser-qualified canonical request I/O, safe-number and bounded UTF-8 behavior, and the parent's frozen validated engineering-number specification by delegating child controls to its three-parameter helper while retaining eleven-decimal presentation; keep protected CI, approval, integration, execution, calibration, downstream parity, and release open. |
@@ -3812,6 +3687,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4274): add matched PyQt6 and React regional surface-plan editors with explicit SI material inputs, one-to-eight bounded overlays, illustrative/unvalidated and persistence/execution qualifications, accessible strict validation/readback, provenance bound to the actual draft, and delegation to the separate regional-plan v1 wire contract; retain playback, execution, result interchange, measured calibration, workspace model-input persistence, other runtimes, protected evidence, and release as open work. |
 | 2026-08-10 | 1.14.27 | feat(ground-roll, #4271): add separate strict Python/TypeScript `ground-regional-material-plan-request/v1` and result/v1 wire contracts with exact keys, SI units, explicit coplanar/static limitations, finite bounded base/overlay intervals, bounded region/document counts, unique region/precedence/surface identities, canonical cross-runtime JSON/SHA-256 evidence, fail-closed no-fabrication result binding, and a Python-only adapter into the existing regional resolver; preserve the frozen flight-to-ground v1 request/result and retain TypeScript/compiled regional physics, UI, changing geometry, internal transition-ledger export, downstream parity, protected CI, review, and release as open work. |
 | 2026-08-10 | 1.14.26 | feat(ground-roll, #4271): add bounded Python-reference support for finite coplanar material overlays with unique explicit precedence, exact quadratic boundary splitting, base-edge precedence, state/energy continuity, strict Python/TypeScript `surface_transition` events, internal from/to identity evidence, typed transition limits, and randomized piecewise-analytic qualification; reject changing normals, height/velocity discontinuities, and overlays owning the impact handoff rather than fabricating impulses or geometry transitions, while retaining UI, compiled regional physics, and downstream parity as open work. |
+| 2026-08-11 | 1.14.28 | merge(ground-regions, #4304 #4332): normally merge exact remote regional-surface child `04ccf08dd990de1cd056a3420e67772773a4be2e` first with exact current skid/roll parent `3f861c1faaa7455faee92eaa7f813174667208e0` second while preserving PR #4332's `feat/4271-ground-skid-roll` base, bounded coplanar material overlays, exact transition splitting and evidence, regional production, tests, fixtures, contracts, limitations, and both append-only handoff/SPEC histories; inherit current impact, bounce, skid, roll, and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping changing normals, discontinuous geometry or velocity, regional UI, compiled regional physics, downstream parity, protected exact-head CI, review, approval, and release open. |
+| 2026-08-11 | 1.14.27 | chore(ground-regions, #4271 #4332): normally reconcile exact live regional-surface child `1a48d749af508843fac2a5102f4dd56294429bda` with exact newly published skid/roll parent `0ea6740965068542e9d8c7449e06ec07d88969e0` without changing the PR base or rewriting either branch; preserve bounded coplanar material overlays, exact transition splitting and evidence, strict contracts, and all current parent physics while retaining changing normals, discontinuous geometry/velocity, UI, compiled regional physics, and downstream parity as open work. |
+| 2026-08-11 | 1.14.27 | merge(ground-roll, #4302 #4304): normally merge exact remote skid/roll child `0ea6740965068542e9d8c7449e06ec07d88969e0` first with exact current impact/bounce parent `62beb3e1aa951645fd556a53f9cbae4bb46c47e5` second while preserving PR #4304's `feat/4270-ground-impact-bounce` base, arbitrary-plane skid, static-feasible pure roll, rolling resistance, qualified rest, edge localization, strict result composition, passive ledgers, fixtures, tests, limitations, and both append-only histories; inherit current bounce and flight-transfer ancestry without rebase, retarget, force-push, parent rewrite, or remote publication, while keeping regional/changing-normal surfaces, deformation, torsional damping, roll-to-skid transitions, UI, compiled physics, protected exact-head CI, review, approval, downstream integration, and release open. |
+| 2026-08-11 | 1.14.26 | chore(ground-roll, #4271 #4304): fast-forward the local skid/roll carrier to exact live child `52d9a6a978d8e6b8b19ef92f02f265c9058b00ad`, then normally merge exact live impact/bounce parent `cf6e72bad98e5f36f782254942e6895b8b71e670` without changing the PR base or rewriting either branch; retain the reviewed skid/roll physics and strict contracts while reconciling current ancestry and deterministic formatting evidence. |
 | 2026-08-10 | 1.14.25 | fix(ground-roll, #4271 #4304): normally propagate exact corrected ground-impact/bounce parent `846653c21bd61a40aab99ab838c29915d0728e70` into the skid/roll descendant without changing its base; preserve the reviewed arbitrary-plane skid, pure-roll, resistance, rest, edge, composition, and passive-ledger behavior while inheriting corrected flight-transfer ancestry, deterministic workspace timestamp parsing, and canonical `swing_sim` import identity; retain explicit exclusions for regional/changing-normal surfaces, terrain deformation, torsional spin damping, roll-to-skid transitions, UI, compiled physics, and downstream parity. |
 | 2026-08-10 | 1.14.24 | fix(ground-roll, #4304): explicitly allowlist the immutable SHA-256 golden-fixture digest as non-secret test evidence so protected secret scanning distinguishes a scientific integrity fingerprint from a credential; no physics, numerical, schema, API, or fixture bytes change. |
 | 2026-08-09 | 1.14.23 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
@@ -3870,7 +3749,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data; playback controls with head-fixed/head-moving display modes, clickable result explanations, a live-substituted Derivation & Traceability tab (mathtext / KaTeX), independent cross-validation tests, PyInstaller/Tauri packaging, and brand-neutral program strings; review round adds unit drop-downs (speed/rotation/length) with a canonical-unit model core, arrow-free typed inputs with sourced golf-swing range tooltips, a Common Closure Metrics panel (CCV, deg/ft, deg/in, deg/ms, R_ISA, time-to-square, toe-heel speed delta), a derivation-tab scroll fix, and removal of the duplicated Theme menu. |
 | 2026-08-05 | 1.5.9 | feat(golf-club, #4160): add exact physical-shaft-axis contact velocity decomposition, counterfactual and Shapley AoA attribution, ground/arc leading-edge rates, 3D face-normal rate, screw-axis clearance, strict frame contracts, and the -10 degree worked example. |
 | 2026-08-05 | 1.5.6 | fix(ci): include and shallow-initialize UpstreamDrift's pinned `vendor/ud-tools` submodule in the narrow cross-repository checkout so editable metadata generation can validate exact package provenance without broadening checkout to the full `src` or `ui` trees. |
->>>>>>> origin/feat/4274-regional-surface-ui
 | 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
 | 2026-08-04 | 1.5.4 | docs(agent-handoff, Repository_Management#1390): add root `AGENT_HANDOFF.md` plus per-tool `AGENT_HANDOFF.md` under `src/rate_of_closure`, `src/pendulum_simulator`, and `src/rotation_converter`; add `docs/AGENT_HANDOFF_TEMPLATE.md` for future tools; add the "Agent Handoff & PR Policy" section to `CLAUDE.md`. |

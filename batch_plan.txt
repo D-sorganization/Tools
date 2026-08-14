@@ -1,0 +1,47 @@
+Missing: set()
+Extra: set()
+Total categorized: 38
+
+=== Palette & Bolt Batch (consolidated/palette-bolt-batch) ===
+  PR #4389: palette-aria-labels-matrices-3953280844180552522 | 🎨 Palette: Add ARIA labels to dynamic matrix grids
+  PR #4387: bolt/optimize-svg-path-building-12382126696986403940 | perf(data-explorer): qualify SVG path construction
+  PR #4347: palette-focus-visible-14866957424878358747 | 🎨 Palette: Add focus-visible states to core buttons
+  PR #4346: bolt-optimize-csv-header-parse-8774832451639572971 | ⚡ Bolt: Optimize array allocations in CSV parsing
+  PR #4345: bolt-optimize-csv-index-allocation-8732981744710152070 | ⚡ Bolt: Replace Array.from in CSV indexing to eliminate closure overhead
+  PR #4337: batch/dependabot-updates | chore: consolidated dependabot updates
+
+=== Ground Study Batch (consolidated/ground-study-batch) ===
+  PR #4375: codex/4369-flight-recompute-cancellation | feat(ground-study): cancel qualified flight recomputation
+  PR #4374: codex/4369-editor-job-preparation | feat(ground-study): prepare jobs from current editors
+  PR #4373: codex/4369-imported-job-ui | feat(ground-study): add imported-job execution workspaces
+  PR #4372: codex/4369-ground-authority-capability | feat(ground-study): add fail-closed web authority capability (#4369)
+  PR #4370: codex/4369-regional-ground-execution-job | feat(ground-study): add execution job prerequisites (#4369)
+  PR #4367: codex/4273-ground-variation-file-ui | feat(ground-study): own React request workspace (#4273)
+  PR #4366: codex/4273-ground-variation-persistence | feat(ground-study): persist seeded variation requests (#4273)
+  PR #4365: codex/4273-seeded-ground-variation | feat(ground-study): add seeded material variation runner
+  PR #4361: codex/4273-flight-ground-study-adapter | feat(ground-study): adapt qualified regional results (#4273)
+  PR #4360: feat/4271-flight-regional-ground-pipeline | feat(ground): compose flight through regional execution
+  PR #4359: feat/4270-flight-bounce-execution | feat(ground): compose flight transfer with repeated bounce
+  PR #4357: feat/4270-repeated-bounce-execution | feat(ground): bind repeated-bounce request execution
+  PR #4356: feat/4270-repeated-bounce-request-wire | feat(ground): bind repeated-bounce execution requests
+  PR #4355: feat/4271-repeated-bounce-wire | feat(ground): add repeated-bounce evidence wire contract
+  PR #4354: feat/4271-regional-trajectory-export | feat(ground): inspect and export regional trajectories
+  PR #4353: feat/4271-regional-event-inspection | feat(ground): inspect regional execution event ledgers
+  PR #4352: feat/4271-regional-result-readback | feat(ground): complete regional execution result readback
+  PR #4351: feat/4271-regional-execution-ui | feat(ground): add regional execution evidence readback
+  PR #4350: feat/4271-regional-execution-binding | feat(ground): bind regional plan execution and evidence
+  PR #4335: feat/4271-regional-wire-contract | feat(ground): add regional material plan wire contract
+  PR #4332: feat/4271-regional-surface-transitions | feat(ground): add coplanar regional transitions
+
+=== Rate of Closure Batch (consolidated/rate-of-closure-batch) ===
+  PR #4402: feat/proximal-distal-workbench | Add Proximal–Distal Dynamics Companion Guide
+  PR #4388: codex/4378-static-inspection-runtime | Rate of Closure: qualify deterministic static web distribution
+  PR #4376: codex/4369-authority-restart-recovery | feat(rate-of-closure): recover durable authority jobs
+  PR #4371: codex/4369-validator-failure-stage | fix(rate): type regional outcome validation failures (#4369)
+  PR #4368: codex/4273-ground-variation-file-controls | feat(rate): add regional-ground request file controls (#4273)
+  PR #4364: codex/4192-ground-target-projection | feat(rate): project qualified post-ground spatial targets (#4192)
+  PR #4363: codex/4274-ground-playback-propagation | feat(rate): add bounded ground-result playback (#4274)
+  PR #4362: feat/4284-track-clubhead | feat(rate): track clubhead in matched camera views (#4284)
+  PR #4358: feat/4284-camera-preset-parity | feat(rate-of-closure): add canonical camera preset parity
+  PR #4342: feat/4274-regional-plan-io | feat(rate): add canonical regional plan file I/O
+  PR #4339: feat/4274-regional-surface-ui | feat(rate): add matched regional surface plan editors

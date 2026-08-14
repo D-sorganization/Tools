@@ -1,17 +1,8 @@
 # AGENT_HANDOFF — Tools
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 ## 2026-08-11 PR #4362 bounded Track Clubhead child
-=======
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
->>>>>>> origin/feat/proximal-distal-workbench
 
 Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
 starts exactly at current published PR #4358 head
@@ -40,7 +31,6 @@ Accessible labels and visible state are present in both clients. Playback
 controls were
 extracted from the React canvas without changing their interaction contract.
 
-<<<<<<< HEAD
 Focused evidence is green: 32 Python/PyQt camera tests and 20 React
 model/component tests, including start/impact/end, wrap, matched manual orbit,
 native PyQt pan,
@@ -53,7 +43,6 @@ changed PyQt viewport is 499 lines; the parent `torque_profile_panel.py`
 persistence, other 3D
 surfaces, UpstreamDrift consumers, protected review, release, and
 #4284/#4218 completion remain open.
-=======
 | Epic                                                                          | Status (one line)                                                                                                                                                                                                   |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | #4103 — Swing–Impact–Ball-Flight Simulation Platform                          | Phases 0-6 implemented on branch `feat/impact-simulation-platform`, consolidated into PR **#4119** (open, auto-merge armed, awaiting review). Phase 7 (WASM web parity swap, Pages CI) still open.                  |
@@ -61,7 +50,6 @@ surfaces, UpstreamDrift consumers, protected review, release, and
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
 | #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
 | UpstreamDrift #8511 — Interactive Proximal–Distal Dynamics Workbench          | Active on `feat/proximal-distal-workbench`; reuses the existing pendulum simulator and adds one canonical experiment/glossary contract for PyQt6 and React/Tauri consumers.                                           |
->>>>>>> origin/feat/proximal-distal-workbench
 
 ## 2026-08-11 PR #4358 published camera-preset parity
 
@@ -102,12 +90,6 @@ Tracking, tracking-suspension semantics, recenter, camera workspace
 persistence, principal React 3D swing, remaining 3D adapters,
 Playwright/high-DPI rendered QA, full playback coverage, protected review,
 release, and issue/epic completion remain open.
-=======
-=======
-=======
-=======
-=======
-=======
 ## 2026-08-12 #4378 deterministic static-inspection distribution
 
 Branch `codex/4378-static-inspection-runtime` starts exactly from Tools PR
@@ -176,8 +158,6 @@ signing, SBOM/attestation, calibrated or compiled physics, downstream parity,
 protected release, and issue/epic closure remain open under #4377 and
 #4379-#4385.
 
-
->>>>>>> origin/codex/4378-static-inspection-runtime
 ## 2026-08-12 #4369 durable loopback authority recovery
 
 Branch `codex/4369-authority-restart-recovery` starts exactly from approved
@@ -238,7 +218,6 @@ runtime qualification, PyQt direct-worker recovery, measured calibration,
 compiled/TypeScript regional physics, UpstreamDrift parity, ancestor
 integration, protected release, and closure of #4369/#4273/#4267 remain open.
 
-
 ## 2026-08-12 #4369 qualified flight-recompute cancellation
 
 Branch `codex/4369-flight-recompute-cancellation` starts exactly from Tools PR
@@ -274,8 +253,6 @@ implementation commit. Durable authority restart recovery, static-host and
 frozen-runtime qualification, measured regional calibration, compiled or
 TypeScript regional physics, downstream UpstreamDrift parity, ancestor-stack
 integration, protected release, and closure of #4369/#4273/#4267 remain open.
-
-
 
 ## 2026-08-11 #4369 current-editor job preparation
 
@@ -322,7 +299,6 @@ static-host execution, frozen-runtime qualification, cooperative cancellation
 inside flight recomputation, measured calibration, compiled/TypeScript regional
 physics, UpstreamDrift consumers, ancestor integration, protected release, and
 #4369/#4273/#4267 completion remain open.
-
 
 ## 2026-08-11 #4369 imported-job accessibility correction
 
@@ -742,7 +718,6 @@ React tests, MyPy, Ruff, TypeScript, ESLint, production build, manifest, and
 module gates. Result binding, in-flight cancellation, controllers, protected
 integration, and release remain open.
 
->>>>>>> origin/codex/4369-authority-restart-recovery
 ## 2026-08-11 local #4369 typed validator failure boundary
 
 Stacked from exact published PR #4370 head
@@ -897,7 +872,6 @@ full React, TypeScript, ESLint, Vite, Ruff, manifest, and documentation gates
 are recorded in the commit evidence. Code, SPEC, manifest, and all handoffs
 commit together as `SELF`; no push or GitHub write occurred.
 
->>>>>>> origin/codex/4369-validator-failure-stage
 ## 2026-08-11 local #4273 contextual regional-ground request File controls
 
 The unpublished `codex/4273-ground-variation-file-controls` child starts from
@@ -1057,7 +1031,6 @@ consumption, compiled/runtime parity, downstream UpstreamDrift parity,
 protected CI and release remain open. Publication does not promote this bounded
 slice to issue or epic completion.
 
->>>>>>> origin/codex/4273-ground-variation-file-controls
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 
 Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)
@@ -1099,8 +1072,6 @@ dependency order, and ordinary merge gates remain. The PR adds no editor/UI,
 persistence, solver/capability invocation, aerial trajectory evaluation,
 compiled runtime, new physics, or geometry. Keep #4192, #4273, and #4267 open.
 
-
->>>>>>> origin/codex/4192-ground-target-projection
 ## 2026-08-11 PR #4363 matched ground playback
 
 Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
@@ -1283,7 +1254,6 @@ found no current-head failing check, but every open PR still had queued
 protected contexts and no submitted approval. The release manifest now records
 the reconciled parent heads and #4357; it remains evidence-only and does not
 claim protected completion or release.
->>>>>>> origin/codex/4274-ground-playback-propagation
 
 ## 2026-08-11 PR #4356 published current-parent propagation
 
@@ -1595,7 +1565,6 @@ model-input persistence, changing geometry or surface velocity,
 TypeScript/compiled regional physics, downstream parity, protected exact-head
 evidence, approval, dependency integration, and release remain open.
 
-
 ## 2026-08-11 PR #4351 delta-MyPy boundary repair candidate
 
 Protected CI on exact PR #4351 head
@@ -1610,7 +1579,6 @@ semantics, canonical bytes, UI behavior, and physics are unchanged.
 This is a local no-publish repair candidate. It must propagate normally through
 descendants #4352, #4353, and #4354 after exact-head review; protected CI,
 review, dependency ordering, and release remain open.
-
 
 ## 2026-08-11 regional execution current-parent reconciliation candidate
 
@@ -1627,7 +1595,6 @@ validation, and executor-produced evidence. The parent retains canonical
 request I/O, the bounded engineering input helper, and its verbatim append-only
 handoff/SPEC history. This local candidate is not protected or release evidence.
 
-
 Merged-tree qualification is 143 focused Python ground tests and 24 focused
 React execution/plan/editor tests passing. Pinned Ruff 0.14.10 check/format
 passes all 50 ground files; pinned MyPy 1.13 passes all four execution modules
@@ -1643,7 +1610,6 @@ A broader formatter sweep also reports three parent-only Rate test files that
 current Ruff would reformat; the exact execution/ground scope is clean and this
 child does not rewrite that published parent baseline. The React build retains
 the existing nonblocking warning for its approximately 500 kB main chunk.
-
 
 ## 2026-08-11 regional execution independent-review remediation
 
@@ -1687,8 +1653,6 @@ transitions, and the coplanar/static limitations. Python executes the existing
 solver/composer; TypeScript only parses/serializes. No UI controls, compiled
 regional physics, UpstreamDrift consumers, protected CI/review, or #4271
 completion are claimed.
-
-
 
 ## 2026-08-11 PR #4342 append-only preservation repair
 
@@ -1793,7 +1757,6 @@ the official changed-file 500-LOC budget, and mandatory production limits of
 400 lines per module, 50 lines per function, and four parameters all pass. The
 local merge is a PUBLISH candidate for independent review only; protected
 exact-head CI, approval, normal child propagation, and publication remain open.
-
 
 ## 2026-08-11 PR #4342 current-parent reconciliation candidate
 
@@ -2012,8 +1975,6 @@ terrain/interval visualization, TypeScript or compiled regional physics,
 UpstreamDrift parity, protected CI/review, parent integration, and main release
 remain open.
 
-
-
 ## 2026-08-10 PR #4335 isolated-MyPy return typing
 
 Protected CI at exact head `d382ca9928628a16fec7ddd4fa1b1cc144b4c490`
@@ -2062,7 +2023,6 @@ This child remains `not_released`. Protected CI, independent review, normal
 stack integration, UI, TypeScript/Rust/PyO3/WASM regional physics, changing
 normals/heights/velocities, internal transition-ledger wire export,
 UpstreamDrift parity, and main release remain open.
-
 
 ## 2026-08-10 issue #4271 coplanar regional-material local child
 
@@ -2177,7 +2137,6 @@ Draft PR #4304 now publishes `feat/4271-ground-skid-roll` at exact reviewed head
 The immutable implementation evidence remains the two-commit child ending at `dcc801395538bdc7b9a46835f5555abdd72677a4`: 115 ground tests pass on CPython 3.11.9 and real 3.10.20, pinned MyPy 1.13 is clean across 25 production modules, pinned Ruff 0.14.10 is clean across 18 changed Python files, and manifest, documentation, assertion, structural, file-size, and diff gates pass. Issue #4271 stays open for changing normals and regional surfaces; protected CI, review, dependency integration, UI, compiled runtimes, and downstream parity remain release gates.
 
 This publication-only registry update makes no material physics, numerical, schema, or API change beyond the already committed exact head; it records the carrier and evidence in the campaign manifest and canonical handoffs.
-
 
 ## 2026-08-09 issue #4271 independent-review hardening
 
