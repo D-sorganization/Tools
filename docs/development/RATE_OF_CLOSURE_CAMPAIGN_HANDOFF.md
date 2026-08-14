@@ -33,6 +33,9 @@
   inputs, Putting pace input, and Glossary term list. The protected PyQt lane
   exercises the exact full-window inventory and retains tab/control counts,
   findings, GitHub SHA, and toolkit versions as JSON.
+- Matplotlib's native Plots toolbar exposes 16 focusable controls on hosted
+  Linux and 17 on Windows. That sole platform envelope is pinned; every
+  observed control remains named and its exact count stays in evidence.
 - `rate-visualization-at-protocol.md` is a controlled, surface-by-surface human
   keyboard/screen-reader qualification record. It requires exact environment,
   announcement, defect, artifact, evaluator, and approver evidence. It has not

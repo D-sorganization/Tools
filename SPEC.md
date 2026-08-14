@@ -69,6 +69,9 @@ bounded to 512 characters. This closes the reproduced unnamed canvas, list,
 combo, slider, and numeric-input gaps across the nine PyQt tabs.
 The protected PyQt artifact records the exact tab/control counts, findings,
 GitHub SHA, and Qt/PyQt versions as JSON.
+Matplotlib's native Plots toolbar exposes 16 focusable controls on hosted Linux
+and 17 on Windows. That sole platform envelope is pinned while every observed
+control remains subject to the name/length audit and its exact count is retained.
 
 The companion controlled protocol covers keyboard traversal, focus, primary
 tasks, status/error/result announcements, 200% scaling, exact environment and

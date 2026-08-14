@@ -33,6 +33,9 @@
   glossary, simulation, flight, variation, and putting controls are corrected.
   The protected artifact records tab/control counts, findings, GitHub SHA, and
   exact Qt/PyQt versions as JSON.
+- The native Matplotlib Plots toolbar has a pinned 16-control hosted-Linux /
+  17-control Windows envelope; every observed control still requires a bounded
+  accessible name, and evidence retains the exact platform count.
 - The new controlled protocol defines keyboard/screen-reader tasks, evidence,
   defects, exact environment identity, and sign-off for every surface/tab. No
   human execution is recorded, so manual AT qualification and approved
