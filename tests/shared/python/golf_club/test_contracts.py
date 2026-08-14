@@ -24,6 +24,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "CATEGORY_TURF",
         "LEGACY_FORMAT",
         "AssembledMassProperties",
+        "CadGeometryReference",
         "ClubAssembly",
         "ClubComponent",
         "ClubLengthConvention",
@@ -33,6 +34,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "ContactSequence",
         "ExtrapolationPolicy",
         "GroundPlane",
+        "ExactCadValidation",
         "Handedness",
         "InstantaneousScrewAxis",
         "RigidTransform",
@@ -64,6 +66,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "TurfPreset",
         "TurfProfileProvenance",
         "TurfVariationPlan",
+        "StlMeshValidation",
         "WedgeExportArtifact",
         "WedgeExportFormat",
         "WedgeExportRequest",
@@ -94,6 +97,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "export_wedge_artifacts",
         "evaluate_turf_contact",
         "evaluate_wedge_turf_wrench",
+        "reference_from_build123d_shape",
         "scale_shaft_profile",
         "shaft_component_mass_properties",
         "shaft_profile_from_csv",
@@ -119,6 +123,8 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "wedge_face_contact_point_m",
         "wedge_ground_clearance_to_json_dict",
         "wedge_preset",
+        "validate_binary_stl",
+        "validate_exact_cad",
     }
 
 

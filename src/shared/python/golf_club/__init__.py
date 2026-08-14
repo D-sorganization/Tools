@@ -6,6 +6,12 @@ component coordinates into the assembly frame.
 """
 
 from .assembly import ClubAssembly, assemble_mass_properties
+from .cad_validation import (
+    CadGeometryReference,
+    ExactCadValidation,
+    reference_from_build123d_shape,
+    validate_exact_cad,
+)
 from .serialization import (
     CURRENT_FORMAT,
     LEGACY_FORMAT,
@@ -71,6 +77,7 @@ from .turf_variation import (
     TurfVariationPlan,
     turf_profiles_for_variation_plan,
 )
+from .stl_validation import StlMeshValidation, validate_binary_stl
 from .types import (
     AssembledMassProperties,
     ClubComponent,
@@ -138,6 +145,7 @@ __all__ = [
     "CATEGORY_TURF",
     "LEGACY_FORMAT",
     "AssembledMassProperties",
+    "CadGeometryReference",
     "ClubAssembly",
     "ClubComponent",
     "ClubLengthConvention",
@@ -146,6 +154,7 @@ __all__ = [
     "ComponentRole",
     "ContactSequence",
     "ExtrapolationPolicy",
+    "ExactCadValidation",
     "Handedness",
     "GroundPlane",
     "InstantaneousScrewAxis",
@@ -175,6 +184,7 @@ __all__ = [
     "TurfConvergenceStudy",
     "TurfPreset",
     "TurfProfileProvenance",
+    "StlMeshValidation",
     "WedgeHeadParameters",
     "WedgeClearanceSample",
     "WedgeContactCandidate",
@@ -208,6 +218,7 @@ __all__ = [
     "export_wedge_artifacts",
     "evaluate_turf_contact",
     "evaluate_wedge_turf_wrench",
+    "reference_from_build123d_shape",
     "scale_shaft_profile",
     "shaft_component_mass_properties",
     "shaft_profile_from_csv",
@@ -233,4 +244,6 @@ __all__ = [
     "wedge_ground_clearance_to_json_dict",
     "wedge_parameters_from_json",
     "wedge_parameters_to_json",
+    "validate_binary_stl",
+    "validate_exact_cad",
 ]

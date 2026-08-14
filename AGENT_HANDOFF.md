@@ -2,6 +2,8 @@
 
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-11.
+> **Update this file with every PR and every push to main.**
+> Last updated: 2026-08-09
 
 ## 2026-08-12 #4385 Windows authority-state security
 > Current-state only; history lives in git. Last updated: 2026-08-11.
@@ -673,8 +675,7 @@ requiring elevated owner-changing authority.
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
 | #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
 
-The separate shared Club Builder epic #4146 is active. Its first dependency
-slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
+The separate shared Club Builder epic #4146 is active. #4147 provides the
 UI-independent assembly mass/CG/inertia, frame, length-datum, and persistence
 contracts that the later shaft, CAD, export, fitting, and UI issues consume.
 The boundary rejects UNC/non-fixed/non-NTFS storage, overlong or reserved
@@ -684,6 +685,16 @@ out-of-root paths. Stable typed diagnostics never include the sensitive path.
 SQLite temporary storage is memory-backed, and no-delete handles remain live
 for the root and durable artifacts; transient sidecar handles are released in a
 bounded order before SQLite shutdown.
+contracts; #4148 adds measured shaft profiles and reference static/modal
+models. The current #4149 drafting branch `feat/4149-cad-families` (PR #4171,
+stacked on #4148) provides the first exact modern-wedge B-Rep. Its controlled
+export contract is now `golf_club.wedge_export/2`: STEP/BREP are reopened and
+compared with the canonical solid, binary STL independently proves watertight
+two-manifold topology, winding, connectedness, outward orientation, bounds,
+and volume, and the manifest records deterministic source/artifact SHA-256
+evidence. This remains a wedge foundation, not completion of all six head
+families, optimization, preview, or manufacturing qualification. See
+`src/shared/python/golf_club/AGENT_HANDOFF.md` for exact gates and residuals.
 
 State retention is deliberate: normal shutdown, restart, upgrade, and package
 uninstall do not delete the per-user authority root. Terminal records remain

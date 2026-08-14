@@ -279,6 +279,14 @@ class MotionCanvas(QWidget):
     def _chain_path_length(self) -> float:
         return self._path_length_m
 
+    @staticmethod
+    def _compute_chain_path_length(chain_nodes: list[tuple[float, float]]) -> float:
+        distances = [
+            np.hypot(end[0] - start[0], end[1] - start[1])
+            for start, end in pairwise(chain_nodes)
+        ]
+        return max(float(sum(distances)), 0.5)
+
     def _draw_grid(self, painter: QPainter) -> None:
         painter.setPen(QPen(GRID, 1))
         step = 40
