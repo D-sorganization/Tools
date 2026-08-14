@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.11                                    |
-| **Spec Version**        | 1.13.11                                    |
+| **Current Version**     | 1.13.13                                    |
+| **Spec Version**        | 1.13.13                                    |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,27 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
+
+- Python and TypeScript share a versioned, golden-fixture-pinned sampler for
+  true meteorological wind and correlated player-estimation errors. Seed,
+  true-wind distributions, systematic under/overestimation, error spread,
+  speed/bearing correlation, units, frame, and provenance are explicit.
+- Club/aim strategies run on identical wind draws (common random numbers),
+  retaining completed landing scatter and explicit nonconverged/invalid
+  cohorts. The v2 output distinguishes actual estimate-driven decisions, the
+  same policy evaluated with true-wind information, and hindsight selection of
+  the best declared preset; the latter is no longer presented as if it were
+  perfect information.
+- Summaries report target-circle hold probability, empirical miss-distance CVaR
+  at an explicit alpha, and short/long/left/right frequency and severity.
+  Failure cohorts remain in hold and tail-risk denominators through an explicit
+  miss-distance penalty and never receive invented landing directions.
+- The bounded foundation is deterministic decision support, not a weather
+  forecast or an automatic club recommendation. UI workflow, terrain effects,
+  measured forecast ingestion, and statistically justified player-specific
+  calibration remain follow-on work.
+
 ### 2026-08-06 Reproducible ball-flight wind physics
 
 - One versioned Python/TypeScript wind scenario defines wind-to velocity in
@@ -2754,6 +2775,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
+| 2026-08-06 | 1.13.13 | fix(ball-flight, #4199): migrate strategy output to v2; separate policy-fixed true-wind counterfactuals from preset-oracle regret and add failure-inclusive target-hold, miss-distance CVaR, and directional risk metrics with Python/TypeScript parity. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |

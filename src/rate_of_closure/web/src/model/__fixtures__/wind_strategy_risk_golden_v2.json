@@ -1,0 +1,54 @@
+{
+  "schema_version": "wind-strategy-analysis/v2",
+  "failure_case": {
+    "miss_scale_m": 10.0,
+    "failure_cost": 4.0,
+    "target_radius_m": 5.0,
+    "miss_distance_cvar_alpha": 0.5,
+    "expected": {
+      "target_hold_probability": 0.0,
+      "miss_distance_cvar_m": 20.0,
+      "directional_probability": 0.0,
+      "expected_information_cost_delta": 0.0,
+      "expected_preset_oracle_regret": 0.0
+    }
+  },
+  "directional_case": {
+    "target": { "forward_m": 100.0, "right_m": 0.0 },
+    "miss_scale_m": 10.0,
+    "failure_cost": 4.0,
+    "target_radius_m": 5.0,
+    "miss_distance_cvar_alpha": 0.5,
+    "landings": [
+      { "forward_m": 95.0, "right_m": -4.0 },
+      { "forward_m": 105.0, "right_m": 3.0 },
+      { "forward_m": 100.0, "right_m": 1.0 },
+      null
+    ],
+    "expected": {
+      "expected_cost": 1.19,
+      "target_hold_probability": 0.25,
+      "miss_distance_cvar_m": 13.201562118716424,
+      "short_risk": {
+        "probability": 0.25,
+        "mean_excess_m": 1.25,
+        "conditional_mean_excess_m": 5.0
+      },
+      "long_risk": {
+        "probability": 0.25,
+        "mean_excess_m": 1.25,
+        "conditional_mean_excess_m": 5.0
+      },
+      "left_risk": {
+        "probability": 0.25,
+        "mean_excess_m": 1.0,
+        "conditional_mean_excess_m": 4.0
+      },
+      "right_risk": {
+        "probability": 0.5,
+        "mean_excess_m": 1.0,
+        "conditional_mean_excess_m": 2.0
+      }
+    }
+  }
+}
