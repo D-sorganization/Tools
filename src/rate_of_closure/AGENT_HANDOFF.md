@@ -1,5 +1,8 @@
 # AGENT_HANDOFF — rate_of_closure
 
+> **Update this file with every PR and every push to main.**
+> Last updated: 2026-08-11
+
 ## 2026-08-12 #4385 Windows authority-state security
 
 Published draft PR #4392 carries branch `codex/4385-windows-state-security`
@@ -11,6 +14,110 @@ ordinary dependency order; do not rebase, force-push, retarget, rewrite the
 shared browser branch, or bypass protection. Human review is approved, but
 fresh exact-head protected CI and ordinary non-admin merge behavior remain
 mandatory.
+## 2026-08-10 PR #4299 camera/ground-stack propagation
+
+Draft PR #4299 keeps base `feat/4199-wind-workflow` and normally merges the
+original four-surface child head
+`dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` first with independently
+reviewed #4298 head `57942e64744a199e4fd7d604fe2eeb9faddd062a`
+second. No branch is rebased, retargeted, rewritten, or force-pushed. The
+result retains `four-surface-capability/v1`, its declared-scope generator,
+schema, canonical inventory, and exact evidence paths while inheriting the
+complete camera-control and repaired flight-to-ground stack.
+
+The governed boundary covers 15 structured campaign programs, 18 unique
+linked active release specifications, and six curated capability records.
+Every record classifies all four product surfaces explicitly. UpstreamDrift
+support remains unavailable without an immutable installed Tools pin and
+repository-bound conformance evidence, and narrative-only features remain
+outside this declared scope until promoted to a structured authority.
+
+Local integration evidence is 1,589 Python/PyQt/shared-swing tests with one
+explicit unavailable-wheel skip; 110 React files / 670 tests; TypeScript,
+zero-warning ESLint, the 194-module production build, and four desktop/high-DPI
+Playwright camera cases; all 137 `tools-core` tests plus formatting and
+warning-denied Clippy; and the exact hosted Ruff/format, pinned MyPy, Bandit,
+deterministic-authority, documentation, changed-code, size, assertion,
+manifest-layout, conflict-marker, and diff gates.
+
+Independent exact-tree review found no findings. Protected current-head CI,
+installed-consumer evidence, native rendered QA, and dependency-ordered
+release remain open. Neither #4264 nor #4260 is complete.
+
+## 2026-08-10 PR #4298 exact hosted-mypy repair
+
+Exact head `a51e49e4d2e7f5b1985c802f8290ea7649e7927e` passed Ruff and
+formatting, then protected quality-gate job `93503197807` failed at pinned
+MyPy 1.13 with 18 integration-only errors in the inherited flight-to-ground
+adapter. The hosted delta checks every changed production file from the
+preserved PR base in one skipped-import invocation; that exposed compatibility
+`StrEnum` members as `str` and generator-built NumPy tuples as variable-length
+tuples.
+
+The repair constructs exact typed enum members through their public
+constructors and builds explicit three-component tuples. Runtime values, wire
+bytes, coordinate transforms, physics, and camera behavior are unchanged. The
+exact hosted command now passes all 33 production files; 79 focused ground,
+transfer, and flight-physics tests plus Ruff/format pass. Fresh protected
+current-head CI is required after the normal fast-forward follow-up; do not
+retry the obsolete failed head. This repair does not complete #4284, #4269, or
+their parent epics.
+
+## Issue #4284 local implementation
+
+Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
+camera evidence through immutable commit
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The normal merge containing this
+handoff keeps original camera child
+`9ffd8d280c77977a41e93bd0caef9678d1c231b6` first and incorporates exact
+repaired #4288 head `108a841b1378c992defd3c7b7ee263d41a6c8b24`
+second; the PR base remains `feat/4199-wind-workflow`. Exact #4288 contains
+repaired #4285 `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` and repaired #4282
+`686016196a2f895058b8a566dff103a0fd32cd10`. No branch was rebased,
+retargeted, rewritten, or force-pushed. The camera child has a shared Python/TypeScript
+camera contract and adapters for PyQt6 Simulation/Flight and React Club,
+Impact, and Flight 3D viewports. Canonical snap directions use x downrange,
+y up, z right; face-on side is explicit. Tracking is opt-in, bounded, isolated
+per viewport, preserves safe zoom, suspends after manual orbit, and resumes on
+Recenter. Camera state is deliberately not persisted in this slice.
+
+The published evidence adds adjacent solver-sample frame stepping to
+React flight playback and Playwright coverage spanning play/pause/restart,
+loop, speed, frame steps, wheel zoom, snap views, tracking suspension, and
+Recenter. It also verifies control containment and canvas backing resolution
+at 520 x 900 and 2x DPR. Do not report released: required follow-up is native
+rendered review, hosted CI/review, normal stack integration, and UpstreamDrift
+PyQt6/React consumer parity. See
+`docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md` and issue #4284.
+
+Evidence commit `2095e748` passes 39 focused Python/PyQt camera tests, the full
+107-file / 650-test React suite, four Playwright browser tests across desktop
+and constrained 2x-DPR Chromium, Ruff format/check, targeted mypy, TypeScript,
+zero-warning ESLint, the 193-module Vite build, campaign validation, and diff
+checks. Headless desktop and 700 px camera-control renders were inspected
+without overlap; the local offscreen Qt font directory is unavailable, so
+native-font/browser rendered review remains explicitly open. Browser
+automation does not close the native visual or downstream parity gates.
+
+The prior documentation-only successor records the already-published camera
+evidence commit. `evidence_commit_sha` is immutable evidence, not an impossible
+self-reference. This local merge records its exact two parents while omitting
+its own future SHA from the commit it creates.
+
+The exact composed tree passes 1,738 Python tests with two explicit optional
+`build123d` skips, including the installed `tools_core` flight parity path;
+110 React files / 670 tests; all 137 `tools-core` Rust tests; and four
+Playwright camera/playback cases across desktop and constrained 2x-DPR
+Chromium. TypeScript, zero-warning ESLint, the 194-module Vite production
+build, Ruff check/format across 61 changed Python files, pinned mypy 1.13 and
+Bandit across 43 changed production files, warning-denied `tools-core` clippy,
+Rust format, campaign-manifest validation, documentation governance, module
+and 500-LOC budgets, conflict-marker checks, and staged/working diff checks are
+clean. The focused child/parent control seam passes 12 PyQt camera and impact
+layer tests. Protected current-head CI, review, native rendered review,
+UpstreamDrift parity, camera persistence, and protected release remain open.
+
+## PR #4288 exact repaired-ground propagation
 
 The Windows authority store now requires a named path on fixed local NTFS with
 persistent ACL and named-stream support. A process-lifetime native lease opens
@@ -311,7 +418,6 @@ signing, SBOM/attestation, calibrated or compiled physics, downstream parity,
 protected release, and issue/epic closure remain open under #4377 and
 #4379-#4385.
 
-
 ## 2026-08-12 #4369 durable loopback authority recovery
 
 Branch `codex/4369-authority-restart-recovery` starts exactly from approved
@@ -372,7 +478,6 @@ runtime qualification, PyQt direct-worker recovery, measured calibration,
 compiled/TypeScript regional physics, UpstreamDrift parity, ancestor
 integration, protected release, and closure of #4369/#4273/#4267 remain open.
 
-
 ## 2026-08-12 #4369 qualified flight-recompute cancellation
 
 Branch `codex/4369-flight-recompute-cancellation` starts exactly from Tools PR
@@ -408,8 +513,6 @@ implementation commit. Durable authority restart recovery, static-host and
 frozen-runtime qualification, measured regional calibration, compiled or
 TypeScript regional physics, downstream UpstreamDrift parity, ancestor-stack
 integration, protected release, and closure of #4369/#4273/#4267 remain open.
-
-
 
 ## 2026-08-11 #4369 current-editor job preparation
 
@@ -456,7 +559,6 @@ static-host execution, frozen-runtime qualification, cooperative cancellation
 inside flight recomputation, measured calibration, compiled/TypeScript regional
 physics, UpstreamDrift consumers, ancestor integration, protected release, and
 #4369/#4273/#4267 completion remain open.
-
 
 ## 2026-08-11 #4369 imported-job accessibility correction
 
@@ -1131,7 +1233,6 @@ dependency order, and ordinary merge gates remain. The PR adds no editor/UI,
 persistence, solver/capability invocation, aerial trajectory evaluation,
 compiled runtime, new physics, or geometry. Keep #4192, #4273, and #4267 open.
 
-
 ## 2026-08-11 PR #4363 matched ground playback
 
 Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
@@ -1578,7 +1679,6 @@ interchange, measured calibration, persistence, changing geometry or velocity,
 TypeScript/compiled regional physics, downstream parity, protected exact-head
 evidence, review, approval, dependency integration, and release remain open.
 
-
 ## 2026-08-11 PR #4351 delta-MyPy boundary repair candidate
 
 Exact PR #4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`
@@ -1592,7 +1692,6 @@ wire, UI, or physics behavior changes.
 This local candidate is not protected or published. It must be reviewed and
 propagated in order through #4352, #4353, and #4354 before those descendants
 can rely on the repair.
-
 
 ## 2026-08-11 regional execution current-parent reconciliation candidate
 
@@ -1609,7 +1708,6 @@ validation, and executor-produced evidence. The parent retains canonical
 request I/O, the bounded engineering input helper, and its verbatim append-only
 handoff/SPEC history. This local candidate is not protected or release evidence.
 
-
 Merged-tree qualification is 143 focused Python ground tests and 24 focused
 React execution/plan/editor tests passing. Pinned Ruff 0.14.10 check/format
 passes all 50 ground files; pinned MyPy 1.13 passes all four execution modules
@@ -1625,7 +1723,6 @@ A broader formatter sweep also reports three parent-only Rate test files that
 current Ruff would reformat; the exact execution/ground scope is clean and this
 child does not rewrite that published parent baseline. The React build retains
 the existing nonblocking warning for its approximately 500 kB main chunk.
-
 
 ## 2026-08-11 regional execution evidence hardening
 
@@ -1663,8 +1760,6 @@ and ordered from/to regional transition evidence are cross-runtime through a
 shared fixture and a TypeScript parser/serializer. UI execution/playback,
 compiled regional physics, downstream parity, protected evidence, and issue
 completion remain open.
-
-
 
 ## 2026-08-11 PR #4342 append-only preservation repair
 
@@ -1769,7 +1864,6 @@ the official changed-file 500-LOC budget, and mandatory production limits of
 400 lines per module, 50 lines per function, and four parameters all pass. The
 local merge is a PUBLISH candidate for independent review only; protected
 exact-head CI, approval, normal child propagation, and publication remain open.
-
 
 ## 2026-08-11 PR #4342 current-parent reconciliation candidate
 
@@ -1903,9 +1997,6 @@ and diff checks are clean. The known polynomial-generator empty-legend warning
 is unrelated. This changes no wire schema, provenance digest, physics, or
 persistence boundary; fresh protected CI is still required before merge.
 
-> **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-11
-
 ## 2026-08-10 issue #4274 canonical regional request I/O local child
 
 Local branch `feat/4274-regional-plan-io` started directly from published PR
@@ -1988,8 +2079,6 @@ terrain/interval visualization, TypeScript or compiled regional physics,
 UpstreamDrift parity, protected CI/review, parent integration, and main release
 remain open.
 
-
-
 ## 2026-08-10 PR #4335 isolated-MyPy return typing
 
 Protected CI at exact head `d382ca9928628a16fec7ddd4fa1b1cc144b4c490`
@@ -2038,7 +2127,6 @@ This child remains `not_released`. Protected CI, independent review, normal
 stack integration, UI, TypeScript/Rust/PyO3/WASM regional physics, changing
 normals/heights/velocities, internal transition-ledger wire export,
 UpstreamDrift parity, and main release remain open.
-
 
 ## 2026-08-10 issue #4271 coplanar regional-material local child
 
@@ -2151,7 +2239,6 @@ The immutable implementation evidence remains the two-commit child ending at `dc
 
 This publication-only registry update makes no material physics, numerical, schema, or API change beyond the already committed exact head; it records the carrier and evidence in the campaign manifest and canonical handoffs.
 
-
 ## 2026-08-09 issue #4271 independent-review hardening
 
 Independent review blocked publication of local commit `730b58bba8d9c281e6cdcc1e7e2c6340caa1c3f9`
@@ -2251,6 +2338,14 @@ change: vector primitives now return explicit `Vector3` tuples without typing
 suppressions, and internal initialization invariants raise deterministic
 runtime errors instead of relying on optimizable assertions. The complete
 82-test ground suite, pinned mypy, Ruff, and diff gates remain green.
+The repaired parent explicitly types the Pydantic manifest return. The composed
+tree also normalizes contract-checked scalar plot values with `float`, replaces
+the command-state `assert` with a runtime invariant error, and documents the
+alias finder's intentional optional-probe `B112` security boundary. Protected
+current-head CI and required review remain release gates. The exact repaired
+ground head is incorporated into #4288, and exact #4288 is incorporated into
+#4298 by the normal merge containing this handoff. Current #4298 CI and review
+are now the next ancestry gates.
 
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 

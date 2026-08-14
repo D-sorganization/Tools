@@ -73,6 +73,9 @@ camera presets and vector layer, and exports 300-DPI PNG, Matplotlib vector SVG,
 or `rate-of-closure.impact-scene/v2` JSON. Layer visibility is persisted as a
 user preference; PNG/SVG geometry honors the active layers, and the complete
 JSON scene records the active layers and camera for reproducible rendering.
+The interactive view consumes the shared canonical camera contract in
+`docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`; snap orientation is explicit
+and does not infer handedness or frame convention from the club pose.
 
 Every metric card is keyboard-focusable and visibly labeled “Click for
 Definition.” Its expanded content gives the equation, frame, units,

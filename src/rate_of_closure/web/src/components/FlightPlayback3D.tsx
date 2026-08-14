@@ -5,13 +5,26 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   drawFlightPlayback,
   FLIGHT_PLAYBACK_LOGICAL_SIZE,
-  type PlaybackCamera,
 } from "./flightPlaybackDrawing";
 import { PlaybackTimeline, validatePlaybackPoints } from "../model/flightPlayback";
 import type { FlightPoint } from "../model/flight";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
 import { observeCanvas } from "./canvasDisplay";
+import { CameraControlBar } from "./CameraControlBar";
+import { pointerCoordinates } from "./pointerCoordinates";
+import {
+  applyManualOverride,
+  applyCameraPreset,
+  defaultCameraState,
+  recenterCamera,
+  safeTrackingZoom,
+  setFaceOnSide,
+  setTrackingEnabled,
+  updateTrackingTarget,
+  withCameraZoom,
+  withManualOrbit,
+} from "../model/cameraCommands";
 
 interface Props {
   points: readonly FlightPoint[];
@@ -19,12 +32,8 @@ interface Props {
   spatialTarget?: SpatialTargetTs;
 }
 
-const INITIAL_CAMERA: PlaybackCamera = {
-  yawRad: -0.65,
-  pitchRad: 0.38,
-  zoom: 1,
-};
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
+const BALL_CLEARANCE_RADIUS_M = 0.05;
 
 export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -34,7 +43,7 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
   const [playing, setPlaying] = useState(false);
   const [loop, setLoop] = useState(false);
   const [speed, setSpeed] = useState(1);
-  const [camera, setCamera] = useState(INITIAL_CAMERA);
+  const [camera, setCamera] = useState(defaultCameraState);
   const timeline = useMemo(
     () => (points.length > 0 ? new PlaybackTimeline(points) : null),
     [points],
@@ -80,6 +89,23 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
     [timeline, time],
   );
 
+  const baseHalfExtentM = useMemo(() => {
+    const positions = [...points, ...comparisonPoints].map((point) => point.position);
+    if (positions.length === 0) return 1;
+    const spans = [0, 1, 2].map((axis) => {
+      const values = positions.map((position) => position[axis]);
+      return (Math.max(...values) - Math.min(...values)) / 2;
+    });
+    return Math.max(1, ...spans);
+  }, [points, comparisonPoints]);
+
+  useEffect(() => {
+    if (!frame) return;
+    setCamera((current) => updateTrackingTarget(
+      current, frame.position, Math.max(0.25, baseHalfExtentM * 0.25),
+    ));
+  }, [frame, baseHalfExtentM]);
+
   useEffect(() => {
     const draw = () => {
       if (!canvasRef.current || (!frame && !spatialTarget)) return;
@@ -105,6 +131,16 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
     setPlaying(false);
     timeRef.current = targetTime;
     setTime(targetTime);
+    const targetFrame = timeline?.frameAt(targetTime);
+    if (targetFrame) {
+      setCamera((current) => current.trackingEnabled
+        ? recenterCamera(current, targetFrame.position) : current);
+    }
+  };
+
+  const stepFrame = (direction: -1 | 1) => {
+    if (timeline === null) return;
+    jump(timeline.stepTime(timeRef.current, direction));
   };
 
   return (
@@ -118,6 +154,26 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
           className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
         >
           Launch
+        </button>
+        <button
+          type="button"
+          disabled={duration <= 0}
+          onClick={() => stepFrame(-1)}
+          aria-label="Step Back One Frame"
+          title="Pause and step to the previous solver-owned trajectory sample"
+          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
+        >
+          −1 frame
+        </button>
+        <button
+          type="button"
+          disabled={duration <= 0}
+          onClick={() => stepFrame(1)}
+          aria-label="Step Forward One Frame"
+          title="Pause and step to the next solver-owned trajectory sample"
+          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
+        >
+          +1 frame
         </button>
         <button
           type="button"
@@ -196,6 +252,22 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
           {time.toFixed(2)} / {duration.toFixed(2)} s
         </output>
       </div>
+      <CameraControlBar state={camera} subjectLabel="Ball"
+        onPreset={(preset) => setCamera((current) => applyCameraPreset(current, preset))}
+        onFaceOnSide={(side) => setCamera((current) => setFaceOnSide(current, side))}
+        onTracking={(enabled) => setCamera((current) => setTrackingEnabled(
+          current, enabled, frame?.position ?? [0, 0, 0],
+        ))}
+        onAutoFit={(enabled) => setCamera((current) => ({
+          ...current,
+          autoFitEnabled: enabled,
+          zoom: enabled
+            ? safeTrackingZoom(current.zoom, BALL_CLEARANCE_RADIUS_M, baseHalfExtentM)
+            : current.zoom,
+        }))}
+        onRecenter={() => setCamera((current) => recenterCamera(
+          current, frame?.position ?? [0, 0, 0],
+        ))} />
       <canvas
         ref={canvasRef}
         width={FLIGHT_PLAYBACK_LOGICAL_SIZE.width}
@@ -212,29 +284,36 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
         className="w-full touch-none rounded-lg border border-slate-800 bg-slate-950/60 outline-none focus:ring-2 focus:ring-sky-500"
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture?.(event.pointerId);
-          dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+          const pointer = pointerCoordinates(event.nativeEvent);
+          dragRef.current = { pointerId: event.pointerId, ...pointer };
+          setCamera(applyManualOverride);
         }}
         onPointerMove={(event) => {
           const drag = dragRef.current;
           if (!drag || drag.pointerId !== event.pointerId) return;
-          const deltaX = event.clientX - drag.x;
-          const deltaY = event.clientY - drag.y;
-          dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
-          setCamera((current) => ({
-            ...current,
-            yawRad: current.yawRad + deltaX * 0.008,
-            pitchRad: Math.max(-1.35, Math.min(1.35, current.pitchRad + deltaY * 0.008)),
-          }));
+          const pointer = pointerCoordinates(event.nativeEvent);
+          const deltaX = pointer.x - drag.x;
+          const deltaY = pointer.y - drag.y;
+          dragRef.current = { pointerId: event.pointerId, ...pointer };
+          setCamera((current) => withManualOrbit(
+            current,
+            current.yawRad + deltaX * 0.008,
+            Math.max(-1.35, Math.min(1.35, current.pitchRad + deltaY * 0.008)),
+          ));
         }}
         onPointerUp={() => { dragRef.current = null; }}
         onPointerCancel={() => { dragRef.current = null; }}
         onWheel={(event) => {
           event.preventDefault();
           const factor = event.deltaY < 0 ? 1.1 : 1 / 1.1;
-          setCamera((current) => ({
-            ...current,
-            zoom: Math.max(0.4, Math.min(4, current.zoom * factor)),
-          }));
+          setCamera((current) => withCameraZoom(
+            current,
+            current.autoFitEnabled
+              ? safeTrackingZoom(
+                current.zoom * factor, BALL_CLEARANCE_RADIUS_M, baseHalfExtentM,
+              )
+              : current.zoom * factor,
+          ));
         }}
       />
       {spatialTarget && (

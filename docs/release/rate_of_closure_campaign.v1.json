@@ -27,7 +27,8 @@
       "head_sha": "bddac1b4bbcbcd2d83baf2b93cb5f6c9118cf61d",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c"
     },
     {
       "id": "pr-4133",
@@ -37,7 +38,8 @@
       "head_sha": "b8209dd866e308058c443cb81c3182d2437b46a9",
       "state": "merged",
       "merge_commit_sha": "bc8ce9b8b98f8cefc9458b903f5bf2f98f1fd9ba",
-      "protection_evidence": "not_protected"
+      "protection_evidence": "not_protected",
+      "evidence_commit_sha": "b8209dd866e308058c443cb81c3182d2437b46a9"
     },
     {
       "id": "pr-4167",
@@ -47,7 +49,8 @@
       "head_sha": "91dc2174578a4fc472907d7141ca44c9ef36d3ab",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "edaa56358a9ccf47809533fcab28e6415b336771"
     },
     {
       "id": "pr-4173",
@@ -57,7 +60,8 @@
       "head_sha": "bd48852d303db6281ed5891d4a271d99e76a94e6",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76"
     },
     {
       "id": "pr-4179",
@@ -67,7 +71,8 @@
       "head_sha": "7e5dfecf569b39dbbf8cc2101c7426cbc53a2771",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "0eb804e70887c788421332369e42792411aff55a"
     },
     {
       "id": "pr-4202",
@@ -77,7 +82,8 @@
       "head_sha": "9f83cd379ce8ae2805aa4a5608b5645a529f9c3c",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd"
     },
     {
       "id": "pr-4203",
@@ -87,7 +93,8 @@
       "head_sha": "1e29c6e52169de5d984144af29664c0419b51a21",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb"
     },
     {
       "id": "pr-4217",
@@ -97,7 +104,8 @@
       "head_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
       "state": "merged",
       "merge_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
-      "protection_evidence": "not_protected"
+      "protection_evidence": "not_protected",
+      "evidence_commit_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e"
     },
     {
       "id": "pr-4279",
@@ -107,7 +115,8 @@
       "head_sha": "983805d799b76e5e1ad1dbdc7a5ab28957d805c8",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392"
     },
     {
       "id": "pr-4280",
@@ -117,7 +126,8 @@
       "head_sha": "7fb5d7f489db49742b7bc82ef009570ad2502456",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4"
     },
     {
       "id": "pr-4281",
@@ -127,7 +137,8 @@
       "head_sha": "73b7f6b45063ec71fa300a39d2185d3f935187b7",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759"
     },
     {
       "id": "pr-4282",
@@ -137,7 +148,8 @@
       "head_sha": "51033696634c624f7c92c3822d98a66875ff90a0",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "bb101cedd555d07d493aae998b46050c68660cdd"
     },
     {
       "id": "pr-4283",
@@ -147,7 +159,8 @@
       "head_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
       "state": "merged",
       "merge_commit_sha": "c1827bbdc50a6e11cc475db2636b4e47a4c15416",
-      "protection_evidence": "not_protected"
+      "protection_evidence": "not_protected",
+      "evidence_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a"
     },
     {
       "id": "pr-4285",
@@ -157,7 +170,8 @@
       "head_sha": "7a6f31b6cb36e05f903c591e207480d36f491c4d",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "3235af71150a774954e7673fc81d7179330fbe76"
     },
     {
       "id": "pr-4288",
@@ -167,7 +181,8 @@
       "head_sha": "8137621d7c77d9fa6941f5cd51d3fd161ebf4300",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded"
+      "protection_evidence": "not_recorded",
+      "evidence_commit_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94"
     },
     {
       "id": "pr-4289",
@@ -177,7 +192,8 @@
       "head_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
       "state": "merged",
       "merge_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
-      "protection_evidence": "not_protected"
+      "protection_evidence": "not_protected",
+      "evidence_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf"
     },
     {
       "id": "pr-4294",
@@ -187,7 +203,8 @@
       "head_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647",
       "state": "merged",
       "merge_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
-      "protection_evidence": "not_protected"
+      "protection_evidence": "not_protected",
+      "evidence_commit_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647"
     },
     {
       "id": "pr-4302",
@@ -528,6 +545,16 @@
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4298",
+      "pr": 4298,
+      "branch": "feat/4284-camera-snap-tracking",
+      "base_branch": "feat/4199-wind-workflow",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded",
+      "head_sha": "2095e748ddca2d7036bbd49a731528f5634daff9"
     }
   ],
   "test_evidence": [
@@ -811,6 +838,23 @@
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md",
         "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "camera-local-2095",
+      "kind": "local",
+      "commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_camera_commands.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_simulation_gui.py -q",
+        "npm test -- --run",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "npm run type-check && npm run lint && npm run build"
+      ],
+      "summary": "The published camera evidence commit passed 39 focused Python/PyQt tests, 107 React files and 650 tests, four Playwright browser tests, TypeScript, zero-warning ESLint, and the 193-module Vite production build; protected and native visual evidence remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
       ]
     }
   ],
@@ -1420,6 +1464,10 @@
         {
           "kind": "repository_path",
           "value": "src/rate_of_closure/view_workspace.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/camera_commands.py"
         }
       ],
       "tracked_issue_ids": [
@@ -1433,7 +1481,8 @@
         4284
       ],
       "carrier_ids": [
-        "pr-4279"
+        "pr-4279",
+        "pr-4298"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
@@ -1442,12 +1491,14 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [
-        "toolstrip-local-c36"
+        "toolstrip-local-c36",
+        "camera-local-2095"
       ],
       "evidence_gap": "Complete persistence adapters, synchronized multi-view state, camera snap controls, accessibility, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
-        "The camera tracking and canonical snap-view child has no implementation carrier."
+        "The camera tracking and canonical snap-view child has no implementation carrier.",
+        "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open."
       ],
       "depends_on_issues": [
         4191
@@ -1532,6 +1583,14 @@
         {
           "kind": "repository_path",
           "value": "src/rate_of_closure/web/src/model/__fixtures__/regional_ground_scalar_ensemble_golden_v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/four_surface_capability.v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/four_surface_capability.v1.schema.json"
         }
       ],
       "tracked_issue_ids": [
@@ -1554,7 +1613,8 @@
       "limitations": [
         "A launcher tile does not establish an independent surface implementation.",
         "Current UpstreamDrift source resolution and React routing do not satisfy parity.",
-        "Strict result import preserves Python evidence but does not establish a browser Run claim, physics authority, or downstream integration."
+        "Strict result import preserves Python evidence but does not establish a browser Run claim, physics authority, or downstream integration.",
+        "The machine-readable matrix is complete for its governed declared scope but must not be treated as exhaustive for narrative features that have not been promoted into a structured campaign record or linked active specification."
       ],
       "depends_on_issues": [
         4191

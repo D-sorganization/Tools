@@ -11,7 +11,14 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    model_validator,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = REPO_ROOT / "docs" / "release" / "rate_of_closure_campaign.v1.json"
@@ -124,7 +131,10 @@ class CarrierRecord(StrictModel):
     pr: int = Field(gt=0)
     branch: str = Field(min_length=1)
     base_branch: str = Field(min_length=1)
-    head_sha: str = Field(pattern=SHA_PATTERN.pattern)
+    evidence_commit_sha: str = Field(
+        pattern=SHA_PATTERN.pattern,
+        validation_alias=AliasChoices("evidence_commit_sha", "head_sha"),
+    )
     state: CarrierState
     merge_commit_sha: str | None
     protection_evidence: ProtectionEvidence

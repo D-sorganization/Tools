@@ -34,6 +34,129 @@
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
+### 2026-08-10 Four-surface capability propagation
+
+- `four-surface-capability/v1` defines stable identifiers for Tools PyQt6,
+  Tools React, UpstreamDrift PyQt6, and UpstreamDrift React consumers.
+- Every declared model, control, output, view, persistence, or export record
+  classifies all four surfaces as supported, unsupported, or deprecated.
+  Supported cells require commit-bound evidence; all other cells require a
+  visible reason.
+- Deterministic enumeration covers all 15 structured campaign programs, all
+  18 unique linked active release specifications, and six curated
+  evidence-backed capabilities. New governed declarations fail completeness
+  validation until all four cells exist.
+- UpstreamDrift remains unsupported until an immutable installed Tools pin and
+  repository-bound conformance evidence exist. Narrative-only features remain
+  excluded until promoted to a governed structured authority.
+- The draft #4299 propagation preserves this declared-scope contract while
+  inheriting repaired flight-to-ground and camera-control ancestry. It does
+  not establish protected release or complete #4264/#4260.
+- The composed tree is required to pass the deterministic four-surface and
+  campaign authorities, the full Python/React/Rust suites, real-browser camera
+  cases, and the exact protected changed-file quality profile before normal
+  publication; protected current-head CI and installed-consumer conformance
+  remain separate release gates.
+
+### 2026-08-10 Flight-ground hosted typing repair
+
+- The complete PR-base delta must pass the protected pinned MyPy 1.13 profile
+  in one skipped-import invocation, not only per-feature subsets.
+- Flight-to-ground adapters construct exact compatibility string-enum members
+  and explicit three-component vectors so the static contract remains stable
+  when all related modules are checked together.
+- The repair is runtime-neutral: wire values, coordinate transforms, physics,
+  camera behavior, and canonical evidence remain unchanged.
+
+### 2026-08-10 Deterministic workspace timestamps
+
+- Workspace timestamps use one anchored UTC-only grammar and accept canonical
+  ISO-8601 values with zero through six fractional-second digits consistently
+  on Python 3.10 through 3.12.
+- Greater-than-microsecond precision, offsets, lower-case suffixes, and invalid
+  calendar values fail closed instead of being accepted or truncated according
+  to interpreter-specific `datetime.fromisoformat` behavior.
+
+### 2026-08-09 Canonical 3D camera controls
+
+- PyQt6 and React swing, impact, and flight 3D viewports share exact Face On,
+  Down the Line, Overhead, Isometric, tracking, Auto Fit, and Recenter commands.
+- Opt-in bounded tracking preserves safe user zoom, suspends on manual orbit,
+  and resumes through one-action recenter without changing model results.
+- Stable command IDs, explicit app-frame conventions, DbC validation, and a
+  cross-runtime golden fixture prevent orientation drift between adapters.
+- React flight playback steps backward or forward on solver-owned trajectory
+  samples without desynchronizing tracking. Playwright verifies the bounded
+  playback/camera interaction matrix at desktop size and at 520 x 900 with 2x
+  device scale; native rendered review and UpstreamDrift parity remain open.
+
+### 2026-08-09 Capability workflow contract hardening
+
+- Python and TypeScript capability workflow readers reject JSON primitive type
+  mismatches throughout the nested v1 document instead of coercing numeric
+  strings, booleans, or numeric text fields.
+- A shared golden parser fixture pins identical acceptance and rejection,
+  including portable acceptance of mathematically integral JSON numbers for
+  integer fields.
+- React Shot Optimizer numeric controls retain decimal draft text, allowing
+  ordinary leading-minus keyboard entry before validated numeric commit.
+
+### 2026-08-09 Capability result diagnostics
+
+- PyQt6 and React ranked-alternative views expose the full v1 optimization
+  diagnostics, explicit parameter units, evidence-envelope state, and Pareto
+  state rather than a reduced carry/dispersion summary.
+- Ranked results export through spreadsheet-safe CSV and a deterministic
+  `capability-result-export/v1` JSON envelope. Lossless raw observation exports
+  remain separate so aggregate recommendations cannot obscure failed or
+  no-impact trials.
+- React scalar-ensemble scatter plots render numeric grid/tick scales, visible
+  axis ranges, and cohort legends with paired-finite counts.
+
+### 2026-08-09 Rate campaign release-evidence authority
+
+- `docs/release/rate_of_closure_campaign.v1.json` is the normalized authority
+  for primary campaign issues, specifications, carriers, four-surface support,
+  commit-bound tests, limitations, dependencies, and release status.
+- `scripts/rate_campaign_manifest.py` validates the strict version-1 contract
+  and emits its deterministic JSON Schema. Feature-stack implementation,
+  protected parent integration, and exact `main` release are mutually
+  exclusive states with fail-closed cross-field requirements.
+- The current manifest truthfully records no complete campaign release SHA;
+  local tests and unprotected feature-parent merges cannot satisfy that claim.
+- Carrier `evidence_commit_sha` values identify immutable, already-published
+  observations rather than attempting an impossible self-reference to the
+  containing commit. Legacy `head_sha` input migrates to the new field, while
+  new schema output uses only the truthful evidence name. Maintainers must
+  still query live mutable PR heads before any write, merge, release, or
+  issue-closure decision.
+- The manifest loader explicitly narrows Pydantic's validated value for the
+  CI mypy 1.13 `--follow-imports=skip` context without weakening runtime
+  validation or the generated schema.
+- The PyQt playback adapter similarly converts Qt's elapsed-time result to a
+  concrete `float`, preserving the typed seconds contract when Qt imports are
+  deliberately skipped by the changed-file CI lane.
+
+### 2026-08-09 Swing-core parity CI isolation
+
+- The dedicated `swing_core` Rust-to-Python parity lane disables third-party
+  pytest plugin auto-loading so cached GUI plugins on self-hosted runners cannot
+  introduce undeclared PyQt dependencies into the Rust-only qualification job.
+- The lane continues to install the built wheel and run the same non-skippable
+  parity suite; numerical behavior and production dependencies are unchanged.
+
+### 2026-08-09 Rate web-release stability
+
+- The documented direct Rate web launcher imports its registration through the
+  package-qualified path and dynamically loads the repository bootstrap without
+  direct `sys.path` mutation, so `python src/rate_of_closure/launch_web.py`
+  works outside package-module execution and satisfies changed-file policy.
+- Rate supports a static Vite web release and a PyQt6/PyInstaller desktop
+  release. It does not claim Tauri support without a `src-tauri` project or an
+  artifact qualification lane.
+- The Flight Explorer parent-panel test explicitly settles its lazy wind-panel
+  import inside React `act`, removing suite-load timing from the assertion.
+
 ### 2026-08-06 GUI module-budget repair
 
 - Movement Optimizer motion palette and chain-length helpers live in a small
@@ -3725,6 +3848,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-10 | 1.14.25 | fix(ground-roll, #4271 #4304): normally propagate exact corrected ground-impact/bounce parent `846653c21bd61a40aab99ab838c29915d0728e70` into the skid/roll descendant without changing its base; preserve the reviewed arbitrary-plane skid, pure-roll, resistance, rest, edge, composition, and passive-ledger behavior while inheriting corrected flight-transfer ancestry, deterministic workspace timestamp parsing, and canonical `swing_sim` import identity; retain explicit exclusions for regional/changing-normal surfaces, terrain deformation, torsional spin damping, roll-to-skid transitions, UI, compiled physics, and downstream parity. |
 | 2026-08-10 | 1.14.24 | fix(ground-roll, #4304): explicitly allowlist the immutable SHA-256 golden-fixture digest as non-secret test evidence so protected secret scanning distinguishes a scientific integrity fingerprint from a credential; no physics, numerical, schema, API, or fixture bytes change. |
 | 2026-08-10 | 1.14.22 | fix(ground-impact, #4270 #4302): normally propagate exact corrected flight-transfer parent `247215422a6d4b677552955b4923bc609a553259` into the ground-impact/bounce descendant without changing its base; preserve the passive restitution/Coulomb impulse, deterministic repeated hops, exact-contact and capture-to-skid behavior while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for skid, roll, rest, total distance, final ground results, UI, TypeScript physics, and compiled bounce runtimes. |
+| 2026-08-10 | 1.14.24 | merge(rate-of-closure, #4264 #4299): normally propagate exact camera/ground-stack head `57942e64744a199e4fd7d604fe2eeb9faddd062a` into original four-surface child `dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` without changing its base; retain the strict declared-scope matrix, schema, canonical inventory, exact evidence paths, deterministic 15-program/18-spec/six-capability coverage, and explicit incomplete UpstreamDrift parity boundaries while inheriting repaired flight-to-ground and camera-control contracts. |
+| 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |
+| 2026-08-10 | 1.14.22 | merge(rate-of-closure, #4284 #4288 #4298): normally propagate exact repaired flight-to-ground head `108a841b1378c992defd3c7b7ee263d41a6c8b24` into original camera-control child `9ffd8d280c77977a41e93bd0caef9678d1c231b6` while preserving base `feat/4199-wind-workflow`; retain canonical cross-runtime camera snaps, bounded tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and playback behavior while inheriting repaired strict-ground, transfer, workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, and import-identity ancestry; preserve explicit non-delivery boundaries for native rendered cross-platform qualification, camera-state persistence, UpstreamDrift parity, bounce, skid, roll, terrain response, total distance, and ground UI. |
+| 2026-08-10 | 1.14.21 | fix(flight-ground, #4199 #4269 #4282 #4285 #4288): normally propagate exact repaired strict-ground parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` into original flight-transfer child `247215422a6d4b677552955b4923bc609a553259` while preserving base `feat/4268-ground-contract`; retain the qualified signed terminal state, physical sphere/terrain contact brackets, strict provenance, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the deterministic workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, import-identity, scalar-extraction, command-invariant, and security-boundary repairs; preserve explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-10 | 1.14.20 | fix(flight-ground, #4269 #4288): normally propagate exact corrected ground-contract parent `788aa547651a3685a363ea401824a5d81477bafb` into the flight-transfer descendant without changing its base; preserve the qualified Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-10 | 1.14.17 | fix(ground, #4268 #4285): normally propagate exact corrected workspace/wind/capability carrier `5f77af4add23547a21cc3fabce98ae9ad4260427` into the strict flight-to-ground contract while preserving base `feat/4197-capability-observer`; coalesce `shared.python.swing_sim` and its repository-local `src.shared.python.swing_sim` spelling so embedded ground/impact contract collection cannot load two package trees; retain the fail-closed ground schemas, fixture, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this ancestry through its own normal descendant merge. |
 | 2026-08-10 | 1.14.13 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `cf52529b1e68479321bb93b1be3d59c77f782008` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the strict cross-version UTC parser, variation export, immutable scalar rows, stable composite identity, availability, and typed wind adapter; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |

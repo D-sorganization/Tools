@@ -23,16 +23,20 @@ export function project(
   zoom: number,
   azimuth: number,
   elevation: number,
+  target: Vec3 = [0, 0, 0],
 ): [number, number] {
   const sinAzimuth = Math.sin(azimuth);
   const cosAzimuth = Math.cos(azimuth);
   const sinElevation = Math.sin(elevation);
   const cosElevation = Math.cos(elevation);
-  const screenX = vector[0] * sinAzimuth - vector[2] * cosAzimuth;
+  const centered: Vec3 = [
+    vector[0] - target[0], vector[1] - target[1], vector[2] - target[2],
+  ];
+  const screenX = centered[0] * sinAzimuth - centered[2] * cosAzimuth;
   const screenY =
-    -sinElevation * cosAzimuth * vector[0] +
-    cosElevation * vector[1] -
-    sinElevation * sinAzimuth * vector[2];
+    -sinElevation * cosAzimuth * centered[0] +
+    cosElevation * centered[1] -
+    sinElevation * sinAzimuth * centered[2];
   const scale = Math.min(width, height) * zoom;
   return [width / 2 + screenX * scale, height * 0.62 - screenY * scale];
 }

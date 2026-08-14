@@ -4,6 +4,114 @@
 > Last updated: 2026-08-11.
 
 ## 2026-08-12 #4385 Windows authority-state security
+## 2026-08-10 PR #4299 camera/ground-stack propagation
+
+Draft PR #4299 keeps base `feat/4199-wind-workflow` and normally merges the
+original four-surface child head
+`dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` first with independently
+reviewed #4298 head `57942e64744a199e4fd7d604fe2eeb9faddd062a`
+second. No branch is rebased, retargeted, rewritten, or force-pushed. The
+result retains `four-surface-capability/v1`, its declared-scope generator,
+schema, canonical inventory, and exact evidence paths while inheriting the
+complete camera-control and repaired flight-to-ground stack.
+
+The declared inventory still covers 15 structured campaign programs, 18
+unique linked active release specifications, and six curated capability
+records across model, control, output, view, persistence, and export
+categories. Every record classifies Tools PyQt6, Tools React, UpstreamDrift
+PyQt6, and UpstreamDrift React explicitly. Both UpstreamDrift cells remain
+unsupported unless an immutable installed consumer pin and repository-bound
+conformance evidence exist; unstructured narrative features remain outside
+the governed boundary until promoted to a structured authority.
+
+Local integration evidence is 1,589 Python/PyQt/shared-swing tests with one
+explicit unavailable-wheel skip; 110 React files / 670 tests; TypeScript,
+zero-warning ESLint, and the 194-module production build; four Playwright
+camera cases across desktop and constrained 2x-DPR viewports; and all 137
+`tools-core` tests plus formatting and warning-denied Clippy. The exact hosted
+delta also passes Ruff/format on 52 Python files, pinned MyPy 1.13 on 36
+production files, Bandit on 34 source files, both deterministic authorities,
+and documentation, changed-code, source-size, assertion, manifest-layout,
+conflict-marker, and diff gates.
+
+Independent exact-tree review found no findings. This propagation is not issue
+or epic completion: protected current-head CI, installed-consumer evidence,
+four-surface conformance, native rendered QA, and dependency-ordered release
+remain open.
+
+## 2026-08-10 PR #4298 exact hosted-mypy repair
+
+Exact head `a51e49e4d2e7f5b1985c802f8290ea7649e7927e` passed Ruff and
+formatting, then protected quality-gate job `93503197807` failed at pinned
+MyPy 1.13 with 18 integration-only errors in the inherited flight-to-ground
+adapter. The hosted delta checks every changed production file from the
+preserved PR base in one skipped-import invocation; that exposed compatibility
+`StrEnum` members as `str` and generator-built NumPy tuples as variable-length
+tuples.
+
+The repair constructs exact typed enum members through their public
+constructors and builds explicit three-component tuples. Runtime values, wire
+bytes, coordinate transforms, physics, and camera behavior are unchanged. The
+exact hosted command now passes all 33 production files; 79 focused ground,
+transfer, and flight-physics tests plus Ruff/format pass. Fresh protected
+current-head CI is required after the normal fast-forward follow-up; do not
+retry the obsolete failed head. This repair does not complete #4284, #4269, or
+their parent epics.
+
+## Issue #4284 camera continuation
+
+Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
+camera evidence through immutable commit
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The normal merge containing this
+handoff keeps original camera child
+`9ffd8d280c77977a41e93bd0caef9678d1c231b6` first and incorporates exact
+repaired #4288 head `108a841b1378c992defd3c7b7ee263d41a6c8b24`
+second; the PR base remains `feat/4199-wind-workflow`. Exact #4288 contains
+repaired #4285 `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` and repaired #4282
+`686016196a2f895058b8a566dff103a0fd32cd10`. No branch was rebased,
+retargeted, rewritten, or force-pushed. The camera child implements the
+shared, UI-neutral camera command contract in Tools PyQt6 and React swing,
+impact, and flight 3D views: exact Face On/Down the Line/Overhead/Isometric
+snaps, opt-in bounded subject tracking, zoom-preserving Auto Fit, predictable
+manual suspension, and one-action Recenter. The published evidence also adds
+solver-sample frame stepping plus real-browser Playwright coverage for a
+bounded playback/camera interaction matrix and a 520 x 900, 2x-DPR viewport.
+UpstreamDrift consumers, native rendered cross-platform review, hosted CI,
+review, and protected release remain open; do not close #4284 on local evidence.
+
+Evidence commit `2095e748` passes 39 focused Python/PyQt camera tests, the full
+107-file / 650-test React suite, four Playwright tests across desktop and
+constrained 2x-DPR Chromium, TypeScript, zero-warning ESLint, the 193-module
+production build, Ruff format/check, targeted mypy, campaign validation, and
+diff checks. Headless desktop and 700 px camera-bar renders show no control
+overlap; this Qt runtime lacks usable fonts, so native-font visual review
+remains an integration gate. Browser automation is not a substitute for that
+manual native review.
+
+The prior documentation-only successor records the already-published camera
+evidence commit. The campaign contract uses `evidence_commit_sha`, not a
+self-referential current-head field. This local merge records its exact two
+parents; its own future SHA is intentionally absent from the commit it creates.
+
+The exact composed tree passes 1,738 Python tests with two explicit optional
+`build123d` skips, including the installed `tools_core` flight parity path;
+110 React files / 670 tests; all 137 `tools-core` Rust tests; and four
+Playwright camera/playback cases across desktop and constrained 2x-DPR
+Chromium. TypeScript, zero-warning ESLint, the 194-module Vite production
+build, Ruff check/format across 61 changed Python files, pinned mypy 1.13 and
+Bandit across 43 changed production files, warning-denied `tools-core` clippy,
+Rust format, campaign-manifest validation, documentation governance, module
+and 500-LOC budgets, conflict-marker checks, and staged/working diff checks are
+clean. The focused child/parent control seam passes 12 PyQt camera and impact
+layer tests. Protected current-head CI, review, native rendered review,
+UpstreamDrift parity, camera persistence, and protected release remain open.
+
+Authorities are `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`,
+`src/rate_of_closure/application/camera_commands.py`, and the cross-runtime
+golden fixture under `web/src/model/__fixtures__/`. Every implementation commit
+must keep this file and `src/rate_of_closure/AGENT_HANDOFF.md` current.
+
+## PR #4288 exact repaired-ground propagation
 
 Published draft PR #4392 carries branch `codex/4385-windows-state-security`
 against `codex/4380-playwright-production-browser`. Implementation commit
@@ -91,6 +199,17 @@ fresh checks and must not inherit evidence from the pre-handoff SHA. The system
 volume was nearly full during local qualification, so all disposable build and
 test environments were isolated on `D:`; this is local infrastructure context,
 not product evidence.
+The inherited ground descendant passes 1,703 Python tests with two explicit optional
+`build123d` skips, 643 React tests across 105 files plus type-check,
+zero-warning lint and production build, 12 Rust tests, and 77 ground plus
+compatibility tests on real CPython 3.10. Ruff/format cover 78 changed Python
+files; pinned mypy and Bandit cover 52 changed production files. Campaign
+manifest, documentation, minimum-test, changed-assertion, 500-LOC, changed-file
+secrets, Python 3.10 compilation, and diff gates are clean. Protected
+current-head CI and required review remain separate release gates. Its exact
+repaired head is incorporated into #4288, and exact #4288 is incorporated into
+#4298 by the normal merge containing this handoff. Current #4298 CI and review
+are now the next ancestry gates.
 
 ## 2026-08-12 #4380 production-browser qualification
 

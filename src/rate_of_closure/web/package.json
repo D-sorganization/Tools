@@ -11,6 +11,7 @@
     "test:browser": "playwright test",
     "test:browser:smoke": "playwright test tests/browser/static-inspection.spec.ts tests/browser/companion-smoke.spec.ts",
     "test:browser:lifecycle": "playwright test tests/browser/companion-lifecycle.spec.ts tests/browser/companion-execution.spec.ts",
+    "test:e2e": "playwright test",
     "preview": "vite preview",
     "type-check": "tsc --noEmit"
   },

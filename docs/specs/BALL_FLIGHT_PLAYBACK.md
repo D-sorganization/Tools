@@ -33,6 +33,11 @@ Both interfaces expose play/pause, time scrub, 0.25x through 4x speed, restart,
 jump-to-launch, jump-to-apex, and jump-to-landing controls with accessible names and frame/unit
 help. Existing static plots and calm-versus-selected-wind overlays remain visible.
 
+The interactive 3D panels also implement the shared
+`docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md` contract: canonical Face On,
+Down the Line, Overhead, and Reset views; opt-in ball tracking; explicit Auto
+Fit; and one-action Recenter after manual orbit suspends tracking.
+
 ## Known Boundaries
 
 - “Launch” is the post-club-impact initial flight sample; “Landing” is the

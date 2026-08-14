@@ -15,6 +15,7 @@ Colors come from the shared UpstreamDrift theme palette
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -28,6 +29,7 @@ from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
+from rate_of_closure.ui.pyqt6.flight_camera_adapter import FlightCameraAdapter
 from rate_of_closure.ui.pyqt6.flight_playback_rendering import FlightPlaybackArtists
 from rate_of_closure.ui.pyqt6.flight_view_axes import distance_axis
 from rate_of_closure.ui.pyqt6.flight_view_panels import FlightViewPanelsMixin
@@ -59,7 +61,7 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
 )
 
 
-class FlightView(FlightViewPanelsMixin, QWidget):
+class FlightView(FlightCameraAdapter, FlightViewPanelsMixin, QWidget):
     """Flight-scale trajectory viewer: side + top-down 2D panels + 3D."""
 
     timelineChanged = pyqtSignal(float, float)  # noqa: N815 - Qt signal convention
@@ -82,11 +84,15 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         self._spatial_target: SpatialTarget | None = None
         # (carry, lateral) landing scatter [m] from the Variation engine.
         self._scatter: tuple[np.ndarray, np.ndarray] | None = None
+        self._axes_3d: Any | None = None
+        self._manual_orientation = (30.0, -60.0)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._build_param_bar())
+        layout.addWidget(self._initialize_camera("Ball"))
         layout.addWidget(self._canvas)
+        self._canvas.mpl_connect("button_release_event", self._manual_camera_released)
         self._draw()
 
     def _build_param_bar(self) -> QHBoxLayout:
@@ -176,6 +182,8 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         frame = self._timed_trajectory.frame_at(time_s)
         self._playback_time_s = frame.time_s
         self._playback_artists.update(frame.position_m)
+        self._advance_camera_tracking()
+        self._apply_camera_to_axes()
         self._canvas.draw_idle()
 
     def playback_duration_s(self) -> float:
@@ -285,7 +293,9 @@ class FlightView(FlightViewPanelsMixin, QWidget):
 
     # ── drawing ─────────────────────────────────────────────────────
     def _draw(self) -> None:
+        self._advance_camera_tracking()
         self._figure.clear()
+        self._axes_3d = None
         pos = self._positions
         frame = (
             None
@@ -330,5 +340,7 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         if want_3d:
             spec = grid[:, 1] if left else grid[:, 0]
             axes_3d = self._figure.add_subplot(spec, projection="3d")
+            self._axes_3d = axes_3d
             self._draw_3d(axes_3d, pos, extents)
+            self._apply_camera_to_axes()
         self._canvas.draw_idle()

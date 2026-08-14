@@ -8,14 +8,14 @@ import {
   type SpatialTargetTs,
 } from "../model/spatialTarget";
 import { canvasContext } from "./canvasDisplay";
+import type { CameraState } from "../model/cameraCommands";
 
 export const FLIGHT_PLAYBACK_LOGICAL_SIZE = { width: 860, height: 420 } as const;
 
-export interface PlaybackCamera {
-  yawRad: number;
-  pitchRad: number;
-  zoom: number;
-}
+export type PlaybackCamera = Pick<
+  CameraState,
+  "yawRad" | "pitchRad" | "zoom" | "targetM" | "trackingEnabled"
+>;
 
 interface ProjectedPoint {
   x: number;
@@ -86,9 +86,10 @@ function createProjection(
   includeOrigin = true,
 ): Projection {
   const bounds = extents(points, comparison, target, includeOrigin);
-  const center = bounds.min.map((value, axis) =>
+  const sceneCenter = bounds.min.map((value, axis) =>
     (value + bounds.max[axis]) / 2,
   ) as Vec3;
+  const center: Vec3 = camera.trackingEnabled ? [...camera.targetM] : sceneCenter;
   const corners: Vec3[] = [];
   for (const carry of [bounds.min[0], bounds.max[0]]) {
     for (const up of [bounds.min[1], bounds.max[1]]) {

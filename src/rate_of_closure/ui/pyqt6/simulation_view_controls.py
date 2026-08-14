@@ -19,6 +19,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.application.camera_commands import CameraCommandId
 from rate_of_closure.ui.pyqt6.impact_layer_controls import ImpactLayerControls
 from rate_of_closure.ui.pyqt6.simulation_engineering_panel import (
     create_engineering_panel,
@@ -211,9 +212,12 @@ class SimulationViewControlsMixin:
         self._screw_entity.currentIndexChanged.connect(lambda _index: self._draw())
         self._impact_view = QComboBox()
         self._impact_view.setAccessibleName("Impact Camera View")
-        self._impact_view.addItem("Isometric", (30.0, -60.0))
-        self._impact_view.addItem("Face-On", (0.0, -90.0))
-        self._impact_view.addItem("Down-the-Line", (10.0, 0.0))
+        self._impact_view.addItem("Isometric", CameraCommandId.VIEW_ISOMETRIC.value)
+        self._impact_view.addItem("Face-On", CameraCommandId.VIEW_FACE_ON.value)
+        self._impact_view.addItem(
+            "Down-the-Line", CameraCommandId.VIEW_DOWN_THE_LINE.value
+        )
+        self._impact_view.addItem("Overhead", CameraCommandId.VIEW_OVERHEAD.value)
         self._impact_view.setToolTip(
             "Choose a named engineering camera; the plot remains rotatable."
         )
