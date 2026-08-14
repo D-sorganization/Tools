@@ -11,11 +11,26 @@ Mirrors firmware/README.md "Modbus register map".
 
 from __future__ import annotations
 
+import math
+
 # ---- Tag broker -------------------------------------------------------
 TAG_COUNT = 32  # tags exposed by the firmware broker
 TAG_PREFIX = "TAG_"
 UNMAPPED_TAG_INDEX = 255  # firmware kUnmappedTag sentinel for routing/PID fields
 UNMAPPED_TAG_NAME = f"{TAG_PREFIX}{UNMAPPED_TAG_INDEX}"
+
+# ---- Signal scaling ---------------------------------------------------
+# The firmware publishes thermocouples as PERCENT OF FULL SCALE, not degrees C
+# (SignalBroker::ReadHardwareInputs scales degC -> % on the way out). Full
+# scale is therefore a two-sided contract, and it lives here for the same
+# reason the register map does: one definition, not a literal copied into
+# temperature_integration, power_supply_integration and the HMI.
+#
+# Must equal the firmware's kThermocoupleFullScaleC. Enforced by
+# tests/test_units_contract.py, which parses the firmware source -- a
+# divergence under-reads every temperature and delays the high-high heater
+# cutoff by the same ratio (issue #3998).
+THERMOCOUPLE_FULL_SCALE_C = 1400.0
 
 # ---- Register map (holding registers; see firmware/README.md) ---------
 TAG_VALUE_BASE = 0  # tag values: TAG_i at (i*2, i*2+1) little-endian float
@@ -98,3 +113,58 @@ def pid_setpoint_address(pid_index: int) -> int:
     if not 0 <= pid_index < PID_COUNT:
         raise ValueError(f"pid index {pid_index} out of range [0, {PID_COUNT})")
     return PID_CONFIG_BASE + pid_index * PID_STRIDE + PID_SETPOINT_OFFSET
+
+
+def percent_to_celsius(percent: float, full_scale_c: float | None = None) -> float:
+    """Convert a broker tag percentage to degrees Celsius.
+
+    The firmware scales degC -> % using ``THERMOCOUPLE_FULL_SCALE_C``; this is
+    the inverse. Every consumer of a thermocouple tag must go through here so
+    the conversion cannot drift between subsystems (issues #3998, #4003).
+
+    Args:
+        percent: Tag value in [0, 100] as published by the firmware broker.
+        full_scale_c: Override for a channel with a different range. Defaults
+            to the firmware contract value.
+
+    Raises:
+        TypeError: If an argument is not a real number.
+        ValueError: If an argument is not finite, or ``full_scale_c`` <= 0.
+    """
+    scale = THERMOCOUPLE_FULL_SCALE_C if full_scale_c is None else full_scale_c
+    _require_finite_number(percent, "percent")
+    _require_finite_number(scale, "full_scale_c")
+    if scale <= 0.0:
+        raise ValueError(f"full_scale_c must be positive, got {scale}")
+    return float(percent) * float(scale) / 100.0
+
+
+def celsius_to_percent(celsius: float, full_scale_c: float | None = None) -> float:
+    """Convert degrees Celsius to a broker tag percentage.
+
+    Inverse of :func:`percent_to_celsius`. Used to express a degC threshold in
+    the tag domain the firmware interlock actually compares against.
+
+    Raises:
+        TypeError: If an argument is not a real number.
+        ValueError: If an argument is not finite, or ``full_scale_c`` <= 0.
+    """
+    scale = THERMOCOUPLE_FULL_SCALE_C if full_scale_c is None else full_scale_c
+    _require_finite_number(celsius, "celsius")
+    _require_finite_number(scale, "full_scale_c")
+    if scale <= 0.0:
+        raise ValueError(f"full_scale_c must be positive, got {scale}")
+    return float(celsius) * 100.0 / float(scale)
+
+
+def _require_finite_number(value: object, name: str) -> None:
+    """DbC helper: reject non-numeric and non-finite inputs.
+
+    A NaN temperature is a sensor fault, not a measurement, and must not be
+    allowed to propagate into a trip comparison where it compares False
+    against every threshold.
+    """
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise TypeError(f"{name} must be a real number, got {type(value).__name__}")
+    if not math.isfinite(float(value)):
+        raise ValueError(f"{name} must be finite, got {value}")

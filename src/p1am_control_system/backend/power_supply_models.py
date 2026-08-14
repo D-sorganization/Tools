@@ -8,6 +8,7 @@ controller) without circular-import risk.
 
 from __future__ import annotations
 
+import hardware
 from pydantic import BaseModel, Field, field_validator, model_validator
 from signal_stats import NoiseMetric, NoiseStats, compute_noise
 
@@ -55,6 +56,16 @@ class PowerSupplyConfig(BaseModel):
     temp_tag: str = Field(
         default="TAG_0",
         description="Modbus tag carrying the HH-monitored thermocouple (TC1).",
+    )
+    temp_full_scale_c: float = Field(
+        default=hardware.THERMOCOUPLE_FULL_SCALE_C,
+        gt=0.0,
+        description=(
+            "deg C at 100 % of temp_tag. The firmware publishes thermocouples "
+            "as percent of full scale, so this is what converts the tag to the "
+            "degC domain temp_alarm_max_c is expressed in. Defaults to the "
+            "firmware contract value; must match it."
+        ),
     )
 
     # Operator-facing signal names (single source of truth for the HMI labels —
