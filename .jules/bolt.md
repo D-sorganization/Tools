@@ -89,3 +89,7 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+
+## 2026-06-13 - Avoid Array.from({ length }) in React render loops
+**Learning:** In high-frequency React render loops (e.g., generating SVG chart elements in Histogram.tsx), using inline array initialization like `Array.from({ length: X }, ...)` incurs significant overhead from iterability checks, iterator creation, and closure execution per element. This creates unnecessary garbage collection pressure and main thread stalls.
+**Action:** Instead, pre-allocate arrays using an Immediately Invoked Function Expression (IIFE) with `new Array(X)` and populate them with a standard `for` loop to bypass `Array.from`'s iterator overhead.
