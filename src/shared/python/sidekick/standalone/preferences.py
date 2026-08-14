@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from sidekick.standalone.session_store import FileSessionStore
+    from .session_store import FileSessionStore
 
 logger = logging.getLogger(__name__)
 
@@ -171,8 +171,16 @@ class StandalonePreferences:
     def apply_tokens(self, theme_colors: dict[str, str]) -> dict[str, str]:
         """Map raw theme colors to Sidekick design tokens.
 
-        Uses ``theme.sidekick_tokens.COLOR_TOKEN_MAP`` — no QSS strings
-        generated here, only the token dict returned to the caller.
+        Uses ``shared.python.theme.sidekick_tokens.COLOR_TOKEN_MAP`` — no QSS
+        strings generated here, only the token dict returned to the caller.
+
+        .. warning::
+           ``shared.python.theme.sidekick_tokens`` does not exist in this repo
+           (under this spelling or the former bare ``theme.`` one), so calling
+           this method raises ``ModuleNotFoundError``. Pre-existing on ``main``
+           and unchanged here; this method has no callers and no tests. See
+           ``shared.python.sidekick.ui.design_tokens.get_token_dict`` for the
+           live token lookup.
 
         Args:
             theme_colors: Dict of theme-key → hex color.
@@ -187,7 +195,10 @@ class StandalonePreferences:
         assert isinstance(theme_colors, dict) and theme_colors, (
             "theme_colors must be a non-empty dict"
         )
-        from theme.sidekick_tokens import COLOR_TOKEN_MAP, DEFAULT_SIDEKICK_TOKENS
+        from shared.python.theme.sidekick_tokens import (
+            COLOR_TOKEN_MAP,
+            DEFAULT_SIDEKICK_TOKENS,
+        )
 
         tokens: dict[str, str] = dict(DEFAULT_SIDEKICK_TOKENS)
         for token_name, theme_key in COLOR_TOKEN_MAP.items():
@@ -207,7 +218,7 @@ class StandalonePreferences:
 
 def _default_store() -> FileSessionStore:
     """Return a FileSessionStore in the platform config directory."""
-    from sidekick.standalone.session_store import FileSessionStore
+    from .session_store import FileSessionStore
 
     try:
         import platformdirs

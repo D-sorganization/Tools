@@ -75,8 +75,8 @@ def _adapt_wgs_reactor(inputs: dict) -> dict:
         All returned mole fractions are in [0, 1] and sum to ≈ 1.
     """
     assert isinstance(inputs, dict), "inputs must be a dict"
-    from sidekick.process_calculators.constants import CELSIUS_TO_KELVIN_OFFSET
-    from sidekick.process_calculators.wgs_reactor_calculator import WGSReactorEngine
+    from ..process_calculators.constants import CELSIUS_TO_KELVIN_OFFSET
+    from ..process_calculators.wgs_reactor_calculator import WGSReactorEngine
 
     t_c = float(inputs.get("temperature_c", 350.0))
     assert -273.15 < t_c <= 2000.0, f"temperature_c {t_c} out of range"
@@ -112,7 +112,7 @@ def _adapt_wgs_reactor(inputs: dict) -> dict:
 def _adapt_water_vapor_pressure(inputs: dict) -> dict:
     """Saturated water-vapour pressure via ``SyngasWaterCalculator``."""
     assert isinstance(inputs, dict), "inputs must be a dict"
-    from sidekick.process_calculators.syngas_water_calculator import (
+    from ..process_calculators.syngas_water_calculator import (
         SyngasWaterCalculator,
     )
 
@@ -132,7 +132,7 @@ def _adapt_water_vapor_pressure(inputs: dict) -> dict:
 def _adapt_flare(inputs: dict) -> dict:
     """Flare sizing via the canonical ``FlareCalculator``."""
     assert isinstance(inputs, dict), "inputs must be a dict"
-    from sidekick.process_calculators.flare_calculator import FlareCalculator
+    from ..process_calculators.flare_calculator import FlareCalculator
 
     total_flow = float(inputs.get("total_flow_kg_hr", 1000.0))
     composition = dict(inputs.get("gas_composition", {"CH4": 80.0, "CO2": 20.0}))
@@ -153,7 +153,7 @@ def _adapt_flare(inputs: dict) -> dict:
 def _adapt_financial(inputs: dict) -> dict:
     """Plant financial model via ``FinancialModelCalculator``."""
     assert isinstance(inputs, dict), "inputs must be a dict"
-    from sidekick.process_calculators.financial_calculator import (
+    from ..process_calculators.financial_calculator import (
         FinancialModelCalculator,
         FinancialParameters,
     )
@@ -180,7 +180,7 @@ def _adapt_syngas_water(inputs: dict) -> dict:
     the supplied dew-point/temperature for a saturated stream.
     """
     assert isinstance(inputs, dict), "inputs must be a dict"
-    from sidekick.process_calculators.syngas_water_calculator import (
+    from ..process_calculators.syngas_water_calculator import (
         SyngasWaterCalculator,
     )
 

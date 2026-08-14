@@ -22,14 +22,19 @@ import pytest
 # ---------------------------------------------------------------------------
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# Canonical package is ``shared.python.sidekick``; ``upstream_drift_tools`` is
+# now an alias shim holding only an ``__init__.py``. These path constants were
+# left behind by that rename, so the three filesystem-backed guards below have
+# been failing against main ever since — invisibly, because changed-file test
+# selection only ran this file when someone edited the file itself.
 PDC_INIT = (
     REPO_ROOT
-    / "src/shared/python/upstream_drift_tools/process_calculators"
+    / "src/shared/python/sidekick/process_calculators"
     / "pressure_drop_calculator/__init__.py"
 )
 PDC_LEGACY = (
     REPO_ROOT
-    / "src/shared/python/upstream_drift_tools/process_calculators"
+    / "src/shared/python/sidekick/process_calculators"
     / "pressure_drop_calculator/_legacy.py"
 )
 SIGNAL_TOOLKIT_INIT = REPO_ROOT / "src/shared/python/signal_toolkit/__init__.py"
