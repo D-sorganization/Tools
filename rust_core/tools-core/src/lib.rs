@@ -58,7 +58,15 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
         m
     )?)?;
     m.add_function(wrap_pyfunction!(
+        flight_ground::python::py_validate_result_v1,
+        m
+    )?)?;
+    m.add_function(wrap_pyfunction!(
         flight_ground::python::py_adapt_request_v1,
+        m
+    )?)?;
+    m.add_function(wrap_pyfunction!(
+        flight_ground::python_reference::py_run_ground_reference_v1,
         m
     )?)?;
     m.add_function(wrap_pyfunction!(math::py_lerp, m)?)?;

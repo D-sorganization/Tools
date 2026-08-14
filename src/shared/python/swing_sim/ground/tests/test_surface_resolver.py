@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import replace
 
 import pytest
@@ -13,6 +14,26 @@ from shared.python.swing_sim.ground import (
 )
 
 from ._support import _surface, _surface_run_request
+
+
+def test_unbounded_domain_derives_an_intrinsic_axis_for_arbitrary_normals() -> None:
+    normal = (0.2, math.sqrt(0.95), -0.1)
+    surface = replace(_surface(), height_m=0.3, normal_unit=normal)
+
+    domain = PlanarSurfaceDomain.unbounded(surface)
+
+    assert sum(value**2 for value in domain.axis_unit) == pytest.approx(1.0)
+    assert sum(
+        domain.axis_unit[index] * normal[index] for index in range(3)
+    ) == pytest.approx(0.0, abs=1e-12)
+    assert domain.axis_origin_m == (0.0, surface.height_m, 0.0)
+    assert domain.lower_coordinate_m is None
+    assert domain.upper_coordinate_m is None
+
+
+def test_unbounded_domain_rejects_non_surface_before_reading_geometry() -> None:
+    with pytest.raises(ValueError, match="exact surface profile"):
+        PlanarSurfaceDomain.unbounded(object())  # type: ignore[arg-type]
 
 
 def test_resolver_requires_the_request_exact_surface_identity_and_geometry() -> None:

@@ -43,6 +43,7 @@ describe("PrimaryViewTabs", () => {
       "calculation",
       "plots",
       "flight",
+      "ground-playback",
       "launch-monitor-analytics",
       "capability-optimization",
       "variation",

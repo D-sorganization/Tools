@@ -3,6 +3,757 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4274 workspace-v2 adversarial review repair
+
+Independent review of local workspace-v2 commit
+`b9579c0b16aaf6188f216acbca0b75828c2a5fe6` found two publication blockers.
+An integer too large for `float` escaped strict Python parsing as
+`OverflowError`, bypassing PyQt's transactional import-error boundary; Python
+and TypeScript also disagreed on whether public limit overrides could raise the
+fixed 11 MiB, 100,000-point-per-result, and 200,000-point-combined contract
+caps. The follow-up normalizes numeric conversion overflow to `ValueError` and
+rejects every override above the same hard caps in both runtimes while still
+allowing stricter caller limits.
+
+RED-first regressions cover v1 and v2 parsing, active PyQt playback retention,
+and all three cross-runtime hard caps. The complete Rate suite passes 913 tests
+and the React suite passes 111 files / 690 tests; focused Ruff/format,
+TypeScript, zero-warning ESLint, and Prettier gates pass. The canonical golden
+bytes and physics remain unchanged. This is a review repair, not completion of
+#4274 or #4267; protected publication, approval, parent landing, and the
+existing downstream boundaries remain open.
+
+## 2026-08-10 issue #4274 comparison workspace v2
+
+Local branch `feat/4274-ground-playback-comparison-workspace-v2` starts from
+exact raw-evidence parent `9be08f9a67336aae4ac1f6add68c190d42e67f10`.
+PyQt6 and React now save one strict
+`rate-of-closure-ground-playback-workspace/v2` document containing the primary
+`flight-to-ground-result/v1`, an always-present nullable comparison envelope
+with independent visibility, union-window playback state, and orbit view.
+The stable shared comparison type is `GroundPlaybackComparisonState`.
+
+Strict v2-only parsing is separate from discoverable version dispatch. V1
+documents migrate one way to normalized v2, visibly disclose migration, and
+subsequent saves remain v2. Exact-field recursive validation, duplicate-key
+rejection, finite bounds, 100,000 points per result, 200,000 combined points,
+and an 11 MiB UTF-8 bound apply before parse and after serialization. Python
+and TypeScript pin the same LF-terminated 9,055-byte golden document at SHA-256
+`28b94af16a05315a9d1067bda894a3817dce5849a9562e1ffef7d0d8caecd654`.
+
+Import is transactional on both clients. Invalid input preserves every
+last-good primary, comparison, visibility, playback, camera, and running state;
+valid input commits paused. PyQt restores comparison visibility with signals
+blocked, avoids intermediate seeks/callbacks, and commits union time last.
+React memoizes result timelines so comparison errors or rerenders do not reset
+time/camera, and portable time uses the union window.
+
+RED-first contract and UI failures were observed before implementation.
+Focused evidence passes 34 Python/PyQt tests and eight React panel tests;
+complete suites pass 910 Rate tests and 111 React files / 689 tests. TypeScript,
+zero-warning ESLint, the 204-module production build, Ruff, Black, pinned MyPy
+1.13, Prettier, Python 3.10 compilation, Bandit with the inherited unchanged
+low-severity B101 assertion excluded, minimum-test, module-size,
+documentation, and conflict-marker gates pass. Maximum-ledger paging/lazy
+mounting, camera/Playwright/native visual evidence, terrain editing/meshes,
+ensembles, compiled runtimes, UpstreamDrift parity, protected publication,
+issue acceptance, and epic closure remain open; keep #4274/#4267 open.
+
+## 2026-08-10 PR #4318 raw comparison evidence publication
+
+The independently reviewed raw comparison-evidence continuation is published
+as ready-for-review [PR #4318](https://github.com/D-sorganization/Tools/pull/4318)
+on the preserved `feat/4274-ground-playback-comparison` base. Exact reviewed
+implementation `b89d642441e72c84481293c1f7bf6de03e933feb` descends directly
+from exact PR #4317 head `b55bfa3d710a4ff8fabd4ebc7ec31cddad37cee4`.
+Independent review found and verified the RED-first repair of a late React
+comparison-import race after strict-result or workspace primary replacement.
+The GitHub App identity and fast-forward remote state were verified before the
+normal push; no branch was rewritten or retargeted. SPEC 1.14.44 records
+publication. Protected exact-head CI, approval, parent landing, issue
+acceptance, and epic closure remain required; keep #4274/#4267 open.
+
+## 2026-08-10 issue #4274 matched raw comparison evidence
+
+Local branch `feat/4274-ground-playback-comparison-evidence` starts from exact
+published comparison parent
+`b55bfa3d710a4ff8fabd4ebc7ec31cddad37cee4`. PyQt6 and React now show
+separately labelled primary/comparison trajectory and event ledgers. Trajectory
+rows contain exact absolute and result-relative times plus phase; event rows
+contain exact event time and identity. Both retain positions, linear
+velocities, and angular velocities from each result without pairing rows or
+implying correspondence between different sample grids or event sequences, and
+they remain available when only the dashed graphical overlay is hidden.
+
+Dedicated comparison trajectory/event CSV actions reuse the existing canonical
+full-ledger serializers, so frame fields, numeric normalization, deterministic
+ordering, and LF endings stay matched across clients. PyQt comparison exports
+now reuse a shared `QSaveFile` atomic writer instead of direct replacement.
+Invalid comparison import retains the prior tables and exports; successful
+primary replacement clears them together and invalidates any in-flight
+comparison import that began against the previously displayed primary. React
+raw rendering and toolbar controls were extracted from the panel, and every
+touched production module remains below 400 lines.
+
+RED-first failures were observed on both surfaces before implementation.
+Focused evidence passes 14 PyQt tests and eight React tests; complete suites
+pass 900 Rate tests and 110 React files / 685 tests. Ruff check/format, pinned MyPy
+1.13, Python 3.10 compilation, TypeScript, zero-warning ESLint, Prettier, the
+203-module production build, Bandit, minimum-test, module-size, documentation,
+and conflict-marker governance gates pass. SPEC 1.14.43 records the slice.
+Independent exact-commit review is clean and PR #4318 is published ready for
+review. Protected CI, approval, parent landing, and issue acceptance remain required.
+Workspace-v2 comparison persistence, maximum-ledger paging or lazy mounting,
+camera/Playwright/native visual verification, terrain editors, ensembles,
+compiled runtimes, UpstreamDrift parity, and epic closure remain open; keep
+#4274/#4267 open.
+
+## 2026-08-10 PR #4317 comparison playback publication
+
+The independently reviewed comparison continuation is published as ready-for-
+review [PR #4317](https://github.com/D-sorganization/Tools/pull/4317) on the
+preserved `feat/4274-ground-playback-persistence` base. Exact reviewed
+implementation head `ab0d07c0b60b2034259444a8fb68253fa24ddac7` has clean
+ancestry through merge `395c48f4142520b0f0a1b41479d02ac29c27abcf`, whose
+parents remain original comparison commit `5ceb806961e76c3699934fafcd4aba96c06bbd20`
+first and exact PR #4316 head
+`2c56294ecda0204886508946239c7ca5b50b8b14` second. The GitHub App identity
+was verified before the normal push; no branch was rewritten or retargeted.
+SPEC 1.14.42 records publication. Protected exact-head CI, approval, parent
+landing, issue acceptance, and epic closure remain required; keep #4274 and
+#4267 open.
+
+## 2026-08-10 issue #4274 comparison-session review repair
+
+Independent review of the normally propagated comparison continuation found
+four release-blocking contract defects. The repaired PyQt6/React behavior now
+keeps the union absolute-time session loaded when comparison artists are
+hidden, so visibility no longer changes scrubber limits, stepping, or the
+current observation. PyQt workspace v1 remains intentionally primary-only:
+export clamps only the serialized time to the primary timeline and does not
+mutate the live comparison time. File-dialog failures explicitly disclose when
+the last valid comparison remains loaded.
+
+Direct comparison deltas are normalized once through the shared eleven-decimal
+cross-runtime numeric policy. Python JSON, CSV, tables, and React exports
+therefore agree on canonical values such as `0.2` and `0`, without binary
+floating-point noise. Paired calibration evidence now includes ID, kind,
+source, and canonical confidence on both clients (twelve total identity,
+status, provenance, and calibration rows).
+
+Regression-first evidence is green: 22 focused Python/PyQt tests, the complete
+Rate suite (898 tests), 12 focused React tests, and the complete React suite
+(110 files / 683 tests) cover canonical deltas/CSV, comparison-only workspace export,
+visibility-only overlay toggling, complete calibration evidence, and retained
+file-error disclosure. Ruff check/format, pinned MyPy 1.13, TypeScript,
+zero-warning ESLint, and the 200-module production build pass. SPEC 1.14.41
+records the review repair. Fresh complete suites, independent exact-head
+re-review, guarded publication, protected CI, approval, parent landing, issue
+acceptance, and epic closure remain open. Keep #4274 and #4267 open.
+
+## 2026-08-10 issue #4274 matched comparison playback
+
+The local continuation on `feat/4274-ground-playback-comparison` adds matched
+PyQt6/React comparison playback from exact local parent
+`0ef91e84b6d49551723ba0fbfb8eb1bf7b1ebfa2`. A second strict
+`flight-to-ground-result/v1` is parsed and fully validated before it can
+replace the last-good comparison; failure leaves both the primary and prior
+comparison intact. A successful primary replacement deliberately clears a
+stale comparison only after the new primary commits.
+
+Both clients use one absolute-time window spanning the two observed results.
+Each result is phase-safely interpolated only inside its own samples; outside
+its observed interval the marker is clamped and explicitly labelled as waiting
+for first contact or held at its qualified/observed end. One locked physical
+metre scale contains both paths. Primary and comparison use solid versus dashed
+trajectories, circular versus diamond event/ball markers, an accessible
+show/hide control, paired identity/status/provenance, and a complete fourteen-
+row direct scalar table. Deterministic JSON retains both exact result records
+and the table; deterministic CSV exports the same direct
+`comparison_minus_primary` deltas. No causal, inferential, or extrapolated
+physics claim is made.
+
+Focused evidence passes 22 Python/PyQt contract, GUI, and tooltip tests; the
+complete Rate suite passes 898 tests. React passes 17 focused tests and the
+complete suite (110 files / 683 tests), TypeScript, zero-warning ESLint, and a
+200-module production build. Ruff check/format, MyPy, CPython 3.10 compilation,
+module/changed-file budgets, documentation, minimum-test, assertion, secrets,
+marker, and diff gates pass. A normal two-parent merge now has original
+comparison commit `5ceb806961e76c3699934fafcd4aba96c06bbd20` first and
+exact live parent PR #4316 head
+`2c56294ecda0204886508946239c7ca5b50b8b14` second. The base remains
+`feat/4274-ground-playback-persistence`; no branch was rewritten or
+retargeted. SPEC 1.14.39 records the feature and 1.14.40 records this
+propagation. Independent exact-merge review and guarded publication remain
+open. Comparison persistence in workspace v1, comparison trajectory/
+event evidence tables, ensembles/statistical inference, terrain meshes and
+editors, inverse solving, compiled runtimes, UpstreamDrift parity, protected
+CI, approval, parent landing, issue acceptance, and epic closure remain open.
+Keep issue #4274 and epic #4267 open.
+
+The exact pinned MyPy 1.13 propagation gate additionally reconciles skipped-
+import and fully resolved inference: explicit typed time/serializer bindings
+avoid both `Any` returns and redundant casts, while distinct metric and
+provenance row variables prevent incompatible loop-variable reuse. These are
+type-only repairs with no runtime coercion or scientific behavior change.
+
+## 2026-08-10 PR #4316 exact-head CI type repair
+
+Current-head quality-gate run `31389230948` identified four redundant `str`
+casts in the PyQt persistence export accessors under the repository's pinned
+MyPy 1.13 delta configuration. The serializers already declare exact `str`
+returns; explicit typed local bindings preserve that contract across differing
+import-following environments without runtime coercion. The casts are removed
+without changing runtime behavior. SPEC 1.14.38 records the repair. Fresh
+isolated MyPy 1.13 and 1.15 checks pass on all five production modules; 15
+focused Python/PyQt tests, Ruff, Python 3.10 compilation, formatting, and
+governance also pass. Protected current-head CI remains required; #4274 and
+#4267 remain open.
+
+## 2026-08-10 issue #4274 playback workspace persistence and exports
+
+A reviewed continuation on `feat/4274-ground-playback-persistence` adds matched
+PyQt6/React persistence and deterministic evidence export from exact reviewed
+implementation head `80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. The strict
+`rate-of-closure-ground-playback-workspace/v1` document embeds the validated
+`flight-to-ground-result/v1` plus paused absolute time, supported speed, loop
+state, and a UI-neutral orbit camera. Imports reject duplicate/unknown fields,
+unsupported versions, nonfinite or out-of-range state, oversized documents,
+and oversized trajectories before replacing the last-good workspace. Active
+timers are never persisted and importing always restores paused.
+
+Both surfaces export lossless canonical result JSON and deterministic
+LF-terminated trajectory/event CSV with every raw position, linear velocity,
+angular velocity, frame, phase/event, time, and sequence field. PyQt uses
+atomic `QSaveFile` replacement. The existing PyQt tab was reduced from 422 to
+367 lines by separating contract, persistence orchestration, and file controls.
+This slice executes no physics and does not add surface editors, terrain
+meshes, comparison overlays, ensembles, solvers, compiled runtimes, or
+UpstreamDrift integration. Keep issue #4274 and epic #4267 open.
+
+Evidence passes 17 focused Python/PyQt tests (including tooltip governance),
+the complete Rate suite (891 tests), 12 focused React/model tests, the complete
+React suite (110 files / 678 tests), and the 198-module Vite production build.
+Ruff check/format, pinned-style MyPy on five production modules, TypeScript,
+zero-warning ESLint, documentation, scoped secrets, module size, minimum-test,
+conflict-marker, and final diff gates pass. A normal two-parent merge now has
+original feature commit `abb55c177af19a3cc08dd6bd5d258ea5ce3a61b9`
+first and exact ready-for-review parent PR #4315 head
+`2618ab025622bf1a4fa21e771b30f808f783648b` second. The base remains
+`feat/4274-ground-playback`; no branch was rewritten or retargeted. SPEC
+1.14.36 records the propagation. Independent exact-head review is READY at
+merge `0ef91e84b6d49551723ba0fbfb8eb1bf7b1ebfa2`, and ready-for-review
+PR #4316 is published against unchanged `feat/4274-ground-playback`. SPEC
+1.14.37 records publication. Protected CI, approval, parent landing, issue
+acceptance, and epic closure remain open.
+
+## 2026-08-10 issue #4274 exact-parent propagation
+
+The locally reviewed Ground Playback continuation now incorporates exact
+current parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` from draft PR #4309 by a
+normal two-parent merge, with original playback head
+`9045f8f3684fcf87bbe0ef3f5c1e1afba0ed5708` first and the corrected ground
+reference executor second. The base remains
+`feat/4275-ground-reference-execution`; no parent branch was rewritten or
+retargeted. SPEC 1.14.33 records the propagation. Fresh current-diff evidence
+passes `77` focused Python tests, `1,105` Rate/ground Python tests, the complete
+React suite (`109` files / `673` tests), TypeScript, zero-warning ESLint, and a
+`197`-module production build. Ruff/format, pinned MyPy 1.13 on six production
+files, real CPython 3.10 compilation, documentation and minimum-test governance,
+a `10`-file secrets scan, conflict-marker scans, and diff checks also pass. The
+exact parent supplies current green Rust/fmt/clippy evidence because this child
+adds no Rust delta. Independent exact-diff review is READY at implementation
+merge `80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. Ready-for-review PR #4315 is
+now published with unchanged base `feat/4275-ground-reference-execution`; SPEC
+1.14.34 records that live publication state. Protected CI, approval, parent
+landing, dependency integration, issue acceptance, and epic closure remain
+open.
+
+## 2026-08-10 issue #4274 playback clock and evidence parity repair
+
+Independent release review found that the PyQt player advanced one nominal
+timer interval per callback and discarded loop overshoot, and that both client
+evidence tables omitted scientifically material state and provenance fields.
+PyQt now anchors playback to an injected monotonic clock, re-anchors speed and
+loop-mode changes without discontinuity, uses modulo loop wrap, and has
+deterministic delayed-tick, speed, toggle, and overshoot coverage. PyQt and React now expose full
+trajectory linear/angular velocity, event pre/post linear/angular velocity,
+result identity/status/termination, input SHA-256, calibration ID/confidence,
+and warnings from the same shared golden result. The full
+Rate suite passes 873 tests and the full React suite passes 109 files / 673
+tests; pinned MyPy 1.13, Ruff, TypeScript, zero-warning ESLint, and production
+build gates pass. Independent re-review, exact-head publication, protected CI,
+required approval, dependency integration, and epic closure remain open.
+
+## 2026-08-10 issue #4274 strict browser-import repair
+
+The React Ground Playback importer now routes raw text through the existing
+duplicate-key-aware `flightToGroundResultFromJson` facade before semantic
+validation. This closes a review finding in which `JSON.parse` discarded
+duplicate fields before the strict result parser could reject them. A
+regression proves duplicate `request_id` fields fail atomically, leave the
+last valid trajectory and summary intact, and tell the user that the valid
+result remains loaded. The complete React suite passes 109 files / 673 tests;
+zero-warning ESLint, TypeScript type-checking, and the production Vite build
+also pass. This is local evidence only: independent re-review, exact-head
+ready-for-review publication, protected CI, review approval, dependency integration, and epic
+closure remain open.
+
+## 2026-08-10 PR #4323 exact hosted-MyPy repair
+
+The repair is published on ready PR #4323 at exact current head
+`3957f013eeadd448ffa381f12d65b6a076abe21b`, fast-forwarded from verified
+prior head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`. Base
+`feat/4275-ground-tilted-conformance` and ready state are preserved; no
+retarget, merge, force operation, or parent rewrite occurred.
+
+Hosted quality-gate run `31429284874`, job `93588443824`, exposed eight
+actionable MyPy 1.13 `no-any-return` errors under its exact Python 3.12 delta
+profile with `MYPYPATH=src:src/python/src` and `--follow-imports=skip`. Skipped
+imports hid the return types of the shared `Vector3` dot-product expression,
+`SurfaceRun.result`, and the rest predicate. The repair uses `typing.cast` at
+those three static-analysis boundaries and one DRY result helper. `cast` is a
+runtime identity operation: arithmetic order, strict vector-length checking,
+predicate truth, event construction, terminal reasons, and public records are
+unchanged.
+
+The exact hosted three-file MyPy profile now passes. Local validation also
+passes all 247 ground tests, 42 focused skid/passivity/conformance tests, Ruff,
+formatting, the campaign manifest and its eight tests, documentation
+governance, changed-Python policy, and diff checks. Fresh exact-head hosted CI
+is the next gate. This repair changes neither the scientific evidence nor the
+open #4275/#4267 limitations recorded below.
+
+## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
+
+Branch `feat/4275-ground-mirrored-property` is published as ready
+[PR #4323](https://github.com/D-sorganization/Tools/pull/4323), targeting
+`feat/4275-ground-tilted-conformance` at exact parent head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. The implementation is exact
+commit `08d631d7169019aee9067f3739051a50d88b9554`; its initial evidence/handoff
+head was `74a23c21bb20f13bf608f463915b00d2d53d5a7f`. This documentation-only
+publication follow-up does not change implementation evidence.
+
+The shared scientific corpus now has seven cases. A second analytic incline
+reflects the existing `n=[0,sqrt(0.99),0.1]` case through the xy plane, with
+polar vectors' z components and the axial spin vector's x component reflected
+under the correct pseudovector transformation. Python, native Rust, installed
+PyO3, and rebuilt Node/WASM consume and pass that shared mirror oracle.
+
+A separate fixed-seed (`4275`) 20-case Python/PyO3 exact-parity sweep varies
+both signs of z tilt, nonzero x-oriented normals, ball radius/mass/inertia,
+surface height and tangential velocity, restitution, static/kinetic friction,
+rolling resistance, launch tangent, and spin. RED exposed that Python's
+implicit unbounded domain always selected world +x as its tangent axis and
+therefore rejected valid normals with x components. The default resolver now
+derives a deterministic unit tangent by projecting the least-aligned Cartesian
+axis into the plane. Explicit caller-supplied finite axes and bounds are
+unchanged.
+
+Local evidence passes all 247 Python ground tests, the four-test native Rust
+corpus harness over all seven cases, fresh installed CPython 3.13 PyO3 corpus
+and seeded-sweep harnesses, and a freshly rebuilt Node/WASM corpus harness.
+Pinned MyPy 1.13 (`follow-imports=silent`), Ruff, Prettier, and diff checks are
+clean. The raw seven-case corpus SHA-256 is
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`.
+
+Keep #4275 and #4267 open. The seeded sweep is a bounded deterministic
+conformance sample, not statistical uncertainty, calibrated materials,
+performance/memory qualification, changing terrain, deformation, UI/3D
+rendering, WASM-wide randomized properties, or downstream release evidence.
+
+## 2026-08-10 issue #4275 tilted-plane conformance and passivity
+
+Branch `feat/4275-ground-tilted-conformance` is published as ready
+[PR #4322](https://github.com/D-sorganization/Tools/pull/4322). It starts
+exactly at ready PR #4321 head
+`7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e` and retains base
+`feat/4275-ground-conformance-corpus`. The implementation/evidence head was
+`a0c8e49a40badc3ce96193e031d2a9dec557d143`; this documentation-only
+publication follow-up changes no implementation evidence. This bounded
+continuation adds a sixth
+shared conformance case: an immutable plane with
+`n=[0,sqrt(0.99),0.1]`, exact initial pure roll, zero rolling resistance, and
+a four-second downhill horizon. Independent constant-acceleration oracles pin
+the time-limit outcome, path, terminal center velocity and spin, exact no-slip
+capture, and the ball-center plane constraint in Python, native Rust, PyO3,
+and WASM.
+
+The new case first failed in both production paths because the passivity guard
+compared only canonical 11-decimal endpoints across hundreds of state snaps.
+Python and Rust now reject any unquantized constant-motion segment that creates
+energy, so an earlier legitimate loss cannot mask a later defect. Canonical
+endpoint and no-slip projection effects are admitted only inside accumulated
+11-decimal component bounds and explicit slip bounds; unexplained endpoint
+creation still fails. The public ledger and wire result retain deterministic
+canonical endpoints. Final local GREEN evidence passes 238 Python ground tests;
+191/206/203 default/Python/WASM Rust tests; 19 focused Python conformance and
+passivity tests; the four-test native corpus harness over all six fixture cases;
+a fresh installed CPython 3.13 PyO3 wheel; and a rebuilt Node/WASM harness.
+Strict lint, type, format, policy, and documentation gates pass. Independent
+adversarial review is `READY`. The exact implementation is
+`5d333a4448d6484f8c98e78c9878cb83b40aa522`; the six-case corpus SHA-256 is
+`502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
+At initial publication PR #4322 was open, ready, and mergeable; protected jobs
+were queued/in progress and no review decision existed. Green hosted CI,
+approval, parent integration, and release remain unclaimed.
+
+Full-matrix testing also exposed a resistance-cusp defect on a translating
+incline: a frozen rolling-resistance direction could step through zero relative
+speed and create energy. Both runtimes now bound any non-collinear closing roll
+step and hold zero relative speed when resistance can balance slope drive. The
+hold preserves surface-carried translation, axial spin, and explicit surface
+work instead of fabricating an absolute rest event. A sub-tolerance residual is
+first projected to exact co-motion through the same slip, velocity, spin, and
+energy bounds; it cannot survive the hold branch as hidden uphill motion.
+Contact slip remains governed independently by `slip_tolerance_m_s`, while the
+holding center/spin correction uses `velocity_tolerance_m_s` and its radius-
+scaled angular equivalent. A stationary exact hold emits `REST` in the same
+solver step; at the zero-duration handoff it first advances one zero-motion
+interval so the strict increasing-time result wire remains representable.
+
+This slice does not complete #4275 or #4267. The opposite tilted orientation,
+randomized frame/property sweeps, calibration/uncertainty, performance and
+memory qualification, changing terrain/materials, deformation, torsional
+damping, roll-to-skid, UI/3D rendering, and downstream consumers remain open.
+
+## 2026-08-10 issue #4275 scientific conformance corpus
+
+Branch `feat/4275-ground-conformance-corpus` starts exactly at ready PR #4320
+head `64506a54d546021f3c16fbe0b627f35057ec6dd1` and must retain base
+`feat/4275-ground-compiled-reference-runtime`. This bounded continuation adds
+the versioned `ground-reference-conformance/v1` corpus without changing the
+production physics kernel. Five cases pin independently derived contact time,
+Newton restitution, passive impact energy, Coulomb skid-to-roll state/time and
+distance, no-slip stopping time/distance, a proper active -90-degree rotation
+about +y, and Galilean moving-surface relative motion. Every expected scalar
+or vector declares units, basis, and an applicable bounded tolerance;
+exact-byte serialization remains owned by the separate existing golden fixture.
+
+The same fixture is consumed by the Python authority, direct native Rust,
+freshly installed CPython 3.13 PyO3 wheel, and freshly rebuilt Node/WASM
+package. Focused evidence currently passes eight Python corpus tests, four
+native Rust tests, the unique-venv PyO3 harness, and the rebuilt WASM harness.
+No runtime callback is fabricated for synchronous WASM. The implementation
+commit intentionally does not attempt a self-referential SHA; a follow-up
+evidence commit must bind its exact parent SHA, full-suite counts, corpus digest,
+independent review, PR, and protected-CI state in all handoffs and the strict
+campaign manifest before publication.
+
+Exact reviewed implementation commit
+`9df3928a1ef32d81db2e568884ca24d8c576d49a` now binds corpus SHA-256
+`f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
+Final local evidence passes 227 Python ground tests; 184 default, 199
+Python-feature, and 196 WASM-feature Rust tests; eight focused Python and four
+native conformance tests; the installed CPython 3.13 PyO3 wheel; rebuilt
+Node/WASM; strict Clippy; MyPy; Ruff; formatting; manifest plus eight tests;
+docs governance; structural budgets; and independent READY review. No carrier
+PR, hosted check, protected review, parent integration, or release is claimed.
+
+This is scientific qualification for five immutable horizontal-plane cases,
+not completion of #4275 or epic #4267. Tilted-frame cross-authority cases,
+property sweeps, ensemble benchmarks, performance/memory budgets, asynchronous
+WASM cancellation, calibration/uncertainty, regional or changing terrain,
+deformation, torsional damping, roll-to-skid, UI/rendering, and downstream
+consumers remain open.
+
+## 2026-08-10 issue #4275 compiled ground-reference runtime
+
+Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on
+`feat/4275-ground-compiled-reference-runtime` starts from exact PR #4312 head
+`e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d` and is intended to retain
+base `feat/4275-ground-result-wire-parity`. `tools-core` now executes the
+qualified rigid-sphere pipeline through actual contact, Coulomb impact,
+repeated bounce/capture, skid, pure roll, and rest phases. The native, PyO3,
+and wasm-bindgen entry points share strict request/execution parsing, canonical
+result emission, typed phase/reason/fingerprint failures, fail-closed resolver
+and serialized-callback rejection, and bounded cancellation checks. No push,
+PR, protected-CI, or protected GitHub review claim is made by this handoff.
+
+The existing v1 execution wire intentionally gains no new resource fields.
+Independent preflight budgets admit at most 200,001 scheduled
+endpoint-inclusive points, 1,000,000 caller-authorized surface-loop steps,
+10,000 declared events, and 210,003 total trajectory points including
+unscheduled contact, transition, event, and terminal evidence. Output points
+are not compared to integration steps: sparse output cannot authorize
+unbounded integration, and a small runtime step cap does not reject a denser
+valid output schedule. Values above the trusted caps fail before callbacks,
+allocation, or physics as `output_point_limit`, `integration_step_limit`,
+`event_count_limit`, or `trajectory_point_limit`; an admitted small
+`max_steps` still terminates honestly as runtime `step_limit`. Dynamic append
+guards enforce the total point/event caps, and every grid loop checks
+cancellation per emitted sample.
+
+Independent pre-publication review then found three current-head defects. The
+shared output schedule now advances by a bounded integer index over elapsed
+time and projects to absolute wire time only when emitting evidence, so a
+large valid epoch cannot make `time + interval == time` and trap a catch-up
+loop. Direct native calls normalize the typed request exactly once; that same
+record drives its fingerprint, output preflight, and every physics phase, while
+the JSON boundary reuses its already-normalized parse result. Finally, PyO3
+releases the GIL for the complete physics run and reacquires it only for each
+cancellation poll, preserving callback exceptions and strict boolean results.
+Large-epoch bounce/immediate-capture surface, sub-canonical mutation, and real
+two-thread wheel cancellation regressions pin these repairs.
+
+A follow-up review found that elapsed-time scheduling alone could still
+collapse distinct samples when a requested interval was smaller than the
+absolute epoch's representable `f64` spacing. Preflight now proves that the
+first and terminal-adjacent points of the endpoint-inclusive requested grid
+advance after projection to canonical wire time. An unrepresentable grid
+fails before callbacks or physics as typed Bounce `time_resolution`; runtime
+append guards independently fail closed if any later positive elapsed-time
+advance collides on the wire. Same-elapsed phase transitions retain their
+intentional replacement behavior, but contact is never silently discarded.
+RED/GREEN coverage includes bounce and immediate-capture failures at `9e15 s`
+and monotonic successful results for both paths at a representable large
+epoch. A separate callback-zero regression proves that a valid absolute epoch
+plus valid duration which exceeds the canonical safe-number range also returns
+typed `time_resolution` instead of panicking.
+
+The final review pass removed all infallible canonicalization of derived
+physics values. Derived states, timestamps, events, distance/energy ledgers,
+summaries, and the recursively inspected final JSON now return typed
+`NumericalFailure`/`numeric_range` from the owning Bounce, SkidRoll, or
+Composition phase rather than panicking or trapping across native, PyO3, and
+WASM. Immediate capture with `max_events=1` is a coherent
+`Partial`/`EventLimit` result at the unchanged terminal state; a rebound that
+needs another event remains a Bounce `event_limit` failure. Regressions cover
+exact derived-overflow payloads and monotonic bounce/capture success at
+`1e12 s` on all three surfaces.
+
+The canonical full-pipeline result remains byte-identical at SHA-256
+`23f567f125ec9631e2a7638dfa217b78891883fc4e5092bea3b1f21fb063e8af`.
+A seeded 20-case corpus plus an immediate-capture edge case is exact against
+the Python authority for the common resolver-free horizontal-plane scope;
+native coverage separately exercises a
+tilted plane because the Python default planar domain fixes a world-x tangent
+axis and world-origin point. Complete `tools-core` totals are 180 default, 195
+Python-feature, and 192 WASM-feature tests. All 219 Python ground tests pass.
+Fresh CPython 3.13 and Node/WASM artifacts pass golden, default-setting,
+100-run determinism, cancellation, callback-exception, wire-resolution,
+derived-numeric, independent resource-cap, event-limit, and trillion-second
+representability checks. Formatting
+and default strict Clippy pass; Python/WASM all-target Clippy passes with the
+same eight enumerated inherited unrelated allowances. New production modules
+are below 400 lines; the main runtime regression file is exactly 500 lines.
+Eight campaign-manifest tests and documentation governance pass. The strict
+campaign manifest now binds local evidence to exact implementation commit
+`50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the existing `commit_sha`
+contract; no dirty-tree evidence type was added. Independent final review was
+READY with no findings after the resource, line-budget, and documentation
+repairs. There is no hosted check, durable benchmark artifact, or
+performance-budget pass.
+
+Packaging note: the successful `wasm-pack` release build emits a notice that
+the crate directory has no local license file even though the repository-root
+`LICENSE` is tracked. This slice validates the generated Node artifact but does
+not publish it; resolve that package-metadata notice before npm distribution.
+
+This remains a bounded static-plane reference runtime, not ground-epic
+completion. It intentionally supports only standard gravity and the existing
+v1 model identities; non-null material/terrain resolvers and serialized
+cancellation are rejected. Changing normals or material regions during a run,
+terrain deformation, torsional damping, roll-to-skid, production calibration,
+ensembles, UI wiring, UpstreamDrift consumers, and asynchronous WASM
+cancellation remain open. Keep #4275 and epic #4267 open until protected CI,
+independent review, normal stack integration, and downstream delivery finish.
+
+## 2026-08-10 PR #4312 corrected-reference propagation
+
+Draft PR #4312 remains on `feat/4275-ground-result-wire-parity` with unchanged
+base `feat/4275-ground-reference-execution`. Exact corrected #4309 parent
+`f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves strict typed Rust
+validation and canonical JSON for `flight-to-ground-result/v1`, recursive
+duplicate-key and unsafe-number rejection, raw-before-normalized semantic and
+state-machine checks, summary/geometry coherence, lowercase provenance-digest
+emission, and PyO3/WASM validation exports. It now inherits corrected bounded
+reference execution, scalar-study, material-profile, impact/roll, timestamp,
+and canonical `swing_sim` ancestry. No branch was rebased, retargeted,
+rewritten, or force-pushed.
+
+This remains a partial `not_released` slice. The compiled bindings validate and
+canonicalize result evidence; they do not execute bounce, skid, roll, or rest
+physics. PyQt6/React workflows, ensembles, production calibration, changing
+terrain/material regions, and downstream UpstreamDrift consumers remain
+excluded. Keep issue #4275 and epic #4267 open. Protected CI, independent
+review, normal stack collapse, and consumer delivery remain separate release
+gates.
+
+Merged-tree validation is `238` focused ground/scalar tests on both CPython
+3.11.9 and real CPython 3.10.20, plus `1,404` passed and seven documented
+optional-Rust-wheel skips across the broader Rate of Closure/swing/flight/
+ground/import-alias selection. `tools-core` passes `144` default, `159`
+Python-feature, and `156` WASM-feature tests, including seven focused
+result-wire adversarial tests. Cargo formatting and strict default/focused
+Clippy pass; Python/WASM all-target Clippy passes with eight explicitly
+enumerated inherited unrelated allowances. Fresh CPython 3.13 wheel and
+Node-targeted wasm-pack artifacts both normalize uppercase digest evidence and
+reject malformed evidence. The relevant TypeScript contract/transfer suite
+passes `20` tests, the 189-module Vite build passes, and ESLint is warning-free.
+Pinned MyPy 1.13 passes 51 ground/flight/scalar production modules. Campaign
+manifest validation and eight contract tests, documentation governance,
+11-module and protected changed-only 500-LOC budgets, 14-file scoped marker
+scan, and diff checks are clean. Hosted checks and review apply only to the new
+exact merge head.
+
+## 2026-08-10 issue #4275 uppercase result-digest parity repair
+
+Independent review of local implementation commit
+`b802f041e1a348e365b98e77f969961b8cd11133` found one P1 cross-runtime
+parity defect: Rust rejected a 64-character uppercase hexadecimal
+`provenance.input_sha256`, while the Python and TypeScript authorities accept
+either ASCII hex case and canonicalize to lowercase. Rust raw validation now
+accepts `[0-9A-Fa-f]`, result normalization lowercases the digest, and the
+normalized record is revalidated before canonical emission. Non-hex or
+wrong-length digests remain rejected.
+
+The focused result-wire suite is now 7 tests. Complete `tools-core` totals are
+144 default, 159 with Python, and 156 with WASM. New PyO3 and WASM unit tests
+cover the case transition, while freshly built real CPython 3.13 and wasm-pack
+Node artifacts both accept uppercase input, emit lowercase, and reject a
+64-character non-hex digest. Cargo formatting, strict focused Clippy, and both
+feature all-target Clippy gates pass. The result-wire production modules remain
+below 400 lines, with the largest at 258 lines. This repair changes no physics,
+result state-machine semantics, or previously documented non-delivery boundary.
+
+## 2026-08-10 issue #4275 Rust result-wire parity slice
+
+Branch `feat/4275-ground-result-wire-parity` starts from exact PR #4309
+carrier `51492c3ddc8b15b1358434da9b29f600261c918a`. The bounded `tools-core`
+slice adds an exact typed `flight-to-ground-result/v1` parser, full semantic
+state-machine validation, and canonical JSON re-emission with the existing
+cross-runtime number rules. Validation rejects duplicate keys at every object
+depth, unsafe integers, unknown fields, invalid text/hash evidence, nonfinite
+or out-of-domain raw values, unordered trajectory phases, incoherent event
+ledgers, summary/geometry mismatches, and contradictory status, termination,
+or unavailable payloads. Raw values are validated before canonical numeric
+normalization so a tiny invalid negative cannot normalize into acceptance.
+
+Python exposes `validate_flight_to_ground_result_v1`; WASM exposes
+`validateFlightToGroundResultV1`. Both real generated artifacts preserve the
+complete shared reference-pipeline fixture and its canonical SHA-256 identity.
+Local evidence is 6 focused adversarial result-wire tests, the complete
+default/Python/WASM `tools-core` suites (143/157/154 tests respectively), 219
+Python ground tests, and 19 existing TypeScript ground-contract/transfer tests.
+Cargo formatting and focused strict Clippy pass; all-target Python/WASM Clippy
+passes with only explicitly enumerated inherited lint allowances. Docs
+governance, source-size review, and diff integrity pass. Every added production
+module is at most 258 lines.
+
+This slice validates and canonicalizes result evidence only. It does not port
+the Python bounce/skid/roll solver to Rust, execute ground physics through the
+bindings, add UI or ensemble workflows, supply production calibration, or add
+UpstreamDrift consumers. No publication, protected-CI, review, merge, or issue
+closure is claimed; #4275 and epic #4267 remain open.
+## 2026-08-10 PR #4309 corrected-scalar-study propagation
+
+Draft PR #4309 remains on `feat/4275-ground-reference-execution` with
+unchanged base `feat/4273-ground-study-scalar-adapter`. Exact corrected #4308
+parent `edd898089d017e36b814bfea408a7845734c7706` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves its bounded
+one-shot Python reference executor: immutable request/settings are validated
+before execution, the same cooperative-cancellation callback spans existing
+repeated bounce, exact settled-to-skid handoff, skid/roll, and canonical result
+composition, and only representable suffixes compose. Typed cancellation and
+execution failures retain phase, native reason, and request fingerprint, while
+the deterministic full-pipeline fixture pins the integrated result. No branch
+was rebased, retargeted, rewritten, or force-pushed.
+
+This remains a partial `not_released` slice. Changing normals or material
+regions, terrain deformation, torsional damping, roll-to-skid transitions,
+production material profiles, ensembles, inverse solving, UI, compiled
+runtimes, and downstream consumer parity remain excluded. Keep issues #4273
+and #4275 and epic #4267 open. Protected CI, independent review, normal stack
+collapse, and consumer delivery remain separate release gates. Downstream PRs
+#4274 and #4312 still descend from the prior #4309 head and require their own
+ordinary propagation after this push.
+
+Merged-tree validation is `238` focused ground/scalar tests on both CPython
+3.11.9 and real CPython 3.10.20, plus `1,404` passed and seven documented
+optional-Rust-wheel skips across the broader Rate of Closure/swing/flight/
+ground/import-alias selection. React passes `106` files / `661` tests, the
+189-module Vite production build, and zero-warning ESLint. The complete
+`tools-core` Rust suite passes `137` tests (`111` unit, `20` transfer, `6`
+wire), workspace formatting, and warning-denied Clippy. Pinned Ruff 0.14.10
+check/format passes all six net changed Python files; pinned MyPy 1.13 passes
+51 ground/flight/scalar production modules. The campaign manifest validator
+and eight contract tests, documentation governance, ground-module budget,
+six-file protected changed-only 500-LOC budget, 13-file scoped marker scan,
+and diff checks are clean. A separate exploratory whole-repository size scan
+still reports four unchanged legacy modules outside this PR diff; it is not
+the protected changed-file gate. Hosted checks and review apply to the new
+exact merge head only.
+
+## 2026-08-10 PR #4308 corrected-result-adapter propagation
+
+Draft PR #4308 remains on `feat/4273-ground-study-scalar-adapter` with
+unchanged base `feat/4273-ground-study-result-adapter`. Exact corrected #4307
+parent `76292d7a97e891aa88b06b3ea85f9e7e5b506e9e` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves its bounded,
+deterministic `ground-study/scalar-ensemble/v1` adapter: callers supply explicit
+series/trial identity, overflow and duplicate rows fail closed, complete and
+censored studies retain observed values, and failed/unavailable studies retain
+evidence with null scalars. Rows keep study/request/result/profile digests,
+calibration and producer provenance, surface/frame and target geometry,
+qualification and operating conditions, eligibility reasons, and typed target
+availability while inheriting corrected qualified-result, material-profile,
+impact/roll, timestamp, and canonical `swing_sim` ancestry. No branch was
+rebased, retargeted, rewritten, or force-pushed.
+
+This remains a partial `not_released` slice. Rendered variation/dispersion
+plots, ensemble runners, optimizers, UI, compiled runtimes,
+regional/changing-normal terrain, and four-surface consumer parity remain
+excluded. Keep issue #4273 and epic #4267 open; protected CI, independent
+review, normal dependency collapse, and consumer delivery remain separate
+release gates.
+
+Merged-tree validation is `217` focused ground/scalar tests on both CPython
+3.11.9 and real CPython 3.10.20, plus `1,383` passed and six expected skips
+across the broader 1,389-case Rate of Closure/swing/flight/ground/import-alias
+selection. React passes `106` files / `661` tests, the 189-module Vite
+production build, and zero-warning ESLint. The complete `tools-core` Rust suite
+passes `137` tests (`111` unit, `20` transfer, `6` wire), workspace formatting,
+and warning-denied Clippy. Pinned Ruff 0.14.10 check/format passes both net
+changed Python files; pinned MyPy 1.13 passes 49 ground/flight/scalar production
+modules. The campaign manifest validator and eight contract tests,
+documentation governance, module budget, changed-only 500-LOC budget, eight-file
+scoped marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
+## 2026-08-10 PR #4307 corrected-study propagation
+
+Draft PR #4307 remains on `feat/4273-ground-study-result-adapter` with
+unchanged base `feat/4273-ground-study-projection`. Exact corrected #4306
+parent `99f7fefbd61a7eb9285c4a9297618bf52344055e` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves its fail-closed
+`qualified_study_to_ground_model_result` bridge, which exposes total, roll,
+bounce count, and final offline values only from a solver-eligible study and
+keeps the study as the provenance authority, while inheriting corrected
+material-profile, impact/roll, deterministic timestamp, and canonical
+`swing_sim` ancestry. No branch was rebased, retargeted, rewritten, or
+force-pushed.
+
+This remains a partial `not_released` slice. Production presets/calibration
+claims, profile UI, regional/changing-normal terrain, compiled runtimes, and
+four-surface consumer parity remain excluded. Keep issue #4273 and epic #4267
+open; protected CI, independent review, normal dependency collapse, and
+consumer delivery remain separate release gates.
+
+Merged-tree validation is `198` focused ground tests on both CPython 3.11.9
+and real CPython 3.10.20, plus `1,371` passed and six expected skips across the
+broader 1,377-case Rate of Closure/swing/flight/ground/import-alias selection.
+React passes `106` files / `661` tests, the 189-module Vite production build,
+and zero-warning ESLint. The complete `tools-core` Rust suite passes `137`
+tests (`111` unit, `20` transfer, `6` wire), workspace formatting, and
+warning-denied Clippy. Pinned Ruff 0.14.10 check/format passes all four net
+changed Python files; pinned MyPy 1.13 passes 47 ground/flight production
+modules. The campaign manifest validator and eight contract tests,
+documentation governance, module budget, four-file changed-only 500-LOC
+budget, ten-file scoped marker scan, and diff checks are clean. Hosted checks
+and review apply to the new exact merge head only.
+
 ## 2026-08-10 PR #4306 corrected-material-profile propagation
 
 Draft PR #4306 remains on `feat/4273-ground-study-projection` with unchanged
@@ -223,7 +974,6 @@ Draft PR #4304 now publishes `feat/4271-ground-skid-roll` at exact reviewed head
 The immutable implementation evidence remains the two-commit child ending at `dcc801395538bdc7b9a46835f5555abdd72677a4`: 115 ground tests pass on CPython 3.11.9 and real 3.10.20, pinned MyPy 1.13 is clean across 25 production modules, pinned Ruff 0.14.10 is clean across 18 changed Python files, and manifest, documentation, assertion, structural, file-size, and diff gates pass. Issue #4271 stays open for changing normals and regional surfaces; protected CI, review, dependency integration, UI, compiled runtimes, and downstream parity remain release gates.
 
 This publication-only registry update makes no material physics, numerical, schema, or API change beyond the already committed exact head; it records the carrier and evidence in the campaign manifest and canonical handoffs.
-
 
 ## 2026-08-09 issue #4271 independent-review hardening
 
@@ -629,6 +1379,22 @@ Draft PR #4306 publishes the stack child at branch
 `6a1b2f76160de0535fca2126958934c53ad5ed25`. Keep #4273 and #4267 open and
 require normal protected checks/review before any merge.
 
+The next local child `feat/4273-ground-study-result-adapter` begins at exact PR
+#4306 creation head `17473948f1ce5837bd5b55618d5393b0d8575188` and normally includes current
+#4306 head `d44edeb4119048fe7a3f8ccfdcae81c8771561e8`. Its narrow continuation adds
+`qualified_study_to_ground_model_result`, which populates the existing total,
+roll, bounce-count, and final-offline DTO only from a solver-eligible study.
+Target misses remain valid physics observations. The DTO is lossy and never
+replaces the study's provenance. This is not yet published or issue completion.
+Exact reviewed adapter evidence is commit
+`6c296ab35471fc8d2070d229f2921d200f7defdb`: 198 ground tests, 27 flight-first
+import/result/transfer tests, and 44 focused adapter/compatibility/API tests
+pass. The independent re-review reports no remaining blocker.
+Draft PR #4307 publishes this continuation against preserved parent branch
+`feat/4273-ground-study-projection`; its creation head is
+`dac35e3fd61ee8af80dc8c2262da31ea274dbb1d`. Keep #4273/#4267 open and require
+normal protected checks and review.
+
 Post-publication import-order regression: importing the flight package first
 exposed a cycle through the expanded ground package facade and solver package.
 `flight.models` and `flight.surface_simulation` now import their neutral ground
@@ -666,6 +1432,37 @@ to `feat/4270-ground-impact-bounce`. Do not retry the unchanged failed run,
 amend history, or force-push. Descendant PRs #4304 and #4305 inherit this file
 and must later receive the parent by ordinary merge commits.
 
+## 2026-08-09 Ground-study scalar ensemble continuation
+
+Local branch `feat/4273-ground-study-scalar-adapter` starts exactly from PR
+#4307 head `de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. It adds a bounded,
+deterministic adapter from explicit `(series_id, trial_index,
+GroundStudyProjection)` samples into `scalar-ensemble/v1`. No identity is
+inferred. Complete and censored rows keep observed metrics; failed/unavailable
+rows keep their cohort and evidence with all scalars null. Partial airborne
+rows keep first-contact evidence and report null final-target values with typed
+unavailability. Target misses and ineligible-but-numeric studies remain visible
+rather than being discarded.
+
+Rows retain a whole-study digest, request/result digests, exact target geometry,
+calibration and producer provenance, surface/frame, profile qualification and
+operating condition, eligibility
+reasons, and target availability. Input collection rejects before retaining a
+row beyond the configured bound and never truncates. This is a bounded #4273
+continuation, not ensemble-runner, optimizer, UI, compiled-runtime, downstream
+parity, or protected-release completion. Before publication, run focused and
+shared scalar contracts, full ground tests, Ruff, MyPy, structural and manifest
+gates, and independent review. Publish only as a stacked draft PR targeting
+`feat/4273-ground-study-result-adapter`; keep #4273 and #4267 open.
+
+Independent re-review declares exact implementation commit
+`b71bf88b6ed888248ad152f69a2bd2de3892e256` READY after 198 ground and 19
+adapter/shared-scalar tests, Ruff, Black, MyPy, manifest, documentation,
+assertion, file-size, structural, and diff gates. Draft PR #4308 publishes that
+commit against unchanged parent `feat/4273-ground-study-result-adapter` at
+`de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. Protected checks and review remain
+open; this local evidence does not close #4273 or #4267.
+
 ## 2026-08-10 PR #4306 pinned-Ruff formatting repair
 
 At exact PR head `d44edeb4119048fe7a3f8ccfdcae81c8771561e8`, the protected
@@ -676,3 +1473,100 @@ contract, eligibility rule, or import boundary changed. Keep this repair on
 PR #4306, preserve its base at exact #4305 head
 `a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`, and require ordinary protected
 checks and review before merge. Issue #4273 and epic #4267 remain open.
+
+## 2026-08-10 PR #4307 parent propagation and formatter repair
+
+PR #4307 normally merges exact parent #4306 head
+`1e1b576c36cc01e27542dd88747f54f918ff16bf` through merge commit
+`6f4009e8e3a1b3cf226b84e761d6d60a9f450d7d`; no rebase, retarget, parent
+rewrite, or force-push occurred. Hosted `quality-gate` run `31365680155`
+identified one additional Ruff 0.14.10 formatting residual in
+`ground/tests/test_study_result_adapter.py`. The helper signature is now in
+the pinned canonical form with no behavioral or contract change.
+
+Local repair evidence is 198 ground tests, 26 focused flight API/result/
+transfer tests plus clean flight-first and ground-first import smoke checks,
+and a 53-test adapter/compatibility/API superset. Ruff 0.14.10 check/format,
+Black 26.1.0, MyPy 1.13 for the two changed production modules, the campaign
+manifest and its eight contract tests, documentation governance, changed-file
+size, and `git diff --check` all pass. Require fresh ordinary protected CI and
+review at the pushed exact head; keep #4273 and #4267 open.
+
+## 2026-08-10 Bounded ground-reference executor continuation
+
+Branch `feat/4275-ground-reference-execution` starts from exact PR #4308 head
+`c8ebf422669992c4a33db661b0c37dfe72b580ae`. The new
+`ground-reference-execution/v1` boundary runs the existing repeated-bounce and
+skid/roll solvers once and delegates successful result construction to the
+existing composer. It composes only rest, left-surface, time-limit, and
+event-limit suffixes after an exact settled-to-skid prefix. Cancellation raises
+a distinct typed operational signal; every other non-representable native
+terminal state fails closed with phase, native reason, and request fingerprint.
+The current skid/roll solver does not emit its reserved `numerical_failure`
+enum; native numerical exceptions continue to propagate without broad
+reclassification.
+
+The same optional cancellation callback reaches both phases. A committed
+cross-runtime fixture pins a full bounce/skid/roll/rest request, result, and
+canonical digests, while focused tests cover deterministic replay, censored
+time-limit, finite-domain exit, cancellation, bounce failure, suffix step
+exhaustion, exact nested controls, and public exports. This bounded #4273/#4275
+slice does not add UI, ensembles, changing terrain, compiled runtimes,
+production calibration, or UpstreamDrift parity and cannot close #4267. Require
+the full ground suite, flight-first and ground-first imports, pinned Ruff,
+Black, MyPy, manifest, documentation, assertion, structural, file-size, diff,
+and independent-review gates before publishing a draft child of PR #4308.
+
+Independent exact-tree re-review is READY after both identified blockers were
+closed: the golden case now carries and reconstructs every concrete phase
+setting, and resolver/request compatibility is proven to fail before bounce or
+callback side effects. Exact local evidence is 219 ground tests, 44 focused
+executor/API tests on CPython 3.12 and isolated CPython 3.10, and 26 flight
+contract/result/transfer tests. Pinned Ruff 0.14.10, changed-file Black, pinned
+MyPy 1.13, manifest plus eight tests, docs governance, assertion, 400/50/4
+structural budgets, both import orders, fixture bytes, and diff checks pass.
+Repository-wide Black still reports only the two unchanged inherited files
+`ground/study_wire.py` and `ground/tests/test_profile_contract.py`; do not
+misstate that baseline as a failure of this slice.
+
+Draft PR #4309 publishes exact reviewed implementation commit
+`c93c6f36d361f4c129d702565a9330149e175557` against unchanged parent branch
+`feat/4273-ground-study-scalar-adapter` at
+`c8ebf422669992c4a33db661b0c37dfe72b580ae`. The campaign manifest records the
+carrier and immutable local evidence. Protected CI and repository review remain
+open, so #4273, #4275, and #4267 stay open.
+
+## 2026-08-10 Issue #4274 strict ground-result playback slice
+
+Local branch `feat/4274-ground-playback` starts exactly from draft PR #4309
+head `51492c3ddc8b15b1358434da9b29f600261c918a`. It adds first-class Ground
+Playback modules to the standalone PyQt6 and React navigation surfaces. Both
+clients import only a strict `flight-to-ground-result/v1` record, reject files
+above 5 MiB or 100,000 samples, apply candidate imports atomically, and retain
+the last valid result after an error. The React view explicitly states that it
+does not execute ground physics; the PyQt disclosure states the same boundary.
+
+One shared golden result pins matching absolute-time and phase-transition
+semantics. Both clients provide play/pause/replay, exact sample stepping, phase
+jumps, scrubbing, 0.25x through 4x speed, looping, carry versus total or
+observed-end markers, locked-physical-scale 3D orbit/zoom/reset, and complete
+trajectory, event, warning, calibration, and provenance evidence. Cross-phase
+interpolation holds the preceding exact sample so the display does not invent
+motion. Result v1 has no surface geometry, so both views use neutral axes and
+do not claim a terrain plane.
+
+Local evidence is 872 full Rate Python tests and 672 full React tests, plus the
+focused 9-test adapter/Qt suite; Ruff 0.14.10 check/format, changed-file Black,
+CI-pinned MyPy 1.13, React lint/type/build, changed-file policy, assertion,
+file-size, documentation, and diff gates pass. Standalone Playwright Chromium
+verified import, phase jumps, replay/pause, wheel zoom, disclosures, locked
+aspect containment, and zero page-width overflow at 1440x900 and 520x900;
+offscreen PyQt rendering verified a usable plot/control split at the supported
+1024x700 minimum.
+
+This is the smallest production #4274 slice, not issue or epic completion.
+Surface editors, terrain meshes, comparison overlays, workspace persistence or
+export, ensembles, inverse optimization, Rust/WASM execution, and UpstreamDrift
+consumer parity remain open. Do not publish this local commit without an
+independent exact-tree review and ordinary protected CI; keep #4274 and #4267
+open.
