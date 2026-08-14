@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import Any, cast
 
 from rate_of_closure.application._regional_ground_execution_job_values import (
@@ -59,7 +60,7 @@ def transfer_payload(settings: FlightGroundTransferSettings) -> dict[str, Any]:
 
 
 def _records(
-    data: dict[str, Any],
+    data: Mapping[str, Any],
 ) -> tuple[GroundSurfaceProfile, GroundCalibration, GroundProvenance]:
     return (
         cast(

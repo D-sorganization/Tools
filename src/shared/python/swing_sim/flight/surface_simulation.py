@@ -7,12 +7,17 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from shared.python.swing_sim.ground import GroundContactState, GroundSurfaceProfile
+from shared.python.swing_sim.ground import (
+    GroundContactState,
+    GroundFrame,
+    GroundSurfaceProfile,
+)
 
 from .frames import from_flight_frame
 from .state import FlightStatePoint
 
-GROUND_STATE_FRAME = "target_frame:x_downrange,y_up,z_right"
+#: The only frame v1 accepts: ``target_frame:x_downrange,y_up,z_right``.
+GROUND_STATE_FRAME: GroundFrame = GroundFrame.TARGET
 
 
 @dataclass(frozen=True)
@@ -32,6 +37,12 @@ class SurfaceFlightSimulationSettings:
             raise ValueError("output_interval_s must be finite and > 0")
 
 
+def _three_floats(values: np.ndarray) -> tuple[float, float, float]:
+    """Convert a three-vector into an exact ``(x, y, z)`` float triple."""
+    x, y, z = (float(value) for value in values)
+    return x, y, z
+
+
 def flight_point_to_ground_state(point: FlightStatePoint) -> GroundContactState:
     """Rotate a full flight sample into the canonical target frame."""
     position = from_flight_frame(point.position)
@@ -40,9 +51,9 @@ def flight_point_to_ground_state(point: FlightStatePoint) -> GroundContactState:
     return GroundContactState(
         time_s=point.time,
         frame=GROUND_STATE_FRAME,
-        position_m=tuple(float(value) for value in position),
-        velocity_m_s=tuple(float(value) for value in velocity),
-        angular_velocity_rad_s=tuple(float(value) for value in omega),
+        position_m=_three_floats(position),
+        velocity_m_s=_three_floats(velocity),
+        angular_velocity_rad_s=_three_floats(omega),
     )
 
 

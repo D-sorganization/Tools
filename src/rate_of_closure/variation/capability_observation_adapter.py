@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Iterable
+from typing import Literal, cast
 
 from rate_of_closure.variation.scalar_ensemble_contract import (
     SCALAR_ENSEMBLE_SCHEMA_VERSION,
@@ -178,8 +179,12 @@ def _ascii_parameter_label(parameter_id: str) -> str:
 
 
 def _target_region(target: TargetDefinition) -> TargetRegion:
+    # TargetDefinition.__post_init__ already restricts kind to these two
+    # values; TargetRegion re-validates it, so the cast asserts no more
+    # than the constructor it feeds.
+    kind = cast(Literal["green", "fairway"], target.kind)
     return TargetRegion(
-        target.kind,
+        kind,
         target.distance_m,
         target.radius_m,
         target.lateral_m,

@@ -14,6 +14,7 @@ import json
 import sys
 from dataclasses import replace
 from pathlib import Path
+from typing import TypedDict
 
 _ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_ROOT / "src"))
@@ -56,6 +57,14 @@ _FAILURE_STAGES: tuple[AuthorityFailureStage, ...] = (
     "runner",
     "result_validation",
 )
+
+
+class _StatusCommon(TypedDict):
+    """Job-bound snapshot fields shared by every generated status case."""
+
+    job_id: str
+    job_sha256: str
+    total: int
 
 
 def _canonical_fixture(value: object) -> str:
@@ -103,7 +112,7 @@ def generated_fixture_texts() -> dict[Path, str]:
         "job_sha256": job.job_sha256,
     }
 
-    status_common = {
+    status_common: _StatusCommon = {
         "job_id": job.job_id,
         "job_sha256": job.job_sha256,
         "total": job.execution_options.max_trials,

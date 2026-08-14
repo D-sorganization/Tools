@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+from typing import TypedDict
 
 from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
@@ -317,6 +318,15 @@ class _StylePage(QWizardPage):
             self._status.setText(f"Preview unavailable: {exc}")
 
 
+class _CommonSpecFields(TypedDict):
+    """The PlotSpec fields every scope takes from the wizard's style page."""
+
+    x_key: str
+    title: str
+    x_log: bool
+    y_log: bool
+
+
 class PlotWizard(QWizard):
     """The 3-step Custom Plot wizard producing a validated PlotSpec."""
 
@@ -348,7 +358,7 @@ class PlotWizard(QWizard):
         scope = self.scope()
         page = self._variables_page
         kind = str(self._style_page.kind_combo.currentData() or "line")
-        common = {
+        common: _CommonSpecFields = {
             "x_key": page.x_key(),
             "title": self._style_page.title_edit.text(),
             "x_log": self._style_page.x_log.isChecked(),

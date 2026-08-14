@@ -70,7 +70,8 @@ def number_input(
         maximum=_MAX_SAFE_FLOAT,
         decimals=11,
     )
-    return engineering_number_input(name, value, resolved_spec)
+    widget: QDoubleSpinBox = engineering_number_input(name, value, resolved_spec)
+    return widget
 
 
 def coordinate_input(name: str, value: float) -> QDoubleSpinBox:

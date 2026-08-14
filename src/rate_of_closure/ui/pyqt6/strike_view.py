@@ -159,7 +159,8 @@ class StrikeView(QWidget):
         exponent = 2.0 / _FACE_EXPONENT
         x = half_w * np.sign(np.cos(theta)) * np.abs(np.cos(theta)) ** exponent
         y = half_h * np.sign(np.sin(theta)) * np.abs(np.sin(theta)) ** exponent
-        return np.column_stack([x, y])
+        outline: np.ndarray = np.column_stack([x, y])
+        return outline
 
     def _draw_curvature(self, club: ClubSpec, half_w: float, half_h: float) -> None:
         if not club.has_curved_face:

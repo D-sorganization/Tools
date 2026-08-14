@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from typing import cast
 
 from rate_of_closure.variation._wind_strategy_plot_validation import (
     validate_header,
@@ -124,7 +123,7 @@ def _scenario_values(prefix: str, scenario: WindScenario) -> dict[str, float]:
 
 def _spin_axis(launch: LaunchConditions) -> tuple[float, float, float]:
     if launch.spin_axis is not None:
-        return cast(tuple[float, float, float], launch.spin_axis)
+        return launch.spin_axis
     tilt = launch.spin_axis_angle
     azimuth = launch.azimuth_angle
     return (

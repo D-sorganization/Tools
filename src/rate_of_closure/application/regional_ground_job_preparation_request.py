@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import Any
 
 from rate_of_closure.application._regional_ground_execution_job_values import (
     FlightLaunchInput,
@@ -44,11 +44,8 @@ class RegionalGroundJobPreparationRequest:
 
     def to_dict(self) -> dict[str, Any]:
         """Return the detached strict SI preparation mapping."""
-        variation = cast(
-            dict[str, Any],
-            strict_json_object(
-                regional_ground_variation_request_to_json(self.variation_request)
-            ),
+        variation = strict_json_object(
+            regional_ground_variation_request_to_json(self.variation_request)
         )
         return {
             "schema_version": REGIONAL_GROUND_JOB_PREPARATION_REQUEST_SCHEMA_VERSION,

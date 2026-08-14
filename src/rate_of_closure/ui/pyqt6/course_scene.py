@@ -119,7 +119,7 @@ def draw_target_region_top(
     uses the palette flag tone so it reads against the grass fills.
     """
     tones = colors or course_colors()
-    style = {
+    style: dict[str, Any] = {
         "fill": False,
         "linestyle": "--",
         "linewidth": 1.6,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, cast
 
 if TYPE_CHECKING:
     from shared.python.swing_sim.solver.targets import TargetRegion
@@ -50,8 +50,10 @@ def _target(request: OptimizationRequest) -> TargetRegion:
     from shared.python.swing_sim.solver.targets import TargetRegion
 
     value = request.target
+    # TargetDefinition.__post_init__ already rejects any other kind string.
+    kind = cast(Literal["green", "fairway"], value.kind)
     return TargetRegion(
-        value.kind,
+        kind,
         value.distance_m,
         value.radius_m,
         value.lateral_m,

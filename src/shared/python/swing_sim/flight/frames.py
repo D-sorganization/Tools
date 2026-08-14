@@ -18,7 +18,7 @@ import numpy as np
 
 def _validated(vec: np.ndarray, name: str) -> np.ndarray:
     """Return ``vec`` as a float array of shape (3,) or (N, 3)."""
-    arr = np.asarray(vec, dtype=float)
+    arr: np.ndarray = np.asarray(vec, dtype=float)
     if arr.shape != (3,) and not (arr.ndim == 2 and arr.shape[1] == 3):
         raise ValueError(f"{name} must have shape (3,) or (N, 3); got {arr.shape}")
     if not np.all(np.isfinite(arr)):
@@ -37,7 +37,7 @@ def to_flight_frame(vec_app: np.ndarray) -> np.ndarray:
         Vector(s) in the flight frame (x forward, y left, z up), same shape.
     """
     arr = _validated(vec_app, "vec_app")
-    out = np.empty_like(arr)
+    out: np.ndarray = np.empty_like(arr)
     out[..., 0] = arr[..., 0]
     out[..., 1] = -arr[..., 2]
     out[..., 2] = arr[..., 1]
@@ -55,7 +55,7 @@ def from_flight_frame(vec_flight: np.ndarray) -> np.ndarray:
         Vector(s) in the app frame (x target, y up, z right), same shape.
     """
     arr = _validated(vec_flight, "vec_flight")
-    out = np.empty_like(arr)
+    out: np.ndarray = np.empty_like(arr)
     out[..., 0] = arr[..., 0]
     out[..., 1] = arr[..., 2]
     out[..., 2] = -arr[..., 1]

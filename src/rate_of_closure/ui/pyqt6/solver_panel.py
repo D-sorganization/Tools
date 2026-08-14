@@ -18,6 +18,7 @@ line — never tracebacks.
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
@@ -235,7 +236,10 @@ class SolverPanel(QWidget):
         With ``include_target`` the target panel's region joins the goal
         additively (#4125 H7b) — any checked quantity goals still apply.
         """
-        targets = {
+        # ``Any`` values: ImpactGoal.of mixes named parameters with
+        # ``**targets``, and a ``**`` unpack is checked against every
+        # parameter it could fill — each value is a (target, weight) pair.
+        targets: dict[str, Any] = {
             name: (row.target.value(), row.weight.value())
             for name, row in self._goal_rows.items()
             if row.enabled.isChecked()

@@ -26,6 +26,27 @@ from .types import FlightResult, LaunchConditions, TrajectoryPoint
 
 _INCOMING_SPEED_TOLERANCE_M_S = 1e-12
 
+# The unavailable-evidence enums subclass the ``StrEnum`` compatibility shim,
+# which the changed-file mypy run does not follow, so their members type as
+# plain ``str`` there.  Re-resolving each member through its own enum restores
+# the declared type; enum value lookup returns the identical singleton member,
+# so ``is`` comparisons against the members are unaffected.
+_FIELD_CONTACT_BRACKET = GroundUnavailableFieldId(
+    GroundUnavailableFieldId.PHYSICAL_CONTACT_BRACKET
+)
+_FIELD_TERMINAL_ANGULAR_VELOCITY = GroundUnavailableFieldId(
+    GroundUnavailableFieldId.TERMINAL_ANGULAR_VELOCITY
+)
+_REASON_NO_PHYSICAL_CONTACT = GroundUnavailableReason(
+    GroundUnavailableReason.NO_PHYSICAL_CONTACT
+)
+_REASON_OUT_OF_BOUNDS = GroundUnavailableReason(
+    GroundUnavailableReason.SOURCE_OUT_OF_BOUNDS
+)
+_REASON_DOES_NOT_PROPAGATE = GroundUnavailableReason(
+    GroundUnavailableReason.SOURCE_DOES_NOT_PROPAGATE
+)
+
 
 @dataclass(frozen=True)
 class FlightGroundTransferSettings:
@@ -85,8 +106,8 @@ def _require_trajectory_qualification(points: tuple[TrajectoryPoint, ...]) -> No
     if not points:
         raise _failure(
             "flight trajectory is empty",
-            GroundUnavailableFieldId.PHYSICAL_CONTACT_BRACKET,
-            GroundUnavailableReason.NO_PHYSICAL_CONTACT,
+            _FIELD_CONTACT_BRACKET,
+            _REASON_NO_PHYSICAL_CONTACT,
         )
     initial = points[0]
     exact_origin = initial.time == 0.0 and np.array_equal(initial.position, np.zeros(3))
@@ -94,22 +115,22 @@ def _require_trajectory_qualification(points: tuple[TrajectoryPoint, ...]) -> No
         raise _failure(
             "flight trajectory must begin at the exact launch origin "
             "in time and position",
-            GroundUnavailableFieldId.PHYSICAL_CONTACT_BRACKET,
-            GroundUnavailableReason.SOURCE_OUT_OF_BOUNDS,
+            _FIELD_CONTACT_BRACKET,
+            _REASON_OUT_OF_BOUNDS,
         )
     previous_time = -1.0
     for point in points:
         if not math.isfinite(point.time) or point.time < 0.0:
             raise _failure(
                 "flight sample times must be finite and nonnegative",
-                GroundUnavailableFieldId.PHYSICAL_CONTACT_BRACKET,
-                GroundUnavailableReason.SOURCE_OUT_OF_BOUNDS,
+                _FIELD_CONTACT_BRACKET,
+                _REASON_OUT_OF_BOUNDS,
             )
         if point.time <= previous_time:
             raise _failure(
                 "flight sample times must be strictly increasing",
-                GroundUnavailableFieldId.PHYSICAL_CONTACT_BRACKET,
-                GroundUnavailableReason.SOURCE_OUT_OF_BOUNDS,
+                _FIELD_CONTACT_BRACKET,
+                _REASON_OUT_OF_BOUNDS,
             )
         previous_time = point.time
 
@@ -120,8 +141,8 @@ def _require_angular_states(
     if not all(isinstance(point, FlightStatePoint) for point in points):
         raise _failure(
             "flight trajectory does not propagate terminal angular velocity",
-            GroundUnavailableFieldId.TERMINAL_ANGULAR_VELOCITY,
-            GroundUnavailableReason.SOURCE_DOES_NOT_PROPAGATE,
+            _FIELD_TERMINAL_ANGULAR_VELOCITY,
+            _REASON_DOES_NOT_PROPAGATE,
         )
     return tuple(point for point in points if isinstance(point, FlightStatePoint))
 
@@ -146,14 +167,14 @@ def _contact_bracket(
         if any(speed >= -_INCOMING_SPEED_TOLERANCE_M_S for speed in speeds):
             raise _failure(
                 "physical contact bracket must be strictly incoming, not grazing",
-                GroundUnavailableFieldId.PHYSICAL_CONTACT_BRACKET,
-                GroundUnavailableReason.SOURCE_OUT_OF_BOUNDS,
+                _FIELD_CONTACT_BRACKET,
+                _REASON_OUT_OF_BOUNDS,
             )
         return separated, state
     raise _failure(
         "flight trajectory has no descending physical contact crossing",
-        GroundUnavailableFieldId.PHYSICAL_CONTACT_BRACKET,
-        GroundUnavailableReason.NO_PHYSICAL_CONTACT,
+        _FIELD_CONTACT_BRACKET,
+        _REASON_NO_PHYSICAL_CONTACT,
     )
 
 

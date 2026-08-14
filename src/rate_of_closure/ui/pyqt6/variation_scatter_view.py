@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import cast
-
 import numpy as np
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QComboBox, QFormLayout, QLabel, QVBoxLayout, QWidget
@@ -204,14 +202,12 @@ class DatasetScatterView(QWidget):
 
     def _selected_csv(self) -> str:
         """Serialize every raw row for the selected scatter axes."""
-        return cast(
-            str,
-            distribution_matrix_csv(
-                self._variation,
-                tuple(variable.key for variable in self._selected_variables()),
-                self._outcomes,
-            ),
+        csv_text: str = distribution_matrix_csv(
+            self._variation,
+            tuple(variable.key for variable in self._selected_variables()),
+            self._outcomes,
         )
+        return csv_text
 
     def _definition(self) -> PlotDefinition:
         """Build the current versioned scatter definition."""

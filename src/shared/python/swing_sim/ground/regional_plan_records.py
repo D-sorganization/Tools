@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from typing import cast
 
 from .contract_types import (
     UNIT_SYSTEM_SI,
@@ -54,7 +53,7 @@ def _sha256(text: str) -> str:
 def _digest(value: object, name: str) -> str:
     if not isinstance(value, str):
         raise ValueError(f"{name} must be 64 lowercase hexadecimal characters")
-    digest = cast(str, _text(value, name)).lower()
+    digest = _text(value, name).lower()
     if len(digest) != 64 or any(
         character not in "0123456789abcdef" for character in digest
     ):
@@ -98,10 +97,7 @@ class GroundRegionalMaterialRegion(_WireRecord):
         """Parse one exact regional material record."""
         from .regional_plan_wire import regional_material_region_from_dict
 
-        return cast(
-            GroundRegionalMaterialRegion,
-            regional_material_region_from_dict(payload),
-        )
+        return regional_material_region_from_dict(payload)
 
     def to_runtime(
         self, request: GroundRegionalMaterialPlanRequest
@@ -248,10 +244,7 @@ class GroundRegionalMaterialPlanRequest(_WireRecord):
         """Parse one exact regional plan request mapping."""
         from .regional_plan_wire import regional_material_plan_request_from_dict
 
-        return cast(
-            GroundRegionalMaterialPlanRequest,
-            regional_material_plan_request_from_dict(payload),
-        )
+        return regional_material_plan_request_from_dict(payload)
 
     def to_surface_resolver(self) -> SurfaceResolver:
         """Construct the exact runtime resolver represented by this plan."""
@@ -326,10 +319,7 @@ class GroundRegionalMaterialPlanResult(_WireRecord):
         """Parse one exact regional plan result mapping."""
         from .regional_plan_wire import regional_material_plan_result_from_dict
 
-        return cast(
-            GroundRegionalMaterialPlanResult,
-            regional_material_plan_result_from_dict(payload),
-        )
+        return regional_material_plan_result_from_dict(payload)
 
 
 def _canonical_regions(

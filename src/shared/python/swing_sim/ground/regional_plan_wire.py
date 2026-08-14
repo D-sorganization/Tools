@@ -141,7 +141,8 @@ def _strict_document(text: str) -> dict[str, Any]:
         raise TypeError("regional material plan JSON must be text")
     if len(text.encode("utf-8")) > MAX_REGIONAL_PLAN_WIRE_BYTES:
         raise ValueError("regional material plan exceeds maximum wire size")
-    return cast(dict[str, Any], strict_json_object(text))
+    document: dict[str, Any] = strict_json_object(text)
+    return document
 
 
 def regional_material_plan_request_from_json(

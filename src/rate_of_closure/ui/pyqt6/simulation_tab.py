@@ -226,7 +226,8 @@ class SimulationTab(
 
     def contact_mode(self) -> ContactMode:
         """The selected contact policy."""
-        return self._contact_combo.currentData()
+        mode: ContactMode = self._contact_combo.currentData()
+        return mode
 
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""

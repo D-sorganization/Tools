@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
-from typing import cast
 
 from PyQt6.QtWidgets import (
     QFileDialog,
@@ -389,7 +388,7 @@ class RegionalGroundExecutionWorkspace(QWidget):
     def _on_progress(self, value: object) -> None:
         if type(value) is not GroundRegionalVariationProgress:
             return
-        progress = cast(GroundRegionalVariationProgress, value)
+        progress = value
         self.progress.setValue(progress.completed)
         self._set_status(
             f"Running — {progress.completed} / {progress.total} accepted trials.",
@@ -400,7 +399,7 @@ class RegionalGroundExecutionWorkspace(QWidget):
         if type(value) is not RegionalGroundExecutionResult or self._job is None:
             self._set_status("Execution returned invalid result evidence.", "error")
             return
-        result = cast(RegionalGroundExecutionResult, value)
+        result = value
         try:
             result.assert_matches_job(self._job)
         except (TypeError, ValueError):
@@ -422,7 +421,7 @@ class RegionalGroundExecutionWorkspace(QWidget):
 
     def _on_cancelled(self, value: object) -> None:
         if type(value) is GroundRegionalVariationCancelled:
-            cancelled = cast(GroundRegionalVariationCancelled, value)
+            cancelled = value
             self.progress.setValue(cancelled.completed)
             self._set_status(
                 f"Cancelled — {cancelled.completed} / {cancelled.total} "
@@ -433,7 +432,7 @@ class RegionalGroundExecutionWorkspace(QWidget):
 
     def _on_failed(self, value: object) -> None:
         if type(value) is GroundRegionalVariationFailed:
-            failure = cast(GroundRegionalVariationFailed, value)
+            failure = value
             self.progress.setValue(failure.completed)
             self._set_status(
                 f"Failed ({failure.stage.value}) — {failure.completed} / "
@@ -448,29 +447,30 @@ class RegionalGroundExecutionWorkspace(QWidget):
         self._render_actions()
 
     def save_job_as(self) -> None:
-        if self._job is None:
+        job = self._job
+        if job is None:
             self._set_status("Save unavailable: no execution job loaded.", "error")
             return
         self._save(
             "Save Regional-Ground Execution Job As",
             "regional-ground-execution-job.json",
-            lambda path: write_regional_ground_execution_job_atomic(self._job, path),
+            lambda path: write_regional_ground_execution_job_atomic(job, path),
         )
 
     def save_result_as(self) -> None:
-        if self._result is None:
+        result = self._result
+        if result is None:
             self._set_status("Save unavailable: no complete result retained.", "error")
             return
         self._save(
             "Save Regional-Ground Execution Result As",
             "regional-ground-execution-result.json",
-            lambda path: write_regional_ground_execution_result_atomic(
-                self._result, path
-            ),
+            lambda path: write_regional_ground_execution_result_atomic(result, path),
         )
 
     def export_rows_csv(self) -> None:
-        if self._result is None:
+        result = self._result
+        if result is None:
             self._set_status(
                 "Export unavailable: no complete result retained.", "error"
             )
@@ -478,9 +478,7 @@ class RegionalGroundExecutionWorkspace(QWidget):
         self._save(
             "Export Regional-Ground Execution Rows",
             "regional-ground-execution-rows.csv",
-            lambda path: write_regional_ground_execution_rows_csv_atomic(
-                self._result, path
-            ),
+            lambda path: write_regional_ground_execution_rows_csv_atomic(result, path),
             file_filter="CSV files (*.csv)",
         )
 

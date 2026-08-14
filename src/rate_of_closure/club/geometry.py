@@ -55,7 +55,8 @@ def superellipse_ring(
     power = 2.0 / exponent
     y = half_height * np.sign(np.sin(theta)) * np.abs(np.sin(theta)) ** power
     z = half_width * np.sign(np.cos(theta)) * np.abs(np.cos(theta)) ** power
-    return np.column_stack([np.full(points, x), y, z])
+    ring: np.ndarray = np.column_stack([np.full(points, x), y, z])
+    return ring
 
 
 def loft_band(

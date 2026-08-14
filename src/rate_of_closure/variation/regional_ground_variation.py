@@ -8,7 +8,7 @@ import math
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from types import MappingProxyType
-from typing import cast
+from typing import Any, cast
 
 from rate_of_closure.variation.regional_ground_study_adapter import (
     MAX_REGIONAL_GROUND_STUDY_ROWS,
@@ -240,7 +240,12 @@ def _sampled_plan(
     values: Mapping[str, float],
 ) -> GroundRegionalVariationTrial:
     digest = _trial_input_digest(request, trial_index, values)
-    surface_values = {_FIELD_NAMES[key]: value for key, value in values.items()}
+    # Heterogeneous ``replace`` keywords: the mapping only ever carries the two
+    # float material fields named in ``_FIELD_NAMES``, but as ``**`` keywords it
+    # is checked against every field of ``GroundSurfaceProfile``.
+    surface_values: dict[str, Any] = {
+        _FIELD_NAMES[key]: value for key, value in values.items()
+    }
     base_surface = replace(request.regional_plan.base_surface, **surface_values)
     provenance = GroundProvenance(
         REGIONAL_GROUND_VARIATION_ADAPTER_ID,
@@ -290,7 +295,7 @@ def _validate_outcome(
         "executor must return an exact pipeline result or transfer failure",
     )
     if type(outcome) is FlightRegionalGroundPipelineResult:
-        pipeline = cast(FlightRegionalGroundPipelineResult, outcome)
+        pipeline = outcome
         require(
             pipeline.regional_plan == trial.regional_plan,
             "pipeline result must retain the sampled regional plan",
@@ -300,7 +305,10 @@ def _validate_outcome(
             == regional_plan_request_sha256(trial.regional_plan),
             "pipeline result digest must match the sampled regional plan",
         )
-    return outcome
+    # The leading ``require`` already pinned ``outcome`` to one of the two exact
+    # outcome types; the validator seam has to accept ``object`` to stay
+    # contravariant with ``CompleteBatchExecution.validator``.
+    return cast(RegionalGroundStudyOutcome, outcome)
 
 
 def _publish_complete_dataset(

@@ -112,7 +112,8 @@ def resolve_contact_normal(
         n = np.asarray(face_normal, dtype=float)
     n_mag = _norm(n)
     require(n_mag > 1e-10, "contact normal must be non-zero")
-    return n / n_mag
+    unit_normal: np.ndarray = n / n_mag
+    return unit_normal
 
 
 def compute_gear_effect(

@@ -46,7 +46,7 @@ __all__ = [
 HEAD_DEPTH_M = 0.11
 
 _BINARY_HEADER_BYTES = 80
-_BINARY_RECORD = np.dtype(
+_BINARY_RECORD: np.dtype[np.void] = np.dtype(
     [("normal", "<f4", (3,)), ("vertices", "<f4", (3, 3)), ("attr", "<u2")]
 )
 _ASCII_VERTEX = re.compile(rb"vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)")
@@ -104,7 +104,8 @@ def _parse_binary(data: bytes) -> np.ndarray:
     records = np.frombuffer(
         data, dtype=_BINARY_RECORD, count=count, offset=_BINARY_HEADER_BYTES + 4
     )
-    return records["vertices"].astype(np.float64)
+    vertices: np.ndarray = records["vertices"].astype(np.float64)
+    return vertices
 
 
 def _parse_ascii(data: bytes) -> np.ndarray:
@@ -120,7 +121,8 @@ def _parse_ascii(data: bytes) -> np.ndarray:
         len(matches),
     )
     flat = np.array([[float(c) for c in m] for m in matches], dtype=np.float64)
-    return flat.reshape(-1, 3, 3)
+    triangles: np.ndarray = flat.reshape(-1, 3, 3)
+    return triangles
 
 
 def triangle_normals(triangles: np.ndarray) -> np.ndarray:
@@ -135,7 +137,8 @@ def triangle_normals(triangles: np.ndarray) -> np.ndarray:
     length = np.linalg.norm(cross, axis=1, keepdims=True)
     with np.errstate(invalid="ignore", divide="ignore"):
         normals = np.where(length > _MIN_AREA, cross / length, 0.0)
-    return np.asarray(normals, dtype=np.float64)
+    unit_normals: np.ndarray = np.asarray(normals, dtype=np.float64)
+    return unit_normals
 
 
 def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.ndarray:
@@ -173,7 +176,8 @@ def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.n
     span = normalized.reshape(-1, 3).max(axis=0) - normalized.reshape(-1, 3).min(axis=0)
     ensure(bool(np.isclose(span[0], depth_m, rtol=1e-9)), "depth must normalize")
     ensure(span[2] >= span[0] >= span[1], "extent ordering z >= x >= y must hold")
-    return np.asarray(normalized, dtype=np.float64)
+    canonical: np.ndarray = np.asarray(normalized, dtype=np.float64)
+    return canonical
 
 
 def load_head_mesh(path: str | Path, depth_m: float = HEAD_DEPTH_M) -> HeadMesh:
@@ -195,7 +199,8 @@ def write_binary_stl(triangles: np.ndarray, header: str = "rate_of_closure") -> 
     head = header.encode("ascii", errors="replace")[:_BINARY_HEADER_BYTES]
     head = head.ljust(_BINARY_HEADER_BYTES, b"\0")
     count = np.array([tris.shape[0]], dtype="<u4")
-    return head + count.tobytes() + records.tobytes()
+    payload: bytes = head + count.tobytes() + records.tobytes()
+    return payload
 
 
 def write_ascii_stl(triangles: np.ndarray, name: str = "rate_of_closure") -> bytes:

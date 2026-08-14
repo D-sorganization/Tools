@@ -99,7 +99,8 @@ class SwingSource(Protocol):
 def _local_axis_rotation(angle: float) -> np.ndarray:
     """Rotation about the plane-local normal axis (local y) by ``angle``."""
     c, s = math.cos(angle), math.sin(angle)
-    return np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]])
+    rotation: np.ndarray = np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]])
+    return rotation
 
 
 class DoublePendulumSwing:
@@ -342,7 +343,8 @@ class DoublePendulumSwing:
             math.sin(state.theta1) * x_axis - math.cos(state.theta1) * up_axis
         )
         tip = wrist + p.l2 * (math.sin(t12) * x_axis - math.cos(t12) * up_axis)
-        return np.vstack([np.zeros(3), wrist, tip])
+        positions: np.ndarray = np.vstack([np.zeros(3), wrist, tip])
+        return positions
 
     def sample(self, t: float) -> SwingSample:
         """Return the clubhead :class:`SwingSample` at time ``t``.
