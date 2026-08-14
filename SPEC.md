@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.92                                    |
-| **Spec Version**        | 1.16.92                                    |
+| **Current Version**     | 1.16.93                                    |
+| **Spec Version**        | 1.16.93                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
@@ -4634,6 +4634,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-13 | 1.16.93 | chore(variation, #4142 #4433 #4120 #4206): consolidate the 34-PR variation / Morris-sensitivity draft family into one branch; drop the six accidentally committed `.codex-worktrees` gitlinks; restore CI-pinned ruff 0.14.10 formatting across 91 files the stack had reverted to an older style; restore the Python 3.10 `timezone.utc` boundary in the sidekick action-audit test. |
 | 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |
 | 2026-08-13 | 1.16.86 | fix(ci, #4441): classify only the PyQt Variation lifecycle subprocess probe as assertion-free support while preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |
