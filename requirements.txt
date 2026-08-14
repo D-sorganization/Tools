@@ -37,6 +37,9 @@ pydantic>=2.0.0  # Data validation using Python type annotations
 pydantic-settings>=2.0.0  # Settings management for Pydantic v2
 jsonschema>=4.23.0  # Validate the published ground-model request/result schemas in CI
 filelock>=3.16.0  # rate_of_closure.web_authority.job_store — imported by collected tests
+# rate_of_closure.web_companion.runtime and web_authority.child import uvicorn
+# unguarded, so tests/rate_of_closure collection fails without it (cf. #4447).
+uvicorn>=0.30.0
 
 # Security & Encryption
 cryptography>=49.0.0  # Cryptographic recipes and primitives
