@@ -1,5 +1,8 @@
 /** Public web-session records, separated from the simulation orchestrator. */
 
+import { type ClubAssemblyBinding } from "./clubAssemblyBinding";
+import { type ClubSpec } from "./club";
+import { type ClubAssemblyImpactInputs } from "./clubAssemblySimulationAdapter";
 import type { BallSetup } from "./ballSetup";
 import type { ContactMode, ImpactOutcomeTs } from "./contact";
 import type {
@@ -38,6 +41,10 @@ export interface SimulationInput {
   manualClubPathDeg?: number;
   manualForwardShaftLeanDeg?: number;
   shaftAxisDatum?: ShaftAxisDatum;
+  /** Qualified binding for the exact selected club (#4111 / #4341). */
+  assemblyBinding?: ClubAssemblyBinding;
+  /** Full selected specification required to validate an assembly binding. */
+  assemblyClubSpec?: ClubSpec;
 }
 
 export interface SwingSampleTs {
@@ -72,4 +79,5 @@ export interface SimulationRunTs {
   ballSetup: BallSetup;
   ballPositionM: Vec3;
   manualDelivery: ManualDelivery;
+  clubAssemblyUsage: ClubAssemblyImpactInputs;
 }

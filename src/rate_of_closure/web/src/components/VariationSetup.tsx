@@ -221,22 +221,30 @@ export function VariationSetup({
         </fieldset>
         {plan.mode === "swing" && (
           <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3">
+            <label
               className="flex cursor-pointer items-start gap-3"
               title="Use a representative 56-degree wedge on the ground and retain every contact cohort for the declared chip objective."
+            >
+              <input
                 aria-label="Analyze wedge chip forgiveness"
+                type="checkbox"
                 checked={chipStudyEnabled}
                 onChange={(event) => {
                   onChipStudyEnabledChange(event.target.checked);
                   onConfigurationChange();
+                }}
                 className="mt-1"
+              />
               <span>
                 <span className="block text-sm font-semibold text-emerald-200">
                   Analyze Wedge Chip Forgiveness
                 </span>
                 <span className="mt-1 block text-xs leading-5 text-slate-400">
-                  Ground-mode 56° wedge · all misses and failures retained · CVaR and Wilson confidence evidence.
+                  Ground-mode 56° wedge · all misses and failures retained · CVaR
+                  and Wilson confidence evidence.
                 </span>
               </span>
+            </label>
             <label className="mt-3 block text-xs text-slate-300">
               <span className="mb-1 block">Chip Target Carry</span>
               <span className="flex items-center gap-2">
@@ -248,9 +256,13 @@ export function VariationSetup({
                   onCommit={(value) => {
                     onChipTargetCarryYdChange(value);
                     onConfigurationChange();
+                  }}
                   className={INPUT_CLASS}
+                />
                 <span>yd</span>
               </span>
+            </label>
+          </div>
         )}
       </div>
 

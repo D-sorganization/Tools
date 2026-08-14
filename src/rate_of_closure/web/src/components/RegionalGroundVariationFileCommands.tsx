@@ -81,7 +81,7 @@ export function RegionalGroundVariationFileCommands(
         Save Regional-Ground Variation Request As
       </button>
       {files.error !== null && <p role="alert" className="mt-2 text-xs text-rose-200">{files.error}</p>}
-      {files.status !== null && <p role="status" className="mt-2 text-xs text-slate-400">{files.status}</p>}
+      {files.status !== null && <p role="status" aria-label="Regional-ground request status" className="mt-2 text-xs text-slate-400">{files.status}</p>}
     </div>
   );
 }

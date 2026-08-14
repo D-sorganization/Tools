@@ -7,22 +7,18 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useState } from "react";
 
 import {
   CATEGORY_LAUNCH,
   GROUND_NORMAL_RESTITUTION_KEY,
   GROUND_ROLLING_RESISTANCE_KEY,
+  type VariationPlanTs,
   planFromJson,
   planToJson,
-  type VariationPlanTs,
 } from "../model/variation";
 import { VARIATION_PLAN_LIBRARY_KEY } from "../model/variationPlanLibrary";
-import { VariationPanel, type VariationPanelProps } from "./VariationPanel";
-import { loadBallSetupPreference, saveBallSetupPreference } from "../model/ballSetupPersistence";
-import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
-import { defaultVariationPlan } from "../model/variationDefaults";
-import type { VariationAnalysisExecution } from "../model/variationAnalysisPolicy";
+import { VariationPanel } from "./VariationPanel";
+import { saveBallSetupPreference } from "../model/ballSetupPersistence";
 import {
   validatedVariationWorkspace,
   type VariationWorkspaceSnapshot,
@@ -102,25 +98,6 @@ const importedPlan = (): VariationPlanTs => ({
 
 let storage: Storage;
 
-type TestPanelProps = Omit<
-  VariationPanelProps,
-  "plan" | "analysisExecution" | "onPlanChange" | "onAnalysisExecutionChange"
->;
-
-function TestVariationPanel(props: TestPanelProps) {
-  const [plan, setPlan] = useState<VariationPlanTs>(() => ({
-    ...defaultVariationPlan(),
-    ballSetup: loadBallSetupPreference(
-      props.storage,
-      { supportMode: "tee" as const, teeHeightM: DRIVER_TEE_HEIGHT_M },
-    ).setup,
-  }));
-  const [analysisExecution, setAnalysisExecution] =
-    useState<VariationAnalysisExecution>("both");
-  return <VariationPanel {...props} plan={plan} analysisExecution={analysisExecution}
-    onPlanChange={setPlan} onAnalysisExecutionChange={setAnalysisExecution} />;
-}
-
 beforeEach(() => {
   storage = new MemoryStorage();
   Object.defineProperty(URL, "createObjectURL", {
@@ -151,7 +128,7 @@ describe("VariationPanel v2 plan persistence", () => {
       tolerance: sphereTolerance(4),
       elevationSource: "absolute",
     });
-    render(<TestVariationPanel spatialTarget={target} />);
+    render(<VariationPanel spatialTarget={target} />);
     const summary = screen.getByRole("status", {
       name: "Variation current spatial target",
     });
@@ -162,7 +139,7 @@ describe("VariationPanel v2 plan persistence", () => {
   });
 
   it("presents a complete results workspace before the first run", () => {
-    render(<TestVariationPanel storage={storage} />);
+    render(<VariationPanel storage={storage} />);
 
     expect(
       screen.getByRole("region", { name: "Variation results" }),
@@ -178,28 +155,10 @@ describe("VariationPanel v2 plan persistence", () => {
   });
 
   it("offers Tee Height only for the persisted Tee support context", () => {
-    saveBallSetupPreference({
-      setup: { supportMode: "ground", teeHeightM: 0 },
-      userOverridden: true,
-    }, storage);
-    const ground = render(<TestVariationPanel storage={storage} />);
-    expect(screen.getByText(/Tee Height is excluded in Ground mode/i)).toBeInTheDocument();
-    expect(within(screen.getByLabelText("Variable 1")).queryByRole("option", {
-      name: "Tee Height",
-    })).not.toBeInTheDocument();
-    ground.unmount();
-
-    saveBallSetupPreference({
-      setup: { supportMode: "tee", teeHeightM: 0.0381 },
-      userOverridden: true,
-    }, storage);
-    render(<TestVariationPanel storage={storage} />);
-    expect(screen.getByText(/Tee Height is available.*active Tee setup/i)).toBeInTheDocument();
-    expect(within(screen.getByLabelText("Variable 1")).getByRole("option", {
-      name: "Tee Height",
-    })).toBeInTheDocument();
     saveBallSetupPreference(
       {
+        setup: { supportMode: "ground", teeHeightM: 0 },
+        userOverridden: true,
       },
       storage,
     );
@@ -209,11 +168,15 @@ describe("VariationPanel v2 plan persistence", () => {
     ).toBeInTheDocument();
     expect(
       within(screen.getByLabelText("Variable 1")).queryByRole("option", {
+        name: "Tee Height",
       }),
     ).not.toBeInTheDocument();
+    ground.unmount();
 
     saveBallSetupPreference(
       {
+        setup: { supportMode: "tee", teeHeightM: 0.0381 },
+        userOverridden: true,
       },
       storage,
     );
@@ -223,6 +186,7 @@ describe("VariationPanel v2 plan persistence", () => {
     ).toBeInTheDocument();
     expect(
       within(screen.getByLabelText("Variable 1")).getByRole("option", {
+        name: "Tee Height",
       }),
     ).toBeInTheDocument();
   });
@@ -230,6 +194,8 @@ describe("VariationPanel v2 plan persistence", () => {
   it("uses the app-owned ball setup instead of a stale local preference", () => {
     saveBallSetupPreference(
       {
+        setup: { supportMode: "ground", teeHeightM: 0 },
+        userOverridden: true,
       },
       storage,
     );
@@ -244,13 +210,14 @@ describe("VariationPanel v2 plan persistence", () => {
     ).toBeInTheDocument();
     expect(
       within(screen.getByLabelText("Variable 1")).getByRole("option", {
+        name: "Tee Height",
       }),
     ).toBeInTheDocument();
   });
 
   it("retains the complete imported plan when saving it to the named library", async () => {
     const user = userEvent.setup();
-    render(<TestVariationPanel storage={storage} />);
+    render(<VariationPanel storage={storage} />);
     const file = new File([planToJson(importedPlan())], "plan.json", {
       type: "application/json",
     });
@@ -287,10 +254,6 @@ describe("VariationPanel v2 plan persistence", () => {
 
   it("supports loading, duplicating, and deleting named plans", async () => {
     const user = userEvent.setup();
-    render(<TestVariationPanel storage={storage} />);
-    await user.type(screen.getByRole("textbox", { name: "Plan name" }), "Baseline");
-    await user.click(screen.getByRole("button", { name: "Save Named Plan" }));
-    expect(screen.getByRole("combobox", { name: "Saved plan library" })).toHaveTextContent(
     render(<VariationPanel storage={storage} />);
     await user.type(
       screen.getByRole("textbox", { name: "Plan name" }),
@@ -322,7 +285,7 @@ describe("VariationPanel v2 plan persistence", () => {
   it("reports corrupt library recovery without preventing a new save", async () => {
     storage.setItem(VARIATION_PLAN_LIBRARY_KEY, "{broken");
     const user = userEvent.setup();
-    render(<TestVariationPanel storage={storage} />);
+    render(<VariationPanel storage={storage} />);
     expect(screen.getByRole("status")).toHaveTextContent(/corrupt/i);
     await user.type(
       screen.getByRole("textbox", { name: "Plan name" }),
@@ -334,39 +297,8 @@ describe("VariationPanel v2 plan persistence", () => {
 });
 
 describe("VariationPanel analysis execution policy", () => {
-  it("fails closed instead of sending ground inputs to scalar flight physics", async () => {
-    const user = userEvent.setup();
-    render(<TestVariationPanel storage={storage} />);
-    const plan: VariationPlanTs = {
-      mode: "launch",
-      baseVariables: {
-        [GROUND_NORMAL_RESTITUTION_KEY]: 0.42,
-        [GROUND_ROLLING_RESISTANCE_KEY]: 0.04,
-      },
-      noise: [{
-        variableKey: GROUND_NORMAL_RESTITUTION_KEY,
-        distribution: "normal",
-        scale: 0.02,
-        lower: 0.1,
-        upper: 0.8,
-      }],
-      nRuns: 2,
-      seed: 4,
-      flightModel: "waterloo_penner",
-      groups: [],
-    };
-    await user.upload(
-      screen.getByLabelText("Import variation plan JSON"),
-      new File([planToJson(plan)], "ground-plan.json", { type: "application/json" }),
-    );
-
-    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-
-    expect(screen.getByRole("status", { name: "Variation status" }))
-      .toHaveTextContent(/regional-ground.*not integrated.*browser/i);
-    expect(screen.getByRole("heading", { name: "Ready to Analyze Variation" }))
-      .toBeInTheDocument();
   it("exposes controlled workspace execution and output-metric selection", async () => {
+    const user = userEvent.setup();
     const initial = validatedVariationWorkspace({
       plan: importedPlan(),
       analysisExecution: "individual",
@@ -381,6 +313,8 @@ describe("VariationPanel analysis execution policy", () => {
           variationWorkspace={workspace}
           onVariationWorkspaceChange={setWorkspace}
         />
+      );
+    };
 
     render(<Harness />);
 
@@ -393,15 +327,96 @@ describe("VariationPanel analysis execution policy", () => {
     await user.selectOptions(
       screen.getByRole("combobox", { name: "Analysis execution" }),
       "all_together",
+    );
     expect(screen.getByRole("checkbox", { name: "apex_m" })).toBeChecked();
     expect(
       screen.getByRole("combobox", { name: "Analysis execution" }),
     ).toHaveValue("all_together");
   });
 
+  it("fails closed instead of sending ground inputs to scalar flight physics", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    const plan: VariationPlanTs = {
+      mode: "launch",
+      baseVariables: {
+        [GROUND_NORMAL_RESTITUTION_KEY]: 0.42,
+        [GROUND_ROLLING_RESISTANCE_KEY]: 0.04,
+      },
+      noise: [
+        {
+          variableKey: GROUND_NORMAL_RESTITUTION_KEY,
+          distribution: "normal",
+          scale: 0.02,
+          lower: 0.1,
+          upper: 0.8,
+        },
+      ],
+      nRuns: 2,
+      seed: 4,
+      flightModel: "waterloo_penner",
+      groups: [],
+    };
+    await user.upload(
+      screen.getByLabelText("Import variation plan JSON"),
+      new File([planToJson(plan)], "ground-plan.json", {
+        type: "application/json",
+      }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+
+    expect(
+      screen.getByRole("status", { name: "Variation status" }),
+    ).toHaveTextContent(/regional-ground.*not integrated.*browser/i);
+    expect(
+      screen.getByRole("heading", { name: "Ready to Analyze Variation" }),
+    ).toBeInTheDocument();
+  });
+
+  it("runs the explicit ground-mode wedge forgiveness objective", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Pipeline" }),
+      "swing",
+    );
+    fireEvent.change(screen.getByRole("textbox", { name: "Runs" }), {
+      target: { value: "2" },
+    });
+    fireEvent.blur(screen.getByRole("textbox", { name: "Runs" }));
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Analysis execution" }),
+      "all_together",
+    );
+    await user.click(
+      screen.getByRole("checkbox", { name: "Analyze wedge chip forgiveness" }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+
+    expect(
+      screen.getByRole("heading", { name: /conditional chip-shot forgiveness/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Contact Cohorts — All 2 Trials/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /forgiveness metric scatter/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/turf ranking disabled/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/illustrative reduced single-point/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Forgiveness Study JSON" }),
+    ).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: "Forgiveness Trials CSV" }),
+    ).toBeEnabled();
+  });
+
   it("executes only the explicitly selected analyses", async () => {
     const user = userEvent.setup();
-    render(<TestVariationPanel storage={storage} />);
+    render(<VariationPanel storage={storage} />);
     const runs = screen.getByRole("textbox", { name: "Runs" });
     fireEvent.change(runs, { target: { value: "2" } });
     fireEvent.blur(runs);
@@ -469,8 +484,6 @@ describe("VariationPanel analysis execution policy", () => {
 
   it("renders every swing trial in the interactive arc inspector", async () => {
     const user = userEvent.setup();
-    render(<TestVariationPanel storage={storage} />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "Pipeline" }), "swing");
     render(<VariationPanel storage={storage} />);
     await user.selectOptions(
       screen.getByRole("combobox", { name: "Pipeline" }),
@@ -570,30 +583,5 @@ describe("VariationPanel analysis execution policy", () => {
     expect(
       screen.getByText(/Hits: .*Plotted landings: .*no fabricated landing/i),
     ).toBeInTheDocument();
-  });
-
-  it("runs the explicit ground-mode wedge forgiveness objective", async () => {
-    const user = userEvent.setup();
-    render(<VariationPanel storage={storage} />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "Pipeline" }), "swing");
-    fireEvent.change(screen.getByRole("textbox", { name: "Runs" }), {
-      target: { value: "2" },
-    });
-    fireEvent.blur(screen.getByRole("textbox", { name: "Runs" }));
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Analysis execution" }),
-      "all_together",
-    );
-    await user.click(screen.getByRole("checkbox", { name: "Analyze wedge chip forgiveness" }));
-
-    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
-
-    expect(screen.getByRole("heading", { name: /conditional chip-shot forgiveness/i })).toBeInTheDocument();
-    expect(screen.getByText(/Contact Cohorts — All 2 Trials/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /forgiveness metric scatter/i })).toBeInTheDocument();
-    expect(screen.getByText(/turf ranking disabled/i)).toBeInTheDocument();
-    expect(screen.getByText(/illustrative reduced single-point/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Forgiveness Study JSON" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Forgiveness Trials CSV" })).toBeEnabled();
   });
 });

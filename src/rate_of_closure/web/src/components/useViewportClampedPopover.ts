@@ -43,14 +43,18 @@ export function useViewportClampedPopover() {
     const details = panel?.closest("details");
     if (!panel || !(details instanceof HTMLDetailsElement) || !details.open) return;
     const bounds = panel.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth;
+    if (viewportWidth <= 0 || bounds.right < bounds.left) {
+      // Nothing measurable to clamp against: the popover is open but unlaid-out
+      // (a non-layout environment, or a host that reports an empty viewport).
+      // Keep the current offset instead of violating the clamp contract.
+      return;
+    }
     const baseBounds = {
       left: bounds.left - offsetRef.current,
       right: bounds.right - offsetRef.current,
     };
-    const nextOffset = horizontalViewportOffset(
-      baseBounds,
-      document.documentElement.clientWidth,
-    );
+    const nextOffset = horizontalViewportOffset(baseBounds, viewportWidth);
     offsetRef.current = nextOffset;
     setOffsetPx(nextOffset);
   }, []);

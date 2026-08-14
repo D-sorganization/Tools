@@ -88,7 +88,7 @@ export function RegionalGroundExecutionFileCommands(props: Props) {
         )}>
         Export Regional-Ground Execution Rows CSV
       </button>
-      {status !== null && <p role="status" className="mt-2 text-xs text-slate-400">{status}</p>}
+      {status !== null && <p role="status" aria-label="Regional-ground execution file status" className="mt-2 text-xs text-slate-400">{status}</p>}
       {error !== null && <p role="alert" className="mt-2 text-xs text-rose-200">{error}</p>}
     </div>
   );

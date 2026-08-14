@@ -432,6 +432,7 @@ export function AppToolstrip({
           </div>
           <ToolsMenu theme={theme} shortcutTrigger={shortcutTrigger} run={run} />
           <span role={fileError === null ? "status" : "alert"}
+            aria-label="Workspace file status"
             className={`self-center px-2 text-xs ${fileError === null ? "text-slate-400" : "text-rose-300"}`}>
             {fileError ?? fileStatus}
           </span>

@@ -100,15 +100,15 @@ export function VariationResults({
           <VariationDistributionMatrix
             dataset={forgivenessDataset}
             ensemble={ensemble}
-            selectedTrialIndex={selectedTrialIndex}
-            onSelectedTrialChange={setSelectedTrialIndex}
+            selectedTrialIndex={validSelectedTrialIndex}
+            onSelectedTrialChange={selectTrial}
           />
           <div className="mt-6 border-t border-slate-800 pt-5">
             <VariationScatter
               dataset={forgivenessDataset}
               ensemble={ensemble}
-              selectedTrialIndex={selectedTrialIndex}
-              onSelectedTrialChange={setSelectedTrialIndex}
+              selectedTrialIndex={validSelectedTrialIndex}
+              onSelectedTrialChange={selectTrial}
             />
           </div>
         </div>

@@ -229,7 +229,11 @@ describe("AppToolstrip", () => {
       name: "valid.json", size: text.length,
       arrayBuffer: vi.fn().mockResolvedValue(fileBytes(text)),
     }] } });
-    expect(await screen.findByRole("status")).toHaveTextContent(/imported valid.json/i);
+    expect(
+      await screen.findByRole("status", {
+        name: "Regional-ground request status",
+      }),
+    ).toHaveTextContent(/imported valid.json/i);
     expect(port.apply).toHaveBeenCalledOnce();
   });
 
@@ -251,7 +255,7 @@ describe("AppToolstrip", () => {
     expect(createUrl).toHaveBeenCalledOnce();
     expect(click).toHaveBeenCalledOnce();
     expect(revokeUrl).toHaveBeenCalledWith("blob:combined-request");
-    expect(screen.getByRole("status")).toHaveTextContent(
+    expect(screen.getByRole("status", { name: "Regional-ground request status" })).toHaveTextContent(
       /browser controls the destination and overwrite behavior/i,
     );
   });

@@ -9,7 +9,6 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
-import { useRegionalGroundVariationWorkspace } from "../hooks/useRegionalGroundVariationWorkspace";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
 import { Derivation } from "./Derivation";
@@ -22,11 +21,8 @@ import { SimulationPanel } from "./SimulationPanel";
 import { VariationPanel } from "./VariationPanel";
 
 function TestVariationPanel() {
-  const workspace = useRegionalGroundVariationWorkspace();
-  return <VariationPanel plan={workspace.state.variationPlan}
-    analysisExecution={workspace.state.analysisExecution}
-    onPlanChange={workspace.replaceVariationPlan}
-    onAnalysisExecutionChange={workspace.replaceAnalysisExecution} />;
+  // VariationPanel owns its workspace when no controlled snapshot is supplied.
+  return <VariationPanel />;
 }
 
 beforeAll(() => {

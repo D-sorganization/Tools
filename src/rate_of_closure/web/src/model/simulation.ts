@@ -20,6 +20,11 @@
  */
 
 import {
+  adaptClubAssemblyForImpact,
+  unboundClubAssemblyImpact,
+  withoutClubBallImpact,
+} from "./clubAssemblySimulationAdapter";
+import {
   deriveLaunch,
   simulateFlight,
 } from "./flight";
@@ -41,7 +46,10 @@ import {
   resolveBallSetup,
 } from "./ballSetup";
 import {
+  DEFAULT_IMPACT_CLUB,
+  type DeliveryInput,
   MPH_PER_MPS,
+  type Vec3,
   add,
   cross,
   fromFlightFrame,
@@ -50,8 +58,6 @@ import {
   solveImpact,
   sub,
   toFlightFrame,
-  type DeliveryInput,
-  type Vec3,
 } from "./impactPhysics";
 import {
   applyRotation,
@@ -224,6 +230,16 @@ function swingSamples(
 
 /** Run the full swing -> impact -> flight pipeline (web parity port). */
 export function runSimulation(input: SimulationInput): SimulationRunTs {
+  const assemblySpec = input.assemblyClubSpec;
+  if (input.assemblyBinding && !assemblySpec) {
+    throw new Error("assembly binding requires the exact selected ClubSpec");
+  }
+  const clubAssemblyUsage =
+    input.assemblyBinding && assemblySpec
+      ? adaptClubAssemblyForImpact(assemblySpec, input.assemblyBinding)
+      : unboundClubAssemblyImpact(
+          input.club?.headMassKg ?? DEFAULT_IMPACT_CLUB.headMassKg,
+        );
   const manualDelivery = resolveManualDelivery(input);
   const manualDeliveredDynamicLoftDeg = input.sourceKind === "manual"
     ? validateDeliveredDynamicLoft(
@@ -304,6 +320,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       ballSetup,
       ballPositionM,
       manualDelivery,
+      clubAssemblyUsage: withoutClubBallImpact(clubAssemblyUsage),
     };
   }
 
@@ -319,7 +336,9 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       : input.loftDeg,
     impactOffsetToeMm: input.impactOffsetToeMm,
     impactOffsetHighMm: input.impactOffsetHighMm,
-    club: input.club,
+    club: input.club
+      ? { ...input.club, headMassKg: clubAssemblyUsage.headMassKg }
+      : undefined,
   };
   const impact = solveImpact(delivery);
   const launch = deriveLaunch(
@@ -354,6 +373,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     flight,
     ballSetup,
     ballPositionM,
+    clubAssemblyUsage,
     manualDelivery,
   };
 }

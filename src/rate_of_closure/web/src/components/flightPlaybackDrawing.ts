@@ -1,7 +1,10 @@
 /** Dependency-free, scale-locked orthographic 3D ball-flight drawing. */
 
 import type { FlightPoint } from "../model/flight";
-import type { GroundTrajectoryPoint } from "../model/flightGroundTypes";
+import type {
+  GroundEvent,
+  GroundTrajectoryPoint,
+} from "../model/flightGroundTypes";
 import type { Vec3 } from "../model/simulation";
 import {
   spatialTargetHalfExtents,
@@ -263,6 +266,13 @@ export function drawGroundPlayback(
   ballPosition: Vec3,
   camera: PlaybackCamera,
   endLabel: string,
+  events: readonly GroundEvent[] = [],
+  comparison?: {
+    readonly points: readonly GroundTrajectoryPoint[];
+    readonly events: readonly GroundEvent[];
+    readonly ballPosition: Vec3;
+    readonly endLabel: string;
+  },
 ): void {
   const drawable = points.map((point) => ({
     time: point.time_s,
@@ -275,9 +285,15 @@ export function drawGroundPlayback(
   context.clearRect(0, 0, width, height);
   context.fillStyle = "#020617";
   context.fillRect(0, 0, width, height);
+  const comparisonDrawable =
+    comparison?.points.map((point) => ({
+      time: point.time_s,
+      position: point.position_m as Vec3,
+      velocity: point.velocity_m_s as Vec3,
+    })) ?? [];
   const projection = createProjection(
     drawable,
-    [],
+    comparisonDrawable,
     camera,
     width,
     height,
@@ -285,7 +301,7 @@ export function drawGroundPlayback(
     GROUND_MINIMUM_EXTENT_M,
     false,
   );
-  const bounds = extents(drawable, [], undefined, false);
+  const bounds = extents(drawable, comparisonDrawable, undefined, false);
   const axisExtents = bounds.max.map((value, axis) =>
     Math.max(GROUND_MINIMUM_EXTENT_M, Math.abs(value - bounds.min[axis])),
   ) as Vec3;
@@ -297,6 +313,15 @@ export function drawGroundPlayback(
     axisExtents[2],
     points[0].position_m as Vec3,
   );
+  comparison?.points.slice(0, -1).forEach((point, index) => {
+    drawPath(
+      context,
+      comparisonDrawable.slice(index, index + 2),
+      projection,
+      GROUND_PHASE_COLORS[point.phase],
+      [7, 5],
+    );
+  });
   points.slice(0, -1).forEach((point, index) => {
     drawPath(
       context,
@@ -324,6 +349,25 @@ export function drawGroundPlayback(
   marker(points[0].position_m as Vec3, "#38bdf8", "Carry / first contact", -8);
   marker(points[points.length - 1].position_m as Vec3, "#f8fafc", endLabel, 14);
   marker(ballPosition, "#fb923c", null, -8);
+  const eventMarker = (position: Vec3, color: string) => {
+    const screen = projection.point(position);
+    context.beginPath();
+    context.arc(screen.x, screen.y, 4, 0, 2 * Math.PI);
+    context.strokeStyle = color;
+    context.lineWidth = 1.4;
+    context.stroke();
+  };
+  events.forEach((event) => eventMarker(event.position_m as Vec3, "#f8fafc"));
+  if (comparison) {
+    comparison.events.forEach((event) =>
+      eventMarker(event.position_m as Vec3, "#94a3b8"),
+    );
+    const last = comparison.points[comparison.points.length - 1];
+    if (last) {
+      marker(last.position_m as Vec3, "#94a3b8", comparison.endLabel, 28);
+    }
+    marker(comparison.ballPosition, "#fdba74", null, -8);
+  }
   context.fillStyle = "#cbd5e1";
   context.fillText(
     `Locked physical scale: ${projection.pixelsPerMeter.toFixed(2)} px/m`,

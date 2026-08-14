@@ -7,8 +7,8 @@ from typing import overload
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PyQt6 import sip
-from PyQt6.QtCore import QRect, QTimer
-from PyQt6.QtGui import QCloseEvent, QRegion
+from PyQt6.QtCore import QRect, QSize, QTimer
+from PyQt6.QtGui import QCloseEvent, QRegion, QResizeEvent
 
 __all__ = ["LifecycleSafeFigureCanvas"]
 
@@ -40,6 +40,23 @@ class LifecycleSafeFigureCanvas(FigureCanvasQTAgg):
     def has_pending_draw(self) -> bool:
         """Return whether this canvas owns a queued idle redraw."""
         return self._draw_pending
+
+    def resizeEvent(self, event: QResizeEvent) -> None:  # noqa: N802
+        """Keep the figure nonzero so Matplotlib transforms stay invertible.
+
+        The synchronized multi-view compositor can lay a hosted view out at
+        zero height. Matplotlib would then set a zero-inch figure, build a
+        degenerate axes transform, and raise ``LinAlgError: Singular matrix``
+        from the first inversion (``axvline``, annotations, autoscaling). A
+        one-pixel floor keeps every plotting call valid; nothing is visible at
+        zero height either way, and the next real resize restores exact size.
+        """
+        size = event.size()
+        if size.width() >= 1 and size.height() >= 1:
+            super().resizeEvent(event)
+            return
+        clamped = QSize(max(size.width(), 1), max(size.height(), 1))
+        super().resizeEvent(QResizeEvent(clamped, event.oldSize()))
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """Cancel queued drawing before Qt starts destroying the canvas."""

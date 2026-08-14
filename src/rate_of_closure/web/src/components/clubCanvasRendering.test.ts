@@ -1,3 +1,4 @@
+import type { Mat3 } from "../model/rotation";
 import { describe, expect, it } from "vitest";
 
 import type { HeadMesh } from "../model/mesh";
@@ -6,7 +7,7 @@ import {
   prepareShadedTriangles,
 } from "./clubCanvasRendering";
 
-const IDENTITY = [
+const IDENTITY: Mat3 = [
   [1, 0, 0],
   [0, 1, 0],
   [0, 0, 1],

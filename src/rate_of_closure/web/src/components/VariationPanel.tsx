@@ -10,9 +10,10 @@ import {
 import {
   GROUND_NORMAL_RESTITUTION_KEY,
   GROUND_ROLLING_RESISTANCE_KEY,
+  type VariationDatasetTs,
+  type VariationPlanTs,
   planFromJson,
   planToJson,
-  type VariationDatasetTs,
 } from "../model/variation";
 import { executeVariationAnalyses } from "../model/variationAnalysisPolicy";
 import type { SensitivityResultTs } from "../model/variationAnalysis";

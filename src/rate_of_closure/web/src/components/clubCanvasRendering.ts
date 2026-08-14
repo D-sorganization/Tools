@@ -1,4 +1,5 @@
 import type { HeadMesh, Triangle } from "../model/mesh";
+import type { Mat3 } from "../model/rotation";
 import { add, apply, project, type Vec3 } from "./clubCanvasGeometry";
 
 const LIGHT_LENGTH = Math.hypot(0.3, 0.8, 0.5);
@@ -31,7 +32,7 @@ export interface PreparedTriangle {
 
 interface PrepareMeshOptions {
   mesh: HeadMesh;
-  rotation: number[][];
+  rotation: Mat3;
   shift: Vec3;
   offset: Vec3;
   yaw: number;

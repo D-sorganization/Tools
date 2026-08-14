@@ -122,10 +122,9 @@ export function useImpactAppModel(): ImpactAppModel {
     [flightExplorerDraft],
   );
   return {
-    scenario, setScenario, spatialTarget, setSpatialTarget, units, setUnits,
-    generatedHead, setGeneratedHead, clubSpec, setClubSpec, explained,
-    setExplained, glossaryTerm, setGlossaryTerm, flightExplorerDraft,
-    setFlightExplorerDraft, flightPreparationLaunch,
+    flightExplorerDraft,
+    setFlightExplorerDraft,
+    flightPreparationLaunch,
     scenario,
     setScenario,
     spatialTarget,

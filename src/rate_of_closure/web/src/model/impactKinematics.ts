@@ -217,8 +217,6 @@ export function impactKinematics(
         (shaftOnlyAoa! - baseAoa!) + (totalAoa! - otherOnlyAoa!)
       )
     : null;
-  const loft = club.loftDeg * Math.PI / 180;
-  const faceNormal = unit(applyRotation(sample.rotation, [Math.cos(loft), Math.sin(loft), 0]), "face normal");
   const nominalEdge = applyRotation(sample.rotation, [0, 0, 1]);
   const leadingEdge = unit(sub(nominalEdge, scale(faceNormal, dot(nominalEdge, faceNormal))), "leading edge");
   const totalVertical = contactVelocity[1];
