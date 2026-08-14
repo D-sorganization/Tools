@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager, suppress
 from datetime import datetime, timezone
@@ -55,7 +54,6 @@ from models import (
     AlicatMFCState,
     AlicatSetpointPayload,
     EventLog,
-    PIDTuningStepPayload,
     PlantArea,
     PlantEquipment,
     PlantUnit,
@@ -63,14 +61,12 @@ from models import (
     TagDefinitionDb,
     TagLog,
 )
-from mpc import simulate_pid_vs_mpc
 from performance import (
     PerformanceConfig,
     PerformanceController,
     PerformanceMode,
     ScanScheduler,
 )
-from pid_tuning import identify_fopdt_and_tune
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from poll_runtime import (
@@ -96,6 +92,7 @@ from temperature_integration import (
     TemperatureService,
     create_temperature_router,
 )
+from tuning_router import create_tuning_router
 from ws_broadcast import ConnectionManager
 
 try:
@@ -518,6 +515,20 @@ app = FastAPI(
 app.state.control_context = control_context
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
+# Direct tag writes, PID auto-tuning and the PID-vs-MPC comparison. Mounted
+# unconditionally: these are admin-gated control endpoints, not an optional
+# analysis feature. Collaborators are injected rather than imported by the
+# router, which would close an import cycle back onto this module.
+app.include_router(
+    create_tuning_router(
+        control_context=control_context,
+        plc_client=plc_client,
+        backup_simulator=backup_simulator,
+        reject_output_write_if_estopped=_reject_output_write_if_estopped,
+        require_admin_key=require_admin_key,
+        logger=logger,
+    )
+)
 
 # Data Explorer analysis suite (historian querying, filtering, correlation,
 # spectral, trendlines, PCA, export). It is numpy-backed; if numpy or the module
@@ -1132,210 +1143,6 @@ def clear_capture_data(
         result.db_bytes_after,
     )
     return result
-
-
-class TagWritePayload(BaseModel):
-    value: float
-
-
-def _latest_tag_or_http_error(tag_name: str, role: str, pid_index: int) -> float:
-    """Return the latest tag value or raise a descriptive PID tuning error."""
-    try:
-        return float(control_context.latest_tags[tag_name])
-    except KeyError as exc:
-        raise HTTPException(
-            status_code=409,
-            detail=(
-                f"PID loop {pid_index} {role} tag '{tag_name}' is not mapped in "
-                "the latest tag values. Check PLC routing before tuning."
-            ),
-        ) from exc
-
-
-@app.post("/api/tags/{tag_id}", dependencies=[Depends(require_admin_key)])
-async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
-    """Manually force/write a 32-bit float value directly to a tag register."""
-    _reject_output_write_if_estopped()
-    tag_name = tag_id
-    if tag_id.isdigit():
-        val_id = int(tag_id)
-        if not (0 <= val_id < 32):
-            raise HTTPException(
-                status_code=400,
-                detail="Tag ID must be between 0 and 31.",
-            )
-        tag_name = f"TAG_{tag_id}"
-
-    if not plc_client.connected:
-        success = await backup_simulator.write_tag(tag_name, payload.value)
-        if not success:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Tag '{tag_name}' not found in simulator registry.",
-            )
-        control_context.write_tag(tag_name, payload.value)
-        return {
-            "status": "success",
-            "message": f"Successfully forced simulated tag {tag_name} to {payload.value}.",
-        }
-
-    try:
-        success = await plc_client.write_tag(tag_name, payload.value)
-    except NotImplementedError as exc:
-        # No host-writable register for this tag (the P1AM TAG_n block is
-        # republished by the firmware every scan) — say so rather than answer
-        # 200 for a write the plant never saw (issue #4015).
-        raise HTTPException(status_code=501, detail=str(exc)) from exc
-    await backup_simulator.write_tag(tag_name, payload.value)
-    if not success:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Failed to write value {payload.value} to tag {tag_name}.",
-        )
-
-    control_context.write_tag(tag_name, payload.value)
-    return {
-        "status": "success",
-        "message": f"Successfully wrote {payload.value} to tag {tag_name}.",
-    }
-
-
-@app.post(
-    "/api/pid/{pid_index}/tuning/start",
-    dependencies=[Depends(require_admin_key)],
-)
-async def start_pid_tuning(pid_index: int) -> dict[str, str]:
-    """Decouples the PID loop from automatic control and begins logging step change history."""
-    if not (0 <= pid_index < 4):
-        raise HTTPException(
-            status_code=400, detail="PID index must be between 0 and 3."
-        )
-
-    # Reject a double-start rather than silently overwriting an in-progress
-    # session (a double-click or race would otherwise wipe the captured initial
-    # PV/CV and step history). The operator must stop the loop first.
-    if pid_index in control_context.tuning_sessions:
-        raise HTTPException(
-            status_code=409,
-            detail=(
-                f"Tuning session already active for PID loop {pid_index}; "
-                "stop it before starting a new one."
-            ),
-        )
-
-    pv_tag = control_context.active_config.pids[pid_index].pv_tag
-    cv_tag = control_context.active_config.pids[pid_index].cv_tag
-    current_pv = _latest_tag_or_http_error(pv_tag, "PV", pid_index)
-    current_cv = _latest_tag_or_http_error(cv_tag, "CV", pid_index)
-
-    control_context.tuning_sessions[pid_index] = {
-        "start_time": time.time(),
-        "history": [],
-        "step_triggered": False,
-        "step_time": 0.0,
-        "initial_cv": current_cv,
-        "initial_pv": current_pv,
-        "final_cv": current_cv,
-        "final_pv": current_pv,
-    }
-    logger.info(f"Started tuning mode for PID loop {pid_index}")
-    return {
-        "status": "success",
-        "message": f"Tuning mode started for PID loop {pid_index}.",
-    }
-
-
-@app.post(
-    "/api/pid/{pid_index}/tuning/step",
-    dependencies=[Depends(require_admin_key)],
-)
-async def step_pid_tuning(
-    pid_index: int, payload: PIDTuningStepPayload
-) -> dict[str, str]:
-    """Executes a step change on the loop, through a seam that reaches the PLC.
-
-    The step used to go out via ``write_tag``, which resolves ``TAG_n`` into the
-    block the firmware republishes every scan and never reads — the plant never
-    saw it, yet identification ran anyway and returned fitted gains as
-    ``status="success"`` (issue #4015). It now goes through
-    ``write_pid_setpoint``, and the session is marked stepped only once acked.
-    """
-    if pid_index not in control_context.tuning_sessions:
-        raise HTTPException(
-            status_code=400, detail="Tuning session not active for this PID loop."
-        )
-
-    _reject_output_write_if_estopped()
-    session = control_context.tuning_sessions[pid_index]
-    cv_tag = control_context.active_config.pids[pid_index].cv_tag
-    initial_cv = _latest_tag_or_http_error(cv_tag, "CV", pid_index)
-
-    if plc_client.connected:
-        stepped = await plc_client.write_pid_setpoint(pid_index, payload.step_value)
-        await backup_simulator.write_pid_setpoint(pid_index, payload.step_value)
-    else:
-        stepped = await backup_simulator.write_pid_setpoint(
-            pid_index, payload.step_value
-        )
-    if not stepped:
-        raise HTTPException(
-            status_code=502,
-            detail=f"PID loop {pid_index} step was not acknowledged; none applied.",
-        )
-
-    session["step_triggered"] = True
-    session["step_time"] = time.time() - session["start_time"]
-    session["initial_cv"] = initial_cv
-    session["final_cv"] = payload.step_value
-
-    control_context.write_tag(cv_tag, payload.step_value)
-
-    logger.info(
-        f"Tuning step triggered on loop {pid_index}: CV set to {payload.step_value}"
-    )
-    return {
-        "status": "success",
-        "message": f"Step change applied. CV set to {payload.step_value}.",
-    }
-
-
-@app.post(
-    "/api/pid/{pid_index}/tuning/stop",
-    dependencies=[Depends(require_admin_key)],
-)
-async def stop_pid_tuning(pid_index: int) -> dict[str, Any]:
-    """Stops the tuning session, calculates FOPDT process parameters, and recommends tuned gains."""
-    if pid_index not in control_context.tuning_sessions:
-        raise HTTPException(
-            status_code=400, detail="Tuning session not active for this PID loop."
-        )
-
-    session = control_context.tuning_sessions.pop(pid_index)
-    result = identify_fopdt_and_tune(
-        session["history"],
-        step_triggered=session["step_triggered"],
-        initial_pv=session["initial_pv"],
-        initial_cv=session["initial_cv"],
-        final_cv=session["final_cv"],
-        step_time=session["step_time"],
-    )
-    return cast(dict[str, Any], result.as_response())
-
-
-class MPCSimulatePayload(BaseModel):
-    prediction_horizon: int = PydanticField(10, ge=2, le=30)
-    control_horizon: int = PydanticField(3, ge=1, le=10)
-    setpoint: float = PydanticField(50.0, ge=0.0, le=100.0)
-    rho: float = PydanticField(0.1, ge=0.0, le=10.0)
-    process_gain: float = PydanticField(1.2, ge=0.1, le=5.0)
-    process_tau: float = PydanticField(5.0, ge=0.5, le=20.0)
-    process_delay: float = PydanticField(1.0, ge=0.0, le=5.0)
-
-
-@app.post("/api/mpc/simulate", dependencies=[Depends(require_admin_key)])
-async def simulate_mpc(payload: MPCSimulatePayload) -> dict[str, Any]:
-    """Simulates and compares standard PID versus Model Predictive Control (MPC)."""
-    return cast(dict[str, Any], simulate_pid_vs_mpc(payload))
 
 
 @app.get(
