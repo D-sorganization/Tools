@@ -6,6 +6,11 @@ import type { ImpactScenario } from "../model/impact";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import type { ViewWorkspace } from "../model/viewWorkspace";
+import {
+  withCameraPreference,
+  type CameraPreference,
+  type CameraViewportId,
+} from "../model/cameraPreferences";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import { wedgeGroundClearance } from "../model/wedgeGroundClearance";
 import { FIELD_GUIDANCE } from "../model/units";
@@ -86,6 +91,20 @@ export function SimulationDisplay({
   const wedgeClearance = useMemo(() =>
     run && clubSpec ? wedgeGroundClearance(run, scenario, clubSpec) : null,
   [run, scenario, clubSpec]);
+  const updateCameraPreference = (
+    viewportId: CameraViewportId,
+    preference: CameraPreference,
+  ) => {
+    if (viewWorkspace === undefined || onViewWorkspaceChange === undefined) return;
+    const cameraPreferences = withCameraPreference(
+      viewWorkspace.cameraPreferences,
+      viewportId,
+      preference,
+    );
+    if (cameraPreferences !== viewWorkspace.cameraPreferences) {
+      onViewWorkspaceChange({ ...viewWorkspace, cameraPreferences });
+    }
+  };
 
   const groundTarget = useMemo(
     () => spatialTargetForGroundWorkflow(spatialTarget, "solver").targetRegion,
@@ -236,7 +255,10 @@ export function SimulationDisplay({
           {run && clubSpec && (
             <>
               <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
-              <ImpactSceneCanvas run={run} scenario={scenario} club={clubSpec} />
+              <ImpactSceneCanvas run={run} scenario={scenario} club={clubSpec}
+                cameraPreference={viewWorkspace?.cameraPreferences.viewports.impact}
+                onCameraPreferenceChange={(preference) =>
+                  updateCameraPreference("impact", preference)} />
               <WedgeGroundClearancePanel result={wedgeClearance} />
             </>
           )}

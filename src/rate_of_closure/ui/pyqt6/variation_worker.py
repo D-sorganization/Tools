@@ -19,6 +19,9 @@ from dataclasses import replace
 import numpy as np
 from PyQt6.QtCore import QThread, pyqtSignal
 
+from rate_of_closure.application.workspace_variation_session import (
+    VariationAnalysisExecution,
+)
 from rate_of_closure.simulation import SimulationConfig
 from rate_of_closure.variation import (
     build_simulation_ensemble_request,
@@ -61,13 +64,17 @@ class VariationWorker(QThread):
     def __init__(
         self,
         plan: VariationPlan,
-        compute_sensitivity: bool = True,
+        analysis_execution: VariationAnalysisExecution = (
+            VariationAnalysisExecution.BOTH
+        ),
         n_workers: int = 4,
         base_simulation_config: SimulationConfig | None = None,
     ) -> None:
         super().__init__()
         self._plan = plan
-        self._compute_sensitivity = bool(compute_sensitivity)
+        if not isinstance(analysis_execution, VariationAnalysisExecution):
+            raise TypeError("analysis_execution must be a VariationAnalysisExecution")
+        self._analysis_execution = analysis_execution
         self._n_workers = int(n_workers)
         self._cancel_event = threading.Event()
         self._base_simulation_config = base_simulation_config
@@ -91,33 +98,45 @@ class VariationWorker(QThread):
         try:
             if self._cancel_event.is_set():
                 raise CancelledError
-            self.phaseChanged.emit("Running…")
+            run_together = self._analysis_execution in (
+                VariationAnalysisExecution.ALL_TOGETHER,
+                VariationAnalysisExecution.BOTH,
+            )
+            run_individually = self._analysis_execution in (
+                VariationAnalysisExecution.INDIVIDUAL,
+                VariationAnalysisExecution.BOTH,
+            )
             ensemble = None
-            if self._plan.mode == "swing":
-                if self._base_simulation_config is None:
-                    raise ValueError("swing trace studies require a simulation config")
-                request = build_simulation_ensemble_request(
-                    self._plan, self._base_simulation_config
-                )
-                ensemble = run_simulation_ensemble(
-                    request,
-                    progress_cb=self.progressed.emit,
-                    cancel_event=self._cancel_event,
-                )
-                dataset = ensemble.variation
-            else:
-                dataset = run_variation(
-                    self._plan,
-                    n_workers=self._n_workers,
-                    progress_cb=self.progressed.emit,
-                    cancel_event=self._cancel_event,
-                )
+            dataset = None
+            if run_together:
+                self.phaseChanged.emit("Running…")
+                if self._plan.mode == "swing":
+                    if self._base_simulation_config is None:
+                        raise ValueError(
+                            "swing trace studies require a simulation config"
+                        )
+                    request = build_simulation_ensemble_request(
+                        self._plan, self._base_simulation_config
+                    )
+                    ensemble = run_simulation_ensemble(
+                        request,
+                        progress_cb=self.progressed.emit,
+                        cancel_event=self._cancel_event,
+                    )
+                    dataset = ensemble.variation
+                else:
+                    dataset = run_variation(
+                        self._plan,
+                        n_workers=self._n_workers,
+                        progress_cb=self.progressed.emit,
+                        cancel_event=self._cancel_event,
+                    )
             sensitivity: SensitivityResult | None = None
-            if self._compute_sensitivity:
+            if run_individually:
                 self.phaseChanged.emit("Sensitivity…")
                 sensitivity = (
                     self._simulation_sensitivity()
-                    if ensemble is not None
+                    if self._plan.mode == "swing"
                     else one_at_a_time_sensitivity(
                         self._plan,
                         n_workers=self._n_workers,

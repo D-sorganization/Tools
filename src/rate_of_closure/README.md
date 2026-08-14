@@ -109,12 +109,20 @@ spatial target (identity, app/source frames, position, surface/absolute source,
   coefficients, stable joint IDs, fit evidence, and source metadata remain the
   shared Python/TypeScript contract rather than UI-specific copies.
 
+Explorer-session v4 adds the user-authored variation-study specification with
+PyQt6/React parity: canonical varied variables, simultaneous versus individual
+analysis policy, validated distributions and ranges, trial count, deterministic
+seed, and selected output metrics. Ball support remains owned by the simulation
+setup; the variation plan cannot duplicate it, and Tee Height can only be
+selected while Tee support is active. Save/Open validates the complete study
+before mutation and rolls back atomically if native widget application fails.
+
 A v1 explorer session can only load through explicit preserve-current
-simulation and torque fallbacks; v2 requires the torque fallback. No tee,
-target, coefficient, joint ID, fit evidence, or outcome is invented. A legacy
-root torque library must exactly match the fallback or Open fails as ambiguous.
-Optimizer, variation-run, and flight-run state are not yet part of this
-document, and variation plans remain rejected instead of being discarded.
+simulation, torque, and variation fallbacks; v2 requires torque and variation,
+and v3 requires variation. No tee, target, coefficient, joint ID, fit evidence,
+study policy, or outcome is invented. A legacy root torque library or variation
+plan must exactly match its fallback or Open fails as ambiguous. Optimizer,
+variation results, and flight-run state are not yet part of this document.
 
 ## Build a Standalone Executable
 

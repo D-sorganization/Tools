@@ -94,7 +94,7 @@ const HEAD_MASS = key(CATEGORY_CLUB, "head_mass_kg");
 const HEAD_MOI = key(CATEGORY_CLUB, "head_moi_kg_m2");
 const COR = key(CATEGORY_CLUB, "cor");
 
-const OUTPUT_NAMES = [
+export const SWING_OUTPUT_NAMES = [
   "candidate_time_s",
   "closest_approach_m",
   "contact_margin_m",
@@ -176,7 +176,7 @@ export function runSwingVariation(
         run: null,
         error: error instanceof Error ? error.message : String(error),
       });
-      outputs.push(OUTPUT_NAMES.map(() => null));
+      outputs.push(SWING_OUTPUT_NAMES.map(() => null));
       success.push(false);
     }
   });
@@ -185,7 +185,7 @@ export function runSwingVariation(
       plan,
       inputNames,
       inputs,
-      outputNames: [...OUTPUT_NAMES],
+      outputNames: [...SWING_OUTPUT_NAMES],
       outputs,
       success,
     },
@@ -238,7 +238,7 @@ function outputRow(run: SimulationRunTs, input: SimulationInput): Array<number |
       outcome.candidateTimeS,
       outcome.closestApproachM,
       outcome.contactMarginM,
-      ...OUTPUT_NAMES.slice(3).map(() => null),
+      ...SWING_OUTPUT_NAMES.slice(3).map(() => null),
     ];
   }
   const impactSample = run.swing.reduce((best, sample) =>

@@ -5,6 +5,10 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping, Sequence
 
+from rate_of_closure.application.camera_preferences import (
+    CameraPreferences,
+    default_camera_preferences,
+)
 from rate_of_closure.view_workspace import (
     LegendPlacement,
     PlaybackState,
@@ -32,7 +36,20 @@ def recover_workspace_document(document: object) -> ViewWorkspace:
         slots=slots,
         active_slot_id=str(active),
         playback=_recover_playback(document.get("playback")),
+        camera_preferences=_recover_camera_preferences(document),
     )
+
+
+def _recover_camera_preferences(
+    document: Mapping[object, object],
+) -> CameraPreferences:
+    raw = document.get("camera_preferences")
+    if raw is None:
+        return default_camera_preferences()
+    try:
+        return CameraPreferences.from_document(raw)
+    except (TypeError, ValueError):
+        return default_camera_preferences()
 
 
 def _recover_slots(document: Mapping[object, object]) -> tuple[ViewSlot, ...]:

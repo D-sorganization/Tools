@@ -1,5 +1,14 @@
 {
   "schema_version": "capability-workflow-parser-cases/v1",
+  "hostile_numbers": [
+    {
+      "id": "reject-4000-digit-json-integer",
+      "path": ["request", "candidate_budget"],
+      "digit": "9",
+      "digits": 4000,
+      "accepted": false
+    }
+  ],
   "cases": [
     {
       "id": "valid-text-profile-id",
