@@ -24,6 +24,10 @@ import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
 import { HelpModal } from "./components/HelpModal";
 import { CsvExporter } from "./components/CsvExporter";
+import { CommsQualityBadge } from "./components/CommsQualityBadge";
+import { ProfessionalAlarmPanel } from "./components/ProfessionalAlarmPanel";
+import { ConfigurationWorkflowPanel } from "./components/ConfigurationWorkflowPanel";
+import { SystemHealthPanel } from "./components/SystemHealthPanel";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
 import {
   TABS,
@@ -84,6 +88,11 @@ const PlantHierarchy = lazy(() =>
     default: m.PlantHierarchy,
   })),
 );
+const OperatorWorkspace = lazy(() =>
+  import("./components/OperatorWorkspace").then((m) => ({
+    default: m.OperatorWorkspace,
+  })),
+);
 
 // Re-export domain types for back-compat with existing importers (AlarmsHeader,
 // EventLogView, InterlocksPanel, RoutingMatrix, ControlDashboard).
@@ -142,6 +151,7 @@ export const App: React.FC = () => {
     eStopActive,
     powerSupplyStatus,
     temperatureStatus,
+    commsHealth,
     isConnected,
     setAlicats,
     setActiveAlarms,
@@ -350,7 +360,8 @@ export const App: React.FC = () => {
     }
   };
 
-  // Deploy configuration & write to NVRAM
+  // Create a protected draft. Validation, review, approval, and activation are
+  // intentionally separate operator actions in the workflow panel.
   const handleDeploy = async () => {
     setDeploying(true);
     try {
@@ -374,9 +385,12 @@ export const App: React.FC = () => {
         })(),
       };
 
-      await api.deployRouting(payload);
+      const revision = await api.createConfigurationDraft(
+        payload,
+        "HMI protected configuration draft",
+      );
       triggerNotification(
-        "Configuration deployed & written to NVRAM successfully.",
+        `Draft ${revision.revision_id} created; review it in the protected workflow.`,
         "success",
       );
     } catch (err) {
@@ -678,22 +692,10 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-            <span
-              className={`status-indicator ${
-                isConnected ? "status-connected" : "status-disconnected"
-              }`}
-            />
-            <span
-              style={{
-                fontSize: "0.8rem",
-                fontWeight: 700,
-                color: "var(--text-secondary)",
-              }}
-            >
-              {isConnected ? "CONNECTED" : "OFFLINE"}
-            </span>
-          </div>
+          <CommsQualityBadge
+            transportConnected={isConnected}
+            health={commsHealth}
+          />
 
           <button
             type="button"
@@ -799,6 +801,10 @@ export const App: React.FC = () => {
               </div>
             }
           >
+          {activeTab === "operator" && visibleTabs.operator && (
+            <OperatorWorkspace />
+          )}
+
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
             <PowerSupplyControl
               liveStatus={powerSupplyStatus}
@@ -1052,12 +1058,24 @@ export const App: React.FC = () => {
                   deploying={deploying}
                 />
               </div>
+
+              <div className="glass-panel">
+                <ConfigurationWorkflowPanel />
+              </div>
             </div>
           )}
 
           {activeTab === "events" && visibleTabs.events && (
-            <div className="glass-panel h-96">
-              <EventLogView events={eventsHistory} />
+            <div style={{ display: "grid", gap: "1rem" }}>
+              <div className="glass-panel">
+                <SystemHealthPanel />
+              </div>
+              <div className="glass-panel">
+                <ProfessionalAlarmPanel />
+              </div>
+              <div className="glass-panel h-96">
+                <EventLogView events={eventsHistory} />
+              </div>
             </div>
           )}
 
@@ -1587,7 +1605,7 @@ export const App: React.FC = () => {
                   className="btn btn-primary"
                   style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
                 >
-                  {deploying ? "Deploying Configuration..." : "Commit PID Tuning"}
+                  {deploying ? "Creating Draft..." : "Create Protected PID Draft"}
                 </button>
               </div>
             )}
@@ -1619,7 +1637,7 @@ export const App: React.FC = () => {
                   className="btn btn-primary"
                   style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
                 >
-                  {deploying ? "Deploying Configuration..." : "Commit Matrix Mapping"}
+                  {deploying ? "Creating Draft..." : "Create Protected Matrix Draft"}
                 </button>
               </div>
             )}

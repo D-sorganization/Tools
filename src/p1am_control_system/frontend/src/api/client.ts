@@ -49,6 +49,37 @@ function joinPath(path: string): string {
   return `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
+/** Execute one checked request while leaving successful response decoding to callers. */
+export async function apiResponse(
+  path: string,
+  init: RequestInit = {},
+): Promise<Response> {
+  let res: Response;
+  try {
+    res = await fetch(joinPath(path), init);
+  } catch (cause) {
+    throw new ApiError(
+      `Network error calling ${path}`,
+      0,
+      cause instanceof Error ? cause.message : cause,
+    );
+  }
+  if (!res.ok) {
+    let detail: unknown;
+    try {
+      detail = await res.json();
+    } catch {
+      detail = undefined;
+    }
+    const message =
+      detail && typeof detail === "object" && "detail" in detail
+        ? String((detail as { detail: unknown }).detail)
+        : `Request to ${path} failed with status ${res.status}`;
+    throw new ApiError(message, res.status, detail);
+  }
+  return res;
+}
+
 /**
  * Perform a JSON request against the backend.
  *
@@ -75,30 +106,7 @@ export async function apiFetch<T = unknown>(
   }
   init.headers = finalHeaders;
 
-  let res: Response;
-  try {
-    res = await fetch(joinPath(path), init);
-  } catch (cause) {
-    throw new ApiError(
-      `Network error calling ${path}`,
-      0,
-      cause instanceof Error ? cause.message : cause,
-    );
-  }
-
-  if (!res.ok) {
-    let detail: unknown;
-    try {
-      detail = await res.json();
-    } catch {
-      detail = undefined;
-    }
-    const message =
-      detail && typeof detail === "object" && "detail" in detail
-        ? String((detail as { detail: unknown }).detail)
-        : `Request to ${path} failed with status ${res.status}`;
-    throw new ApiError(message, res.status, detail);
-  }
+  const res = await apiResponse(path, init);
 
   // No-content responses (e.g. 204) resolve to undefined.
   if (res.status === 204) {

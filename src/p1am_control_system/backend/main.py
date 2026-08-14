@@ -1,10 +1,11 @@
 import asyncio
 import logging
 import os
+import shutil
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 try:
     from datetime import UTC
@@ -12,14 +13,31 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
+from advisory_router import create_advisory_router
+from alarm_router import create_alarm_router
+from alarm_service import AlarmService, manager_from_routing
 from alicat_manager import AlicatManager, AlicatMFC
+from asset_health import (
+    AssetHealthPolicy,
+    AssetHealthReport,
+    AssetHealthService,
+    AssetObservation,
+)
+from audit_middleware import MutationAuditMiddleware
+from audit_router import create_audit_router
 from auth_config import (
     CREDENTIAL_HEADER_NAME,
+    identity_service,
     require_admin_key,
     require_api_key,
+    require_engineer_key,
+    resolve_optional_principal,
     verify_operator_key,
 )
-from config_store import load_config, load_model, save_config, save_model
+from config_store import load_config, load_model, save_config
+from configuration_repository import SqliteRevisionRepository
+from configuration_router import create_configuration_router
+from configuration_workflow import ConfigurationWorkflow
 from cors_config import resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
@@ -42,6 +60,7 @@ from fastapi import (
     File,
     HTTPException,
     Query,
+    Request,
     Security,
     UploadFile,
     WebSocket,
@@ -51,6 +70,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.security import APIKeyHeader
 from historian_wiring import build_historian_writer, shipper_stats
+from identity import Principal
+from identity_router import create_identity_router
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
@@ -65,19 +86,32 @@ from models import (
     TagLog,
 )
 from mpc import simulate_pid_vs_mpc
+from operations_router import create_operations_router
+from operator_router import create_operator_router
 from performance import PerformanceConfig, PerformanceController, PerformanceMode
 from pid_tuning import identify_fopdt_and_tune
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from poll_runtime import _connect_once, _poll_once
 from power_supply_integration import PowerSupplyService, create_power_supply_router
+from product_router import create_product_router
 from project_import import import_project_archive
+from protection_management import ProtectionService, representative_protections
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
+from recovery_package import RecoveryPackageService
+from representative_product import build_representative_product
+from saved_investigation import InvestigationService, SqliteInvestigationRepository
+from scenario_router import create_scenario_router
 from settings import get_settings
+from shift_log import ShiftLogService
+from shift_log_repository import SqliteShiftLogRepository
+from signal_quality import SignalFrame
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
 from state import SystemState
+from system_health import SystemHealthService
+from system_router import create_system_router
 from temperature_integration import (
     TemperatureService,
     create_temperature_router,
@@ -177,17 +211,27 @@ historian_writer, historian_shipper = build_historian_writer(
 )
 
 
-def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
+def _throttled_log_scan(
+    session: Session,
+    tags: dict[str, float],
+    *,
+    signal_frame: SignalFrame | None = None,
+) -> int:
     """Persist a scan to the historian only when the throttle says it's due.
 
     Thin wrapper kept so the poll loop's injected callable has a stable name and
     signature; the throttle, local write, and remote forward all live in
     :class:`historian_sink.HistorianWriter`.
+
+    ``signal_frame`` carries the per-scan quality metadata that
+    ``poll_runtime.ScanLogger`` requires (PR #4091) and is forwarded verbatim to
+    the local write, so quality survives consolidation with the historian
+    forwarding path (PR #4065).
     """
     # Annotated local: the backend uses flat intra-package imports, which mypy
     # resolves to Any when it runs from the repo root rather than this
     # directory. Pinning the type here keeps the check honest either way.
-    rows: int = historian_writer.write(session, tags)
+    rows: int = historian_writer.write(session, tags, signal_frame=signal_frame)
     return rows
 
 
@@ -314,6 +358,107 @@ def build_alarm_engine(config: RoutingConfig) -> Any:
 
 control_context = SystemState(alarm_engine_factory=build_alarm_engine)
 control_context.attach_clients(plc_client, backup_simulator)
+professional_alarm_service = AlarmService(
+    manager_from_routing(control_context.active_config)
+)
+protection_service = ProtectionService(
+    representative_protections(), now=lambda: datetime.now(UTC)
+)
+representative_product = build_representative_product(lambda: datetime.now(UTC))
+
+
+def _apply_control_config(config: RoutingConfig) -> None:
+    """Synchronize proven controls and the supervisory alarm workspace."""
+    alarm_manager = manager_from_routing(config)
+    control_context.apply_config(config, plc_client, backup_simulator)
+    professional_alarm_service.reconfigure(alarm_manager)
+
+
+async def _deploy_approved_routing(config: RoutingConfig) -> None:
+    """Deploy one approved revision before publishing it to runtime readers."""
+    if not isinstance(config, RoutingConfig):
+        raise TypeError("config must be a RoutingConfig")
+    if plc_client.connected:
+        if not await plc_client.write_routing(config):
+            raise RuntimeError("PLC rejected the approved configuration")
+        if not await plc_client.save_to_flash():
+            raise RuntimeError("PLC configuration was not saved to flash")
+    if not await backup_simulator.write_routing(config):
+        raise RuntimeError("simulator rejected the approved configuration")
+    if not await backup_simulator.save_to_flash():
+        raise RuntimeError("simulator configuration was not saved")
+    _apply_control_config(config)
+    global _persisted_routing
+    _persisted_routing = config
+
+
+configuration_workflow = ConfigurationWorkflow(
+    SqliteRevisionRepository(_config_session),
+    _deploy_approved_routing,
+)
+investigation_service = InvestigationService(
+    SqliteInvestigationRepository(_config_session)
+)
+shift_log_service = ShiftLogService(SqliteShiftLogRepository(_config_session))
+asset_health_service = AssetHealthService(
+    AssetHealthPolicy(), now=lambda: datetime.now(UTC)
+)
+
+
+def _representative_asset_health() -> AssetHealthReport:
+    """Return invented maintenance context; no field identity or value is used."""
+    now = datetime.now(UTC)
+    observations = (
+        AssetObservation(
+            observed_at=now - timedelta(minutes=10),
+            value=15.0,
+            reference=10.0,
+            command=True,
+            feedback=False,
+            running=True,
+        ),
+        AssetObservation(
+            observed_at=now,
+            value=15.0,
+            reference=10.0,
+            command=True,
+            feedback=False,
+            running=True,
+        ),
+    )
+    return asset_health_service.assess(
+        "SYNTHETIC.FEED.PUMP",
+        observations,
+        calibration_due_at=now - timedelta(days=1),
+    )
+
+
+software_revision = os.environ.get("P1AM_SOFTWARE_REVISION", "development-unidentified")
+recovery_service = RecoveryPackageService(
+    configuration_workflow,
+    software_revision=software_revision,
+)
+system_health_service = SystemHealthService(
+    workflow=configuration_workflow,
+    recovery=recovery_service,
+    engine=engine,
+    software_revision=software_revision,
+    plc_connected=lambda: plc_client.connected,
+    simulator_available=lambda: True,
+    clock_synchronized=lambda: None,
+    storage_free_bytes=lambda: shutil.disk_usage(".").free,
+    service_running=lambda: not shutdown_event.is_set(),
+    driver_identity=lambda: (
+        f"{plc_client.__class__.__module__}.{plc_client.__class__.__name__}"
+    ),
+)
+
+
+def _acceptance_identity() -> tuple[str, str]:
+    identity = system_health_service.identity()
+    if identity.configuration_sha256 is None:
+        raise ValueError("an identified active configuration is required")
+    return identity.software_revision, identity.configuration_revision
 
 
 async def modbus_connect_background() -> None:
@@ -342,7 +487,7 @@ def _publish_active_config(config: RoutingConfig) -> None:
     """
     if _persisted_routing is not None:
         config = config.model_copy(update={"interlocks": _persisted_routing.interlocks})
-    control_context.apply_config(config, plc_client, backup_simulator)
+    _apply_control_config(config)
 
 
 def require_read_auth(
@@ -410,6 +555,9 @@ async def poll_plc_loop() -> None:
             # the reference is atomic, so a concurrent reader sees a whole frame.
             if frame:
                 latest_frame = frame
+                quality = frame.get("comms_health", {}).get("quality")
+                if quality in {"good", "uncertain", "simulated"}:
+                    professional_alarm_service.observe(frame.get("tags_dict", {}))
             consecutive_failures = 0
         except Exception as loop_err:
             consecutive_failures += 1
@@ -461,11 +609,16 @@ def _restore_persisted_settings(session: Session) -> None:
     """
     global _persisted_routing
     try:
-        routing = load_model(session, "routing", RoutingConfig)
+        active_revision = configuration_workflow.active()
+        routing = (
+            active_revision.payload
+            if active_revision is not None
+            else load_model(session, "routing", RoutingConfig)
+        )
         if routing is not None:
             _persisted_routing = routing
-            control_context.apply_config(routing, plc_client, backup_simulator)
-            logger.info("Recalled persisted routing (alarm setpoints + PID).")
+            _apply_control_config(routing)
+            logger.info("Recalled de-energized configuration settings.")
     except Exception as exc:  # noqa: BLE001 - never block boot on a bad blob
         logger.warning("Routing recall skipped: %s", exc)
     try:
@@ -532,6 +685,65 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.state.control_context = control_context
+app.include_router(create_identity_router(identity_service))
+app.include_router(create_audit_router(get_session, require_engineer_key))
+app.include_router(
+    create_alarm_router(
+        professional_alarm_service,
+        operator_dependency=require_api_key,
+        engineer_dependency=require_engineer_key,
+    )
+)
+app.include_router(
+    create_operator_router(
+        protection_service,
+        engineer_dependency=require_engineer_key,
+    )
+)
+app.include_router(
+    create_operations_router(
+        investigation_service,
+        shift_log_service,
+        asset_report_provider=_representative_asset_health,
+        operator_dependency=require_api_key,
+    )
+)
+app.include_router(
+    create_product_router(
+        representative_product.procedure,
+        representative_product.connectors,
+        representative_product.notifications,
+        representative_product.availability,
+        operator_dependency=require_api_key,
+    )
+)
+app.include_router(
+    create_advisory_router(
+        representative_product.advisories,
+        operator_dependency=require_api_key,
+    )
+)
+app.include_router(
+    create_configuration_router(
+        configuration_workflow,
+        engineer_dependency=require_engineer_key,
+        admin_dependency=require_admin_key,
+    )
+)
+app.include_router(
+    create_system_router(
+        recovery_service,
+        system_health_service,
+        engineer_dependency=require_engineer_key,
+        admin_dependency=require_admin_key,
+    )
+)
+app.include_router(
+    create_scenario_router(
+        identity_provider=_acceptance_identity,
+        admin_dependency=require_admin_key,
+    )
+)
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
 
@@ -558,6 +770,28 @@ app.add_middleware(
     allow_credentials=_cors.allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+
+def _audit_principal(request: Request) -> Principal | None:
+    return resolve_optional_principal(
+        request.headers.get(CREDENTIAL_HEADER_NAME),
+        request.headers.get("Authorization"),
+    )
+
+
+def _configuration_revision() -> str:
+    active = configuration_workflow.active()
+    if active is not None and active.activation_identity:
+        return cast(str, active.activation_identity)
+    return os.environ.get("P1AM_CONFIG_REVISION", "unversioned")
+
+
+app.add_middleware(
+    MutationAuditMiddleware,
+    engine=engine,
+    principal_resolver=_audit_principal,
+    configuration_revision=_configuration_revision,
 )
 
 
@@ -661,57 +895,15 @@ async def get_routing() -> RoutingConfig:
 
 @app.post("/api/routing", dependencies=[Depends(require_admin_key)])
 async def update_routing(config: RoutingConfig) -> dict[str, str]:
-    """Write new routing configurations to the PLC.
-
-    Args:
-        config: RoutingConfig model.
-
-    Returns:
-        JSON response indicating success.
-    """
-    control_context.apply_config(config, plc_client, backup_simulator)
-
-    # Persist the SCADA-authoritative routing (interlocks/alarm setpoints + PID)
-    # so it survives a restart independent of PLC flash, and refresh the overlay.
-    global _persisted_routing
-    _persisted_routing = config
-    try:
-        with _config_session() as s:
-            save_model(s, "routing", config)
-    except Exception as exc:  # noqa: BLE001 - persistence must not fail a deploy
-        logger.warning("Persisting routing failed (non-fatal): %s", exc)
-
-    if not plc_client.connected:
-        await backup_simulator.write_routing(config)
-        return {
-            "status": "success",
-            "message": "Configuration successfully applied to simulated PLC.",
-        }
-
-    success = await plc_client.write_routing(config)
-    await backup_simulator.write_routing(config)
-
-    if not success:
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to write routing parameters to PLC registers.",
-        )
-
-    save_success = await plc_client.save_to_flash()
-    await backup_simulator.save_to_flash()
-
-    if not save_success:
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Config registers written, but failed to trigger 'Save to Flash' coil."
-            ),
-        )
-
-    return {
-        "status": "success",
-        "message": ("Configuration successfully deployed and saved to PLC NVRAM."),
-    }
+    """Reject the retired direct-activation path without applying the payload."""
+    del config
+    raise HTTPException(
+        status_code=409,
+        detail=(
+            "Direct configuration activation is disabled; use the protected "
+            "draft, validation, review, approval, and activation workflow."
+        ),
+    )
 
 
 # NOTE: E-stop *activation* is intentionally left unauthenticated so a panic
@@ -883,6 +1075,37 @@ def get_events(
     return list(results)
 
 
+def _trend_signal_metadata(
+    db: Session,
+    tag_name: str,
+    sample_times: list[datetime],
+) -> dict[str, list[Any]]:
+    if not sample_times:
+        return {
+            "qualities": [],
+            "diagnostic_reasons": [],
+            "source_timestamps": [],
+            "sequences": [],
+            "sources": [],
+        }
+    rows = db.exec(
+        select(TagLog)
+        .where(col(TagLog.tag_name) == tag_name)
+        .where(col(TagLog.timestamp).in_(sample_times))
+    ).all()
+    by_timestamp = {row.timestamp: row for row in rows}
+    ordered = [by_timestamp[timestamp] for timestamp in sample_times]
+    return {
+        "qualities": [row.quality for row in ordered],
+        "diagnostic_reasons": [row.diagnostic_reason for row in ordered],
+        "source_timestamps": [
+            (row.source_timestamp or row.timestamp).isoformat() for row in ordered
+        ],
+        "sequences": [row.sequence for row in ordered],
+        "sources": [row.source for row in ordered],
+    }
+
+
 @app.get("/api/trends", dependencies=[Depends(require_read_auth)])
 def get_trends(
     tag_id: str,
@@ -933,7 +1156,12 @@ def get_trends(
     elif smoothing == "exponential_smoothing" and values:
         values = exponential_smoothing(values, alpha)
 
-    return {"timestamps": timestamps, "values": values, "truncated": truncated}
+    return {
+        "timestamps": timestamps,
+        "values": values,
+        **_trend_signal_metadata(db, tag_name, sample_times),
+        "truncated": truncated,
+    }
 
 
 @app.get("/api/export", dependencies=[Depends(require_read_auth)])

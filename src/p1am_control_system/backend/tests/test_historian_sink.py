@@ -75,7 +75,13 @@ def _never_due() -> bool:
 
 
 def _fake_log_scan(recorder: list[Any]) -> Any:
-    def _inner(session: Any, tags: dict[str, float], *, timestamp: Any = None) -> int:
+    def _inner(
+        session: Any,
+        tags: dict[str, float],
+        *,
+        timestamp: Any = None,
+        signal_frame: Any = None,
+    ) -> int:
         recorder.append((session, dict(tags), timestamp))
         return len(tags)
 
@@ -210,6 +216,74 @@ def test_writer_without_a_sink_still_persists_locally() -> None:
     assert writer.write(object(), {"TAG_0": 1.0}) == 1
     assert len(calls) == 1
     assert isinstance(writer.sink, NullHistorianSink)
+
+
+def test_writer_forwards_signal_frame_to_the_local_write() -> None:
+    """Signal quality must survive the historian-forwarding seam.
+
+    Regression guard for the #4065 + #4091 consolidation: ``poll_runtime``
+    invokes its injected ``ScanLogger`` with ``signal_frame=``, so a
+    ``HistorianWriter`` that swallowed the keyword would silently drop quality
+    metadata from every persisted sample (and, before the writer accepted it,
+    raise ``TypeError`` inside the scan loop).
+    """
+    seen: list[Any] = []
+
+    def _recording_log_scan(
+        _session: Any,
+        tags: dict[str, float],
+        *,
+        timestamp: Any = None,
+        signal_frame: Any = None,
+    ) -> int:
+        seen.append(signal_frame)
+        return len(tags)
+
+    frame = object()
+    writer = HistorianWriter(
+        due=_always_due,
+        sink=_RecordingSink(),
+        log_scan=_recording_log_scan,
+        clock=lambda: _TS,
+    )
+
+    assert writer.write(object(), {"TAG_0": 1.0}, signal_frame=frame) == 1
+    assert seen == [frame]
+
+
+def test_writer_defaults_signal_frame_to_none() -> None:
+    """Two-argument callers (the pre-#4091 shape) still work."""
+    seen: list[Any] = []
+
+    def _recording_log_scan(
+        _session: Any,
+        tags: dict[str, float],
+        *,
+        timestamp: Any = None,
+        signal_frame: Any = None,
+    ) -> int:
+        seen.append(signal_frame)
+        return len(tags)
+
+    writer = HistorianWriter(due=_always_due, log_scan=_recording_log_scan)
+
+    assert writer.write(object(), {"TAG_0": 1.0}) == 1
+    assert seen == [None]
+
+
+def test_sink_never_receives_signal_frame() -> None:
+    """The forwarding contract stays ``{tag: value}`` + timestamp."""
+    sink = _RecordingSink()
+    writer = HistorianWriter(
+        due=_always_due,
+        sink=sink,
+        log_scan=_fake_log_scan([]),
+        clock=lambda: _TS,
+    )
+
+    writer.write(object(), {"TAG_0": 1.0}, signal_frame=object())
+
+    assert sink.scans == [({"TAG_0": 1.0}, _TS)]
 
 
 def test_close_forwards_to_the_sink() -> None:

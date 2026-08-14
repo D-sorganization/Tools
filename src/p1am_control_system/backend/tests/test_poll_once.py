@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from main import _connect_once, _poll_once  # noqa: E402
 from models import EventLog, RoutingConfig  # noqa: E402
+from signal_quality import SignalFrameFactory  # noqa: E402
 
 
 class _Status:
@@ -141,7 +142,11 @@ async def test_poll_once_offline_falls_back_to_simulator_and_broadcasts_payload(
     ws = _FakeWsManager()
     logged_scans: list[dict[str, float]] = []
 
-    def fake_log_scan(_session: _FakeSession, tags: dict[str, float]) -> int:
+    def fake_log_scan(
+        _session: _FakeSession,
+        tags: dict[str, float],
+        **_: object,
+    ) -> int:
         logged_scans.append(dict(tags))
         return len(tags)
 
@@ -163,6 +168,8 @@ async def test_poll_once_offline_falls_back_to_simulator_and_broadcasts_payload(
     assert latest == {"TAG_0": 2.5, "TAG_1": 10.0}
     assert power.seen_tags == [{"TAG_0": 2.5, "TAG_1": 10.0}]
     assert payload["tags"][:2] == [2.5, 10.0]
+    assert payload["tag_samples"]["TAG_0"]["quality"] == "simulated"
+    assert payload["comms_health"]["quality"] == "simulated"
     assert ws.messages == [payload]
     assert logged_scans == [{"TAG_0": 2.5, "TAG_1": 10.0}]
     assert len(session.added) == 1
@@ -184,6 +191,15 @@ async def test_poll_once_connected_read_hiccup_holds_last_good() -> None:
     simulator = _FakeSimulator({"TAG_0": 0.0, "TAG_1": 0.0})  # must NOT be used
     power = _FakePowerSupply()
     ws = _FakeWsManager()
+    alarm_calls: list[dict[str, float]] = []
+
+    def process_events(
+        _engine: object,
+        tags: dict[str, float],
+        _active: dict[str, dict[str, Any]],
+    ) -> list[EventLog]:
+        alarm_calls.append(tags)
+        return []
 
     payload = await _poll_once(
         plc=plc,
@@ -196,13 +212,18 @@ async def test_poll_once_connected_read_hiccup_holds_last_good() -> None:
         active_alarm_map={},
         session_factory=lambda: _session_factory(session),
         estop_active=False,
-        log_scan=lambda _s, _t: 0,
+        log_scan=lambda _s, _t, **_kw: 0,
+        process_events=process_events,
     )
 
     assert simulator.read_count == 0  # simulator never consulted while connected
     assert latest == last_good  # held, not zeroed
     assert payload["tags"][:2] == [56.5, 2.5]
+    assert payload["tag_samples"]["TAG_0"]["quality"] == "stale"
+    assert payload["tag_samples"]["TAG_0"]["diagnostic_reason"] == "read_timeout"
+    assert payload["comms_health"]["quality"] == "stale"
     assert power.seen_tags == [last_good]
+    assert alarm_calls == []
 
 
 @pytest.mark.asyncio
@@ -230,7 +251,11 @@ async def test_poll_once_reasserts_estop_every_connected_scan() -> None:
 async def test_poll_once_rolls_back_historian_and_alarm_transaction() -> None:
     session = _FakeSession()
 
-    def failing_log_scan(_session: _FakeSession, _tags: dict[str, float]) -> int:
+    def failing_log_scan(
+        _session: _FakeSession,
+        _tags: dict[str, float],
+        **_: object,
+    ) -> int:
         raise RuntimeError("disk unavailable")
 
     await _poll_once(
@@ -250,6 +275,31 @@ async def test_poll_once_rolls_back_historian_and_alarm_transaction() -> None:
     assert session.commits == 0
     assert session.rollbacks == 1
     assert session.closed is True
+
+
+@pytest.mark.asyncio
+async def test_poll_frames_increment_one_shared_scan_sequence() -> None:
+    factory = SignalFrameFactory()
+    sequences: list[int] = []
+    latest = {"TAG_0": 0.0}
+    for value in (1.0, 2.0):
+        payload = await _poll_once(
+            plc=_FakePLC(connected=True, tags={"TAG_0": value}),
+            backup=_FakeSimulator(None),
+            latest_tag_values=latest,
+            ws=_FakeWsManager(),
+            alicats=_FakeAlicats(),
+            power_supply=_FakePowerSupply(),
+            alarm_engine=_FakeAlarmEngine(),
+            active_alarm_map={},
+            session_factory=lambda: _session_factory(_FakeSession()),
+            estop_active=False,
+            signal_frames=factory,
+            log_scan=lambda _s, _t, **_kw: 0,
+        )
+        sequences.append(payload["comms_health"]["sequence"])
+
+    assert sequences == [1, 2]
 
 
 @pytest.mark.asyncio

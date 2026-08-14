@@ -72,4 +72,33 @@ describe("telemetryFrameSchema", () => {
     });
     expect(parsed.success).toBe(true);
   });
+
+  it("preserves signal quality, timing, diagnostic, source, and sequence", () => {
+    const parsed = telemetryFrameSchema.safeParse({
+      tag_samples: {
+        TAG_0: {
+          value: 12.5,
+          source_timestamp: "2026-08-03T20:00:00+00:00",
+          server_timestamp: "2026-08-03T20:00:01+00:00",
+          quality: "stale",
+          diagnostic_reason: "read_timeout",
+          sequence: 42,
+          source: "synthetic.driver",
+        },
+      },
+      comms_health: {
+        quality: "stale",
+        diagnostic_reason: "read_timeout",
+        sequence: 42,
+        server_timestamp: "2026-08-03T20:00:01+00:00",
+        source: "synthetic.driver",
+      },
+    });
+
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.tag_samples?.TAG_0.quality).toBe("stale");
+      expect(parsed.data.comms_health?.sequence).toBe(42);
+    }
+  });
 });

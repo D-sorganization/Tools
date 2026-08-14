@@ -15,6 +15,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from models import TagLog
+from signal_quality import SignalFrame
 
 try:
     from datetime import UTC
@@ -29,6 +30,7 @@ def log_scan(
     tags: dict[str, float],
     *,
     timestamp: datetime | None = None,
+    signal_frame: SignalFrame | None = None,
 ) -> int:
     """Bulk-insert one scan's tag samples; return the number of rows written.
 
@@ -53,11 +55,20 @@ def log_scan(
         raise TypeError(f"tags must be a dict, got {type(tags).__name__}")
     if timestamp is not None and not isinstance(timestamp, datetime):
         raise TypeError(f"timestamp must be a datetime or None, got {type(timestamp)}")
+    if signal_frame is not None and not isinstance(signal_frame, SignalFrame):
+        raise TypeError("signal_frame must be a SignalFrame or None")
 
     if not tags:
         return 0
 
-    ts = timestamp if timestamp is not None else datetime.now(UTC)
+    if signal_frame is not None:
+        if signal_frame.values != {name: float(value) for name, value in tags.items()}:
+            raise ValueError("signal_frame values must match logged tags")
+        if timestamp is not None and timestamp != signal_frame.server_timestamp:
+            raise ValueError("timestamp must match signal_frame server_timestamp")
+        ts = signal_frame.server_timestamp
+    else:
+        ts = timestamp if timestamp is not None else datetime.now(UTC)
 
     rows = []
     for name, value in tags.items():
@@ -65,7 +76,33 @@ def log_scan(
             numeric = float(value)
         except (TypeError, ValueError) as exc:
             raise ValueError(f"tag {name!r} has non-numeric value {value!r}") from exc
-        rows.append({"tag_name": str(name), "value": numeric, "timestamp": ts})
+        if signal_frame is None:
+            rows.append(
+                {
+                    "tag_name": str(name),
+                    "value": numeric,
+                    "source_timestamp": ts,
+                    "timestamp": ts,
+                    "quality": "uncertain",
+                    "diagnostic_reason": "legacy_unqualified",
+                    "sequence": 0,
+                    "source": "legacy.adapter",
+                }
+            )
+            continue
+        sample = signal_frame.samples[str(name)]
+        rows.append(
+            {
+                "tag_name": str(name),
+                "value": numeric,
+                "source_timestamp": sample.source_timestamp,
+                "timestamp": sample.server_timestamp,
+                "quality": sample.quality.value,
+                "diagnostic_reason": sample.diagnostic_reason,
+                "sequence": sample.sequence,
+                "source": sample.source,
+            }
+        )
 
     session.execute(insert(TagLog), rows)
     return len(rows)

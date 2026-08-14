@@ -75,11 +75,25 @@ def test_response_schema_and_small_range(session: Session) -> None:
         end_time=_iso(4),
         db=session,
     )
-    assert set(result) == {"timestamps", "values", "truncated"}  # frontend contract
+    assert set(result) == {
+        "timestamps",
+        "values",
+        "qualities",
+        "diagnostic_reasons",
+        "source_timestamps",
+        "sequences",
+        "sources",
+        "truncated",
+    }
     assert result["truncated"] is False
     assert result["values"] == [0.0, 1.0, 2.0, 3.0, 4.0]
     assert len(result["timestamps"]) == 5
     assert all(isinstance(t, str) for t in result["timestamps"])  # ISO strings
+    assert result["qualities"] == ["uncertain"] * 5
+    assert result["diagnostic_reasons"] == ["legacy_unqualified"] * 5
+    assert len(result["source_timestamps"]) == 5
+    assert result["sequences"] == [0] * 5
+    assert result["sources"] == ["legacy.adapter"] * 5
 
 
 def test_numeric_tag_id_resolves_to_tag_name(session: Session) -> None:

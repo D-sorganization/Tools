@@ -72,6 +72,332 @@ export type ActiveAlarm = z.infer<typeof activeAlarmSchema>;
 
 export const activeAlarmsSchema = z.array(activeAlarmSchema);
 
+export const signalQualitySchema = z.enum([
+  "good",
+  "uncertain",
+  "bad",
+  "stale",
+  "simulated",
+]);
+
+export const signalSampleSchema = z.object({
+  value: z.number(),
+  source_timestamp: z.string(),
+  server_timestamp: z.string(),
+  quality: signalQualitySchema,
+  diagnostic_reason: z.string().nullable(),
+  sequence: z.number().int().positive(),
+  source: z.string().min(1),
+});
+export type SignalSample = z.infer<typeof signalSampleSchema>;
+
+export const commsHealthSchema = z.object({
+  quality: signalQualitySchema,
+  diagnostic_reason: z.string().nullable(),
+  sequence: z.number().int().positive().nullable(),
+  server_timestamp: z.string().nullable(),
+  source: z.string().min(1),
+});
+export type CommsHealth = z.infer<typeof commsHealthSchema>;
+
+export const professionalAlarmSchema = z.object({
+  tag: z.string(),
+  priority: z.enum(["critical", "high", "medium", "low"]),
+  lifecycle: z.enum([
+    "inactive",
+    "unacknowledged",
+    "acknowledged",
+    "returned_unacknowledged",
+    "shelved",
+    "suppressed",
+  ]),
+  condition: z.string(),
+  acknowledged_by: z.string().nullable(),
+  shelved_by: z.string().nullable(),
+  shelf_reason: z.string().nullable(),
+  shelf_until: z.string().nullable(),
+  suppression_rule: z.string().nullable(),
+  first_out_sequence: z.number().int().positive().nullable(),
+  active_since: z.string().nullable(),
+  help_text: z.string(),
+});
+export const professionalAlarmsSchema = z.array(professionalAlarmSchema);
+export type ProfessionalAlarm = z.infer<typeof professionalAlarmSchema>;
+
+export const configurationStateSchema = z.enum([
+  "draft",
+  "validated",
+  "in_review",
+  "approved",
+  "active",
+  "superseded",
+]);
+export const configurationRevisionSchema = z.object({
+  revision_id: z.string(),
+  version: z.number().int().positive(),
+  state: configurationStateSchema,
+  payload: z.unknown(),
+  payload_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+  reason: z.string(),
+  created_by: z.string(),
+  created_at: z.string(),
+  validated_by: z.string().nullable(),
+  reviewed_by: z.string().nullable(),
+  approved_by: z.string().nullable(),
+  activated_by: z.string().nullable(),
+  activated_at: z.string().nullable(),
+  activation_identity: z.string().nullable(),
+  source_revision_id: z.string().nullable(),
+});
+export const configurationRevisionsSchema = z.array(configurationRevisionSchema);
+export const configurationDiffSchema = z.array(
+  z.object({
+    path: z.string(),
+    before: z.unknown().nullable(),
+    after: z.unknown().nullable(),
+  }),
+);
+export type ConfigurationRevision = z.infer<typeof configurationRevisionSchema>;
+export type ConfigurationDiffEntry = z.infer<typeof configurationDiffSchema>[number];
+
+export const deploymentIdentitySchema = z.object({
+  software_revision: z.string(),
+  configuration_revision: z.string(),
+  configuration_sha256: z.string().nullable(),
+  configuration_state: z.string(),
+});
+export const systemHealthSchema = z.object({
+  generated_at: z.string(),
+  overall: z.enum(["good", "degraded", "bad"]),
+  identity: deploymentIdentitySchema,
+  checks: z.array(
+    z.object({
+      name: z.string(),
+      status: z.enum(["good", "degraded", "bad"]),
+      detail: z.string(),
+    }),
+  ),
+});
+export type DeploymentIdentity = z.infer<typeof deploymentIdentitySchema>;
+export type SystemHealth = z.infer<typeof systemHealthSchema>;
+
+// --- Representative operator workspace -------------------------------------
+
+export const faceplateValueSchema = z.object({
+  value: z.number(),
+  unit: z.string().min(1),
+  source_timestamp: z.string(),
+});
+export const assetFaceplateSchema = z.object({
+  asset_id: z.string().startsWith("SYNTHETIC."),
+  label: z.string(),
+  asset_type: z.enum(["pump", "valve", "vessel", "heater", "separator"]),
+  primary_value: faceplateValueSchema,
+  quality: z.enum(["good", "uncertain", "bad", "stale", "simulated"]),
+  mode: z.enum(["off", "manual", "automatic", "unavailable"]),
+  alarm_state: z.enum(["normal", "active", "shelved", "suppressed"]),
+  interlock_state: z.enum(["clear", "permissive_missing", "tripped"]),
+  detail_route: z.string(),
+  trend_tags: z.array(z.string().startsWith("SYNTHETIC.")).min(1),
+});
+export const processOverviewSchema = z.object({
+  overview_id: z.string().startsWith("SYNTHETIC."),
+  title: z.string(),
+  areas: z.array(
+    z.object({
+      area_id: z.string().startsWith("SYNTHETIC."),
+      label: z.string(),
+      detail_route: z.string(),
+      assets: z.array(assetFaceplateSchema),
+    }),
+  ),
+  data_classification: z.literal("synthetic"),
+  not_for_live_control: z.literal(true),
+});
+export const protectionDefinitionSchema = z.object({
+  protection_id: z.string().startsWith("SYNTHETIC."),
+  category: z.enum(["control", "interlock", "independent_protection"]),
+  consequences: z.array(z.string()).min(1),
+  bypassable: z.boolean(),
+});
+export const tripRecordSchema = z.object({
+  protection_id: z.string().startsWith("SYNTHETIC."),
+  group_id: z.string(),
+  category: z.enum(["control", "interlock", "independent_protection"]),
+  consequences: z.array(z.string()),
+  occurred_at: z.string(),
+  first_out: z.boolean(),
+});
+export const managedBypassSchema = z.object({
+  protection_id: z.string().startsWith("SYNTHETIC."),
+  actor: z.string(),
+  reason: z.string(),
+  requested_at: z.string(),
+  expires_at: z.string(),
+  banner_required: z.literal(true),
+  active: z.literal(true),
+});
+export const protectionSnapshotSchema = z.object({
+  definitions: z.array(protectionDefinitionSchema),
+  trips: z.array(tripRecordSchema),
+  active_bypasses: z.array(managedBypassSchema),
+});
+export type AssetFaceplate = z.infer<typeof assetFaceplateSchema>;
+export type ProcessOverview = z.infer<typeof processOverviewSchema>;
+export type ProtectionSnapshot = z.infer<typeof protectionSnapshotSchema>;
+
+export const assetHealthReportSchema = z.object({
+  asset_id: z.string().startsWith("SYNTHETIC."),
+  generated_at: z.string(),
+  counters: z.object({
+    runtime_seconds: z.number().nonnegative(),
+    start_count: z.number().int().nonnegative(),
+  }),
+  statistics: z.object({
+    sample_count: z.number().int().positive(),
+    minimum: z.number(),
+    maximum: z.number(),
+    mean: z.number(),
+    standard_deviation: z.number().nonnegative(),
+  }),
+  advisories: z.array(
+    z.object({
+      code: z.enum([
+        "calibration_due",
+        "drift",
+        "flatline",
+        "command_feedback_mismatch",
+        "noisy_signal",
+      ]),
+      asset_id: z.string().startsWith("SYNTHETIC."),
+      detected_at: z.string(),
+      detail: z.string(),
+      classification: z.literal("maintenance_advisory"),
+      authoritative_trip: z.literal(false),
+    }),
+  ),
+  data_classification: z.literal("synthetic"),
+});
+export const shiftEntrySchema = z.object({
+  entry_id: z.string(),
+  shift_id: z.string().startsWith("SYNTHETIC."),
+  run_id: z.string().startsWith("SYNTHETIC."),
+  summary: z.string(),
+  unresolved_actions: z.array(z.string()),
+  event_references: z.array(
+    z.object({ event_id: z.string().startsWith("SYNTHETIC."), occurred_at: z.string() }),
+  ),
+  trend_references: z.array(
+    z.object({
+      investigation_id: z.string().startsWith("SYNTHETIC."),
+      content_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+    }),
+  ),
+  created_by: z.string(),
+  created_at: z.string(),
+  data_classification: z.literal("synthetic"),
+});
+export const shiftEntriesSchema = z.array(shiftEntrySchema);
+export type AssetHealthReport = z.infer<typeof assetHealthReportSchema>;
+export type ShiftEntry = z.infer<typeof shiftEntrySchema>;
+
+export const productStatusSchema = z.object({
+  procedure_state: z.enum([
+    "idle",
+    "starting",
+    "running",
+    "holding",
+    "stopping",
+    "aborted",
+    "recovering",
+  ]),
+  procedure_events: z.array(z.unknown()),
+  connectors: z.array(
+    z.object({
+      connector_id: z.string().startsWith("SYNTHETIC."),
+      version: z.string(),
+      details: z.record(z.string(), z.unknown()),
+    }),
+  ),
+  samples: z.record(
+    z.string(),
+    z.object({
+      value: z.number().nullable(),
+      quality: z.enum(["good", "bad"]),
+      diagnostic: z.string(),
+      connector_id: z.string().startsWith("SYNTHETIC."),
+    }),
+  ),
+  notification_policy: z.object({
+    primary_recipient: z.string(),
+    escalation_recipient: z.string(),
+  }).passthrough(),
+  notification_audit: z.array(z.unknown()),
+  availability: z.object({
+    recovery_time_objective_seconds: z.number().positive(),
+    recovery_point_objective_seconds: z.number().positive(),
+    clock_ordering_reliable: z.boolean(),
+    command_authority: z.string().nullable(),
+    transport_available: z.boolean(),
+    hmi_available: z.boolean(),
+    buffered_samples: z.number().int().nonnegative(),
+    data_classification: z.literal("synthetic"),
+  }),
+  data_classification: z.literal("synthetic"),
+  not_for_live_control: z.literal(true),
+});
+export type ProductStatus = z.infer<typeof productStatusSchema>;
+
+const sha256Schema = z.string().regex(/^[0-9a-f]{64}$/);
+export const advisoryResultSchema = z.object({
+  advisory_id: z.string().startsWith("ADV-"),
+  generated_at: z.string(),
+  model: z.object({
+    model_id: z.literal("SYNTHETIC.MODEL.ADVISORY"),
+    version: z.string(),
+    algorithm: z.string(),
+    artifact_sha256: sha256Schema,
+  }),
+  data: z.object({
+    dataset_id: z.string().startsWith("SYNTHETIC."),
+    content_sha256: sha256Schema,
+    feature_names: z.array(z.string()),
+  }),
+  constraints: z.object({
+    minimum: z.number(),
+    maximum: z.number(),
+    unit: z.string(),
+  }),
+  confidence: z.object({
+    level: z.number().gt(0).lt(1),
+    lower: z.number(),
+    estimate: z.number(),
+    upper: z.number(),
+  }),
+  recommended_setpoint: z.number(),
+  recommendation: z.string(),
+  limitation: z.string(),
+  replay: z.object({
+    input_sha256: sha256Schema,
+    result_sha256: sha256Schema,
+    verified: z.literal(true),
+  }),
+  authoritative_write_available: z.literal(false),
+  data_classification: z.literal("synthetic"),
+  not_for_live_control: z.literal(true),
+});
+export type AdvisoryResult = z.infer<typeof advisoryResultSchema>;
+
+export const advisoryDispositionSchema = z.object({
+  advisory_id: z.string(),
+  decision: z.enum(["accepted_for_review", "rejected", "deferred"]),
+  reason: z.string(),
+  actor: z.string(),
+  recorded_at: z.string(),
+  applied_to_control: z.literal(false),
+});
+export type AdvisoryDisposition = z.infer<typeof advisoryDispositionSchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *
@@ -87,6 +413,11 @@ export const activeAlarmsSchema = z.array(activeAlarmSchema);
 export const telemetryFrameSchema = z.object({
   tags: z.array(z.number()).optional().catch(undefined),
   tags_dict: z.record(z.string(), z.number()).optional().catch(undefined),
+  tag_samples: z
+    .record(z.string(), signalSampleSchema)
+    .optional()
+    .catch(undefined),
+  comms_health: commsHealthSchema.optional().catch(undefined),
   alicats: z.array(alicatMfcStateSchema).optional().catch(undefined),
   active_alarms: z
     .record(z.string(), activeAlarmSchema)

@@ -144,6 +144,28 @@ describe("useTelemetryStream", () => {
     expect(result.current.temperatureStatus).toBe(temp);
   });
 
+  it("surfaces stale communications independently of transport connectivity", () => {
+    const { result } = renderHook(() => useTelemetryStream());
+
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({
+        data: JSON.stringify({
+          comms_health: {
+            quality: "stale",
+            diagnostic_reason: "read_timeout",
+            sequence: 9,
+            server_timestamp: "2026-08-03T20:00:00+00:00",
+            source: "synthetic.driver",
+          },
+        }),
+      });
+    });
+
+    expect(result.current.isConnected).toBe(true);
+    expect(result.current.commsHealth?.quality).toBe("stale");
+    expect(result.current.commsHealth?.diagnostic_reason).toBe("read_timeout");
+  });
+
   it("bounds the live history buffer (MAX_HISTORY eviction)", () => {
     const { result } = renderHook(() => useTelemetryStream());
     const ws = MockWebSocket.instances[0];

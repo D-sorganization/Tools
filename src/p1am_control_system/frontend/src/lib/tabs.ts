@@ -10,6 +10,7 @@
  */
 
 export type TabId =
+  | "operator"
   | "trends"
   | "explorer"
   | "controllers"
@@ -34,6 +35,12 @@ export interface TabDef {
 }
 
 export const TABS: readonly TabDef[] = [
+  {
+    id: "operator",
+    label: "Operator Overview",
+    settingsLabel: "Representative Operator Workspace",
+    accentVar: "var(--accent-cyan)",
+  },
   {
     id: "trends",
     label: "Trends & Monitors",

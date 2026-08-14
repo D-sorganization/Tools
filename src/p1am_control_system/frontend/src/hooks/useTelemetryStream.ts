@@ -4,7 +4,7 @@ import { SAMPLES_PER_SECOND } from "../lib/trendTime";
 import { telemetryFrameSchema } from "../api/schemas";
 import type { PowerSupplyStatus } from "../components/PowerSupplyControl";
 import type { TemperatureStatus } from "../components/TemperatureControl";
-import type { AlicatMFCState, ActiveAlarm } from "../api/schemas";
+import type { AlicatMFCState, ActiveAlarm, CommsHealth } from "../api/schemas";
 
 /**
  * Live telemetry from the `/api/stream` WebSocket (#3543).
@@ -36,6 +36,7 @@ export interface TelemetryState {
   eStopActive: boolean;
   powerSupplyStatus: PowerSupplyStatus | undefined;
   temperatureStatus: TemperatureStatus | undefined;
+  commsHealth: CommsHealth | undefined;
   isConnected: boolean;
 }
 
@@ -116,6 +117,9 @@ export function useTelemetryStream(
   const [temperatureStatus, setTemperatureStatus] = useState<
     TemperatureStatus | undefined
   >(undefined);
+  const [commsHealth, setCommsHealth] = useState<CommsHealth | undefined>(
+    undefined,
+  );
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -209,6 +213,17 @@ export function useTelemetryStream(
               : next,
           );
         }
+        if (frame.comms_health) {
+          const next = frame.comms_health;
+          setCommsHealth((prev) =>
+            shallowObjEqual(
+              prev as unknown as Record<string, unknown> | undefined,
+              next as unknown as Record<string, unknown>,
+            )
+              ? prev
+              : next,
+          );
+        }
         lastFrameAt = Date.now();
         setIsConnected(true);
         return true;
@@ -289,6 +304,7 @@ export function useTelemetryStream(
     eStopActive,
     powerSupplyStatus,
     temperatureStatus,
+    commsHealth,
     isConnected,
     setAlicats,
     setActiveAlarms,

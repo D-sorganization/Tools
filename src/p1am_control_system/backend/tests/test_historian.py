@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from historian import log_scan  # noqa: E402
 from models import TagLog  # noqa: E402
+from signal_quality import SignalFrameFactory  # noqa: E402
 from sqlalchemy import StaticPool, func  # noqa: E402
 from sqlmodel import Session, SQLModel, col, create_engine, select  # noqa: E402
 
@@ -60,6 +61,34 @@ class TestLogScan:
         session.commit()
         stamps = {r.timestamp for r in session.exec(select(TagLog)).all()}
         assert len(stamps) == 1  # every row shares the one scan timestamp
+
+    def test_signal_provenance_persists_with_each_historian_value(
+        self, session: Session
+    ) -> None:
+        frame = SignalFrameFactory(
+            clock=lambda: datetime(2026, 1, 1, tzinfo=UTC)
+        ).stale({"TAG_0": 4.5}, source="synthetic.driver", reason="read_timeout")
+
+        log_scan(session, frame.values, signal_frame=frame)
+        session.commit()
+
+        row = session.exec(select(TagLog)).one()
+        assert row.quality == "stale"
+        assert row.diagnostic_reason == "read_timeout"
+        assert row.source == "synthetic.driver"
+        assert row.sequence == 1
+        assert row.source_timestamp == frame.samples["TAG_0"].source_timestamp.replace(
+            tzinfo=None
+        )
+        assert row.timestamp == frame.server_timestamp.replace(tzinfo=None)
+
+    def test_signal_frame_must_match_logged_tag_contract(
+        self, session: Session
+    ) -> None:
+        frame = SignalFrameFactory().good({"TAG_0": 1.0})
+
+        with pytest.raises(ValueError, match="must match"):
+            log_scan(session, {"TAG_0": 2.0}, signal_frame=frame)
 
     def test_empty_scan_writes_nothing(self, session: Session) -> None:
         assert log_scan(session, {}) == 0

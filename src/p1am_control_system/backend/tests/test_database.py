@@ -15,6 +15,7 @@ import pytest
 pytest.importorskip("sqlmodel")
 
 import database  # noqa: E402
+from audit_log import AuditLog  # noqa: E402,F401  (registers audit metadata)
 from models import TagLog  # noqa: E402,F401  (registers the table in metadata)
 from sqlalchemy import text  # noqa: E402
 from sqlmodel import Session, SQLModel, create_engine  # noqa: E402
@@ -101,6 +102,92 @@ def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
     names = {r[0] for r in rows}
     assert "ix_taglog_tag_name_timestamp" in names
     assert "ix_taglog_tag_name" not in names
+
+
+def test_init_db_installs_append_only_audit_guards(tmp_path, monkeypatch) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'init-audit.db'}")
+    monkeypatch.setattr(database, "engine", engine)
+
+    database.init_db()
+
+    with engine.connect() as connection:
+        trigger_names = {
+            row[0]
+            for row in connection.execute(
+                text(
+                    "SELECT name FROM sqlite_master WHERE type='trigger' "
+                    "AND tbl_name='auditlog'"
+                )
+            )
+        }
+    assert trigger_names == {"auditlog_no_delete", "auditlog_no_update"}
+
+
+def test_init_db_creates_versioned_configuration_store_idempotently(
+    tmp_path, monkeypatch
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'init-configuration.db'}")
+    monkeypatch.setattr(database, "engine", engine)
+
+    database.init_db()
+    database.init_db()
+
+    with engine.connect() as connection:
+        table = connection.execute(
+            text(
+                "SELECT name FROM sqlite_master WHERE type='table' "
+                "AND name='configurationrevisionrecord'"
+            )
+        ).scalar_one()
+    assert table == "configurationrevisionrecord"
+
+
+def test_historian_quality_migration_preserves_legacy_rows(
+    tmp_path, monkeypatch
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'legacy-quality.db'}")
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE taglog (id INTEGER PRIMARY KEY, tag_name VARCHAR "
+                "NOT NULL, value FLOAT NOT NULL, timestamp DATETIME NOT NULL)"
+            )
+        )
+        connection.execute(
+            text(
+                "INSERT INTO taglog(tag_name, value, timestamp) "
+                "VALUES ('TAG_0', 1.5, '2026-08-03 12:00:00')"
+            )
+        )
+    monkeypatch.setattr(database, "engine", engine)
+
+    database._migrate_historian_quality_columns()
+    database._migrate_historian_quality_columns()
+
+    with engine.connect() as connection:
+        columns = {
+            row[1] for row in connection.exec_driver_sql("PRAGMA table_info(taglog)")
+        }
+        row = connection.execute(
+            text(
+                "SELECT quality, diagnostic_reason, sequence, source, "
+                "source_timestamp FROM taglog"
+            )
+        ).one()
+    assert {
+        "quality",
+        "diagnostic_reason",
+        "sequence",
+        "source",
+        "source_timestamp",
+    } <= columns
+    assert tuple(row) == (
+        "uncertain",
+        "legacy_unqualified",
+        0,
+        "legacy.adapter",
+        "2026-08-03 12:00:00",
+    )
 
 
 def test_trend_query_uses_composite_index(tmp_path) -> None:

@@ -21,6 +21,7 @@ pytest.importorskip("sqlmodel")
 pytest.importorskip("httpx")
 pytest.importorskip("fastapi.testclient")
 
+import main as main_module
 from fastapi.testclient import TestClient
 from main import app, control_context, get_session, modbus_manager
 from models import InterlockConfig, PIDConfig, RoutingConfig, TagLog
@@ -196,7 +197,7 @@ async def test_get_routing_success() -> None:
 async def test_update_routing_success(
     sample_routing_config: RoutingConfig,
 ) -> None:
-    """Verify POST /api/routing writes configs and triggers Save to Flash coil."""
+    """Verify the retired direct route cannot bypass protected activation."""
     mock_write_routing = AsyncMock(return_value=True)
     mock_save_flash = AsyncMock(return_value=True)
 
@@ -207,10 +208,26 @@ async def test_update_routing_success(
     ):
         payload = sample_routing_config.model_dump()
         response = client.post("/api/routing", json=payload)
-        assert response.status_code == 200
-        assert response.json()["status"] == "success"
-        mock_write_routing.assert_called_once()
-        mock_save_flash.assert_called_once()
+        assert response.status_code == 409
+        assert "protected" in response.json()["detail"]
+        mock_write_routing.assert_not_called()
+        mock_save_flash.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_failed_approved_deployment_never_publishes_runtime_config(
+    sample_routing_config: RoutingConfig,
+) -> None:
+    publish = MagicMock()
+    with (
+        patch.object(modbus_manager, "_connected", True),
+        patch.object(modbus_manager, "write_routing", AsyncMock(return_value=False)),
+        patch.object(main_module, "_apply_control_config", publish),
+    ):
+        with pytest.raises(RuntimeError, match="rejected"):
+            await main_module._deploy_approved_routing(sample_routing_config)
+
+    publish.assert_not_called()
 
 
 @pytest.mark.asyncio

@@ -36,6 +36,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-08-13 P1AM platform consolidation (historian + SCADA foundation)
+
+- `HistorianWriter.write` accepts and forwards the `signal_frame` quality
+  metadata that `poll_runtime.ScanLogger` supplies, so the qualified-signal
+  contract (#4091) and the pluggable historian forwarding path (#4065) compose
+  instead of one overwriting the other. The remote sink contract stays
+  `{tag: value}` + timestamp, so no sink implementation depends on the quality
+  model.
+
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
 - Shared golf-club assembly validation returns explicitly typed NumPy arrays
@@ -43,6 +52,33 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   new assembly physics contracts while satisfying the changed-file mypy gate.
   Serialization facade methods keep typed local return values so narrow mypy
   runs agree with full-repository type information.
+
+### 2026-08-03 Professional SCADA trustworthy foundation
+
+- `src/p1am_control_system` supports named synthetic principals, short-lived
+  digest-only sessions, server-side Viewer/Operator/Engineer/Admin roles, and
+  append-only audit records for every attempted API mutation. Audit payloads
+  are bounded and redact credential fields.
+- A canonical qualified-signal contract carries value, source/server time,
+  quality, diagnostic reason, sequence, and source through polling, REST and
+  WebSocket APIs, historian storage, alarm eligibility, and the HMI.
+- Supervisory alarm management provides deterministic priority, lifecycle,
+  acknowledgement, timed shelving, designed suppression, first-out,
+  deadband/delay, help, and performance metrics. It is not an independent
+  protection layer.
+- Protected configuration changes follow immutable draft, validation, diff,
+  review, approval, activation, identification, and rollback states. Direct
+  activation is rejected and failed deployment does not publish a revision.
+- Recovery archives are checksummed, exclude runtime databases and energized
+  state, and restore only as configuration drafts. System health reports build,
+  configuration, database, clock, storage, service, driver, and backup status
+  independently.
+- Declarative acceptance scenarios operate only on an isolated synthetic
+  adapter and produce self-contained evidence packages with hashes,
+  expected/observed states, timing results, limitations, and sign-off fields.
+- These features preserve existing control behavior and do not authorize live
+  deployment or inclusion of plant tags, addresses, values, recipes,
+  sequences, credentials, network details, or production data.
 
 ### 2026-07-31 P1AM Plant Historian Forwarding (TimescaleDB)
 

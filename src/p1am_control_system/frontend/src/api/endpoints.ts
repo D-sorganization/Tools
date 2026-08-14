@@ -1,4 +1,4 @@
-import { apiFetch } from "./client";
+import { apiFetch, apiResponse } from "./client";
 import {
   ladderExplorerSchema,
   alicatListSchema,
@@ -11,6 +11,19 @@ import {
   captureClearResultSchema,
   captureConfigSchema,
   performanceConfigSchema,
+  professionalAlarmSchema,
+  professionalAlarmsSchema,
+  configurationDiffSchema,
+  configurationRevisionSchema,
+  configurationRevisionsSchema,
+  systemHealthSchema,
+  processOverviewSchema,
+  protectionSnapshotSchema,
+  assetHealthReportSchema,
+  shiftEntriesSchema,
+  productStatusSchema,
+  advisoryResultSchema,
+  advisoryDispositionSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -23,6 +36,17 @@ import {
   type TuningResult,
   type MpcSimResult,
   type HierarchicalArea,
+  type ProfessionalAlarm,
+  type ConfigurationDiffEntry,
+  type ConfigurationRevision,
+  type SystemHealth,
+  type ProcessOverview,
+  type ProtectionSnapshot,
+  type AssetHealthReport,
+  type ShiftEntry,
+  type ProductStatus,
+  type AdvisoryResult,
+  type AdvisoryDisposition,
 } from "./schemas";
 
 /**
@@ -41,8 +65,195 @@ export function getRouting(): Promise<unknown> {
   return apiFetch("/routing");
 }
 
-export function deployRouting(payload: unknown): Promise<unknown> {
-  return apiFetch("/routing", { method: "POST", json: payload });
+export function createConfigurationDraft(
+  payload: unknown,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  return apiFetch("/configurations/drafts", {
+    method: "POST",
+    json: { payload, reason },
+    schema: configurationRevisionSchema,
+  });
+}
+
+export function getConfigurationRevisions(): Promise<ConfigurationRevision[]> {
+  return apiFetch("/configurations", { schema: configurationRevisionsSchema });
+}
+
+export function getConfigurationDiff(
+  revisionId: string,
+): Promise<ConfigurationDiffEntry[]> {
+  return apiFetch(`/configurations/${encodeURIComponent(revisionId)}/diff`, {
+    schema: configurationDiffSchema,
+  });
+}
+
+function transitionConfiguration(
+  revisionId: string,
+  transition: "validate" | "review" | "activate",
+): Promise<ConfigurationRevision> {
+  return apiFetch(
+    `/configurations/${encodeURIComponent(revisionId)}/${transition}`,
+    { method: "POST", schema: configurationRevisionSchema },
+  );
+}
+
+export const validateConfiguration = (revisionId: string) =>
+  transitionConfiguration(revisionId, "validate");
+export const reviewConfiguration = (revisionId: string) =>
+  transitionConfiguration(revisionId, "review");
+export const activateConfiguration = (revisionId: string) =>
+  transitionConfiguration(revisionId, "activate");
+
+export function approveConfiguration(
+  revisionId: string,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  return apiFetch(`/configurations/${encodeURIComponent(revisionId)}/approve`, {
+    method: "POST",
+    json: { reason },
+    schema: configurationRevisionSchema,
+  });
+}
+
+export function rollbackConfiguration(
+  revisionId: string,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  return apiFetch(`/configurations/${encodeURIComponent(revisionId)}/rollback`, {
+    method: "POST",
+    json: { reason },
+    schema: configurationRevisionSchema,
+  });
+}
+
+// --- System identity, health, and recovery ----------------------------------
+
+export function getSystemHealth(): Promise<SystemHealth> {
+  return apiFetch("/system/health", { schema: systemHealthSchema });
+}
+
+// --- Representative operator workspace -------------------------------------
+
+export function getOperatorOverview(): Promise<ProcessOverview> {
+  return apiFetch("/operator/overview", { schema: processOverviewSchema });
+}
+
+export function getProtectionSnapshot(): Promise<ProtectionSnapshot> {
+  return apiFetch("/operator/protections", { schema: protectionSnapshotSchema });
+}
+
+export function getRepresentativeAssetHealth(): Promise<AssetHealthReport> {
+  return apiFetch("/operator/assets/health/representative", {
+    schema: assetHealthReportSchema,
+  });
+}
+
+export function getShiftEntries(query = ""): Promise<ShiftEntry[]> {
+  return apiFetch(`/operator/shift-log?query=${encodeURIComponent(query)}`, {
+    schema: shiftEntriesSchema,
+  });
+}
+
+export function getProductStatus(): Promise<ProductStatus> {
+  return apiFetch("/operator/product-status", { schema: productStatusSchema });
+}
+
+export function getRepresentativeAdvisory(): Promise<AdvisoryResult> {
+  return apiFetch("/operator/advisories/representative", {
+    schema: advisoryResultSchema,
+  });
+}
+
+export function recordAdvisoryDisposition(
+  advisoryId: string,
+  decision: "accepted_for_review" | "rejected" | "deferred",
+  reason: string,
+): Promise<AdvisoryDisposition> {
+  return apiFetch(
+    `/operator/advisories/${encodeURIComponent(advisoryId)}/dispositions`,
+    {
+      method: "POST",
+      json: { decision, reason },
+      schema: advisoryDispositionSchema,
+    },
+  );
+}
+
+export function sendProcedureCommand(command: string, reason: string): Promise<unknown> {
+  return apiFetch(`/operator/procedure/commands/${encodeURIComponent(command)}`, {
+    method: "POST",
+    json: { reason },
+  });
+}
+
+export type RecoveryDownload = {
+  payload: Blob;
+  sha256: string;
+  configurationRevision: string;
+};
+
+export async function downloadRecoveryPackage(): Promise<RecoveryDownload> {
+  const response = await apiResponse("/system/backups", { method: "POST" });
+  const sha256 = response.headers.get("X-Artifact-SHA256");
+  const configurationRevision = response.headers.get("X-Configuration-Revision");
+  if (!sha256 || !configurationRevision) {
+    throw new Error("Recovery response omitted identity headers");
+  }
+  return {
+    payload: await response.blob(),
+    sha256,
+    configurationRevision,
+  };
+}
+
+export async function restoreRecoveryPackage(
+  payload: Blob,
+  sha256: string,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  const response = await apiResponse("/system/restores", {
+    method: "POST",
+    body: payload,
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "X-Artifact-SHA256": sha256,
+      "X-Change-Reason": reason,
+    },
+  });
+  const parsed = configurationRevisionSchema.safeParse(await response.json());
+  if (!parsed.success) {
+    throw new Error("Restore response did not match the revision contract");
+  }
+  return parsed.data;
+}
+
+export type EvidenceDownload = {
+  payload: Blob;
+  sha256: string;
+  evidenceId: string;
+  passed: boolean;
+};
+
+export async function runRepresentativeScenario(): Promise<EvidenceDownload> {
+  const scenario = await apiFetch("/acceptance/scenarios/representative");
+  const response = await apiResponse("/acceptance/scenarios/run", {
+    method: "POST",
+    body: JSON.stringify(scenario),
+    headers: { "Content-Type": "application/json" },
+  });
+  const sha256 = response.headers.get("X-Artifact-SHA256");
+  const evidenceId = response.headers.get("X-Evidence-ID");
+  const passed = response.headers.get("X-Evidence-Passed");
+  if (!sha256 || !evidenceId || !passed) {
+    throw new Error("Acceptance response omitted evidence identity headers");
+  }
+  return {
+    payload: await response.blob(),
+    sha256,
+    evidenceId,
+    passed: passed === "true",
+  };
 }
 
 // --- Tags --------------------------------------------------------------------
@@ -77,6 +288,40 @@ export function getEvents(limit = 50): Promise<EventLogEntry[]> {
 
 export function acknowledgeAlarm(tagId: string): Promise<unknown> {
   return apiFetch(`/alarms/${tagId}/acknowledge`, { method: "POST" });
+}
+
+export function getProfessionalAlarms(): Promise<ProfessionalAlarm[]> {
+  return apiFetch("/alarm-management/active", {
+    schema: professionalAlarmsSchema,
+  });
+}
+
+export function acknowledgeProfessionalAlarm(
+  tag: string,
+): Promise<ProfessionalAlarm> {
+  return apiFetch(`/alarm-management/${encodeURIComponent(tag)}/acknowledge`, {
+    method: "POST",
+    schema: professionalAlarmSchema,
+  });
+}
+
+export function shelfProfessionalAlarm(
+  tag: string,
+  reason: string,
+  durationSeconds: number,
+): Promise<ProfessionalAlarm> {
+  return apiFetch(`/alarm-management/${encodeURIComponent(tag)}/shelf`, {
+    method: "POST",
+    json: { reason, duration_seconds: durationSeconds },
+    schema: professionalAlarmSchema,
+  });
+}
+
+export function unshelveProfessionalAlarm(tag: string): Promise<ProfessionalAlarm> {
+  return apiFetch(`/alarm-management/${encodeURIComponent(tag)}/shelf`, {
+    method: "DELETE",
+    schema: professionalAlarmSchema,
+  });
 }
 
 // --- Alicat mass-flow controllers --------------------------------------------

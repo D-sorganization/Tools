@@ -29,11 +29,16 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from auth_config import (  # noqa: E402
+    identity_service,
     require_admin_key,
     require_api_key,
+    require_engineer_key,
+    resolve_optional_principal,
     verify_operator_key,
 )
 from fastapi import HTTPException, status  # noqa: E402
+from fastapi.security import HTTPAuthorizationCredentials  # noqa: E402
+from identity import Principal, Role  # noqa: E402
 
 _OPERATOR_KEY = "operator-secret"  # pragma: allowlist secret
 _ADMIN_KEY = "admin-secret"  # pragma: allowlist secret
@@ -84,7 +89,8 @@ def test_require_api_key_passes_with_correct_operator_key(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
-    assert require_api_key(api_key=_OPERATOR_KEY) is None
+    principal = require_api_key(api_key=_OPERATOR_KEY, bearer=None)
+    assert principal == Principal("legacy.single-key", "Legacy User", Role.ADMIN)
 
 
 def test_require_api_key_accepts_admin_key_as_operator(
@@ -93,7 +99,7 @@ def test_require_api_key_accepts_admin_key_as_operator(
     monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", _ADMIN_KEY)
     # The admin key is also accepted for plain operator-gated routes.
-    assert require_api_key(api_key=_ADMIN_KEY) is None
+    assert require_api_key(api_key=_ADMIN_KEY, bearer=None).role is Role.ADMIN
 
 
 def test_require_api_key_dev_no_auth_bypasses(
@@ -101,7 +107,7 @@ def test_require_api_key_dev_no_auth_bypasses(
 ) -> None:
     monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
     # No key configured and no key supplied, yet the bypass lets it through.
-    assert require_api_key(api_key=None) is None
+    assert require_api_key(api_key=None, bearer=None).role is Role.ADMIN
 
 
 def test_require_api_key_dev_no_auth_wins_over_missing_key(
@@ -109,7 +115,7 @@ def test_require_api_key_dev_no_auth_wins_over_missing_key(
 ) -> None:
     monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
     monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
-    assert require_api_key(api_key=None) is None
+    assert require_api_key(api_key=None, bearer=None).role is Role.ADMIN
 
 
 # --------------------------------------------------------------------------- #
@@ -148,7 +154,7 @@ def test_require_admin_key_passes_with_correct_admin_key(
 ) -> None:
     monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", _ADMIN_KEY)
-    assert require_admin_key(api_key=_ADMIN_KEY) is None
+    assert require_admin_key(api_key=_ADMIN_KEY, bearer=None).role is Role.ADMIN
 
 
 def test_require_admin_key_accepts_operator_key_when_no_admin_set(
@@ -156,7 +162,7 @@ def test_require_admin_key_accepts_operator_key_when_no_admin_set(
 ) -> None:
     # Single-key deployment: no admin key -> operator key is accepted.
     monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
-    assert require_admin_key(api_key=_OPERATOR_KEY) is None
+    assert require_admin_key(api_key=_OPERATOR_KEY, bearer=None).role is Role.ADMIN
 
 
 def test_require_admin_key_401_with_wrong_key_when_no_admin_set(
@@ -173,7 +179,77 @@ def test_require_admin_key_dev_no_auth_bypasses(
 ) -> None:
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", _ADMIN_KEY)
     monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
-    assert require_admin_key(api_key=None) is None
+    assert require_admin_key(api_key=None, bearer=None).role is Role.ADMIN
+
+
+def test_named_engineer_can_operate_but_cannot_admin(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(
+        "P1AM_PRINCIPALS_JSON",
+        '[{"subject":"eng.1","display_name":"Engineer One",'
+        '"role":"engineer","api_key":"engineer-key-12345"}]',  # noqa: E501  # pragma: allowlist secret
+    )
+    principal = require_api_key(api_key="engineer-key-12345", bearer=None)
+    assert principal.subject == "eng.1"
+    with pytest.raises(HTTPException) as excinfo:
+        require_admin_key(api_key="engineer-key-12345", bearer=None)  # noqa: E501  # pragma: allowlist secret
+    assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_engineer_gate_rejects_named_operator(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(
+        "P1AM_PRINCIPALS_JSON",
+        '[{"subject":"op.1","display_name":"Operator One",'
+        '"role":"operator","api_key":"operator-key-12345"}]',  # noqa: E501  # pragma: allowlist secret
+    )
+
+    with pytest.raises(HTTPException) as excinfo:
+        require_engineer_key(api_key="operator-key-12345", bearer=None)  # noqa: E501  # pragma: allowlist secret
+
+    assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_operator_gate_accepts_short_lived_bearer_session(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(
+        "P1AM_PRINCIPALS_JSON",
+        '[{"subject":"op.1","display_name":"Operator One",'
+        '"role":"operator","api_key":"operator-key-12345"}]',  # noqa: E501  # pragma: allowlist secret
+    )
+    service = identity_service()
+    assert service is not None
+    issued = service.login("operator-key-12345")
+    assert issued is not None
+    bearer = HTTPAuthorizationCredentials(scheme="Bearer", credentials=issued.token)
+
+    principal = require_api_key(api_key=None, bearer=bearer)
+    assert principal.subject == "op.1"
+
+
+def test_invalid_bearer_does_not_fall_back_to_valid_api_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
+    bearer = HTTPAuthorizationCredentials(scheme="Bearer", credentials="invalid")
+    with pytest.raises(HTTPException) as excinfo:
+        require_api_key(api_key=_OPERATOR_KEY, bearer=bearer)
+    assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_optional_principal_resolver_supports_audit_attribution(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
+
+    principal = resolve_optional_principal(_OPERATOR_KEY, None)
+
+    assert principal is not None
+    assert principal.subject == "legacy.single-key"
+    assert resolve_optional_principal("invalid", None) is None
 
 
 # --------------------------------------------------------------------------- #

@@ -23,9 +23,10 @@ So the split is:
 :class:`HistorianWriter` composes the two behind the exact callable shape
 ``_poll_once`` already expects, so the control path is untouched.
 
-LOD: this module imports only ``historian`` and stdlib — nothing from FastAPI,
-the PLC clients, or the database engine — so it unit-tests against a plain
-session double.
+LOD: this module imports only ``historian``, the ``signal_quality`` value type,
+and stdlib — nothing from FastAPI, the PLC clients, or the database engine — so
+it unit-tests against a plain session double. (``historian`` itself imports
+``signal_quality``, so this adds no new dependency edge to the package.)
 """
 
 from __future__ import annotations
@@ -42,6 +43,7 @@ try:
 except ImportError:  # Python 3.10 — repo supports 3.10+
     UTC = timezone.utc  # noqa: UP017
 
+from signal_quality import SignalFrame
 from sqlmodel import Session
 
 __all__ = [
@@ -170,13 +172,25 @@ class HistorianWriter:
         """The configured forwarding sink (never ``None``)."""
         return self._sink
 
-    def write(self, session: Session, tags: dict[str, float]) -> int:
+    def write(
+        self,
+        session: Session,
+        tags: dict[str, float],
+        *,
+        signal_frame: SignalFrame | None = None,
+    ) -> int:
         """Persist a scan locally when due, then forward it best-effort.
 
         Args:
             session: Active session owned by the caller. Not committed here —
                 the caller commits historian and alarm rows together.
             tags: Mapping of tag name -> value for this scan.
+            signal_frame: Per-scan signal-quality metadata. Forwarded verbatim
+                to the local write so quality is persisted with the sample.
+                Deliberately NOT passed to the remote sink: the sink contract is
+                a plain ``{tag: value}`` + timestamp forward, and widening it
+                would make every sink implementation depend on the quality
+                model.
 
         Returns:
             Number of rows written to the **local** historian. 0 when the
@@ -188,7 +202,7 @@ class HistorianWriter:
             return 0
 
         ts = self._clock()
-        written = self._log_scan(session, tags, timestamp=ts)
+        written = self._log_scan(session, tags, timestamp=ts, signal_frame=signal_frame)
 
         # Forwarding is best-effort by contract. A remote historian that is
         # down, slow, or misconfigured must never propagate into the scan loop,

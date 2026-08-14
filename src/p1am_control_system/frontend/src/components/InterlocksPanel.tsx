@@ -32,9 +32,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
           className="btn btn-primary"
           style={{ padding: "0.25rem 0.75rem", fontSize: "0.8rem" }}
         >
-          {deploying ? "Deploying..." : (
+          {deploying ? "Creating Draft..." : (
             <span style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
-              <Save size={14} /> Deploy Config
+              <Save size={14} /> Create Protected Draft
             </span>
           )}
         </button>
