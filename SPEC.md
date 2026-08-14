@@ -371,7 +371,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
-<<<<<<< HEAD
 ### 2026-08-12 Production-Browser Qualification
 
 - The exact-revision production web bundle is exercised in Chromium, Firefox,
@@ -1116,7 +1115,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Ground execution/playback, result interchange, measured calibration
   workflows, model-input workspace persistence, compiled regional physics,
   and UpstreamDrift consumers remain explicit non-goals.
-=======
 ### 2026-08-10 Ground-playback workspace hard-bound repair
 
 - Python normalizes finite-number conversion overflow to the same `ValueError`
@@ -1261,7 +1259,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Rust/WASM execution, and UpstreamDrift
   consumer integration remain downstream work under issue #4274 and epic
   #4267.
->>>>>>> incoming
 
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
