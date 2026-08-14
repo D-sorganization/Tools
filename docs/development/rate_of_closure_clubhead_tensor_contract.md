@@ -100,9 +100,53 @@ full symmetric CG tensor, world-from-head attitude, and assembly mass
 properties unavailable. The browser rejects an invalid SHA-256 result, and
 both surfaces validate the selected inputs before serialization.
 
-The shared `golf_club.ClubAssembly` domain can carry validated assembly mass,
-CG, full tensor, frames, and component transforms, but no such assembly is
-currently bound to a Rate of Closure `ClubSpec`. The sidecar therefore does not
-construct one from default shaft/grip masses or the legacy scalar composition.
-The remaining integration must establish an explicit selected-spec ↔ assembly
-identity and provenance record before assembly values can become available.
+The shared `golf_club.ClubAssembly` domain carries validated component and
+assembly mass, CG, full tensors, frames, and component transforms. The strict
+`rate_of_closure.club_assembly_binding/1` import contract now binds one such
+assembly to one exact selected `ClubSpec` identity. Both identities are SHA-256
+digests of deterministic, cross-language canonical bytes; a golden vector pins
+the Python and browser encoders. The binding also identifies the unique head
+component, supplies the explicit selected-head-to-component transform, declares
+SI units, and preserves a measured, manufacturer, CAD-integrated, or qualified-
+analysis source-authority record. Duplicate JSON fields, unknown or absent
+fields, payloads over 4 MiB, unsupported authority classes, nonphysical tensors,
+head-mass mismatch, frame mismatch, and either identity mismatch fail closed.
+
+After that complete validation, PyQt and React engineering-sidecar export can
+mark the head CG, head full CG tensor, and assembled-club mass properties
+available in their explicitly named frames. Any identity-defining Club-panel
+edit clears the retained binding. The source declaration is preserved rather
+than independently certified, and the included driver fixture is synthetic
+qualified-analysis test data—not a manufacturer measurement or production
+club definition. No default shaft/grip assembly, uniform-density mesh tensor,
+CAD density, or missing transform is inferred.
+
+The binding alone does not satisfy the dynamic world-attitude requirement. The
+sidecar continues to mark `world_from_head` unavailable because it is a static
+artifact. The simulation adapter separately requires a proper, orthonormal
+`rate_of_closure.head` to `rate_of_closure.app` rotation with provenance.
+
+## Strict Simulation Adapter Delivered for #4111
+
+Desktop manual-swing simulation explicitly declares its selected-head pose and
+therefore may transform the bound authoritative tensor as
+`I_app = R_app_from_head I_head R_app_from_head^T`. The shared impact solver
+receives that tensor about head CG in the same app frame as its velocity,
+normal, and contact-offset vectors. Current double- and triple-pendulum sources
+declare their link/plane kinematics but no selected-head body attitude; the
+adapter does not infer one and keeps their full-tensor capability unavailable.
+An external caller may supply an explicit validated attitude through
+`SimulationConfig`.
+
+The full bound head-CG vector is also unavailable because the present impact
+solver accepts only a scalar `cg_depth` tied to a face datum; the exact 3-D
+datum relation needed for safe substitution is absent. Assembled-club mass, CG,
+and inertia are always marked unavailable at this boundary and are never used
+in place of head properties. Browser impact remains scalar-MOI-only, so a valid
+binding can replace only the already-supported head-mass input there.
+
+Every run carries a capability ledger. It records whether head inertia, head
+CG, and assembly properties were consumed, unavailable with an actionable
+reason, or not used because fixed-ball contact missed. Selection/spec/frame
+mismatches fail before impact, and no-impact runs contain neither launch nor
+flight data.

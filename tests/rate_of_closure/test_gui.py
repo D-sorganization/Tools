@@ -9,6 +9,7 @@ touching any internal widget of another component.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -386,6 +387,78 @@ class TestClubGroup:
         assert output.read_text(encoding="utf-8") == "existing artifact"
         assert panel._export_status.text() == "Engineering sidecar export failed."
         assert warnings == ["disk full"]
+
+    def test_imported_binding_unlocks_complete_engineering_properties(
+        self, qtbot, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "club_assembly_binding_driver_10_5.json"
+        )
+        output = tmp_path / "bound.engineering.json"
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        published_bindings: list[object] = []
+        panel.assemblyBindingChanged.connect(published_bindings.append)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getOpenFileName",
+            lambda *_args, **_kwargs: (str(fixture), "Club assembly binding"),
+        )
+
+        panel._import_assembly_button.click()
+
+        assert panel._assembly_binding is not None
+        assert published_bindings[-1] is panel._assembly_binding
+        assert "driver-qualified-2026-08" in panel._binding_status.text()
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: (str(output), "Engineering JSON"),
+        )
+        panel._export_engineering_button.click()
+        document = json.loads(output.read_text(encoding="utf-8"))
+        assert document["mass_properties"]["assembly"]["status"] == "available"
+        assert (
+            document["mass_properties"]["head"]["inertia_tensor_at_com_kg_m2"]["status"]
+            == "available"
+        )
+        assert document["frames"]["world_from_head"]["status"] == "unavailable"
+
+    def test_binding_import_mismatch_fails_closed_and_spec_edit_clears_binding(
+        self, qtbot, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "club_assembly_binding_driver_10_5.json"
+        )
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        published_bindings: list[object] = []
+        panel.assemblyBindingChanged.connect(published_bindings.append)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getOpenFileName",
+            lambda *_args, **_kwargs: (str(fixture), "Club assembly binding"),
+        )
+        warnings: list[str] = []
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QMessageBox.warning",
+            lambda _parent, _title, message: warnings.append(message),
+        )
+
+        panel._loft_spin.setValue(11.0)
+        panel._import_assembly_button.click()
+        assert panel._assembly_binding is None
+        assert "import failed" in panel._binding_status.text().lower()
+        assert warnings and "selected ClubSpec identity" in warnings[0]
+
+        panel._loft_spin.setValue(10.5)
+        panel._import_assembly_button.click()
+        assert panel._assembly_binding is not None
+        panel._loft_spin.setValue(11.0)
+        assert panel._assembly_binding is None
+        assert published_bindings[-1] is None
+        assert "specification changed" in panel._binding_status.text()
 
     def test_generate_loads_a_parametric_head_into_the_view(
         self, window, qtbot

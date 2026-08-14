@@ -275,6 +275,12 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
 
         self._controls.scenarioChanged.connect(self._on_scenario)
         self._controls.clubHeadRequested.connect(self._on_club_head)
+        self._controls.assemblyBindingChanged.connect(
+            self._simulation_tab.set_assembly_binding
+        )
+        self._simulation_tab.assemblyBindingInvalidated.connect(
+            self._controls.clear_assembly_binding
+        )
         # Distance display unit (#4125 H6): yards default; switching
         # re-renders every distance surface across the tabs.
         self._controls.distanceUnitChanged.connect(self._on_distance_unit)

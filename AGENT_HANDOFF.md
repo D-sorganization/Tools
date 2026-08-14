@@ -3,7 +3,92 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 #4111 assembly-to-simulation adapter (draft PR #4341)
+
+Independent publication review found and repaired one desktop ownership gap:
+changing the Simulation tab's club now invalidates the binding in the Club
+panel that owns it, so export status and solver state cannot disagree. The
+new signal-bound regression and the combined 67-test adapter/PyQt/GUI suite
+pass serially. Focused Ruff/format, CI-pinned Mypy 1.13, the 27-test React
+suite, TypeScript, zero-warning ESLint, and the 125-module production build are
+clean. The first test invocation exposed only a missing test fixture and was
+corrected before implementation evidence. The repository's generic 500-LOC
+file gate still reports three pre-existing oversized modules touched by this
+stack; the repository's baseline-aware 1200-line module budget passes.
+
+Local branch `feat/4111-assembly-simulation-adapter` starts at exact published
+PR #4338 head `6b55a6b01e8029712217185f0e0ebf2a421be20e` and is published
+as draft PR #4341 while remaining **not released**. It adds a fail-closed adapter from the
+validated selected-spec to `ClubAssembly` binding to the existing impact
+boundary. Desktop consumes the bound head mass and may rotate the authoritative
+head-CG tensor as `R I_head R^T` only when a complete selected-head-to-app
+attitude is explicitly declared. The manual source declares that pose; current
+double/triple pendulum sources do not, so their tensor capability stays
+unavailable. The scalar-only browser solver consumes the validated head mass
+only and reports tensor/CG unavailability. Neither surface ever substitutes
+assembled-club mass, CG, or inertia for head properties, and a miss records
+every property as `not_used` without impact/flight. PyQt/React expose binding
+status and clear mismatched selection state; exports include a non-duplicating
+capability ledger. The binding fixture remains synthetic qualified-analysis
+evidence. Canonical campaign handoff/release-manifest files are still absent on
+this lineage, so no release state was invented.
+
+Final local evidence on this continuation: 42 focused Python simulation,
+contact, ball-setup, export, and adapter tests pass; three focused PyQt binding,
+invalidation, and source-status tests pass; and 27 React adapter, persistence,
+Club-panel, and Simulation-panel tests pass. Focused Ruff lint/format, Black,
+CI-pinned Mypy 1.13 (eight changed sources), repository module-size and docs
+governance gates, React ESLint/type-check, and the production Vite build are
+clean. A first broad 14-worker GUI run saturated shared Qt setup and timed out;
+the same new GUI coverage passes serially. A broader serial regression then
+caught and drove the fix that prevents unbound manual runs from constructing a
+binding-only attitude.
+
+## 2026-08-10 assembly-binding lint follow-up
+
+The post-split TypeScript compiler passes on exact local head
+`e9e75614f29a0d6fb4925bc2b096155a9f9edf25`. ESLint then found one
+test-only explicit `any`; the assertion view now uses a narrow structural
+inspection type instead. Runtime behavior, wire bytes, identities, sidecar
+content, and scientific availability remain unchanged and `not_released`.
+The focused UI test also now waits for the asynchronous re-import result
+instead of matching the already-present selection-cleared status.
+
 ## 2026-08-10 Authoritative Transfer Snapshot
+
+- Publication-hardening follow-up on the same **not released** branch preserves
+  `fdce377f123f925bf5768b666619927886f17ae9` as its parent and extracts the
+  three-dimensional matrix, rotation, eigenvalue, and inertia-validation
+  operations into `clubAssemblyMassMath.ts`. The new math module is 88 lines;
+  `clubAssemblyMassProperties.ts` is 316 lines, and every production TypeScript
+  file introduced by the binding slice is at most 328 lines. Schema, canonical
+  identity bytes/digests, validation order, and sidecar behavior are unchanged.
+  Under the continuing workstation overload, the combined formatter/count
+  command timed out and the direct worktree-local Prettier executable was not
+  present because dependencies are supplied through the sibling junction. At
+  the coordinating agent's gate boundary, no further test/type/lint/build
+  command was started; the prior evidence and explicit unverified
+  TypeScript/ESLint/build boundary below remain authoritative. The absent
+  campaign-handoff/manifest explanation below remains unchanged.
+
+- Local continuation `feat/4111-club-assembly-binding` is based exactly on the
+  published sidecar parent `66da8f024450ad5e7940a8005227f3d6612a85d8` and is
+  **not released**. It adds the validated selected-spec ↔ shared-assembly
+  boundary described below without changing the parent or writing to GitHub.
+  On that exact parent, neither
+  `docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md` nor
+  `docs/release/rate_of_closure_campaign.v1.json` exists, so this commit does
+  not invent a release manifest or claim campaign delivery. The canonical root
+  and Rate handoffs, Rate README/specification, and tensor-contract document are
+  updated instead. Fresh bounded evidence: 14 Python binding/legacy-sidecar
+  contract tests and 5 browser binding tests pass; the two focused PyQt import,
+  export, mismatch, and invalidation tests passed before the final documentation
+  and typing-only adjustments. CI-pinned Mypy 1.13 is clean across the five
+  changed Python sources, and focused Ruff lint/format are clean. A three-file
+  React test command, the final TypeScript check after its ArrayBuffer typing
+  repair, and an earlier full GUI command timed out without failure output under
+  workstation load. Final TypeScript/ESLint/build status is therefore
+  unverified on this local head; do not repeat those overloaded broad commands.
 
 - Issue #4111 now has a tested mesh-defining-`ClubSpec`-subset → deterministic
   binary STL path and discoverable PyQt and React export actions. The generator
@@ -24,12 +109,17 @@
   Partial CG offsets and the shaft-axis scalar are evidence only; complete CG,
   full symmetric CG tensor, world attitude, and assembly properties fail closed
   as unavailable. No default-mass assembly or uniform-density mesh tensor is
-  inferred. A validated shared `golf_club.ClubAssembly` still must be explicitly
-  bound to the selected spec before authoritative assembly data can be emitted.
-  Local release evidence on the implementation head: 511 Rate Python/PyQt tests
-  and 328 React tests pass; React type-check, ESLint, production build, changed-
-  file Ruff/format, and changed-source MyPy also pass. The React contract test
-  imports the Python golden JSON, so whole-document parity is executable.
+  inferred. The strict `rate_of_closure.club_assembly_binding/1` continuation
+  now provides that explicit boundary: deterministic cross-language spec and
+  assembly identities, qualified authority, SI units, unique-head/exact-mass,
+  frame-transform, and physical-tensor validation precede availability. PyQt
+  and React provide discoverable import and clear a retained binding on an
+  identity-defining selection edit. Duplicate/oversized/unknown/mismatched data
+  fails closed. The golden assembly is synthetic qualified-analysis test data,
+  not manufacturer data; authority is preserved but not certified. World
+  attitude and simulation tensor injection remain unavailable. The parent
+  sidecar head's 511 Python/PyQt and 328 React counts do not cover this local,
+  unpushed continuation; use its newest focused evidence entry below.
 - The protected Rate of Closure release still starts at Tools PR **#4119**
   (`feat/impact-simulation-platform`). Every later Rate/Wedge/D-plane,
   workspace, variation, wind, camera, and ground-model PR depends on this
