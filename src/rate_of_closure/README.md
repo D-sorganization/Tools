@@ -106,6 +106,45 @@ clickable reference-frame notes. Web numeric fields select the complete value
 on focus and accept intermediate signed decimal drafts (for example, `-12.5`
 degrees of spin-axis tilt) before committing on Enter or focus loss.
 
+## Workspace Files
+
+The top File menu stores and restores the supported explorer calculation
+state, module presentation, and multi-view compositor in a strict versioned
+workspace document. PyQt6 supports New, Open, persisted Open Recent, atomic
+Save/Save As, strict view-layout Import/Export, and Close. The browser supports
+the same workflow through Open, Save As downloads, and strict view-layout
+Import/Export; ordinary browser security means Save-over-current-path and
+Recent remain visibly unavailable rather than pretending to work.
+
+Open and Import validate the complete file before changing live state. Invalid
+files show an error and leave the session untouched. New, Open, and Close
+protect unsaved changes, and cancelled operations do not mutate the session.
+The current whole-workspace adapter covers impact scenario, club, units,
+primary-module layout, compositor state, the Ground/Tee selection and SI tee
+height with club-default/override provenance, and the complete canonical
+spatial target (identity, app/source frames, position, surface/absolute source,
+  and tolerance geometry). Explorer-session v3 additionally stores the
+  canonical prescribed polynomial torque-profile library, active stable profile
+  ID, profile-source provenance, passive/prescribed execution selection, and
+  canonical joint locks. Profile schema, `N*m` units, ascending `c0`-first
+  coefficients, stable joint IDs, fit evidence, and source metadata remain the
+  shared Python/TypeScript contract rather than UI-specific copies.
+
+Explorer-session v4 adds the user-authored variation-study specification with
+PyQt6/React parity: canonical varied variables, simultaneous versus individual
+analysis policy, validated distributions and ranges, trial count, deterministic
+seed, and selected output metrics. Ball support remains owned by the simulation
+setup; the variation plan cannot duplicate it, and Tee Height can only be
+selected while Tee support is active. Save/Open validates the complete study
+before mutation and rolls back atomically if native widget application fails.
+
+A v1 explorer session can only load through explicit preserve-current
+simulation, torque, and variation fallbacks; v2 requires torque and variation,
+and v3 requires variation. No tee, target, coefficient, joint ID, fit evidence,
+study policy, or outcome is invented. A legacy root torque library or variation
+plan must exactly match its fallback or Open fails as ambiguous. Optimizer,
+variation results, and flight-run state are not yet part of this document.
+
 ## Build a Standalone Executable
 
 Developers can build candidate artifacts for qualification:

@@ -1,3 +1,5 @@
+/** Canonical UI defaults for a new, unsaved variation study. */
+
 import type { BallSetup } from "./ballSetup";
 import {
   keysForMode,
@@ -27,13 +29,15 @@ export const defaultVariationSpec = (
   };
 };
 
-/** Return a fresh browser variation-plan draft. */
-export const defaultVariationPlan = (): VariationPlanTs => ({
+export const defaultVariationPlan = (
+  ballSetup?: BallSetup,
+): VariationPlanTs => ({
   mode: "delivery",
   baseVariables: {},
-  noise: [defaultVariationSpec("delivery")],
+  noise: [defaultVariationSpec("delivery", new Set(), ballSetup)],
   nRuns: 200,
   seed: 0,
   flightModel: "waterloo_penner",
   groups: [],
+  ...(ballSetup === undefined ? {} : { ballSetup }),
 });

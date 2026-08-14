@@ -60,10 +60,16 @@ from rate_of_closure.ui.pyqt6.main_window_contracts import (
     _TAB_HELP_KEYS,
     _UNITS,
 )
+from rate_of_closure.ui.pyqt6.main_window_file_commands import (
+    MainWindowFileCommandsMixin,
+)
 from rate_of_closure.ui.pyqt6.main_window_layout import (
     PrimaryTabSpec,
     ResultsSidebar,
     create_primary_tabs,
+)
+from rate_of_closure.ui.pyqt6.main_window_view_commands import (
+    MainWindowViewCommandsMixin,
 )
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
@@ -125,6 +131,8 @@ except ImportError:  # standalone / vendored use
 
 class RateOfClosureMainWindow(
     RegionalGroundVariationWindowMixin,
+    MainWindowFileCommandsMixin,
+    MainWindowViewCommandsMixin,
     WorkspaceNavigationMixin,
     ThemedWindowMixin,
     QMainWindow,
@@ -151,10 +159,16 @@ class RateOfClosureMainWindow(
         self._regional_ground_submitter = regional_ground_submitter
         self._regional_ground_confirmation = regional_ground_confirmation
         self._regional_ground_preparation_service = regional_ground_preparation_service
+        self._navigation_settings = (
+            navigation_settings
+            if navigation_settings is not None
+            else QSettings(_NAVIGATION_SETTINGS_ORG, _NAVIGATION_SETTINGS_APP)
+        )
         self._create_views()
-        self._build_application_shell(navigation_settings)
+        self._build_application_shell()
         self._connect_view_signals()
         self._initialize_view_content()
+        self.initialize_workspace_files()
 
     def _create_views(self) -> None:
         """Create the application views without coupling their signal graph."""
@@ -165,7 +179,7 @@ class RateOfClosureMainWindow(
         self._club_view = Club3DView()
         self._plots_tab = PlotsTab()
         self._derivation_view = DerivationView()
-        self._simulation_tab = SimulationTab()
+        self._simulation_tab = SimulationTab(view_settings=self._navigation_settings)
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._regional_surface_plan_tab = RegionalSurfacePlanTab()
@@ -213,7 +227,7 @@ class RateOfClosureMainWindow(
         )
 
     def _build_application_shell(
-        self, navigation_settings: NavigationSettings | None
+        self,
     ) -> None:
         """Assemble navigation, toolstrip, result sidebar, and central splitter."""
         sidebar = ResultsSidebar(
@@ -221,11 +235,6 @@ class RateOfClosureMainWindow(
         )
         self._rows = sidebar.rows
         self._explanation = sidebar.explanation
-        self._navigation_settings = (
-            navigation_settings
-            if navigation_settings is not None
-            else QSettings(_NAVIGATION_SETTINGS_ORG, _NAVIGATION_SETTINGS_APP)
-        )
         self._tabs = create_primary_tabs(self._primary_tab_specs())
         self._restore_primary_navigation()
         tab_bar = self._primary_tab_bar()
@@ -388,18 +397,9 @@ class RateOfClosureMainWindow(
         self._module_manager_dialog = dialog
         dialog.show()
 
-    def module_manager_dialog(self) -> ModuleManagerDialog | None:
-        """Return the current workspace module manager, if one was opened."""
-        return self._module_manager_dialog
-
     def bind_theme_menu(self, menu) -> None:  # type: ignore[no-untyped-def]
         """Expose the launcher-owned theme choices in the top toolstrip."""
         self._app_toolstrip.bind_theme_menu(menu)
-
-    def shortcut_help_dialog(self) -> QDialog | None:
-        """Return the current keyboard-shortcut help dialog."""
-        dialog = self._app_toolstrip.shortcut_dialog()
-        return dialog if isinstance(dialog, QDialog) else None
 
     def _bind_launcher_theme_menu(self) -> None:
         """Move the launcher-provided Theme surface into the top toolstrip."""

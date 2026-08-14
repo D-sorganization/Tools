@@ -18,7 +18,10 @@ import {
   type VariationPlanTs,
 } from "./variationSchema";
 import { TEE_HEIGHT_VARIATION_KEY, type VariationMode } from "./variationRegistry";
-import { runSwingVariation } from "./variationSwingEnsemble";
+import {
+  runSwingVariation,
+  SWING_OUTPUT_NAMES,
+} from "./variationSwingEnsemble";
 
 export {
   CATEGORY_DELIVERY,
@@ -69,12 +72,7 @@ export const FLIGHT_OUTPUTS = [
 ] as const;
 
 export function outputsForMode(mode: VariationMode): string[] {
-  if (mode === "swing") return [
-    "candidate_time_s", "closest_approach_m", "contact_margin_m",
-    "impact_time_s", "clubhead_speed_mps", "ball_speed_mph",
-    "launch_angle_deg", "launch_azimuth_deg", "spin_rpm", "carry_m",
-    "lateral_m", "max_height_m", "flight_time_s", "landing_angle_deg",
-  ];
+  if (mode === "swing") return [...SWING_OUTPUT_NAMES];
   return mode === "launch"
     ? [...LAUNCH_OUTPUTS, ...FLIGHT_OUTPUTS]
     : [...DELIVERY_OUTPUTS, ...LAUNCH_OUTPUTS, ...FLIGHT_OUTPUTS];

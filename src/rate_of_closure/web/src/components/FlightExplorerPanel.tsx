@@ -40,6 +40,7 @@ import {
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 import { meteorologicalWind } from "../model/wind";
 import type { SpatialTargetTs } from "../model/spatialTarget";
+import type { CameraPreference } from "../model/cameraPreferences";
 
 const LazyWindStrategyPanel = lazy(() => import("./WindStrategyPanel").then((module) => ({
   default: module.WindStrategyPanel,
@@ -97,6 +98,8 @@ interface Props {
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
   draft?: FlightExplorerDraft;
   onDraftChange?: (draft: FlightExplorerDraft) => void;
+  cameraPreference?: CameraPreference;
+  onCameraPreferenceChange?: (preference: CameraPreference) => void;
 }
 
 export function FlightExplorerPanel({
@@ -105,6 +108,8 @@ export function FlightExplorerPanel({
   onSpatialTargetChange,
   draft: controlledDraft,
   onDraftChange,
+  cameraPreference,
+  onCameraPreferenceChange,
 }: Props) {
   const [localDraft, setLocalDraft] = useState(DEFAULT_FLIGHT_EXPLORER_DRAFT);
   const draft = controlledDraft ?? localDraft;
@@ -385,6 +390,8 @@ export function FlightExplorerPanel({
               points={result?.points ?? []}
               comparisonPoints={windComparison?.calm.points ?? []}
               spatialTarget={spatialTarget}
+              cameraPreference={cameraPreference}
+              onCameraPreferenceChange={onCameraPreferenceChange}
             />
           </div>
         </div>

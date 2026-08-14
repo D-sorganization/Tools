@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { PlotData } from "../model/plotspec";
+import { type LegendPosition, resolvePlotLayout } from "./plotLayout";
 
 const PALETTE = ["#38bdf8", "#fbbf24", "#34d399", "#f472b6", "#a78bfa"];
 const ZOOM_STEP = 1.25;
-
-export type LegendPosition = "hidden" | "outside_right" | "inside_top_left" | "inside_top_right";
 
 interface Props {
   data: PlotData;
@@ -32,17 +31,14 @@ function drawLegend(
   ctx: CanvasRenderingContext2D,
   data: PlotData,
   position: LegendPosition,
-  width: number,
+  legendX: number,
+  legendY: number,
 ): void {
   if (position === "hidden") return;
-  const x = position === "outside_right" || position === "inside_top_right"
-    ? width - (position === "outside_right" ? 170 : 185)
-    : 76;
-  const y = position === "outside_right" ? 52 : 46;
   data.series.forEach((series, index) => {
     ctx.fillStyle = PALETTE[index % PALETTE.length];
-    ctx.fillRect(x, y + index * 18 - 8, 12, 3);
-    ctx.fillText(series.label, x + 18, y + index * 18);
+    ctx.fillRect(legendX, legendY + index * 18 - 8, 12, 3);
+    ctx.fillText(series.label, legendX + 18, legendY + index * 18);
   });
 }
 
@@ -56,9 +52,8 @@ function drawPlot(
   if (!ctx) return;
   const { width, height } = canvas;
   ctx.clearRect(0, 0, width, height);
-  const margin = { left: 64, right: legend === "outside_right" ? 190 : 20, top: 42, bottom: 46 };
-  const plotW = width - margin.left - margin.right;
-  const plotH = height - margin.top - margin.bottom;
+  const layout = resolvePlotLayout(width, height, legend);
+  const { margin, plotWidth: plotW, plotHeight: plotH } = layout;
   const [xMin, xMax] = fittedRange(data.x, zoom);
   const [yMin, yMax] = fittedRange(data.series.flatMap((series) => series.values), zoom);
   const sx = (value: number): number => margin.left + ((value - xMin) / (xMax - xMin)) * plotW;
@@ -101,7 +96,7 @@ function drawPlot(
     if (data.spec.kind === "scatter") ctx.fill();
     else ctx.stroke();
   });
-  drawLegend(ctx, data, legend, width);
+  drawLegend(ctx, data, legend, layout.legendX, layout.legendY);
   ctx.fillStyle = "#cbd5e1";
   ctx.font = "12px sans-serif";
   ctx.textAlign = "center";

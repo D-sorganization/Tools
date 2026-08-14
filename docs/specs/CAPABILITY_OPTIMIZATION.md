@@ -83,21 +83,53 @@ deterministic search basis. The default document is explicitly representative
 and user-authored; it is not presented as measured player data.
 
 The persisted v1 wire contract is strict at every nested primitive. Numeric
-fields accept only finite JSON numbers (and integer fields require an integral
-number); text fields accept only nonempty JSON strings. Numeric strings,
+fields accept only finite JSON numbers with magnitude at most `1e300` (and
+integer fields require an integral number); text fields accept only nonempty
+JSON strings. Numeric strings,
 booleans used as numbers, fractional integer values, and numeric identifiers or
 provenance values are rejected in both runtimes. Python and TypeScript execute
 one shared versioned accept/reject fixture to prevent parser drift.
 
 Optimization runs outside the UI thread. Progress is based on attempted model
 evaluations, cancellation publishes no partial optimization result, and input
-changes invalidate captured output. Every attempted sample is retained in
+changes invalidate captured output. Native publication also requires matching
+worker identity and generation, so a cancelled pre-replacement worker cannot
+publish a late success. Every attempted sample is retained in
 `scalar-ensemble/v1` with complete, no-impact, or failed cohort identity. The
 clients present ranked alternatives, selectable scalar axes, paired-finite and
 unavailable counts, managed zoom/autofit, a bounded paged raw table,
 spreadsheet-safe lossless CSV, and stable JSON. Duplicate evaluator and target
 diagnostic labels are stage-qualified in selectors without changing their
 contract keys.
+
+### Whole-Workspace Input Persistence
+
+Explorer-session v5 embeds the exact `capability-optimization-workflow/v1`
+document as `model_session.data.capability_request`. The nested document is the
+sole cross-runtime schema for this input specification; the workspace does not
+duplicate individual optimizer fields. It contains only the profile, request,
+target, evaluator configuration, search budgets, and deterministic seed needed
+to reproduce a request.
+
+Whole-workspace parsing completes before either UI mutates. PyQt6 applies the
+validated request inside the window's rollback boundary, while React retains
+the same full document as app-owned state. Both clients overlay only fields
+represented by editable controls; accepted provenance, confidence,
+correlation, bias, bounds, custom problem policy, target geometry, and spin
+provenance survive apply, edit, recapture, save, and reopen exactly. Documents
+outside the supported single-club/three-parameter interactive projection fail
+closed. Specifically, the interactive basis is exactly `ball_speed` in `m/s`,
+`launch_angle` in `deg`, and `launch_direction` in `deg`, in that order, with
+one matching 3-by-3 correlation matrix, one club, and one spin default.
+Covariance matrices, alternate units such as `mph`, reordered parameters, and
+other shapes are rejected before UI mutation; this slice performs no implicit
+unit conversion or covariance rescaling. Both clients invalidate previous
+computed output. Explorer-session v1-v4 migration requires an explicit current
+capability fallback and never invents an optimizer request.
+Ranked alternatives, observation ensembles, progress, cancellation/runtime
+objects, and inferred player identity are excluded. The current interactive
+workflow declares still air and has no editable wind input; workspace restore
+must not fabricate wind-aware optimization or execution parity.
 
 ## Interpretation And Limitations
 

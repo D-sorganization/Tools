@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import pytest
 
@@ -19,8 +20,24 @@ from rate_of_closure.application.commands import (  # noqa: E402
 )
 from rate_of_closure.application.regional_ground_variation_request import (  # noqa: E402
     regional_ground_variation_request_from_json,
+from rate_of_closure.application.workspace_session import (  # noqa: E402
+    document_from_state,
+)
+from rate_of_closure.application.workspace_simulation_session import (  # noqa: E402
+    SimulationWorkspaceState,
 )
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow  # noqa: E402
+from rate_of_closure.view_workspace import ViewKind  # noqa: E402
+from shared.python.swing_sim.ball_setup import (  # noqa: E402
+    BallSetup,
+    BallSupportMode,
+)
+from shared.python.swing_sim.solver import (  # noqa: E402
+    BoxTolerance,
+    SpatialTarget,
+    SurfaceCircleTolerance,
+    TargetPoint,
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -53,26 +70,331 @@ def test_real_top_toolstrip_exposes_stable_file_view_and_tools_surfaces(window) 
         assert button.menu() is not None
 
 
-@pytest.mark.parametrize(
-    "command_id",
-    (
+def test_implemented_file_commands_are_enabled_and_recent_remains_honest(
+    window,
+) -> None:  # type: ignore[no-untyped-def]
+    supported = (
         AppCommandId.FILE_NEW_WORKSPACE,
         AppCommandId.FILE_OPEN_WORKSPACE,
-        AppCommandId.FILE_OPEN_RECENT_WORKSPACE,
         AppCommandId.FILE_SAVE_WORKSPACE,
         AppCommandId.FILE_SAVE_WORKSPACE_AS,
         AppCommandId.FILE_IMPORT_WORKSPACE,
         AppCommandId.FILE_EXPORT_WORKSPACE,
         AppCommandId.FILE_CLOSE_WORKSPACE,
-    ),
-)
-def test_file_commands_are_truthfully_disabled_until_project_contract_exists(
-    window, command_id: AppCommandId
+    )
+    assert all(_action(window, command_id).isEnabled() for command_id in supported)
+    assert all(_action(window, command_id).toolTip() for command_id in supported)
+    recent = _action(window, AppCommandId.FILE_OPEN_RECENT_WORKSPACE)
+    assert not recent.isEnabled()
+    assert "no recent workspace" in recent.toolTip().lower()
+    assert recent.statusTip() == recent.toolTip()
+
+
+def test_save_as_and_open_restore_supported_state_atomically(
+    window, tmp_path, monkeypatch
 ) -> None:  # type: ignore[no-untyped-def]
-    action = _action(window, command_id)
-    assert not action.isEnabled()
-    assert "project document contract" in action.toolTip().lower()
-    assert action.statusTip() == action.toolTip()
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    target = tmp_path / "session.roc-workspace.json"
+    monkeypatch.setattr(
+        QFileDialog,
+        "getSaveFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    saved_target = SpatialTarget(
+        label="Saved apex gate",
+        kind="aerial_waypoint",
+        point=TargetPoint.from_frame((142.0, 3.0, 25.0), "flight"),
+        tolerance=BoxTolerance((5.0, 2.0, 4.0)),
+        elevation_source="absolute",
+    )
+    window._simulation_tab.apply_simulation_workspace_state(
+        SimulationWorkspaceState(
+            ball_setup=BallSetup(BallSupportMode.TEE, 0.052),
+            ball_setup_user_overridden=True,
+            spatial_target=saved_target,
+        )
+    )
+    _action(window, AppCommandId.FILE_SAVE_WORKSPACE_AS).trigger()
+    saved = window._capture_workspace_state()
+    assert target.is_file()
+    assert not window.workspace_is_dirty()
+    recent = _action(window, AppCommandId.FILE_OPEN_RECENT_WORKSPACE)
+    assert recent.isEnabled()
+    assert str(target) in recent.toolTip()
+
+    window._controls.apply_preset("Zero rotation (control)")
+    window._simulation_tab.apply_simulation_workspace_state(
+        SimulationWorkspaceState(
+            ball_setup=BallSetup(BallSupportMode.GROUND, 0.0),
+            ball_setup_user_overridden=True,
+            spatial_target=SpatialTarget(
+                label="Temporary landing",
+                kind="landing_area",
+                point=TargetPoint(80.0, 0.0, 5.0),
+                tolerance=SurfaceCircleTolerance(8.0),
+                elevation_source="course_surface",
+                ground_source="course.surface/test",
+            ),
+        )
+    )
+    assert window.workspace_is_dirty()
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Discard,
+    )
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == saved
+    assert not window.workspace_is_dirty()
+
+    window._controls.apply_preset("Zero rotation (control)")
+    recent.trigger()
+
+    assert window._capture_workspace_state() == saved
+    assert not window.workspace_is_dirty()
+
+
+def test_cancelled_dirty_new_preserves_live_state(window, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QMessageBox
+
+    window._controls.apply_preset("Zero rotation (control)")
+    dirty = window._controls.scenario()
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Cancel,
+    )
+
+    _action(window, AppCommandId.FILE_NEW_WORKSPACE).trigger()
+
+    assert window._controls.scenario() == dirty
+    assert window.workspace_is_dirty()
+
+
+def test_invalid_open_reports_error_without_partial_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    target = tmp_path / "invalid.roc-workspace.json"
+    target.write_text('{"schema":"wrong"}', encoding="utf-8")
+    before = window._capture_workspace_state()
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and warnings[0][0] == "Open Failed"
+
+
+def test_invalid_nested_target_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    raw["model_session"]["data"]["simulation_setup"]["data"]["spatial_target"][
+        "source_frame"
+    ] = "camera"
+    target = tmp_path / "invalid-target.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "source_frame" in warnings[0][1]
+
+
+def test_invalid_torque_selection_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    provenance = raw["model_session"]["data"]["torque_selection"]["data"][
+        "selection_provenance"
+    ]
+    provenance["profile_source"] = "drawn"
+    target = tmp_path / "invalid-torque-selection.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "provenance" in warnings[0][1]
+
+
+def test_invalid_variation_selection_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    selection = raw["model_session"]["data"]["variation_study"]["data"]
+    selection["selected_output_metrics"] = ["unknown_metric"]
+    target = tmp_path / "invalid-variation-selection.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "metric" in warnings[0][1]
+
+
+def test_invalid_capability_request_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    raw["model_session"]["data"]["capability_request"]["computed_result"] = {}
+    target = tmp_path / "invalid-capability-request.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "capability workflow" in warnings[0][1]
+
+
+@pytest.mark.parametrize(
+    ("kind", "message"), [("mph", "unit"), ("covariance", "correlation")]
+)
+def test_noncanonical_capability_basis_reports_open_error_without_mutation(
+    window, tmp_path, monkeypatch, kind: str, message: str
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    club = raw["model_session"]["data"]["capability_request"]["profile"]["clubs"][0]
+    if kind == "mph":
+        club["parameters"][0]["unit"] = "mph"
+    else:
+        club["matrix_kind"] = "covariance"
+    target = tmp_path / f"invalid-capability-{kind}.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog, "getOpenFileName", lambda *_args: (str(target), "")
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, text, *_args: warnings.append((title, text)),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and message in warnings[0][1]
+
+
+def test_oversized_capability_number_reports_open_error_without_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = json.dumps(
+        document_from_state(before, window._workspace_metadata).to_json_dict()
+    )
+    raw = raw.replace('"candidate_budget": 8', '"candidate_budget": ' + "9" * 4000)
+    target = tmp_path / "oversized-capability-number.roc-workspace.json"
+    target.write_text(raw, encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "finite" in warnings[0][1]
 
 
 def test_glossary_is_first_class_and_recovers_a_hidden_module(window) -> None:  # type: ignore[no-untyped-def]
@@ -145,20 +467,44 @@ def test_module_manager_applies_visibility_and_order_changes(window) -> None:  #
 
 
 @pytest.mark.parametrize(
-    "command_id",
+    ("command_id", "view_id"),
     (
-        AppCommandId.VIEW_SHOW_IMPACT,
-        AppCommandId.VIEW_SHOW_SWING,
-        AppCommandId.VIEW_SHOW_FLIGHT,
+        (AppCommandId.VIEW_SHOW_IMPACT, "impact"),
+        (AppCommandId.VIEW_SHOW_SWING, "swing"),
+        (AppCommandId.VIEW_SHOW_FLIGHT, "flight"),
     ),
 )
-def test_multi_view_commands_explain_their_deliberate_unavailable_state(
-    window, command_id: AppCommandId
+def test_multi_view_commands_open_real_single_view_hosts(
+    window, command_id: AppCommandId, view_id: str
 ) -> None:  # type: ignore[no-untyped-def]
     action = _action(window, command_id.value)
-    assert not action.isEnabled()
-    assert "multi-view compositor contract" in action.toolTip().lower()
-    assert action.statusTip() == action.toolTip()
+    assert action.isEnabled()
+
+    action.trigger()
+
+    assert window.current_primary_module_id() == "simulation"
+    compositor = window._simulation_tab.compositor()
+    assert compositor.workspace().active_slot_id == view_id
+    assert compositor.visible_view_ids() == (view_id,)
+
+
+def test_multi_view_hosts_share_run_and_time_but_keep_distinct_view_instances(
+    window,
+) -> None:  # type: ignore[no-untyped-def]
+    _action(window, AppCommandId.VIEW_SHOW_SWING.value).trigger()
+    compositor = window._simulation_tab.compositor()
+    run = window._simulation_tab.last_run()
+    assert run is not None and run.impact_time_s is not None
+
+    swing = compositor.view(ViewKind.SWING)
+    impact = compositor.view(ViewKind.IMPACT)
+    flight = compositor.view(ViewKind.FLIGHT)
+    assert len({id(swing), id(impact), id(flight)}) == 3
+    assert swing.run() is run
+    assert impact.run() is run
+
+    swing.set_playback_time(run.impact_time_s + 0.2)
+    assert flight.playback_time_s() == pytest.approx(0.2)
 
 
 def test_every_ui_neutral_command_id_is_registered_exactly_once(window) -> None:  # type: ignore[no-untyped-def]

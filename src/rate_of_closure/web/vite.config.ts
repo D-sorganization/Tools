@@ -37,6 +37,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes("node_modules/katex")) return "katex";
           if (id.includes("node_modules/react")) return "react-vendor";
+          if (id.includes("hooks/useWorkspaceFiles")) return "workspace-files";
         },
       },
     },

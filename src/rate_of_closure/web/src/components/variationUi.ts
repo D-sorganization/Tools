@@ -17,7 +17,11 @@ export const INPUT_CLASS =
 export const BUTTON_CLASS =
   "rounded border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-slate-500 disabled:opacity-40";
 
-export const downloadText = (name: string, text: string, type: string): void => {
+export const downloadText = (
+  name: string,
+  text: string,
+  type: string,
+): void => {
   downloadBlob(name, new Blob([text], { type }));
 };
 
@@ -30,13 +34,17 @@ export const downloadBlob = (name: string, blob: Blob): void => {
   URL.revokeObjectURL(url);
 };
 
-export const downloadSvgElement = (name: string, element: SVGSVGElement): void => {
+export const downloadSvgElement = (
+  name: string,
+  element: SVGSVGElement,
+): void => {
   const source = new XMLSerializer().serializeToString(element);
   downloadText(name, source, "image/svg+xml;charset=utf-8");
 };
 
 export const sensitivityHeat = (fraction: number): string => {
   const bounded = Math.min(Math.max(fraction, 0), 1);
-  const mix = (start: number, end: number) => Math.round(start + bounded * (end - start));
+  const mix = (start: number, end: number) =>
+    Math.round(start + bounded * (end - start));
   return `rgb(${mix(37, 235)}, ${mix(66, 106)}, ${mix(96, 60)})`;
 };

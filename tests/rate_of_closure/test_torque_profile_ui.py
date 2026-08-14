@@ -12,6 +12,9 @@ pytest.importorskip("pytestqt")
 from PyQt6.QtCore import Qt  # noqa: E402
 from PyQt6.QtWidgets import QCheckBox, QPushButton  # noqa: E402
 
+from rate_of_closure.application.workspace_torque_session import (  # noqa: E402
+    TorqueWorkspaceState,
+)
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab  # noqa: E402
 from rate_of_closure.ui.pyqt6.torque_profile_controller import (  # noqa: E402
     ProfileDraft,
@@ -28,6 +31,8 @@ from shared.python.signal_toolkit.polynomial_generator import (  # noqa: E402
 from shared.python.swing_sim.run_config import (  # noqa: E402
     SHOULDER_JOINT_ID,
     WRIST_JOINT_ID,
+    DoublePendulumRunConfig,
+    JointLockConfig,
 )
 from shared.python.swing_sim.torque_profiles import (  # noqa: E402
     COEFFICIENT_ORDER,
@@ -96,6 +101,18 @@ class TestTorqueProfileLibraryAdapter:
         assert imported == PrescribedTorqueProfile.loads(export_path.read_text())
         assert loaded.active_profile() == original
 
+    def test_workspace_replacement_is_atomic_and_uses_stable_identity(self) -> None:
+        source = TorqueProfileLibraryAdapter()
+        profile = source.assign(_draft(), "joint.shoulder", [10.0, -2.0])
+        target = TorqueProfileLibraryAdapter()
+
+        target.replace_library((profile,), profile.profile_id)
+        with pytest.raises(ValueError, match="not found"):
+            target.replace_library((profile,), "profile.missing")
+
+        assert target.profiles() == (profile,)
+        assert target.active_profile() == profile
+
 
 class TestTorqueProfilePanel:
     def test_run_mode_defaults_to_current_execution(self, panel) -> None:  # type: ignore[no-untyped-def]
@@ -110,6 +127,28 @@ class TestTorqueProfilePanel:
         assert selection.execution_ready is False
         assert "dynamics kernel" in panel._mode_description.text().lower()
         assert "author or load" in selection.validation_message.lower()
+
+    def test_workspace_state_restores_library_mode_selection_and_locks(
+        self, panel
+    ) -> None:  # type: ignore[no-untyped-def]
+        library = TorqueProfileLibraryAdapter()
+        library.assign(_draft(), "joint.shoulder", [10.0, -2.0])
+        profile = library.assign(_draft(), "joint.wrist", [0.0, 3.0])
+        state = TorqueWorkspaceState(
+            profiles=(profile,),
+            active_profile_id=profile.profile_id,
+            run_config=DoublePendulumRunConfig.prescribed(
+                profile.profile_id,
+                joint_locks=JointLockConfig((WRIST_JOINT_ID,)),
+            ),
+        )
+
+        panel.apply_torque_workspace_state(state)
+
+        assert panel.torque_workspace_state() == state
+        assert panel.selection().execution_ready
+        assert panel.joint_lock_checkboxes()[WRIST_JOINT_ID].isChecked()
+        assert "workspace restored" in panel._status_label.text().lower()
 
     def test_joint_assignment_buttons_are_obvious(self, panel) -> None:  # type: ignore[no-untyped-def]
         assert set(panel.assignment_buttons()) == {"joint.shoulder", "joint.wrist"}

@@ -151,12 +151,31 @@ class BallSetupControl(HeightForWidthGroupBox):
 
     def set_setup(self, setup: BallSetup) -> None:
         """Load a canonical persisted setup as an explicit user override."""
+        self.set_persisted_setup(setup, use_club_default=False)
+
+    def set_persisted_setup(
+        self,
+        setup: BallSetup,
+        *,
+        use_club_default: bool,
+    ) -> None:
+        """Restore setup and its validated default/override provenance."""
+        if not isinstance(setup, BallSetup):
+            raise TypeError("setup must be a BallSetup")
+        if not isinstance(use_club_default, bool):
+            raise TypeError("use_club_default must be a bool")
+        if use_club_default and setup != self._club_default:
+            raise ValueError("club-default ball setup does not match the active club")
         self._updating = True
         try:
-            self._use_default.setChecked(False)
+            self._use_default.setChecked(use_club_default)
         finally:
             self._updating = False
         self._apply_setup(setup)
+
+    def uses_club_default(self) -> bool:
+        """Return whether the current setup follows the selected club default."""
+        return bool(self._use_default.isChecked())
 
     def mode_combo(self) -> QComboBox:
         """Return the support-mode editor for integration tests and hosts."""

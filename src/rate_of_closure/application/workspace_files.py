@@ -49,4 +49,21 @@ def write_workspace_atomic(
     return write_utf8_text_atomic(serialized, destination, document_name="workspace")
 
 
-__all__ = ["read_workspace", "write_workspace_atomic"]
+def write_text_atomic(text: str, destination: str | Path | None) -> bool:
+    """Atomically replace a UTF-8 text file, or return false on cancellation.
+
+    Args:
+        text: Already-serialized document text.
+        destination: Destination path, or ``None`` for a cancelled operation.
+
+    Returns:
+        ``True`` after replacement; ``False`` when the operation was cancelled.
+
+    Raises:
+        TypeError: If ``text`` is not a string.
+        OSError: If staging, flushing, or atomic replacement fails.
+    """
+    return write_utf8_text_atomic(text, destination, document_name="workspace")
+
+
+__all__ = ["read_workspace", "write_text_atomic", "write_workspace_atomic"]

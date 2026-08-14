@@ -554,7 +554,28 @@
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded",
-      "head_sha": "2095e748ddca2d7036bbd49a731528f5634daff9"
+      "head_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
+      "evidence_commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9"
+    },
+    {
+      "id": "pr-4301",
+      "pr": 4301,
+      "branch": "fix/rate-mobile-tools-menu",
+      "base_branch": "feat/4284-camera-snap-tracking",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded",
+      "head_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5"
+    },
+    {
+      "id": "pr-4303",
+      "pr": 4303,
+      "branch": "fix/rate-pyqt-default-camera",
+      "base_branch": "fix/rate-mobile-tools-menu",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded",
+      "head_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca"
     }
   ],
   "test_evidence": [
@@ -856,6 +877,68 @@
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md"
       ]
+    },
+    {
+      "id": "mobile-toolstrip-local-ebd8",
+      "kind": "local",
+      "commit_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5",
+      "outcome": "passed",
+      "commands": [
+        "npm test",
+        "npm run type-check && npm run lint && npm run build",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The published constrained-toolstrip evidence commit passed 108 React files and 653 tests, six Chrome Playwright cases across desktop and constrained 2x-DPR projects, TypeScript, zero-warning ESLint, the 194-module production build, manifest validation, and 11 manifest tests; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "legend-rail-local-83b4",
+      "kind": "local",
+      "commit_sha": "83b4baa3be7424777db4dd50883b7a9e45c8ca91",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -n 4 --dist loadscope tests/rate_of_closure/test_compact_simulation_layout.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_plots_gui.py tests/rate_of_closure/test_simulation_gui.py tests/rate_of_closure/test_wedge_ground_clearance_gui.py tests/rate_of_closure/test_campaign_release_manifest.py -q",
+        "python -m pytest -q tests/rate_of_closure/test_compact_simulation_layout.py -k legend",
+        "python -m ruff check <changed Python files> && python -m ruff format --check <changed Python files>",
+        "python -m mypy --namespace-packages --explicit-package-bases --ignore-missing-imports --follow-imports=skip <changed Python production files>",
+        "node --experimental-strip-types <520 px plot-layout contract>",
+        "esbuild.build({ bundle: true, write: false }) for PlotCanvasCard.tsx",
+        "npm ci",
+        "npm test -- src/components/PlotsPanel.test.tsx --reporter=verbose",
+        "npm test -- --reporter=verbose",
+        "npm run type-check",
+        "npx --no-install eslint src/components/PlotCanvasCard.tsx src/components/PlotsPanel.test.tsx src/components/plotLayout.ts --report-unused-disable-directives --max-warnings 0",
+        "npm run build"
+      ],
+      "summary": "Exact follow-up evidence passed 69 focused PyQt6, plot, camera, simulation, wedge, and campaign-manifest tests plus the isolated default-xdist legend regression; changed Python lint, format, and pinned typing; and installed React evidence comprising the focused one-file/four-test layout regression, all 111 files and 674 tests, TypeScript, scoped zero-warning ESLint, and the 196-module production build. npm ci audited 337 packages with zero vulnerabilities. Rendered native qualification remains open.",
+      "source_paths": [
+        "tests/rate_of_closure/test_compact_simulation_layout.py",
+        "src/rate_of_closure/web/src/components/PlotsPanel.test.tsx"
+      ]
+    },
+    {
+      "id": "moving-camera-local-01ae",
+      "kind": "local",
+      "commit_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_camera_commands.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_compact_simulation_layout.py tests/rate_of_closure/test_simulation_gui.py -q",
+        "npm test && npm run type-check && npm run lint && npm run build",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The moving-subject camera continuation passed 49 focused Python/PyQt tests, 108 React files and 653 tests, six desktop/constrained-HiDPI Chrome Playwright cases, TypeScript, zero-warning ESLint, production build, pinned MyPy, Ruff, manifest validation, and 11 manifest contracts; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md"
+      ]
     }
   ],
   "programs": [
@@ -918,6 +1001,14 @@
         {
           "kind": "repository_path",
           "value": "docs/rate_of_closure/variation_visualization_performance.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_variation_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceVariationSession.ts"
         }
       ],
       "tracked_issue_ids": [
@@ -1468,6 +1559,54 @@
         {
           "kind": "repository_path",
           "value": "src/rate_of_closure/application/camera_commands.py"
+        },
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4300"
+        },
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4224"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_simulation_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceSimulationSession.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_torque_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceTorqueSession.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_variation_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceVariationSession.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/capability_workflow.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/capabilityWorkflow.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/ui/pyqt6/simulation_scene_renderer.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/components/plotLayout.ts"
         }
       ],
       "tracked_issue_ids": [
@@ -1478,11 +1617,14 @@
         4223,
         4224,
         4225,
-        4284
+        4284,
+        4300
       ],
       "carrier_ids": [
         "pr-4279",
-        "pr-4298"
+        "pr-4298",
+        "pr-4301",
+        "pr-4303"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
@@ -1492,13 +1634,23 @@
       },
       "evidence_ids": [
         "toolstrip-local-c36",
-        "camera-local-2095"
+        "camera-local-2095",
+        "mobile-toolstrip-local-ebd8",
+        "legend-rail-local-83b4",
+        "moving-camera-local-01ae"
       ],
       "evidence_gap": "Complete persistence adapters, synchronized multi-view state, camera snap controls, accessibility, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
         "The camera tracking and canonical snap-view child has no implementation carrier.",
-        "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open."
+        "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
+        "The explorer-session v2 child persists ball support/default provenance and the full canonical spatial target on Tools PyQt6 and React, while legacy v1 migration requires an explicit current-state fallback; protected integration remains open.",
+        "The explorer-session v3 child locally persists the canonical torque-profile library, source-derived active selection, passive/prescribed run contract, and joint locks on Tools PyQt6 and React; legacy v1/v2 migration is explicit and conflict-safe, while protected integration remains open.",
+        "The explorer-session v5 child locally persists authored variation inputs plus the strict capability optimizer input specification on Tools PyQt6 and React. Full-document authority preserves accepted evidence and advanced policy while controls overlay represented fields; interactive projection requires the exact ordered canonical units and a 3-by-3 correlation basis, rejecting alternate units, covariance, and unsupported shapes before mutation without conversion. Stale native workers cannot publish across generations, and oversized numeric wire values fail closed. Capability results, observation ensembles, runtime objects, wind-aware optimizer inputs, UpstreamDrift consumers, and protected integration remain open.",
+        "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open.",
+        "The bounded issue 4224 default-legend rail slice has immutable local evidence at 83b4baa3be7424777db4dd50883b7a9e45c8ca91 on a child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; installed React qualification passes while persistence/export qualification, native review, and protected integration remain open.",
+        "Draft PR 4303 publishes share-ready moving-subject camera defaults across PyQt6 and React at immutable evidence commit 01ae99f0f42876c7a6948c30f50e13618da14eca; protected integration and remaining issue 4300 layout work remain open.",
+        "The local #4218/#4284 camera-preference continuation composes exact published #4343, #4331, and #4303 heads and adds strict cross-runtime view-workspace v2 persistence across QSettings, localStorage, File operations, and five camera adapters without persisting targets or per-frame tracking; immutable commit evidence, protected review/CI, rendered qualification, and UpstreamDrift consumers remain open."
       ],
       "depends_on_issues": [
         4191
@@ -1591,6 +1743,14 @@
         {
           "kind": "repository_path",
           "value": "docs/release/four_surface_capability.v1.schema.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/runtime_manifest.py"
         }
       ],
       "tracked_issue_ids": [

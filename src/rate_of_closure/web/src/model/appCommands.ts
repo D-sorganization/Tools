@@ -70,8 +70,10 @@ export interface AppCommand {
   readonly shortcut?: string;
 }
 
-const FILE_DISABLED_REASON =
-  "Available after the shared workspace document adapter is integrated.";
+const RECENT_DISABLED_REASON =
+  "Browsers do not expose persistent recent-file paths without user permission.";
+const SAVE_DISABLED_REASON =
+  "Browsers cannot overwrite a prior download; use Save Workspace As to download a new copy.";
 
 const enabled = (
   id: AppCommandId,
@@ -92,14 +94,14 @@ const disabled = (
 };
 
 export const APP_COMMANDS: readonly AppCommand[] = Object.freeze([
-  disabled(APP_COMMAND_ID.fileNewWorkspace, "file", "New Workspace", FILE_DISABLED_REASON),
-  disabled(APP_COMMAND_ID.fileOpenWorkspace, "file", "Open Workspace…", FILE_DISABLED_REASON),
-  disabled(APP_COMMAND_ID.fileOpenRecentWorkspace, "file", "Open Recent Workspace", FILE_DISABLED_REASON),
-  disabled(APP_COMMAND_ID.fileSaveWorkspace, "file", "Save Workspace", FILE_DISABLED_REASON),
-  disabled(APP_COMMAND_ID.fileSaveWorkspaceAs, "file", "Save Workspace As…", FILE_DISABLED_REASON),
-  disabled(APP_COMMAND_ID.fileImportWorkspace, "file", "Import Workspace…", FILE_DISABLED_REASON),
-  disabled(APP_COMMAND_ID.fileExportWorkspace, "file", "Export Workspace…", FILE_DISABLED_REASON),
-  disabled(APP_COMMAND_ID.fileCloseWorkspace, "file", "Close Workspace", FILE_DISABLED_REASON),
+  enabled(APP_COMMAND_ID.fileNewWorkspace, "file", "New Workspace"),
+  enabled(APP_COMMAND_ID.fileOpenWorkspace, "file", "Open Workspace…"),
+  disabled(APP_COMMAND_ID.fileOpenRecentWorkspace, "file", "Open Recent Workspace", RECENT_DISABLED_REASON),
+  disabled(APP_COMMAND_ID.fileSaveWorkspace, "file", "Save Workspace", SAVE_DISABLED_REASON),
+  enabled(APP_COMMAND_ID.fileSaveWorkspaceAs, "file", "Save Workspace As…"),
+  enabled(APP_COMMAND_ID.fileImportWorkspace, "file", "Import View Layout…"),
+  enabled(APP_COMMAND_ID.fileExportWorkspace, "file", "Export View Layout…"),
+  enabled(APP_COMMAND_ID.fileCloseWorkspace, "file", "Close Workspace"),
   enabled(
     APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest,
     "file",

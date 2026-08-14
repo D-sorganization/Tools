@@ -92,3 +92,20 @@ def test_read_rejects_invalid_document(tmp_path: Path) -> None:
 
     with pytest.raises((TypeError, ValueError)):
         workspace_files.read_workspace(target)
+
+
+def test_atomic_text_export_preserves_existing_file_on_replace_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    target = tmp_path / "layout.json"
+    target.write_text("last-known-good", encoding="utf-8")
+
+    def fail_replace(_source: str | Path, _target: str | Path) -> None:
+        raise OSError("replace failed")
+
+    monkeypatch.setattr(workspace_files.os, "replace", fail_replace)
+
+    with pytest.raises(OSError, match="replace failed"):
+        workspace_files.write_text_atomic('{"new":true}\n', target)
+    assert target.read_text(encoding="utf-8") == "last-known-good"
+    assert not list(tmp_path.glob(".*.tmp"))

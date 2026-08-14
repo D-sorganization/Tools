@@ -6,7 +6,6 @@ import logging
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
-    QCheckBox,
     QComboBox,
     QFormLayout,
     QFrame,
@@ -35,6 +34,7 @@ from rate_of_closure.ui.pyqt6.variation_tab_results import (
     populate_result_views,
 )
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker
+from rate_of_closure.ui.pyqt6.variation_workspace import VariationWorkspaceMixin
 from rate_of_closure.variation.plot_data import build_ensemble_plot_dataset
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.contracts import ContractViolationError
@@ -61,7 +61,12 @@ _BASE_SOURCES = ("Registry Defaults", "Explorer Scenario")
 _MAX_RUNS = 5000
 
 
-class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
+class VariationTab(
+    VariationWorkspaceMixin,
+    VariationTabIoMixin,
+    VariationTabResultsMixin,
+    QWidget,
+):
     """Monte-Carlo variation tab (controls left, results right)."""
 
     #: Emitted with the VariationDataset after a successful study
@@ -87,6 +92,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         left = QWidget()
         left_layout = QVBoxLayout(left)
         left_layout.addWidget(self._build_setup_box())
+        left_layout.addWidget(self._build_workspace_policy_box())
         left_layout.addWidget(self._build_noise_box())
         left_layout.addWidget(self._build_run_box())
         left_layout.addWidget(self._build_export_box())
@@ -184,15 +190,6 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
     def _build_run_box(self) -> QGroupBox:
         box = QGroupBox("Run")
         layout = QVBoxLayout(box)
-        self._sens_check = QCheckBox("Compute One-at-a-Time Sensitivity")
-        self._sens_check.setChecked(True)
-        self._sens_check.setToolTip(
-            "After the main batch, rerun the study once per noise row with "
-            "only that row active (paired draws) to attribute each "
-            "output's spread to its inputs. Multiplies runtime by the "
-            "number of rows + 1."
-        )
-        layout.addWidget(self._sens_check)
         row = QHBoxLayout()
         self._run_button = QPushButton("Run Variation Study")
         self._run_button.setToolTip(
@@ -291,6 +288,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         self._loaded_base.clear()
         for row in self._rows:
             row.set_mode(self.mode())
+        self._reset_output_metric_choices()
 
     # ── run / cancel ────────────────────────────────────────────────
     def _on_run(self) -> None:
@@ -307,7 +305,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         self._set_running(True)
         worker = VariationWorker(
             plan,
-            compute_sensitivity=self._sens_check.isChecked(),
+            analysis_execution=self.analysis_execution(),
             base_simulation_config=self._base_simulation_config,
         )
         worker.progressed.connect(self._on_progress)
@@ -353,22 +351,33 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             self._progress.setRange(0, 0)  # busy while OAT sub-studies run
         self._status.setText(phase)
 
-    def _on_succeeded(self, dataset: VariationDataset, sensitivity: object) -> None:
-        self._dataset = dataset
+    def _on_succeeded(self, dataset: object, sensitivity: object) -> None:
+        parsed_dataset = dataset if isinstance(dataset, VariationDataset) else None
+        self._dataset = parsed_dataset
         self._sensitivity = (
             sensitivity if isinstance(sensitivity, SensitivityResult) else None
         )
+        if parsed_dataset is None:
+            assert self._sensitivity is not None
+            self._sensitivity_table.set_matrix(
+                self._sensitivity.input_keys,
+                self._sensitivity.output_names,
+                self._sensitivity.matrix,
+                self._sensitivity.normalized,
+            )
+            self._status.setText("Done: one-at-a-time sensitivity analysis complete.")
+            return
         if self._ensemble_result is None:
-            self._ensemble_scatter.set_variation_dataset(dataset)
-            self._distribution_matrix.set_variation_dataset(dataset)
+            self._ensemble_scatter.set_variation_dataset(parsed_dataset)
+            self._distribution_matrix.set_variation_dataset(parsed_dataset)
         self._populate_results()
-        failures = dataset.plan.n_runs - dataset.n_success
+        failures = parsed_dataset.plan.n_runs - parsed_dataset.n_success
         note = f" ({failures} runs failed)" if failures else ""
         self._status.setText(
-            f"Done: {dataset.n_success}/{dataset.plan.n_runs} runs in "
-            f"{dataset.elapsed_s:.1f} s{note}."
+            f"Done: {parsed_dataset.n_success}/{parsed_dataset.plan.n_runs} runs in "
+            f"{parsed_dataset.elapsed_s:.1f} s{note}."
         )
-        self.studyCompleted.emit(dataset)
+        self.studyCompleted.emit(parsed_dataset)
 
     def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
         """Populate complete-trace views before the scalar completion callback."""
@@ -392,7 +401,6 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         self._progress.setValue(self._progress.maximum())
         self._set_running(False)
 
-    # ── results ─────────────────────────────────────────────────────
     def _populate_results(self) -> None:
         dataset = self._dataset
         if dataset is None:

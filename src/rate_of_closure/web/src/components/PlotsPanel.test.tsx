@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DEFAULT_SCENARIO } from "../model/impact";
 import { PlotsPanel } from "./PlotsPanel";
+import { resolvePlotLayout } from "./plotLayout";
 
 describe("PlotsPanel view workspace", () => {
   beforeEach(() => {
@@ -59,5 +60,15 @@ describe("PlotsPanel view workspace", () => {
     const canvas = screen.getByLabelText("Closure Sweep plot");
     fireEvent.wheel(canvas, { deltaY: -100 });
     expect(screen.getByText("125%" )).toBeInTheDocument();
+  });
+
+  it("reserves a non-overlapping outside legend rail at constrained width", () => {
+    const layout = resolvePlotLayout(520, 320, "outside_right");
+
+    expect(layout.plotRight).toBeLessThanOrEqual(layout.legendX);
+    expect(layout.legendX).toBeGreaterThan(0);
+    expect(layout.legendX).toBeLessThan(520);
+    expect(() => resolvePlotLayout(200, 320, "outside_right")).toThrow(RangeError);
+    expect(() => resolvePlotLayout(Number.NaN, 320, "hidden")).toThrow(RangeError);
   });
 });

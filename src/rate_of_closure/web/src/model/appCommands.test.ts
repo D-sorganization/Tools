@@ -47,18 +47,18 @@ describe("application command registry", () => {
       enabled ? disabledReason === null : Boolean(disabledReason?.trim()),
     )).toBe(true);
     const disabledCommand = APP_COMMANDS.find(
-      ({ id }) => id === APP_COMMAND_ID.fileNewWorkspace,
+      ({ id }) => id === APP_COMMAND_ID.fileSaveWorkspace,
     );
     expect(disabledCommand).toBeDefined();
     expect(() => requireCommandEnabled(disabledCommand!)).toThrow(
       new CommandUnavailableError(
-        APP_COMMAND_ID.fileNewWorkspace,
+        APP_COMMAND_ID.fileSaveWorkspace,
         disabledCommand!.disabledReason!,
       ),
     );
   });
 
-  it("keeps unavailable workspace-document commands truthfully disabled", () => {
+  it("enables browser-safe operations and explains unavailable file authority", () => {
     const enabledContextual = new Set<(typeof APP_COMMAND_IDS)[number]>([
       APP_COMMAND_ID.fileOpenRegionalGroundVariationRequest,
       APP_COMMAND_ID.fileSaveRegionalGroundVariationRequestAs,
@@ -67,12 +67,25 @@ describe("application command registry", () => {
       APP_COMMAND_ID.fileSaveRegionalGroundExecutionResultAs,
       APP_COMMAND_ID.fileExportRegionalGroundExecutionRowsCsv,
     ]);
-    const fileCommands = APP_COMMANDS.filter(({ group, id }) =>
-      group === "file" && !enabledContextual.has(id));
+    expect(
+      APP_COMMANDS.filter(({ id }) => enabledContextual.has(id)).every(
+        ({ enabled }) => enabled,
+      ),
+    ).toBe(true);
+    const fileCommands = APP_COMMANDS.filter(
+      ({ group, id }) => group === "file" && !enabledContextual.has(id),
+    );
     expect(fileCommands).toHaveLength(8);
-    expect(fileCommands.every(({ enabled }) => !enabled)).toBe(true);
-    expect(fileCommands.every(({ disabledReason }) =>
-      disabledReason?.includes("workspace document adapter"))).toBe(true);
+    expect(fileCommands.filter(({ enabled }) => enabled).map(({ id }) => id)).toEqual([
+      APP_COMMAND_ID.fileNewWorkspace,
+      APP_COMMAND_ID.fileOpenWorkspace,
+      APP_COMMAND_ID.fileSaveWorkspaceAs,
+      APP_COMMAND_ID.fileImportWorkspace,
+      APP_COMMAND_ID.fileExportWorkspace,
+      APP_COMMAND_ID.fileCloseWorkspace,
+    ]);
+    expect(fileCommands.filter(({ enabled }) => !enabled).every(({ disabledReason }) =>
+      Boolean(disabledReason?.trim()))).toBe(true);
   });
 
   it("resolves global shortcuts without stealing editable-field keystrokes", () => {
