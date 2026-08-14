@@ -98,6 +98,7 @@ class PlotsTab(PlotsTabComputationMixin, PlotExportMixin, QWidget):
         layout = QVBoxLayout(box)
 
         self._plot_list = QListWidget()
+        self._plot_list.setAccessibleName("Managed Plots")
         self._plot_list.setToolTip(
             "Your managed plots. Select one to render it on the canvas; "
             "add built-ins or build your own with Custom Plot…"
@@ -107,6 +108,7 @@ class PlotsTab(PlotsTabComputationMixin, PlotExportMixin, QWidget):
 
         row = QHBoxLayout()
         self._builtin_combo = QComboBox()
+        self._builtin_combo.setAccessibleName("Built-in Plot to Add")
         for name, (label, _factory) in BUILTIN_PLOTS.items():
             self._builtin_combo.addItem(label, userData=name)
         self._builtin_combo.setToolTip(

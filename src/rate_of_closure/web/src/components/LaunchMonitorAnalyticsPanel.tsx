@@ -149,7 +149,7 @@ export function LaunchMonitorAnalyticsPanel() {
               onChange={(event) => { const file = event.target.files?.[0]; if (file) void loadFile(file); }} />
             <button type="button" title="Import a local CSV or JSON launch-monitor export"
               onClick={() => input.current?.click()}
-              className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold hover:bg-sky-500">Import Data</button>
+              className="rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-600">Import Data</button>
             <button type="button" title="Restore the built-in non-vendor demonstration dataset"
               onClick={() => { importEpoch.current += 1; setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setOutcome("ball_speed"); setPredictors(["club_speed", "attack_angle"]); setGroupBy("monitor_vendor"); setResult(null); setSelectedRawIndex(null); setError(null); }}
               className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Load Demo</button>
@@ -225,7 +225,7 @@ export function LaunchMonitorAnalyticsPanel() {
             </label>
           </div>
           <button type="button" onClick={run} title="Run the selected traceable statistical analysis"
-            className="w-full rounded-lg bg-emerald-600 px-4 py-3 font-semibold hover:bg-emerald-500">Run Analysis</button>
+            className="w-full rounded-lg bg-emerald-700 px-4 py-3 font-semibold hover:bg-emerald-600">Run Analysis</button>
           {error && <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{error}</p>}
         </section>
 

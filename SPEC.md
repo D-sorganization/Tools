@@ -26,11 +26,103 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.00                                    |
-| **Spec Version**        | 1.17.00                                    |
+| **Current Version**     | 1.17.06                                    |
+| **Spec Version**        | 1.17.06                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Visual-baseline hosted typing closure (#4433)
+
+Version 1.17.06 adds an explicit NumPy array cast at the decoded/copied RGB
+return boundary required by CPython 3.12/MyPy 1.13. The runtime array, pixel
+metrics, reference identities, drift tolerances, workflow authority, and
+scientific behavior are unchanged.
+
+### 2026-08-14 Proposed protected visual baselines (#4433)
+
+Version 1.17.05 packages the 18 reviewed initial-state PNGs produced by the
+successful protected `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c` run. The
+strict v1 manifest exactly covers the visualization-tab authority and binds
+each React/PyQt reference to its environment, basename, SHA-256, and a narrow
+one-channel, 100-microunit mean/fraction raster envelope. Inputs are bounded to
+10 MiB, 4096 pixels per dimension, and 16,777,216 pixels before RGB comparison.
+
+Both PR-hosted and trusted-main workflows regenerate all 18 candidates, require
+their manifests to name the exact evaluated commit, validate coverage and
+digests, then fail closed when decoded geometry or pixels exceed the reference
+contract. The references remain proposed on this branch; protected merge is
+their approval event. Responsive React, PyQt DPI-1.5, manual AT execution, and
+cross-platform pixel identity remain open. No scientific, result, playback,
+selection, persistence, or export authority changes in this promotion.
+
+### 2026-08-14 Deterministic Explorer candidate capture (#4433)
+
+Version 1.17.04 explicitly applies the declared dark and reduced-motion media
+environment before each React candidate navigation and requires the Explorer
+playback control to be paused before its initial-state PNG is written. Two
+consecutive local production-Chromium runs produced the same Explorer digest.
+This changes only the protected capture harness, not runtime playback, camera,
+mesh-source, result, or scientific authority.
+
+### 2026-08-14 Cross-platform accessibility inventory correction (#4433)
+
+Version 1.17.03 records the observed 160–161 registered semantic-control
+envelope for the PyQt Variation tab instead of asserting one platform-specific
+count. Every actual visible, enabled, focusable semantic control is still
+audited for a nonempty name bounded to 512 characters, and the protected
+artifact records both registered and visible counts. Candidate pixels,
+scientific behavior, and retained evidence are unchanged.
+
+### 2026-08-14 Visual-baseline candidate authority (#4433)
+
+Version 1.17.02 adds a protected, pre-approval capture stage. React emits one
+initial-state PNG for each of its nine registered tabs at Chromium 1440x900,
+dark mode, device scale 1, UTC, and reduced motion. PyQt emits one full-window
+PNG for each of its nine tabs at offscreen DPI 1.0/1440x900 after loading
+bundled DejaVu Sans and verifying required ASCII coverage. Each surface writes
+an exact source-commit/environment/file/SHA-256 manifest, and both workflows
+retain the candidates in their existing evidence artifact.
+
+Candidate generation does not approve a golden. Approval requires inspection
+of the hosted images, committed immutable baseline bytes and digests, explicit
+drift limits, and protected merge. React narrow and PyQt DPI-1.5 captures remain
+diagnostic. No scientific, result, selection, playback, layout-preference, or
+export authority changes in this capture stage. Candidate inspection also
+closed a PyQt Launch Monitor overlap by reserving explicit space between the
+linked scatter and its compact retained-row status.
+
+### 2026-08-14 Cross-tab automated accessibility evidence (#4433)
+
+Version 1.17.01 introduces
+`rate-of-closure/visualization-accessibility-evidence@1`, whose tab identities
+must exactly equal the existing visibility authority. React evidence uses
+axe-core 4.13.0 WCAG A/AA rules through WCAG 2.2 against each initial primary
+tab in production Chromium. The protected attachment preserves every tab's
+violation array. The first strict run found three contrast failures; corrected
+sky/emerald action shades now produce zero detected violations across all nine
+React tabs.
+
+PyQt evidence constructs the real main window and audits visible, enabled,
+focusable semantic controls. Buttons may use their text; line edits may use an
+explicit placeholder; labeled fields may use their `QLabel` buddy; all other
+audited controls require an explicit accessible name. Names are nonempty and
+bounded to 512 characters. This closes the reproduced unnamed canvas, list,
+combo, slider, and numeric-input gaps across the nine PyQt tabs.
+The protected PyQt artifact records the exact tab/control counts, findings,
+GitHub SHA, and Qt/PyQt versions as JSON.
+The audit separately pins the exact registered semantic-control inventory and
+records the visible audited count. Platform-dependent native visibility cannot
+masquerade as missing application authority, and every visible control remains
+subject to the name/length audit.
+
+The companion controlled protocol covers keyboard traversal, focus, primary
+tasks, status/error/result announcements, 200% scaling, exact environment and
+build identity, evidence retention, defects, evaluator, and approval. It is a
+protocol, not a completed qualification record. No human screen-reader run or
+sign-off is claimed. Automated rule success does not prove manual AT, voice or
+switch access, cognitive accessibility, arbitrary browsers/platforms, or
+approved-golden status.
 
 ### 2026-08-14 Persisted visual-layout preferences (#4433)
 
@@ -4362,6 +4454,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.06 | fix(rate-of-closure, #4433): add the explicit decoded-RGB NumPy return cast required by hosted MyPy 1.13 without changing runtime visual comparison behavior. |
+| 2026-08-14 | 1.17.05 | test(rate-of-closure, #4433): package 18 reviewed exact-head initial-state references and enforce commit-bound, digest-bound, bounded-pixel visual drift in PR and trusted-main evidence lanes, with protected merge as approval. |
+| 2026-08-14 | 1.17.04 | test(rate-of-closure, #4433): apply the declared dark/reduced-motion media before React baseline navigation and require Explorer playback paused for deterministic candidate capture. |
+| 2026-08-14 | 1.17.03 | fix(rate-of-closure, #4433): replace the platform-specific PyQt Variation registered-control count with the observed 160–161 envelope while preserving per-control accessible-name enforcement and evidence. |
+| 2026-08-14 | 1.17.02 | test(rate-of-closure, #4433): generate exact hosted React/PyQt initial-state visual-baseline candidates with deterministic environments and SHA-256 manifests while retaining explicit pre-approval status. |
+| 2026-08-14 | 1.17.01 | feat(rate-of-closure, #4433): add exact all-tab automated accessibility evidence, strict React axe and PyQt semantic-control gates, corrected action contrast and control names, plus a controlled but not-yet-executed human AT qualification protocol. |
 | 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |
 | 2026-08-13 | 1.16.86 | fix(ci, #4441): classify only the PyQt Variation lifecycle subprocess probe as assertion-free support while preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |

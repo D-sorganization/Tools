@@ -149,7 +149,9 @@ class FlightExplorerTab(FlightExplorerRunMixin, QWidget):
         self._speed_spin = make_spin(
             1.0, 250.0, 167.0, 1, "", FIELD_GUIDANCE["fx_ball_speed"]
         )
+        self._speed_spin.setAccessibleName("Ball Speed")
         self._speed_unit_combo = QComboBox()
+        self._speed_unit_combo.setAccessibleName("Ball Speed Unit")
         self._speed_unit_combo.addItems(list(SPEED_UNITS))
         self._speed_unit_combo.setToolTip(FIELD_GUIDANCE["fx_speed_unit"])
         self._speed_unit_combo.currentTextChanged.connect(self._on_speed_unit)
@@ -236,6 +238,7 @@ class FlightExplorerTab(FlightExplorerRunMixin, QWidget):
             spin = make_spin(
                 low, high, default, decimals, suffix, FIELD_GUIDANCE[guidance_key]
             )
+            spin.setAccessibleName(label)
             target[attr] = spin
             form.addRow(field_label(label, attr, FIELD_GUIDANCE[guidance_key]), spin)
         return page

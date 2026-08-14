@@ -166,6 +166,7 @@ class PuttingTab(QWidget):
             "putts inside 15 m. Source: pendulum-stroke kinematics "
             "(swing_sim.putting.impact).",
         )
+        self._speed_spin.setAccessibleName("Putter Clubhead Speed")
         self._backstroke_spin = self._spin(
             5.0,
             100.0,
@@ -177,6 +178,7 @@ class PuttingTab(QWidget):
             "10-60 cm. Source: swing_sim.putting.impact derivation.",
             decimals=0,
         )
+        self._backstroke_spin.setAccessibleName("Putter Backstroke Length")
         self._pace_stack = QStackedWidget()
         self._pace_stack.setToolTip(
             "Stroke pace entry — switches with the pace-input mode."

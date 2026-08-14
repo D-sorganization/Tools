@@ -226,6 +226,10 @@ exclude = [
 "rate_of_closure" = [
     "visualization_tabs.v1.json",
     "visualization_performance.v1.json",
+    "visualization_accessibility.v1.json",
+    "visual_baselines.v1.json",
+    "visual_baselines/v1/react/*.png",
+    "visual_baselines/v1/pyqt/*.png",
 ]
 
 # =============================================================================

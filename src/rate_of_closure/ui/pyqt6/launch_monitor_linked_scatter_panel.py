@@ -21,14 +21,21 @@ class LaunchMonitorLinkedScatterPanel(QWidget):
         self.status = QLabel()
         self.status.setWordWrap(True)
         self.status.setAccessibleName("Linked Scatter Selected Retained Row")
+        self.status.setAccessibleDescription(
+            "All retained rows remain exportable. The selected missing-data policy "
+            "controls which rows enter statistical analysis."
+        )
+        self.status.setToolTip(self.status.accessibleDescription())
         self.status.setTextInteractionFlags(
             Qt.TextInteractionFlag.TextSelectableByKeyboard
             | Qt.TextInteractionFlag.TextSelectableByMouse
         )
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(12)
         layout.addWidget(self.preview, 1)
         layout.addWidget(self.status)
+        self.setMinimumHeight(330)
         self._generation = 0
         self._selection: tuple[int, int] | None = None
         self._frame: pd.DataFrame | None = None
@@ -89,15 +96,14 @@ class LaunchMonitorLinkedScatterPanel(QWidget):
     def _status_text(plan: LinkedScatterPlan, selected_raw_index: int | None) -> str:
         prefix = (
             f"Displayed {plan.displayed_count:,} of {plan.finite_count:,} finite "
-            f"pairs from {plan.raw_count:,} retained rows. All rows remain retained "
-            "for export; the selected missing-data policy controls analysis inclusion. "
+            f"pairs from {plan.raw_count:,} retained rows. "
         )
         if plan.points:
             prefix += (
-                f"Displayed-point {plan.x_field} range "
+                f"Ranges: {plan.x_field} "
                 f"{min(point.x for point in plan.points):g} to "
-                f"{max(point.x for point in plan.points):g}; displayed-point "
-                f"{plan.y_field} range {min(point.y for point in plan.points):g} to "
+                f"{max(point.x for point in plan.points):g}; "
+                f"{plan.y_field} {min(point.y for point in plan.points):g} to "
                 f"{max(point.y for point in plan.points):g}. "
             )
         point = next(

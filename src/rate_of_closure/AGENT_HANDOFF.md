@@ -3,6 +3,76 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Visual-baseline hosted typing closure (#4433)
+
+- SPEC 1.17.06 explicitly casts the already validated/copied RGB NumPy array at
+  the hosted MyPy 1.13 return boundary. Runtime pixels, digest/tolerance logic,
+  candidate identity, and scientific authority do not change.
+
+## 2026-08-14 Proposed protected visual baselines (#4433)
+
+- SPEC 1.17.05 packages 18 reviewed initial-state references from successful
+  protected head `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c` with exact
+  SHA-256 identities and a narrow 1-channel/100-microunit raster tolerance.
+- PR and trusted-main lanes now bind newly generated manifests to the exact
+  evaluated commit and fail closed on missing/foreign images or visual drift.
+- The references remain proposed until protected merge. Narrow React,
+  DPI-1.5 PyQt, manual AT qualification, and cross-platform pixel identity are
+  still open; no scientific/result/export authority changed.
+
+## 2026-08-14 Deterministic Explorer candidate capture (#4433)
+
+- SPEC 1.17.04 makes the React baseline harness apply dark/reduced-motion media
+  before navigation and prove Explorer is paused before the PNG is written.
+- Consecutive local production-browser captures are byte-identical. No runtime
+  playback, camera, source, or scientific authority changed.
+
+## 2026-08-14 Cross-platform accessibility inventory correction (#4433)
+
+- SPEC 1.17.03 records Qt's observed 160–161 registered-control envelope for
+  the Variation tab. Every actual visible semantic control is still audited
+  for a nonempty, bounded accessible name, and both counts remain in evidence.
+- No candidate pixels, scientific execution, or retained-result authority
+  changed.
+
+## 2026-08-14 Visual-baseline candidate authority (#4433)
+
+- Protected React and PyQt lanes now emit exactly nine initial-state reference
+  PNGs apiece with source commit, environment, filename, and SHA-256 manifests.
+- React is fixed to Chromium 1440x900, dark color scheme, device scale 1, UTC,
+  and reduced motion. PyQt is fixed to offscreen DPI 1.0 at 1440x900 and loads
+  bundled DejaVu Sans with an ASCII sanity check before capture.
+- Candidate artifacts are not approved goldens. Promotion still requires exact
+  hosted-image inspection, committed baseline bytes/digests and drift limits,
+  then protected merge. Narrow/150% evidence remains diagnostic. SPEC is
+  1.17.02.
+- PyQt Launch Monitor candidate inspection also closed a plot/status overlap by
+  reserving explicit space beneath the linked scatter; scientific and retained
+  row authority are unchanged.
+
+## 2026-08-14 Cross-tab automated accessibility evidence (#4433)
+
+- `visualization-accessibility-evidence@1` exactly covers all nine React and
+  nine PyQt visualization-tab identities and explicitly separates protected
+  automated evidence from human assistive-technology qualification.
+- React uses pinned axe-core 4.13.0 against production Chromium with WCAG A/AA
+  tags through 2.2. The strict first run exposed three low-contrast actions;
+  corrected sky/emerald shades now leave zero detected violations across the
+  nine initial tab states, with per-tab JSON retained by Playwright.
+- PyQt constructs the real main window and audits every visible, enabled,
+  focusable button, item view, slider, spin box, combo, line edit, and
+  Matplotlib canvas for a bounded accessible name. Previously unnamed plot,
+  glossary, simulation, flight, variation, and putting controls are corrected.
+  The protected artifact records tab/control counts, findings, GitHub SHA, and
+  exact Qt/PyQt versions as JSON.
+- The PyQt audit separately pins each tab's exact registered semantic-control
+  inventory and records its visible audited count; every visible control still
+  requires a bounded accessible name.
+- The new controlled protocol defines keyboard/screen-reader tasks, evidence,
+  defects, exact environment identity, and sign-off for every surface/tab. No
+  human execution is recorded, so manual AT qualification and approved
+  baselines remain open. SPEC is 1.17.01.
+
 ## 2026-08-14 Persisted visual-layout preferences (#4433)
 
 - `visual-layout-preferences@1` durably restores the existing tab/order state

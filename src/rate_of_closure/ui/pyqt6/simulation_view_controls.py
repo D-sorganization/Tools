@@ -131,6 +131,7 @@ class SimulationViewControlsMixin:
     def _create_timeline_controls(self, layout: QGridLayout) -> None:
         """Create scrubbing, looping, and granular playback-rate controls."""
         self._position_slider = QSlider(Qt.Orientation.Horizontal)
+        self._position_slider.setAccessibleName("Simulation Playback Position")
         self._position_slider.setRange(0, 1000)
         self._position_slider.setToolTip(
             "Scrub the playback instant across the swing and flight timeline."
@@ -204,6 +205,7 @@ class SimulationViewControlsMixin:
     def _add_analysis_controls(self, grid: QGridLayout, row: int) -> None:
         """Add screw-axis selection, camera presets, and impact export."""
         self._screw_entity = QComboBox()
+        self._screw_entity.setAccessibleName("Screw Axis Body or Joint")
         self._screw_entity.addItem("Club", "club")
         self._screw_entity.setToolTip(
             "Choose the rigid body or modeled joint used for screw-axis analysis."
@@ -235,6 +237,7 @@ class SimulationViewControlsMixin:
         self._legend_check.setToolTip("Show or hide the plot legend.")
         self._legend_check.toggled.connect(lambda _checked: self._draw())
         self._legend_position = QComboBox()
+        self._legend_position.setAccessibleName("Simulation Legend Position")
         self._legend_position.addItem("Outside right", "outside_right")
         self._legend_position.addItem("Inside upper right", "inside_upper_right")
         self._legend_position.addItem("Inside lower right", "inside_lower_right")

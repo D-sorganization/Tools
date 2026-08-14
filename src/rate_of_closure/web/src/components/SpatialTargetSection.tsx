@@ -242,7 +242,7 @@ export function SpatialTargetSection({ target, onChange, flightPoints = [] }: Pr
       </div>
       <button type="submit"
         title="Validate the draft and apply it as the active canonical spatial target"
-        className="mt-3 min-h-11 rounded-md bg-sky-600 px-4 py-2 text-sm font-semibold hover:bg-sky-500">
+        className="mt-3 min-h-11 rounded-md bg-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-600">
         Apply spatial target
       </button>
       {error && <p id={ERROR_ID} role="alert" className="mt-2 text-sm text-rose-300">{error}</p>}

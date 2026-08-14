@@ -137,7 +137,7 @@ def test_manifest_is_deeply_immutable() -> None:
         manifest.surfaces["react"] = manifest.surfaces["pyqt"]  # type: ignore[index]
 
 
-def test_both_visualization_authorities_are_declared_as_package_data() -> None:
+def test_all_visualization_authorities_are_declared_as_package_data() -> None:
     project = tomllib.loads(
         (Path(__file__).parents[2] / "pyproject.toml").read_text(encoding="utf-8")
     )
@@ -145,4 +145,5 @@ def test_both_visualization_authorities_are_declared_as_package_data() -> None:
     assert set(packaged) == {
         "visualization_tabs.v1.json",
         "visualization_performance.v1.json",
+        "visualization_accessibility.v1.json",
     }

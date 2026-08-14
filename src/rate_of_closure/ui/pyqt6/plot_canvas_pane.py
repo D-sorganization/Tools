@@ -41,6 +41,7 @@ class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
         self._zoom = 1.0
         self._figure = Figure(figsize=(5.2, 3.5), tight_layout=True)
         self._canvas = FigureCanvas(self._figure)
+        self._canvas.setAccessibleName(f"{label} Interactive Plot")
         self._canvas.setMinimumSize(380, 260)
         self._toolbar = NavigationToolbar2QT(self._canvas, self)
 

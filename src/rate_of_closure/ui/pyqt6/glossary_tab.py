@@ -52,6 +52,7 @@ class GlossaryTab(QWidget):
         self._search.textChanged.connect(self._refilter)
 
         self._list = QListWidget()
+        self._list.setAccessibleName("Glossary Terms")
         self._list.setToolTip("Glossary terms — click one to read its definition")
         self._list.currentItemChanged.connect(self._on_current_item)
 
