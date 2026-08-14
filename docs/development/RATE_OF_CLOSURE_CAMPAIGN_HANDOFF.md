@@ -1,5 +1,11 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Plot-worker Bandit directive closure
+
+- SPEC 1.16.99 adds the explicit Bandit B301 suppression required for two
+  bounded internal plot-worker IPC deserializations. The request digest, exact
+  message/result contracts, generation binding, and runtime remain unchanged.
+
 ## 2026-08-14 #4433 Cross-tab performance hosted typing closure
 
 - SPEC 1.16.98 explicitly narrows the canonical plot-worker selector and uses

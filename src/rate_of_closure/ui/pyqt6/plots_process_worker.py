@@ -132,7 +132,7 @@ def _worker_main() -> int:
     try:
         request_bytes = sys.stdin.buffer.read()
         authority_identity = sha256(request_bytes).hexdigest()
-        request = pickle.loads(request_bytes)  # noqa: S301 - internal IPC
+        request = pickle.loads(request_bytes)  # nosec B301  # noqa: S301
         if not isinstance(request, PlotProcessRequest):
             raise TypeError("Malformed plot process request")
         sys.stdout.buffer.write(
@@ -230,7 +230,7 @@ class PlotComputeProcess(QObject):
         self._read_stdout()
         if exit_code == 0 and self._stdout:
             try:
-                message = pickle.loads(self._stdout)  # noqa: S301 - internal IPC
+                message = pickle.loads(self._stdout)  # nosec B301  # noqa: S301
             except Exception as exc:  # noqa: BLE001 - bounded IPC failure
                 self.failed.emit(
                     self.generation, f"Malformed plot process result: {exc}"

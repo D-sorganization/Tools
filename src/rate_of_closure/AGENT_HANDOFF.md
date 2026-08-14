@@ -3,6 +3,12 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Plot-worker Bandit directive closure (#4433)
+
+- Version 1.16.99 adds the protected gate's explicit B301 suppression to the
+  two already-bounded internal IPC deserializations. Runtime behavior and all
+  1.16.98 authority/evidence contracts are unchanged.
+
 ## 2026-08-14 Cross-tab performance hosted typing closure (#4433)
 
 - Version 1.16.98 explicitly narrows the canonical worker-selection return and

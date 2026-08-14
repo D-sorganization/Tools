@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Plot-worker Bandit directive closure (#4433)
+
+Version 1.16.99 adds the Bandit B301 suppression understood by the protected
+gate to the two already-bounded internal plot-worker IPC deserializations. The
+request digest, exact message/result types, generation ownership, process
+isolation, and 1.16.98 runtime behavior remain unchanged.
+
 ## 2026-08-14 Cross-tab performance hosted typing closure (#4433)
 
 Version 1.16.98 is a behavior-neutral correction for the protected Linux MyPy
