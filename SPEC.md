@@ -26,11 +26,28 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.04                                    |
-| **Spec Version**        | 1.17.04                                    |
+| **Current Version**     | 1.17.05                                    |
+| **Spec Version**        | 1.17.05                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Proposed protected visual baselines (#4433)
+
+Version 1.17.05 packages the 18 reviewed initial-state PNGs produced by the
+successful protected `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c` run. The
+strict v1 manifest exactly covers the visualization-tab authority and binds
+each React/PyQt reference to its environment, basename, SHA-256, and a narrow
+one-channel, 100-microunit mean/fraction raster envelope. Inputs are bounded to
+10 MiB, 4096 pixels per dimension, and 16,777,216 pixels before RGB comparison.
+
+Both PR-hosted and trusted-main workflows regenerate all 18 candidates, require
+their manifests to name the exact evaluated commit, validate coverage and
+digests, then fail closed when decoded geometry or pixels exceed the reference
+contract. The references remain proposed on this branch; protected merge is
+their approval event. Responsive React, PyQt DPI-1.5, manual AT execution, and
+cross-platform pixel identity remain open. No scientific, result, playback,
+selection, persistence, or export authority changes in this promotion.
 
 ### 2026-08-14 Deterministic Explorer candidate capture (#4433)
 
@@ -4430,6 +4447,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.05 | test(rate-of-closure, #4433): package 18 reviewed exact-head initial-state references and enforce commit-bound, digest-bound, bounded-pixel visual drift in PR and trusted-main evidence lanes, with protected merge as approval. |
 | 2026-08-14 | 1.17.04 | test(rate-of-closure, #4433): apply the declared dark/reduced-motion media before React baseline navigation and require Explorer playback paused for deterministic candidate capture. |
 | 2026-08-14 | 1.17.03 | fix(rate-of-closure, #4433): replace the platform-specific PyQt Variation registered-control count with the observed 160–161 envelope while preserving per-control accessible-name enforcement and evidence. |
 | 2026-08-14 | 1.17.02 | test(rate-of-closure, #4433): generate exact hosted React/PyQt initial-state visual-baseline candidates with deterministic environments and SHA-256 manifests while retaining explicit pre-approval status. |

@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Proposed protected visual baselines (#4433)
+
+Version 1.17.05 packages the 18 reviewed initial-state PNGs emitted by the
+successful protected `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c` run. A
+strict manifest binds every visibility-authority tab to its environment,
+filename, SHA-256, and a narrow one-channel/100-microunit raster envelope.
+Both PR and trusted-main evidence lanes now regenerate all candidates, bind
+them to the exact evaluated commit, and fail closed on coverage, identity,
+digest, geometry, or pixel drift.
+
+These references are proposed on this branch; protected merge is the approval
+event. Responsive React, PyQt DPI-1.5, manual assistive-technology execution,
+and cross-platform pixel identity remain explicitly outside this baseline set.
+Scientific execution and retained-result authority are unchanged.
+
 ## 2026-08-14 Deterministic Explorer candidate capture (#4433)
 
 Version 1.17.04 explicitly applies the documented dark/reduced-motion media

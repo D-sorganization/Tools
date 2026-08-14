@@ -48,6 +48,10 @@ PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/visualization_performance.v1.json",
     "src/rate_of_closure/visualization_accessibility_manifest.py",
     "src/rate_of_closure/visualization_accessibility.v1.json",
+    "src/rate_of_closure/visual_baseline_compare.py",
+    "src/rate_of_closure/visual_baseline_manifest.py",
+    "src/rate_of_closure/visual_baselines.v1.json",
+    "src/rate_of_closure/visual_baselines/**",
     "src/shared/python/swing_sim/variation/**",
     "src/shared/python/swing_sim/putting.py",
     "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
@@ -89,6 +93,7 @@ PYQT_AUTHORITY_PATHS = {
     "tests/rate_of_closure/test_visualization_tab_audit.py",
     "tests/rate_of_closure/test_visualization_performance_manifest.py",
     "tests/rate_of_closure/test_visualization_accessibility.py",
+    "tests/rate_of_closure/test_visual_baseline_compare.py",
     "tests/rate_of_closure/test_visual_layout_gui.py",
     "tests/rate_of_closure/test_visual_layout_preferences.py",
     "tests/ops/test_rate_web_playwright_workflow.py",
@@ -217,6 +222,16 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "tests/rate_of_closure/test_pyqt_visual_layout_persistence_rendered.py "
         "tests/rate_of_closure/test_visualization_accessibility.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
+    )
+    assert pr_commands["Enforce protected visual baseline drift"] == (
+        "python -m rate_of_closure.visual_baseline_compare "
+        '--candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR" '
+        '--candidate-commit "$RATE_VISUAL_BASELINE_SOURCE_COMMIT"'
+    )
+    assert trusted_commands["Enforce protected visual baseline drift"] == (
+        "python -m rate_of_closure.visual_baseline_compare "
+        '--candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR" '
+        '--candidate-commit "$GITHUB_SHA"'
     )
 
 

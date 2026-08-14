@@ -1,5 +1,18 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Proposed protected visual baselines
+
+- Version 1.17.05 packages all 18 reviewed initial-state PNGs from successful
+  protected head `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c`. The immutable
+  manifest binds exact tab coverage, environment, filename, SHA-256, and a
+  narrow 1-channel/100-microunit pixel-drift envelope.
+- Both untrusted PR and trusted-main evidence lanes regenerate the complete set,
+  require the manifest's exact evaluated commit, and compare decoded RGB pixels
+  after strict byte/dimension/digest preflight.
+- The references are proposed until protected merge approves them. Responsive
+  React, DPI-1.5 PyQt, manual AT execution, and cross-platform pixel identity
+  remain open. Analysis and retained-result authority are unchanged.
+
 ## 2026-08-14 #4433 Deterministic Explorer candidate capture
 
 - The React candidate harness now applies its declared dark/reduced-motion

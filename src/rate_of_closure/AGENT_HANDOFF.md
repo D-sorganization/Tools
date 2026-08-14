@@ -3,6 +3,17 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Proposed protected visual baselines (#4433)
+
+- SPEC 1.17.05 packages 18 reviewed initial-state references from successful
+  protected head `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c` with exact
+  SHA-256 identities and a narrow 1-channel/100-microunit raster tolerance.
+- PR and trusted-main lanes now bind newly generated manifests to the exact
+  evaluated commit and fail closed on missing/foreign images or visual drift.
+- The references remain proposed until protected merge. Narrow React,
+  DPI-1.5 PyQt, manual AT qualification, and cross-platform pixel identity are
+  still open; no scientific/result/export authority changed.
+
 ## 2026-08-14 Deterministic Explorer candidate capture (#4433)
 
 - SPEC 1.17.04 makes the React baseline harness apply dark/reduced-motion media
