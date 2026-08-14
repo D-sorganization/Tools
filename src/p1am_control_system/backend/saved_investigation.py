@@ -10,9 +10,9 @@ import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from enum import StrEnum
 from typing import Literal, Protocol
 
+from enum_compat import StrEnum
 from identity import Principal, Role
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from sqlmodel import Field as SqlField

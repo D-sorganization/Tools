@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping, Sequence
-from enum import StrEnum
 from typing import Literal, Protocol
 
+from enum_compat import StrEnum
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 _SECRET_FRAGMENTS = ("password", "secret", "token", "api_key", "credential")

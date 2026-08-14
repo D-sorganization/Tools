@@ -6,9 +6,9 @@ import math
 import statistics
 from collections.abc import Callable, Sequence
 from datetime import datetime, timedelta
-from enum import StrEnum
 from typing import Literal
 
+from enum_compat import StrEnum
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 

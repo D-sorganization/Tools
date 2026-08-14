@@ -6,9 +6,9 @@ import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from enum import StrEnum
 from typing import Any
 
+from enum_compat import StrEnum
 from identity import Principal
 from models import utc_now
 from sqlalchemy import Engine, text

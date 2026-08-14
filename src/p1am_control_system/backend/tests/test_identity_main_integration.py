@@ -4,32 +4,41 @@ from __future__ import annotations
 
 import os
 import sys
-from collections.abc import Iterable
 from pathlib import Path
 
 os.environ.setdefault("PLC_DRIVER", "modbus")
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from _route_inventory import methods_by_path as _methods_by_path  # noqa: E402
 from audit_middleware import MutationAuditMiddleware  # noqa: E402
+from fastapi import APIRouter, FastAPI  # noqa: E402
 from main import _configuration_revision, app, configuration_workflow  # noqa: E402
 
 
-def _methods_by_path(routes: Iterable[object]) -> dict[str, set[str]]:
-    methods_by_path: dict[str, set[str]] = {}
-    for route in routes:
-        path = getattr(route, "path", None)
-        if not isinstance(path, str):
-            continue
-        methods_by_path.setdefault(path, set()).update(getattr(route, "methods", set()))
-    return methods_by_path
+def test_route_inventory_resolves_routes_behind_an_included_router() -> None:
+    """The inventory must see through `include_router`, not around it.
 
+    From FastAPI 0.141 an included router appears in ``app.routes`` as a single
+    pathless ``_IncludedRouter`` marker that does not expose its children. An
+    inventory that skipped such markers returned an empty mapping, which turned
+    every downstream assertion into a vacuous pass.
+    """
+    router = APIRouter()
 
-def test_route_inventory_ignores_optional_pathless_router_markers() -> None:
-    assert _methods_by_path((object(),)) == {}
+    @router.post("/session")
+    def _create() -> dict[str, str]:
+        return {}
+
+    probe = FastAPI()
+    probe.include_router(router, prefix="/api/auth")
+
+    assert _methods_by_path(probe) == {"/api/auth/session": {"POST"}}
 
 
 def test_main_application_mounts_identity_session_routes() -> None:
-    methods_by_path = _methods_by_path(app.routes)
+    methods_by_path = _methods_by_path(app)
+
+    assert methods_by_path, "route inventory empty; assertions below are vacuous"
 
     assert "POST" in methods_by_path["/api/auth/session"]
     assert "DELETE" in methods_by_path["/api/auth/session"]

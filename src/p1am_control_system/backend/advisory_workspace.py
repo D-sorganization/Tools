@@ -7,9 +7,9 @@ import json
 import math
 from collections.abc import Callable
 from datetime import datetime
-from enum import StrEnum
 from typing import Literal
 
+from enum_compat import StrEnum
 from identity import Principal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 

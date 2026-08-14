@@ -9,10 +9,10 @@ import json
 import threading
 from collections.abc import Awaitable, Callable, Mapping
 from datetime import datetime, timezone
-from enum import StrEnum
 from typing import Protocol
 
 from alarm_service import manager_from_routing
+from enum_compat import StrEnum
 from identity import Principal, Role
 from models import RoutingConfig
 from pydantic import BaseModel, ConfigDict, Field

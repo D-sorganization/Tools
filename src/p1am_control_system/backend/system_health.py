@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime, timezone
-from enum import StrEnum
 
 from configuration_workflow import ConfigurationWorkflow
+from enum_compat import StrEnum
 from pydantic import BaseModel, ConfigDict, Field
 from recovery_package import RecoveryPackageService
 from sqlalchemy import Engine

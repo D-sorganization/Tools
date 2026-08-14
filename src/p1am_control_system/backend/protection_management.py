@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from datetime import datetime, timedelta
-from enum import StrEnum
 from typing import Literal
 
+from enum_compat import StrEnum
 from identity import Principal, Role
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 

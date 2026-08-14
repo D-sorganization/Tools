@@ -9,6 +9,7 @@ try:
 except ImportError:  # Python 3.10 — repo supports 3.10+
     UTC = timezone.utc  # noqa: UP017
 
+from _route_inventory import route_paths
 from advisory_router import create_advisory_router
 from advisory_workspace import AdvisoryService
 from fastapi import FastAPI
@@ -46,7 +47,12 @@ def test_representative_advisory_and_disposition_are_review_only() -> None:
     assert disposition.status_code == 200
     assert disposition.json()["applied_to_control"] is False
 
-    advisory_paths = {route.path for route in app.routes if "/advisories" in route.path}
+    advisory_paths = {path for path in route_paths(app) if "/advisories" in path}
+    # Guard the guard: an empty set would satisfy the `all(...)` below vacuously,
+    # which is exactly what happened when this inventory was built by walking
+    # `app.routes` and skipping FastAPI's `_IncludedRouter` marker. See
+    # _route_inventory for why the schema is the authority here.
+    assert advisory_paths, "advisory routes not discovered; next check is vacuous"
     assert all("command" not in path and "write" not in path for path in advisory_paths)
 
 

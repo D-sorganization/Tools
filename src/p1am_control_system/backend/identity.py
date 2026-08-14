@@ -10,8 +10,9 @@ import threading
 from collections.abc import Callable, Sequence
 from dataclasses import InitVar, dataclass, field
 from datetime import datetime, timedelta, timezone
-from enum import StrEnum
 from typing import cast, overload
+
+from enum_compat import StrEnum
 
 try:
     from datetime import UTC
