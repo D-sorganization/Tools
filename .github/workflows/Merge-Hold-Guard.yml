@@ -19,7 +19,7 @@ name: Merge Hold Guard
 # auto-merge armed, the arm is revoked, no matter who armed it.
 #
 # HOLD SIGNALS — any one is sufficient:
-#   1. the `do-not-merge` or `blocked` label is present
+#   1. a `do-not-merge`, `blocked` or `do-not-automate` label is present
 #   2. the PR is a draft
 #   3. auto-merge was disabled by a non-bot account more recently than the head
 #      commit — i.e. a reviewer said no and nobody has pushed since
@@ -47,8 +47,11 @@ env:
   npm_config_fetch_retries: "10"
   npm_config_fetch_retry_maxtimeout: "120000"
   NODE_OPTIONS: "--dns-result-order=ipv4first"
+  # The label the guard applies itself, and the one to remove to release.
   HOLD_LABEL: do-not-merge
-  BLOCK_LABEL: blocked
+  # Also honoured. `do-not-automate` is the pre-existing fleet-wide
+  # convention (shared_scripts/agent_identity.DO_NOT_AUTOMATE_LABEL).
+  EXTRA_HOLD_LABELS: "blocked do-not-automate"
   ACK_LABEL: deletions-acknowledged
   COMMENT_MARKER: "<!-- merge-hold-guard -->"
   # Revocations against the current head commit before the guard converts the
@@ -195,8 +198,9 @@ jobs:
             add_reason() { REASONS="${REASONS}${REASONS:+; }$1"; }
 
             # ---- signal 1: explicit hold labels -----------------------------
-            has_label "$HOLD_LABEL" && add_reason "\`$HOLD_LABEL\` label"
-            has_label "$BLOCK_LABEL" && add_reason "\`$BLOCK_LABEL\` label"
+            for hold in $HOLD_LABEL $EXTRA_HOLD_LABELS; do
+              has_label "$hold" && add_reason "\`$hold\` label"
+            done
 
             # ---- signal 2: draft --------------------------------------------
             [ "$DRAFT" = "true" ] && add_reason "PR is a draft"
