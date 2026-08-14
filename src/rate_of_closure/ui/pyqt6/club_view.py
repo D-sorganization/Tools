@@ -144,7 +144,7 @@ class Club3DView(ClubViewLifecycleMixin, QWidget):
 
     def is_playing(self) -> bool:
         """Whether the clubhead animation timer is running."""
-        return self._timer.isActive()
+        return bool(self._timer.isActive())
 
     def set_view_mode(self, mode: str) -> None:
         """Select a display mode by name (see :data:`VIEW_MODES`)."""
@@ -355,7 +355,7 @@ class Club3DView(ClubViewLifecycleMixin, QWidget):
             if action is not None:
                 self._try_camera_action(action)
                 return True
-        return super().eventFilter(watched, event)
+        return bool(super().eventFilter(watched, event))
 
     def _update_status(self) -> None:
         self._status.setText(camera_status(self._camera, self._source.status))

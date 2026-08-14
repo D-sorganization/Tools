@@ -146,7 +146,7 @@ def _looks_binary(data: bytes) -> bool:
             count <= MAX_IMPORTED_MESH_TRIANGLES,
             "STL must not exceed 2,048 triangles",
         )
-    return matches_layout
+    return bool(matches_layout)
 
 
 def _parse_binary(data: bytes) -> np.ndarray:
