@@ -11,6 +11,7 @@ from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SQLITE_SYNCHRONOUS_MODES = {"OFF", "NORMAL", "FULL", "EXTRA"}
+ALICAT_CONNECTION_TYPES = {"mock", "serial", "tcp"}
 
 #: Drivers backed by real field hardware. Everything else that ``PLCFactory``
 #: can resolve produces a simulator, so this is the authoritative allow-list
@@ -145,6 +146,45 @@ class P1AMSettings(BaseSettings):
             "credential-free bench setup."
         ),
     )
+
+    alicat_connection_type: str = Field(
+        default="mock",
+        validation_alias="P1AM_ALICAT_CONNECTION_TYPE",
+        description=(
+            "Transport for the Alicat mass flow controllers: 'mock' (simulated "
+            "flow, bench only), 'serial', or 'tcp'. 'mock' is refused at "
+            "startup when plc_driver is a real PLC — an operator must never be "
+            "able to command a purge against simulated gas control (#4031)."
+        ),
+    )
+    alicat_port_or_ip: str | None = Field(
+        default=None,
+        validation_alias="P1AM_ALICAT_PORT_OR_IP",
+        description=(
+            "Serial device (e.g. /dev/ttyUSB0) or host/IP shared by the Alicat "
+            "MFCs; each controller is addressed by its unit ID. Required when "
+            "alicat_connection_type is 'serial' or 'tcp'."
+        ),
+    )
+
+    @field_validator("alicat_connection_type", mode="before")
+    @classmethod
+    def _normalize_alicat_connection_type(cls, value: object) -> str:
+        connection_type = str(value).strip().lower()
+        if connection_type not in ALICAT_CONNECTION_TYPES:
+            raise ValueError(
+                f"alicat_connection_type must be one of "
+                f"{sorted(ALICAT_CONNECTION_TYPES)}; got {value!r}"
+            )
+        return connection_type
+
+    @field_validator("alicat_port_or_ip", mode="before")
+    @classmethod
+    def _normalize_alicat_port_or_ip(cls, value: object) -> str | None:
+        if value is None:
+            return None
+        port_or_ip = str(value).strip()
+        return port_or_ip or None
 
     @property
     def plc_driver_is_simulated(self) -> bool:

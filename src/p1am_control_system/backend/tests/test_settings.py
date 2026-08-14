@@ -91,3 +91,24 @@ def test_modbus_timeout_is_sized_to_the_scan_period() -> None:
 
     explicit = P1AMSettings(P1AM_MODBUS_TIMEOUT_S="0.05")
     assert explicit.resolved_modbus_timeout_s == 0.05
+def test_alicat_connection_type_defaults_to_mock() -> None:
+    settings = P1AMSettings()
+
+    assert settings.alicat_connection_type == "mock"
+    assert settings.alicat_port_or_ip is None
+
+
+def test_alicat_connection_type_is_driven_by_the_environment() -> None:
+    """Issue #4031: the MFC transport must not be hardcoded in main.py."""
+    settings = P1AMSettings(
+        P1AM_ALICAT_CONNECTION_TYPE="TCP",
+        P1AM_ALICAT_PORT_OR_IP="192.0.2.10",
+    )
+
+    assert settings.alicat_connection_type == "tcp"
+    assert settings.alicat_port_or_ip == "192.0.2.10"
+
+
+def test_alicat_connection_type_rejects_an_unknown_transport() -> None:
+    with pytest.raises(ValueError, match="alicat_connection_type"):
+        P1AMSettings(P1AM_ALICAT_CONNECTION_TYPE="carrier-pigeon")

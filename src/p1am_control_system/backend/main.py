@@ -12,7 +12,7 @@ except ImportError:
 from typing import Any, cast
 
 import shutdown_safety
-from alicat_manager import AlicatManager, AlicatMFC
+from alicat_manager import create_default_manager
 from audit import AuditMiddleware
 from auth_config import (
     log_auth_configuration,
@@ -212,34 +212,17 @@ shutdown_event = asyncio.Event()
 # that can't hold a WebSocket) can poll /api/snapshot as a streaming fallback.
 latest_frame: dict[str, Any] = {}
 
-# Instantiate global Alicat manager and default devices
-alicat_manager = AlicatManager()
-alicat_manager.add_device(
-    AlicatMFC(
-        device_id="A",
-        name="Oxygen MFC",
-        gas="O2",
-        max_flow=50.0,
-        connection_type="mock",
-    )
-)
-alicat_manager.add_device(
-    AlicatMFC(
-        device_id="B",
-        name="Nitrogen MFC",
-        gas="N2",
-        max_flow=100.0,
-        connection_type="mock",
-    )
-)
-alicat_manager.add_device(
-    AlicatMFC(
-        device_id="C",
-        name="Carbon Dioxide MFC",
-        gas="CO2",
-        max_flow=20.0,
-        connection_type="mock",
-    )
+# Instantiate the global Alicat manager and the rig's default devices.
+#
+# The transport is driven by settings (P1AM_ALICAT_CONNECTION_TYPE /
+# P1AM_ALICAT_PORT_OR_IP), NOT hardcoded to "mock". Registration refuses a
+# simulated gas path whenever plc_driver drives real hardware, so the backend
+# fails to start rather than letting an operator command an N2 purge that
+# "establishes" against a random-number generator (issue #4031).
+alicat_manager = create_default_manager(
+    connection_type=settings.alicat_connection_type,
+    port_or_ip=settings.alicat_port_or_ip,
+    plc_driver=settings.plc_driver,
 )
 
 
@@ -831,21 +814,41 @@ async def get_active_alarms() -> list[dict[str, Any]]:
     return list(control_context.active_alarms.values())
 
 
+class AlarmAckPayload(BaseModel):
+    """Optional body for an alarm acknowledgement.
+
+    ``user`` is recorded in the alarm engine's ``acknowledged_by`` audit field.
+    The body is optional so existing clients that POST nothing keep working;
+    those acknowledgements are attributed to the default operator.
+    """
+
+    user: str | None = PydanticField(default=None, min_length=1, max_length=64)
+
+
 @app.post(
     "/api/alarms/{tag_id}/acknowledge",
     dependencies=[Depends(require_api_key)],
 )
 async def acknowledge_alarm(
     tag_id: str,
+    payload: AlarmAckPayload | None = None,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, str]:
-    """Acknowledge a specific active alarm."""
+    """Acknowledge a specific active alarm.
+
+    The acknowledgement is forwarded to the SCADA alarm engine (issue #4034),
+    which is what makes it survive a routing deploy or a PLC reconnect — both
+    rebuild the engine and the live alarm map.
+    """
     if tag_id in control_context.active_alarms:
+        user = payload.user if payload is not None else None
         # Log the acknowledgment
         try:
             event_log = EventLog(
                 event_type="ACKNOWLEDGE",
-                description=f"Alarm on Tag {tag_id} acknowledged by user.",
+                description=(
+                    f"Alarm on Tag {tag_id} acknowledged by {user or 'operator'}."
+                ),
                 severity=0,
             )
             db.add(event_log)
@@ -858,7 +861,7 @@ async def acknowledge_alarm(
                 detail=f"Failed to persist acknowledgment for alarm {tag_id}.",
             ) from e
 
-        if not control_context.acknowledge_alarm(tag_id):
+        if not control_context.acknowledge_alarm(tag_id, user=user):
             raise HTTPException(
                 status_code=409,
                 detail=f"Alarm {tag_id} could not be acknowledged.",

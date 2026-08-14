@@ -8,6 +8,7 @@ try:
     from datetime import UTC
 except ImportError:
     UTC = timezone.utc  # noqa: UP017
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -330,7 +331,39 @@ def test_write_tag_disconnected() -> None:
         assert "forced simulated tag" in response.json()["message"]
 
 
-def test_get_alicats_success() -> None:
+@pytest.fixture
+def simulated_alicats(monkeypatch: pytest.MonkeyPatch) -> Any:
+    """Install a bench-simulator MFC registry for the gas endpoints.
+
+    This module runs the app with ``PLC_DRIVER=modbus``, and issue #4031 makes
+    "real PLC + simulated gas control" an unreachable combination, so the app's
+    own registry is deliberately empty here (see
+    ``test_gas_control_is_absent_when_mock_mfcs_are_refused``).
+    """
+    import main
+    from alicat_manager import create_default_manager
+
+    manager = create_default_manager(connection_type="mock", plc_driver="simulator")
+    monkeypatch.setattr(main, "alicat_manager", manager)
+    return manager
+
+
+def test_gas_control_is_absent_when_mock_mfcs_are_refused() -> None:
+    """Issue #4031: simulated gas must never be served against a real PLC."""
+    from main import alicat_manager
+
+    assert alicat_manager.devices == {}
+    assert alicat_manager.registration_error is not None
+
+    response = client.get("/api/alicats")
+    assert response.status_code == 200
+    assert response.json() == []
+
+    response = client.post("/api/alicats/A/setpoint", json={"setpoint": 25.5})
+    assert response.status_code == 404
+
+
+def test_get_alicats_success(simulated_alicats: Any) -> None:
     """Verify GET /api/alicats successfully returns default MFCs."""
     response = client.get("/api/alicats")
     assert response.status_code == 200
@@ -345,7 +378,7 @@ def test_get_alicats_success() -> None:
     assert mfc_a["connection_state"] == "simulated"
 
 
-def test_update_alicat_setpoint() -> None:
+def test_update_alicat_setpoint(simulated_alicats: Any) -> None:
     """Verify POST /api/alicats/{id}/setpoint updates target setpoint."""
     # Test valid MFC update
     response = client.post("/api/alicats/A/setpoint", json={"setpoint": 25.5})
@@ -353,9 +386,7 @@ def test_update_alicat_setpoint() -> None:
     assert "Setpoint for MFC 'A' set to 25.5" in response.json()["message"]
 
     # Test setpoint updates on manager
-    from main import alicat_manager
-
-    assert alicat_manager.devices["A"].setpoint == 25.5
+    assert simulated_alicats.devices["A"].setpoint == 25.5
 
     # Test invalid MFC
     response = client.post("/api/alicats/Z/setpoint", json={"setpoint": 10.0})
@@ -363,16 +394,14 @@ def test_update_alicat_setpoint() -> None:
     assert "Z" in response.json()["detail"]
 
 
-def test_update_alicat_gas() -> None:
+def test_update_alicat_gas(simulated_alicats: Any) -> None:
     """Verify POST /api/alicats/{id}/gas updates gas selection calibration."""
     # Test valid gas species change
     response = client.post("/api/alicats/A/gas", json={"gas": "He"})
     assert response.status_code == 200
     assert "Gas species for MFC 'A' set to He" in response.json()["message"]
 
-    from main import alicat_manager
-
-    assert alicat_manager.devices["A"].gas == "He"
+    assert simulated_alicats.devices["A"].gas == "He"
 
     # Test invalid gas species
     response = client.post("/api/alicats/A/gas", json={"gas": "Unobtainium"})
