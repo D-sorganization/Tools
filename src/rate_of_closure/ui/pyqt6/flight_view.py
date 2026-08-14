@@ -17,7 +17,7 @@ from __future__ import annotations
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import QEvent, QObject, pyqtSignal
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
 from rate_of_closure.simulation import SimulationRun
@@ -92,6 +92,21 @@ class FlightView(
         layout.addLayout(self._build_param_bar())
         layout.addWidget(self._canvas)
         self._draw()
+
+    def _emit_sample_selected(self, raw_index: int) -> None:
+        self.sampleSelected.emit(raw_index)
+
+    def _emit_sample_selection_failed(
+        self, message: str, restoration_failed: bool
+    ) -> None:
+        self.sampleSelectionFailed.emit(message, restoration_failed)
+
+    def eventFilter(  # noqa: N802 - Qt override
+        self, watched: QObject | None, event: QEvent | None
+    ) -> bool:
+        if self._handle_sample_inspector_event(watched, event):
+            return True
+        return bool(super().eventFilter(watched, event))
 
     def _build_param_bar(self) -> QHBoxLayout:
         bar = QHBoxLayout()

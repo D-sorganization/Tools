@@ -5,8 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 from PyQt6.QtCore import QEvent, QObject, Qt
+from PyQt6.QtGui import QKeyEvent
 
 from rate_of_closure.flight_sample_inspector import (
+    FlightNavigation,
     FlightSamplePlan,
     navigate_flight_samples,
     nearest_flight_sample,
@@ -33,7 +35,11 @@ class FlightViewInspectorMixin:
 
         def set_playback_time(self, time_s: float) -> None: ...
 
-        def sampleSelected(self, raw_index: int) -> None: ...  # noqa: N802
+        def _emit_sample_selected(self, raw_index: int) -> None: ...
+
+        def _emit_sample_selection_failed(
+            self, message: str, restoration_failed: bool
+        ) -> None: ...
 
     def _initialize_sample_inspector(self) -> None:
         self._sample_plan = None
@@ -84,13 +90,11 @@ class FlightViewInspectorMixin:
                 self._canvas.pause_idle_draws()
             else:
                 self._canvas.resume_idle_draws()
-            self.sampleSelectionFailed.emit(  # type: ignore[attr-defined]
-                str(exc)[:512], restoration_failed
-            )
+            self._emit_sample_selection_failed(str(exc)[:512], restoration_failed)
             return
         self._canvas.resume_idle_draws()
         self._canvas.setFocus()
-        self.sampleSelected.emit(-1 if raw_index is None else raw_index)  # type: ignore[attr-defined]
+        self._emit_sample_selected(-1 if raw_index is None else raw_index)
 
     def _on_sample_click(self, event: MouseEvent) -> None:
         plan = self._sample_plan
@@ -117,17 +121,22 @@ class FlightViewInspectorMixin:
             self._canvas.setFocus()
             self._select_raw_sample(selection.raw_index)
 
-    def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # noqa: N802
-        if watched is self._canvas and event.type() == QEvent.Type.KeyPress:
-            key = cast(object, event).key()  # type: ignore[attr-defined]
-            commands = {
+    def _handle_sample_inspector_event(
+        self, watched: QObject | None, event: QEvent | None
+    ) -> bool:
+        if (
+            watched is self._canvas
+            and isinstance(event, QKeyEvent)
+            and event.type() == QEvent.Type.KeyPress
+        ):
+            commands: dict[int, FlightNavigation] = {
                 Qt.Key.Key_Left: "previous",
                 Qt.Key.Key_Right: "next",
                 Qt.Key.Key_Home: "home",
                 Qt.Key.Key_End: "end",
                 Qt.Key.Key_Escape: "clear",
             }
-            command = commands.get(key)
+            command = commands.get(event.key())
             if command and self._sample_plan is not None:
                 self._select_raw_sample(
                     navigate_flight_samples(
@@ -135,7 +144,7 @@ class FlightViewInspectorMixin:
                     )
                 )
                 return True
-        return bool(super().eventFilter(watched, event))  # type: ignore[misc]
+        return False
 
     def _draw_sample_marker(self, axes: Axes, name: str) -> None:
         self._inspector_axes[name] = axes

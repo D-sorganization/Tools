@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Flight hosted typing closure (#4433)
+
+Version 1.16.94 narrows the immutable NumPy return, keeps Qt signals and
+`eventFilter` on the concrete `FlightView`, and gives the execution mixin
+type-check-only optional result contracts. This closes the hosted Python 3.12 /
+MyPy 1.13 findings without runtime stubs or an MRO change. Flight authority,
+interaction, rendering, diagnostic evidence, and the open #4433 limitations
+are unchanged.
+
 ## 2026-08-13 Flight synchronized sample inspector (#4433)
 
 Version 1.16.93 adds immutable, generation-bound accepted-flight bundles and

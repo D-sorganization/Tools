@@ -16,6 +16,7 @@ from rate_of_closure.flight_accepted_study import (
 )
 from rate_of_closure.simulation import (
     FlightExploration,
+    WindComparison,
     explore_with_optional_wind,
     launch_from_delivery,
     launch_from_direct,
@@ -47,6 +48,8 @@ class FlightExplorerRunMixin:
 
     if TYPE_CHECKING:
         _accepted: AcceptedFlightStudy | None
+        _exploration: FlightExploration | None
+        wind_comparison: WindComparison | None
         _generation: int
         _speed_spin: QDoubleSpinBox
         _speed_unit: str

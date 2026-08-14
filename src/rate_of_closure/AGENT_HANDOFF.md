@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Flight hosted typing closure (#4433)
+
+- The immutable NumPy return is explicitly narrowed, Qt signal/event ownership
+  stays on the concrete `FlightView`, and the execution mixin's optional result
+  fields are declared under `TYPE_CHECKING` only.
+- Pinned Python 3.12 / MyPy 1.13 accepts all 13 changed Flight sources. This is
+  static-only: runtime MRO, scientific authority, interaction, rendering,
+  artifacts, and open #4433 limits are unchanged. SPEC is 1.16.94.
+
 ## 2026-08-13 Flight synchronized sample inspector (#4433)
 
 - React direct entry and PyQt direct/delivery snapshot one complete accepted

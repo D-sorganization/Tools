@@ -1,5 +1,15 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Flight hosted typing closure
+
+- The accepted-flight NumPy snapshot has an explicit array return, Qt signals
+  and `eventFilter` remain on the concrete viewer, and optional accepted-result
+  fields exist only under `TYPE_CHECKING` in the execution mixin.
+- Pinned Python 3.12 / MyPy 1.13 accepts all 13 changed Flight sources; focused
+  Python/Qt behavior remains 36/36. This is static-only: science, interaction,
+  rendering, diagnostic evidence, and open boundaries are unchanged. SPEC is
+  1.16.94; #4433 remains open.
+
 ## 2026-08-13 #4433 Flight synchronized sample inspector
 
 - A Python-owned golden and strict Python/TypeScript twins cap raw evidence at

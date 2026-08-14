@@ -166,7 +166,10 @@ def _immutable_array(value: object, shape: tuple[int, ...], field: str) -> np.nd
     ):
         raise ValueError(f"{field} exceeds the explorer evidence envelope")
     source = np.asarray(raw, dtype=np.float64)
-    return np.frombuffer(source.tobytes(), dtype=np.float64).reshape(source.shape)
+    return cast(
+        np.ndarray,
+        np.frombuffer(source.tobytes(), dtype=np.float64).reshape(source.shape),
+    )
 
 
 def _snapshot(exploration: FlightExploration) -> FlightExploration:

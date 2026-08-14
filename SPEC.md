@@ -26,11 +26,20 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.93                                    |
-| **Spec Version**        | 1.16.93                                    |
+| **Current Version**     | 1.16.94                                    |
+| **Spec Version**        | 1.16.94                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Flight hosted typing closure (#4433)
+
+Version 1.16.94 makes the accepted-flight NumPy snapshot return explicit,
+keeps Qt signals and event filtering on the concrete view, and supplies
+`TYPE_CHECKING`-only optional result fields to the execution mixin. Pinned
+Python 3.12 / MyPy 1.13 accepts all 13 changed Flight source files. Runtime
+science, atomic publication, interaction, artifacts, and open #4433 boundaries
+are unchanged.
 
 ### 2026-08-13 Flight synchronized sample inspector (#4433)
 
