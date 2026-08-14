@@ -49,3 +49,6 @@
 ## 2024-05-31 - Tab Roles vs aria-pressed
 **Learning:** When implementing custom tab components in React, use `role="tab"` paired strictly with `aria-selected` (not `aria-pressed`, which is intended for toggle buttons) and ensure `aria-controls` points to a valid `role="tabpanel"` container whose `aria-labelledby` points back to the tab.
 **Action:** When adding accessible properties to custom tabs, replace `aria-pressed` with `aria-selected`, ensure a `role="tablist"` wrapper is present, and correctly cross-reference `aria-controls` with the tab panel IDs.
+## 2024-05-31 - React `useId()` for Input Labels
+**Learning:** When improving accessibility for React form inputs where explicit IDs are missing, using hardcoded IDs can cause conflicts if components render multiple times.
+**Action:** When improving accessibility for React form inputs where explicit IDs are missing, use the `useId()` hook to safely generate unique, deterministic identifiers for reliably mapping `<label htmlFor={...}>` to `<input id={...}>` elements.
