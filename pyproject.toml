@@ -223,6 +223,10 @@ exclude = [
 [tool.setuptools.package-data]
 # Include py.typed marker for PEP 561 type hint support
 "*" = ["py.typed"]
+"rate_of_closure" = [
+    "visualization_tabs.v1.json",
+    "visualization_performance.v1.json",
+]
 
 # =============================================================================
 # Pytest Configuration

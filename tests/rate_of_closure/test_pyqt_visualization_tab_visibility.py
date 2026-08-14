@@ -11,6 +11,10 @@ from typing import Any, cast
 
 import pytest
 
+from rate_of_closure.visualization_performance_manifest import (
+    load_visualization_performance_manifest,
+)
+
 pytest.importorskip("PyQt6")
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -46,18 +50,33 @@ def _probe(output_root: Path, scale: float) -> dict[str, Any]:
     )
 
 
+@pytest.mark.timeout(300)
 def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
     tmp_path: Path,
 ) -> None:
     output = Path(os.environ.get("RATE_PYQT_EVIDENCE_DIR", str(tmp_path)))
     manifests = [_probe(output, scale) for scale in (1.0, 1.5)]
+    budget = load_visualization_performance_manifest().surfaces["pyqt"]
     for scale, manifest in zip((1.0, 1.5), manifests, strict=True):
         assert manifest["artifact_policy"] == "diagnostic-only-not-approved-golden"
+        assert manifest["measurement_policy"] == (
+            "protected-diagnostic-not-user-hardware-qualification"
+        )
         assert manifest["requested_scale"] == scale
         assert manifest["device_pixel_ratio"] == pytest.approx(scale)
         assert manifest["logical_window_size"] == [1440, 900]
         assert len(manifest["tabs"]) == 9
         for tab in manifest["tabs"]:
+            assert tab["workload"] == "initial-production-state", tab["tab_id"]
+            assert tab["tab_open_ms"] <= budget.tab_open_budget_ms, tab["tab_id"]
+            assert tab["resize_settle_ms"] <= budget.resize_settle_budget_ms, tab[
+                "tab_id"
+            ]
+            assert tab["post_settle_shift_px"] <= (budget.max_post_settle_shift_px), (
+                tab["tab_id"]
+            )
+            assert tab["max_open_step_px"] >= 0, tab["tab_id"]
+            assert tab["max_resize_step_px"] >= 0, tab["tab_id"]
             assert tab["screenshot_bytes"] > 10_000, tab["tab_id"]
             assert tab["visual_visible"] is True, tab["tab_id"]
             if tab["landmark_kind"] == "visual":

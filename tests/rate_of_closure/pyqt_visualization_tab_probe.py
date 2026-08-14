@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from pathlib import Path
 
 from PyQt6.QtCore import QRect, Qt
@@ -19,6 +20,10 @@ from rate_of_closure.ui.pyqt6.visualization_tab_audit import (
     mapped_rect,
     resolve_visual_widget,
     visible_intersection,
+)
+from rate_of_closure.visualization_performance_manifest import (
+    SurfacePerformanceBudget,
+    load_visualization_performance_manifest,
 )
 from rate_of_closure.visualization_tab_manifest import (
     load_visualization_tab_manifest,
@@ -44,6 +49,41 @@ def _rect(rect: QRect) -> list[int]:
     return [rect.x(), rect.y(), rect.width(), rect.height()]
 
 
+def _rect_shift(left: QRect, right: QRect) -> int:
+    return max(
+        abs(left.x() - right.x()),
+        abs(left.y() - right.y()),
+        abs(left.width() - right.width()),
+        abs(left.height() - right.height()),
+    )
+
+
+def _stable_visual_rect(
+    tab: QWidget,
+    locator: str,
+    budget_ms: int,
+    stable_frames: int,
+    tolerance_px: int,
+) -> tuple[QRect, float, int]:
+    started = time.perf_counter()
+    visual = resolve_visual_widget(tab, locator)
+    previous = mapped_rect(visual, tab)
+    stable = 0
+    max_step = 0
+    while (time.perf_counter() - started) * 1000 <= budget_ms:
+        QTest.qWait(10)
+        QApplication.processEvents()
+        current = mapped_rect(resolve_visual_widget(tab, locator), tab)
+        step = _rect_shift(previous, current)
+        max_step = max(max_step, step)
+        stable = stable + 1 if step <= tolerance_px else 0
+        previous = current
+        if stable >= stable_frames:
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            return current, elapsed_ms, max_step
+    raise RuntimeError(f"visual rectangle did not settle within {budget_ms} ms")
+
+
 def _semantic_text(widget: QWidget) -> str:
     """Read a semantic landmark without treating an empty container as evidence."""
     for accessor in ("text", "toPlainText"):
@@ -62,16 +102,52 @@ def _audit_tab(
     landmark_kind: str,
     minimum_visible_height_px: int,
     minimum_visible_width_px: int,
+    workload: str,
+    budget: SurfacePerformanceBudget,
     output: Path,
 ) -> dict[str, object]:
     index = window.primary_tab_ids().index(tab_id)
+    opened_at = time.perf_counter()
     window._tabs.setCurrentIndex(index)
     QApplication.processEvents()
     tab = window._tabs.widget(index)
     if not isinstance(tab, QWidget):
         raise TypeError(f"registered tab is not QWidget: {tab_id}")
+    _, open_settle_ms, max_open_step = _stable_visual_rect(
+        tab,
+        locator,
+        budget.tab_open_budget_ms,
+        budget.stable_frame_count,
+        budget.stability_tolerance_px,
+    )
+    tab_open_ms = (time.perf_counter() - opened_at) * 1000
     visual = resolve_visual_widget(tab, locator)
     tab_rect = mapped_rect(tab, window)
+    visual_rect = mapped_rect(visual, tab)
+    QTest.qWait(100)
+    QApplication.processEvents()
+    quiet_rect = mapped_rect(resolve_visual_widget(tab, locator), tab)
+    post_settle_shift = _rect_shift(visual_rect, quiet_rect)
+    original_size = window.size()
+    resize_started = time.perf_counter()
+    window.resize(max(1, original_size.width() - 8), original_size.height())
+    _, shrunk_ms, shrunk_step = _stable_visual_rect(
+        tab,
+        locator,
+        budget.resize_settle_budget_ms,
+        budget.stable_frame_count,
+        budget.stability_tolerance_px,
+    )
+    window.resize(original_size)
+    _, restored_ms, restored_step = _stable_visual_rect(
+        tab,
+        locator,
+        budget.resize_settle_budget_ms,
+        budget.stable_frame_count,
+        budget.stability_tolerance_px,
+    )
+    resize_settle_ms = (time.perf_counter() - resize_started) * 1000
+    visual = resolve_visual_widget(tab, locator)
     visual_rect = mapped_rect(visual, tab)
     intersection = visible_intersection(visual, tab)
     tab_bar_rect = mapped_rect(window._tabs.tabBar(), window)
@@ -92,6 +168,15 @@ def _audit_tab(
         QTest.keyClick(preview, Qt.Key.Key_Escape)
     return {
         "tab_id": tab_id,
+        "workload": workload,
+        "tab_open_ms": round(tab_open_ms, 3),
+        "open_settle_ms": round(open_settle_ms, 3),
+        "resize_settle_ms": round(resize_settle_ms, 3),
+        "resize_shrink_ms": round(shrunk_ms, 3),
+        "resize_restore_ms": round(restored_ms, 3),
+        "max_open_step_px": max_open_step,
+        "max_resize_step_px": max(shrunk_step, restored_step),
+        "post_settle_shift_px": post_settle_shift,
         "locator": locator,
         "landmark_kind": landmark_kind,
         "minimum_visible_height_px": minimum_visible_height_px,
@@ -126,7 +211,12 @@ def main() -> int:
     window.show()
     QApplication.processEvents()
     manifest = load_visualization_tab_manifest()
+    performance = load_visualization_performance_manifest()
     entries = manifest.for_surface("pyqt")
+    performance_entries = {
+        entry.tab_id: entry for entry in performance.for_surface("pyqt")
+    }
+    performance_budget = performance.surfaces["pyqt"]
     minimum_width = manifest.reference_environments["pyqt"].minimum_visible_width_px
     evidence = [
         _audit_tab(
@@ -136,6 +226,8 @@ def main() -> int:
             entry.landmark_kind,
             entry.minimum_visible_height_px,
             minimum_width if entry.landmark_kind == "visual" else 1,
+            performance_entries[entry.tab_id].workload,
+            performance_budget,
             args.output,
         )
         for entry in entries
@@ -143,6 +235,7 @@ def main() -> int:
     pixmap = window.grab()
     document = {
         "artifact_policy": "diagnostic-only-not-approved-golden",
+        "measurement_policy": performance.measurement_policy,
         "requested_scale": args.scale,
         "device_pixel_ratio": pixmap.devicePixelRatio(),
         "logical_window_size": [window.width(), window.height()],

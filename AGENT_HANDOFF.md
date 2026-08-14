@@ -3,6 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-tab visualization performance budgets (#4433)
+
+Version 1.16.97 adds one immutable performance manifest over the exact nine
+React and nine PyQt tab identities. Protected diagnostics now bound cold tab
+open, resize settling, stable-frame geometry, and post-settle visual movement
+for the initial production state. Browser evidence also enforces canonical CLS
+at 0.1 or less while excluding shifts covered by recent user input. React uses
+2.5/1.5-second open/resize ceilings; PyQt uses 5/4 seconds to retain measured
+headroom for cold offscreen Matplotlib text/layout work at DPI 1.0 and 1.5.
+
+The initial PyQt Plots probe exposed a real 7.8–10.6-second GUI-thread closure
+sweep. Production computation now crosses a generation-bound, killable Qt
+subprocess with single-thread scientific-library limits, a 120-second hard
+cap, exact owner/result validation, and prior-pane retention. Injected test
+executors retain the cooperative QThread seam. This protects UI responsiveness
+without changing simulation, plot, or export authority. These are protected
+diagnostic budgets, not user-hardware qualification, result-workload coverage,
+approved goldens, or formal assistive-technology evidence. Persisted layout
+preferences and the remaining #4433 closure work stay open.
+
+Local evidence is 1,070/1,070 web tests, 70/70 focused Python authority tests,
+one three-viewport Chromium budget run, one two-DPI all-tab PyQt budget run,
+and two/two corrected Plots error-prior renders. The 14-worker broad Python
+run passed 1,439 tests and exposed the two probe races plus one contended Club
+timing; after correction, those exact three cases pass serially. Ruff, pinned
+Python 3.12/MyPy 1.13, ESLint, TypeScript, production build, governance, and a
+wheel inspection containing both JSON manifests are green.
+
 ## 2026-08-14 Plots bounded computation and exact inspector (#4433)
 
 Version 1.16.96 caps one workspace at eight plots, 512 sweep evaluations,

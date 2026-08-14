@@ -3,6 +3,29 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-tab visualization performance budgets (#4433)
+
+- `visualization-performance-budgets@1` exactly covers the existing nine React
+  and nine PyQt tab identities. Initial production states must open, settle
+  after resize, and remain geometrically stable within toolkit-specific
+  ceilings. React additionally pins canonical CLS at 0.1 or less.
+- React open/resize ceilings are 2.5/1.5 seconds. PyQt uses 5/4 seconds at DPI
+  1.0 and 1.5, preserving measured cold-Matplotlib margin while still rejecting
+  the reproduced 7.8–10.6-second synchronous Plots regression.
+- CPU-bound PyQt plot computation now uses a killable Qt subprocess with exact
+  generation/owner publication, bounded immutable payloads, single-thread
+  child math libraries, lower child scheduling priority, and a 120-second hard
+  limit. Retained panes remain visible and malformed/stale results fail closed.
+- Both protected workflow authorities track the manifest, parser, probes, and
+  tests. Evidence remains diagnostic rather than an approved golden or a claim
+  about arbitrary user hardware/result workloads. Persisted layout and formal
+  AT remain open under #4433. SPEC is 1.16.97.
+- Local gates: web 1,070/1,070; focused Python 70/70; Chromium budget 1/1;
+  two-DPI all-tab budget 1/1; corrected Plots render 2/2; broad Python 1,439
+  passed with the exact two artifact races and one contended Club timing then
+  passing 3/3 serially. Ruff, pinned MyPy 1.13, ESLint, TypeScript, build,
+  governance, and wheel resource inspection are green.
+
 ## 2026-08-14 Plots bounded computation and exact inspector (#4433)
 
 - Shared Python/TypeScript authority caps one workspace at eight plots, 512

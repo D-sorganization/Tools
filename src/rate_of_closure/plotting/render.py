@@ -19,7 +19,7 @@ import csv
 import dataclasses
 import json
 import math
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -190,12 +190,18 @@ def _shared_y_label(y_keys: tuple[str, ...]) -> str:
     return "Value (Mixed Units)"
 
 
-def _sweep_data(spec: PlotSpec, run: SimulationRun) -> PlotData:
+def _sweep_data(
+    spec: PlotSpec,
+    run: SimulationRun,
+    should_cancel: Callable[[], bool] | None = None,
+) -> PlotData:
     assert spec.x_start is not None and spec.x_stop is not None
     grid = np.linspace(spec.x_start, spec.x_stop, spec.x_count)
     columns: dict[str, list[float]] = {key: [] for key in spec.y_keys}
     kept: list[float] = []
     for value in grid:
+        if should_cancel is not None and should_cancel():
+            raise InterruptedError("plot computation cancelled")
         try:
             point = run_simulation(_config_with(run.config, spec.x_key, float(value)))
         except Exception:  # noqa: BLE001 — skip infeasible sweep points
@@ -218,7 +224,11 @@ def _sweep_data(spec: PlotSpec, run: SimulationRun) -> PlotData:
     )
 
 
-def compute_plot_data(spec: PlotSpec, run: SimulationRun) -> PlotData:
+def compute_plot_data(
+    spec: PlotSpec,
+    run: SimulationRun,
+    should_cancel: Callable[[], bool] | None = None,
+) -> PlotData:
     """Evaluate a plot definition against a reference run.
 
     Args:
@@ -230,8 +240,10 @@ def compute_plot_data(spec: PlotSpec, run: SimulationRun) -> PlotData:
     """
     require(isinstance(spec, PlotSpec), "spec must be a PlotSpec", spec)
     require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
+    if should_cancel is not None and should_cancel():
+        raise InterruptedError("plot computation cancelled")
     if spec.kind == "sweep":
-        return _sweep_data(spec, run)
+        return _sweep_data(spec, run, should_cancel)
     x = np.asarray(extract(run, spec.x_key), dtype=float) / _display_factor(spec.x_key)
     if spec.kind == "histogram":
         return PlotData(

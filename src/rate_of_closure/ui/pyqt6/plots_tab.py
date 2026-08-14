@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-import logging
 from collections.abc import Callable
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QResizeEvent, QShowEvent
+from PyQt6.QtGui import QResizeEvent
 from PyQt6.QtWidgets import (
     QComboBox,
     QGridLayout,
@@ -23,7 +22,6 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.plot_workspace_limits import validate_plot_workspace
 from rate_of_closure.plotting import (
@@ -33,19 +31,21 @@ from rate_of_closure.plotting import (
     builtin_spec,
     compute_plot_data,
 )
-from rate_of_closure.simulation import SimulationConfig, SimulationRun, run_simulation
+from rate_of_closure.simulation import SimulationRun
 from rate_of_closure.ui.pyqt6.plot_canvas_pane import PlotCanvasPane
 from rate_of_closure.ui.pyqt6.plot_export_mixin import PlotExportMixin
-
-logger = logging.getLogger(__name__)
+from rate_of_closure.ui.pyqt6.plots_tab_computation import (
+    PlotExecutor,
+    PlotsTabComputationMixin,
+)
 
 __all__ = ["PlotsTab"]
 
-_DEFAULT_CLUB = "Driver 10.5°"
 _TWO_COLUMN_VIEWPORT_PX = 800
+_CANONICAL_PLOT_EXECUTOR = compute_plot_data
 
 
-class PlotsTab(PlotExportMixin, QWidget):
+class PlotsTab(PlotsTabComputationMixin, PlotExportMixin, QWidget):
     """Investigative plotting suite tab (plot list left, canvas right)."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -56,6 +56,7 @@ class PlotsTab(PlotExportMixin, QWidget):
         self._plot_panes: list[PlotCanvasPane] = []
         self._plot_data: list[PlotData | None] = []
         self._plot_data_current: list[bool] = []
+        self._init_plot_computation()
 
         left = QWidget()
         left_layout = QVBoxLayout(left)
@@ -173,39 +174,6 @@ class PlotsTab(PlotExportMixin, QWidget):
             grid.addWidget(button, index // 2, index % 2)
         return box
 
-    def set_scenario(self, scenario: ImpactScenario) -> None:
-        """Adopt the explorer's scenario (rebuilds the lazy run).
-
-        Rendering is deferred while the tab is hidden — sweeps re-run
-        the simulation per grid point, far too heavy for every explorer
-        keystroke.
-        """
-        self._scenario = scenario
-        self._run = None
-        self._mark_plot_data_stale()
-        self._refresh_if_visible()
-
-    def set_run(self, run: SimulationRun) -> None:
-        """Adopt a completed simulation run as the reference run."""
-        self._run = run
-        self._mark_plot_data_stale()
-        self._refresh_if_visible()
-
-    def showEvent(self, event: QShowEvent | None) -> None:  # noqa: N802
-        """Render any deferred scenario/run change on first show."""
-        super().showEvent(event)
-        if not all(self._plot_data_current):
-            self.refresh()
-
-    def _refresh_if_visible(self) -> None:
-        """Deferred refresh: sweeps re-run the simulation per grid point,
-        far too heavy while the tab is hidden; showEvent catches up."""
-        if self.isVisible():
-            self.refresh()
-
-    def _mark_plot_data_stale(self) -> None:
-        self._plot_data_current = [False] * len(self._plot_panes)
-
     def add_spec(self, spec: PlotSpec, label: str | None = None) -> None:
         """Append a plot definition to the managed list and select it."""
         items = [self._plot_list.item(row) for row in range(self._plot_list.count())]
@@ -242,56 +210,9 @@ class PlotsTab(PlotExportMixin, QWidget):
         item = self._plot_list.currentItem()
         return item.data(Qt.ItemDataRole.UserRole) if item is not None else None
 
-    def reference_run(self) -> SimulationRun | None:
-        """The reference run, building the lazy manual-source run once."""
-        if self._run is None:
-            try:
-                self._run = run_simulation(
-                    SimulationConfig(
-                        scenario=self._scenario, club=get_club(_DEFAULT_CLUB)
-                    )
-                )
-            except Exception as exc:  # noqa: BLE001 — surfaced in status
-                logger.warning("reference run failed: %s", exc)
-                self._status.setText(f"Reference run failed: {exc}")
-        return self._run
-
     def plot_panes(self) -> tuple[PlotCanvasPane, ...]:
         """Return every independently controlled visible plot viewport."""
         return tuple(self._plot_panes)
-
-    def refresh(self) -> None:
-        """Compute and render only uncached managed plots."""
-        run = self.reference_run()
-        if run is None:
-            return
-        errors: list[str] = []
-        current_row = self._plot_list.currentRow()
-        for row in range(len(self._plot_panes)):
-            if not self._plot_data_current[row]:
-                error = self._compute_row(row, run)
-                if error:
-                    errors.append(error)
-            if row == current_row:
-                self._data = self._plot_data[row]
-        self._sync_selected_pane()
-        self._status.setText("; ".join(errors))
-
-    def _compute_row(self, row: int, run: SimulationRun) -> str | None:
-        item = self._plot_list.item(row)
-        if item is None:
-            return None
-        spec = item.data(Qt.ItemDataRole.UserRole)
-        try:
-            data = compute_plot_data(spec, run)
-            self._plot_panes[row].render_data(data)
-            self._plot_data[row] = data
-            self._plot_data_current[row] = True
-        except Exception as exc:  # noqa: BLE001 — plotting must not crash
-            logger.warning("plot render failed: %s", exc)
-            retained = "; prior accepted plot retained" if self._plot_data[row] else ""
-            return f"{item.text()}: {exc}{retained}"
-        return None
 
     def current_data(self) -> PlotData | None:
         """The data behind the rendered plot (exports read this)."""
@@ -336,15 +257,13 @@ class PlotsTab(PlotExportMixin, QWidget):
             self._reflow_panes()
             self._sync_selected_pane()
 
-    def _on_selection_changed(self, _row: int) -> None:
-        self._sync_selected_pane()
-        row = self._plot_list.currentRow()
-        if self.isVisible() and 0 <= row < len(self._plot_data):
-            if not self._plot_data_current[row]:
-                run = self.reference_run()
-                error = self._compute_row(row, run) if run is not None else None
-                self._status.setText(error or "")
-            self._data = self._plot_data[row]
+    @staticmethod
+    def _plot_compute_executor() -> PlotExecutor:
+        return compute_plot_data
+
+    @staticmethod
+    def _plot_process_enabled() -> bool:
+        return compute_plot_data is _CANONICAL_PLOT_EXECUTOR
 
     def _sync_selected_pane(self) -> None:
         row = self._plot_list.currentRow()

@@ -156,19 +156,20 @@ class TestPlotList:
         calls = 0
         original = plots_module.compute_plot_data
 
-        def counted(spec, run):  # type: ignore[no-untyped-def]
+        def counted(spec, run, should_cancel=None):  # type: ignore[no-untyped-def]
             nonlocal calls
             calls += 1
-            return original(spec, run)
+            return original(spec, run, should_cancel)
 
         monkeypatch.setattr(plots_module, "compute_plot_data", counted)
         tab.show()
-        tab.refresh()
+        qtbot.waitUntil(lambda: tab.current_data() is not None, timeout=15_000)
         assert calls == 1
         index = tab._builtin_combo.findData("swing_time_series")
         tab._builtin_combo.setCurrentIndex(index)
         tab._on_add_builtin()
-        qtbot.wait(1)
+        qtbot.waitUntil(lambda: calls == 2, timeout=15_000)
+        qtbot.waitUntil(lambda: tab.current_data() is not None, timeout=15_000)
         assert calls == 2
         tab._plot_list.setCurrentRow(0)
         assert calls == 2
@@ -211,7 +212,7 @@ class TestPlotList:
         qtbot.keyClick(pane.canvas(), Qt.Key.Key_Home)
         assert pane.selected_evidence() is not None
         tab.set_run(tab.reference_run())
-        assert pane.selected_evidence() is None
+        qtbot.waitUntil(lambda: pane.selected_evidence() is None, timeout=15_000)
 
         tab.add_spec(
             PlotSpec(kind="histogram", x_key="flight.speed_mps", title="Speed")
@@ -234,11 +235,15 @@ class TestPlotList:
         prior_figure = pane.figure()
         prior_selection = pane.selected_evidence()
 
-        def fail(_spec, _run):  # type: ignore[no-untyped-def]
+        def fail(_spec, _run, _should_cancel=None):  # type: ignore[no-untyped-def]
             raise RuntimeError("planted plot authority failure")
 
         monkeypatch.setattr(plots_module, "compute_plot_data", fail)
         tab.set_run(tab.reference_run())
+        qtbot.waitUntil(
+            lambda: "prior accepted plot retained" in tab._status.text(),
+            timeout=15_000,
+        )
         assert tab.current_data() is prior_data
         assert pane.figure() is prior_figure
         assert pane.selected_evidence() == prior_selection

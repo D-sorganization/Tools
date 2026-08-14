@@ -26,11 +26,31 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.96                                    |
-| **Spec Version**        | 1.16.96                                    |
+| **Current Version**     | 1.16.97                                    |
+| **Spec Version**        | 1.16.97                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Cross-tab visualization performance budgets (#4433)
+
+Version 1.16.97 introduces `visualization-performance-budgets@1`, an immutable
+authority over the exact nine React and nine PyQt tab identities already owned
+by the visibility manifest. For the initial production state it bounds cold tab
+open, resize settling, stable-frame geometry, and post-settle movement. React
+uses 2.5/1.5-second open/resize ceilings and canonical CLS <= 0.1 after excluding
+recent-input shifts. PyQt uses 5/4-second ceilings and exact geometry at DPI
+1.0/1.5 because Qt has no browser CLS metric.
+
+The first PyQt probe reproduced a 7.8–10.6-second Plots open while a 41-point
+closure sweep held the GUI thread. Production plot computation now runs through
+a generation-bound, killable Qt subprocess. IPC accepts only complete bounded
+plot payloads; stale/malformed results fail closed, prior panes remain visible,
+scientific-library child threads are capped, and work is terminated after 120
+seconds. The simulation, plot, selection, and export identities are unchanged.
+These thresholds are protected diagnostics for the declared workload, not user-
+hardware qualification, result-state coverage, approved visual goldens, or
+formal assistive-technology evidence. Persisted layout remains open under #4433.
 
 ### 2026-08-14 Plots bounded computation and exact inspector (#4433)
 

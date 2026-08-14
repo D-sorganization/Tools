@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import time
 from pathlib import Path
 
 import matplotlib
@@ -104,6 +105,16 @@ def _capture(
     }
 
 
+def _wait_for_plot_terminal(tab: PlotsTab, timeout_ms: int = 5_000) -> None:
+    """Wait for the exact async plot generation to publish or fail."""
+    started = time.perf_counter()
+    while tab._plot_worker is not None:
+        if (time.perf_counter() - started) * 1_000 > timeout_ms:
+            raise TimeoutError("plot evidence did not reach a terminal state")
+        QTest.qWait(10)
+        QApplication.processEvents()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
@@ -136,6 +147,7 @@ def main() -> int:
     if run is None:
         raise RuntimeError("Plots probe has no accepted reference run")
     tab.set_run(run)
+    _wait_for_plot_terminal(tab)
     if tab.current_data() is not accepted_data:
         raise RuntimeError("failed plot recompute discarded accepted evidence")
     states.append(_capture(window, tab, args.output, "error-prior"))

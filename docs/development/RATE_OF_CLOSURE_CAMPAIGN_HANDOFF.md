@@ -1,5 +1,26 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Cross-tab visualization performance budgets
+
+- One packaged manifest exactly covers all nine React and nine PyQt tabs and
+  binds the initial-production-state open, resize-settle, stable-frame, and
+  post-settle-shift budgets to the existing visibility authority. Browser CLS
+  is capped at 0.1 using the canonical recent-input exclusion; PyQt records
+  geometry because Qt has no browser CLS metric.
+- React is protected at 2.5 seconds to open and 1.5 seconds to settle a resize.
+  PyQt is protected at 5 and 4 seconds, respectively, leaving measured margin
+  for cold offscreen Matplotlib layout at DPI 1.0/1.5. The manifest explicitly
+  classifies these as diagnostics rather than user-hardware qualification.
+- The first probe reproduced a 7.8–10.6-second PyQt Plots open caused by a
+  CPU-bound closure sweep on the GUI thread. Production sweeps now run in a
+  killable, generation-bound Qt subprocess with bounded IPC, child thread
+  limits, lower scheduling priority, and a 120-second ceiling. Prior pane data
+  remains visible; stale or malformed process results cannot publish.
+- Protected PR and trusted-main workflows run the browser and two-DPI budget
+  evidence and retain semantic manifests/screenshots. Result-state performance,
+  persisted layout preferences, approved goldens, formal AT, and broader
+  hardware qualification remain open. SPEC is 1.16.97.
+
 ## 2026-08-14 #4433 Plots bounded computation and exact inspector
 
 - One shared authority rejects more than eight managed plots, 512 total sweep
