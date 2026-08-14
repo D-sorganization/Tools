@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -20,7 +20,7 @@ pytestmark = pytest.mark.unit
 
 def _call(**params: Any) -> RecordedCall:
     return RecordedCall(
-        timestamp=datetime(2026, 1, 2, tzinfo=UTC),  # noqa: UP017 - Python 3.10 CI lacks datetime.UTC.
+        timestamp=datetime(2026, 1, 2, tzinfo=timezone.utc),  # noqa: UP017 - Python 3.10 CI lacks datetime.UTC.
         action_id="test.echo",
         params=params,
         descriptor=ActionDescriptor(
