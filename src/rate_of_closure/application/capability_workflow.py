@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from rate_of_closure.application.capability_interactive_basis import (
+    validate_capability_interactive_basis,
+)
 from rate_of_closure.application.capability_workflow_wire import (
     validate_capability_workflow_wire,
 )
@@ -310,13 +314,31 @@ def capability_workflow_json(document: CapabilityWorkflowDocument) -> str:
 
 def capability_workflow_from_json(source: str) -> CapabilityWorkflowDocument:
     """Parse one exact workflow document and reject unknown fields."""
-    payload = validate_capability_workflow_wire(json.loads(source))
+    return capability_workflow_from_wire(json.loads(source))
+
+
+def capability_workflow_from_wire(
+    source: Mapping[str, object],
+) -> CapabilityWorkflowDocument:
+    """Parse one exact in-memory workflow payload without JSON round-tripping."""
+    if not isinstance(source, Mapping):
+        raise TypeError("capability workflow must be an object")
+    payload = validate_capability_workflow_wire(_mutable_wire_value(source))
     return CapabilityWorkflowDocument(
         PlayerCapabilityProfile.from_dict(payload["profile"]),
         OptimizationRequest.from_dict(payload["request"]),
         _config_from_wire(payload["evaluator_config"]),
         _text(payload["schema_version"], "schema_version"),
     )
+
+
+def _mutable_wire_value(value: object) -> Any:
+    """Detach recursively frozen workspace JSON for strict domain validation."""
+    if isinstance(value, Mapping):
+        return {key: _mutable_wire_value(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return [_mutable_wire_value(item) for item in value]
+    return value
 
 
 def capability_workflow_inputs(
@@ -331,6 +353,7 @@ def capability_workflow_inputs(
             "interactive workflow supports exactly one club and spin default"
         )
     club = document.profile.clubs[0]
+    validate_capability_interactive_basis(club)
     parameters = {item.parameter_id: item for item in club.parameters}
     if set(parameters) != {"ball_speed", "launch_angle", "launch_direction"}:
         raise ValueError("interactive workflow requires the three launch parameters")
@@ -368,6 +391,7 @@ __all__ = [
     "CapabilityWorkflowInputs",
     "build_capability_workflow",
     "capability_workflow_from_json",
+    "capability_workflow_from_wire",
     "capability_workflow_inputs",
     "capability_workflow_json",
 ]

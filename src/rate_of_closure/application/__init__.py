@@ -16,7 +16,26 @@ from .workspace_document import (
     workspace_from_json,
     workspace_to_json,
 )
-from .workspace_files import read_workspace, write_workspace_atomic
+from .workspace_files import read_workspace, write_text_atomic, write_workspace_atomic
+from .workspace_session import (
+    ExplorerWorkspaceState,
+    WorkspaceSessionMetadata,
+    document_from_state,
+    state_from_document,
+)
+from .workspace_simulation_session import (
+    LegacySimulationMigrationRequired,
+    SimulationWorkspaceState,
+)
+from .workspace_torque_session import (
+    LegacyTorqueMigrationRequired,
+    TorqueWorkspaceState,
+)
+from .workspace_variation_session import (
+    LegacyVariationMigrationRequired,
+    VariationAnalysisExecution,
+    VariationWorkspaceState,
+)
 
 __all__ = [
     "APP_COMMAND_IDS",
@@ -25,12 +44,24 @@ __all__ = [
     "AppCommandId",
     "CommandAvailability",
     "CommandUnavailableError",
+    "ExplorerWorkspaceState",
+    "LegacySimulationMigrationRequired",
+    "LegacyTorqueMigrationRequired",
+    "LegacyVariationMigrationRequired",
+    "SimulationWorkspaceState",
+    "TorqueWorkspaceState",
+    "VariationAnalysisExecution",
+    "VariationWorkspaceState",
     "VersionedPayload",
     "WorkspaceDocument",
     "WorkspaceLayout",
     "WorkspaceMetadata",
+    "WorkspaceSessionMetadata",
+    "document_from_state",
     "read_workspace",
     "workspace_from_json",
     "workspace_to_json",
+    "state_from_document",
+    "write_text_atomic",
     "write_workspace_atomic",
 ]

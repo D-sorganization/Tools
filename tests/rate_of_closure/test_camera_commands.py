@@ -16,6 +16,7 @@ from rate_of_closure.application.camera_commands import (
     camera_preset,
     canvas_angles,
     matplotlib_angles,
+    moving_subject_camera_state,
     recenter_camera,
     safe_tracking_zoom,
     set_tracking_enabled,
@@ -89,3 +90,12 @@ def test_auto_fit_only_reduces_unsafe_zoom_and_preserves_safe_zoom() -> None:
     ) == pytest.approx(2.8)
     with pytest.raises(ValueError, match="positive"):
         safe_tracking_zoom(1.0, subject_radius_m=0.0, base_half_extent_m=1.0)
+
+
+def test_moving_subject_camera_state_is_share_ready_and_user_reversible() -> None:
+    state = moving_subject_camera_state()
+    assert state.zoom == pytest.approx(2.0)
+    assert state.tracking_enabled
+    assert state.auto_fit_enabled
+    assert not state.tracking_suspended
+    assert not set_tracking_enabled(state, False, (1.0, 2.0, 3.0)).tracking_enabled

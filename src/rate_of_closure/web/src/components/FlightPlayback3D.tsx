@@ -16,7 +16,7 @@ import { pointerCoordinates } from "./pointerCoordinates";
 import {
   applyManualOverride,
   applyCameraPreset,
-  defaultCameraState,
+  movingSubjectCameraState,
   recenterCamera,
   safeTrackingZoom,
   setFaceOnSide,
@@ -25,6 +25,11 @@ import {
   withCameraZoom,
   withManualOrbit,
 } from "../model/cameraCommands";
+import {
+  applyCameraPreference,
+  preferenceFromCameraState,
+  type CameraPreference,
+} from "../model/cameraPreferences";
 
 interface Props {
   points: readonly FlightPoint[];
@@ -32,6 +37,8 @@ interface Props {
   spatialTarget?: SpatialTargetTs;
   synchronizedTimeS?: number;
   hideTransport?: boolean;
+  cameraPreference?: CameraPreference;
+  onCameraPreferenceChange?: (preference: CameraPreference) => void;
 }
 
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
@@ -43,6 +50,8 @@ export function FlightPlayback3D({
   spatialTarget,
   synchronizedTimeS,
   hideTransport = false,
+  cameraPreference,
+  onCameraPreferenceChange,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
@@ -51,7 +60,9 @@ export function FlightPlayback3D({
   const [playing, setPlaying] = useState(false);
   const [loop, setLoop] = useState(false);
   const [speed, setSpeed] = useState(1);
-  const [camera, setCamera] = useState(defaultCameraState);
+  const [camera, setCamera] = useState(() => cameraPreference === undefined
+    ? movingSubjectCameraState()
+    : applyCameraPreference(movingSubjectCameraState(), cameraPreference));
   const timeline = useMemo(
     () => (points.length > 0 ? new PlaybackTimeline(points) : null),
     [points],
@@ -64,6 +75,25 @@ export function FlightPlayback3D({
   useMemo(() => {
     if (comparisonPoints.length > 0) validatePlaybackPoints(comparisonPoints);
   }, [comparisonPoints]);
+
+  const updatePreferenceCamera = (
+    transform: (current: typeof camera) => typeof camera,
+  ) => {
+    setCamera((current) => {
+      const next = transform(current);
+      if (cameraPreference !== undefined) {
+        onCameraPreferenceChange?.(
+          preferenceFromCameraState(next, cameraPreference),
+        );
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (cameraPreference === undefined) return;
+    setCamera((current) => applyCameraPreference(current, cameraPreference));
+  }, [cameraPreference]);
 
   useEffect(() => {
     setPlaying(false);
@@ -264,12 +294,12 @@ export function FlightPlayback3D({
         </output>
       </div>}
       <CameraControlBar state={camera} subjectLabel="Ball"
-        onPreset={(preset) => setCamera((current) => applyCameraPreset(current, preset))}
-        onFaceOnSide={(side) => setCamera((current) => setFaceOnSide(current, side))}
-        onTracking={(enabled) => setCamera((current) => setTrackingEnabled(
+        onPreset={(preset) => updatePreferenceCamera((current) => applyCameraPreset(current, preset))}
+        onFaceOnSide={(side) => updatePreferenceCamera((current) => setFaceOnSide(current, side))}
+        onTracking={(enabled) => updatePreferenceCamera((current) => setTrackingEnabled(
           current, enabled, frame?.position ?? [0, 0, 0],
         ))}
-        onAutoFit={(enabled) => setCamera((current) => ({
+        onAutoFit={(enabled) => updatePreferenceCamera((current) => ({
           ...current,
           autoFitEnabled: enabled,
           zoom: enabled
@@ -317,7 +347,7 @@ export function FlightPlayback3D({
         onWheel={(event) => {
           event.preventDefault();
           const factor = event.deltaY < 0 ? 1.1 : 1 / 1.1;
-          setCamera((current) => withCameraZoom(
+          updatePreferenceCamera((current) => withCameraZoom(
             current,
             current.autoFitEnabled
               ? safeTrackingZoom(

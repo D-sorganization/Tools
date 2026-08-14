@@ -22,6 +22,11 @@ import { solve, type ImpactScenario } from "../model/impact";
 import { loadHeadMesh, type HeadMesh } from "../model/mesh";
 import { getChartColor } from "../model/theme";
 import {
+  applyCameraPreference,
+  preferenceFromCameraState,
+  type CameraPreference,
+} from "../model/cameraPreferences";
+import {
   SHAFT_LEN,
   add,
   apply,
@@ -34,7 +39,7 @@ import { drawEngineeringCgSymbol } from "./engineeringSymbols";
 import { ClubCanvasPlaybackControls } from "./ClubCanvasPlaybackControls";
 import { ClubCanvasViewport } from "./ClubCanvasViewport";
 import {
-  defaultCameraState,
+  movingSubjectCameraState,
   safeTrackingZoom,
   updateTrackingTarget,
   withCameraZoom,
@@ -79,6 +84,8 @@ export function ClubCanvas({
   externalMesh = null,
   hoselPoint = null,
   cogPoint = null,
+  cameraPreference,
+  onCameraPreferenceChange,
 }: {
   scenario: ImpactScenario;
   /** A generated head (e.g. parametric club head) to render; the STL
@@ -88,10 +95,14 @@ export function ClubCanvas({
   hoselPoint?: Vec3 | null;
   /** Generated head's divergence-theorem volumetric COG (H1). */
   cogPoint?: Vec3 | null;
+  cameraPreference?: CameraPreference;
+  onCameraPreferenceChange?: (preference: CameraPreference) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef(0);
-  const [camera, setCamera] = useState(defaultCameraState);
+  const [camera, setCamera] = useState(() => cameraPreference === undefined
+    ? movingSubjectCameraState()
+    : applyCameraPreference(movingSubjectCameraState(), cameraPreference));
   const cameraRef = useRef(camera);
   const subjectRef = useRef<Vec3>([0, 0, 0]);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
@@ -107,9 +118,23 @@ export function ClubCanvas({
     setCamera((current) => {
       const next = transform(current);
       cameraRef.current = next;
+      if (cameraPreference !== undefined) {
+        onCameraPreferenceChange?.(
+          preferenceFromCameraState(next, cameraPreference),
+        );
+      }
       return next;
     });
   };
+
+  useEffect(() => {
+    if (cameraPreference === undefined) return;
+    setCamera((current) => {
+      const next = applyCameraPreference(current, cameraPreference);
+      cameraRef.current = next;
+      return next;
+    });
+  }, [cameraPreference]);
 
   useEffect(() => {
     if (externalMesh) {

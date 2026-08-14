@@ -55,6 +55,46 @@ def test_every_3d_view_exposes_accessible_stable_camera_commands(
     assert controls.minimumSizeHint().width() <= 700
 
 
+def test_simulation_camera_starts_fitted_and_tracks_the_clubhead(
+    qtbot, reference_run
+) -> None:  # type: ignore[no-untyped-def]
+    """The share-ready swing scene should not open tiny or lose its subject."""
+    view = SimulationView()
+    qtbot.addWidget(view)
+    view.set_run(reference_run)
+
+    state = view.camera_state()
+    assert state.tracking_enabled
+    assert state.auto_fit_enabled
+    assert state.zoom == pytest.approx(2.0)
+    assert view.camera_controls().track.isChecked()
+    assert view.camera_controls().auto_fit.isChecked()
+
+    subject = view._display(reference_run.swing_positions[0])
+    limits = (
+        view._axes.get_xlim3d(),
+        view._axes.get_ylim3d(),
+        view._axes.get_zlim3d(),
+    )
+    for coordinate, bounds in zip(subject, limits, strict=True):
+        assert bounds[0] < coordinate < bounds[1]
+    assert view.scene_extent_m() < view._camera_base_half_extent_m()
+
+
+def test_flight_camera_starts_fitted_and_tracks_the_ball(qtbot, reference_run) -> None:  # type: ignore[no-untyped-def]
+    view = FlightView()
+    qtbot.addWidget(view)
+    view.set_run(reference_run)
+
+    state = view.camera_state()
+    assert state.tracking_enabled
+    assert state.auto_fit_enabled
+    assert state.zoom == pytest.approx(2.0)
+    assert view.camera_controls().track.isChecked()
+    assert view.camera_controls().auto_fit.isChecked()
+    assert view.camera_subject_in_frame()
+
+
 def test_simulation_snap_views_are_exact_idempotent_and_face_side_explicit(
     qtbot, reference_run
 ) -> None:  # type: ignore[no-untyped-def]
@@ -84,6 +124,72 @@ def test_simulation_snap_views_are_exact_idempotent_and_face_side_explicit(
     view.apply_camera_command(CameraCommandId.VIEW_OVERHEAD)
     assert float(view._axes.elev) == pytest.approx(90.0)
     assert float(view._axes.azim) == pytest.approx(-90.0)
+
+
+@pytest.mark.parametrize("view_type", [SimulationView, FlightView])
+@pytest.mark.parametrize(
+    ("command", "hidden_axis"),
+    [
+        (CameraCommandId.VIEW_FACE_ON, "xaxis"),
+        (CameraCommandId.VIEW_DOWN_THE_LINE, "yaxis"),
+        (CameraCommandId.VIEW_OVERHEAD, "zaxis"),
+    ],
+)
+def test_orthographic_snap_hides_only_depth_axis_and_restores_all_axes(
+    qtbot, reference_run, view_type, command, hidden_axis
+) -> None:  # type: ignore[no-untyped-def]
+    view = view_type()
+    qtbot.addWidget(view)
+    view.set_run(reference_run)
+
+    view.apply_camera_command(command)
+    axes = view._axes if isinstance(view, SimulationView) else view._axes_3d
+    assert axes is not None
+    visibility = {
+        axis_name: getattr(axes, axis_name).get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+    }
+    assert visibility == {
+        "xaxis": hidden_axis != "xaxis",
+        "yaxis": hidden_axis != "yaxis",
+        "zaxis": hidden_axis != "zaxis",
+    }
+    depth_axis = getattr(axes, hidden_axis)
+    assert not depth_axis.label.get_visible()
+    assert not depth_axis.line.get_visible()
+    assert not depth_axis.pane.get_visible()
+    assert all(
+        not artist.get_visible()
+        for tick in depth_axis.get_major_ticks()
+        for artist in (tick.tick1line, tick.tick2line, tick.label1, tick.label2)
+    )
+
+    view.apply_camera_command(CameraCommandId.VIEW_ISOMETRIC)
+    axes = view._axes if isinstance(view, SimulationView) else view._axes_3d
+    assert axes is not None
+    assert all(
+        getattr(axes, axis_name).get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+    )
+    assert all(
+        artist.get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+        for axis in (getattr(axes, axis_name),)
+        for artist in (axis.label, axis.line, axis.pane)
+    )
+    assert all(
+        tick.label1.get_visible() and not tick.label2.get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+        for tick in getattr(axes, axis_name).get_major_ticks()
+    )
+    view.apply_camera_command(command)
+    view.suspend_camera_tracking()
+    axes = view._axes if isinstance(view, SimulationView) else view._axes_3d
+    assert axes is not None
+    assert all(
+        getattr(axes, axis_name).get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+    )
 
 
 def test_tracking_keeps_complete_swing_subject_inside_preserved_zoom(

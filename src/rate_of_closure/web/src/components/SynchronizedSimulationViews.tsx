@@ -5,6 +5,10 @@ import type { ImpactScenario } from "../model/impact";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import type { ViewKind, ViewWorkspace } from "../model/viewWorkspace";
+import {
+  withCameraPreference,
+  type CameraPreference,
+} from "../model/cameraPreferences";
 import { BallSetupDiagram } from "./BallSetupDiagram";
 import { FlightPlayback3D } from "./FlightPlayback3D";
 import { SpatialTargetSection } from "./SpatialTargetSection";
@@ -71,6 +75,17 @@ function FlightViewport(props: Props) {
         spatialTarget={props.spatialTarget}
         synchronizedTimeS={Math.max(0, props.timeS - impactTime)}
         hideTransport
+        cameraPreference={props.workspace.cameraPreferences.viewports.flight}
+        onCameraPreferenceChange={(preference: CameraPreference) => {
+          const cameraPreferences = withCameraPreference(
+            props.workspace.cameraPreferences,
+            "flight",
+            preference,
+          );
+          if (cameraPreferences !== props.workspace.cameraPreferences) {
+            props.onWorkspaceChange({ ...props.workspace, cameraPreferences });
+          }
+        }}
       />
     </div>
   );

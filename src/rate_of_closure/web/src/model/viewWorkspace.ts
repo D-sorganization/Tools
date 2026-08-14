@@ -1,5 +1,12 @@
 /** Versioned multi-viewport layout and resilient local persistence (#4225). */
 
+import {
+  cameraPreferencesDocument,
+  cameraPreferencesFromDocument,
+  defaultCameraPreferences,
+  type CameraPreferences,
+} from "./cameraPreferences";
+
 export const VIEW_KINDS = ["impact", "swing", "flight"] as const;
 export type ViewKind = (typeof VIEW_KINDS)[number];
 export const VIEW_LAYOUTS = [
@@ -30,10 +37,13 @@ export interface ViewWorkspace {
   readonly slots: readonly ViewSlot[];
   readonly activeSlotId: ViewKind;
   readonly playback: ViewPlayback;
+  readonly cameraPreferences: CameraPreferences;
 }
 
-export const VIEW_WORKSPACE_STORAGE_KEY = "rate-of-closure.web.view-workspace.v1";
-const FORMAT = "rate_of_closure.view_workspace/1";
+export const VIEW_WORKSPACE_STORAGE_KEY = "rate-of-closure.web.view-workspace.v2";
+export const LEGACY_VIEW_WORKSPACE_STORAGE_KEY = "rate-of-closure.web.view-workspace.v1";
+const FORMAT_V1 = "rate_of_closure.view_workspace/1";
+const FORMAT = "rate_of_closure.view_workspace/2";
 const DEFAULT_PLAYBACK: ViewPlayback = {
   timeS: 0,
   playing: false,
@@ -47,6 +57,7 @@ export const defaultViewWorkspace: ViewWorkspace = {
   slots: [slot("swing")],
   activeSlotId: "swing",
   playback: DEFAULT_PLAYBACK,
+  cameraPreferences: defaultCameraPreferences(),
 };
 
 interface StorageReader { getItem(key: string): string | null }
@@ -64,8 +75,7 @@ function normalizedLayout(value: unknown, count: number): ViewLayout {
     : "split_horizontal";
 }
 
-function recoveredPlayback(value: unknown): ViewPlayback {
-  if (!isRecord(value)) return DEFAULT_PLAYBACK;
+function playbackCandidate(value: Record<string, unknown>): ViewPlayback | null {
   const candidate = {
     timeS: value.time_s,
     playing: value.playing,
@@ -76,8 +86,22 @@ function recoveredPlayback(value: unknown): ViewPlayback {
     typeof candidate.timeS !== "number" || !Number.isFinite(candidate.timeS) || candidate.timeS < 0 ||
     typeof candidate.rate !== "number" || !Number.isFinite(candidate.rate) || candidate.rate <= 0 ||
     typeof candidate.playing !== "boolean" || typeof candidate.loop !== "boolean"
-  ) return DEFAULT_PLAYBACK;
+  ) return null;
   return candidate as ViewPlayback;
+}
+
+function recoveredPlayback(value: unknown): ViewPlayback {
+  return isRecord(value) ? playbackCandidate(value) ?? DEFAULT_PLAYBACK : DEFAULT_PLAYBACK;
+}
+
+function recoveredCameraPreferences(value: unknown): CameraPreferences {
+  try {
+    return value === undefined
+      ? defaultCameraPreferences()
+      : cameraPreferencesFromDocument(value);
+  } catch {
+    return defaultCameraPreferences();
+  }
 }
 
 function recoveredSlots(value: unknown): ViewSlot[] {
@@ -114,6 +138,7 @@ export function migrateViewWorkspace(value: unknown): ViewWorkspace {
     slots,
     activeSlotId,
     playback: recoveredPlayback(value.playback),
+    cameraPreferences: recoveredCameraPreferences(value.camera_preferences),
   };
 }
 
@@ -155,7 +180,7 @@ export function toggleWorkspaceView(current: ViewWorkspace, kind: ViewKind): Vie
   };
 }
 
-function documentFor(workspace: ViewWorkspace): Record<string, unknown> {
+export function viewWorkspaceDocument(workspace: ViewWorkspace): Record<string, unknown> {
   return {
     format: FORMAT,
     layout: workspace.layout,
@@ -169,7 +194,100 @@ function documentFor(workspace: ViewWorkspace): Record<string, unknown> {
       loop: workspace.playback.loop,
       rate: workspace.playback.rate,
     },
+    camera_preferences: cameraPreferencesDocument(workspace.cameraPreferences),
   };
+}
+
+function exactKeys(
+  value: Record<string, unknown>,
+  expected: readonly string[],
+  context: string,
+): void {
+  const actual = Object.keys(value);
+  if (actual.length !== expected.length || expected.some((key) => !(key in value))) {
+    throw new TypeError(`${context} has invalid fields`);
+  }
+}
+
+function strictWorkspaceDocument(value: unknown): ViewWorkspace {
+  if (!isRecord(value)) throw new TypeError("workspace document must be an object");
+  let current = value;
+  if (current.format === FORMAT_V1) {
+    exactKeys(
+      current,
+      ["format", "layout", "slots", "active_slot_id", "playback"],
+      "workspace v1",
+    );
+    current = {
+      ...current,
+      format: FORMAT,
+      camera_preferences: cameraPreferencesDocument(defaultCameraPreferences()),
+    };
+  }
+  exactKeys(
+    current,
+    ["format", "layout", "slots", "active_slot_id", "playback", "camera_preferences"],
+    "workspace",
+  );
+  if (current.format !== FORMAT) {
+    throw new TypeError(`unsupported workspace format: ${String(current.format)}`);
+  }
+  if (!VIEW_LAYOUTS.includes(current.layout as ViewLayout) || !Array.isArray(current.slots)) {
+    throw new TypeError("workspace layout and slots must be valid");
+  }
+  const slots = current.slots.map((item): ViewSlot => {
+    if (!isRecord(item)) throw new TypeError("workspace slot must be an object");
+    exactKeys(item, ["id", "kind", "plot_id", "legend"], "workspace slot");
+    if (item.id !== item.kind || !isViewKind(item.id) || item.plot_id !== null) {
+      throw new TypeError("workspace slot identity is invalid");
+    }
+    if (item.legend !== "hidden" && item.legend !== "outside_right") {
+      throw new TypeError("workspace slot legend is invalid");
+    }
+    return { id: item.id, kind: item.id, legend: item.legend };
+  });
+  if (slots.length === 0 || slots.length > VIEW_KINDS.length ||
+      new Set(slots.map(({ id }) => id)).size !== slots.length) {
+    throw new TypeError("workspace slots must be non-empty and unique");
+  }
+  if (!isViewKind(current.active_slot_id) ||
+      !slots.some(({ id }) => id === current.active_slot_id)) {
+    throw new TypeError("workspace active slot is invalid");
+  }
+  if (normalizedLayout(current.layout, slots.length) !== current.layout) {
+    throw new TypeError("workspace layout cardinality is invalid");
+  }
+  if (!isRecord(current.playback)) throw new TypeError("workspace playback is invalid");
+  exactKeys(current.playback, ["time_s", "playing", "loop", "rate"], "workspace playback");
+  const playback = playbackCandidate(current.playback);
+  if (playback === null) throw new TypeError("workspace playback is invalid");
+  return {
+    layout: current.layout as ViewLayout,
+    slots,
+    activeSlotId: current.active_slot_id,
+    playback,
+    cameraPreferences: cameraPreferencesFromDocument(current.camera_preferences),
+  };
+}
+
+/** Serialize a strict, versioned compositor document for file/workspace adapters. */
+export function exportViewWorkspace(workspace: ViewWorkspace): string {
+  const document = viewWorkspaceDocument(workspace);
+  strictWorkspaceDocument(document);
+  return `${JSON.stringify(document, null, 2)}\n`;
+}
+
+/** Parse a strict compositor export without partial mutation or version recovery. */
+export function importViewWorkspace(text: string): ViewWorkspace {
+  if (typeof text !== "string" || text.trim().length === 0) {
+    throw new TypeError("workspace import must be non-empty JSON text");
+  }
+  return strictWorkspaceDocument(JSON.parse(text));
+}
+
+/** Validate one already-parsed compositor document without recovery. */
+export function viewWorkspaceFromDocument(document: unknown): ViewWorkspace {
+  return strictWorkspaceDocument(document);
 }
 
 export function loadViewWorkspace(storage?: StorageReader | null): ViewWorkspace {
@@ -177,7 +295,8 @@ export function loadViewWorkspace(storage?: StorageReader | null): ViewWorkspace
     const target = storage === undefined
       ? (typeof window === "undefined" ? null : window.localStorage)
       : storage;
-    const raw = target?.getItem(VIEW_WORKSPACE_STORAGE_KEY);
+    const raw = target?.getItem(VIEW_WORKSPACE_STORAGE_KEY)
+      ?? target?.getItem(LEGACY_VIEW_WORKSPACE_STORAGE_KEY);
     return raw === null || raw === undefined
       ? defaultViewWorkspace
       : migrateViewWorkspace(JSON.parse(raw));
@@ -195,7 +314,7 @@ export function saveViewWorkspace(
       ? (typeof window === "undefined" ? null : window.localStorage)
       : storage;
     if (target === null) return false;
-    target.setItem(VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify(documentFor(workspace)));
+    target.setItem(VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify(viewWorkspaceDocument(workspace)));
     return true;
   } catch {
     return false;

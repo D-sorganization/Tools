@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  LEGACY_VIEW_WORKSPACE_STORAGE_KEY,
   VIEW_WORKSPACE_STORAGE_KEY,
+  exportViewWorkspace,
+  importViewWorkspace,
   loadViewWorkspace,
   migrateViewWorkspace,
   saveViewWorkspace,
@@ -68,7 +71,7 @@ describe("view workspace persistence", () => {
 
   it("migrates the legacy visible-view list and persists the canonical document", () => {
     const storage = new Map<string, string>();
-    storage.set(VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify({
+    storage.set(LEGACY_VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify({
       version: 1,
       layout: "split_horizontal",
       views: ["impact", "future", "flight"],
@@ -84,9 +87,31 @@ describe("view workspace persistence", () => {
     expect(migrated.activeSlotId).toBe("impact");
     expect(saveViewWorkspace(migrated, adapter)).toBe(true);
     expect(JSON.parse(storage.get(VIEW_WORKSPACE_STORAGE_KEY) ?? "{}")).toMatchObject({
-      format: "rate_of_closure.view_workspace/1",
+      format: "rate_of_closure.view_workspace/2",
       layout: "split_horizontal",
       active_slot_id: "impact",
+      camera_preferences: { format: "camera-preferences/v1" },
     });
+  });
+
+  it("round-trips a strict versioned export without partial future-version recovery", () => {
+    const workspace = migrateViewWorkspace({
+      format: "rate_of_closure.view_workspace/1",
+      layout: "grid",
+      slots: [
+        { id: "impact", kind: "impact", legend: "hidden" },
+        { id: "swing", kind: "swing", legend: "outside_right" },
+        { id: "flight", kind: "flight", legend: "outside_right" },
+      ],
+      active_slot_id: "flight",
+      playback: { time_s: 0.42, playing: false, loop: true, rate: 0.5 },
+    });
+
+    const text = exportViewWorkspace(workspace);
+
+    expect(text.endsWith("\n")).toBe(true);
+    expect(importViewWorkspace(text)).toEqual(workspace);
+    const future = JSON.stringify({ ...JSON.parse(text), format: "future/9" });
+    expect(() => importViewWorkspace(future)).toThrow(/unsupported workspace format/);
   });
 });
