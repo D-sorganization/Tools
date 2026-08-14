@@ -532,6 +532,27 @@ SPEC advances to 1.16.73.
   and portable exact replay remain open follow-on dependencies.
 
 SPEC advances to 1.16.71.
+## 2026-08-13 Variation flight-model identity closure (#4142 R10.4/R10.6)
+
+- `VariationPlan` accepts only values registered by Python `FlightModelType`;
+  arbitrary persisted or direct-construction model labels fail closed.
+- `build_simulation_ensemble_request` requires exact plan/base-config model
+  equality before sampling, so every generated `SimulationConfig` executes
+  the model declared by its plan.
+- React exposes one browser-variation model authority,
+  `waterloo_penner`. Plan import/validation, library load, inline execution,
+  and Worker submission share that guard.
+- Legacy/custom browser plans are not silently migrated. Direct imports and
+  executions fail with the unsupported and supported identities; stored
+  entries are skipped with the same visible edit-or-recreate warning.
+- Schema v2, samples, archives, paired producers, and physics are unchanged.
+  Resolved-base/unit snapshots, registry and RNG/stream versions, solver
+  identity, dimensional provenance, and cross-runtime replay remain open.
+- Local evidence is 1,473 scoped Python tests, all 879 React tests,
+  workflow-pinned Ruff 0.14.10/Black, exact Python 3.12 + NumPy 2.3.5 + Mypy
+  1.13 for changed production files, TypeScript, ESLint, and Vite build.
+
+SPEC 1.16.70 records this bounded identity correction.
 
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 

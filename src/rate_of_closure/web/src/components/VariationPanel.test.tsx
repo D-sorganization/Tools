@@ -72,7 +72,7 @@ const importedPlan = (): VariationPlanTs => ({
   ],
   nRuns: 8,
   seed: 6,
-  flightModel: "custom-flight-model",
+  flightModel: "waterloo_penner",
 });
 
 let storage: Storage;
@@ -264,6 +264,22 @@ describe("VariationPanel v2 plan persistence", () => {
       /Cannot load plan.*resolved variable snapshot/i,
     );
     expect(screen.getByLabelText("Pipeline")).toHaveValue("launch");
+  });
+
+  it("explains an unsupported imported flight model without mutating controls", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    const unsupported = JSON.parse(planToJson(importedPlan())) as Record<string, unknown>;
+    unsupported.flight_model = "custom-flight-model";
+
+    await user.upload(screen.getByLabelText("Import variation plan JSON"), new File(
+      [JSON.stringify(unsupported)], "unsupported-model.json", { type: "application/json" },
+    ));
+
+    expect(screen.getByRole("status", { name: "Variation status" })).toHaveTextContent(
+      /Cannot load plan.*custom-flight-model.*waterloo_penner.*edit/i,
+    );
+    expect(screen.getByLabelText("Pipeline")).toHaveValue("delivery");
   });
 
   it("explains why Morris is disabled when the current context cannot round-trip", () => {

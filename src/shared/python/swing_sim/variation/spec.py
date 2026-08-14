@@ -24,6 +24,7 @@ import numpy as np
 
 from shared.python.contracts import require
 from shared.python.swing_sim._numeric_contracts import finite_real, integer
+from shared.python.swing_sim.flight.registry import FlightModelType
 
 from .group_spec import PerturbationGroup
 from .identity_contracts import stable_id as require_stable_id
@@ -279,6 +280,12 @@ class VariationPlan:
 
     def __post_init__(self) -> None:
         require(self.mode in MODES, f"mode must be one of {MODES}", self.mode)
+        require(
+            isinstance(self.flight_model, str)
+            and self.flight_model in {model.value for model in FlightModelType},
+            "flight_model must be a registered FlightModelType value",
+            self.flight_model,
+        )
         n_runs = integer(cast(object, self.n_runs), "n_runs", minimum=1)
         seed = integer(cast(object, self.seed), "seed", minimum=0)
         require(n_runs <= MAX_SAFE_INTEGER, "n_runs must be a safe integer", n_runs)

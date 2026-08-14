@@ -204,6 +204,18 @@ def test_identity_request_rejects_sample_or_config_order_drift(mutation: str) ->
         SimulationEnsembleRequest(plan, samples, configs, built.execution_metadata)
 
 
+def test_builder_rejects_plan_and_config_flight_model_mismatch() -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(_spec(_YAW, 0.1),),
+        n_runs=2,
+        flight_model="nathan",
+    )
+
+    with pytest.raises(ContractViolationError, match="flight_model.*match"):
+        build_simulation_ensemble_request(plan, _base_config())
+
+
 def test_global_value_seam_applies_every_fixed_contact_morris_variable() -> None:
     values = {
         _YAW: 1.0,

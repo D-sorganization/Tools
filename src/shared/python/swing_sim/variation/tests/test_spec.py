@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 
 from shared.python.contracts import ContractViolationError
+from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.variation import (
     CATEGORY_BALL_SETUP,
     CATEGORY_CLUB,
@@ -264,6 +265,31 @@ class TestVariationPlan:
     def test_json_round_trip_is_lossless(self) -> None:
         plan = self._plan()
         assert VariationPlan.loads(plan.dumps()) == plan
+
+    @pytest.mark.parametrize("flight_model", [model.value for model in FlightModelType])
+    def test_accepts_only_registered_flight_model_identities(
+        self, flight_model: str
+    ) -> None:
+        plan = VariationPlan(
+            mode="delivery",
+            noise=(NoiseSpec(f"{CATEGORY_DELIVERY}.face_angle_deg"),),
+            flight_model=flight_model,
+        )
+
+        assert plan.flight_model == flight_model
+
+    @pytest.mark.parametrize(
+        "flight_model", ["custom-flight-model", True, None, ["waterloo_penner"]]
+    )
+    def test_rejects_unregistered_flight_model_identity(
+        self, flight_model: object
+    ) -> None:
+        with pytest.raises(ContractViolationError, match="flight_model.*registered"):
+            VariationPlan(
+                mode="delivery",
+                noise=(NoiseSpec(f"{CATEGORY_DELIVERY}.face_angle_deg"),),
+                flight_model=flight_model,  # type: ignore[arg-type]
+            )
 
     def test_v2_grouped_plan_json_round_trip_is_lossless(self) -> None:
         specs = (

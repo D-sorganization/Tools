@@ -566,6 +566,27 @@
   RNG/stream algorithm/version, solver implementation identity, and portable
   cross-runtime exact replay remain open R10.4/R10.6 work.
 - SPEC advances to 1.16.71.
+## 2026-08-13 #4142 variation flight-model identity closure
+
+- Python variation plans now accept only the seven canonical
+  `FlightModelType` values. The complete Rate ensemble request fails before
+  sampling when the plan and base `SimulationConfig` name different models.
+- Browser variation remains honest about its narrower capability: only
+  `waterloo_penner` is executable. Direct JSON import, saved-library loading,
+  inline execution, and Worker preflight use one validation authority.
+- Unsupported stored/custom entries are never rewritten to Waterloo/Penner.
+  They remain in browser storage, are omitted from runnable choices, and
+  produce a visible warning naming both the rejected identity and the
+  supported identity so the operator can edit or recreate the plan.
+- The slice deliberately leaves variation schema v2, archive/paired-producer
+  contracts, RNGs, sampling, and physics unchanged. R10.4/R10.6 still require
+  resolved-base and registry-unit snapshots, registry/RNG/stream versions,
+  solver identity, dimensional provenance, and portable cross-runtime replay.
+- Local evidence is 1,473 scoped Rate/shared-variation Python tests, all 879
+  React tests, workflow-pinned Ruff 0.14.10/Black, exact Python 3.12 + NumPy
+  2.3.5 + Mypy 1.13 over changed production files, TypeScript, ESLint, and the
+  Vite production build.
+- SPEC advances to 1.16.70.
 
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 

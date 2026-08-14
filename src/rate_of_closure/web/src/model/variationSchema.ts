@@ -21,6 +21,7 @@ import {
 export const SCHEMA_VERSION = 2;
 export const MAX_RUNS = 500;
 export const MAX_SAFE_PLAN_INTEGER = Number.MAX_SAFE_INTEGER;
+export const SUPPORTED_VARIATION_FLIGHT_MODEL = "waterloo_penner";
 
 export type Distribution = "normal" | "uniform" | "triangular";
 
@@ -187,6 +188,12 @@ const validateGroups = (
 export function validatePlan(plan: VariationPlanTs): void {
   if (plan.mode !== "delivery" && plan.mode !== "swing" && plan.mode !== "launch") {
     throw new Error(`mode ${plan.mode} is not supported in the browser`);
+  }
+  if (plan.flightModel !== SUPPORTED_VARIATION_FLIGHT_MODEL) {
+    throw new Error(
+      `Flight model ${JSON.stringify(plan.flightModel)} is unsupported for browser variation; ` +
+      `supported model: ${SUPPORTED_VARIATION_FLIGHT_MODEL}. Recreate or edit the stored plan.`,
+    );
   }
   if (!Number.isSafeInteger(plan.nRuns)) {
     throw new Error("nRuns must be a safe integer");

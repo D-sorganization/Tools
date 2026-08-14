@@ -104,6 +104,11 @@ def _validate_request_context(
         isinstance(base_config, SimulationConfig),
         "base_config must be a SimulationConfig",
     )
+    require(
+        plan.flight_model == base_config.flight_model,
+        "plan and base_config flight_model must match",
+        (plan.flight_model, base_config.flight_model),
+    )
     require(plan.mode == "swing", "trace ensembles require swing mode", plan.mode)
     require(
         base_config.source_kind == "double_pendulum",
