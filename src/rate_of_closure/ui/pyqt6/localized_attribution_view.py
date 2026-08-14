@@ -86,6 +86,10 @@ class LocalizedAttributionView(QWidget):
         )
         self._cancel_study = QPushButton("Cancel Paired Study")
         self._cancel_study.setAccessibleName("Cancel separate paired study")
+        self._cancel_study.setToolTip(
+            "Stop the running paired study. Any authority already published "
+            "is retained; a cancelled study publishes nothing."
+        )
         self._cancel_study.setEnabled(False)
         self._study_progress = QProgressBar()
         self._study_progress.setAccessibleName("Separate paired study progress")
@@ -95,14 +99,30 @@ class LocalizedAttributionView(QWidget):
         self._study_status.setWordWrap(True)
         self._raw_export = QPushButton("Export Raw Observations CSV")
         self._raw_export.setAccessibleName("Export localized attribution observations")
+        self._raw_export.setToolTip(
+            "Write every retained baseline/perturbed observation and its "
+            "denominator as raw CSV. Values are exported unrounded."
+        )
         self._view_export = QPushButton("Export View Definition JSON")
         self._view_export.setAccessibleName(
             "Export localized attribution view definition"
         )
+        self._view_export.setToolTip(
+            "Write the current source, target, and pair selection as JSON. "
+            "This records what is displayed, not the authority itself."
+        )
         self._save_authority = QPushButton("Save Paired Authority JSON…")
         self._save_authority.setAccessibleName("Save paired authority JSON")
+        self._save_authority.setToolTip(
+            "Archive the complete paired authority, including its bound design "
+            "and request identities, so it can be reloaded exactly."
+        )
         self._load_authority = QPushButton("Load Paired Authority JSON…")
         self._load_authority.setAccessibleName("Load archived paired authority JSON")
+        self._load_authority.setToolTip(
+            "Load an archived paired authority. It is accepted only if its "
+            "recorded design and request identities still validate."
+        )
         self._build_layout()
         self._source.currentIndexChanged.connect(self._source_changed)
         self._target.currentIndexChanged.connect(self._target_changed)
