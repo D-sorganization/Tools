@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-tab performance hosted typing closure (#4433)
+
+Version 1.16.98 is a behavior-neutral correction for the protected Linux MyPy
+1.13 gate: canonical worker selection now returns an explicit boolean, and the
+Windows priority API is resolved through a runtime attribute boundary. All
+1.16.97 behavior, evidence, budgets, and open limitations remain unchanged.
+
 ## 2026-08-14 Cross-tab visualization performance budgets (#4433)
 
 Version 1.16.97 adds one immutable performance manifest over the exact nine

@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-tab performance hosted typing closure (#4433)
+
+- Version 1.16.98 explicitly narrows the canonical worker-selection return and
+  accesses the Windows priority API through a runtime attribute boundary.
+- This is static-only Linux MyPy 1.13 closure; runtime behavior, protected
+  performance evidence, and the open #4433 limitations are unchanged.
+
 ## 2026-08-14 Cross-tab visualization performance budgets (#4433)
 
 - `visualization-performance-budgets@1` exactly covers the existing nine React

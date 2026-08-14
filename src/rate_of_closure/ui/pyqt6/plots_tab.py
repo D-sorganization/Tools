@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import cast
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QResizeEvent
@@ -259,11 +260,11 @@ class PlotsTab(PlotsTabComputationMixin, PlotExportMixin, QWidget):
 
     @staticmethod
     def _plot_compute_executor() -> PlotExecutor:
-        return compute_plot_data
+        return cast(PlotExecutor, compute_plot_data)
 
     @staticmethod
     def _plot_process_enabled() -> bool:
-        return compute_plot_data is _CANONICAL_PLOT_EXECUTOR
+        return bool(compute_plot_data is _CANONICAL_PLOT_EXECUTOR)
 
     def _sync_selected_pane(self) -> None:
         row = self._plot_list.currentRow()

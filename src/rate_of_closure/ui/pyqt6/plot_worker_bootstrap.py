@@ -11,7 +11,10 @@ def _lower_process_priority() -> None:
         import ctypes
 
         below_normal_priority_class = 0x00004000
-        kernel32 = ctypes.windll.kernel32
+        windll = vars(ctypes).get("windll")
+        if windll is None:  # pragma: no cover - guarded by os.name
+            return
+        kernel32 = windll.kernel32
         kernel32.SetPriorityClass(
             kernel32.GetCurrentProcess(), below_normal_priority_class
         )

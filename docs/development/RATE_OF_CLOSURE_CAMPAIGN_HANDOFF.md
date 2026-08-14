@@ -1,5 +1,12 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Cross-tab performance hosted typing closure
+
+- SPEC 1.16.98 explicitly narrows the canonical plot-worker selector and uses
+  a runtime attribute boundary for the Windows process-priority API.
+- This is behavior-neutral Linux MyPy 1.13 closure. The 1.16.97 runtime,
+  evidence, diagnostic budgets, and open qualification gaps are unchanged.
+
 ## 2026-08-14 #4433 Cross-tab visualization performance budgets
 
 - One packaged manifest exactly covers all nine React and nine PyQt tabs and

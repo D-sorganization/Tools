@@ -26,11 +26,19 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.97                                    |
-| **Spec Version**        | 1.16.97                                    |
+| **Current Version**     | 1.16.98                                    |
+| **Spec Version**        | 1.16.98                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Cross-tab performance hosted typing closure (#4433)
+
+Version 1.16.98 narrows the canonical PyQt plot-worker selection to an explicit
+boolean and resolves the Windows priority API through a runtime attribute
+boundary. This is a static-only correction for the protected Linux MyPy 1.13
+gate; process selection, scheduling, scientific computation, and evidence are
+unchanged from 1.16.97.
 
 ### 2026-08-14 Cross-tab visualization performance budgets (#4433)
 
