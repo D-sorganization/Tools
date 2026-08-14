@@ -49,9 +49,9 @@ def test_ui_imports_without_pyqt6() -> None:
         check=False,
         cwd=_repo_src_dir(),
     )
-    assert result.returncode == 0, (
-        f"headless ui import failed:\nstdout={result.stdout}\nstderr={result.stderr}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"headless ui import failed:\nstdout={result.stdout}\nstderr={result.stderr}"
     assert "HEADLESS_UI_IMPORT_OK" in result.stdout
 
 

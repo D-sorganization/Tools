@@ -57,9 +57,9 @@ class TestC3DReaderBoundsChecking:
             reader._metadata = None
             df = reader.points_dataframe(include_time=False)
             assert "residual" in df.columns
-            assert df["residual"].isna().all(), (
-                "Residuals should be NaN when only 3 channels present"
-            )
+            assert (
+                df["residual"].isna().all()
+            ), "Residuals should be NaN when only 3 channels present"
 
     def test_points_4_channels_has_residuals(self, reader):
         """When C3D has 4 channels, residuals are extracted normally."""

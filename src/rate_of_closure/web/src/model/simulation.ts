@@ -47,18 +47,30 @@ import {
   type BallSetup,
 } from "./ballSetup";
 import {
+  DEFAULT_IMPACT_CLUB,
   MPH_PER_MPS,
   add,
   fromFlightFrame,
   norm,
   scale,
   solveImpact,
-  sub,
   toFlightFrame,
   type DeliveryInput,
   type ImpactClubProperties,
   type Vec3,
 } from "./impactPhysics";
+import { type ClubAssemblyBinding } from "./clubAssemblyBinding";
+import { type ClubSpec } from "./club";
+import {
+  adaptClubAssemblyForImpact,
+  unboundClubAssemblyImpact,
+  withoutClubBallImpact,
+  type ClubAssemblyImpactInputs,
+} from "./clubAssemblySimulationAdapter";
+import {
+  alignSwingToBall,
+  type SwingSampleTs,
+} from "./simulationGeometry";
 
 export { deriveLaunch, simulateFlight } from "./flight";
 export type { FlightPoint, FlightResult, Launch } from "./flight";
@@ -101,14 +113,13 @@ export interface SimulationInput {
   doublePendulumInitialState?: PendulumState;
   /** Defaults to Ground for backward compatibility with older saved scenarios. */
   ballSetup?: BallSetup;
+  /** Strict exact selected-spec binding; never serialized as an input default. */
+  assemblyBinding?: ClubAssemblyBinding;
+  /** Full selected specification required to validate an assembly binding. */
+  assemblyClubSpec?: ClubSpec;
 }
 
-export interface SwingSampleTs {
-  t: number;
-  position: Vec3; // app frame; aligned only in delivery-inspection mode
-  velocity: Vec3;
-  joints: Vec3[]; // pivot -> articulated joints -> clubhead
-}
+export type { SwingSampleTs } from "./simulationGeometry";
 
 export interface SimulationLaunchTs {
   ballSpeedMph: number;
@@ -132,6 +143,7 @@ export interface SimulationRunTs {
   flight: FlightPoint[]; // app frame, ball-aligned positions
   ballSetup: BallSetup;
   ballPositionM: Vec3;
+  clubAssemblyUsage: ClubAssemblyImpactInputs;
 }
 
 const clampAngle = (value: number): number => Math.max(-89, Math.min(89, value));
@@ -242,6 +254,17 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
 
 /** Run the full swing -> impact -> flight pipeline (web parity port). */
 export function runSimulation(input: SimulationInput): SimulationRunTs {
+  const selectedClub = input.club;
+  const assemblySpec = input.assemblyClubSpec;
+  if (input.assemblyBinding && !assemblySpec) {
+    throw new Error("assembly binding requires the exact selected ClubSpec");
+  }
+  const clubAssemblyUsage =
+    input.assemblyBinding && assemblySpec
+      ? adaptClubAssemblyForImpact(assemblySpec, input.assemblyBinding)
+      : unboundClubAssemblyImpact(
+          selectedClub?.headMassKg ?? DEFAULT_IMPACT_CLUB.headMassKg,
+        );
   const ballSetup = resolveBallSetup(input.ballSetup);
   const ballPositionM = ballCenterPosition(ballSetup);
   const swing = swingSamples(input);
@@ -301,6 +324,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       flight: [],
       ballSetup,
       ballPositionM,
+      clubAssemblyUsage: withoutClubBallImpact(clubAssemblyUsage),
     };
   }
 
@@ -314,7 +338,9 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     dynamicLoftDeg: input.loftDeg,
     impactOffsetToeMm: input.impactOffsetToeMm,
     impactOffsetHighMm: input.impactOffsetHighMm,
-    club: input.club,
+    club: input.club
+      ? { ...input.club, headMassKg: clubAssemblyUsage.headMassKg }
+      : undefined,
   };
   const impact = solveImpact(delivery);
   const launch = deriveLaunch(
@@ -348,18 +374,6 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     flight,
     ballSetup,
     ballPositionM,
+    clubAssemblyUsage,
   };
-}
-
-function alignSwingToBall(
-  swing: readonly SwingSampleTs[],
-  candidatePosition: Vec3,
-  ballPositionM: Vec3,
-): SwingSampleTs[] {
-  const offset = sub(ballPositionM, candidatePosition);
-  return swing.map((sample) => ({
-    ...sample,
-    position: add(sample.position, offset),
-    joints: sample.joints.map((joint) => add(joint, offset)),
-  }));
 }

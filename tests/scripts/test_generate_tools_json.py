@@ -250,9 +250,9 @@ class TestContractGeneration:
         pattern = re.compile(r"^[a-z0-9_]+$")
 
         for tool in contract["tools"]:
-            assert pattern.match(tool["id"]), (
-                f"Tool ID '{tool['id']}' is not snake_case"
-            )
+            assert pattern.match(
+                tool["id"]
+            ), f"Tool ID '{tool['id']}' is not snake_case"
 
     def test_contract_surfaces_structure(self, manifest_gen_module, mock_repo_root):
         """Each tool's surfaces dict must have exactly pyqt6 and web booleans."""
@@ -334,9 +334,9 @@ class TestContractGeneration:
         expected_surface_keys = {"pyqt6", "web", "legacy_gui"}
 
         for tool in contract["tools"]:
-            assert set(tool.keys()) == expected_tool_keys, (
-                f"Unexpected keys in tool entry: {set(tool.keys()) - expected_tool_keys}"
-            )
+            assert (
+                set(tool.keys()) == expected_tool_keys
+            ), f"Unexpected keys in tool entry: {set(tool.keys()) - expected_tool_keys}"
             assert set(tool["surfaces"].keys()) == expected_surface_keys
 
 

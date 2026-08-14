@@ -110,10 +110,13 @@ export function createSimulationRunDocument(
   prescribedTorqueProfile: unknown = null,
 ) {
   const setup = resolveBallSetup(input.ballSetup);
+  const { assemblyBinding, assemblyClubSpec, ...persistedInput } = input;
+  void assemblyBinding;
+  void assemblyClubSpec;
   return {
     format: SIMULATION_EXPORT_FORMAT,
     parameters: {
-      ...input,
+      ...persistedInput,
       ballSetup: undefined,
       ball_setup: ballSetupToJson(setup),
     },
@@ -121,6 +124,7 @@ export function createSimulationRunDocument(
     impactOutcome: run.impactOutcome,
     launch: run.launch,
     impactTimeS: run.impactTimeS,
+    clubAssemblyUsage: run.clubAssemblyUsage,
     torqueRun: run.torqueRun,
     prescribedTorqueProfile,
     series: { swing: run.swing, flight: run.flight },
