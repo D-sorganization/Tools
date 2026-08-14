@@ -142,9 +142,14 @@ from .upstream_terrain_adapter import (
     upstream_snapshot_from_json,
 )
 
-_LAZY_STUDY_EXPORTS = {
+_LAZY_EXPORTS = {
+    "GROUND_REFERENCE_EXECUTION_SCHEMA_VERSION": "reference_execution_types",
     "GROUND_STUDY_SCHEMA_VERSION": "study_types",
     "GroundEndpointKind": "study_types",
+    "GroundReferenceCancelled": "reference_execution_types",
+    "GroundReferenceExecution": "reference_execution_types",
+    "GroundReferenceExecutionError": "reference_execution_types",
+    "GroundReferencePhase": "reference_execution_types",
     "GroundSolverEligibility": "study_types",
     "GroundSolverEligibilityReason": "study_types",
     "GroundStudyMetrics": "study_types",
@@ -155,12 +160,13 @@ _LAZY_STUDY_EXPORTS = {
     "GroundTargetUnavailableReason": "study_types",
     "project_ground_study": "study_projection",
     "qualified_study_to_ground_model_result": "result_adapter",
+    "run_ground_reference": "reference_execution",
 }
 
 
 def __getattr__(name: str) -> Any:
-    """Load solver-dependent study exports without creating import cycles."""
-    module_name = _LAZY_STUDY_EXPORTS.get(name)
+    """Load solver-dependent exports without creating import cycles."""
+    module_name = _LAZY_EXPORTS.get(name)
     if module_name is None:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
     value = getattr(import_module(f"{__name__}.{module_name}"), name)
@@ -178,6 +184,7 @@ __all__ = [
     "DEFAULT_PROFILE_LIBRARY_MAX_BYTES",
     "GROUND_MATERIAL_PROFILE_SCHEMA_VERSION",
     "GROUND_PROFILE_LIBRARY_SCHEMA_VERSION",
+    "GROUND_REFERENCE_EXECUTION_SCHEMA_VERSION",
     "GROUND_STUDY_SCHEMA_VERSION",
     "PROFILE_UNQUALIFIED_WARNING",
     "PROFILE_ILLUSTRATIVE_WARNING",
@@ -212,6 +219,10 @@ __all__ = [
     "GroundProfileProvenance",
     "GroundProfileQualification",
     "GroundProfileRights",
+    "GroundReferenceCancelled",
+    "GroundReferenceExecution",
+    "GroundReferenceExecutionError",
+    "GroundReferencePhase",
     "GroundQualificationGate",
     "GroundQualificationGateId",
     "GroundQualificationStatus",
@@ -294,6 +305,7 @@ __all__ = [
     "migrate_request_to_current",
     "migrate_result_to_current",
     "resolve_sphere_plane_impact",
+    "run_ground_reference",
     "simulate_repeated_bounce",
     "simulate_skid_roll",
     "upstream_snapshot_from_json",
