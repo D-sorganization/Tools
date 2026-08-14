@@ -26,15 +26,51 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.7                                      |
-| **Spec Version**        | 1.5.7                                      |
-| **Last Spec Update**    | 2026-08-05                                 |
+| **Current Version**     | 1.5.9                                      |
+| **Spec Version**        | 1.5.9                                      |
+| **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Wedge impact-point kinematics and AoA attribution
+
+- `shared.python.golf_club` defines an immutable, frame-explicit rigid-body
+  state at a declared contact point and physical shaft-axis line.
+- Contact velocity decomposes exactly into shaft-datum translation, shaft-axis
+  rotation, and all other rotation, independent of the selected twist reference
+  point.
+- The analysis reports direct and Shapley shaft contributions to angle of
+  attack, signed vertical share, leading-edge rates relative to ground and arc,
+  full 3D face-normal rate, and instantaneous screw-axis/contact clearance.
+- Undefined geometries return typed missing metrics rather than fabricated
+  angles; strict unit-vector and orthogonality contracts reject ambiguous input.
+- `docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md` documents equations, frames, the
+  worked example, sign dependence, verification, and simulation-adapter limits.
+
+### 2026-08-05 Exact modern-wedge CAD foundation
+
+- `shared.python.golf_club` defines a provenance-bearing, immutable modern-wedge
+  family with editable handedness, loft, lie, bounce, face dimensions, sole
+  width, topline, leading-edge radius, rear curvature, face progression, hollow
+  hosel geometry, density, and target mass.
+- The pinned build123d/OpenCascade stack generates one valid exact solid and
+  independently recovers loft, lie, bounce, face span, volume, mass, and target
+  residual from its B-Rep.
+- Strict versioned parameter JSON and deterministic STEP, BREP, and configurable
+  STL export include units, kernel metadata, provenance, requested values,
+  measured residuals, source/artifact SHA-256 digests, byte sizes, and explicit
+  post-export validation evidence. STEP/BREP are reopened as exact solids;
+  binary STL independently proves finite nondegenerate triangles, two-manifold
+  watertight edge incidence, consistent winding, one connected component,
+  outward orientation, and tolerance-bounded bounds/volume before a manifest is
+  emitted.
+- `docs/specs/GOLF_CLUB_WEDGE_CAD.md` defines frames, datums, supported claims,
+  dependency/licensing evidence, and the remaining grind/cavity/optimization
+  release boundary.
 
 ### 2026-08-05 Measured golf-shaft profiles and flexible reference models
 
@@ -1747,6 +1783,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.5.9 | feat(golf-club, #4149): harden the modern-wedge drafting seam with generic exact-CAD reference contracts, independent fail-closed STEP/BREP re-import validation, dependency-light binary-STL topology/orientation/fidelity validation, deterministic parameter and artifact SHA-256 evidence, byte sizes, and a versioned `golf_club.wedge_export/2` manifest. |
+| 2026-08-05 | 1.5.9 | feat(golf-club, #4160): add exact physical-shaft-axis contact velocity decomposition, counterfactual and Shapley AoA attribution, ground/arc leading-edge rates, 3D face-normal rate, screw-axis clearance, strict frame contracts, and the -10 degree worked example. |
 | 2026-08-05 | 1.5.6 | fix(ci): include and shallow-initialize UpstreamDrift's pinned `vendor/ud-tools` submodule in the narrow cross-repository checkout so editable metadata generation can validate exact package provenance without broadening checkout to the full `src` or `ui` trees. |
 | 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |

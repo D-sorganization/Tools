@@ -6,6 +6,12 @@ component coordinates into the assembly frame.
 """
 
 from .assembly import ClubAssembly, assemble_mass_properties
+from .cad_validation import (
+    CadGeometryReference,
+    ExactCadValidation,
+    reference_from_build123d_shape,
+    validate_exact_cad,
+)
 from .serialization import (
     CURRENT_FORMAT,
     LEGACY_FORMAT,
@@ -41,6 +47,7 @@ from .shaft_statics import (
     ShaftTipResponse,
     solve_cantilever_tip_response,
 )
+from .stl_validation import StlMeshValidation, validate_binary_stl
 from .types import (
     AssembledMassProperties,
     ClubComponent,
@@ -50,11 +57,40 @@ from .types import (
     ComponentRole,
     RigidTransform,
 )
+from .wedge_cad import WedgeMeasuredMetrics, WedgeSolidResult, build_wedge_solid
+from .wedge_export import (
+    WEDGE_EXPORT_FORMAT,
+    WedgeExportArtifact,
+    WedgeExportFormat,
+    WedgeExportRequest,
+    WedgeExportResult,
+    export_wedge_artifacts,
+)
+from .wedge_kinematics import (
+    InstantaneousScrewAxis,
+    WedgeKinematicAnalysis,
+    WedgeKinematicState,
+    analyze_wedge_kinematics,
+    angle_of_attack_deg,
+)
+from .wedge_parameters import (
+    Handedness,
+    WedgeGeometryProvenance,
+    WedgeHeadParameters,
+    WedgePreset,
+    wedge_preset,
+)
+from .wedge_serialization import (
+    WEDGE_PARAMETERS_FORMAT,
+    wedge_parameters_from_json,
+    wedge_parameters_to_json,
+)
 
 __all__ = [
     "CURRENT_FORMAT",
     "LEGACY_FORMAT",
     "AssembledMassProperties",
+    "CadGeometryReference",
     "ClubAssembly",
     "ClubComponent",
     "ClubLengthConvention",
@@ -62,6 +98,9 @@ __all__ = [
     "ComponentMassProperties",
     "ComponentRole",
     "ExtrapolationPolicy",
+    "ExactCadValidation",
+    "Handedness",
+    "InstantaneousScrewAxis",
     "RigidTransform",
     "SHAFT_PROFILE_FORMAT",
     "ShaftProfile",
@@ -72,11 +111,30 @@ __all__ = [
     "ShaftModalSettings",
     "ShaftTipLoad",
     "ShaftTipResponse",
+    "StlMeshValidation",
+    "WedgeHeadParameters",
+    "WedgeKinematicAnalysis",
+    "WedgeKinematicState",
+    "WedgeGeometryProvenance",
+    "WEDGE_EXPORT_FORMAT",
+    "WedgeExportArtifact",
+    "WedgeExportFormat",
+    "WedgeExportRequest",
+    "WedgeExportResult",
+    "WedgeMeasuredMetrics",
+    "WedgePreset",
+    "WedgeSolidResult",
+    "WEDGE_PARAMETERS_FORMAT",
     "assemble_mass_properties",
+    "analyze_wedge_kinematics",
+    "angle_of_attack_deg",
     "assembly_from_json",
     "assembly_from_json_dict",
     "assembly_to_json",
     "assembly_to_json_dict",
+    "build_wedge_solid",
+    "export_wedge_artifacts",
+    "reference_from_build123d_shape",
     "scale_shaft_profile",
     "shaft_component_mass_properties",
     "shaft_profile_from_csv",
@@ -87,4 +145,9 @@ __all__ = [
     "shaft_profile_to_json_dict",
     "solve_shaft_bending_modes",
     "solve_cantilever_tip_response",
+    "wedge_preset",
+    "wedge_parameters_from_json",
+    "wedge_parameters_to_json",
+    "validate_binary_stl",
+    "validate_exact_cad",
 ]
