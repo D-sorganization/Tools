@@ -33,6 +33,12 @@ from rate_of_closure.web_authority.jobs import (
     AuthorityJobConflict,
     AuthorityJobManager,
 )
+from rate_of_closure.web_authority.state_security import (
+    StateSecurityCode,
+    StateSecurityError,
+    verify_state_file,
+    verify_state_root,
+)
 from tests.rate_of_closure.test_regional_ground_authority_jobs import _job, _result
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -290,6 +296,38 @@ def test_store_hardens_directory_database_and_sqlite_sidecars(tmp_path: Path) ->
         assert candidate.stat().st_mode & 0o777 == 0o600
 
     store.close()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="requires Windows security descriptors")
+def test_store_hardens_exact_windows_database_sidecar_and_lock_dacls(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "authority.v1.sqlite3"
+    store = AuthorityJobStore(path, max_retained_jobs=4)
+
+    verify_state_root(tmp_path)
+    for candidate in (
+        path,
+        Path(f"{path}-wal"),
+        Path(f"{path}-shm"),
+        Path(f"{path}.lock"),
+    ):
+        verify_state_file(tmp_path, candidate)
+
+    store.close()
+
+
+@pytest.mark.skipif(os.name != "nt", reason="requires Windows state-root lease")
+def test_store_rejects_unknown_root_entry_without_mutating_it(tmp_path: Path) -> None:
+    sentinel = tmp_path / "unexpected.txt"
+    sentinel.write_bytes(b"preserve")
+
+    with pytest.raises(StateSecurityError) as captured:
+        AuthorityJobStore(tmp_path / "authority.v1.sqlite3", max_retained_jobs=4)
+
+    assert captured.value.code is StateSecurityCode.UNEXPECTED_ENTRY
+    assert sentinel.read_bytes() == b"preserve"
+    assert not (tmp_path / "authority.v1.sqlite3").exists()
 
 
 @pytest.mark.parametrize("linked_suffix", ["", ".lock"])

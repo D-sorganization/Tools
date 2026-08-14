@@ -28,6 +28,7 @@ dependencies = [
     "defusedxml>=0.7.0",
     "keyring>=24.0.0",
     "platformdirs>=4.2.0",
+    "pywin32>=311; sys_platform == 'win32'",
 ]
 
 [project.optional-dependencies]

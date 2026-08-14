@@ -10,6 +10,8 @@ on:
       - "scripts/check_rate_web_wheel.py"
       - "src/rate_of_closure/**"
       - "tests/rate_of_closure/test_web_asset_distribution.py"
+      - "tests/rate_of_closure/browser_companion_harness.py"
+      - "tests/rate_of_closure/test_browser_*.py"
       - "tests/rate_of_closure/test_web_companion_*.py"
   push:
     branches: [main]
@@ -20,7 +22,9 @@ on:
       - "pyproject.toml"
       - "scripts/check_rate_web_wheel.py"
       - "src/rate_of_closure/**"
+      - "tests/rate_of_closure/browser_companion_harness.py"
       - "tests/rate_of_closure/test_web_companion_*.py"
+      - "tests/rate_of_closure/test_browser_*.py"
 
 concurrency:
   group: rate-web-distribution-${{ github.workflow }}-${{ github.ref }}
@@ -180,3 +184,74 @@ jobs:
                   if any(name.startswith("rate_of_closure/web/dist/") for name in archive.namelist()):
                       raise SystemExit(f"{directory} contains qualified web distribution data")
           PY
+
+  production-browser:
+    name: Production browser qualification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Fetch exact public head without credentials
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          ROC_SOURCE_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+        run: |
+          git init .
+          git remote add origin "https://github.com/${ROC_SOURCE_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$ROC_RELEASE_REVISION"
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$ROC_RELEASE_REVISION"
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/rate_of_closure/web/package-lock.json
+      - name: Install exact browser qualification environment
+        working-directory: src/rate_of_closure/web
+        run: npm ci
+      - name: Build exact production web bundle
+        working-directory: src/rate_of_closure/web
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run build
+      - name: Install packaged companion and test contracts
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m pip install --disable-pip-version-check \
+            pytest==9.0.2 \
+            pytest-asyncio==1.3.0 \
+            pytest-benchmark==5.2.3 \
+            pytest-xdist==3.8.0 \
+            httpx2==2.10.0 \
+            '.[rate-of-closure-web]'
+          python -m pytest -q \
+            tests/rate_of_closure/test_browser_companion_harness.py \
+            tests/rate_of_closure/test_web_companion_app.py
+      - name: Install qualified browser engines
+        working-directory: src/rate_of_closure/web
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Run production browser smoke qualification
+        working-directory: src/rate_of_closure/web
+        env:
+          CI: "true"
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/browser-smoke.json
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run test:browser:smoke
+      - name: Run production browser lifecycle qualification
+        working-directory: src/rate_of_closure/web
+        env:
+          CI: "true"
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/browser-lifecycle.json
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run test:browser:lifecycle
+      - name: Upload structured qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rate-of-closure-production-browser-qualification
+          path: src/rate_of_closure/web/test-results/*.json
+          if-no-files-found: warn
+          retention-days: 14

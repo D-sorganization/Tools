@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 import sqlite3
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -30,6 +29,8 @@ from rate_of_closure.application.regional_ground_execution_result import (
     regional_ground_execution_result_from_json,
     regional_ground_execution_result_to_json,
 )
+
+from .job_store_security import JobStoreSecurity
 
 AUTHORITY_JOB_STORE_SCHEMA_VERSION: Final = (
     "rate-of-closure/regional-ground-authority-store/v1"
@@ -121,11 +122,10 @@ class AuthorityJobStore:
             )
         self._path = path
         self._max_retained_jobs = max_retained_jobs
+        self._security = JobStoreSecurity(path)
         self._lock = FileLock(lock_path)
         self._connection: sqlite3.Connection | None = None
         try:
-            if os.name != "nt":
-                path.parent.chmod(0o700)
             if path.exists() and path.stat().st_size > MAX_AUTHORITY_JOB_STORE_BYTES:
                 raise ValueError("authority state store exceeds its file-size bound")
             self._lock.acquire(timeout=0)
@@ -151,9 +151,11 @@ class AuthorityJobStore:
     def close(self) -> None:
         connection, self._connection = self._connection, None
         if connection is not None:
+            self._security.before_connection_close()
             connection.close()
         if self._lock.is_locked:
             self._lock.release()
+        self._security.close()
 
     def load(self) -> tuple[RetainedAuthorityJob, ...]:
         connection = self._require_connection()
@@ -195,16 +197,7 @@ class AuthorityJobStore:
             raise RuntimeError("authority state transaction failed") from exc
 
     def _harden_files(self) -> None:
-        if os.name == "nt":
-            return
-        for candidate in (
-            self._path,
-            Path(str(self._path) + "-wal"),
-            Path(str(self._path) + "-shm"),
-            Path(str(self._path) + ".lock"),
-        ):
-            if candidate.exists():
-                candidate.chmod(0o600)
+        self._security.harden_files()
 
     @staticmethod
     def _delete_missing(
@@ -222,6 +215,7 @@ class AuthorityJobStore:
         connection = self._require_connection()
         connection.execute("PRAGMA foreign_keys = ON")
         connection.execute("PRAGMA trusted_schema = OFF")
+        connection.execute("PRAGMA temp_store = MEMORY")
         journal_mode = connection.execute("PRAGMA journal_mode = WAL").fetchone()
         if journal_mode != ("wal",):
             raise ValueError("authority state store requires WAL journal mode")

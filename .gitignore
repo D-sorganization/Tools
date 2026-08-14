@@ -184,6 +184,7 @@ certs/
 # Local-only artifacts
 .secrets.baseline.windows_backup
 memory.db
+src/rate_of_closure/web/test-results/
 
 # Debug/log files (tracked files removed in repo hygiene cleanup)
 log.txt

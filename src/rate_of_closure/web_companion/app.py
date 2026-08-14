@@ -31,7 +31,7 @@ _JSON_MEDIA_TYPE: Final = "application/json"
 _MAX_DECLARED_BODY_BYTES: Final = 2_147_483_647
 _CSP: Final = (
     "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
-    "img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; "
+    "img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; "
     "worker-src 'self'; object-src 'none'; base-uri 'none'; "
     "frame-ancestors 'none'; form-action 'none'"
 )

@@ -96,6 +96,7 @@ def test_companion_serves_only_immutable_snapshot_with_security_headers() -> Non
     assert asset.headers["referrer-policy"] == "no-referrer"
     assert asset.headers["x-frame-options"] == "DENY"
     assert "default-src 'none'" in asset.headers["content-security-policy"]
+    assert "font-src 'self' data:" in asset.headers["content-security-policy"]
     assert not any(name.startswith("access-control-") for name in asset.headers)
     assert missing.status_code == 404
     assert transport.requests == []

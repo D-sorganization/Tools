@@ -1,5 +1,176 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-12 #4385 Windows authority-state security
+
+Published draft PR #4392 carries branch `codex/4385-windows-state-security`
+against `codex/4380-playwright-production-browser`. Implementation commit
+`48197ad25` was reconciled by normal parent propagation with exact PR #4391
+head `0de3de8a41c018aec03dead8371a1f3ec6e1912f`; the resulting published
+pre-handoff head is `dde43534babf385530a95b2ff6ce3477f73ac9b3`. It must follow #4391 in
+ordinary dependency order; do not rebase, force-push, retarget, rewrite the
+shared browser branch, or bypass protection. Human review is approved, but
+fresh exact-head protected CI and ordinary non-admin merge behavior remain
+mandatory.
+
+The Windows authority store now requires a named path on fixed local NTFS with
+persistent ACL and named-stream support. A process-lifetime native lease opens
+every ancestor without delete sharing, rejects reparse points, and pins volume
+and file identities. The dedicated root and every database, WAL, SHM, journal,
+and lock artifact use a protected DACL with exactly full-control allow ACEs for
+the current token user, SYSTEM, and Builtin Administrators. Existing broad
+DACLs migrate in place without replacing the directory or file; batch failure
+rolls changes back in reverse order and reports a distinct rollback-incomplete
+code if restoration cannot be proven. New roots are created with the current
+token user as owner; an existing owner mismatch is rejected rather than
+requiring elevated owner-changing authority.
+
+The boundary rejects UNC/non-fixed/non-NTFS storage, overlong or reserved
+components, alternate-data-stream syntax and planted named streams, junctions
+and symlinks, hard-linked files, unexpected root entries, type changes, and
+out-of-root paths. Stable typed diagnostics never include the sensitive path.
+SQLite temporary storage is memory-backed, and no-delete handles remain live
+for the root and durable artifacts; transient sidecar handles are released in a
+bounded order before SQLite shutdown.
+
+State retention is deliberate: normal shutdown, restart, upgrade, and package
+uninstall do not delete the per-user authority root. Terminal records remain
+subject to the existing oldest-first job bound. This slice adds no automatic or
+in-app destructive purge; explicit user removal is out of band and is safe only
+after every Rate of Closure authority process has stopped. The protection does
+not claim resistance to the same user, an elevated Administrator or SYSTEM,
+offline disk access, or a malicious process able to inject into this process.
+Installer-owned removal remains part of the still-open frozen-distribution
+work.
+
+A dedicated protected workflow targets only
+`[self-hosted, Windows, X64, d-sorg-windows-security]` for Python 3.11 and
+3.12. It performs credential-free exact-head checkout, requires the symlink
+adversarial case rather than accepting a skip, runs the native contracts,
+builds exact React assets and a wheel, then qualifies the clean installed wheel
+from an unrelated Unicode working directory. No credential, native state,
+database, browser profile, or raw diagnostic is uploaded. Do not route this
+gate to the shared ControlTower/MATLAB runner; absence of the dedicated
+restricted runner is an explicit release blocker, not permission to weaken the
+label contract.
+
+Local evidence on Windows is green: the final focused native,
+store/API/loopback/companion, and workflow suite passed 86 tests with four
+expected local symlink-privilege skips and the expected POSIX-mode skip. Ruff,
+format, YAML lint, and focused MyPy pass after excluding only the repository's
+pre-existing transitive unreachable-code diagnostic. The fully provisioned
+Rate of Closure suite reached 1,344 passes and seven expected skips; its one
+companion timeout passed serially and its sole deterministic tooltip failure
+reproduces unchanged on parent PR #4391. Fresh wheel installs on Python 3.11
+and 3.12 both proved installed-module isolation, exact private ACLs, schema v1,
+completed-result restart recovery, interrupted-job no-replay, and zero
+unrelated-CWD pollution. Wheel metadata and both installs prove
+`pywin32>=311` is a Windows base dependency; the existing
+`rate-of-closure-web` extra supplies the separate SciPy web runtime boundary.
+
+The publication handoff records PR #4392 and reconciles the previously missing
+#4376/#4388/#4390/#4391 carriers in the campaign manifest. Independent review
+found no remaining P1/P2 code findings and classified this slice as code-ready,
+not ship-ready: no registered runner carries the restricted
+`d-sorg-windows-security` label, so both protected Windows matrix jobs remain
+an explicit external release blocker. The final documentation head requires
+fresh checks and must not inherit evidence from the pre-handoff SHA. The system
+volume was nearly full during local qualification, so all disposable build and
+test environments were isolated on `D:`; this is local infrastructure context,
+not product evidence.
+
+## 2026-08-12 #4380 production-browser qualification
+
+Acceptance completion extension: the release matrix now exercises the complete
+combined-request workflow through Python-authoritative preparation, explicit
+identity confirmation, one submit, polling, canonical job/result downloads,
+reload/import, retained-result recovery, cooperative cancellation, and prepared
+job staleness without automatic resubmission. A forbidden `Worker` constructor
+proves that this ground execution path does not substitute browser physics.
+
+Adversarial browser qualification now covers malformed capability data, a
+missing declared entry script, corrupt persisted workspace/layer preferences,
+private-authority replacement with both token and port rotation, and full public
+gateway loss. The native harness scans bounded public HTML/capability responses
+while retaining the secret identity out of browser state; combined with the
+same-origin credential-free request audit, this proves the bearer token and
+private child port are absent from public responses and requests. Intentional
+cancellation and gateway-loss transport failures are separately bounded while
+all successful paths retain zero console, page, or network failures.
+
+Current working-tree evidence atop `de673971bfae83a9d673bba4859def5322635af9`:
+TypeScript and zero-warning ESLint pass; 15 native harness contracts pass; and
+all 36 deterministic Playwright scenarios pass across Chromium, Firefox, and
+WebKit with configuration-owned zero retries. The publication commit and its
+final handoff-recording child still require exact-revision local gates and fresh
+protected qualification before ordinary merge.
+
+Branch `codex/4380-playwright-production-browser` was created at
+`0821557d80c366133e3de5af54d5ad82a01b14b0` as an exact child of Tools
+PR #4390. Corrected parent head
+`c3ecfd48910aa5aafb89962a256333690e8e72c5` is now propagated normally into
+this branch. Human review is approved, but parent order, fresh protected CI,
+and ordinary non-admin merge behavior remain mandatory. Published child PR:
+#4391. Its exact pre-publication browser-qualified head is
+`5de71c74d2de9e7105d486b60c48e4ed6569e8fd`; protected CI must qualify the
+final handoff-recording head independently.
+
+This slice adds deterministic Playwright qualification against the exact
+revision-built production surfaces in Chromium, Firefox, and WebKit. The
+static-inspection harness exercises the deliberately host-owned nested-path and
+fragment navigation contract. The packaged same-origin companion is stricter:
+only `/` and `/index.html` are document-shell routes, declared hashed assets
+are exact routes, and arbitrary nested application paths remain rejected rather
+than silently becoming an SPA fallback.
+
+Browser assertions cover bootstrap mode and revision, primary surface
+rendering, no unexpected page/console failures, the network-silent
+static-inspection boundary, and the same-origin companion capability/lifecycle
+workflow. Security observation is browser-visible only: requests, DOM,
+runtime metadata, storage, and qualification results must not disclose the
+authority bearer token or child port, and browser code performs no physics.
+This does not claim protection from same-user native malware.
+
+The browser gate exposed and fixes two release-path defects: the companion CSP
+now admits the bundle's local `data:` font payloads without relaxing script or
+connection policy, and Vitest explicitly owns only unit-test paths so it cannot
+mistake Playwright specifications for unit suites.
+
+Local qualification passes TypeScript type-check and zero-warning ESLint, all
+922 React/Vitest tests, six deterministic release-artifact checks with one
+expected Windows symlink skip, 60 focused Python companion/harness contracts,
+all nine three-engine smoke scenarios, and all three three-engine hard-loss
+lifecycle scenarios. The generated release manifest matched the qualified head.
+
+Exact-head hosted run `31595498982` built the production bundle and passed all
+13 harness tests before app-contract collection exposed Starlette 1.6's split
+TestClient dependency. The isolated browser job now pins `httpx2==2.10.0`.
+Hosted quality run `31595499033` also correctly classified the native harness
+as changed test support; its exact path is now documented in the fixture-only
+assertion allowlist while behavioral assertions remain in the separate harness
+test module. These are qualification-environment fixes, not product expansion.
+
+Final-revision local qualification then exposed a WebKit-only lifecycle race:
+the authority could be stopped while the application's initial capability
+request was still in flight, producing a real 502 before successful recovery.
+The browser contract now observes the initial 200 response before inducing
+hard loss. Runtime diagnostics retain bounded error meaning while redacting
+origins and long token-like values, with cross-engine coverage.
+
+The protected distribution workflow gains an independent 30-minute
+**Production browser qualification** job. It fetches the exact public head
+without credentials, uses Python 3.11 and Node 22, performs `npm ci`, builds
+with the exact `ROC_RELEASE_REVISION`, installs the packaged web extra and
+pinned Pytest plugins, installs all three browser engines, and runs the separate
+smoke and lifecycle scripts with configuration-owned one-worker/zero-retry
+behavior. Only structured Playwright JSON qualification records are uploaded;
+traces, videos, screenshots, and raw browser profiles are not release evidence.
+
+Forced parent-process termination and descendant-tree cleanup are not qualified
+by this slice. Windows authority-state ACL/reparse privacy, frozen web/PyQt
+artifacts, installers, signing, SBOM/attestation, calibrated or compiled
+physics, downstream parity, protected release, and #4377/#4380 completion all
+remain open.
+
 ## 2026-08-12 #4379 same-origin source production companion
 
 Branch `codex/4379-same-origin-companion` starts exactly from Tools PR #4388

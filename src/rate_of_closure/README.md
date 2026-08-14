@@ -86,6 +86,18 @@ keeps authority credentials server-side. The current PyInstaller script is a
 developer candidate, not a qualified standalone release; real-browser and
 frozen qualification remain tracked under Tools epic #4377.
 
+Issue #4380 adds deterministic Playwright qualification of the exact production
+surfaces in Chromium, Firefox, and WebKit. Static-inspection tests cover
+host-owned nested paths and URL fragments without granting execution. The
+packaged companion intentionally serves the application shell only at `/` and
+`/index.html`; arbitrary nested paths are rejected, while declared assets and
+the closed same-origin API retain exact routes. Browser-visible requests,
+runtime metadata, DOM, and storage are checked for accidental authority-token
+or child-port exposure, and browser code remains non-physical. The protected
+job uploads structured Playwright JSON only. It does not claim forced
+parent-process tree cleanup, Windows state privacy, frozen/installable
+artifacts, signing, attestation, or protected release.
+
 Both interfaces open with a generated driver head and its engineering CG
 target visible. The Simulation view runs immediately and supports manual,
 double-pendulum, and triple-pendulum sources; pendulum modes draw every joint

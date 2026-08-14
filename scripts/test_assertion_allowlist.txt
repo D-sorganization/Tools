@@ -21,3 +21,5 @@ src/shared/python/swing_sim/ground/tests/__init__.py
 src/shared/python/swing_sim/ground/tests/_support.py
 # Flight-through-regional deterministic builders shared by split contract tests.
 src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py
+# Secret-free process-control support used by production-browser specifications.
+tests/rate_of_closure/browser_companion_harness.py

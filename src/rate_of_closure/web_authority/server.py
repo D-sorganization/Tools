@@ -12,6 +12,7 @@ from .capability import QUALIFIED_EXECUTION_CAPABILITY
 from .job_store import AuthorityJobStore
 from .jobs import AuthorityJobManager
 from .production_runner import run_regional_ground_production_job
+from .state_security import bounded_state_path
 
 TOKEN_ENVIRONMENT_VARIABLE = "ROC_AUTHORITY_TOKEN"
 STATE_ROOT_ENVIRONMENT_VARIABLE = "ROC_AUTHORITY_STATE_ROOT"
@@ -24,7 +25,10 @@ def _state_store_from_environment() -> AuthorityJobStore:
     root = Path(source)
     if not source or not root.is_absolute() or not root.is_dir() or root.is_symlink():
         raise ValueError("authority state root is unavailable or unsafe")
-    return AuthorityJobStore(root / _STORE_FILENAME, max_retained_jobs=4)
+    return AuthorityJobStore(
+        bounded_state_path(root, _STORE_FILENAME),
+        max_retained_jobs=4,
+    )
 
 
 def create_app_from_environment() -> FastAPI:

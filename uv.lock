@@ -3967,6 +3967,7 @@ dependencies = [
     { name = "keyring" },
     { name = "numpy" },
     { name = "platformdirs" },
+    { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "pyyaml" },
 ]
 
@@ -4147,6 +4148,7 @@ requires-dist = [
     { name = "python-multipart", marker = "extra == 'chat'", specifier = ">=0.0.7" },
     { name = "python-multipart", marker = "extra == 'test'", specifier = ">=0.0.7" },
     { name = "pythonnet", marker = "extra == 'dwsim'", specifier = ">=3.0.0" },
+    { name = "pywin32", marker = "sys_platform == 'win32'", specifier = ">=311" },
     { name = "pywinpty", marker = "sys_platform == 'win32' and extra == 'terminal'", specifier = ">=2.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "requests", marker = "extra == 'test'", specifier = ">=2.32.0" },
