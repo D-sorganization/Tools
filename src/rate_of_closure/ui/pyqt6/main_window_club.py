@@ -22,9 +22,7 @@ if TYPE_CHECKING:
 class MainWindowClubMixin:
     """Publish club and scenario changes through their guarded view boundaries."""
 
-    def _format_row(
-        self: RateOfClosureMainWindow, field: str, value: float
-    ) -> str:
+    def _format_row(self: RateOfClosureMainWindow, field: str, value: float) -> str:
         if not math.isfinite(value):
             return "∞ (not closing)"
         quantity = _QUANTITY_ROWS.get(field)
