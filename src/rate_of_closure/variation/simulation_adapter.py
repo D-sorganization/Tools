@@ -189,7 +189,8 @@ def run_simulation_ensemble(
     )
     variation = _variation_dataset(request, outcomes, time.monotonic() - started)
     traces = _ensemble_traces(request, variation, capture_tuple, reference)
-    return SimulationEnsembleResult(outcomes, variation, traces)
+    runs = tuple(capture.run for capture in capture_tuple)
+    return SimulationEnsembleResult(outcomes, variation, traces, runs)
 
 
 def _capture(config: SimulationConfig, executor: SimulationExecutor) -> _TrialCapture:

@@ -2659,6 +2659,32 @@ high_mm)` exposes the face-curvature normal (gradient of the
   metrics, test evidence, shortest-arc SLERP, and the strict boundary between
   rigid geometric clearance and future turf-contact mechanics.
 
+### 2026-08-05 Conditional chip-shot forgiveness decision analysis
+
+- Complete swing ensembles retain their evaluated runs so wedge contact,
+  kinematics, and turf evidence can be analyzed without executing the physics
+  a second time.
+- Every configured trial remains in one ball-first, ball-only, ground-first,
+  simultaneous/grazing, ground-only miss, no-contact miss, or numerical-failure
+  cohort. All probabilities, expected loss, CVaR, constraint rates, and
+  convergence results use the all-trial denominator.
+- The shared decision layer reports 95% Wilson cohort intervals, deterministic
+  bootstrap expected-loss intervals, worst-tail CVaR, clean-contact and
+  constraint probabilities, metric support/censor counts, convergence
+  checkpoints, and expected-loss/CVaR/clean-contact Pareto tradeoffs.
+- PyQt analyzes the selected wedge off-thread and adds a dedicated result tab,
+  linked scatter/marginal views, a customizable carry target defaulting to the
+  30-yard example, and strict JSON/CSV exports.
+- React adds an explicit ground-mode 56-degree wedge study, the same decision
+  and availability evidence, a parity-tested reduced firm-fairway turf model,
+  linked metric scatter/marginal views, carry-target control, and JSON/CSV
+  exports.
+- Illustrative turf profiles visibly disable turf-supported ranking language;
+  results remain conditional on the declared plan, objective, candidate,
+  solver, seed, and calibration state.
+- `docs/specs/CHIP_FORGIVENESS_ANALYSIS.md` defines the equations, cohorts,
+  metrics, claim gates, interchange schema, and verification evidence.
+
 ### 2026-08-05 Passive wedge/turf interaction foundation
 
 - `shared.python.golf_club` provides a replaceable unilateral Kelvin-Voigt
@@ -4600,6 +4626,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-06 | 1.13.12 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/Launch/Apex/Landing controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
 | 2026-08-06 | 1.13.12 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/launch/impact controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
+| 2026-08-05 | 1.13.8 | feat(rate_of_closure, #4164): add all-trial conditional chip-shot forgiveness studies with explicit contact/failure cohorts, Wilson intervals, deterministic bootstrap confidence, worst-tail CVaR, convergence, Pareto tradeoffs, advanced wedge/shaft/ground/turf metrics, linked PyQt/React visualizations, customizable 30-yard target, and strict JSON/CSV exports. |
+| 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |
 | 2026-08-06 | 1.13.5 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |

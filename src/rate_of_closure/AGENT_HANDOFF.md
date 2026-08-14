@@ -3980,6 +3980,55 @@ vendor-first versus sibling-first precedence. A launcher tile cannot satisfy a
 calculation-parity row; #4261, #4262, and #4264 must make the runtime source,
 exact Tools pin, and support state machine-verifiable.
 
+## 2026-08-05 Conditional Chip-Shot Forgiveness
+
+Branch `feat/4164-wedge-forgiveness` implements issue #4164 on top of draft PR
+#4179. The new UI-independent decision layer retains every ball-first,
+ball-only, ground-first, simultaneous/grazing, ground-only miss, no-contact
+miss, and numerical-failure trial. It reports 95% Wilson cohort intervals,
+deterministic bootstrap expected-loss confidence, worst-tail CVaR,
+clean-contact and constraint probabilities, prefix convergence, optional-metric
+support/unavailability, and nondominated expected-loss/CVaR/clean-contact
+Pareto tradeoffs. Misses and failures remain in all denominators.
+
+This branch is an honest single-candidate analysis slice, not completion of
+#4164. The multi-candidate loft/bounce/grind campaign UI, integrated Pareto
+comparison/export, browser worker execution and cancellation, benchmarked
+large-run memory limits, and broader sensitivity/arc-envelope acceptance work
+remain open. No issue should be closed and no universal "best wedge" claim is
+authorized from this branch.
+
+The simulation ensemble now optionally retains its actual runs so wedge
+post-processing does not re-run the physics. Python/PyQt consumes the canonical
+nine-point ground geometry, exact-event shaft/face/edge analysis, and reduced
+turf diagnostic on the worker thread. A dedicated result tab provides linked
+scatter/marginal views, a customizable 30-yard worked target, and complete
+JSON/CSV exports. React adds an explicit ground-mode representative 56-degree
+wedge study, the same decision evidence and exports, and a parity-tested port
+of the passive reduced firm-fairway turf calculation.
+
+Hardening after independent review adds per-trial post-processing failure
+isolation, cancellation in the retained Python analysis, strict nonfinite
+rejection, a common Mulberry32 bootstrap fixture, explicit iid joint
+Monte-Carlo inference metadata, complete Python physics-input manifests,
+browser candidate/turf/loss manifests, calibrated-only turf loss, unsupported
+turf and missing-output penalties, physical TypeScript turf-profile bounds,
+aligned advanced metric names, and units/model boundaries in both interfaces.
+
+Claim boundary: the generic turf profiles are illustrative. Both interfaces
+therefore disable turf-supported ranking language and qualify results to the
+declared plan, target/loss, candidate, solver, seed, and calibration state. The
+reduced turf result does not replay the retained swing under turf force and is
+not a divot, grass-fracture, granular-flow, or universal bounce model. See
+`docs/specs/CHIP_FORGIVENESS_ANALYSIS.md`.
+
+Current-head verification: 844 Python/PyQt/shared tests passed, with two
+optional `build123d` CAD tests skipped because that dependency is not installed
+and 15 warnings (14 Hypothesis collection warnings plus the existing
+polynomial-generator legend warning). All 367 React/model tests passed. Ruff,
+formatting, strict changed-module mypy, protected module-size budget, ESLint,
+TypeScript, production Vite build, and `git diff --check` passed.
+
 ## 2026-08-05 Advanced Wedge Impact Visualization
 
 Branch `feat/4162-wedge-impact-visualization` extends issue #4162 on top of the

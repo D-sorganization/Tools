@@ -17,6 +17,11 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.ui.pyqt6.variation_rows import NoiseRow
+from rate_of_closure.variation import (
+    ChipForgivenessStudy,
+    chip_forgiveness_study_to_csv,
+    chip_forgiveness_study_to_json,
+)
 from rate_of_closure.variation.ensemble_io import (
     write_json as write_ensemble_json,
 )
@@ -34,6 +39,7 @@ class VariationTabIoMixin:
 
     _dataset: VariationDataset | None
     _ensemble_result: SimulationEnsembleResult | None
+    _forgiveness_study: ChipForgivenessStudy | None
     _status: QLabel
     _mode_combo: QComboBox
     _runs_spin: QSpinBox
@@ -80,6 +86,18 @@ class VariationTabIoMixin:
             "and position traces."
         )
         self._export_ensemble_json.clicked.connect(self._on_export_ensemble_json)
+        self._export_forgiveness_csv = QPushButton("Forgiveness CSV")
+        self._export_forgiveness_csv.setToolTip(
+            "Export every chip trial, cohort, loss, sampled input, "
+            "and available metric."
+        )
+        self._export_forgiveness_csv.clicked.connect(self._on_export_forgiveness_csv)
+        self._export_forgiveness_json = QPushButton("Forgiveness JSON")
+        self._export_forgiveness_json.setToolTip(
+            "Export the qualified chip objective, population, records, confidence, "
+            "CVaR, convergence, and limitations."
+        )
+        self._export_forgiveness_json.clicked.connect(self._on_export_forgiveness_json)
         save_plan = QPushButton("Save Plan")
         save_plan.setToolTip(
             "Save just the plan as JSON — the schema the web tab also reads."
@@ -93,6 +111,8 @@ class VariationTabIoMixin:
             self._export_json,
             self._export_trace_csv,
             self._export_ensemble_json,
+            self._export_forgiveness_csv,
+            self._export_forgiveness_json,
         )
         for button in exports:
             button.setEnabled(False)
@@ -151,6 +171,34 @@ class VariationTabIoMixin:
         if path:
             write_ensemble_json(self._ensemble_result, path)
             self._status.setText(f"Complete swing ensemble written to {path}.")
+
+    def _on_export_forgiveness_csv(self) -> None:
+        if self._forgiveness_study is None:
+            return
+        path, _filter = QFileDialog.getSaveFileName(
+            cast(QWidget, self),
+            "Export Chip Forgiveness Trials CSV",
+            "chip_forgiveness_trials.csv",
+            "CSV (*.csv)",
+        )
+        if path:
+            with open(path, "w", encoding="utf-8", newline="") as handle:
+                handle.write(chip_forgiveness_study_to_csv(self._forgiveness_study))
+            self._status.setText(f"Chip forgiveness trials written to {path}.")
+
+    def _on_export_forgiveness_json(self) -> None:
+        if self._forgiveness_study is None:
+            return
+        path, _filter = QFileDialog.getSaveFileName(
+            cast(QWidget, self),
+            "Export Chip Forgiveness Study JSON",
+            "chip_forgiveness_study.json",
+            "JSON (*.json)",
+        )
+        if path:
+            with open(path, "w", encoding="utf-8") as handle:
+                handle.write(chip_forgiveness_study_to_json(self._forgiveness_study))
+            self._status.setText(f"Chip forgiveness study written to {path}.")
 
     def _on_save_plan(self) -> None:
         try:

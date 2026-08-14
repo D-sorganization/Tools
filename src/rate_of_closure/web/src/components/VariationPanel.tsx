@@ -3,6 +3,11 @@ import { useState } from "react";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import {
+  analyzeChipForgivenessEnsemble,
+  defaultChipVariationInput,
+  type ChipForgivenessStudyTs,
+} from "../model/chipForgivenessEnsemble";
+import {
   GROUND_NORMAL_RESTITUTION_KEY,
   GROUND_ROLLING_RESISTANCE_KEY,
   planFromJson,
@@ -100,6 +105,11 @@ export function VariationPanel({
     null,
   );
   const [ensemble, setEnsemble] = useState<SwingVariationResultTs | null>(null);
+  const [chipStudyEnabled, setChipStudyEnabled] = useState(false);
+  const [chipTargetCarryYd, setChipTargetCarryYd] = useState(30);
+  const [forgiveness, setForgiveness] = useState<ChipForgivenessStudyTs | null>(
+    null,
+  );
   const [library, setLibrary] = useState<NamedVariationPlan[]>(
     initialLibrary.plans,
   );
@@ -115,6 +125,7 @@ export function VariationPanel({
     setDataset(null);
     setSensitivity(null);
     setEnsemble(null);
+    setForgiveness(null);
   };
 
   const persistLibrary = (next: NamedVariationPlan[], message: string) => {
@@ -137,11 +148,22 @@ export function VariationPanel({
       return;
     }
     try {
+      const executionPlan = chipStudyEnabled && plan.mode === "swing"
+        ? {
+            ...plan,
+            ballSetup: { supportMode: "ground" as const, teeHeightM: 0 },
+          }
+        : plan;
       const runTogether = analysisExecution !== "individual";
       const traceResult =
-        plan.mode === "swing" && runTogether ? runSwingVariation(plan) : null;
+        executionPlan.mode === "swing" && runTogether
+          ? runSwingVariation(
+              executionPlan,
+              chipStudyEnabled ? defaultChipVariationInput() : undefined,
+            )
+          : null;
       const result = executeVariationAnalyses(
-        plan,
+        executionPlan,
         analysisExecution,
         traceResult === null
           ? undefined
@@ -153,6 +175,14 @@ export function VariationPanel({
       setDataset(result.dataset);
       setSensitivity(result.sensitivity);
       setEnsemble(traceResult);
+      setForgiveness(
+        chipStudyEnabled && traceResult
+          ? analyzeChipForgivenessEnsemble(traceResult, {
+              seed: plan.seed,
+              targetCarryM: chipTargetCarryYd * 0.9144,
+            })
+          : null,
+      );
       if (result.dataset) {
         const succeeded = result.dataset.success.filter(Boolean).length;
         const failed = plan.nRuns - succeeded;
@@ -261,6 +291,10 @@ export function VariationPanel({
             variation.setSelectedOutputMetrics(metrics);
             clearResults();
           }}
+          chipStudyEnabled={chipStudyEnabled}
+          onChipStudyEnabledChange={setChipStudyEnabled}
+          chipTargetCarryYd={chipTargetCarryYd}
+          onChipTargetCarryYdChange={setChipTargetCarryYd}
           onConfigurationChange={clearResults}
         />
         <VariationActions
@@ -292,6 +326,7 @@ export function VariationPanel({
         target={targetUse.targetRegion ?? undefined}
         distanceUnit={distanceUnit}
         ensemble={ensemble}
+        forgiveness={forgiveness}
       />
     </div>
   );

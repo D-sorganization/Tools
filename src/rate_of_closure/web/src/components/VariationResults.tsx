@@ -13,7 +13,14 @@ import { VariationScatter } from "./VariationScatter";
 import { VariationArcOverlay } from "./VariationArcOverlay";
 import { VariationDistributionMatrix } from "./VariationDistributionMatrix";
 import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
-import { PANEL_CLASS, sensitivityHeat } from "./variationUi";
+import {
+  chipForgivenessStudyToCsv,
+  chipForgivenessStudyToJson,
+  chipForgivenessVariationDataset,
+  type ChipForgivenessStudyTs,
+} from "../model/chipForgivenessEnsemble";
+import { ChipForgivenessPanel } from "./ChipForgivenessPanel";
+import { downloadText, PANEL_CLASS, sensitivityHeat } from "./variationUi";
 
 interface VariationResultsProps {
   dataset: VariationDatasetTs | null;
@@ -21,6 +28,7 @@ interface VariationResultsProps {
   target?: TargetRegionTs;
   distanceUnit: string;
   ensemble?: SwingVariationResultTs | null;
+  forgiveness?: ChipForgivenessStudyTs | null;
 }
 
 interface TrialSelection {
@@ -35,6 +43,7 @@ export function VariationResults({
   target,
   distanceUnit,
   ensemble = null,
+  forgiveness = null,
 }: VariationResultsProps): JSX.Element {
   const [selection, setSelection] = useState<TrialSelection | null>(null);
   const trialCount = dataset?.plan.nRuns ?? ensemble?.dataset.plan.nRuns ?? 0;
@@ -60,9 +69,50 @@ export function VariationResults({
   };
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
+  const forgivenessDataset = useMemo(
+    () => forgiveness ? chipForgivenessVariationDataset(forgiveness) : null,
+    [forgiveness],
+  );
 
   return (
     <section aria-label="Variation results" className="min-w-0 space-y-6">
+      {forgiveness && (
+        <ChipForgivenessPanel
+          summary={forgiveness.summary}
+          limitations={forgiveness.metadata.limitations}
+          onExportJson={() => downloadText(
+            "chip-forgiveness-study.json",
+            chipForgivenessStudyToJson(forgiveness),
+            "application/json;charset=utf-8",
+          )}
+          onExportCsv={() => downloadText(
+            "chip-forgiveness-trials.csv",
+            chipForgivenessStudyToCsv(forgiveness),
+            "text/csv;charset=utf-8",
+          )}
+        />
+      )}
+      {forgivenessDataset && (
+        <div className={PANEL_CLASS}>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            Forgiveness Metric Scatter and Marginal Distributions
+          </h2>
+          <VariationDistributionMatrix
+            dataset={forgivenessDataset}
+            ensemble={ensemble}
+            selectedTrialIndex={selectedTrialIndex}
+            onSelectedTrialChange={setSelectedTrialIndex}
+          />
+          <div className="mt-6 border-t border-slate-800 pt-5">
+            <VariationScatter
+              dataset={forgivenessDataset}
+              ensemble={ensemble}
+              selectedTrialIndex={selectedTrialIndex}
+              onSelectedTrialChange={setSelectedTrialIndex}
+            />
+          </div>
+        </div>
+      )}
       {dataset && (
         <div className={PANEL_CLASS}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Scatter Matrix and Marginal Distributions</h2>

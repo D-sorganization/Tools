@@ -571,4 +571,29 @@ describe("VariationPanel analysis execution policy", () => {
       screen.getByText(/Hits: .*Plotted landings: .*no fabricated landing/i),
     ).toBeInTheDocument();
   });
+
+  it("runs the explicit ground-mode wedge forgiveness objective", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Pipeline" }), "swing");
+    fireEvent.change(screen.getByRole("textbox", { name: "Runs" }), {
+      target: { value: "2" },
+    });
+    fireEvent.blur(screen.getByRole("textbox", { name: "Runs" }));
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Analysis execution" }),
+      "all_together",
+    );
+    await user.click(screen.getByRole("checkbox", { name: "Analyze wedge chip forgiveness" }));
+
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+
+    expect(screen.getByRole("heading", { name: /conditional chip-shot forgiveness/i })).toBeInTheDocument();
+    expect(screen.getByText(/Contact Cohorts — All 2 Trials/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /forgiveness metric scatter/i })).toBeInTheDocument();
+    expect(screen.getByText(/turf ranking disabled/i)).toBeInTheDocument();
+    expect(screen.getByText(/illustrative reduced single-point/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Forgiveness Study JSON" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Forgiveness Trials CSV" })).toBeEnabled();
+  });
 });

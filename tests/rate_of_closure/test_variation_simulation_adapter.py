@@ -95,6 +95,9 @@ def test_ensemble_distinguishes_hit_miss_and_numerical_failure() -> None:
     )
     assert result.outcomes[2].failure_type == "RuntimeError"
     assert result.outcomes[2].failure_message == "planted trial failure"
+    assert result.runs[0] is not None
+    assert result.runs[1] is not None
+    assert result.runs[2] is None
     np.testing.assert_array_equal(result.variation.success, [True, True, False])
     assert result.variation.output_column("closest_approach_m").shape == (2,)
     assert result.variation.output_column("clubhead_speed_mps").shape == (1,)

@@ -10,7 +10,7 @@ from types import MappingProxyType
 
 import numpy as np
 
-from rate_of_closure.simulation import SimulationConfig
+from rate_of_closure.simulation import SimulationConfig, SimulationRun
 from shared.python.contracts import require
 from shared.python.swing_sim.variation.engine import VariationDataset
 from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTraces
@@ -136,6 +136,7 @@ class SimulationEnsembleResult:
     outcomes: tuple[SimulationTrialOutcome, ...]
     variation: VariationDataset
     traces: EnsemblePositionTraces
+    runs: tuple[SimulationRun | None, ...] = field(default=(), repr=False)
 
     def __post_init__(self) -> None:
         trial_count = len(self.variation.success)
@@ -157,6 +158,21 @@ class SimulationEnsembleResult:
             self.traces.variation is self.variation,
             "traces and result must share one VariationDataset",
         )
+        runs = tuple(self.runs)
+        if runs:
+            require(len(runs) == trial_count, "runs must align to trials")
+            require(
+                all(
+                    (run is None) == (outcome.status is NUMERICAL_FAILURE)
+                    for run, outcome in zip(runs, self.outcomes, strict=True)
+                ),
+                "run availability must agree with outcome status",
+            )
+            require(
+                all(run is None or isinstance(run, SimulationRun) for run in runs),
+                "runs must contain SimulationRun or None",
+            )
+        object.__setattr__(self, "runs", runs)
 
     @property
     def impact_output_names(self) -> tuple[str, ...]:

@@ -28,6 +28,10 @@ interface VariationSetupProps {
   onAnalysisExecutionChange: (value: VariationAnalysisExecution) => void;
   selectedOutputMetrics: readonly string[];
   onSelectedOutputMetricsChange: (metrics: readonly string[]) => void;
+  chipStudyEnabled: boolean;
+  onChipStudyEnabledChange: (value: boolean) => void;
+  chipTargetCarryYd: number;
+  onChipTargetCarryYdChange: (value: number) => void;
   onConfigurationChange: () => void;
 }
 
@@ -38,6 +42,10 @@ export function VariationSetup({
   onAnalysisExecutionChange,
   selectedOutputMetrics,
   onSelectedOutputMetricsChange,
+  chipStudyEnabled,
+  onChipStudyEnabledChange,
+  chipTargetCarryYd,
+  onChipTargetCarryYdChange,
   onConfigurationChange,
 }: VariationSetupProps): JSX.Element {
   const updatePlan = (updates: Partial<VariationPlanTs>) => {
@@ -211,6 +219,39 @@ export function VariationSetup({
             })}
           </div>
         </fieldset>
+        {plan.mode === "swing" && (
+          <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3">
+              className="flex cursor-pointer items-start gap-3"
+              title="Use a representative 56-degree wedge on the ground and retain every contact cohort for the declared chip objective."
+                aria-label="Analyze wedge chip forgiveness"
+                checked={chipStudyEnabled}
+                onChange={(event) => {
+                  onChipStudyEnabledChange(event.target.checked);
+                  onConfigurationChange();
+                className="mt-1"
+              <span>
+                <span className="block text-sm font-semibold text-emerald-200">
+                  Analyze Wedge Chip Forgiveness
+                </span>
+                <span className="mt-1 block text-xs leading-5 text-slate-400">
+                  Ground-mode 56° wedge · all misses and failures retained · CVaR and Wilson confidence evidence.
+                </span>
+              </span>
+            <label className="mt-3 block text-xs text-slate-300">
+              <span className="mb-1 block">Chip Target Carry</span>
+              <span className="flex items-center gap-2">
+                <DecimalInput
+                  min={1}
+                  max={200}
+                  value={chipTargetCarryYd}
+                  aria-label="Chip target carry yards"
+                  onCommit={(value) => {
+                    onChipTargetCarryYdChange(value);
+                    onConfigurationChange();
+                  className={INPUT_CLASS}
+                <span>yd</span>
+              </span>
+        )}
       </div>
 
       <div className={PANEL_CLASS}>

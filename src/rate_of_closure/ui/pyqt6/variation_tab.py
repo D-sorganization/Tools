@@ -7,6 +7,7 @@ import logging
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QComboBox,
+    QDoubleSpinBox,
     QFormLayout,
     QFrame,
     QGroupBox,
@@ -35,6 +36,7 @@ from rate_of_closure.ui.pyqt6.variation_tab_results import (
 )
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker
 from rate_of_closure.ui.pyqt6.variation_workspace import VariationWorkspaceMixin
+from rate_of_closure.variation import ChipForgivenessStudy
 from rate_of_closure.variation.plot_data import build_ensemble_plot_dataset
 from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.contracts import ContractViolationError
@@ -82,6 +84,7 @@ class VariationTab(
         self._dataset: VariationDataset | None = None
         self._sensitivity: SensitivityResult | None = None
         self._ensemble_result: SimulationEnsembleResult | None = None
+        self._forgiveness_study: ChipForgivenessStudy | None = None
         self._base_simulation_config = SimulationConfig(
             scenario=self._scenario,
             club=get_club("Driver 10.5°"),
@@ -190,6 +193,37 @@ class VariationTab(
     def _build_run_box(self) -> QGroupBox:
         box = QGroupBox("Run")
         layout = QVBoxLayout(box)
+        self._sens_check = QCheckBox("Compute One-at-a-Time Sensitivity")
+        self._sens_check.setChecked(True)
+        self._sens_check.setToolTip(
+            "After the main batch, rerun the study once per noise row with "
+            "only that row active (paired draws) to attribute each "
+            "output's spread to its inputs. Multiplies runtime by the "
+            "number of rows + 1."
+        )
+        layout.addWidget(self._sens_check)
+        self._forgiveness_check = QCheckBox("Analyze Wedge Chip Forgiveness")
+        self._forgiveness_check.setChecked(True)
+        self._forgiveness_check.setToolTip(
+            "For swing studies with a selected wedge, retain ball-first, "
+            "ground-first, grazing, miss, and failure cohorts and compute "
+            "Wilson confidence, expected loss, CVaR, and convergence evidence."
+        )
+        layout.addWidget(self._forgiveness_check)
+        target_row = QHBoxLayout()
+        target_label = QLabel("Chip Target Carry")
+        self._chip_target_yd = QDoubleSpinBox()
+        self._chip_target_yd.setRange(1.0, 200.0)
+        self._chip_target_yd.setDecimals(1)
+        self._chip_target_yd.setValue(30.0)
+        self._chip_target_yd.setSuffix(" yd")
+        self._chip_target_yd.setToolTip(
+            "Declared carry target used by the normalized chip-shot loss; "
+            "30 yards is the worked example."
+        )
+        target_row.addWidget(target_label)
+        target_row.addWidget(self._chip_target_yd, stretch=1)
+        layout.addLayout(target_row)
         row = QHBoxLayout()
         self._run_button = QPushButton("Run Variation Study")
         self._run_button.setToolTip(
@@ -302,16 +336,20 @@ class VariationTab(
         self._dataset = None
         self._sensitivity = None
         self._ensemble_result = None
+        self._forgiveness_study = None
         self._set_running(True)
         worker = VariationWorker(
             plan,
             analysis_execution=self.analysis_execution(),
             base_simulation_config=self._base_simulation_config,
+            compute_forgiveness=self._forgiveness_check.isChecked(),
+            chip_target_carry_m=self._chip_target_yd.value() * 0.9144,
         )
         worker.progressed.connect(self._on_progress)
         worker.phaseChanged.connect(self._on_phase)
         worker.succeeded.connect(self._on_succeeded)
         worker.ensembleSucceeded.connect(self._on_ensemble_succeeded)
+        worker.forgivenessSucceeded.connect(self._on_forgiveness_succeeded)
         worker.cancelled.connect(self._on_cancelled)
         worker.failed.connect(self._on_failed)
         worker.finished.connect(self._on_finished)
@@ -329,6 +367,9 @@ class VariationTab(
         has_ensemble = self._ensemble_result is not None
         self._export_trace_csv.setEnabled(not running and has_ensemble)
         self._export_ensemble_json.setEnabled(not running and has_ensemble)
+        has_forgiveness = self._forgiveness_study is not None
+        self._export_forgiveness_csv.setEnabled(not running and has_forgiveness)
+        self._export_forgiveness_json.setEnabled(not running and has_forgiveness)
 
     def _on_cancel(self) -> None:
         if self._worker is not None:
@@ -389,6 +430,13 @@ class VariationTab(
         self._ensemble_scatter.set_plot_dataset(plot_dataset)
         self._distribution_matrix.set_plot_dataset(plot_dataset)
         self._arc_overlay.set_plot_dataset(plot_dataset)
+
+    def _on_forgiveness_succeeded(self, study: ChipForgivenessStudy) -> None:
+        """Populate the all-trial wedge decision view from worker evidence."""
+        self._forgiveness_study = study
+        self._forgiveness_view.set_study(study)
+        self._export_forgiveness_csv.setEnabled(True)
+        self._export_forgiveness_json.setEnabled(True)
 
     def _on_cancelled(self) -> None:
         self._status.setText("Cancelled.")
