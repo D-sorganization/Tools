@@ -9,7 +9,7 @@ from sqlalchemy import func
 from sqlmodel import Field, Session, SQLModel, col, select
 
 
-class ConfigurationRevisionRecord(SQLModel, table=True):
+class ConfigurationRevisionRecord(SQLModel, table=True):  # type: ignore[call-arg]
     """Durable revision envelope; the JSON document is canonically validated."""
 
     revision_id: str = Field(primary_key=True)

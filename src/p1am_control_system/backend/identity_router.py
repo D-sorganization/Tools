@@ -151,7 +151,10 @@ def create_identity_router(service: IdentityServiceSource) -> APIRouter:
     async def get_principal(
         principal: Principal = Depends(authenticated),  # noqa: B008
     ) -> PrincipalResponse:
-        return PrincipalResponse.model_validate(principal)
+        # Annotated local: see the typing convention note in SPEC.md — CI runs
+        # mypy from the repo root, where flat intra-package imports become Any.
+        response: PrincipalResponse = PrincipalResponse.model_validate(principal)
+        return response
 
     @router.delete("/session", status_code=status.HTTP_204_NO_CONTENT)
     async def delete_session(bearer: BearerCredential = None) -> Response:

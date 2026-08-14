@@ -129,7 +129,7 @@ class HandoverAcknowledgment(BaseModel):
     note: str
 
 
-class ShiftEntryRecord(SQLModel, table=True):
+class ShiftEntryRecord(SQLModel, table=True):  # type: ignore[call-arg]
     entry_id: str = SqlField(primary_key=True)
     shift_id: str = SqlField(index=True)
     run_id: str = SqlField(index=True)
@@ -141,14 +141,14 @@ class ShiftEntryRecord(SQLModel, table=True):
     created_at: datetime = SqlField(index=True)
 
 
-class ShiftSignoffRecord(SQLModel, table=True):
+class ShiftSignoffRecord(SQLModel, table=True):  # type: ignore[call-arg]
     entry_id: str = SqlField(primary_key=True, foreign_key="shiftentryrecord.entry_id")
     signed_by: str
     signed_at: datetime
     content_sha256: str
 
 
-class HandoverAcknowledgmentRecord(SQLModel, table=True):
+class HandoverAcknowledgmentRecord(SQLModel, table=True):  # type: ignore[call-arg]
     entry_id: str = SqlField(primary_key=True, foreign_key="shiftentryrecord.entry_id")
     acknowledged_by: str
     acknowledged_at: datetime

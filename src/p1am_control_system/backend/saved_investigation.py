@@ -155,7 +155,7 @@ class SavedInvestigation(BaseModel):
     content_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 
-class InvestigationRecord(SQLModel, table=True):
+class InvestigationRecord(SQLModel, table=True):  # type: ignore[call-arg]
     investigation_id: str = SqlField(primary_key=True)
     created_at: datetime = SqlField(index=True)
     created_by: str
@@ -190,7 +190,14 @@ class SqliteInvestigationRepository:
             record = session.get(InvestigationRecord, investigation_id)
             if record is None:
                 raise KeyError(f"unknown investigation: {investigation_id}")
-            return SavedInvestigation.model_validate_json(record.document_json)
+            # Annotated local: this package uses flat intra-package imports, which
+            # mypy resolves only when invoked from this directory. CI invokes it
+            # from the repo root with --follow-imports=skip, where the model
+            # becomes Any. Pinning the type keeps the check honest either way.
+            loaded: SavedInvestigation = SavedInvestigation.model_validate_json(
+                record.document_json
+            )
+            return loaded
 
 
 class InvestigationExportManifest(BaseModel):

@@ -118,7 +118,7 @@ class AuditEvent:
         _json_payload(self.after)
 
 
-class AuditLog(SQLModel, table=True):
+class AuditLog(SQLModel, table=True):  # type: ignore[call-arg]
     """Immutable persisted representation of :class:`AuditEvent`."""
 
     id: int | None = Field(default=None, primary_key=True)

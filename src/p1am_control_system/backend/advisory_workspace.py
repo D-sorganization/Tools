@@ -246,7 +246,9 @@ class AdvisoryService:
         if retained is not None:
             return retained
         result_sha256 = _canonical_sha256(core)
-        result = AdvisoryResult.model_validate(
+        # Annotated local: see the typing convention note in SPEC.md — CI runs
+        # mypy from the repo root, where flat intra-package imports become Any.
+        result: AdvisoryResult = AdvisoryResult.model_validate(
             {
                 **core,
                 "replay": ReplayEvidence(

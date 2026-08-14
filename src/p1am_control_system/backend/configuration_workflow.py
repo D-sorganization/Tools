@@ -228,7 +228,11 @@ class ConfigurationWorkflow:
             revision = self.get(revision_id)
             if revision.state is not expected:
                 raise ValueError(f"revision must be {expected.value}")
-            changed = revision.model_copy(update={"state": target, **updates})
+            # Annotated local: see the typing convention note in SPEC.md — CI runs
+            # mypy from the repo root, where flat intra-package imports become Any.
+            changed: ConfigurationRevision = revision.model_copy(
+                update={"state": target, **updates}
+            )
             self._repository.save(changed)
         return changed
 
