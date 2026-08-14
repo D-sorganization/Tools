@@ -140,6 +140,7 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
       dataset: null,
       sensitivity: oneAtATimeSensitivity(service.calls[0].request.plan),
       ensemble: null,
+      executionMetadata: service.calls[0].request.executionMetadata,
     }));
 
     expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
@@ -151,6 +152,7 @@ describe("VariationPanel asynchronous Monte Carlo execution", () => {
       dataset: null,
       sensitivity: oneAtATimeSensitivity(service.calls[1].request.plan),
       ensemble: null,
+      executionMetadata: service.calls[1].request.executionMetadata,
     }));
     await waitFor(() => expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledOnce());
     expect(vi.mocked(HTMLElement.prototype.scrollIntoView).mock.instances[0])
