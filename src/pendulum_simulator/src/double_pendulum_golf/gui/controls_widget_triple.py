@@ -211,8 +211,12 @@ class ControlsWidgetTriple(ControlsWidgetBase):
             self.inp_L1 = LabeledInput(
                 "L1 (m) — Hub", "0.20", "Length of segment 1: Hub (sternum → shoulder)"
             )
-            self.inp_L2 = LabeledInput("L2 (m) — Arm", "0.65", "Length of segment 2: Arm")
-            self.inp_L3 = LabeledInput("L3 (m) — Club", "1.10", "Length of segment 3: Club")
+            self.inp_L2 = LabeledInput(
+                "L2 (m) — Arm", "0.65", "Length of segment 2: Arm"
+            )
+            self.inp_L3 = LabeledInput(
+                "L3 (m) — Club", "1.10", "Length of segment 3: Club"
+            )
             for w in [
                 self.inp_m1,
                 self.inp_m2,
@@ -264,8 +268,12 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         self.inp_tau_shoulder = LabeledInput(
             "Shoulder", "-25, 10", "τ(t) = c0 + c1*t + c2*t^2 + ..."
         )
-        self.inp_tau_elbow = LabeledInput("Elbow", "0", "τ(t) = c0 + c1*t + c2*t^2 + ...")
-        self.inp_tau_wrist = LabeledInput("Wrist", "0", "τ(t) = c0 + c1*t + c2*t^2 + ...")
+        self.inp_tau_elbow = LabeledInput(
+            "Elbow", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
+        )
+        self.inp_tau_wrist = LabeledInput(
+            "Wrist", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
+        )
         layout.addWidget(self.inp_tau_shoulder)
         layout.addWidget(self.inp_tau_elbow)
         layout.addWidget(self.inp_tau_wrist)
@@ -364,12 +372,24 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         L1 = self._uai_or_parse(self.inp_L1, "L1")
         L2 = self._uai_or_parse(self.inp_L2, "L2")
         L3 = self._uai_or_parse(self.inp_L3, "L3")
-        b1 = require_non_negative(parse_float(getattr(self, "inp_b1", None), "b1"), "b1")
-        b2 = require_non_negative(parse_float(getattr(self, "inp_b2", None), "b2"), "b2")
-        b3 = require_non_negative(parse_float(getattr(self, "inp_b3", None), "b3"), "b3")
-        mu1 = require_non_negative(parse_float(getattr(self, "inp_mu1", None), "μ1"), "μ1")
-        mu2 = require_non_negative(parse_float(getattr(self, "inp_mu2", None), "μ2"), "μ2")
-        mu3 = require_non_negative(parse_float(getattr(self, "inp_mu3", None), "μ3"), "μ3")
+        b1 = require_non_negative(
+            parse_float(getattr(self, "inp_b1", None), "b1"), "b1"
+        )
+        b2 = require_non_negative(
+            parse_float(getattr(self, "inp_b2", None), "b2"), "b2"
+        )
+        b3 = require_non_negative(
+            parse_float(getattr(self, "inp_b3", None), "b3"), "b3"
+        )
+        mu1 = require_non_negative(
+            parse_float(getattr(self, "inp_mu1", None), "μ1"), "μ1"
+        )
+        mu2 = require_non_negative(
+            parse_float(getattr(self, "inp_mu2", None), "μ2"), "μ2"
+        )
+        mu3 = require_non_negative(
+            parse_float(getattr(self, "inp_mu3", None), "μ3"), "μ3"
+        )
         require_positive(m1, "m1")
         require_positive(m2, "m2")
         require_positive(m3, "m3")
