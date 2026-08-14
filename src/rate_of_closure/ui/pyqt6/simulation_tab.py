@@ -43,6 +43,7 @@ from rate_of_closure.simulation import (
 )
 from rate_of_closure.simulation.targets import TargetRegion, layout_for_region
 from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
+from rate_of_closure.ui.pyqt6.flight_playback_controls import FlightPlaybackPanel
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
@@ -90,6 +91,7 @@ class SimulationTab(QWidget):
         self._view = SimulationView()
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
+        self._flight_panel = FlightPlaybackPanel(self._flight_view)
         self._kinetics_panel = KineticsPanel()
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
@@ -131,7 +133,7 @@ class SimulationTab(QWidget):
         right.addTab(self._strike_view, "Strike")
         right.addTab(self._view, "Swing")
         right.addTab(self._kinetics_panel, "Kinetics")
-        right.addTab(self._flight_view, "Flight")
+        right.addTab(self._flight_panel, "Flight")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
         right.addTab(self._torque_profile_panel, "Torque Profiles")

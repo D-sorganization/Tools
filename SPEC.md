@@ -607,6 +607,21 @@ heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
     `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
     builtins, exports).
 
+### 2026-08-06 Rate of Closure real-time 3D ball-flight playback (#4200)
+
+- A shared `TimedTrajectory` contract validates finite, strictly increasing
+  solver timestamps and app-frame SI positions, then deterministically
+  interpolates by physical time with launch/impact endpoint clamping.
+- PyQt6 composes `FlightView` with accessible play/pause, scrub, speed,
+  restart, launch, and impact controls in both the Simulation and standalone
+  Flight Explorer surfaces. One owned precise timer advances physical time;
+  mutable ball artists preserve the user's Matplotlib 3D rotation and zoom.
+- React adds a dependency-free orthographic 3D canvas with pointer rotation,
+  wheel zoom, the same transport controls, and a single cancellable
+  `requestAnimationFrame` lifecycle. The projection uses one pixel scale per
+  physical metre so camera rotation and responsive sizing do not distort the
+  trajectory. Existing static side/top plots and paired wind overlays remain.
+
 ### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
 
 - Three purpose-built, scale-separated viewers replace the single
@@ -2777,6 +2792,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---- | ------- | ------- |
 | 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
 | 2026-08-06 | 1.13.13 | fix(ball-flight, #4199): migrate strategy output to v2; separate policy-fixed true-wind counterfactuals from preset-oracle regret and add failure-inclusive target-hold, miss-distance CVaR, and directional risk metrics with Python/TypeScript parity. |
+| 2026-08-06 | 1.13.12 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/launch/impact controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |

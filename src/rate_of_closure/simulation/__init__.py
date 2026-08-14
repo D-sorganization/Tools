@@ -37,6 +37,7 @@ from .flight_explorer import (
     launch_from_delivery,
     launch_from_direct,
 )
+from .flight_playback import PlaybackFrame, TimedTrajectory
 from .ground_clearance import (
     RunGroundClearanceSnapshot,
     ground_clearance_for_run,
@@ -94,6 +95,8 @@ __all__ = [
     "SCREW_CSV_COLUMNS",
     "AppFrameSwing",
     "FlightExploration",
+    "PlaybackFrame",
+    "TimedTrajectory",
     "WindComparison",
     "KineticsSeries",
     "ImpactOutcome",
