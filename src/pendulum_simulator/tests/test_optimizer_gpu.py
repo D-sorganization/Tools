@@ -97,7 +97,9 @@ class TestGradientCorrectness:
 
         # Compute gradient via autodiff
         def loss_fn(coeffs):
-            return clubhead_speed_objective(coeffs, _PARAMS, state_jax, t_end=0.5, dt=0.01)
+            return clubhead_speed_objective(
+                coeffs, _PARAMS, state_jax, t_end=0.5, dt=0.01
+            )
 
         grad_autodiff = jax.grad(loss_fn)(torque_jax)
 
@@ -114,7 +116,9 @@ class TestGradientCorrectness:
         # Normalize by max absolute value to avoid scale issues
         max_grad = np.max(np.abs(grad_fd_np))
         if max_grad > 1e-10:
-            rel_error = np.linalg.norm(grad_autodiff_np - grad_fd_np) / (max_grad + 1e-12)
+            rel_error = np.linalg.norm(grad_autodiff_np - grad_fd_np) / (
+                max_grad + 1e-12
+            )
             assert rel_error < 0.5, f"Relative error in gradient: {rel_error}"
 
 
@@ -196,7 +200,9 @@ class TestClubheadSpeed:
         assert float(speed) >= 0.0
 
     @pytest.mark.slow
-    def test_clubhead_speed_increases_with_torque(self, initial_state: np.ndarray) -> None:
+    def test_clubhead_speed_increases_with_torque(
+        self, initial_state: np.ndarray
+    ) -> None:
         """Clubhead speed is higher with positive torques."""
         state_jax = jnp.array(initial_state)
 
@@ -245,4 +251,6 @@ class TestFiniteElementGradient:
         )
 
         grad_np = np.array(grad)
-        assert np.all(np.isfinite(grad_np)), f"Gradient has non-finite values: {grad_np}"
+        assert np.all(
+            np.isfinite(grad_np)
+        ), f"Gradient has non-finite values: {grad_np}"

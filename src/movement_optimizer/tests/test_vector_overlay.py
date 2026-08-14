@@ -26,7 +26,9 @@ _SIZE = 120
 _MID = _SIZE // 2
 
 
-def _flipping_projector(scale: float = 20.0) -> Callable[[tuple[float, float]], QPointF]:
+def _flipping_projector(
+    scale: float = 20.0,
+) -> Callable[[tuple[float, float]], QPointF]:
     # Mimics the canvas projector's Y handling: larger world-y -> smaller screen-y.
     def _project(point: tuple[float, float]) -> QPointF:
         x, y = point
@@ -89,14 +91,18 @@ def test_auto_scale_factor_rejects_nonpositive_target(style: VectorStyle) -> Non
 
 def test_draw_force_arrows_renders_pixels(qapp, style: VectorStyle) -> None:
     arrows = [ForceArrow((0.0, 0.0), (1.0, 0.0), style)]
-    image = _render(lambda p: draw_force_arrows(p, _flipping_projector(), arrows, scale=1.0))
+    image = _render(
+        lambda p: draw_force_arrows(p, _flipping_projector(), arrows, scale=1.0)
+    )
     assert _colored_pixels(image)
 
 
 def test_draw_force_arrows_respects_projector_y_flip(qapp, style: VectorStyle) -> None:
     # A +y world vector must render ABOVE the origin (smaller screen-y).
     up = [ForceArrow((0.0, 0.0), (0.0, 1.0), style)]
-    image = _render(lambda p: draw_force_arrows(p, _flipping_projector(), up, scale=1.0))
+    image = _render(
+        lambda p: draw_force_arrows(p, _flipping_projector(), up, scale=1.0)
+    )
     ys = [y for _x, y in _colored_pixels(image)]
     assert min(ys) < _MID  # reached above the origin row
 
@@ -104,31 +110,45 @@ def test_draw_force_arrows_respects_projector_y_flip(qapp, style: VectorStyle) -
 def test_draw_force_arrows_rejects_nonpositive_scale(qapp, style: VectorStyle) -> None:
     arrows = [ForceArrow((0.0, 0.0), (1.0, 0.0), style)]
     with pytest.raises(ValueError, match="scale"):
-        _render(lambda p: draw_force_arrows(p, _flipping_projector(), arrows, scale=0.0))
+        _render(
+            lambda p: draw_force_arrows(p, _flipping_projector(), arrows, scale=0.0)
+        )
 
 
 def test_draw_force_arrows_rejects_nonfinite_scale(qapp, style: VectorStyle) -> None:
     arrows = [ForceArrow((0.0, 0.0), (1.0, 0.0), style)]
     with pytest.raises(ValueError, match="scale"):
-        _render(lambda p: draw_force_arrows(p, _flipping_projector(), arrows, scale=float("inf")))
+        _render(
+            lambda p: draw_force_arrows(
+                p, _flipping_projector(), arrows, scale=float("inf")
+            )
+        )
 
 
 def test_draw_force_arrows_skips_zero_length(qapp, style: VectorStyle) -> None:
     arrows = [ForceArrow((0.0, 0.0), (0.0, 0.0), style)]
-    image = _render(lambda p: draw_force_arrows(p, _flipping_projector(), arrows, scale=1.0))
+    image = _render(
+        lambda p: draw_force_arrows(p, _flipping_projector(), arrows, scale=1.0)
+    )
     assert not _colored_pixels(image)  # no shaft, no head
 
 
 def test_draw_torque_arcs_renders(qapp, style: VectorStyle) -> None:
     arcs = [TorqueArc((0.0, 0.0), 12.0, style), TorqueArc((0.5, 0.0), -8.0, style)]
-    image = _render(lambda p: draw_torque_arcs(p, _flipping_projector(), arcs, reference_nm=12.0))
+    image = _render(
+        lambda p: draw_torque_arcs(p, _flipping_projector(), arcs, reference_nm=12.0)
+    )
     assert _colored_pixels(image)
 
 
-def test_draw_torque_arcs_rejects_nonpositive_reference(qapp, style: VectorStyle) -> None:
+def test_draw_torque_arcs_rejects_nonpositive_reference(
+    qapp, style: VectorStyle
+) -> None:
     arcs = [TorqueArc((0.0, 0.0), 1.0, style)]
     with pytest.raises(ValueError, match="reference_nm"):
-        _render(lambda p: draw_torque_arcs(p, _flipping_projector(), arcs, reference_nm=0.0))
+        _render(
+            lambda p: draw_torque_arcs(p, _flipping_projector(), arcs, reference_nm=0.0)
+        )
 
 
 def test_draw_com_markers_renders(qapp, style: VectorStyle) -> None:
