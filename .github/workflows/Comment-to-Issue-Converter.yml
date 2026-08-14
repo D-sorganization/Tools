@@ -1,10 +1,11 @@
 name: Convert Review Comments to Issues
 on:
+  # Only events that can surface *new review comments* belong here. `synchronize`
+  # (every push to every PR) and `closed` (every PR closure) produce none, and
+  # each one still spawned a full run on the 7-runner self-hosted fleet.
   pull_request:
     types:
       - opened
-      - synchronize
-      - closed
   pull_request_review_comment:
     types:
       - created
@@ -34,36 +35,15 @@ defaults:
     shell: bash
 
 jobs:
-  pick-runner:
-    name: pick-runner
-    runs-on: d-sorg-fleet
-    timeout-minutes: 3
-    outputs:
-      runner: ${{ steps.pick.outputs.runner }}
-      mode: ${{ steps.pick.outputs.mode }}
-      online: ${{ steps.pick.outputs.online }}
-      idle: ${{ steps.pick.outputs.idle }}
-      busy: ${{ steps.pick.outputs.busy }}
-      queued_runs: ${{ steps.pick.outputs.queued_runs }}
-      threshold: ${{ steps.pick.outputs.threshold }}
-    steps:
-      - name: Select runner target
-        id: pick
-        shell: bash
-        run: |
-          {
-            echo "runner=d-sorg-fleet"
-            echo "mode=self-hosted-fleet"
-            echo "online=unknown"
-            echo "idle=unknown"
-            echo "busy=unknown"
-            echo "queued_runs=unknown"
-            echo "threshold=12"
-          } >> "$GITHUB_OUTPUT"
-          echo "Selected d-sorg-fleet (self-hosted-fleet)"
+  # NOTE: this workflow deliberately has no `pick-runner` job. The one removed
+  # here only echoed constants into $GITHUB_OUTPUT (`runner=d-sorg-fleet`, plus
+  # `online`/`idle`/`busy`/`queued_runs` hardcoded to the string "unknown"), and
+  # nothing consumed them — `process-comments` pins `runs-on` directly. It
+  # occupied a d-sorg-fleet slot per trigger to decide nothing. Other workflows'
+  # `pick-runner` jobs either probe the runner API or feed `runs-on`; those are
+  # load-bearing and must stay.
   process-comments:
     timeout-minutes: 30
-    needs: pick-runner
     runs-on: d-sorg-fleet
     if: |
       github.event_name == 'workflow_dispatch' ||
