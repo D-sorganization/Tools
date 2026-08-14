@@ -29,6 +29,7 @@ import {
 import { Derivation } from "./components/Derivation";
 import { GlossaryPanel } from "./components/GlossaryPanel";
 import { getClub, type ClubSpec } from "./model/club";
+import { type ClubAssemblyBinding } from "./model/clubAssemblyBinding";
 import {
   METRIC_EXPLANATIONS,
   RESULT_EXPLANATIONS,
@@ -165,6 +166,7 @@ export default function App() {
     generatedHeadFor(defaultDriver),
   );
   const [clubSpec, setClubSpec] = useState<ClubSpec>(defaultDriver);
+  const [assemblyBinding, setAssemblyBinding] = useState<ClubAssemblyBinding>();
   const [glossaryTerm, setGlossaryTerm] = useState<string | undefined>(undefined);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
@@ -318,6 +320,7 @@ export default function App() {
           scenario={scenario}
           loftDeg={10.5}
           clubSpec={clubSpec}
+          assemblyBinding={assemblyBinding}
           onScenarioChange={(updates) =>
             setScenario((s) => ({ ...s, ...updates }))
           }
@@ -365,6 +368,7 @@ export default function App() {
               onDriveScenario={driveScenarioFromClub}
               onGenerate={setGeneratedHead}
               onSpecChange={setClubSpec}
+              onBindingChange={setAssemblyBinding}
             />
 
             <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">

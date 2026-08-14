@@ -23,28 +23,18 @@ import {
 import { downloadClubheadEngineeringSidecar } from "../model/clubEngineeringSidecar";
 import { downloadClubheadStl } from "../model/clubStlExport";
 import { FIELD_GUIDANCE } from "../model/units";
+import { readBrowserFileText } from "../model/browserFileText";
 
 const INPUT_CLASS =
   "no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 " +
   "py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none " +
   "disabled:opacity-40";
 
-async function readBindingFile(file: File): Promise<string> {
-  if (typeof file.text === "function") return file.text();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => resolve(String(reader.result ?? "")));
-    reader.addEventListener("error", () =>
-      reject(reader.error ?? new Error("binding file read failed")),
-    );
-    reader.readAsText(file, "utf-8");
-  });
-}
-
 export function ClubPanel({
   onDriveScenario,
   onGenerate,
   onSpecChange,
+  onBindingChange,
 }: {
   /** Scenario plumbing: adopt the selected club's GC-to-face and lie. */
   onDriveScenario: (comToFaceMm: number, lieAngleDeg: number) => void;
@@ -52,6 +42,8 @@ export function ClubPanel({
   onGenerate: (head: GeneratedHead) => void;
   /** Track the effective club spec (overrides applied) as it changes. */
   onSpecChange?: (spec: ClubSpec) => void;
+  /** Publish only a binding validated against the exact effective spec. */
+  onBindingChange?: (binding: ClubAssemblyBinding | undefined) => void;
 }) {
   const [clubName, setClubName] = useState<string>(CLUB_LIBRARY[1].name);
   const [loftDeg, setLoftDeg] = useState<number>(CLUB_LIBRARY[1].loftDeg);
@@ -71,6 +63,7 @@ export function ClubPanel({
   useEffect(() => {
     if (assemblyBinding) {
       setAssemblyBinding(undefined);
+      onBindingChange?.(undefined);
       setExportStatus(
         "Assembly binding cleared — selected club specification changed.",
       );
@@ -137,9 +130,10 @@ export function ClubPanel({
       }
       const binding = await parseClubAssemblyBinding(
         effectiveSpec(),
-        await readBindingFile(file),
+        await readBrowserFileText(file),
       );
       setAssemblyBinding(binding);
+      onBindingChange?.(binding);
       setExportStatus(
         `Assembly binding loaded: ${binding.assemblyIdentity.assemblyId} — ` +
           `${binding.sourceAuthority.kind}; ${binding.sourceAuthority.documentId} ` +
@@ -147,6 +141,7 @@ export function ClubPanel({
       );
     } catch (error) {
       setAssemblyBinding(undefined);
+      onBindingChange?.(undefined);
       const detail =
         error instanceof Error ? error.message : "unknown import error";
       setExportStatus(`Assembly binding import failed: ${detail}`);

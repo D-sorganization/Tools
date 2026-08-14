@@ -28,7 +28,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.club import club_names, get_club
+from rate_of_closure.club import ClubAssemblyBinding, club_names, get_club
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
 from rate_of_closure.derivation_models import DerivationConfig
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
@@ -80,6 +80,8 @@ class SimulationTab(QWidget):
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
     #: Drives conditional Calculation Description sections from model changes.
     configChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Requests invalidation from the Club panel, which owns the binding.
+    assemblyBindingInvalidated = pyqtSignal(str)  # noqa: N815 - Qt convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -87,6 +89,7 @@ class SimulationTab(QWidget):
         self._run: SimulationRun | None = None
         self._tau: float | None = None  # None = auto (max clubhead speed)
         self._source: SwingSource | None = None
+        self._assembly_binding: ClubAssemblyBinding | None = None
         self._rows: dict[str, ResultRow] = {}
 
         self._view = SimulationView()
@@ -161,6 +164,9 @@ class SimulationTab(QWidget):
         self._source_combo.currentIndexChanged.connect(
             self._reconcile_joint_locks_for_source
         )
+        self._source_combo.currentIndexChanged.connect(
+            self._refresh_assembly_binding_status
+        )
         form.addRow("Swing Source", self._source_combo)
         self._tilt_spins: dict[str, QDoubleSpinBox] = {}
         for attr, label, guidance_key in TILT_SPECS:
@@ -182,6 +188,15 @@ class SimulationTab(QWidget):
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
         self._club_combo.currentTextChanged.connect(self._on_club_changed)
         form.addRow("Club", self._club_combo)
+        self._assembly_binding_status = QLabel(
+            "No validated assembly binding — complete head CG/tensor and "
+            "assembled-club properties are unavailable."
+        )
+        self._assembly_binding_status.setWordWrap(True)
+        self._assembly_binding_status.setAccessibleName(
+            "Club Assembly Simulation Binding Status"
+        )
+        form.addRow("Assembly", self._assembly_binding_status)
 
         club = get_club(self._club_combo.currentText())
         default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
@@ -334,10 +349,68 @@ class SimulationTab(QWidget):
 
     def _on_club_changed(self, name: str) -> None:
         """Apply the canonical club default unless the user owns an override."""
+        if self._assembly_binding is not None:
+            self._assembly_binding = None
+            self._assembly_binding_status.setText(
+                "Assembly binding cleared — simulation club selection changed."
+            )
+            self.assemblyBindingInvalidated.emit(
+                "Assembly binding cleared — simulation club selection changed."
+            )
         club = get_club(name)
         default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
         self._ball_setup_control.apply_club_default(default_setup, club.name)
         self._emit_config()
+
+    def set_assembly_binding(self, binding: object) -> None:
+        """Adopt an exact selected-spec binding or fail closed visibly."""
+        if binding is None:
+            self._assembly_binding = None
+            self._assembly_binding_status.setText(
+                "No validated assembly binding — complete head CG/tensor and "
+                "assembled-club properties are unavailable."
+            )
+            self._mark_stale()
+            return
+        if not isinstance(binding, ClubAssemblyBinding):
+            self._assembly_binding = None
+            self._assembly_binding_status.setText(
+                "Assembly binding rejected — expected ClubAssemblyBinding."
+            )
+            self._mark_stale()
+            return
+        try:
+            binding.assert_matches(get_club(self._club_combo.currentText()))
+        except (TypeError, ValueError) as error:
+            self._assembly_binding = None
+            self._assembly_binding_status.setText(
+                f"Assembly binding rejected — {error}"
+            )
+            self._mark_stale()
+            return
+        self._assembly_binding = binding
+        self._refresh_assembly_binding_status()
+        self._mark_stale()
+
+    def _refresh_assembly_binding_status(self, *_args: object) -> None:
+        """Explain source-specific property availability before a run."""
+        binding = self._assembly_binding
+        if binding is None:
+            return
+        if self.source_kind() == "manual":
+            detail = (
+                "head mass and the full head-CG tensor will be consumed using "
+                "the manual source's declared selected-head attitude"
+            )
+        else:
+            detail = (
+                "head mass is available, but the full tensor is unavailable "
+                "because this source does not declare selected-head attitude"
+            )
+        self._assembly_binding_status.setText(
+            f"Bound: {binding.assembly.assembly_id}; {detail}. Full CG "
+            "and assembled-club mass properties are not consumed."
+        )
 
     def contact_mode(self) -> ContactMode:
         """The selected contact policy."""
@@ -374,6 +447,7 @@ class SimulationTab(QWidget):
             contact_mode=self.contact_mode(),
             swing_run_config=run_config,
             torque_library=torque_library,
+            assembly_binding=self._assembly_binding,
         )
 
     def run_now(self) -> SimulationRun | None:
@@ -395,6 +469,7 @@ class SimulationTab(QWidget):
         self._refresh_launch_rows()
         self._update_outcome_labels(run)
         self._set_completed_status(run)
+        self._set_assembly_run_status(run)
         if run.config.swing_run_config.prescribed_profile_id is not None:
             self._torque_profile_panel.set_execution_status(
                 "Prescribed profile executed in the double-pendulum dynamics kernel; "
@@ -402,6 +477,19 @@ class SimulationTab(QWidget):
             )
         self.runCompleted.emit(run)
         return run
+
+    def _set_assembly_run_status(self, run: SimulationRun) -> None:
+        """Render the actual post-run binding consumption ledger."""
+        usage = run.club_assembly_usage
+        self._assembly_binding_status.setText(
+            "Head inertia: "
+            f"{usage.head_inertia.status} — {usage.head_inertia.reason} "
+            "Head CG: "
+            f"{usage.head_center_of_mass.status} — "
+            f"{usage.head_center_of_mass.reason} Assembly properties: "
+            f"{usage.assembly_mass_properties.status} — "
+            f"{usage.assembly_mass_properties.reason}"
+        )
 
     def _refresh_launch_rows(self) -> None:
         """Format launch rows; carry follows the distance display unit
