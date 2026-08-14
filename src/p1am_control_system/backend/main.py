@@ -12,7 +12,6 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
-import historian
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import (
     CREDENTIAL_HEADER_NAME,
@@ -51,6 +50,7 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.security import APIKeyHeader
+from historian_wiring import build_historian_writer, shipper_stats
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
@@ -168,9 +168,27 @@ perf_controller = PerformanceController(
 )
 
 
+# The scan-loop historian writer. Persists locally when the capture throttle
+# allows, then forwards the same scan to the remote plant historian if one is
+# configured. `historian_shipper` is None unless forwarding is enabled, in which
+# case no thread and no driver import happen at all.
+historian_writer, historian_shipper = build_historian_writer(
+    capture_throttle.due, settings
+)
+
+
 def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
-    """Persist a scan to the historian only when the throttle says it's due."""
-    return historian.log_scan(session, tags) if capture_throttle.due() else 0
+    """Persist a scan to the historian only when the throttle says it's due.
+
+    Thin wrapper kept so the poll loop's injected callable has a stable name and
+    signature; the throttle, local write, and remote forward all live in
+    :class:`historian_sink.HistorianWriter`.
+    """
+    # Annotated local: the backend uses flat intra-package imports, which mypy
+    # resolves to Any when it runs from the repo root rather than this
+    # directory. Pinning the type here keeps the check honest either way.
+    rows: int = historian_writer.write(session, tags)
+    return rows
 
 
 class ConnectionManager:
@@ -499,6 +517,13 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await retention_task
     await alicat_manager.stop()
     await plc_client.disconnect()
+    # Flush the forward queue last, and with a bound. An unreachable historian
+    # must not be able to hold the controller in shutdown — the local SQLite
+    # copy is already durable, so anything still queued is expendable.
+    if historian_shipper is not None:
+        await asyncio.to_thread(
+            historian_shipper.close, timeout_s=settings.timescale_shutdown_flush_s
+        )
 
 
 app = FastAPI(
@@ -964,6 +989,21 @@ def get_capture_status(
     indicator.
     """
     return capture_stats(db, capturing=True)
+
+
+@app.get("/api/historian/shipper", dependencies=[Depends(require_read_auth)])
+async def get_historian_shipper_status() -> dict[str, object]:
+    """Report remote plant-historian forwarding health.
+
+    Engineering diagnostic, not an operator alarm. A forwarding outage is not an
+    operator action and deliberately does not reach the alarm banner.
+
+    This exists so a flat line in a plant dashboard can be told apart from a
+    flat process value. ``lag_s`` climbing while the process is running means
+    the trend has a hole in it, not that the plant was idle.
+    """
+    stats: dict[str, object] = shipper_stats(historian_shipper).as_dict()
+    return stats
 
 
 @app.get("/api/capture/config", response_model=CaptureConfig)

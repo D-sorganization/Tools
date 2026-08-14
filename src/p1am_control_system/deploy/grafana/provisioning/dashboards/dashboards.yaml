@@ -1,0 +1,22 @@
+# File-based dashboard provisioning.
+#
+# Dashboards are committed JSON, not rows in Grafana's own database. A plant
+# record has to be reviewable and reproducible; a dashboard someone edited in
+# the UI six months ago is neither.
+#
+# allowUiUpdates is false, so the UI is a viewer. To change a dashboard: edit
+# the JSON, open a PR, redeploy.
+
+apiVersion: 1
+
+providers:
+  - name: plant-dashboards
+    orgId: 1
+    folder: Plant
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

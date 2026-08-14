@@ -259,14 +259,14 @@ class TestAdapterCapabilityContract:
     ) -> None:
         adapter = factory()
         models = adapter.list_models()
-        assert isinstance(models, list), (
-            f"{provider_name}: list_models() must return a list"
-        )
+        assert isinstance(
+            models, list
+        ), f"{provider_name}: list_models() must return a list"
         assert models, f"{provider_name}: list_models() must not be empty"
         for entry in models:
-            assert isinstance(entry, str) and entry.strip(), (
-                f"{provider_name}: every model id must be a non-empty string"
-            )
+            assert (
+                isinstance(entry, str) and entry.strip()
+            ), f"{provider_name}: every model id must be a non-empty string"
 
     def test_list_models_is_offline_safe(self, provider_name: str, factory) -> None:
         """``list_models()`` must fall back to a static catalogue when the
@@ -286,9 +286,9 @@ class TestAdapterCapabilityContract:
         assert caps.provider
         # Must always include at least the "none" level.
         names = caps.level_names()
-        assert "none" in names, (
-            f"{provider_name}: thinking_capabilities must include 'none'"
-        )
+        assert (
+            "none" in names
+        ), f"{provider_name}: thinking_capabilities must include 'none'"
         assert caps.default_level_name in names
 
     def test_thinking_capabilities_default_resolvable(

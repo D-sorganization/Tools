@@ -1,0 +1,137 @@
+{
+  "uid": "plant-historian-health",
+  "title": "Historian Health (ingest)",
+  "tags": ["plant", "historian", "diagnostics"],
+  "timezone": "utc",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": false,
+  "refresh": "1m",
+  "time": { "from": "now-24h", "to": "now" },
+  "description": "Is the plant historian actually receiving data? Measured at the destination, so it detects shipper outages, network partitions, and a stopped control node alike. The control node's own shipper counters (queue depth, drops) are at GET /api/historian/shipper on the Pi — Grafana OSS cannot scrape that without an external plugin, so ingest is measured here instead.",
+  "panels": [
+    {
+      "type": "text",
+      "title": "Why this dashboard exists",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "A flat line on a process trend has two very different causes: **the value did not change**, or **no data arrived**. Those look identical on a chart and mean opposite things. Check here before drawing a conclusion from a flat or missing trend.\n\nForwarding is best-effort and at-most-once by design — the control node's local SQLite historian is the authoritative record. A gap here does **not** mean the data is lost, only that it did not reach this database."
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Ingest lag (time since newest sample)",
+      "description": "Should stay near the capture interval. Climbing steadily means forwarding has stopped.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 60 },
+              { "color": "red", "value": 300 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT EXTRACT(EPOCH FROM (now() - max(ts))) AS \"lag\"\nFROM tag_sample"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Tags reporting (last hour)",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 4 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(DISTINCT tag_id) AS \"tags\"\nFROM tag_sample\nWHERE ts > now() - INTERVAL '1 hour'"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Samples ingested per minute",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 4 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*)::float / 60.0 AS \"samples/min\"\nFROM tag_sample\nWHERE ts > now() - INTERVAL '1 hour'"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Ingest rate — gaps here are forwarding gaps",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 10 },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "bars", "fillOpacity": 70 },
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time_bucket('$__interval', ts) AS time,\n       count(*)::float                AS \"samples\"\nFROM tag_sample\nWHERE $__timeFilter(ts)\nGROUP BY 1\nORDER BY 1"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Stale tags (no sample in the last hour)",
+      "description": "A tag that stopped reporting while others continued is an instrument or mapping problem, not a shipper problem.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 19 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT t.name                                   AS \"Tag\",\n       max(s.ts)                                AS \"Last sample\",\n       round(EXTRACT(EPOCH FROM (now() - max(s.ts)))) AS \"Age (s)\"\nFROM tag_definition t\nLEFT JOIN tag_sample s ON s.tag_id = t.id\nGROUP BY t.name\nHAVING max(s.ts) IS NULL OR max(s.ts) < now() - INTERVAL '1 hour'\nORDER BY 2 NULLS FIRST\nLIMIT 100"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Storage and compression",
+      "description": "If the compression ratio is closer to 2-3x than 10-20x, check that compress_segmentby = 'tag_id' actually applied — that setting dominates the outcome.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 19 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT hypertable_name AS \"Table\",\n       pg_size_pretty(before_compression_total_bytes) AS \"Before\",\n       pg_size_pretty(after_compression_total_bytes)  AS \"After\",\n       round(before_compression_total_bytes::numeric\n             / NULLIF(after_compression_total_bytes, 0), 1) AS \"Ratio\"\nFROM hypertable_compression_stats('tag_sample')"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Continuous aggregate and retention jobs",
+      "description": "If the 1-minute aggregate stops refreshing, retention will eventually drop raw chunks that were never rolled up — permanent history loss.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 28 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT job_id                 AS \"Job\",\n       hypertable_name        AS \"Table\",\n       last_run_status        AS \"Status\",\n       last_successful_finish AS \"Last success\",\n       total_failures         AS \"Failures\"\nFROM timescaledb_information.job_stats\nORDER BY last_successful_finish NULLS FIRST"
+        }
+      ]
+    }
+  ]
+}

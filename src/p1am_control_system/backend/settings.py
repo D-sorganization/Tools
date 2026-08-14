@@ -5,7 +5,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import AliasChoices, Field, field_validator
+from pydantic import AliasChoices, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SQLITE_SYNCHRONOUS_MODES = {"OFF", "NORMAL", "FULL", "EXTRA"}
@@ -82,6 +82,65 @@ class P1AMSettings(BaseSettings):
         default="NORMAL",
         validation_alias="P1AM_SQLITE_SYNCHRONOUS",
     )
+    # --- Remote plant historian (TimescaleDB) forwarding ------------------
+    # Off by default: enabling this is a deployment decision, and a backend
+    # that has never been configured for a plant historian must behave exactly
+    # as it did before. SQLite remains the local source of truth either way;
+    # forwarding is strictly additive and best-effort.
+    timescale_enabled: bool = Field(
+        default=False,
+        validation_alias="P1AM_TIMESCALE_ENABLED",
+        description=(
+            "Enable best-effort forwarding of historian samples to a remote "
+            "TimescaleDB plant historian. Requires timescale_dsn. The local "
+            "SQLite historian is unaffected."
+        ),
+    )
+    timescale_dsn: str = Field(
+        default="",
+        validation_alias="P1AM_TIMESCALE_DSN",
+        description=(
+            "libpq connection string for the plant historian. Never logged in "
+            "full — see timescale_writer.redact_dsn."
+        ),
+    )
+    timescale_queue_max: int = Field(
+        default=100_000,
+        ge=1,
+        validation_alias="P1AM_TIMESCALE_QUEUE_MAX",
+        description=(
+            "Bounded forward-queue depth. On overflow the oldest samples are "
+            "dropped and counted. Bounded deliberately: an unbounded queue on "
+            "the control Pi is an out-of-memory crash of the controller."
+        ),
+    )
+    timescale_batch_size: int = Field(
+        default=1_000,
+        ge=1,
+        validation_alias="P1AM_TIMESCALE_BATCH_SIZE",
+        description="Maximum samples per remote round-trip.",
+    )
+    timescale_flush_interval_s: float = Field(
+        default=1.0,
+        gt=0.0,
+        validation_alias="P1AM_TIMESCALE_FLUSH_INTERVAL_S",
+        description="Maximum time a partial batch waits before being shipped.",
+    )
+    timescale_connect_timeout_s: float = Field(
+        default=5.0,
+        gt=0.0,
+        validation_alias="P1AM_TIMESCALE_CONNECT_TIMEOUT_S",
+        description="Fail-fast bound on historian connection establishment.",
+    )
+    timescale_shutdown_flush_s: float = Field(
+        default=5.0,
+        gt=0.0,
+        validation_alias="P1AM_TIMESCALE_SHUTDOWN_FLUSH_S",
+        description=(
+            "Bound on the shutdown flush. Application shutdown must never hang "
+            "waiting on an unreachable historian."
+        ),
+    )
     require_read_auth: bool = Field(
         default=False,
         validation_alias="P1AM_REQUIRE_READ_AUTH",
@@ -93,6 +152,24 @@ class P1AMSettings(BaseSettings):
             "P1AM_DEV_NO_AUTH is off) a valid operator/admin API key is required."
         ),
     )
+
+    @model_validator(mode="after")
+    def _require_dsn_when_timescale_enabled(self) -> P1AMSettings:
+        """Reject an enabled-but-unconfigured plant historian at startup.
+
+        Failing loudly here is deliberate. The alternative — starting with
+        forwarding "on" but no destination — produces a plant where everyone
+        believes history is being recorded off-box and it is not. A historian
+        that is silently absent is worse than one that is openly disabled,
+        because nobody goes looking for the gap until they need the data.
+        """
+        if self.timescale_enabled and not self.timescale_dsn.strip():
+            raise ValueError(
+                "P1AM_TIMESCALE_ENABLED is true but P1AM_TIMESCALE_DSN is empty. "
+                "Set a connection string, or disable forwarding explicitly with "
+                "P1AM_TIMESCALE_ENABLED=false."
+            )
+        return self
 
     @field_validator("plc_driver", mode="before")
     @classmethod

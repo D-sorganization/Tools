@@ -1,0 +1,99 @@
+{
+  "uid": "plant-process-overview",
+  "title": "Process Overview",
+  "tags": ["plant", "process"],
+  "timezone": "utc",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": false,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "description": "Process values by plant area/unit/equipment. NOT AN HMI: this dashboard is read-only and cannot control anything. If it disagrees with the HMI, the HMI is authoritative.",
+  "templating": {
+    "list": [
+      {
+        "name": "resolution",
+        "label": "Resolution",
+        "type": "custom",
+        "description": "Raw samples are retained 90 days, 1-minute rollups 2 years, 1-hour indefinitely. Selecting a range beyond a source's retention returns nothing — which reads as 'the plant was off' rather than 'wrong table'. Pick to match your time range.",
+        "query": "tag_sample : Raw (< 90 days),tag_sample_1m : 1 minute (< 2 years),tag_sample_1h : 1 hour (all history)",
+        "current": {
+          "text": "1 minute (< 2 years)",
+          "value": "tag_sample_1m"
+        },
+        "options": [],
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "area",
+        "label": "Area",
+        "type": "query",
+        "datasource": { "type": "postgres", "uid": "plant-historian" },
+        "query": "SELECT name AS __text, id AS __value FROM plant_area ORDER BY name",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": false
+      },
+      {
+        "name": "tag",
+        "label": "Tags",
+        "type": "query",
+        "datasource": { "type": "postgres", "uid": "plant-historian" },
+        "query": "SELECT t.name AS __text, t.id AS __value\nFROM tag_definition t\nLEFT JOIN plant_equipment eq ON eq.id = t.equipment_id\nLEFT JOIN plant_unit u ON u.id = eq.unit_id\nWHERE ('$area' = '$__all' OR u.area_id = $area::int)\nORDER BY t.name",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "current": { "text": "All", "value": "$__all" }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Process values — $resolution",
+      "description": "Mean per bucket. The band panel below shows min/max, which is where excursions are visible; an averaged excursion is an invisible excursion.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 11, "w": 24, "x": 0, "y": 0 },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 0 }
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "-- Raw table has `ts`/`value`; the rollups have `bucket`/`avg_value`.\n-- The UNION keeps one panel working across all three sources.\nSELECT time_bucket('$__interval', s.ts) AS time,\n       t.name                           AS metric,\n       avg(s.value)                     AS value\nFROM tag_sample s\nJOIN tag_definition t ON t.id = s.tag_id\nWHERE '$resolution' = 'tag_sample'\n  AND $__timeFilter(s.ts)\n  AND ('$tag' = '$__all' OR s.tag_id IN ($tag))\nGROUP BY 1, 2\n\nUNION ALL\n\nSELECT time_bucket('$__interval', a.bucket) AS time,\n       t.name                                AS metric,\n       sum(a.sum_value) / NULLIF(sum(a.sample_count), 0) AS value\nFROM tag_sample_1m a\nJOIN tag_definition t ON t.id = a.tag_id\nWHERE '$resolution' = 'tag_sample_1m'\n  AND $__timeFilter(a.bucket)\n  AND ('$tag' = '$__all' OR a.tag_id IN ($tag))\nGROUP BY 1, 2\n\nUNION ALL\n\nSELECT time_bucket('$__interval', h.bucket) AS time,\n       t.name                                AS metric,\n       sum(h.sum_value) / NULLIF(sum(h.sample_count), 0) AS value\nFROM tag_sample_1h h\nJOIN tag_definition t ON t.id = h.tag_id\nWHERE '$resolution' = 'tag_sample_1h'\n  AND $__timeFilter(h.bucket)\n  AND ('$tag' = '$__all' OR h.tag_id IN ($tag))\nGROUP BY 1, 2\n\nORDER BY 1"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Excursion envelope (min / max per bucket)",
+      "description": "Only available from the rollups, which is the reason they carry min and max rather than just a mean.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 11 },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time_bucket('$__interval', a.bucket) AS time,\n       t.name || ' min'                     AS metric,\n       min(a.min_value)                     AS value\nFROM tag_sample_1m a\nJOIN tag_definition t ON t.id = a.tag_id\nWHERE $__timeFilter(a.bucket)\n  AND ('$tag' = '$__all' OR a.tag_id IN ($tag))\nGROUP BY 1, 2\n\nUNION ALL\n\nSELECT time_bucket('$__interval', a.bucket) AS time,\n       t.name || ' max'                     AS metric,\n       max(a.max_value)                     AS value\nFROM tag_sample_1m a\nJOIN tag_definition t ON t.id = a.tag_id\nWHERE $__timeFilter(a.bucket)\n  AND ('$tag' = '$__all' OR a.tag_id IN ($tag))\nGROUP BY 1, 2\n\nORDER BY 1"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Current values and asset context",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 21 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT DISTINCT ON (t.id)\n       t.name              AS \"Tag\",\n       t.description       AS \"Description\",\n       s.value             AS \"Value\",\n       t.engineering_units AS \"Units\",\n       s.ts                AS \"Sampled\",\n       ar.name             AS \"Area\",\n       u.name              AS \"Unit\",\n       eq.name             AS \"Equipment\"\nFROM tag_definition t\nLEFT JOIN plant_equipment eq ON eq.id = t.equipment_id\nLEFT JOIN plant_unit u      ON u.id  = eq.unit_id\nLEFT JOIN plant_area ar     ON ar.id = u.area_id\nLEFT JOIN tag_sample s      ON s.tag_id = t.id AND $__timeFilter(s.ts)\nWHERE ('$tag' = '$__all' OR t.id IN ($tag))\nORDER BY t.id, s.ts DESC"
+        }
+      ]
+    }
+  ]
+}
