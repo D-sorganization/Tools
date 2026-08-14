@@ -12,9 +12,13 @@ interface Props {
 const number = (value: number | null, unit: string, decimals = 2) =>
   value === null ? "Unavailable" : `${value.toFixed(decimals)} ${unit}`;
 
+const vector = (value: readonly number[], unit: string) =>
+  `[${value.map((component) => component.toFixed(4)).join(", ")}] ${unit}`;
+
 export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
   const metrics = impactKinematics(run, scenario, club);
   const dplane = metrics.faceCenterDPlane;
+  const sasho = metrics.sashoFaceCenterRotation;
   const entries = [
     { label: "Face-Center Club Path", value: number(dplane.clubPathDeg, "°"),
       equation: "atan2(v_face_center · right, v_face_center · target)", detail: "Horizontal heading of the rigid-body face-center velocity; positive is right/in-to-out in the app convention." },
@@ -44,6 +48,10 @@ export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
       equation: "AoA(v_contact − v_shaft)", detail: "Rigid-body counterfactual with only the angular-velocity component parallel to the shaft removed." },
     { label: "Shaft AoA Contribution", value: number(metrics.shaftAoaContributionDeg, "°"),
       equation: "AoA(v_contact) − AoA(v_contact − v_shaft)", detail: "Non-additive counterfactual delta; this is not an Euler-angle decomposition." },
+    { label: "Shaft-Rotation Shapley AoA", value: number(metrics.shaftShapleyAoaDeg, "°"),
+      equation: "mean marginal AoA across both factor orders", detail: "Order-independent two-factor attribution about shaft-axis translation; it remains a model attribution, not an independently measured cause." },
+    { label: "Sasho Face-Center Rotation-Only AoA", value: number(metrics.sashoFaceCenterRotation.aoaDeg, "°"),
+      equation: "AoA(ω × (F − nearest_shaft(F)))", detail: `Method ${metrics.sashoFaceCenterRotation.methodId}. Uses complete club angular velocity and the nearest point on the physical shaft line. It is descriptive and is not interchangeable with shaft-axis-only or Shapley attribution.` },
     { label: "Shaft Rotation Rate", value: number(metrics.shaftRotationRateDps, "°/s", 1),
       equation: "ω · ŝ", detail: "Signed projection of rigid-head angular velocity onto the declared physical shaft axis." },
     { label: "Shaft-Induced Vertical Velocity", value: number(metrics.shaftVerticalVelocityMps, "m/s", 3),
@@ -82,6 +90,20 @@ export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
           </div>
         </details>)}
       </div>
+      <p className="mt-2 rounded border border-cyan-400/20 bg-slate-950/40 p-2 text-xs text-slate-300">
+        <b>AoA method options:</b> compare the remove-shaft counterfactual,
+        two-factor Shapley attribution, and Sasho nearest-shaft face-center
+        rotation-only AoA. They answer different questions and are not additive.
+      </p>
+      <dl aria-label="Sasho nearest-shaft geometry"
+        className="mt-2 grid gap-x-4 gap-y-1 rounded border border-teal-400/20 bg-teal-950/10 p-2 text-xs sm:grid-cols-2">
+        <div><dt className="text-slate-400">Method ID</dt><dd>{sasho.methodId}</dd></div>
+        <div><dt className="text-slate-400">Nearest shaft point Q</dt><dd>{vector(sasho.nearestShaftPointM, "m")}</dd></div>
+        <div><dt className="text-slate-400">Perpendicular lever F − Q</dt><dd>{vector(sasho.leverArmM, "m")}</dd></div>
+        <div><dt className="text-slate-400">Complete angular velocity ω</dt><dd>{vector(metrics.angularVelocityRadS, "rad/s")}</dd></div>
+        <div><dt className="text-slate-400">Rotation-only velocity</dt><dd>{vector(sasho.velocityMps, "m/s")}</dd></div>
+        <div><dt className="text-slate-400">Vertical / horizontal speed</dt><dd>{number(sasho.velocityMps[1], "m/s", 4)} / {number(Math.hypot(sasho.velocityMps[0], sasho.velocityMps[2]), "m/s", 4)}</dd></div>
+      </dl>
       <p className="mt-2 text-xs text-slate-400">
         <b className="text-slate-300">Geometry Basis:</b> {metrics.geometryBasis}.{" "}
         <b className="text-slate-300">Model Boundary:</b> {metrics.modelLimitations}

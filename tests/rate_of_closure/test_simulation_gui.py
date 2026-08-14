@@ -209,6 +209,15 @@ class TestSimulationView:
         assert view._inspection_button.text() == "Jump to Impact"
         assert "Contact-Point AoA" in view._impact_kinematics_readout.text()
         assert "Shaft AoA Contribution" in view._impact_kinematics_readout.text()
+        assert (
+            "Sasho Face-Center Rotation-Only AoA"
+            in view._impact_kinematics_readout.text()
+        )
+        assert "AoA Method Options" in view._impact_kinematics_readout.text()
+        assert (
+            "sasho_nearest_shaft_face_center_rotation_only_aoa_v1"
+            in view._impact_kinematics_readout.text()
+        )
         assert "Geometry Basis" in view._impact_kinematics_readout.text()
 
     def test_play_pause_and_loop_toggle(self, ran_tab, qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -250,6 +259,7 @@ class TestSimulationView:
             "Total Contact Velocity",
             "Rotation About Shaft",
             "Without Shaft Rotation",
+            "Sasho Face-Center Rotation",
         } <= labels
         collection_labels = {
             str(collection.get_label()) for collection in view._axes.collections
@@ -260,6 +270,7 @@ class TestSimulationView:
         view._impact_layer_checks["face_center_travel"].setChecked(False)
         view._impact_layer_checks["dplane_normal"].setChecked(False)
         view._impact_layer_checks["spin_loft_sector"].setChecked(False)
+        view._impact_layer_checks["sasho_face_center_rotation"].setChecked(False)
         labels = {str(line.get_label()) for line in view._axes.lines}
         collection_labels = {
             str(collection.get_label()) for collection in view._axes.collections
@@ -268,6 +279,7 @@ class TestSimulationView:
         assert "Face-Center Travel" not in labels
         assert "D-Plane Normal" not in labels
         assert "3D Spin-Loft Sector" not in collection_labels
+        assert "Sasho Face-Center Rotation" not in labels
 
     def test_impact_layers_are_independent_and_persisted(self, qtbot, tmp_path) -> None:  # type: ignore[no-untyped-def]
         settings_path = tmp_path / "impact-layers.ini"
@@ -287,6 +299,7 @@ class TestSimulationView:
         assert not second._impact_layer_checks["spin_loft_sector"].isChecked()
         assert not second._impact_layer_checks["face_center_travel"].isChecked()
         assert second._impact_layer_checks["face_normal"].isChecked()
+        assert second._impact_layer_checks["sasho_face_center_rotation"].isChecked()
 
     def test_impact_scene_exports_strict_data_and_true_vector_artwork(
         self, ran_tab, tmp_path
@@ -295,7 +308,7 @@ class TestSimulationView:
         data_path = view.export_impact_scene(tmp_path / "impact.json")
         vector_path = view.export_impact_scene(tmp_path / "impact.svg")
 
-        assert '"format": "rate-of-closure.impact-scene/v2"' in data_path.read_text(
+        assert '"format": "rate-of-closure.impact-scene/v3"' in data_path.read_text(
             encoding="utf-8"
         )
         payload = json.loads(data_path.read_text(encoding="utf-8"))

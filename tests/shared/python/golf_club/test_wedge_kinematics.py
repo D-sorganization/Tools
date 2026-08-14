@@ -2,15 +2,25 @@
 
 from __future__ import annotations
 
+import json
 import math
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 from shared.python.golf_club import (
+    SASHO_FACE_CENTER_ROTATION_METHOD_ID,
     WedgeKinematicState,
     analyze_wedge_kinematics,
     angle_of_attack_deg,
+    sasho_face_center_rotation_aoa,
+)
+
+_SASHO_GOLDEN = (
+    Path(__file__).resolve().parents[4]
+    / "src/rate_of_closure/web/src/model/__fixtures__"
+    / "sasho_face_center_rotation_golden_v1.json"
 )
 
 
@@ -22,6 +32,7 @@ def _state(**overrides: object) -> WedgeKinematicState:
         "angular_velocity_rad_s": (0.0, 20.0, 0.0),
         "shaft_axis_point_m": (0.0, 0.0, 0.0),
         "shaft_axis_unit": (0.0, 1.0, 0.0),
+        "face_center_point_m": (0.02, 0.0, 0.0),
         "contact_point_m": (0.02, 0.0, 0.0),
         "face_normal_unit": (1.0, 0.0, 0.0),
         "leading_edge_tangent_unit": (0.0, 0.0, 1.0),
@@ -75,6 +86,140 @@ def test_worked_example_attributes_shaft_twist_to_aoa() -> None:
         30.0 * 0.44704, abs=2e-6
     )
     assert result.shaft_vertical_velocity_share == pytest.approx(0.08295277, abs=1e-8)
+
+
+def test_sasho_face_center_rotation_matches_cross_runtime_golden() -> None:
+    fixture = json.loads(_SASHO_GOLDEN.read_text(encoding="utf-8"))
+
+    result = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=fixture["angular_velocity_rad_s"],
+        shaft_axis_point_m=fixture["shaft_axis_point_m"],
+        shaft_axis_unit=fixture["shaft_axis_unit"],
+        face_center_point_m=fixture["face_center_point_m"],
+        ground_up_unit=fixture["ground_up_unit"],
+    )
+
+    expected = fixture["expected"]
+    assert result.method_id == expected["method_id"]
+    assert result.method_id == SASHO_FACE_CENTER_ROTATION_METHOD_ID
+    assert result.nearest_shaft_point_m == pytest.approx(
+        expected["nearest_shaft_point_m"]
+    )
+    assert result.lever_arm_m == pytest.approx(expected["lever_arm_m"])
+    assert result.velocity_mps == pytest.approx(expected["velocity_mps"])
+    assert result.aoa_deg == pytest.approx(expected["aoa_deg"])
+
+
+def test_sasho_face_center_rotation_is_invariant_to_shaft_line_datum() -> None:
+    first = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=(2.0, 10.0, -4.0),
+        shaft_axis_point_m=(0.0, 0.0, 0.0),
+        shaft_axis_unit=(0.0, 1.0, 0.0),
+        face_center_point_m=(0.02, 0.1, 0.03),
+        ground_up_unit=(0.0, 1.0, 0.0),
+    )
+    shifted = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=(2.0, 10.0, -4.0),
+        shaft_axis_point_m=(0.0, 0.4, 0.0),
+        shaft_axis_unit=(0.0, -1.0, 0.0),
+        face_center_point_m=(0.02, 0.1, 0.03),
+        ground_up_unit=(0.0, 1.0, 0.0),
+    )
+
+    assert shifted.nearest_shaft_point_m == pytest.approx(first.nearest_shaft_point_m)
+    assert shifted.velocity_mps == pytest.approx(first.velocity_mps)
+    assert shifted.aoa_deg == pytest.approx(first.aoa_deg)
+
+
+@pytest.mark.parametrize(
+    ("omega", "expected_velocity", "expected_aoa"),
+    (
+        ((2.0, 10.0, -4.0), (0.3, -0.14, -0.2), -21.220700223593433),
+        ((-2.0, -10.0, 4.0), (-0.3, 0.14, 0.2), 21.220700223593433),
+        ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), None),
+    ),
+)
+def test_sasho_rotation_sign_and_zero_availability(
+    omega: tuple[float, float, float],
+    expected_velocity: tuple[float, float, float],
+    expected_aoa: float | None,
+) -> None:
+    result = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=omega,
+        shaft_axis_point_m=(0.0, 0.0, 0.0),
+        shaft_axis_unit=(0.0, 1.0, 0.0),
+        face_center_point_m=(0.02, 0.1, 0.03),
+        ground_up_unit=(0.0, 1.0, 0.0),
+    )
+
+    assert result.velocity_mps == pytest.approx(expected_velocity)
+    if expected_aoa is None:
+        assert result.aoa_deg is None
+    else:
+        assert result.aoa_deg == pytest.approx(expected_aoa)
+
+
+def test_sasho_rotation_is_rigid_frame_equivariant() -> None:
+    rotation = np.array(((0.0, 0.0, 1.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0)))
+    arguments = {
+        "angular_velocity_rad_s": np.array((2.0, 10.0, -4.0)),
+        "shaft_axis_point_m": np.array((0.0, 0.0, 0.0)),
+        "shaft_axis_unit": np.array((0.0, 1.0, 0.0)),
+        "face_center_point_m": np.array((0.02, 0.1, 0.03)),
+        "ground_up_unit": np.array((0.0, 1.0, 0.0)),
+    }
+    original = sasho_face_center_rotation_aoa(**arguments)
+    transformed = sasho_face_center_rotation_aoa(
+        **{name: rotation @ value for name, value in arguments.items()}
+    )
+
+    assert transformed.nearest_shaft_point_m == pytest.approx(
+        rotation @ original.nearest_shaft_point_m
+    )
+    assert transformed.lever_arm_m == pytest.approx(rotation @ original.lever_arm_m)
+    assert transformed.velocity_mps == pytest.approx(rotation @ original.velocity_mps)
+    assert transformed.aoa_deg == pytest.approx(original.aoa_deg)
+
+
+def test_sasho_rotation_is_unavailable_when_face_center_is_on_shaft() -> None:
+    result = sasho_face_center_rotation_aoa(
+        angular_velocity_rad_s=(2.0, 10.0, -4.0),
+        shaft_axis_point_m=(0.0, 0.0, 0.0),
+        shaft_axis_unit=(0.0, 1.0, 0.0),
+        face_center_point_m=(0.0, 0.1, 0.0),
+        ground_up_unit=(0.0, 1.0, 0.0),
+    )
+
+    assert result.lever_arm_m == pytest.approx((0.0, 0.0, 0.0))
+    assert result.velocity_mps == pytest.approx((0.0, 0.0, 0.0))
+    assert result.aoa_deg is None
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "message"),
+    (
+        (
+            "angular_velocity_rad_s",
+            (math.nan, 10.0, -4.0),
+            "must contain only finite values",
+        ),
+        ("shaft_axis_unit", (0.0, 0.0, 0.0), "must be unit length"),
+    ),
+)
+def test_sasho_face_center_rotation_rejects_invalid_geometry(
+    field: str, value: object, message: str
+) -> None:
+    arguments: dict[str, object] = {
+        "angular_velocity_rad_s": (2.0, 10.0, -4.0),
+        "shaft_axis_point_m": (0.0, 0.0, 0.0),
+        "shaft_axis_unit": (0.0, 1.0, 0.0),
+        "face_center_point_m": (0.02, 0.1, 0.03),
+        "ground_up_unit": (0.0, 1.0, 0.0),
+    }
+    arguments[field] = value
+
+    with pytest.raises(ValueError, match=message):
+        sasho_face_center_rotation_aoa(**arguments)
 
 
 @pytest.mark.parametrize(

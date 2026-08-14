@@ -587,6 +587,43 @@
   2.3.5 + Mypy 1.13 over changed production files, TypeScript, ESLint, and the
   Vite production build.
 - SPEC advances to 1.16.70.
+## 2026-08-13 #4434 Sasho AoA evidence closure
+
+- PyQt6 and React now show the stable method ID, complete club angular
+  velocity, nearest shaft point, face-center lever, induced velocity, and
+  vertical/horizontal components, not only the final angle.
+- Python impact-scene authority and the exact React impact sample retain those
+  fields before strict impact-scene v3 export.
+- Adversarial tests cover positive/negative/zero rotation, an on-shaft face
+  center, shaft-line datum/direction invariance, rigid-frame equivariance, and
+  invalid finite/zero-axis inputs.
+- SPEC advances to 1.16.71. Final-tree evidence is 1,222 Rate/PyQt tests, 175
+  shared golf-club tests with two optional CAD skips, and 877 React tests;
+  Python 3.12/Mypy 1.13, Ruff/format, TypeScript, ESLint, Vite build, docs,
+  assertions, size, and diff gates pass.
+- The option remains a descriptive `omega x r` view. It is not additive,
+  causal, a shaft-axis-only counterfactual, or a two-factor Shapley value.
+
+## 2026-08-13 #4434 Sasho face-center rotation-only AoA option
+
+- Adds Sasho's suggested `omega x r` construction at face center, where `r`
+  runs from the nearest point on the declared physical shaft line to face
+  center. Signed AoA uses the resulting horizontal and vertical components.
+- Stable method ID
+  `sasho_nearest_shaft_face_center_rotation_only_aoa_v1` is pinned by a shared
+  Python/React golden. Shaft-line datum shifts and axis reversal leave the
+  result invariant.
+- React and PyQt6 expose this as a peer to the remove-shaft counterfactual and
+  two-factor Shapley methods, including a face-center velocity vector with
+  separate visibility controls. Impact-scene v3 exports the method ID and
+  complete geometry.
+- This is descriptive and non-additive, uses complete club angular velocity,
+  and does not alter contact or flight physics. It is tracked by #4434 under
+  shaft-rotation epic #4206 and current Rate goal #4135. SPEC is 1.16.70.
+- Evidence passes 1,222 Rate/PyQt tests, 170 shared golf-club tests with two
+  optional CAD skips, all 876 React tests, and exact Python 3.12/Mypy 1.13 on
+  seven changed production Python modules. Ruff/format, TypeScript, ESLint,
+  Vite build, docs, assertion, changed-source size, and diff gates pass.
 
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 

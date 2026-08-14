@@ -714,6 +714,51 @@ Required local evidence is 1,473 scoped Rate/shared-variation Python tests,
 all 879 React tests, workflow-pinned Ruff 0.14.10 and Black, exact Python 3.12
 + NumPy 2.3.5 + Mypy 1.13 over the changed production Python files,
 TypeScript, zero-warning ESLint, and the Vite production build.
+### 2026-08-13 Sasho rotational-AoA evidence closure (#4434)
+
+Version 1.16.71 makes every term of the new option inspectable in PyQt6,
+React, and impact-scene v3: stable method ID, complete club angular velocity,
+nearest shaft point, face-center lever, induced linear velocity, vertical and
+horizontal speeds, and signed AoA. The Python impact scene and React impact
+sample retain the same authority rather than reconstructing display-only
+values.
+
+Contract tests cover positive, negative, and zero angular velocity, an on-axis
+face center, shaft-line point and direction invariance, rigid-frame
+equivariance, and finite/nonzero-axis rejection. These checks do not turn the
+descriptive construction into an additive or causal attribution and do not
+alter collision or flight physics.
+
+Exact final-tree evidence passes 1,222 Rate/PyQt tests, 175 shared golf-club
+tests (two optional `build123d` skips), and all 877 React tests. Python 3.12
+with pinned Mypy 1.13, Ruff/format, TypeScript, ESLint, Vite production build,
+docs governance, changed-test assertions, changed-source size, and diff checks
+pass.
+
+### 2026-08-13 Sasho nearest-shaft face-center rotational AoA (#4434)
+
+Version 1.16.70 adds Sasho's proposed descriptive rotation-only AoA as a third
+peer method beside the existing remove-shaft counterfactual and two-factor
+Shapley attribution. For face center `F`, shaft line point `A`, unit shaft
+direction `s`, and complete club angular velocity `omega`, the authority uses
+`Q = A + s(s dot (F-A))`, `v = omega x (F-Q)`, and the standard signed AoA of
+`v`. The stable method ID is
+`sasho_nearest_shaft_face_center_rotation_only_aoa_v1`.
+
+Python and React share an exact golden, and PyQt6/React expose the scalar,
+definition, nearest-shaft geometry, and independently selectable velocity
+vector.
+Impact-scene export advances to v3 so the method ID, nearest point, lever,
+velocity, and AoA are retained. This metric uses complete angular velocity; it
+is descriptive, non-additive, and neither a causal claim nor interchangeable
+with the shaft-axis-only counterfactual or Shapley value. Issue #4434 is linked
+to shaft-rotation epic #4206 and current Rate goal #4135.
+
+Exact-tree evidence passes 1,222 Rate/PyQt tests, 170 shared golf-club tests
+(two optional `build123d` skips), and all 876 React tests. Python 3.12 with
+pinned Mypy 1.13 passes the seven changed production Python modules; Ruff,
+TypeScript, ESLint, Vite production build, docs governance, changed-test
+assertions, 400-line changed-source policy, and diff checks pass.
 
 ### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
@@ -4621,6 +4666,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.72 | fix(rate-of-closure, #4142 R10.4/R10.6): canonicalize floating signed zero across plan JSON, snapshots, and digests; bound shared plan integers to the exact JavaScript-safe domain; reject out-of-domain digest integers and unknown React runtime metadata fields; add signed-zero/edge-float cross-runtime golden evidence without expanding archive, producer, RNG, solver, or replay claims. |
 | 2026-08-13 | 1.16.71 | feat(rate-of-closure, #4142 R10.4/R10.6): add a separate strict variation execution document and immutable resolved-base/registry-unit sidecar; bind Python complete requests and React inline/Worker requests/results; provide exact shared launch-registry parity and explicit legacy current-registry warnings without changing plan schema v2, archives, paired producers, RNGs, solvers, sampling, or physics. |
 | 2026-08-13 | 1.16.70 | fix(rate-of-closure, #4142 R10.4/R10.6): require Python variation plans to use registered flight-model identities and fail complete Rate ensemble requests when plan/base models differ; restrict browser variation import/library/execution/Worker preflight to the actually implemented Waterloo/Penner model with explicit edit-or-recreate warnings and no silent migration, while leaving schema, RNG, archive, paired-producer, and physics contracts unchanged. |
+| 2026-08-13 | 1.16.71 | fix(rate-of-closure, #4434): retain and expose the complete Sasho method geometry and velocity evidence in Python, React, PyQt6, and impact-scene v3; close sign, zero-motion, on-axis, line-invariance, rigid-frame, and invalid-input contract boundaries. |
+| 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4434): add Sasho nearest-shaft face-center rotation-only AoA as a separately labeled Python/React/PyQt metric and vector, exact cross-runtime golden, and strict impact-scene v3 export; retain explicit non-additive/noncausal distinction from counterfactual and Shapley methods. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |

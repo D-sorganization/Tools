@@ -54,6 +54,7 @@ def test_documented_generated_wedge_geometry_pins_shaft_aoa_contribution() -> No
         angular_velocity_rad_s=tuple(shaft_omega),
         shaft_axis_point_m=(0.0, 0.0, 0.0),
         shaft_axis_unit=tuple(shaft_axis),
+        face_center_point_m=tuple(contact_offset),
         contact_point_m=tuple(contact_offset),
         face_normal_unit=(1.0, 0.0, 0.0),
         leading_edge_tangent_unit=(0.0, 0.0, 1.0),

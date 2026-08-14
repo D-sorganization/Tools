@@ -210,6 +210,14 @@ describe("SimulationPanel impact club", () => {
     })).toHaveTextContent("Shaft AoA Contribution");
     expect(screen.getByRole("complementary", {
       name: "Impact Kinematics Engineering Readout",
+    })).toHaveTextContent("Sasho Face-Center Rotation-Only AoA");
+    expect(screen.getByRole("checkbox", {
+      name: "Sasho Face-Center Rotation",
+    })).toBeChecked();
+    expect(screen.getByLabelText("Sasho nearest-shaft geometry"))
+      .toHaveTextContent("sasho_nearest_shaft_face_center_rotation_only_aoa_v1");
+    expect(screen.getByRole("complementary", {
+      name: "Impact Kinematics Engineering Readout",
     })).toHaveTextContent("Geometry Basis");
     expect(screen.getByRole("complementary", {
       name: "Impact Kinematics Engineering Readout",

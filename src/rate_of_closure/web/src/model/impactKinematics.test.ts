@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import { getClub } from "./club";
+import sashoFixture from "./__fixtures__/sasho_face_center_rotation_golden_v1.json";
 import { add, cross, norm, sub } from "./impactPhysics";
 import { DEFAULT_SCENARIO, solve } from "./impact";
-import { exactEventSample, impactKinematics } from "./impactKinematics";
+import {
+  SASHO_FACE_CENTER_ROTATION_METHOD_ID,
+  exactEventSample,
+  impactKinematics,
+  sashoFaceCenterRotationAoa,
+} from "./impactKinematics";
 import { runSimulation, type SimulationInput } from "./simulation";
 
 const scenario = {
@@ -30,6 +36,50 @@ const input: SimulationInput = {
 };
 
 describe("impact kinematics", () => {
+  it("matches the Python-owned Sasho nearest-shaft face-center golden", () => {
+    const result = sashoFaceCenterRotationAoa(
+      sashoFixture.angular_velocity_rad_s as [number, number, number],
+      sashoFixture.shaft_axis_point_m as [number, number, number],
+      sashoFixture.shaft_axis_unit as [number, number, number],
+      sashoFixture.face_center_point_m as [number, number, number],
+    );
+
+    expect(result.methodId).toBe(SASHO_FACE_CENTER_ROTATION_METHOD_ID);
+    expect(result.methodId).toBe(sashoFixture.expected.method_id);
+    result.nearestShaftPointM.forEach((value, index) =>
+      expect(value).toBeCloseTo(sashoFixture.expected.nearest_shaft_point_m[index], 12));
+    result.leverArmM.forEach((value, index) =>
+      expect(value).toBeCloseTo(sashoFixture.expected.lever_arm_m[index], 12));
+    result.velocityMps.forEach((value, index) =>
+      expect(value).toBeCloseTo(sashoFixture.expected.velocity_mps[index], 12));
+    expect(result.aoaDeg).toBeCloseTo(sashoFixture.expected.aoa_deg, 12);
+  });
+
+  it("fails closed on invalid Sasho geometry", () => {
+    expect(() => sashoFaceCenterRotationAoa(
+      [Number.NaN, 10, -4], [0, 0, 0], [0, 1, 0], [0.02, 0.1, 0.03],
+    )).toThrow(/angular velocity/i);
+    expect(() => sashoFaceCenterRotationAoa(
+      [2, 10, -4], [0, 0, 0], [0, 0, 0], [0.02, 0.1, 0.03],
+    )).toThrow(/shaft axis/i);
+  });
+
+  it("pins Sasho sign and zero-velocity availability", () => {
+    const negative = sashoFaceCenterRotationAoa(
+      [-2, -10, 4], [0, 0, 0], [0, 1, 0], [0.02, 0.1, 0.03],
+    );
+    const zero = sashoFaceCenterRotationAoa(
+      [0, 0, 0], [0, 0, 0], [0, 1, 0], [0, 0.1, 0],
+    );
+
+    expect(negative.velocityMps).toEqual(expect.arrayContaining([
+      expect.closeTo(-0.3, 12), expect.closeTo(0.14, 12), expect.closeTo(0.2, 12),
+    ]));
+    expect(negative.aoaDeg).toBeCloseTo(21.220700223593433, 12);
+    expect(zero.velocityMps).toEqual([0, 0, 0]);
+    expect(zero.aoaDeg).toBeNull();
+  });
+
   it("reconciles the manual rigid-body point-velocity fixture", () => {
     const metrics = impactKinematics(
       runSimulation(input), scenario, getClub("Pitching Wedge"),
@@ -40,6 +90,13 @@ describe("impact kinematics", () => {
     expect(metrics.contactAoaDeg).toBeCloseTo(expected.aoaDeviationDeg, 10);
     expect(metrics.shaftAoaContributionDeg).toBeLessThan(0);
     expect(metrics.shaftRotationRateDps).toBeCloseTo(1307, 10);
+    expect(metrics.shaftShapleyAoaDeg).not.toBeNull();
+    expect(metrics.sashoFaceCenterRotation.methodId).toBe(
+      SASHO_FACE_CENTER_ROTATION_METHOD_ID,
+    );
+    expect(metrics.sashoFaceCenterRotation.velocityMps).not.toEqual(
+      metrics.vectors.find((vector) => vector.key === "shaftRotation")!.vectorMps,
+    );
     const vectors = Object.fromEntries(metrics.vectors.map((vector) => [vector.key, vector.vectorMps]));
     const reconstructed = vectors.axisTranslation.map((value: number, index: number) =>
       value + vectors.shaftRotation[index] + vectors.otherRotation[index]);
