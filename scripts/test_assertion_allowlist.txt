@@ -29,3 +29,5 @@ src/shared/python/swing_sim/impact/tests/__init__.py
 src/shared/python/swing_sim/putting/tests/__init__.py
 src/shared/python/swing_sim/solver/tests/__init__.py
 src/shared/python/swing_sim/variation/tests/__init__.py
+# pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
+src/document_processing/pdf_renamer/tests/conftest.py
