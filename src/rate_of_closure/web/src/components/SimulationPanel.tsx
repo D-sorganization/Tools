@@ -8,7 +8,6 @@ import {
   type SimulationRunTs,
   type WebSourceKind,
 } from "../model/simulation";
-import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
 import { solve, type ImpactScenario } from "../model/impact";
 import { type SpatialTargetTs } from "../model/spatialTarget";
@@ -22,6 +21,7 @@ import { TorqueProfilePanel } from "./TorqueProfilePanel";
 import { JointLockControls } from "./JointLockControls";
 import { BallSetupControl } from "./BallSetupControl";
 import { SimulationDisplay } from "./SimulationDisplay";
+import { SimulationImpactTimeControl } from "./SimulationImpactTimeControl";
 import {
   defaultBallSetupForClub,
   type BallSetup,
@@ -55,7 +55,11 @@ interface Props {
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
+  /** Testable scientific execution boundary; defaults to the production kernel. */
+  executeSimulation?: SimulationExecutor;
 }
+
+export type SimulationExecutor = (input: SimulationInput) => SimulationRunTs;
 
 export function SimulationPanel({
   scenario,
@@ -65,6 +69,7 @@ export function SimulationPanel({
   spatialTarget,
   onSpatialTargetChange,
   distanceUnit = "yd",
+  executeSimulation = runSimulation,
 }: Props) {
   const clubDefaultSetup = defaultBallSetupForClub(clubSpec);
   const [initialBallPreference] = useState(() => {
@@ -146,15 +151,25 @@ export function SimulationPanel({
     ? `Impact physics uses ${clubSpec.name}: ${clubSpec.headMassKg.toFixed(3)} kg head mass, ${clubSpec.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${clubSpec.loftDeg.toFixed(1)}° nominal loft. COR uses the ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} driver default because the club library does not yet define measured COR.`
     : `No selected club specification was provided. Impact physics uses the default driver: ${DEFAULT_IMPACT_CLUB.headMassKg.toFixed(3)} kg head mass, ${DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} COR.`;
 
-  const doRun = () => {
+  const executeCandidate = (candidateInput: SimulationInput) => {
     try {
-      const result = runSimulation(input);
+      const result = executeSimulation(candidateInput);
       setRun(result);
-      setLastRunSignature(inputSignature);
+      setLastRunSignature(JSON.stringify(candidateInput));
       setRunError(null);
     } catch (error) {
-      setRunError(error instanceof Error ? error.message : String(error));
+      setRunError(
+        (error instanceof Error ? error.message : String(error)).slice(0, 512),
+      );
     }
+  };
+  const doRun = () => executeCandidate(input);
+  const commitImpactTime = (valueMs: number | null) => {
+    setTauMs(valueMs);
+    executeCandidate({
+      ...input,
+      impactTimeS: valueMs === null ? null : valueMs / 1000,
+    });
   };
   const runIsStale = run !== null && lastRunSignature !== inputSignature;
   const completedStatus = run?.impactOutcome.status === "miss"
@@ -174,7 +189,9 @@ export function SimulationPanel({
       ].filter((detail): detail is string => detail !== null)
     : [];
   const runStatus = runError
-    ? `Run failed: ${runError}`
+    ? `Run failed: ${runError}; ${run
+      ? "prior accepted scene retained"
+      : "no accepted simulation available"}`
     : runIsStale
       ? "Inputs changed — run required"
       : run ? [completedStatus, ...completedDetails].join("; ") : "Not run";
@@ -270,41 +287,14 @@ export function SimulationPanel({
               onRunConfigChange={setDoublePendulumRun}
             />
           )}
-          <label
-            className="mb-3 block text-sm"
-            title={FIELD_GUIDANCE.impactTimeScrub}
-          >
-            <span className="mb-1 flex justify-between text-slate-300">
-              <span>Impact Time τ</span>
-              <span className="text-slate-500">
-                {tauMs === null ? "auto" : `${tauMs.toFixed(0)} ms`}
-              </span>
-            </span>
-            <input
-              type="range"
-              aria-label="Impact Time"
-              min={0}
-              max={swingDuration * 1000}
-              step={1}
-              value={
-                tauMs ??
-                (run
-                  ? (run.impactTimeS ?? run.impactOutcome.candidateTimeS) * 1000
-                  : swingDuration * 500)
-              }
-              disabled={contactMode === "fixed_ball_contact"}
-              title={FIELD_GUIDANCE.impactTimeScrub}
-              onChange={(e) => setTauMs(Number(e.target.value))}
-              onMouseUp={doRun}
-              onTouchEnd={doRun}
-              className="w-full disabled:cursor-not-allowed disabled:opacity-40"
-            />
-            {contactMode === "fixed_ball_contact" && (
-              <span className="mt-1 block text-xs text-amber-300/90">
-                Impact time is detected from closest approach in this mode.
-              </span>
-            )}
-          </label>
+          <SimulationImpactTimeControl
+            contactMode={contactMode}
+            run={run}
+            swingDuration={swingDuration}
+            tauMs={tauMs}
+            onPreview={setTauMs}
+            onCommit={(valueMs) => commitImpactTime(valueMs)}
+          />
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -316,10 +306,7 @@ export function SimulationPanel({
             </button>
             <button
               type="button"
-              onClick={() => {
-                setTauMs(null);
-                doRun();
-              }}
+              onClick={() => commitImpactTime(null)}
               title="Reset the impact instant to the moment of maximum clubhead speed"
               className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500"
             >

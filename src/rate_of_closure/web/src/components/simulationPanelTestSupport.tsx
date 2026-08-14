@@ -5,7 +5,10 @@ import type { ClubSpec } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
-import { SimulationPanel } from "./SimulationPanel";
+import {
+  SimulationPanel,
+  type SimulationExecutor,
+} from "./SimulationPanel";
 
 export const defaultSpatialTarget = spatialTargetFromRegion(DEFAULT_TARGET);
 
@@ -34,6 +37,7 @@ export function installSimulationPanelTestEnvironment(): void {
 export function renderSimulationPanel(
   clubSpec?: ClubSpec | null,
   onSpatialTargetChange: (target: SpatialTargetTs) => void = () => undefined,
+  executeSimulation?: SimulationExecutor,
 ) {
   return render(
     <SimulationPanel
@@ -43,6 +47,7 @@ export function renderSimulationPanel(
       onScenarioChange={() => undefined}
       spatialTarget={defaultSpatialTarget}
       onSpatialTargetChange={onSpatialTargetChange}
+      executeSimulation={executeSimulation}
     />,
   );
 }

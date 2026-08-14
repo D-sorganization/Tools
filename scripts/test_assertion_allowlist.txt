@@ -26,5 +26,7 @@ tests/rate_of_closure/pyqt_variation_visual_state_probe.py
 tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py
 # Subprocess entrypoint; semantic assertions live in the owning rendered test.
 tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_simulation_scrub_probe.py
 # Subprocess entrypoint; semantic assertions live in the owning tab-visibility test.
 tests/rate_of_closure/pyqt_visualization_tab_probe.py

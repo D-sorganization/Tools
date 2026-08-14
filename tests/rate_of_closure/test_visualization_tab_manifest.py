@@ -88,6 +88,24 @@ def test_flight_manifest_names_synchronous_atomic_inspector_states() -> None:
     )
 
 
+def test_simulation_manifest_names_honest_synchronous_retained_states() -> None:
+    manifest = load_visualization_tab_manifest()
+    react = next(
+        entry
+        for entry in manifest.tabs
+        if entry.surface == "react" and entry.tab_id == "simulation"
+    )
+    pyqt = next(
+        entry
+        for entry in manifest.tabs
+        if entry.surface == "pyqt" and entry.tab_id == "simulation"
+    )
+    assert react.states["loading"] == "synchronous-not-observable"
+    assert pyqt.states["loading"] == "synchronous-not-observable"
+    assert react.states["error"] == "status-and-prior-or-empty-scene"
+    assert pyqt.states["error"] == "status-and-prior-or-empty-scene"
+
+
 def test_governance_rejects_a_missing_or_duplicate_registered_tab() -> None:
     manifest = load_visualization_tab_manifest()
     pyqt = manifest.for_surface("pyqt")

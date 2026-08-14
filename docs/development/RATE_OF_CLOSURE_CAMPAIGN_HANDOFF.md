@@ -1,5 +1,27 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Simulation exact scrub authority
+
+- React range pointer release and Arrow/Home/End/Page keyboard commits construct
+  and execute the exact impact-time candidate. Auto tau executes a null
+  impact-time request directly; it does not depend on asynchronous state
+  publication or a stale closure.
+- Successful execution publishes run plus input signature together. Failure
+  publishes neither, retains prior accepted evidence when present, and exposes
+  a bounded status. PyQt's already-correct keyboard/Auto path is regression
+  pinned; its successful-run publication was extracted without changing the
+  scientific kernel or view authority.
+- Both manifests now describe loading as synchronous and not observable.
+  Chromium artifacts cover three viewports with product-driven scene
+  prominence and no test scroll. Two PyQt DPI runs capture result and planted
+  dependency-error prior states as window/canvas pairs; the diagnostic scrolls
+  the setup pane to make the persistent error label human-reviewable and proves
+  the canvas hash is unchanged.
+- The six React and eight PyQt PNGs are diagnostic, not approved baselines.
+  Async/cancel behavior is not invented for these synchronous paths, and
+  approved goldens, formal AT validation, performance qualification, and the
+  remaining #4433 tabs stay open. SPEC is 1.16.95.
+
 ## 2026-08-13 #4433 Flight hosted typing closure
 
 - The accepted-flight NumPy snapshot has an explicit array return, Qt signals

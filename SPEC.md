@@ -26,11 +26,26 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.94                                    |
-| **Spec Version**        | 1.16.94                                    |
+| **Current Version**     | 1.16.95                                    |
+| **Spec Version**        | 1.16.95                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Simulation exact scrub authority (#4433)
+
+Version 1.16.95 requires React pointer, keyboard, and Auto tau actions to
+execute the exact candidate impact-time request before result publication.
+Failures retain the prior accepted scene or an honest empty state and surface a
+bounded status. PyQt retains its existing exact keyboard/Auto behavior and
+extracts successful-run publication into a focused mixin. Both runtime
+manifests identify execution as synchronous with no observable loading state.
+Three Chromium viewports and two PyQt DPI scales provide diagnostic result,
+stale, and error-prior evidence; the PyQt diagnostic scrolls the setup pane to
+show the persistent error while separately proving exact retained canvas
+identity. These artifacts are not approved goldens. Async/cancel semantics,
+formal AT approval, performance qualification, and remaining #4433 tabs are
+still open.
 
 ### 2026-08-13 Flight hosted typing closure (#4433)
 

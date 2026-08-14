@@ -44,6 +44,7 @@ PYQT_AUTHORITY_PATHS = {
     "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
     "tests/rate_of_closure/pyqt_club_camera_probe.py",
     "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+    "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
     "tests/rate_of_closure/test_club_camera.py",
     "tests/rate_of_closure/test_club_mesh_source.py",
     "tests/rate_of_closure/test_club_view_camera.py",
@@ -55,6 +56,9 @@ PYQT_AUTHORITY_PATHS = {
     "tests/rate_of_closure/test_mesh.py",
     "tests/rate_of_closure/test_pyqt_club_camera_rendered.py",
     "tests/rate_of_closure/test_pyqt_flight_sample_inspector_rendered.py",
+    "tests/rate_of_closure/test_pyqt_simulation_scrub_rendered.py",
+    "tests/rate_of_closure/test_simulation_gui.py",
+    "tests/rate_of_closure/test_simulation_scrub_authority.py",
     "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py",
     "tests/rate_of_closure/pyqt_variation_render_probe.py",
     "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
@@ -157,6 +161,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
         "tests/rate_of_closure/test_pyqt_club_camera_rendered.py "
         "tests/rate_of_closure/test_pyqt_flight_sample_inspector_rendered.py "
+        "tests/rate_of_closure/test_pyqt_simulation_scrub_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
     assert (
@@ -172,6 +177,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
         "tests/rate_of_closure/test_pyqt_club_camera_rendered.py "
         "tests/rate_of_closure/test_pyqt_flight_sample_inspector_rendered.py "
+        "tests/rate_of_closure/test_pyqt_simulation_scrub_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
 

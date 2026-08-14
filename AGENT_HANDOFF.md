@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Simulation exact scrub authority (#4433)
+
+Version 1.16.95 makes every accepted React impact-time action execute the
+candidate shown by that action: pointer release, keyboard range commit, and
+Auto tau no longer reuse stale closure state. A failed synchronous execution
+retains the prior accepted scene, bounds its status text, and never publishes a
+candidate result. PyQt already had exact keyboard/Auto execution; its run
+publication is now isolated in a responsibility-specific mixin and its manifest
+correctly says synchronous loading is not observable. Six Chromium viewport
+PNGs and eight PyQt window/canvas DPI PNGs are diagnostic-only; the PyQt error
+window is deliberately scrolled to the persistent product status for review.
+Approved goldens, formal AT qualification, and the remaining #4433 tabs stay
+open.
+
 ## 2026-08-13 Flight hosted typing closure (#4433)
 
 Version 1.16.94 narrows the immutable NumPy return, keeps Qt signals and

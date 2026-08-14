@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Simulation exact scrub authority (#4433)
+
+- React pointer, keyboard, and Auto tau actions now execute the exact candidate
+  impact-time request before publishing it. Auto sends null authority directly
+  instead of rerunning the previous tau through a stale state closure.
+- A synchronous execution failure retains the prior accepted scene or reports
+  an honest first-run empty state; error text is bounded to 512 characters.
+  PyQt keeps its existing exact keyboard/Auto behavior and now owns run
+  publication in a focused mixin.
+- React evidence covers 1440x900, 1280x720, and 390x844 without test-side visual
+  scrolling. PyQt result/error-prior evidence covers DPI 1.0/1.5, preserves the
+  exact accepted canvas, and scrolls only the diagnostic setup pane so the real
+  persistent error status is readable. All PNGs remain diagnostic. SPEC is
+  1.16.95; #4433 remains open.
+
 ## 2026-08-13 Flight hosted typing closure (#4433)
 
 - The immutable NumPy return is explicitly narrowed, Qt signal/event ownership
