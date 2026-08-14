@@ -67,9 +67,22 @@ jobs:
           "
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  # The dispatcher itself runs on a hosted runner for public repos: standard
+  # GitHub-hosted runners are free and unmetered there, and pinning this job to
+  # the fleet burned a self-hosted slot per run purely to decide where to run,
+  # while every job with `needs: pick-runner` queued behind it.
+  #
+  # Only this job's placement changes. The hardware and large-integration lanes
+  # (`fix-brick-toolcache`, `tests`, `rust-quality-gate`) keep their explicit
+  # `d-sorg-fleet` targets, and no job consumes `pick-runner`'s `runner` output.
+  #
+  # Private repos still fall through to the fleet, so no Actions minutes are
+  # billed. Reverting: set the repo variable CI_RUNNER_MODE=local.
   pick-runner:
-    runs-on: d-sorg-fleet
-    timeout-minutes: 2
+    runs-on:
+      ${{ !github.event.repository.private && vars.CI_RUNNER_MODE != 'local' && 'ubuntu-latest' ||
+      'd-sorg-fleet' }}
+    timeout-minutes: 3
     outputs:
       runner: ${{ steps.check.outputs.runner }}
     steps:
@@ -78,7 +91,12 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+          # Fleet-standard variable is CI_RUNNER_MODE (Project_Template,
+          # runner-dashboard, Maxwell_Daemon). LOCAL_RUNNER_MODE is this repo's
+          # legacy name, kept as a fallback so the rename cannot break routing;
+          # drop it once the variable is retired org-wide.
+          LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
         run: |
           MODE="${LOCAL_MODE:-local}"
           echo "Fleet mode: $MODE"
@@ -93,6 +111,17 @@ jobs:
               exit 1
               ;;
             *)
+              # Public repos get free unmetered hosted runners, so there is no
+              # reason to fail closed when the fleet is saturated. This matters
+              # because the fleet routinely runs at zero IDLE runners while
+              # still fully online: the availability probe below counts
+              # `busy == false`, so without this branch any non-local mode
+              # would fail the job outright rather than fall back.
+              if [ "$REPOSITORY_PRIVATE" != "true" ]; then
+                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+                echo "Public repo - routing to free hosted runner (mode=$MODE)"
+                exit 0
+              fi
               AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
                 --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
                 2>/dev/null || echo "0")
