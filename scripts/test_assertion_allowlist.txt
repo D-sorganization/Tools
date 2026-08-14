@@ -21,3 +21,11 @@ src/shared/python/swing_sim/ground/tests/__init__.py
 src/shared/python/swing_sim/ground/tests/_support.py
 # Flight-through-regional deterministic builders shared by split contract tests.
 src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py
+# Package markers for the split swing_sim contract test packages. These are empty
+# __init__.py files, same class as the ground/tests marker allowlisted above.
+src/shared/python/swing_sim/tests/__init__.py
+src/shared/python/swing_sim/flight/tests/__init__.py
+src/shared/python/swing_sim/impact/tests/__init__.py
+src/shared/python/swing_sim/putting/tests/__init__.py
+src/shared/python/swing_sim/solver/tests/__init__.py
+src/shared/python/swing_sim/variation/tests/__init__.py
