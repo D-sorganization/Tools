@@ -12,6 +12,7 @@ import { sampleInputs } from "./variationSampling";
 import {
   validateLocalizedTrialCommands, validateSwingTrialPayload,
 } from "./variationSwingResultValidation";
+import { validateVariationExecutionMetadata } from "./variationExecutionMetadata";
 
 export const MAX_WORKER_ERROR_LENGTH = 512;
 
@@ -31,6 +32,7 @@ export const validateExecutionRequest = (request: VariationExecutionRequest): vo
     throw new Error("Invalid variation analysis execution policy.");
   }
   validatePlan(request.plan);
+  validateVariationExecutionMetadata(request.plan, request.executionMetadata);
 };
 
 const stringArray = (value: unknown, field: string): string[] => {
@@ -199,6 +201,18 @@ export const validateResult = (
   request: VariationExecutionRequest,
 ): VariationExecutionResult => {
   if (!isRecord(value)) return failProtocol("result message");
+  if (!isRecord(value.executionMetadata)) return failProtocol("result execution metadata");
+  try {
+    validateVariationExecutionMetadata(
+      request.plan,
+      value.executionMetadata as unknown as typeof request.executionMetadata,
+    );
+    if (JSON.stringify(value.executionMetadata) !== JSON.stringify(request.executionMetadata)) {
+      return failProtocol("result execution metadata identity");
+    }
+  } catch {
+    return failProtocol("result execution metadata");
+  }
   const runJoint = request.analysisExecution !== "individual";
   const runIndividual = request.analysisExecution !== "all_together";
   const expectedEnsemble = runJoint && request.plan.mode === "swing";
@@ -216,7 +230,7 @@ export const validateResult = (
       && JSON.stringify(dataset) !== JSON.stringify(ensemble.dataset)) {
     return failProtocol("dataset and ensemble cohesion");
   }
-  return { dataset, sensitivity, ensemble };
+  return { dataset, sensitivity, ensemble, executionMetadata: request.executionMetadata };
 };
 
 export const workerError = (value: unknown): Error | DOMException => {

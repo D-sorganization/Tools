@@ -557,6 +557,87 @@ hosted Python 3.12 + Mypy 1.13 policy passes the six changed production Python
 files. TypeScript, ESLint, Vite build, Ruff/format, assertion, documentation,
 changed-source 400-line, module-size, fixture-parity, conflict-marker, and diff
 gates also pass.
+### 2026-08-13 Sample/config and executor identity correction (#4142)
+
+Version 1.16.74 closes two provenance gaps in @2. A Python request carrying the
+PCG64/SeedSequence identity must contain the exact plan-derived sample matrix,
+including canonical row order and signed-zero normalization. Every sampled
+global or localized value must match the `SimulationConfig` executed at that
+row, rejecting value tampering, permutation, subset, and config-order drift.
+
+The canonical Python executor/solver identity is retained only when the exact
+internal `run_simulation` entry point executes the request. Dependency-injected
+test executors are relabeled `test-injected-executor@1` with `unknown@1` solver
+in the stream header and result. A forged production or unsupported live
+identity still fails closed. This remains an in-memory live-result contract;
+archive and paired-producer integration is unchanged.
+
+### 2026-08-13 Runtime-specific replay identity (#4142 R10.4)
+
+Version 1.16.73 advances the strict sidecar to
+`rate-of-closure/variation-execution-document@2`. It records exact RNG
+algorithm and stream-derivation IDs/versions plus runtime, executor, and solver
+implementation IDs/versions. Python identifies NumPy Generator PCG64 streams
+derived through SeedSequence from the safe seed and CRC32 of UTF-8 spec ID;
+React identifies mulberry32 streams derived by low-32-bit seed XOR FNV-1a over
+JavaScript UTF-16 code units. Python configured simulation uses SciPy RK45
+flight; React records mode-specific fixed-RK4 Waterloo execution.
+
+These identities deliberately differ. Two golden @2 documents share exact plan
+and registry hashes but each runtime accepts only its own document. Tests pin
+same-runtime replay; portable Python/React RNG or numerical replay is not
+claimed. Strict @1 document import fails with instructions to resolve its raw
+plan into a fresh @2 sidecar; historical replay remains unproven. Live Python
+results retain request metadata in memory. Archive codecs and paired producers
+remain explicit later integration dependencies and do not gain metadata by
+inference.
+
+### 2026-08-13 Execution metadata canonical-number correction (#4142)
+
+Version 1.16.72 defines canonical floating signed zero as positive zero for
+variation plan JSON, resolved-variable snapshots, and execution-metadata digest
+input in both Python and React. A second shared golden document exercises legal
+negative zero, adjacent representable binary64 values, and the maximum shared
+safe integer seed, proving one exact plan SHA-256 across the two implementations.
+
+Plan schema v2 is unchanged and v1/v2 readers continue accepting signed-zero
+input. `seed` and `n_runs` are now bounded to integers at or below `2^53 - 1`,
+the largest integer represented exactly by both runtimes. An unsafe legacy
+integer must be replaced explicitly and resolved into a fresh current-registry
+sidecar; it cannot support a historical or cross-runtime identity claim.
+Canonical digest encoding rejects integers outside this domain instead of
+coercing them to colliding binary64 values.
+
+React exact-field validation now applies to the camel-case in-memory metadata
+and every resolved-variable snapshot, not only JSON document parsing. Unknown
+fields therefore fail before inline execution or Worker posting and during
+Worker-result validation. Archive and paired-producer binding, RNG/stream
+identity, solver identity, and portable exact replay remain open.
+
+### 2026-08-13 Variation resolved-base execution identity (#4142 R10.4/R10.6)
+
+Version 1.16.71 preserves canonical variation plan schema v2 and introduces a
+separate strict `rate-of-closure/variation-execution-document@1`. Its immutable
+metadata sidecar records a canonical plan SHA-256, mode and flight-model label,
+the variable-registry schema identity/version/digest, and every ordered resolved
+base value with registered unit and stable physical dimension. Exact-field
+readers reject cross-plan, value/default, unit/dimension, registry, schema, and
+digest drift before execution or import acceptance.
+
+Complete Python Rate requests and React inline/Worker requests construct or
+validate the sidecar. React Worker results must return the exact request
+metadata. One launch-mode golden document proves exact Python/React read-write
+parity for the registry surface both runtimes actually share; it is not a claim
+of complete swing/delivery physics or solver parity.
+
+Existing plan-v1/v2 documents remain readable without silent metadata insertion.
+Executing/importing a raw legacy plan explicitly resolves a fresh sidecar from
+the current registry and presents a warning that this cannot establish its
+historical resolved defaults. Strict execution-document imports validate the
+sidecar before replacing UI controls. Ensemble archives and paired producers
+are deliberately unchanged and must bind this contract in later slices. RNG
+algorithm/stream version, solver implementation identity, dimensional output
+provenance, and portable exact cross-runtime replay remain open.
 
 ### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
@@ -4459,6 +4540,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-13 | 1.16.72 | fix(rate-of-closure, #4142 R13.3): close numerical and cross-runtime parity findings with finite response arithmetic, nonzero interventions, normalized binary64 CSV text, Unicode code-point caps, accurate pair counts, and an exact pinned-Mypy typed boundary. |
 | 2026-08-13 | 1.16.71 | fix(rate-of-closure, #4142 R13.3): harden paired attribution with immutable source pair rosters, complete source-target-pair matrices, canonical target semantics, shared ULP response policy, resource bounds, deep-frozen TypeScript values, and enriched formula-safe parity CSV. |
 | 2026-08-13 | 1.16.70 | feat(rate-of-closure, #4142 R13.3): define strict Python/TypeScript paired planted-intervention attribution authority, typed source/target/pair observations and denominators, raw CSV and view JSON, and accessible PyQt6/React consumers that fail closed because current Monte Carlo results do not retain isolated baseline pairs. |
+| 2026-08-13 | 1.16.72 | fix(rate-of-closure, #4142 R10.4/R10.6): canonicalize floating signed zero across plan JSON, snapshots, and digests; bound shared plan integers to the exact JavaScript-safe domain; reject out-of-domain digest integers and unknown React runtime metadata fields; add signed-zero/edge-float cross-runtime golden evidence without expanding archive, producer, RNG, solver, or replay claims. |
+| 2026-08-13 | 1.16.71 | feat(rate-of-closure, #4142 R10.4/R10.6): add a separate strict variation execution document and immutable resolved-base/registry-unit sidecar; bind Python complete requests and React inline/Worker requests/results; provide exact shared launch-registry parity and explicit legacy current-registry warnings without changing plan schema v2, archives, paired producers, RNGs, solvers, sampling, or physics. |
 | 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
 | 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
 | 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |

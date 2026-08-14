@@ -7,6 +7,7 @@ import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import {
   createVariationExecutionService,
   plannedVariationRuns,
+  prepareVariationExecutionRequest,
   type VariationExecutionProgress,
   type VariationExecutionResult,
   type VariationExecutionService,
@@ -134,7 +135,9 @@ export function useVariationExecution(
     setProgress(initialProgress);
     setStatus(runningStatus(initialProgress));
     try {
-      const request = { plan, analysisExecution };
+      // The prepared request carries the execution metadata that both the
+      // request and the returned result are validated against.
+      const request = prepareVariationExecutionRequest(plan, analysisExecution);
       validateExecutionRequest(request);
       const result = validateResult(await service.execute(
         request,

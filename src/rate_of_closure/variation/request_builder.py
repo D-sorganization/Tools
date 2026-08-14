@@ -28,6 +28,10 @@ from shared.python.swing_sim.variation import (
     VariationPlan,
     sample_inputs,
 )
+from shared.python.swing_sim.variation.execution_metadata import (
+    VariationExecutionMetadata,
+    make_execution_metadata,
+)
 
 
 def _key(category: str, name: str) -> str:
@@ -83,7 +87,12 @@ def build_simulation_ensemble_request(
     """
     _validate_request_context(plan, base_config)
     samples = sample_inputs(plan)
-    return build_simulation_ensemble_request_from_samples(plan, base_config, samples)
+    return build_simulation_ensemble_request_from_samples(
+        plan,
+        base_config,
+        samples,
+        execution_metadata=make_execution_metadata(plan),
+    )
 
 
 def _validate_request_context(
@@ -133,12 +142,19 @@ def build_simulation_ensemble_request_from_samples(
     plan: VariationPlan,
     base_config: SimulationConfig,
     sampled_inputs: np.ndarray,
+    *,
+    execution_metadata: VariationExecutionMetadata | None = None,
 ) -> SimulationEnsembleRequest:
     """Build a request from an explicit finite sample matrix.
 
     This seam is for deterministic experimental designs whose rows are the
     scientific authority (for example, planted baseline/perturbation pairs),
     rather than pseudorandom Monte Carlo draws.
+
+    ``execution_metadata`` stays ``None`` by default on purpose. The metadata
+    carries an RNG replay identity, and an explicit design matrix was not drawn
+    from that stream, so claiming it would assert a replay that cannot
+    reproduce these rows. Only the sampling seam supplies it.
     """
     _validate_request_context(plan, base_config)
     samples = _normalize_explicit_samples(sampled_inputs, plan)
@@ -146,7 +162,9 @@ def build_simulation_ensemble_request_from_samples(
     configs = tuple(
         _apply_row(base_config, plan, row) for row in np.asarray(samples, dtype=float)
     )
-    return SimulationEnsembleRequest(plan, samples, configs)
+    return SimulationEnsembleRequest(
+        plan, samples, configs, execution_metadata=execution_metadata
+    )
 
 
 def _apply_row(

@@ -11,6 +11,7 @@ from __future__ import annotations
 import threading
 import time
 from collections.abc import Mapping
+from dataclasses import replace
 from types import MappingProxyType
 from typing import TypeVar
 
@@ -44,6 +45,9 @@ from shared.python.swing_sim.solver.solve import (
     CancelledError,
     ProgressCallback,
     ProgressReport,
+)
+from shared.python.swing_sim.variation.execution_metadata import (
+    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
 )
 from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
@@ -181,6 +185,15 @@ def run_simulation_ensemble_chunks(
         state_units,
         commanded_torque_joint_ids(request.configs[0].source_kind),
     )
+    execution_metadata = request.execution_metadata
+    if executor is not run_simulation and execution_metadata is not None:
+        # An injected executor is never allowed to be reported as the pinned
+        # production implementation. Requests with no metadata (explicit design
+        # matrices) stay metadata-free rather than gaining a fabricated one.
+        execution_metadata = replace(
+            execution_metadata,
+            implementation_identity=PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
+        )
     header = EnsembleStreamHeader(
         request.plan,
         request.sampled_inputs,
@@ -189,6 +202,7 @@ def run_simulation_ensemble_chunks(
         APP_FRAME_ID,
         authority_layout,
         request_identity_sha256(request),
+        execution_metadata,
     )
     cells_per_trial = times.size * len(point_ids) * 3
     authority_bytes_per_trial = times.size * (

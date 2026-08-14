@@ -16,6 +16,12 @@ from shared.python.swing_sim.variation.ensemble_types import (
     require_coordinate_frame_id,
     require_point_ids,
 )
+from shared.python.swing_sim.variation.execution_metadata import (
+    PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
+    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
+    VariationExecutionMetadata,
+    validate_execution_metadata,
+)
 from shared.python.swing_sim.variation.spec import VariationPlan
 
 from ._ensemble_limits import MAX_INPUT_CELLS, require_ensemble_shape_limits
@@ -63,6 +69,7 @@ class EnsembleStreamHeader:
     coordinate_frame: str
     authority_layout: EnsembleAuthorityLayout | None = None
     request_identity_sha256: str | None = None
+    execution_metadata: VariationExecutionMetadata | None = None
 
     def __post_init__(self) -> None:
         require(isinstance(self.plan, VariationPlan), "plan must be a VariationPlan")
@@ -109,6 +116,25 @@ class EnsembleStreamHeader:
             or re.fullmatch(r"[0-9a-f]{64}", self.request_identity_sha256) is not None,
             "request_identity_sha256 must be lowercase SHA-256",
         )
+        if self.execution_metadata is not None:
+            identity = self.execution_metadata.implementation_identity
+            require(
+                identity
+                in {
+                    PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
+                    PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY,
+                },
+                "unsupported live implementation identity",
+            )
+            object.__setattr__(
+                self,
+                "execution_metadata",
+                validate_execution_metadata(
+                    self.plan,
+                    self.execution_metadata,
+                    expected_implementation_identity=identity,
+                ),
+            )
 
 
 @dataclass(frozen=True)
@@ -368,7 +394,9 @@ class CollectingEnsembleSink:
             sample_valid=self._valid,
             impact_sample_indices=self._impacts,
         )
-        result = SimulationEnsembleResult(outcomes, variation, traces)
+        result = SimulationEnsembleResult(
+            outcomes, variation, traces, header.execution_metadata
+        )
         self._finished = True
         return result
 

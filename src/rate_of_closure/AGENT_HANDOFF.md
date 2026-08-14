@@ -443,6 +443,62 @@
 
 SPEC 1.16.70 records the slice. Paired producer/Worker/ensemble-document
 wiring, prescribed/Rust parity, import and live authority exports remain open.
+## 2026-08-13 Request/executor identity correction (#4142)
+
+- PCG64 identity now requires exact plan-derived samples, canonical ordering,
+  and row-wise binding to actual global/localized `SimulationConfig` values.
+- Value tampering, row permutation/subset, and config-order drift fail closed.
+- Injected test executors produce `test-injected-executor` / `unknown` solver
+  metadata; only the internal production executor retains the SciPy-RK45 ID.
+- SPEC advances to 1.16.74; archive and paired integration remains open.
+
+## 2026-08-13 Runtime-specific replay sidecar (#4142)
+
+- Execution document/metadata schema @2 binds RNG algorithm/stream derivation
+  and runtime/executor/solver implementation IDs with explicit versions.
+- Python names PCG64 + SeedSequence safe-seed/CRC32-UTF-8 streams and its
+  configured-simulation/SciPy-RK45 path. React names mulberry32 + low32-seed
+  XOR FNV-1a-UTF-16 streams and mode-specific fixed-RK4 Waterloo paths.
+- Two goldens share plan/registry hashes while cross-runtime documents are
+  rejected. Same-runtime replay is pinned; portable replay is not claimed.
+- @1 strict documents fail with a fresh-@2 migration instruction. Live Python
+  results retain request metadata; archive/paired integration remains open.
+
+SPEC advances to 1.16.73.
+
+## 2026-08-13 Canonical-number and strict-runtime correction (#4142)
+
+- Plan writers and execution sidecars normalize floating `-0.0` to `+0.0` in
+  JSON, resolved snapshots, and canonical digest input in Python and React.
+- A shared edge fixture binds signed zero, adjacent representable floats, and
+  the maximum JavaScript-safe integer seed to one exact plan SHA-256.
+- Plan v1/v2 readers remain compatible, but unsafe `seed`/`n_runs` integers
+  above `2^53 - 1` now fail explicitly. Migration requires choosing a safe
+  value and resolving a fresh sidecar, not relabeling old identity evidence.
+- React validates exact camel-case runtime metadata and snapshot fields before
+  inline/Worker execution and rejects extra fields returned by a Worker.
+- SPEC advances to 1.16.72. Archive, paired-producer, RNG, and solver identity
+  integration remain open as previously documented.
+
+## 2026-08-13 Resolved-base and registry-unit sidecar (#4142 R10.4/R10.6)
+
+- Plan schema v2 remains byte-compatible; execution provenance is a separate
+  strict `variation-execution-document@1` wrapper and metadata sidecar.
+- The sidecar snapshots canonical plan SHA-256, mode, flight-model label,
+  registry schema/version/digest, and every ordered resolved value with its
+  registered unit and stable physical dimension.
+- Python `SimulationEnsembleRequest` and React inline/Worker request/result
+  paths validate this identity before execution or result acceptance.
+- Cross-plan, resolved-value/default, unit/dimension, registry, schema, and
+  digest drift fail closed. Launch-mode shared-fixture parity is exact; no
+  broader cross-runtime physics claim is made.
+- Raw legacy plans still load, resolve explicitly against the current registry,
+  and show a warning that historical reproducibility is unproven. Strict
+  execution-document imports validate before UI controls change.
+- Ensemble archives, paired producers, RNG/stream identity, solver identity,
+  and portable exact replay remain open follow-on dependencies.
+
+SPEC advances to 1.16.71.
 
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 

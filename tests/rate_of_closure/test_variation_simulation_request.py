@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 
+import numpy as np
 import pytest
 
 from rate_of_closure.club import get_club
@@ -19,6 +20,7 @@ from rate_of_closure.variation.request_builder import (
 from rate_of_closure.variation.simulation_adapter import (
     build_simulation_ensemble_request,
 )
+from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.types import PendulumParameters
 from shared.python.swing_sim.variation import (
@@ -28,6 +30,10 @@ from shared.python.swing_sim.variation import (
     CATEGORY_SWING,
     NoiseSpec,
     VariationPlan,
+)
+from shared.python.swing_sim.variation.execution_metadata import (
+    LEGACY_CURRENT_REGISTRY_WARNING,
+    make_execution_metadata,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -141,6 +147,61 @@ def test_builder_uses_default_pendulum_parameters_when_not_explicit() -> None:
 
     expected = PendulumParameters.golf_default()
     assert all(config.pendulum_parameters == expected for config in request.configs)
+
+
+def test_builder_binds_fresh_execution_metadata_without_legacy_warning() -> None:
+    plan = VariationPlan(mode="swing", noise=(_spec(_YAW, 0.1),), n_runs=2)
+
+    request = build_simulation_ensemble_request(plan, _base_config())
+
+    assert request.execution_metadata == make_execution_metadata(plan)
+    assert request.metadata_warning is None
+
+
+def test_direct_legacy_request_resolves_current_registry_with_warning() -> None:
+    plan = VariationPlan(mode="swing", noise=(_spec(_YAW, 0.1),), n_runs=2)
+    built = build_simulation_ensemble_request(plan, _base_config())
+
+    legacy = SimulationEnsembleRequest(plan, built.sampled_inputs, built.configs)
+
+    assert legacy.execution_metadata == make_execution_metadata(plan)
+    assert legacy.metadata_warning == LEGACY_CURRENT_REGISTRY_WARNING
+
+
+def test_request_rejects_cross_plan_execution_metadata() -> None:
+    first = VariationPlan(mode="swing", noise=(_spec(_YAW, 0.1),), n_runs=2)
+    second = dataclasses.replace(first, seed=first.seed + 1)
+    built = build_simulation_ensemble_request(second, _base_config())
+
+    with pytest.raises(ContractViolationError, match="plan digest"):
+        SimulationEnsembleRequest(
+            second,
+            built.sampled_inputs,
+            built.configs,
+            execution_metadata=make_execution_metadata(first),
+        )
+
+
+@pytest.mark.parametrize("mutation", ["value", "permutation", "subset", "config_order"])
+def test_identity_request_rejects_sample_or_config_order_drift(mutation: str) -> None:
+    plan = VariationPlan(mode="swing", noise=(_spec(_YAW, 0.1),), n_runs=3, seed=8)
+    built = build_simulation_ensemble_request(plan, _base_config())
+    samples = np.array(built.sampled_inputs, copy=True)
+    configs = built.configs
+    if mutation == "value":
+        samples[0, 0] += 0.01
+    elif mutation == "permutation":
+        samples = samples[::-1]
+    elif mutation == "subset":
+        samples = samples[:-1]
+        configs = configs[:-1]
+    else:
+        configs = configs[::-1]
+
+    with pytest.raises(
+        ContractViolationError, match="sampled_inputs|config order|configs must contain"
+    ):
+        SimulationEnsembleRequest(plan, samples, configs, built.execution_metadata)
 
 
 def test_global_value_seam_applies_every_fixed_contact_morris_variable() -> None:

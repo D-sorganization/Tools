@@ -463,6 +463,68 @@
   six changed production files; TS, ESLint, build, Ruff/format, assertion,
   docs, 400-line/module-size, fixture-parity, conflict-marker, and diff pass.
 - SPEC advances to 1.16.70.
+## 2026-08-13 #4142 request/executor identity correction
+
+- Python PCG64 requests recompute and require the exact plan sample matrix and
+  bind each row to the global/localized config values executed at that index.
+- Sample tampering, permutation, subset, and config-order drift are rejected.
+- An injected executor is labeled `test-injected-executor@1` and solver
+  `unknown@1` in stream/result metadata. Only exact internal production
+  execution keeps the configured-simulation/SciPy-RK45 identity.
+- SPEC advances to 1.16.74. Archive and paired producers are unchanged.
+
+## 2026-08-13 #4142 runtime-specific replay identity
+
+- Strict execution documents and metadata advance to @2 with versioned RNG,
+  stream-derivation, runtime, executor, and solver implementation identity.
+- Python identifies NumPy PCG64/SeedSequence with CRC32 over UTF-8 spec IDs and
+  configured simulation plus SciPy RK45 flight. React identifies mulberry32,
+  low32-seed XOR FNV-1a over UTF-16, and mode-specific fixed-RK4 Waterloo paths.
+- Python and React goldens have the same plan/registry hashes and deliberately
+  different execution identities; each runtime rejects the other's document.
+  Same-runtime replay is tested without claiming portable numerical parity.
+- @1 documents fail closed with explicit fresh-@2 migration guidance.
+  Live Python results bind request metadata in memory. Archive codecs and
+  paired producers remain later dependencies and historical metadata is never
+  inferred.
+- SPEC advances to 1.16.73.
+
+## 2026-08-13 #4142 execution-metadata canonical-number correction
+
+- Python and React canonical plan writers, resolved snapshots, and digest
+  encoders normalize floating signed zero to positive zero.
+- The shared edge-number golden covers legal `launch_azimuth_deg = -0.0`, two
+  adjacent representable floats, and seed `9007199254740991` with one exact
+  Python/React SHA-256.
+- Both plan contracts reject unsafe integer `seed`/`n_runs` values above
+  `2^53 - 1`, preventing Python integer-to-float digest collisions. Existing
+  v1/v2 files remain readable when values are safe; unsafe legacy values require
+  an explicit safe replacement and fresh current-registry sidecar.
+- React runtime request/result validation now rejects unknown metadata and
+  resolved-variable fields, including inline and Worker boundaries.
+- SPEC advances to 1.16.72. This correction does not close the documented
+  archive, paired-producer, RNG-stream, solver-identity, or replay gaps.
+
+## 2026-08-13 #4142 resolved-base execution metadata
+
+- Added a separate strict `rate-of-closure/variation-execution-document@1`;
+  plan schema v2 and its legacy v1/v2 readers remain unchanged.
+- Metadata binds the canonical plan digest, mode/flight-model label, registry
+  schema/version/digest, and ordered resolved variable values, units, and
+  physical dimensions. Readers reject unknown fields and all identity drift.
+- Python complete Rate requests bind a fresh/validated sidecar. React does the
+  same before inline work or Worker construction/posting and rejects result
+  metadata that differs from the request.
+- A shared launch-mode fixture passes exact Python/React read-write parity. It
+  is intentionally limited to their genuinely common execution registry and
+  does not assert complete physics or solver parity.
+- Raw legacy plan imports resolve against today's registry with a visible
+  warning that historical reproducibility is unproven. Strict document imports
+  validate before controls change, and raw plan JSON is never rewritten.
+- Archive and paired-producer binding remain later integration dependencies.
+  RNG/stream algorithm/version, solver implementation identity, and portable
+  cross-runtime exact replay remain open R10.4/R10.6 work.
+- SPEC advances to 1.16.71.
 
 ## 2026-08-13 #4142 integrated localized execution and confidence mesh
 

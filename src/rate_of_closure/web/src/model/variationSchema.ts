@@ -20,6 +20,7 @@ import {
 
 export const SCHEMA_VERSION = 2;
 export const MAX_RUNS = 500;
+export const MAX_SAFE_PLAN_INTEGER = Number.MAX_SAFE_INTEGER;
 
 export type Distribution = "normal" | "uniform" | "triangular";
 
@@ -187,11 +188,14 @@ export function validatePlan(plan: VariationPlanTs): void {
   if (plan.mode !== "delivery" && plan.mode !== "swing" && plan.mode !== "launch") {
     throw new Error(`mode ${plan.mode} is not supported in the browser`);
   }
-  if (!Number.isInteger(plan.nRuns) || plan.nRuns < 2 || plan.nRuns > MAX_RUNS) {
+  if (!Number.isSafeInteger(plan.nRuns)) {
+    throw new Error("nRuns must be a safe integer");
+  }
+  if (plan.nRuns < 2 || plan.nRuns > MAX_RUNS) {
     throw new Error(`nRuns must be an integer in [2, ${MAX_RUNS}]`);
   }
-  if (!Number.isInteger(plan.seed) || plan.seed < 0) {
-    throw new Error("seed must be a non-negative integer");
+  if (!Number.isSafeInteger(plan.seed) || plan.seed < 0) {
+    throw new Error("seed must be a non-negative safe integer");
   }
   if (plan.noise.length === 0) throw new Error("plan must vary at least one variable");
 

@@ -253,6 +253,27 @@ export function keysForMode(mode: VariationMode, ballSetup?: BallSetup): string[
   return keys;
 }
 
+const UNIT_DIMENSIONS: Readonly<Record<string, string>> = Object.freeze({
+  "": "dimensionless",
+  deg: "angle",
+  kg: "mass",
+  "kg·m²": "moment_of_inertia",
+  m: "length",
+  "m/s": "speed",
+  mm: "length",
+  mph: "speed",
+  "N·m": "torque",
+  "N·m·s": "torque_time",
+  rpm: "angular_frequency",
+  s: "time",
+});
+
+export const variableDimension = (unit: string): string => {
+  const dimension = UNIT_DIMENSIONS[unit];
+  if (dimension === undefined) throw new Error(`registered variable unit has no dimension: ${unit}`);
+  return dimension;
+};
+
 export const variableLabel = (key: string): string =>
   REGISTRY_BY_KEY.get(key)?.label ?? key;
 

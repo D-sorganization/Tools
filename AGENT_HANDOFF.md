@@ -461,6 +461,65 @@ Playwright scenarios pass. Exact hosted-policy Python 3.12 + Mypy 1.13 passes
 the six changed production Python files; TypeScript, ESLint, Vite build,
 Ruff/format, assertion, docs, changed-source 400-line, module-size, fixture-
 parity, conflict-marker, and diff gates pass.
+## 2026-08-13 Sample/config and executor identity correction (#4142)
+
+Version 1.16.74 requires PCG64-identified Python requests to match the exact
+plan-derived sample matrix and config row/value order. Tampered, permuted, or
+subset samples and permuted configs fail before execution. Custom test executor
+injection is explicitly relabeled `test-injected-executor` with an unknown
+solver in headers/results; it can no longer inherit the production configured-
+simulation/SciPy-RK45 claim. Archive and paired integration remain open.
+
+## 2026-08-13 Runtime-specific replay identity (#4142 R10.4)
+
+Version 1.16.73 advances strict execution documents/metadata to @2 with exact
+RNG algorithm, stream derivation, runtime, executor, and solver IDs/versions.
+Python records NumPy PCG64/SeedSequence plus configured simulation and SciPy
+RK45 flight. React records mulberry32/FNV-1a and its mode-specific fixed-RK4
+Waterloo path. Runtime-specific golden documents share plan/registry hashes but
+cross-runtime documents fail closed; only same-runtime replay is evidenced.
+
+@1 documents now provide an explicit fresh-@2 migration instruction and cannot
+prove historical replay. Live Python results carry request metadata in memory.
+Archive and paired-producer serialization remain open and must not synthesize
+identity for historical results.
+
+## 2026-08-13 Execution metadata canonical-number correction (#4142 R10.4/R10.6)
+
+Version 1.16.72 closes three fail-open identity gaps in the versioned execution
+sidecar. Python and React now canonicalize every floating signed zero to positive
+zero in plan JSON, resolved snapshots, and SHA-256 input. A shared golden
+document covers `-0.0`, adjacent representable floats, and the maximum safe
+integer seed with one exact cross-runtime digest.
+
+Plan v1/v2 readers remain schema-compatible, including signed-zero input, but
+`seed` and `n_runs` must now be integers no larger than `2^53 - 1`; this is the
+largest value represented exactly by both runtimes. Older unsafe-integer plans
+must be migrated by choosing a safe seed/run count and creating a fresh sidecar;
+they cannot claim historical cross-runtime identity. React runtime validators
+also reject unknown metadata or resolved-variable fields before inline work,
+Worker posting, or Worker-result acceptance.
+
+## 2026-08-13 Variation resolved-base execution identity (#4142 R10.4/R10.6)
+
+Version 1.16.71 leaves variation plan schema v2 unchanged and adds the separate,
+strict `rate-of-closure/variation-execution-document@1` contract. Its immutable
+metadata sidecar binds the canonical plan digest, mode and flight-model label to
+the current registry schema/digest plus every ordered resolved base value, unit,
+and stable physical dimension used by that runtime.
+
+Python complete-simulation requests and React inline/Worker requests create or
+validate this sidecar before execution. Worker results must return the exact
+request metadata. Cross-plan, default/value, unit/dimension, registry, schema,
+and digest drift fail closed; a shared launch-mode fixture proves exact Python /
+React writer-reader parity for their genuinely shared execution registry.
+
+Legacy schema-v1/v2 plan readers remain compatible. A raw plan is explicitly
+resolved against the current registry and surfaces a warning that this is not
+historical-reproducibility evidence; the plan JSON is never silently mutated.
+Strict execution-document imports verify the sidecar before replacing controls.
+Archive and paired-producer integration remain later dependencies, as do RNG /
+stream and solver-implementation identities and full cross-runtime replay.
 
 ## 2026-08-13 Integrated localized execution and confidence mesh (#4142)
 
