@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.95                                    |
-| **Spec Version**        | 1.14.95                                    |
-| **Last Spec Update**    | 2026-08-12                                 |
+| **Current Version**     | 1.14.96                                    |
+| **Spec Version**        | 1.14.96                                    |
+| **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
 
@@ -4997,6 +4997,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.14.96 | feat(rate-of-closure): consolidate the remaining 43 open `src/rate_of_closure` pull requests (club builder and impact tensor, flight/wind/wedge, multi-view workspace, ground, and the same-origin web companion) into one change, folding each stack top-down so non-tip carriers are retained; reconcile the PyQt and React module registries onto one 12-entry cross-client set with the PyQt-only ground-study tab declared unshared, wire the qualified club-assembly binding through both simulation clients, keep Matplotlib figures nonzero so a collapsed compositor viewport cannot raise a singular transform, project no-slip rolling onto the active surface after a region transition, and declare the `filelock` and `uvicorn` imports that collected tests reach unguarded. |
 | 2026-08-13 | 1.5.6 | fix(ci): drop the no-op `pick-runner` job from Convert Review Comments to Issues (it echoed only constants and fed nothing, while occupying a `d-sorg-fleet` slot per trigger) and narrow its `pull_request` trigger to `opened`, since `synchronize` and `closed` cannot surface new review comments; ignore `.codex-worktrees/` so agent scratch worktrees stop landing as gitlinks. |
 | 2026-08-13 | 1.5.6 | fix(pdf-renamer): close every `ResultCache` SQLite connection with `contextlib.closing` (the bare `sqlite3.connect` context manager commits the transaction but leaks the handle); make the sub-app's test package importable from its own conftest and repair two extractor tests whose patch targets invented unused attributes instead of intercepting the function-local `pypdf`/`fitz` imports. |
 | 2026-08-12 | 1.14.90 | feat(ground-study, #4369): add exact cooperative cancellation through registered Waterloo/Penner integration, dense-output sampling, retained-trajectory construction, metric publication, and canonical evidence serialization; preserve callback-free digests and wire contracts, map cancellation and callback defects to existing typed production terminals, and prove authority shutdown at solver and post-solver seams while retaining restart/static/frozen/compiled/downstream/release limitations. |
