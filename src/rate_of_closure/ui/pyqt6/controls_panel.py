@@ -39,12 +39,12 @@ from rate_of_closure.club import (
 )
 from rate_of_closure.model import _BOUNDS, ImpactScenario
 from rate_of_closure.presets import PRESETS, preset_names
-from rate_of_closure.ui.pyqt6.responsive_layout import HeightForWidthGroupBox
 from rate_of_closure.ui.pyqt6.club_artifact_ui import (
     export_clubhead_engineering_sidecar,
     export_clubhead_stl,
     import_club_assembly_binding,
 )
+from rate_of_closure.ui.pyqt6.responsive_layout import HeightForWidthGroupBox
 from rate_of_closure.units import (
     FIELD_GUIDANCE,
     QUANTITY_UNITS,
