@@ -12,6 +12,7 @@ import {
   normalizeHead,
   parseStl,
   triangleNormals,
+  writeBinaryStl,
   type Triangle,
   type Vec3,
 } from "./mesh";
@@ -30,22 +31,6 @@ endsolid parity
 
 function asciiBuffer(text: string): ArrayBuffer {
   return new TextEncoder().encode(text).buffer as ArrayBuffer;
-}
-
-/** Binary STL writer (test-only) matching mesh.py's write_binary_stl. */
-function writeBinaryStl(triangles: Triangle[]): ArrayBuffer {
-  const buffer = new ArrayBuffer(84 + triangles.length * 50);
-  const view = new DataView(buffer);
-  view.setUint32(80, triangles.length, true);
-  triangles.forEach((tri, t) => {
-    const base = 84 + t * 50 + 12; // skip the record normal (zeros)
-    tri.forEach((v, i) => {
-      view.setFloat32(base + i * 12, v[0], true);
-      view.setFloat32(base + i * 12 + 4, v[1], true);
-      view.setFloat32(base + i * 12 + 8, v[2], true);
-    });
-  });
-  return buffer;
 }
 
 /** Cuboid as 12 triangles — same layout as test_mesh.py. */
@@ -93,6 +78,32 @@ function extents(tris: Triangle[]): Vec3 {
 }
 
 describe("STL parser — parity with pytest", () => {
+  it("writes deterministic binary STL with a bounded ASCII header", () => {
+    const triangles = boxTriangles([0, 0, 0], [2, 6, 4]);
+    const first = writeBinaryStl(triangles, "contract");
+    const second = writeBinaryStl(triangles, "contract");
+    const bytes = new Uint8Array(first);
+
+    expect(bytes).toEqual(new Uint8Array(second));
+    expect(first.byteLength).toBe(84 + triangles.length * 50);
+    expect(new TextDecoder().decode(bytes.slice(0, 8))).toBe("contract");
+    expect(new DataView(first).getUint32(80, true)).toBe(triangles.length);
+    expect(parseStl(first)).toEqual(triangles);
+  });
+
+  it("rejects empty or non-finite binary STL source geometry", () => {
+    expect(() => writeBinaryStl([])).toThrow(/empty/i);
+    expect(() =>
+      writeBinaryStl([
+        [
+          [0, 0, 0],
+          [1, Number.NaN, 0],
+          [0, 1, 0],
+        ],
+      ]),
+    ).toThrow(/finite/i);
+  });
+
   it("parses the shared ASCII parity fixture to exact vertices", () => {
     const tris = parseStl(asciiBuffer(PARITY_ASCII));
     expect(tris).toEqual([

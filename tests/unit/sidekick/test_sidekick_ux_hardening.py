@@ -47,9 +47,7 @@ class TestF1PtyNewline:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
 
         written: list[bytes] = []
 
@@ -115,9 +113,7 @@ class TestF3RawOutputAppend:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
         widget = SidekickOsTerminalWidget(
             project_root=tmp_path,
             shells=[
@@ -202,9 +198,7 @@ class TestF5QSettingsConsolidation:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
         written: dict[str, Any] = {}
 
         class _FakeQSettings:
@@ -273,9 +267,7 @@ class TestF7HelpDialogSingleton:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -353,9 +345,7 @@ class TestF10QuickAccessPersistence:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
         explorer = ProjectFileExplorer(project_root=tmp_path, parent=None)
         qtbot.addWidget(explorer)
 
@@ -491,9 +481,7 @@ class TestF8AtomicTabSwap:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -525,9 +513,7 @@ class TestF8AtomicTabSwap:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -658,9 +644,7 @@ class TestF2TerminalControls:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
 
         written: list[bytes] = []
 
@@ -800,9 +784,7 @@ class TestF6AsyncRepl:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
         reg = WorkspaceRegistry()
         widget = runtime_tabs.PythonReplWidget(
             registry=reg,

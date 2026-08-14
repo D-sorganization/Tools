@@ -15,8 +15,10 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import TypeAlias
 
 import numpy as np
+import numpy.typing as npt
 
 from rate_of_closure._contracts import ensure
 from rate_of_closure.club.geometry import (
@@ -27,6 +29,8 @@ from rate_of_closure.club.geometry import (
 )
 from rate_of_closure.club.parametric_head import BASE_SECTIONS
 from rate_of_closure.mesh import write_binary_stl
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 __all__ = ["ASSET_PATH", "build_example_head", "main"]
 
@@ -40,7 +44,7 @@ ASSET_PATH = (
 _SECTIONS = BASE_SECTIONS
 
 
-def build_example_head() -> np.ndarray:
+def build_example_head() -> FloatArray:
     """Triangles ``(n, 3, 3)`` of the stylized driver head, meters."""
     rings = [superellipse_ring(*section) for section in _SECTIONS]
     triangles: list[np.ndarray] = []
@@ -55,7 +59,7 @@ def build_example_head() -> np.ndarray:
     triangles.extend(cap_fan(face_center, rings[0], outward_x=True))
     triangles.extend(cap_fan(tail_center, rings[-1], outward_x=False))
 
-    mesh = np.array(triangles)
+    mesh: FloatArray = np.array(triangles)
     # (sections-1) bands of 2*N triangles plus two N-triangle caps.
     ensure(mesh.shape[0] == len(_SECTIONS) * 2 * RING_POINTS, "loft closed")
     return mesh

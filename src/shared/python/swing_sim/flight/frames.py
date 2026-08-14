@@ -13,12 +13,17 @@ Mapping: app x = flight x; app y = flight z; app z = -flight y.
 
 from __future__ import annotations
 
+from typing import TypeAlias
+
 import numpy as np
+from numpy.typing import NDArray
+
+FloatArray: TypeAlias = NDArray[np.float64]
 
 
-def _validated(vec: np.ndarray, name: str) -> np.ndarray:
+def _validated(vec: FloatArray, name: str) -> FloatArray:
     """Return ``vec`` as a float array of shape (3,) or (N, 3)."""
-    arr = np.asarray(vec, dtype=float)
+    arr: FloatArray = np.asarray(vec, dtype=np.float64)
     if arr.shape != (3,) and not (arr.ndim == 2 and arr.shape[1] == 3):
         raise ValueError(f"{name} must have shape (3,) or (N, 3); got {arr.shape}")
     if not np.all(np.isfinite(arr)):
@@ -26,7 +31,7 @@ def _validated(vec: np.ndarray, name: str) -> np.ndarray:
     return arr
 
 
-def to_flight_frame(vec_app: np.ndarray) -> np.ndarray:
+def to_flight_frame(vec_app: FloatArray) -> FloatArray:
     """Convert vector(s) from the app frame to the flight frame.
 
     Args:
@@ -37,14 +42,14 @@ def to_flight_frame(vec_app: np.ndarray) -> np.ndarray:
         Vector(s) in the flight frame (x forward, y left, z up), same shape.
     """
     arr = _validated(vec_app, "vec_app")
-    out = np.empty_like(arr)
+    out: FloatArray = np.empty_like(arr)
     out[..., 0] = arr[..., 0]
     out[..., 1] = -arr[..., 2]
     out[..., 2] = arr[..., 1]
     return out
 
 
-def from_flight_frame(vec_flight: np.ndarray) -> np.ndarray:
+def from_flight_frame(vec_flight: FloatArray) -> FloatArray:
     """Convert vector(s) from the flight frame to the app frame.
 
     Args:
@@ -55,7 +60,7 @@ def from_flight_frame(vec_flight: np.ndarray) -> np.ndarray:
         Vector(s) in the app frame (x target, y up, z right), same shape.
     """
     arr = _validated(vec_flight, "vec_flight")
-    out = np.empty_like(arr)
+    out: FloatArray = np.empty_like(arr)
     out[..., 0] = arr[..., 0]
     out[..., 1] = arr[..., 2]
     out[..., 2] = -arr[..., 1]

@@ -47,8 +47,10 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 
 from shared.python.contracts import require
 
@@ -60,7 +62,9 @@ from .constants import (
 )
 from .models import SPHERE_ROLLING_CAP_FACTOR, _norm, offset_to_face_vector
 
-FaceNormalAtOffset = Callable[[float, float], np.ndarray]
+FloatArray: TypeAlias = NDArray[np.float64]
+
+FaceNormalAtOffset = Callable[[float, float], FloatArray]
 """Callable seam for bulge/roll: ``(toe_m, high_m) -> local face normal``."""
 
 _CONTACT_RAMP_FACTOR = 0.5
@@ -82,17 +86,17 @@ class GearEffectResult:
             speed at the contact point [m/s]
     """
 
-    ball_spin_delta: np.ndarray
-    head_angular_velocity_delta: np.ndarray
-    contact_normal: np.ndarray
+    ball_spin_delta: FloatArray
+    head_angular_velocity_delta: FloatArray
+    contact_normal: FloatArray
     tangential_surface_speed: float
 
 
 def resolve_contact_normal(
-    impact_offset: np.ndarray,
-    face_normal: np.ndarray,
+    impact_offset: FloatArray,
+    face_normal: FloatArray,
     face_normal_at_offset: FaceNormalAtOffset | None = None,
-) -> np.ndarray:
+) -> FloatArray:
     """Unit contact normal: local bulge/roll normal if supplied, else nominal.
 
     Args:
@@ -107,7 +111,10 @@ def resolve_contact_normal(
     offset = np.asarray(impact_offset, dtype=float).reshape(-1)
     require(offset.size == 2, "impact_offset must have exactly 2 components")
     if face_normal_at_offset is not None:
-        n = np.asarray(face_normal_at_offset(float(offset[0]), float(offset[1])))
+        n: FloatArray = np.asarray(
+            face_normal_at_offset(float(offset[0]), float(offset[1])),
+            dtype=np.float64,
+        )
     else:
         n = np.asarray(face_normal, dtype=float)
     n_mag = _norm(n)
@@ -116,13 +123,13 @@ def resolve_contact_normal(
 
 
 def compute_gear_effect(
-    impact_offset: np.ndarray,
-    face_normal: np.ndarray,
+    impact_offset: FloatArray,
+    face_normal: FloatArray,
     normal_impulse: float,
-    clubhead_moi: float | np.ndarray,
+    clubhead_moi: float | FloatArray,
     cg_depth_m: float = DRIVER_CG_DEPTH_M,
     friction_coefficient: float = 0.4,
-    reference_up: np.ndarray | None = None,
+    reference_up: FloatArray | None = None,
     face_normal_at_offset: FaceNormalAtOffset | None = None,
 ) -> GearEffectResult:
     """Compute gear-effect spin from the head's rotation recoil.

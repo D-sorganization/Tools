@@ -225,7 +225,7 @@ def _run_single_start(
         nonlocal n_evals
         if cancel_event.is_set():
             raise _StartCancelled
-        res = residuals(x, partition, goal, config)
+        res: np.ndarray = residuals(x, partition, goal, config)
         n_evals += 1
         tracker.record(0.5 * float(res @ res))
         return res

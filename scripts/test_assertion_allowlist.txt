@@ -9,6 +9,10 @@ tests/shared/python/ai/integrations/_bootstrap.py
 tests/rust_bindings/_tools_core_import.py
 tests/helpers/numerical.py
 tests/shared/python/ai/integrations/_bootstrap.py
+# Source-local test packages use empty __init__.py files only as import/package
+# markers; they intentionally contain no executable behavioral assertion.
+src/**/tests/__init__.py
+src/**/tests/**/__init__.py
 # Vendored Movement Optimizer sub-app support files (migrated from D-sorganization/Movement_Optimizer; Tools#3407)
 src/movement_optimizer/tests/__init__.py
 src/movement_optimizer/tests/conftest.py

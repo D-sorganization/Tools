@@ -25,10 +25,14 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TypeAlias, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from ._contracts import ensure, require
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 __all__ = [
     "HEAD_DEPTH_M",
@@ -46,8 +50,9 @@ __all__ = [
 HEAD_DEPTH_M = 0.11
 
 _BINARY_HEADER_BYTES = 80
-_BINARY_RECORD = np.dtype(
-    [("normal", "<f4", (3,)), ("vertices", "<f4", (3, 3)), ("attr", "<u2")]
+_BINARY_RECORD: np.dtype[np.void] = cast(
+    np.dtype[np.void],
+    np.dtype([("normal", "<f4", (3,)), ("vertices", "<f4", (3, 3)), ("attr", "<u2")]),
 )
 _ASCII_VERTEX = re.compile(rb"vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)")
 _MIN_AREA = 1e-20
@@ -84,7 +89,7 @@ def parse_stl(data: bytes) -> np.ndarray:
     )
     ensure(triangles.shape[0] > 0, "STL contained no triangles")
     ensure(bool(np.isfinite(triangles).all()), "STL vertices must be finite")
-    return triangles
+    return cast(np.ndarray, triangles)
 
 
 def _looks_binary(data: bytes) -> bool:
@@ -96,18 +101,19 @@ def _looks_binary(data: bytes) -> bool:
     return len(data) == _BINARY_HEADER_BYTES + 4 + count * _BINARY_RECORD.itemsize
 
 
-def _parse_binary(data: bytes) -> np.ndarray:
+def _parse_binary(data: bytes) -> FloatArray:
     count = int(
         np.frombuffer(data, dtype="<u4", count=1, offset=_BINARY_HEADER_BYTES)[0]
     )
     require(count > 0, "binary STL declares zero triangles")
-    records = np.frombuffer(
+    records: np.ndarray = np.frombuffer(
         data, dtype=_BINARY_RECORD, count=count, offset=_BINARY_HEADER_BYTES + 4
     )
-    return records["vertices"].astype(np.float64)
+    triangles: FloatArray = records["vertices"].astype(np.float64)
+    return triangles
 
 
-def _parse_ascii(data: bytes) -> np.ndarray:
+def _parse_ascii(data: bytes) -> FloatArray:
     require(
         data.lstrip()[:5].lower() == b"solid",
         "not a valid STL: neither binary layout nor ASCII 'solid'",
@@ -120,7 +126,8 @@ def _parse_ascii(data: bytes) -> np.ndarray:
         len(matches),
     )
     flat = np.array([[float(c) for c in m] for m in matches], dtype=np.float64)
-    return flat.reshape(-1, 3, 3)
+    triangles: FloatArray = flat.reshape(-1, 3, 3)
+    return triangles
 
 
 def triangle_normals(triangles: np.ndarray) -> np.ndarray:
@@ -135,7 +142,8 @@ def triangle_normals(triangles: np.ndarray) -> np.ndarray:
     length = np.linalg.norm(cross, axis=1, keepdims=True)
     with np.errstate(invalid="ignore", divide="ignore"):
         normals = np.where(length > _MIN_AREA, cross / length, 0.0)
-    return np.asarray(normals, dtype=np.float64)
+    result: FloatArray = np.asarray(normals, dtype=np.float64)
+    return cast(np.ndarray, result)
 
 
 def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.ndarray:
@@ -173,7 +181,8 @@ def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.n
     span = normalized.reshape(-1, 3).max(axis=0) - normalized.reshape(-1, 3).min(axis=0)
     ensure(bool(np.isclose(span[0], depth_m, rtol=1e-9)), "depth must normalize")
     ensure(span[2] >= span[0] >= span[1], "extent ordering z >= x >= y must hold")
-    return np.asarray(normalized, dtype=np.float64)
+    result: FloatArray = np.asarray(normalized, dtype=np.float64)
+    return cast(np.ndarray, result)
 
 
 def load_head_mesh(path: str | Path, depth_m: float = HEAD_DEPTH_M) -> HeadMesh:
@@ -195,7 +204,8 @@ def write_binary_stl(triangles: np.ndarray, header: str = "rate_of_closure") -> 
     head = header.encode("ascii", errors="replace")[:_BINARY_HEADER_BYTES]
     head = head.ljust(_BINARY_HEADER_BYTES, b"\0")
     count = np.array([tris.shape[0]], dtype="<u4")
-    return head + count.tobytes() + records.tobytes()
+    payload: bytes = head + count.tobytes() + records.tobytes()
+    return payload
 
 
 def write_ascii_stl(triangles: np.ndarray, name: str = "rate_of_closure") -> bytes:
