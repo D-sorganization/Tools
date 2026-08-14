@@ -2,18 +2,27 @@
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 import math
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import numpy as np
-from PyQt6.QtWidgets import QComboBox, QGroupBox, QLabel, QPushButton, QSlider
+from PyQt6.QtWidgets import (
+    QComboBox,
+    QDoubleSpinBox,
+    QGroupBox,
+    QLabel,
+    QPushButton,
+    QSlider,
+)
 
 from rate_of_closure.club import get_club
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import (
     SOURCE_KINDS,
     ContactMode,
+    ManualDeliveryConfig,
     SimulationConfig,
     SimulationRun,
     delivery_at,
@@ -25,6 +34,7 @@ from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
 from shared.python.swing_sim.types import PlaneOrientation
 
 logger = logging.getLogger(__name__)
+RunResult: TypeAlias = SimulationRun | None
 
 
 class SimulationTabRuntimeMixin:
@@ -43,6 +53,8 @@ class SimulationTabRuntimeMixin:
     _scrub_slider: QSlider
     _source: Any
     _source_combo: QComboBox
+    _manual_delivery_spins: dict[str, QDoubleSpinBox]
+    _shaft_datum_combo: QComboBox
     _tau: float | None
     _torque_profile_panel: TorqueProfilePanel
 
@@ -59,6 +71,84 @@ class SimulationTabRuntimeMixin:
         def run_now(self) -> SimulationRun | None: ...
 
         def source_kind(self) -> str: ...
+
+    def set_manual_delivery(self, delivery: ManualDeliveryConfig) -> None:
+        """Load one validated manual declaration without partial signal churn."""
+        if not isinstance(delivery, ManualDeliveryConfig):
+            raise TypeError("delivery must be a ManualDeliveryConfig")
+        values = {
+            "attack_angle_deg": delivery.attack_angle_deg,
+            "club_path_deg": delivery.club_path_deg,
+            "forward_shaft_lean_deg": delivery.forward_shaft_lean_deg,
+        }
+        for name, value in values.items():
+            spin = self._manual_delivery_spins[name]
+            spin.blockSignals(True)
+            spin.setValue(value)
+            spin.blockSignals(False)
+        datum_index = self._shaft_datum_combo.findData(delivery.shaft_axis_datum)
+        if datum_index < 0:
+            raise ValueError("manual shaft-axis datum is unavailable in this UI")
+        self._shaft_datum_combo.blockSignals(True)
+        self._shaft_datum_combo.setCurrentIndex(datum_index)
+        self._shaft_datum_combo.blockSignals(False)
+        self._invalidate_source()
+
+    def apply_solver_solution(
+        self, result: object, use_swing_source: bool
+    ) -> RunResult:
+        """Load a SolverResult's variables into the session and rerun."""
+        variables: dict[str, float] = result.variables  # type: ignore[attr-defined]
+        updates = self._impact_offset_updates(variables)
+        if use_swing_source:
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
+            for attribute, variable in (
+                ("yaw_deg", "swing_yaw_deg"),
+                ("side_tilt_deg", "swing_side_tilt_deg"),
+                ("forward_tilt_deg", "swing_forward_tilt_deg"),
+            ):
+                spin = self._tilt_spins[attribute]  # type: ignore[attr-defined]
+                spin.blockSignals(True)
+                spin.setValue(variables[variable])
+                spin.blockSignals(False)
+        else:
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("manual"))
+            updates["clubhead_speed_mph"] = (
+                variables["clubhead_speed_mps"] * MPH_PER_MPS
+            )
+            self.set_manual_delivery(
+                ManualDeliveryConfig(
+                    attack_angle_deg=variables["attack_angle_deg"],
+                    club_path_deg=variables["club_path_deg"],
+                    forward_shaft_lean_deg=(
+                        get_club(self._club_combo.currentText()).loft_deg
+                        - variables["dynamic_loft_deg"]
+                    ),
+                    shaft_axis_datum=self._shaft_datum_combo.currentData(),
+                )
+            )
+        self._scenario = dataclasses.replace(self._scenario, **updates)
+        self._invalidate_source()
+        self._tau = None
+        run = self.run_now()
+        offset = variables.get("swing_impact_time_offset_s", 0.0)
+        if (
+            run is not None
+            and run.impact_time_s is not None
+            and use_swing_source
+            and abs(offset) > 1e-9
+        ):
+            source = self._ensure_source()
+            self._tau = min(max(run.impact_time_s + offset, 0.0), source.duration)
+            run = self.run_now()
+        return run
+
+    @staticmethod
+    def _impact_offset_updates(variables: dict[str, float]) -> dict[str, float]:
+        return {
+            "impact_offset_toe_mm": variables["impact_offset_toe_mm"],
+            "impact_offset_high_mm": variables["impact_offset_high_mm"],
+        }
 
     def _ensure_source(self):  # type: ignore[no-untyped-def]
         if self._source is None:

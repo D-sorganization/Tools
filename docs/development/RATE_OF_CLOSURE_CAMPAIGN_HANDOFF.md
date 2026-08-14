@@ -1,9 +1,292 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-10. This isolated integration is published as draft
+## 2026-08-11 Capability input specification in whole workspaces
+
+- Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348)
+  publishes this bounded child from independently approved implementation head
+  `5730e74752ffb84ab3560bed6318b7d97b6e627d`, preserving base
+  `feat/4144-workspace-variation-study`. Protected current-head CI, review,
+  parent landing, integration, and release remain required.
+
+- The remaining no-publish finding against local head `68692bbcb` is repaired
+  locally. Interactive projection requires the exact ordered `ball_speed`
+  (`m/s`), `launch_angle` (`deg`), and `launch_direction` (`deg`) basis with a
+  3-by-3 correlation matrix, one club, and one spin default. Alternate units,
+  covariance, reordered parameters, and unsupported shapes fail closed before
+  projection, UI apply, or File/Open mutation; no conversion/rescaling occurs.
+- Earlier findings are also repaired: full-document authority plus editable overlays preserve accepted
+  evidence and advanced policy; unsupported interactive documents fail closed.
+  Native identity/generation gates reject stale success, and both parsers cap
+  numeric wire magnitude at `1e300` through the native File/Open error path.
+
+- Branch `feat/4197-workspace-capability-request` starts from exact draft
+  PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`; it does not modify
+  or publish the parent branch.
+- Explorer-session v5 embeds the established cross-runtime
+  `capability-optimization-workflow/v1` request. PyQt6 and React round-trip the
+  editable profile/club, capability ranges/distributions, objective, target,
+  fixed-spin evaluator assumptions, integration policy, budgets, and seed.
+- Full parsing precedes application. Both clients retain the full validated
+  document while controls overlay only represented fields. Legacy v1-v4 files
+  require an explicit current capability fallback. Native apply is rollback-safe,
+  and both clients
+  invalidate computed results when restored inputs replace the live request.
+- Results, observation ensembles, runtime objects, inferred identity, and
+  optimizer-execution claims remain excluded. Wind-aware optimizer inputs are
+  not yet user-editable in this workflow and therefore are not fabricated.
+  #4197/#4225, UpstreamDrift parity, protected CI/review, integration, and
+  release remain open.
+- Local qualification passes 71 focused Python workflow/workspace/File/PyQt/
+  manifest tests and 70 focused React contract/File/UI tests; pinned MyPy, Ruff,
+  TypeScript, zero-warning ESLint, the 211-module production build, 11
+  campaign-manifest tests, docs governance, and manifest-layout validation
+  also pass.
+## 2026-08-11 Camera child quality-gate repair
+
+- The Ruff-only repair was published normally as exact #4349 head
+  `317d2b0c16c9516ef2cac028e77b25c6f13aced4`. Fresh protected CI passed lint
+  and format, then exposed strict MyPy errors in camera-preference enum parsing
+  and a redundant compositor cast. The current repair adds explicit string
+  narrowing plus adversarial non-string tests, removes the redundant cast,
+  binds the camera callback through a typed partial, and makes the Qt putting
+  speed's float boundary explicit. It does not change valid wire values or
+  runtime behavior. Independent review, normal fast-forward publication, and
+  fresh exact-head CI remain open.
+- The first independent audit found only the SPEC header still declared
+  1.14.35 despite the 1.14.36 changelog. Both version fields are now aligned;
+  no source, test, schema, or runtime artifact changes in that correction.
+
+## 2026-08-11 Camera-preference workspace child
+
+- Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349)
+  publishes this bounded child from independently approved exact head
+  `f2d3be771a9ba1d17f5e8942484b3fb49c236527`, preserving its #4343 base and
+  composed #4331/#4303 histories. Fresh protected CI/review, rendered platform
+  qualification, dependency landing, and release remain required.
+
+- `feat/4218-camera-preference-persistence` begins at exact published #4343
+  head `4ff103d9a6ef886099c180da560e8458d5e20b49`, then normally
+  composes exact #4331 `e07e2a66a894c93b50c1ded308fc8902f2ff6c24`
+  and #4303 `98cf35994488dd6f3d66916415bbc9f8e7c8bf3f` in order.
+- `camera-preferences/v1` owns three stable viewport keys and exactly five
+  deliberate fields: preset, face-on side, bounded zoom, tracking, and Auto
+  Fit. It excludes the moving target and manual suspension.
+- View-workspace v2, QSettings, localStorage, and whole-workspace File adapters
+  share the contract. V1 migration uses #4303 defaults; malformed/future
+  documents reject before mutation. Five native/browser camera adapters are
+  connected and animation-frame tracking cannot trigger persistence.
+- Protected CI/review, rendered cross-platform qualification, UpstreamDrift
+  consumers, ordered integration, and #4218 completion remain open.
+
+## 2026-08-11 variation-study workspace protected publication
+
+- Branch `feat/4144-workspace-variation-study` is published normally as draft
+  PR [#4343](https://github.com/D-sorganization/Tools/pull/4343), targeting
+  exact PR #4340 branch `feat/4136-workspace-torque-profiles` at parent head
+  `26105f668de260d75a99f450726348570db7ff89`.
+- Independently reviewed implementation head
+  `73041194a7cfd8cae14cd1739b806617af933648` contains explorer-session v4,
+  deterministic file-operation ordering, complete swing-output registry
+  parity, and valid saved-focus controls. Publication documentation commits
+  change no runtime code.
+- Protected CI/review, #4142/#4144, dependency ordering, UpstreamDrift
+  qualification, integration, and release remain open.
+
+Status verified 2026-08-11. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-11 Variation-study workspace child
+
+- Worktree `Tools-worktrees/workspace-variation-study` and branch
+  `feat/4144-workspace-variation-study` start at exact published PR #4340 head
+  `26105f668de260d75a99f450726348570db7ff89`.
+- Explorer-session v4 persists canonical user-authored variation inputs,
+  distributions/ranges/groups, trial count, deterministic seed,
+  simultaneous/individual/both analysis policy, and a strict selected-output
+  focus on both Tools clients.
+- Simulation is the sole persisted Ground/Tee authority. Duplicate ball setup,
+  Tee Height under Ground support, unknown/duplicate/empty output selections,
+  ambiguous legacy plans, and partial native application all fail closed.
+- Independent review makes asynchronous browser Open recheck the latest dirty
+  state and legacy fallbacks before applying, and derives the complete
+  17-field swing output focus from the executor rather than a stale duplicate
+  registry. The focus is persisted policy; complete results remain available.
+- Native focus controls preserve one selected output, matching React and
+  keeping every File operation inside the validated contract. Browser file
+  reads capture their selected type and a monotonic operation ID; stale
+  out-of-order reads cannot overwrite newer choices or change parser mode.
+  Confirmed New/Close operations invalidate pending reads; cancelled resets do
+  not discard the user's pending Open.
+- This slice stores no results, identity, optimizer outputs, or flight-run
+  outputs; it does not qualify UpstreamDrift or close #4142/#4144/#4218.
+  Protected review/CI and dependency-ordered release remain open. Post-review
+  gates pass 21 focused Python and 48 focused React tests, pinned MyPy 1.13,
+  Ruff, TypeScript, zero-warning ESLint, the 210-module production build, 11
+  campaign manifest tests, changed-file/module-size, docs, manifest-layout,
+  changed-Python, JSON, and diff validation. A broader PyQt pair was stopped
+  without failure output after two contention timeouts; the three directly
+  affected native workflows passed serially.
+
+## 2026-08-10 Torque-profile workspace child
+
+- Worktree `Tools-worktrees/workspace-torque-profiles` and branch
+  `feat/4136-workspace-torque-profiles` start at exact published PR #4336 head
+  `6e9dd85a3c5f43d37cf8a704db0555bdad734e7e`.
+- Explorer-session v3 references the root canonical torque-profile library
+  through a strict selection payload shared by Python and TypeScript. It stores
+  active stable identity, passive/prescribed run configuration, canonical joint
+  locks, and profile-source provenance without duplicating or inventing profile
+  data.
+- PyQt6 and React map the real editor library and selection. Complete validation
+  precedes atomic application; canonical schema/SI-unit/c0-first order/joint/
+  fit/source rules remain authoritative. Legacy v1/v2 migration requires an
+  explicit current fallback and rejects conflicting root profiles.
+- Remaining work includes optimizer, variation-run and flight-run persistence,
+  installed UpstreamDrift parity, protected CI/review, and ordered release.
+  Local qualification passes 34 focused Python tests, 43 focused React tests,
+  pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint, the
+  206-module production build, the 11-test campaign-manifest suite,
+  module-size, docs, manifest-layout, changed-Python, changed-test assertion,
+  JSON, and diff gates. Protected release evidence remains open.
+
+## 2026-08-10 Ball setup and spatial target workspace child
+
+- Worktree `Tools-worktrees/workspace-ball-target` and branch
+  `feat/4225-ball-target-session-mappers` start at exact draft PR #4333 head
+  `bd7da1e6d42557d5e8782b8f4f64fc4ed183e5ce`.
+- Explorer-session v2 embeds the same strict simulation-setup v1 contract in
+  Python and TypeScript. It includes Ground/Tee mode, SI tee height, derived
+  ball centre, club-default/override provenance, and the complete canonical
+  spatial-target label/kind/frames/position/source/tolerance document.
+- PyQt6 maps the real Simulation tab state; React lifts ball state to the app
+  model beside the shared target. Nested corruption is rejected before any
+  live mutation. Legacy explorer-session v1 requires an explicit preserve-
+  current fallback and never fabricates missing physical values.
+- Remaining #4225 work is torque-editor, optimizer, variation-run, flight-run,
+  installed UpstreamDrift parity, protected CI/review, and ordered release.
+  Post-refactor qualification passes 8 focused native tests, 27 focused React
+  tests, pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint,
+  the 203-module production build, the 11-test campaign-manifest suite,
+  module-size, docs, manifest-layout, changed-Python, and diff gates. The
+  broader suites were stopped without failure output after several minutes on
+  the overloaded workstation; they are not claimed as validation.
+
+## 2026-08-10 Live workspace File-adapter continuation
+
+- Worktree `Tools-worktrees/workspace-file-adapters` and branch
+  `feat/4225-workspace-file-adapters` start at exact draft PR #4330 head
+  `d8176bb5863a35725199bb8357a5f000f9bdd3ba`.
+- PyQt6 and React now connect New, Open, Save As, strict compositor-layout
+  Import/Export, and Close to real validated state. Native adds atomic Save and
+  persisted Open Recent. Browser Save/Recent remain honestly disabled because
+  the browser surface cannot safely overwrite or retain a filesystem path.
+- The whole-workspace live slice is impact scenario, club, units, primary
+  navigation, and compositor. Parsing finishes before mutation; invalid or
+  cancelled reads preserve state, dirty destructive commands confirm first,
+  native writes are atomic, and unsupported torque/variation payloads fail
+  closed.
+- Remaining work is explicit: add strict mappers for simulation-local ball,
+  target, torque-editor, optimizer, variation-run, and flight-run state; qualify
+  installed UpstreamDrift consumers; pass protected CI/review and merge in
+  dependency order. This slice does not close #4218 or #4225.
+- Local evidence: 921/921 Rate-of-Closure Python tests; focused MyPy, Ruff, and
+  Black; React TypeScript, zero-warning ESLint, 116 files / 693 tests, and the
+  201-module production build; plus baseline-aware module-size, docs,
+  linked-debt, changed-Python policy, changed-test assertion, and diff gates.
+  The legacy full-tree 500-LOC scanner has no loaded grandfather baseline in
+  this checkout and reports 232 pre-existing files; all newly added modules
+  remain below 500 lines.
+## 2026-08-11 PR #4331 current-parent propagation repair
+
+- Exact live child `c7bccbccc6cda0c9b938b2862ed660cebdcb7597` is retained
+  first and exact current PR #4330 parent
+  `304a069b1777dcf8cf107de26caa3b9fbe96dbb3` is incorporated second through a
+  normal merge on `feat/4284-orthographic-axis-polish`.
+- The failed hosted format gate was an ancestry defect: stale merge base
+  `d8176bb5863a35725199bb8357a5f000f9bdd3ba` exposed the parent's formatting
+  commit and six worktree pointers as child-local changes. With current parent
+  ancestry, the effective child delta contains only nine intended camera-polish
+  documentation, adapter, and regression files.
+- The merge is content-clean and camera behavior is unchanged. No rebase,
+  retarget, force-push, parent rewrite, CI retry, or GitHub write was used.
+  Independent review, release-owner publication, and protected exact-head CI
+  remain open.
+- Root `SPEC.md` is synchronized at version `1.14.30` with the exact per-preset
+  depth-axis mapping, full Matplotlib artist-suppression boundary, preservation
+  of visible engineering axes/native one-sided ticks, and restoration on
+  isometric/manual orbit. This governance repair changes no runtime file.
+- Fresh merged-tree evidence is 71 Python/PyQt camera, compositor, layout,
+  main-window, and manifest tests; exact-delta Ruff/format, pinned MyPy 1.13,
+  Bandit, documentation, changed-code, module-size, minimum-test, assertion,
+  manifest-layout, Spec Check, version, whitespace, and diff gates. React
+  passes 114 files / 686
+  tests, TypeScript, zero-warning ESLint, the 199-module production build, and
+  four serial Playwright camera cases across desktop and constrained 2x-DPR
+  projects. `npm ci` audited 337 packages with zero vulnerabilities.
+
+## 2026-08-10 Repaired compositor-parent propagation into persistence child
+
+- Continuation branch `feat/4225-multiview-persistence` now normally
+  incorporates exact repaired compositor parent
+  `0e3054e6a7fa0e3e38e1312b4132bbd1e4336fb2`.
+- Keyboard/persistence production and test code did not conflict; only the four
+  additive handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain.
+- The pinned-MyPy delta requires an explicit typed current-workspace validation
+  local; parsing, validation, migration, and serialization behavior is unchanged.
+
+## 2026-08-10 Repaired legend-parent propagation into PR #4327
+
+- Draft PR `#4327` keeps branch `feat/4225-multiview-compositor` and base
+  `fix/4224-default-legend-layout-local`.
+- Exact repaired legend parent `531a851dc125e83ad86abe1601651e163f5f866d`
+  is incorporated through a normal merge.
+- Multi-view production/test code did not conflict; only the four additive
+  handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain.
+
+## 2026-08-10 Issue #4225 multi-view keyboard/export acceptance slice
+
+Worktree `Tools-worktrees/issue-4225-multiview-persistence` and branch
+`feat/4225-multiview-persistence` begin at exact draft PR #4327 head
+`e975f66bdcfc5a32f9688b8c2c6e34fe1b53ce6e`. The parent slice replaces the
+disabled/direct-route placeholders with three real distinct viewport hosts in
+PyQt6 and React. Impact, Swing, and Flight can be selected directly or composed
+as single, horizontal, vertical, and grid layouts. The active run and playback
+time are synchronized, flight time is mapped relative to impact, and each host
+keeps independent camera/overlay ownership. React Flight also retains the
+canonical spatial-target editor. React's established Strike, Swing, Kinetics,
+and Flight displays remain reachable beside Multi View, while direct toolstrip
+commands return to Multi View and select a real host.
+
+Both clients persist the same version-1 workspace shape and defensively migrate
+legacy layouts, corrupt values, unsupported future IDs, and missing active
+views to deterministic known-view layouts. Cardinality is strict across both
+clients: one host is Single, two use a valid split, and three are Grid. Valid
+per-slot legends survive recovery/transitions. The live transport owns saved
+play/loop/rate and settled time; PyQt6 debounces active-frame writes. Native
+controls now include hover guidance and constrained multi-view grids expose
+scroll navigation instead of clipping real plots.
+
+This continuation closes the two remaining local acceptance-proof gaps. React
+quick-view tabs implement roving focus and Arrow Left/Right, Home, and End;
+native controls use an explicit Layout -> Impact -> Swing -> Flight tab order.
+Both clients are tested manipulating view membership entirely by keyboard.
+Strict version-1 import/export boundaries validate before mutation, reject
+future formats, preserve playback and legend state, and the native import
+survives QSettings reconstruction. The canonical view document is now proven
+inside the whole-app workspace v2 envelope too. This exposed and repaired its
+pre-existing nested-array double-freeze parser defect. Local evidence is 921
+Python/PyQt Rate tests, 114 React files / 686 tests, focused MyPy,
+Ruff/format, TypeScript, zero-warning ESLint, production build, module-size,
+changed-policy, assertion, whitespace, and diff gates; 337 npm packages audit
+with zero vulnerabilities. File-menu commands remain
+disabled because no file picker or full live-session mapper is claimed here.
+Keep #4225 and #4218 open for protected CI/review, dependency-ordered
+integration, and UpstreamDrift consumer parity.
 ## 2026-08-10 Repaired mobile-parent propagation into PR #4324
 
 - Draft PR `#4324` keeps branch `fix/4224-default-legend-layout-local` and
@@ -42,6 +325,33 @@ persistence/migration, exported-layout proof,
 complete rendered QA, protected CI/review, and dependency-ordered integration
 remain open. PR #4303 is a separate camera-default child and is not claimed as
 ancestry of this local branch.
+## 2026-08-11 PR #4303 current-parent propagation repair
+
+- Preserve exact live child `2e07bec58b8a759c9db36ea7afb26a1c835434f5`
+  first and normally merge exact current PR #4301 parent
+  `c653f9ff9193d6cdb8e11a13ad0001707e468a42` second without changing PR #4303's
+  branch or base.
+- The former merge base `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`
+  was stale, causing GitHub conflicts and exposing parent formatting as
+  child-local. The merge keeps the current parent for one unrelated shared
+  flight-contract test and reconciles four additive current-state documents;
+  camera production code merges cleanly.
+- Preserve the shared Python/TypeScript moving-subject default: animated PyQt6
+  and React clubhead/flight viewports start at 2x zoom with bounded tracking
+  and Auto Fit enabled, static viewports remain neutral, and controls remain
+  independently user-overridable. Physics and geometry are unchanged.
+- No rebase, retarget, force-push, parent rewrite, publication, GitHub write,
+  or CI retry is used. Independent review and protected exact-head CI remain
+  release gates; #4300 and epic #4218 stay open.
+- Fresh merged-tree evidence is 49 focused Python/PyQt camera, layout, and
+  simulation tests plus 14 campaign/launcher-manifest tests; exact-delta
+  Ruff/format on six Python files; pinned MyPy 1.13 and Bandit on four
+  production files; documentation, changed-code, module-size, minimum-test,
+  assertion, manifest-layout, whitespace, and diff gates. React passes 111
+  files / 673 tests, TypeScript, zero-warning ESLint, the 195-module production
+  build, and six serial Playwright camera/toolstrip cases across desktop and
+  constrained 2x-DPR projects.
+
 ## 2026-08-10 Repaired camera-parent propagation into PR #4301
 
 - Draft PR `#4301` keeps branch `fix/rate-mobile-tools-menu` and base
@@ -112,6 +422,36 @@ Independent exact-tree review found no findings. This propagation is not issue
 or epic completion: protected current-head CI, installed-consumer evidence,
 four-surface conformance, native rendered QA, and dependency-ordered release
 remain open.
+
+## 2026-08-10 Native orthographic-axis presentation polish
+
+Native Windows review of the current camera carrier confirmed Face On, Down
+the Line, Overhead, Reset, Track, Auto Fit, Re-center, replay, pause, and loop,
+then identified one presentation defect: the depth-axis labels and ticks
+collapsed into the screen plane and overlapped plot titles or visible axes in
+the exact orthographic presets.
+
+The shared PyQt camera adapter now applies one explicit display-axis contract
+after each Simulation and Flight render. Face On hides only display x/right,
+Down the Line hides only display y/target, and Overhead hides only display
+z/up. Because Axes3D can retain cached artists, the adapter suppresses the
+depth axis container, label, line, pane, and tick artists together. The two
+in-plane physical axes remain labelled. Isometric/reset and manual orbit
+restore all axis artists from each fresh render, preventing stale visibility
+across modes without forcing both tick-label sides visible. A
+parameterized headless GUI regression proves all three mappings and both
+restoration paths in both viewports. Physics, camera angles, limits, tracking,
+zoom, geometry, and React behavior are unchanged.
+
+Exact implementation head `c6f7122d8fb63eacaf94fc0f295c2e470f80fce8`
+passes 11 focused camera tests, the 33-test camera/layout/workspace integration
+set, Ruff, pinned MyPy on the three changed production modules, and diff
+validation. Native Windows inspection at 1282 x 752 confirms Face On, Down the
+Line, and Overhead retain only the two in-plane labelled axes with no duplicate
+ticks; reset/isometric restores the complete 3D frame. Protected exact-head CI,
+review, parent-first integration, and installed UpstreamDrift parity remain
+required before this follow-up is released.
+
 ## 2026-08-10 Current-parent propagation into camera PR #4298
 
 - Draft PR `#4298` keeps branch `feat/4284-camera-snap-tracking` and base

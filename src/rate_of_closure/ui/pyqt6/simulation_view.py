@@ -23,6 +23,7 @@ from rate_of_closure.application.camera_commands import (
     CameraCommandId,
     camera_preset,
     matplotlib_angles,
+    moving_subject_camera_state,
 )
 from rate_of_closure.simulation import (
     ImpactScene,
@@ -106,7 +107,12 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
         layout.setSpacing(3)
         layout.addWidget(self._build_playback_controls())
         layout.addWidget(self._build_layers_control())
-        layout.addWidget(self._initialize_camera("Clubhead"))
+        layout.addWidget(
+            self._initialize_camera(
+                "Clubhead",
+                moving_subject_camera_state(),
+            )
+        )
         layout.addWidget(self._build_engineering_panel())
         self._canvas.setMinimumSize(360, 280)
         self._canvas.setSizePolicy(
@@ -198,6 +204,10 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
     def set_looping(self, looping: bool) -> None:
         """Set the loop toggle."""
         self._loop_check.setChecked(looping)
+
+    def is_looping(self) -> bool:
+        """Whether playback restarts automatically at the timeline end."""
+        return bool(self._loop_check.isChecked())
 
     def flight_shown(self) -> bool:
         """Whether the flight-scale 'Show Ball Flight' toggle is on."""
@@ -401,6 +411,7 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
             elevation, azimuth = orientation
             self._axes.view_init(elev=elevation, azim=azimuth)
         SimulationSceneRenderer(self, get_chart_color).draw()
+        self._apply_camera_axis_visibility(self._axes)
 
     def _redraw_after_canvas_resize(self, _event: object) -> None:
         """Reflow the legend without advancing camera or playback state."""

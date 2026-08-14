@@ -80,6 +80,15 @@ export function defaultCameraState(): CameraState {
   };
 }
 
+export function movingSubjectCameraState(): CameraState {
+  return {
+    ...defaultCameraState(),
+    zoom: 2,
+    trackingEnabled: true,
+    autoFitEnabled: true,
+  };
+}
+
 export function applyCameraPreset(state: CameraState, commandId: CameraViewId): CameraState {
   const preset = cameraPreset(commandId, state.faceOnSide);
   return { ...state, presetId: commandId, ...canvasAngles(preset) };

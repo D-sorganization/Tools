@@ -17,6 +17,11 @@ from rate_of_closure.application.workspace_document import (
     workspace_from_json,
     workspace_to_json,
 )
+from rate_of_closure.view_workspace import (
+    ViewWorkspace,
+    workspace_from_document,
+    workspace_to_document,
+)
 from shared.python.swing_sim.torque_profiles import (
     JointTorqueAssignment,
     PrescribedTorqueProfile,
@@ -83,7 +88,7 @@ def _document() -> WorkspaceDocument:
             view_workspace=VersionedPayload(
                 schema="rate_of_closure.view_workspace",
                 schema_version=1,
-                data={"mode": "single", "selected_view": "swing"},
+                data=workspace_to_document(ViewWorkspace.default()),
             ),
         ),
     )
@@ -99,6 +104,11 @@ def test_current_document_round_trip_is_deterministic_and_lossless() -> None:
     assert workspace_to_json(decoded) == encoded
     assert json.loads(encoded)["schema"] == WORKSPACE_SCHEMA
     assert json.loads(encoded)["schema_version"] == WORKSPACE_SCHEMA_VERSION
+    view_payload = decoded.layout.view_workspace
+    assert view_payload is not None
+    assert workspace_from_document(view_payload.to_json_dict()["data"]) == (
+        ViewWorkspace.default()
+    )
 
 
 def test_v1_document_migrates_torque_name_and_versioned_layout() -> None:

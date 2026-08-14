@@ -5,6 +5,12 @@ import { DEFAULT_COURSE_LAYOUT, type CourseLayout } from "../model/course";
 import type { ImpactScenario } from "../model/impact";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
 import type { SpatialTargetTs } from "../model/spatialTarget";
+import type { ViewWorkspace } from "../model/viewWorkspace";
+import {
+  withCameraPreference,
+  type CameraPreference,
+  type CameraViewportId,
+} from "../model/cameraPreferences";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import { wedgeGroundClearance } from "../model/wedgeGroundClearance";
 import { FIELD_GUIDANCE } from "../model/units";
@@ -17,6 +23,7 @@ import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
 import { SpatialTargetSection } from "./SpatialTargetSection";
 import { WedgeGroundClearancePanel } from "./WedgeGroundClearancePanel";
+import { SynchronizedSimulationViews } from "./SynchronizedSimulationViews";
 import { drawSwingScene } from "./swingSceneDraw";
 import {
   screwEntityOptions,
@@ -24,7 +31,7 @@ import {
   screwPresentation,
 } from "./screwPresentation";
 
-const VIEWS = ["Strike", "Swing", "Kinetics", "Flight"] as const;
+const VIEWS = ["Strike", "Swing", "Kinetics", "Flight", "Multi View"] as const;
 type ViewName = (typeof VIEWS)[number];
 
 const TOGGLE_GUIDANCE = {
@@ -44,6 +51,9 @@ interface Props {
   spatialTarget: SpatialTargetTs;
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
   distanceUnit: string;
+  viewWorkspace?: ViewWorkspace;
+  onViewWorkspaceChange?: (workspace: ViewWorkspace) => void;
+  viewCommandRevision?: number;
 }
 
 export function SimulationDisplay({
@@ -55,11 +65,15 @@ export function SimulationDisplay({
   spatialTarget,
   onSpatialTargetChange,
   distanceUnit,
+  viewWorkspace,
+  onViewWorkspaceChange,
+  viewCommandRevision = 0,
 }: Props) {
-  const [playing, setPlaying] = useState(false);
-  const [loop, setLoop] = useState(false);
-  const [rate, setRate] = useState(1);
-  const [time, setTime] = useState(0);
+  const initialPlayback = viewWorkspace?.playback;
+  const [playing, setPlaying] = useState(initialPlayback?.playing ?? false);
+  const [loop, setLoop] = useState(initialPlayback?.loop ?? false);
+  const [rate, setRate] = useState(initialPlayback?.rate ?? 1);
+  const [time, setTime] = useState(initialPlayback?.timeS ?? 0);
   const [showBall, setShowBall] = useState(true);
   const [showGround, setShowGround] = useState(true);
   const [showCourse, setShowCourse] = useState(true);
@@ -67,8 +81,9 @@ export function SimulationDisplay({
   const [screwEntityId, setScrewEntityId] = useState("club");
   const [showFlight, setShowFlight] = useState(false);
   const [showSwingTrail, setShowSwingTrail] = useState(false);
-  const [view, setView] = useState<ViewName>("Swing");
+  const [view, setView] = useState<ViewName>(viewWorkspace ? "Multi View" : "Swing");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const workspaceRef = useRef(viewWorkspace);
   const screwEntities = useMemo(() => screwEntityOptions(run), [run]);
   const screwData = useMemo(() =>
     run && showScrew ? screwPresentation(run, time, screwEntityId) : null,
@@ -76,6 +91,20 @@ export function SimulationDisplay({
   const wedgeClearance = useMemo(() =>
     run && clubSpec ? wedgeGroundClearance(run, scenario, clubSpec) : null,
   [run, scenario, clubSpec]);
+  const updateCameraPreference = (
+    viewportId: CameraViewportId,
+    preference: CameraPreference,
+  ) => {
+    if (viewWorkspace === undefined || onViewWorkspaceChange === undefined) return;
+    const cameraPreferences = withCameraPreference(
+      viewWorkspace.cameraPreferences,
+      viewportId,
+      preference,
+    );
+    if (cameraPreferences !== viewWorkspace.cameraPreferences) {
+      onViewWorkspaceChange({ ...viewWorkspace, cameraPreferences });
+    }
+  };
 
   const groundTarget = useMemo(
     () => spatialTargetForGroundWorkflow(spatialTarget, "solver").targetRegion,
@@ -110,6 +139,31 @@ export function SimulationDisplay({
     setScrewEntityId("club");
   }, [run]);
   useEffect(() => {
+    workspaceRef.current = viewWorkspace;
+  }, [viewWorkspace]);
+  useEffect(() => {
+    if (viewCommandRevision > 0) setView("Multi View");
+  }, [viewCommandRevision]);
+  useEffect(() => {
+    const current = workspaceRef.current;
+    if (!current || !onViewWorkspaceChange) return;
+    const playback = {
+      timeS: playing ? current.playback.timeS : time,
+      playing,
+      loop,
+      rate,
+    };
+    if (
+      playback.timeS === current.playback.timeS &&
+      playback.playing === current.playback.playing &&
+      playback.loop === current.playback.loop &&
+      playback.rate === current.playback.rate
+    ) return;
+    const next = { ...current, playback };
+    workspaceRef.current = next;
+    onViewWorkspaceChange(next);
+  }, [playing, loop, rate, time, onViewWorkspaceChange]);
+  useEffect(() => {
     if (!playing || !run) return undefined;
     let last = performance.now();
     let frame = 0;
@@ -137,8 +191,22 @@ export function SimulationDisplay({
     }
   }, [
     run, time, showBall, showGround, showCourse, showFlight, showSwingTrail,
-    showScrew, screwEntityId, view, wedgeClearance,
+    showScrew, screwEntityId, view, wedgeClearance, viewWorkspace,
   ]);
+
+  const playbackControls = (
+    <SwingPlaybackControls run={run} playing={playing} setPlaying={setPlaying}
+      time={time} setTime={setTime} loop={loop} setLoop={setLoop}
+      rate={rate} setRate={setRate} toggles={[
+        ["Ball", showBall, setShowBall, TOGGLE_GUIDANCE.ball, "text-slate-300"],
+        ["Ground", showGround, setShowGround, TOGGLE_GUIDANCE.ground, "text-slate-300"],
+        ["Course Elements", showCourse, setShowCourse, TOGGLE_GUIDANCE.course, "text-slate-300"],
+        ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
+        ["Path Trail", showSwingTrail, setShowSwingTrail,
+          "Show the clubhead path travelled up to the current frame.", "text-sky-300"],
+        ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
+      ]} />
+  );
 
   return (
     <section className="min-w-0 space-y-3">
@@ -173,22 +241,24 @@ export function SimulationDisplay({
             layout={targetLayout}
             spatialTarget={spatialTarget} distanceUnit={distanceUnit} />
         </>}
+        {view === "Multi View" && viewWorkspace && onViewWorkspaceChange && <>
+          {playbackControls}
+          <SynchronizedSimulationViews workspace={viewWorkspace}
+            onWorkspaceChange={onViewWorkspaceChange} run={run} input={input}
+            scenario={scenario} effectiveLoftDeg={effectiveLoftDeg}
+            clubSpec={clubSpec} spatialTarget={spatialTarget}
+            onSpatialTargetChange={onSpatialTargetChange} timeS={time}
+            swingCanvasRef={canvasRef} deliveryAngles={deliveryAngles} />
+        </>}
         {view === "Swing" && <>
-          <SwingPlaybackControls run={run} playing={playing} setPlaying={setPlaying}
-            time={time} setTime={setTime} loop={loop} setLoop={setLoop}
-            rate={rate} setRate={setRate} toggles={[
-              ["Ball", showBall, setShowBall, TOGGLE_GUIDANCE.ball, "text-slate-300"],
-              ["Ground", showGround, setShowGround, TOGGLE_GUIDANCE.ground, "text-slate-300"],
-              ["Course Elements", showCourse, setShowCourse, TOGGLE_GUIDANCE.course, "text-slate-300"],
-              ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
-              ["Path Trail", showSwingTrail, setShowSwingTrail,
-                "Show the clubhead path travelled up to the current frame.", "text-sky-300"],
-              ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
-            ]} />
+          {playbackControls}
           {run && clubSpec && (
             <>
               <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
-              <ImpactSceneCanvas run={run} scenario={scenario} club={clubSpec} />
+              <ImpactSceneCanvas run={run} scenario={scenario} club={clubSpec}
+                cameraPreference={viewWorkspace?.cameraPreferences.viewports.impact}
+                onCameraPreferenceChange={(preference) =>
+                  updateCameraPreference("impact", preference)} />
               <WedgeGroundClearancePanel result={wedgeClearance} />
             </>
           )}

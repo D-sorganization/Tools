@@ -23,10 +23,14 @@ from rate_of_closure.application.capability_result_export import (
 )
 from rate_of_closure.application.capability_workflow import (
     CapabilityWorkflowDocument,
+    CapabilityWorkflowInputs,
     build_capability_workflow,
     capability_workflow_from_json,
     capability_workflow_inputs,
     capability_workflow_json,
+)
+from rate_of_closure.application.capability_workflow_overlay import (
+    overlay_capability_workflow_inputs,
 )
 from rate_of_closure.ui.pyqt6.capability_controls import CapabilityControls
 from rate_of_closure.ui.pyqt6.capability_results import CapabilityResults
@@ -58,6 +62,8 @@ class CapabilityOptimizationTab(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self._worker: CapabilityOptimizationWorker | None = None
+        self._worker_generation = 0
+        self._workspace_document = build_capability_workflow(CapabilityWorkflowInputs())
         self._document: CapabilityWorkflowDocument | None = None
         self._dataset: ScalarEnsembleDataset | None = None
         self._result: OptimizationResult | None = None
@@ -136,6 +142,7 @@ class CapabilityOptimizationTab(QWidget):
         self.result_json_button.clicked.connect(self._export_result_json)
 
     def _invalidate(self) -> None:
+        self._worker_generation += 1
         if self._worker is not None and self._worker.isRunning():
             self._worker.cancel()
         self._document = None
@@ -152,22 +159,94 @@ class CapabilityOptimizationTab(QWidget):
         """Validate the full basis before starting a background calculation."""
         self.stop()
         try:
-            document = build_capability_workflow(self.controls.inputs())
+            document = self.capability_workspace_document()
         except (TypeError, ValueError) as exc:
             self.status.setText(f"Invalid inputs: {exc}")
             return
         self._document = document
+        self._workspace_document = document
         total = document.request.candidate_budget * document.request.ensemble_size
         self.progress.setRange(0, total)
         self.progress.setValue(0)
         self.status.setText(f"Running 0/{total} model evaluations…")
         self._worker = CapabilityOptimizationWorker(document)
-        self._worker.progressed.connect(self._on_progress)
-        self._worker.succeeded.connect(self._on_success)
-        self._worker.cancelled.connect(self._on_cancelled)
-        self._worker.failed.connect(self._on_failed)
+        generation = self._worker_generation
+        worker = self._worker
+        worker.progressed.connect(
+            lambda completed, total: self.accept_worker_progress(
+                worker, generation, completed, total
+            )
+        )
+        worker.succeeded.connect(
+            lambda result, dataset: self.accept_worker_success(
+                worker, generation, result, dataset
+            )
+        )
+        worker.cancelled.connect(
+            lambda completed, total: self.accept_worker_cancelled(
+                worker, generation, completed, total
+            )
+        )
+        worker.failed.connect(
+            lambda message: self.accept_worker_failure(worker, generation, message)
+        )
         self._set_running(True)
         self._worker.start()
+
+    def capability_workspace_document(self) -> CapabilityWorkflowDocument:
+        """Capture only the strict, reproducible optimizer input specification."""
+        return overlay_capability_workflow_inputs(
+            self._workspace_document, self.controls.inputs()
+        )
+
+    def apply_capability_workspace_document(
+        self, document: CapabilityWorkflowDocument
+    ) -> None:
+        """Replace inputs atomically and invalidate all prior computed output."""
+        inputs = capability_workflow_inputs(document)
+        self._workspace_document = document
+        self.controls.set_inputs(inputs)
+        self._invalidate()
+        self.status.setText("Workspace optimizer inputs loaded — run when ready.")
+
+    def worker_generation(self) -> int:
+        """Return the current result-publication generation for deterministic tests."""
+        return self._worker_generation
+
+    def _is_current_worker(self, worker: object, generation: int) -> bool:
+        return worker is self._worker and generation == self._worker_generation
+
+    def accept_worker_progress(
+        self, worker: object, generation: int, completed: int, total: int
+    ) -> None:
+        """Accept progress only from the active worker generation."""
+        if self._is_current_worker(worker, generation):
+            self._on_progress(completed, total)
+
+    def accept_worker_success(
+        self,
+        worker: object,
+        generation: int,
+        result: OptimizationResult,
+        dataset: ScalarEnsembleDataset,
+    ) -> None:
+        """Publish output only when worker identity and generation remain current."""
+        if self._is_current_worker(worker, generation):
+            self._on_success(result, dataset)
+
+    def accept_worker_cancelled(
+        self, worker: object, generation: int, completed: int, total: int
+    ) -> None:
+        """Accept cancellation only from the active worker generation."""
+        if self._is_current_worker(worker, generation):
+            self._on_cancelled(completed, total)
+
+    def accept_worker_failure(
+        self, worker: object, generation: int, message: str
+    ) -> None:
+        """Accept failure only from the active worker generation."""
+        if self._is_current_worker(worker, generation):
+            self._on_failed(message)
 
     def _set_running(self, running: bool) -> None:
         self.run_button.setEnabled(not running)
@@ -208,6 +287,7 @@ class CapabilityOptimizationTab(QWidget):
 
     def stop(self) -> None:
         """Cancel and join the worker so it cannot outlive the application."""
+        self._worker_generation += 1
         worker = self._worker
         if worker is None:
             return
@@ -220,9 +300,7 @@ class CapabilityOptimizationTab(QWidget):
 
     def _save_workflow(self) -> None:
         try:
-            source = capability_workflow_json(
-                build_capability_workflow(self.controls.inputs())
-            )
+            source = capability_workflow_json(self.capability_workspace_document())
         except (TypeError, ValueError) as exc:
             self.status.setText(f"Cannot save invalid workflow: {exc}")
             return
@@ -238,7 +316,7 @@ class CapabilityOptimizationTab(QWidget):
             document = capability_workflow_from_json(
                 Path(selected).read_text(encoding="utf-8")
             )
-            self.controls.set_inputs(capability_workflow_inputs(document))
+            self.apply_capability_workspace_document(document)
         except (OSError, TypeError, ValueError) as exc:
             self.status.setText(f"Workflow load failed: {exc}")
         else:

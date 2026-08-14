@@ -2,6 +2,7 @@ import { useMemo, type Dispatch, type SetStateAction } from "react";
 
 import type { ClubSpec } from "../model/club";
 import type { GeneratedHead } from "../model/clubHeadGeneration";
+import type { CameraPreference } from "../model/cameraPreferences";
 import { METRIC_EXPLANATIONS, RESULT_EXPLANATIONS } from "../model/derivation";
 import { FIELD_TO_TERM } from "../model/glossary";
 import {
@@ -213,6 +214,8 @@ interface ImpactExplorerPanelProps {
   readonly explained: string;
   readonly onExplainedChange: (key: string) => void;
   readonly onOpenGlossary: (term: string | undefined) => void;
+  readonly cameraPreference?: CameraPreference;
+  readonly onCameraPreferenceChange?: (preference: CameraPreference) => void;
 }
 
 export function ImpactExplorerPanel(props: ImpactExplorerPanelProps) {
@@ -239,7 +242,9 @@ export function ImpactExplorerPanel(props: ImpactExplorerPanelProps) {
           explained={props.explained} onExplainedChange={props.onExplainedChange}
           onOpenGlossary={props.onOpenGlossary} />
         <ClubCanvas scenario={props.scenario} externalMesh={props.generatedHead.mesh}
-          hoselPoint={props.generatedHead.hosel} cogPoint={props.generatedHead.cog} />
+          hoselPoint={props.generatedHead.hosel} cogPoint={props.generatedHead.cog}
+          cameraPreference={props.cameraPreference}
+          onCameraPreferenceChange={props.onCameraPreferenceChange} />
       </section>
     </div>
   );

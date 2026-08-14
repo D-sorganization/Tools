@@ -105,7 +105,7 @@ class VersionedPayload:
             schema_version=positive_version(
                 data["schema_version"], "payload.schema_version"
             ),
-            data=freeze_object(data["data"], "payload.data"),
+            data=data["data"],
         )
 
 
@@ -317,7 +317,8 @@ def _migrate_workspace(value: object) -> Mapping[str, Any]:
     if type(version) is not int or version not in _SUPPORTED_WORKSPACE_VERSIONS:
         raise ValueError(f"unsupported workspace schema_version {version!r}")
     if version == WORKSPACE_SCHEMA_VERSION:
-        return exact_mapping(value, _ROOT_FIELDS, "workspace")
+        current: Mapping[str, Any] = exact_mapping(value, _ROOT_FIELDS, "workspace")
+        return current
     legacy = exact_mapping(value, _ROOT_V1_FIELDS, "workspace v1")
     legacy_layout = exact_mapping(legacy["layout"], _LAYOUT_V1_FIELDS, "layout v1")
     migrated = dict(legacy)
