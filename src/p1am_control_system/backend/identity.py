@@ -10,9 +10,16 @@ import threading
 from collections.abc import Callable, Sequence
 from dataclasses import InitVar, dataclass, field
 from datetime import datetime, timedelta, timezone
-from typing import cast, overload
+from typing import TYPE_CHECKING, cast, overload
 
-from enum_compat import StrEnum
+if TYPE_CHECKING:
+    # Type checkers must see the real 3.11 symbol; TYPE_CHECKING is always
+    # true for them and always false at runtime, so this needs no version
+    # test and never degrades StrEnum members to bare `str`.
+    from enum import StrEnum
+else:
+    from enum_compat import StrEnum
+
 
 try:
     from datetime import UTC

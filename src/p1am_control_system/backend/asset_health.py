@@ -6,10 +6,17 @@ import math
 import statistics
 from collections.abc import Callable, Sequence
 from datetime import datetime, timedelta
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
-from enum_compat import StrEnum
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+if TYPE_CHECKING:
+    # Type checkers must see the real 3.11 symbol; TYPE_CHECKING is always
+    # true for them and always false at runtime, so this needs no version
+    # test and never degrades StrEnum members to bare `str`.
+    from enum import StrEnum
+else:
+    from enum_compat import StrEnum
 
 
 def _aware(value: datetime) -> datetime:

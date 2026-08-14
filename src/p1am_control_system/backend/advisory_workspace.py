@@ -7,11 +7,18 @@ import json
 import math
 from collections.abc import Callable
 from datetime import datetime
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
-from enum_compat import StrEnum
 from identity import Principal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+if TYPE_CHECKING:
+    # Type checkers must see the real 3.11 symbol; TYPE_CHECKING is always
+    # true for them and always false at runtime, so this needs no version
+    # test and never degrades StrEnum members to bare `str`.
+    from enum import StrEnum
+else:
+    from enum_compat import StrEnum
 
 MODEL_DESCRIPTOR = {
     "algorithm": "representative bounded linear projection",

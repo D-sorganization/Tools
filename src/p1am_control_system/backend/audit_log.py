@@ -6,13 +6,20 @@ import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from enum_compat import StrEnum
 from identity import Principal
 from models import utc_now
 from sqlalchemy import Engine, text
 from sqlmodel import Field, Session, SQLModel
+
+if TYPE_CHECKING:
+    # Type checkers must see the real 3.11 symbol; TYPE_CHECKING is always
+    # true for them and always false at runtime, so this needs no version
+    # test and never degrades StrEnum members to bare `str`.
+    from enum import StrEnum
+else:
+    from enum_compat import StrEnum
 
 try:
     from datetime import UTC

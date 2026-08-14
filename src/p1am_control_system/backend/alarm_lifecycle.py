@@ -5,9 +5,17 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 
-from enum_compat import StrEnum
 from identity import Principal, Role
+
+if TYPE_CHECKING:
+    # Type checkers must see the real 3.11 symbol; TYPE_CHECKING is always
+    # true for them and always false at runtime, so this needs no version
+    # test and never degrades StrEnum members to bare `str`.
+    from enum import StrEnum
+else:
+    from enum_compat import StrEnum
 
 
 class AlarmPriority(StrEnum):

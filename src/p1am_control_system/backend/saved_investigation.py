@@ -10,13 +10,20 @@ import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Literal, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
 
-from enum_compat import StrEnum
 from identity import Principal, Role
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from sqlmodel import Field as SqlField
 from sqlmodel import Session, SQLModel
+
+if TYPE_CHECKING:
+    # Type checkers must see the real 3.11 symbol; TYPE_CHECKING is always
+    # true for them and always false at runtime, so this needs no version
+    # test and never degrades StrEnum members to bare `str`.
+    from enum import StrEnum
+else:
+    from enum_compat import StrEnum
 
 try:
     from datetime import UTC
