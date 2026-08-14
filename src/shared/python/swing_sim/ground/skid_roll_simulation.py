@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
+from typing import cast
 
-from ._vector_math import norm, subtract
+from ._vector_math import cross, norm, subtract
 from .bounce_types import RepeatedBounceResult
 from .contract_records import GroundSimulationRequest
 from .contract_types import (
@@ -17,8 +18,8 @@ from .impact_types import SphereProperties
 from .skid_roll_dynamics import (
     bounded_closing_duration,
     contact_slip_velocity,
+    holding_kinematics,
     rolling_kinematics,
-    rolling_state,
     skid_kinematics,
     stable_at_zero_speed,
     static_rolling_feasible,
@@ -63,6 +64,14 @@ def _never_cancelled() -> bool:
     return False
 
 
+def _typed_result(
+    run: SurfaceRun,
+    reason: SkidRollTerminationReason,
+) -> SkidRollResult:
+    """Return the runtime result across the skipped-import type boundary."""
+    return cast(SkidRollResult, run.result(reason))
+
+
 def _event_result(
     run: SurfaceRun,
     event_type: GroundEventType,
@@ -76,21 +85,22 @@ def _event_result(
     before = run.state
     if not run.append_event(event_type, before, after):
         run.append_point(before, run.phase)
-        return run.result(SkidRollTerminationReason.EVENT_LIMIT)
+        return _typed_result(run, SkidRollTerminationReason.EVENT_LIMIT)
     run.state = after
     run.phase = phase
     run.append_point(after, phase)
-    return None if reason is None else run.result(reason)
+    return None if reason is None else _typed_result(run, reason)
 
 
 def _can_rest(run: SurfaceRun) -> bool:
     surface = run.request.surface
-    return (
+    return cast(
+        bool,
         surface.surface_velocity_m_s == _ZERO
         and stable_at_zero_speed(surface, run.body, run.settings.gravity_m_s2)
         and norm(run.state.velocity_m_s) <= run.settings.velocity_tolerance_m_s
         and norm(run.state.angular_velocity_rad_s)
-        <= run.settings.angular_tolerance_rad_s
+        <= run.settings.angular_tolerance_rad_s,
     )
 
 
@@ -110,8 +120,8 @@ def _transition_to_roll(run: SurfaceRun) -> SkidRollResult | None:
     if not static_rolling_feasible(
         run.request.surface, run.body, run.settings.gravity_m_s2
     ):
-        return run.result(SkidRollTerminationReason.UNSUPPORTED_SURFACE)
-    rolled = rolling_state(run.state, run.request.surface, run.body)
+        return _typed_result(run, SkidRollTerminationReason.UNSUPPORTED_SURFACE)
+    rolled = run.rolling_projection()
     return _event_result(run, GroundEventType.SKID_TO_ROLL, rolled)
 
 
@@ -151,8 +161,8 @@ def _skid_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
 def _roll_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
     surface = run.request.surface
     if not static_rolling_feasible(surface, run.body, run.settings.gravity_m_s2):
-        return run.result(SkidRollTerminationReason.UNSUPPORTED_SURFACE)
-    run.state = rolling_state(run.state, surface, run.body)
+        return _typed_result(run, SkidRollTerminationReason.UNSUPPORTED_SURFACE)
+    run.state = run.rolling_projection()
     relative = tangent(
         subtract(run.state.velocity_m_s, surface.surface_velocity_m_s),
         surface.normal_unit,
@@ -161,6 +171,27 @@ def _roll_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
         resting = _rest_or_hold(run)
         if resting is not None:
             return resting
+        if stable_at_zero_speed(surface, run.body, run.settings.gravity_m_s2):
+            run.state = run.holding_projection()
+            motion = holding_kinematics(
+                surface,
+                run.body,
+                run.settings.gravity_m_s2,
+            )
+            if _can_rest(run):
+                handoff = run.prefix.handoff_state
+                if handoff is None:
+                    raise RuntimeError("surface run requires a handoff")
+                if run.state.time_s <= handoff.time_s + run.settings.time_tolerance_s:
+                    outcome = run.advance(motion, duration_s)
+                    if outcome.boundary_crossed:
+                        return _left_surface(run)
+                return _rest_or_hold(run)
+            outcome = run.advance(
+                motion,
+                duration_s,
+            )
+            return _left_surface(run) if outcome.boundary_crossed else None
     motion = rolling_kinematics(run.state, surface, run.body, run.settings.gravity_m_s2)
     stop = time_to_vector_zero(
         relative,
@@ -168,12 +199,24 @@ def _roll_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
         tolerance=run.settings.velocity_tolerance_m_s,
     )
     reaches_zero = stop is not None and stop <= duration_s
-    advance_for = stop if reaches_zero and stop is not None else duration_s
+    advance_for = (
+        stop
+        if reaches_zero and stop is not None
+        else (
+            bounded_closing_duration(
+                relative,
+                motion.acceleration_m_s2,
+                duration_s,
+            )
+            if norm(cross(relative, motion.acceleration_m_s2)) > 1e-12
+            else duration_s
+        )
+    )
     outcome = run.advance(motion, advance_for)
     if outcome.boundary_crossed:
         return _left_surface(run)
     if reaches_zero:
-        run.state = rolling_state(run.state, surface, run.body)
+        run.state = run.rolling_projection()
         return _rest_or_hold(run)
     return None
 
@@ -193,13 +236,13 @@ def _left_surface(run: SurfaceRun) -> SkidRollResult:
 def _run_loop(run: SurfaceRun) -> SkidRollResult:
     while True:
         if run.is_cancelled():
-            return run.result(SkidRollTerminationReason.CANCELLED)
+            return _typed_result(run, SkidRollTerminationReason.CANCELLED)
         if run.step_count >= run.settings.max_steps:
-            return run.result(SkidRollTerminationReason.STEP_LIMIT)
+            return _typed_result(run, SkidRollTerminationReason.STEP_LIMIT)
         remaining = run.time_limit_s - run.state.time_s
         if remaining <= run.settings.time_tolerance_s:
             run.append_point(run.state, run.phase)
-            return run.result(SkidRollTerminationReason.TIME_LIMIT)
+            return _typed_result(run, SkidRollTerminationReason.TIME_LIMIT)
         duration = min(run.settings.integration_step_s, remaining)
         run.step_count += 1
         result = (
@@ -222,7 +265,7 @@ def simulate_skid_roll(
         raise ValueError("execution must be an exact SkidRollExecution record")
     selected_settings = selected_execution.settings
     selected_resolver = (
-        SurfaceResolver(PlanarSurfaceDomain(request.surface))
+        SurfaceResolver(PlanarSurfaceDomain.unbounded(request.surface))
         if selected_execution.resolver is None
         else selected_execution.resolver
     )

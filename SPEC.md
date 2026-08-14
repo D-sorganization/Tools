@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.46                                    |
-| **Spec Version**        | 1.14.46                                    |
+| **Current Version**     | 1.14.47                                    |
+| **Spec Version**        | 1.14.47                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -267,6 +267,159 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   results identify missing required fields with typed reason and provenance;
   duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
   out-of-range values fail closed before normalization.
+
+### 2026-08-10 Rust ground-result wire parity
+
+- `tools-core` parses the complete typed `flight-to-ground-result/v1` record,
+  enforces the Python authority's status, termination, trajectory, event,
+  summary, calibration, provenance, warning, and unavailable-data semantics,
+  and emits the shared canonical-number JSON representation.
+- Duplicate object keys at any nesting depth, unknown fields, unsafe integers,
+  invalid raw values, and malformed state-machine evidence fail closed. Raw
+  validation precedes numeric normalization, followed by normalized-record
+  validation, so rounding cannot convert invalid evidence into valid evidence.
+- PyO3 and wasm-bindgen expose validation/canonicalization entry points pinned
+  to the full reference-pipeline result and canonical SHA-256 fixture.
+- This boundary does not execute the Python bounce/skid/roll reference solver
+  in Rust and makes no compiled-physics parity, UI, calibration, ensemble, or
+  downstream-consumer claim.
+
+### 2026-08-10 Ground-result provenance digest normalization
+
+- A result provenance input digest may contain exactly 64 ASCII hexadecimal
+  characters in either case at the raw wire boundary, matching Python and
+  TypeScript acceptance.
+- Canonical result normalization lowercases the digest and semantic validation
+  runs again afterward. Wrong-length or non-hex digests remain invalid.
+- The required behavior is verified in the core parser/canonicalizer and both
+  real compiled binding surfaces; it does not change any ground-physics value.
+
+### 2026-08-10 Compiled ground-reference execution
+
+- `tools-core` executes the qualified static-plane reference pipeline through
+  sphere-plane contact, passive restitution/Coulomb impact, repeated bounce and
+  capture, skid, skid-to-roll transition, pure roll, rolling resistance, and
+  qualified rest.
+- Native Rust, PyO3, and wasm-bindgen entry points share strict request and
+  `ground-reference-execution/v1` parsing, canonical
+  `flight-to-ground-result/v1` output, and typed
+  `ground-reference-execution-error/v1` runtime failures with phase, native
+  reason, and request fingerprint.
+- Execution is bounded by request time/event limits and solver step limits.
+  Cancellation is checked before contact, within bounce and surface loops,
+  inside every grid-emission loop, and before composition. Callback exceptions
+  propagate through PyO3 and WASM; cancellation is not serialized into the
+  execution record.
+- The v1 wire adds no redundant resource fields. Independent trusted budgets
+  permit at most 200,001 scheduled endpoint-inclusive output points, 1,000,000
+  declared surface-loop steps, 10,000 events, and 210,003 total trajectory
+  points including unscheduled contact, transition, event, and terminal
+  evidence. Output density is not compared with integration steps. Excess
+  declarations fail before callbacks, allocation, or physics with
+  resource-specific reasons; an admitted small `max_steps` retains runtime
+  `step_limit`. Dynamic append guards preserve the event/trajectory caps.
+- A single bounded integer output index is shared across bounce and surface
+  phases in elapsed time. Absolute request time is applied only when emitting
+  trajectory, event, and termination evidence, preventing non-advancing
+  floating-point catch-up at large valid epochs while preserving canonical
+  wire timestamps.
+- Before callbacks or physics, the first and terminal-adjacent points of the
+  endpoint-inclusive requested grid must remain strictly increasing after
+  projection onto canonical absolute `f64` wire time. A grid below the epoch's
+  representable spacing fails as typed Bounce `time_resolution`. Runtime
+  append guards enforce the same rule for unplanned event/state times, while
+  intentional same-elapsed phase transitions may replace one another; contact
+  must never be silently dropped. Epoch-plus-duration projections outside the
+  canonical safe-number range produce the same typed failure rather than a
+  panic.
+- Every derived state, wire timestamp, event, summary accumulator, and final
+  recursively inspected JSON number must remain within the canonical safe
+  numeric range. A violation returns `NumericalFailure` with reason
+  `numeric_range` from the phase that derived it; valid parsed inputs must not
+  panic or trap in native, PyO3, or WASM execution.
+- If immediate capture consumes the sole allowed event, the unchanged surface
+  handoff is a coherent `Partial`/`EventLimit` result whose final trajectory
+  point equals termination. A rebound that requires another bounce event
+  remains a typed Bounce `event_limit` failure; an empty surface suffix is not
+  accepted for an uncensored terminal reason.
+- A direct native call normalizes its typed request exactly once and uses that
+  same immutable record for the request fingerprint, output preflight, and all
+  physics. The JSON boundary reuses its normalized parse result rather than
+  applying a second normalization pass.
+- PyO3 releases the GIL for compiled physics and reacquires it only for a
+  cancellation callback poll. Python callback exceptions and non-boolean
+  results remain strict, and cancellation from another Python thread must be
+  prompt.
+- The compiled result must remain byte-identical to the established canonical
+  golden SHA. Seeded parity covers the common Python/Rust resolver-free scope,
+  and native coverage separately validates an arbitrary static plane. Native,
+  fresh CPython 3.13 PyO3, and fresh Node/WASM regressions cover derived-range
+  failures, the trusted output cap, event-limit coherence, and monotonic
+  bounce/immediate-capture success at the representable `1e12 s` epoch.
+- Final local evidence is 180 default, 195 Python-feature, and 192 WASM-feature
+  `tools-core` tests; 219 Python ground-authority tests; eight campaign-manifest
+  tests; strict Clippy, Rust formatting, Ruff, Prettier, and documentation
+  governance. The strict campaign manifest binds this evidence to exact
+  implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c`
+  through the existing `commit_sha` contract; no dirty-tree evidence type was
+  added. Independent final review is READY. This is not a performance-budget
+  pass, hosted check, protected merge, or release.
+- This version supports only standard gravity, the v1 model identities, and
+  one immutable planar profile. Non-null resolvers fail closed. Changing
+  terrain/material regions, deformation, torsional damping, roll-to-skid,
+  production calibration, ensemble/UI/consumer integration, and asynchronous
+  WASM cancellation are non-goals of this slice.
+- The verified `wasm-pack` release build currently emits a packaging notice
+  because the nested crate lacks its own license file while the repository
+  root tracks `LICENSE`. Generated Node execution is in scope; npm publication
+  and its package-metadata remediation are not qualified by this version.
+
+### 2026-08-10 Ground-reference scientific conformance
+
+- `ground-reference-conformance/v1` is a single machine-readable scientific
+  corpus shared by the Python reference, direct native Rust, installed PyO3
+  wheel, and rebuilt Node/WASM executor.
+- Seven cases cover shallow bounce/capture, Coulomb
+  skid-to-roll, no-slip stopping under rolling resistance, proper 90-degree
+  frame rotation, constant moving-surface relative motion, and zero-resistance
+  pure roll down the mirrored immutable inclines
+  `n=[0,sqrt(0.99),+/-0.1]`.
+- Expected observables are independent closed-form values or physical
+  invariants with explicit derivation, unit, and applicable bounded tolerance.
+  Supported checks are whitelisted; fixture text is never executed.
+- The corpus checks contact/transition timing, Newton restitution, passive
+  impact energy, event order, no-slip contact velocity, center-to-plane
+  distance, vector orientation, phase distances, total distance, and typed
+  rest/time-limit outcomes.
+- Surface passivity is enforced independently on every unquantized constant-
+  motion segment so earlier dissipation cannot mask later energy creation.
+  Canonical 11-decimal endpoint effects are admitted only inside accumulated
+  fixed-component bounds, and no-slip projection is separately slip-bounded.
+  The reproducible public ledger/wire authority is unchanged. Adversarial
+  masking and unexplained-endpoint tests remain fail-closed.
+- Rolling resistance cannot step through its zero-relative-speed direction
+  cusp. Non-collinear closing steps are bounded, and a moving plane carries a
+  resistance-held ball at zero relative speed without fabricating absolute
+  rest; the balancing contact force remains explicit for work accounting.
+  Sub-tolerance residual motion is projected to exact co-motion only through
+  the bounded slip, velocity, spin, and energy contract before holding. Slip
+  and correction tolerances remain independent. A stationary projected state
+  terminates as rest in the same solver step; at the exact handoff boundary one
+  zero-motion interval preserves strictly increasing wire timestamps.
+- Scientific conformance and serialization conformance are separate. The new
+  artifact compares declared observables within tolerance; the existing
+  full-result golden continues to pin canonical bytes and SHA-256.
+- A deterministic seed-4275 Python/PyO3 sweep adds 20 exact-parity cases over
+  nonzero x-normal components, both z-tilt signs, and bounded ball, surface,
+  material, launch, and spin properties. The implicit unbounded Python domain
+  derives a stable tangent by projecting the least-aligned Cartesian axis;
+  explicit finite-domain axes and bounds remain caller-owned.
+- This bounded evidence qualifies two analytic mirrored cross-authority cases
+  and one finite Python/PyO3 sample. It does not qualify exhaustive randomized
+  frames, WASM-wide property sweeps, statistical uncertainty, performance or
+  memory budgets, ensembles, asynchronous WASM
+  cancellation, calibrated materials, changing terrain, UI/rendering, or
+  downstream consumers.
 
 ### 2026-08-09 Static-plane skid, roll, and result composition
 
@@ -3189,6 +3342,21 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-10 | 1.14.23 | fix(ground-playback, #4274): make PyQt playback monotonic-time based with continuous speed/loop-mode changes and modulo loop overshoot; render full trajectory and event linear/angular state, result identity/status/termination, input digest, calibration identity/confidence, and warnings with shared-fixture PyQt/React parity assertions; protected publication and review remain open. |
 | 2026-08-10 | 1.14.22 | fix(ground-playback, #4274): route browser result imports through the duplicate-key-aware strict JSON facade, retain the last valid result on duplicate-field rejection, disclose that retention in the error state, and cover the boundary with an atomic-import regression; protected publication and review remain open. |
 | 2026-08-10 | 1.14.21 | feat(ground-playback, #4274): add discoverable standalone PyQt6 and React strict-result playback with bounded atomic import and last-good retention, shared-golden phase-aware absolute-time semantics, exact-frame/phase/loop/speed controls, honest complete versus observed endpoint labels, warning/calibration/provenance and trajectory/event tables, and locked-physical-scale orbit/zoom/reset 3D views; disclose that clients do not execute ground physics and result v1 carries no terrain geometry, while retaining explicit non-delivery boundaries for surface editors, terrain meshes, comparisons, persistence/export, ensembles, optimization, compiled runtimes, and UpstreamDrift integration. |
+| 2026-08-10 | 1.14.47 | docs(ground-conformance, #4323): record guarded publication of the hosted-MyPy boundary repair at exact current head `3957f013eeadd448ffa381f12d65b6a076abe21b`, preserving ready state, exact parent base, scientific evidence, and all protected CI/review/integration gates. |
+| 2026-08-10 | 1.14.46 | fix(ground-conformance, #4323): satisfy the exact hosted Python 3.12/MyPy 1.13 changed-production profile by exposing existing float, bool, and `SkidRollResult` return types through runtime-identity casts and one DRY result helper; preserve all arithmetic, predicate, event, termination, scientific-corpus, and wire semantics. |
+| 2026-08-10 | 1.14.45 | docs(ground-conformance, #4275 #4323): publish the mirrored-frame and seeded-property continuation as ready PR #4323 at initial evidence head `74a23c21bb20f13bf608f463915b00d2d53d5a7f`, preserve exact PR #4322 ancestry and base topology, and retain protected CI, review, integration, exhaustive property, performance, terrain, UI, and downstream release gates. |
+| 2026-08-10 | 1.14.44 | docs(ground-conformance, #4275): bind the mirrored-frame and seeded-property implementation to exact local commit `08d631d7169019aee9067f3739051a50d88b9554`, the seven-case corpus SHA-256, complete Python ground suite, and fresh native/PyO3/WASM consumer evidence while retaining all hosted, protected, statistical, performance, terrain, UI, and downstream release gates. |
+| 2026-08-10 | 1.14.43 | fix(ground-conformance, #4275): add a mirrored analytic incline across Python/native/PyO3/WASM and a deterministic 20-case tilted property sweep across Python/PyO3; derive the default unbounded Python plane's tangent intrinsically for arbitrary valid normals while preserving caller-declared finite axes and explicit qualification limits. |
+| 2026-08-10 | 1.14.42 | docs(ground-conformance, #4275): record ready PR #4322 targeting `feat/4275-ground-conformance-corpus` from exact implementation/evidence head `a0c8e49a40badc3ce96193e031d2a9dec557d143`; preserve the independently reviewed local evidence while keeping queued hosted checks, approval, integration, and release explicitly open. |
+| 2026-08-10 | 1.14.41 | docs(ground-conformance, #4275): bind the independently reviewed tilted-plane/passivity implementation `5d333a4448d6484f8c98e78c9878cb83b40aa522` and six-case corpus SHA-256 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`; record 238 Python and 191/206/203 Rust matrices, installed PyO3/rebuilt WASM consumers, strict structural/lint/type/policy gates, READY review, and explicit protected-release gaps. |
+| 2026-08-10 | 1.14.40 | fix(ground-conformance, #4275): add a sixth analytic zero-resistance inclined pure-roll case and center-to-plane invariant across Python/native/PyO3/WASM; reject energy creation per unquantized segment, bound canonical snaps/projections, harden masking and unexplained-energy tests, prevent rolling resistance from crossing the zero-relative-speed cusp on a translating slope, and project sub-tolerance residuals to exact passive co-motion before holding. |
+| 2026-08-10 | 1.14.39 | docs(ground-conformance, #4275): bind exact reviewed implementation `9df3928a1ef32d81db2e568884ca24d8c576d49a` and corpus SHA-256 `f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310` to the strict campaign manifest and all canonical handoffs; record 227 Python and 184/199/196 Rust matrix tests, real PyO3/WASM consumers, independent READY review, and explicit hosted/protected/epic gaps. |
+| 2026-08-10 | 1.14.38 | test(ground-conformance, #4275): add one versioned five-case scientific corpus consumed by Python, direct native Rust, installed PyO3, and rebuilt WASM; pin independently derived contact, restitution, passive-energy, skid-to-roll, no-slip stopping, proper-rotation, and moving-surface observables with explicit units and tolerances while preserving the separate exact-byte golden and all remaining performance/terrain/UI/consumer gaps. |
+| 2026-08-10 | 1.14.37 | docs(ground-runtime, #4275): bind the compiled native/PyO3/WASM runtime's independently reviewed local evidence to exact implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the unchanged strict manifest schema; record the 180/195/192 Rust matrices, 219 Python authority tests, unique-venv wheel and rebuilt Node/WASM checks, independent resource caps, structural budgets, package-publication notice, and explicit hosted/protected/performance/epic gaps. |
+| 2026-08-10 | 1.14.36 | feat(ground-runtime, #4275): execute the canonical contact/bounce/skid/roll/rest reference pipeline in native Rust, PyO3, and WASM with strict normalized request authority, bounded elapsed-time scheduling, independent trusted output/step/event/trajectory caps, absolute wire-resolution preflight, fully typed derived-number range failures, coherent immediate-capture event censoring, runtime monotonicity guards, cooperative cancellation including Python GIL release between polls, exact golden/parity evidence, and explicit commit-bound-evidence/static-plane/non-production boundaries. |
+| 2026-08-10 | 1.14.35 | feat(ground-wire, #4275 #4312): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the strict Rust result-wire parity descendant without changing its base; preserve raw-before-normalized fail-closed validation, recursive duplicate-key rejection, complete result state-machine and geometry coherence, canonical JSON, lowercase provenance-digest emission, and real PyO3/WASM validation exports while inheriting corrected reference execution, scalar-study, material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and downstream consumers. |
+| 2026-08-10 | 1.14.34 | fix(ground, #4275): align Rust result provenance digest handling with Python and TypeScript by accepting 64-character ASCII hexadecimal input in either case, canonicalizing to lowercase before emission, revalidating the normalized record, and pinning malformed rejection plus real PyO3/WASM binding behavior. |
+| 2026-08-10 | 1.14.33 | feat(ground, #4275): add strict typed Rust validation and canonical JSON parity for `flight-to-ground-result/v1`, including recursive duplicate-key rejection, pre-normalization semantic checks, complete trajectory/event/summary/status coherence, and real PyO3/WASM validation exports pinned to the shared reference-pipeline SHA; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and UpstreamDrift consumers. |
 | 2026-08-09 | 1.14.20 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.18 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |
