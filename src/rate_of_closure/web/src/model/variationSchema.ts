@@ -1,0 +1,335 @@
+import { validateGroupMatrix } from "./variationGroups";
+import {
+  LOCALIZED_TORQUE_DURATION_S,
+  keysForMode,
+  localizedTorqueJointId,
+  type VariationMode,
+} from "./variationRegistry";
+import { ballSetupFromJson, ballSetupToJson, type BallSetup } from "./ballSetup";
+import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
+import {
+  wireArray,
+  wireFiniteNumber,
+  wireInteger,
+  wireNumberArray,
+  wireRecord,
+  wireStableId,
+  wireStableIdArray,
+  wireString,
+} from "./wireValues";
+
+export const SCHEMA_VERSION = 2;
+export const MAX_RUNS = 500;
+
+export type Distribution = "normal" | "uniform" | "triangular";
+
+export interface NoiseSpecTs {
+  variableKey: string;
+  distribution: Distribution;
+  scale: number;
+  lower: number | null;
+  upper: number | null;
+  /** Stable RNG/group identifier. Defaults to variableKey for v1 plans. */
+  specId?: string;
+  /** Temporal locus; executable only for registered double-pendulum torque variables. */
+  timeWindowS?: [number, number] | null;
+  /** Topological joint locus for torque variables; other loci remain fail-closed. */
+  pointIds?: string[];
+}
+
+export type MatrixKindTs = "correlation" | "covariance";
+
+export interface PerturbationGroupTs {
+  groupId: string;
+  specIds: string[];
+  matrix: number[][];
+  matrixKind: MatrixKindTs;
+}
+
+export interface VariationPlanTs {
+  mode: VariationMode;
+  baseVariables: Record<string, number>;
+  noise: NoiseSpecTs[];
+  nRuns: number;
+  seed: number;
+  flightModel: string;
+  /** Optional for source compatibility with v1 callers; normalized to [] on import. */
+  groups?: PerturbationGroupTs[];
+  /** Physical context required when Tee Height is a varied input. */
+  ballSetup?: BallSetup;
+}
+
+export const stableSpecId = (spec: NoiseSpecTs): string =>
+  spec.specId ?? spec.variableKey;
+
+const isStableId = (value: string): boolean =>
+  value.length > 0 &&
+  value.trim() === value &&
+  [...value].every((character) => {
+    const codePoint = character.codePointAt(0)!;
+    return codePoint >= 32 && !(codePoint >= 127 && codePoint <= 159);
+  });
+
+export const isGlobalSpec = (spec: NoiseSpecTs): boolean =>
+  (spec.timeWindowS === undefined || spec.timeWindowS === null) &&
+  (spec.pointIds?.length ?? 0) === 0;
+
+const validateNoiseSpec = (
+  spec: NoiseSpecTs,
+  mode: VariationMode,
+  legal: Set<string>,
+): void => {
+  if (!legal.has(spec.variableKey)) {
+    throw new Error(`noise variable not legal in ${mode} mode: ${spec.variableKey}`);
+  }
+  if (!isStableId(stableSpecId(spec))) {
+    throw new Error("specId must be a non-empty, trimmed stable ID");
+  }
+  if (!(<string[]>["normal", "uniform", "triangular"]).includes(spec.distribution)) {
+    throw new Error(`unsupported distribution: ${String(spec.distribution)}`);
+  }
+  if (!(spec.scale > 0) || !Number.isFinite(spec.scale)) {
+    throw new Error(`scale for ${spec.variableKey} must be finite and > 0`);
+  }
+  if (spec.lower !== null && !Number.isFinite(spec.lower)) {
+    throw new Error(`lower for ${spec.variableKey} must be finite when given`);
+  }
+  if (spec.upper !== null && !Number.isFinite(spec.upper)) {
+    throw new Error(`upper for ${spec.variableKey} must be finite when given`);
+  }
+  if (spec.lower !== null && spec.upper !== null && !(spec.lower < spec.upper)) {
+    throw new Error(`truncation bounds for ${spec.variableKey} must be lower < upper`);
+  }
+  if (spec.timeWindowS !== undefined && spec.timeWindowS !== null) {
+    const [start, end] = spec.timeWindowS;
+    if (
+      spec.timeWindowS.length !== 2 ||
+      !Number.isFinite(start) ||
+      !Number.isFinite(end) ||
+      !(start < end)
+    ) {
+      throw new Error("timeWindowS must contain finite start < end");
+    }
+  }
+  const pointIds = spec.pointIds ?? [];
+  if (
+    pointIds.some((pointId) => !isStableId(pointId)) ||
+    new Set(pointIds).size !== pointIds.length
+  ) {
+    throw new Error("pointIds must be unique, non-empty stable IDs");
+  }
+  const localizedJoint = localizedTorqueJointId(spec.variableKey);
+  if (localizedJoint !== null) {
+    if (mode !== "swing") {
+      throw new Error("localized torque variables require swing mode");
+    }
+    if (spec.timeWindowS === undefined || spec.timeWindowS === null) {
+      throw new Error("localized torque requires a finite half-open time window");
+    }
+    const [start, end] = spec.timeWindowS;
+    if (!(0 <= start && start < end && end <= LOCALIZED_TORQUE_DURATION_S)) {
+      throw new Error(
+        `localized torque window must satisfy 0 <= start < end <= ${LOCALIZED_TORQUE_DURATION_S} s`,
+      );
+    }
+    if (pointIds.length !== 1 || pointIds[0] !== localizedJoint) {
+      throw new Error(
+        `localized torque requires exact topological joint ${localizedJoint}; swing.* IDs are spatial`,
+      );
+    }
+  }
+};
+
+const validateGroups = (
+  groups: PerturbationGroupTs[],
+  specsById: Map<string, NoiseSpecTs>,
+): void => {
+  const groupIds = new Set<string>();
+  const assignedSpecIds = new Set<string>();
+  for (const group of groups) {
+    if (!isStableId(group.groupId)) {
+      throw new Error("groupId must be a non-empty, trimmed stable ID");
+    }
+    if (groupIds.has(group.groupId)) throw new Error(`duplicate groupId: ${group.groupId}`);
+    groupIds.add(group.groupId);
+    if (
+      group.specIds.some((specId) => !isStableId(specId)) ||
+      new Set(group.specIds).size !== group.specIds.length
+    ) {
+      throw new Error("specIds must be unique, non-empty stable IDs");
+    }
+    validateGroupMatrix(group);
+    for (const specId of group.specIds) {
+      const spec = specsById.get(specId);
+      if (spec === undefined) throw new Error(`group references unknown specId: ${specId}`);
+      if (assignedSpecIds.has(specId)) {
+        throw new Error(`a specId may belong to only one group: ${specId}`);
+      }
+      if (spec.distribution !== "normal") {
+        throw new Error("grouped specs must use normal distributions");
+      }
+      assignedSpecIds.add(specId);
+    }
+    if (group.matrixKind === "covariance") {
+      group.specIds.forEach((specId, index) => {
+        const expected = specsById.get(specId)!.scale ** 2;
+        const actual = group.matrix[index][index];
+        if (Math.abs(actual - expected) > 1e-12 + 1e-9 * Math.abs(expected)) {
+          throw new Error("covariance diagonal must equal each NoiseSpec scale squared");
+        }
+      });
+    }
+  }
+};
+
+/** DbC-style validation mirroring the Python variation plan. */
+export function validatePlan(plan: VariationPlanTs): void {
+  if (plan.mode !== "delivery" && plan.mode !== "swing" && plan.mode !== "launch") {
+    throw new Error(`mode ${plan.mode} is not supported in the browser`);
+  }
+  if (!Number.isInteger(plan.nRuns) || plan.nRuns < 2 || plan.nRuns > MAX_RUNS) {
+    throw new Error(`nRuns must be an integer in [2, ${MAX_RUNS}]`);
+  }
+  if (!Number.isInteger(plan.seed) || plan.seed < 0) {
+    throw new Error("seed must be a non-negative integer");
+  }
+  if (plan.noise.length === 0) throw new Error("plan must vary at least one variable");
+
+  const legal = new Set(keysForMode(plan.mode, plan.ballSetup));
+  if (
+    plan.noise.some((spec) => spec.variableKey === TEE_HEIGHT_VARIATION_KEY) &&
+    plan.ballSetup?.supportMode !== "tee"
+  ) {
+    throw new Error("Tee Height cannot vary in Ground mode; select Tee in Simulation first.");
+  }
+  const seenVariables = new Set<string>();
+  const specsById = new Map<string, NoiseSpecTs>();
+  for (const spec of plan.noise) {
+    validateNoiseSpec(spec, plan.mode, legal);
+    if (seenVariables.has(spec.variableKey)) {
+      throw new Error(`duplicate noise spec for ${spec.variableKey}`);
+    }
+    seenVariables.add(spec.variableKey);
+    const specId = stableSpecId(spec);
+    if (specsById.has(specId)) throw new Error(`duplicate specId: ${specId}`);
+    specsById.set(specId, spec);
+  }
+  for (const [key, value] of Object.entries(plan.baseVariables)) {
+    if (!legal.has(key)) {
+      throw new Error(`base variable not legal in ${plan.mode} mode: ${key}`);
+    }
+    if (!Number.isFinite(value)) throw new Error(`base value must be finite: ${key}`);
+  }
+  validateGroups(plan.groups ?? [], specsById);
+}
+
+/** Serialize the canonical snake_case schema shared with Python. */
+export function planToJson(plan: VariationPlanTs): string {
+  validatePlan(plan);
+  return JSON.stringify(
+    {
+      schema_version: SCHEMA_VERSION,
+      mode: plan.mode,
+      base_variables: plan.baseVariables,
+      noise: plan.noise.map((spec) => ({
+        variable_key: spec.variableKey,
+        distribution: spec.distribution,
+        scale: spec.scale,
+        lower: spec.lower,
+        upper: spec.upper,
+        spec_id: stableSpecId(spec),
+        time_window_s: spec.timeWindowS ?? null,
+        point_ids: spec.pointIds ?? [],
+      })),
+      n_runs: plan.nRuns,
+      seed: plan.seed,
+      flight_model: plan.flightModel,
+      groups: (plan.groups ?? []).map((group) => ({
+        group_id: group.groupId,
+        spec_ids: group.specIds,
+        matrix_kind: group.matrixKind,
+        matrix: group.matrix,
+      })),
+      ball_setup: plan.ballSetup === undefined ? undefined : ballSetupToJson(plan.ballSetup),
+    },
+    null,
+    2,
+  );
+}
+
+/** Parse schema v2 or migrate a schema-v1 plan into normalized model fields. */
+export function planFromJson(text: string): VariationPlanTs {
+  const data = wireRecord(JSON.parse(text) as unknown, "variation plan");
+  const version = wireInteger(data.schema_version ?? 1, "schema_version");
+  if (version !== 1 && version !== SCHEMA_VERSION) {
+    throw new Error(`unsupported schema_version ${version}`);
+  }
+  const noiseRaw = wireArray(data.noise ?? [], "noise").map((entry, index) =>
+    wireRecord(entry, `noise[${index}]`),
+  );
+  const groupsRaw = version === 1
+    ? []
+    : wireArray(data.groups ?? [], "groups").map((entry, index) =>
+      wireRecord(entry, `groups[${index}]`),
+    );
+  const baseRaw = wireRecord(data.base_variables ?? {}, "base_variables");
+  const ballRaw = data.ball_setup;
+  const plan: VariationPlanTs = {
+    mode: wireString(data.mode, "mode") as VariationMode,
+    baseVariables: Object.fromEntries(
+      Object.entries(baseRaw).map(([key, value]) => [
+        key,
+        wireFiniteNumber(value, `base_variables.${key}`),
+      ]),
+    ),
+    noise: noiseRaw.map((spec, index) => ({
+      variableKey: wireString(spec.variable_key, `noise[${index}].variable_key`),
+      distribution: wireString(
+        spec.distribution ?? "normal",
+        `noise[${index}].distribution`,
+      ) as Distribution,
+      scale: wireFiniteNumber(spec.scale ?? 1, `noise[${index}].scale`),
+      lower: spec.lower === null || spec.lower === undefined
+        ? null
+        : wireFiniteNumber(spec.lower, `noise[${index}].lower`),
+      upper: spec.upper === null || spec.upper === undefined
+        ? null
+        : wireFiniteNumber(spec.upper, `noise[${index}].upper`),
+      specId: spec.spec_id === null || spec.spec_id === undefined
+        ? wireStableId(spec.variable_key, `noise[${index}].variable_key`)
+        : wireStableId(spec.spec_id, `noise[${index}].spec_id`),
+      timeWindowS: spec.time_window_s === null || spec.time_window_s === undefined
+        ? null
+        : (wireNumberArray(
+          spec.time_window_s,
+          `noise[${index}].time_window_s`,
+        ) as [number, number]),
+      pointIds: wireStableIdArray(spec.point_ids ?? [], `noise[${index}].point_ids`),
+    })),
+    nRuns: wireInteger(data.n_runs ?? 200, "n_runs"),
+    seed: wireInteger(data.seed ?? 0, "seed"),
+    flightModel: wireString(data.flight_model ?? "waterloo_penner", "flight_model"),
+    groups: groupsRaw.map((group, groupIndex) => ({
+      groupId: wireStableId(group.group_id, `groups[${groupIndex}].group_id`),
+      specIds: wireStableIdArray(
+        group.spec_ids ?? [],
+        `groups[${groupIndex}].spec_ids`,
+      ),
+      matrixKind: wireString(
+        group.matrix_kind ?? "correlation",
+        `groups[${groupIndex}].matrix_kind`,
+      ) as MatrixKindTs,
+      matrix: wireArray(group.matrix, `groups[${groupIndex}].matrix`).map(
+        (row, rowIndex) => wireNumberArray(
+          row,
+          `groups[${groupIndex}].matrix[${rowIndex}]`,
+        ),
+      ),
+    })),
+    ...(ballRaw === undefined ? {} : {
+      ballSetup: ballSetupFromJson(ballRaw),
+    }),
+  };
+  validatePlan(plan);
+  return plan;
+}

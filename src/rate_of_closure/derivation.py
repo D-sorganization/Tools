@@ -1,0 +1,461 @@
+"""Step-by-step derivation of the impact-point calculation.
+
+Single source of truth for the "Calculation Description" tab: every
+step carries the symbolic formula (matplotlib-mathtext-compatible
+LaTeX), a plain-language narrative, and the numeric substitution for
+the *live* scenario, so a user can follow each number in the results
+panel back to the rigid-body kinematics that produced it.
+
+Also owns ``RESULT_EXPLANATIONS`` — the click-through text behind every
+result row in both the PyQt6 and web UIs.
+
+Sources: AffineDrift Launch Monitor Technology Review
+(``sections/02-parameters.tex`` frame and sign conventions), the
+closure-rate derivation (d / R_ISA, deg/ft), and the closure-rate
+literature dossier (Cheetham 2014 HTV / CCV figures).
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from ._contracts import ensure
+from .model import ImpactResult, ImpactScenario, solve
+
+__all__ = [
+    "KINETICS_EXPLANATIONS",
+    "LAUNCH_EXPLANATIONS",
+    "METRIC_EXPLANATIONS",
+    "RESULT_EXPLANATIONS",
+    "DerivationStep",
+    "derivation_steps",
+]
+
+
+@dataclass(frozen=True)
+class DerivationStep:
+    """One traceable step of the calculation.
+
+    Attributes:
+        title: Title Case step heading.
+        latex: Symbolic formula, matplotlib-mathtext compatible.
+        values: Numeric substitution for the live scenario (mathtext).
+        narrative: Plain-language explanation of the step.
+    """
+
+    title: str
+    latex: str
+    values: str
+    narrative: str
+
+
+#: Click-through explanation for every result row, keyed by field name.
+RESULT_EXPLANATIONS: dict[str, str] = {
+    "path_deviation_deg": (
+        "The horizontal angle between the impact point's velocity and the "
+        "geometric center's velocity: atan2(v_z, v_x). Launch monitors "
+        "report the GC path; the ball responds to the impact point's path. "
+        "Negative = the impact point travels left of the reported path "
+        "(standard launch-monitor sign convention: club path positive = "
+        "in-to-out). Openly published launch-monitor material puts this "
+        "gap near 3 degrees for a driver."
+    ),
+    "aoa_deviation_deg": (
+        "The vertical analogue of the path deviation: atan2(v_y, "
+        "sqrt(v_x^2 + v_z^2)). Positive = the impact point is travelling "
+        "more upward than the reported delivery (a shallower effective "
+        "attack angle). Driven mostly by the swing-plane rotation "
+        "component."
+    ),
+    "tangential_speed_mph": (
+        "The magnitude of omega x r: how fast the impact point moves "
+        "relative to the geometric center purely because the head is "
+        "rotating. For the forum's 35 mm / 2,000 deg/s case this is "
+        "1.22 m/s = 2.73 mph — the number that was misread as 1.2 mph."
+    ),
+    "speed_delta_mph": (
+        "How much the rotation changes the impact point's total speed. "
+        "Because omega x r is nearly perpendicular to the delivery, it "
+        "redirects the point without meaningfully speeding it up or "
+        "slowing it down — which is why framing the effect as a percent "
+        "of clubhead speed understates it. Direction changes; speed "
+        "barely does."
+    ),
+    "closure_rate_dps": (
+        "The vertical component of the angular velocity vector — the "
+        "rate the face normal sweeps horizontally (closes). This is the "
+        "literature's club closure velocity: CCV = HTV sin(lie) + "
+        "SPV cos(lie). Cheetham 2014 tour driver data: HTV 1,307 +/- 304 "
+        "deg/s about the shaft (range 652-2,432, n = 94); CCV mean near "
+        "2,100 deg/s."
+    ),
+    "normalized_closure_deg_per_ft": (
+        "Closure per foot of travel: omega / v, which equals 1 / R_ISA "
+        "(the inverse distance to the instantaneous screw axis). It is "
+        "speed-invariant: two deliveries with the same deg/ft have the "
+        "same path-gap geometry regardless of clubhead speed, because "
+        "the gap between two reference points is d / R_ISA."
+    ),
+    "closure_during_contact_deg": (
+        "Face closure accumulated while the ball is on the face: CCV "
+        "times the contact duration (about 450 microseconds for a "
+        "driver). The face the ball leaves is not the face it met — "
+        "roughly a degree at tour closure rates."
+    ),
+    "loft_gain_during_contact_deg": (
+        "Dynamic loft gained during contact: the heel-toe component of "
+        "omega times the contact duration. The swing-plane rotation "
+        "keeps adding loft while the ball is on the face."
+    ),
+}
+
+
+#: Click-through explanation for every common-literature closure metric.
+METRIC_EXPLANATIONS: dict[str, str] = {
+    "ccv_dps": (
+        "Club closure velocity in degrees per second — the most common "
+        "way golf research reports rate of closure. Identical to the "
+        "closure rate above: CCV = HTV sin(lie) + SPV cos(lie). Tour "
+        "driver mean near 2,100 deg/s (Cheetham 2014 dossier)."
+    ),
+    "closure_deg_per_ft": (
+        "Closure per foot of clubhead travel — the speed-invariant "
+        "normalization preferred in the AffineDrift derivation "
+        "(omega / v = 1 / R_ISA). Two deliveries with the same deg/ft "
+        "have identical path-gap geometry at any speed."
+    ),
+    "closure_deg_per_inch": (
+        "The same speed-invariant closure quoted per inch of travel — a "
+        "framing club fitters use when discussing strike-to-strike face "
+        "variation across the hitting area."
+    ),
+    "closure_deg_per_ms": (
+        "Closure per millisecond — the timing framing: how much the face "
+        "angle changes for every millisecond of timing error in the "
+        "release. Roughly 2 degrees/ms at tour closure rates, which is "
+        "why closure rate behaves as a dispersion term."
+    ),
+    "r_isa_m": (
+        "Distance from the clubhead to the instantaneous screw axis, "
+        "v / omega, in metres. The smaller this radius, the faster the "
+        "face sweeps for the same clubhead speed. Infinite when the face "
+        "is not closing."
+    ),
+    "r_isa_ft": (
+        "The same instantaneous-screw-axis distance in feet. The openly "
+        "published ~3 degree GC-vs-face-center gap implies roughly "
+        "2.5 ft at a 40 mm offset — closer than the hub radius, the "
+        "tension the AffineDrift derivation documents."
+    ),
+    "time_to_square_from_1deg_open_ms": (
+        "How long before impact the face was one degree open, at the "
+        "current closure rate. At tour rates this is about half a "
+        "millisecond — the timing window behind the classic 'a degree "
+        "per half-millisecond' framing of release timing."
+    ),
+    "toe_heel_speed_delta_mph": (
+        "Speed difference between the toe and heel ends of a 117 mm "
+        "face due to rotation alone. The toe outruns the heel on every "
+        "closing delivery — the same rigid-body effect that produces "
+        "the reference-point path gap."
+    ),
+}
+
+
+#: Click-through explanation for every simulation launch-number row.
+LAUNCH_EXPLANATIONS: dict[str, str] = {
+    "ball_speed_mph": (
+        "Post-impact ball speed from the rigid-body COR impulse solve "
+        "(swing_sim.impact): the effective-mass momentum exchange along "
+        "the delivered face normal, reduced for off-center strikes by "
+        "the clubhead MOI. Divided by clubhead speed this is the smash "
+        "factor (~1.48-1.50 for a well-struck driver)."
+    ),
+    "launch_angle_deg": (
+        "Vertical angle of the ball's launch velocity above the ground "
+        "plane. The D-plane compromise: the ball leaves close to the "
+        "delivered face normal (dynamic loft), pulled slightly toward "
+        "the club path — typically 10-16 deg for a driver."
+    ),
+    "launch_azimuth_deg": (
+        "Horizontal launch direction relative to the target line "
+        "(positive = right, matching the club-path sign convention). "
+        "Dominated by the delivered face angle, with a smaller path "
+        "contribution."
+    ),
+    "spin_rpm": (
+        "Total spin rate from the friction impulse of the impact solve "
+        "(2/7 rolling-cap Coulomb model) plus gear-effect spin from the "
+        "head's rotation recoil on off-center strikes. Driver band "
+        "roughly 2,000-3,500 rpm."
+    ),
+    "carry_m": (
+        "Carry distance from the selected literature flight model "
+        "(swing_sim.flight): the integrated trajectory's horizontal "
+        "distance at the terminal ground event, no roll-out."
+    ),
+    "max_height_m": (
+        "Apex height of the integrated trajectory — the peak of the "
+        "lift-vs-gravity balance; typical driver apex is 25-40 m."
+    ),
+    "flight_time_s": (
+        "Total time aloft from launch to the terminal ground event of "
+        "the flight integration (typically 5-7 s for a driver)."
+    ),
+    "landing_angle_deg": (
+        "Descent angle below horizontal at the terminal ground event; "
+        "steeper landings stop faster (driver band roughly 35-45 deg)."
+    ),
+    "lateral_m": (
+        "Sideways landing offset from the target line (+ = right of "
+        "target for a right-handed player): the integrated effect of "
+        "launch direction plus spin-axis-tilt curvature (the D-plane's "
+        "Magnus component), reported the way launch monitors report "
+        "carry offline."
+    ),
+}
+
+
+#: Click-through explanations for the swing-kinetics panel (#4125 H2).
+KINETICS_EXPLANATIONS: dict[str, str] = {
+    "joint_torques": (
+        "Net joint torques from per-sample inverse dynamics over the "
+        "double-pendulum EOM (swing_sim.reference mass matrix / "
+        "Coriolis / gravity / damping surfaces): M(θ)·α + C(θ, ω). "
+        "The swing source is passive, so gravity is the driver — the "
+        "gravity-torque traces show what accelerates each joint while "
+        "damping resists. Positive torque acts counter-clockwise about "
+        "the swing-plane normal (increasing joint angle)."
+    ),
+    "joint_power": (
+        "Power delivered to each joint coordinate, τ·ω (net torque "
+        "times joint angular rate) — the movement-optimizer 'Joint "
+        "Power' convention. The sum over joints equals the rate of "
+        "change of the swing's kinetic energy (test-pinned), so the "
+        "area under the total curve up to impact is the kinetic energy "
+        "delivered to the club."
+    ),
+    "reaction_forces": (
+        "Joint reaction forces from Newton-Euler on each segment: the "
+        "force the proximal side exerts on the distal side (gravity "
+        "included, so a static hang shows the supporting force). The "
+        "clubhead trace is a point-mass estimate at the club tip "
+        "(shared 0.20 kg head mass). Peak shoulder loads of hundreds "
+        "of N through the downswing are the centripetal cost of "
+        "clubhead speed."
+    ),
+    "zero_torque_counterfactual": (
+        "The Zero-Torque Counterfactual (ZTCF) sets commanded shoulder and "
+        "wrist torques to zero at each recorded (q, qdot) state, then solves "
+        "the same forward dynamics with gravity, damping, velocity coupling, "
+        "and ideal joint locks intact. The resulting torque and force curves "
+        "isolate passive drift at the original state. Each sample is "
+        "state-matched; the displayed series is not one continuously "
+        "integrated alternate swing."
+    ),
+}
+
+
+def _fmt_vec(vec: tuple[float, float, float], decimals: int = 3) -> str:
+    """Render a 3-vector as a mathtext tuple."""
+    return "(" + ",\\ ".join(f"{component:.{decimals}f}" for component in vec) + ")"
+
+
+def derivation_steps(scenario: ImpactScenario) -> tuple[DerivationStep, ...]:
+    """Build the full traceable derivation for one scenario.
+
+    Args:
+        scenario: The delivery to trace.
+
+    Returns:
+        Ordered steps from frame definition to the reported outputs,
+        each with the live numeric substitution.
+    """
+    result: ImpactResult = solve(scenario)
+    speed_mps = scenario.clubhead_speed_mph * 0.44704
+    speed_fts = speed_mps / 0.3048
+    lever = (
+        scenario.com_to_face_mm / 1000.0,
+        scenario.impact_offset_high_mm / 1000.0,
+        scenario.impact_offset_toe_mm / 1000.0,
+    )
+    cross_term = (
+        result.point_velocity_mps[0] - speed_mps,
+        result.point_velocity_mps[1],
+        result.point_velocity_mps[2],
+    )
+
+    steps = (
+        DerivationStep(
+            title="Frame and Sign Conventions",
+            latex=(
+                r"$\hat{x} \parallel \mathrm{target},\ "
+                r"\hat{y} \parallel \mathrm{up},\ "
+                r"\hat{z} \parallel \mathrm{right\ of\ target}$"
+            ),
+            values=(
+                r"$\mathrm{club\ path} > 0 \Rightarrow \mathrm{in\!-\!to\!-\!out;}"
+                r"\ \mathrm{deviations\ referenced\ at\ maximum\ compression}$"
+            ),
+            narrative=(
+                "The AffineDrift house convention (Launch Monitor Technology "
+                "Review, 02-parameters.tex, following standard "
+                "launch-monitor definitions): x along the "
+                "target line, y vertical, z right of the target line. All "
+                "angles positive right and up. The tracked reference point is "
+                "the geometric center (GC); the CG lies within ~6 mm of it."
+            ),
+        ),
+        DerivationStep(
+            title="Shaft Axis and Swing-Plane Normal",
+            latex=(
+                r"$\hat{s} = (0,\ \sin\beta,\ -\cos\beta),\quad "
+                r"\hat{n} = \widehat{\hat{x} \times \hat{s}} "
+                r"= (0,\ \cos\beta,\ \sin\beta)$"
+            ),
+            values=(
+                rf"$\beta = {scenario.lie_angle_deg:.1f}^\circ:\ "
+                rf"\hat{{s}} = {_fmt_vec(result.shaft_axis)},\ "
+                rf"\hat{{n}} = {_fmt_vec(result.plane_normal)}$"
+            ),
+            narrative=(
+                "The shaft leans from the head up toward the hands (up and "
+                "left of the target line for a right-handed golfer) at the "
+                "impact lie angle. The swing plane contains the shaft and "
+                "the target line; its unit normal carries the in-plane "
+                "rotation."
+            ),
+        ),
+        DerivationStep(
+            title="Angular Velocity Assembly",
+            latex=(
+                r"$\vec{\omega} = \omega_{plane}\,\hat{n} "
+                r"+ \omega_{shaft}\,\hat{s}$"
+            ),
+            values=(
+                rf"$({scenario.omega_plane_dps:.0f}\,\hat{{n}} "
+                rf"+ {scenario.omega_shaft_dps:.0f}\,\hat{{s}})\ "
+                rf"\mathrm{{deg/s}} \Rightarrow \vec{{\omega}} "
+                rf"= {_fmt_vec(result.omega_dps, 0)}\ \mathrm{{deg/s}}$"
+            ),
+            narrative=(
+                "The two rates reported by 3-D motion studies (Cheetham "
+                "2014): swing-plane velocity (SPV) about the plane normal "
+                "and horizontal turning velocity (HTV) about the shaft — "
+                "the closing/release component. They add vectorially "
+                "because the two axes are orthogonal."
+            ),
+        ),
+        DerivationStep(
+            title="Lever Arm to the Impact Point",
+            latex=r"$\vec{r} = (d,\ h_{high},\ h_{toe})$",
+            values=(
+                rf"$\vec{{r}} = {_fmt_vec(lever)}\ \mathrm{{m}}"
+                rf"\quad (d = {scenario.com_to_face_mm:.0f}\ \mathrm{{mm}}"
+                r"\ \mathrm{GC\ to\ face\ center})$"
+            ),
+            narrative=(
+                "The vector from the geometric center to the struck point: "
+                "forward to the face center (published head data cites 25-50 mm for "
+                "drivers; 40 mm is the AffineDrift worked-example value) "
+                "plus any high/toe miss offsets."
+            ),
+        ),
+        DerivationStep(
+            title="Rigid-Body Point Velocity",
+            latex=(r"$\vec{v}_P = \vec{v}_{GC} + \vec{\omega} \times \vec{r}$"),
+            values=(
+                rf"$\vec{{v}}_{{GC}} = ({speed_mps:.2f},\ 0,\ 0),\ "
+                rf"\vec{{\omega}} \times \vec{{r}} = {_fmt_vec(cross_term)},"
+                rf"\ \vec{{v}}_P = {_fmt_vec(result.point_velocity_mps)}"
+                r"\ \mathrm{m/s}$"
+            ),
+            narrative=(
+                "The twist relation: a rigid body has one velocity per "
+                "point, and any point's velocity is the reference velocity "
+                "plus omega cross the lever. The cross product is the "
+                "rotation-induced velocity — "
+                f"{result.tangential_speed_mph:.2f} mph here — and it is "
+                "nearly perpendicular to the delivery."
+            ),
+        ),
+        DerivationStep(
+            title="Path and Attack-Angle Deviation",
+            latex=(
+                r"$\Delta\theta_{path} = \mathrm{atan2}(v_z,\ v_x),\quad "
+                r"\Delta AoA = \mathrm{atan2}\!\left(v_y,\ "
+                r"\sqrt{v_x^2 + v_z^2}\right)$"
+            ),
+            values=(
+                rf"$\Delta\theta_{{path}} = "
+                rf"{result.path_deviation_deg:+.2f}^\circ,\quad "
+                rf"\Delta AoA = {result.aoa_deviation_deg:+.2f}^\circ$"
+            ),
+            narrative=(
+                "The deliverables: how far the impact point's direction "
+                "differs from the reported geometric-center delivery, "
+                "horizontally and vertically. Negative path = left of the "
+                "reported path."
+            ),
+        ),
+        DerivationStep(
+            title="Closure Rate — the CCV Identity",
+            latex=(r"$CCV = \omega_y = HTV\,\sin\beta + SPV\,\cos\beta$"),
+            values=(
+                rf"${scenario.omega_shaft_dps:.0f}\sin"
+                rf"{scenario.lie_angle_deg:.0f}^\circ + "
+                rf"{scenario.omega_plane_dps:.0f}\cos"
+                rf"{scenario.lie_angle_deg:.0f}^\circ = "
+                rf"{result.closure_rate_dps:.0f}\ \mathrm{{deg/s}}$"
+            ),
+            narrative=(
+                "The vertical omega component is exactly the literature's "
+                "global club closure velocity — the dossier's "
+                "reconciliation of shaft-axis and swing-plane rates "
+                "(Cheetham tour mean near 2,100 deg/s)."
+            ),
+        ),
+        DerivationStep(
+            title="Speed-Invariant Closure and the Path Gap",
+            latex=(
+                r"$\frac{\omega}{v} = \frac{1}{R_{ISA}},\qquad "
+                r"\Delta\theta_{path} \approx \frac{d}{R_{ISA}}$"
+            ),
+            values=(
+                rf"$\frac{{{result.closure_rate_dps:.0f}\ \mathrm{{deg/s}}}}"
+                rf"{{{speed_fts:.0f}\ \mathrm{{ft/s}}}} = "
+                rf"{result.normalized_closure_deg_per_ft:.2f}\ "
+                r"\mathrm{deg/ft}$"
+            ),
+            narrative=(
+                "Closure per foot of travel is the inverse distance to the "
+                "instantaneous screw axis, so the path gap between two "
+                "points separated by d is d / R_ISA — independent of "
+                "clubhead speed. This is the AffineDrift derivation's "
+                "preferred unit."
+            ),
+        ),
+        DerivationStep(
+            title="Face Rotation During Contact",
+            latex=(
+                r"$\Delta\phi_{close} = CCV\,\Delta t,\qquad "
+                r"\Delta\phi_{loft} = \omega_z\,\Delta t$"
+            ),
+            values=(
+                rf"$\Delta t = {scenario.contact_duration_us:.0f}\ \mu s:\ "
+                rf"\Delta\phi_{{close}} = "
+                rf"{result.closure_during_contact_deg:.2f}^\circ,\ "
+                rf"\Delta\phi_{{loft}} = "
+                rf"{result.loft_gain_during_contact_deg:.2f}^\circ$"
+            ),
+            narrative=(
+                "The ball stays on the face about 450 microseconds; the "
+                "face keeps rotating the whole time. The face the ball "
+                "leaves is not the face it met — a dispersion term, not a "
+                "calibratable bias (Cheetham outcome correlation "
+                "r = -.14)."
+            ),
+        ),
+    )
+    ensure(len(steps) >= 8, "derivation must cover the full chain")
+    return steps

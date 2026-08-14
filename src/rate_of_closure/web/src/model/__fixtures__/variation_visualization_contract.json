@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "coordinate_frame": "app_frame:x_target,y_up,z_right",
+  "point_ids": [
+    "swing.pivot",
+    "swing.wrist",
+    "swing.clubhead.reference"
+  ],
+  "trial_statuses": [
+    "evaluated_hit",
+    "evaluated_no_impact",
+    "numerical_failure"
+  ],
+  "output_names": [
+    "candidate_time_s",
+    "closest_approach_m",
+    "contact_margin_m",
+    "impact_time_s",
+    "clubhead_speed_mps",
+    "spin_loft_deg",
+    "face_to_path_deg",
+    "spin_axis_tilt_deg",
+    "ball_speed_mph",
+    "launch_angle_deg",
+    "launch_azimuth_deg",
+    "spin_rpm",
+    "carry_m",
+    "lateral_m",
+    "max_height_m",
+    "flight_time_s",
+    "landing_angle_deg"
+  ]
+}

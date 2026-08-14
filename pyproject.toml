@@ -31,6 +31,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Private loopback authority used by the Rate React launcher.
+rate-morris-authority = [
+    "fastapi>=0.100.0",
+    "scipy>=1.10.0,<1.18",
+    "uvicorn>=0.30.0",
+]
 # Full installation with all features
 all = [
     "scipy>=1.10.0,<1.18",
@@ -40,6 +46,8 @@ all = [
     "mujoco>=3.0.0",
     "PyQt6>=6.5.0",
     "sympy>=1.12",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.30.0",
 ]
 # AI and simulation models
 ai = [
@@ -72,6 +80,9 @@ gui = [
     "PyQt6>=6.5.0",
     "pyqtgraph>=0.13.7",
     "matplotlib>=3.7.0",
+    "pandas>=2.0,<3",
+    "scipy>=1.10.0,<1.18",
+    "sympy>=1.12",
 ]
 # Shared chat facade, WebSocket router, and optional Qt dock widget.
 chat = [
@@ -152,6 +163,7 @@ test = [
     "python-multipart>=0.0.7",
     "requests>=2.32.0",
     "sqlmodel>=0.0.22",
+    "uvicorn>=0.30.0",
 ]
 # Development tools
 dev = [
@@ -199,6 +211,7 @@ include = [
     "web_applications*",
     "contracts*",
     "lower_body_model*",
+    "rate_of_closure*",
     "codemap*",
     "video_analyzer*",
 ]
@@ -210,6 +223,14 @@ exclude = [
 [tool.setuptools.package-data]
 # Include py.typed marker for PEP 561 type hint support
 "*" = ["py.typed"]
+"rate_of_closure" = [
+    "visualization_tabs.v1.json",
+    "visualization_performance.v1.json",
+    "visualization_accessibility.v1.json",
+    "visual_baselines.v1.json",
+    "visual_baselines/v1/react/*.png",
+    "visual_baselines/v1/pyqt/*.png",
+]
 
 # =============================================================================
 # Pytest Configuration
