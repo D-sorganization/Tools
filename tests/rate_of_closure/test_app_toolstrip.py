@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import json
+from pathlib import Path
 
 import pytest
 
@@ -20,6 +20,7 @@ from rate_of_closure.application.commands import (  # noqa: E402
 )
 from rate_of_closure.application.regional_ground_variation_request import (  # noqa: E402
     regional_ground_variation_request_from_json,
+)
 from rate_of_closure.application.workspace_session import (  # noqa: E402
     document_from_state,
 )

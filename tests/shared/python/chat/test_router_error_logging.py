@@ -281,9 +281,7 @@ class TestNewActionsErrorLogging:
         with caplog.at_level(logging.WARNING, logger="chat.router_factory"):
             with client.websocket_connect("/api/ws/chat/new") as ws:
                 ws.receive_json()
-                ws.send_json(
-                    {"action": "index_codebase", "root_path": "/tmp"}
-                )  # nosec B108
+                ws.send_json({"action": "index_codebase", "root_path": "/tmp"})  # nosec B108
                 payload = ws.receive_json()
 
         assert payload == {"type": "error", "detail": "disk full"}

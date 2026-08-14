@@ -20,9 +20,8 @@ pytestmark = pytest.mark.unit
 
 def _call(**params: Any) -> RecordedCall:
     return RecordedCall(
-        timestamp=datetime(
-            2026, 1, 2, tzinfo=timezone.utc
-        ),  # noqa: UP017 - Python 3.10 CI lacks datetime.UTC.
+        # Python 3.10 CI lacks datetime.UTC, so keep timezone.utc here.
+        timestamp=datetime(2026, 1, 2, tzinfo=timezone.utc),  # noqa: UP017
         action_id="test.echo",
         params=params,
         descriptor=ActionDescriptor(

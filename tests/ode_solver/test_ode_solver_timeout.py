@@ -162,9 +162,9 @@ class TestODESolverLoadPerformance:
         elapsed = time.perf_counter() - start
 
         assert sol is not None
-        assert (
-            elapsed < 5.0
-        ), f"Exponential decay solve took {elapsed:.3f} s, expected < 5 s"
+        assert elapsed < 5.0, (
+            f"Exponential decay solve took {elapsed:.3f} s, expected < 5 s"
+        )
 
     def test_harmonic_oscillator_completes_in_budget(self, ode_solver: type) -> None:
         """Harmonic oscillator solve completes in < 5 s (typical: < 0.1 s).
@@ -182,9 +182,9 @@ class TestODESolverLoadPerformance:
         elapsed = time.perf_counter() - start
 
         assert sol is not None
-        assert (
-            elapsed < 5.0
-        ), f"Harmonic oscillator solve took {elapsed:.3f} s, expected < 5 s"
+        assert elapsed < 5.0, (
+            f"Harmonic oscillator solve took {elapsed:.3f} s, expected < 5 s"
+        )
 
     def test_lotka_volterra_completes_in_budget(self, ode_solver: type) -> None:
         """Lotka-Volterra (predator-prey) solve completes in < 5 s.
@@ -205,9 +205,9 @@ class TestODESolverLoadPerformance:
         elapsed = time.perf_counter() - start
 
         assert sol is not None
-        assert (
-            elapsed < 5.0
-        ), f"Lotka-Volterra solve took {elapsed:.3f} s, expected < 5 s"
+        assert elapsed < 5.0, (
+            f"Lotka-Volterra solve took {elapsed:.3f} s, expected < 5 s"
+        )
 
     def test_with_timeout_overhead_is_negligible(self) -> None:
         """with_timeout wrapper adds < 100 ms overhead for fast operations.
@@ -226,6 +226,6 @@ class TestODESolverLoadPerformance:
 
         assert result == 42
         avg_ms = (elapsed / 100) * 1000
-        assert (
-            avg_ms < 100
-        ), f"with_timeout average overhead {avg_ms:.1f} ms/call, expected < 100 ms"
+        assert avg_ms < 100, (
+            f"with_timeout average overhead {avg_ms:.1f} ms/call, expected < 100 ms"
+        )

@@ -47,6 +47,7 @@ from .shaft_statics import (
     ShaftTipResponse,
     solve_cantilever_tip_response,
 )
+from .stl_validation import StlMeshValidation, validate_binary_stl
 from .turf_contact import (
     TurfCalibrationStatus,
     TurfContactKinematics,
@@ -77,7 +78,6 @@ from .turf_variation import (
     TurfVariationPlan,
     turf_profiles_for_variation_plan,
 )
-from .stl_validation import StlMeshValidation, validate_binary_stl
 from .types import (
     AssembledMassProperties,
     ClubComponent,

@@ -247,9 +247,9 @@ def _assert_contact_plane_constraint(
             float(point["position_m"][index]) - origin[index] for index in range(3)
         ]
         error = abs(_dot(offset, normal) - radius)
-        assert (
-            error <= tolerance
-        ), f"contact point leaves the declared plane: error={error}"
+        assert error <= tolerance, (
+            f"contact point leaves the declared plane: error={error}"
+        )
 
 
 def _impact_energy(
