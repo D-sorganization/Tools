@@ -176,9 +176,7 @@ class TestCylinderCrossSection:
 
     def test_negative_radius_raises(self) -> None:
         with pytest.raises((ValueError, TypeError)):
-            cylinder_cross_section(
-                np.array([0.0, 0.0]), np.array([1.0, 0.0]), radius=-0.1
-            )
+            cylinder_cross_section(np.array([0.0, 0.0]), np.array([1.0, 0.0]), radius=-0.1)
 
     def test_degenerate_segment(self) -> None:
         """Zero-length segment should not crash."""
@@ -235,9 +233,7 @@ class TestTaperedCylinderCrossSection:
     def test_shape(self) -> None:
         start = np.array([0.0, 0.0])
         end = np.array([0.0, 1.0])
-        corners = tapered_cylinder_cross_section(
-            start, end, radius_start=0.2, radius_end=0.05
-        )
+        corners = tapered_cylinder_cross_section(start, end, radius_start=0.2, radius_end=0.05)
         assert corners.shape == (4, 2)
 
     def test_finite(self) -> None:

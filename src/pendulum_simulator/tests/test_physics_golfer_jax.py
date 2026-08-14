@@ -244,9 +244,7 @@ class TestGravityVector:
         G_jax = gravity_vector_jax(q_jax, _PARAMS_JAX)
         assert G_jax.shape == (N_DOF,)
 
-    def test_gravity_vector_parity_random_configs(
-        self, random_config: np.ndarray
-    ) -> None:
+    def test_gravity_vector_parity_random_configs(self, random_config: np.ndarray) -> None:
         """JAX gravity vector matches numpy."""
         q_jax = jnp.array(random_config)
 

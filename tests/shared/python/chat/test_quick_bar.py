@@ -116,14 +116,12 @@ class TestResolveColors:
     def test_fallback_provider_produces_coherent_palette(self) -> None:
         c = _resolve_colors(_FallbackThemeProvider())
         for key, value in c.items():
-            assert len(value) in (
-                4,
-                7,
-                9,
-            ), f"Key {key!r} resolved to non-standard color: {value!r}"
-            assert value.startswith(
-                "#"
-            ), f"Key {key!r} resolved to non-hex color: {value!r}"
+            assert len(value) in (4, 7, 9), (
+                f"Key {key!r} resolved to non-standard color: {value!r}"
+            )
+            assert value.startswith("#"), (
+                f"Key {key!r} resolved to non-hex color: {value!r}"
+            )
 
     def test_partial_theme_uses_fallback_for_missing_keys(self) -> None:
         """A partial palette should not break resolution for missing tokens."""

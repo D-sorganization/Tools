@@ -126,17 +126,13 @@ def test_swingset_minimum_layout_preserves_curve_height(qapp, swing_history) -> 
     panel.draw()
     panel.canvas.draw()
     renderer = panel.canvas.get_renderer()
-    data_heights = [
-        axes.get_window_extent(renderer).height for axes in panel.axes.values()
-    ]
+    data_heights = [axes.get_window_extent(renderer).height for axes in panel.axes.values()]
 
     assert min(data_heights) >= 210.0
     _assert_panel_legends_do_not_cover_plots(panel)
 
 
-def test_swingset_live_tab_layout_preserves_usable_plot_width(
-    qapp, swing_history
-) -> None:
+def test_swingset_live_tab_layout_preserves_usable_plot_width(qapp, swing_history) -> None:
     from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
     panel = MotionAnalysisPanel(
@@ -153,9 +149,7 @@ def test_swingset_live_tab_layout_preserves_usable_plot_width(
     )
     panel.draw()
     renderer = panel.canvas.get_renderer()
-    data_widths = [
-        axes.get_window_extent(renderer).width for axes in panel.axes.values()
-    ]
+    data_widths = [axes.get_window_extent(renderer).width for axes in panel.axes.values()]
 
     assert min(data_widths) >= 300.0
     _assert_panel_legends_do_not_cover_plots(
@@ -187,8 +181,7 @@ def test_swingset_legends_are_docked_in_reserved_rows(qapp, swing_history) -> No
         assert legend_box.x0 >= figure_box.x0 - 1.0
         assert legend_box.x1 <= figure_box.x1 + 1.0
         assert not any(
-            legend_box.overlaps(axes.get_window_extent(renderer))
-            for axes in panel.axes.values()
+            legend_box.overlaps(axes.get_window_extent(renderer)) for axes in panel.axes.values()
         )
 
 
@@ -224,9 +217,7 @@ def test_swingset_docked_legends_clear_minimum_plot_size(qapp, swing_history) ->
     assert all(axes.get_legend() is None for axes in panel.axes.values())
 
 
-def test_swingset_docked_legends_clear_compressed_plot_size(
-    qapp, swing_history
-) -> None:
+def test_swingset_docked_legends_clear_compressed_plot_size(qapp, swing_history) -> None:
     from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
     panel = MotionAnalysisPanel(
@@ -240,9 +231,7 @@ def test_swingset_docked_legends_clear_compressed_plot_size(
     assert all(axes.get_legend() is None for axes in panel.axes.values())
 
 
-def test_draw_enforces_minimum_render_size_before_docking_legends(
-    qapp, swing_history
-) -> None:
+def test_draw_enforces_minimum_render_size_before_docking_legends(qapp, swing_history) -> None:
     from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
     panel = MotionAnalysisPanel(
@@ -263,9 +252,7 @@ def test_draw_enforces_minimum_render_size_before_docking_legends(
 def test_chain_legends_are_docked_outside_data_axes(qapp, chain_history) -> None:
     from movement_optimizer.gui.motion_analysis_panel import MotionAnalysisPanel
 
-    panel = MotionAnalysisPanel(
-        ["tension", "curvature", "energy", "tip_speed"], rows=2, cols=2
-    )
+    panel = MotionAnalysisPanel(["tension", "curvature", "energy", "tip_speed"], rows=2, cols=2)
     plot_chain_tension(panel.axes["tension"], chain_history)
     plot_chain_curvature(panel.axes["curvature"], chain_history)
     plot_chain_energy(panel.axes["energy"], np.linspace(0, 1, _T), np.zeros(_T))
