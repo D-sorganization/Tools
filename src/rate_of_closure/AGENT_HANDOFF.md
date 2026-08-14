@@ -1355,3 +1355,53 @@ the changed flight-ground scope is clean. New code respects the source and
 function budgets. Existing oversized append-only registries and preserved
 multi-parameter public compatibility signatures are baseline constraints, not
 new structures introduced by this issue.
+
+## 2026-08-11 strict calculation-runtime manifest foundation
+
+Draft PR #4344 publishes `feat/4261-runtime-manifest-contract` at exact head
+`c06cefb5c541fe7d87b54cd36269917d92d837a6`, stacked on exact
+`fix/rate-mobile-tools-menu` head
+`c653f9ff9193d6cdb8e11a13ad0001707e468a42`, incorporated by an ordinary
+conflict-free parent merge after the branch advanced from `16a1167c...`. It
+adds the UI-neutral Python/
+TypeScript `calculation-runtime-manifest/v1` boundary and shared fixture for
+#4261 without changing simulation, UI, workspace, ground, or consumer code.
+
+The contract is strict and immutable. It requires all three calculation
+domains in canonical order, makes unavailable domains carry a reason rather
+than fake identities, records exact model/backend/integrator/schema/frame/unit
+evidence for available domains, and accepts only explicit caller-sourced build
+and provenance records. Canonical JSON parity and adversarial validation cover
+unknown fields, invalid revisions/surfaces, status contradictions, duplicate
+domains/options/evidence, placeholders, non-finite values, unsafe integers,
+unit mismatches, unpaired-surrogate text, and duplicate JSON fields.
+
+Keep PR #4344 contract-only. Live run attachment, workspace/export persistence,
+provider discovery, UpstreamDrift pinning, and scientific model qualification
+remain future reviewed slices. The pure factories must not inspect ambient Git,
+sibling worktrees, or installed-package state.
+
+### 2026-08-11 review-gap hardening
+
+The follow-up to local contract commit `15b951e40` aligns manifest validation
+and serialization domains: all integer and floating-point option magnitudes
+must be at most `9,007,199,254,740,991`. Keep that bound manifest-local; the
+shared Python encoder preserves the established capability-observation `1e21`
+wire domain. Python and TypeScript reject leading-zero SemVer core or numeric
+prerelease identifiers. Unavailable reasons must be 16–500 Unicode scalars,
+contain at least three explanatory ASCII word tokens, reject the exact shared
+Unicode White_Space set at either boundary, and survive a normalized sentinel
+blacklist. Valid non-BMP scalars are accepted and only unpaired surrogates are
+rejected. The shared fixture is authoritative for these edge cases; keep the
+rules mirrored when delivery adapters attach the manifest to a run.
+
+### 2026-08-11 stable-ID placeholder boundary repair
+
+Python and TypeScript now detect placeholder vocabulary as complete
+ASCII-alphanumeric-delimited tokens instead of regex word-boundary tokens.
+This closes the underscore bypass (`todo_build`, `unknown_source`) while
+preserving legitimate longer identifiers such as `todolist`. The shared parity
+fixture covers every placeholder adjacent to `.`, `_`, `/`, and `-` on both
+sides in both runtimes. The redundant MyPy reason cast was also removed. Keep
+these token semantics mirrored in future adapters; no live integration is
+claimed by this contract-only repair.

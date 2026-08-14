@@ -1826,3 +1826,65 @@ existing local SciPy/NumPy compatibility warning also remains environmental.
 All new source files are below 400 lines. The oversized append-only SPEC and
 handoff registries plus the preserved Waterloo and `from_imperial` public
 signatures predate #4269 and are explicitly retained for compatibility.
+
+## 2026-08-11 #4261 calculation-runtime manifest contract slice
+
+Draft PR #4344 publishes the next four-surface authority slice on
+`feat/4261-runtime-manifest-contract` at exact head
+`c06cefb5c541fe7d87b54cd36269917d92d837a6`, from exact remote
+`fix/rate-mobile-tools-menu` head
+`c653f9ff9193d6cdb8e11a13ad0001707e468a42`. The child incorporated the
+parent's advance from `16a1167c...` by an ordinary conflict-free merge and
+retains the same base branch. It defines the strict immutable
+`calculation-runtime-manifest/v1` contract in Python and TypeScript and shares a
+canonical parity fixture. The record names the exact product surface, package,
+build, Tools SHA, and complete impact/flight/ground status ledger. Available
+domains require model/version, implementation authority, backend, integrator,
+request/result schemas, frame, units, and unit-explicit finite options;
+unavailable domains require a reason and reject all identities/options.
+
+The contract rejects unknown fields and schema/surface values, non-SHA builds,
+placeholder evidence, domain/status contradictions, duplicate option/evidence
+IDs, non-finite values, unsafe integers, invalid unit semantics, unpaired
+surrogate text, and duplicate JSON fields. Python and TypeScript emit the same stable
+11-decimal canonical bytes and expose pure factories that accept explicit
+evidence rather than reading ambient Git or installed-package state.
+
+Adding the nested active specification expanded the deterministic declared
+scope from 18 to 19 specifications. Its four-surface cells remain explicitly
+unsupported because the protected inventory pin predates this unpublished
+child and no live surface attachment or consumer conformance evidence exists.
+
+This is deliberately not wired into live simulation results, workspaces,
+exports, regional ground execution, or UpstreamDrift. It does not close #4261
+or #4260. Future attachment and provider-resolution work must be independent,
+dependency-ordered slices after active assembly and workspace edits settle.
+
+### 2026-08-11 independent-review hardening
+
+The contract follow-up after `15b951e40` repairs the independent-review
+blockers without expanding delivery scope. Python and TypeScript manifest
+options share the safe-magnitude domain, while the general Python canonical
+encoder retains its established large-float behavior for capability-observation
+exports. Both runtimes enforce SemVer 2 numeric identifiers and one
+deterministic substantive-reason grammar: the same explicit Unicode White_Space
+boundary set, Unicode-scalar length, ASCII explanatory-word threshold, and
+normalized sentinel rejection. TypeScript now distinguishes valid UTF-16 pairs
+from unpaired surrogates, matching Python and preserving valid non-BMP text.
+RED-first shared-fixture tests cover `1e16`, `1e20`, both safe boundaries,
+leading-zero versions, astral text, all declared boundary whitespace, unpaired
+surrogates, `x`, `n/a`, and bare/whitespace `unavailable`; capability tests
+restore the existing `1e21` wire behavior. The declared-scope prose accurately
+includes recursive `docs/specs/**/*.md`. This remains a draft contract child
+with all four spec cells unsupported at the older protected inventory pin.
+
+### 2026-08-11 stable-ID placeholder boundary repair
+
+Independent publish review found that regex word boundaries treated `_` as a
+word character, allowing placeholder tokens such as `todo_build` to pass even
+though `_` is a valid stable-ID separator. Python and TypeScript now recognize
+placeholders as complete ASCII-alphanumeric-delimited tokens. The shared parity
+fixture exercises every token next to `.`, `_`, `/`, and `-` in both directions
+and preserves legitimate longer substrings such as `todolist`. The same bounded
+repair removes the pinned-MyPy redundant reason cast. Draft PR #4344 remains a
+contract-only child and does not expand the #4261 completion claim.

@@ -34,11 +34,11 @@
     ],
     "enumeration_rules": [
       "Every rate-of-closure-campaign/v1 programs array record.",
-      "Every unique linked Markdown specification authority at SPEC.md, docs/specs/*.md, or docs/rate_of_closure/*.md."
+      "Every unique linked Markdown specification authority at SPEC.md, docs/specs/**/*.md, or docs/rate_of_closure/*.md."
     ],
     "curated_capability_count": 6,
     "campaign_program_count": 15,
-    "active_specification_count": 18,
+    "active_specification_count": 19,
     "excluded_scope_reason": "The deterministic boundary covers structured campaign program records, their linked active release specifications, and six curated evidenced capabilities. Narrative headings and feature bullets that are not promoted to either structured source remain outside the declared scope."
   },
   "surfaces": [
@@ -841,6 +841,38 @@
         "upstreamdrift.react": {
           "state": "unsupported",
           "reason": "Campaign issue #4267 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.calculation-runtime-manifest",
+      "category": "active_specification",
+      "title": "Calculation Runtime Manifest v1",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
           "evidence_ids": []
         }
       }

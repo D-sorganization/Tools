@@ -908,3 +908,62 @@ npm run type-check
 npm run lint
 npm run build
 ```
+
+## 2026-08-11 calculation-runtime manifest contract continuation
+
+Issue #4261 is published as draft PR #4344 from exact head
+`c06cefb5c541fe7d87b54cd36269917d92d837a6` in
+`C:\Users\diete\Repositories\Tools-worktrees\runtime-manifest-contract` on
+`feat/4261-runtime-manifest-contract`, based on exact remote parent
+`fix/rate-mobile-tools-menu` at
+`c653f9ff9193d6cdb8e11a13ad0001707e468a42`. The branch incorporated that
+parent by an ordinary merge after the parent advanced from `16a1167c...`;
+there were no conflicts. Do not rebase, retarget, or rewrite the stack.
+
+The bounded child adds immutable, extra-forbidding Python and TypeScript
+`calculation-runtime-manifest/v1` contracts. Every record contains an exact
+four-surface identity, package/build/Tools SHA, and canonical impact/flight/
+ground ledger. Available entries require complete model, authority, backend,
+integrator, request/result schema, frame, unit-system, and numerical-option
+identity. Unavailable entries require a substantive reason and prohibit every
+calculation identity and option. Shared canonical bytes, duplicate-field
+rejection, non-finite/safe-integer guards, placeholder rejection, deep freeze,
+and adversarial validation are pinned by one fixture.
+
+The governed four-surface inventory now includes this active specification as
+unsupported on all four surfaces at its older protected Tools pin. That record
+is intentional: a draft contract cannot establish live support.
+
+This branch does not bind the manifest to live runs, workspaces, exports,
+regional ground execution, or UpstreamDrift source resolution. It does not
+complete #4261 or #4260. The next integration must be reviewed separately
+after active assembly/workspace work settles and must never invent ambient Git
+or package provenance inside the pure contract layer.
+
+### 2026-08-11 independent-review contract repairs
+
+Follow-up work after local commit `15b951e40acea6a58d6c2b76fbe402602f08af2d`
+keeps the same contract-only boundary while closing three review blockers.
+Both manifest validators reject every numerical-option magnitude above the
+JavaScript safe-integer bound before serialization. The shared Python numeric
+encoder retains its established broader domain so capability-observation
+exports remain compatible. Both runtimes use SemVer 2 numeric-identifier rules
+and the same length-bounded explanatory-reason grammar with an explicit Unicode
+White_Space boundary set and normalized sentinel blacklist. TypeScript accepts
+valid UTF-16 surrogate pairs and rejects only unpaired surrogates, matching
+Python Unicode-scalar semantics. Numeric boundaries, valid astral text, every
+declared boundary-whitespace code point, leading-zero versions, unpaired
+surrogates, and sentinels are pinned by RED-first shared-fixture tests. The
+four-surface documentation correctly describes nested specs as
+`docs/specs/**/*.md`.
+
+### 2026-08-11 stable-ID placeholder boundary repair
+
+Independent publish review found that regex word boundaries treated `_` as a
+word character, allowing placeholder tokens such as `todo_build` to pass even
+though `_` is a valid stable-ID separator. Python and TypeScript now recognize
+placeholders as complete ASCII-alphanumeric-delimited tokens. The shared parity
+fixture exercises every token next to `.`, `_`, `/`, and `-` in both directions
+and preserves legitimate longer substrings such as `todolist`. The same bounded
+repair removes the pinned-MyPy redundant reason cast. This is still a
+contract-only child and does not change any live attachment or completion claim.
