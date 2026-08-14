@@ -52,6 +52,7 @@ from rate_of_closure.ui.pyqt6.result_row import explanation_html
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.ui.pyqt6.variation_workspace import VariationWorkspace
+from rate_of_closure.ui.pyqt6.workspace_layout import WorkspaceLayoutMixin
 from rate_of_closure.ui.pyqt6.workspace_navigation import (
     _DEFAULT_TAB_IDS,
     _NAVIGATION_SETTINGS_APP,
@@ -93,7 +94,11 @@ except ImportError:  # standalone / vendored use
 
 
 class RateOfClosureMainWindow(
-    MainWindowClubMixin, WorkspaceNavigationMixin, ThemedWindowMixin, QMainWindow
+    MainWindowClubMixin,
+    WorkspaceLayoutMixin,
+    WorkspaceNavigationMixin,
+    ThemedWindowMixin,
+    QMainWindow,
 ):
     """Interactive explorer for rotation-induced impact-point deviations."""
 
@@ -156,12 +161,18 @@ class RateOfClosureMainWindow(
         tab_bar.tabMoved.connect(self._persist_primary_navigation)
         self._tabs.currentChanged.connect(self._persist_primary_navigation)
         self._configure_toolstrip_and_help()
-        splitter = QSplitter()
-        splitter.addWidget(sidebar)
-        splitter.addWidget(self._tabs)
-        splitter.setStretchFactor(0, 0)
-        splitter.setStretchFactor(1, 1)
-        self.setCentralWidget(splitter)
+        sidebar.setMinimumWidth(200)
+        self._tabs.setMinimumWidth(640)
+        self._shell_splitter = QSplitter()
+        self._shell_splitter.setChildrenCollapsible(False)
+        self._shell_splitter.addWidget(sidebar)
+        self._shell_splitter.addWidget(self._tabs)
+        self._shell_splitter.setStretchFactor(0, 0)
+        self._shell_splitter.setStretchFactor(1, 1)
+        self.setCentralWidget(self._shell_splitter)
+        self._restore_visual_layout()
+        self._connect_visual_layout_persistence()
+        QTimer.singleShot(0, self._reapply_visual_layout_geometry)
         self.setStatusBar(QStatusBar())
         self.setStyleSheet(showcase_stylesheet(self.palette()))
 

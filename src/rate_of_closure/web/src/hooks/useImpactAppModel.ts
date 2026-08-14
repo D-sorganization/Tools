@@ -40,7 +40,10 @@ const DEFAULT_UNITS: UnitSelections = {
   distance: "yd",
 };
 
-export function useImpactAppModel(): ImpactAppModel {
+export function useImpactAppModel(options?: {
+  readonly clubCamera: ClubCamera;
+  readonly setClubCamera: Dispatch<SetStateAction<ClubCamera>>;
+}): ImpactAppModel {
   const defaultDriver = useMemo(() => getClub("Driver 10.5°"), []);
   const [scenario, setScenario] = useState(DEFAULT_SCENARIO);
   const [spatialTarget, setSpatialTarget] = useState(() =>
@@ -50,7 +53,9 @@ export function useImpactAppModel(): ImpactAppModel {
     generatedHeadFor(defaultDriver));
   const [clubMeshSource, setClubMeshSource] = useState(() =>
     generatedMeshSource(generatedHeadFor(defaultDriver), defaultDriver.name, 0));
-  const [clubCamera, setClubCamera] = useState(DEFAULT_CLUB_CAMERA);
+  const [localClubCamera, setLocalClubCamera] = useState(DEFAULT_CLUB_CAMERA);
+  const clubCamera = options?.clubCamera ?? localClubCamera;
+  const setClubCamera = options?.setClubCamera ?? setLocalClubCamera;
   const [clubSpec, setClubSpec] = useState(defaultDriver);
   const [explained, setExplained] = useState("pathDeviationDeg");
   const [glossaryTerm, setGlossaryTerm] = useState<string>();

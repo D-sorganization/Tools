@@ -26,11 +26,30 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.99                                    |
-| **Spec Version**        | 1.16.99                                    |
+| **Current Version**     | 1.17.00                                    |
+| **Spec Version**        | 1.17.00                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Persisted visual-layout preferences (#4433)
+
+Version 1.17.00 defines `visual-layout-preferences@1` as presentation-only
+state. React durably restores the primary tab/order, canonical Club camera, and
+module-help disclosure; the disclosure is placed after the primary workspace
+so restoring it cannot push the visual below the first viewport. PyQt durably
+restores the primary tab/order, canonical Club camera, and main-shell sidebar
+fraction, constrained to 0.20-0.38 with non-collapsible sidebar and workspace.
+
+Readers reject malformed, nonfinite, out-of-range, and unknown-version values
+to exact defaults. Writers bound payloads and treat storage failure as nonfatal.
+No scientific result, imported mesh, selected sample, playback phase, or export
+owner enters this preference schema. Browser reload evidence covers 1440x900
+and 390x844; real-main-window restart evidence covers PyQt DPI 1.0 and 1.5 with
+four state captures stored as eight diagnostic window/canvas PNGs. These are
+not approved baselines or formal AT evidence. Per-tab inner layout, portable
+workspace/archive replay, cross-device synchronization, approved goldens, and
+manual assistive-technology qualification remain open.
 
 ### 2026-08-14 Plot-worker Bandit directive closure (#4433)
 

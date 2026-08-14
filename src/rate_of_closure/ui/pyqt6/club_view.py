@@ -12,7 +12,7 @@ from typing import cast
 
 import numpy as np
 from matplotlib.figure import Figure
-from PyQt6.QtCore import QEvent, QObject, Qt, QTimer
+from PyQt6.QtCore import QEvent, QObject, Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QKeyEvent
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -52,6 +52,8 @@ __all__ = ["VIEW_MODES", "Club3DView"]
 
 class Club3DView(ClubViewLifecycleMixin, QWidget):
     """Animated 3D rendering of the rotating clubhead at impact."""
+
+    cameraChanged = pyqtSignal(object)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -163,6 +165,18 @@ class Club3DView(ClubViewLifecycleMixin, QWidget):
             self._camera.azimuth_deg, self._camera.elevation_deg, factor
         )
         self._adopt_camera(candidate)
+
+    def camera(self) -> ClubCamera:
+        """Return the exact presentation-only camera state."""
+        return self._camera
+
+    def set_camera(self, camera: ClubCamera) -> None:
+        """Adopt one validated camera through the transactional renderer."""
+        self._adopt_camera(camera)
+
+    def _camera_was_adopted(self, camera: ClubCamera) -> None:
+        """Publish only a camera whose render transaction completed."""
+        self.cameraChanged.emit(camera)
 
     def zoom(self) -> float:
         """Current camera zoom factor."""

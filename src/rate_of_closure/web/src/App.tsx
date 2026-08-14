@@ -35,7 +35,7 @@ function ModuleHelp(props: {
   return (
     <details open={props.open}
       onToggle={(event) => props.onOpenChange(event.currentTarget.open)}
-      className="mb-5 rounded-xl border border-slate-800/80 bg-slate-900/60 px-5 py-3 text-sm shadow-lg shadow-black/20 backdrop-blur"
+      className="mt-5 rounded-xl border border-slate-800/80 bg-slate-900/60 px-5 py-3 text-sm shadow-lg shadow-black/20 backdrop-blur"
       title="Usage instructions for this page">
       <summary className="cursor-pointer font-semibold text-slate-300 hover:text-slate-100">
         {help.title}
@@ -62,7 +62,10 @@ function AppFooter() {
 
 export default function App() {
   const workspace = useAppWorkspace();
-  const model = useImpactAppModel();
+  const model = useImpactAppModel({
+    clubCamera: workspace.clubCamera,
+    setClubCamera: workspace.setClubCamera,
+  });
   const morrisClient = useMemo(() => createMorrisAuthorityClient(), []);
   const active = workspace.viewState.active;
   const openGlossary = (term: string | undefined) => {
@@ -81,13 +84,13 @@ export default function App() {
       <PrimaryViewTabs state={workspace.viewState}
         onActiveChange={workspace.activatePrimaryView}
         onOrderChange={(order) => workspace.setViewState((state) => ({ ...state, order }))} />
-      <ModuleHelp active={active} open={workspace.moduleHelpOpen}
-        onOpenChange={workspace.setModuleHelpOpen} />
       <main id={`primary-panel-${active}`} role="tabpanel"
         aria-labelledby={`primary-tab-${active}`}>
         <PrimaryWorkspacePanel active={active} model={model}
           onOpenGlossary={openGlossary} morrisClient={morrisClient} />
       </main>
+      <ModuleHelp active={active} open={workspace.moduleHelpOpen}
+        onOpenChange={workspace.setModuleHelpOpen} />
       <AppFooter />
     </div>
   );

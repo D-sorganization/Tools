@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Persisted visual-layout preferences (#4433)
+
+Version 1.17.00 adds one bounded, versioned presentation-preference contract.
+React now restores the active primary tab and tab order together with the Club
+camera and the module-help disclosure; help follows the primary workspace so an
+expanded disclosure cannot displace its visual. PyQt restores the active tab,
+tab order, canonical Club camera, and a 0.20-0.38 main-sidebar fraction while
+keeping the sidebar and workspace non-collapsible.
+
+Malformed, nonfinite, out-of-range, or unknown-version values fail closed to
+defaults. Storage-write failures are nonfatal. These preferences never persist
+scientific results, imported mesh bytes, sample selections, playback phase, or
+export authority. Production evidence covers browser reload at 1440x900 and
+390x844 plus real PyQt restart at DPI 1.0/1.5. The four PyQt state captures are
+each retained as a window/canvas pair (eight PNGs total). All artifacts remain
+diagnostic, not approved goldens or formal assistive-technology evidence.
+Per-tab inner splitters, cross-device synchronization, portable workspace
+archives, approved baselines, and manual AT qualification remain open.
+
 ## 2026-08-14 Plot-worker Bandit directive closure (#4433)
 
 Version 1.16.99 adds the Bandit B301 suppression understood by the protected

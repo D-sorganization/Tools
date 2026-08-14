@@ -47,6 +47,7 @@ class ClubViewLifecycleMixin:
         _play_button: QPushButton
         _draw: Callable[[], None]
         _update_status: Callable[[], None]
+        _camera_was_adopted: Callable[[ClubCamera], None]
 
     def _apply_source(self, candidate: ClubMeshSource) -> None:
         prior = (self._source, self._mesh, self._hosel, self._cog)
@@ -123,6 +124,7 @@ class ClubViewLifecycleMixin:
             self._error.hide()
             self._error_kind = None
         self._update_status()
+        self._camera_was_adopted(candidate)
 
     def _advance(self) -> None:
         prior_phase = self._phase

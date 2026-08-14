@@ -18,6 +18,11 @@ import {
   type PrimaryViewId,
   type PrimaryViewState,
 } from "../model/viewPreferences";
+import type { ClubCamera } from "../model/clubCamera";
+import {
+  loadVisualLayout,
+  saveVisualLayout,
+} from "../model/visualLayoutPreferences";
 import { primaryViewForCommand } from "../model/workspaceCommands";
 
 function usePersistedTheme(): [AppTheme, React.Dispatch<React.SetStateAction<AppTheme>>] {
@@ -56,16 +61,34 @@ interface AppWorkspaceState {
   readonly setShortcutHelpOpen: (open: boolean) => void;
   readonly moduleHelpOpen: boolean;
   readonly setModuleHelpOpen: (open: boolean) => void;
+  readonly clubCamera: ClubCamera;
+  readonly setClubCamera: React.Dispatch<React.SetStateAction<ClubCamera>>;
   readonly activatePrimaryView: (view: PrimaryViewId) => void;
   readonly handleCommand: (command: AppCommandId) => void;
 }
 
 export function useAppWorkspace(): AppWorkspaceState {
   const [viewState, setViewState] = useState(loadPrimaryViewState);
+  const [visualLayout, setVisualLayout] = useState(loadVisualLayout);
   const [theme, setTheme] = usePersistedTheme();
   const [shortcutHelpOpen, setShortcutHelpOpen] = useState(false);
-  const [moduleHelpOpen, setModuleHelpOpen] = useState(false);
   useEffect(() => { savePrimaryViewState(viewState); }, [viewState]);
+  useEffect(() => { saveVisualLayout(visualLayout); }, [visualLayout]);
+
+  const setModuleHelpOpen = useCallback((moduleHelpOpen: boolean) => {
+    setVisualLayout((current) => ({ ...current, moduleHelpOpen }));
+  }, []);
+  const setClubCamera = useCallback(
+    (update: React.SetStateAction<ClubCamera>) => {
+      setVisualLayout((current) => ({
+        ...current,
+        clubCamera: typeof update === "function"
+          ? update(current.clubCamera)
+          : update,
+      }));
+    },
+    [],
+  );
 
   const activatePrimaryView = useCallback((active: PrimaryViewId) => {
     setViewState((state) => ({
@@ -84,11 +107,13 @@ export function useAppWorkspace(): AppWorkspaceState {
     } else if (command === APP_COMMAND_ID.globalOpenCurrentModuleHelp) {
       setModuleHelpOpen(true);
     }
-  }, [activatePrimaryView, setTheme]);
+  }, [activatePrimaryView, setModuleHelpOpen, setTheme]);
 
   useGlobalCommandShortcuts(handleCommand);
   return {
     viewState, setViewState, theme, shortcutHelpOpen, setShortcutHelpOpen,
-    moduleHelpOpen, setModuleHelpOpen, activatePrimaryView, handleCommand,
+    moduleHelpOpen: visualLayout.moduleHelpOpen, setModuleHelpOpen,
+    clubCamera: visualLayout.clubCamera, setClubCamera,
+    activatePrimaryView, handleCommand,
   };
 }

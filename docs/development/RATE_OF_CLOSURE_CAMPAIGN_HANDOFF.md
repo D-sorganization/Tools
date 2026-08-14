@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Persisted visual-layout preferences
+
+- One `visual-layout-preferences@1` contract treats layout as presentation
+  state. React restores active tab/order, canonical Club camera, and module-help
+  disclosure after reload; help follows the primary workspace so restoration
+  cannot displace the visual. PyQt restores active tab/order, canonical Club
+  camera, and the main-shell sidebar fraction after a real restart.
+- The shell fraction is constrained to 0.20-0.38 and both PyQt splitter panes
+  remain non-collapsible. Invalid, nonfinite, out-of-range, and unknown-version
+  payloads fail closed to defaults; storage failure is nonfatal.
+- Scientific results, imported mesh bytes, sample selection, playback phase,
+  and export authority remain session-only. Browser evidence covers 1440x900
+  and 390x844 without test scrolling. PyQt DPI 1.0/1.5 evidence records four
+  restart states as eight window/canvas PNGs with supported geometry.
+- Evidence is diagnostic, not an approved golden or formal AT result. Per-tab
+  inner splitters, portable workspace/archive replay, cross-device sync,
+  approved baselines, and manual AT qualification remain open. SPEC is 1.17.00.
+
 ## 2026-08-14 #4433 Plot-worker Bandit directive closure
 
 - SPEC 1.16.99 adds the explicit Bandit B301 suppression required for two

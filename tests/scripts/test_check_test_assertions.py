@@ -122,6 +122,7 @@ def test_plot_definition_support_exemption_is_exact(tmp_path: Path) -> None:
         "pyqt_simulation_scrub_probe.py",
         "pyqt_plot_point_inspector_probe.py",
         "pyqt_visualization_tab_probe.py",
+        "pyqt_visual_layout_persistence_probe.py",
     ],
 )
 def test_pyqt_render_probe_exemption_is_exact(tmp_path: Path, probe_name: str) -> None:
