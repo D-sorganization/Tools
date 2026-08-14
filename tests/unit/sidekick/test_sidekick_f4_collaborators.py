@@ -85,9 +85,9 @@ class TestTabCollection:
             [SidebarTabDefinition(tab_id="chat", title="Chat", factory=lambda *_: None)]
         )
 
-        assert alias is col._tab_definitions, (  # noqa: SLF001
+        assert alias is col._tab_definitions, (
             "set_definitions() must not rebind the backing dict"
-        )
+        )  # noqa: SLF001
         assert "chat" in alias, "alias must observe the new definition in place"
         assert col.definition_for("chat") is not None
 
@@ -105,9 +105,9 @@ class TestTabCollection:
 
         col.sync_order_from_widget()
 
-        assert alias is col._tab_ids, (  # noqa: SLF001
+        assert alias is col._tab_ids, (
             "sync_order_from_widget() must not rebind the backing list"
-        )
+        )  # noqa: SLF001
         assert alias == ["a", "b"], "alias must observe current visual order"
 
     def test_add_duplicate_raises(self, qtbot: Any) -> None:

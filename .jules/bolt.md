@@ -89,3 +89,6 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+## 2026-08-13 - Replace chained .map().join() in CSV generation
+**Learning:** Using chained array methods like `.map().join()` for large data serialization (like CSV exports) allocates intermediate arrays for every row, putting immense pressure on the garbage collector and stalling the main thread.
+**Action:** Replace chained array map/join operations in data serialization hot paths with single-pass `for` loops and string concatenation to eliminate intermediate allocations.
