@@ -29,9 +29,33 @@ void PIDController::Reset() {
   integral_ = 0.0f;
   last_error_ = 0.0f;
   first_run_ = true;
+  held_ = false;
+}
+
+void PIDController::Hold() {
+  held_ = true;
+  ResetDynamicState();
+}
+
+void PIDController::Release() {
+  held_ = false;
+  ResetDynamicState();
+}
+
+bool PIDController::IsHeld() const {
+  return held_;
+}
+
+void PIDController::ResetDynamicState() {
+  integral_ = 0.0f;
+  last_error_ = 0.0f;
+  first_run_ = true;
 }
 
 void PIDController::Compute(SignalBroker& broker, float dt) {
+  if (held_) {
+    return;
+  }
   if (!std::isfinite(dt) || dt <= 0.0f) {
     return;
   }
@@ -115,7 +139,16 @@ float PIDController::GetSetpoint() const {
 }
 
 void PIDController::SetSetpoint(float setpoint) {
-  setpoint_ = FiniteOrZero(setpoint);
+  const float next = FiniteOrZero(setpoint);
+  if (next != setpoint_) {
+    // Bumpless transfer: carrying the old integral across a setpoint change
+    // means the accumulated term still reflects the previous target. On an
+    // E-stop -- whose only effect that reaches the plant is zeroing these
+    // setpoints -- a wound-up integral held the analog output at 100% for tens
+    // of seconds after the operator commanded a stop (issue #4002).
+    ResetDynamicState();
+  }
+  setpoint_ = next;
 }
 
 float PIDController::GetKp() const {

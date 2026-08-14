@@ -81,6 +81,15 @@ jobs:
 
   firmware-compile:
     name: Firmware sketch compile (arduino-cli)
+    # Never run on a pull request from a fork. This job executes a third-party
+    # installer and downloads a board package onto a SELF-HOSTED runner whose
+    # workspace and tool caches are shared with every other fleet job. This
+    # repository is public and set to the weakest fork-PR approval, so without
+    # this gate any external contributor could run code on the fleet by opening
+    # a PR that touches a firmware path.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [d-sorg-fleet, Linux]
     timeout-minutes: 25
     steps:
@@ -88,13 +97,30 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install arduino-cli
+        env:
+          # Pinned to a release tag, NOT `master`. This installer is fetched and
+          # piped straight into a shell on a self-hosted runner, so tracking a
+          # moving branch means the fleet executes whatever lands on it. Bump
+          # deliberately, and check the diff of install.sh when you do.
+          ARDUINO_CLI_REF: v1.5.1
+          ARDUINO_CLI_VERSION: 1.5.1
         run: |
           mkdir -p "$HOME/.local/bin"
-          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh \
-            | BINDIR="$HOME/.local/bin" sh
+          curl -fsSL \
+            "https://raw.githubusercontent.com/arduino/arduino-cli/${ARDUINO_CLI_REF}/install.sh" \
+            | BINDIR="$HOME/.local/bin" sh -s -- "${ARDUINO_CLI_VERSION}"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/arduino-cli" version
 
       - name: Install P1AM board package and libraries
+        # The board package and libraries are intentionally NOT version-pinned
+        # here. Pinning them is worth doing, but it requires a version set
+        # verified against the FACTS board-manager index and the Arduino library
+        # index; inventing plausible-looking versions would break this gate on
+        # its first run. The resolved versions are recorded to the job summary by
+        # the step below, which is what makes a later pin a mechanical change.
+        # Unlike the installer above this is not a code-execution concern: it
+        # runs the arduino-cli binary already pinned in the previous step.
         run: |
           arduino-cli config init --overwrite
           arduino-cli config add board_manager.additional_urls \

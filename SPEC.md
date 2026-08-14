@@ -46,8 +46,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - `.github/workflows/p1am-firmware.yml` adds two gates on changes under
   `src/p1am_control_system/firmware/**`: `firmware-unit-tests` (g++ `make test`)
   and `firmware-compile` (arduino-cli against the `P1AM-100:samd` board package).
-  The arduino-cli installer and both package versions are pinned, and the compile
-  job is gated against fork pull requests because this repository is public.
+  The arduino-cli installer is pinned to a release tag (it is piped into a shell
+  on a self-hosted runner, so `master` would mean the fleet runs whatever lands
+  there), and the compile job is gated against fork pull requests because this
+  repository is public. The board package and libraries are not yet
+  version-pinned; the resolved versions are recorded to the job summary so that
+  pin becomes a mechanical follow-up.
 - `SignalBroker::kThermocoupleFullScaleC` is now a public constant in
   `SignalBroker.h` (was a function-local literal in `SignalBroker.cpp`). It is
   the firmware half of the percent/degC contract the backend's

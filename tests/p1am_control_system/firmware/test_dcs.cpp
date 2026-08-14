@@ -15,6 +15,7 @@
 #include "PIDController.h"
 #include "SafetyInterlock.h"
 #include "StorageManager.h"
+#include "CommsWatchdog.h"
 
 // Helper to check approximate equality for floats
 bool FloatEquals(float a, float b, float epsilon = 0.001f) {
@@ -288,6 +289,90 @@ void TestSoftFailRuntimeContracts() {
   std::cout << "TestSoftFailRuntimeContracts PASSED!" << std::endl;
 }
 
+
+void TestPidResetsIntegralOnSetpointChange() {
+  std::cout << "Running TestPidResetsIntegralOnSetpointChange..." << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);  // integral-only, so the wind-up is unambiguous
+  pid.SetKd(0.0f);
+
+  // Wind the integral to its clamp against a large sustained error.
+  broker.SetTag(3, 0.0f);
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 100.0f));
+
+  // Commanding the setpoint to zero must drop the output on the NEXT scan,
+  // not decay towards it over many seconds.
+  pid.SetSetpoint(0.0f);
+  pid.Compute(broker, 0.1f);
+  assert(FloatEquals(broker.GetTag(4), 0.0f));
+
+  std::cout << "TestPidResetsIntegralOnSetpointChange PASSED!" << std::endl;
+}
+
+void TestPidDoesNotIntegrateWhileTripped() {
+  std::cout << "Running TestPidDoesNotIntegrateWhileTripped..." << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);
+  pid.SetKd(0.0f);
+  broker.SetTag(3, 0.0f);
+
+  pid.Hold();  // interlock tripped: freeze the loop and shed accumulated state
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 0.0f));
+
+  // Releasing the hold starts from a clean integral, so the first scan after
+  // recovery contributes one step -- not 200 scans' worth.
+  pid.Release();
+  pid.Compute(broker, 0.1f);
+  assert(FloatEquals(broker.GetTag(4), 10.0f));  // ki * error * dt = 1*100*0.1
+
+  std::cout << "TestPidDoesNotIntegrateWhileTripped PASSED!" << std::endl;
+}
+
+void TestCommsWatchdog() {
+  std::cout << "Running TestCommsWatchdog..." << std::endl;
+  CommsWatchdog watchdog(2000);  // 2 s against a nominal 100 ms scan
+
+  watchdog.Begin(1000);
+  assert(!watchdog.IsExpired(1000));
+  assert(!watchdog.IsExpired(2999));
+
+  // Exactly at the timeout counts as expired -- fail safe, not fail late.
+  assert(watchdog.IsExpired(3000));
+  assert(watchdog.IsExpired(50000));
+
+  // Traffic re-arms it.
+  watchdog.RecordActivity(50000);
+  assert(!watchdog.IsExpired(51999));
+  assert(watchdog.IsExpired(52000));
+
+  // millis() wraps at ~49.7 days. Unsigned subtraction must carry the
+  // watchdog across the wrap rather than disarming it for another 49 days.
+  const unsigned long kNearWrap = 0xFFFFFF00UL;
+  watchdog.RecordActivity(kNearWrap);
+  assert(!watchdog.IsExpired(kNearWrap + 1999UL));
+  assert(watchdog.IsExpired(kNearWrap + 2000UL));  // wraps past zero
+
+  std::cout << "TestCommsWatchdog PASSED!" << std::endl;
+}
+
 int main() {
   std::cout << "=== DCS CORE FIRMWARE TDD TEST RUNNER ===" << std::endl;
   TestSignalBroker();
@@ -295,6 +380,9 @@ int main() {
   TestSafetyInterlock();
   TestStorageManager();
   TestSoftFailRuntimeContracts();
+  TestPidResetsIntegralOnSetpointChange();
+  TestPidDoesNotIntegrateWhileTripped();
+  TestCommsWatchdog();
   std::cout << "All C++ Core Firmware Tests Passed Successfully!" << std::endl;
   return 0;
 }
