@@ -1,5 +1,8 @@
 # AGENT_HANDOFF — Tools
 
+> Update this file in every implementation commit and every push to `main`.
+> Current-state only; history lives in git. Last updated: 2026-08-11.
+
 ## 2026-08-11 Capability-request workspace continuation
 
 Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348) publishes
@@ -46,6 +49,82 @@ the parent stack explicitly authorizes publication. Local qualification passes
 contract/File/UI tests; pinned MyPy, Ruff check/format, TypeScript,
 zero-warning ESLint, the 211-module production build, 11 campaign-manifest
 tests, docs governance, and manifest-layout validation also pass.
+
+## 2026-08-11 Exact-head quality-gate repair
+
+The Ruff-only repair was published normally as
+`317d2b0c16c9516ef2cac028e77b25c6f13aced4`. Fresh protected CI then passed
+lint and format and exposed two MyPy defects that the formatter failure had
+masked. The current repair strictly narrows persisted enum fields to strings
+before construction and removes one redundant workspace-document cast. New
+adversarial tests reject non-string enum values without coercion. The repair
+also replaces an untyped signal lambda with a typed partial and explicitly
+narrows the Qt putting-speed value to float. Camera, putting, and simulation
+behavior and wire-format values remain unchanged.
+Independent review, normal fast-forward publication, and fresh exact-head CI
+remain required.
+
+The first independent pass found only a stale SPEC header: its changelog was
+1.14.36 while the declared version remained 1.14.35. Both declarations are now
+aligned to 1.14.36; this documentation correction changes no runtime artifact.
+
+## 2026-08-11 Camera-preference persistence continuation
+
+Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349) publishes
+this bounded child from independently approved exact head
+`f2d3be771a9ba1d17f5e8942484b3fb49c236527`, with the #4343 base and
+composed #4331/#4303 histories unchanged. Fresh protected CI/review, rendered
+platform qualification, dependency landing, and release remain required.
+
+Branch `feat/4218-camera-preference-persistence` starts from exact published
+PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49` and normally
+composes exact PR #4331 head `e07e2a66a894c93b50c1ded308fc8902f2ff6c24`
+then exact PR #4303 head `98cf35994488dd6f3d66916415bbc9f8e7c8bf3f`.
+No source branch, base, or published history is rewritten.
+
+The shared strict `camera-preferences/v1` contract is keyed by stable Impact,
+Swing, and Flight viewport IDs. It stores only preset, explicit face-on side,
+bounded zoom, tracking enabled, and Auto Fit enabled. Moving subject targets
+and manual-tracking suspension remain runtime-only. View-workspace v2 embeds
+that contract; exact v1 files migrate to the published #4303 neutral-impact
+and 2x tracked Swing/Flight defaults, while malformed/future data fails closed.
+
+PyQt6 Simulation/Flight adapters and React Impact/Clubhead/Flight adapters now
+consume app-owned values through QSettings, localStorage, and File Save/Open.
+Only deliberate controls notify persistence; animation-frame tracking never
+writes. Layout, hide/show, reload, strict import, and existing atomic/stale-read
+File boundaries retain the isolated values. Protected CI/review, rendered
+cross-platform qualification, UpstreamDrift consumption, and #4218 completion
+remain open.
+
+## 2026-08-11 PR #4303 current-parent propagation repair
+
+Draft PR #4303 retains branch `fix/rate-pyqt-default-camera` and base
+`fix/rate-mobile-tools-menu`. A normal child-first merge preserves exact live
+child `2e07bec58b8a759c9db36ea7afb26a1c835434f5` and incorporates exact current
+parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`. The parent had advanced from
+the child's merge base `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`, so
+GitHub reported conflicts and treated the parent's broad style mutation as
+child-local. The current parent is authoritative for the unrelated shared
+flight contract test; four additive current-state documents were reconciled
+here. Camera production code merged without conflict.
+
+The child retains one shared Python/TypeScript moving-subject initializer:
+animated PyQt6 and React clubhead and ball-flight viewports start at 2x zoom
+with bounded tracking and Auto Fit enabled, while static viewports retain the
+neutral default and every user override remains independent. No camera
+physics, geometry, view convention, or persistence claim changes. No rebase,
+retarget, force-push, parent rewrite, publication, GitHub write, or CI retry
+was used. Independent review and protected exact-head CI remain required.
+
+Fresh merged-tree evidence is 49 focused Python/PyQt camera, layout, and
+simulation tests plus 14 campaign/launcher-manifest tests; exact-delta Ruff
+lint/format on six Python files; pinned MyPy 1.13 and Bandit on four production
+files; documentation, changed-code, module-size, minimum-test, assertion,
+manifest-layout, whitespace, and diff gates. React passes all 111 files / 673
+tests, TypeScript, zero-warning ESLint, the 195-module production build, and
+six serial Playwright camera/toolstrip cases across desktop and constrained
+2x-DPR projects.
 
 ## 2026-08-11 variation-study workspace protected publication
 
@@ -186,6 +265,34 @@ checks pass. The older full-tree 500-LOC check is not a usable delta gate in
 this checkout because it loads no grandfather baseline and reports 232
 pre-existing repository files; every new module in this slice is below 500
 lines and the active 1,200-line baseline-aware module gate passes.
+## 2026-08-11 PR #4331 current-parent propagation repair
+
+Branch `feat/4284-orthographic-axis-polish` now normally incorporates exact
+current PR #4330 parent `304a069b1777dcf8cf107de26caa3b9fbe96dbb3`
+after live PR #4331 head `c7bccbccc6cda0c9b938b2862ed660cebdcb7597`.
+The failed hosted quality gate compared the child with stale merge base
+`d8176bb5863a35725199bb8357a5f000f9bdd3ba`, so the parent's broad formatting
+commit and six worktree pointers incorrectly appeared in the child delta. The
+normal two-parent merge has no content conflict and reduces the effective PR
+delta to the nine intended camera-polish documentation, adapter, and regression
+files. Camera behavior is unchanged. No rebase, retarget, force-push, parent
+rewrite, or CI retry was used. This local candidate still requires independent
+review, publication by the release owner, and protected exact-head CI.
+
+The repository specification is now synchronized at version `1.14.30`. It
+defines the per-preset depth-axis mapping, complete artist suppression,
+visible engineering-axis preservation, native one-sided ticks, and full-axis
+restoration without claiming any camera-state or simulation-behavior change.
+
+Fresh local evidence on the merged tree is 71 Python/PyQt camera, compositor,
+main-window, layout, campaign-manifest, and launcher-manifest tests; Ruff lint
+and format on the exact Python delta; pinned MyPy 1.13 on three production
+adapters; Bandit; documentation, changed-code, module-size, minimum-test,
+assertion, manifest-layout, Spec Check, version, whitespace, and diff gates.
+React passes all 114
+files / 686 tests, TypeScript, zero-warning ESLint, the 199-module production
+build, and four serial Playwright camera cases across desktop and constrained
+2x-DPR projects. `npm ci` audited 337 packages with zero vulnerabilities.
 
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 

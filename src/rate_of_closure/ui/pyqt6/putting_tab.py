@@ -296,7 +296,7 @@ class PuttingTab(QWidget):
                     self._backstroke_spin.value() / 100.0, putter_length_m
                 )
             )
-        return self._speed_spin.value()
+        return float(self._speed_spin.value())
 
     @staticmethod
     def _format_m(value: float) -> str:
@@ -346,9 +346,11 @@ class PuttingTab(QWidget):
             "putt_margin": (
                 f"HOLED (+{result.margin_mps:.2f} m/s under bound)"
                 if result.holed and result.margin_mps is not None
-                else f"miss by {self._format_m(result.miss_distance_m)}"
-                if result.miss_distance_m is not None
-                else "—"
+                else (
+                    f"miss by {self._format_m(result.miss_distance_m)}"
+                    if result.miss_distance_m is not None
+                    else "—"
+                )
             ),
         }
         for field, text in values.items():

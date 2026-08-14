@@ -1,5 +1,8 @@
 # AGENT_HANDOFF — rate_of_closure
 
+> Update with every implementation commit and every push to `main`.
+> Current-state only; history lives in git. Last updated: 2026-08-11.
+
 ## 2026-08-11 Explorer-session v5 capability-request mapper
 
 Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348) publishes
@@ -44,6 +47,71 @@ Local qualification passes 71 focused Python workflow/workspace/File/PyQt/
 manifest tests and 70 focused React contract/File/UI tests, plus pinned MyPy, Ruff
 check/format, TypeScript, zero-warning ESLint, the 211-module production build,
 11 campaign-manifest tests, docs governance, and manifest-layout validation.
+
+## 2026-08-11 Exact-head quality-gate repair
+
+The Ruff-only repair was published normally as
+`317d2b0c16c9516ef2cac028e77b25c6f13aced4`. Its fresh protected run passed
+lint and format, then exposed strict MyPy failures in two persisted enum
+constructors and one redundant cast. The current repair rejects non-string
+enum tokens before construction and returns the already precise compositor
+document type directly. It also uses a typed partial for the camera listener
+and explicitly narrows the Qt putting-speed value to float. Valid camera
+preferences, putting results, and simulation behavior are unchanged.
+Independent review, normal publication, and fresh CI remain open.
+
+The initial independent review found only that the SPEC header lagged its new
+1.14.36 changelog entry. The header is now aligned to 1.14.36. This follow-up
+is documentation-only and changes no camera or simulation behavior.
+
+## 2026-08-11 View-workspace v2 camera preferences
+
+Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349) publishes
+this bounded child from independently approved exact head
+`f2d3be771a9ba1d17f5e8942484b3fb49c236527`, preserving the #4343 base and
+composed #4331/#4303 histories. Fresh protected CI/review, rendered platform
+qualification, dependency landing, and release remain required.
+
+The isolated `feat/4218-camera-preference-persistence` branch starts at exact
+published #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49` and
+normally merges exact #4331 `e07e2a66a894c93b50c1ded308fc8902f2ff6c24`
+then #4303 `98cf35994488dd6f3d66916415bbc9f8e7c8bf3f`.
+
+Python and TypeScript share an exact `camera-preferences/v1` document for the
+Impact, Swing, and Flight viewport identities. Its deliberate fields are
+preset, face-on side, zoom in [0.25, 8], tracking, and Auto Fit. Subject target
+and manual suspension are excluded. Strict view-workspace v2 serialization and
+v1 migration are cross-runtime; QSettings, localStorage, and whole-workspace
+File adapters restore the same values atomically. Five runtime adapters are
+wired, while bounded tracking updates remain silent to durable storage.
+
+This is bounded #4218/#4284 work, not issue or epic completion. Protected
+review/CI, installed UpstreamDrift consumers, and rendered platform evidence
+remain required.
+
+## 2026-08-11 PR #4303 current-parent propagation repair
+
+The PyQt default-camera child now normally merges exact live head
+`2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current mobile-
+toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42` second. This repairs the stale
+`05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` merge-base comparison that exposed
+parent formatting as child-local and made GitHub report conflicts. Current
+parent content is retained for the unrelated shared flight contract test;
+camera production code merged cleanly.
+
+Animated clubhead and ball-flight viewports still share a cross-runtime 2x,
+tracking-enabled, Auto-Fit-enabled initial state. Static viewports retain the
+neutral default, controls remain independent, and physics and geometry are
+unchanged. No publication or CI retry is authorized from this worktree;
+independent review and protected exact-head CI remain open.
+
+Fresh verification is 49 focused native camera/layout/simulation tests and 14
+campaign/launcher-manifest tests; exact-delta Ruff/format on six Python files;
+pinned MyPy 1.13 and Bandit on four production files; and the relevant
+documentation, policy, size, assertion, manifest, whitespace, and diff gates.
+React passes 111 files / 673 tests, TypeScript, zero-warning ESLint, the
+195-module production build, and six serial desktop/constrained-2x-DPR
+Playwright camera/toolstrip cases.
 
 ## 2026-08-11 variation-study workspace protected publication
 
@@ -177,6 +245,31 @@ linked-debt, changed-Python policy, changed-test assertion, and diff checks.
 The legacy full-tree 500-LOC script loads no grandfather baseline in this
 checkout and therefore reports 232 pre-existing files; all new modules in this
 slice are below 500 lines.
+## 2026-08-11 PR #4331 current-parent propagation repair
+
+The orthographic-axis child now normally incorporates exact current
+multi-view persistence parent
+`304a069b1777dcf8cf107de26caa3b9fbe96dbb3` after exact live child
+`c7bccbccc6cda0c9b938b2862ed660cebdcb7597`. The earlier hosted quality gate
+used stale merge base `d8176bb5863a35725199bb8357a5f000f9bdd3ba` and therefore
+treated the parent's formatting and worktree-pointer changes as child-local.
+The content-clean merge restores the effective PR delta to the intended nine
+camera documentation, adapter, and test files without changing runtime camera
+semantics. Protected current-head CI and independent review remain required;
+no publication or CI retry is authorized from this worktree.
+
+Root `SPEC.md` version `1.14.30` now records the exact depth-axis mapping,
+complete Matplotlib artist suppression, visible-axis/tick preservation, and
+isometric/manual-orbit restoration contract. Runtime files are unchanged by
+this documentation-governance repair.
+
+Fresh verification is 71 focused/native Python and PyQt tests, exact-delta
+Ruff/format, pinned MyPy 1.13, Bandit, campaign and launcher manifests, and all
+relevant Spec Check, version, governance, and diff gates. The complete React
+suite passes 114 files / 686
+tests together with TypeScript, zero-warning ESLint, the 199-module production
+build, and four serial desktop/constrained-2x-DPR Playwright camera cases. The
+web dependency audit reports 337 packages and zero vulnerabilities.
 
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 

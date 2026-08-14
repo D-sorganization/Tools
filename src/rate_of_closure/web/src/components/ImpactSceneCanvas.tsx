@@ -22,6 +22,11 @@ import {
   withCameraZoom,
   withManualOrbit,
 } from "../model/cameraCommands";
+import {
+  applyCameraPreference,
+  preferenceFromCameraState,
+  type CameraPreference,
+} from "../model/cameraPreferences";
 
 const VELOCITY_KEYS = ["total", "axisTranslation", "shaftRotation", "otherRotation", "withoutShaft"] as const;
 const DPLANE_LAYERS = [
@@ -53,20 +58,47 @@ function download(name: string, contents: Blob): void {
   URL.revokeObjectURL(link.href);
 }
 
-export function ImpactSceneCanvas({ run, scenario, club }: {
+export function ImpactSceneCanvas({
+  run,
+  scenario,
+  club,
+  cameraPreference,
+  onCameraPreferenceChange,
+}: {
   run: SimulationRunTs;
   scenario: ImpactScenario;
   club: ClubSpec;
+  cameraPreference?: CameraPreference;
+  onCameraPreferenceChange?: (preference: CameraPreference) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
-  const [camera, setCamera] = useState(() => ({
-    ...defaultCameraState(),
-    zoom: 2.2,
-  }));
+  const [camera, setCamera] = useState(() => {
+    const initial = { ...defaultCameraState(), zoom: 2.2 };
+    return cameraPreference === undefined
+      ? initial
+      : applyCameraPreference(initial, cameraPreference);
+  });
   const [visible, setVisible] = useState<ReadonlySet<string>>(initialVisible);
   const scene = useMemo(() => impactKinematics(run, scenario, club), [run, scenario, club]);
   const geometry = useMemo(() => impactSceneGeometry(scene, visible), [scene, visible]);
+
+  const updateCamera = (transform: (current: typeof camera) => typeof camera) => {
+    setCamera((current) => {
+      const next = transform(current);
+      if (cameraPreference !== undefined) {
+        onCameraPreferenceChange?.(
+          preferenceFromCameraState(next, cameraPreference),
+        );
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (cameraPreference === undefined) return;
+    setCamera((current) => applyCameraPreference(current, cameraPreference));
+  }, [cameraPreference]);
 
   useEffect(() => {
     try {
@@ -150,15 +182,15 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
         </div>
       </div>
       <CameraControlBar state={camera} subjectLabel="Impact" trackingAvailable={false}
-        onPreset={(preset) => setCamera((current) => applyCameraPreset(current, preset))}
-        onFaceOnSide={(side) => setCamera((current) => setFaceOnSide(current, side))}
+        onPreset={(preset) => updateCamera((current) => applyCameraPreset(current, preset))}
+        onFaceOnSide={(side) => updateCamera((current) => setFaceOnSide(current, side))}
         onTracking={() => undefined}
-        onAutoFit={(enabled) => setCamera((current) => ({
+        onAutoFit={(enabled) => updateCamera((current) => ({
           ...current,
           autoFitEnabled: enabled,
           zoom: enabled ? safeTrackingZoom(current.zoom, 0.35, 1) : current.zoom,
         }))}
-        onRecenter={() => setCamera((current) => recenterCamera(current, geometry.contactPoint))} />
+        onRecenter={() => updateCamera((current) => recenterCamera(current, geometry.contactPoint))} />
       <div className="flex flex-wrap gap-3 text-xs">
         {DPLANE_LAYERS.map(([key, label, meaning]) => <label key={key} title={meaning} className="flex cursor-pointer items-center gap-1 text-slate-300">
           <input type="checkbox" checked={visible.has(key)} onChange={() => setVisible((current) => {
@@ -189,14 +221,14 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
         onPointerDown={(event) => {
           dragRef.current = pointerCoordinates(event.nativeEvent);
           event.currentTarget.setPointerCapture?.(event.pointerId);
-          setCamera(applyManualOverride);
+          updateCamera(applyManualOverride);
         }}
         onPointerMove={(event) => {
           if (!dragRef.current) return;
           const pointer = pointerCoordinates(event.nativeEvent);
           const dx = pointer.x - dragRef.current.x;
           const dy = pointer.y - dragRef.current.y;
-          setCamera((current) => withManualOrbit(
+          updateCamera((current) => withManualOrbit(
             current,
             current.yawRad - dx * 0.008,
             Math.max(-1.4, Math.min(1.4, current.pitchRad + dy * 0.008)),
@@ -204,16 +236,16 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
           dragRef.current = pointer;
         }}
         onPointerUp={(event) => { dragRef.current = null; event.currentTarget.releasePointerCapture?.(event.pointerId); }}
-        onWheel={(event) => { event.preventDefault(); setCamera((current) => withCameraZoom(
+        onWheel={(event) => { event.preventDefault(); updateCamera((current) => withCameraZoom(
           current,
           current.zoom * (event.deltaY < 0 ? 1.1 : 1 / 1.1),
         )); }}
         onKeyDown={(event) => {
           const delta = event.shiftKey ? 0.2 : 0.08;
-          if (event.key === "ArrowLeft" || event.key === "ArrowRight") setCamera((current) => withManualOrbit(
+          if (event.key === "ArrowLeft" || event.key === "ArrowRight") updateCamera((current) => withManualOrbit(
             current, current.yawRad + (event.key === "ArrowLeft" ? delta : -delta), current.pitchRad,
           ));
-          if (event.key === "ArrowUp" || event.key === "ArrowDown") setCamera((current) => withManualOrbit(
+          if (event.key === "ArrowUp" || event.key === "ArrowDown") updateCamera((current) => withManualOrbit(
             current, current.yawRad,
             Math.max(-1.4, Math.min(1.4, current.pitchRad + (event.key === "ArrowUp" ? delta : -delta))),
           ));

@@ -11,6 +11,8 @@ from rate_of_closure.club import ClubSpec, ClubType, HeadStyle
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.units import QUANTITY_UNITS
 from rate_of_closure.view_workspace import (
+    FORMAT,
+    FORMAT_V1,
     ViewWorkspace,
     workspace_from_document,
     workspace_to_document,
@@ -254,7 +256,7 @@ def document_from_state(
             active_module_id=state.active_module_id,
             view_workspace=VersionedPayload(
                 "rate_of_closure.view_workspace",
-                1,
+                2,
                 workspace_to_document(state.view_workspace),
             ),
         ),
@@ -303,9 +305,14 @@ def state_from_document(
     if not isinstance(units, Mapping):
         raise TypeError("model_session.units must be an object")
     view = document.layout.view_workspace
-    if view is None or (view.schema, view.schema_version) != (
-        "rate_of_closure.view_workspace",
-        1,
+    if (
+        view is None
+        or view.schema != "rate_of_closure.view_workspace"
+        or (
+            view.schema_version,
+            view.data.get("format"),
+        )
+        not in {(1, FORMAT_V1), (2, FORMAT)}
     ):
         raise ValueError("workspace requires a supported compositor payload")
     if session.schema_version == 1:
