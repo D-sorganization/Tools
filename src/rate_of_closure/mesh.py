@@ -55,7 +55,7 @@ MAX_IMPORTED_MESH_TRIANGLES = 2_048
 MAX_RENDER_MESH_TRIANGLES = 4_096
 
 _BINARY_HEADER_BYTES = 80
-_BINARY_RECORD = np.dtype(
+_BINARY_RECORD: np.dtype[np.void] = np.dtype(
     [("normal", "<f4", (3,)), ("vertices", "<f4", (3, 3)), ("attr", "<u2")]
 )
 _ASCII_VERTEX = re.compile(r"vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)")

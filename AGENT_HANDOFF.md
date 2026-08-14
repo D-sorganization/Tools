@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Club Explorer hosted dtype closure (#4433)
+
+Version 1.16.92 explicitly types the structured binary-STL NumPy dtype and
+normalizes three hosted binding boolean returns. This closes the final pinned
+Python 3.12 / MyPy 1.13 diagnostic without changing parsing, rendering,
+interaction, evidence, or the open #4433 limitations.
+
 ## 2026-08-13 Club Explorer hosted typing closure (#4433)
 
 Version 1.16.91 gives the Club Explorer mixins type-check-only attribute

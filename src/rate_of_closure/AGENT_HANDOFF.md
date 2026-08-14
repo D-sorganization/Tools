@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Club Explorer hosted dtype closure (#4433)
+
+- The binary-STL record now has an explicit structured NumPy dtype, and Qt/
+  NumPy-derived boolean returns are normalized at their typed boundaries.
+- This is static-only: parsing, camera/source authority, rendering, artifacts,
+  and open #4433 limitations are unchanged. SPEC is 1.16.92.
+
 ## 2026-08-13 Club Explorer hosted typing closure (#4433)
 
 - `TYPE_CHECKING`-only mixin attribute contracts avoid runtime/MRO stubs while

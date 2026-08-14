@@ -1,5 +1,13 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Club Explorer hosted dtype closure
+
+- The structured binary-STL dtype is explicitly typed and three binding boolean
+  returns are normalized, closing the remaining Python 3.12 / pinned MyPy 1.13
+  diagnostic.
+- Runtime science, rendering, interaction, diagnostic evidence, and open gaps
+  are unchanged. SPEC is 1.16.92; #4433 remains open.
+
 ## 2026-08-13 #4433 Club Explorer hosted typing closure
 
 - Type-only mixin attribute contracts replace concrete erased-self annotations,
