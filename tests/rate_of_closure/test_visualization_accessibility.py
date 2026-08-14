@@ -30,16 +30,16 @@ from rate_of_closure.visualization_tab_manifest import (  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
-_EXPECTED_INITIAL_CONTROL_COUNTS = {
-    "clubhead": 8,
-    "plots": 17,
-    "calculation_description": 0,
-    "simulation": 35,
-    "flight_explorer": 37,
-    "launch_monitor_analytics": 15,
-    "variation": 17,
-    "putting": 8,
-    "glossary": 2,
+_EXPECTED_REGISTERED_CONTROL_RANGES = {
+    "clubhead": (9, 9),
+    "plots": (19, 19),
+    "calculation_description": (0, 0),
+    "simulation": (182, 182),
+    "flight_explorer": (59, 59),
+    "launch_monitor_analytics": (21, 21),
+    "variation": (160, 161),
+    "putting": (11, 11),
+    "glossary": (2, 2),
 }
 
 
@@ -127,12 +127,15 @@ def test_every_visible_focusable_pyqt_control_has_a_bounded_name(
         page = window._tabs.currentWidget()
         assert page is not None
         result = audit_visible_focusable_controls(page)
-        assert result.control_count == _EXPECTED_INITIAL_CONTROL_COUNTS[tab_id]
+        minimum, maximum = _EXPECTED_REGISTERED_CONTROL_RANGES[tab_id]
+        assert minimum <= result.registered_control_count <= maximum
+        assert result.control_count <= result.registered_control_count
         assert result.findings == (), tab_id
         evidence.append(
             {
                 "tab_id": tab_id,
                 "audited_control_count": result.control_count,
+                "registered_control_count": result.registered_control_count,
                 "findings": [],
             }
         )

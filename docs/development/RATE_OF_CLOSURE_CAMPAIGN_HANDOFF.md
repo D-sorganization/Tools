@@ -1,5 +1,60 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Visual-baseline hosted typing closure
+
+- Version 1.17.06 adds only the explicit NumPy return cast required by hosted
+  CPython 3.12/MyPy 1.13 after RGB decode/copy validation.
+- Image bytes, pixel metrics, thresholds, workflows, and scientific authority
+  are unchanged.
+
+## 2026-08-14 #4433 Proposed protected visual baselines
+
+- Version 1.17.05 packages all 18 reviewed initial-state PNGs from successful
+  protected head `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c`. The immutable
+  manifest binds exact tab coverage, environment, filename, SHA-256, and a
+  narrow 1-channel/100-microunit pixel-drift envelope.
+- Both untrusted PR and trusted-main evidence lanes regenerate the complete set,
+  require the manifest's exact evaluated commit, and compare decoded RGB pixels
+  after strict byte/dimension/digest preflight.
+- The references are proposed until protected merge approves them. Responsive
+  React, DPI-1.5 PyQt, manual AT execution, and cross-platform pixel identity
+  remain open. Analysis and retained-result authority are unchanged.
+
+## 2026-08-14 #4433 Deterministic Explorer candidate capture
+
+- The React candidate harness now applies its declared dark/reduced-motion
+  media environment before navigation and asserts Explorer is paused before
+  capture. Two consecutive local Chromium runs produced the same PNG digest.
+- SPEC 1.17.04 records this evidence-only correction. Product animation,
+  camera, source, and scientific authority are unchanged.
+
+## 2026-08-14 #4433 Cross-platform accessibility inventory correction
+
+- Qt exposes 160 or 161 registered semantic controls on the Variation tab
+  across the supported hosted/local environments. SPEC 1.17.03 records that
+  narrow envelope while retaining the stronger requirement that every actual
+  visible, enabled, focusable control has a bounded accessible name.
+- Candidate capture, scientific execution, and accepted-result authority are
+  unchanged.
+
+## 2026-08-14 #4433 Visual-baseline candidate authority
+
+- The protected browser and PyQt jobs now retain 18 stable initial-state
+  baseline candidates: one for every registered tab at React 1440x900 and
+  PyQt DPI 1.0/1440x900. Each surface writes a strict manifest with exact source
+  SHA, reference environment, filenames, and SHA-256 digests.
+- Browser candidates inherit pinned dark/UTC/reduced-motion/device-scale-1
+  Playwright settings. PyQt installs bundled DejaVu Sans and verifies required
+  ASCII glyph support, closing the prior offscreen tofu risk before capture.
+- This step creates candidate evidence only. Hosted images must still be
+  reviewed and committed with exact baseline/diff authority; protected merge
+  is the approval event. Responsive and DPI-1.5 captures remain diagnostic.
+  SPEC is 1.17.02.
+- Candidate inspection found and closed a PyQt Launch Monitor overlap: the
+  linked scatter keeps its scientific plot area while a compact retained-row
+  status is separated beneath it. Analysis and retained-data identity did not
+  change.
+
 ## 2026-08-14 #4433 Cross-tab automated accessibility evidence
 
 - A packaged v1 authority exactly matches the visibility manifest's nine React
@@ -15,6 +70,10 @@
   inputs, Putting pace input, and Glossary term list. The protected PyQt lane
   exercises the exact full-window inventory and retains tab/control counts,
   findings, GitHub SHA, and toolkit versions as JSON.
+- The PyQt audit separately pins each tab's exact registered semantic-control
+  inventory and records the visible audited count. Native platform visibility
+  cannot masquerade as missing application authority, while every visible
+  control still requires a bounded name.
 - `rate-visualization-at-protocol.md` is a controlled, surface-by-surface human
   keyboard/screen-reader qualification record. It requires exact environment,
   announcement, defect, artifact, evaluator, and approver evidence. It has not

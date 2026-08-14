@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
+import shutil
 import time
 from pathlib import Path
 
+import matplotlib
 from PyQt6.QtCore import QRect, Qt
+from PyQt6.QtGui import QFont, QFontDatabase, QFontMetrics
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QWidget
 
@@ -28,6 +33,20 @@ from rate_of_closure.visualization_performance_manifest import (
 from rate_of_closure.visualization_tab_manifest import (
     load_visualization_tab_manifest,
 )
+
+
+def _install_evidence_font(application: QApplication) -> dict[str, object]:
+    font_path = Path(matplotlib.get_data_path()) / "fonts" / "ttf" / "DejaVuSans.ttf"
+    font_id = QFontDatabase.addApplicationFont(str(font_path))
+    families = QFontDatabase.applicationFontFamilies(font_id)
+    if font_id < 0 or not families:
+        raise RuntimeError("could not load the bundled all-tab evidence font")
+    font = QFont(families[0])
+    metrics = QFontMetrics(font)
+    if not all(metrics.inFontUcs4(ord(char)) for char in "Tabs 0123 m/s"):
+        raise RuntimeError("the all-tab evidence font lacks required ASCII glyphs")
+    application.setFont(font)
+    return {"font_family": families[0], "font_ascii_supported": True}
 
 
 class MemorySettings:
@@ -206,6 +225,7 @@ def main() -> int:
     application = QApplication.instance() or QApplication([])
     if application is None:
         raise RuntimeError("could not initialize QApplication")
+    font = _install_evidence_font(application)
     window = RateOfClosureMainWindow(navigation_settings=MemorySettings())
     window.resize(1440, 900)
     window.show()
@@ -232,6 +252,44 @@ def main() -> int:
         )
         for entry in entries
     ]
+    candidate_root_text = os.environ.get("RATE_VISUAL_BASELINE_CANDIDATE_DIR")
+    if candidate_root_text and args.scale == 1.0:
+        candidate_root = Path(candidate_root_text) / "pyqt"
+        candidate_root.mkdir(parents=True, exist_ok=True)
+        candidates: list[dict[str, str]] = []
+        for entry in evidence:
+            tab_id = str(entry["tab_id"])
+            file = f"initial-{tab_id}-dpi-1.0.png"
+            source = args.output / str(entry["screenshot"])
+            target = candidate_root / file
+            shutil.copyfile(source, target)
+            candidates.append(
+                {
+                    "tab_id": tab_id,
+                    "file": file,
+                    "sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
+                }
+            )
+        candidate_document = {
+            "schema_id": "rate-of-closure/visual-baseline-candidates",
+            "schema_version": 1,
+            "artifact_policy": (
+                "candidate-diagnostic-not-approved-until-protected-merge"
+            ),
+            "source_commit": os.environ.get(
+                "RATE_VISUAL_BASELINE_SOURCE_COMMIT",
+                os.environ.get("GITHUB_SHA", "local-diagnostic"),
+            ),
+            "surface": "pyqt",
+            "environment": (
+                f"{os.name}-{os.environ.get('QT_QPA_PLATFORM', 'default')}"
+                "-qt-dpi-1.0-1440x900"
+            ),
+            "captures": candidates,
+        }
+        (candidate_root / "manifest.json").write_text(
+            json.dumps(candidate_document, indent=2) + "\n", encoding="utf-8"
+        )
     pixmap = window.grab()
     document = {
         "artifact_policy": "diagnostic-only-not-approved-golden",
@@ -239,6 +297,7 @@ def main() -> int:
         "requested_scale": args.scale,
         "device_pixel_ratio": pixmap.devicePixelRatio(),
         "logical_window_size": [window.width(), window.height()],
+        "font": font,
         "tabs": evidence,
     }
     (args.output / "manifest.json").write_text(

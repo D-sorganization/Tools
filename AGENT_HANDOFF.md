@@ -3,6 +3,60 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Visual-baseline hosted typing closure (#4433)
+
+Version 1.17.06 adds an explicit NumPy array cast at the decoded RGB return
+boundary required by hosted CPython 3.12/MyPy 1.13. The validated copy, dtype,
+geometry, hashes, tolerances, candidate pixels, and comparison behavior are
+unchanged.
+
+## 2026-08-14 Proposed protected visual baselines (#4433)
+
+Version 1.17.05 packages the 18 reviewed initial-state PNGs emitted by the
+successful protected `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c` run. A
+strict manifest binds every visibility-authority tab to its environment,
+filename, SHA-256, and a narrow one-channel/100-microunit raster envelope.
+Both PR and trusted-main evidence lanes now regenerate all candidates, bind
+them to the exact evaluated commit, and fail closed on coverage, identity,
+digest, geometry, or pixel drift.
+
+These references are proposed on this branch; protected merge is the approval
+event. Responsive React, PyQt DPI-1.5, manual assistive-technology execution,
+and cross-platform pixel identity remain explicitly outside this baseline set.
+Scientific execution and retained-result authority are unchanged.
+
+## 2026-08-14 Deterministic Explorer candidate capture (#4433)
+
+Version 1.17.04 explicitly applies the documented dark/reduced-motion media
+environment before each React candidate navigation and requires the Explorer
+playback control to be in its paused `Play` state before capture. Two local
+production-browser runs emitted the exact same Explorer PNG digest. This is a
+test/evidence correction only; product animation behavior is unchanged.
+
+## 2026-08-14 Cross-platform accessibility inventory correction (#4433)
+
+Version 1.17.03 replaces one false exact Variation-widget count with the
+observed 160–161 Qt platform envelope. The audit still visits every actual
+visible, enabled, focusable semantic control and requires a bounded accessible
+name; its artifact records both the registered and visible counts. Candidate
+generation, scientific behavior, and retained evidence are unchanged.
+
+## 2026-08-14 Visual-baseline candidate authority (#4433)
+
+Version 1.17.02 adds protected candidate generation for one deterministic
+initial-state reference capture per React and PyQt primary tab. React uses the
+1440x900 Chromium dark/reduced-motion environment; PyQt uses the 1440x900
+offscreen DPI-1.0 environment with bundled DejaVu Sans. Each surface emits an
+exact nine-entry SHA-256 manifest alongside the PNGs.
+
+These 18 images remain diagnostic candidates. They are not approved until the
+hosted artifacts are inspected, committed with exact digests and tolerances,
+and accepted through protected merge. Narrow React and PyQt DPI-1.5 captures
+remain diagnostic-only. Scientific behavior and evidence identity are unchanged.
+The PyQt Launch Monitor linked scatter now also reserves explicit space between
+its plot and compact retained-row status, closing the overlap found during
+candidate inspection without changing analysis or retained-data authority.
+
 ## 2026-08-14 Cross-tab automated accessibility evidence (#4433)
 
 Version 1.17.01 adds one immutable accessibility-evidence authority over the
@@ -13,6 +67,10 @@ requires every visible, enabled, focusable semantic control to expose a
 bounded accessible name; missing plot/list/slider/spin/combo names are fixed.
 The protected PyQt artifact retains exact tab/control counts and zero-finding
 arrays with the GitHub SHA and Qt/PyQt versions.
+The audit separately pins the bounded registered semantic-control inventory and
+records the visible audited count. This avoids treating platform-dependent
+native visibility as missing application authority while every visible control
+still requires a bounded name.
 
 The first strict browser run found three low-contrast primary actions in Flight
 and Launch Monitor Analytics; their sky/emerald shades now meet the automated

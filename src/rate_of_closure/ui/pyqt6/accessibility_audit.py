@@ -42,6 +42,7 @@ class AccessibilityAuditResult:
     """Bounded audit result for one currently visible tab."""
 
     control_count: int
+    registered_control_count: int
     findings: tuple[AccessibilityFinding, ...]
 
 
@@ -79,6 +80,7 @@ def audit_visible_focusable_controls(root: QWidget) -> AccessibilityAuditResult:
 
     findings: list[AccessibilityFinding] = []
     control_count = 0
+    registered_control_count = 0
     for widget in root.findChildren(QWidget):
         if not isinstance(widget, _SEMANTIC_CONTROL_TYPES):
             continue
@@ -86,11 +88,10 @@ def audit_visible_focusable_controls(root: QWidget) -> AccessibilityAuditResult:
             widget.parentWidget(), QAbstractSpinBox
         ):
             continue
-        if (
-            not widget.isVisible()
-            or not widget.isEnabled()
-            or widget.focusPolicy() == Qt.FocusPolicy.NoFocus
-        ):
+        if not widget.isEnabled() or widget.focusPolicy() == Qt.FocusPolicy.NoFocus:
+            continue
+        registered_control_count += 1
+        if not widget.isVisible():
             continue
         control_count += 1
         name = accessible_control_name(root, widget)
@@ -103,7 +104,9 @@ def audit_visible_focusable_controls(root: QWidget) -> AccessibilityAuditResult:
         findings.append(
             AccessibilityFinding(type(widget).__name__, widget.objectName(), issue)
         )
-    return AccessibilityAuditResult(control_count, tuple(findings))
+    return AccessibilityAuditResult(
+        control_count, registered_control_count, tuple(findings)
+    )
 
 
 __all__ = [

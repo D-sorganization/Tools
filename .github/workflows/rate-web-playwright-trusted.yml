@@ -28,6 +28,10 @@ on:
       - "src/rate_of_closure/visualization_performance.v1.json"
       - "src/rate_of_closure/visualization_accessibility_manifest.py"
       - "src/rate_of_closure/visualization_accessibility.v1.json"
+      - "src/rate_of_closure/visual_baseline_compare.py"
+      - "src/rate_of_closure/visual_baseline_manifest.py"
+      - "src/rate_of_closure/visual_baselines.v1.json"
+      - "src/rate_of_closure/visual_baselines/**"
       - "src/rate_of_closure/ui/pyqt6/**"
       - "src/shared/python/swing_sim/variation/**"
       - "src/shared/python/swing_sim/putting.py"
@@ -70,6 +74,7 @@ on:
       - "tests/rate_of_closure/test_visualization_tab_audit.py"
       - "tests/rate_of_closure/test_visualization_performance_manifest.py"
       - "tests/rate_of_closure/test_visualization_accessibility.py"
+      - "tests/rate_of_closure/test_visual_baseline_compare.py"
       - "tests/rate_of_closure/test_visual_layout_gui.py"
       - "tests/rate_of_closure/test_visual_layout_preferences.py"
       - "tests/ops/test_rate_web_playwright_workflow.py"
@@ -92,6 +97,8 @@ jobs:
     defaults:
       run:
         working-directory: src/rate_of_closure/web
+    env:
+      RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -132,6 +139,13 @@ jobs:
           tests/rate_of_closure/test_visualization_accessibility.py
           tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0
 
+      - name: Enforce protected visual baseline drift
+        working-directory: .
+        run: >-
+          python -m rate_of_closure.visual_baseline_compare
+          --candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR"
+          --candidate-commit "$GITHUB_SHA"
+
       - name: Retain Playwright evidence
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -141,5 +155,6 @@ jobs:
             src/rate_of_closure/web/playwright-report/
             src/rate_of_closure/web/test-results/
             rate-pyqt-screenshots/
+            visual-baseline-candidates/
           if-no-files-found: error
           retention-days: 14

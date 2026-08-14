@@ -1,3 +1,7 @@
+import { createHash } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import {
@@ -63,11 +67,19 @@ test("every registered React tab exposes its primary visual in the initial viewp
   test.skip(testInfo.project.name !== "chromium-desktop", "manifest viewport authority");
   const pageErrors = capturePageErrors(page);
   const evidence: Array<{ viewport: { width: number; height: number }; tabs: VisualEvidence[] }> = [];
+  const candidates: Array<{ tabId: string; file: string; sha256: string }> = [];
+  const candidateRoot = resolve(
+    process.env.RATE_VISUAL_BASELINE_CANDIDATE_DIR ??
+      testInfo.outputPath("visual-baseline-candidates"),
+  );
+  const reactCandidateRoot = resolve(candidateRoot, "react");
+  await mkdir(reactCandidateRoot, { recursive: true });
   const reference = visualizationReferenceEnvironments.react;
   const viewports = [reference.viewportPx, ...reference.additionalViewportsPx]
     .map(([width, height]) => ({ width, height }));
   for (const viewport of viewports) {
     await page.setViewportSize(viewport);
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
     await page.goto("/");
     const tabs: VisualEvidence[] = [];
     for (const entry of visualizationTabs("react")) {
@@ -101,6 +113,19 @@ test("every registered React tab exposes its primary visual in the initial viewp
             .toBeLessThanOrEqual(controlsRect.y);
         }
       }
+      if (viewport.width === 1440 && viewport.height === 900) {
+        if (entry.tabId === "explorer") {
+          await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+        }
+        const file = `initial-${entry.tabId}-1440x900.png`;
+        const image = await page.screenshot({ animations: "disabled", caret: "hide" });
+        await writeFile(resolve(reactCandidateRoot, file), image);
+        candidates.push({
+          tabId: entry.tabId,
+          file,
+          sha256: createHash("sha256").update(image).digest("hex"),
+        });
+      }
       tabs.push(audited);
     }
     evidence.push({ viewport, tabs });
@@ -111,6 +136,17 @@ test("every registered React tab exposes its primary visual in the initial viewp
     }, null, 2)),
     contentType: "application/json",
   });
+  await writeFile(resolve(reactCandidateRoot, "manifest.json"), `${JSON.stringify({
+    schemaId: "rate-of-closure/visual-baseline-candidates",
+    schemaVersion: 1,
+    artifactPolicy: "candidate-diagnostic-not-approved-until-protected-merge",
+    sourceCommit: process.env.RATE_VISUAL_BASELINE_SOURCE_COMMIT ??
+      process.env.GITHUB_SHA ?? "local-diagnostic",
+    surface: "react",
+    environment: `${process.platform}-chromium-desktop-1440x900-dark-reduced-motion`,
+    captures: candidates,
+  }, null, 2)}\n`);
+  expect(candidates).toHaveLength(visualizationTabs("react").length);
   expect(pageErrors).toEqual([]);
 });
 
