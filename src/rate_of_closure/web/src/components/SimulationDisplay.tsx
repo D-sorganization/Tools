@@ -4,14 +4,17 @@ import type { ClubSpec } from "../model/club";
 import { DEFAULT_COURSE_LAYOUT, type CourseLayout } from "../model/course";
 import type { ImpactScenario } from "../model/impact";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
+import { wedgeGroundClearance } from "../model/wedgeGroundClearance";
 import type { TargetRegionTs } from "../model/targets";
 import { FIELD_GUIDANCE } from "../model/units";
 import { BallSetupDiagram } from "./BallSetupDiagram";
 import { FlightCanvases } from "./FlightCanvases";
+import { ImpactKinematicsPanel } from "./ImpactKinematicsPanel";
 import { KineticsSection } from "./KineticsSection";
 import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
 import { TargetSection } from "./TargetSection";
+import { WedgeGroundClearancePanel } from "./WedgeGroundClearancePanel";
 import { drawSwingScene } from "./swingSceneDraw";
 import {
   screwEntityOptions,
@@ -67,6 +70,9 @@ export function SimulationDisplay({
   const screwData = useMemo(() =>
     run && showScrew ? screwPresentation(run, time, screwEntityId) : null,
   [run, time, showScrew, screwEntityId]);
+  const wedgeClearance = useMemo(() =>
+    run && clubSpec ? wedgeGroundClearance(run, scenario, clubSpec) : null,
+  [run, scenario, clubSpec]);
 
   const targetLayout = useMemo<CourseLayout>(() =>
     target.kind === "green"
@@ -120,12 +126,12 @@ export function SimulationDisplay({
     if (canvasRef.current) {
       drawSwingScene(canvasRef.current, run, {
         time, showBall, showGround, showCourse, showFlight,
-        showScrew, screwEntityId,
+        showScrew, screwEntityId, wedgeClearance,
       });
     }
   }, [
     run, time, showBall, showGround, showCourse, showFlight,
-    showScrew, screwEntityId, view,
+    showScrew, screwEntityId, view, wedgeClearance,
   ]);
 
   return (
@@ -170,6 +176,12 @@ export function SimulationDisplay({
               ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
               ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
             ]} />
+          {run && clubSpec && (
+            <>
+              <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
+              <WedgeGroundClearancePanel result={wedgeClearance} />
+            </>
+          )}
           {showScrew && (
             <div className="mb-3 grid gap-3 rounded-lg border border-fuchsia-400/30 bg-fuchsia-950/10 p-3 md:grid-cols-[190px_1fr]">
               <label className="text-sm font-medium text-fuchsia-200">

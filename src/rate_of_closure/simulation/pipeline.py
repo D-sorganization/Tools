@@ -213,7 +213,15 @@ def _inspection_time(
     if config.impact_time_s is not None:
         return min(max(float(config.impact_time_s), 0.0), float(source.duration))
     speeds = np.linalg.norm(swing.twists[:, 3:], axis=1)
-    peak_time_s = float(swing.times[int(np.argmax(speeds))])
+    peak_speed = float(np.max(speeds))
+    peak_indices = np.flatnonzero(
+        np.isclose(speeds, peak_speed, rtol=1e-12, atol=1e-12)
+    )
+    midpoint_s = float(source.duration) / 2.0
+    peak_index = int(
+        peak_indices[np.argmin(np.abs(swing.times[peak_indices] - midpoint_s))]
+    )
+    peak_time_s = float(swing.times[peak_index])
     return float(
         min(
             max(peak_time_s + config.impact_time_offset_s, 0.0),

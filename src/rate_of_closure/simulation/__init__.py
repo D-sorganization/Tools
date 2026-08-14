@@ -34,6 +34,12 @@ from .flight_explorer import (
     launch_from_delivery,
     launch_from_direct,
 )
+from .ground_clearance import (
+    RunGroundClearanceSnapshot,
+    ground_clearance_for_run,
+    representative_wedge_parameters_for_club,
+)
+from .impact_kinematics import ImpactKinematicSnapshot, impact_kinematics_for_run
 from .isa import screw_axis_samples
 from .kinetics import (
     KINETIC_JOINT_NAMES,
@@ -79,8 +85,10 @@ __all__ = [
     "FlightExploration",
     "KineticsSeries",
     "ImpactOutcome",
+    "ImpactKinematicSnapshot",
     "ImpactStatus",
     "ManualSwingSource",
+    "RunGroundClearanceSnapshot",
     "SimulationConfig",
     "SimulationRun",
     "TriplePendulumParameters",
@@ -89,7 +97,9 @@ __all__ = [
     "delivery_at",
     "explore_flight",
     "fit_run_torque_profile",
+    "ground_clearance_for_run",
     "inverse_dynamics",
+    "impact_kinematics_for_run",
     "kinetics_for_run",
     "simulate_forced",
     "zero_torque_counterfactual",
@@ -97,6 +107,7 @@ __all__ = [
     "launch_from_direct",
     "make_source",
     "run_simulation",
+    "representative_wedge_parameters_for_club",
     "run_to_json_dict",
     "screw_axis_samples",
     "screw_series_rows",

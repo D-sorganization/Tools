@@ -61,6 +61,11 @@ import {
   type ImpactClubProperties,
   type Vec3,
 } from "./impactPhysics";
+import {
+  rodrigues,
+  rotationFromColumns,
+  type Mat3,
+} from "./rotation";
 
 export { deriveLaunch, simulateFlight } from "./flight";
 export type { FlightPoint, FlightResult, Launch } from "./flight";
@@ -114,6 +119,7 @@ export interface SwingSampleTs {
   position: Vec3; // app frame; aligned only in delivery-inspection mode
   velocity: Vec3;
   angularVelocity: Vec3; // app frame, rad/s, for club screw-axis analysis
+  rotation: Mat3; // canonical head frame -> app frame
   joints: Vec3[]; // pivot -> articulated joints -> clubhead
 }
 
@@ -159,14 +165,12 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
     const samples: SwingSampleTs[] = [];
     for (let t = 0.0; t <= duration + 1e-9; t += dt) {
       const rel = t - duration / 2.0;
-      // Straight-line reference travel; rotation only affects the pose,
-      // which the web scene does not render — velocity is constant.
-      void omega;
       samples.push({
         t,
         position: [speed * rel, 0, 0],
         velocity: [speed, 0, 0],
         angularVelocity: omega,
+        rotation: rodrigues(omega, rel),
         joints: [],
       });
     }
@@ -236,11 +240,17 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
       vy += length * Math.sin(angle) * rates[linkIndex];
       localJoints.push([x, yLoc]);
     });
+    const clubAngle = angles[angles.length - 1];
+    const cosine = Math.cos(clubAngle);
+    const sine = Math.sin(clubAngle);
+    const headX = add(scale(xAxis, cosine), scale(upAxis, -sine));
+    const headZ = add(scale(xAxis, sine), scale(upAxis, cosine));
     return {
       t: index * dt,
       position: add(scale(xAxis, x), scale(upAxis, yLoc)),
       velocity: add(scale(xAxis, vx), scale(upAxis, vy)),
       angularVelocity: scale(planeNormal, rates[rates.length - 1]),
+      rotation: rotationFromColumns(headX, planeNormal, headZ),
       joints: [
         ...localJoints.map(([jointX, jointY]) =>
           add(scale(xAxis, jointX), scale(upAxis, jointY)),
@@ -267,9 +277,13 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   if (input.impactTimeS === null) {
     let best = 0;
     let bestSpeed = -1;
+    const midpoint = swing[swing.length - 1].t / 2;
     swing.forEach((sample, index) => {
       const speed = norm(sample.velocity);
-      if (speed > bestSpeed) {
+      const isHigher = speed > bestSpeed + 1e-12;
+      const isEqualAndMoreCentral = Math.abs(speed - bestSpeed) <= 1e-12 &&
+        Math.abs(sample.t - midpoint) < Math.abs(swing[best].t - midpoint);
+      if (isHigher || isEqualAndMoreCentral) {
         bestSpeed = speed;
         best = index;
       }

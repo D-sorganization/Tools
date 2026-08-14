@@ -58,7 +58,7 @@ describe("SimulationPanel impact club", () => {
     expect(screen.getByRole("combobox", { name: "Screw Motion Entity" }))
       .toHaveValue("club");
     expect(screen.getByRole("note", { name: "Screw Motion Explanation" }))
-      .toHaveTextContent(/pure translation.*axis is at infinity/i);
+      .toHaveTextContent(/finite screw.*Rate 2281\.5 deg\/s/i);
 
     fireEvent.change(screen.getByLabelText("Swing Source"), {
       target: { value: "double_pendulum" },
@@ -186,10 +186,32 @@ describe("SimulationPanel impact club", () => {
     );
     const timeline = screen.getByRole("slider", { name: "Playback timeline" });
     const play = screen.getByRole("button", { name: "Play" });
+    const jump = screen.getByRole("button", { name: "Jump to Closest Approach" });
     expect(timeline).toBeEnabled();
     expect(play).toBeEnabled();
+    fireEvent.click(jump);
+    expect(timeline).toHaveValue(jump.getAttribute("data-event-time"));
     fireEvent.click(play);
     expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument();
+  });
+
+  it("jumps exactly to impact for a completed hit", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    const jump = screen.getByRole("button", { name: "Jump to Impact" });
+    const timeline = screen.getByRole("slider", { name: "Playback timeline" });
+
+    fireEvent.click(jump);
+
+    expect(timeline).toHaveValue(jump.getAttribute("data-event-time"));
+    expect(screen.getByRole("complementary", {
+      name: "Impact Kinematics Engineering Readout",
+    })).toHaveTextContent("Shaft AoA Contribution");
+    expect(screen.getByRole("complementary", {
+      name: "Impact Kinematics Engineering Readout",
+    })).toHaveTextContent("Geometry Basis");
+    expect(screen.getByRole("complementary", {
+      name: "Impact Kinematics Engineering Readout",
+    })).toHaveTextContent("1307.0 °/s");
   });
 
   it("passes the selected club mass and MOI into the simulation", () => {

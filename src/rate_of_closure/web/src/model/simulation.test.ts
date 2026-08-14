@@ -167,7 +167,43 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
   });
 });
 
+describe("retained rigid-head orientation", () => {
+  it("keeps the manual head square at the inspection-window midpoint", () => {
+    const run = runSimulation({
+      ...MANUAL_INPUT,
+      omegaDps: [0, 0, 900],
+      impactTimeS: 0.03,
+    });
+
+    expect(run.swing[30].rotation).toEqual([
+      [1, 0, 0],
+      [0, 1, 0],
+      [0, 0, 1],
+    ]);
+    expect(run.swing[20].rotation[0][0]).toBeCloseTo(Math.cos(-Math.PI / 20), 12);
+    expect(run.swing[20].rotation[1][0]).toBeCloseTo(Math.sin(-Math.PI / 20), 12);
+  });
+
+  it("retains a proper articulated head rotation", () => {
+    const run = runSimulation({
+      ...MANUAL_INPUT,
+      sourceKind: "double_pendulum",
+      swingDurationS: 0.05,
+    });
+    const rotation = run.swing[20].rotation;
+    const determinant =
+      rotation[0][0] * (rotation[1][1] * rotation[2][2] - rotation[1][2] * rotation[2][1])
+      - rotation[0][1] * (rotation[1][0] * rotation[2][2] - rotation[1][2] * rotation[2][0])
+      + rotation[0][2] * (rotation[1][0] * rotation[2][1] - rotation[1][1] * rotation[2][0]);
+    expect(determinant).toBeCloseTo(1, 12);
+  });
+});
+
 describe("session orchestration", () => {
+  it("uses the midpoint of a constant-speed plateau for automatic inspection", () => {
+    expect(runSimulation(MANUAL_INPUT).impactTimeS).toBeCloseTo(0.03, 12);
+  });
+
   it("uses configured ball elevation for alignment, flight, and contact classification", () => {
     const teeHeightM = 0.0381;
     const inspection = runSimulation({

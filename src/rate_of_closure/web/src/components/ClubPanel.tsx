@@ -27,10 +27,13 @@ const INPUT_CLASS =
   "disabled:opacity-40";
 
 export function ClubPanel({
+  initialSpec,
   onDriveScenario,
   onGenerate,
   onSpecChange,
 }: {
+  /** Canonical parent state used to restore this panel after tab unmounts. */
+  initialSpec?: ClubSpec;
   /** Scenario plumbing: adopt the selected club's GC-to-face and lie. */
   onDriveScenario: (comToFaceMm: number, lieAngleDeg: number) => void;
   /** Deliver a generated head with its hosel and volumetric COG. */
@@ -38,11 +41,12 @@ export function ClubPanel({
   /** Track the effective club spec (overrides applied) as it changes. */
   onSpecChange?: (spec: ClubSpec) => void;
 }) {
-  const [clubName, setClubName] = useState<string>(CLUB_LIBRARY[1].name);
-  const [loftDeg, setLoftDeg] = useState<number>(CLUB_LIBRARY[1].loftDeg);
-  const [curvedFace, setCurvedFace] = useState<boolean>(true);
-  const [bulgeMm, setBulgeMm] = useState<number>(300);
-  const [rollMm, setRollMm] = useState<number>(280);
+  const initial = initialSpec ?? CLUB_LIBRARY[1];
+  const [clubName, setClubName] = useState<string>(initial.name);
+  const [loftDeg, setLoftDeg] = useState<number>(initial.loftDeg);
+  const [curvedFace, setCurvedFace] = useState<boolean>(initial.faceBulgeRadiusM !== null);
+  const [bulgeMm, setBulgeMm] = useState<number>((initial.faceBulgeRadiusM ?? 0.3) * 1000);
+  const [rollMm, setRollMm] = useState<number>((initial.faceRollRadiusM ?? 0.28) * 1000);
 
   const effectiveSpec = (): ClubSpec => ({
     ...getClub(clubName),

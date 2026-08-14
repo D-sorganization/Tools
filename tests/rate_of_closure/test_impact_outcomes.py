@@ -52,6 +52,12 @@ def test_delivery_inspection_remains_default_and_forces_alignment() -> None:
     assert run.launch is not None
 
 
+def test_manual_auto_inspection_uses_midpoint_of_constant_speed_plateau() -> None:
+    run = run_simulation(SimulationConfig(scenario=_SCENARIO, club=_DRIVER))
+
+    assert run.impact_time_s == pytest.approx(0.03)
+
+
 def test_fixed_ball_contact_hit_does_not_translate_swing() -> None:
     """A sampled fixed-ball hit retains the source's original world positions."""
     config = SimulationConfig(
@@ -102,12 +108,22 @@ def test_fixed_ball_miss_retains_complete_swing_without_impact(
     assert run.swing_times[-1] == pytest.approx(0.05)
     assert len(run.swing_positions) == len(run.swing_times)
     assert run.impact_time_s is None
+    assert run.inspection_time_s == pytest.approx(run.impact_outcome.candidate_time_s)
+    assert run.inspection_event_label == "Closest Approach"
     assert run.delivery is None
     assert run.post_impact is None
     assert run.launch is None
     assert run.flight_times.shape == (0,)
     assert run.flight_positions.shape == (0, 3)
     assert run.flight_velocities.shape == (0, 3)
+
+
+def test_hit_inspection_event_is_the_physical_impact() -> None:
+    run = run_simulation(SimulationConfig(scenario=_SCENARIO, club=_DRIVER))
+
+    assert run.impact_time_s is not None
+    assert run.inspection_time_s == pytest.approx(run.impact_time_s)
+    assert run.inspection_event_label == "Impact"
 
 
 def test_fixed_ball_miss_exports_honest_json_and_csv(

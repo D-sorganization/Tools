@@ -10,7 +10,7 @@ import {
 } from "../model/simulation";
 import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
-import { type ImpactScenario } from "../model/impact";
+import { solve, type ImpactScenario } from "../model/impact";
 import { type TargetRegionTs } from "../model/targets";
 import { type ContactMode } from "../model/contact";
 import { SolverPanel } from "./SolverPanel";
@@ -112,7 +112,7 @@ export function SimulationPanel({
     () => ({
       sourceKind,
       clubheadSpeedMph: scenario.clubheadSpeedMph,
-      omegaDps: [0, 0, 0],
+      omegaDps: solve(scenario).omegaDps,
       loftDeg: effectiveLoftDeg,
       impactOffsetToeMm: scenario.impactOffsetToeMm,
       impactOffsetHighMm: scenario.impactOffsetHighMm,
