@@ -32,3 +32,5 @@ tests/rate_of_closure/pyqt_visualization_tab_probe.py
 # match an empty path segment.
 src/shared/python/swing_sim/tests/__init__.py
 src/shared/python/swing_sim/**/tests/__init__.py
+# pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
+src/document_processing/pdf_renamer/tests/conftest.py
