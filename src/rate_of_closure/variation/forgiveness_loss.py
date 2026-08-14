@@ -9,6 +9,15 @@ from dataclasses import dataclass
 from .chip_forgiveness import ChipTrialCohort
 
 
+def objective_id_for_target_carry(target_carry_m: float) -> str:
+    """Return a stable objective identity without millimetre-rounding aliases."""
+    target = float(target_carry_m)
+    if not math.isfinite(target) or target < 0.0:
+        raise ValueError("target_carry_m must be finite and >= 0")
+    target_text = f"{target:.9f}".rstrip("0").rstrip(".")
+    return f"chip-target-{target_text}m-balanced-v1"
+
+
 @dataclass(frozen=True)
 class ChipLossModel:
     """Normalized continuous loss plus explicit contact/failure penalties."""
@@ -35,7 +44,7 @@ class ChipLossModel:
             object.__setattr__(
                 self,
                 "objective_id",
-                f"chip-target-{self.target_carry_m:.3f}m-balanced-v1",
+                objective_id_for_target_carry(self.target_carry_m),
             )
         if not isinstance(self.include_turf_penetration, bool):
             raise TypeError("include_turf_penetration must be a boolean")
@@ -127,4 +136,4 @@ class ChipLossModel:
         }[cohort]
 
 
-__all__ = ["ChipLossModel"]
+__all__ = ["ChipLossModel", "objective_id_for_target_carry"]

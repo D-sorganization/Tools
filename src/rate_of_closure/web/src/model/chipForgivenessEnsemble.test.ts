@@ -84,12 +84,15 @@ describe("browser chip forgiveness ensemble adapter", () => {
     expect(chipForgivenessStudyToCsv(study)).toContain("numerical_failure");
   });
 
-  it("derives custom objective identity and rejects nonfinite exports", () => {
+  it("derives non-aliasing custom objective identity and rejects nonfinite exports", () => {
     const ensemble = runSwingVariation(plan, defaultChipVariationInput());
-    const study = analyzeChipForgivenessEnsemble(ensemble, { targetCarryM: 20 });
+    const study = analyzeChipForgivenessEnsemble(ensemble, { targetCarryM: 20.0004 });
+    const adjacent = analyzeChipForgivenessEnsemble(ensemble, { targetCarryM: 20.0005 });
 
-    expect(study.metadata.objectiveId).toBe("chip-target-20.000m-balanced-v1");
+    expect(study.metadata.objectiveId).toBe("chip-target-20.0004m-balanced-v1");
+    expect(adjacent.metadata.objectiveId).toBe("chip-target-20.0005m-balanced-v1");
     study.records[0].metrics.carry_m = Number.NaN;
     expect(() => chipForgivenessStudyToJson(study)).toThrow(/nonfinite/i);
+    expect(() => chipForgivenessStudyToCsv(study)).toThrow(/nonfinite/i);
   });
 });

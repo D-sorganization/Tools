@@ -39,6 +39,11 @@ const MISS_PENALTY = 12;
 const MISSING_REQUIRED_METRIC_PENALTY = 12;
 const UNSUPPORTED_TURF_PENALTY = 12;
 
+const objectiveIdForTargetCarry = (targetCarryM: number): string => {
+  const targetText = targetCarryM.toFixed(9).replace(/\.?0+$/, "");
+  return `chip-target-${targetText}m-balanced-v1`;
+};
+
 const CHIP_METRIC_NAMES = [
   "carry_m", "lateral_m", "max_height_m", "landing_angle_deg",
   "leading_edge_clearance_at_ball_m", "minimum_pre_ball_clearance_m",
@@ -283,7 +288,7 @@ export function analyzeChipForgivenessEnsemble(
       seed: options.seed ?? ensemble.dataset.plan.seed,
       noiseModelId: ensemble.dataset.plan.noise
         .map((spec) => spec.specId ?? spec.variableKey).join("+"),
-      objectiveId: `chip-target-${targetCarryM.toFixed(3)}m-balanced-v1`,
+      objectiveId: objectiveIdForTargetCarry(targetCarryM),
       turfProfileId: FIRM_FAIRWAY_TURF.profileId,
       turfCalibrationStatus: FIRM_FAIRWAY_TURF.calibrationStatus,
       solverId: "rate-of-closure/web-canonical",
@@ -327,18 +332,25 @@ const csvCell = (value: string | number | boolean | null | undefined): string =>
   return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 };
 
+const strictNumberReplacer = (_key: string, value: unknown): unknown => {
+  if (typeof value === "number" && !Number.isFinite(value)) {
+    throw new RangeError("chip forgiveness export contains a nonfinite number");
+  }
+  return value;
+};
+
+const rejectNonfiniteStudyNumbers = (study: ChipForgivenessStudyTs): void => {
+  JSON.stringify(study, strictNumberReplacer);
+};
+
 /** Serialize complete plan, sampled population, records, and qualification evidence. */
 export function chipForgivenessStudyToJson(study: ChipForgivenessStudyTs): string {
-  return JSON.stringify({ schemaVersion: 1, ...study }, (_key, value) => {
-    if (typeof value === "number" && !Number.isFinite(value)) {
-      throw new RangeError("chip forgiveness export contains a nonfinite number");
-    }
-    return value;
-  }, 2);
+  return JSON.stringify({ schemaVersion: 1, ...study }, strictNumberReplacer, 2);
 }
 
 /** Serialize one all-trial row per record, retaining unavailable values as blanks. */
 export function chipForgivenessStudyToCsv(study: ChipForgivenessStudyTs): string {
+  rejectNonfiniteStudyNumbers(study);
   const metricNames = [...new Set(study.records.flatMap((record) =>
     Object.keys(record.metrics)))].sort();
   const header = [

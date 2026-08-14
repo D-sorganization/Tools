@@ -332,7 +332,9 @@ def analyze_chip_forgiveness_ensemble(
                         turf_contact_status=turf_status,
                     )
                 )
-            except _FAILURE_TYPES as error:
+            except CancelledError:
+                raise
+            except Exception as error:  # noqa: BLE001 - retain post-process failures
                 failures += 1
                 records.append(
                     _failure_record(outcome.trial_index, error, request.loss_model)
