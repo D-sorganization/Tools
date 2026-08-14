@@ -645,23 +645,6 @@
                 }
               ],
               "returns": "None"
-            },
-            "apply_tokens": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "theme_colors",
-                  "annotation": "dict[str, str]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, str]"
             }
           }
         }
