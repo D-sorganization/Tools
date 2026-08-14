@@ -38,6 +38,7 @@ _REQUEST_FIELDS = {
     "seed",
     "target",
 }
+MAX_CAPABILITY_WIRE_MAGNITUDE = 1e300
 
 
 def _record(value: object, fields: set[str], name: str) -> dict[str, Any]:
@@ -61,9 +62,16 @@ def _text(value: object, name: str) -> str:
 def _number(value: object, name: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ValueError(f"{name} must be a finite number")
-    parsed = float(value)
+    try:
+        parsed = float(value)
+    except OverflowError as exc:
+        raise ValueError(f"{name} must be finite") from exc
     if not math.isfinite(parsed):
         raise ValueError(f"{name} must be a finite number")
+    if abs(parsed) > MAX_CAPABILITY_WIRE_MAGNITUDE:
+        raise ValueError(
+            f"{name} magnitude must not exceed {MAX_CAPABILITY_WIRE_MAGNITUDE:g}"
+        )
     return parsed
 
 
@@ -157,4 +165,4 @@ def validate_capability_workflow_wire(payload: object) -> dict[str, Any]:
     return document
 
 
-__all__ = ["validate_capability_workflow_wire"]
+__all__ = ["MAX_CAPABILITY_WIRE_MAGNITUDE", "validate_capability_workflow_wire"]

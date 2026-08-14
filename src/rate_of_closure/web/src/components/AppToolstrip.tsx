@@ -22,6 +22,8 @@ interface AppToolstripProps {
   readonly onModuleStateChange: (state: PrimaryViewState) => void;
   readonly onCommand: (command: AppCommandId) => void;
   readonly onShortcutHelpOpenChange: (open: boolean) => void;
+  readonly fileStatus?: string;
+  readonly fileError?: string | null;
 }
 
 interface ToolCommandDescriptor {
@@ -39,6 +41,14 @@ const POPOVER_CLASS =
   "absolute left-0 z-40 mt-1 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-700 bg-slate-950 p-3 shadow-2xl shadow-black/50";
 const COMMAND_CLASS =
   "w-full rounded-md px-3 py-2 text-left text-sm hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 disabled:cursor-not-allowed disabled:opacity-45";
+const FILE_COMMAND_HINTS: Partial<Record<AppCommandId, string>> = {
+  [APP_COMMAND_ID.fileNewWorkspace]: "Reset supported inputs and views to a clean workspace.",
+  [APP_COMMAND_ID.fileOpenWorkspace]: "Choose and validate a whole workspace before applying it.",
+  [APP_COMMAND_ID.fileSaveWorkspaceAs]: "Download a new whole-workspace JSON copy.",
+  [APP_COMMAND_ID.fileImportWorkspace]: "Import a strict cross-client view-layout JSON file.",
+  [APP_COMMAND_ID.fileExportWorkspace]: "Download the current cross-client view layout.",
+  [APP_COMMAND_ID.fileCloseWorkspace]: "Close the current session and load clean defaults.",
+};
 
 const commandShortcut = (id: AppCommandId): string | undefined =>
   commandsInGroup("global").find((command) => command.id === id)?.shortcut;
@@ -136,7 +146,7 @@ function ShortcutDialog({ onClose }: { readonly onClose: () => void }) {
   );
 }
 
-function FileMenu() {
+function FileMenu({ onCommand }: { readonly onCommand: (command: AppCommandId) => void }) {
   const fileCommands = commandsInGroup("file");
   const popover = useViewportClampedPopover();
   return (
@@ -155,15 +165,19 @@ function FileMenu() {
             type="button"
             disabled={!command.enabled}
             data-command-id={command.id}
-            title={command.disabledReason ?? undefined}
+            title={command.disabledReason ?? FILE_COMMAND_HINTS[command.id]}
+            onClick={() => onCommand(command.id)}
             className={COMMAND_CLASS}
           >
             {command.label}
           </button>
         ))}
-        <p className="mt-2 border-t border-slate-800 pt-2 text-xs leading-relaxed text-amber-200">
-          {fileCommands[0]?.disabledReason}
-        </p>
+        {fileCommands.filter(({ disabledReason }) => disabledReason !== null).map((command) => (
+          <p key={`${command.id}-reason`}
+            className="mt-2 border-t border-slate-800 pt-2 text-xs leading-relaxed text-amber-200">
+            {command.label}: {command.disabledReason}
+          </p>
+        ))}
       </div>
     </details>
   );
@@ -321,6 +335,8 @@ export function AppToolstrip({
   onModuleStateChange,
   onCommand,
   onShortcutHelpOpenChange,
+  fileStatus = "Workspace ready",
+  fileError = null,
 }: AppToolstripProps) {
   const shortcutTrigger = useRef<HTMLButtonElement>(null);
   const run = (id: AppCommandId) => {
@@ -339,7 +355,7 @@ export function AppToolstrip({
         className="sticky top-0 z-30 mb-5 overflow-visible rounded-xl border border-slate-700/80 bg-slate-950/90 p-2 shadow-xl shadow-black/30 backdrop-blur"
       >
         <div className="flex flex-wrap items-start gap-2">
-          <FileMenu />
+          <FileMenu onCommand={run} />
           <ViewMenu state={moduleState} onChange={onModuleStateChange} onCommand={onCommand} />
           <div className="flex max-w-full shrink-0 items-stretch gap-1 overflow-x-auto rounded-lg border border-slate-700/80 bg-slate-900/90 p-1">
             {([
@@ -360,6 +376,10 @@ export function AppToolstrip({
             ))}
           </div>
           <ToolsMenu theme={theme} shortcutTrigger={shortcutTrigger} run={run} />
+          <span role={fileError === null ? "status" : "alert"}
+            className={`self-center px-2 text-xs ${fileError === null ? "text-slate-400" : "text-rose-300"}`}>
+            {fileError ?? fileStatus}
+          </span>
         </div>
       </div>
       {shortcutHelpOpen && <ShortcutDialog onClose={closeShortcuts} />}

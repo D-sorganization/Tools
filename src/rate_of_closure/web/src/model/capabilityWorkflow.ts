@@ -3,6 +3,7 @@
 import {
   parseOptimizationRequest,
   parsePlayerCapabilityProfile,
+  MAX_CAPABILITY_WIRE_MAGNITUDE,
   type CapabilityObjective,
   type CapabilityParameter,
   type OptimizationRequest,
@@ -12,6 +13,7 @@ import type {
   CapabilityFlightEvaluatorConfig,
   CapabilitySpinDefault,
 } from "./capabilityFlightEvaluator";
+import { validateInteractiveCapabilityBasis } from "./capabilityInteractiveBasis";
 
 export const CAPABILITY_WORKFLOW_SCHEMA_VERSION =
   "capability-optimization-workflow/v1" as const;
@@ -66,6 +68,9 @@ export const defaultCapabilityWorkflowInputs = (): CapabilityWorkflowInputs => (
 const finite = (value: unknown, name: string): number => {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     throw new RangeError(`${name} must be finite`);
+  }
+  if (Math.abs(value) > MAX_CAPABILITY_WIRE_MAGNITUDE) {
+    throw new RangeError(`${name} magnitude must not exceed ${MAX_CAPABILITY_WIRE_MAGNITUDE}`);
   }
   return value;
 };
@@ -282,12 +287,21 @@ const parseConfig = (value: unknown): CapabilityFlightEvaluatorConfig => {
 
 export const capabilityWorkflowToJson = (
   document: CapabilityWorkflowDocument,
-): string => JSON.stringify({ evaluator_config: configWire(document.evaluatorConfig),
+): string => JSON.stringify(capabilityWorkflowDocument(document));
+
+export const capabilityWorkflowDocument = (
+  document: CapabilityWorkflowDocument,
+): Record<string, unknown> => ({ evaluator_config: configWire(document.evaluatorConfig),
   profile: profileWire(document.profile), request: requestWire(document.request),
   schema_version: document.schemaVersion });
 
 export function capabilityWorkflowFromJson(source: string): CapabilityWorkflowDocument {
-  const value: unknown = JSON.parse(source);
+  return capabilityWorkflowFromDocument(JSON.parse(source));
+}
+
+export function capabilityWorkflowFromDocument(
+  value: unknown,
+): CapabilityWorkflowDocument {
   const payload = record(value, "capability workflow");
   exact(payload, ["evaluator_config", "profile", "request", "schema_version"], "capability workflow");
   if (payload.schema_version !== CAPABILITY_WORKFLOW_SCHEMA_VERSION) {
@@ -308,6 +322,7 @@ export function capabilityWorkflowInputs(
     throw new RangeError("interactive workflow supports exactly one club and spin default");
   }
   const club = document.profile.clubs[0];
+  validateInteractiveCapabilityBasis(club);
   const parameters = new Map(club.parameters.map((item) => [item.parameterId, item]));
   const ballSpeed = parameters.get("ball_speed");
   const launchAngle = parameters.get("launch_angle");
@@ -330,4 +345,42 @@ export function capabilityWorkflowInputs(
     alternativesCount: document.request.alternativesCount, seed: document.request.seed,
     maxTimeS: document.evaluatorConfig.maxTimeS,
     trajectorySampleIntervalS: document.evaluatorConfig.trajectorySampleIntervalS });
+}
+
+/** Overlay editable controls on a validated document without erasing evidence. */
+export function overlayCapabilityWorkflowInputs(
+  document: CapabilityWorkflowDocument,
+  input: CapabilityWorkflowInputs,
+): CapabilityWorkflowDocument {
+  capabilityWorkflowInputs(document);
+  validateAuthoringInputs(input);
+  const values: Readonly<Record<string, readonly [number, number]>> = {
+    ball_speed: [input.ballSpeedMps, input.ballSpeedStdMps],
+    launch_angle: [input.launchAngleDeg, input.launchAngleStdDeg],
+    launch_direction: [input.launchDirectionDeg, input.launchDirectionStdDeg],
+  };
+  const sourceClub = document.profile.clubs[0];
+  const club = { ...sourceClub, clubId: text(input.clubId, "clubId"),
+    parameters: sourceClub.parameters.map((item) => ({ ...item,
+      baseline: values[item.parameterId][0],
+      standardDeviation: values[item.parameterId][1] })) };
+  const profile = { ...document.profile, profileId: text(input.profileId, "profileId"),
+    clubs: [club] };
+  const target = { ...document.request.target, distanceM: input.targetDistanceM,
+    lateralM: input.targetLateralM, radiusM: input.targetRadiusM };
+  const request = { ...document.request, objective: input.objective,
+    clubIds: [club.clubId], target, candidateBudget: input.candidateBudget,
+    ensembleSize: input.ensembleSize, alternativesCount: input.alternativesCount,
+    seed: input.seed };
+  const sourceSpin = document.evaluatorConfig.spinDefaults[0];
+  const evaluatorConfig = { ...document.evaluatorConfig,
+    maxTimeS: input.maxTimeS,
+    trajectorySampleIntervalS: input.trajectorySampleIntervalS,
+    spinDefaults: [{ ...sourceSpin, clubId: club.clubId,
+      totalSpinRpm: input.totalSpinRpm,
+      spinAxisTiltDeg: input.spinAxisTiltDeg }] };
+  return capabilityWorkflowFromDocument(capabilityWorkflowDocument({
+    schemaVersion: CAPABILITY_WORKFLOW_SCHEMA_VERSION,
+    profile, request, evaluatorConfig,
+  }));
 }

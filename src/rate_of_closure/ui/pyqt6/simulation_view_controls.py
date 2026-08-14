@@ -235,10 +235,12 @@ class SimulationViewControlsMixin:
     def _add_legend_controls(self, grid: QGridLayout, row: int) -> None:
         """Add legend visibility and placement controls."""
         self._legend_check = QCheckBox("Legend")
+        self._legend_check.setAccessibleName("Show plot legend")
         self._legend_check.setChecked(True)
         self._legend_check.setToolTip("Show or hide the plot legend.")
         self._legend_check.toggled.connect(lambda _checked: self._draw())
         self._legend_position = QComboBox()
+        self._legend_position.setAccessibleName("Legend position")
         self._legend_position.addItem("Outside right", "outside_right")
         self._legend_position.addItem("Inside upper right", "inside_upper_right")
         self._legend_position.addItem("Inside lower right", "inside_lower_right")

@@ -110,28 +110,69 @@ def test_engineering_details_are_scrollable_and_key_metrics_remain_visible(
     assert view._impact_details_scroll.horizontalScrollBar().maximum() == 0
 
 
-def test_legend_defaults_outside_and_can_move_or_hide(tab, qtbot) -> None:  # type: ignore[no-untyped-def]
+def test_legend_defaults_outside_and_can_move_or_hide(  # type: ignore[no-untyped-def]
+    tab, qtbot, monkeypatch: pytest.MonkeyPatch
+) -> None:
     assert tab.run_now() is not None
     view = tab.view()
     view._layers_button.click()
     qtbot.wait(10)
 
-    legend = view._axes.get_legend()
-    assert legend is not None
+    view._canvas.draw()
     assert view._legend_position.currentData() == "outside_right"
-    assert legend.get_bbox_to_anchor()._bbox.x0 >= 1.0
+    assert view._legend_check.accessibleName() == "Show plot legend"
+    assert view._legend_position.accessibleName() == "Legend position"
+    assert view._axes.get_legend() is None
+    assert len(view._figure.legends) == 1
+    legend = view._figure.legends[0]
+    renderer = view._canvas.get_renderer()
+    legend_bounds = legend.get_window_extent(renderer)
+    axes_bounds = view._axes.get_window_extent(renderer)
+    figure_bounds = view._figure.bbox
+    assert legend_bounds.x0 >= axes_bounds.x1
+    assert legend_bounds.x1 <= figure_bounds.x1
+    assert legend_bounds.y0 >= figure_bounds.y0
+    assert legend_bounds.y1 <= figure_bounds.y1
     assert view._axes.get_position().x1 <= 0.75
+
+    redraw_calls: list[None] = []
+    with monkeypatch.context() as resize_patch:
+        resize_patch.setattr(view, "_draw", lambda: redraw_calls.append(None))
+        view._canvas.setFixedSize(*MINIMUM_PLOT_SIZE)
+        qtbot.wait(30)
+    assert redraw_calls == []
+    assert view._canvas.width() == MINIMUM_PLOT_SIZE[0]
+    assert view._canvas.height() == MINIMUM_PLOT_SIZE[1]
+    view._canvas.draw()
+    device_ratio = view._canvas.devicePixelRatioF()
+    assert view._figure.bbox.width == pytest.approx(MINIMUM_PLOT_SIZE[0] * device_ratio)
+    assert view._figure.bbox.height == pytest.approx(
+        MINIMUM_PLOT_SIZE[1] * device_ratio
+    )
+    assert len(view._figure.legends) == 1
+    compact_legend_bounds = view._figure.legends[0].get_window_extent(
+        view._canvas.get_renderer()
+    )
+    compact_axes_bounds = view._axes.get_window_extent(view._canvas.get_renderer())
+    assert compact_legend_bounds.x0 >= compact_axes_bounds.x1
+    assert compact_legend_bounds.x1 <= view._figure.bbox.x1
+
+    view._draw()
+    view._canvas.draw()
+    assert len(view._figure.legends) == 1
 
     view._legend_position.setCurrentIndex(
         view._legend_position.findData("inside_lower_left")
     )
     qtbot.wait(10)
+    assert view._figure.legends == []
     assert view._axes.get_legend() is not None
     assert view._axes.get_legend()._loc == 3  # Matplotlib lower-left location
 
     view._legend_check.setChecked(False)
     qtbot.wait(10)
     assert view._axes.get_legend() is None
+    assert view._figure.legends == []
 
 
 @pytest.mark.parametrize("window_size", [(1269, 731), (1280, 768)])

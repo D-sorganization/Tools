@@ -24,6 +24,10 @@ from rate_of_closure.ui.pyqt6.screw_overlay import (
     ScrewOverlayRenderer,
     format_screw_readout,
 )
+from rate_of_closure.ui.pyqt6.simulation_legend_layout import (
+    clear_figure_legends,
+    place_simulation_legend,
+)
 from rate_of_closure.ui.pyqt6.wedge_ground_scene import draw_wedge_ground_overlay_3d
 
 __all__ = ["SimulationSceneRenderer", "fallback_joint_ids", "joint_label"]
@@ -64,6 +68,7 @@ class SimulationSceneRenderer:
         view = self._view
         axes = view._axes
         elev, azim = float(axes.elev), float(axes.azim)
+        clear_figure_legends(view)
         axes.clear()
         view._rendered_ball_center_m = None
         view._tee_artist_count = 0
@@ -356,7 +361,7 @@ class SimulationSceneRenderer:
         axes.set_ylabel("x — target line [m]")
         axes.set_zlabel("y — up [m]")
         axes.set_title(self._scene_title(in_flight))
-        self._place_legend()
+        place_simulation_legend(view)
         view._canvas.draw_idle()
 
     def _scene_title(self, in_flight: bool) -> str:
@@ -371,38 +376,3 @@ class SimulationSceneRenderer:
                 f"closest approach at {run.impact_outcome.candidate_time_s:.3f} s"
             )
         return f"t = {view._time:.3f} s ({phase}) — impact at {run.impact_time_s:.3f} s"
-
-    def _place_legend(self) -> None:
-        """Apply the user-selected legend visibility and placement."""
-        view = self._view
-        axes = view._axes
-        handles, labels = axes.get_legend_handles_labels()
-        if handles and view.legend_visible():
-            location = view.legend_location()
-            if location == "outside_right":
-                # Reserve a deterministic right gutter. Axes-level legends anchored
-                # beyond a full-width 3-D axes are otherwise clipped at high DPI.
-                axes.set_position((0.05, 0.08, 0.68, 0.82))
-                axes.legend(
-                    handles,
-                    labels,
-                    loc="upper left",
-                    bbox_to_anchor=(1.02, 1.0),
-                    borderaxespad=0.0,
-                    fontsize=7,
-                )
-            else:
-                axes.set_position((0.06, 0.08, 0.88, 0.82))
-                locations = {
-                    "inside_upper_right": "upper right",
-                    "inside_lower_right": "lower right",
-                    "inside_lower_left": "lower left",
-                }
-                axes.legend(
-                    handles,
-                    labels,
-                    loc=locations.get(location, "upper right"),
-                    fontsize=7,
-                )
-        else:
-            axes.set_position((0.06, 0.08, 0.88, 0.82))

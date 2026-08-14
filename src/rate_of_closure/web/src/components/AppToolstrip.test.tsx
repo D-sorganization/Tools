@@ -45,8 +45,12 @@ describe("AppToolstrip", () => {
     expect(onCommand).toHaveBeenCalledWith(APP_COMMAND_ID.viewManageModules);
 
     fireEvent.click(screen.getByText("File"));
-    expect(screen.getByRole("button", { name: "New Workspace" })).toBeDisabled();
-    expect(screen.getByText(/workspace document adapter/i)).toBeInTheDocument();
+    const create = screen.getByRole("button", { name: "New Workspace" });
+    expect(create).toBeEnabled();
+    fireEvent.click(create);
+    expect(onCommand).toHaveBeenCalledWith(APP_COMMAND_ID.fileNewWorkspace);
+    expect(screen.getByRole("button", { name: "Save Workspace" })).toBeDisabled();
+    expect(screen.getByText(/cannot overwrite a prior download/i)).toBeInTheDocument();
   });
 
   it("protects required modules and hides an active optional module with fallback", () => {

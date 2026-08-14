@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   passiveDoublePendulumRun,
@@ -6,11 +6,9 @@ import {
   DOUBLE_PENDULUM_MODEL_ID,
   SHOULDER_JOINT_ID,
   WRIST_JOINT_ID,
-  type DoublePendulumRunConfig,
 } from "../model/doublePendulum";
 import {
   fitTorqueRows,
-  loadTorqueProfileLibrary,
   parseCoefficientText,
   parseTorqueSampleRows,
   saveTorqueProfileLibrary,
@@ -23,27 +21,17 @@ import {
   TorquePolynomial,
   TorqueProfileSource,
 } from "../model/torqueProfiles";
-import { type WebSourceKind } from "../model/simulation";
-import { type SimulationRunTs } from "../model/simulation";
 import { TorqueFitPreview } from "./TorqueFitPreview";
-
-interface Props {
-  sourceKind: WebSourceKind;
-  runConfig: DoublePendulumRunConfig;
-  onRunConfigChange: (config: DoublePendulumRunConfig) => void;
-  storage?: Storage;
-  run?: SimulationRunTs | null;
-}
-
-interface EditorState {
-  profileId: string;
-  name: string;
-  description: string;
-  startS: string;
-  endS: string;
-  shoulder: string;
-  wrist: string;
-}
+import {
+  displayNumber,
+  editorFor,
+  fileText,
+  formatFit,
+  initialProfiles,
+  representativeSubset,
+  type TorqueProfileEditorState,
+  type TorqueProfilePanelProps,
+} from "./torqueProfilePanelSupport";
 
 const INPUT =
   "w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-slate-100 focus:border-sky-500 focus:outline-none";
@@ -51,75 +39,53 @@ const SAMPLE_ROWS = "0, 18, -4\n0.75, 9, 0.5\n1.5, 0, 5";
 const MAX_EDITABLE_SAMPLE_ROWS = 101;
 const MAX_TABLE_ROWS = 25;
 
-function representativeSubset<T>(values: readonly T[], limit: number): readonly T[] {
-  if (values.length <= limit) return values;
-  return Object.freeze(Array.from({ length: limit }, (_, index) =>
-    values[Math.round((index * (values.length - 1)) / (limit - 1))]));
-}
-
-function displayNumber(value: number): string {
-  return String(Number(value.toFixed(3)));
-}
-
-function coefficients(profile: PrescribedTorqueProfile, jointId: string): string {
-  const values = profile.assignments.find((item) => item.jointId === jointId)
-    ?.polynomial.coefficients ?? [];
-  return values.join(", ");
-}
-
-function editorFor(profile: PrescribedTorqueProfile): EditorState {
-  return {
-    profileId: profile.profileId,
-    name: profile.name,
-    description: profile.description,
-    startS: String(profile.timeDomainS[0]),
-    endS: String(profile.timeDomainS[1]),
-    shoulder: coefficients(profile, SHOULDER_JOINT_ID),
-    wrist: coefficients(profile, WRIST_JOINT_ID),
-  };
-}
-
-function initialProfiles(storage?: Storage): readonly PrescribedTorqueProfile[] {
-  try {
-    return storage ? loadTorqueProfileLibrary(storage) : loadTorqueProfileLibrary();
-  } catch {
-    return Object.freeze([starterTorqueProfile()]);
-  }
-}
-
-function formatFit(values: readonly number[]): string {
-  return values.map((value) => String(Number(value.toPrecision(10)))).join(", ");
-}
-
-async function fileText(file: File): Promise<string> {
-  if (typeof file.text === "function") return file.text();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsText(file);
-  });
-}
-
 export function TorqueProfilePanel({
   sourceKind,
   runConfig,
   onRunConfigChange,
   storage,
   run = null,
-}: Props) {
-  const [profiles, setProfiles] = useState(() => initialProfiles(storage));
-  const [selectedId, setSelectedId] = useState(profiles[0].profileId);
-  const [editor, setEditor] = useState(() => editorFor(profiles[0]));
+  profiles: controlledProfiles,
+  activeProfileId: controlledActiveProfileId,
+  onLibraryChange,
+}: TorqueProfilePanelProps) {
+  const [internalProfiles, setInternalProfiles] = useState(() =>
+    initialProfiles(storage));
+  const [internalSelectedId, setInternalSelectedId] = useState(
+    internalProfiles[0].profileId,
+  );
+  const profiles = controlledProfiles ?? internalProfiles;
+  const selectedId = controlledActiveProfileId === undefined
+    ? internalSelectedId
+    : controlledActiveProfileId ?? "";
+  const activeSelected = profiles.find((profile) =>
+    profile.profileId === selectedId) ?? null;
+  const selected = activeSelected ?? starterTorqueProfile();
+  const [editor, setEditor] = useState(() => editorFor(selected));
   const [sampleText, setSampleText] = useState(SAMPLE_ROWS);
   const [fitDegree, setFitDegree] = useState(2);
   const [fit, setFit] = useState<TorqueFit | null>(null);
   const [fitOrigin, setFitOrigin] = useState<"drawn" | "fitted_run">("drawn");
   const [sourceSampleCount, setSourceSampleCount] = useState<number | null>(null);
   const [message, setMessage] = useState("Ready — changes are not saved yet.");
-  const selected = profiles.find((profile) => profile.profileId === selectedId)
-    ?? profiles[0];
   const prescribedAvailable = sourceKind === "double_pendulum";
+
+  useEffect(() => {
+    if (activeSelected !== null) setEditor(editorFor(activeSelected));
+  }, [activeSelected]);
+
+  const commitLibrary = (
+    updated: readonly PrescribedTorqueProfile[],
+    activeId: string,
+  ) => {
+    if (storage) saveTorqueProfileLibrary(updated, storage);
+    else saveTorqueProfileLibrary(updated);
+    if (onLibraryChange) onLibraryChange(Object.freeze([...updated]), activeId);
+    else {
+      setInternalProfiles(Object.freeze([...updated]));
+      setInternalSelectedId(activeId);
+    }
+  };
 
   const previewRows = useMemo(() => {
     try {
@@ -136,7 +102,8 @@ export function TorqueProfilePanel({
   const selectProfile = (profileId: string) => {
     const profile = profiles.find((item) => item.profileId === profileId);
     if (!profile) return;
-    setSelectedId(profileId);
+    if (onLibraryChange) onLibraryChange(profiles, profileId);
+    else setInternalSelectedId(profileId);
     setEditor(editorFor(profile));
     setFit(null);
     setMessage(`Loaded ${profile.name} into the editor.`);
@@ -148,12 +115,12 @@ export function TorqueProfilePanel({
   const selectMode = (mode: string) => {
     if (mode === "passive") {
       onRunConfigChange(passiveDoublePendulumRun(runConfig.jointLocks));
-    } else if (prescribedAvailable) {
+    } else if (prescribedAvailable && activeSelected !== null) {
       onRunConfigChange(prescribedDoublePendulumRun(selected, runConfig.jointLocks));
     }
   };
 
-  const edit = (key: keyof EditorState, value: string) => {
+  const edit = (key: keyof TorqueProfileEditorState, value: string) => {
     setEditor((current) => ({ ...current, [key]: value }));
     if (key === "shoulder" || key === "wrist") setFit(null);
   };
@@ -193,10 +160,7 @@ export function TorqueProfilePanel({
         ],
       });
       const updated = [...profiles.filter((item) => item.profileId !== profile.profileId), profile];
-      if (storage) saveTorqueProfileLibrary(updated, storage);
-      else saveTorqueProfileLibrary(updated);
-      setProfiles(Object.freeze(updated));
-      setSelectedId(profile.profileId);
+      commitLibrary(updated, profile.profileId);
       setEditor(editorFor(profile));
       if (runConfig.mode === "prescribed") {
         onRunConfigChange(prescribedDoublePendulumRun(profile, runConfig.jointLocks));
@@ -262,10 +226,7 @@ export function TorqueProfilePanel({
     try {
       const profile = PrescribedTorqueProfile.loads(await fileText(file));
       const updated = [...profiles.filter((item) => item.profileId !== profile.profileId), profile];
-      if (storage) saveTorqueProfileLibrary(updated, storage);
-      else saveTorqueProfileLibrary(updated);
-      setProfiles(Object.freeze(updated));
-      setSelectedId(profile.profileId);
+      commitLibrary(updated, profile.profileId);
       setEditor(editorFor(profile));
       setFit(null);
       setMessage(`Imported ${profile.name}.`);
@@ -275,6 +236,10 @@ export function TorqueProfilePanel({
   };
 
   const exportProfile = () => {
+    if (activeSelected === null) {
+      setMessage("Export failed: select or save a torque profile first.");
+      return;
+    }
     const blob = new Blob([selected.dumps()], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
@@ -305,6 +270,7 @@ export function TorqueProfilePanel({
           onChange={(event) => selectMode(event.target.value)}
           className={`${INPUT} mt-1`}
         >
+          {profiles.length === 0 && <option value="">No profiles loaded</option>}
           <option value="passive">Passive (Default)</option>
           <option value="prescribed" disabled={!prescribedAvailable}>
             Prescribed Profile

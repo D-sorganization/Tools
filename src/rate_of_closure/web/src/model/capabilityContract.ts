@@ -53,6 +53,8 @@ export type CapabilityEvaluator = (
   clubId: string, parameters: Readonly<Record<string, number>>,
 ) => SolverEvaluation;
 
+export const MAX_CAPABILITY_WIRE_MAGNITUDE = 1e300;
+
 const record = (value: unknown, name: string): Record<string, unknown> => {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new RangeError(`${name} must be an object`);
   return value as Record<string, unknown>;
@@ -66,6 +68,7 @@ const text = (value: unknown, name: string): string => {
 };
 const finite = (value: unknown, name: string): number => {
   if (typeof value !== "number" || !Number.isFinite(value)) throw new RangeError(`${name} must be finite`);
+  if (Math.abs(value) > MAX_CAPABILITY_WIRE_MAGNITUDE) throw new RangeError(`${name} magnitude must not exceed ${MAX_CAPABILITY_WIRE_MAGNITUDE}`);
   return value;
 };
 const integer = (value: unknown, name: string): number => {

@@ -296,7 +296,7 @@ class PuttingTab(QWidget):
                     self._backstroke_spin.value() / 100.0, putter_length_m
                 )
             )
-        return self._speed_spin.value()
+        return float(self._speed_spin.value())
 
     @staticmethod
     def _format_m(value: float) -> str:

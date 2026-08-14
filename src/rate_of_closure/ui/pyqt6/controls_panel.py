@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from dataclasses import fields, replace
 
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import QSignalBlocker, pyqtSignal
 from PyQt6.QtWidgets import (
     QAbstractSpinBox,
     QCheckBox,
@@ -232,6 +232,77 @@ class ControlsPanel(QWidget):
     def unit_for(self, quantity: str) -> str:
         """The selected display unit for a quantity."""
         return self._units[quantity]
+
+    def unit_selections(self) -> dict[str, str]:
+        """Return a detached snapshot of every display-unit selection."""
+        return dict(self._units)
+
+    def apply_workspace_state(
+        self,
+        scenario: ImpactScenario,
+        club: ClubSpec,
+        units: dict[str, str],
+    ) -> None:
+        """Apply a validated explorer slice without intermediate emissions.
+
+        The current native editor can vary a library club's loft and face
+        curvature. Other static club fields must still match that library
+        entry; unsupported documents fail before any control changes.
+        """
+        if not isinstance(scenario, ImpactScenario) or not isinstance(club, ClubSpec):
+            raise TypeError("workspace scenario and club types are invalid")
+        if set(units) != set(QUANTITY_UNITS) or any(
+            value not in QUANTITY_UNITS[key] for key, value in units.items()
+        ):
+            raise ValueError("workspace units are invalid")
+        base = get_club(club.name)
+        variable_fields = {
+            "loft_deg",
+            "face_bulge_radius_m",
+            "face_roll_radius_m",
+        }
+        if any(
+            getattr(base, field.name) != getattr(club, field.name)
+            for field in fields(ClubSpec)
+            if field.name not in variable_fields
+        ):
+            raise ValueError("native editor cannot represent this custom club")
+        self._updating = True
+        try:
+            for unit_quantity, unit in units.items():
+                with QSignalBlocker(self._unit_combos[unit_quantity]):
+                    self._unit_combos[unit_quantity].setCurrentText(unit)
+                self._units[unit_quantity] = unit
+            set_display_distance_unit(units["distance"])
+            for name, spin in self._spins.items():
+                self._configure_spin_range(spin, name)
+            self._club_combo.setCurrentText(club.name)
+            self._on_club_changed(club.name)
+            self._loft_spin.setValue(club.loft_deg)
+            curved = (
+                club.face_bulge_radius_m is not None
+                or club.face_roll_radius_m is not None
+            )
+            self._curvature_check.setChecked(curved)
+            if club.face_bulge_radius_m is not None:
+                self._bulge_spin.setValue(club.face_bulge_radius_m * 1000.0)
+            if club.face_roll_radius_m is not None:
+                self._roll_spin.setValue(club.face_roll_radius_m * 1000.0)
+            for field in fields(ImpactScenario):
+                value = getattr(scenario, field.name)
+                field_quantity = self._quantity_of(field.name)
+                displayed = (
+                    value
+                    if field_quantity is None
+                    else convert_from_canonical(
+                        field_quantity, self._units[field_quantity], value
+                    )
+                )
+                self._spins[field.name].setValue(displayed)
+        finally:
+            self._updating = False
+        self.distanceUnitChanged.emit(units["distance"])
+        self._emit()
 
     def _quantity_of(self, name: str) -> str | None:
         quantity_or_suffix = _FIELD_SPECS[name][1]

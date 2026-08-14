@@ -6,12 +6,8 @@ import {
   planFromJson,
   planToJson,
   type VariationDatasetTs,
-  type VariationPlanTs,
 } from "../model/variation";
-import {
-  executeVariationAnalyses,
-  type VariationAnalysisExecution,
-} from "../model/variationAnalysisPolicy";
+import { executeVariationAnalyses } from "../model/variationAnalysisPolicy";
 import type { SensitivityResultTs } from "../model/variationAnalysis";
 import { oneAtATimeSensitivity } from "../model/variationAnalysis";
 import {
@@ -30,10 +26,14 @@ import { VariationActions } from "./VariationActions";
 import { VariationPlanLibraryPanel } from "./VariationPlanLibraryPanel";
 import { VariationResults } from "./VariationResults";
 import { VariationSetup } from "./VariationSetup";
-import { defaultVariationPlan } from "./variationUi";
-import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
+import { DRIVER_TEE_HEIGHT_M, type BallSetup } from "../model/ballSetup";
 import { loadBallSetupPreference } from "../model/ballSetupPersistence";
+import { TEE_HEIGHT_VARIATION_KEY } from "../model/variationRegistry";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
+import {
+  useVariationWorkspace,
+  type ControlledVariationWorkspaceProps,
+} from "../hooks/useVariationWorkspace";
 
 let generatedPlanId = 0;
 const createPlanId = (): string => {
@@ -41,9 +41,10 @@ const createPlanId = (): string => {
   return `variation-plan-${Date.now()}-${generatedPlanId}`;
 };
 
-export interface VariationPanelProps {
+export interface VariationPanelProps extends ControlledVariationWorkspaceProps {
   spatialTarget?: SpatialTargetTs;
   distanceUnit?: string;
+  ballSetup?: BallSetup;
   /** Injectable persistent storage for tests, embedded hosts, and privacy modes. */
   storage?: Storage;
 }
@@ -51,30 +52,52 @@ export interface VariationPanelProps {
 export function VariationPanel({
   spatialTarget,
   distanceUnit = "yd",
+  ballSetup,
   storage,
+  variationWorkspace,
+  onVariationWorkspaceChange,
 }: VariationPanelProps = {}): JSX.Element {
   const targetUse = spatialTarget
     ? spatialTargetForGroundWorkflow(spatialTarget, "variation")
     : { targetRegion: null, diagnostic: null };
   const [initialLibrary] = useState(() => loadVariationPlanLibrary(storage));
-  const [initialBallSetup] = useState(() => loadBallSetupPreference(
-    storage,
-    { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M },
-  ).setup);
-  const [plan, setPlan] = useState<VariationPlanTs>(() => ({
-    ...defaultVariationPlan(),
-    ballSetup: initialBallSetup,
-  }));
-  const [analysisExecution, setAnalysisExecution] =
-    useState<VariationAnalysisExecution>("both");
+  const [storedBallSetup] = useState(
+    () =>
+      loadBallSetupPreference(storage, {
+        supportMode: "tee",
+        teeHeightM: DRIVER_TEE_HEIGHT_M,
+      }).setup,
+  );
+  const activeBallSetup = ballSetup ?? storedBallSetup;
+  const variation = useVariationWorkspace(
+    { variationWorkspace, onVariationWorkspaceChange },
+    activeBallSetup,
+  );
+  const {
+    plan: persistedPlan,
+    analysisExecution,
+    selectedOutputMetrics,
+  } = variation.state;
+  const plan = { ...persistedPlan, ballSetup: activeBallSetup };
+  const portablePlan = plan.noise.some(
+    (spec) => spec.variableKey === TEE_HEIGHT_VARIATION_KEY,
+  )
+    ? plan
+    : persistedPlan;
   const [dataset, setDataset] = useState<VariationDatasetTs | null>(null);
-  const [sensitivity, setSensitivity] = useState<SensitivityResultTs | null>(null);
+  const [sensitivity, setSensitivity] = useState<SensitivityResultTs | null>(
+    null,
+  );
   const [ensemble, setEnsemble] = useState<SwingVariationResultTs | null>(null);
-  const [library, setLibrary] = useState<NamedVariationPlan[]>(initialLibrary.plans);
+  const [library, setLibrary] = useState<NamedVariationPlan[]>(
+    initialLibrary.plans,
+  );
   const [selectedId, setSelectedId] = useState("");
   const [planName, setPlanName] = useState("");
   const [status, setStatus] = useState(
-    initialLibrary.warnings.length > 0 ? initialLibrary.warnings.join(" ") : "Ready.",
+    initialLibrary.warnings.length > 0
+      ? initialLibrary.warnings.join(" ")
+      : "Ready.",
   );
 
   const clearResults = () => {
@@ -97,9 +120,8 @@ export function VariationPanel({
     clearResults();
     try {
       const runTogether = analysisExecution !== "individual";
-      const traceResult = plan.mode === "swing" && runTogether
-        ? runSwingVariation(plan)
-        : null;
+      const traceResult =
+        plan.mode === "swing" && runTogether ? runSwingVariation(plan) : null;
       const result = executeVariationAnalyses(
         plan,
         analysisExecution,
@@ -121,7 +143,9 @@ export function VariationPanel({
             `${result.sensitivity ? "; one-at-a-time analysis also complete" : ""}.`,
         );
       } else {
-        setStatus("Done: one-at-a-time analysis complete; joint analysis was not requested.");
+        setStatus(
+          "Done: one-at-a-time analysis complete; joint analysis was not requested.",
+        );
       }
     } catch (error) {
       setStatus(`Cannot run: ${(error as Error).message}`);
@@ -131,9 +155,11 @@ export function VariationPanel({
   const importPlan = (text: string) => {
     try {
       const loaded = planFromJson(text);
-      setPlan(loaded);
+      variation.setPlan(loaded);
       clearResults();
-      setStatus(`Plan loaded with ${loaded.noise.length} noise rows and ${loaded.groups?.length ?? 0} groups.`);
+      setStatus(
+        `Plan loaded with ${loaded.noise.length} noise rows and ${loaded.groups?.length ?? 0} groups.`,
+      );
     } catch (error) {
       setStatus(`Cannot load plan: ${(error as Error).message}`);
     }
@@ -143,7 +169,11 @@ export function VariationPanel({
     const id = library.some((entry) => entry.id === selectedId)
       ? selectedId
       : createPlanId();
-    const next = upsertVariationPlan(library, { id, name: planName.trim(), plan });
+    const next = upsertVariationPlan(library, {
+      id,
+      name: planName.trim(),
+      plan: portablePlan,
+    });
     persistLibrary(next, `Saved named plan “${planName.trim()}”.`);
     setSelectedId(id);
   };
@@ -151,7 +181,7 @@ export function VariationPanel({
   const loadSelectedPlan = () => {
     const selected = library.find((entry) => entry.id === selectedId);
     if (!selected) return;
-    setPlan(planFromJson(planToJson(selected.plan)));
+    variation.setPlan(planFromJson(planToJson(selected.plan)));
     setPlanName(selected.name);
     clearResults();
     setStatus(`Loaded named plan “${selected.name}”.`);
@@ -187,32 +217,44 @@ export function VariationPanel({
     <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
       <section aria-label="Variation setup" className="space-y-4">
         {spatialTarget && (
-          <p role="status" aria-label="Variation current spatial target"
-            className={`rounded-lg border p-3 text-xs ${targetUse.diagnostic
-              ? "border-amber-400/40 bg-amber-950/20 text-amber-200"
-              : "border-sky-400/30 bg-sky-950/20 text-sky-200"}`}>
+          <p
+            role="status"
+            aria-label="Variation current spatial target"
+            className={`rounded-lg border p-3 text-xs ${
+              targetUse.diagnostic
+                ? "border-amber-400/40 bg-amber-950/20 text-amber-200"
+                : "border-sky-400/30 bg-sky-950/20 text-sky-200"
+            }`}
+          >
             Current target: {spatialTargetSummary(spatialTarget)}
             {targetUse.diagnostic ? ` ${targetUse.diagnostic.message}` : ""}
           </p>
         )}
         <VariationSetup
           plan={plan}
-          onPlanChange={setPlan}
+          onPlanChange={variation.setPlan}
           analysisExecution={analysisExecution}
           onAnalysisExecutionChange={(value) => {
-            setAnalysisExecution(value);
+            variation.setAnalysisExecution(value);
+            clearResults();
+          }}
+          selectedOutputMetrics={selectedOutputMetrics}
+          onSelectedOutputMetricsChange={(metrics) => {
+            variation.setSelectedOutputMetrics(metrics);
             clearResults();
           }}
           onConfigurationChange={clearResults}
         />
         <VariationActions
-          plan={plan}
+          plan={portablePlan}
           dataset={dataset}
           ensemble={ensemble}
           status={status}
           onRun={run}
           onImportText={importPlan}
-          onImportError={(message) => setStatus(`Cannot read plan file: ${message}`)}
+          onImportError={(message) =>
+            setStatus(`Cannot read plan file: ${message}`)
+          }
         />
         <VariationPlanLibraryPanel
           plans={library}
