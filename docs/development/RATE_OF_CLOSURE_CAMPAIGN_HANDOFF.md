@@ -1,5 +1,47 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 Capability input specification in whole workspaces
+
+- Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348)
+  publishes this bounded child from independently approved implementation head
+  `5730e74752ffb84ab3560bed6318b7d97b6e627d`, preserving base
+  `feat/4144-workspace-variation-study`. Protected current-head CI, review,
+  parent landing, integration, and release remain required.
+
+- The remaining no-publish finding against local head `68692bbcb` is repaired
+  locally. Interactive projection requires the exact ordered `ball_speed`
+  (`m/s`), `launch_angle` (`deg`), and `launch_direction` (`deg`) basis with a
+  3-by-3 correlation matrix, one club, and one spin default. Alternate units,
+  covariance, reordered parameters, and unsupported shapes fail closed before
+  projection, UI apply, or File/Open mutation; no conversion/rescaling occurs.
+- Earlier findings are also repaired: full-document authority plus editable overlays preserve accepted
+  evidence and advanced policy; unsupported interactive documents fail closed.
+  Native identity/generation gates reject stale success, and both parsers cap
+  numeric wire magnitude at `1e300` through the native File/Open error path.
+
+- Branch `feat/4197-workspace-capability-request` starts from exact draft
+  PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`; it does not modify
+  or publish the parent branch.
+- Explorer-session v5 embeds the established cross-runtime
+  `capability-optimization-workflow/v1` request. PyQt6 and React round-trip the
+  editable profile/club, capability ranges/distributions, objective, target,
+  fixed-spin evaluator assumptions, integration policy, budgets, and seed.
+- Full parsing precedes application. Both clients retain the full validated
+  document while controls overlay only represented fields. Legacy v1-v4 files
+  require an explicit current capability fallback. Native apply is rollback-safe,
+  and both clients
+  invalidate computed results when restored inputs replace the live request.
+- Results, observation ensembles, runtime objects, inferred identity, and
+  optimizer-execution claims remain excluded. Wind-aware optimizer inputs are
+  not yet user-editable in this workflow and therefore are not fabricated.
+  #4197/#4225, UpstreamDrift parity, protected CI/review, integration, and
+  release remain open.
+- Local qualification passes 71 focused Python workflow/workspace/File/PyQt/
+  manifest tests and 70 focused React contract/File/UI tests; pinned MyPy, Ruff,
+  TypeScript, zero-warning ESLint, the 211-module production build, 11
+  campaign-manifest tests, docs governance, and manifest-layout validation
+  also pass.
+
 ## 2026-08-11 variation-study workspace protected publication
 
 - Branch `feat/4144-workspace-variation-study` is published normally as draft

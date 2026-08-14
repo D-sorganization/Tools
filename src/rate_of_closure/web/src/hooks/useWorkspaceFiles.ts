@@ -217,6 +217,7 @@ export function useWorkspaceFiles(
                   legacySimulationFallback: current.snapshot.simulation,
                   legacyTorqueFallback: current.snapshot.torque,
                   legacyVariationFallback: current.snapshot.variation,
+                  legacyCapabilityFallback: current.snapshot.capability,
                 });
                 if (!confirmDiscard("open the selected workspace")) return;
                 current.applySnapshot(parsed);

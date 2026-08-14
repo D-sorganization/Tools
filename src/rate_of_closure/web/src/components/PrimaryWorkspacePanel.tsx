@@ -128,7 +128,10 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
             </section>
           }
         >
-          <LazyCapabilityOptimizationPanel />
+          <LazyCapabilityOptimizationPanel
+            workflow={model.capabilityWorkflow}
+            onWorkflowChange={model.setCapabilityWorkflow}
+          />
         </Suspense>
       );
     case "plots":

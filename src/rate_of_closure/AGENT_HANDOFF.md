@@ -1,5 +1,50 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 Explorer-session v5 capability-request mapper
+
+Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348) publishes
+this bounded child from independently approved implementation head
+`5730e74752ffb84ab3560bed6318b7d97b6e627d`, preserving base
+`feat/4144-workspace-variation-study`. Protected current-head CI, review,
+parent landing, integration, and release remain required.
+
+The remaining independent no-publish blocker on local head `68692bbcb` is
+repaired locally. PyQt6 and React interactive projection accepts only the exact
+ordered `ball_speed` (`m/s`), `launch_angle` (`deg`), and `launch_direction`
+(`deg`) basis with one 3-by-3 correlation matrix, one club, and one spin
+default. `mph`, covariance, reordered parameters, and unsupported shapes fail
+closed before projection, UI apply, or File/Open mutation. No unit conversion
+or covariance rescaling is attempted.
+
+The prior repair retains the full validated workflow as live authority
+and overlay only editable fields, preserving accepted evidence and advanced
+request policy. Unsupported interactive shapes fail closed. Native result
+publication now requires matching worker identity and generation. A shared
+hostile fixture caps numeric wire magnitude at `1e300`; Python overflow is a
+normal validation error covered through whole-window File/Open rollback.
+
+The local child `feat/4197-workspace-capability-request` is based on exact
+published PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`.
+PyQt6 and React now persist the same existing
+`capability-optimization-workflow/v1` input document through explorer-session
+v5: profile/club IDs, the three launch capability bounds and distributions,
+objective, target, fixed total-spin/spin-axis assumptions, evaluator time
+settings, candidate/trial/alternative budgets, and deterministic seed.
+
+The workspace owns only reproducible request inputs. It deliberately excludes
+ranked results, observations, progress, workers, cancellation handles, and
+inferred identity. Parsing is strict and precedes mutation. PyQt6 uses the
+whole-window rollback boundary and clears result widgets; React moves the full
+document to app-owned state and clears stale output after external replacement.
+Legacy v1-v4 files require an explicit current capability fallback instead of a
+fabricated default. This bounded slice does not claim optimizer execution
+parity, wind-aware optimization, result persistence, UpstreamDrift parity,
+protected release, or completion of #4197/#4225.
+Local qualification passes 71 focused Python workflow/workspace/File/PyQt/
+manifest tests and 70 focused React contract/File/UI tests, plus pinned MyPy, Ruff
+check/format, TypeScript, zero-warning ESLint, the 211-module production build,
+11 campaign-manifest tests, docs governance, and manifest-layout validation.
+
 ## 2026-08-11 variation-study workspace protected publication
 
 Branch `feat/4144-workspace-variation-study` is published normally as draft PR
