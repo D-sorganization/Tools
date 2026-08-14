@@ -403,3 +403,34 @@ def test_nan_reading_does_not_clear_an_active_high_high_alarm() -> None:
     cleared = machine.evaluate(0, 50.0, NARROW)
     assert [t.kind for t in cleared] == ["cleared"]
     assert machine.annunciator_state().has_hhll is False
+
+
+# ---------------------------------------------------------------------------
+# Event-log ordering must be deterministic within a single clock tick
+# ---------------------------------------------------------------------------
+
+
+def test_fetch_logs_orders_same_timestamp_events_newest_first(tmp_path: Path) -> None:
+    """A burst sharing one timestamp must still read back newest-first.
+
+    ``datetime.now()`` reports microseconds but the underlying clock does not --
+    ~15.6 ms granularity on Windows -- so an alarm trip and its acknowledgement
+    land on the same timestamp string. With ``ORDER BY timestamp DESC`` alone
+    SQLite may then return them in either order, which made
+    ``test_desktop.py::test_event_logger_basic`` fail intermittently and, more
+    importantly, could show an operator a trip listed above the acknowledgement
+    that answered it. The autoincrement ``id`` breaks the tie in insertion order.
+    """
+    event_logger = EventLogger(str(tmp_path / "ordering.db"))
+    stamp = datetime(2026, 8, 14, 12, 0, 0)
+
+    # Same timestamp for every row: the tie is forced, not hoped for.
+    event_logger.log_event("first", "INFO", "Operator", "one", timestamp=stamp)
+    event_logger.log_event("second", "INFO", "Operator", "two", timestamp=stamp)
+    event_logger.log_event("third", "INFO", "Operator", "three", timestamp=stamp)
+
+    kinds = [row[2] for row in event_logger.fetch_logs()]
+    assert kinds == ["third", "second", "first"], (
+        "events sharing a timestamp must be returned newest-first by insertion "
+        f"order, got {kinds}"
+    )

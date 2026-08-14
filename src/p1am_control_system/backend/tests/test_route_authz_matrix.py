@@ -61,6 +61,7 @@ from cors_config import CSRF_HEADER_NAME, CSRF_HEADER_VALUE  # noqa: E402
 from fastapi.routing import APIRoute  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from main import app  # noqa: E402
+from starlette.routing import Match  # noqa: E402
 
 _OPERATOR_KEY = "matrix-operator-key"  # pragma: allowlist secret
 _ADMIN_KEY = "matrix-admin-key"  # pragma: allowlist secret
@@ -281,9 +282,43 @@ def test_every_route_is_classified() -> None:
     )
 
 
+def _is_served(method: str, path: str) -> bool:
+    """True if the app's router would dispatch ``method path`` to a handler.
+
+    Deliberately asks the router the same question a request asks, instead of
+    string-matching ``route.path`` over ``app.routes``. Those two disagreed in
+    CI: `tests (3.11)` reported all 19 power-supply / temperature / tuning rows
+    as unserved, while in the SAME single-process run the 19
+    ``test_gated_route_rejects_anonymous_caller`` cases hit those exact paths
+    through ``TestClient(app)`` and got 401/403 — a route the app does not serve
+    answers 404, which would have failed. So the routes were registered and
+    reachable, and the enumeration was under-reporting them; the rows were never
+    stale. Deleting them (as a previous slice did) would have made the test green
+    while the authz matrix quietly agreed that the plant's whole control surface —
+    acknowledge_trip, permissive, setpoint, burnout_mode, tc_type — did not exist.
+
+    ``Route.matches`` is what Starlette itself calls during dispatch, so this
+    check cannot disagree with a real request.
+    """
+    scope = {
+        "type": "http",
+        "method": method,
+        "path": _concrete(path),
+        "path_params": {},
+        "root_path": "",
+        "headers": [],
+        "query_string": b"",
+    }
+    for route in app.routes:
+        match, _ = route.matches(scope)
+        if match is Match.FULL:
+            return True
+    return False
+
+
 def test_table_has_no_stale_rows() -> None:
     """Keep the contract honest in the other direction too."""
-    stale = sorted(set(ROUTE_TIERS) - _app_routes())
+    stale = sorted(row for row in ROUTE_TIERS if not _is_served(*row))
     assert not stale, f"ROUTE_TIERS lists routes the app no longer serves: {stale}"
 
 

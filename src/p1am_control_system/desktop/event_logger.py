@@ -470,7 +470,16 @@ class EventLogger:
             like_pattern = f"%{keyword}%"
             params.extend([like_pattern, like_pattern, like_pattern])
 
-        query += " ORDER BY timestamp DESC"
+        # Tie-break on the autoincrement id, not timestamp alone. `datetime.now()`
+        # carries microseconds but the underlying clock does not: on Windows its
+        # granularity is ~15.6 ms, so a burst of events -- an alarm trip and its
+        # acknowledgement, or a setpoint change and the trip it causes -- share one
+        # timestamp string and SQLite is then free to return them in any order.
+        # That made `test_event_logger_basic` intermittently fail on the
+        # newest-first assertions, and it would equally show an operator a trip
+        # listed above its own acknowledgement. `id` is monotonic in insertion
+        # order, so this makes "newest first" exact within a tick.
+        query += " ORDER BY timestamp DESC, id DESC"
 
         with closing(sqlite3.connect(self.db_path)) as conn:
             cursor = conn.cursor()
