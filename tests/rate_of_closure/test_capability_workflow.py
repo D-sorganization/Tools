@@ -9,9 +9,11 @@ import pytest
 
 from rate_of_closure.application.capability_workflow import (
     CAPABILITY_WORKFLOW_SCHEMA_VERSION,
+    CapabilityWorkflowDocument,
     CapabilityWorkflowInputs,
     build_capability_workflow,
     capability_workflow_from_json,
+    capability_workflow_inputs,
     capability_workflow_json,
 )
 from rate_of_closure.variation.scalar_ensemble_contract import (
@@ -37,6 +39,7 @@ _PARSER_FIXTURE = json.loads(
     ).read_text(encoding="utf-8")
 )
 _PARSER_CASES = _PARSER_FIXTURE["cases"]
+_HOSTILE_NUMBERS = _PARSER_FIXTURE["hostile_numbers"]
 
 
 def _mutated_workflow(case: dict[str, object]) -> str:
@@ -67,6 +70,20 @@ def test_shared_parser_fixture_schema_is_supported() -> None:
     assert _PARSER_FIXTURE["schema_version"] == "capability-workflow-parser-cases/v1"
 
 
+@pytest.mark.parametrize("case", _HOSTILE_NUMBERS, ids=lambda case: case["id"])
+def test_shared_parser_rejects_oversized_raw_json_numbers(
+    case: dict[str, object],
+) -> None:
+    source = capability_workflow_json(
+        build_capability_workflow(CapabilityWorkflowInputs())
+    )
+    raw_number = str(case["digit"]) * int(case["digits"])
+    source = source.replace('"candidate_budget":8', f'"candidate_budget":{raw_number}')
+
+    with pytest.raises(ValueError, match="magnitude|finite"):
+        capability_workflow_from_json(source)
+
+
 def test_workflow_round_trip_preserves_strict_nested_contracts() -> None:
     source = build_capability_workflow(
         CapabilityWorkflowInputs(
@@ -85,6 +102,41 @@ def test_workflow_round_trip_preserves_strict_nested_contracts() -> None:
 
     assert restored == source
     assert json.loads(encoded)["schema_version"] == CAPABILITY_WORKFLOW_SCHEMA_VERSION
+
+
+def _noncanonical_interactive_workflow(
+    kind: str,
+) -> CapabilityWorkflowDocument:
+    payload = json.loads(
+        capability_workflow_json(build_capability_workflow(CapabilityWorkflowInputs()))
+    )
+    club = payload["profile"]["clubs"][0]
+    if kind == "mph":
+        club["parameters"][0]["unit"] = "mph"
+    elif kind == "covariance":
+        club["matrix_kind"] = "covariance"
+    else:
+        club["parameters"].reverse()
+    return capability_workflow_from_json(json.dumps(payload))
+
+
+def test_interactive_projection_accepts_exact_canonical_parameter_basis() -> None:
+    projected = capability_workflow_inputs(
+        build_capability_workflow(CapabilityWorkflowInputs())
+    )
+
+    assert projected == CapabilityWorkflowInputs()
+
+
+@pytest.mark.parametrize(
+    ("kind", "message"),
+    [("mph", "unit"), ("covariance", "correlation"), ("reordered", "order")],
+)
+def test_interactive_projection_rejects_noncanonical_basis(
+    kind: str, message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        capability_workflow_inputs(_noncanonical_interactive_workflow(kind))
 
 
 @pytest.mark.parametrize(

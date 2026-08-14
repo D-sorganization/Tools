@@ -24,20 +24,19 @@ import { JointLockControls } from "./JointLockControls";
 import { BallSetupControl } from "./BallSetupControl";
 import { SimulationDisplay } from "./SimulationDisplay";
 import {
-  defaultBallSetupForClub,
-  type BallSetup,
-} from "../model/ballSetup";
-import {
-  loadBallSetupPreference,
-  saveBallSetupPreference,
-} from "../model/ballSetupPersistence";
+  type ControlledBallSetupProps,
+  useSimulationBallSetup,
+} from "../hooks/useSimulationBallSetup";
 import {
   PASSIVE_DOUBLE_PENDULUM_RUN,
   SHOULDER_JOINT_ID,
   WRIST_JOINT_ID,
-  type DoublePendulumRunConfig,
   type PendulumState,
 } from "../model/doublePendulum";
+import {
+  type ControlledTorqueWorkspaceProps,
+  useSimulationTorqueWorkspace,
+} from "../hooks/useSimulationTorqueWorkspace";
 import { SimulationRunFileControls } from "./SimulationRunFileControls";
 import { ManualDeliveryControls } from "./ManualDeliveryControls";
 import {
@@ -45,7 +44,7 @@ import {
   type ManualDelivery,
 } from "../model/manualDelivery";
 
-interface Props {
+interface Props extends ControlledBallSetupProps, ControlledTorqueWorkspaceProps {
   scenario: ImpactScenario;
   loftDeg: number;
   /** Effective club spec from the Club group (H1: CG marker source). */
@@ -68,25 +67,32 @@ export function SimulationPanel({
   onScenarioChange,
   spatialTarget,
   onSpatialTargetChange,
+  ballSetup: controlledBallSetup,
+  ballSetupUserOverridden: controlledBallSetupUserOverridden,
+  ballSetupMessage: controlledBallSetupMessage,
+  onBallSetupChange: controlledOnBallSetupChange,
+  onBallSetupUserOverriddenChange: controlledOnBallSetupUserOverriddenChange,
+  onBallSetupMessageChange: controlledOnBallSetupMessageChange,
+  torqueWorkspace: controlledTorqueWorkspace,
+  onTorqueWorkspaceChange: controlledOnTorqueWorkspaceChange,
   distanceUnit = "yd",
   viewWorkspace,
   viewCommandRevision,
   onViewWorkspaceChange,
 }: Props) {
-  const clubDefaultSetup = defaultBallSetupForClub(clubSpec);
-  const [initialBallPreference] = useState(() => {
-    const loaded = loadBallSetupPreference(undefined, clubDefaultSetup);
-    return !loaded.userOverridden && loaded.warning === null
-      ? { ...loaded, setup: clubDefaultSetup }
-      : loaded;
+  const ball = useSimulationBallSetup(clubSpec, {
+    ballSetup: controlledBallSetup,
+    ballSetupUserOverridden: controlledBallSetupUserOverridden,
+    ballSetupMessage: controlledBallSetupMessage,
+    onBallSetupChange: controlledOnBallSetupChange,
+    onBallSetupUserOverriddenChange: controlledOnBallSetupUserOverriddenChange,
+    onBallSetupMessageChange: controlledOnBallSetupMessageChange,
   });
-  const [ballSetup, setBallSetup] = useState<BallSetup>(initialBallPreference.setup);
-  const [ballSetupOverridden, setBallSetupOverridden] = useState(
-    initialBallPreference.userOverridden,
-  );
-  const [ballSetupMessage, setBallSetupMessage] = useState<string | null>(
-    initialBallPreference.warning,
-  );
+  const { ballSetup, ballSetupUserOverridden, ballSetupMessage } = ball;
+  const torque = useSimulationTorqueWorkspace({
+    torqueWorkspace: controlledTorqueWorkspace,
+    onTorqueWorkspaceChange: controlledOnTorqueWorkspaceChange,
+  });
   const [importError, setImportError] = useState<string | null>(null);
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
   const [manualDelivery, setManualDelivery] = useState<ManualDelivery>(
@@ -94,8 +100,8 @@ export function SimulationPanel({
   );
   const [contactMode, setContactMode] =
     useState<ContactMode>("delivery_inspection");
-  const [doublePendulumRun, setDoublePendulumRun] =
-    useState<DoublePendulumRunConfig>(PASSIVE_DOUBLE_PENDULUM_RUN);
+  const doublePendulumRun = torque.state.runConfig;
+  const setDoublePendulumRun = torque.setRunConfig;
   const [doublePendulumInitialState, setDoublePendulumInitialState] =
     useState<PendulumState>([-Math.PI / 2, 0, 0, 0]);
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
@@ -104,14 +110,6 @@ export function SimulationPanel({
   const [lastRunSignature, setLastRunSignature] = useState<string | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
   const effectiveLoftDeg = clubSpec?.loftDeg ?? loftDeg;
-
-  useEffect(() => {
-    if (ballSetupOverridden) return;
-    const next = defaultBallSetupForClub(clubSpec);
-    setBallSetup(next);
-    const warning = saveBallSetupPreference({ setup: next, userOverridden: false });
-    if (warning) setBallSetupMessage(warning);
-  }, [clubSpec, ballSetupOverridden]);
 
   const input: SimulationInput = useMemo(
     () => ({
@@ -226,22 +224,9 @@ export function SimulationPanel({
           />
           <BallSetupControl
             setup={ballSetup}
-            userOverridden={ballSetupOverridden}
-            onChange={(next) => {
-              setBallSetup(next);
-              setBallSetupOverridden(true);
-              setBallSetupMessage(
-                saveBallSetupPreference({ setup: next, userOverridden: true }),
-              );
-            }}
-            onUseClubDefault={() => {
-              const next = defaultBallSetupForClub(clubSpec);
-              setBallSetup(next);
-              setBallSetupOverridden(false);
-              setBallSetupMessage(
-                saveBallSetupPreference({ setup: next, userOverridden: false }),
-              );
-            }}
+            userOverridden={ballSetupUserOverridden}
+            onChange={ball.setOverride}
+            onUseClubDefault={ball.restoreClubDefault}
           />
           {ballSetupMessage && (
             <p role="status" className="mb-3 text-xs text-sky-300">{ballSetupMessage}</p>
@@ -342,20 +327,18 @@ export function SimulationPanel({
                 manualDelivery: importedManualDelivery,
               }) => {
                 setImportError(null);
-                setBallSetup(imported);
-                setBallSetupOverridden(true);
+                const warning = ball.setOverride(imported);
                 setManualDelivery(importedManualDelivery);
                 onSpatialTargetChange(importedTarget);
-                const warning = saveBallSetupPreference({
-                  setup: imported,
-                  userOverridden: true,
-                });
-                setBallSetupMessage(warning ??
-                  `Imported ${imported.supportMode === "tee" ? "Tee" : "Ground"} ` +
-                  "ball setup, spatial target, and manual delivery.");
+                if (warning === null) {
+                  ball.setMessage(
+                    `Imported ${imported.supportMode === "tee" ? "Tee" : "Ground"} ` +
+                    "ball setup, spatial target, and manual delivery.",
+                  );
+                }
               }}
               onImportError={(message) => {
-                setBallSetupMessage(null);
+                ball.setMessage(null);
                 setImportError(`Cannot import simulation settings: ${message}`);
               }} />
           </div>
@@ -365,6 +348,9 @@ export function SimulationPanel({
           sourceKind={sourceKind}
           runConfig={doublePendulumRun}
           onRunConfigChange={setDoublePendulumRun}
+          profiles={torque.state.profiles}
+          activeProfileId={torque.state.activeProfileId}
+          onLibraryChange={torque.setLibrary}
           run={run}
         />
 

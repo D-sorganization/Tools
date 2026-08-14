@@ -49,6 +49,9 @@ from rate_of_closure.ui.pyqt6.main_window_contracts import (
     _TAB_HELP_KEYS,
     _UNITS,
 )
+from rate_of_closure.ui.pyqt6.main_window_file_commands import (
+    MainWindowFileCommandsMixin,
+)
 from rate_of_closure.ui.pyqt6.main_window_layout import (
     PrimaryTabSpec,
     ResultsSidebar,
@@ -99,6 +102,7 @@ except ImportError:  # standalone / vendored use
 
 
 class RateOfClosureMainWindow(
+    MainWindowFileCommandsMixin,
     MainWindowViewCommandsMixin,
     WorkspaceNavigationMixin,
     ThemedWindowMixin,
@@ -126,6 +130,7 @@ class RateOfClosureMainWindow(
         self._build_application_shell()
         self._connect_view_signals()
         self._initialize_view_content()
+        self.initialize_workspace_files()
 
     def _create_views(self) -> None:
         """Create the application views without coupling their signal graph."""

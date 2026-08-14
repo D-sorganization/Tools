@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  LEGACY_VIEW_WORKSPACE_STORAGE_KEY,
   VIEW_WORKSPACE_STORAGE_KEY,
   exportViewWorkspace,
   importViewWorkspace,
@@ -70,7 +71,7 @@ describe("view workspace persistence", () => {
 
   it("migrates the legacy visible-view list and persists the canonical document", () => {
     const storage = new Map<string, string>();
-    storage.set(VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify({
+    storage.set(LEGACY_VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify({
       version: 1,
       layout: "split_horizontal",
       views: ["impact", "future", "flight"],
@@ -86,9 +87,10 @@ describe("view workspace persistence", () => {
     expect(migrated.activeSlotId).toBe("impact");
     expect(saveViewWorkspace(migrated, adapter)).toBe(true);
     expect(JSON.parse(storage.get(VIEW_WORKSPACE_STORAGE_KEY) ?? "{}")).toMatchObject({
-      format: "rate_of_closure.view_workspace/1",
+      format: "rate_of_closure.view_workspace/2",
       layout: "split_horizontal",
       active_slot_id: "impact",
+      camera_preferences: { format: "camera-preferences/v1" },
     });
   });
 
