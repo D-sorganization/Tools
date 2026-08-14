@@ -314,6 +314,45 @@ The Python fixture pins semantic ordering only. React retains its TypeScript
 reference RK4, passive 1 ms/1.5 s capability, and React-specific identities;
 Python solver/digest parity, prescribed production input, Rust, and JSON loading
 remain open.
+## 2026-08-13 Paired-authority persistence/scenario review closure (#4142)
+
+Version 1.16.78 caps canonical authority bytes before touching the destination,
+then writes a same-directory temporary file, flushes/fsyncs it, and completes
+with `os.replace`. Oversize, staging, flush, and replace failures preserve the
+prior destination and remove the temporary file.
+
+`VariationTab.set_scenario` now compares only Explorer fields that define the
+current plan. Effective Explorer delivery/swing changes invalidate ordinary
+results, cancel the paired worker, advance its generation, and visibly clear
+live production/authority so late success is ignored. Registry-based plans and
+unconsumed scenario fields retain valid authority. React and the other stated
+1.16.77 gaps remain open.
+
+## 2026-08-13 Explicit PyQt paired-attribution workflow (#4142)
+
+Version 1.16.77 wires the genuine paired producer into PyQt as an explicitly
+requested, separate study. The Localized Attribution result surface now owns
+independent Configure/Cancel/progress/status controls; its dialog shows every
+localized spec, exact topological joint and half-open window, requires a
+finite nonzero planted torque delta, selects an exact spatial `swing.*` point
+and configured sample-grid time, and fixes the canonical state/impact/shot
+target registry. Global Monte Carlo factors remain at declared base values and
+groups are removed from the paired design.
+
+The dedicated worker retains exact `2N` progress and cooperative cancellation.
+Generation guards reject stale callbacks; cancellation or failure preserves
+prior authority, while plan/config changes cancel and clear incompatible
+authority. Ordinary Monte Carlo never invokes the producer. Authority-only
+JSON uses canonical finite output, an 8 MiB pre-parse cap, atomic load, and an
+explicit archived/unverified-execution disclaimer. A loaded archive is not
+reported as live verified production. React remains consumer/presentation
+only; browser Worker production, full production-package persistence, Rust
+parity, and protected publication remain open.
+
+Local gates pass 40 focused workflow/round-trip tests, 271 complete Rate GUI
+plus localized producer/contract tests, Ruff/format, pinned Mypy 1.13 on all
+nine changed production files, the repository module-size gate, and a stricter
+400-line changed-file audit.
 
 ## 2026-08-13 Explicit-sample NumPy typing boundary (#4426)
 

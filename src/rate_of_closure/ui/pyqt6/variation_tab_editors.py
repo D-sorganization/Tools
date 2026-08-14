@@ -38,6 +38,7 @@ class VariationTabEditorsMixin:
             self._remove_row,
             localized_enabled=self._localized_authoring_enabled(),
             duration_s=self._localized_duration_s(),
+            on_change=self._on_noise_editor_changed,
         )
         self._rows.append(row)
         row.authorityChanged.connect(self._invalidate_current_study)
@@ -54,12 +55,14 @@ class VariationTabEditorsMixin:
         self._invalidate_current_study()
         row.setParent(None)
         row.deleteLater()
+        self._on_noise_editor_changed()
 
     def _on_mode_changed(self, *_args: object) -> None:
         self._invalidate_current_study()
         self._loaded_base.clear()
         self._loaded_groups = ()
         self._refresh_row_contexts()
+        self._on_noise_editor_changed()
 
     def _localized_authoring_enabled(self, mode: str | None = None) -> bool:
         """Return whether a mode/source pair can execute authored torque loci."""
@@ -82,3 +85,14 @@ class VariationTabEditorsMixin:
         duration_s = self._localized_duration_s()
         for row in self._rows:
             row.set_context(self.mode(), enabled, duration_s)
+
+    def _on_noise_editor_changed(self) -> None:
+        """Invalidate paired evidence after an authored source changes."""
+        if hasattr(self, "_attribution_generation"):
+            self._invalidate_attribution(
+                "Variation plan changed; prior paired authority was cleared."
+            )
+
+    def _invalidate_attribution(self, reason: str) -> None:
+        """Invalidate paired evidence; provided by the concrete controller."""
+        raise NotImplementedError

@@ -25,6 +25,9 @@ from rate_of_closure.club import get_club
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import SimulationConfig
 from rate_of_closure.ui.pyqt6 import variation_constants
+from rate_of_closure.ui.pyqt6.variation_attribution_controller import (
+    VariationAttributionControllerMixin,
+)
 from rate_of_closure.ui.pyqt6.variation_rows import NoiseRow
 from rate_of_closure.ui.pyqt6.variation_tab_editors import VariationTabEditorsMixin
 from rate_of_closure.ui.pyqt6.variation_tab_io import VariationTabIoMixin
@@ -46,6 +49,7 @@ __all__ = ["QFileDialog", "VariationTab"]
 
 
 class VariationTab(
+    VariationAttributionControllerMixin,
     VariationTabRunMixin,
     VariationTabEditorsMixin,
     VariationTabIoMixin,
@@ -104,6 +108,11 @@ class VariationTab(
         layout.addWidget(splitter)
 
         self._add_row()
+        self._initialize_attribution_controller()
+        self._runs_spin.valueChanged.connect(self._on_plan_editor_changed)
+        self._seed_spin.valueChanged.connect(self._on_plan_editor_changed)
+        self._base_combo.currentIndexChanged.connect(self._on_plan_editor_changed)
+        self._flight_combo.currentIndexChanged.connect(self._on_plan_editor_changed)
 
     def _build_setup_box(self) -> QGroupBox:
         box = QGroupBox("Study Setup")
@@ -217,9 +226,25 @@ class VariationTab(
 
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (base-source 'Explorer Scenario')."""
-        if scenario != self._scenario and self._base_combo.currentIndex() == 1:
-            self._invalidate_current_study()
+        prior_values = self._scenario_plan_values(self._scenario)
+        next_values = self._scenario_plan_values(scenario)
         self._scenario = scenario
+        if prior_values != next_values:
+            self._invalidate_current_study()
+            self._invalidate_attribution(
+                "Explorer scenario changed; prior paired authority was cleared."
+            )
+
+    def _scenario_plan_values(self, scenario: ImpactScenario) -> tuple[float, ...]:
+        """Return only Explorer-scenario fields that define the current plan."""
+        if self._base_combo.currentIndex() != 1:
+            return ()
+        offsets = (scenario.impact_offset_toe_mm, scenario.impact_offset_high_mm)
+        if self.mode() == "delivery":
+            return (scenario.clubhead_speed_mph, *offsets)
+        if self.mode() == "swing":
+            return offsets
+        return ()
 
     def set_simulation_config(self, config: SimulationConfig) -> None:
         """Set the complete base request used by trace-capable swing studies."""
@@ -231,8 +256,12 @@ class VariationTab(
         if changed:
             self._invalidate_current_study()
         self._base_simulation_config = config
-        self._refresh_row_contexts()
         self._simulation_config_valid = True
+        if changed:
+            self._invalidate_attribution(
+                "Simulation changed; prior paired authority was cleared."
+            )
+        self._refresh_row_contexts()
         self._set_running(bool(self._worker and self._worker.isRunning()))
         if changed or not was_valid:
             self._status.setText(
@@ -245,6 +274,7 @@ class VariationTab(
         """Fail closed while the Simulation editor has no valid request."""
         self._invalidate_current_study()
         self._simulation_config_valid = False
+        self._invalidate_attribution(message)
         self._set_running(bool(self._worker and self._worker.isRunning()))
         self._status.setText(message)
 
@@ -289,3 +319,11 @@ class VariationTab(
         if self._worker is not None:
             self._worker.cancel()
             self._worker.wait(10_000)
+        self._stop_attribution_worker()
+
+    def _on_plan_editor_changed(self, *_args: object) -> None:
+        """Invalidate paired authority when a plan-defining editor changes."""
+        if hasattr(self, "_attribution_generation"):
+            self._invalidate_attribution(
+                "Variation plan changed; prior paired authority was cleared."
+            )

@@ -46,6 +46,7 @@ class NoiseRow(QWidget):
         *,
         localized_enabled: bool = False,
         duration_s: float = 1.5,
+        on_change: Callable[[], None] | None = None,
     ) -> None:
         super().__init__()
         self._mode = mode
@@ -56,6 +57,7 @@ class NoiseRow(QWidget):
         self._loaded_spec: NoiseSpec | None = None
         self._loaded_editor_state: tuple[object, ...] | None = None
         self._loaded_locus_state: tuple[float, float, object] | None = None
+        self._on_change = on_change
         self.variable = QComboBox()
         self.variable.setToolTip(
             "Which registry variable varies run to run. Grouped by "
@@ -109,6 +111,15 @@ class NoiseRow(QWidget):
         outer.addWidget(self.locus_editor)
 
         self.variable.currentIndexChanged.connect(self._on_variable_changed)
+        if on_change is not None:
+            self.variable.currentIndexChanged.connect(on_change)
+            self.distribution.currentIndexChanged.connect(on_change)
+            self.scale.valueChanged.connect(on_change)
+            self.clip.toggled.connect(on_change)
+            self.clip_low.valueChanged.connect(on_change)
+            self.clip_high.valueChanged.connect(on_change)
+            self.window_start.valueChanged.connect(on_change)
+            self.window_end.valueChanged.connect(on_change)
         self.set_context(mode, localized_enabled, duration_s)
         for combo in self.findChildren(QComboBox):
             combo.currentIndexChanged.connect(self.authorityChanged.emit)
