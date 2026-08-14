@@ -24,6 +24,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 
@@ -156,7 +157,7 @@ def _parse_binary(data: bytes) -> np.ndarray:
     records = np.frombuffer(
         data, dtype=_BINARY_RECORD, count=count, offset=_BINARY_HEADER_BYTES + 4
     )
-    return records["vertices"].astype(np.float64)
+    return cast(np.ndarray, records["vertices"].astype(np.float64))
 
 
 def _parse_ascii(data: bytes) -> np.ndarray:
@@ -184,7 +185,7 @@ def _parse_ascii(data: bytes) -> np.ndarray:
         len(vertices),
     )
     flat = np.asarray(vertices, dtype=np.float64)
-    return flat.reshape(-1, 3, 3)
+    return cast(np.ndarray, flat.reshape(-1, 3, 3))
 
 
 def triangle_normals(triangles: np.ndarray) -> np.ndarray:
@@ -199,7 +200,7 @@ def triangle_normals(triangles: np.ndarray) -> np.ndarray:
     length = np.linalg.norm(cross, axis=1, keepdims=True)
     with np.errstate(invalid="ignore", divide="ignore"):
         normals = np.where(length > _MIN_AREA, cross / length, 0.0)
-    return np.asarray(normals, dtype=np.float64)
+    return cast(np.ndarray, np.asarray(normals, dtype=np.float64))
 
 
 def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.ndarray:
@@ -260,7 +261,7 @@ def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.n
         bool((span <= MAX_HEAD_SPAN_M).all()),
         "normalized mesh span exceeds 0.330 m",
     )
-    return np.asarray(normalized, dtype=np.float64)
+    return cast(np.ndarray, np.asarray(normalized, dtype=np.float64))
 
 
 def load_head_mesh(path: str | Path, depth_m: float = HEAD_DEPTH_M) -> HeadMesh:
@@ -291,7 +292,7 @@ def write_binary_stl(triangles: np.ndarray, header: str = "rate_of_closure") -> 
     head = header.encode("ascii", errors="replace")[:_BINARY_HEADER_BYTES]
     head = head.ljust(_BINARY_HEADER_BYTES, b"\0")
     count = np.array([tris.shape[0]], dtype="<u4")
-    return head + count.tobytes() + records.tobytes()
+    return cast(bytes, head + count.tobytes() + records.tobytes())
 
 
 def write_ascii_stl(triangles: np.ndarray, name: str = "rate_of_closure") -> bytes:

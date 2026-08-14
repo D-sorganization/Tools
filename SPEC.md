@@ -26,11 +26,18 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.90                                    |
-| **Spec Version**        | 1.16.90                                    |
+| **Current Version**     | 1.16.91                                    |
+| **Spec Version**        | 1.16.91                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Club Explorer hosted typing closure (#4433)
+
+Version 1.16.91 closes the pinned Python 3.12 / MyPy 1.13 Club Explorer
+diagnostics with type-only mixin contracts and explicit NumPy/bytes return
+types. It changes no runtime, scientific, visual, interaction, or evidence
+behavior; #4433 remains open.
 
 ### 2026-08-13 Club Explorer bounded mesh and camera interaction (#4433)
 

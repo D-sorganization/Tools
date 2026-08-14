@@ -1,5 +1,13 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Club Explorer hosted typing closure
+
+- Type-only mixin attribute contracts replace concrete erased-self annotations,
+  and NumPy/bytes return seams are explicitly narrowed for Python 3.12 / pinned
+  MyPy 1.13.
+- Runtime MRO, physics, rendering, interaction, artifact authority, and open
+  limitations are unchanged. SPEC is 1.16.91; #4433 remains open.
+
 ## 2026-08-13 #4433 Club Explorer bounded mesh and camera interaction
 
 - React and PyQt now expose one focusable, named clubhead camera with matched

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from rate_of_closure.club import ClubSpec, head_cog, hosel_point, parametric_head_mesh
@@ -16,13 +17,33 @@ from rate_of_closure.ui.pyqt6.main_window_contracts import (
 from rate_of_closure.units import convert_from_canonical
 
 if TYPE_CHECKING:
-    from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow
+    from PyQt6.QtWidgets import QStatusBar
+
+    from rate_of_closure.ui.pyqt6.club_view import Club3DView
+    from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
+    from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+    from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
+    from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
+    from rate_of_closure.ui.pyqt6.result_row import ResultRow
+    from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
+    from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 
 
 class MainWindowClubMixin:
     """Publish club and scenario changes through their guarded view boundaries."""
 
-    def _format_row(self: RateOfClosureMainWindow, field: str, value: float) -> str:
+    if TYPE_CHECKING:
+        _controls: ControlsPanel
+        _club_view: Club3DView
+        _rows: dict[str, ResultRow]
+        _plots_tab: PlotsTab
+        _derivation_view: DerivationView
+        _simulation_tab: SimulationTab
+        _variation_tab: VariationTab
+        _morris_tab: MorrisScreeningTab
+        statusBar: Callable[[], QStatusBar | None]
+
+    def _format_row(self, field: str, value: float) -> str:
         if not math.isfinite(value):
             return "∞ (not closing)"
         quantity = _QUANTITY_ROWS.get(field)
@@ -32,7 +53,7 @@ class MainWindowClubMixin:
         displayed = convert_from_canonical(quantity, unit, value)
         return f"{displayed:+.2f} {unit}"
 
-    def _on_club_head(self: RateOfClosureMainWindow, spec: ClubSpec) -> None:
+    def _on_club_head(self, spec: ClubSpec) -> None:
         """Build and guard publication of one representative generated head."""
         report = head_cog(spec)
         adopted = self._club_view.try_set_head_mesh(
@@ -56,7 +77,7 @@ class MainWindowClubMixin:
                 f"{spec.loft_deg:.1f}°, {face}"
             )
 
-    def _on_scenario(self: RateOfClosureMainWindow, scenario: ImpactScenario) -> None:
+    def _on_scenario(self, scenario: ImpactScenario) -> None:
         result = solve(scenario)
         metrics = closure_metrics(scenario)
         for field, _ in _RESULT_ROWS:

@@ -54,7 +54,7 @@ def _head_wireframe(scenario: ImpactScenario) -> dict[str, np.ndarray]:
 
 
 def _display(points: np.ndarray) -> np.ndarray:
-    return np.asarray(points)[..., [2, 0, 1]]
+    return cast(np.ndarray, np.asarray(points)[..., [2, 0, 1]])
 
 
 def draw_club_view(view: Any) -> None:

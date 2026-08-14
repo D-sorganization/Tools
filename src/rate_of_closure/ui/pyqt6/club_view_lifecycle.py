@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -15,7 +16,11 @@ from rate_of_closure.club_camera import (
 from rate_of_closure.club_mesh_source import ClubMeshSource
 
 if TYPE_CHECKING:
-    from rate_of_closure.ui.pyqt6.club_view import Club3DView
+    from PyQt6.QtCore import QTimer
+    from PyQt6.QtWidgets import QLabel, QPushButton
+
+    from rate_of_closure.mesh import HeadMesh
+    from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
 
 logger = logging.getLogger(__name__)
 TIMER_INTERVAL_MS = 200
@@ -25,7 +30,25 @@ ANIMATION_CYCLE_MS = 1920
 class ClubViewLifecycleMixin:
     """State adoption methods; mixed into the concrete QWidget view."""
 
-    def _apply_source(self: Club3DView, candidate: ClubMeshSource) -> None:
+    if TYPE_CHECKING:
+        _source: ClubMeshSource
+        _mesh: HeadMesh | None
+        _hosel: np.ndarray | None
+        _cog: np.ndarray | None
+        _reset_mesh_button: QPushButton
+        _error: QLabel
+        _error_kind: str | None
+        _camera: ClubCamera
+        _zoom: float
+        _canvas: LifecycleSafeFigureCanvas
+        _phase: float
+        _speed: float
+        _timer: QTimer
+        _play_button: QPushButton
+        _draw: Callable[[], None]
+        _update_status: Callable[[], None]
+
+    def _apply_source(self, candidate: ClubMeshSource) -> None:
         prior = (self._source, self._mesh, self._hosel, self._cog)
         self._source = candidate
         self._mesh = candidate.mesh
@@ -49,7 +72,7 @@ class ClubViewLifecycleMixin:
         self._error_kind = None
         self._update_status()
 
-    def _set_error(self: Club3DView, text: str, kind: str = "render") -> None:
+    def _set_error(self, text: str, kind: str = "render") -> None:
         self._error_kind = kind
         suffix = (
             "; prior head and camera remain displayed."
@@ -60,18 +83,18 @@ class ClubViewLifecycleMixin:
         self._error.show()
 
     def _apply_camera_action(
-        self: Club3DView,
+        self,
         action: ClubCameraAction,
     ) -> None:
         self._adopt_camera(apply_club_camera_action(self._camera, action))
 
-    def _try_camera_action(self: Club3DView, action: ClubCameraAction) -> None:
+    def _try_camera_action(self, action: ClubCameraAction) -> None:
         try:
             self._apply_camera_action(action)
         except Exception as error:
             self._set_error(f"Clubhead render failed: {str(error)[:512]}", "render")
 
-    def _try_redraw(self: Club3DView) -> None:
+    def _try_redraw(self) -> None:
         try:
             self._draw()
         except Exception as error:
@@ -81,7 +104,7 @@ class ClubViewLifecycleMixin:
                 self._error.hide()
                 self._error_kind = None
 
-    def _adopt_camera(self: Club3DView, candidate: ClubCamera) -> None:
+    def _adopt_camera(self, candidate: ClubCamera) -> None:
         prior = self._camera
         canvas_had_focus = self._canvas.hasFocus()
         self._camera, self._zoom = candidate, candidate.zoom
@@ -101,7 +124,7 @@ class ClubViewLifecycleMixin:
             self._error_kind = None
         self._update_status()
 
-    def _advance(self: Club3DView) -> None:
+    def _advance(self) -> None:
         prior_phase = self._phase
         self._phase = (
             prior_phase + self._speed * TIMER_INTERVAL_MS / ANIMATION_CYCLE_MS

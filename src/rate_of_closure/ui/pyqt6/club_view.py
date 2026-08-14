@@ -254,7 +254,10 @@ class Club3DView(ClubViewLifecycleMixin, QWidget):
         shifted with the mesh; ``None`` for the wireframe hosel."""
         if self._scenario is None or self._mesh is None or self._hosel is None:
             return None
-        return np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario))
+        return cast(
+            np.ndarray,
+            np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario)),
+        )
 
     def cg_marker_point(self) -> np.ndarray | None:
         """Model-frame CG marker location, or ``None`` when hidden."""
@@ -262,13 +265,19 @@ class Club3DView(ClubViewLifecycleMixin, QWidget):
             return None
         if self._mesh is None or self._cog is None:
             return np.zeros(3)  # scenario reference datum, not a mass CG
-        return np.asarray(self._cog + self._head_shift(self._mesh, self._scenario))
+        return cast(
+            np.ndarray,
+            np.asarray(self._cog + self._head_shift(self._mesh, self._scenario)),
+        )
 
     @staticmethod
     def _head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
         """+x shift placing the mesh's face plane at GC-to-face."""
         d = scenario.com_to_face_mm / 1000.0
-        return np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
+        return cast(
+            np.ndarray,
+            np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0]),
+        )
 
     def has_mesh(self) -> bool:
         """Whether an STL mesh is currently rendered."""

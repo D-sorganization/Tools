@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Club Explorer hosted typing closure (#4433)
+
+- `TYPE_CHECKING`-only mixin attribute contracts avoid runtime/MRO stubs while
+  satisfying Python 3.12 / pinned MyPy 1.13, and NumPy/bytes returns are
+  explicitly narrowed at their public boundaries.
+- This is static-only: camera/source authority, physics, rendering, artifacts,
+  and open #4433 limitations are unchanged. SPEC is 1.16.91.
+
 ## 2026-08-13 Club Explorer bounded mesh and camera interaction (#4433)
 
 - One canonical camera powers Arrow/+/-/Home, pointer/wheel, visible status,

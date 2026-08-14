@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Club Explorer hosted typing closure (#4433)
+
+Version 1.16.91 gives the Club Explorer mixins type-check-only attribute
+contracts and narrows NumPy/bytes return boundaries for pinned Python 3.12 /
+MyPy 1.13. Runtime MRO, scientific results, rendering, interaction, evidence,
+and the open #4433 limitations are unchanged.
+
 ## 2026-08-13 Club Explorer bounded mesh and camera interaction (#4433)
 
 Version 1.16.90 adds matched keyboard/pointer camera control and bounded local
