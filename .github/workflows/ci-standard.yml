@@ -649,6 +649,12 @@ jobs:
             # cosmetic reformat enlisted it and blocked PR #4446. Directory entry
             # (not a file list) so new guards are covered the day they land.
             "tests/architecture/"
+            # CI/workflow contracts — same blind spot, same fix. These assert on
+            # .github/workflows/*.yml, so editing a workflow never enlists them;
+            # three had been red against main since quality-gate moved to a
+            # hosted runner and left the self-hosted tool-cache steps behind.
+            # Whole directory, and cheap: 130 tests in ~2 s, no Python provisioning.
+            "tests/ops/"
             # Core rotation math (shared library used across many tools)
             "tests/rotation_converter/test_rotation_core.py"
             # Process calculator constants (always fast, catches unit regressions)
