@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.11                                    |
-| **Spec Version**        | 1.13.11                                    |
+| **Current Version**     | 1.13.14                                    |
+| **Spec Version**        | 1.13.14                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -55,6 +55,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   explicit axis/reference approximation rather than authoritative tensor
   physics. It remains only for compatibility until the measured/CAD density and frame contract in
   `docs/development/rate_of_closure_clubhead_tensor_contract.md` is satisfied.
+- A strict `rate_of_closure.club_assembly_binding/1` import can make complete
+  head and assembled-club mass properties available in engineering sidecars,
+  but only after deterministic selected-spec and embedded-assembly identities,
+  a unique matching head, exact head mass, SI units, explicit frame transform,
+  physical tensors, and qualified source authority all validate. PyQt and React
+  clear the binding after any identity-defining selection edit. The authority
+  declaration is preserved but not independently certified. The simulation
+  adapter consumes bound head mass and permits the full head-CG tensor only
+  when a complete selected-head-to-app attitude is explicitly declared. The
+  manual source declares that pose; current pendulum sources and the browser's
+  scalar-MOI solver keep the tensor unavailable. Full CG and assembled-club
+  properties remain unconsumed, and no-contact runs record `not_used`.
 
 ### 2026-08-10 Shared swing-core typed numerical boundaries
 
@@ -2594,6 +2606,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.14 | feat(rate_of_closure, #4111): bind validated selected-head mass and, only with an explicit complete selected-head attitude, the authoritative head-CG tensor into desktop impact; preserve the browser scalar-MOI boundary, expose matched binding availability/invalidation status, export per-run capability use, mark misses not-used, and never substitute assembled-club mass properties or infer pendulum attitude/full CG. |
+| 2026-08-10 | 1.13.13 | feat(rate_of_closure, #4111): add a strict versioned selected-spec to shared-ClubAssembly binding with cross-language canonical SHA-256 identities, qualified authority, exact units/frames/head-mass validation, physical full-tensor checks, PyQt/React import and invalidation parity, bound sidecar properties, and fail-closed duplicate/oversize/mismatch handling while world attitude remains unavailable. |
+| 2026-08-10 | 1.13.12 | feat(rate_of_closure, #4111): add matched PyQt/React `rate_of_closure.clubhead_engineering/1` export with exact unchanged portable-named companion-STL SHA-256/size, declared head/STL frames and transform, selected head-mass provenance, strict unavailable complete-CG/full-tensor/world-attitude/assembly capabilities, evidence-only partial CG/scalar MOI, atomic native writes, browser cleanup, cross-surface golden/contract/UI tests, and documented shared-assembly binding gap. |
 | 2026-08-10 | 1.13.11 | feat(rate_of_closure, #4111): complete React selected-club STL download parity with a reusable deterministic binary writer, the exact millimetre/head-frame/axis header contract, portable bounded filenames, runtime mesh-field validation, object-URL cleanup, visible success/failure status, and explicit representative-mesh limitations. |
 | 2026-08-10 | 1.13.10 | fix(rate_of_closure, #4111): export unitless STL coordinates in explicitly labeled millimetres, pin canonical frame/extents, harden portable filenames and atomic destination replacement, cover cancel/serialization/write failures, identify the actual mesh-defining ClubSpec subset, and label the current shaft-axis scalar in the CG-centered impact equation as an isotropic-equivalent axis/reference approximation. |
 | 2026-08-10 | 1.13.9 | feat(rate_of_closure, #4111): add deterministic selected-`ClubSpec` binary STL serialization and a tested PyQt export action; document why the current scalar shaft-axis MOI, partial CG, representative envelope, and face-normal-only attitude cannot safely generate the shared impact model's full world-frame inertia tensor. |

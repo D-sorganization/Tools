@@ -31,6 +31,8 @@ import numpy as np
 import numpy.typing as npt
 
 from rate_of_closure._contracts import require
+from rate_of_closure.club.assembly_binding import SELECTED_HEAD_FRAME_ID
+from rate_of_closure.club.simulation_adapter import APP_FRAME_ID, WorldFromHeadAttitude
 from rate_of_closure.model import ImpactScenario, solve
 from shared.python.swing_sim import reference
 from shared.python.swing_sim.run_config import DoublePendulumRunConfig
@@ -208,6 +210,15 @@ class ManualSwingSource:
         pose[:3, 3] = self._velocity * dt
         twist = np.concatenate([self._omega, self._velocity])
         return SwingSample(t=t, pose=pose, twist=twist)
+
+    def world_from_selected_head(self, t: float) -> WorldFromHeadAttitude:
+        """Declare the manual source's exact selected-head attitude at ``t``."""
+        return WorldFromHeadAttitude(
+            from_frame_id=SELECTED_HEAD_FRAME_ID,
+            to_frame_id=APP_FRAME_ID,
+            rotation=self.sample(t).pose[:3, :3],
+            provenance="ManualSwingSource.world-from-selected-head/1",
+        )
 
 
 # ── Triple pendulum ─────────────────────────────────────────────────

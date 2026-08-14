@@ -10,17 +10,20 @@ import { useEffect, useState } from "react";
 
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
+import { CLUB_LIBRARY, getClub, type ClubSpec } from "../model/club";
 import {
-  CLUB_LIBRARY,
-  getClub,
-  type ClubSpec,
-} from "../model/club";
+  MAX_BINDING_BYTES,
+  parseClubAssemblyBinding,
+  type ClubAssemblyBinding,
+} from "../model/clubAssemblyBinding";
 import {
   generatedHeadFor,
   type GeneratedHead,
 } from "../model/clubHeadGeneration";
+import { downloadClubheadEngineeringSidecar } from "../model/clubEngineeringSidecar";
 import { downloadClubheadStl } from "../model/clubStlExport";
 import { FIELD_GUIDANCE } from "../model/units";
+import { readBrowserFileText } from "../model/browserFileText";
 
 const INPUT_CLASS =
   "no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 " +
@@ -31,6 +34,7 @@ export function ClubPanel({
   onDriveScenario,
   onGenerate,
   onSpecChange,
+  onBindingChange,
 }: {
   /** Scenario plumbing: adopt the selected club's GC-to-face and lie. */
   onDriveScenario: (comToFaceMm: number, lieAngleDeg: number) => void;
@@ -38,6 +42,8 @@ export function ClubPanel({
   onGenerate: (head: GeneratedHead) => void;
   /** Track the effective club spec (overrides applied) as it changes. */
   onSpecChange?: (spec: ClubSpec) => void;
+  /** Publish only a binding validated against the exact effective spec. */
+  onBindingChange?: (binding: ClubAssemblyBinding | undefined) => void;
 }) {
   const [clubName, setClubName] = useState<string>(CLUB_LIBRARY[1].name);
   const [loftDeg, setLoftDeg] = useState<number>(CLUB_LIBRARY[1].loftDeg);
@@ -45,6 +51,7 @@ export function ClubPanel({
   const [bulgeMm, setBulgeMm] = useState<number>(300);
   const [rollMm, setRollMm] = useState<number>(280);
   const [exportStatus, setExportStatus] = useState<string>("");
+  const [assemblyBinding, setAssemblyBinding] = useState<ClubAssemblyBinding>();
 
   const effectiveSpec = (): ClubSpec => ({
     ...getClub(clubName),
@@ -54,6 +61,13 @@ export function ClubPanel({
   });
 
   useEffect(() => {
+    if (assemblyBinding) {
+      setAssemblyBinding(undefined);
+      onBindingChange?.(undefined);
+      setExportStatus(
+        "Assembly binding cleared — selected club specification changed.",
+      );
+    }
     onSpecChange?.(effectiveSpec());
     // eslint-disable-next-line react-hooks/exhaustive-deps -- state-derived
   }, [clubName, loftDeg, curvedFace, bulgeMm, rollMm]);
@@ -63,7 +77,8 @@ export function ClubPanel({
     setClubName(name);
     setLoftDeg(club.loftDeg);
     setCurvedFace(club.faceBulgeRadiusM !== null);
-    if (club.faceBulgeRadiusM !== null) setBulgeMm(club.faceBulgeRadiusM * 1000);
+    if (club.faceBulgeRadiusM !== null)
+      setBulgeMm(club.faceBulgeRadiusM * 1000);
     if (club.faceRollRadiusM !== null) setRollMm(club.faceRollRadiusM * 1000);
     onDriveScenario(club.cgDepthM * 1000, club.lieDeg);
   };
@@ -85,12 +100,65 @@ export function ClubPanel({
     }
   };
 
+  const onDownloadEngineering = async () => {
+    const spec = effectiveSpec();
+    try {
+      const filename = await downloadClubheadEngineeringSidecar(
+        spec,
+        undefined,
+        assemblyBinding,
+      );
+      setExportStatus(
+        `Engineering JSON downloaded: ${spec.name} — ${filename}`,
+      );
+    } catch (error) {
+      const detail =
+        error instanceof Error ? error.message : "unknown browser error";
+      setExportStatus(`Engineering JSON download failed: ${detail}`);
+    }
+  };
+
+  const onImportAssemblyBinding = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      if (file.size > MAX_BINDING_BYTES) {
+        throw new Error("club assembly binding exceeds the 4 MiB limit");
+      }
+      const binding = await parseClubAssemblyBinding(
+        effectiveSpec(),
+        await readBrowserFileText(file),
+      );
+      setAssemblyBinding(binding);
+      onBindingChange?.(binding);
+      setExportStatus(
+        `Assembly binding loaded: ${binding.assemblyIdentity.assemblyId} — ` +
+          `${binding.sourceAuthority.kind}; ${binding.sourceAuthority.documentId} ` +
+          `rev ${binding.sourceAuthority.revision}`,
+      );
+    } catch (error) {
+      setAssemblyBinding(undefined);
+      onBindingChange?.(undefined);
+      const detail =
+        error instanceof Error ? error.message : "unknown import error";
+      setExportStatus(`Assembly binding import failed: ${detail}`);
+    } finally {
+      input.value = "";
+    }
+  };
+
   return (
     <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
         Club
       </h2>
-      <label title={FIELD_GUIDANCE.clubSelection} className="mb-3 block text-sm">
+      <label
+        title={FIELD_GUIDANCE.clubSelection}
+        className="mb-3 block text-sm"
+      >
         <span className="mb-1 block text-slate-300">Club</span>
         <select
           value={clubName}
@@ -107,7 +175,10 @@ export function ClubPanel({
       </label>
       <label title={FIELD_GUIDANCE.clubLoftDeg} className="mb-3 block text-sm">
         <span className="mb-1 flex justify-between text-slate-300">
-          <span className="flex items-center">Loft<FieldInfo label="Loft" guidance={FIELD_GUIDANCE.clubLoftDeg} /></span>
+          <span className="flex items-center">
+            Loft
+            <FieldInfo label="Loft" guidance={FIELD_GUIDANCE.clubLoftDeg} />
+          </span>
           <span className="text-slate-500">deg</span>
         </span>
         <DecimalInput
@@ -145,7 +216,10 @@ export function ClubPanel({
           className="mb-3 block text-sm"
         >
           <span className="mb-1 flex justify-between text-slate-300">
-            <span className="flex items-center">{label}<FieldInfo label={label} guidance={FIELD_GUIDANCE[guidanceKey]} /></span>
+            <span className="flex items-center">
+              {label}
+              <FieldInfo label={label} guidance={FIELD_GUIDANCE[guidanceKey]} />
+            </span>
             <span className="text-slate-500">mm</span>
           </span>
           <DecimalInput
@@ -176,6 +250,32 @@ export function ClubPanel({
         className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1.5 text-sm font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
       >
         Download Selected Clubhead STL
+      </button>
+      <label
+        title="Import a strict binding for this exact selected club. Qualified source authority, selected-spec and assembly identities, SI units, frames, and complete tensors are validated before use."
+        className="mt-2 block w-full cursor-pointer rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1.5 text-center text-sm font-medium transition-colors hover:border-sky-400 focus-within:outline focus-within:outline-2 focus-within:outline-sky-400"
+      >
+        Import Assembly Binding JSON
+        <input
+          type="file"
+          accept=".json,.club-assembly.json,application/json"
+          aria-label="Import assembly binding JSON"
+          onChange={onImportAssemblyBinding}
+          className="sr-only"
+        />
+      </label>
+      <p className="mt-1 text-xs text-slate-500">
+        {assemblyBinding
+          ? `Bound: ${assemblyBinding.assemblyIdentity.assemblyId}`
+          : "No binding — complete CG and tensors remain unavailable."}
+      </p>
+      <button
+        type="button"
+        onClick={onDownloadEngineering}
+        title="Download a versioned engineering sidecar containing the exact companion-STL SHA-256, frame and transform declarations, and source provenance. A validated assembly binding makes complete CG and inertia records available; world attitude remains unavailable."
+        className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1.5 text-sm font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+      >
+        Download Engineering Sidecar JSON
       </button>
       {exportStatus ? (
         <p role="status" className="mt-2 text-xs text-slate-400">

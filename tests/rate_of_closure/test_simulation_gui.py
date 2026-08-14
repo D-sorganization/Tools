@@ -9,11 +9,14 @@ guidance on every new input, and export-button gating.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
+from rate_of_closure.club import get_club, parse_club_assembly_binding  # noqa: E402
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.simulation import SimulationRun  # noqa: E402
@@ -62,6 +65,55 @@ class TestSimulationTab:
 
     def test_default_simulation_club_is_representative_driver(self, tab) -> None:  # type: ignore[no-untyped-def]
         assert tab._club_combo.currentText() == "Driver 10.5°"
+
+    def test_binding_status_tracks_source_and_selection_without_inference(
+        self, tab
+    ) -> None:  # type: ignore[no-untyped-def]
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "club_assembly_binding_driver_10_5.json"
+        )
+        binding = parse_club_assembly_binding(
+            get_club("Driver 10.5°"), fixture.read_bytes()
+        )
+
+        tab.set_assembly_binding(binding)
+        assert "full head-CG tensor will be consumed" in (
+            tab._assembly_binding_status.text()
+        )
+        tab._source_combo.setCurrentIndex(1)
+        assert "does not declare selected-head attitude" in (
+            tab._assembly_binding_status.text()
+        )
+        tab._club_combo.setCurrentText("7-Iron")
+        assert tab._assembly_binding is None
+        assert "selection changed" in tab._assembly_binding_status.text()
+
+    def test_simulation_club_change_invalidates_binding_in_owning_club_panel(
+        self, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        window = RateOfClosureMainWindow()
+        qtbot.addWidget(window)
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "club_assembly_binding_driver_10_5.json"
+        )
+        binding = parse_club_assembly_binding(
+            get_club("Driver 10.5°"), fixture.read_bytes()
+        )
+        window._controls._assembly_binding = binding
+        window._controls._binding_status.setText("Bound")
+        window._controls.assemblyBindingChanged.emit(binding)
+
+        window._simulation_tab._club_combo.setCurrentText("7-Iron")
+
+        assert window._simulation_tab._assembly_binding is None
+        assert window._controls._assembly_binding is None
+        assert "simulation club selection changed" in (
+            window._controls._binding_status.text()
+        )
 
     def test_run_populates_launch_rows(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         assert isinstance(ran_tab.last_run(), SimulationRun)
