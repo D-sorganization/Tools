@@ -92,6 +92,7 @@ def build_simulation_ensemble_request(
         base_config,
         samples,
         execution_metadata=make_execution_metadata(plan),
+        sample_provenance="plan_rng",
     )
 
 
@@ -149,6 +150,7 @@ def build_simulation_ensemble_request_from_samples(
     sampled_inputs: np.ndarray,
     *,
     execution_metadata: VariationExecutionMetadata | None = None,
+    sample_provenance: str = "explicit_design",
 ) -> SimulationEnsembleRequest:
     """Build a request from an explicit finite sample matrix.
 
@@ -160,6 +162,10 @@ def build_simulation_ensemble_request_from_samples(
     carries an RNG replay identity, and an explicit design matrix was not drawn
     from that stream, so claiming it would assert a replay that cannot
     reproduce these rows. Only the sampling seam supplies it.
+
+    ``sample_provenance`` likewise defaults to ``explicit_design``, which tells
+    the request not to require the rows to reproduce from ``plan.seed``. The
+    Monte Carlo seam above passes ``plan_rng`` so it keeps that guarantee.
     """
     _validate_request_context(plan, base_config)
     samples = _normalize_explicit_samples(sampled_inputs, plan)
@@ -168,7 +174,11 @@ def build_simulation_ensemble_request_from_samples(
         _apply_row(base_config, plan, row) for row in np.asarray(samples, dtype=float)
     )
     return SimulationEnsembleRequest(
-        plan, samples, configs, execution_metadata=execution_metadata
+        plan,
+        samples,
+        configs,
+        execution_metadata=execution_metadata,
+        sample_provenance=sample_provenance,
     )
 
 

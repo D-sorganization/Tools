@@ -112,6 +112,21 @@ class SimulationTrialOutcome:
         return self.values[name]
 
 
+SAMPLE_PROVENANCES: frozenset[str] = frozenset({"plan_rng", "explicit_design"})
+"""How a request's ``sampled_inputs`` came to be.
+
+``plan_rng`` (the default) means the rows are the plan's own pseudorandom draws
+and must reproduce exactly from ``plan.seed``; the request enforces that.
+
+``explicit_design`` means the caller supplied a deterministic experimental
+design whose rows *are* the scientific authority -- planted baseline/perturbed
+pairs, for example. Such rows are not drawn from the plan's RNG stream, so
+requiring them to match it would reject the very designs the seam exists for.
+Every other integrity check still applies, including the per-row config
+binding, which is what actually guarantees each row was executed as written.
+"""
+
+
 @dataclass(frozen=True)
 class SimulationEnsembleRequest:
     """Complete per-trial simulation configs aligned to sampled inputs."""
@@ -120,6 +135,7 @@ class SimulationEnsembleRequest:
     sampled_inputs: np.ndarray = field(repr=False)
     configs: tuple[SimulationConfig, ...]
     execution_metadata: VariationExecutionMetadata | None = None
+    sample_provenance: str = "plan_rng"
     metadata_warning: str | None = field(init=False, default=None)
 
     def __post_init__(self) -> None:
@@ -144,13 +160,22 @@ class SimulationEnsembleRequest:
             samples.shape,
         )
         require(bool(np.all(np.isfinite(samples))), "sampled_inputs must be finite")
-        expected_samples = np.asarray(sample_inputs(self.plan), dtype=float)
-        normalized_samples = np.where(samples == 0.0, 0.0, samples)
-        normalized_expected = np.where(expected_samples == 0.0, 0.0, expected_samples)
         require(
-            np.array_equal(normalized_samples, normalized_expected),
-            "sampled_inputs must exactly match the plan-derived RNG stream and order",
+            self.sample_provenance in SAMPLE_PROVENANCES,
+            "sample_provenance is unsupported",
+            self.sample_provenance,
         )
+        normalized_samples = np.where(samples == 0.0, 0.0, samples)
+        if self.sample_provenance == "plan_rng":
+            expected_samples = np.asarray(sample_inputs(self.plan), dtype=float)
+            normalized_expected = np.where(
+                expected_samples == 0.0, 0.0, expected_samples
+            )
+            require(
+                np.array_equal(normalized_samples, normalized_expected),
+                "sampled_inputs must exactly match the plan-derived RNG stream "
+                "and order",
+            )
         samples = normalized_samples
         _require_config_sample_binding(self.plan, normalized_samples, configs)
         samples.setflags(write=False)
