@@ -80,7 +80,9 @@ def _plan(
     )
 
 
-def _execution(*, transition: bool = True) -> tuple[
+def _execution(
+    *, transition: bool = True
+) -> tuple[
     GroundSimulationRequest,
     RepeatedBounceResult,
     GroundRegionalMaterialPlanRequest,

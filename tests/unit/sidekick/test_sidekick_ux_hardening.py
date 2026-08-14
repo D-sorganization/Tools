@@ -47,9 +47,7 @@ class TestF1PtyNewline:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
 
         written: list[bytes] = []
 
@@ -115,9 +113,7 @@ class TestF3RawOutputAppend:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         widget = SidekickOsTerminalWidget(
             project_root=tmp_path,
             shells=[
@@ -173,9 +169,9 @@ class TestF5QSettingsConsolidation:
         except ImportError:
             pytest.skip("sidekick unavailable")
 
-        assert hasattr(
-            UnifiedToolsSidebar, "_persist_visible_tabs"
-        ), "_persist_visible_tabs helper missing (F5 regression)"
+        assert hasattr(UnifiedToolsSidebar, "_persist_visible_tabs"), (
+            "_persist_visible_tabs helper missing (F5 regression)"
+        )
 
     def test_qs_constants_are_defined(self) -> None:
         """Module-level QSettings constants must be present."""
@@ -186,9 +182,9 @@ class TestF5QSettingsConsolidation:
 
         assert hasattr(sb, "_QS_ORG"), "_QS_ORG constant missing"
         assert hasattr(sb, "_QS_APP"), "_QS_APP constant missing"
-        assert hasattr(
-            sb, "_QS_VISIBLE_TABS_KEY"
-        ), "_QS_VISIBLE_TABS_KEY constant missing"  # noqa: E501
+        assert hasattr(sb, "_QS_VISIBLE_TABS_KEY"), (
+            "_QS_VISIBLE_TABS_KEY constant missing"
+        )  # noqa: E501
 
     def test_persist_uses_explicit_org_app(  # noqa: ANN201
         self, tmp_path: Path, qtbot: Any
@@ -202,9 +198,7 @@ class TestF5QSettingsConsolidation:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         written: dict[str, Any] = {}
 
         class _FakeQSettings:
@@ -216,9 +210,7 @@ class TestF5QSettingsConsolidation:
                 written["key"] = key
                 written["value"] = value
 
-            def value(
-                self, key: str, default: Any = None, **kwargs: Any
-            ) -> Any:  # noqa: N802
+            def value(self, key: str, default: Any = None, **kwargs: Any) -> Any:  # noqa: N802
                 return default
 
             def sync(self) -> None:  # noqa: N802
@@ -273,9 +265,7 @@ class TestF7HelpDialogSingleton:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -331,15 +321,15 @@ class TestF10QuickAccessPersistence:
         except ImportError:
             pytest.skip("sidekick unavailable")
 
-        assert hasattr(
-            ProjectFileExplorer, "_restore_quick_access"
-        ), "_restore_quick_access missing (F10 regression)"
-        assert hasattr(
-            ProjectFileExplorer, "_save_quick_access"
-        ), "_save_quick_access missing (F10 regression)"
-        assert hasattr(
-            ProjectFileExplorer, "_quick_access_settings_key"
-        ), "_quick_access_settings_key missing (F10 regression)"
+        assert hasattr(ProjectFileExplorer, "_restore_quick_access"), (
+            "_restore_quick_access missing (F10 regression)"
+        )
+        assert hasattr(ProjectFileExplorer, "_save_quick_access"), (
+            "_save_quick_access missing (F10 regression)"
+        )
+        assert hasattr(ProjectFileExplorer, "_quick_access_settings_key"), (
+            "_quick_access_settings_key missing (F10 regression)"
+        )
 
     def test_add_to_quick_access_rejects_duplicates(  # noqa: ANN201
         self, tmp_path: Path, qtbot: Any
@@ -353,9 +343,7 @@ class TestF10QuickAccessPersistence:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         explorer = ProjectFileExplorer(project_root=tmp_path, parent=None)
         qtbot.addWidget(explorer)
 
@@ -476,9 +464,9 @@ class TestF8AtomicTabSwap:
         except ImportError:
             pytest.skip("sidekick unavailable")
 
-        assert hasattr(
-            UnifiedToolsSidebar, "replace_tab_widget"
-        ), "replace_tab_widget public method missing (F8 regression)"
+        assert hasattr(UnifiedToolsSidebar, "replace_tab_widget"), (
+            "replace_tab_widget public method missing (F8 regression)"
+        )
         assert callable(UnifiedToolsSidebar.replace_tab_widget)
 
     def test_replace_tab_widget_updates_map(self, tmp_path: Path, qtbot: Any) -> None:
@@ -491,9 +479,7 @@ class TestF8AtomicTabSwap:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -507,9 +493,7 @@ class TestF8AtomicTabSwap:
         result = sidebar.replace_tab_widget(old_widget, new_widget)
 
         assert result is True, "replace_tab_widget returned False unexpectedly"
-        assert (
-            sidebar._tab_widgets.get("swap_test") is new_widget
-        ), (  # noqa: SLF001
+        assert sidebar._tab_widgets.get("swap_test") is new_widget, (  # noqa: SLF001
             "_tab_widgets still points to old_widget after swap (F8 regression)"
         )
 
@@ -525,9 +509,7 @@ class TestF8AtomicTabSwap:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -562,12 +544,12 @@ class TestF9RegistryUpdateFrom:
         target.update_from(source)
 
         notified_names = {name for _, name in events}
-        assert (
-            "x" in notified_names
-        ), "Subscriber was not notified for 'x' (F9 regression)"
-        assert (
-            "y" in notified_names
-        ), "Subscriber was not notified for 'y' (F9 regression)"
+        assert "x" in notified_names, (
+            "Subscriber was not notified for 'x' (F9 regression)"
+        )
+        assert "y" in notified_names, (
+            "Subscriber was not notified for 'y' (F9 regression)"
+        )
 
     def test_update_from_validates_names(self) -> None:
         """update_from must reject invalid variable names from the source."""
@@ -601,9 +583,9 @@ class TestF9RegistryUpdateFrom:
 
         target.update_from(source, replace=True)
 
-        assert target.list_names() == [
-            "new"
-        ], "replace=True did not clear existing variables (F9 regression)"
+        assert target.list_names() == ["new"], (
+            "replace=True did not clear existing variables (F9 regression)"
+        )
 
     def test_repr_only_entries_are_merged_and_notified(self) -> None:
         """Repr-only entries from a loaded registry must be merged + notify fired."""
@@ -629,12 +611,12 @@ class TestF9RegistryUpdateFrom:
 
         target.update_from(source)
 
-        assert (
-            "arr" in target.list_names()
-        ), "repr-only variable not merged by update_from (F9 regression)"
-        assert (
-            "arr" in events
-        ), "Subscriber not notified for repr-only variable (F9 regression)"
+        assert "arr" in target.list_names(), (
+            "repr-only variable not merged by update_from (F9 regression)"
+        )
+        assert "arr" in events, (
+            "Subscriber not notified for repr-only variable (F9 regression)"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -658,9 +640,7 @@ class TestF2TerminalControls:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
 
         written: list[bytes] = []
 
@@ -704,9 +684,9 @@ class TestF2TerminalControls:
         widget, written = self._make_widget_with_fake_backend(tmp_path, qtbot)
         widget._send_interrupt()  # noqa: SLF001
         assert written, "_send_interrupt did not write anything to backend"
-        assert (
-            written[0] == b"\x03"
-        ), f"Expected b'\\x03' but got {written[0]!r} (F2 regression)"
+        assert written[0] == b"\x03", (
+            f"Expected b'\\x03' but got {written[0]!r} (F2 regression)"
+        )
 
     def test_history_records_submitted_commands(
         self, tmp_path: Path, qtbot: Any
@@ -718,9 +698,7 @@ class TestF2TerminalControls:
         widget._input.setText("pwd")  # noqa: SLF001
         widget._on_submit()  # noqa: SLF001
 
-        assert (
-            widget._history[0] == "pwd"
-        ), (  # noqa: SLF001
+        assert widget._history[0] == "pwd", (  # noqa: SLF001
             "Most recent command must be first in history (F2 regression)"
         )
         assert widget._history[1] == "ls -la"  # noqa: SLF001
@@ -733,9 +711,9 @@ class TestF2TerminalControls:
         widget._input.setText("echo hi")  # noqa: SLF001
         widget._on_submit()  # noqa: SLF001
 
-        assert (
-            widget._history.count("echo hi") == 1
-        ), "Duplicate command was added to history (F2 regression)"  # noqa: SLF001
+        assert widget._history.count("echo hi") == 1, (
+            "Duplicate command was added to history (F2 regression)"
+        )  # noqa: SLF001
 
     def test_navigate_history_older(self, tmp_path: Path, qtbot: Any) -> None:
         """Up-arrow (direction=1) must populate the input with older commands."""
@@ -747,17 +725,15 @@ class TestF2TerminalControls:
 
         # Navigate one step back (most recent = "second")
         widget._navigate_history(direction=1)  # noqa: SLF001
-        assert (
-            widget._input.text() == "second"
-        ), (  # noqa: SLF001
+        assert widget._input.text() == "second", (  # noqa: SLF001
             "First up-arrow should show most recent command (F2 regression)"
         )
 
         # Navigate one more step back (older = "first")
         widget._navigate_history(direction=1)  # noqa: SLF001
-        assert (
-            widget._input.text() == "first"
-        ), "Second up-arrow should show older command (F2 regression)"  # noqa: SLF001
+        assert widget._input.text() == "first", (
+            "Second up-arrow should show older command (F2 regression)"
+        )  # noqa: SLF001
 
     def test_navigate_history_forward_restores_scratch(
         self, tmp_path: Path, qtbot: Any
@@ -771,9 +747,7 @@ class TestF2TerminalControls:
         widget._navigate_history(direction=1)  # noqa: SLF001  # go back
         widget._navigate_history(direction=-1)  # noqa: SLF001  # come forward
 
-        assert (
-            widget._input.text() == "new draft"
-        ), (  # noqa: SLF001
+        assert widget._input.text() == "new draft", (  # noqa: SLF001
             "Navigating forward past newest should restore live draft (F2 regression)"
         )
 
@@ -800,9 +774,7 @@ class TestF6AsyncRepl:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication(
-            []
-        )  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         reg = WorkspaceRegistry()
         widget = runtime_tabs.PythonReplWidget(
             registry=reg,
@@ -815,23 +787,23 @@ class TestF6AsyncRepl:
     def test_cancel_button_present_and_hidden(self, qtbot: Any) -> None:
         """Widget must expose _cancel_button, initially hidden and disabled."""
         widget = self._make_repl(qtbot)
-        assert hasattr(
-            widget, "_cancel_button"
-        ), "_cancel_button missing (F6 regression)"
-        assert (
-            not widget._cancel_button.isVisible()
-        ), "_cancel_button should be hidden at rest (F6 regression)"  # noqa: SLF001
-        assert (
-            not widget._cancel_button.isEnabled()
-        ), "_cancel_button should be disabled at rest (F6 regression)"  # noqa: SLF001
+        assert hasattr(widget, "_cancel_button"), (
+            "_cancel_button missing (F6 regression)"
+        )
+        assert not widget._cancel_button.isVisible(), (
+            "_cancel_button should be hidden at rest (F6 regression)"
+        )  # noqa: SLF001
+        assert not widget._cancel_button.isEnabled(), (
+            "_cancel_button should be disabled at rest (F6 regression)"
+        )  # noqa: SLF001
 
     def test_status_label_present_and_hidden(self, qtbot: Any) -> None:
         """Widget must expose _status_label, initially hidden."""
         widget = self._make_repl(qtbot)
         assert hasattr(widget, "_status_label"), "_status_label missing (F6 regression)"
-        assert (
-            not widget._status_label.isVisible()
-        ), "_status_label should be hidden at rest (F6 regression)"  # noqa: SLF001
+        assert not widget._status_label.isVisible(), (
+            "_status_label should be hidden at rest (F6 regression)"
+        )  # noqa: SLF001
 
     def test_execute_completes_and_shows_output(self, qtbot: Any) -> None:
         """execute() must complete and write output to the output pane."""
@@ -851,27 +823,23 @@ class TestF6AsyncRepl:
         widget = self._make_repl(qtbot)
         widget._set_running(True)  # noqa: SLF001
 
-        assert (
-            not widget._run_button.isEnabled()
-        ), "Run button must be disabled while running (F6 regression)"  # noqa: SLF001
+        assert not widget._run_button.isEnabled(), (
+            "Run button must be disabled while running (F6 regression)"
+        )  # noqa: SLF001
         # In headless tests the top-level window is never shown, so isVisible()
         # returns False even after setVisible(True).  isHidden() checks the
         # widget's own explicit visibility bit, which is reliable here.
-        assert (
-            not widget._cancel_button.isHidden()
-        ), (  # noqa: SLF001
+        assert not widget._cancel_button.isHidden(), (  # noqa: SLF001
             "Cancel button must not be hidden while running (F6 regression)"
         )
-        assert (
-            not widget._status_label.isHidden()
-        ), (  # noqa: SLF001
+        assert not widget._status_label.isHidden(), (  # noqa: SLF001
             "Status label must not be hidden while running (F6 regression)"
         )
 
         widget._set_running(False)  # noqa: SLF001
-        assert (
-            widget._run_button.isEnabled()
-        ), "Run button must re-enable after stop (F6 regression)"  # noqa: SLF001
-        assert (
-            widget._cancel_button.isHidden()
-        ), "Cancel button must be hidden after stop (F6 regression)"  # noqa: SLF001
+        assert widget._run_button.isEnabled(), (
+            "Run button must re-enable after stop (F6 regression)"
+        )  # noqa: SLF001
+        assert widget._cancel_button.isHidden(), (
+            "Cancel button must be hidden after stop (F6 regression)"
+        )  # noqa: SLF001
