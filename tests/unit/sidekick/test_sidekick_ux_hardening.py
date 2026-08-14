@@ -47,7 +47,7 @@ class TestF1PtyNewline:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
 
         written: list[bytes] = []
 
@@ -113,7 +113,7 @@ class TestF3RawOutputAppend:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         widget = SidekickOsTerminalWidget(
             project_root=tmp_path,
             shells=[
@@ -182,9 +182,9 @@ class TestF5QSettingsConsolidation:
 
         assert hasattr(sb, "_QS_ORG"), "_QS_ORG constant missing"
         assert hasattr(sb, "_QS_APP"), "_QS_APP constant missing"
-        assert hasattr(sb, "_QS_VISIBLE_TABS_KEY"), (  # noqa: E501
+        assert hasattr(sb, "_QS_VISIBLE_TABS_KEY"), (
             "_QS_VISIBLE_TABS_KEY constant missing"
-        )
+        )  # noqa: E501
 
     def test_persist_uses_explicit_org_app(  # noqa: ANN201
         self, tmp_path: Path, qtbot: Any
@@ -198,7 +198,7 @@ class TestF5QSettingsConsolidation:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         written: dict[str, Any] = {}
 
         class _FakeQSettings:
@@ -265,7 +265,7 @@ class TestF7HelpDialogSingleton:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -343,7 +343,7 @@ class TestF10QuickAccessPersistence:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         explorer = ProjectFileExplorer(project_root=tmp_path, parent=None)
         qtbot.addWidget(explorer)
 
@@ -479,7 +479,7 @@ class TestF8AtomicTabSwap:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -509,7 +509,7 @@ class TestF8AtomicTabSwap:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         sidebar = UnifiedToolsSidebar(project_root=tmp_path)
         qtbot.addWidget(sidebar)
 
@@ -640,7 +640,7 @@ class TestF2TerminalControls:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
 
         written: list[bytes] = []
 
@@ -711,9 +711,9 @@ class TestF2TerminalControls:
         widget._input.setText("echo hi")  # noqa: SLF001
         widget._on_submit()  # noqa: SLF001
 
-        assert widget._history.count("echo hi") == 1, (  # noqa: SLF001
+        assert widget._history.count("echo hi") == 1, (
             "Duplicate command was added to history (F2 regression)"
-        )
+        )  # noqa: SLF001
 
     def test_navigate_history_older(self, tmp_path: Path, qtbot: Any) -> None:
         """Up-arrow (direction=1) must populate the input with older commands."""
@@ -731,9 +731,9 @@ class TestF2TerminalControls:
 
         # Navigate one more step back (older = "first")
         widget._navigate_history(direction=1)  # noqa: SLF001
-        assert widget._input.text() == "first", (  # noqa: SLF001
+        assert widget._input.text() == "first", (
             "Second up-arrow should show older command (F2 regression)"
-        )
+        )  # noqa: SLF001
 
     def test_navigate_history_forward_restores_scratch(
         self, tmp_path: Path, qtbot: Any
@@ -774,7 +774,7 @@ class TestF6AsyncRepl:
         except ImportError:
             pytest.skip("Qt/sidekick unavailable")
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+        _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
         reg = WorkspaceRegistry()
         widget = runtime_tabs.PythonReplWidget(
             registry=reg,
@@ -790,20 +790,20 @@ class TestF6AsyncRepl:
         assert hasattr(widget, "_cancel_button"), (
             "_cancel_button missing (F6 regression)"
         )
-        assert not widget._cancel_button.isVisible(), (  # noqa: SLF001
+        assert not widget._cancel_button.isVisible(), (
             "_cancel_button should be hidden at rest (F6 regression)"
-        )
-        assert not widget._cancel_button.isEnabled(), (  # noqa: SLF001
+        )  # noqa: SLF001
+        assert not widget._cancel_button.isEnabled(), (
             "_cancel_button should be disabled at rest (F6 regression)"
-        )
+        )  # noqa: SLF001
 
     def test_status_label_present_and_hidden(self, qtbot: Any) -> None:
         """Widget must expose _status_label, initially hidden."""
         widget = self._make_repl(qtbot)
         assert hasattr(widget, "_status_label"), "_status_label missing (F6 regression)"
-        assert not widget._status_label.isVisible(), (  # noqa: SLF001
+        assert not widget._status_label.isVisible(), (
             "_status_label should be hidden at rest (F6 regression)"
-        )
+        )  # noqa: SLF001
 
     def test_execute_completes_and_shows_output(self, qtbot: Any) -> None:
         """execute() must complete and write output to the output pane."""
@@ -823,9 +823,9 @@ class TestF6AsyncRepl:
         widget = self._make_repl(qtbot)
         widget._set_running(True)  # noqa: SLF001
 
-        assert not widget._run_button.isEnabled(), (  # noqa: SLF001
+        assert not widget._run_button.isEnabled(), (
             "Run button must be disabled while running (F6 regression)"
-        )
+        )  # noqa: SLF001
         # In headless tests the top-level window is never shown, so isVisible()
         # returns False even after setVisible(True).  isHidden() checks the
         # widget's own explicit visibility bit, which is reliable here.
@@ -837,9 +837,9 @@ class TestF6AsyncRepl:
         )
 
         widget._set_running(False)  # noqa: SLF001
-        assert widget._run_button.isEnabled(), (  # noqa: SLF001
+        assert widget._run_button.isEnabled(), (
             "Run button must re-enable after stop (F6 regression)"
-        )
-        assert widget._cancel_button.isHidden(), (  # noqa: SLF001
+        )  # noqa: SLF001
+        assert widget._cancel_button.isHidden(), (
             "Cancel button must be hidden after stop (F6 regression)"
-        )
+        )  # noqa: SLF001
