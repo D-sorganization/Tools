@@ -22,11 +22,15 @@ concurrency:
 jobs:
   file-size-budget:
     runs-on: d-sorg-fleet
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
+          # The PR merge commit and both parents are sufficient for the
+          # changed-file diff below. Full history repeatedly exhausts the
+          # job timeout while unshallowing persistent self-hosted clones
+          # (same contract as the CI Standard quality-gate checkout).
+          fetch-depth: 2
 
       - name: Clean up broken editable pth files
         run: |
@@ -61,10 +65,23 @@ jobs:
           echo "base_ref=$base_ref" >> "$GITHUB_OUTPUT"
           echo "Using base ref: $base_ref"
 
-      - name: Fetch base ref
+      - name: Fetch base ref (bounded)
         shell: bash
         run: |
-          git fetch origin "${{ steps.base-ref.outputs.base_ref }}"
+          # Keep the base fetch bounded so persistent self-hosted clones do
+          # not transfer full history; deepen only until a merge base exists.
+          base_ref="${{ steps.base-ref.outputs.base_ref }}"
+          git fetch --depth=200 origin "$base_ref"
+          for deepen in 1000 4000; do
+            if git merge-base "origin/$base_ref" HEAD >/dev/null 2>&1; then
+              break
+            fi
+            echo "No merge base at current depth; deepening by $deepen"
+            git fetch --deepen="$deepen" origin "$base_ref"
+          done
+          if ! git merge-base "origin/$base_ref" HEAD >/dev/null 2>&1; then
+            echo "::warning::No merge base with origin/$base_ref after bounded deepening; the budget check will scan all files against the baseline."
+          fi
 
       - name: Enforce 500 LOC budget on changed files
         shell: bash
