@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -89,6 +90,20 @@ class TorqueProfileLibraryAdapter:
     def canonical_library(self) -> CanonicalTorqueProfileLibrary:
         """Return the immutable library for a simulation request."""
         return self._library
+
+    def replace_library(
+        self,
+        profiles: Sequence[PrescribedTorqueProfile],
+        active_profile_id: str | None,
+    ) -> None:
+        """Atomically replace the validated library and active stable ID."""
+        candidate = CanonicalTorqueProfileLibrary(tuple(profiles))
+        if candidate.profiles and active_profile_id is None:
+            raise ValueError("a non-empty torque library requires an active profile")
+        if active_profile_id is not None:
+            candidate.get(active_profile_id)
+        self._library = candidate
+        self._active_profile_id = active_profile_id
 
     def set_active(self, profile_id: str) -> PrescribedTorqueProfile:
         """Select an existing profile."""

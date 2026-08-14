@@ -32,6 +32,7 @@ import {
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 import { meteorologicalWind } from "../model/wind";
 import type { SpatialTargetTs } from "../model/spatialTarget";
+import type { CameraPreference } from "../model/cameraPreferences";
 
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
 
@@ -89,12 +90,16 @@ interface Props {
   distanceUnit?: string;
   spatialTarget: SpatialTargetTs;
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
+  cameraPreference?: CameraPreference;
+  onCameraPreferenceChange?: (preference: CameraPreference) => void;
 }
 
 export function FlightExplorerPanel({
   distanceUnit = "yd",
   spatialTarget,
   onSpatialTargetChange,
+  cameraPreference,
+  onCameraPreferenceChange,
 }: Props) {
   const [speed, setSpeed] = useState(167.0);
   const [speedUnit, setSpeedUnit] = useState("mph");
@@ -365,6 +370,8 @@ export function FlightExplorerPanel({
               points={result?.points ?? []}
               comparisonPoints={windComparison?.calm.points ?? []}
               spatialTarget={spatialTarget}
+              cameraPreference={cameraPreference}
+              onCameraPreferenceChange={onCameraPreferenceChange}
             />
           </div>
         </div>

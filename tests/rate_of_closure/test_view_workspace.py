@@ -69,8 +69,23 @@ def test_workspace_document_round_trip_is_strict_and_versioned() -> None:
 
     document = workspace_to_document(workspace)
 
-    assert document["format"] == "rate_of_closure.view_workspace/1"
+    assert document["format"] == "rate_of_closure.view_workspace/2"
+    assert document["camera_preferences"]["format"] == "camera-preferences/v1"
     assert workspace_from_document(document) == workspace
+
+
+def test_strict_v1_migration_adds_declared_camera_defaults() -> None:
+    current = workspace_to_document(ViewWorkspace.default())
+    legacy = {
+        key: value for key, value in current.items() if key != "camera_preferences"
+    }
+    legacy["format"] = "rate_of_closure.view_workspace/1"
+
+    migrated = workspace_from_document(legacy)
+
+    assert migrated.camera_preferences.viewports["impact"].zoom == 1.0
+    assert migrated.camera_preferences.viewports["swing"].zoom == 2.0
+    assert migrated.camera_preferences.viewports["flight"].zoom == 2.0
 
 
 @pytest.mark.parametrize(

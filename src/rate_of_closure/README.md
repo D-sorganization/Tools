@@ -102,14 +102,27 @@ The current whole-workspace adapter covers impact scenario, club, units,
 primary-module layout, compositor state, the Ground/Tee selection and SI tee
 height with club-default/override provenance, and the complete canonical
 spatial target (identity, app/source frames, position, surface/absolute source,
-and tolerance geometry). Current explorer-session v2 files restore those
-values on both clients. A v1 explorer session can only load through an explicit
-preserve-current simulation fallback; no tee or target values are invented,
-and a preserved default from another club becomes an explicit override.
+  and tolerance geometry). Explorer-session v3 additionally stores the
+  canonical prescribed polynomial torque-profile library, active stable profile
+  ID, profile-source provenance, passive/prescribed execution selection, and
+  canonical joint locks. Profile schema, `N*m` units, ascending `c0`-first
+  coefficients, stable joint IDs, fit evidence, and source metadata remain the
+  shared Python/TypeScript contract rather than UI-specific copies.
 
-Torque-editor, optimizer, variation-run, and flight-run state are not yet part
-of this document. Unsupported torque-profile or variation-plan payloads are
-rejected instead of being silently discarded.
+Explorer-session v4 adds the user-authored variation-study specification with
+PyQt6/React parity: canonical varied variables, simultaneous versus individual
+analysis policy, validated distributions and ranges, trial count, deterministic
+seed, and selected output metrics. Ball support remains owned by the simulation
+setup; the variation plan cannot duplicate it, and Tee Height can only be
+selected while Tee support is active. Save/Open validates the complete study
+before mutation and rolls back atomically if native widget application fails.
+
+A v1 explorer session can only load through explicit preserve-current
+simulation, torque, and variation fallbacks; v2 requires torque and variation,
+and v3 requires variation. No tee, target, coefficient, joint ID, fit evidence,
+study policy, or outcome is invented. A legacy root torque library or variation
+plan must exactly match its fallback or Open fails as ambiguous. Optimizer,
+variation results, and flight-run state are not yet part of this document.
 
 ## Build a Standalone Executable
 

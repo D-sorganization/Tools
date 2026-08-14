@@ -12,6 +12,9 @@ pytest.importorskip("pytestqt")
 from PyQt6.QtCore import QSettings, Qt  # noqa: E402
 from PyQt6.QtWidgets import QCheckBox, QComboBox, QLabel, QScrollArea  # noqa: E402
 
+from rate_of_closure.application.camera_commands import CameraCommandId  # noqa: E402
+from rate_of_closure.ui.pyqt6.flight_view import FlightView  # noqa: E402
+from rate_of_closure.ui.pyqt6.simulation_view import SimulationView  # noqa: E402
 from rate_of_closure.ui.pyqt6.view_compositor import ViewCompositor  # noqa: E402
 from rate_of_closure.view_workspace import (  # noqa: E402
     LegendPlacement,
@@ -194,7 +197,7 @@ def test_versioned_workspace_export_import_round_trip_is_atomic(
     qtbot.addWidget(target)
     target.import_workspace_document(document)
 
-    assert document["format"] == "rate_of_closure.view_workspace/1"
+    assert document["format"] == "rate_of_closure.view_workspace/2"
     assert target.workspace() == source.workspace()
     settings.sync()
     reloaded = ViewCompositor(
@@ -210,3 +213,52 @@ def test_versioned_workspace_export_import_round_trip_is_atomic(
     with pytest.raises(ValueError, match="unsupported workspace format"):
         target.import_workspace_document({**document, "format": "future/9"})
     assert target.workspace() == before
+
+
+def test_camera_preferences_survive_layout_hide_show_and_qsettings_reload(
+    qtbot, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    settings = QSettings(str(tmp_path / "camera.ini"), QSettings.Format.IniFormat)
+    swing = SimulationView()
+    flight = FlightView()
+    compositor = ViewCompositor(
+        {
+            ViewKind.IMPACT: QLabel("impact"),
+            ViewKind.SWING: swing,
+            ViewKind.FLIGHT: flight,
+        },
+        settings,
+    )
+    qtbot.addWidget(compositor)
+
+    swing.set_camera_zoom(2.25)
+    swing.apply_camera_command(CameraCommandId.VIEW_DOWN_THE_LINE)
+    before_flight = compositor.workspace().camera_preferences.viewports["flight"]
+    compositor.show_single_view(ViewKind.FLIGHT)
+    compositor.show_single_view(ViewKind.SWING)
+
+    saved = compositor.workspace().camera_preferences.viewports
+    assert saved["swing"].zoom == pytest.approx(2.25)
+    assert saved["swing"].preset_id is CameraCommandId.VIEW_DOWN_THE_LINE
+    assert saved["flight"] == before_flight
+    qtbot.wait(300)
+    settings.sync()
+    writes: list[str] = []
+    monkeypatch.setattr(compositor, "_persist", lambda: writes.append("write"))
+    for _ in range(20):
+        swing._advance_camera_tracking()
+    qtbot.wait(300)
+    assert writes == []
+
+    restored_swing = SimulationView()
+    restored = ViewCompositor(
+        {
+            ViewKind.IMPACT: QLabel("restored-impact"),
+            ViewKind.SWING: restored_swing,
+            ViewKind.FLIGHT: FlightView(),
+        },
+        settings,
+    )
+    qtbot.addWidget(restored)
+    assert restored_swing.camera_state().zoom == pytest.approx(2.25)
+    assert restored_swing.camera_state().preset_id is CameraCommandId.VIEW_DOWN_THE_LINE

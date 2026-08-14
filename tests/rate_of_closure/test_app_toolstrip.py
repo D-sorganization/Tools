@@ -235,6 +235,165 @@ def test_invalid_nested_target_is_rejected_before_native_ui_mutation(
     assert warnings and "source_frame" in warnings[0][1]
 
 
+def test_invalid_torque_selection_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    provenance = raw["model_session"]["data"]["torque_selection"]["data"][
+        "selection_provenance"
+    ]
+    provenance["profile_source"] = "drawn"
+    target = tmp_path / "invalid-torque-selection.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "provenance" in warnings[0][1]
+
+
+def test_invalid_variation_selection_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    selection = raw["model_session"]["data"]["variation_study"]["data"]
+    selection["selected_output_metrics"] = ["unknown_metric"]
+    target = tmp_path / "invalid-variation-selection.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "metric" in warnings[0][1]
+
+
+def test_invalid_capability_request_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    raw["model_session"]["data"]["capability_request"]["computed_result"] = {}
+    target = tmp_path / "invalid-capability-request.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "capability workflow" in warnings[0][1]
+
+
+@pytest.mark.parametrize(
+    ("kind", "message"), [("mph", "unit"), ("covariance", "correlation")]
+)
+def test_noncanonical_capability_basis_reports_open_error_without_mutation(
+    window, tmp_path, monkeypatch, kind: str, message: str
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    club = raw["model_session"]["data"]["capability_request"]["profile"]["clubs"][0]
+    if kind == "mph":
+        club["parameters"][0]["unit"] = "mph"
+    else:
+        club["matrix_kind"] = "covariance"
+    target = tmp_path / f"invalid-capability-{kind}.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog, "getOpenFileName", lambda *_args: (str(target), "")
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, text, *_args: warnings.append((title, text)),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and message in warnings[0][1]
+
+
+def test_oversized_capability_number_reports_open_error_without_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = json.dumps(
+        document_from_state(before, window._workspace_metadata).to_json_dict()
+    )
+    raw = raw.replace('"candidate_budget": 8', '"candidate_budget": ' + "9" * 4000)
+    target = tmp_path / "oversized-capability-number.roc-workspace.json"
+    target.write_text(raw, encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "finite" in warnings[0][1]
+
+
 def test_glossary_is_first_class_and_recovers_a_hidden_module(window) -> None:  # type: ignore[no-untyped-def]
     assert window.set_primary_module_visible("glossary", False)
     glossary = _action(window, AppCommandId.GLOBAL_OPEN_GLOSSARY.value)

@@ -7,10 +7,12 @@ from typing import TYPE_CHECKING
 from rate_of_closure.application.workspace_simulation_session import (
     SimulationWorkspaceState,
 )
+from rate_of_closure.application.workspace_torque_session import TorqueWorkspaceState
 
 if TYPE_CHECKING:
     from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
     from rate_of_closure.ui.pyqt6.spatial_target_panel import SpatialTargetPanel
+    from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
 
 
 class SimulationWorkspaceBridgeMixin:
@@ -18,6 +20,7 @@ class SimulationWorkspaceBridgeMixin:
 
     _ball_setup_control: BallSetupControl
     _spatial_target_panel: SpatialTargetPanel
+    _torque_profile_panel: TorqueProfilePanel
 
     if TYPE_CHECKING:
 
@@ -46,6 +49,14 @@ class SimulationWorkspaceBridgeMixin:
         )
         self._spatial_target_panel.set_target(state.spatial_target)
         self._emit_config()
+
+    def torque_workspace_state(self) -> TorqueWorkspaceState:
+        """Return the complete prescribed-torque library and selection."""
+        return self._torque_profile_panel.torque_workspace_state()
+
+    def apply_torque_workspace_state(self, state: TorqueWorkspaceState) -> None:
+        """Apply one validated prescribed-torque library and selection."""
+        self._torque_profile_panel.apply_torque_workspace_state(state)
 
 
 __all__ = ["SimulationWorkspaceBridgeMixin"]

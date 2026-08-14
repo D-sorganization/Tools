@@ -7,12 +7,18 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, TypeVar, cast
 
+from rate_of_closure.application.camera_preferences import (
+    CameraPreferences,
+    default_camera_preferences,
+)
+
 if TYPE_CHECKING:
     from enum import StrEnum
 else:
     from shared.python.compatibility import StrEnum
 
-FORMAT = "rate_of_closure.view_workspace/1"
+FORMAT_V1 = "rate_of_closure.view_workspace/1"
+FORMAT = "rate_of_closure.view_workspace/2"
 MAX_SLOTS = 6
 EnumT = TypeVar("EnumT", bound=StrEnum)
 
@@ -97,6 +103,9 @@ class ViewWorkspace:
     slots: tuple[ViewSlot, ...]
     active_slot_id: str
     playback: PlaybackState = field(default_factory=PlaybackState)
+    camera_preferences: CameraPreferences = field(
+        default_factory=default_camera_preferences
+    )
 
     @classmethod
     def default(cls) -> ViewWorkspace:
@@ -127,6 +136,8 @@ class ViewWorkspace:
         if self.active_slot_id not in slot_ids:
             raise ValueError("active_slot_id must identify a workspace slot")
         self.playback.validate()
+        if not isinstance(self.camera_preferences, CameraPreferences):
+            raise TypeError("camera_preferences must be CameraPreferences")
 
 
 def workspace_to_document(workspace: ViewWorkspace) -> dict[str, object]:
@@ -153,14 +164,29 @@ def workspace_to_document(workspace: ViewWorkspace) -> dict[str, object]:
             "loop": playback.loop,
             "rate": playback.rate,
         },
+        "camera_preferences": workspace.camera_preferences.to_document(),
     }
 
 
 def workspace_from_document(document: Mapping[str, object]) -> ViewWorkspace:
-    """Parse a strict version-1 workspace document without partial mutation."""
+    """Parse v2 or deterministically migrate a strict v1 workspace."""
+    if document.get("format") == FORMAT_V1:
+        _require_keys(
+            document,
+            {"format", "layout", "slots", "active_slot_id", "playback"},
+            "workspace v1",
+        )
+        document = {**document, "format": FORMAT, "camera_preferences": None}
     _require_keys(
         document,
-        {"format", "layout", "slots", "active_slot_id", "playback"},
+        {
+            "format",
+            "layout",
+            "slots",
+            "active_slot_id",
+            "playback",
+            "camera_preferences",
+        },
         "workspace",
     )
     if document["format"] != FORMAT:
@@ -180,6 +206,11 @@ def workspace_from_document(document: Mapping[str, object]) -> ViewWorkspace:
             playing=_boolean(playback_raw["playing"], "playback.playing"),
             loop=_boolean(playback_raw["loop"], "playback.loop"),
             rate=_number(playback_raw["rate"], "playback.rate"),
+        ),
+        camera_preferences=(
+            default_camera_preferences()
+            if document["camera_preferences"] is None
+            else CameraPreferences.from_document(document["camera_preferences"])
         ),
     )
     workspace.validate()

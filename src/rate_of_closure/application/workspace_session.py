@@ -5,17 +5,26 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, fields
 from types import MappingProxyType
+from typing import cast
 
 from rate_of_closure.club import ClubSpec, ClubType, HeadStyle
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.units import QUANTITY_UNITS
 from rate_of_closure.view_workspace import (
+    FORMAT,
+    FORMAT_V1,
     ViewWorkspace,
     workspace_from_document,
     workspace_to_document,
 )
+from shared.python.swing_sim.ball_setup import BallSupportMode
 
 from ._workspace_validation import FrozenJsonValue
+from .capability_workflow import (
+    CapabilityWorkflowDocument,
+    capability_workflow_from_wire,
+    capability_workflow_inputs,
+)
 from .workspace_document import (
     VersionedPayload,
     WorkspaceDocument,
@@ -30,10 +39,26 @@ from .workspace_simulation_session import (
     simulation_workspace_to_payload,
     validate_simulation_workspace,
 )
+from .workspace_torque_session import (
+    LegacyTorqueMigrationRequired,
+    TorqueWorkspaceState,
+    migrate_legacy_torque_fallback,
+    torque_workspace_from_payload,
+    torque_workspace_to_payload,
+)
+from .workspace_variation_session import (
+    LegacyVariationMigrationRequired,
+    VariationWorkspaceState,
+    migrate_legacy_variation_fallback,
+    variation_workspace_from_payload,
+    variation_workspace_to_payload,
+)
+
+_TEE_HEIGHT_VARIATION_KEY = "swing_sim.ball_setup.tee_height_m"
 
 EXPLORER_SESSION_SCHEMA = "rate_of_closure.explorer_session"
 CLUB_CONFIGURATION_SCHEMA = "rate_of_closure.club_configuration"
-SESSION_SCHEMA_VERSION = 2
+SESSION_SCHEMA_VERSION = 5
 CLUB_CONFIGURATION_SCHEMA_VERSION = 1
 CANONICAL_MODULE_IDS = (
     "explorer",
@@ -65,7 +90,14 @@ _CLUB_FIELDS = frozenset(
     }
 )
 _SESSION_V1_FIELDS = frozenset({"scenario", "units"})
-_SESSION_FIELDS = _SESSION_V1_FIELDS | {"simulation_setup"}
+_SESSION_V2_FIELDS = _SESSION_V1_FIELDS | {"simulation_setup"}
+_SESSION_V3_FIELDS = _SESSION_V2_FIELDS | {"torque_selection"}
+_SESSION_V4_FIELDS = _SESSION_V3_FIELDS | {"variation_study"}
+_SESSION_FIELDS = _SESSION_V4_FIELDS | {"capability_request"}
+
+
+class LegacyCapabilityMigrationRequired(ValueError):
+    """Raised when a legacy workspace needs an explicit capability fallback."""
 
 
 @dataclass(frozen=True)
@@ -87,6 +119,9 @@ class ExplorerWorkspaceState:
     club: ClubSpec
     units: Mapping[str, str]
     simulation: SimulationWorkspaceState
+    torque: TorqueWorkspaceState
+    variation: VariationWorkspaceState
+    capability: CapabilityWorkflowDocument
     module_order: tuple[str, ...]
     visible_module_ids: tuple[str, ...]
     active_module_id: str
@@ -99,6 +134,21 @@ class ExplorerWorkspaceState:
         if not isinstance(self.club, ClubSpec):
             raise TypeError("club must be a ClubSpec")
         validate_simulation_workspace(self.simulation, self.club)
+        if not isinstance(self.torque, TorqueWorkspaceState):
+            raise TypeError("torque must be a TorqueWorkspaceState")
+        if not isinstance(self.variation, VariationWorkspaceState):
+            raise TypeError("variation must be a VariationWorkspaceState")
+        if not isinstance(self.capability, CapabilityWorkflowDocument):
+            raise TypeError("capability must be a CapabilityWorkflowDocument")
+        capability_workflow_inputs(self.capability)
+        varies_tee_height = any(
+            spec.variable_key == _TEE_HEIGHT_VARIATION_KEY
+            for spec in self.variation.plan.noise
+        )
+        if varies_tee_height and (
+            self.simulation.ball_setup.support_mode is not BallSupportMode.TEE
+        ):
+            raise ValueError("tee-height variation requires Tee ball support")
         units = dict(self.units)
         if set(units) != set(QUANTITY_UNITS) or any(
             value not in QUANTITY_UNITS[key] for key, value in units.items()
@@ -175,25 +225,38 @@ def document_from_state(
             {
                 "scenario": _scenario_data(state.scenario),
                 "units": dict(state.units),
-                "simulation_setup": simulation_workspace_to_payload(
-                    state.simulation, state.club
+                "simulation_setup": cast(
+                    FrozenJsonValue,
+                    simulation_workspace_to_payload(state.simulation, state.club),
+                ),
+                "torque_selection": cast(
+                    FrozenJsonValue,
+                    torque_workspace_to_payload(state.torque),
+                ),
+                "variation_study": cast(
+                    FrozenJsonValue,
+                    variation_workspace_to_payload(state.variation),
+                ),
+                "capability_request": cast(
+                    FrozenJsonValue,
+                    state.capability.to_wire(),
                 ),
             },
         ),
-        prescribed_torque_profiles=(),
+        prescribed_torque_profiles=state.torque.profiles,
         club_configuration=VersionedPayload(
             CLUB_CONFIGURATION_SCHEMA,
             CLUB_CONFIGURATION_SCHEMA_VERSION,
             _club_data(state.club),
         ),
-        variation_plan=None,
+        variation_plan=state.variation.plan,
         layout=WorkspaceLayout(
             module_order=state.module_order,
             visible_module_ids=state.visible_module_ids,
             active_module_id=state.active_module_id,
             view_workspace=VersionedPayload(
                 "rate_of_closure.view_workspace",
-                1,
+                2,
                 workspace_to_document(state.view_workspace),
             ),
         ),
@@ -204,18 +267,20 @@ def state_from_document(
     document: WorkspaceDocument,
     *,
     legacy_simulation_fallback: SimulationWorkspaceState | None = None,
+    legacy_torque_fallback: TorqueWorkspaceState | None = None,
+    legacy_variation_fallback: VariationWorkspaceState | None = None,
+    legacy_capability_fallback: CapabilityWorkflowDocument | None = None,
 ) -> ExplorerWorkspaceState:
     """Validate a supported whole document before returning applicable state."""
     if not isinstance(document, WorkspaceDocument):
         raise TypeError("document must be a WorkspaceDocument")
-    if document.prescribed_torque_profiles:
-        raise ValueError("prescribed torque profiles are not supported by this adapter")
-    if document.variation_plan is not None:
-        raise TypeError("variation plans are not supported by this adapter")
     session = document.model_session
     club = document.club_configuration
     if session.schema != EXPLORER_SESSION_SCHEMA or session.schema_version not in (
         1,
+        2,
+        3,
+        4,
         SESSION_SCHEMA_VERSION,
     ):
         raise ValueError("unsupported explorer session payload")
@@ -225,9 +290,13 @@ def state_from_document(
     ):
         raise ValueError("unsupported club configuration payload")
     parsed_club = _club_from_data(club.data)
-    session_fields = (
-        _SESSION_V1_FIELDS if session.schema_version == 1 else _SESSION_FIELDS
-    )
+    session_fields = {
+        1: _SESSION_V1_FIELDS,
+        2: _SESSION_V2_FIELDS,
+        3: _SESSION_V3_FIELDS,
+        4: _SESSION_V4_FIELDS,
+        SESSION_SCHEMA_VERSION: _SESSION_FIELDS,
+    }[session.schema_version]
     session_data = _exact_mapping(session.data, session_fields, "model_session.data")
     scenario_data = _exact_mapping(
         session_data["scenario"], _SCENARIO_FIELDS, "model_session.scenario"
@@ -236,9 +305,14 @@ def state_from_document(
     if not isinstance(units, Mapping):
         raise TypeError("model_session.units must be an object")
     view = document.layout.view_workspace
-    if view is None or (view.schema, view.schema_version) != (
-        "rate_of_closure.view_workspace",
-        1,
+    if (
+        view is None
+        or view.schema != "rate_of_closure.view_workspace"
+        or (
+            view.schema_version,
+            view.data.get("format"),
+        )
+        not in {(1, FORMAT_V1), (2, FORMAT)}
     ):
         raise ValueError("workspace requires a supported compositor payload")
     if session.schema_version == 1:
@@ -254,11 +328,57 @@ def state_from_document(
         simulation = simulation_workspace_from_payload(
             session_data["simulation_setup"], parsed_club
         )
+    if session.schema_version < 3:
+        if legacy_torque_fallback is None:
+            raise LegacyTorqueMigrationRequired(
+                "legacy model_session omitted torque selection; "
+                "an explicit torque migration fallback is required"
+            )
+        torque = migrate_legacy_torque_fallback(
+            legacy_torque_fallback,
+            document.prescribed_torque_profiles,
+        )
+    else:
+        torque = torque_workspace_from_payload(
+            session_data["torque_selection"],
+            document.prescribed_torque_profiles,
+        )
+    if session.schema_version < 4:
+        if legacy_variation_fallback is None:
+            raise LegacyVariationMigrationRequired(
+                "legacy model_session omitted variation selection; "
+                "an explicit variation migration fallback is required"
+            )
+        variation = migrate_legacy_variation_fallback(
+            legacy_variation_fallback,
+            document.variation_plan,
+        )
+    else:
+        if document.variation_plan is None:
+            raise ValueError("current workspace requires a canonical variation plan")
+        variation = variation_workspace_from_payload(
+            session_data["variation_study"],
+            document.variation_plan,
+        )
+    if session.schema_version < SESSION_SCHEMA_VERSION:
+        if legacy_capability_fallback is None:
+            raise LegacyCapabilityMigrationRequired(
+                "legacy model_session omitted the capability request; "
+                "an explicit capability migration fallback is required"
+            )
+        capability = legacy_capability_fallback
+    else:
+        capability = capability_workflow_from_wire(
+            cast(Mapping[str, object], session_data["capability_request"])
+        )
     return ExplorerWorkspaceState(
         scenario=ImpactScenario(**scenario_data),
         club=parsed_club,
         units=units,
         simulation=simulation,
+        torque=torque,
+        variation=variation,
+        capability=capability,
         module_order=document.layout.module_order,
         visible_module_ids=document.layout.visible_module_ids,
         active_module_id=document.layout.active_module_id,
@@ -273,7 +393,12 @@ __all__ = [
     "EXPLORER_SESSION_SCHEMA",
     "ExplorerWorkspaceState",
     "LegacySimulationMigrationRequired",
+    "LegacyCapabilityMigrationRequired",
+    "LegacyTorqueMigrationRequired",
+    "LegacyVariationMigrationRequired",
     "SimulationWorkspaceState",
+    "TorqueWorkspaceState",
+    "VariationWorkspaceState",
     "WorkspaceSessionMetadata",
     "document_from_state",
     "state_from_document",
