@@ -6,6 +6,7 @@ import {
   CAPABILITY_WORKFLOW_SCHEMA_VERSION,
   buildCapabilityWorkflow,
   capabilityWorkflowFromJson,
+  capabilityWorkflowInputs,
   capabilityWorkflowToJson,
   defaultCapabilityWorkflowInputs,
 } from "./capabilityWorkflow";
@@ -18,6 +19,7 @@ interface ParserCase {
 }
 
 const parserCases = parserCasesFixture.cases as readonly ParserCase[];
+const hostileNumbers = parserCasesFixture.hostile_numbers;
 
 const mutatedWorkflow = (testCase: ParserCase): string => {
   const payload: unknown = JSON.parse(capabilityWorkflowToJson(
@@ -33,10 +35,35 @@ const mutatedWorkflow = (testCase: ParserCase): string => {
   return JSON.stringify(payload);
 };
 
+const noncanonicalInteractiveWorkflow = (
+  kind: "mph" | "covariance" | "reordered",
+) => {
+  const payload = JSON.parse(capabilityWorkflowToJson(
+    buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+  ));
+  if (kind === "mph") payload.profile.clubs[0].parameters[0].unit = "mph";
+  else if (kind === "covariance") payload.profile.clubs[0].matrix_kind = "covariance";
+  else payload.profile.clubs[0].parameters.reverse();
+  return capabilityWorkflowFromJson(JSON.stringify(payload));
+};
+
 describe("capability workflow", () => {
   it("uses the supported shared parser fixture schema", () => {
     expect(parserCasesFixture.schema_version)
       .toBe("capability-workflow-parser-cases/v1");
+  });
+
+  it.each(hostileNumbers)("rejects shared hostile number $id", (testCase) => {
+    const source = capabilityWorkflowToJson(
+      buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+    );
+    const rawNumber = testCase.digit.repeat(testCase.digits);
+    const hostile = source.replace(
+      '"candidate_budget":8',
+      `"candidate_budget":${rawNumber}`,
+    );
+
+    expect(() => capabilityWorkflowFromJson(hostile)).toThrow(/magnitude|finite/i);
   });
 
   it("builds a model-ready and auditable default driver workflow", () => {
@@ -64,6 +91,19 @@ describe("capability workflow", () => {
     const encoded = capabilityWorkflowToJson(source);
     expect(capabilityWorkflowFromJson(encoded)).toEqual(source);
     expect(JSON.parse(encoded).schema_version).toBe(CAPABILITY_WORKFLOW_SCHEMA_VERSION);
+  });
+
+  it("projects the exact canonical interactive parameter basis", () => {
+    expect(capabilityWorkflowInputs(
+      buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+    )).toEqual(defaultCapabilityWorkflowInputs());
+  });
+
+  it.each([
+    ["mph", /unit/i], ["covariance", /correlation/i], ["reordered", /order/i],
+  ] as const)("rejects a noncanonical %s interactive basis", (kind, message) => {
+    expect(() => capabilityWorkflowInputs(noncanonicalInteractiveWorkflow(kind)))
+      .toThrow(message);
   });
 
   it.each([

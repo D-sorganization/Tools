@@ -26,13 +26,88 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.30                                    |
-| **Spec Version**        | 1.14.30                                    |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.14.36                                    |
+| **Spec Version**        | 1.14.36                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-11 Camera-preference workspace persistence
+
+- `camera-preferences/v1` is a strict cross-runtime document keyed by stable
+  Impact, Swing, and Flight viewport IDs. Each viewport stores only canonical
+  preset, explicit face-on side, zoom bounded to [0.25, 8], tracking enabled,
+  and Auto Fit enabled.
+- Subject targets, manual yaw/pitch, and tracking suspension are runtime-only.
+  Applying a preference preserves the current target and clears stale manual
+  suspension. Capturing a manually orbited view retains its last durable preset.
+- `rate_of_closure.view_workspace/2` embeds the complete camera document.
+  Strict v1 migration supplies the #4303 defaults: neutral 1x Impact and 2x,
+  tracking-enabled, Auto-Fit-enabled Swing and Flight. Malformed, incomplete,
+  non-finite, out-of-range, or future documents reject before mutation.
+- QSettings/localStorage and whole-workspace File Save/Open share the schema.
+  PyQt6 Simulation/Flight and React Impact/Clubhead/Flight adapters restore
+  independently across layout, hide/show, and reload. Only deliberate controls
+  notify persistence; moving-subject animation updates cannot write per frame.
+- This bounded #4218/#4284 continuation does not close either issue, qualify
+  installed UpstreamDrift consumers, or replace protected and rendered release
+  gates.
+
+### 2026-08-11 Variation-study workspace specification
+
+- `rate_of_closure.explorer_session/4` stores the existing canonical variation
+  plan plus `rate_of_closure.variation_workspace_selection/1`. The selection
+  records all-together, individual, or both execution; and a non-empty,
+  mode-valid, deterministically ordered set of selected output metrics.
+- The canonical plan remains the authority for varied parameters, distribution
+  and bounds, groups, trial count, deterministic seed, and flight model. The
+  selection payload does not duplicate physical plan values or persist results.
+  Selected metrics are a saved study focus, not a result filter; calculated
+  runs and exports always retain the complete canonical output contract.
+- Browser Open rechecks current unsaved state after asynchronous file reads and
+  parses legacy sessions against the latest live fallback. Selectable swing
+  outputs derive from the executor's complete 17-field registry rather than a
+  second manually maintained list.
+- Native controls preserve at least one selected output. Browser file reads
+  bind their selected parser mode and a monotonic operation ID at selection
+  time; later commands cannot reinterpret an in-flight file and stale reads
+  cannot overwrite a newer completed Open. Confirmed New/Close operations
+  invalidate pending reads; cancelled resets preserve them.
+- Simulation setup is the only authority for Ground/Tee context. Workspace
+  variation plans reject a duplicate ball setup, and a Tee Height input is
+  invalid unless the separately persisted setup selects Tee support.
+- Current files validate completely before live mutation. Legacy v1-v3 files
+  require an explicit current variation fallback, and any non-null legacy root
+  plan must match it exactly; native application failure restores the prior
+  complete supported state.
+- This bounded #4142/#4144/#4218 slice does not persist trial results, player
+  identity, optimizer outputs, or flight-run results, does not implement
+  UpstreamDrift consumers, and does not close either variation issue or epic.
+
+### 2026-08-10 Torque-profile workspace persistence
+
+- `rate_of_closure.explorer_session/3` stores a strict
+  `rate_of_closure.torque_workspace_selection/1` payload while continuing to
+  use the workspace root's canonical `PrescribedTorqueProfile` library. The
+  selection records the active stable profile ID, passive/prescribed run mode,
+  prescribed profile ID, and canonical joint locks without duplicating profile
+  coefficients or fit evidence.
+- Python and TypeScript validate the existing profile schema version, `N*m`
+  units, ascending `c0`-first coefficient order, stable model/joint IDs, time
+  domain, source metadata, timestamps, optional fit evidence, unique profile
+  identity, selection membership, run-contract consistency, and provenance
+  derived from the selected profile source.
+- PyQt6 and React File operations capture and restore the live profile library,
+  active selection, execution mode, and joint locks. Complete parsing precedes
+  UI mutation; invalid nested profile or selection data leaves current state
+  intact and presents the existing accessible File/profile error surfaces.
+- Explorer-session v1/v2 migration requires an explicit current torque-state
+  fallback. A legacy root library must exactly match that fallback or loading
+  fails as ambiguous; coefficients, joint IDs, fit evidence, and outcomes are
+  never inferred. Optimizer, variation-run, flight-run, UpstreamDrift consumer,
+  protected-CI, and release work remain open.
 
 ### 2026-08-10 Live workspace File adapters
 
@@ -51,10 +126,55 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   status/error text. Browser Save and Recent remain explicitly unavailable
   because an ordinary browser cannot overwrite a prior download or retain a
   trustworthy filesystem path; Save As remains the supported browser write.
-- This bounded live-adapter slice does not serialize simulation-tab-local ball,
-  target, torque-editor, optimizer, variation-run, or flight-run state. Those
-  domain mappers and installed UpstreamDrift consumer parity remain explicit
-  follow-up work; their absence is not represented as epic completion.
+- The explorer-session v2 continuation now serializes the simulation's ball
+  support selection and complete spatial target. Torque-editor, optimizer,
+  variation-run, and flight-run state still require strict domain mappers;
+  installed UpstreamDrift consumer parity also remains explicit follow-up work.
+
+### 2026-08-10 Ball support and spatial target workspace contract
+
+- `rate_of_closure.explorer_session/2` embeds a versioned
+  `rate_of_closure.simulation_setup/1` payload. It stores Ground/Tee mode,
+  tee height in metres, height-reference and derived ball-centre invariants,
+  plus whether the value is a club default or an explicit override. Default
+  provenance names the persisted club and fails closed unless its geometry is
+  exactly that club's declared default.
+- The same payload stores the complete `swing_sim.spatial_target/1` identity:
+  label, target kind, canonical app-frame position, authoring-frame provenance,
+  units, elevation/ground source, and the full sphere, box, surface-circle, or
+  surface-corridor tolerance geometry. Python and TypeScript delegate to their
+  existing canonical target serializers rather than maintaining another shape.
+- PyQt6 and React now lift this state into the whole-app File adapter. A file is
+  completely parsed before any widget/setter is touched; native application
+  still has rollback, and nested target or provenance corruption leaves the
+  prior live session intact.
+- Explorer-session v1 is never assigned invented tee or target values. Loading
+  it requires an explicit current-live simulation fallback. The fallback's
+  physical values are preserved; a default originating from a different club
+  is deliberately reclassified as an explicit override.
+- This slice is not issue #4225 or epic #4218 completion: torque profiles,
+  optimizer state, variation/flight run artifacts, protected review/release,
+  and UpstreamDrift consumers remain open.
+### 2026-08-11 Orthographic 3D axis presentation
+
+- PyQt6 Face On, Down the Line, and Overhead camera presets suppress the
+  complete Matplotlib presentation of only the screen-depth display axis:
+  x/right for Face On, y/downrange for Down the Line, and z/up for Overhead.
+- Suppression covers the depth-axis container, label, line, pane, and tick
+  artists so cached Axes3D labels cannot survive an orthographic snap. The two
+  visible axes retain their physical labels, engineering units, ticks, and
+  Matplotlib's native one-sided tick-label selection.
+- Reset/isometric and manual orbit restore all three axes. Snap commands remain
+  idempotent and do not change the camera target, zoom, tracking state,
+  simulation physics, trajectory, or geometry.
+- The behavior is implemented by the shared native camera adapter and consumed
+  by both Swing and Flight viewports. Focused GUI contracts verify all three
+  orthographic presets on both viewport types, depth-artist suppression,
+  restoration, and absence of duplicate visible-axis labels.
+- Draft PR #4331 normally incorporates exact current parent
+  `304a069b1777dcf8cf107de26caa3b9fbe96dbb3` after exact live child
+  `c7bccbccc6cda0c9b938b2862ed660cebdcb7597`; independent review and protected
+  exact-head CI remain release gates.
 
 ### 2026-08-10 Non-obscuring external legend rail
 
@@ -78,6 +198,27 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - This bounded #4224 slice does not claim persistence/migration, export-layout
   proof, full rendered qualification, protected release, or completion of
   #4224/#4218.
+### 2026-08-11 PyQt moving-camera current-parent repair
+
+- Draft PR #4303 normally merges exact live child
+  `2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current
+  mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`
+  second, preserving the branch, base, and history.
+- The merge replaces stale merge-base comparison
+  `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`, removes parent formatter changes
+  from the effective child delta, and retains current-parent content for the
+  unrelated shared flight-contract test. Camera production code merges
+  without conflict.
+- Animated PyQt6 and React clubhead/ball-flight viewports retain their shared
+  2x, bounded-tracking, Auto-Fit initial state. Static viewports remain neutral,
+  user controls remain independent, and physics and geometry are unchanged.
+- Independent review and protected exact-head CI remain required; the local
+  repair does not complete #4300 or #4218.
+- Fresh evidence is 49 focused native camera/layout/simulation tests, 14
+  campaign/launcher-manifest tests, exact-delta Ruff/format, pinned MyPy 1.13,
+  Bandit, governance/diff gates, 111 React files / 673 tests, TypeScript,
+  zero-warning ESLint, the 195-module build, and six serial desktop/constrained
+  2x-DPR Playwright camera/toolstrip cases.
 
 ### 2026-08-10 Constrained toolstrip / four-surface propagation
 
@@ -3082,11 +3223,19 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.36 | fix(rate-of-closure, #4218 #4284): narrow persisted camera preset and face-on-side values to exact strings before enum construction, reject non-string tokens without coercion, remove a redundant compositor document cast, bind camera listeners through a typed partial, and make the Qt putting-speed float boundary explicit after protected MyPy exposed the defects; preserve valid camera and putting behavior and wire values while keeping independent review, exact-head protected CI, installed-consumer qualification, and epic completion open. |
+| 2026-08-11 | 1.14.35 | feat(rate-of-closure, #4218 #4284): add strict cross-runtime `camera-preferences/v1` keyed by Impact/Swing/Flight; persist only preset, face-on side, bounded zoom, tracking, and Auto Fit through view-workspace v2, QSettings, localStorage, and whole-workspace File operations; migrate v1 to exact #4303 defaults; reject malformed/future data atomically; wire two PyQt6 and three React adapters while excluding moving targets/manual suspension and preventing per-frame writes; retain protected CI/review, rendered qualification, UpstreamDrift parity, and epic completion as open gates. |
+| 2026-08-11 | 1.14.34 | feat(rate-of-closure, #4142 #4144 #4218): persist the complete user-authored variation-study specification in explorer-session v4 across PyQt6 and React, including canonical varied inputs/distributions/ranges/groups, simultaneous/individual/both execution, trial count, deterministic seed, and selected mode-valid output metrics; keep simulation ball support authoritative, reject duplicated or inapplicable Tee Height context, require explicit conflict-safe v1-v3 migration, and apply atomically without persisting results, identity, optimizer outputs, or claiming issue/epic completion. |
+| 2026-08-10 | 1.14.32 | feat(rate-of-closure, #4136 #4220 #4218): persist the canonical prescribed polynomial torque-profile library and source-derived active selection in explorer-session v3 across PyQt6 and React; preserve passive/prescribed run configuration and canonical joint locks, validate schema/SI units/c0-first order/identity/provenance before atomic apply, require explicit conflict-safe v1/v2 migration, and retain optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
+| 2026-08-10 | 1.14.31 | feat(rate-of-closure, #4143 #4225): extend whole-workspace persistence with the strict explorer-session v2 simulation subpayload shared by PyQt6 and React; round-trip Ground/Tee support, SI tee height, derived geometry, club-default versus explicit-override provenance, and the complete versioned spatial-target identity/frame/tolerance contract; validate before UI mutation, reject corrupt provenance/targets atomically, and require explicit preserve-current migration for v1 instead of inventing values; retain torque/optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.30 | feat(rate-of-closure, #4218 #4225): wire the strict whole-workspace and compositor contracts into production PyQt6 and React File operations; provide New/Open/Save As/view Import/view Export/Close on both clients, native atomic Save and persisted Recent, complete-before-mutate validation, rollback-safe application, dirty-session protection, cancellation, and user-visible status/errors; preserve honest browser Save/Recent limitations and fail closed on unsupported torque/variation payloads; retain simulation-tab-local domain mappers, installed-consumer parity, protected CI/review, and epic completion as explicit open work. |
+| 2026-08-11 | 1.14.30 | fix(rate-of-closure, #4284 #4331): suppress only the screen-depth Matplotlib axis presentation for Face On, Down the Line, and Overhead native 3D presets; preserve both visible engineering axes and native one-sided ticks, restore all axes on isometric/manual orbit, retain camera target/zoom/tracking and simulation behavior, and record the normal current-parent ancestry repair while keeping protected exact-head CI and review open. |
 | 2026-08-10 | 1.14.29 | merge(rate-of-closure, #4327 #4225): normally place the keyboard-complete, versioned multi-view workspace continuation on exact repaired compositor parent `0e3054e6a7fa0e3e38e1312b4132bbd1e4336fb2`; retain React roving-tab navigation, deterministic PyQt focus order, atomic cross-client compositor import/export, QSettings and whole-workspace round trips, and the nested-array freeze repair while inheriting the repaired legend, toolstrip, camera, wind, variation, and capability ancestry; make the already-validated current-workspace mapping explicit at the pinned type boundary without runtime change; implementation/test code does not conflict, only additive handoff/spec files require reconciliation, and protected CI/review, live File adapters, and installed-consumer parity remain open. |
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4218 #4225): complete local multi-view keyboard and persistence acceptance contracts with React roving-tab Arrow/Home/End navigation, deterministic PyQt Layout/Impact/Swing/Flight tab order, keyboard-only Single/Split/Grid membership tests, strict atomic version-1 compositor import/export on both client boundaries, future-format rejection, native QSettings reconstruction, canonical view data inside the whole-app workspace envelope, and a repair for its nested-array double-freeze parser defect; retain disabled File commands, protected CI/review, dependency integration, and UpstreamDrift parity as explicit remaining gates. |
 | 2026-08-10 | 1.14.27 | feat(rate-of-closure, #4218 #4225): add real distinct Impact/Swing/Flight viewport hosts with PyQt6/React direct-command parity, synchronized live playback persistence, host-local camera and overlay ownership, strict one/two/three-host Single/Split/Grid cardinality, preserved valid per-slot legends, debounced native settings writes, navigable native constrained grids, and deterministic legacy/corrupt/unknown-view recovery; preserve all established React displays and the spatial-target Flight workflow beside Multi View, verify desktop/constrained browser and native rendering, and retain complete keyboard focus behavior, export proof, protected CI/review, stack integration, and UpstreamDrift parity as explicit open gates. |
 | 2026-08-10 | 1.14.26 | fix(rate-of-closure, #4218 #4224): move the default PyQt6 3D scene legend from the axes into a measured figure-level rail, clear retained legends across redraw and inside/hidden transitions, reflow the rail on canvas resize, add explicit accessible control names, and centralize React plot/legend geometry in one constrained-width contract; retain open persistence, export, rendered-QA, protected-CI, review, and integration gates without claiming epic completion. |
+| 2026-08-11 | 1.14.27 | merge(rate-of-closure, #4300 #4303): normally propagate exact current mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42` into exact live PyQt moving-camera child `2e07bec58b8a759c9db36ea7afb26a1c835434f5` without changing its branch or base; repair stale merge ancestry, retain current-parent shared-flight test content, preserve cross-runtime 2x tracking and Auto Fit defaults, and require independent review plus protected exact-head CI. |
+| 2026-08-10 | 1.14.26 | merge(rate-of-closure, #4298 #4301): normally propagate exact repaired camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7` into the constrained mobile-toolstrip descendant without changing its base; retain the shared File/View/Tools clamp and accessibility behavior while inheriting current camera, wind, workspace, variation, and capability repairs; mobile-toolstrip production/test code does not conflict, only additive handoff/spec files require reconciliation, and protected exact-head CI plus review remain required. |
 | 2026-08-10 | 1.14.25 | merge(rate-of-closure, #4300 #4301): normally propagate exact four-surface/camera/ground head `142631a90c008942bad99745e279748a7eda2ffa` into original constrained-toolstrip child `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` without changing its base; retain the shared 16 px viewport-gutter clamp, desktop anchoring, bounded mobile menus, and native keyboard/accessibility semantics while inheriting the declared four-surface inventory, complete camera controls, and repaired flight-to-ground ancestry; require fresh combined-tree validation, independent review, and protected current-head CI without claiming epic completion. |
 | 2026-08-10 | 1.14.24 | merge(rate-of-closure, #4264 #4299): normally propagate exact camera/ground-stack head `57942e64744a199e4fd7d604fe2eeb9faddd062a` into original four-surface child `dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` without changing its base; retain the strict declared-scope matrix, schema, canonical inventory, exact evidence paths, deterministic 15-program/18-spec/six-capability coverage, and explicit incomplete UpstreamDrift parity boundaries while inheriting repaired flight-to-ground and camera-control contracts. |
 | 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |

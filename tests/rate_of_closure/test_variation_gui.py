@@ -16,6 +16,10 @@ import pytest
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
+from rate_of_closure.application.workspace_variation_session import (  # noqa: E402
+    VariationAnalysisExecution,
+    VariationWorkspaceState,
+)
 from rate_of_closure.club import get_club  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.simulation import SimulationConfig  # noqa: E402
@@ -61,7 +65,7 @@ class TestConstruction:
             tab._flight_combo,
             tab._runs_spin,
             tab._seed_spin,
-            tab._sens_check,
+            tab._analysis_execution_combo,
             tab._run_button,
             tab._cancel_button,
             tab._export_csv,
@@ -69,6 +73,7 @@ class TestConstruction:
         ]
         for row in tab._rows:
             widgets.extend([row.variable, row.distribution, row.scale, row.clip])
+        widgets.extend(tab._metric_checks.values())
         for widget in widgets:
             assert widget.toolTip(), f"missing tooltip on {widget}"
 
@@ -137,6 +142,41 @@ class TestPlanRoundTrip:
         key = f"{CATEGORY_DELIVERY}.clubhead_speed_mps"
         assert plan.base_variables[key] == pytest.approx(113.0 * 0.44704)
 
+    def test_workspace_state_restores_plan_execution_and_output_metrics(
+        self, tab: VariationTab
+    ) -> None:
+        state = VariationWorkspaceState(
+            plan=_fast_launch_plan(22),
+            analysis_execution=VariationAnalysisExecution.INDIVIDUAL,
+            selected_output_metrics=("carry_m", "lateral_m"),
+        )
+
+        tab.apply_variation_workspace_state(state)
+
+        assert tab.variation_workspace_state() == state
+        assert tab._analysis_execution_combo.currentData() == (
+            VariationAnalysisExecution.INDIVIDUAL
+        )
+        assert tab._metric_checks["carry_m"].isChecked()
+        assert not tab._metric_checks["apex_m"].isChecked()
+
+    def test_saved_output_focus_keeps_one_metric_selected(
+        self, tab: VariationTab
+    ) -> None:
+        for checkbox in tab._metric_checks.values():
+            checkbox.setChecked(False)
+
+        selected = [
+            metric
+            for metric, checkbox in tab._metric_checks.items()
+            if checkbox.isChecked()
+        ]
+        assert len(selected) == 1
+        assert tab.variation_workspace_state().selected_output_metrics == tuple(
+            selected
+        )
+        assert "at least one" in tab._status.text().lower()
+
 
 class TestRunAndResults:
     def test_full_study_populates_every_results_view(
@@ -160,11 +200,28 @@ class TestRunAndResults:
     def test_cancel_before_start_reports_cancelled(
         self, qtbot, tab: VariationTab
     ) -> None:  # type: ignore[no-untyped-def]
-        worker = VariationWorker(_fast_launch_plan(200), compute_sensitivity=False)
+        worker = VariationWorker(
+            _fast_launch_plan(200),
+            analysis_execution=VariationAnalysisExecution.ALL_TOGETHER,
+        )
         worker.cancel()
         with qtbot.waitSignal(worker.cancelled, timeout=15_000):
             worker.start()
         worker.wait(10_000)
+
+    def test_individual_execution_returns_sensitivity_without_joint_dataset(
+        self, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        worker = VariationWorker(
+            _fast_launch_plan(3),
+            analysis_execution=VariationAnalysisExecution.INDIVIDUAL,
+        )
+        with qtbot.waitSignal(worker.succeeded, timeout=15_000) as completed:
+            worker.start()
+        worker.wait(10_000)
+
+        assert completed.args[0] is None
+        assert completed.args[1] is not None
 
     def test_swing_study_populates_trace_scatter_and_arc_views(
         self, qtbot, tab: VariationTab

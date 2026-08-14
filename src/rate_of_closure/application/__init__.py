@@ -23,6 +23,19 @@ from .workspace_session import (
     document_from_state,
     state_from_document,
 )
+from .workspace_simulation_session import (
+    LegacySimulationMigrationRequired,
+    SimulationWorkspaceState,
+)
+from .workspace_torque_session import (
+    LegacyTorqueMigrationRequired,
+    TorqueWorkspaceState,
+)
+from .workspace_variation_session import (
+    LegacyVariationMigrationRequired,
+    VariationAnalysisExecution,
+    VariationWorkspaceState,
+)
 
 __all__ = [
     "APP_COMMAND_IDS",
@@ -32,6 +45,13 @@ __all__ = [
     "CommandAvailability",
     "CommandUnavailableError",
     "ExplorerWorkspaceState",
+    "LegacySimulationMigrationRequired",
+    "LegacyTorqueMigrationRequired",
+    "LegacyVariationMigrationRequired",
+    "SimulationWorkspaceState",
+    "TorqueWorkspaceState",
+    "VariationAnalysisExecution",
+    "VariationWorkspaceState",
     "VersionedPayload",
     "WorkspaceDocument",
     "WorkspaceLayout",

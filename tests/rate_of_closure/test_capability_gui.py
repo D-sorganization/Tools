@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
 from rate_of_closure.application.capability_workflow import (  # noqa: E402
+    CapabilityWorkflowDocument,
     CapabilityWorkflowInputs,
+    build_capability_workflow,
+    capability_workflow_from_json,
+    capability_workflow_json,
 )
 from rate_of_closure.ui.pyqt6.capability_controls import (
     CapabilityControls,  # noqa: E402
@@ -18,6 +24,45 @@ from rate_of_closure.ui.pyqt6.capability_tab import (  # noqa: E402
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def _custom_workflow():  # type: ignore[no-untyped-def]
+    payload = json.loads(
+        capability_workflow_json(build_capability_workflow(CapabilityWorkflowInputs()))
+    )
+    profile = payload["profile"]
+    club = profile["clubs"][0]
+    profile.update(provenance="measured/session-42", confidence=0.71)
+    club.update(provenance="fit/driver-42", confidence=0.63)
+    club["matrix"] = [[1.0, 0.2, 0.0], [0.2, 1.0, 0.1], [0.0, 0.1, 1.0]]
+    club["parameters"][0].update(
+        bias=0.4,
+        lower_bound=10.0,
+        upper_bound=95.0,
+        evidence_lower_bound=30.0,
+        evidence_upper_bound=85.0,
+    )
+    request = payload["request"]
+    request.update(
+        problem_id="custom-problem-42",
+        cvar_alpha=0.83,
+        minimum_success_fraction=0.64,
+    )
+    request["target"].update(kind="fairway", band_half_length_m=21.0, half_width_m=8.0)
+    payload["evaluator_config"]["spin_defaults"][0]["provenance"] = "measured/spin-42"
+    return capability_workflow_from_json(json.dumps(payload))
+
+
+def _noncanonical_workflow(kind: str) -> CapabilityWorkflowDocument:
+    payload = json.loads(
+        capability_workflow_json(build_capability_workflow(CapabilityWorkflowInputs()))
+    )
+    club = payload["profile"]["clubs"][0]
+    if kind == "mph":
+        club["parameters"][0]["unit"] = "mph"
+    else:
+        club["matrix_kind"] = "covariance"
+    return capability_workflow_from_json(json.dumps(payload))
 
 
 def test_capability_controls_round_trip_integration_settings(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -86,3 +131,63 @@ def test_capability_tab_rejects_oversized_interactive_workload(qtbot) -> None:  
 
     assert "100000" in tab.status.text()
     assert tab._worker is None
+
+
+def test_capability_workspace_apply_replaces_inputs_and_invalidates_results(
+    qtbot,  # type: ignore[no-untyped-def]
+) -> None:
+    tab = CapabilityOptimizationTab()
+    qtbot.addWidget(tab)
+    tab._document = build_capability_workflow(CapabilityWorkflowInputs())
+    tab.results.setVisible(True)
+    requested = _custom_workflow()
+
+    tab.apply_capability_workspace_document(requested)
+
+    assert tab.capability_workspace_document() == requested
+    assert tab._document is None
+    assert not tab.results.isVisibleTo(tab)
+
+
+@pytest.mark.parametrize(
+    ("kind", "message"), [("mph", "unit"), ("covariance", "correlation")]
+)
+def test_capability_workspace_apply_rejects_noncanonical_basis_before_mutation(
+    qtbot, kind: str, message: str
+) -> None:  # type: ignore[no-untyped-def]
+    tab = CapabilityOptimizationTab()
+    qtbot.addWidget(tab)
+    before = tab.capability_workspace_document()
+
+    with pytest.raises(ValueError, match=message):
+        tab.apply_capability_workspace_document(_noncanonical_workflow(kind))
+
+    assert tab.capability_workspace_document() == before
+
+
+def test_capability_workspace_rejects_stale_worker_success_after_replacement(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    tab = CapabilityOptimizationTab()
+    qtbot.addWidget(tab)
+
+    class StaleWorker:
+        def isRunning(self) -> bool:
+            return False
+
+        def cancel(self) -> None:
+            pass
+
+    stale_worker = StaleWorker()
+    tab._worker = stale_worker  # type: ignore[assignment]
+    stale_generation = tab.worker_generation()
+
+    tab.apply_capability_workspace_document(_custom_workflow())
+    tab.accept_worker_success(stale_worker, stale_generation, object(), object())
+
+    assert tab._document is None
+    assert tab._dataset is None
+    assert tab._result is None
+    assert not tab.results.isVisibleTo(tab)
+    assert not tab.csv_button.isEnabled()
+    assert not tab.result_json_button.isEnabled()
