@@ -1,5 +1,26 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Cross-tab automated accessibility evidence
+
+- A packaged v1 authority exactly matches the visibility manifest's nine React
+  and nine PyQt tabs. It labels React evidence as pinned axe-core WCAG A/AA
+  rules through 2.2 and PyQt evidence as a real-window audit of bounded names
+  on visible, enabled, focusable semantic controls.
+- The initial browser audit found and corrected contrast failures on the Flight
+  target Apply action and the Launch Monitor Analytics Import/Run actions.
+  Production Chromium now reports zero detected violations for all nine initial
+  tab states and attaches per-tab JSON to the protected Playwright evidence.
+- PyQt now names the previously missing plot canvas/list/combo, simulation
+  sliders and display selectors, Flight numeric inputs, Variation sampling
+  inputs, Putting pace input, and Glossary term list. The protected PyQt lane
+  exercises the exact full-window inventory and retains tab/control counts,
+  findings, GitHub SHA, and toolkit versions as JSON.
+- `rate-visualization-at-protocol.md` is a controlled, surface-by-surface human
+  keyboard/screen-reader qualification record. It requires exact environment,
+  announcement, defect, artifact, evaluator, and approver evidence. It has not
+  been executed or signed; manual AT qualification, voice/switch validation,
+  and approved goldens remain open. SPEC is 1.17.01.
+
 ## 2026-08-14 #4433 Persisted visual-layout preferences
 
 - One `visual-layout-preferences@1` contract treats layout as presentation

@@ -257,6 +257,7 @@ class SimulationTabControlsMixin:
 
         row = QHBoxLayout()
         self._scrub_slider = QSlider(Qt.Orientation.Horizontal)
+        self._scrub_slider.setAccessibleName("Impact Time")
         self._scrub_slider.setRange(0, SCRUB_STEPS)
         self._scrub_slider.setValue(SCRUB_STEPS // 2)
         self._scrub_slider.setToolTip(FIELD_GUIDANCE["impact_time_scrub"])

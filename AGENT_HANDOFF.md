@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-tab automated accessibility evidence (#4433)
+
+Version 1.17.01 adds one immutable accessibility-evidence authority over the
+exact nine React and nine PyQt tab identities. The protected React lane runs
+axe-core 4.13.0 WCAG A/AA rules through WCAG 2.2 in production Chromium and
+retains tab-by-tab JSON. The PyQt lane constructs the real main window and
+requires every visible, enabled, focusable semantic control to expose a
+bounded accessible name; missing plot/list/slider/spin/combo names are fixed.
+The protected PyQt artifact retains exact tab/control counts and zero-finding
+arrays with the GitHub SHA and Qt/PyQt versions.
+
+The first strict browser run found three low-contrast primary actions in Flight
+and Launch Monitor Analytics; their sky/emerald shades now meet the automated
+rule set. A controlled human AT protocol records exact build, environment,
+screen reader, keyboard task, announcement, defect, evidence, and approval
+fields for all 18 surface/tab identities. It is protocol-ready but has not been
+executed or signed. Automated success is not manual AT qualification, approved
+golden evidence, voice-control proof, or arbitrary-platform accessibility.
+
 ## 2026-08-14 Persisted visual-layout preferences (#4433)
 
 Version 1.17.00 adds one bounded, versioned presentation-preference contract.

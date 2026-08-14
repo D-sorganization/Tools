@@ -26,6 +26,8 @@ on:
       - "src/rate_of_closure/visualization_tab_manifest.py"
       - "src/rate_of_closure/visualization_performance_manifest.py"
       - "src/rate_of_closure/visualization_performance.v1.json"
+      - "src/rate_of_closure/visualization_accessibility_manifest.py"
+      - "src/rate_of_closure/visualization_accessibility.v1.json"
       - "src/rate_of_closure/ui/pyqt6/**"
       - "src/shared/python/swing_sim/variation/**"
       - "src/shared/python/swing_sim/putting.py"
@@ -67,6 +69,7 @@ on:
       - "tests/rate_of_closure/test_visualization_tab_manifest.py"
       - "tests/rate_of_closure/test_visualization_tab_audit.py"
       - "tests/rate_of_closure/test_visualization_performance_manifest.py"
+      - "tests/rate_of_closure/test_visualization_accessibility.py"
       - "tests/rate_of_closure/test_visual_layout_gui.py"
       - "tests/rate_of_closure/test_visual_layout_preferences.py"
       - "tests/ops/test_rate_web_playwright_workflow.py"
@@ -126,6 +129,7 @@ jobs:
           tests/rate_of_closure/test_pyqt_simulation_scrub_rendered.py
           tests/rate_of_closure/test_pyqt_plot_point_inspector_rendered.py
           tests/rate_of_closure/test_pyqt_visual_layout_persistence_rendered.py
+          tests/rate_of_closure/test_visualization_accessibility.py
           tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0
 
       - name: Retain Playwright evidence

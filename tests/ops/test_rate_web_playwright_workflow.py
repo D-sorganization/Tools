@@ -44,6 +44,8 @@ PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/visualization_tabs.v1.json",
     "src/rate_of_closure/visualization_performance_manifest.py",
     "src/rate_of_closure/visualization_performance.v1.json",
+    "src/rate_of_closure/visualization_accessibility_manifest.py",
+    "src/rate_of_closure/visualization_accessibility.v1.json",
     "src/shared/python/swing_sim/variation/**",
     "src/shared/python/swing_sim/putting.py",
     "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
@@ -84,6 +86,7 @@ PYQT_AUTHORITY_PATHS = {
     "tests/rate_of_closure/test_visualization_tab_manifest.py",
     "tests/rate_of_closure/test_visualization_tab_audit.py",
     "tests/rate_of_closure/test_visualization_performance_manifest.py",
+    "tests/rate_of_closure/test_visualization_accessibility.py",
     "tests/rate_of_closure/test_visual_layout_gui.py",
     "tests/rate_of_closure/test_visual_layout_preferences.py",
     "tests/ops/test_rate_web_playwright_workflow.py",
@@ -182,6 +185,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "tests/rate_of_closure/test_pyqt_simulation_scrub_rendered.py "
         "tests/rate_of_closure/test_pyqt_plot_point_inspector_rendered.py "
         "tests/rate_of_closure/test_pyqt_visual_layout_persistence_rendered.py "
+        "tests/rate_of_closure/test_visualization_accessibility.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
     assert (
@@ -200,6 +204,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "tests/rate_of_closure/test_pyqt_simulation_scrub_rendered.py "
         "tests/rate_of_closure/test_pyqt_plot_point_inspector_rendered.py "
         "tests/rate_of_closure/test_pyqt_visual_layout_persistence_rendered.py "
+        "tests/rate_of_closure/test_visualization_accessibility.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
 

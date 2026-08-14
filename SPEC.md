@@ -26,11 +26,39 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.00                                    |
-| **Spec Version**        | 1.17.00                                    |
+| **Current Version**     | 1.17.01                                    |
+| **Spec Version**        | 1.17.01                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Cross-tab automated accessibility evidence (#4433)
+
+Version 1.17.01 introduces
+`rate-of-closure/visualization-accessibility-evidence@1`, whose tab identities
+must exactly equal the existing visibility authority. React evidence uses
+axe-core 4.13.0 WCAG A/AA rules through WCAG 2.2 against each initial primary
+tab in production Chromium. The protected attachment preserves every tab's
+violation array. The first strict run found three contrast failures; corrected
+sky/emerald action shades now produce zero detected violations across all nine
+React tabs.
+
+PyQt evidence constructs the real main window and audits visible, enabled,
+focusable semantic controls. Buttons may use their text; line edits may use an
+explicit placeholder; labeled fields may use their `QLabel` buddy; all other
+audited controls require an explicit accessible name. Names are nonempty and
+bounded to 512 characters. This closes the reproduced unnamed canvas, list,
+combo, slider, and numeric-input gaps across the nine PyQt tabs.
+The protected PyQt artifact records the exact tab/control counts, findings,
+GitHub SHA, and Qt/PyQt versions as JSON.
+
+The companion controlled protocol covers keyboard traversal, focus, primary
+tasks, status/error/result announcements, 200% scaling, exact environment and
+build identity, evidence retention, defects, evaluator, and approval. It is a
+protocol, not a completed qualification record. No human screen-reader run or
+sign-off is claimed. Automated rule success does not prove manual AT, voice or
+switch access, cognitive accessibility, arbitrary browsers/platforms, or
+approved-golden status.
 
 ### 2026-08-14 Persisted visual-layout preferences (#4433)
 
@@ -4362,6 +4390,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.01 | feat(rate-of-closure, #4433): add exact all-tab automated accessibility evidence, strict React axe and PyQt semantic-control gates, corrected action contrast and control names, plus a controlled but not-yet-executed human AT qualification protocol. |
 | 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |
 | 2026-08-13 | 1.16.86 | fix(ci, #4441): classify only the PyQt Variation lifecycle subprocess probe as assertion-free support while preserving rejection of adjacent assertion-light tests. |
 | 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |

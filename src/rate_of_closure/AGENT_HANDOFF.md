@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Cross-tab automated accessibility evidence (#4433)
+
+- `visualization-accessibility-evidence@1` exactly covers all nine React and
+  nine PyQt visualization-tab identities and explicitly separates protected
+  automated evidence from human assistive-technology qualification.
+- React uses pinned axe-core 4.13.0 against production Chromium with WCAG A/AA
+  tags through 2.2. The strict first run exposed three low-contrast actions;
+  corrected sky/emerald shades now leave zero detected violations across the
+  nine initial tab states, with per-tab JSON retained by Playwright.
+- PyQt constructs the real main window and audits every visible, enabled,
+  focusable button, item view, slider, spin box, combo, line edit, and
+  Matplotlib canvas for a bounded accessible name. Previously unnamed plot,
+  glossary, simulation, flight, variation, and putting controls are corrected.
+  The protected artifact records tab/control counts, findings, GitHub SHA, and
+  exact Qt/PyQt versions as JSON.
+- The new controlled protocol defines keyboard/screen-reader tasks, evidence,
+  defects, exact environment identity, and sign-off for every surface/tab. No
+  human execution is recorded, so manual AT qualification and approved
+  baselines remain open. SPEC is 1.17.01.
+
 ## 2026-08-14 Persisted visual-layout preferences (#4433)
 
 - `visual-layout-preferences@1` durably restores the existing tab/order state

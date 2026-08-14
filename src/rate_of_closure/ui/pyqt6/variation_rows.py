@@ -57,11 +57,13 @@ class NoiseRow(QWidget):
         self._loaded_editor_state: tuple[object, ...] | None = None
         self._loaded_locus_state: tuple[float, float, object] | None = None
         self.variable = QComboBox()
+        self.variable.setAccessibleName("Varied Variable")
         self.variable.setToolTip(
             "Which registry variable varies run to run. Grouped by "
             "namespaced category (shared across the desktop and web tools)."
         )
         self.distribution = QComboBox()
+        self.distribution.setAccessibleName("Sampling Distribution")
         self.distribution.addItems(list(DISTRIBUTIONS))
         self.distribution.setToolTip(
             "Sampling distribution about the base value: normal (scale = "
@@ -69,13 +71,16 @@ class NoiseRow(QWidget):
             "triangular peaks at the base value)."
         )
         self.scale = make_spin(1e-6, 1e6, 1.0, 4)
+        self.scale.setAccessibleName("Noise Scale")
         self.clip = QCheckBox("Clip")
         self.clip.setToolTip(
             "Truncate samples into [min, max] by clipping — samples never "
             "leave the bounds and the draw count stays deterministic."
         )
         self.clip_low = make_spin(-1e6, 1e6, -5.0, 3)
+        self.clip_low.setAccessibleName("Clipping Lower Bound")
         self.clip_high = make_spin(-1e6, 1e6, 5.0, 3)
+        self.clip_high.setAccessibleName("Clipping Upper Bound")
         for widget in (self.clip_low, self.clip_high):
             widget.setEnabled(False)
             widget.setToolTip("Truncation bound (absolute value, same unit).")
