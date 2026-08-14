@@ -43,6 +43,15 @@ describe("FlightPlayback3D", () => {
     expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();
   });
 
+  it("replays an exact repeated selection command after manual scrubbing", () => {
+    const view = render(<FlightPlayback3D points={points} selectedTimeS={0}
+      selectedCommandId={1} />);
+    fireEvent.click(screen.getByRole("button", { name: "Jump to Landing" }));
+    expect(screen.getByLabelText("Ball flight playback position")).toHaveTextContent("2.00 / 2.00 s");
+    view.rerender(<FlightPlayback3D points={points} selectedTimeS={0} selectedCommandId={2} />);
+    expect(screen.getByLabelText("Ball flight playback position")).toHaveTextContent("0.00 / 2.00 s");
+  });
+
   it("preserves its intrinsic aspect ratio at responsive widths", () => {
     render(<FlightPlayback3D points={points} />);
 

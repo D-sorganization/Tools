@@ -12,6 +12,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from rate_of_closure._contracts import PreconditionError
 from rate_of_closure.simulation import (
     BALL_POSITION_M,
     EXPLORER_METRIC_KEYS,
@@ -77,6 +78,23 @@ class TestLaunchFromDirect:
     def test_rejects_nonpositive_ball_speed(self) -> None:
         with pytest.raises(Exception, match="ball_speed"):
             launch_from_direct(0.0, 12.0, 0.0, 2500.0, 0.0)
+
+    @pytest.mark.parametrize(
+        "values",
+        [
+            (250.01, 12.0, 0.0, 2500.0, 0.0),
+            (150.0, 89.01, 0.0, 2500.0, 0.0),
+            (150.0, 12.0, 45.01, 2500.0, 0.0),
+            (150.0, 12.0, 0.0, 15001.0, 0.0),
+            (150.0, 12.0, 0.0, 2500.0, float("nan")),
+            (True, 12.0, 0.0, 2500.0, 0.0),
+        ],
+    )
+    def test_enforces_finite_direct_entry_domains(
+        self, values: tuple[object, ...]
+    ) -> None:
+        with pytest.raises(PreconditionError):
+            launch_from_direct(*values)
 
 
 class TestLaunchFromDelivery:

@@ -1,5 +1,31 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Flight synchronized sample inspector
+
+- A Python-owned golden and strict Python/TypeScript twins cap raw evidence at
+  1,002 samples before planner copying/allocation, preserve launch/apex/landing semantics,
+  and reject malformed, nonfinite, overflow-prone, translated, airborne-final,
+  below-ground, or provenance-incoherent trajectories.
+- React direct entry and PyQt direct/delivery each publish one immutable accepted
+  bundle with exact producing inputs, launch, model/kernel/wind provenance,
+  aligned time/position/velocity, optional calm comparison, derived summaries, and the
+  generation-bound time/position display plan. The separate target overlay is
+  transactionally refreshed from the accepted trajectory.
+  The calm ghost has no inferred correspondence and is never selectable.
+- Side/top pointer selection is bounded to 12 rendered pixels; keyboard
+  navigation and misses preserve focus and exact raw identity. Selection jumps
+  the sole 3D playback owner to the exact accepted timestamp without a solver
+  rerun. Canonical speed survives all presentation-unit switches.
+- PyQt commits target, view, controls, result rows, deltas, statuses, and public
+  references as one transaction. Failed repaint retains scientific authority;
+  failed pixel restoration is labeled stale/unavailable and idle redraw pauses
+  until a proven recovery. React retains prior or honest empty evidence with a
+  bounded alert and marks edited inputs as different from displayed context.
+- Three Chromium React selected viewport captures plus eight PyQt selected/error-prior
+  window/canvas DPI PNGs are diagnostic only. The retained raw grid differs by runtime,
+  so indices are runtime-local evidence, not cross-solver identity. SPEC is
+  1.16.93; #4433 remains open for remaining tabs and approval/AT coverage.
+
 ## 2026-08-13 #4433 Club Explorer hosted dtype closure
 
 - The structured binary-STL dtype is explicitly typed and three binding boolean

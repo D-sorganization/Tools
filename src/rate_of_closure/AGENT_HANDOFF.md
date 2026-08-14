@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Flight synchronized sample inspector (#4433)
+
+- React direct entry and PyQt direct/delivery snapshot one complete accepted
+  flight: producing inputs, launch/model/kernel/wind provenance, aligned raw
+  time/position/velocity, optional calm comparison, summaries, and a bounded
+  time/position plan. The separate target overlay is transactionally aligned.
+- Only the current primary cohort is selectable. Exact raw-index selection is
+  generation-bound, uses a 12 CSS/display-pixel radius, retains on misses, and
+  synchronizes side/top markers, polite status, and the sole 3D playback time.
+- All target/view/row/delta/status/public-reference publication is transactional.
+  First failure stays empty; prior failure retains authority and selection. A
+  failed pixel rollback is reported as stale/unavailable rather than fabricated
+  retained imagery. Presentation-unit changes preserve canonical speed exactly.
+- Chromium React selected evidence covers 1440x900, 1280x720, and 390x844. Eight PyQt
+  selected/error-prior window/canvas PNGs cover DPI 1.0/1.5 with exact canvas identity. These
+  PNGs are diagnostic, not approved goldens. SPEC is 1.16.93; #4433 remains open.
+
 ## 2026-08-13 Club Explorer hosted dtype closure (#4433)
 
 - The binary-STL record now has an explicit structured NumPy dtype, and Qt/

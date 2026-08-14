@@ -33,8 +33,16 @@ describe("directLaunch", () => {
     expect(launch.spinAxis[2]).toBeCloseTo(0.0, 12);
   });
 
-  it("rejects non-positive ball speed", () => {
+  it("enforces exact finite direct-entry domains", () => {
     expect(() => directLaunch({ ...PINNED, ballSpeedMph: 0 })).toThrow();
+    expect(() => directLaunch({ ...PINNED, ballSpeedMph: 250.01 })).toThrow();
+    expect(() => directLaunch({ ...PINNED, launchAngleDeg: 89.01 })).toThrow();
+    expect(() => directLaunch({ ...PINNED, launchDirectionDeg: -45.01 })).toThrow();
+    expect(() => directLaunch({ ...PINNED, spinRpm: 15001 })).toThrow();
+    expect(() => directLaunch({ ...PINNED, spinAxisTiltDeg: Number.NaN })).toThrow();
+    expect(() => directLaunch({ ...PINNED, spinRpm: true as never })).toThrow();
+    expect(() => directLaunch({ ...PINNED, ballSpeedMph: 1 })).not.toThrow();
+    expect(() => directLaunch({ ...PINNED, ballSpeedMph: 250 })).not.toThrow();
   });
 });
 

@@ -12,13 +12,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.model import MPH_PER_MPS
-
 #: Entry modes, in combo order.
 ENTRY_MODES: tuple[str, ...] = ("Direct Launch Conditions", "Impact Delivery")
-
-#: Speed display units: label -> factor from displayed to m/s.
-SPEED_UNITS: dict[str, float] = {"mph": 1.0 / MPH_PER_MPS, "m/s": 1.0}
 
 #: (metric key, Title Case label, unit suffix) result rows in display order.
 EXPLORER_ROWS: tuple[tuple[str, str, str], ...] = (

@@ -62,6 +62,32 @@ def test_manifest_v1_covers_every_registered_pyqt_tab() -> None:
     )
 
 
+def test_flight_manifest_names_synchronous_atomic_inspector_states() -> None:
+    manifest = load_visualization_tab_manifest()
+    react = next(
+        entry
+        for entry in manifest.tabs
+        if entry.surface == "react" and entry.tab_id == "flight"
+    )
+    pyqt = next(
+        entry
+        for entry in manifest.tabs
+        if entry.surface == "pyqt" and entry.tab_id == "flight_explorer"
+    )
+    assert react.states == MappingProxyType(
+        {
+            "empty": "placeholder-canvas",
+            "loading": "synchronous",
+            "result": "bounded-synchronized-sample-inspector",
+            "error": "alert-and-prior-or-empty-inspector",
+        }
+    )
+    assert pyqt.states["result"] == "bounded-synchronized-sample-inspector"
+    assert pyqt.states["error"] == (
+        "status-and-prior-or-empty-inspector;stale-warning-on-restoration-failure"
+    )
+
+
 def test_governance_rejects_a_missing_or_duplicate_registered_tab() -> None:
     manifest = load_visualization_tab_manifest()
     pyqt = manifest.for_surface("pyqt")

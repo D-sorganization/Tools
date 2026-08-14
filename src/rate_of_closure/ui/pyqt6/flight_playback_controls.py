@@ -101,6 +101,7 @@ class FlightPlaybackControls(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(row)
         layout.addWidget(help_label)
+        self.set_timeline(0.0, 0.0)
 
     @staticmethod
     def _button(label: str, callback: Callable[[], None]) -> QPushButton:
@@ -124,6 +125,7 @@ class FlightPlaybackControls(QWidget):
         self._set_time(0.0)
         enabled = duration_s > 0.0
         for control in (
+            self.launch_button,
             self.play_button,
             self.restart_button,
             self.apex_button,
@@ -169,6 +171,13 @@ class FlightPlaybackControls(QWidget):
         """Pause at the terminal ground-contact/landing sample."""
         self.pause()
         self._set_time(self._duration_s)
+
+    def jump_to_time(self, time_s: float) -> None:
+        """Pause at one exact accepted solver timestamp."""
+        if not math.isfinite(time_s):
+            raise ValueError("playback time must be finite")
+        self.pause()
+        self._set_time(time_s)
 
     def current_time_s(self) -> float:
         """Current physical playback time [s]."""

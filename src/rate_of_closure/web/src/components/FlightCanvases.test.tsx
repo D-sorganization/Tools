@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FlightCanvases } from "./FlightCanvases";
 import { spatialTargetFromRegion, DEFAULT_TARGET } from "../model/targets";
+import { planFlightSamples } from "../model/flightSampleInspector";
 
 describe("FlightCanvases responsive layout", () => {
   beforeEach(() => {
@@ -93,4 +94,37 @@ describe("FlightCanvases responsive layout", () => {
         .toHaveAttribute("aria-description", expect.stringContaining("Green Target"));
     },
   );
+
+  it("synchronizes pointer and keyboard selection without selecting the calm ghost", () => {
+    const points = [
+      { time: 0, position: [0, 0, 0] as [number, number, number], velocity: [1, 1, 0] as [number, number, number] },
+      { time: 1, position: [100, 0, 0] as [number, number, number], velocity: [1, -1, 0] as [number, number, number] },
+    ];
+    const calm = points.map((point) => ({
+      ...point,
+      position: [point.position[0], 3, point.position[2]] as [number, number, number],
+    }));
+    const plan = planFlightSamples({ timesS: [0, 1], positionsM: points.map((point) => point.position) });
+    const onSelectionChange = vi.fn();
+    render(<FlightCanvases points={points} comparisonPoints={calm} plan={plan}
+      onSelectionChange={onSelectionChange} />);
+    const side = screen.getByLabelText("Flight side profile (height vs carry)");
+    vi.spyOn(side, "getBoundingClientRect").mockReturnValue({
+      left: 0, top: 0, width: 860, height: 260, right: 860, bottom: 260,
+      x: 0, y: 0, toJSON: () => ({}),
+    });
+    fireEvent.click(side, { clientX: 34, clientY: 226 });
+    expect(onSelectionChange).toHaveBeenLastCalledWith({ cohort: "current", rawIndex: 0 });
+    const afterHit = onSelectionChange.mock.calls.length;
+    fireEvent.click(side, { clientX: 34, clientY: 203 });
+    expect(onSelectionChange).toHaveBeenCalledTimes(afterHit);
+    fireEvent.click(side, { clientX: 34, clientY: 10 });
+    expect(onSelectionChange).toHaveBeenCalledTimes(afterHit);
+    side.focus();
+    fireEvent.keyDown(side, { key: "End" });
+    expect(onSelectionChange).toHaveBeenLastCalledWith({ cohort: "current", rawIndex: 1 });
+    expect(side).toHaveFocus();
+    fireEvent.keyDown(side, { key: "Escape" });
+    expect(onSelectionChange).toHaveBeenLastCalledWith(null);
+  });
 });

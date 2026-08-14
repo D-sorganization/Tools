@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 from PyQt6.QtWidgets import (
     QAbstractSpinBox,
     QCheckBox,
@@ -112,6 +114,17 @@ class FlightWindControls(QGroupBox):
         if key not in self._delta_labels:
             raise KeyError(key)
         return str(self._delta_labels[key].text())
+
+    def delta_texts(self) -> dict[str, str]:
+        """Snapshot presentation texts for an atomic explorer publication."""
+        return {key: label.text() for key, label in self._delta_labels.items()}
+
+    def restore_delta_texts(self, texts: Mapping[str, str]) -> None:
+        """Restore a previously snapshotted delta presentation."""
+        if set(texts) != set(self._delta_labels):
+            raise ValueError("wind delta presentation snapshot is incomplete")
+        for key, label in self._delta_labels.items():
+            label.setText(texts[key])
 
     def _refresh_direction(self) -> None:
         to_bearing = (self.bearing_spin.value() + 180.0) % 360.0

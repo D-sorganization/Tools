@@ -9,7 +9,6 @@ explanations, and timestamp-accurate 3D playback. Physics remains in
 from __future__ import annotations
 
 import logging
-import math
 from typing import cast
 
 from PyQt6.QtCore import pyqtSignal
@@ -22,7 +21,6 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QPushButton,
     QScrollArea,
     QSplitter,
@@ -33,24 +31,18 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
+from rate_of_closure.flight_accepted_study import AcceptedFlightStudy
 from rate_of_closure.model import MPH_PER_MPS
-from rate_of_closure.simulation import (
-    FlightExploration,
-    WindComparison,
-    explore_with_optional_wind,
-    launch_from_delivery,
-    launch_from_direct,
-)
+from rate_of_closure.simulation import FlightExploration, WindComparison
 from rate_of_closure.ui.pyqt6.flight_explorer_controls import (
     DELIVERY_FIELDS,
     DIRECT_FIELDS,
-    DISTANCE_ROWS,
     ENTRY_MODES,
     EXPLORER_ROWS,
-    SPEED_UNITS,
     field_label,
     make_spin,
 )
+from rate_of_closure.ui.pyqt6.flight_explorer_run import FlightExplorerRunMixin
 from rate_of_closure.ui.pyqt6.flight_playback_controls import FlightPlaybackPanel
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.flight_wind_controls import FlightWindControls
@@ -58,21 +50,20 @@ from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.ui.pyqt6.spatial_target_workflow import (
     build_spatial_target_workflow,
 )
-from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
+from rate_of_closure.units import FIELD_GUIDANCE, SPEED_UNITS
 from shared.python.swing_sim.flight import (
     LAUNCH_DIRECTION_DEFINITIONS,
     LaunchDirectionConvention,
     launch_direction_sign_labels,
 )
 from shared.python.swing_sim.flight.registry import FlightModelType
-from shared.python.swing_sim.impact import DeliveryParameters
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["EXPLORER_ROWS", "FlightExplorerTab"]
 
 
-class FlightExplorerTab(QWidget):
+class FlightExplorerTab(FlightExplorerRunMixin, QWidget):
     """Standalone flight explorer: launch entry, model picker, viewer."""
 
     #: Emitted with a glossary term key when an explanation link is used.
@@ -82,11 +73,16 @@ class FlightExplorerTab(QWidget):
         super().__init__(parent)
         self._exploration: FlightExploration | None = None
         self.wind_comparison: WindComparison | None = None
+        self._accepted: AcceptedFlightStudy | None = None
+        self._generation = 0
+        self._error_origin: str | None = None
         self._rows: dict[str, ResultRow] = {}
         self._direct_spins: dict[str, QDoubleSpinBox] = {}
         self._delivery_spins: dict[str, QDoubleSpinBox] = {}
         self._flight_view = FlightView()
         self._flight_panel = FlightPlaybackPanel(self._flight_view)
+        self._flight_view.sampleSelected.connect(self._on_sample_selected)
+        self._flight_view.sampleSelectionFailed.connect(self._show_sample_error)
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -108,7 +104,27 @@ class FlightExplorerTab(QWidget):
 
         splitter = QSplitter()
         splitter.addWidget(left)
-        splitter.addWidget(self._flight_panel)
+        right = QWidget()
+        right_layout = QVBoxLayout(right)
+        right_layout.setContentsMargins(0, 0, 0, 0)
+        self._error_status = QLabel()
+        self._error_status.setAccessibleName("Flight explorer error")
+        self._error_status.setWordWrap(True)
+        self._error_status.setStyleSheet("color: #ef4444")
+        self._error_status.setFixedHeight(64)
+        self._context_status = QLabel("No accepted flight is available.")
+        self._context_status.setAccessibleName("Displayed flight context")
+        self._context_status.setWordWrap(True)
+        self._sample_status = QLabel(
+            "Select the current primary trajectory; calm ghost is comparison-only."
+        )
+        self._sample_status.setAccessibleName("Selected flight sample")
+        self._sample_status.setWordWrap(True)
+        right_layout.addWidget(self._error_status)
+        right_layout.addWidget(self._context_status)
+        right_layout.addWidget(self._sample_status)
+        right_layout.addWidget(self._flight_panel, stretch=1)
+        splitter.addWidget(right)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         layout = QHBoxLayout(self)
@@ -116,6 +132,7 @@ class FlightExplorerTab(QWidget):
         layout.addWidget(splitter)
 
         self._show_explanation(EXPLORER_ROWS[0][0])
+        self._connect_identity_editors()
 
     # ── construction ────────────────────────────────────────────────
     def _build_entry_box(self) -> QGroupBox:
@@ -137,6 +154,8 @@ class FlightExplorerTab(QWidget):
         self._speed_unit_combo.setToolTip(FIELD_GUIDANCE["fx_speed_unit"])
         self._speed_unit_combo.currentTextChanged.connect(self._on_speed_unit)
         self._speed_unit = "mph"
+        self._speed_mph = 167.0
+        self._speed_spin.valueChanged.connect(self._on_speed_value_changed)
         speed_row.addWidget(self._speed_spin, stretch=1)
         speed_row.addWidget(self._speed_unit_combo)
         form.addRow("Speed", speed_row)
@@ -251,9 +270,11 @@ class FlightExplorerTab(QWidget):
     # ── public API ──────────────────────────────────────────────────
     def speed_mps(self) -> float:
         """The entered speed converted to m/s."""
-        speed: float = self._speed_spin.value()
-        factor: float = SPEED_UNITS[self._speed_unit]
-        return speed * factor
+        return float(self._speed_mph / MPH_PER_MPS)
+
+    def speed_mph(self) -> float:
+        """The exact canonical speed authority in miles per hour."""
+        return self._speed_mph
 
     def mode(self) -> str:
         """The selected entry mode label."""
@@ -265,86 +286,11 @@ class FlightExplorerTab(QWidget):
 
     def last_exploration(self) -> FlightExploration | None:
         """The most recent successful exploration, if any."""
-        return self._exploration
+        return None if self._accepted is None else self._accepted.exploration
 
-    def run_now(self) -> FlightExploration | None:
-        """Build launch conditions, run the flight, populate the views."""
-        try:
-            if self.mode() == ENTRY_MODES[0]:
-                launch = launch_from_direct(
-                    ball_speed_mph=self.speed_mps() * MPH_PER_MPS,
-                    launch_angle_deg=self._direct_spins["launch_angle_deg"].value(),
-                    launch_direction_deg=self._direct_spins[
-                        "launch_direction_deg"
-                    ].value(),
-                    spin_rpm=self._direct_spins["spin_rpm"].value(),
-                    spin_axis_tilt_deg=self._direct_spins["spin_axis_tilt_deg"].value(),
-                    direction_convention=self._direction_convention_combo.currentData(),
-                )
-            else:
-                launch = launch_from_delivery(
-                    DeliveryParameters(
-                        clubhead_speed_mps=self.speed_mps(),
-                        club_path_deg=self._delivery_spins["club_path_deg"].value(),
-                        face_angle_deg=self._delivery_spins["face_angle_deg"].value(),
-                        attack_angle_deg=self._delivery_spins[
-                            "attack_angle_deg"
-                        ].value(),
-                        dynamic_loft_deg=self._delivery_spins[
-                            "dynamic_loft_deg"
-                        ].value(),
-                        impact_offset_toe_mm=self._delivery_spins[
-                            "impact_offset_toe_mm"
-                        ].value(),
-                        impact_offset_high_mm=self._delivery_spins[
-                            "impact_offset_high_mm"
-                        ].value(),
-                    )
-                )
-            model_name = self._model_combo.currentText()
-            exploration, comparison = explore_with_optional_wind(
-                launch, self.wind_controls.optional_scenario(), model_name
-            )
-        except Exception as exc:  # noqa: BLE001 — surface physics failures
-            logger.warning("flight exploration failed: %s", exc)
-            QMessageBox.warning(self, "Flight Failed", str(exc))
-            return None
-        self._exploration = exploration
-        self.wind_comparison = comparison
-        self.wind_controls.set_comparison(comparison)
-        self._flight_view.set_timed_trajectory(exploration.times, exploration.positions)
-        if comparison is None:
-            self._flight_view.set_comparison_timed_trajectory(None, None)
-        else:
-            self._flight_view.set_comparison_timed_trajectory(
-                comparison.calm.times, comparison.calm.positions
-            )
-        self._refresh_rows()
-        self._target_workflow.set_trajectory(exploration.positions)
-        return exploration
-
-    def _refresh_rows(self) -> None:
-        """Format the result rows; carry/lateral follow the distance
-        display unit (#4125 H6 — yards default, apex stays metres)."""
-        if self._exploration is None:
-            return
-        for key, _label, unit in EXPLORER_ROWS:
-            value = self._exploration.metrics[key]
-            if not math.isfinite(value):
-                text = "—"
-            elif key in DISTANCE_ROWS:
-                text = (
-                    f"+{format_distance_m(value)}"
-                    if value >= 0
-                    else (f"-{format_distance_m(-value)}")
-                )
-            else:
-                text = f"{value:+.1f}{unit}"
-            self._rows[key].value_label.setText(text)
-
-    def refresh_units(self) -> None:
-        """Re-render distance rows after a display-unit change."""
-        self._refresh_rows()
+    def accepted_study(self) -> AcceptedFlightStudy | None:
+        """The complete immutable accepted authority, if one has committed."""
+        return self._accepted
 
     # ── internals ──────────────────────────────────────────────────
     def _on_mode_changed(self, index: int) -> None:
@@ -363,11 +309,61 @@ class FlightExplorerTab(QWidget):
         previous = self._speed_unit
         if unit == previous:
             return
-        mps = self._speed_spin.value() * SPEED_UNITS[previous]
         self._speed_unit = unit
         self._speed_spin.blockSignals(True)
-        self._speed_spin.setValue(mps / SPEED_UNITS[unit])
+        mph_per_display_unit = SPEED_UNITS[unit]
+        self._speed_spin.setDecimals(9)
+        self._speed_spin.setRange(
+            1.0 / mph_per_display_unit,
+            250.0 / mph_per_display_unit,
+        )
+        self._speed_spin.setValue(self._speed_mph / mph_per_display_unit)
         self._speed_spin.blockSignals(False)
+
+    def _on_speed_value_changed(self, value: float) -> None:
+        self._speed_mph = value * SPEED_UNITS[self._speed_unit]
+
+    def _connect_identity_editors(self) -> None:
+        self._speed_spin.valueChanged.connect(self._mark_inputs_changed)
+        for spin in self._direct_spins.values():
+            spin.valueChanged.connect(self._mark_direct_inputs_changed)
+        for spin in self._delivery_spins.values():
+            spin.valueChanged.connect(self._mark_delivery_inputs_changed)
+        self._mode_combo.currentIndexChanged.connect(self._mark_inputs_changed)
+        self._model_combo.currentIndexChanged.connect(self._mark_inputs_changed)
+        self._direction_convention_combo.currentIndexChanged.connect(
+            self._mark_direction_changed
+        )
+        self.wind_controls.enabled_check.toggled.connect(self._mark_inputs_changed)
+        self.wind_controls.speed_spin.valueChanged.connect(
+            self._mark_wind_inputs_changed
+        )
+        self.wind_controls.bearing_spin.valueChanged.connect(
+            self._mark_wind_inputs_changed
+        )
+
+    def _mark_direct_inputs_changed(self) -> None:
+        if self.mode() == ENTRY_MODES[0]:
+            self._mark_inputs_changed()
+
+    def _mark_delivery_inputs_changed(self) -> None:
+        if self.mode() == ENTRY_MODES[1]:
+            self._mark_inputs_changed()
+
+    def _mark_wind_inputs_changed(self) -> None:
+        if self.wind_controls.enabled_check.isChecked():
+            self._mark_inputs_changed()
+
+    def _mark_direction_changed(self) -> None:
+        if self.mode() == ENTRY_MODES[0]:
+            self._mark_inputs_changed()
+
+    def _show_sample_error(self, message: str, restoration_failed: bool) -> None:
+        self._show_error(
+            RuntimeError(message),
+            origin="selection",
+            restoration_failed=restoration_failed,
+        )
 
     def _refresh_direction_example(self) -> None:
         convention = self._direction_convention_combo.currentData()

@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Flight synchronized sample inspector (#4433)
+
+Version 1.16.93 adds immutable, generation-bound accepted-flight bundles and
+matched React/PyQt raw-sample inspectors. The accepted exploration retains
+aligned time/position/velocity, while a maximum 1,002-sample plan binds exact
+current-primary time/position; the calm ghost
+is comparison-only. Twelve-CSS-pixel pointer picking and Arrow/Home/End/Escape
+navigation drive the sole 3D playback time without rerunning flight physics.
+React direct-entry and PyQt direct/delivery model, kernel, wind, launch,
+summary, origin, and landing evidence is validated before atomic publication;
+the separate target overlay is refreshed in the same PyQt transaction. Failed computation
+or UI/render publication retains prior scientific authority; if pixels cannot
+be restored the visible warning says the image may be stale. Three Chromium React
+selected viewport captures and eight PyQt selected/error window/canvas DPI PNGs are
+diagnostic-only, not approved goldens. Runtime-local sample indices are not a
+portable cross-solver identity, and #4433 remains open.
+
 ## 2026-08-13 Club Explorer hosted dtype closure (#4433)
 
 Version 1.16.92 explicitly types the structured binary-STL NumPy dtype and

@@ -42,10 +42,17 @@ export interface DirectLaunchInput {
 
 /** Twin of `launch_from_direct` (app signs -> flight frame). */
 export function directLaunch(input: DirectLaunchInput): Launch {
-  if (!(input.ballSpeedMph > 0)) {
-    throw new Error("ballSpeedMph must be > 0");
+  const values = [input.ballSpeedMph, input.launchAngleDeg, input.spinRpm, input.spinAxisTiltDeg];
+  if (values.some((value) => typeof value !== "number" || !Number.isFinite(value)) ||
+      input.ballSpeedMph < 1 || input.ballSpeedMph > 250 ||
+      Math.abs(input.launchAngleDeg) > 89 || input.spinRpm < 0 || input.spinRpm > 15_000 ||
+      Math.abs(input.spinAxisTiltDeg) > 60) {
+    throw new RangeError("direct flight inputs are outside the supported domain");
   }
   const direction = launchDirectionFromRecord(input as unknown as Record<string, unknown>);
+  if (!Number.isFinite(direction.degrees) || Math.abs(direction.degrees) > 45) {
+    throw new RangeError("launch direction must be finite and within -45..45 degrees");
+  }
   // App direction + = right; flight-frame azimuth + = left: flip. The
   // fade-side tilt (+) needs a downward (-z flight) sidespin component,
   // so the legacy spin-axis-angle decomposition gets the flipped angle
@@ -86,6 +93,12 @@ export interface FlightExplorationTs {
     landingAngleDeg: number;
     lateralM: number; // + = right of target
   };
+  execution: {
+    readonly model: "waterloo_penner";
+    readonly kernelRevision: "web-rk4-10ms-sampled-v1";
+    readonly windScenario: WindScenario | null;
+    readonly launch: Launch;
+  };
 }
 
 export interface WindComparisonTs {
@@ -122,13 +135,27 @@ export function exploreFlight(launch: Launch): FlightExplorationTs {
       // Flight lateral + = left; app lateral + = right.
       lateralM: -result.lateralM,
     },
+    execution: Object.freeze({
+      model: "waterloo_penner",
+      kernelRevision: "web-rk4-10ms-sampled-v1",
+      windScenario: launch.windScenario ?? null,
+      launch: Object.freeze({
+        ...launch,
+        spinAxis: Object.freeze([...launch.spinAxis]) as Vec3,
+        windScenario: launch.windScenario,
+      }),
+    }),
   };
 }
 
 /** Run common-input no-wind and wind trajectories and retain auditable deltas. */
-export function compareWind(launch: Launch, scenario: WindScenario): WindComparisonTs {
-  const calm = exploreFlight({ ...launch, windScenario: undefined });
-  const wind = exploreFlight({ ...launch, windScenario: scenario });
+export function compareWind(
+  launch: Launch,
+  scenario: WindScenario,
+  execute: (request: Launch) => FlightExplorationTs = exploreFlight,
+): WindComparisonTs {
+  const calm = execute({ ...launch, windScenario: undefined });
+  const wind = execute({ ...launch, windScenario: scenario });
   return {
     calm,
     wind,

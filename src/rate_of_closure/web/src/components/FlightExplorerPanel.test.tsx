@@ -1,9 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
+import { directLaunch, exploreFlight } from "../model/flightExplorer";
 
 function FlightExplorerHarness() {
   const [target, setTarget] = useState(() => spatialTargetFromRegion(DEFAULT_TARGET));
@@ -20,6 +21,7 @@ beforeAll(() => {
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
     ctx as CanvasRenderingContext2D,
   );
+  HTMLElement.prototype.scrollIntoView = vi.fn();
 });
 
 describe("FlightExplorerPanel input editing", () => {
@@ -98,4 +100,127 @@ describe("FlightExplorerPanel input editing", () => {
     expect(screen.getByLabelText("Flight side profile (height vs carry)"))
       .toBeInTheDocument();
   });
+
+  it("retains the atomic prior flight, context, and selection after a failed rerun", () => {
+    const accepted = exploreFlight(directLaunch({
+      ballSpeedMph: 167, launchAngleDeg: 10.9, launchDirectionDeg: 0,
+      spinRpm: 2686, spinAxisTiltDeg: 0,
+    }));
+    const execute = vi.fn()
+      .mockReturnValueOnce(accepted)
+      .mockImplementationOnce(() => { throw new Error("planted executor failure"); });
+    render(<FlightExplorerHarnessWithExecutor execute={execute} />);
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    const side = screen.getByLabelText("Flight side profile (height vs carry)");
+    side.focus();
+    fireEvent.keyDown(side, { key: "Home" });
+    expect(screen.getByRole("status", { name: "Selected flight sample" }))
+      .toHaveTextContent("source sample 1/");
+    expect(screen.getByLabelText("Ball flight playback position")).toHaveTextContent(/^0\.00/);
+    fireEvent.keyDown(side, { key: "End" });
+    expect(screen.getByLabelText("Ball flight playback position")).not.toHaveTextContent(/^0\.00/);
+    fireEvent.keyDown(side, { key: "Home" });
+    expect(screen.getByLabelText("Ball flight playback position")).toHaveTextContent(/^0\.00/);
+    const displayed = screen.getByRole("status", { name: "Displayed flight context" }).textContent;
+
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(/prior accepted flight remains displayed/i);
+    expect(screen.getByRole("status", { name: "Displayed flight context" }).textContent).toBe(displayed);
+    expect(screen.getByRole("status", { name: "Selected flight sample" }))
+      .toHaveTextContent("source sample 1/");
+    expect(execute).toHaveBeenCalledTimes(2);
+  });
+
+  it("uses the injected execution authority for both wind cohorts and retains prior evidence", () => {
+    let calls = 0;
+    const execute = vi.fn((launch: Parameters<typeof exploreFlight>[0]) => {
+      calls += 1;
+      if (calls > 2) throw new Error("planted paired executor failure");
+      return exploreFlight(launch);
+    });
+    render(<FlightExplorerHarnessWithExecutor execute={execute} />);
+    fireEvent.click(screen.getByRole("checkbox", {
+      name: "Compare No Wind and Selected Wind",
+    }));
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    const displayed = screen.getByRole("status", {
+      name: "Displayed flight context",
+    }).textContent;
+    expect(execute).toHaveBeenCalledTimes(2);
+
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      /prior accepted flight remains displayed/i,
+    );
+    expect(screen.getByRole("status", { name: "Displayed flight context" }).textContent)
+      .toBe(displayed);
+    expect(execute).toHaveBeenCalledTimes(3);
+  });
+
+  it("shows an honest empty error when the paired wind executor fails initially", () => {
+    const execute = vi.fn(() => {
+      throw new Error(`\u0000${"initial paired failure ".repeat(60)}`);
+    });
+    render(<FlightExplorerHarnessWithExecutor execute={execute} />);
+    fireEvent.click(screen.getByRole("checkbox", {
+      name: "Compare No Wind and Selected Wind",
+    }));
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent(/no accepted flight is available/i);
+    expect(alert.textContent).not.toContain("\u0000");
+    expect(alert.textContent?.length).toBeLessThanOrEqual(512);
+    expect(screen.queryByRole("status", { name: "Displayed flight context" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("labels retained evidence as prior when current scientific inputs change", () => {
+    render(<FlightExplorerHarness />);
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    expect(screen.getByRole("status", { name: "Displayed flight context" }))
+      .toHaveTextContent(/^Displayed flight:/);
+    fireEvent.change(screen.getByLabelText("Launch Angle"), { target: { value: "12" } });
+    fireEvent.blur(screen.getByLabelText("Launch Angle"));
+    expect(screen.getByRole("status", { name: "Displayed flight context" }))
+      .toHaveTextContent(/^Prior result — inputs changed:/);
+  });
+
+  it("keeps speed canonical across presentation-unit switches and reruns", () => {
+    const execute = vi.fn((launch: Parameters<typeof exploreFlight>[0]) =>
+      exploreFlight(launch));
+    render(<FlightExplorerHarnessWithExecutor execute={execute} />);
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    const status = screen.getByRole("status", {
+      name: "Displayed flight context",
+    });
+    const displayed = status.textContent;
+    fireEvent.change(screen.getByLabelText("Ball speed unit"), {
+      target: { value: "m/s" },
+    });
+    expect(status.textContent).toBe(displayed);
+    expect(status).toHaveTextContent(/^Displayed flight:/);
+    expect(execute).toHaveBeenCalledTimes(1);
+    const firstSpeed = execute.mock.calls[0][0].ballSpeedMps;
+    fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
+    expect(execute.mock.calls[1][0].ballSpeedMps).toBe(firstSpeed);
+  });
+
+  it("reveals the accepted visual once after a pointer run without moving focus", async () => {
+    render(<FlightExplorerHarness />);
+    const run = screen.getByRole("button", { name: "Run Flight" });
+    run.focus();
+    fireEvent.click(run, { detail: 1 });
+    await waitFor(() => expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledOnce());
+    expect(vi.mocked(HTMLElement.prototype.scrollIntoView).mock.instances[0])
+      .toHaveAccessibleName("Flight side profile (height vs carry)");
+    expect(document.activeElement).toBe(run);
+  });
 });
+
+function FlightExplorerHarnessWithExecutor({ execute }: {
+  execute: typeof exploreFlight;
+}) {
+  const [target, setTarget] = useState(() => spatialTargetFromRegion(DEFAULT_TARGET));
+  return <FlightExplorerPanel spatialTarget={target} onSpatialTargetChange={setTarget}
+    executeFlight={execute} />;
+}

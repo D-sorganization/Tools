@@ -26,11 +26,32 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.92                                    |
-| **Spec Version**        | 1.16.92                                    |
+| **Current Version**     | 1.16.93                                    |
+| **Spec Version**        | 1.16.93                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Flight synchronized sample inspector (#4433)
+
+Version 1.16.93 adds matched React/PyQt inspection of exact runtime-local flight
+samples. React direct entry and PyQt direct/delivery each produce an immutable
+generation-bound bundle containing the complete producing context,
+launch/model/kernel/wind provenance, aligned time/position/velocity evidence,
+optional calm comparison, validated summaries, and a time/position plan capped
+at 1,002 samples before planner copying/allocation. The separate target overlay is
+transactionally refreshed from the accepted trajectory. Canonical tee origin,
+launch velocity, ground floor, landing,
+and wind-delta cohesion fail closed. The current primary cohort alone is
+selectable; the calm trace is a comparison ghost with no inferred raw-index
+correspondence. Twelve-pixel pointer selection and Arrow/Home/End/Escape update
+side/top markers, status, and the sole 3D playback timestamp without scientific
+recomputation. React and PyQt retain prior or honest empty authority on failure;
+PyQt publication spans target, renderer, controls, rows, deltas, statuses, and
+public references, while a failed pixel rollback is explicitly labeled stale.
+Three Chromium React selected viewport and eight PyQt selected/error window/canvas DPI PNGs are
+diagnostic-only, not approved goldens. Raw indices are runtime-local rather than
+portable solver identity, and broader #4433 tab/approval work remains open.
 
 ### 2026-08-13 Club Explorer hosted typing closure (#4433)
 

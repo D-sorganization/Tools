@@ -17,6 +17,8 @@ interface Props {
   points: readonly FlightPoint[];
   comparisonPoints?: readonly FlightPoint[];
   spatialTarget?: SpatialTargetTs;
+  selectedTimeS?: number | null;
+  selectedCommandId?: number;
 }
 
 const INITIAL_CAMERA: PlaybackCamera = {
@@ -26,7 +28,9 @@ const INITIAL_CAMERA: PlaybackCamera = {
 };
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
 
-export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget }: Props) {
+export function FlightPlayback3D({
+  points, comparisonPoints = [], spatialTarget, selectedTimeS = null, selectedCommandId = 0,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const timeRef = useRef(0);
@@ -53,6 +57,14 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
   useEffect(() => {
     timeRef.current = time;
   }, [time]);
+
+  useEffect(() => {
+    if (selectedTimeS === null || !Number.isFinite(selectedTimeS)) return;
+    const next = Math.max(0, Math.min(duration, selectedTimeS));
+    setPlaying(false);
+    timeRef.current = next;
+    setTime(next);
+  }, [selectedTimeS, selectedCommandId, duration]);
 
   useEffect(() => {
     if (!playing || duration <= 0) return;
@@ -179,7 +191,8 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
             ))}
           </select>
         </label>
-        <output className="min-w-24 text-right tabular-nums text-slate-300">
+        <output aria-label="Ball flight playback position"
+          className="min-w-24 text-right tabular-nums text-slate-300">
           {time.toFixed(2)} / {duration.toFixed(2)} s
         </output>
       </div>

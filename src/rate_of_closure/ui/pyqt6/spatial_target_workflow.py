@@ -34,8 +34,25 @@ class SpatialTargetWorkflow:
         )
         if positions.ndim != 2 or positions.shape[1:] != (3,):
             raise ValueError("positions_m must have shape (N, 3)")
+        previous_positions = self._positions
+        previous_miss = self._panel.miss_label().text()
         self._positions = positions
-        self._refresh_miss()
+        try:
+            self._refresh_miss()
+        except Exception:
+            self._positions = previous_positions
+            self._panel.miss_label().setText(previous_miss)
+            raise
+
+    def publication_snapshot(self) -> tuple[np.ndarray, str]:
+        """Snapshot the exact accepted target authority and visible residual."""
+        return self._positions.copy(), self._panel.miss_label().text()
+
+    def restore_publication_snapshot(self, snapshot: tuple[np.ndarray, str]) -> None:
+        """Restore a trusted prior snapshot without fallible miss recomputation."""
+        positions, miss_text = snapshot
+        self._positions = positions.copy()
+        self._panel.miss_label().setText(miss_text)
 
     def set_unavailable(self, reason: str) -> None:
         """Clear retained trajectory and expose a specific unavailable reason."""

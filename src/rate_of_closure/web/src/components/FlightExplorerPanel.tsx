@@ -9,19 +9,20 @@
  * until the P7 WASM kernels land.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
 import { FlightPlayback3D } from "./FlightPlayback3D";
+import {
+  buildAcceptedFlightStudy, type AcceptedFlightStudy,
+} from "./flightAcceptedStudy";
 import { SpatialTargetSection } from "./SpatialTargetSection";
 import {
   compareWind,
   directLaunch,
   exploreFlight,
-  type FlightExplorationTs,
-  type WindComparisonTs,
 } from "../model/flightExplorer";
 import {
   LAUNCH_DIRECTION_DEFINITIONS,
@@ -30,69 +31,31 @@ import {
 } from "../model/launchDirection";
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 import { meteorologicalWind } from "../model/wind";
+import { scheduleMeaningfulVisualReveal } from "../model/variationVisualProminence";
+import type { FlightSampleSelection } from "../model/flightSampleInspector";
 import type { SpatialTargetTs } from "../model/spatialTarget";
-
-const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
-
-const DIRECTION_CONVENTIONS: Array<{
-  value: string;
-  label: string;
-  disabled?: boolean;
-  title?: string;
-}> = [
-  { value: "app_native", label: "App Native (+ Right)" },
-  {
-    value: "trackman_comparable",
-    label: "TrackMan-Comparable (+ Right)",
-  },
-  {
-    value: "foresight_comparable",
-    label: "Foresight-Comparable (Sign Unavailable)",
-    disabled: true,
-    title: "Unavailable: the general public sign convention is not established independently of player handedness.",
-  },
-];
-
-const RESULT_ROWS: Array<{
-  key: keyof WindComparisonTs["deltas"];
-  label: string;
-  unit: string;
-}> = [
-  { key: "carryM", label: "Carry Distance", unit: "m" },
-  { key: "maxHeightM", label: "Apex Height", unit: "m" },
-  { key: "flightTimeS", label: "Flight Time", unit: "s" },
-  { key: "landingAngleDeg", label: "Landing Angle", unit: "°" },
-  { key: "lateralM", label: "Lateral Landing Offset", unit: "m" },
-];
-
-interface FieldSpec {
-  key: "launchAngleDeg" | "launchDirectionDeg" | "spinRpm" | "spinAxisTiltDeg";
-  label: string;
-  unit: string;
-  guidance: string;
-}
-
-const FIELDS: FieldSpec[] = [
-  { key: "launchAngleDeg", label: "Launch Angle", unit: "deg", guidance: "fxLaunchAngle" },
-  { key: "launchDirectionDeg", label: "Launch Direction", unit: "deg", guidance: "fxLaunchDirection" },
-  { key: "spinRpm", label: "Total Spin", unit: "rpm", guidance: "fxSpinRpm" },
-  { key: "spinAxisTiltDeg", label: "Spin-Axis Tilt", unit: "deg", guidance: "fxSpinAxisTilt" },
-];
+import {
+  boundedFlightError, DIRECTION_CONVENTIONS, FLIGHT_FIELDS, RESULT_ROWS,
+  SPEED_UNITS,
+} from "./flightExplorerContract";
 
 interface Props {
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
   spatialTarget: SpatialTargetTs;
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
+  executeFlight?: typeof exploreFlight;
 }
 
 export function FlightExplorerPanel({
   distanceUnit = "yd",
   spatialTarget,
   onSpatialTargetChange,
+  executeFlight = exploreFlight,
 }: Props) {
-  const [speed, setSpeed] = useState(167.0);
+  const [speedMph, setSpeedMph] = useState(167.0);
   const [speedUnit, setSpeedUnit] = useState("mph");
+  const displayedSpeed = speedMph / SPEED_UNITS[speedUnit];
   const [directionConvention, setDirectionConvention] =
     useState<LaunchDirectionConvention>("app_native");
   const [fields, setFields] = useState({
@@ -104,27 +67,63 @@ export function FlightExplorerPanel({
   const [windEnabled, setWindEnabled] = useState(false);
   const [windSpeedMph, setWindSpeedMph] = useState(10.0);
   const [windFromDeg, setWindFromDeg] = useState(0.0);
-  const [result, setResult] = useState<FlightExplorationTs | null>(null);
-  const [windComparison, setWindComparison] = useState<WindComparisonTs | null>(null);
+  const [accepted, setAccepted] = useState<AcceptedFlightStudy | null>(null);
+  const [selection, setSelection] = useState<(
+    FlightSampleSelection & { generation: number; commandId: number }
+  ) | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const generation = useRef(0);
+  const selectionCommand = useRef(0);
+  const visualCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const result = accepted?.exploration ?? null;
+  const windComparison = accepted?.comparison ?? null;
+  const currentWind = windEnabled
+    ? meteorologicalWind(windSpeedMph / SPEED_UNITS["m/s"], windFromDeg) : null;
+  const inputsChanged = accepted !== null && (
+    accepted.context.ballSpeedMph !== speedMph ||
+    accepted.context.launchAngleDeg !== fields.launchAngleDeg ||
+    accepted.context.launchDirectionDeg !== fields.launchDirectionDeg ||
+    accepted.context.spinRpm !== fields.spinRpm ||
+    accepted.context.spinAxisTiltDeg !== fields.spinAxisTiltDeg ||
+    accepted.context.directionConvention !== directionConvention ||
+    JSON.stringify(accepted.context.windScenario) !== JSON.stringify(currentWind)
+  );
   const directionSigns = launchDirectionSignLabels(directionConvention);
 
-  const run = () => {
+  const run = (allowAutomaticReveal = false) => {
     try {
       const launch = directLaunch({
-        ballSpeedMph: speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph),
+        ballSpeedMph: speedMph,
         launchDirectionConvention: directionConvention,
         ...fields,
       });
-      const comparison = windEnabled
-        ? compareWind(launch, meteorologicalWind(windSpeedMph / SPEED_UNITS["m/s"], windFromDeg))
-        : null;
-      const exploration = comparison?.wind ?? exploreFlight(launch);
-      setResult(exploration);
-      setWindComparison(comparison);
+      const windScenario = windEnabled
+        ? meteorologicalWind(windSpeedMph / SPEED_UNITS["m/s"], windFromDeg) : null;
+      const comparison = windScenario
+        ? compareWind(launch, windScenario, executeFlight) : null;
+      const exploration = comparison?.wind ?? executeFlight(launch);
+      const nextGeneration = generation.current + 1;
+      const candidate = buildAcceptedFlightStudy(nextGeneration, {
+        entryMode: "direct",
+        ballSpeedMph: speedMph,
+        launchAngleDeg: fields.launchAngleDeg,
+        launchDirectionDeg: fields.launchDirectionDeg,
+        spinRpm: fields.spinRpm,
+        spinAxisTiltDeg: fields.spinAxisTiltDeg,
+        directionConvention,
+        windScenario,
+        model: "waterloo_penner",
+        kernelRevision: "web-rk4-10ms-sampled-v1",
+      }, exploration, comparison);
+      generation.current = nextGeneration;
+      setAccepted(candidate);
+      setSelection(null);
       setError(null);
+      if (allowAutomaticReveal) {
+        scheduleMeaningfulVisualReveal(() => visualCanvasRef.current);
+      }
     } catch (exc) {
-      setError(exc instanceof Error ? exc.message : String(exc));
+      setError(boundedFlightError(exc, accepted !== null));
     }
   };
 
@@ -143,23 +142,18 @@ export function FlightExplorerPanel({
             </span>
             <span className="flex min-w-0 gap-2">
               <DecimalInput
-                value={speed}
+                value={displayedSpeed}
                 aria-label="Ball Speed"
                 title={FIELD_GUIDANCE.fxBallSpeed}
-                min={0.1}
-                onCommit={setSpeed}
+                min={1 / SPEED_UNITS[speedUnit]}
+                max={250 / SPEED_UNITS[speedUnit]}
+                onCommit={(value) => setSpeedMph(value * SPEED_UNITS[speedUnit])}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
               <select
                 value={speedUnit}
                 title={FIELD_GUIDANCE.fxSpeedUnit}
-                onChange={(e) => {
-                  const next = e.target.value;
-                  // Convert the displayed value in place (canonical mph).
-                  const mph = speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph);
-                  setSpeed(Number((mph * (SPEED_UNITS.mph / SPEED_UNITS[next])).toFixed(2)));
-                  setSpeedUnit(next);
-                }}
+                onChange={(event) => setSpeedUnit(event.target.value)}
                 className="min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100"
                 aria-label="Ball speed unit"
               >
@@ -191,7 +185,7 @@ export function FlightExplorerPanel({
               0° = straight · + = {directionSigns.positive} · − = {directionSigns.negative} · {LAUNCH_DIRECTION_DEFINITIONS[directionConvention].quantityStatus}
             </span>
           </label>
-          {FIELDS.map(({ key, label, unit, guidance }) => (
+          {FLIGHT_FIELDS.map(({ key, label, unit, guidance }) => (
             <label key={key} className="mb-2 block text-sm" title={FIELD_GUIDANCE[guidance]}>
               <span className="mb-1 flex justify-between text-slate-300">
                 <span className="flex items-center truncate" title={label}>
@@ -203,7 +197,10 @@ export function FlightExplorerPanel({
                 value={fields[key]}
                 aria-label={label}
                 title={FIELD_GUIDANCE[guidance]}
-                min={key === "spinRpm" ? 0 : undefined}
+                min={key === "spinRpm" ? 0 : key === "launchAngleDeg" ? -89 :
+                  key === "launchDirectionDeg" ? -45 : -60}
+                max={key === "spinRpm" ? 15000 : key === "launchAngleDeg" ? 89 :
+                  key === "launchDirectionDeg" ? 45 : 60}
                 onCommit={(value) => setFields((f) => ({ ...f, [key]: value }))}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
@@ -211,7 +208,7 @@ export function FlightExplorerPanel({
           ))}
           <button
             type="button"
-            onClick={run}
+            onClick={(event) => run(event.detail > 0)}
             title="Integrate the ball flight for the entered launch conditions"
             className="mt-1 w-full rounded-lg border border-sky-400/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20"
           >
@@ -220,6 +217,13 @@ export function FlightExplorerPanel({
           {error && (
             <p className="mt-2 text-xs text-rose-400" role="alert">
               {error}
+            </p>
+          )}
+          {accepted && (
+            <p className="mt-2 text-xs text-slate-400" role="status"
+              aria-label="Displayed flight context">
+              {inputsChanged ? "Prior result — inputs changed: " : "Displayed flight: "}
+              {accepted.contextLabel}
             </p>
           )}
           <p className="mt-3 text-xs text-slate-500">
@@ -255,6 +259,7 @@ export function FlightExplorerPanel({
             <DecimalInput
               value={windSpeedMph}
               min={0}
+              max={150}
               aria-label="Wind Speed"
               title="Horizontal wind speed in miles per hour. Source: canonical wind-scenario/v1 meteorological adapter."
               onCommit={setWindSpeedMph}
@@ -338,19 +343,43 @@ export function FlightExplorerPanel({
         </div>
       </section>
 
-      <section className="order-first min-w-0 space-y-3 lg:order-none">
+      <section aria-label="Flight accepted visual inspector"
+        className="order-first min-w-0 space-y-3 lg:order-none">
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
           <FlightCanvases
             points={result?.points ?? []}
             comparisonPoints={windComparison?.calm.points ?? []}
             emptyText="Enter launch conditions and press Run Flight."
             spatialTarget={spatialTarget}
+            plan={accepted?.plan}
+            selection={selection?.generation === accepted?.generation ? selection : null}
+            onSelectionChange={(next) => setSelection(
+              next && accepted ? {
+                ...next, generation: accepted.generation,
+                commandId: ++selectionCommand.current,
+              } : null,
+            )}
+            prominenceRef={visualCanvasRef}
           />
+          <p className="mt-2 min-h-5 text-xs text-slate-300" role="status"
+            aria-label="Selected flight sample" aria-live="polite">
+            {selection && accepted && selection.generation === accepted.generation
+              ? (() => {
+                const sample = accepted.plan.rawSample(selection.rawIndex);
+                return `Current primary flight, source sample ${sample.rawIndex + 1}/${accepted.plan.rawCount}; ` +
+                  `t ${sample.timeS.toFixed(3)} s; downrange ${sample.downrangeM.toFixed(3)} m; ` +
+                  `height ${sample.heightM.toFixed(3)} m; right ${sample.rightM.toFixed(3)} m; ${sample.phase}.`;
+              })()
+              : "Select the current primary trajectory; the calm dashed ghost is comparison-only."}
+          </p>
           <div className="mt-4 border-t border-slate-800 pt-4">
             <FlightPlayback3D
               points={result?.points ?? []}
               comparisonPoints={windComparison?.calm.points ?? []}
               spatialTarget={spatialTarget}
+              selectedTimeS={selection && accepted && selection.generation === accepted.generation
+                ? accepted.plan.rawSample(selection.rawIndex).timeS : null}
+              selectedCommandId={selection?.commandId}
             />
           </div>
         </div>

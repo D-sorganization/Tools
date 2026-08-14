@@ -14,9 +14,8 @@ Colors come from the shared UpstreamDrift theme palette
 
 from __future__ import annotations
 
-import logging
-
 import numpy as np
+from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
@@ -30,6 +29,8 @@ from rate_of_closure.ui.pyqt6.figure_canvas import (
 )
 from rate_of_closure.ui.pyqt6.flight_playback_rendering import FlightPlaybackArtists
 from rate_of_closure.ui.pyqt6.flight_view_axes import distance_axis
+from rate_of_closure.ui.pyqt6.flight_view_bundle import FlightViewBundleMixin
+from rate_of_closure.ui.pyqt6.flight_view_inspector import FlightViewInspectorMixin
 from rate_of_closure.ui.pyqt6.flight_view_panels import FlightViewPanelsMixin
 from rate_of_closure.ui.pyqt6.spatial_target_rendering import spatial_target_extents
 from rate_of_closure.ui.pyqt6.spatial_target_trajectory import (
@@ -37,8 +38,6 @@ from rate_of_closure.ui.pyqt6.spatial_target_trajectory import (
 )
 from rate_of_closure.units import FIELD_GUIDANCE
 from shared.python.swing_sim.solver import SpatialTarget
-
-logger = logging.getLogger(__name__)
 
 __all__ = ["FlightView", "distance_axis"]
 
@@ -59,10 +58,14 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
 )
 
 
-class FlightView(FlightViewPanelsMixin, QWidget):
+class FlightView(
+    FlightViewBundleMixin, FlightViewInspectorMixin, FlightViewPanelsMixin, QWidget
+):
     """Flight-scale trajectory viewer: side + top-down 2D panels + 3D."""
 
     timelineChanged = pyqtSignal(float, float)  # noqa: N815 - Qt signal convention
+    sampleSelected = pyqtSignal(int)  # noqa: N815 - Qt signal convention
+    sampleSelectionFailed = pyqtSignal(str, bool)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -82,6 +85,7 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         self._spatial_target: SpatialTarget | None = None
         # (carry, lateral) landing scatter [m] from the Variation engine.
         self._scatter: tuple[np.ndarray, np.ndarray] | None = None
+        self._initialize_sample_inspector()
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -106,6 +110,7 @@ class FlightView(FlightViewPanelsMixin, QWidget):
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt the flight trajectory of a full simulation run."""
         self._run = run
+        self.set_sample_plan(None)
         self.comparison_positions = np.zeros((0, 3))
         self._comparison_timed = None
         self._positions = (
@@ -126,6 +131,7 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         z right of target [m].
         """
         self._run = None
+        self.set_sample_plan(None)
         self.comparison_positions = np.zeros((0, 3))
         self._timed_trajectory = None
         self._comparison_timed = None
@@ -140,6 +146,7 @@ class FlightView(FlightViewPanelsMixin, QWidget):
     ) -> None:
         """Adopt a solver-timestamped app-frame trajectory for playback."""
         self._run = None
+        self.set_sample_plan(None)
         self._timed_trajectory = TimedTrajectory(times_s, positions_m)
         self._positions = self._timed_trajectory.positions_m
         self._reset_playback()
@@ -174,6 +181,8 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         if self._timed_trajectory is None:
             return
         frame = self._timed_trajectory.frame_at(time_s)
+        if frame.time_s == self._playback_time_s:
+            return
         self._playback_time_s = frame.time_s
         self._playback_artists.update(frame.position_m)
         self._canvas.draw_idle()
@@ -284,8 +293,11 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         return (carry, height, lateral)
 
     # ── drawing ─────────────────────────────────────────────────────
-    def _draw(self) -> None:
+    def _draw(self, *, sync: bool = False) -> None:
+        if sync:
+            self._canvas.cancel_pending_draw()
         self._figure.clear()
+        self._inspector_axes: dict[str, Axes] = {}
         pos = self._positions
         frame = (
             None
@@ -312,7 +324,7 @@ class FlightView(FlightViewPanelsMixin, QWidget):
             else:
                 title = "Enable a panel to display the flight"
             axes.set_title(title)
-            self._canvas.draw_idle()
+            self._publish_canvas(sync)
             return
 
         want_3d = "three_d" in panels
@@ -327,8 +339,16 @@ class FlightView(FlightViewPanelsMixin, QWidget):
                 self._draw_side(axes, pos, extents)
             else:
                 self._draw_top(axes, pos, extents)
+            self._draw_sample_marker(axes, name)
         if want_3d:
             spec = grid[:, 1] if left else grid[:, 0]
             axes_3d = self._figure.add_subplot(spec, projection="3d")
             self._draw_3d(axes_3d, pos, extents)
-        self._canvas.draw_idle()
+        self._publish_canvas(sync)
+
+    def _publish_canvas(self, sync: bool) -> None:
+        if not sync:
+            self._canvas.draw_idle()
+            return
+        with self._canvas.suppress_idle_draws():
+            self._canvas.draw()

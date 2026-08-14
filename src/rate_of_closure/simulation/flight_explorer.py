@@ -85,6 +85,7 @@ class FlightExploration:
     model_name: str
     times: np.ndarray
     positions: np.ndarray
+    velocities: np.ndarray
     metrics: dict[str, float]
 
 
@@ -127,11 +128,21 @@ def launch_from_direct(
     Returns:
         Flight-frame :class:`LaunchConditions`.
     """
+    if spin_rpm is None or spin_axis_tilt_deg is None:
+        raise TypeError("spin_rpm and spin_axis_tilt_deg are required")
+    direct_values = (ball_speed_mph, launch_angle_deg, spin_rpm, spin_axis_tilt_deg)
     require(
-        math.isfinite(ball_speed_mph) and ball_speed_mph > 0.0,
-        "ball_speed_mph must be finite and > 0",
-        ball_speed_mph,
+        all(
+            type(value) in (int, float) and math.isfinite(value)
+            for value in direct_values
+        ),
+        "direct flight inputs must be finite real numbers",
+        direct_values,
     )
+    require(1 <= ball_speed_mph <= 250, "ball_speed_mph must be within 1..250")
+    require(abs(launch_angle_deg) <= 89, "launch_angle_deg must be within -89..89")
+    require(0 <= spin_rpm <= 15_000, "spin_rpm must be within 0..15000")
+    require(abs(spin_axis_tilt_deg) <= 60, "spin_axis_tilt_deg must be within -60..60")
     # Accept the historical keyword without silently choosing between conflicts.
     if launch_direction_deg is None:
         if azimuth_deg is None:
@@ -141,8 +152,12 @@ def launch_from_direct(
         launch_direction_deg, azimuth_deg, rel_tol=0.0, abs_tol=1e-12
     ):
         raise ValueError("conflicting launch-direction and legacy azimuth values")
-    if spin_rpm is None or spin_axis_tilt_deg is None:
-        raise TypeError("spin_rpm and spin_axis_tilt_deg are required")
+    require(
+        type(launch_direction_deg) in (int, float)
+        and math.isfinite(launch_direction_deg)
+        and abs(launch_direction_deg) <= 45,
+        "launch_direction_deg must be within -45..45",
+    )
     flight_azimuth_deg = launch_direction_to_flight_azimuth(
         LaunchDirection(launch_direction_deg, direction_convention)
     )
@@ -209,6 +224,9 @@ def explore_flight(
         if len(flight.trajectory)
         else np.zeros((0, 3))
     )
+    velocities = np.asarray(
+        [from_flight_frame(point.velocity) for point in flight.trajectory], dtype=float
+    )
     metrics = {
         "ball_speed_mph": launch.ball_speed * MPH_PER_MPS,
         "launch_angle_deg": math.degrees(launch.launch_angle),
@@ -232,6 +250,7 @@ def explore_flight(
         model_name=model_name,
         times=times,
         positions=np.asarray(positions),
+        velocities=velocities,
         metrics=metrics,
     )
 
