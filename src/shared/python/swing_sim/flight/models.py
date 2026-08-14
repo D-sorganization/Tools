@@ -11,7 +11,7 @@ from typing import Protocol
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from shared.python.swing_sim.ground import GroundSurfaceProfile
+from shared.python.swing_sim.ground.contract_types import GroundSurfaceProfile
 
 from ._cancellation import (
     FlightCancellationCallbackError,

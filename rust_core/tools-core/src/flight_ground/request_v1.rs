@@ -128,9 +128,23 @@ pub fn parse_request_v1_json(
 pub fn canonical_request_v1_json(
     request: &FlightToGroundRequestV1,
 ) -> Result<String, GroundRequestV1Error> {
+    canonical_normalized_request_v1_json(&normalized_request_v1(request)?)
+}
+
+pub(super) fn normalized_request_v1(
+    request: &FlightToGroundRequestV1,
+) -> Result<FlightToGroundRequestV1, GroundRequestV1Error> {
     validate_raw_numbers(request).map_err(GroundRequestV1Error::InvalidField)?;
     let mut normalized = request.clone();
     normalize_request(&mut normalized).map_err(|_| GroundRequestV1Error::InvalidJson)?;
+    normalized.validate()?;
+    Ok(normalized)
+}
+
+pub(super) fn canonical_normalized_request_v1_json(
+    normalized: &FlightToGroundRequestV1,
+) -> Result<String, GroundRequestV1Error> {
+    validate_raw_numbers(normalized).map_err(GroundRequestV1Error::InvalidField)?;
     normalized.validate()?;
     let value = serde_json::to_value(normalized).map_err(|_| GroundRequestV1Error::InvalidJson)?;
     canonical_json(&value).map_err(|_| GroundRequestV1Error::InvalidJson)

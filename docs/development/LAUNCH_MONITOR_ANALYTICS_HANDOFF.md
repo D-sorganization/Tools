@@ -1,5 +1,49 @@
 # Launch Monitor Analytics Handoff
 
+## 2026-08-10 ground-runtime integration context
+
+Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on
+`feat/4275-ground-compiled-reference-runtime`, based on exact PR #4312 head
+`e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d`, adds a bounded
+`tools-core` executor for the existing canonical contact/bounce/skid/roll/rest
+contract through native, PyO3, and WASM entry points. It does not change any
+launch-monitor registry, analytics metric, identity rule, tab, or dataset
+contract. Future launch-monitor total-distance consumers may use the canonical
+ground result only after this branch clears independent review, protected CI,
+normal stack integration, and explicit consumer wiring. Issue #4275 and ground
+epic #4267 remain open; this implementation handoff makes no publication or
+merge claim.
+The v1 execution wire remains unchanged. Independent trusted caps bound
+scheduled output, integration steps, events, and total trajectory evidence;
+output density is not conflated with solver steps. Pathological declarations
+fail before callbacks or allocation, dynamic append guards preserve the caps,
+and grid emission checks cancellation per sample. This resource boundary does
+not alter launch-monitor analytics data or metric contracts.
+Independent review also moved ground scheduling to a bounded elapsed-time
+index, made one normalized native request authoritative for fingerprint and
+execution, and released the PyO3 GIL between callback polls. These corrections
+preserve the launch-monitor contract while preventing large-epoch stalls and
+allowing a second Python thread to cancel a compiled run promptly.
+Follow-up review also made absolute timestamp representability explicit:
+requested output grids that cannot advance after projection to canonical wire
+time now fail before callbacks or physics as typed `time_resolution`, and
+runtime append guards prevent an unexpected later wire collision from
+silently replacing contact or another positive-time state. Representable
+large epochs continue to produce strict monotonic canonical trajectories, and
+epoch-plus-duration safe-number overflow is the same typed preflight failure.
+The final review also adds a trusted 200,001-point endpoint-inclusive ceiling
+independent of untrusted `max_steps`, typed owning-phase `numeric_range`
+failures for every unsafe derived state/evidence value, coherent
+`max_events=1` immediate-capture censoring, and monotonic `1e12 s` regressions
+through native, PyO3, and WASM. Final local evidence is 180/195/192
+default/Python/WASM Rust tests, 219 Python ground tests, fresh CPython 3.13 and
+Node/WASM binding scripts, eight manifest tests, strict lint/format, and docs
+governance. The strict campaign manifest binds this evidence to exact
+implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c`
+through its existing `commit_sha` field; no dirty-tree evidence type was added.
+Independent final review is READY. This is not a performance-budget pass,
+hosted check, protected merge, release, or launch-monitor surface change.
+
 ## Scope and repository state
 
 - Repository: `D-sorganization/Tools`

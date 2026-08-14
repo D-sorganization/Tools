@@ -576,6 +576,56 @@
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded",
       "head_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca"
+    },
+    {
+      "id": "pr-4305",
+      "pr": 4305,
+      "branch": "feat/4272-ground-material-profiles",
+      "base_branch": "feat/4271-ground-skid-roll",
+      "head_sha": "a35fc8aac0cbc2aeeef757fd1d1c518987f2355c",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4306",
+      "pr": 4306,
+      "branch": "feat/4273-ground-study-projection",
+      "base_branch": "feat/4272-ground-material-profiles",
+      "head_sha": "1e1b576c36cc01e27542dd88747f54f918ff16bf",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4307",
+      "pr": 4307,
+      "branch": "feat/4273-ground-study-result-adapter",
+      "base_branch": "feat/4273-ground-study-projection",
+      "head_sha": "40f5cd94d934bcebaf99c942a64852bcb4710a9e",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4308",
+      "pr": 4308,
+      "branch": "feat/4273-ground-study-scalar-adapter",
+      "base_branch": "feat/4273-ground-study-result-adapter",
+      "head_sha": "c8ebf422669992c4a33db661b0c37dfe72b580ae",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4309",
+      "pr": 4309,
+      "branch": "feat/4275-ground-reference-execution",
+      "base_branch": "feat/4273-ground-study-scalar-adapter",
+      "head_sha": "c93c6f36d361f4c129d702565a9330149e175557",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
@@ -938,6 +988,263 @@
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md",
         "docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md"
+      ]
+    },
+    {
+      "id": "ground-profiles-local-3645",
+      "kind": "local",
+      "commit_sha": "3645fc4d28e332785eb23cd2198ed0be931614d0",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --isolated --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --isolated --python 3.11 --with mypy==1.13.0 -- python -m mypy --no-incremental --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The independently audited strict ground-profile, persistence, applicability-binding, and neutral Upstream terrain-adapter implementation passed all 167 ground tests on CPython 3.11.9 and real CPython 3.10.20, 75 focused adversarial/API tests, pinned MyPy and Ruff, manifest and documentation governance, changed-test assertions, structural/file-size budgets, and diff checks; production presets, UI, consumers, and protected integration remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_MATERIAL_PROFILES.md"
+      ]
+    },
+    {
+      "id": "ground-study-local-0de7",
+      "kind": "local",
+      "commit_sha": "0de714842cf4cd1207944044c883c2d8dc83a7ba",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest -q src/shared/python/swing_sim/ground/tests -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground/tests/test_study_projection.py src/shared/python/swing_sim/ground/tests/test_study_state.py src/shared/python/swing_sim/ground/tests/test_study_validation.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "py -3.12 -m ruff check src/shared/python/swing_sim/ground",
+        "py -3.12 -m mypy src/shared/python/swing_sim/ground/study_derivation.py src/shared/python/swing_sim/ground/study_geometry.py src/shared/python/swing_sim/ground/study_projection.py src/shared/python/swing_sim/ground/study_record.py src/shared/python/swing_sim/ground/study_target.py src/shared/python/swing_sim/ground/study_types.py src/shared/python/swing_sim/ground/study_wire.py src/shared/python/swing_sim/ground/validation.py",
+        "py -3.12 scripts/rate_campaign_manifest.py docs/release/rate_of_closure_campaign.v1.json && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed strict ground-study projection passed all 192 ground tests, 47 focused state/wire/API tests, MyPy and Ruff, manifest validation and eight manifest tests, documentation governance, structural/file-size policy, and adversarial targetless endpoint, airborne/penetration, target, summary, profile, warning, and status-integrity checks; protected integration and downstream carriers remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_RESULT_STUDIES.md"
+      ]
+    },
+    {
+      "id": "ground-study-qualification-local-9405",
+      "kind": "local",
+      "commit_sha": "940563f222065c4f343b587699c52062c6e1db59",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest -q src/shared/python/swing_sim/ground/tests -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/flight/tests/test_result_metrics.py src/shared/python/swing_sim/flight/tests/test_result_contract.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py -o addopts=",
+        "py -3.12 -m ruff check src/shared/python/swing_sim/ground src/shared/python/swing_sim/flight/models.py src/shared/python/swing_sim/flight/surface_simulation.py",
+        "py -3.12 -m mypy src/shared/python/swing_sim/ground/study_derivation.py src/shared/python/swing_sim/ground/study_projection.py src/shared/python/swing_sim/ground/study_record.py src/shared/python/swing_sim/ground/study_types.py src/shared/python/swing_sim/ground/study_wire.py src/shared/python/swing_sim/ground/result_adapter.py",
+        "py -3.12 scripts/rate_campaign_manifest.py docs/release/rate_of_closure_campaign.v1.json && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed model-evidence qualification repair passed 194 ground tests, 27 flight-first import/result/transfer tests, 75 focused adversarial tests, Ruff, MyPy, manifest validation and eight manifest tests, documentation governance, and strict calibration/provenance parsing; estimated, unvalidated, zero-confidence, forged-stale eligibility, public legacy bypass, and import-order regressions fail closed.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_RESULT_STUDIES.md"
+      ]
+    },
+    {
+      "id": "ground-study-metric-adapter-local-6c29",
+      "kind": "local",
+      "commit_sha": "6c296ab35471fc8d2070d229f2921d200f7defdb",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest -q src/shared/python/swing_sim/ground/tests -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/flight/tests/test_result_metrics.py src/shared/python/swing_sim/flight/tests/test_result_contract.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground/tests/test_study_result_adapter.py src/shared/python/swing_sim/ground/tests/test_contract.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "py -3.12 -m ruff check src/shared/python/swing_sim/ground src/shared/python/swing_sim/flight/models.py src/shared/python/swing_sim/flight/surface_simulation.py",
+        "py -3.12 -m mypy src/shared/python/swing_sim/ground/result_adapter.py src/shared/python/swing_sim/ground/study_derivation.py src/shared/python/swing_sim/ground/study_record.py",
+        "py -3.12 scripts/rate_campaign_manifest.py docs/release/rate_of_closure_campaign.v1.json && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts="
+      ],
+      "summary": "The independently re-reviewed qualified-study metric adapter passed 198 ground tests, 27 flight-first import/result/transfer tests, 44 focused adapter/compatibility/API tests, Ruff, MyPy, manifest and documentation gates, and structural policy. Missing profile, unvalidated model calibration, wrong exact type, and public legacy bypass fail closed; target miss does not hide qualified physics, and the lossy DTO is documented as non-authoritative provenance.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_RESULT_STUDIES.md"
+      ]
+    },
+    {
+      "id": "ground-study-scalar-adapter-local-b71b",
+      "kind": "local",
+      "commit_sha": "b71bf88b6ed888248ad152f69a2bd2de3892e256",
+      "outcome": "passed",
+      "commands": [
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground -o addopts=",
+        "py -3.12 -m pytest -q tests/rate_of_closure/test_ground_study_scalar_adapter.py tests/rate_of_closure/test_scalar_ensemble_contract.py -o addopts=",
+        "py -3.12 -m mypy src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py --ignore-missing-imports",
+        "py -3.12 -m ruff check src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py && py -3.12 -m black --check src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+        "py -3.12 scripts/rate_campaign_manifest.py && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed explicit-identity ground-study scalar adapter passed 198 ground and 19 adapter/shared-scalar tests, Ruff, Black, MyPy, manifest and documentation gates, and structural policy. It binds target-derived scalars to exact target geometry and a whole-study digest, rejects duplicate/non-iterable/overflow input, preserves numeric censored observations, and retains failed/unavailable rows with truthful null scalars and typed evidence.",
+      "source_paths": [
+        "src/rate_of_closure/variation/ground_study_scalar_adapter.py",
+        "tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+        "docs/specs/GROUND_RESULT_STUDIES.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-reference-execution-local-c93c",
+      "kind": "local",
+      "commit_sha": "c93c6f36d361f4c129d702565a9330149e175557",
+      "outcome": "passed",
+      "commands": [
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground/tests/test_reference_execution.py src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "uv run --no-project --isolated --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest -q src/shared/python/swing_sim/ground/tests/test_reference_execution.py src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/flight/tests/test_contract_api.py src/shared/python/swing_sim/flight/tests/test_result_contract.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py -o addopts=",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground/reference_execution.py src/shared/python/swing_sim/ground/reference_execution_types.py src/shared/python/swing_sim/ground/tests/test_reference_execution.py src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
+        "uv run --no-project --isolated --with mypy==1.13.0 -- python -m mypy --no-incremental --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/reference_execution.py src/shared/python/swing_sim/ground/reference_execution_types.py",
+        "py -3.12 scripts/rate_campaign_manifest.py && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed bounded ground-reference executor passed 219 full ground tests, 44 focused executor/API tests on CPython 3.12 and isolated 3.10, 26 flight compatibility tests, pinned Ruff, Black, MyPy, manifest, documentation, assertion, structural, import-order, fixture-byte, and diff gates. It preflights resolver compatibility before physics, reuses one cancellation callback without an extra probe, composes only representable phase outcomes, and fails closed for every other typed terminal state.",
+      "source_paths": [
+        "src/shared/python/swing_sim/ground/reference_execution.py",
+        "src/shared/python/swing_sim/ground/reference_execution_types.py",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-compiled-runtime-local-5068",
+      "kind": "local",
+      "commit_sha": "50682f251d5e9c0424ba633d1ce5be7fa1379a3c",
+      "outcome": "passed",
+      "commands": [
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml --all -- --check && cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-wheel-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheelhouse'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_runtime.py; & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_parity.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests\\wasm_ground_reference_runtime.cjs",
+        "python scripts/rate_campaign_manifest.py && python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py && python scripts/check_docs_governance.py",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d"
+      ],
+      "summary": "The independently reviewed compiled ground-reference implementation at exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c passes 180 default, 195 Python-feature, and 192 WASM-feature Rust tests; strict default and scoped feature Clippy; 219 Python ground-authority tests; fresh unique-venv CPython 3.13 PyO3 and rebuilt Node/WASM runtime/parity scripts; manifest, documentation, assertion, changed-Python, line-budget, and diff gates. Independent output, step, event, and total-trajectory limits fail closed without conflating their dimensions; runtime step exhaustion, derived numeric failures, event censoring, cancellation, and large-epoch representability remain typed and deterministic. This is local commit-bound evidence, not a hosted check, protected merge, release, or performance qualification.",
+      "source_paths": [
+        "rust_core/tools-core/src/flight_ground/reference_runtime.rs",
+        "rust_core/tools-core/src/flight_ground/resource_limits.rs",
+        "rust_core/tools-core/src/flight_ground/surface_runtime.rs",
+        "rust_core/tools-core/src/flight_ground/surface_events.rs",
+        "rust_core/tools-core/tests/ground_reference_limits.rs",
+        "rust_core/tools-core/tests/ground_reference_runtime.rs",
+        "rust_core/tools-core/tests/python_ground_reference_runtime.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_runtime.cjs",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-scientific-conformance-local-9df3",
+      "kind": "local",
+      "commit_sha": "9df3928a1ef32d81db2e568884ca24d8c576d49a",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "python -m pytest src/shared/python/swing_sim/ground/tests/test_reference_conformance.py -q",
+        "python -m mypy --no-incremental --ignore-missing-imports src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "python -m ruff check src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py rust_core/tools-core/tests/python_ground_reference_conformance.py && python -m ruff format --check src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml -- --check && npx prettier --check rust_core/tools-core/tests/ground_reference_conformance_support.cjs rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-conformance-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheel'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_conformance.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref 64506a54d546021f3c16fbe0b627f35057ec6dd1 --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref 64506a54d546021f3c16fbe0b627f35057ec6dd1",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed scientific corpus at exact implementation commit 9df3928a1ef32d81db2e568884ca24d8c576d49a passes 227 Python ground tests; 184 default, 199 Python-feature, and 196 WASM-feature Rust tests; eight focused Python contract tests; four native conformance tests; strict default and scoped feature Clippy; MyPy, Ruff, formatting, manifest, documentation, structural, installed CPython 3.13 PyO3-wheel, and rebuilt Node/WASM checks. Five immutable horizontal-plane cases use independent closed-form observables, strict duplicate-key and RFC 6901 semantics, a pinned template reference, explicit units, and bounded tolerances. Corpus SHA-256 is f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310. This is local commit-bound evidence, not hosted or protected-release qualification.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "rust_core/tools-core/tests/ground_reference_conformance.rs",
+        "rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-inclined-passivity-local-5d33",
+      "kind": "local",
+      "commit_sha": "5d333a4448d6484f8c98e78c9878cb83b40aa522",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "python -m pytest src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py -q",
+        "python -m mypy --no-incremental --ignore-missing-imports src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "python -m ruff check src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py && python -m ruff format --check src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml -- --check && npx prettier --check rust_core/tools-core/tests/ground_reference_conformance_support.cjs rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-conformance-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheel'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_conformance.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref 7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref 7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py"
+      ],
+      "summary": "Exact implementation commit 5d333a4448d6484f8c98e78c9878cb83b40aa522 passes 238 Python ground tests; 191 default, 206 Python-feature, and 203 WASM-feature Rust tests; 19 focused conformance/passivity tests; four native six-case corpus tests; strict Clippy, MyPy, Ruff, formatting, policy, documentation, and 500-line structural gates; a fresh installed CPython 3.13 PyO3 wheel; and a rebuilt Node/WASM harness. Independent adversarial review is READY. The sixth analytic case pins zero-resistance pure roll on n=[0,sqrt(0.99),0.1], while per-segment passivity, bounded canonical projection, rolling-resistance cusp handling, independent slip/velocity tolerances, and same-step stationary REST remain fail closed. Corpus SHA-256 is 502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76. This is local commit-bound evidence, not hosted or protected-release qualification.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/skid_roll_dynamics.py",
+        "src/shared/python/swing_sim/ground/skid_roll_runtime.py",
+        "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py",
+        "rust_core/tools-core/src/flight_ground/runtime_math.rs",
+        "rust_core/tools-core/src/flight_ground/surface_dynamics.rs",
+        "rust_core/tools-core/src/flight_ground/surface_runtime.rs",
+        "rust_core/tools-core/tests/ground_reference_conformance.rs",
+        "rust_core/tools-core/tests/ground_reference_holding.rs",
+        "rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-mirrored-property-local-08d6",
+      "kind": "local",
+      "commit_sha": "08d631d7169019aee9067f3739051a50d88b9554",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --test ground_reference_conformance",
+        "python -m maturin build --release --manifest-path rust_core/tools-core/Cargo.toml --out <temporary-wheelhouse> && <fresh-cpython-3.13> rust_core/tools-core/tests/python_ground_reference_conformance.py && <fresh-cpython-3.13> rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python -m mypy --no-incremental --ignore-missing-imports --follow-imports=silent src/shared/python/swing_sim/ground/_vector_math.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/surface_motion_types.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_surface_resolver.py rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "python -m ruff check <seven changed Python sources> && python -m ruff format --check <seven changed Python sources> && npx prettier --check src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py && python scripts/check_changed_python_policy.py --base-ref 8b065dd299acc7cab39321b0e2d7f34ca64f159b"
+      ],
+      "summary": "Exact implementation commit 08d631d7169019aee9067f3739051a50d88b9554 passes 247 Python ground tests; four native Rust seven-case corpus tests; a fresh CPython 3.13 PyO3 seven-case corpus and deterministic seed-4275 20-case tilted property sweep; a fresh release WASM build and Node seven-case harness; and pinned MyPy, Ruff, formatting, manifest, governance, changed-Python, file-size, and diff gates. The reflected incline applies the polar/axial vector distinction, and the Python default unbounded plane derives a deterministic intrinsic tangent for arbitrary valid normals while preserving explicit finite axes. Corpus SHA-256 is c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465. Ready PR #4323 current head 3957f013eeadd448ffa381f12d65b6a076abe21b additionally repairs the exact hosted eight-path MyPy boundary failure without runtime semantic change; protected checks, review, parent integration, and release remain open.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/_vector_math.py",
+        "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
+        "src/shared/python/swing_sim/ground/surface_motion_types.py",
+        "src/shared/python/swing_sim/ground/tests/conformance_support.py",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "src/shared/python/swing_sim/ground/tests/test_surface_resolver.py",
+        "rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
       ]
     }
   ],
@@ -1939,6 +2246,18 @@
         {
           "kind": "repository_path",
           "value": "tests/rate_of_closure/test_regional_ground_real_loopback.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_MATERIAL_PROFILES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_RESULT_STUDIES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_REFERENCE_EXECUTION.md"
         }
       ],
       "tracked_issue_ids": [
@@ -1994,7 +2313,12 @@
         "pr-4388",
         "pr-4390",
         "pr-4391",
-        "pr-4392"
+        "pr-4392",
+        "pr-4305",
+        "pr-4306",
+        "pr-4307",
+        "pr-4308",
+        "pr-4309"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
@@ -2012,7 +2336,17 @@
         "ground-regional-ui-local-cbb9",
         "ground-regional-ui-helper-local-d217",
         "ground-regional-io-local-8e1c",
-        "windows-state-security-local-dde4"
+        "windows-state-security-local-dde4",
+        "ground-profiles-local-3645",
+        "ground-study-local-0de7",
+        "ground-study-qualification-local-9405",
+        "ground-study-metric-adapter-local-6c29",
+        "ground-study-scalar-adapter-local-b71b",
+        "ground-reference-execution-local-c93c",
+        "ground-compiled-runtime-local-5068",
+        "ground-scientific-conformance-local-9df3",
+        "ground-inclined-passivity-local-5d33",
+        "ground-mirrored-property-local-08d6"
       ],
       "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, matched ground-playback, post-ground target, and seeded base-material variation carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, 4363, 4364, 4365, 4366, 4367, 4368, 4370, 4371, 4372, 4373, 4374, 4375, 4376, 4388, 4390, 4391, and 4392. The #4369 continuation includes strict canonical request persistence, App-owned React editor state, matched File commands, execution job/result/status authorities, complete-only execution controls, the registered Waterloo/Penner flight profile and qualified production runner, authenticated loopback APIs and clients, visible imported-job workflows, strict Python-authoritative current-editor job preparation, and cooperative cancellation through qualified Waterloo/Penner integration and evidence serialization. Published PR #4376 adds a locked versioned SQLite/WAL source-loopback authority store, fail-closed hard-loss reconciliation with no physics replay, exact complete-result survival, and explicit React GET-only retained-status recovery. The #4378 child on PR #4388 adds descriptor-bound network-silent static inspection, a deterministic web asset manifest, immutable Python readiness, no public source maps, fail-closed exact-revision wheel admission, stale-staging cleanup, and credential-free exact-head hosted clean-install qualification without claiming execution. The #4379 child on PR #4390 adds a Python-only exact-bundle same-origin companion, immutable in-memory runtime overlay, closed route broker, strict Host/origin/fetch/body and route-specific response-domain policies, event-loop-safe authority transport, all-method security headers, partial-start cleanup, child-owned ephemeral authority binding, token/port argv removal, normal reaping, and pre-request fresh-token hard-loss replacement without replay. Published PR #4391 for #4380 adds exact-revision Chromium, Firefox, and WebKit harness contracts plus an independent protected-job definition for static inspection and the same-origin companion. PR #4392 for #4385 adds fixed-local-NTFS state admission, exact protected owner/SYSTEM/Administrators DACLs, retained anti-substitution handles, reparse/hard-link/ADS rejection, bounded in-place migration and rollback, explicit retention, and clean installed-wheel restart recovery. The final handoff head still requires fresh protected evidence; the dedicated Windows 3.11/3.12 jobs cannot run until a restricted d-sorg-windows-security runner is registered. Frozen qualification, forced descendant-tree cleanup, fresh protected release evidence, regional-overlay variation, variable-wind scenario wire, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
@@ -2034,7 +2368,15 @@
         "The local #4369 canonical status-wire child centralizes strict Python construction and bounded duplicate-safe parsing in a transport-neutral application module, makes the server manager consume it, and proves Python-produced canonical byte and semantic parity in React for all six states and every stable failure code/stage. It adds no transport adapter, model invocation, UI, persistence, capability promotion, or execution claim.",
         "The local #4369 Python loopback-submitter child reuses the runtime-owned fixed loopback host, port, bearer token, canonical status parser, and expected-job result validator. It provides bounded polling/backoff, cooperative POST cancellation, accepted-job best-effort cleanup on client failure, and stale/late suppression, but remains unconstructed and unregistered in the visible PyQt workflow despite the qualified headless service capability and adds no UI execution claim.",
         "The local #4369 real-loopback qualification starts actual Uvicorn/FastAPI processes and exercises bearer rejection, qualified submit/status/result, cancel-after-success, client close/join, manager shutdown, and process reaping through the production HTTP transport. The default environment factory now advertises and executes the qualified runner, but this is headless service evidence rather than released visible Run integration.",
-        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python regional execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; open PR #4353 adds bounded ground-event and regional-transition ledger inspection; open PR #4354 adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export; open PR #4355 adds strict import-only Python/TypeScript RepeatedBounceResult evidence serialization and parsing with exact nested invariants, a 1 MiB bound, and canonical SHA parity; open PR #4356 adds the strict paired request envelope; open PR #4357 adds the UI-neutral Python request-to-solver binding; open PR #4359 adds strict composition from qualified flight output through the existing transfer and request boundaries to that executor; open PR #4360 composes the existing flight, bounce, regional skid/roll, and complete-result authorities behind one strict non-fabricating evidence contract; open PR #4361 adds a complete-rest-only Python adapter into existing metric and scalar-ensemble contracts without promoting censored numeric endpoints; open PR #4363 adds strict phase-safe import-only playback to matched PyQt6/React workspaces; and open PR #4364 evaluates only qualified landing targets while retaining typed nulls for aerial and every unqualified outcome. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, direct editor handoff, persistence, aerial target trajectory evaluation, measured calibration, workspace model-input persistence, rendered visual QA, camera presets/tracking, compiled or TypeScript regional physics, solver/capability invocation, variation UI, wind strategy, and downstream surface adapters remain unimplemented."
+        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python regional execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; open PR #4353 adds bounded ground-event and regional-transition ledger inspection; open PR #4354 adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export; open PR #4355 adds strict import-only Python/TypeScript RepeatedBounceResult evidence serialization and parsing with exact nested invariants, a 1 MiB bound, and canonical SHA parity; open PR #4356 adds the strict paired request envelope; open PR #4357 adds the UI-neutral Python request-to-solver binding; open PR #4359 adds strict composition from qualified flight output through the existing transfer and request boundaries to that executor; open PR #4360 composes the existing flight, bounce, regional skid/roll, and complete-result authorities behind one strict non-fabricating evidence contract; open PR #4361 adds a complete-rest-only Python adapter into existing metric and scalar-ensemble contracts without promoting censored numeric endpoints; open PR #4363 adds strict phase-safe import-only playback to matched PyQt6/React workspaces; and open PR #4364 evaluates only qualified landing targets while retaining typed nulls for aerial and every unqualified outcome. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, direct editor handoff, persistence, aerial target trajectory evaluation, measured calibration, workspace model-input persistence, rendered visual QA, camera presets/tracking, compiled or TypeScript regional physics, solver/capability invocation, variation UI, wind strategy, and downstream surface adapters remain unimplemented.",
+        "The #4271 slice qualifies one immutable planar profile and optional finite tangent-axis edge; material regions, changing normals, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI, compiled runtimes, and downstream adapters remain unimplemented.",
+        "The #4272 contract slice defines no production material preset or calibration claim and its one-way Upstream snapshot adapter is a local tangent-plane projection, not regional-terrain parity.",
+        "The #4273 foundation projects one result into typed target and solver evidence; it does not yet integrate ensemble variation, wind, optimizers, user interfaces, compiled runtimes, or UpstreamDrift consumers.",
+        "The #4273 scalar adapter exposes bounded explicit-identity rows but does not execute ensembles, reinterpret final-rest target miss as a flight target residual, or provide rendered dispersion controls.",
+        "The bounded #4275 Python reference executor composes only settled bounce prefixes with representable skid/roll suffix outcomes; exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c adds compiled execution for one immutable planar profile but no UI, regional terrain, production calibration, hosted evidence, or downstream consumer parity.",
+        "The existing GroundModelResult DTO is provenance-lossy; qualified-study consumers must retain the study record alongside it.",
+        "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint.",
+        "Solver admission preserves declared result calibration and provenance and rejects estimated, unvalidated, or zero-confidence calibration; provenance is auditable context rather than producer certification."
       ],
       "depends_on_issues": [
         4191

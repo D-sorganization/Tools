@@ -371,6 +371,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+<<<<<<< HEAD
 ### 2026-08-12 Production-Browser Qualification
 
 - The exact-revision production web bundle is exercised in Chromium, Firefox,
@@ -1115,6 +1116,152 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Ground execution/playback, result interchange, measured calibration
   workflows, model-input workspace persistence, compiled regional physics,
   and UpstreamDrift consumers remain explicit non-goals.
+=======
+### 2026-08-10 Ground-playback workspace hard-bound repair
+
+- Python normalizes finite-number conversion overflow to the same `ValueError`
+  boundary as non-finite floats, so malformed large integers cannot escape the
+  strict v1/v2 parsers or PyQt transactional import reporting.
+- Python and TypeScript treat 11 MiB, 100,000 trajectory points per result,
+  and 200,000 combined points as hard public contract caps. Callers may request
+  stricter limits but cannot raise those caps.
+- RED-first parser, active-playback retention, and cross-runtime hard-cap tests
+  pin the repair without changing canonical workspace bytes or physics.
+
+### 2026-08-10 Ground-playback comparison workspace v2
+
+- PyQt6 and React persist one strict
+  `rate-of-closure-ground-playback-workspace/v2` document with primary result,
+  an always-present nullable comparison envelope and visibility, union-window
+  playback, and orbit view. `GroundPlaybackComparisonState` is the stable
+  public comparison type.
+- Strict v2-only parsers remain separate from version dispatch. V1 imports
+  migrate one way to normalized v2, visibly disclose migration, and save as v2.
+  Recursive exact-field and duplicate-key validation enforce finite values,
+  100,000 points per result, 200,000 combined points, and 11 MiB before parse
+  and after serialization. Python and TypeScript pin identical LF-terminated
+  canonical bytes and SHA-256.
+- Both clients import transactionally: invalid input retains every last-good
+  result, comparison, visibility, playback, camera, and running field; valid
+  input commits paused. PyQt blocks visibility signals and commits union time
+  last without intermediate seeks. React memoizes timelines so comparison
+  activity cannot reset playback time or camera.
+- This persistence slice executes no physics and does not add maximum-ledger
+  paging/lazy mounting, terrain editing/meshes, camera-command propagation,
+  Playwright/native visual evidence, ensembles, compiled runtimes, or
+  UpstreamDrift parity. Those remain downstream under #4274/#4267.
+
+### 2026-08-10 Matched raw ground-comparison evidence
+
+- PyQt6 and React expose separately labelled primary and comparison trajectory
+  and event ledgers. Trajectory rows retain exact absolute and result-relative
+  time plus phase; event rows retain exact event time and identity. Both retain
+  position, linear velocity, and angular velocity without inventing row-to-row
+  correspondence.
+- Comparison evidence remains available when only its graphical artists are
+  hidden. Failed comparison imports retain the entire last-good evidence set,
+  while a successful primary replacement clears every stale comparison table
+  and export control and invalidates comparison imports still completing
+  against the previously displayed primary.
+- Dedicated comparison trajectory and event CSV exports reuse the canonical
+  full-ledger serializers, including exact frame fields, eleven-decimal numeric
+  normalization, deterministic order, and LF termination. PyQt6 comparison
+  files use the same `QSaveFile` atomic replacement path as primary exports.
+- This viewer still executes no physics and makes no causal, inferential, or
+  sample/event-alignment claim. Workspace-v2 comparison persistence, bounded
+  paging/lazy mounting for maximum-size evidence, terrain editing/meshes,
+  camera-command propagation, Playwright/native visual evidence, ensembles,
+  compiled runtimes, and UpstreamDrift parity remain downstream work under
+  #4274/#4267.
+
+### 2026-08-10 Matched ground-result comparison playback
+
+- Comparison overlay visibility changes only artists and the corresponding
+  legend; the loaded paired session continues to own the union time window,
+  exact stepping, and explicit waiting/held states.
+- Primary-only workspace v1 export clamps the serialized playback time to the
+  primary result without mutating comparison-only live playback state.
+- All direct deltas and CSV numeric tokens use the shared canonical
+  eleven-decimal cross-runtime policy. The paired evidence table includes
+  calibration ID, kind, source, and confidence in addition to identity,
+  status, and provenance.
+- Failed file-dialog imports explicitly report that the last valid comparison
+  remains loaded.
+- PyQt6 and React can atomically import one second strict
+  `flight-to-ground-result/v1` without replacing the current primary or prior
+  valid comparison when validation fails. A successful primary replacement
+  clears the stale comparison only after the primary commits.
+- Both clients use one absolute-time window over both observed results. Each
+  result is phase-safely interpolated only within its samples; before first
+  contact and after observed termination its marker is clamped and explicitly
+  labelled rather than extrapolated.
+- One locked physical metre scale contains solid primary and dashed comparison
+  trajectories, distinct event and ball markers, and an accessible show/hide
+  control. A complete fourteen-row scalar table and paired identity, status,
+  calibration, and provenance table define every delta as comparison minus
+  primary without causal or inferential claims.
+- Deterministic comparison JSON retains both exact result records and their
+  direct delta table; deterministic CSV exports the same scalar evidence.
+- Workspace v1 remains a primary-only persistence contract. Comparison
+  persistence, comparison trajectory/event evidence tables, ensembles,
+  statistical inference, terrain editors/meshes, inverse solving, compiled
+  runtimes, and UpstreamDrift parity remain downstream work under #4274/#4267.
+
+### 2026-08-10 Ground-playback workspace persistence and evidence export
+
+- PyQt6 and React share strict
+  `rate-of-closure-ground-playback-workspace/v1` semantics over one validated
+  `flight-to-ground-result/v1`, paused absolute playback time, supported speed,
+  loop state, and UI-neutral orbit yaw/pitch/zoom. Active playback is never
+  persisted, and every import restores paused.
+- Workspace imports are bounded, duplicate-key-aware, exact-field and
+  exact-version validated, and atomic: invalid files retain the complete
+  last-good result, playback, and view state.
+- Result export is the lossless canonical strict JSON record. Trajectory and
+  event CSV exports are deterministic, LF-terminated, accessible tables that
+  retain every raw position, linear/angular velocity, frame, phase/event, time,
+  sample/sequence field. PyQt file replacement uses `QSaveFile`.
+- The persistence layer does not run or alter physics. Comparison state is not
+  embedded in workspace v1; surface editors, terrain meshes, ensembles,
+  inverse solvers, compiled runtimes, and UpstreamDrift integration remain
+  downstream work under #4274/#4267.
+
+### 2026-08-10 Strict ground-result playback
+
+- Standalone PyQt6 and React expose a first-class, discoverable Ground
+  Playback workspace that imports only an exact
+  `flight-to-ground-result/v1` record. Imports are bounded to 5 MiB and
+  100,000 trajectory samples, reject invalid input atomically, and retain the
+  last valid result.
+- React validates the raw JSON text with duplicate-field detection before
+  constructing a result. Duplicate fields are rejected without replacing the
+  last valid playback, and the error message explicitly discloses that the
+  prior result remains loaded.
+- Desktop playback derives simulation time from elapsed monotonic time rather
+  than timer-callback count, preserves continuity when playback speed changes,
+  re-anchors loop-mode changes, and retains overshoot with modulo wrapping.
+- Both clients render the complete v1 trajectory and event state vectors,
+  result identity/status/termination, provenance input digest, calibration
+  identity/confidence, and warnings from one
+  validated immutable result.
+- Both clients use one shared golden result and matching absolute-time,
+  phase-aware playback semantics. Interpolation is permitted only within a
+  declared phase; a phase transition holds the preceding exact state until
+  the next exact sample. Controls provide play, pause, replay, exact-frame
+  stepping, phase jumps, looping, speed selection, scrubbing, and view reset.
+- Complete results distinguish carry from total/rest distance; partial results
+  label their endpoint as observed rather than final. Tables expose trajectory,
+  event, warning, calibration, and provenance evidence without discarding
+  censored observations.
+- The 3D views preserve physical axis proportions and support orbit, zoom, and
+  auto-fit/reset. Because result v1 contains no surface geometry, the views
+  show neutral axes and explicitly do not claim an exact terrain plane.
+- Neither client executes ground physics in this slice. Surface editors,
+  terrain meshes, comparison overlays, ensembles, inverse optimization,
+  Rust/WASM execution, and UpstreamDrift
+  consumer integration remain downstream work under issue #4274 and epic
+  #4267.
+>>>>>>> incoming
 
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
@@ -1192,6 +1339,288 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   results identify missing required fields with typed reason and provenance;
   duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
   out-of-range values fail closed before normalization.
+
+### 2026-08-10 Rust ground-result wire parity
+
+- `tools-core` parses the complete typed `flight-to-ground-result/v1` record,
+  enforces the Python authority's status, termination, trajectory, event,
+  summary, calibration, provenance, warning, and unavailable-data semantics,
+  and emits the shared canonical-number JSON representation.
+- Duplicate object keys at any nesting depth, unknown fields, unsafe integers,
+  invalid raw values, and malformed state-machine evidence fail closed. Raw
+  validation precedes numeric normalization, followed by normalized-record
+  validation, so rounding cannot convert invalid evidence into valid evidence.
+- PyO3 and wasm-bindgen expose validation/canonicalization entry points pinned
+  to the full reference-pipeline result and canonical SHA-256 fixture.
+- This boundary does not execute the Python bounce/skid/roll reference solver
+  in Rust and makes no compiled-physics parity, UI, calibration, ensemble, or
+  downstream-consumer claim.
+
+### 2026-08-10 Ground-result provenance digest normalization
+
+- A result provenance input digest may contain exactly 64 ASCII hexadecimal
+  characters in either case at the raw wire boundary, matching Python and
+  TypeScript acceptance.
+- Canonical result normalization lowercases the digest and semantic validation
+  runs again afterward. Wrong-length or non-hex digests remain invalid.
+- The required behavior is verified in the core parser/canonicalizer and both
+  real compiled binding surfaces; it does not change any ground-physics value.
+
+### 2026-08-10 Compiled ground-reference execution
+
+- `tools-core` executes the qualified static-plane reference pipeline through
+  sphere-plane contact, passive restitution/Coulomb impact, repeated bounce and
+  capture, skid, skid-to-roll transition, pure roll, rolling resistance, and
+  qualified rest.
+- Native Rust, PyO3, and wasm-bindgen entry points share strict request and
+  `ground-reference-execution/v1` parsing, canonical
+  `flight-to-ground-result/v1` output, and typed
+  `ground-reference-execution-error/v1` runtime failures with phase, native
+  reason, and request fingerprint.
+- Execution is bounded by request time/event limits and solver step limits.
+  Cancellation is checked before contact, within bounce and surface loops,
+  inside every grid-emission loop, and before composition. Callback exceptions
+  propagate through PyO3 and WASM; cancellation is not serialized into the
+  execution record.
+- The v1 wire adds no redundant resource fields. Independent trusted budgets
+  permit at most 200,001 scheduled endpoint-inclusive output points, 1,000,000
+  declared surface-loop steps, 10,000 events, and 210,003 total trajectory
+  points including unscheduled contact, transition, event, and terminal
+  evidence. Output density is not compared with integration steps. Excess
+  declarations fail before callbacks, allocation, or physics with
+  resource-specific reasons; an admitted small `max_steps` retains runtime
+  `step_limit`. Dynamic append guards preserve the event/trajectory caps.
+- A single bounded integer output index is shared across bounce and surface
+  phases in elapsed time. Absolute request time is applied only when emitting
+  trajectory, event, and termination evidence, preventing non-advancing
+  floating-point catch-up at large valid epochs while preserving canonical
+  wire timestamps.
+- Before callbacks or physics, the first and terminal-adjacent points of the
+  endpoint-inclusive requested grid must remain strictly increasing after
+  projection onto canonical absolute `f64` wire time. A grid below the epoch's
+  representable spacing fails as typed Bounce `time_resolution`. Runtime
+  append guards enforce the same rule for unplanned event/state times, while
+  intentional same-elapsed phase transitions may replace one another; contact
+  must never be silently dropped. Epoch-plus-duration projections outside the
+  canonical safe-number range produce the same typed failure rather than a
+  panic.
+- Every derived state, wire timestamp, event, summary accumulator, and final
+  recursively inspected JSON number must remain within the canonical safe
+  numeric range. A violation returns `NumericalFailure` with reason
+  `numeric_range` from the phase that derived it; valid parsed inputs must not
+  panic or trap in native, PyO3, or WASM execution.
+- If immediate capture consumes the sole allowed event, the unchanged surface
+  handoff is a coherent `Partial`/`EventLimit` result whose final trajectory
+  point equals termination. A rebound that requires another bounce event
+  remains a typed Bounce `event_limit` failure; an empty surface suffix is not
+  accepted for an uncensored terminal reason.
+- A direct native call normalizes its typed request exactly once and uses that
+  same immutable record for the request fingerprint, output preflight, and all
+  physics. The JSON boundary reuses its normalized parse result rather than
+  applying a second normalization pass.
+- PyO3 releases the GIL for compiled physics and reacquires it only for a
+  cancellation callback poll. Python callback exceptions and non-boolean
+  results remain strict, and cancellation from another Python thread must be
+  prompt.
+- The compiled result must remain byte-identical to the established canonical
+  golden SHA. Seeded parity covers the common Python/Rust resolver-free scope,
+  and native coverage separately validates an arbitrary static plane. Native,
+  fresh CPython 3.13 PyO3, and fresh Node/WASM regressions cover derived-range
+  failures, the trusted output cap, event-limit coherence, and monotonic
+  bounce/immediate-capture success at the representable `1e12 s` epoch.
+- Final local evidence is 180 default, 195 Python-feature, and 192 WASM-feature
+  `tools-core` tests; 219 Python ground-authority tests; eight campaign-manifest
+  tests; strict Clippy, Rust formatting, Ruff, Prettier, and documentation
+  governance. The strict campaign manifest binds this evidence to exact
+  implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c`
+  through the existing `commit_sha` contract; no dirty-tree evidence type was
+  added. Independent final review is READY. This is not a performance-budget
+  pass, hosted check, protected merge, or release.
+- This version supports only standard gravity, the v1 model identities, and
+  one immutable planar profile. Non-null resolvers fail closed. Changing
+  terrain/material regions, deformation, torsional damping, roll-to-skid,
+  production calibration, ensemble/UI/consumer integration, and asynchronous
+  WASM cancellation are non-goals of this slice.
+- The verified `wasm-pack` release build currently emits a packaging notice
+  because the nested crate lacks its own license file while the repository
+  root tracks `LICENSE`. Generated Node execution is in scope; npm publication
+  and its package-metadata remediation are not qualified by this version.
+
+### 2026-08-10 Ground-reference scientific conformance
+
+- `ground-reference-conformance/v1` is a single machine-readable scientific
+  corpus shared by the Python reference, direct native Rust, installed PyO3
+  wheel, and rebuilt Node/WASM executor.
+- Seven cases cover shallow bounce/capture, Coulomb
+  skid-to-roll, no-slip stopping under rolling resistance, proper 90-degree
+  frame rotation, constant moving-surface relative motion, and zero-resistance
+  pure roll down the mirrored immutable inclines
+  `n=[0,sqrt(0.99),+/-0.1]`.
+- Expected observables are independent closed-form values or physical
+  invariants with explicit derivation, unit, and applicable bounded tolerance.
+  Supported checks are whitelisted; fixture text is never executed.
+- The corpus checks contact/transition timing, Newton restitution, passive
+  impact energy, event order, no-slip contact velocity, center-to-plane
+  distance, vector orientation, phase distances, total distance, and typed
+  rest/time-limit outcomes.
+- Surface passivity is enforced independently on every unquantized constant-
+  motion segment so earlier dissipation cannot mask later energy creation.
+  Canonical 11-decimal endpoint effects are admitted only inside accumulated
+  fixed-component bounds, and no-slip projection is separately slip-bounded.
+  The reproducible public ledger/wire authority is unchanged. Adversarial
+  masking and unexplained-endpoint tests remain fail-closed.
+- Rolling resistance cannot step through its zero-relative-speed direction
+  cusp. Non-collinear closing steps are bounded, and a moving plane carries a
+  resistance-held ball at zero relative speed without fabricating absolute
+  rest; the balancing contact force remains explicit for work accounting.
+  Sub-tolerance residual motion is projected to exact co-motion only through
+  the bounded slip, velocity, spin, and energy contract before holding. Slip
+  and correction tolerances remain independent. A stationary projected state
+  terminates as rest in the same solver step; at the exact handoff boundary one
+  zero-motion interval preserves strictly increasing wire timestamps.
+- Scientific conformance and serialization conformance are separate. The new
+  artifact compares declared observables within tolerance; the existing
+  full-result golden continues to pin canonical bytes and SHA-256.
+- A deterministic seed-4275 Python/PyO3 sweep adds 20 exact-parity cases over
+  nonzero x-normal components, both z-tilt signs, and bounded ball, surface,
+  material, launch, and spin properties. The implicit unbounded Python domain
+  derives a stable tangent by projecting the least-aligned Cartesian axis;
+  explicit finite-domain axes and bounds remain caller-owned.
+- This bounded evidence qualifies two analytic mirrored cross-authority cases
+  and one finite Python/PyO3 sample. It does not qualify exhaustive randomized
+  frames, WASM-wide property sweeps, statistical uncertainty, performance or
+  memory budgets, ensembles, asynchronous WASM
+  cancellation, calibrated materials, changing terrain, UI/rendering, or
+  downstream consumers.
+
+### 2026-08-09 Static-plane skid, roll, and result composition
+
+- The Python ground reference solver consumes only an exact #4270
+  `SETTLED_TO_SKID` handoff and propagates a rigid sphere across one immutable
+  planar surface with arbitrary orientation, kinetic skid, a static-friction
+  feasibility gate, pure roll, rolling resistance, retained normal-axis spin,
+  and physically qualified rest.
+- A deterministic bounded state machine localizes skid-to-roll, zero-speed,
+  and optional finite-axis edge events. Exact collinear capture is retained,
+  while closing oblique slip uses a characteristic-time substep bound to avoid
+  overshoot and step-size resonance; separate skid and roll paths remain;
+  anchors output sampling at first contact; and returns typed internal limit,
+  cancellation, and unsupported-surface outcomes without inventing wire
+  results; invalid numerical states raise before result construction.
+- One fail-closed composer joins the impact/bounce prefix and surface suffix
+  without duplicate or epsilon-time points. It produces v1 summaries only for
+  representable rest, left-surface, time-limit, or event-limit outcomes and
+  labels censored endpoint distances explicitly. The prefix is bound to the
+  complete canonical request digest, composed model identity includes both
+  phases, phase limitations remain typed, and contradictory terminal evidence
+  is rejected.
+- Energy accounting includes translation, rotation, gravity work, moving-plane
+  work, and nonnegative dissipation. The shared SHA-locked analytic fixture and
+  physics/state-machine/composition tests qualify this bounded Python slice.
+- CI-isolated MyPy execution may skip imported helper implementations, so
+  validated scalar helper boundaries explicitly normalize to `float` or
+  `bool`; this static contract hardening does not change equations, values,
+  ordering, schemas, or runtime behavior.
+- Piecewise material regions, changing normals, terrain deformation,
+  torsional-spin damping, roll-to-skid transitions, UI, TypeScript physics,
+  compiled runtimes, and downstream parity remain follow-on work.
+
+### 2026-08-09 Qualified ground material profile contracts
+
+- Strict `ground-material-profile/v1` and `ground-profile-library/v1`
+  documents carry all eleven solver-facing SI material parameters, explicit
+  standard uncertainty, evidence-linked lower/upper validity bounds, immutable
+  evidence/rights/provenance, bounded applicability, calibration dependencies,
+  seven derived qualification gates, and a separately derived
+  calibrated-versus-illustrative scientific use status.
+- Draft 2020-12 schemas are structural necessary-but-not-sufficient contracts;
+  authoritative semantic validators enforce exact ordering, evidence coverage,
+  calibration coherence, applicability, safe numeric identity, exact record
+  types, and canonical JSON.
+- One explicit-directory cooperative profile store provides bounded reads,
+  writer locks, SHA-256 compare-and-swap, Windows write-through/POSIX-synced
+  atomic replacement, last-known-good backup, dual-digest explicit recovery,
+  root-identity and reparse-point checks, and typed
+  corruption/path/conflict/indeterminate-commit failures.
+- Exact applicability-aware binding retains qualification evidence and warns on
+  unqualified profiles. A neutral one-way Upstream terrain snapshot adapter
+  retains separate terrain/material identity and revisions, source, frame,
+  velocity, transform, adapter version, interpretation, and individual plus
+  combined identities with a complete loss/disposition report; Tools does not
+  import UpstreamDrift classes.
+
+### 2026-08-09 Qualified ground-result study projection
+
+- `ground-study-projection/v1` preserves the exact ground summary, observed
+  endpoints, caller-request context digest and source-result digest, complete solver surface and
+  ball geometry, model identity, evidence-bearing profile binding, typed result
+  and profile warnings, and unavailable evidence for downstream adapters.
+- Arbitrary-plane target evaluation uses the ball/surface contact point and an
+  intrinsic surface basis. Landing targets require matching ground identity,
+  an on-plane centre, and a surface-circle or surface-corridor tolerance.
+- Only complete rest results backed by a qualified calibrated profile are
+  solver eligible, and the result-model calibration must be measured or
+  literature-backed with positive confidence. Partial, failed, unavailable,
+  unqualified, illustrative, unvalidated/estimated-calibration, zero-confidence,
+  or unbound results fail closed without fabricating final-rest metrics. A partial
+  airborne endpoint retains its observation and a typed unavailable target
+  miss rather than being projected onto the surface.
+- The strict canonical JSON boundary re-derives summary/endpoint, sphere/plane,
+  intrinsic target-miss, and profile/surface coherence, rejecting detached or
+  forged assertions before returning the immutable study. Full semantics and
+  limitations are in
+  `docs/specs/GROUND_RESULT_STUDIES.md`.
+- Each study embeds the exact result `GroundCalibration` and `GroundProvenance`
+  records. Provenance is audit evidence, not a producer certification or an
+  attested request/result binding.
+- The direct result-to-metric compatibility adapter is deprecated and removed
+  from the public ground facade because it cannot prove material-profile
+  qualification. Qualification-sensitive consumers must use a study boundary.
+- `ground-result/v1` does not carry the producing request fingerprint. The
+  study projection checks compatible IDs, surface/frame, calibration, and
+  provenance, but its two digests are not an attested request/result pair.
+- `qualified_study_to_ground_model_result` populates the existing total,
+  roll, bounce-count, and final-offline DTO only from a solver-eligible study.
+  Target misses do not suppress qualified physics values. Because that legacy
+  DTO is intentionally lossy, the study remains the provenance authority.
+- `build_ground_study_scalar_dataset` maps only explicitly identified
+  `(series_id, trial_index, study)` samples into the shared
+  `scalar-ensemble/v1` contract. It bounds collection without truncation,
+  rejects duplicate composite identities, preserves observed complete and
+  censored values, and keeps failed or unavailable rows with null scalars and
+  their typed evidence.
+- Scalar rows retain study/request/result digests, calibration and producer
+  provenance, surface/frame identity, exact target geometry, material profile
+  qualification and operating conditions, solver eligibility and reasons, and
+  target availability. The adapter exposes raw observations for later
+  dispersion analysis but does not claim rendered plots or reinterpret final
+  rest target miss as the flight solver's first-landing residual.
+- Production presets/calibration claims, profile UI, regional/changing-normal
+  terrain, compiled runtimes, and four-surface consumer parity remain open.
+  `docs/specs/GROUND_MATERIAL_PROFILES.md` is the bounded scientific authority.
+
+### 2026-08-10 Bounded ground-reference execution
+
+- `ground-reference-execution/v1` is the Python-only one-shot orchestration
+  boundary over the existing repeated-impact, exact settled-to-skid handoff,
+  skid/roll, and result-composition implementations. It does not duplicate
+  phase physics or fabricate a terminal state that `ground-result/v1` cannot
+  represent.
+- One immutable execution record carries exact bounce and skid/roll settings,
+  an optional exact surface resolver, and one cooperative cancellation callback
+  shared by both phases. The request and resolver are validated before bounce
+  or callback side effects.
+- Only settled-to-skid prefixes and rest, left-surface, time-limit, or
+  event-limit suffixes reach the canonical composer. Cancellation is a distinct
+  typed operational exception; every other non-representable native outcome
+  fails closed with its phase, stable native reason, and exact request digest.
+- A committed golden fixture pins a full bounce-to-skid-to-roll-to-rest request,
+  exact execution settings, result, and canonical digests. These digests prove
+  byte identity only and are not calibration certificates or signatures.
+- Changing normals and material regions, terrain deformation, torsional-spin
+  damping, roll-to-skid transitions, production profiles, ensembles, inverse
+  solving, UI, compiled runtimes, and downstream consumers remain explicit
+  follow-on work.
 
 ### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
 
@@ -4057,6 +4486,56 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4274): add matched PyQt6 and React regional surface-plan editors with explicit SI material inputs, one-to-eight bounded overlays, illustrative/unvalidated and persistence/execution qualifications, accessible strict validation/readback, provenance bound to the actual draft, and delegation to the separate regional-plan v1 wire contract; retain playback, execution, result interchange, measured calibration, workspace model-input persistence, other runtimes, protected evidence, and release as open work. |
 | 2026-08-10 | 1.14.27 | feat(ground-roll, #4271): add separate strict Python/TypeScript `ground-regional-material-plan-request/v1` and result/v1 wire contracts with exact keys, SI units, explicit coplanar/static limitations, finite bounded base/overlay intervals, bounded region/document counts, unique region/precedence/surface identities, canonical cross-runtime JSON/SHA-256 evidence, fail-closed no-fabrication result binding, and a Python-only adapter into the existing regional resolver; preserve the frozen flight-to-ground v1 request/result and retain TypeScript/compiled regional physics, UI, changing geometry, internal transition-ledger export, downstream parity, protected CI, review, and release as open work. |
 | 2026-08-10 | 1.14.26 | feat(ground-roll, #4271): add bounded Python-reference support for finite coplanar material overlays with unique explicit precedence, exact quadratic boundary splitting, base-edge precedence, state/energy continuity, strict Python/TypeScript `surface_transition` events, internal from/to identity evidence, typed transition limits, and randomized piecewise-analytic qualification; reject changing normals, height/velocity discontinuities, and overlays owning the impact handoff rather than fabricating impulses or geometry transitions, while retaining UI, compiled regional physics, and downstream parity as open work. |
+| 2026-08-10 | 1.14.46 | fix(ground-playback, #4274): normalize oversized finite-number conversion to the strict invalid-input boundary and enforce the documented 11 MiB, 100,000-point-per-result, and 200,000-point-combined workspace caps identically in Python and TypeScript; preserve active PyQt playback on rejected imports and keep canonical bytes and physics unchanged. |
+| 2026-08-10 | 1.14.45 | feat(ground-playback, #4274): add strict cross-surface comparison workspace v2 persistence with an always-present nullable comparison envelope, visibility, union playback time, orbit view, bounded canonical LF JSON, shared Python/TypeScript golden bytes, one-way disclosed v1 migration, and transactional paused restore that preserves every last-good field on failure; retain explicit paging, terrain, camera/visual, ensemble, compiled-runtime, and UpstreamDrift non-delivery boundaries. |
+| 2026-08-10 | 1.14.44 | docs(ground-playback, #4274 #4318): record the independently reviewed raw comparison trajectory/event evidence and hardened export continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-comparison`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.43 | feat(ground-playback, #4274): add separately labelled primary/comparison raw trajectory and event evidence in PyQt6 and React, dedicated canonical full-ledger comparison CSV exports, atomic last-good retention/clear behavior, and shared `QSaveFile` replacement without implying row alignment or adding physics, workspace-v2, camera, or Playwright scope. |
+| 2026-08-10 | 1.14.42 | docs(ground-playback, #4274 #4317): record the independently reviewed matched comparison continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-persistence`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.41 | fix(ground-playback, #4274): preserve the loaded union-time comparison session when its artists are hidden, primary-clamp only the serialized workspace-v1 time, canonicalize direct deltas and Python CSV numeric tokens under the shared eleven-decimal policy, disclose calibration kind/source/confidence, and retain explicit last-good comparison messaging after file-dialog errors; add matched PyQt6/React regressions while complete suites, re-review, publication, protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.40 | merge(ground-playback, #4274 #4316): normally propagate exact current persistence/export parent `2c56294ecda0204886508946239c7ca5b50b8b14` into the matched comparison continuation without changing its base; preserve strict atomic comparison import, union-time phase-safe overlays, direct deltas, paired provenance, deterministic exports, and explicit remaining boundaries; reconcile pinned MyPy 1.13 skipped-import inference through runtime-neutral typed bindings and distinct row variables while protected publication, review, CI, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.39 | feat(rate-of-closure, #4274): add matched PyQt6/React atomic comparison-result import, synchronized absolute-time playback with explicitly waiting/held observation states, locked-scale solid/dashed trajectories and distinct events, accessible visibility/provenance/status/direct-delta tables, and deterministic exact-result JSON plus scalar CSV export; preserve primary-only workspace v1 and explicit remaining release boundaries. |
+| 2026-08-10 | 1.14.38 | fix(ground-playback, #4274 #4316): replace four runtime-no-op `str` casts with explicit typed local bindings after exact-head CI's pinned MyPy 1.13 delta gate correctly reported the casts as redundant; this preserves exact serializer contracts across differing import-following environments without runtime coercion, while bytes, UI behavior, and scientific scope remain unchanged. |
+| 2026-08-10 | 1.14.37 | docs(ground-playback, #4274 #4316): record the independently reviewed workspace-persistence and evidence-export continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback`; protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.36 | merge(ground-playback, #4274 #4315): normally propagate exact ready-for-review parent `2618ab025622bf1a4fa21e771b30f808f783648b` into the persistence and evidence-export continuation without changing its base; preserve strict atomic workspace import, paused playback and orbit state, deterministic full-state exports, and explicit non-delivery boundaries while protected publication, CI, approval, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.35 | feat(ground-playback, #4274): add strict cross-surface v1 workspace persistence for validated result plus paused playback/orbit state, atomic last-good import, canonical result JSON, full deterministic trajectory/event CSV, atomic PyQt file replacement, accessible controls, and contract/UI parity tests; retain explicit no-physics, no-terrain, no-comparison, no-solver, and no-consumer boundaries. |
+| 2026-08-10 | 1.14.34 | docs(ground-playback, #4274 #4315): record the independently reviewed Ground Playback implementation as a ready-for-review PR against unchanged `feat/4275-ground-reference-execution`; protected CI, approval, parent landing, dependency integration, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.33 | merge(ground-playback, #4274 #4309): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the locally reviewed PyQt6/React playback continuation without changing its base; preserve strict duplicate-key-aware import, monotonic-time playback, continuous speed and loop changes, full result/provenance evidence, locked-scale 3D controls, and explicit non-delivery boundaries while inheriting corrected ground-study, material, impact/roll, compatibility, and reference-execution ancestry; protected publication, CI, approval, dependency integration, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.23 | fix(ground-playback, #4274): make PyQt playback monotonic-time based with continuous speed/loop-mode changes and modulo loop overshoot; render full trajectory and event linear/angular state, result identity/status/termination, input digest, calibration identity/confidence, and warnings with shared-fixture PyQt/React parity assertions; protected publication and review remain open. |
+| 2026-08-10 | 1.14.22 | fix(ground-playback, #4274): route browser result imports through the duplicate-key-aware strict JSON facade, retain the last valid result on duplicate-field rejection, disclose that retention in the error state, and cover the boundary with an atomic-import regression; protected publication and review remain open. |
+| 2026-08-10 | 1.14.21 | feat(ground-playback, #4274): add discoverable standalone PyQt6 and React strict-result playback with bounded atomic import and last-good retention, shared-golden phase-aware absolute-time semantics, exact-frame/phase/loop/speed controls, honest complete versus observed endpoint labels, warning/calibration/provenance and trajectory/event tables, and locked-physical-scale orbit/zoom/reset 3D views; disclose that clients do not execute ground physics and result v1 carries no terrain geometry, while retaining explicit non-delivery boundaries for surface editors, terrain meshes, comparisons, persistence/export, ensembles, optimization, compiled runtimes, and UpstreamDrift integration. |
+| 2026-08-10 | 1.14.47 | docs(ground-conformance, #4323): record guarded publication of the hosted-MyPy boundary repair at exact current head `3957f013eeadd448ffa381f12d65b6a076abe21b`, preserving ready state, exact parent base, scientific evidence, and all protected CI/review/integration gates. |
+| 2026-08-10 | 1.14.46 | fix(ground-conformance, #4323): satisfy the exact hosted Python 3.12/MyPy 1.13 changed-production profile by exposing existing float, bool, and `SkidRollResult` return types through runtime-identity casts and one DRY result helper; preserve all arithmetic, predicate, event, termination, scientific-corpus, and wire semantics. |
+| 2026-08-10 | 1.14.45 | docs(ground-conformance, #4275 #4323): publish the mirrored-frame and seeded-property continuation as ready PR #4323 at initial evidence head `74a23c21bb20f13bf608f463915b00d2d53d5a7f`, preserve exact PR #4322 ancestry and base topology, and retain protected CI, review, integration, exhaustive property, performance, terrain, UI, and downstream release gates. |
+| 2026-08-10 | 1.14.44 | docs(ground-conformance, #4275): bind the mirrored-frame and seeded-property implementation to exact local commit `08d631d7169019aee9067f3739051a50d88b9554`, the seven-case corpus SHA-256, complete Python ground suite, and fresh native/PyO3/WASM consumer evidence while retaining all hosted, protected, statistical, performance, terrain, UI, and downstream release gates. |
+| 2026-08-10 | 1.14.43 | fix(ground-conformance, #4275): add a mirrored analytic incline across Python/native/PyO3/WASM and a deterministic 20-case tilted property sweep across Python/PyO3; derive the default unbounded Python plane's tangent intrinsically for arbitrary valid normals while preserving caller-declared finite axes and explicit qualification limits. |
+| 2026-08-10 | 1.14.42 | docs(ground-conformance, #4275): record ready PR #4322 targeting `feat/4275-ground-conformance-corpus` from exact implementation/evidence head `a0c8e49a40badc3ce96193e031d2a9dec557d143`; preserve the independently reviewed local evidence while keeping queued hosted checks, approval, integration, and release explicitly open. |
+| 2026-08-10 | 1.14.41 | docs(ground-conformance, #4275): bind the independently reviewed tilted-plane/passivity implementation `5d333a4448d6484f8c98e78c9878cb83b40aa522` and six-case corpus SHA-256 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`; record 238 Python and 191/206/203 Rust matrices, installed PyO3/rebuilt WASM consumers, strict structural/lint/type/policy gates, READY review, and explicit protected-release gaps. |
+| 2026-08-10 | 1.14.40 | fix(ground-conformance, #4275): add a sixth analytic zero-resistance inclined pure-roll case and center-to-plane invariant across Python/native/PyO3/WASM; reject energy creation per unquantized segment, bound canonical snaps/projections, harden masking and unexplained-energy tests, prevent rolling resistance from crossing the zero-relative-speed cusp on a translating slope, and project sub-tolerance residuals to exact passive co-motion before holding. |
+| 2026-08-10 | 1.14.39 | docs(ground-conformance, #4275): bind exact reviewed implementation `9df3928a1ef32d81db2e568884ca24d8c576d49a` and corpus SHA-256 `f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310` to the strict campaign manifest and all canonical handoffs; record 227 Python and 184/199/196 Rust matrix tests, real PyO3/WASM consumers, independent READY review, and explicit hosted/protected/epic gaps. |
+| 2026-08-10 | 1.14.38 | test(ground-conformance, #4275): add one versioned five-case scientific corpus consumed by Python, direct native Rust, installed PyO3, and rebuilt WASM; pin independently derived contact, restitution, passive-energy, skid-to-roll, no-slip stopping, proper-rotation, and moving-surface observables with explicit units and tolerances while preserving the separate exact-byte golden and all remaining performance/terrain/UI/consumer gaps. |
+| 2026-08-10 | 1.14.37 | docs(ground-runtime, #4275): bind the compiled native/PyO3/WASM runtime's independently reviewed local evidence to exact implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the unchanged strict manifest schema; record the 180/195/192 Rust matrices, 219 Python authority tests, unique-venv wheel and rebuilt Node/WASM checks, independent resource caps, structural budgets, package-publication notice, and explicit hosted/protected/performance/epic gaps. |
+| 2026-08-10 | 1.14.36 | feat(ground-runtime, #4275): execute the canonical contact/bounce/skid/roll/rest reference pipeline in native Rust, PyO3, and WASM with strict normalized request authority, bounded elapsed-time scheduling, independent trusted output/step/event/trajectory caps, absolute wire-resolution preflight, fully typed derived-number range failures, coherent immediate-capture event censoring, runtime monotonicity guards, cooperative cancellation including Python GIL release between polls, exact golden/parity evidence, and explicit commit-bound-evidence/static-plane/non-production boundaries. |
+| 2026-08-10 | 1.14.35 | feat(ground-wire, #4275 #4312): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the strict Rust result-wire parity descendant without changing its base; preserve raw-before-normalized fail-closed validation, recursive duplicate-key rejection, complete result state-machine and geometry coherence, canonical JSON, lowercase provenance-digest emission, and real PyO3/WASM validation exports while inheriting corrected reference execution, scalar-study, material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and downstream consumers. |
+| 2026-08-10 | 1.14.34 | fix(ground, #4275): align Rust result provenance digest handling with Python and TypeScript by accepting 64-character ASCII hexadecimal input in either case, canonicalizing to lowercase before emission, revalidating the normalized record, and pinning malformed rejection plus real PyO3/WASM binding behavior. |
+| 2026-08-10 | 1.14.33 | feat(ground, #4275): add strict typed Rust validation and canonical JSON parity for `flight-to-ground-result/v1`, including recursive duplicate-key rejection, pre-normalization semantic checks, complete trajectory/event/summary/status coherence, and real PyO3/WASM validation exports pinned to the shared reference-pipeline SHA; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and UpstreamDrift consumers. |
+| 2026-08-10 | 1.14.32 | feat(ground-execution, #4273 #4275 #4309): normally propagate exact corrected scalar-study parent `edd898089d017e36b814bfea408a7845734c7706` into the bounded ground-reference executor without changing its base; orchestrate existing repeated bounce, exact settled-to-skid handoff, skid/roll, and canonical composition once with exact immutable settings, prevalidated optional resolver, shared cooperative cancellation, typed phase/reason/request-digest failures for non-representable outcomes, and a deterministic full-pipeline golden fixture while inheriting corrected qualified-study, material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit exclusions for changing terrain/material regions, production profiles, ensembles, inverse solving, UI, compiled runtimes, and downstream parity. |
+| 2026-08-10 | 1.14.31 | feat(ground-study, #4273 #4308): normally propagate exact corrected qualified-result parent `76292d7a97e891aa88b06b3ea85f9e7e5b506e9e` into the ground-study scalar adapter without changing its base; retain bounded explicit `(series_id, trial_index)` identity, deterministic `scalar-ensemble/v1` rows, observed complete/censored metrics, null-valued failed/unavailable cohorts, target and qualification evidence, exact study/request/result/profile provenance, and fail-closed duplicate/overflow handling while inheriting corrected material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit exclusions for rendered variation plots, ensemble runners, optimizers, UI, compiled runtimes, regional/changing terrain, and four-surface consumer parity. |
+| 2026-08-10 | 1.14.30 | feat(ground-study, #4273 #4307): normally propagate exact corrected study parent `99f7fefbd61a7eb9285c4a9297618bf52344055e` into the qualified study-result adapter without changing its base; retain fail-closed `qualified_study_to_ground_model_result` projection of total, roll, bounce count, and final offline values only from solver-eligible studies while preserving the study as the provenance authority and inheriting corrected material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit exclusions for production presets/calibration claims, profile UI, regional/changing terrain, compiled runtimes, and four-surface consumer parity. |
+| 2026-08-10 | 1.14.29 | feat(ground-study, #4273 #4306): normally propagate exact corrected material-profile parent `dcfc8ef9fe522b817e64e72e964264d1770a916d` into the ground-study descendant without changing its base; preserve strict `ground-study-projection/v1` records, arbitrary-plane contact-target geometry, qualified/calibrated solver-eligibility gates, canonical revalidation, explicit unavailable evidence, and the deprecation of the unqualified direct metric adapter while inheriting corrected impact/roll ancestry, deterministic workspace timestamps, and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for production presets/calibration claims, profile UI, regional/changing terrain, compiled runtimes, and four-surface consumer parity. |
+| 2026-08-10 | 1.14.28 | fix(ground-profile, #4272 #4305): normally propagate exact corrected skid/roll parent `ee77b059bd83f7dafac7e0d411665231cdb7435c` into the material-profile descendant without changing its base; preserve strict qualified SI profiles/libraries, atomic CAS persistence, solver binding, and neutral terrain snapshot adaptation while inheriting corrected impact/roll ancestry, deterministic workspace timestamp parsing, and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream consumer parity. |
+| 2026-08-10 | 1.14.27 | fix(ground-profile, #4305): explicitly allowlist the material profile/library's immutable SHA-256 golden digests as non-secret scientific integrity evidence while preserving every digest, fixture byte, physics value, schema, API, and persistence behavior. |
+| 2026-08-09 | 1.14.20 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
+| 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
+| 2026-08-09 | 1.14.18 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |
+| 2026-08-09 | 1.14.17 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-09 | 1.14.16 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. Reconcile the transfer integrator with the current capability and strict-ground ancestry through normal stacked merges without retargeting or rewriting either PR, and remove the resulting ground/flight package-facade cycle through direct record/type dependencies. |
+| 2026-08-09 | 1.14.15 | chore(ground, #4268 #4285): normally reconcile the strict ground-contract parent with exact corrected wind carrier `bb101cedd555d07d493aae998b46050c68660cdd` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixtures, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this observer-to-wind ancestry through its own normal descendant merge. |
+| 2026-08-09 | 1.14.14 | fix(ground, #4268): keep strict ground JSON Schema generation compatible with the shared Python 3.10 string-enum shim under the repository's pinned mypy 1.13 skipped-import gate by deriving wire values through `str`, and replace stale test suppressions with explicit casts around intentional invalid inputs without changing runtime validation behavior. |
+| 2026-08-09 | 1.14.13 | fix(ground, #4268): declare and lock the JSON Schema validator exercised by the strict flight-to-ground contract suite, route every new ground enum through the shared Python 3.10-compatible `StrEnum` boundary, and enforce that boundary across the package with a source-level regression contract. Propagate the current capability parent into PR #4285 through normal merge ancestry without rebasing or retargeting the stacked branch. |
+| 2026-08-09 | 1.14.12 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `958770049f0124dac0426a6dd62fd4edbf437e7a` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the parent's Python 3.10 compatibility, variation-export, immutable scalar-row, stable composite-identity, availability, and typed wind-adapter corrections; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |
+| 2026-08-09 | 1.14.11 | feat(wind variation, #4199 #4281): add matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, labeled stages/categories/cohorts, unit-bearing variables, stable RFC3986 composite row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt every actual and perfect-information wind-strategy outcome with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values while leaving impact variables explicitly unavailable because the analysis begins at prescribed launch. |
+| 2026-08-09 | 1.14.10 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
+| 2026-08-09 | 1.14.26 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence with explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
 | 2026-08-10 | 1.14.25 | fix(ground-roll, #4271 #4304): normally propagate exact corrected ground-impact/bounce parent `846653c21bd61a40aab99ab838c29915d0728e70` into the skid/roll descendant without changing its base; preserve the reviewed arbitrary-plane skid, pure-roll, resistance, rest, edge, composition, and passive-ledger behavior while inheriting corrected flight-transfer ancestry, deterministic workspace timestamp parsing, and canonical `swing_sim` import identity; retain explicit exclusions for regional/changing-normal surfaces, terrain deformation, torsional spin damping, roll-to-skid transitions, UI, compiled physics, and downstream parity. |
 | 2026-08-10 | 1.14.24 | fix(ground-roll, #4304): explicitly allowlist the immutable SHA-256 golden-fixture digest as non-secret test evidence so protected secret scanning distinguishes a scientific integrity fingerprint from a credential; no physics, numerical, schema, API, or fixture bytes change. |
 | 2026-08-10 | 1.14.22 | fix(ground-impact, #4270 #4302): normally propagate exact corrected flight-transfer parent `247215422a6d4b677552955b4923bc609a553259` into the ground-impact/bounce descendant without changing its base; preserve the passive restitution/Coulomb impulse, deterministic repeated hops, exact-contact and capture-to-skid behavior while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for skid, roll, rest, total distance, final ground results, UI, TypeScript physics, and compiled bounce runtimes. |

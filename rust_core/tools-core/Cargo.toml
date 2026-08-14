@@ -18,14 +18,16 @@ python = ["dep:pyo3", "dep:numpy", "math-primitives/python"]
 # Enable Python extension-module linkage only for maturin wheel builds.
 extension-module = ["pyo3/extension-module", "math-primitives/extension-module"]
 # Enable wasm-bindgen for WASM/NPM builds (wasm-pack)
-wasm = ["dep:wasm-bindgen", "math-primitives/wasm"]
+wasm = ["dep:js-sys", "dep:wasm-bindgen", "math-primitives/wasm"]
 
 [dependencies]
 pyo3 = { workspace = true, optional = true }
 numpy = { workspace = true, optional = true }
 wasm-bindgen = { workspace = true, optional = true }
+js-sys = { version = "0.3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+sha2 = "0.10"
 math-primitives = { path = "../math-primitives" }
 rand = "0.8"
 
@@ -38,4 +40,8 @@ criterion = { workspace = true }
 
 [[bench]]
 name = "math_benchmarks"
+harness = false
+
+[[bench]]
+name = "ground_reference"
 harness = false

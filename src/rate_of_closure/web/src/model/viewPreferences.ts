@@ -72,7 +72,10 @@ function sanitizeVisible(value: unknown, savedOrder: unknown): PrimaryViewId[] {
   const supplied = sanitizeIds(value);
   const known = new Set(sanitizeIds(savedOrder));
   const introduced = NEWLY_REGISTERED_VISIBLE_IDS.filter((id) => !known.has(id));
-  const visible = [...supplied, ...introduced.filter((id) => !supplied.includes(id))];
+  const visible = [
+    ...supplied,
+    ...introduced.filter((id) => !supplied.includes(id)),
+  ];
   return [...visible, ...REQUIRED_PRIMARY_VIEW_IDS.filter((id) => !visible.includes(id))];
 }
 
