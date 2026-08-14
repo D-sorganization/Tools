@@ -11,6 +11,7 @@ from rate_of_closure.club.types import SPEC_BOUNDS
 from shared.python.swing_sim.ball_setup import BallSupportMode
 
 if TYPE_CHECKING:
+    from rate_of_closure.application._workspace_validation import FrozenJsonValue
     from rate_of_closure.simulation.records import SimulationConfig
 
 from .contracts import (
@@ -100,7 +101,7 @@ def _suggested_draft(config: SimulationConfig, key: str) -> MorrisFactorDraft:
     return MorrisFactorDraft(key, True, lower, upper)
 
 
-def base_document(config: SimulationConfig) -> dict[str, object]:
+def base_document(config: SimulationConfig) -> dict[str, FrozenJsonValue]:
     """Return the complete primitive authority base represented by ``config``."""
     parameters = config.pendulum_parameters
     return {

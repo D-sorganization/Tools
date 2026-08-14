@@ -109,7 +109,7 @@ def build_geometric_variability(
     point_index = dispersion.point_index(point_id)
     intervals = find_low_variability_intervals(dispersion, criteria)
     selected = tuple(item for item in intervals if item.point_id == point_id)
-    quiet = np.zeros(dispersion.sample_times_s.size, dtype=bool)
+    quiet: np.ndarray = np.zeros(dispersion.sample_times_s.size, dtype=bool)
     for interval in selected:
         quiet[interval.start_index : interval.end_index + 1] = True
     eigenvalues = dispersion.eigenvalues_m2[:, point_index]
@@ -244,7 +244,7 @@ def build_dispersion_metric_variability(
         for item in find_ranked_low_variability_intervals(dispersion, point_criteria)
         if item.point_id == point_id
     )
-    quiet = np.zeros(dispersion.sample_times_s.size, dtype=bool)
+    quiet: np.ndarray = np.zeros(dispersion.sample_times_s.size, dtype=bool)
     for interval in intervals:
         quiet[interval.start_index : interval.end_index + 1] = True
     eigenvalues = dispersion.eigenvalues_m2[:, point_index]

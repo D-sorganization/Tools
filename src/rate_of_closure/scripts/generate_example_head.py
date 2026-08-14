@@ -55,7 +55,7 @@ def build_example_head() -> np.ndarray:
     triangles.extend(cap_fan(face_center, rings[0], outward_x=True))
     triangles.extend(cap_fan(tail_center, rings[-1], outward_x=False))
 
-    mesh = np.array(triangles)
+    mesh: np.ndarray = np.array(triangles)
     # (sections-1) bands of 2*N triangles plus two N-triangle caps.
     ensure(mesh.shape[0] == len(_SECTIONS) * 2 * RING_POINTS, "loft closed")
     return mesh

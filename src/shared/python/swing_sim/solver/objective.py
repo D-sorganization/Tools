@@ -309,7 +309,8 @@ def evaluate_candidate(
             )
             / SCALE_CARRY_M
         )
-    return np.array(values)
+    residual: np.ndarray = np.array(values)
+    return residual
 
 
 def residuals(

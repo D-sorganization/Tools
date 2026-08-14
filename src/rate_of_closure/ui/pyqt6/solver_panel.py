@@ -246,7 +246,9 @@ class SolverPanel(QWidget):
                 target_region_weight=self._target_panel.weight(),
                 **targets,
             )
-        return ImpactGoal.of(**targets)
+        # The two named parameters are passed explicitly at their defaults so
+        # **targets is only ever matched against **targets.
+        return ImpactGoal.of(target_region=None, target_region_weight=1.0, **targets)
 
     def build_partition(self) -> VariablePartition:
         """The VariablePartition described by the variable rows."""

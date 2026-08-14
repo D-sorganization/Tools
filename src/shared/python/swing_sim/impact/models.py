@@ -244,7 +244,8 @@ class RigidBodyImpactModel(ImpactModel):
         spin_magnitude = j_friction / (
             GOLF_BALL_MOMENT_OF_INERTIA_KG_M2 / GOLF_BALL_RADIUS_M
         )
-        return pre_state.ball_angular_velocity + spin_magnitude * spin_axis
+        spin: np.ndarray = pre_state.ball_angular_velocity + spin_magnitude * spin_axis
+        return spin
 
     def _compute_energy_transfer(
         self,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-GUI_INFO = {
+GUI_INFO: dict[str, Any] = {
     "name": "Rate of Closure Impact Explorer",
     "tool_name": "rate_of_closure",
     "description": (

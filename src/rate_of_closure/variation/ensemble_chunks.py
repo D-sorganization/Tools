@@ -368,7 +368,7 @@ class CollectingEnsembleSink:
         assert self._valid is not None
         assert self._impacts is not None
         outputs = np.full((header.plan.n_runs, len(ALL_OUTPUT_NAMES)), np.nan)
-        success = np.zeros(header.plan.n_runs, dtype=bool)
+        success: np.ndarray = np.zeros(header.plan.n_runs, dtype=bool)
         outcomes = tuple(self._outcomes)
         for outcome in outcomes:
             outputs[outcome.trial_index] = [

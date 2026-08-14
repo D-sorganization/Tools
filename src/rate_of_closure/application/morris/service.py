@@ -7,7 +7,7 @@ import json
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Protocol, cast
+from typing import Any, Protocol
 
 from rate_of_closure.simulation import SimulationConfig
 from rate_of_closure.variation.morris_rate_adapter import (
@@ -115,10 +115,9 @@ class RateMorrisService:
         observations = evaluate_morris_design(
             design, RATE_MORRIS_OUTPUTS, evaluator, options
         )
-        report_document = cast(
-            dict[str, Any],
-            analyze_morris(observations, request.minimum_effects).to_json_dict(),
-        )
+        report_document = analyze_morris(
+            observations, request.minimum_effects
+        ).to_json_dict()
         archive = make_morris_observation_archive(
             observations,
             study_id=request.request_id,

@@ -16,6 +16,11 @@ __all__ = ["LifecycleSafeFigureCanvas"]
 class LifecycleSafeFigureCanvas(FigureCanvasQTAgg):
     """Own idle redraw work and tolerate destruction at the Qt update boundary."""
 
+    # Declared (not assigned) so Mypy can resolve the base class's untyped
+    # attributes; matplotlib sets both in FigureCanvasBase.__init__.
+    _draw_pending: bool
+    _is_drawing: bool
+
     def __init__(self, figure: Figure) -> None:
         super().__init__(figure)
         self._idle_draw_timer = QTimer(self)

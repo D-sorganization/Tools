@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections.abc import Callable
 from dataclasses import dataclass, replace
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
     from shared.python.swing_sim.solver.targets import TargetRegion
@@ -89,8 +89,18 @@ def _target(request: OptimizationRequest) -> TargetRegion:
     from shared.python.swing_sim.solver.targets import TargetRegion
 
     value = request.target
+    # TargetDefinition validates this in __post_init__, but its field is a plain
+    # str while TargetRegion.kind is a Literal. Narrow explicitly rather than
+    # asserting the two agree.
+    kind: Literal["green", "fairway"]
+    if value.kind == "green":
+        kind = "green"
+    elif value.kind == "fairway":
+        kind = "fairway"
+    else:
+        raise ValueError(f"target kind must be green or fairway; got {value.kind!r}")
     return TargetRegion(
-        value.kind,
+        kind,
         value.distance_m,
         value.radius_m,
         value.lateral_m,

@@ -12,7 +12,6 @@ import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import cast
 
 from shared.python.contracts import require
 
@@ -402,11 +401,8 @@ SWING_DERIVED_KEYS = swing_derived_keys(CATEGORY_DELIVERY)
 
 def keys_for_mode(mode: str) -> tuple[str, ...]:
     """Registry keys legal as base/noise variables for a pipeline mode."""
-    return cast(
-        tuple[str, ...],
-        resolve_keys_for_mode(
-            mode, MODE_CATEGORIES, variables_in_category, SWING_DERIVED_KEYS
-        ),
+    return resolve_keys_for_mode(
+        mode, MODE_CATEGORIES, variables_in_category, SWING_DERIVED_KEYS
     )
 
 

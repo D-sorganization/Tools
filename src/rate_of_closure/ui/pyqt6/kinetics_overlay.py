@@ -73,11 +73,12 @@ def _arc_points(
     radius = MIN_ARC_RADIUS_M + (MAX_ARC_RADIUS_M - MIN_ARC_RADIUS_M) * abs(fraction)
     sweep = math.radians(MAX_ARC_SWEEP_DEG) * fraction
     angles = np.linspace(0.0, sweep, _ARC_POINTS)
-    return np.asarray(
+    arc: np.ndarray = np.asarray(
         center
         + radius * np.outer(np.cos(angles), x_axis)
         + radius * np.outer(np.sin(angles), up_axis)
     )
+    return arc
 
 
 def overlay_frame(series: KineticsSeries, index: int) -> OverlayFrame:
