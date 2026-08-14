@@ -26,3 +26,9 @@ tests/rate_of_closure/pyqt_variation_visual_state_probe.py
 tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py
 # Subprocess entrypoint; semantic assertions live in the owning tab-visibility test.
 tests/rate_of_closure/pyqt_visualization_tab_probe.py
+# Package markers for the in-tree swing_sim test packages. Docstring-only files
+# with no test body, matching the src/movement_optimizer precedent above. Two
+# patterns because the allowlist is matched with fnmatch, where `**` cannot
+# match an empty path segment.
+src/shared/python/swing_sim/tests/__init__.py
+src/shared/python/swing_sim/**/tests/__init__.py
