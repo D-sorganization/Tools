@@ -1,0 +1,399 @@
+"""Standalone launch-to-flight explorer with plots and 3D playback.
+
+The presentation widget combines direct/delivery launch entry, seven literature
+flight models, wind-pair comparison, canonical spatial targets, result
+explanations, and timestamp-accurate 3D playback. Physics remains in
+``rate_of_closure.simulation.flight_explorer``.
+"""
+
+from __future__ import annotations
+
+import logging
+import math
+from typing import cast
+
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QStandardItemModel
+from PyQt6.QtWidgets import (
+    QComboBox,
+    QDoubleSpinBox,
+    QFormLayout,
+    QFrame,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QSplitter,
+    QStackedWidget,
+    QTabWidget,
+    QTextBrowser,
+    QVBoxLayout,
+    QWidget,
+)
+
+from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
+from rate_of_closure.simulation import (
+    FlightExploration,
+    WindComparison,
+    explore_with_optional_wind,
+)
+from rate_of_closure.ui.pyqt6.flight_explorer_controls import (
+    DELIVERY_FIELDS,
+    DIRECT_FIELDS,
+    DISTANCE_ROWS,
+    ENTRY_MODES,
+    EXPLORER_ROWS,
+    SPEED_UNITS,
+    field_label,
+    make_spin,
+)
+from rate_of_closure.ui.pyqt6.flight_playback_controls import FlightPlaybackPanel
+from rate_of_closure.ui.pyqt6.flight_view import FlightView
+from rate_of_closure.ui.pyqt6.flight_wind_controls import FlightWindControls
+from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
+from rate_of_closure.ui.pyqt6.spatial_target_workflow import (
+    build_spatial_target_workflow,
+)
+from rate_of_closure.ui.pyqt6.wind_strategy_launch import (
+    FlightExplorerLaunchValues,
+    WindStrategyLaunchContext,
+    build_flight_explorer_launch,
+)
+from rate_of_closure.ui.pyqt6.wind_strategy_panel import WindStrategyPanel
+from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
+from shared.python.swing_sim.flight import (
+    LAUNCH_DIRECTION_DEFINITIONS,
+    LaunchConditions,
+    LaunchDirectionConvention,
+    launch_direction_sign_labels,
+)
+from shared.python.swing_sim.flight.registry import FlightModelType
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["EXPLORER_ROWS", "FlightExplorerTab"]
+
+
+class FlightExplorerTab(QWidget):
+    """Standalone flight explorer: launch entry, model picker, viewer."""
+
+    #: Emitted with a glossary term key when an explanation link is used.
+    glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._exploration: FlightExploration | None = None
+        self.wind_comparison: WindComparison | None = None
+        self._rows: dict[str, ResultRow] = {}
+        self._direct_spins: dict[str, QDoubleSpinBox] = {}
+        self._delivery_spins: dict[str, QDoubleSpinBox] = {}
+        self._flight_view = FlightView()
+        self._flight_panel = FlightPlaybackPanel(self._flight_view)
+
+        left_content = QWidget()
+        left_layout = QVBoxLayout(left_content)
+        left_layout.addWidget(self._build_entry_box())
+        self.wind_controls = FlightWindControls()
+        left_layout.addWidget(self.wind_controls)
+        self._spatial_target_panel, self._target_workflow = (
+            build_spatial_target_workflow(self._flight_view)
+        )
+        left_layout.addWidget(self._spatial_target_panel)
+        self._wind_strategy_panel = WindStrategyPanel(self._wind_strategy_context)
+        left_layout.addWidget(self._build_results_box())
+        left_layout.addWidget(self._build_explanation_box())
+        left_layout.addStretch(1)
+        left = QScrollArea()
+        left.setWidgetResizable(True)
+        left.setFrameShape(QFrame.Shape.NoFrame)
+        left.setWidget(left_content)
+        left.setMinimumWidth(300)
+
+        right_tabs = QTabWidget()
+        right_tabs.setAccessibleName("Flight Explorer Workspaces")
+        right_tabs.addTab(self._flight_panel, "Flight Playback")
+        right_tabs.addTab(self._wind_strategy_panel, "Wind Strategy")
+        right_tabs.setTabToolTip(
+            1, "Analyze current-launch dispersion under uncertain wind."
+        )
+        splitter = QSplitter()
+        splitter.addWidget(left)
+        splitter.addWidget(right_tabs)
+        splitter.setStretchFactor(0, 0)
+        splitter.setStretchFactor(1, 1)
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(splitter)
+
+        self._show_explanation(EXPLORER_ROWS[0][0])
+
+    # ── construction ────────────────────────────────────────────────
+    def _build_entry_box(self) -> QGroupBox:
+        box = QGroupBox("Launch Entry (No Swing Required)")
+        layout = QVBoxLayout(box)
+        form = QFormLayout()
+
+        self._mode_combo = QComboBox()
+        self._mode_combo.addItems(list(ENTRY_MODES))
+        self._mode_combo.setToolTip(FIELD_GUIDANCE["fx_mode"])
+        form.addRow("Entry Mode", self._mode_combo)
+
+        speed_row = QHBoxLayout()
+        self._speed_spin = make_spin(
+            1.0, 250.0, 167.0, 1, "", FIELD_GUIDANCE["fx_ball_speed"]
+        )
+        self._speed_unit_combo = QComboBox()
+        self._speed_unit_combo.addItems(list(SPEED_UNITS))
+        self._speed_unit_combo.setToolTip(FIELD_GUIDANCE["fx_speed_unit"])
+        self._speed_unit_combo.currentTextChanged.connect(self._on_speed_unit)
+        self._speed_unit = "mph"
+        speed_row.addWidget(self._speed_spin, stretch=1)
+        speed_row.addWidget(self._speed_unit_combo)
+        form.addRow("Speed", speed_row)
+        layout.addLayout(form)
+
+        self._stack = QStackedWidget()
+        self._stack.addWidget(self._build_fields_page(DIRECT_FIELDS, "direct"))
+        self._stack.addWidget(self._build_fields_page(DELIVERY_FIELDS, "delivery"))
+        self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
+        layout.addWidget(self._stack)
+
+        direction_form = QFormLayout()
+        self._direction_convention_combo = QComboBox()
+        self._direction_convention_combo.addItem(
+            "App Native (+ Right)", LaunchDirectionConvention.APP_NATIVE
+        )
+        self._direction_convention_combo.addItem(
+            "TrackMan-Comparable (+ Right)",
+            LaunchDirectionConvention.TRACKMAN_COMPARABLE,
+        )
+        self._direction_convention_combo.addItem(
+            "Foresight-Comparable (Sign Unavailable)"
+        )
+        foresight_item = cast(
+            QStandardItemModel, self._direction_convention_combo.model()
+        ).item(2)
+        if foresight_item is None:
+            raise RuntimeError("launch-direction convention item was not created")
+        foresight_item.setEnabled(False)
+        foresight_item.setToolTip(
+            "Unavailable: the general public sign convention is not established "
+            "independently of player handedness."
+        )
+        self._direction_convention_combo.setAccessibleName(
+            "Launch Direction Convention"
+        )
+        self._direction_convention_combo.setToolTip(
+            "Choose how entered Launch Direction values are interpreted."
+        )
+        self._direction_convention_combo.currentIndexChanged.connect(
+            self._refresh_direction_example
+        )
+        direction_form.addRow("Direction Convention", self._direction_convention_combo)
+        self._direction_example = QLabel()
+        self._direction_example.setWordWrap(True)
+        self._direction_example.setAccessibleName("Launch Direction Sign Example")
+        direction_form.addRow("", self._direction_example)
+        layout.addLayout(direction_form)
+        self._refresh_direction_example()
+
+        model_form = QFormLayout()
+        self._model_combo = QComboBox()
+        self._model_combo.addItems([m.value for m in FlightModelType])
+        self._model_combo.setCurrentText("waterloo_penner")
+        self._model_combo.setToolTip(FIELD_GUIDANCE["flight_model"])
+        model_form.addRow("Flight Model", self._model_combo)
+        layout.addLayout(model_form)
+
+        self._run_button = QPushButton("Run Flight")
+        self._run_button.setToolTip(
+            "Build launch conditions from the entries (running the "
+            "impact model first in Impact Delivery mode) and integrate "
+            "the ball flight with the selected literature model."
+        )
+        self._run_button.clicked.connect(self.run_now)
+        layout.addWidget(self._run_button)
+        return box
+
+    def _build_fields_page(
+        self,
+        fields: tuple[tuple[str, str, str, float, float, float, int, str], ...],
+        kind: str,
+    ) -> QWidget:
+        page = QWidget()
+        form = QFormLayout(page)
+        form.setContentsMargins(0, 0, 0, 0)
+        target = self._direct_spins if kind == "direct" else self._delivery_spins
+        for attr, label, guidance_key, low, high, default, decimals, suffix in fields:
+            spin = make_spin(
+                low, high, default, decimals, suffix, FIELD_GUIDANCE[guidance_key]
+            )
+            target[attr] = spin
+            form.addRow(field_label(label, attr, FIELD_GUIDANCE[guidance_key]), spin)
+        return page
+
+    def _build_results_box(self) -> QGroupBox:
+        box = QGroupBox("Flight Numbers")
+        layout = QVBoxLayout(box)
+        layout.setSpacing(4)
+        for key, label, _unit in EXPLORER_ROWS:
+            row = ResultRow(key, label)
+            row.clicked.connect(self._show_explanation)
+            self._rows[key] = row
+            layout.addWidget(row)
+        return box
+
+    def _build_explanation_box(self) -> QGroupBox:
+        box = QGroupBox("What This Number Means")
+        layout = QVBoxLayout(box)
+        self._explanation = QTextBrowser()
+        self._explanation.setOpenExternalLinks(False)
+        self._explanation.setOpenLinks(False)
+        self._explanation.setToolTip(
+            "Explanation of the selected row; the Glossary link jumps "
+            "to the matching term."
+        )
+        self._explanation.anchorClicked.connect(self._on_explanation_link)
+        self._explanation.setMinimumHeight(90)
+        self._explanation.setMaximumHeight(150)
+        layout.addWidget(self._explanation)
+        return box
+
+    # ── public API ──────────────────────────────────────────────────
+    def speed_mps(self) -> float:
+        """The entered speed converted to m/s."""
+        speed: float = self._speed_spin.value()
+        factor: float = SPEED_UNITS[self._speed_unit]
+        return speed * factor
+
+    def mode(self) -> str:
+        """The selected entry mode label."""
+        return str(ENTRY_MODES[self._mode_combo.currentIndex()])
+
+    def flight_view(self) -> FlightView:
+        """The embedded flight-scale viewer."""
+        return self._flight_view
+
+    def last_exploration(self) -> FlightExploration | None:
+        """The most recent successful exploration, if any."""
+        return self._exploration
+
+    def current_launch(self) -> LaunchConditions:
+        """Build launch conditions from the current visible controls."""
+        values = FlightExplorerLaunchValues(
+            self.mode() == ENTRY_MODES[0],
+            self.speed_mps(),
+            {key: spin.value() for key, spin in self._direct_spins.items()},
+            {key: spin.value() for key, spin in self._delivery_spins.items()},
+            self._direction_convention_combo.currentData(),
+        )
+        return build_flight_explorer_launch(values)
+
+    def _wind_strategy_context(self) -> WindStrategyLaunchContext:
+        """Return the current launch/target/model context for wind analysis."""
+        return WindStrategyLaunchContext(
+            self.current_launch(),
+            self._spatial_target_panel.target(),
+            self._model_combo.currentText(),
+        )
+
+    def stop(self) -> None:
+        """Cancel and join background wind analysis during shutdown."""
+        self._wind_strategy_panel.stop()
+
+    def run_now(self) -> FlightExploration | None:
+        """Build launch conditions, run the flight, populate the views."""
+        try:
+            launch = self.current_launch()
+            model_name = self._model_combo.currentText()
+            exploration, comparison = explore_with_optional_wind(
+                launch, self.wind_controls.optional_scenario(), model_name
+            )
+        except Exception as exc:  # noqa: BLE001 — surface physics failures
+            logger.warning("flight exploration failed: %s", exc)
+            QMessageBox.warning(self, "Flight Failed", str(exc))
+            return None
+        self._exploration = exploration
+        self.wind_comparison = comparison
+        self.wind_controls.set_comparison(comparison)
+        self._flight_view.set_timed_trajectory(exploration.times, exploration.positions)
+        if comparison is None:
+            self._flight_view.set_comparison_timed_trajectory(None, None)
+        else:
+            self._flight_view.set_comparison_timed_trajectory(
+                comparison.calm.times, comparison.calm.positions
+            )
+        self._refresh_rows()
+        self._target_workflow.set_trajectory(exploration.positions)
+        return exploration
+
+    def _refresh_rows(self) -> None:
+        """Format the result rows; carry/lateral follow the distance
+        display unit (#4125 H6 — yards default, apex stays metres)."""
+        if self._exploration is None:
+            return
+        for key, _label, unit in EXPLORER_ROWS:
+            value = self._exploration.metrics[key]
+            if not math.isfinite(value):
+                text = "—"
+            elif key in DISTANCE_ROWS:
+                text = (
+                    f"+{format_distance_m(value)}"
+                    if value >= 0
+                    else (f"-{format_distance_m(-value)}")
+                )
+            else:
+                text = f"{value:+.1f}{unit}"
+            self._rows[key].value_label.setText(text)
+
+    def refresh_units(self) -> None:
+        """Re-render distance rows after a display-unit change."""
+        self._refresh_rows()
+
+    # ── internals ──────────────────────────────────────────────────
+    def _on_mode_changed(self, index: int) -> None:
+        self._stack.setCurrentIndex(index)
+        label = "Ball Speed" if index == 0 else "Clubhead Speed"
+        tooltip = (
+            FIELD_GUIDANCE["fx_ball_speed"]
+            if index == 0
+            else FIELD_GUIDANCE["clubhead_speed_mph"]
+        )
+        self._speed_spin.setToolTip(tooltip)
+        self._run_button.setText("Run Flight" if index == 0 else "Run Impact + Flight")
+        logger.debug("flight-explorer mode -> %s (%s)", self.mode(), label)
+
+    def _on_speed_unit(self, unit: str) -> None:
+        previous = self._speed_unit
+        if unit == previous:
+            return
+        mps = self._speed_spin.value() * SPEED_UNITS[previous]
+        self._speed_unit = unit
+        self._speed_spin.blockSignals(True)
+        self._speed_spin.setValue(mps / SPEED_UNITS[unit])
+        self._speed_spin.blockSignals(False)
+
+    def _refresh_direction_example(self) -> None:
+        convention = self._direction_convention_combo.currentData()
+        definition = LAUNCH_DIRECTION_DEFINITIONS[convention]
+        positive, negative = launch_direction_sign_labels(convention)
+        self._direction_example.setText(
+            f"0° = straight · + = {positive} · − = {negative} · "
+            f"{definition.quantity_status.value}"
+        )
+
+    def _show_explanation(self, key: str) -> None:
+        labels = {row_key: label for row_key, label, _unit in EXPLORER_ROWS}
+        text = LAUNCH_EXPLANATIONS.get(key, "")
+        # Persistent single selection across the result rows (#4120 V4).
+        for row_field, row in self._rows.items():
+            row.set_selected(row_field == key)
+        self._explanation.setHtml(explanation_html(labels.get(key, key), text, key))
+
+    def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
+        """Forward ``glossary:<term>`` links to the main window."""
+        text = url.toString()
+        if text.startswith("glossary:"):
+            self.glossaryRequested.emit(text.partition(":")[2])

@@ -49,7 +49,9 @@ except ImportError:
         PlotWidget = _FallbackPlotWidget
 
         @staticmethod
-        def mkPen(*args: Any, **kwargs: Any) -> tuple[tuple[Any, ...], dict[str, Any]]:  # noqa: N802
+        def mkPen(
+            *args: Any, **kwargs: Any
+        ) -> tuple[tuple[Any, ...], dict[str, Any]]:  # noqa: N802
             return args, kwargs
 
     pg = _FallbackPyQtGraph()

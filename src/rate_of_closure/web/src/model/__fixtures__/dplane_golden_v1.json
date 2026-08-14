@@ -1,0 +1,70 @@
+{
+  "schema_version": "dplane-golden-v1",
+  "frame_id": "app_frame:x_target,y_up,z_right",
+  "tolerance_deg": 1e-9,
+  "cases": [
+    {
+      "id": "square-descending",
+      "travel_vector": [0.9986295347545738, -0.052335956242943835, 0.0],
+      "face_normal": [0.9781476007338057, 0.20791169081775934, 0.0],
+      "expected": {
+        "status": "defined",
+        "spin_loft_3d_deg": 15.0,
+        "planar_spin_loft_deg": 15.0,
+        "signed_planar_gap_deg": 15.0,
+        "spin_loft_residual_deg": 0.0,
+        "club_path_deg": 0.0,
+        "attack_angle_deg": -3.0,
+        "face_angle_deg": 0.0,
+        "dynamic_loft_deg": 12.0,
+        "face_to_path_deg": 0.0,
+        "dplane_normal_azimuth_deg": 90.0,
+        "dplane_tilt_deg": 0.0,
+        "dplane_inclination_deg": 90.0,
+        "ground_intersection_azimuth_deg": 0.0
+      }
+    },
+    {
+      "id": "compound-rightward-face",
+      "travel_vector": [0.995587843197948, -0.08715574274765817, -0.03476669358110182],
+      "face_normal": [0.8524716485419714, 0.5150380749100542, 0.08959838070567443],
+      "expected": {
+        "status": "defined",
+        "spin_loft_3d_deg": 36.80234585197317,
+        "planar_spin_loft_deg": 36.0,
+        "signed_planar_gap_deg": 36.0,
+        "spin_loft_residual_deg": 0.8023458519731719,
+        "club_path_deg": -2.0,
+        "attack_angle_deg": -5.0,
+        "face_angle_deg": 6.0,
+        "dynamic_loft_deg": 31.0,
+        "face_to_path_deg": 8.0,
+        "dplane_normal_azimuth_deg": 89.01464232128987,
+        "dplane_tilt_deg": 11.442229522056229,
+        "dplane_inclination_deg": 78.55777047794376,
+        "ground_intersection_azimuth_deg": -0.9853576787101317
+      }
+    },
+    {
+      "id": "crossed-leftward-face",
+      "travel_vector": [0.9901283591011188, 0.0697564737441253, 0.12157247580974431],
+      "face_normal": [0.9361168066628592, 0.3420201433256687, -0.08189960831908934],
+      "expected": {
+        "status": "defined",
+        "spin_loft_3d_deg": 19.817514323544046,
+        "planar_spin_loft_deg": 16.0,
+        "signed_planar_gap_deg": 16.0,
+        "spin_loft_residual_deg": 3.8175143235440494,
+        "club_path_deg": 7.0,
+        "attack_angle_deg": 4.0,
+        "face_angle_deg": -5.0,
+        "dynamic_loft_deg": 20.0,
+        "face_to_path_deg": -12.0,
+        "dplane_normal_azimuth_deg": 99.81600123921214,
+        "dplane_tilt_deg": -35.09085188935642,
+        "dplane_inclination_deg": 54.90914811064358,
+        "ground_intersection_azimuth_deg": 9.816001239212135
+      }
+    }
+  ]
+}

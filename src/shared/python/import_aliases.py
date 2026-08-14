@@ -47,6 +47,7 @@ _SHARED_ROOTS = frozenset(
         "safe_eval",
         "sidekick",
         "signal_toolkit",
+        "swing_sim",
         "theme",
         "upstream_drift_tools",
     }
@@ -190,7 +191,8 @@ class SharedImportAliasFinder(MetaPathFinder):
             for alias in aliases:
                 try:
                     spec = importlib.util.find_spec(alias)
-                except Exception:
+                # Optional probes may invoke arbitrary third-party meta-path finders.
+                except Exception:  # nosec B112
                     continue
                 if spec is not None and spec.loader is not None:
                     return spec

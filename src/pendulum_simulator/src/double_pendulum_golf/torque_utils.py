@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-import numpy as np
+from shared.python.swing_sim.torque_profiles import TorquePolynomial
 
 
 def make_polynomial_torque(
@@ -53,15 +53,15 @@ def make_polynomial_torque(
     if not (len(coeffs_per_joint) >= 1):
         raise ValueError("Need at least one joint")
 
-    polys: list[np.ndarray] = []
+    polynomials: list[TorquePolynomial] = []
     for i, coeffs in enumerate(coeffs_per_joint):
         if not (len(coeffs) >= 1):
-            raise ValueError(f"Need at least one coefficient for joint {i}, got {len(coeffs)}")
-        # Reverse: our convention is [c0, c1, c2, ...] (ascending),
-        # np.polyval expects [cN, ..., c1, c0] (descending).
-        polys.append(np.array(coeffs[::-1]))
+            raise ValueError(
+                f"Need at least one coefficient for joint {i}, got {len(coeffs)}"
+            )
+        polynomials.append(TorquePolynomial(tuple(coeffs)))
 
     def torque_func(t: float) -> tuple[float, ...]:
-        return tuple(float(np.polyval(p, t)) for p in polys)
+        return tuple(polynomial.evaluate(t) for polynomial in polynomials)
 
     return torque_func

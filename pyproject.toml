@@ -28,6 +28,7 @@ dependencies = [
     "defusedxml>=0.7.0",
     "keyring>=24.0.0",
     "platformdirs>=4.2.0",
+    "pywin32>=311; sys_platform == 'win32'",
 ]
 
 [project.optional-dependencies]
@@ -40,6 +41,9 @@ all = [
     "mujoco>=3.0.0",
     "PyQt6>=6.5.0",
     "sympy>=1.12",
+    "fastapi>=0.100.0",
+    "filelock>=3.16.0",
+    "uvicorn>=0.30.0",
 ]
 # AI and simulation models
 ai = [
@@ -79,6 +83,13 @@ chat = [
     "fastapi>=0.100.0",
     "PyQt6>=6.5.0",
     "python-multipart>=0.0.7",
+]
+# Local Python authority used by the Rate of Closure React client.
+rate-of-closure-web = [
+    "fastapi>=0.100.0",
+    "filelock>=3.16.0",
+    "scipy>=1.10.0,<1.18",
+    "uvicorn>=0.30.0",
 ]
 # Voice-to-text addon for ChatDockWidget (Tools issue #2744).
 # Install with: pip install "tools[chat-voice]"
@@ -183,6 +194,7 @@ codemap = "shared.python.codemap.cli:main"
 codemap-watch = "shared.python.codemap.watcher:main"
 codemap-mcp = "shared.python.codemap.mcp_server:main"
 video-analyzer = "video_analyzer.launch_video_analyzer:main"
+rate-of-closure-web = "rate_of_closure.web_companion.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"
@@ -199,17 +211,28 @@ include = [
     "web_applications*",
     "contracts*",
     "lower_body_model*",
+    "rate_of_closure*",
+    "rotation_converter*",
     "codemap*",
     "video_analyzer*",
 ]
 exclude = [
     "*.tests*",
     "*tests*",
+    "*node_modules*",
 ]
 
 [tool.setuptools.package-data]
 # Include py.typed marker for PEP 561 type hint support
 "*" = ["py.typed"]
+"rate_of_closure" = [
+    "web/dist/index.html",
+    "web/dist/*.json",
+    "web/dist/assets/*",
+]
+
+[tool.setuptools.cmdclass]
+build_py = "build_hooks.RateWebBuildPy"
 
 # =============================================================================
 # Pytest Configuration

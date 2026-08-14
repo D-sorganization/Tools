@@ -1,0 +1,155 @@
+name: Rate of Closure Windows State Security
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/rate-of-closure-windows-state-security.yml"
+      - "pyproject.toml"
+      - "scripts/qualify_windows_authority_state_install.py"
+      - "src/rate_of_closure/web/**"
+      - "src/rate_of_closure/web_authority/**"
+      - "tests/ops/test_rate_of_closure_windows_state_workflow.py"
+      - "tests/rate_of_closure/test_authority_state_security.py"
+      - "tests/rate_of_closure/test_regional_ground_authority_store.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rate-of-closure-windows-state-security.yml"
+      - "pyproject.toml"
+      - "scripts/qualify_windows_authority_state_install.py"
+      - "src/rate_of_closure/web/**"
+      - "src/rate_of_closure/web_authority/**"
+      - "tests/ops/test_rate_of_closure_windows_state_workflow.py"
+      - "tests/rate_of_closure/test_authority_state_security.py"
+      - "tests/rate_of_closure/test_regional_ground_authority_store.py"
+
+concurrency:
+  group: rate-windows-state-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    name: Windows authority-state security (${{ matrix.python }})
+    runs-on: [self-hosted, Windows, X64, d-sorg-windows-security]
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - name: Fetch exact public head without credentials
+        shell: pwsh
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          ROC_SOURCE_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP `
+            "roc-source-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT-${{ matrix.python }}"
+          New-Item -ItemType Directory -Path $source -ErrorAction Stop | Out-Null
+          git -C $source init .
+          git -C $source remote add origin `
+            "https://github.com/$env:ROC_SOURCE_REPOSITORY.git"
+          git -C $source -c credential.helper= fetch --no-tags --depth=1 `
+            origin $env:ROC_RELEASE_REVISION
+          git -C $source checkout --detach FETCH_HEAD
+          if ((git -C $source rev-parse HEAD) -ne $env:ROC_RELEASE_REVISION) {
+            throw "exact public head mismatch"
+          }
+          "ROC_SOURCE_ROOT=$source" | Out-File -FilePath $env:GITHUB_ENV `
+            -Encoding utf8 -Append
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+      - name: Install bounded test environment
+        shell: pwsh
+        run: |
+          Push-Location $env:ROC_SOURCE_ROOT
+          try {
+            python -m pip install --disable-pip-version-check `
+              build==1.3.0 `
+              pytest==9.0.2 `
+              pytest-asyncio==1.3.0 `
+              pytest-benchmark==5.2.3 `
+              pytest-xdist==3.8.0 `
+              ".[rate-of-closure-web]"
+          } finally {
+            Pop-Location
+          }
+      - name: Run native adversarial state contracts
+        shell: pwsh
+        env:
+          ROC_REQUIRE_WINDOWS_SYMLINK_TEST: "1"
+        run: |
+          Push-Location $env:ROC_SOURCE_ROOT
+          try {
+            python -m pytest -n 0 -q `
+              tests/rate_of_closure/test_authority_state_security.py `
+              tests/rate_of_closure/test_regional_ground_authority_store.py
+          } finally {
+            Pop-Location
+          }
+      - name: Build exact static assets and wheel
+        shell: pwsh
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          Push-Location "$env:ROC_SOURCE_ROOT/src/rate_of_closure/web"
+          try {
+            npm ci
+            npm run type-check
+            npm run lint
+            npm run build
+          } finally {
+            Pop-Location
+          }
+          Push-Location $env:ROC_SOURCE_ROOT
+          try {
+            python -m build --wheel --outdir wheelhouse
+          } finally {
+            Pop-Location
+          }
+      - name: Qualify clean installed wheel from unrelated Unicode CWD
+        shell: pwsh
+        run: |
+          $wheel = @(Get-ChildItem "$env:ROC_SOURCE_ROOT/wheelhouse" `
+            -Filter *.whl -File -ErrorAction Stop)
+          if ($wheel.Count -ne 1) { throw "expected exactly one wheel" }
+          $sandbox = Join-Path $env:RUNNER_TEMP ("roc-state-" + [guid]::NewGuid())
+          $venv = Join-Path $sandbox "install"
+          $cwd = Join-Path $sandbox "unrelated ü cwd"
+          $state = Join-Path $sandbox "private state"
+          $report = Join-Path $sandbox "report.json"
+          New-Item -ItemType Directory -Path $cwd | Out-Null
+          python -m venv $venv
+          $package = "$($wheel[0].FullName)[rate-of-closure-web]"
+          & "$venv\Scripts\python.exe" -m pip install --disable-pip-version-check `
+            $package
+          $jobFixture = `
+            "$env:ROC_SOURCE_ROOT/src/rate_of_closure/web/src/model/__fixtures__/regional_ground_execution_job_golden_v1.json"
+          $resultFixture = `
+            "$env:ROC_SOURCE_ROOT/src/rate_of_closure/web/src/model/__fixtures__/regional_ground_execution_result_golden_v1.json"
+          $qualifier = `
+            "$env:ROC_SOURCE_ROOT/scripts/qualify_windows_authority_state_install.py"
+          Push-Location $cwd
+          try {
+            & "$venv\Scripts\python.exe" -I `
+              $qualifier --phase seed --state-root $state `
+              --job-fixture $jobFixture --result-fixture $resultFixture `
+              --report $report
+            & "$venv\Scripts\python.exe" -I `
+              $qualifier --phase recover --state-root $state `
+              --job-fixture $jobFixture --result-fixture $resultFixture `
+              --report $report
+          } finally {
+            Pop-Location
+          }
+          if ((Get-ChildItem -Force $cwd | Measure-Object).Count -ne 0) {
+            throw "installed qualification polluted its unrelated working directory"
+          }
+          Get-Content $report

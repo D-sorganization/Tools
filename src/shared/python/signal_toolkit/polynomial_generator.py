@@ -95,7 +95,9 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
     """Widget for visually generating polynomial functions."""
 
     # Signals
-    polynomial_generated = QtCore.pyqtSignal(str, list)  # joint_name, coefficients
+    # Coefficients use the control-system convention [c0, c1, ...], matching
+    # SignalToolkitWidget and pendulum_simulator.torque_utils.
+    polynomial_generated = QtCore.pyqtSignal(str, list)
 
     def __init__(
         self,
@@ -446,7 +448,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
                 self._display_results()
                 joint = self.joint_combo.currentText()
                 if self.polynomial_coeffs is not None:
-                    self.polynomial_generated.emit(joint, list(self.polynomial_coeffs))
+                    self.polynomial_generated.emit(joint, self._control_coefficients())
 
             self.dragging_curve = False
             self.drag_start_pos = None
@@ -557,6 +559,18 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             logger.error(f"Fitting error: {e}")
             return False
 
+    def _control_coefficients(self) -> list[float]:
+        """Return the fitted polynomial as ``[c0, c1, ...]``.
+
+        ``numpy.polyfit`` stores coefficients highest-degree first for
+        ``numpy.polyval``.  Joint controllers throughout Tools use the opposite,
+        constant-term-first convention.  Keep the fit in NumPy order internally
+        for plotting, and convert only at the integration boundary.
+        """
+        if self.polynomial_coeffs is None:
+            raise PolynomialFitError("Fit a polynomial before requesting coefficients.")
+        return [float(value) for value in reversed(self.polynomial_coeffs)]
+
     def _fit_polynomial(self) -> None:
         """Fit a polynomial to the current points and update UI."""
         try:
@@ -579,7 +593,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             # Emit signal
             joint = self.joint_combo.currentText()
             if self.polynomial_coeffs is not None:
-                self.polynomial_generated.emit(joint, list(self.polynomial_coeffs))
+                self.polynomial_generated.emit(joint, self._control_coefficients())
         else:
             raise PolynomialFitError("Failed to fit polynomial to points.")
 
@@ -663,8 +677,10 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
                     terms.append(f"{c:.4f}*x^{power}")
 
         poly_str = " + ".join(terms).replace("+ -", "- ")
+        control_coeffs = self._control_coefficients()
         self.result_text.setText(
-            f"Polynomial:\n{poly_str}\n\nCoefficients:\n{self.polynomial_coeffs}"
+            f"Polynomial:\n{poly_str}\n\n"
+            f"Control coefficients [c0, c1, ...]:\n{control_coeffs}"
         )
 
     def set_joints(self, joints: list[str]) -> None:
