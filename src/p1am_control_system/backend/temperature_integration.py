@@ -17,7 +17,7 @@ from collections.abc import Callable
 from typing import Any, cast
 
 import hardware
-from auth_config import require_admin_key
+from auth_config import require_admin_key, require_read_auth
 from config_store import load_config, load_model, save_config, save_model
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -509,7 +509,11 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
     router = APIRouter(prefix="/api/temperature", tags=["temperature"])
     controller = service.controller
 
-    @router.get("/config", response_model=TemperatureConfig)
+    @router.get(
+        "/config",
+        response_model=TemperatureConfig,
+        dependencies=[Depends(require_read_auth)],
+    )
     async def get_temperature_config() -> TemperatureConfig:
         config: TemperatureConfig = controller.config
         return config
@@ -524,7 +528,11 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
     ) -> TemperatureConfig:
         return service.update_config(new_config)
 
-    @router.get("/status", response_model=TemperatureStatus)
+    @router.get(
+        "/status",
+        response_model=TemperatureStatus,
+        dependencies=[Depends(require_read_auth)],
+    )
     async def get_temperature_status() -> TemperatureStatus:
         return service.status()
 

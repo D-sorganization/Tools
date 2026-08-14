@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager, suppress
@@ -14,14 +13,16 @@ from typing import Any, cast
 
 import shutdown_safety
 from alicat_manager import AlicatManager, AlicatMFC
+from audit import AuditMiddleware
 from auth_config import (
-    CREDENTIAL_HEADER_NAME,
+    log_auth_configuration,
     require_admin_key,
     require_api_key,
+    require_read_auth,
     verify_operator_key,
 )
 from config_store import load_config, load_model, save_config, save_model
-from cors_config import resolve_cors_settings
+from cors_config import RequestGuardMiddleware, resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
     CaptureConfig,
@@ -43,14 +44,12 @@ from fastapi import (
     File,
     HTTPException,
     Query,
-    Security,
     UploadFile,
     WebSocket,
     WebSocketDisconnect,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
-from fastapi.security import APIKeyHeader
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
@@ -124,11 +123,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
 settings = get_settings()
 
-# Truthy tokens for the opt-in read-auth env gate (mirrors auth_config).
-_TRUTHY = {"1", "true", "yes", "on"}
-# auto_error=False so require_read_auth can no-op when the gate is disabled
-# instead of FastAPI rejecting a missing header up front.
-_read_api_key_header = APIKeyHeader(name=CREDENTIAL_HEADER_NAME, auto_error=False)
+# Report the resolved credential posture at boot so a half-configured or
+# bypassed deployment is visible in journalctl immediately (#4041), not at the
+# operator's first control action.
+log_auth_configuration()
 
 plc_client = PLCFactory.create_client(settings)
 modbus_manager = plc_client  # Compatibility alias
@@ -320,24 +318,6 @@ def _publish_active_config(config: RoutingConfig) -> None:
     if _persisted_routing is not None:
         config = config.model_copy(update={"interlocks": _persisted_routing.interlocks})
     control_context.apply_config(config, plc_client, backup_simulator)
-
-
-def require_read_auth(
-    api_key: str | None = Security(_read_api_key_header),
-) -> None:
-    """Optional gate for the historian/plant read surface.
-
-    Enforces :func:`require_api_key` only when ``P1AM_REQUIRE_READ_AUTH`` is
-    enabled. When the setting is off (the default) this is a no-op so the read
-    endpoints stay public and the bench HMI keeps working unchanged. The
-    existing ``P1AM_DEV_NO_AUTH`` bypass still applies via ``require_api_key``.
-
-    The env var is read per-request (not the ``lru_cache``d settings singleton)
-    so the gate can be toggled without a process restart.
-    """
-    if os.environ.get("P1AM_REQUIRE_READ_AUTH", "").strip().lower() not in _TRUTHY:
-        return
-    require_api_key(api_key)
 
 
 def _reject_output_write_if_estopped() -> None:
@@ -573,6 +553,16 @@ except Exception as exc:  # pragma: no cover - only when numpy/module absent
 # Restrict CORS to a configured allowlist (no wildcard with credentials).
 # See cors_config.resolve_cors_settings for env-driven configuration.
 _cors = resolve_cors_settings()
+
+# Middleware order note: the LAST one added is the OUTERMOST. So the effective
+# request path is CORS -> audit -> request guard -> routes. CORS stays outermost
+# so it answers OPTIONS preflights and decorates the guard's 403s; the audit
+# layer sits above the guard so a *refused* control attempt is recorded too.
+app.add_middleware(
+    RequestGuardMiddleware,
+    allowed_origins=list(_cors.allow_origins),
+)
+app.add_middleware(AuditMiddleware, session_factory=_config_session)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(_cors.allow_origins),
@@ -663,7 +653,11 @@ async def root_info() -> str:
     """
 
 
-@app.get("/api/routing", response_model=RoutingConfig)
+@app.get(
+    "/api/routing",
+    response_model=RoutingConfig,
+    dependencies=[Depends(require_read_auth)],
+)
 async def get_routing() -> RoutingConfig:
     """Read the active routing and PID parameters from the PLC.
 
@@ -831,7 +825,7 @@ async def get_snapshot() -> dict[str, Any]:
     return latest_frame
 
 
-@app.get("/api/alarms/active")
+@app.get("/api/alarms/active", dependencies=[Depends(require_read_auth)])
 async def get_active_alarms() -> list[dict[str, Any]]:
     """Get all currently active or unacknowledged alarms."""
     return list(control_context.active_alarms.values())
@@ -1012,7 +1006,11 @@ def export_data(
     )
 
 
-@app.get("/api/capture/status", response_model=CaptureStats)
+@app.get(
+    "/api/capture/status",
+    response_model=CaptureStats,
+    dependencies=[Depends(require_read_auth)],
+)
 def get_capture_status(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> CaptureStats:
@@ -1025,7 +1023,11 @@ def get_capture_status(
     return capture_stats(db, capturing=True)
 
 
-@app.get("/api/capture/config", response_model=CaptureConfig)
+@app.get(
+    "/api/capture/config",
+    response_model=CaptureConfig,
+    dependencies=[Depends(require_read_auth)],
+)
 async def get_capture_config() -> CaptureConfig:
     """Return the current historian sampling interval (seconds between writes)."""
     return CaptureConfig(interval_s=capture_throttle.interval_s)
@@ -1057,7 +1059,11 @@ class PerformanceModeRequest(BaseModel):
     mode: PerformanceMode
 
 
-@app.get("/api/performance", response_model=PerformanceConfig)
+@app.get(
+    "/api/performance",
+    response_model=PerformanceConfig,
+    dependencies=[Depends(require_read_auth)],
+)
 async def get_performance() -> PerformanceConfig:
     """Return the active performance mode, both cadences and loop health.
 
@@ -1329,7 +1335,11 @@ async def simulate_mpc(payload: MPCSimulatePayload) -> dict[str, Any]:
     return cast(dict[str, Any], simulate_pid_vs_mpc(payload))
 
 
-@app.get("/api/alicats", response_model=list[AlicatMFCState])
+@app.get(
+    "/api/alicats",
+    response_model=list[AlicatMFCState],
+    dependencies=[Depends(require_read_auth)],
+)
 async def get_alicats() -> list[AlicatMFCState]:
     """Retrieve live parameters for all configured Alicat Mass Flow Controllers."""
     return [AlicatMFCState(**d) for d in alicat_manager.get_devices_data()]

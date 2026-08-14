@@ -15,7 +15,6 @@ import pytest
 os.environ["PLC_DRIVER"] = "modbus"
 # These functional tests exercise endpoint behavior, not the auth gate.
 # Opt out of auth here.
-os.environ["P1AM_DEV_NO_AUTH"] = "1"
 
 pytest.importorskip("sqlmodel")
 pytest.importorskip("httpx")
@@ -42,7 +41,14 @@ def override_get_session() -> Generator[Session, None, None]:
 
 app.dependency_overrides[get_session] = override_get_session
 
-client = TestClient(app)
+
+@pytest.fixture(autouse=True)
+def _bench_no_auth(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Keep the endpoint tests on the explicit bench auth posture (#4061)."""
+    monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
+
+
+client = TestClient(app, headers={"X-Requested-With": "p1am-hmi"})
 
 
 @pytest.fixture(autouse=True)

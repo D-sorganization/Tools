@@ -22,7 +22,7 @@ from collections.abc import Callable
 from typing import Any
 
 import hardware
-from auth_config import require_admin_key
+from auth_config import require_admin_key, require_read_auth
 from config_store import load_config, load_model, save_model
 from fastapi import APIRouter, Depends, HTTPException
 from power_supply import (
@@ -405,7 +405,11 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
     router = APIRouter(prefix="/api/power_supply", tags=["power_supply"])
     controller = service.controller
 
-    @router.get("/config", response_model=PowerSupplyConfig)
+    @router.get(
+        "/config",
+        response_model=PowerSupplyConfig,
+        dependencies=[Depends(require_read_auth)],
+    )
     async def get_power_supply_config() -> PowerSupplyConfig:
         return controller.config
 
@@ -419,7 +423,11 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
     ) -> PowerSupplyConfig:
         return service.update_config(new_config)
 
-    @router.get("/status", response_model=PowerSupplyStatus)
+    @router.get(
+        "/status",
+        response_model=PowerSupplyStatus,
+        dependencies=[Depends(require_read_auth)],
+    )
     async def get_power_supply_status() -> PowerSupplyStatus:
         return service.status()
 

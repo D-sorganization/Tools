@@ -9,7 +9,6 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 os.environ["PLC_DRIVER"] = "modbus"
-os.environ["P1AM_DEV_NO_AUTH"] = "1"
 
 pytest.importorskip("sqlmodel")
 # tools_core is optional: main.py falls back to scada_fallback (pure Python)
@@ -20,7 +19,27 @@ pytest.importorskip("fastapi.testclient")
 from fastapi.testclient import TestClient
 from main import app, modbus_manager
 
-client = TestClient(app)
+# The HMI marker header: cors_config.RequestGuardMiddleware refuses a
+# state-changing request that carries no preflight-forcing signal, because a
+# bodyless control POST is otherwise a CORS-"simple" request any page can make
+# (#4037). Set it once on the client so every request below is HMI-shaped.
+
+
+@pytest.fixture(autouse=True)
+def _bench_no_auth(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Re-establish the bench auth bypass for EVERY test in this module.
+
+    This used to be a bare ``os.environ`` assignment at import time, which is
+    order-dependent: a sibling suite that clears the variable at *its* import
+    time silently disables the bypass for this whole module, and the tests then
+    fail with 503 ("no credential configured") depending only on collection
+    order and xdist worker assignment (#4061). A per-test ``monkeypatch`` is
+    immune to that and unwinds cleanly afterwards.
+    """
+    monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
+
+
+client = TestClient(app, headers={"X-Requested-With": "p1am-hmi"})
 
 
 @pytest.fixture(autouse=True)

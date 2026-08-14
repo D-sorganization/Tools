@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+from collections.abc import Mapping
 from functools import lru_cache
 from typing import Literal
 
@@ -129,14 +131,18 @@ class P1AMSettings(BaseSettings):
         validation_alias="P1AM_SQLITE_SYNCHRONOUS",
     )
     require_read_auth: bool = Field(
-        default=False,
+        default=True,
         validation_alias="P1AM_REQUIRE_READ_AUTH",
         description=(
-            "Opt-in gate for the historian/plant read surface (/api/trends, "
-            "/api/export, /api/snapshot, /api/events, /api/plant, "
-            "/api/project/ladder-explorer, /api/explorer/*). Default False keeps "
-            "those routes public so the HMI works in bench mode. When True (and "
-            "P1AM_DEV_NO_AUTH is off) a valid operator/admin API key is required."
+            "Gate for the historian/plant/configuration read surface "
+            "(/api/routing, /api/trends, /api/export, /api/snapshot, "
+            "/api/events, /api/plant, /api/alarms/active, /api/capture/*, "
+            "/api/performance, /api/alicats, the service /config + /status "
+            "pairs, /api/project/ladder-explorer and /api/explorer/*). "
+            "Defaults to True (issue #4037): GET /api/routing alone discloses "
+            "the full register map, every scale factor and every interlock trip "
+            "limit. Set P1AM_REQUIRE_READ_AUTH=0 (or P1AM_DEV_NO_AUTH=1) for a "
+            "credential-free bench setup."
         ),
     )
 
@@ -176,3 +182,31 @@ class P1AMSettings(BaseSettings):
 def get_settings() -> P1AMSettings:
     """Return process-wide P1AM settings resolved from the environment."""
     return P1AMSettings()
+
+
+_TRUTHY = frozenset({"1", "true", "yes", "on"})
+_FALSY = frozenset({"0", "false", "no", "off"})
+
+
+def read_auth_required(env: Mapping[str, str] | None = None) -> bool:
+    """Resolve whether the read surface requires a credential, per request.
+
+    Precedence: an explicit, recognised ``P1AM_REQUIRE_READ_AUTH`` value wins;
+    otherwise the :class:`P1AMSettings` default applies. Reading the variable
+    directly (rather than the ``lru_cache``d settings singleton) lets an
+    operator toggle the gate without restarting the safety-critical controller,
+    while an unset variable still inherits the secure-by-default value.
+
+    Args:
+        env: Environment mapping to read. Defaults to ``os.environ``.
+
+    Returns:
+        True when a valid operator/admin key is required for read routes.
+    """
+    source = os.environ if env is None else env
+    raw = source.get("P1AM_REQUIRE_READ_AUTH", "").strip().lower()
+    if raw in _TRUTHY:
+        return True
+    if raw in _FALSY:
+        return False
+    return get_settings().require_read_auth
