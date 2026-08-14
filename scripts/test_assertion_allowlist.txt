@@ -27,3 +27,5 @@ src/shared/python/swing_sim/ground/tests/_support.py
 src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py
 # Secret-free process-control support used by production-browser specifications.
 tests/rate_of_closure/browser_companion_harness.py
+# pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
+src/document_processing/pdf_renamer/tests/conftest.py

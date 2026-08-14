@@ -186,6 +186,12 @@ certs/
 memory.db
 src/rate_of_closure/web/test-results/
 
+# Codex agent scratch worktrees. `git add -A` inside one of these captures it as
+# a gitlink (mode 160000) pointing at a commit that exists only in the local
+# clone, so a fresh clone gets a tree entry whose object the server does not
+# have. 90 of the 103 open PRs at 2026-08-13 were contaminated this way.
+.codex-worktrees/
+
 # Debug/log files (tracked files removed in repo hygiene cleanup)
 log.txt
 log4.txt
