@@ -24,6 +24,37 @@ from sqlalchemy import (
 from sqlmodel import Session, SQLModel, create_engine  # noqa: E402
 
 
+def test_db_file_is_anchored_to_the_backend_package(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # The historian path must NOT depend on the process CWD: a relative
+    # "dcs_scada.db" forks the DB into one file per launch directory (and drops
+    # a stray untracked copy at the repo root during a test run).
+    monkeypatch.delenv("P1AM_DB_PATH", raising=False)
+    resolved = Path(database._resolve_db_file())
+    assert resolved.is_absolute()
+    assert resolved.name == database.DB_FILENAME
+    assert resolved.parent == Path(database.__file__).resolve().parent
+
+
+def test_db_path_env_override_is_honoured(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Deployments that keep the historian on separate storage override the path.
+    target = tmp_path / "historian" / "bench.db"
+    target.parent.mkdir()
+    monkeypatch.setenv("P1AM_DB_PATH", str(target))
+    assert Path(database._resolve_db_file()) == target.resolve()
+
+
+def test_database_url_is_a_wellformed_absolute_sqlite_url() -> None:
+    # Windows drive paths must use posix separators inside the URL, otherwise
+    # SQLAlchemy sees escapes instead of a drive-absolute path.
+    assert "\\" not in database.DATABASE_URL
+    assert database.DATABASE_URL == f"sqlite:///{Path(database.DB_FILE).as_posix()}"
+    assert Path(database.DB_FILE).is_absolute()
+
+
 def test_configure_sqlite_sets_wal_and_size_limit(tmp_path: Path) -> None:
     db_file = tmp_path / "pragma.db"
     conn = sqlite3.connect(db_file)

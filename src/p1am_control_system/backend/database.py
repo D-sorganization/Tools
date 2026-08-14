@@ -1,5 +1,7 @@
 import logging
+import os
 from collections.abc import Generator
+from pathlib import Path
 from typing import Any
 
 from settings import P1AMSettings, get_settings
@@ -9,8 +11,35 @@ from sqlmodel import Session, SQLModel, create_engine
 # Set up logging conforming to user guidelines
 logger = logging.getLogger("dcs_backend.database")
 
-DB_FILE = "dcs_scada.db"
-DATABASE_URL = f"sqlite:///{DB_FILE}"
+DB_FILENAME = "dcs_scada.db"
+
+
+def _resolve_db_file() -> str:
+    """Absolute on-disk path of the historian DB.
+
+    Anchored to *this package's* directory, not the process CWD. A bare relative
+    ``sqlite:///dcs_scada.db`` silently forks the historian into a different file
+    for every directory the backend is started from — a test run from the repo
+    root, a `uvicorn main:app` from `backend/`, and a systemd unit with a
+    different WorkingDirectory would each get their own DB, so tag history would
+    appear to vanish. The bench documents one DB at ``backend/dcs_scada.db``
+    (BENCH_HANDOFF.md); this makes that location authoritative.
+
+    ``P1AM_DB_PATH`` overrides it for deployments that keep the historian on
+    separate storage (e.g. an SSD or a mounted volume). In the container image
+    the package directory *is* ``/app`` — the compose ``dcs_db_data`` volume
+    mount — so the default is unchanged there.
+    """
+    override = os.environ.get("P1AM_DB_PATH", "").strip()
+    if override:
+        return str(Path(override).expanduser().resolve())
+    return str(Path(__file__).resolve().parent / DB_FILENAME)
+
+
+DB_FILE = _resolve_db_file()
+# Posix-style separators keep the URL well-formed on Windows, where a raw
+# backslash path would be parsed as escapes rather than a drive-absolute path.
+DATABASE_URL = f"sqlite:///{Path(DB_FILE).as_posix()}"
 
 # ``PRAGMA auto_vacuum`` result codes: 0 = NONE, 1 = FULL, 2 = INCREMENTAL.
 _AUTO_VACUUM_INCREMENTAL = 2
