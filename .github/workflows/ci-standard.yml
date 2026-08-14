@@ -96,6 +96,7 @@ jobs:
           # legacy name, kept as a fallback so the rename cannot break routing;
           # drop it once the variable is retired org-wide.
           LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
         run: |
           MODE="${LOCAL_MODE:-local}"
           echo "Fleet mode: $MODE"
@@ -110,6 +111,17 @@ jobs:
               exit 1
               ;;
             *)
+              # Public repos get free unmetered hosted runners, so there is no
+              # reason to fail closed when the fleet is saturated. This matters
+              # because the fleet routinely runs at zero IDLE runners while
+              # still fully online: the availability probe below counts
+              # `busy == false`, so without this branch any non-local mode
+              # would fail the job outright rather than fall back.
+              if [ "$REPOSITORY_PRIVATE" != "true" ]; then
+                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+                echo "Public repo - routing to free hosted runner (mode=$MODE)"
+                exit 0
+              fi
               AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
                 --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
                 2>/dev/null || echo "0")
