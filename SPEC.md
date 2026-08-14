@@ -26,11 +26,20 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.03                                    |
-| **Spec Version**        | 1.17.03                                    |
+| **Current Version**     | 1.17.04                                    |
+| **Spec Version**        | 1.17.04                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Deterministic Explorer candidate capture (#4433)
+
+Version 1.17.04 explicitly applies the declared dark and reduced-motion media
+environment before each React candidate navigation and requires the Explorer
+playback control to be paused before its initial-state PNG is written. Two
+consecutive local production-Chromium runs produced the same Explorer digest.
+This changes only the protected capture harness, not runtime playback, camera,
+mesh-source, result, or scientific authority.
 
 ### 2026-08-14 Cross-platform accessibility inventory correction (#4433)
 
@@ -4421,6 +4430,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.04 | test(rate-of-closure, #4433): apply the declared dark/reduced-motion media before React baseline navigation and require Explorer playback paused for deterministic candidate capture. |
 | 2026-08-14 | 1.17.03 | fix(rate-of-closure, #4433): replace the platform-specific PyQt Variation registered-control count with the observed 160–161 envelope while preserving per-control accessible-name enforcement and evidence. |
 | 2026-08-14 | 1.17.02 | test(rate-of-closure, #4433): generate exact hosted React/PyQt initial-state visual-baseline candidates with deterministic environments and SHA-256 manifests while retaining explicit pre-approval status. |
 | 2026-08-14 | 1.17.01 | feat(rate-of-closure, #4433): add exact all-tab automated accessibility evidence, strict React axe and PyQt semantic-control gates, corrected action contrast and control names, plus a controlled but not-yet-executed human AT qualification protocol. |

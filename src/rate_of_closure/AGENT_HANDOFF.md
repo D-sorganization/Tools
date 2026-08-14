@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Deterministic Explorer candidate capture (#4433)
+
+- SPEC 1.17.04 makes the React baseline harness apply dark/reduced-motion media
+  before navigation and prove Explorer is paused before the PNG is written.
+- Consecutive local production-browser captures are byte-identical. No runtime
+  playback, camera, source, or scientific authority changed.
+
 ## 2026-08-14 Cross-platform accessibility inventory correction (#4433)
 
 - SPEC 1.17.03 records Qt's observed 160–161 registered-control envelope for

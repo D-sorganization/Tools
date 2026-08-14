@@ -3,6 +3,14 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Deterministic Explorer candidate capture (#4433)
+
+Version 1.17.04 explicitly applies the documented dark/reduced-motion media
+environment before each React candidate navigation and requires the Explorer
+playback control to be in its paused `Play` state before capture. Two local
+production-browser runs emitted the exact same Explorer PNG digest. This is a
+test/evidence correction only; product animation behavior is unchanged.
+
 ## 2026-08-14 Cross-platform accessibility inventory correction (#4433)
 
 Version 1.17.03 replaces one false exact Variation-widget count with the

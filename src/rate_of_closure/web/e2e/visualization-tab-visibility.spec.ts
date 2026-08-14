@@ -79,6 +79,7 @@ test("every registered React tab exposes its primary visual in the initial viewp
     .map(([width, height]) => ({ width, height }));
   for (const viewport of viewports) {
     await page.setViewportSize(viewport);
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
     await page.goto("/");
     const tabs: VisualEvidence[] = [];
     for (const entry of visualizationTabs("react")) {
@@ -113,6 +114,9 @@ test("every registered React tab exposes its primary visual in the initial viewp
         }
       }
       if (viewport.width === 1440 && viewport.height === 900) {
+        if (entry.tabId === "explorer") {
+          await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+        }
         const file = `initial-${entry.tabId}-1440x900.png`;
         const image = await page.screenshot({ animations: "disabled", caret: "hide" });
         await writeFile(resolve(reactCandidateRoot, file), image);

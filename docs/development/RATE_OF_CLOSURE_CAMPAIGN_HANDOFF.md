@@ -1,5 +1,13 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Deterministic Explorer candidate capture
+
+- The React candidate harness now applies its declared dark/reduced-motion
+  media environment before navigation and asserts Explorer is paused before
+  capture. Two consecutive local Chromium runs produced the same PNG digest.
+- SPEC 1.17.04 records this evidence-only correction. Product animation,
+  camera, source, and scientific authority are unchanged.
+
 ## 2026-08-14 #4433 Cross-platform accessibility inventory correction
 
 - Qt exposes 160 or 161 registered semantic controls on the Variation tab
