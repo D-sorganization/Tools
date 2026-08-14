@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, cast
 from uuid import uuid4
 
-from PyQt6.QtCore import QSettings
 from PyQt6.QtWidgets import QFileDialog, QMessageBox, QWidget
 
 from rate_of_closure.application.workspace_files import (
@@ -23,6 +22,7 @@ from rate_of_closure.application.workspace_session import (
     document_from_state,
     state_from_document,
 )
+from rate_of_closure.ui.pyqt6.navigation_state import NavigationSettings
 from rate_of_closure.view_workspace import (
     workspace_from_document,
     workspace_to_document,
@@ -84,7 +84,7 @@ class MainWindowFileCommandsMixin:
     _workspace_baseline: str
     _default_workspace_state: ExplorerWorkspaceState
     _recent_workspace_paths: list[Path]
-    _navigation_settings: QSettings
+    _navigation_settings: NavigationSettings
 
     if TYPE_CHECKING:
 

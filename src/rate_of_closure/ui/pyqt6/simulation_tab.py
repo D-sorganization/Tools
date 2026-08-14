@@ -7,7 +7,7 @@ import logging
 import math
 from typing import cast
 
-from PyQt6.QtCore import QSettings, Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -35,6 +35,7 @@ from rate_of_closure.ui.pyqt6.flight_playback_controls import FlightPlaybackPane
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
+from rate_of_closure.ui.pyqt6.navigation_state import NavigationSettings
 from rate_of_closure.ui.pyqt6.result_row import ResultRow
 from rate_of_closure.ui.pyqt6.simulation_specs import (
     LAUNCH_ROWS,
@@ -94,7 +95,7 @@ class SimulationTab(
     def __init__(
         self,
         parent: QWidget | None = None,
-        view_settings: QSettings | None = None,
+        view_settings: NavigationSettings | None = None,
     ) -> None:
         super().__init__(parent)
         self._scenario = ImpactScenario(clubhead_speed_mph=113.0)

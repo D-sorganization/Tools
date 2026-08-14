@@ -242,7 +242,8 @@ class Club3DView(QWidget):
 
     def is_playing(self) -> bool:
         """Whether the clubhead animation timer is running."""
-        return cast("bool", self._timer.isActive())
+        running: bool = self._timer.isActive()
+        return running
 
     def set_view_mode(self, mode: str) -> None:
         """Select a display mode by name (see :data:`VIEW_MODES`)."""
@@ -253,7 +254,8 @@ class Club3DView(QWidget):
 
     def view_mode(self) -> str:
         """The active display mode name."""
-        return cast("str", self._mode_combo.currentText())
+        mode: str = self._mode_combo.currentText()
+        return mode
 
     def set_zoom(self, factor: float) -> None:
         """Set the camera zoom factor (0.3-4.0; larger = closer)."""

@@ -215,7 +215,8 @@ class SolverPanel(QWidget):
     # ── editor -> solver inputs ─────────────────────────────────────
     def use_swing_source(self) -> bool:
         """Whether swing-source mode is selected."""
-        return cast("bool", self._swing_check.isChecked())
+        include: bool = self._swing_check.isChecked()
+        return include
 
     def target_panel(self) -> TargetPanel:
         """The target-region editor (#4125 H7b) — wiring/test seam."""

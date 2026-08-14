@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from dataclasses import replace
 from functools import partial
 
-from PyQt6.QtCore import QSettings, QSignalBlocker, QTimer
+from PyQt6.QtCore import QSignalBlocker, QTimer
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -26,6 +26,7 @@ from rate_of_closure.application.camera_preferences import (
     preference_from_camera_state,
 )
 from rate_of_closure.ui.pyqt6.camera_controls import CameraViewportMixin
+from rate_of_closure.ui.pyqt6.navigation_state import NavigationSettings
 from rate_of_closure.view_workspace import (
     PlaybackState,
     ViewKind,
@@ -57,7 +58,7 @@ class ViewCompositor(QWidget):
     def __init__(
         self,
         views: Mapping[ViewKind, QWidget],
-        settings: QSettings | None = None,
+        settings: NavigationSettings | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)

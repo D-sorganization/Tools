@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+from typing import Any
 
 from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
@@ -348,7 +349,7 @@ class PlotWizard(QWizard):
         scope = self.scope()
         page = self._variables_page
         kind = str(self._style_page.kind_combo.currentData() or "line")
-        common = {
+        common: dict[str, Any] = {
             "x_key": page.x_key(),
             "title": self._style_page.title_edit.text(),
             "x_log": self._style_page.x_log.isChecked(),
