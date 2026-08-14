@@ -80,12 +80,36 @@ def init_db() -> None:
     """
     try:
         SQLModel.metadata.create_all(engine)
+        _migrate_taglog_quality_column()
         _migrate_historian_indexes()
         _optimize_planner_statistics()
         logger.info("Database tables initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
         raise
+
+
+def _migrate_taglog_quality_column() -> None:
+    """Add ``taglog.quality`` to an already-populated database (issue #4004).
+
+    ``create_all`` only creates *missing tables*, so an existing bench DB would
+    otherwise reject inserts that carry the new provenance column. Rows written
+    before this migration predate the data-source distinction and are therefore
+    backfilled as ``live`` — that is what the old code recorded them as.
+    """
+    from sqlalchemy import text
+
+    with engine.begin() as conn:
+        columns = {
+            str(row[1]) for row in conn.exec_driver_sql("PRAGMA table_info(taglog)")
+        }
+        if not columns or "quality" in columns:
+            return
+        conn.execute(
+            text("ALTER TABLE taglog ADD COLUMN quality VARCHAR(16) DEFAULT 'live'")
+        )
+        conn.execute(text("UPDATE taglog SET quality = 'live' WHERE quality IS NULL"))
+    logger.info("Migrated taglog: added data-quality column.")
 
 
 def _migrate_historian_indexes() -> None:

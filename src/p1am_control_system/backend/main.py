@@ -12,7 +12,6 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
-import historian
 import shutdown_safety
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import (
@@ -66,11 +65,26 @@ from models import (
     TagLog,
 )
 from mpc import simulate_pid_vs_mpc
-from performance import PerformanceConfig, PerformanceController, PerformanceMode
+from performance import (
+    PerformanceConfig,
+    PerformanceController,
+    PerformanceMode,
+    ScanScheduler,
+)
 from pid_tuning import identify_fopdt_and_tune
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
-from poll_runtime import _connect_once, _poll_once
+from poll_runtime import (
+    POLL_FAILURE_ESCALATION_THRESHOLD,
+    POLL_FAILURE_MAX_BACKOFF_S,
+    DataQualityTracker,
+    HistorianWriter,
+    ThrottledHistorianSink,
+    _connect_once,
+    _poll_once,
+    log_poll_failure,
+    loop_diagnostics,
+)
 from power_supply_integration import PowerSupplyService, create_power_supply_router
 from project_import import import_project_archive
 from pydantic import BaseModel
@@ -83,6 +97,7 @@ from temperature_integration import (
     TemperatureService,
     create_temperature_router,
 )
+from ws_broadcast import ConnectionManager
 
 try:
     # Prefer the Rust-accelerated SCADA kernel when the compiled wheel is
@@ -117,7 +132,18 @@ _read_api_key_header = APIKeyHeader(name=CREDENTIAL_HEADER_NAME, auto_error=Fals
 
 plc_client = PLCFactory.create_client(settings)
 modbus_manager = plc_client  # Compatibility alias
+
+# The backup simulator still backs the routing/tag/E-stop endpoints (they mirror
+# commands into it so the bench HMI stays coherent), but it is wired into the
+# SCAN path only when the operator actually selected a simulator driver: on real
+# hardware a dropped link must surface as a fault, never as fabricated
+# continuity fed to the control laws, alarms and historian (issue #4004).
+PLC_DRIVER_IS_SIMULATED = settings.plc_driver_is_simulated
 backup_simulator = SimulatedPLCClient()
+if not PLC_DRIVER_IS_SIMULATED:
+    logger.info(
+        "PLC driver %r is real hardware; no scan back-fill.", settings.plc_driver
+    )
 
 
 # A session factory lets the services durably persist operator settings (config
@@ -158,62 +184,27 @@ _persisted_routing: RoutingConfig | None = None
 # without slowing the control/stream loop. Runtime-adjustable via /api/capture/config.
 capture_throttle = CaptureThrottle(settings.capture_interval_s)
 
-# Global performance mode: switches the scan-loop cadence between the fast
-# (performance) and slow (lightweight) intervals to conserve CPU / HMI load.
-# Defaults to lightweight — fast polling is opt-in (and the HMI auto-engages it
-# whenever its tab is hidden), so an unattended backend stays easy on the Pi.
+# Global performance mode. It governs ONLY how often the live frame is pushed
+# to the HMI: the scan/control/alarm cadence is pinned to settings.poll_interval_s
+# below. Defaults to lightweight, which is now a pure rendering choice — a hidden
+# browser tab can no longer slow the plant down (issue #4008).
 perf_controller = PerformanceController(
     settings.poll_interval_s,
     settings.lightweight_poll_interval_s,
     mode=PerformanceMode.LIGHTWEIGHT,
+    scan_interval_s=settings.poll_interval_s,
 )
 
+# THE control clock: a monotonic deadline schedule so the real period is the
+# configured period rather than `t_work + sleep`, with missed deadlines counted
+# and the phase resynchronised instead of accumulating lag (issue #4009).
+scan_scheduler = ScanScheduler(settings.poll_interval_s)
 
-def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
-    """Persist a scan to the historian only when the throttle says it's due."""
-    return historian.log_scan(session, tags) if capture_throttle.due() else 0
+# Historian writes happen on a worker thread, batched, off the event loop.
+historian_writer = HistorianWriter(get_session)
 
-
-class ConnectionManager:
-    """Manages WebSocket client connections and broadcasts live updates."""
-
-    def __init__(self) -> None:
-        self.active_connections: list[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket) -> None:
-        await websocket.accept()
-        self.register_accepted(websocket)
-        logger.info("New WebSocket client connected.")
-
-    def register_accepted(self, websocket: WebSocket) -> None:
-        """Register an already-accepted socket without re-accepting it.
-
-        Used by the frame-authenticated path, which must ``accept()`` before it
-        can read the credential frame and therefore cannot call ``connect()``.
-        Routing the registration through the manager keeps connection
-        bookkeeping in one place instead of reaching into
-        ``active_connections`` directly.
-        """
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket) -> None:
-        if websocket in self.active_connections:
-            self.active_connections.remove(websocket)
-            logger.info("WebSocket client disconnected.")
-
-    async def broadcast(self, message: dict[str, Any]) -> None:
-        # Iterate a snapshot and prune any client whose send fails — otherwise a
-        # dead socket lingers forever and gets re-tried (and re-logged) at 10 Hz,
-        # a slow leak that degrades the loop over a long session.
-        dead: list[WebSocket] = []
-        for connection in list(self.active_connections):
-            try:
-                await connection.send_json(message)
-            except Exception as e:
-                logger.warning(f"Dropping unreachable WebSocket client: {e}")
-                dead.append(connection)
-        for connection in dead:
-            self.disconnect(connection)
+# Tracks tag provenance across scans so an outage is logged once, as an event.
+data_quality_tracker = DataQualityTracker()
 
 
 ws_manager = ConnectionManager()
@@ -222,9 +213,6 @@ shutdown_event = asyncio.Event()
 # Latest broadcast frame, cached so HTTP-only clients (e.g. embedded webviews
 # that can't hold a WebSocket) can poll /api/snapshot as a streaming fallback.
 latest_frame: dict[str, Any] = {}
-
-POLL_FAILURE_ESCALATION_THRESHOLD = 3
-POLL_FAILURE_MAX_BACKOFF_S = 5.0
 
 # Instantiate global Alicat manager and default devices
 alicat_manager = AlicatManager()
@@ -370,71 +358,108 @@ def _require_latest_tag(tag_name: str, *, role: str) -> float:
         ) from exc
 
 
-async def poll_plc_loop() -> None:
-    """Background loop polling the PLC tags at 10Hz.
+# The scan's persistence seam: the capture throttle decides whether a sample
+# is due BEFORE the record reaches the queue, so a suppressed scan never opens
+# a session (issue #4023). Alarm/quality events are never throttled.
+_historian_sink = ThrottledHistorianSink(historian_writer, capture_throttle.due)
 
-    Saves data to DB and streams updates to WS.
+
+async def poll_plc_loop() -> None:
+    """Background loop scanning the PLC at the fixed control period.
+
+    The scan, the alarm evaluation, the heater-relay decision and the E-stop
+    re-assert all run at ``settings.poll_interval_s`` (10 Hz by default). The
+    performance mode may only decimate the WebSocket broadcast: a browser tab
+    going hidden must never change a control period (issue #4008).
+
+    Cycles are scheduled against a monotonic deadline rather than a fixed sleep
+    after the work, so the true period does not drift with load; a missed
+    deadline is counted, logged and resynchronised instead of accumulating lag
+    (issue #4009).
     """
     global latest_frame
     logger.info("Starting background PLC polling loop...")
+    historian_writer.rebind()
+    writer_task = asyncio.create_task(historian_writer.run(shutdown_event))
     consecutive_failures = 0
-    while not shutdown_event.is_set():
-        retry_delay = perf_controller.poll_interval_s
-        try:
-            frame = await _poll_once(
-                plc=plc_client,
-                backup=backup_simulator,
-                latest_tag_values=control_context.latest_tags,
-                ws=ws_manager,
-                alicats=alicat_manager,
-                power_supply=power_supply_service,
-                temperature=temperature_service,
-                alarm_engine=control_context.alarm_engine,
-                active_alarm_map=control_context.active_alarms,
-                session_factory=get_session,
-                estop_active=control_context.e_stop_active,
-                log_scan=_throttled_log_scan,
-            )
-            # Cache the frame for the /api/snapshot polling fallback. Reassigning
-            # the reference is atomic, so a concurrent reader sees a whole frame.
-            if frame:
-                latest_frame = frame
-            consecutive_failures = 0
-        except Exception as loop_err:
-            consecutive_failures += 1
-            retry_delay = min(
-                settings.poll_interval_s * (2 ** (consecutive_failures - 1)),
-                POLL_FAILURE_MAX_BACKOFF_S,
-            )
-            if consecutive_failures < POLL_FAILURE_ESCALATION_THRESHOLD:
-                logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
-            elif consecutive_failures == POLL_FAILURE_ESCALATION_THRESHOLD:
-                logger.warning(
-                    "PLC polling loop degraded after %d consecutive failures; "
-                    "retrying in %.3fs: %s",
-                    consecutive_failures,
-                    retry_delay,
-                    loop_err,
+    scan_index = 0
+    try:
+        while not shutdown_event.is_set():
+            period = float(settings.poll_interval_s)
+            if period != scan_scheduler.period_s:
+                scan_scheduler.set_period_s(period)
+            scan_index += 1
+            failed = False
+            retry_delay = period
+            try:
+                frame = await _poll_once(
+                    plc=plc_client,
+                    backup=backup_simulator if PLC_DRIVER_IS_SIMULATED else None,
+                    simulated=PLC_DRIVER_IS_SIMULATED,
+                    latest_tag_values=control_context.latest_tags,
+                    ws=ws_manager,
+                    alicats=alicat_manager,
+                    power_supply=power_supply_service,
+                    temperature=temperature_service,
+                    alarm_engine=control_context.alarm_engine,
+                    active_alarm_map=control_context.active_alarms,
+                    estop_active=control_context.e_stop_active,
+                    historian=_historian_sink,
+                    quality_tracker=data_quality_tracker,
+                    broadcast=scan_index % perf_controller.broadcast_every_n == 0,
+                    diagnostics=loop_diagnostics(
+                        scheduler=scan_scheduler,
+                        perf=perf_controller,
+                        writer=historian_writer,
+                        ws=ws_manager,
+                    ),
                 )
-            else:
-                logger.debug(
-                    "PLC polling loop still degraded after %d consecutive failures; "
-                    "retrying in %.3fs: %s",
-                    consecutive_failures,
-                    retry_delay,
-                    loop_err,
+                # Cache the frame for the /api/snapshot polling fallback.
+                # Reassigning the reference is atomic, so a concurrent reader
+                # sees a whole frame. Cached EVERY scan even when the broadcast
+                # is decimated, so HTTP pollers keep full resolution.
+                if frame:
+                    latest_frame = frame
+                consecutive_failures = 0
+            except Exception as loop_err:
+                failed = True
+                consecutive_failures += 1
+                # Back off from the ACTIVE control period. Previously the healthy
+                # delay came from the performance mode (2.0 s) while the backoff
+                # came from settings (0.1 s), so the FIRST failure made the loop
+                # poll 20x faster than healthy (issue #4009).
+                retry_delay = min(
+                    period * (2 ** (consecutive_failures - 1)),
+                    POLL_FAILURE_MAX_BACKOFF_S,
                 )
-            if consecutive_failures >= POLL_FAILURE_ESCALATION_THRESHOLD:
-                latest_frame = {
-                    "polling_status": {
-                        "status": "degraded",
-                        "consecutive_failures": consecutive_failures,
-                        "retry_delay_s": retry_delay,
-                        "last_error": str(loop_err),
+                log_poll_failure(consecutive_failures, retry_delay, loop_err)
+                if consecutive_failures >= POLL_FAILURE_ESCALATION_THRESHOLD:
+                    latest_frame = {
+                        "polling_status": {
+                            "status": "degraded",
+                            "consecutive_failures": consecutive_failures,
+                            "retry_delay_s": retry_delay,
+                            "last_error": str(loop_err),
+                        }
                     }
-                }
-        # Sleep to maintain 10Hz frequency (100ms cycle)
-        await asyncio.sleep(retry_delay)
+            if failed:
+                scan_scheduler.resync(retry_delay)
+                await asyncio.sleep(retry_delay)
+                continue
+            overruns_before = scan_scheduler.overrun_count
+            sleep_s = scan_scheduler.next_sleep_s()
+            if scan_scheduler.overrun_count != overruns_before:
+                logger.warning(
+                    "PLC scan overran its %.3fs period by %.3fs "
+                    "(overrun #%d); resynchronising phase.",
+                    scan_scheduler.period_s,
+                    scan_scheduler.last_overrun_s,
+                    scan_scheduler.overrun_count,
+                )
+            await asyncio.sleep(sleep_s)
+    finally:
+        shutdown_event.set()
+        await writer_task
     logger.info("Background PLC polling loop stopped.")
 
 
@@ -1034,8 +1059,16 @@ class PerformanceModeRequest(BaseModel):
 
 @app.get("/api/performance", response_model=PerformanceConfig)
 async def get_performance() -> PerformanceConfig:
-    """Return the active performance mode + its resolved poll interval."""
-    return perf_controller.config()
+    """Return the active performance mode, both cadences and loop health.
+
+    The mode selects the broadcast period only; ``scan_interval_s`` is the
+    unchangeable control period, and the counters let an operator see whether
+    the loop is meeting its deadlines and the historian is keeping up.
+    """
+    return perf_controller.config(
+        scan_overruns=scan_scheduler.overrun_count,
+        historian_write_failures=historian_writer.write_failures,
+    )
 
 
 @app.put(
@@ -1050,12 +1083,15 @@ async def update_performance(req: PerformanceModeRequest) -> PerformanceConfig:
     except TypeError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     logger.info(
-        "Performance mode set to %s (poll %.3f s)",
+        "Performance mode set to %s (broadcast every %d scans, %.3f s); "
+        "control period unchanged at %.3f s",
         perf_controller.mode,
-        perf_controller.poll_interval_s,
+        perf_controller.broadcast_every_n,
+        perf_controller.broadcast_interval_s,
+        scan_scheduler.period_s,
     )
     _persist_setting("performance", {"mode": str(perf_controller.mode)})
-    return perf_controller.config()
+    return await get_performance()
 
 
 class CaptureClearRequest(BaseModel):
