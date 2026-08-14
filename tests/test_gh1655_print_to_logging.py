@@ -48,9 +48,9 @@ class TestModernRoboticsLogging:
             elif isinstance(node, ast.ImportFrom):
                 if node.module:
                     import_names.append(node.module)
-        assert (
-            "logging" in import_names
-        ), "logging must be imported in modern_robotics.py"
+        assert "logging" in import_names, (
+            "logging must be imported in modern_robotics.py"
+        )
 
 
 class TestNoUnguardedPrintInSrc:
@@ -153,9 +153,9 @@ class TestRuffT201Configured:
         ruff_toml = Path(__file__).parents[1] / "ruff.toml"
         config = tomllib.loads(ruff_toml.read_text())
         lint_select = config["lint"]["select"]
-        assert (
-            "T201" in lint_select
-        ), "T201 must be in [lint] select in ruff.toml to enforce no-print policy"
+        assert "T201" in lint_select, (
+            "T201 must be in [lint] select in ruff.toml to enforce no-print policy"
+        )
 
     def test_notebooks_excluded_from_t201(self) -> None:
         """Notebooks must be excluded from T201 (print is valid)."""

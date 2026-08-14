@@ -139,9 +139,7 @@ class _FakeOptimizer:
 
 
 class TestMain:
-    def test_main_writes_output_file(
-        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-    ):
+    def test_main_writes_output_file(self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
         result = make_test_result(cost=12.3)
         _FakeOptimizer.init_calls = []
         _FakeOptimizer.next_result = result
@@ -152,9 +150,7 @@ class TestMain:
             np.ones(3),
             np.zeros((3, 2)),
         )
-        monkeypatch.setitem(
-            cli.EXERCISE_FACTORIES, "squat", lambda body, bar_mass: fake_config
-        )
+        monkeypatch.setitem(cli.EXERCISE_FACTORIES, "squat", lambda body, bar_mass: fake_config)
         monkeypatch.setattr(cli, "TrajectoryOptimizer", _FakeOptimizer)
 
         output_path = tmp_path / "result.json"
@@ -168,9 +164,7 @@ class TestMain:
         assert _FakeOptimizer.init_calls[-1]["kwargs"]["duration"] == 2.0
         assert _FakeOptimizer.init_calls[-1]["kwargs"]["q_via"] is None
 
-    def test_main_emits_summary_for_multiphase_lift(
-        self, monkeypatch: pytest.MonkeyPatch
-    ):
+    def test_main_emits_summary_for_multiphase_lift(self, monkeypatch: pytest.MonkeyPatch):
         result = make_test_result(cost=7.5)
         result.success = False
         _FakeOptimizer.init_calls = []
@@ -186,13 +180,9 @@ class TestMain:
         )
         emitted: list[dict[str, Any]] = []
 
-        monkeypatch.setitem(
-            cli.EXERCISE_FACTORIES, "clean", lambda body, bar_mass: fake_config
-        )
+        monkeypatch.setitem(cli.EXERCISE_FACTORIES, "clean", lambda body, bar_mass: fake_config)
         monkeypatch.setattr(cli, "TrajectoryOptimizer", _FakeOptimizer)
-        monkeypatch.setattr(
-            cli, "_emit_cli_summary", lambda summary: emitted.append(summary)
-        )
+        monkeypatch.setattr(cli, "_emit_cli_summary", lambda summary: emitted.append(summary))
 
         exit_code = cli.main(["--exercise", "clean", "--duration", "1.0", "--verbose"])
 

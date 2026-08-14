@@ -74,9 +74,7 @@ def test_swing_chain_tension_uses_acceleration_not_velocity() -> None:
     )
     linear_com_rollout = dataclasses.replace(rollout, snapshots=snapshots)
 
-    field = swing_force_field(
-        config, linear_com_rollout, DEFAULT_POLICY_DT_S, frame_index=10
-    )
+    field = swing_force_field(config, linear_com_rollout, DEFAULT_POLICY_DT_S, frame_index=10)
 
     np.testing.assert_allclose(field.chain_tension_n, -field.gravity_n, atol=1e-9)
 

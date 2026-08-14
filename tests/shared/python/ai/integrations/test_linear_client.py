@@ -111,11 +111,9 @@ def with_token():
     """Set a dummy token for tests that need one."""
     set_linear_api_token("test-token-abc")
     yield
-    (
-        set_linear_api_token.__wrapped__
-        if hasattr(set_linear_api_token, "__wrapped__")
-        else None
-    )
+    set_linear_api_token.__wrapped__ if hasattr(
+        set_linear_api_token, "__wrapped__"
+    ) else None
 
 
 # ---------------------------------------------------------------------------
