@@ -13,13 +13,16 @@ def _write_coverage(path: Path, classes: list[tuple[str, list[int]]]) -> None:
             for idx, hits in enumerate(hits_by_line, 1)
         )
 
-    class_xml = "\n".join(f"""
+    class_xml = "\n".join(
+        f"""
         <class filename="{filename}">
           <lines>
             {_line_xml(hits_by_line)}
           </lines>
         </class>
-        """ for filename, hits_by_line in classes)
+        """
+        for filename, hits_by_line in classes
+    )
     path.write_text(
         f"""<?xml version="1.0" ?>
 <coverage>

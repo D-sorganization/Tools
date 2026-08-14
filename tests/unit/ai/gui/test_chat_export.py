@@ -318,7 +318,7 @@ class TestMessageWidgetCopyButton:
 
         widget = MessageWidget("user", "Hello world")
         assert hasattr(widget, "_copy_btn"), "MessageWidget missing _copy_btn attribute"
-        assert isinstance(
-            widget._copy_btn, QToolButton
-        ), "_copy_btn must be a QToolButton"
+        assert isinstance(widget._copy_btn, QToolButton), (
+            "_copy_btn must be a QToolButton"
+        )
         _ = app  # keep reference alive

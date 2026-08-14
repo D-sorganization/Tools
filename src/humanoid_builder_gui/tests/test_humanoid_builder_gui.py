@@ -326,8 +326,8 @@ class TestLoDAliases:
             )
             matches = pattern.findall(source)
             # Only the alias definitions should match (7 lines)
-            assert (
-                len(matches) <= 7
-            ), f"Unexpected deep attribute chains found: {matches}"
+            assert len(matches) <= 7, (
+                f"Unexpected deep attribute chains found: {matches}"
+            )
         except ImportError:
             pytest.skip("PyQt6 not available in this environment")
