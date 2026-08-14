@@ -248,7 +248,7 @@ fn canonical_f64_token(value: f64) -> Result<String, ()> {
     Ok(format!("{sign}{integer}.{fraction}"))
 }
 
-fn scaled_abs_half_away(value: f64) -> Result<u128, ()> {
+pub(super) fn scaled_abs_half_away(value: f64) -> Result<u128, ()> {
     let bits = value.to_bits();
     let exponent_bits = ((bits >> 52) & 0x7ff) as i32;
     let fraction = bits & ((1_u64 << 52) - 1);

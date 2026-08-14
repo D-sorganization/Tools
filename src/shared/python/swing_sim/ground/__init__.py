@@ -1,5 +1,8 @@
 """Strict reusable flight-to-ground transfer and result contracts."""
 
+from importlib import import_module
+from typing import Any
+
 from .bounce_kinematics import interpolate_first_contact
 from .bounce_simulation import simulate_repeated_bounce
 from .bounce_types import (
@@ -105,7 +108,6 @@ from .profile_wire import (
     library_from_json,
     profile_from_json,
 )
-from .result_adapter import to_ground_model_result
 from .result_types import GroundSummary, GroundTermination, GroundWarning
 from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
 from .surface_motion_types import (
@@ -140,6 +142,38 @@ from .upstream_terrain_adapter import (
     upstream_snapshot_from_json,
 )
 
+_LAZY_EXPORTS = {
+    "GROUND_REFERENCE_EXECUTION_SCHEMA_VERSION": "reference_execution_types",
+    "GROUND_STUDY_SCHEMA_VERSION": "study_types",
+    "GroundEndpointKind": "study_types",
+    "GroundReferenceCancelled": "reference_execution_types",
+    "GroundReferenceExecution": "reference_execution_types",
+    "GroundReferenceExecutionError": "reference_execution_types",
+    "GroundReferencePhase": "reference_execution_types",
+    "GroundSolverEligibility": "study_types",
+    "GroundSolverEligibilityReason": "study_types",
+    "GroundStudyMetrics": "study_types",
+    "GroundStudyProfile": "study_types",
+    "GroundStudyProjection": "study_record",
+    "GroundStudyStatus": "study_types",
+    "GroundTargetEvaluation": "study_types",
+    "GroundTargetUnavailableReason": "study_types",
+    "project_ground_study": "study_projection",
+    "qualified_study_to_ground_model_result": "result_adapter",
+    "run_ground_reference": "reference_execution",
+}
+
+
+def __getattr__(name: str) -> Any:
+    """Load solver-dependent exports without creating import cycles."""
+    module_name = _LAZY_EXPORTS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(f"{__name__}.{module_name}"), name)
+    globals()[name] = value
+    return value
+
+
 __all__ = [
     "REQUEST_SCHEMA_VERSION",
     "RESULT_SCHEMA_VERSION",
@@ -150,6 +184,8 @@ __all__ = [
     "DEFAULT_PROFILE_LIBRARY_MAX_BYTES",
     "GROUND_MATERIAL_PROFILE_SCHEMA_VERSION",
     "GROUND_PROFILE_LIBRARY_SCHEMA_VERSION",
+    "GROUND_REFERENCE_EXECUTION_SCHEMA_VERSION",
+    "GROUND_STUDY_SCHEMA_VERSION",
     "PROFILE_UNQUALIFIED_WARNING",
     "PROFILE_ILLUSTRATIVE_WARNING",
     "UPSTREAM_TERRAIN_ADAPTER_VERSION",
@@ -168,6 +204,7 @@ __all__ = [
     "GroundContactState",
     "GroundEvent",
     "GroundEventType",
+    "GroundEndpointKind",
     "GroundFrame",
     "GroundEvidenceKind",
     "GroundMaterialParameter",
@@ -182,16 +219,28 @@ __all__ = [
     "GroundProfileProvenance",
     "GroundProfileQualification",
     "GroundProfileRights",
+    "GroundReferenceCancelled",
+    "GroundReferenceExecution",
+    "GroundReferenceExecutionError",
+    "GroundReferencePhase",
     "GroundQualificationGate",
     "GroundQualificationGateId",
     "GroundQualificationStatus",
     "GroundResultStatus",
     "GroundSimulationRequest",
     "GroundSimulationResult",
+    "GroundSolverEligibility",
+    "GroundSolverEligibilityReason",
+    "GroundStudyMetrics",
+    "GroundStudyProfile",
+    "GroundStudyProjection",
+    "GroundStudyStatus",
     "GroundSummary",
     "GroundSurfaceProfile",
     "GroundTermination",
     "GroundTerminationReason",
+    "GroundTargetEvaluation",
+    "GroundTargetUnavailableReason",
     "GroundTrajectoryPoint",
     "GroundUnavailableField",
     "GroundUnavailableFieldId",
@@ -246,6 +295,8 @@ __all__ = [
     "profile_from_json",
     "profile_json_schema",
     "profile_schema_json",
+    "project_ground_study",
+    "qualified_study_to_ground_model_result",
     "request_from_json",
     "request_json_schema",
     "result_from_json",
@@ -253,8 +304,8 @@ __all__ = [
     "schema_json",
     "migrate_request_to_current",
     "migrate_result_to_current",
-    "to_ground_model_result",
     "resolve_sphere_plane_impact",
+    "run_ground_reference",
     "simulate_repeated_bounce",
     "simulate_skid_roll",
     "upstream_snapshot_from_json",

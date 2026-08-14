@@ -12,7 +12,7 @@ import pytest
 import shared.python.swing_sim.ground as ground
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 
-from ._support import _contact, _request, _result, _surface
+from ._support import _request, _result, _surface
 
 EXPECTED_API = {
     "REQUEST_SCHEMA_VERSION",
@@ -24,6 +24,8 @@ EXPECTED_API = {
     "DEFAULT_PROFILE_LIBRARY_MAX_BYTES",
     "GROUND_MATERIAL_PROFILE_SCHEMA_VERSION",
     "GROUND_PROFILE_LIBRARY_SCHEMA_VERSION",
+    "GROUND_REFERENCE_EXECUTION_SCHEMA_VERSION",
+    "GROUND_STUDY_SCHEMA_VERSION",
     "PROFILE_UNQUALIFIED_WARNING",
     "PROFILE_ILLUSTRATIVE_WARNING",
     "UPSTREAM_TERRAIN_ADAPTER_VERSION",
@@ -43,6 +45,7 @@ EXPECTED_API = {
     "GroundContactState",
     "GroundEvent",
     "GroundEventType",
+    "GroundEndpointKind",
     "GroundFrame",
     "GroundEvidenceKind",
     "GroundMaterialParameter",
@@ -57,16 +60,28 @@ EXPECTED_API = {
     "GroundProfileProvenance",
     "GroundProfileQualification",
     "GroundProfileRights",
+    "GroundReferenceCancelled",
+    "GroundReferenceExecution",
+    "GroundReferenceExecutionError",
+    "GroundReferencePhase",
     "GroundQualificationGate",
     "GroundQualificationGateId",
     "GroundQualificationStatus",
     "GroundResultStatus",
     "GroundSimulationRequest",
     "GroundSimulationResult",
+    "GroundSolverEligibility",
+    "GroundSolverEligibilityReason",
+    "GroundStudyMetrics",
+    "GroundStudyProfile",
+    "GroundStudyProjection",
+    "GroundStudyStatus",
     "GroundSummary",
     "GroundSurfaceProfile",
     "GroundTermination",
     "GroundTerminationReason",
+    "GroundTargetEvaluation",
+    "GroundTargetUnavailableReason",
     "GroundTrajectoryPoint",
     "GroundUnavailableField",
     "GroundUnavailableFieldId",
@@ -120,6 +135,8 @@ EXPECTED_API = {
     "profile_from_json",
     "profile_json_schema",
     "profile_schema_json",
+    "project_ground_study",
+    "qualified_study_to_ground_model_result",
     "request_from_json",
     "request_json_schema",
     "result_from_json",
@@ -127,8 +144,8 @@ EXPECTED_API = {
     "schema_json",
     "migrate_request_to_current",
     "migrate_result_to_current",
-    "to_ground_model_result",
     "resolve_sphere_plane_impact",
+    "run_ground_reference",
     "simulate_repeated_bounce",
     "simulate_skid_roll",
     "upstream_snapshot_from_json",
@@ -268,28 +285,8 @@ def test_json_entry_points_fail_closed_for_nonobjects_and_invalid_json() -> None
         ground.request_from_json(duplicate_nested)
 
 
-def test_adapter_rejects_noncomplete_results() -> None:
-    failed = replace(
-        _result(),
-        status=ground.GroundResultStatus.UNAVAILABLE,
-        trajectory=(),
-        events=(),
-        summary=None,
-        unavailable_fields=(
-            ground.GroundUnavailableField(
-                ground.GroundUnavailableFieldId.TERMINAL_ANGULAR_VELOCITY,
-                ground.GroundUnavailableReason.SOURCE_DOES_NOT_PROPAGATE,
-                "swing_sim.flight.models:waterloo_penner",
-            ),
-        ),
-        termination=ground.GroundTermination(
-            ground.GroundTerminationReason.UNAVAILABLE_INPUT,
-            _contact().time_s,
-            False,
-        ),
-    )
-    with pytest.raises(ValueError, match="complete"):
-        ground.to_ground_model_result(failed)
+def test_unqualified_compatibility_adapter_is_not_public() -> None:
+    assert not hasattr(ground, "to_ground_model_result")
 
 
 @pytest.mark.parametrize(

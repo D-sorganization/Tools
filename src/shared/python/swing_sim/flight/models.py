@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from shared.python.swing_sim.ground import GroundSurfaceProfile
+from shared.python.swing_sim.ground.contract_types import GroundSurfaceProfile
 
 from ._constants import MAX_GOLF_BALL_LIFT_COEFFICIENT
 from .dynamics import ConstantCoefficientDynamics, WaterlooDynamics

@@ -17,12 +17,12 @@ from shared.python.swing_sim.ground import (
     SurfaceResolver,
     compose_ground_result,
     simulate_skid_roll,
-    to_ground_model_result,
 )
 from shared.python.swing_sim.ground.bounce_types import (
     BOUNCE_HANDOFF_NOTICE,
     BOUNCE_MATERIAL_LIMITATION,
 )
+from shared.python.swing_sim.ground.result_adapter import to_ground_model_result
 
 from ._support import _settled_prefix, _surface, _surface_run_request
 
@@ -132,8 +132,9 @@ def test_left_surface_summary_is_censored_and_legacy_adapter_rejects_it() -> Non
     assert result.termination.reason is GroundTerminationReason.LEFT_SURFACE
     assert result.summary is not None
     assert any(warning.code == "CENSORED_ENDPOINT" for warning in result.warnings)
-    with pytest.raises(ValueError, match="rest-terminated"):
-        to_ground_model_result(result)
+    with pytest.deprecated_call(match="unqualified compatibility output"):
+        with pytest.raises(ValueError, match="rest-terminated"):
+            to_ground_model_result(result)
 
 
 def test_time_limit_summary_is_censored_endpoint_diagnostic() -> None:
@@ -155,8 +156,9 @@ def test_time_limit_summary_is_censored_endpoint_diagnostic() -> None:
         (endpoint[0] ** 2 + endpoint[2] ** 2) ** 0.5
     )
     assert any(warning.code == "CENSORED_ENDPOINT" for warning in result.warnings)
-    with pytest.raises(ValueError, match="rest-terminated"):
-        to_ground_model_result(result)
+    with pytest.deprecated_call(match="unqualified compatibility output"):
+        with pytest.raises(ValueError, match="rest-terminated"):
+            to_ground_model_result(result)
 
 
 def test_internal_cancel_and_step_limit_cannot_be_serialized_as_v1_results() -> None:

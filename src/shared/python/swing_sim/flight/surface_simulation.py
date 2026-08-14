@@ -7,7 +7,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from shared.python.swing_sim.ground import GroundContactState, GroundSurfaceProfile
+from shared.python.swing_sim.ground.contract_types import (
+    GroundContactState,
+    GroundSurfaceProfile,
+)
 
 from .frames import from_flight_frame
 from .state import FlightStatePoint

@@ -6,6 +6,7 @@ export const PRIMARY_VIEWS = [
   { id: "simulation", label: "Simulation", required: false },
   { id: "plots", label: "Plots", required: false },
   { id: "flight", label: "Flight Explorer", required: false },
+  { id: "ground-playback", label: "Ground Playback", required: false },
   { id: "launch-monitor-analytics", label: "Launch Monitor Analytics", required: false },
   { id: "capability-optimization", label: "Shot Optimizer", required: false },
   { id: "variation", label: "Variation", required: false },
@@ -21,6 +22,7 @@ export const PRIMARY_VIEW_IDS: readonly PrimaryViewId[] = PRIMARY_VIEWS.map(
 export const REQUIRED_PRIMARY_VIEW_IDS: readonly PrimaryViewId[] = PRIMARY_VIEWS
   .filter(({ required }) => required)
   .map(({ id }) => id);
+const NEWLY_REGISTERED_VISIBLE_IDS: readonly PrimaryViewId[] = ["ground-playback"];
 export const PRIMARY_VIEW_STORAGE_KEY =
   "rate-of-closure.web.workspace-modules.v2";
 export const LEGACY_PRIMARY_VIEW_STORAGE_KEY =
@@ -64,10 +66,16 @@ function sanitizeOrder(value: unknown): PrimaryViewId[] {
   return [...unique, ...PRIMARY_VIEW_IDS.filter((id) => !unique.includes(id))];
 }
 
-function sanitizeVisible(value: unknown): PrimaryViewId[] {
+function sanitizeVisible(value: unknown, savedOrder: unknown): PrimaryViewId[] {
   if (!Array.isArray(value)) return [...PRIMARY_VIEW_IDS];
   const supplied = sanitizeIds(value);
-  return [...supplied, ...REQUIRED_PRIMARY_VIEW_IDS.filter((id) => !supplied.includes(id))];
+  const known = new Set(sanitizeIds(savedOrder));
+  const introduced = NEWLY_REGISTERED_VISIBLE_IDS.filter((id) => !known.has(id));
+  const visible = [
+    ...supplied,
+    ...introduced.filter((id) => !supplied.includes(id)),
+  ];
+  return [...visible, ...REQUIRED_PRIMARY_VIEW_IDS.filter((id) => !visible.includes(id))];
 }
 
 function normalizedState(
@@ -76,7 +84,7 @@ function normalizedState(
   activeValue: unknown,
 ): PrimaryViewState {
   const order = sanitizeOrder(orderValue);
-  const visible = sanitizeVisible(visibleValue);
+  const visible = sanitizeVisible(visibleValue, orderValue);
   const fallback = order.find((id) => visible.includes(id)) ?? "explorer";
   const active = isPrimaryViewId(activeValue) && visible.includes(activeValue)
     ? activeValue
