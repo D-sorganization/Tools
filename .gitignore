@@ -207,6 +207,10 @@ failed2848.txt
 failed2852.txt
 =2.0.0
 
+# Browser-test output is uploaded by CI, never committed as a binary baseline.
+src/rate_of_closure/web/playwright-report/
+src/rate_of_closure/web/test-results/
+
 # SQLite WAL sidecar files (generated at runtime)
 src/p1am_control_system/backend/dcs_scada.db-wal
 src/p1am_control_system/backend/dcs_scada.db-shm

@@ -1,6 +1,67 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
 ## 2026-08-12 #4385 Windows authority-state security
+## 2026-08-10 #4143 durable Playwright artifact contract
+
+- A child of exact PR #4325 head
+  `f0f0dee074d29e3f12bf5f566c38d0080e43c756` adds the missing committed,
+  reproducible web visual scenario without modifying the parent or production
+  code.
+- One Chromium test clears local persistence, opens Simulation/Strike, records
+  the Driver default Tee at 38.1 mm, changes to explicit Ground, reruns, and
+  records zero effective height with no representative tee. Semantic UI state,
+  completed execution, zero console/page errors, nonblank images, and distinct
+  image digests all gate the test.
+- The local-fleet, path-filtered `Rate of Closure Visual Evidence` workflow builds first,
+  captures at 1600 x 1200, and uploads PNGs, a v1 size/digest manifest, traces,
+  and the HTML report for 14 days. There are no committed pixel baselines.
+  Issue #4143 still waits on protected child CI/review, its normal dependency
+  chain, and release to `main`.
+- Local gates: deterministic `npm ci`; 526 passing Vitest tests; one passing
+  Playwright scenario; TypeScript, ESLint, Vite build, workflow routing and
+  pinning, YAML parsing, and whitespace checks all pass.
+
+## 2026-08-10 #4143 child receives repaired launch-registry parent
+
+- Ready PR `#4325` stays on `feat/4143-tee-parity-fixture`, based on
+  `feat/4181-launch-monitor-registry`.
+- Exact parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated by a
+  normal merge commit. There is no production/test-code conflict and no
+  rebase, retarget, force-push, or parent rewrite.
+- Preserve the shared parity fixture and deterministic web/PyQt evidence.
+  Fresh exact-head CI, review, dependency order, and release to `main` remain
+  required before #4143 can close.
+
+## 2026-08-10 #4143 Python/React golden ball-setup parity
+
+- The bounded `feat/4143-tee-parity-fixture` branch starts at exact PR #4203
+  head `31cbc007d4c85b5479b7cd0fb0969124eab2af67`, preserving its draft state,
+  base, and stack order.
+- A single `ball_setup_golden_v1.json` fixture declares schema/version, metre
+  units, the ground-plane-to-ball-bottom reference, ball radius, Driver/Tee and
+  iron/Ground defaults, explicit club-default overrides, Ground zero effective
+  height, center/serialization geometry, invalid finite-domain cases, and a
+  legacy simulation-run migration.
+- Python and React independently consume every case through their public
+  configuration/persistence boundaries. Verification is 18 passing Python
+  tests, 24 passing React tests, and green TypeScript, ESLint, Vite production
+  build, Ruff check, and Ruff format.
+- Recorded visual evidence is stored under
+  `C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+  Playwright captured the 1600 x 1200 default Driver/Tee and rerun
+  explicit-Ground React states after semantic control/diagram and zero-error
+  checks. A hidden 1400 x 900 PyQt harness captured the same states after
+  canonical center, editor, and tee-artist assertions. The browser manifest
+  SHA-256 is `43df78e04b47e1b3209ff7a574718f90847ccda6dde5afd863d43191a950ccf7`;
+  the PyQt manifest SHA-256 is
+  `07822495dbcfa7568615ccb2728481210c28963614434c80f6997210c325a6f9`.
+  PNGs remain external evidence rather than oversized repository binaries.
+- #4143 remains open for protected CI/review and release to `main`. The strict
+  campaign release manifest does not exist in this exact #4203 history; it was
+  added later on a divergent branch and is not backported by this bounded
+  slice.
+
+## 2026-08-10 Second propagation into launch-monitor registry
 
 Published draft PR #4392 carries branch `codex/4385-windows-state-security`
 against `codex/4380-playwright-production-browser`. Implementation commit

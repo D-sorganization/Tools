@@ -5,6 +5,67 @@
 
 ## 2026-08-12 #4385 Windows authority-state security
 > Current-state only; history lives in git. Last updated: 2026-08-11.
+## 2026-08-10 Durable #4143 web visual evidence
+
+- The isolated `test/4143-ground-tee-visual-evidence` child starts at exact PR
+  #4325 head `f0f0dee074d29e3f12bf5f566c38d0080e43c756`; no parent branch, base,
+  production UI, or physics code is changed.
+- The Rate web package now owns a single Chromium Playwright scenario that
+  clears persisted state, proves the Driver default is Tee at 38.1 mm, records
+  the visible representative tee, switches to explicit Ground, reruns, proves
+  the disabled zero-height state and absent tee, and fails on browser errors.
+  Captures must be nonblank and distinct; their exact sizes and SHA-256 digests
+  are written to a versioned manifest.
+- `.github/workflows/rate-of-closure-visual-evidence.yml` builds the web app,
+  runs the scenario on the local fleet in Chromium, and uploads the runtime screenshots,
+  manifest, traces, and HTML report for 14 days. Binary visual baselines remain
+  untracked. #4143 still requires protected child CI/review, parent-first
+  landing, and release to `main` before closure.
+- Local verification: reproducible `npm ci`; 526/526 Vitest unit tests; 1/1
+  Playwright scenario; TypeScript, ESLint, Vite production build, workflow
+  routing/pinning, YAML parsing, and whitespace checks all pass.
+
+## 2026-08-10 #4143 child receives repaired #4203 parent
+
+- Ready PR `#4325` retains branch `feat/4143-tee-parity-fixture` and base
+  `feat/4181-launch-monitor-registry`; repaired parent head
+  `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated through a
+  normal merge commit without rebasing, retargeting, or rewriting history.
+- The merge tree has no production/test-code conflict. Both branches'
+  append-only handoff/SPEC evidence is retained, including the shared parity
+  fixture and deterministic web/PyQt visual evidence.
+- Fresh exact-head protected CI and review remain required. #4143 stays open
+  until the dependency line lands on `main`.
+
+## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
+
+- Branch `feat/4143-tee-parity-fixture` starts from exact draft PR #4203 head
+  `31cbc007d4c85b5479b7cd0fb0969124eab2af67`; it does not rewrite or retarget
+  the release stack.
+- `ball_setup_golden_v1.json` is the single Python/React source of truth for
+  schema `rate_of_closure.ball_setup_golden` version 1, SI metre units, and
+  reference `ground_plane_to_ball_bottom`. It pins Driver/Tee and iron/Ground
+  defaults, explicit overrides, Ground's zero effective tee height, derived
+  center geometry, serialization, negative and non-finite rejection, and
+  legacy-run migration to Ground.
+- New consumer tests plus the existing tee suites pass: 18 Python tests and 24
+  React tests. Web TypeScript, ESLint, and production Vite build gates pass;
+  scoped Ruff check and format pass. This is test/fixture-only and does not
+  change production physics or UI behavior.
+- Deterministic 1600 x 1200 Playwright captures cover the default Driver/Tee
+  and rerun explicit-Ground React states with checked/disabled controls,
+  present/absent tee geometry, and zero console/page errors. A hidden 1400 x
+  900 PyQt harness records the same states with canonical center and tee-artist
+  assertions; a headless regression keeps its temporary PNGs nonblank and
+  structurally distinct without pixel-perfect baselines. Artifact manifests
+  and SHA-256 digests are under
+  `C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+- Issue #4143 remains open for exact-head protected CI/review and release to
+  `main`. The strict campaign release manifest is not present on #4203's exact
+  history (it was introduced later on a divergent campaign branch), so this
+  bounded child records that limitation instead of reconstructing it.
+
+## 2026-08-10 Second Parent Repair Propagation (#4202 -> #4203)
 
 ## 2026-08-11 Capability-request workspace continuation
 

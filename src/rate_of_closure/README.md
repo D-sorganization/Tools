@@ -98,6 +98,27 @@ job uploads structured Playwright JSON only. It does not claim forced
 parent-process tree cleanup, Windows state privacy, frozen/installable
 artifacts, signing, attestation, or protected release.
 
+### Reproduce Ground/Tee visual evidence
+
+The web package owns one Chromium Playwright scenario for the Driver's default
+Tee setup and an explicit Ground override. It verifies semantic control and
+diagram state, reruns the simulation after the override, rejects browser
+errors, and writes two PNGs plus a versioned JSON manifest with file sizes and
+SHA-256 digests. Generated images are CI artifacts, not pixel-perfect Git
+baselines.
+
+```bash
+cd src/rate_of_closure/web
+npm ci
+npx playwright install chromium
+npm run test:e2e
+```
+
+Local output is written below `test-results/`. The
+`Rate of Closure Visual Evidence` workflow repeats the production build and
+scenario on Chromium, then retains `test-results/` and `playwright-report/` as
+a 14-day workflow artifact even when the scenario fails.
+
 Both interfaces open with a generated driver head and its engineering CG
 target visible. The Simulation view runs immediately and supports manual,
 double-pendulum, and triple-pendulum sources; pendulum modes draw every joint
