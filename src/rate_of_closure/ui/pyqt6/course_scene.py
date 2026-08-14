@@ -14,7 +14,7 @@ axes use display order (z, x, y) like the swing view.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from matplotlib.patches import Circle, Rectangle
@@ -34,7 +34,10 @@ _FLAG_HEIGHT_M = 2.5  # regulation-ish flagstick, tall enough to read
 
 def _surface(axes: Any, xs: Any, zs: Any, y: float, color: str, alpha: float) -> None:
     """A flat y-level rectangle in display axes (X=z right, Y=x downrange)."""
-    gx, gz = np.meshgrid(np.asarray(xs, float), np.asarray(zs, float))
+    gx, gz = cast(
+        tuple[np.ndarray, np.ndarray],
+        np.meshgrid(np.asarray(xs, float), np.asarray(zs, float)),
+    )
     gy = np.full_like(gx, y)
     axes.plot_surface(gz, gx, gy, color=color, alpha=alpha, linewidth=0.0, shade=False)
 
@@ -119,16 +122,17 @@ def draw_target_region_top(
     uses the palette flag tone so it reads against the grass fills.
     """
     tones = colors or course_colors()
-    style = {
-        "fill": False,
-        "linestyle": "--",
-        "linewidth": 1.6,
-        "edgecolor": tones.flag,
-        "zorder": 5,
-    }
     if region.kind == "green":
         axes.add_patch(
-            Circle((region.distance_m, region.lateral_m), region.radius_m, **style)
+            Circle(
+                (region.distance_m, region.lateral_m),
+                region.radius_m,
+                fill=False,
+                linestyle="--",
+                linewidth=1.6,
+                edgecolor=tones.flag,
+                zorder=5,
+            )
         )
     else:
         axes.add_patch(
@@ -139,7 +143,11 @@ def draw_target_region_top(
                 ),
                 2.0 * region.band_half_length_m,
                 2.0 * region.half_width_m,
-                **style,
+                fill=False,
+                linestyle="--",
+                linewidth=1.6,
+                edgecolor=tones.flag,
+                zorder=5,
             )
         )
 

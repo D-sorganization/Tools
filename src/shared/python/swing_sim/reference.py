@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from typing import cast
 
 import numpy as np
 
@@ -41,7 +42,7 @@ def plane_rotation(yaw: float, side_tilt: float, fwd_tilt: float) -> np.ndarray:
     rz = np.array([[cy, -sy, 0.0], [sy, cy, 0.0], [0.0, 0.0, 1.0]])
     rx = np.array([[1.0, 0.0, 0.0], [0.0, cs, -ss], [0.0, ss, cs]])
     ry = np.array([[cf, 0.0, sf], [0.0, 1.0, 0.0], [-sf, 0.0, cf]])
-    return np.asarray(rz @ rx @ ry)
+    return cast(np.ndarray, np.asarray(rz @ rx @ ry))
 
 
 def in_plane_gravity(plane_r: np.ndarray, g: float) -> tuple[float, float]:
@@ -72,7 +73,7 @@ def mass_matrix(p: PendulumParameters, theta2: float) -> np.ndarray:
     m11 = p.i1 + p.i2 + p.m2 * p.l1 * p.l1 + 2.0 * p.m2 * p.l1 * p.lc2 * cos_theta2
     m12 = p.i2 + p.m2 * p.l1 * p.lc2 * cos_theta2
     m22 = p.i2
-    return np.array([[m11, m12], [m12, m22]])
+    return cast(np.ndarray, np.array([[m11, m12], [m12, m22]]))
 
 
 def coriolis_vector(
@@ -122,7 +123,10 @@ def _invert_mass_matrix(p: PendulumParameters, theta2: float) -> np.ndarray:
         "mass matrix determinant too close to zero; check pendulum parameters",
         det,
     )
-    return np.array([[m[1, 1] / det, -m[0, 1] / det], [-m[1, 0] / det, m[0, 0] / det]])
+    return cast(
+        np.ndarray,
+        np.array([[m[1, 1] / det, -m[0, 1] / det], [-m[1, 0] / det, m[0, 0] / det]]),
+    )
 
 
 def derivatives(
@@ -375,7 +379,7 @@ def simulate(
     ``[theta1, theta2, omega1, omega2]`` including the initial state.
     """
     require(n_steps >= 0, "n_steps must be >= 0", n_steps)
-    out = np.empty((n_steps + 1, 4), dtype=np.float64)
+    out: np.ndarray = np.empty((n_steps + 1, 4), dtype=np.float64)
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
     current = initial
     for i in range(n_steps):
@@ -395,7 +399,7 @@ def simulate_forced(
     """Simulate prescribed generalized torques on the existing RK4 grid."""
     require(n_steps >= 0, "n_steps must be >= 0", n_steps)
     require(callable(torque_at), "torque_at must be callable", torque_at)
-    out = np.empty((n_steps + 1, 4), dtype=np.float64)
+    out: np.ndarray = np.empty((n_steps + 1, 4), dtype=np.float64)
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
     current = initial
     for i in range(n_steps):
@@ -417,7 +421,7 @@ def simulate_locked(
     require(n_steps >= 0, "n_steps must be >= 0", n_steps)
     require(callable(torque_at), "torque_at must be callable", torque_at)
     derivatives_locked(p, initial, g_inplane, torque_at(0.0), locked)
-    out = np.empty((n_steps + 1, 4), dtype=np.float64)
+    out: np.ndarray = np.empty((n_steps + 1, 4), dtype=np.float64)
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
     current = initial
     for i in range(n_steps):

@@ -189,6 +189,9 @@ class PlotsTabComputationMixin:
         if not all(isinstance(spec, PlotSpec) for _row, spec in requests):
             self._status.setText("Plot definitions are malformed; prior plots retained")
             return
+        typed_requests = tuple(
+            (row, spec) for row, spec in requests if isinstance(spec, PlotSpec)
+        )
         retained = any(data is not None for data in self._plot_data)
         self._status.setText(
             "Computing plots…" + ("; prior accepted plots retained" if retained else "")
@@ -201,7 +204,9 @@ class PlotsTabComputationMixin:
 
             try:
                 worker: PlotWorker = PlotComputeProcess(
-                    PlotProcessRequest(generation, requests, self._run, self._scenario)
+                    PlotProcessRequest(
+                        generation, typed_requests, self._run, self._scenario
+                    )
                 )
             except Exception as exc:  # noqa: BLE001 - bounded IPC preflight
                 retained_suffix = (
@@ -215,7 +220,7 @@ class PlotsTabComputationMixin:
         else:
             worker = PlotComputeWorker(
                 generation,
-                requests,
+                typed_requests,
                 self._run,
                 self._scenario,
                 self._plot_compute_executor(),

@@ -2,6 +2,10 @@
 
 ## 2026-08-14 #4142/#4433 clean main-based consolidation
 
+- Version 1.17.08 corrects the local typing evidence to the exact protected
+  Python 3.12/MyPy 1.13 command over 368 changed production files. Thirty-one
+  static NumPy, Qt, mapping, and constructor boundaries now pass that command
+  and a stricter analyzer; runtime and scientific behavior are unchanged.
 - Version 1.17.07 replaces a 30-deep protected cascade with one scoped release
   tree on current `main`. It excludes inherited non-Rate formatter churn and
   six scratch-worktree gitlinks while preserving current-main CI/PDF-renamer
@@ -10,7 +14,7 @@
   baseline manifest/PNG sets and seven explicit Qt/NumPy return narrowings.
   Runtime/scientific behavior is unchanged.
 - Local evidence is 2,381 Python/PyQt/shared, 1,080 React, 123 Rust, and 70
-  governance tests; Ruff over 589 files; hosted-shaped MyPy 1.13 over 371
+  governance tests; Ruff over 589 files; hosted-shaped MyPy 1.13 over 368
   production modules; TypeScript, ESLint, production build, diff, and the
   protected 1,200-line module budget.
 - Thirty-five historical foundation modules remain over the later 400-line

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 
@@ -58,7 +59,7 @@ def build_example_head() -> np.ndarray:
     mesh = np.array(triangles)
     # (sections-1) bands of 2*N triangles plus two N-triangle caps.
     ensure(mesh.shape[0] == len(_SECTIONS) * 2 * RING_POINTS, "loft closed")
-    return mesh
+    return cast(np.ndarray, mesh)
 
 
 def main() -> None:

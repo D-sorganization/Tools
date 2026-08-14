@@ -36,6 +36,7 @@ from __future__ import annotations
 import dataclasses
 import math
 from collections.abc import Mapping
+from typing import cast
 
 import numpy as np
 
@@ -309,7 +310,7 @@ def evaluate_candidate(
             )
             / SCALE_CARRY_M
         )
-    return np.array(values)
+    return cast(np.ndarray, np.array(values))
 
 
 def residuals(

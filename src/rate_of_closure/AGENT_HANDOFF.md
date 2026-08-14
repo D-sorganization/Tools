@@ -5,6 +5,10 @@
 
 ## 2026-08-14 Clean main-based campaign consolidation (#4142/#4433)
 
+- SPEC 1.17.08 replaces the non-equivalent local MyPy claim with the exact
+  protected Python 3.12/MyPy 1.13 selection: 368 changed production files.
+  Thirty-one explicit NumPy, Qt, mapping, and constructor boundaries now pass
+  both the pinned and stricter analyzers without runtime/scientific changes.
 - SPEC 1.17.07 carries the approved Rate/swing/golf/runtime tree directly onto
   current `main`, excluding inherited unrelated formatting and six scratch
   worktree gitlinks while retaining current-main CI and PDF-renamer changes.
@@ -12,7 +16,7 @@
   baseline entries, and explicit Qt/NumPy return narrowing closes seven hosted
   MyPy findings without changing runtime behavior or scientific authority.
 - Evidence: 2,381 Python/PyQt/shared, 1,080 React, 123 Rust, and 70 governance
-  tests; Ruff 589 files; MyPy 1.13 371 production modules; TypeScript, ESLint,
+  tests; Ruff 589 files; MyPy 1.13 368 production modules; TypeScript, ESLint,
   production build, diff, and the protected 1,200-line module budget are green.
 - Thirty-five historical foundation modules exceed the later 400-line slice
   policy but did not grow here. The 18 visual references remain proposed until

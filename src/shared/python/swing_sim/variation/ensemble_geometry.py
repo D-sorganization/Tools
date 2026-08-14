@@ -117,8 +117,8 @@ def _true_runs(mask: np.ndarray) -> tuple[tuple[int, int], ...]:
     """Return inclusive index bounds of contiguous true regions."""
     padded = np.pad(mask.astype(np.int8), (1, 1))
     transitions = np.diff(padded)
-    starts = np.flatnonzero(transitions == 1)
-    ends = np.flatnonzero(transitions == -1) - 1
+    starts: np.ndarray = np.flatnonzero(transitions == 1)
+    ends: np.ndarray = np.flatnonzero(transitions == -1) - 1
     return tuple(zip(starts.tolist(), ends.tolist(), strict=True))
 
 

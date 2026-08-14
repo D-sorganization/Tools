@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import math
 from abc import ABC, abstractmethod
+from typing import cast
 
 import numpy as np
 
@@ -244,7 +245,10 @@ class RigidBodyImpactModel(ImpactModel):
         spin_magnitude = j_friction / (
             GOLF_BALL_MOMENT_OF_INERTIA_KG_M2 / GOLF_BALL_RADIUS_M
         )
-        return pre_state.ball_angular_velocity + spin_magnitude * spin_axis
+        return cast(
+            np.ndarray,
+            pre_state.ball_angular_velocity + spin_magnitude * spin_axis,
+        )
 
     def _compute_energy_transfer(
         self,

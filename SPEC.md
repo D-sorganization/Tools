@@ -26,13 +26,19 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.07                                    |
-| **Spec Version**        | 1.17.07                                    |
+| **Current Version**     | 1.17.08                                    |
+| **Spec Version**        | 1.17.08                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-14 Clean main-based Rate campaign consolidation (#4142/#4433)
+
+Version 1.17.08 corrects the consolidation's typing authority to the exact
+protected Python 3.12/MyPy 1.13 selection of 368 changed production files.
+Explicit NumPy, Qt, mapping, and constructor narrowings across 31 source files
+pass both the pinned and stricter analyzers without changing runtime or
+scientific behavior.
 
 Version 1.17.07 publishes the approved Rate/swing/golf campaign as one scoped
 tree on current `main`, excluding inherited non-Rate formatter churn and six
@@ -4473,6 +4479,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.08 | fix(rate-of-closure, #4142 #4433): align the clean consolidation with the exact protected Python 3.12/MyPy 1.13 command over 368 changed production files through behavior-neutral explicit typing boundaries. |
 | 2026-08-14 | 1.17.07 | release(rate-of-closure, #4142 #4433): consolidate the approved Rate/swing/golf campaign directly onto current main without inherited non-Rate formatting or scratch-worktree gitlinks; reconcile visual package-data tests and hosted typing while retaining scientific behavior and explicit evidence gaps. |
 | 2026-08-14 | 1.17.06 | fix(rate-of-closure, #4433): add the explicit decoded-RGB NumPy return cast required by hosted MyPy 1.13 without changing runtime visual comparison behavior. |
 | 2026-08-14 | 1.17.05 | test(rate-of-closure, #4433): package 18 reviewed exact-head initial-state references and enforce commit-bound, digest-bound, bounded-pixel visual drift in PR and trusted-main evidence lanes, with protected merge as approval. |

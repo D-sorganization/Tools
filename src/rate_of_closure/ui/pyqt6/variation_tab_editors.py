@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import cast
-
 from PyQt6.QtWidgets import QLabel, QVBoxLayout
 
 from rate_of_closure.simulation import SimulationConfig
@@ -71,10 +69,7 @@ class VariationTabEditorsMixin:
 
     def _localized_duration_s(self) -> float:
         """Return the source's exact fixed-step duration authority."""
-        return cast(
-            float,
-            effective_rk4_duration(self._base_simulation_config.swing_duration_s),
-        )
+        return effective_rk4_duration(self._base_simulation_config.swing_duration_s)
 
     def _refresh_row_contexts(self) -> None:
         """Update every row from one source/mode locus-authoring decision."""

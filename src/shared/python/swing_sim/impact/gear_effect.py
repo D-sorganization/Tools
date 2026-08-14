@@ -47,6 +47,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
@@ -112,7 +113,7 @@ def resolve_contact_normal(
         n = np.asarray(face_normal, dtype=float)
     n_mag = _norm(n)
     require(n_mag > 1e-10, "contact normal must be non-zero")
-    return n / n_mag
+    return cast(np.ndarray, n / n_mag)
 
 
 def compute_gear_effect(

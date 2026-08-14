@@ -18,6 +18,8 @@ produce a consistently outward-wound, watertight solid.
 
 from __future__ import annotations
 
+from typing import cast
+
 import numpy as np
 
 from rate_of_closure._contracts import require
@@ -55,7 +57,7 @@ def superellipse_ring(
     power = 2.0 / exponent
     y = half_height * np.sign(np.sin(theta)) * np.abs(np.sin(theta)) ** power
     z = half_width * np.sign(np.cos(theta)) * np.abs(np.cos(theta)) ** power
-    return np.column_stack([np.full(points, x), y, z])
+    return cast(np.ndarray, np.column_stack([np.full(points, x), y, z]))
 
 
 def loft_band(

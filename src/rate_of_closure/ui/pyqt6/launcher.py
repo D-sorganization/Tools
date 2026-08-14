@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from rate_of_closure.application.morris.client import MorrisAuthorityClient
 from rate_of_closure.application.morris.runtime import MorrisAuthorityRuntime
@@ -16,7 +16,7 @@ def _launch_config(morris_client: Any) -> LaunchConfig:
     """Return the registered app config with an explicit private-client seam."""
     from rate_of_closure.gui_registration import GUI_INFO
 
-    pyqt = GUI_INFO["pyqt6"]
+    pyqt = cast(dict[str, Any], GUI_INFO["pyqt6"])
     minimum = pyqt.get("min_size")
     return LaunchConfig(
         tool_name=str(GUI_INFO["tool_name"]),

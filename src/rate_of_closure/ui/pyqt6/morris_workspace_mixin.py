@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
 from typing import cast
 
 from PyQt6.QtWidgets import QFileDialog, QHBoxLayout, QLabel, QPushButton, QWidget
 
+from rate_of_closure.application._workspace_validation import FrozenJsonValue
 from rate_of_closure.application.morris._response_types import MorrisResponseJob
 from rate_of_closure.application.morris.request_document import (
     CANONICAL_MORRIS_FACTOR_KEYS,
@@ -69,7 +71,7 @@ class MorrisWorkspaceMixin:
         )
         return MorrisWorkspaceSetup(
             MORRIS_WORKSPACE_EXPORT_SCOPE,
-            base_document(self._config),
+            cast(Mapping[str, FrozenJsonValue], base_document(self._config)),
             drafts,
             self._trajectories.value(),  # type: ignore[attr-defined]
             self._levels.value(),  # type: ignore[attr-defined]

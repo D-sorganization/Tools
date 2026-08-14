@@ -5,6 +5,13 @@
 
 ## 2026-08-14 Clean main-based Rate campaign consolidation (#4142/#4433)
 
+Version 1.17.08 corrects the consolidated release's protected MyPy command
+authority. The prior local claim counted a different file set; the exact
+Python 3.12/MyPy 1.13 invocation checks 368 changed production files. Explicit
+NumPy, Qt, mapping, and constructor narrowings across 31 source files now pass
+that exact command and a stricter MyPy analyzer without changing runtime or
+scientific behavior.
+
 Version 1.17.07 rebases the approved Rate campaign as one scoped release tree
 on current `main` instead of cascading the historical draft-PR chain. The
 consolidation excludes inherited non-Rate formatter churn and six local-only
@@ -15,7 +22,7 @@ the hosted MyPy boundary without changing runtime values or scientific logic.
 
 Local cumulative evidence is 2,381 Python/PyQt/shared tests, 1,080 React tests,
 123 Rust tests, 70 governance/baseline tests, Ruff over 589 Python files, and
-MyPy 1.13 over 371 production modules, plus TypeScript, ESLint, and production
+MyPy 1.13 over 368 production modules, plus TypeScript, ESLint, and production
 build. The protected 1,200-line module budget passes. Thirty-five historical
 foundation modules remain above the later 400-line slice policy, but none grew
 in this consolidation; re-architecting them is outside this release correction.

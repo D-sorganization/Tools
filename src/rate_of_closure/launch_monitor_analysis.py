@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import replace
 from hashlib import sha256
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 
@@ -98,10 +98,12 @@ def _validate_request(frame: pd.DataFrame, request: AnalysisRequest) -> pd.DataF
         raise ValueError(f"Columns not present: {sorted(missing)}")
     projected = frame[list(selected)]
     mapper = getattr(projected, "map", None)
-    numeric = (
+    legacy_mapper: Any = projected.applymap
+    numeric = cast(
+        pd.DataFrame,
         mapper(finite_launch_monitor_scalar)
         if callable(mapper)
-        else projected.applymap(finite_launch_monitor_scalar)
+        else legacy_mapper(finite_launch_monitor_scalar),
     )
     constants = [
         column for column in selected if numeric[column].dropna().nunique() < 2
@@ -110,7 +112,7 @@ def _validate_request(frame: pd.DataFrame, request: AnalysisRequest) -> pd.DataF
         raise ValueError(f"Constant variables cannot be analyzed: {constants}")
     if request.missing_policy == "fail" and numeric.isna().any().any():
         raise ValueError("Selected variables contain missing or non-numeric values")
-    return cast(pd.DataFrame, numeric)
+    return numeric
 
 
 def _validate_observation_scope(

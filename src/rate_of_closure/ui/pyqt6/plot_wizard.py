@@ -348,21 +348,35 @@ class PlotWizard(QWizard):
         scope = self.scope()
         page = self._variables_page
         kind = str(self._style_page.kind_combo.currentData() or "line")
-        common = {
-            "x_key": page.x_key(),
-            "title": self._style_page.title_edit.text(),
-            "x_log": self._style_page.x_log.isChecked(),
-            "y_log": self._style_page.y_log.isChecked(),
-        }
+        x_key = page.x_key()
+        title = self._style_page.title_edit.text()
+        x_log = self._style_page.x_log.isChecked()
+        y_log = self._style_page.y_log.isChecked()
         if scope == "histogram":
-            return PlotSpec(kind="histogram", **common)
+            return PlotSpec(
+                kind="histogram",
+                x_key=x_key,
+                title=title,
+                x_log=x_log,
+                y_log=y_log,
+            )
         if scope == "sweep":
             return PlotSpec(
                 kind="sweep",
+                x_key=x_key,
                 y_keys=page.y_keys(),
+                title=title,
+                x_log=x_log,
+                y_log=y_log,
                 x_start=page.start_spin.value(),
                 x_stop=page.stop_spin.value(),
                 x_count=page.count_spin.value(),
-                **common,
             )
-        return PlotSpec(kind=kind, y_keys=page.y_keys(), **common)
+        return PlotSpec(
+            kind=kind,
+            x_key=x_key,
+            y_keys=page.y_keys(),
+            title=title,
+            x_log=x_log,
+            y_log=y_log,
+        )

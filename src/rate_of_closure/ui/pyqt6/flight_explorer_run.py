@@ -28,7 +28,7 @@ from rate_of_closure.ui.pyqt6.flight_explorer_controls import (
 )
 from rate_of_closure.ui.pyqt6.flight_view_bundle import FlightViewRestorationError
 from rate_of_closure.units import format_distance_m
-from shared.python.swing_sim.flight import LaunchDirectionConvention
+from shared.python.swing_sim.flight import LaunchConditions, LaunchDirectionConvention
 from shared.python.swing_sim.impact import DeliveryParameters
 
 if TYPE_CHECKING:
@@ -73,7 +73,7 @@ class FlightExplorerRunMixin:
 
         def speed_mph(self) -> float: ...
 
-    def _candidate_context(self) -> tuple[object, FlightStudyContext]:
+    def _candidate_context(self) -> tuple[LaunchConditions, FlightStudyContext]:
         scenario = self.wind_controls.optional_scenario()
         model_name = self._model_combo.currentText()
         direction = self._direction_convention_combo.currentData()

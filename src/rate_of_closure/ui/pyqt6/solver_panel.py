@@ -18,6 +18,7 @@ line — never tracebacks.
 from __future__ import annotations
 
 import logging
+from typing import Any, cast
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
@@ -235,18 +236,22 @@ class SolverPanel(QWidget):
         With ``include_target`` the target panel's region joins the goal
         additively (#4125 H7b) — any checked quantity goals still apply.
         """
-        targets = {
+        targets: dict[str, tuple[float, float]] = {
             name: (row.target.value(), row.weight.value())
             for name, row in self._goal_rows.items()
             if row.enabled.isChecked()
         }
+        goal_factory = cast(Any, ImpactGoal.of)
         if include_target:
-            return ImpactGoal.of(
-                target_region=self._target_panel.region(),
-                target_region_weight=self._target_panel.weight(),
-                **targets,
+            return cast(
+                ImpactGoal,
+                goal_factory(
+                    target_region=self._target_panel.region(),
+                    target_region_weight=self._target_panel.weight(),
+                    **targets,
+                ),
             )
-        return ImpactGoal.of(**targets)
+        return cast(ImpactGoal, goal_factory(**targets))
 
     def build_partition(self) -> VariablePartition:
         """The VariablePartition described by the variable rows."""

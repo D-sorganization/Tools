@@ -53,6 +53,7 @@ class SimulationTabControlsMixin:
     glossaryRequested: Any
 
     if TYPE_CHECKING:
+        from rate_of_closure.simulation import SimulationRun
 
         def _emit_config(self, *_args: object) -> None: ...
 
@@ -72,7 +73,7 @@ class SimulationTabControlsMixin:
 
         def _update_contact_controls(self) -> None: ...
 
-        def run_now(self) -> object: ...
+        def run_now(self) -> SimulationRun | None: ...
 
     def _build_setup_box(self) -> QGroupBox:
         box: QGroupBox = HeightForWidthGroupBox("Simulation Setup")

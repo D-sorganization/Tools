@@ -13,6 +13,8 @@ Mapping: app x = flight x; app y = flight z; app z = -flight y.
 
 from __future__ import annotations
 
+from typing import cast
+
 import numpy as np
 
 
@@ -23,7 +25,7 @@ def _validated(vec: np.ndarray, name: str) -> np.ndarray:
         raise ValueError(f"{name} must have shape (3,) or (N, 3); got {arr.shape}")
     if not np.all(np.isfinite(arr)):
         raise ValueError(f"{name} must be finite")
-    return arr
+    return cast(np.ndarray, arr)
 
 
 def to_flight_frame(vec_app: np.ndarray) -> np.ndarray:
@@ -41,7 +43,7 @@ def to_flight_frame(vec_app: np.ndarray) -> np.ndarray:
     out[..., 0] = arr[..., 0]
     out[..., 1] = -arr[..., 2]
     out[..., 2] = arr[..., 1]
-    return out
+    return cast(np.ndarray, out)
 
 
 def from_flight_frame(vec_flight: np.ndarray) -> np.ndarray:
@@ -59,7 +61,7 @@ def from_flight_frame(vec_flight: np.ndarray) -> np.ndarray:
     out[..., 0] = arr[..., 0]
     out[..., 1] = arr[..., 2]
     out[..., 2] = -arr[..., 1]
-    return out
+    return cast(np.ndarray, out)
 
 
 __all__ = ["from_flight_frame", "to_flight_frame"]
