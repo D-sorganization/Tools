@@ -421,6 +421,7 @@ def run_to_json_dict(
             },
         },
         "impact_outcome": run.impact_outcome.to_dict(),
+        "club_assembly_usage": run.club_assembly_usage.to_json_dict(),
         "delivery": _delivery_dict(run),
         "launch": _launch_dict(run),
         "series": {

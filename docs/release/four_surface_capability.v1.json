@@ -38,7 +38,7 @@
     ],
     "curated_capability_count": 6,
     "campaign_program_count": 15,
-    "active_specification_count": 19,
+    "active_specification_count": 24,
     "excluded_scope_reason": "The deterministic boundary covers structured campaign program records, their linked active release specifications, and six curated evidenced capabilities. Narrative headings and feature bullets that are not promoted to either structured source remain outside the declared scope."
   },
   "surfaces": [
@@ -149,222 +149,6 @@
     }
   ],
   "capabilities": [
-    {
-      "id": "rate.model.capability-optimization",
-      "category": "model",
-      "title": "Capability optimization workflow",
-      "declaration": {
-        "kind": "curated_evidence",
-        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
-        "source_key": "curated.rate.model.capability-optimization"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-pyqt-capability-workflow"
-          ]
-        },
-        "tools.react": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-react-capability-workflow"
-          ]
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "No installed UpstreamDrift PyQt consumer adapter is pinned to the audited Tools commit; a launcher tile is not an implementation.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "No UpstreamDrift React Rate of Closure route or consumer adapter is pinned to the audited Tools commit.",
-          "evidence_ids": []
-        }
-      }
-    },
-    {
-      "id": "rate.control.capability-parameters",
-      "category": "control",
-      "title": "Capability target and player parameter controls",
-      "declaration": {
-        "kind": "curated_evidence",
-        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
-        "source_key": "curated.rate.control.capability-parameters"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-pyqt-capability-workflow"
-          ]
-        },
-        "tools.react": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-react-capability-workflow"
-          ]
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "No installed UpstreamDrift PyQt consumer adapter is pinned to the audited Tools commit; launcher discovery alone does not expose these controls.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "No UpstreamDrift React Rate of Closure route is installed for these controls.",
-          "evidence_ids": []
-        }
-      }
-    },
-    {
-      "id": "rate.output.capability-diagnostics",
-      "category": "output",
-      "title": "Capability optimization diagnostics",
-      "declaration": {
-        "kind": "curated_evidence",
-        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
-        "source_key": "curated.rate.output.capability-diagnostics"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-pyqt-capability-workflow"
-          ]
-        },
-        "tools.react": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-react-capability-workflow"
-          ]
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "No installed UpstreamDrift PyQt capability-results adapter is pinned to the audited Tools commit.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "No UpstreamDrift React Rate of Closure results route is installed.",
-          "evidence_ids": []
-        }
-      }
-    },
-    {
-      "id": "rate.view.capability-workbench",
-      "category": "view",
-      "title": "Capability optimization workbench view",
-      "declaration": {
-        "kind": "curated_evidence",
-        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
-        "source_key": "curated.rate.view.capability-workbench"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-pyqt-capability-workflow"
-          ]
-        },
-        "tools.react": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-react-capability-workflow"
-          ]
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "The UpstreamDrift PyQt launcher does not establish an independently verified capability workbench surface.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "No UpstreamDrift React Rate of Closure route is installed for this view.",
-          "evidence_ids": []
-        }
-      }
-    },
-    {
-      "id": "rate.persistence.workspace-json",
-      "category": "persistence",
-      "title": "Versioned workspace JSON persistence",
-      "declaration": {
-        "kind": "curated_evidence",
-        "source_path": "src/rate_of_closure/application/workspace_document.py",
-        "source_key": "curated.rate.persistence.workspace-json"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-pyqt-workspace"
-          ]
-        },
-        "tools.react": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-react-workspace"
-          ]
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "No installed UpstreamDrift PyQt workspace adapter is pinned to the audited Tools commit.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "No UpstreamDrift React Rate of Closure workspace route or adapter is installed.",
-          "evidence_ids": []
-        }
-      }
-    },
-    {
-      "id": "rate.export.capability-results",
-      "category": "export",
-      "title": "Capability result JSON and CSV exports",
-      "declaration": {
-        "kind": "curated_evidence",
-        "source_path": "src/rate_of_closure/application/capability_result_export.py",
-        "source_key": "curated.rate.export.capability-results"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-pyqt-capability-export"
-          ]
-        },
-        "tools.react": {
-          "state": "supported",
-          "reason": null,
-          "evidence_ids": [
-            "tools-react-capability-export"
-          ]
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "No installed UpstreamDrift PyQt export adapter is pinned to the audited Tools commit.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "No UpstreamDrift React Rate of Closure export route or adapter is installed.",
-          "evidence_ids": []
-        }
-      }
-    },
     {
       "id": "campaign.issue-4103",
       "category": "campaign_program",
@@ -846,33 +630,217 @@
       }
     },
     {
-      "id": "spec.calculation-runtime-manifest",
-      "category": "active_specification",
-      "title": "Calculation Runtime Manifest v1",
+      "id": "rate.control.capability-parameters",
+      "category": "control",
+      "title": "Capability target and player parameter controls",
       "declaration": {
-        "kind": "active_release_spec",
-        "source_path": "docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md",
-        "source_key": "heading.h1"
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.control.capability-parameters"
       },
       "surfaces": {
         "tools.pyqt6": {
-          "state": "unsupported",
-          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
-          "evidence_ids": []
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
         },
         "tools.react": {
-          "state": "unsupported",
-          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
-          "evidence_ids": []
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
         },
         "upstreamdrift.pyqt6": {
           "state": "unsupported",
-          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "reason": "No installed UpstreamDrift PyQt consumer adapter is pinned to the audited Tools commit; launcher discovery alone does not expose these controls.",
           "evidence_ids": []
         },
         "upstreamdrift.react": {
           "state": "unsupported",
-          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "reason": "No UpstreamDrift React Rate of Closure route is installed for these controls.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.export.capability-results",
+      "category": "export",
+      "title": "Capability result JSON and CSV exports",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "src/rate_of_closure/application/capability_result_export.py",
+        "source_key": "curated.rate.export.capability-results"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-pyqt-capability-export"
+          ]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-react-capability-export"
+          ]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt export adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure export route or adapter is installed.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.model.capability-optimization",
+      "category": "model",
+      "title": "Capability optimization workflow",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.model.capability-optimization"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt consumer adapter is pinned to the audited Tools commit; a launcher tile is not an implementation.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure route or consumer adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.output.capability-diagnostics",
+      "category": "output",
+      "title": "Capability optimization diagnostics",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.output.capability-diagnostics"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt capability-results adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure results route is installed.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.persistence.workspace-json",
+      "category": "persistence",
+      "title": "Versioned workspace JSON persistence",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "src/rate_of_closure/application/workspace_document.py",
+        "source_key": "curated.rate.persistence.workspace-json"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-pyqt-workspace"
+          ]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-react-workspace"
+          ]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt workspace adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure workspace route or adapter is installed.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.view.capability-workbench",
+      "category": "view",
+      "title": "Capability optimization workbench view",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.view.capability-workbench"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "The UpstreamDrift PyQt launcher does not establish an independently verified capability workbench surface.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure route is installed for this view.",
           "evidence_ids": []
         }
       }
@@ -937,6 +905,38 @@
         "upstreamdrift.react": {
           "state": "unsupported",
           "reason": "Active specification docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.calculation-runtime-manifest",
+      "category": "active_specification",
+      "title": "Calculation Runtime Manifest v1",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
           "evidence_ids": []
         }
       }
@@ -1166,6 +1166,166 @@
       }
     },
     {
+      "id": "spec.ground-impact-bounce",
+      "category": "active_specification",
+      "title": "Ground Impact and Repeated-Bounce Specification",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GROUND_IMPACT_BOUNCE.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_IMPACT_BOUNCE.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_IMPACT_BOUNCE.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_IMPACT_BOUNCE.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_IMPACT_BOUNCE.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.ground-material-profiles",
+      "category": "active_specification",
+      "title": "Ground Material Profile Contracts",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GROUND_MATERIAL_PROFILES.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_MATERIAL_PROFILES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_MATERIAL_PROFILES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_MATERIAL_PROFILES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_MATERIAL_PROFILES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.ground-reference-execution",
+      "category": "active_specification",
+      "title": "Ground Reference Execution",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_REFERENCE_EXECUTION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_REFERENCE_EXECUTION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_REFERENCE_EXECUTION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_REFERENCE_EXECUTION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.ground-result-studies",
+      "category": "active_specification",
+      "title": "Qualified Ground-Result Study Projection",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GROUND_RESULT_STUDIES.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_RESULT_STUDIES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_RESULT_STUDIES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_RESULT_STUDIES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_RESULT_STUDIES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.ground-skid-roll",
+      "category": "active_specification",
+      "title": "Planar Ground Skid, Roll, and Regional Material Specification",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GROUND_SKID_ROLL.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_SKID_ROLL.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_SKID_ROLL.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_SKID_ROLL.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GROUND_SKID_ROLL.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
       "id": "spec.impact-solution-families",
       "category": "active_specification",
       "title": "Impact-to-Flight Solution Families",
@@ -1294,6 +1454,70 @@
       }
     },
     {
+      "id": "spec.repository",
+      "category": "active_specification",
+      "title": "SPEC.md — Repository Specification Document",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "SPEC.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.variation-visualization-performance",
+      "category": "active_specification",
+      "title": "Variation Visualization Performance Contract",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/rate_of_closure/variation_visualization_performance.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
       "id": "spec.wedge-impact-visualization",
       "category": "active_specification",
       "title": "Exact-Event Wedge Impact Visualization",
@@ -1385,70 +1609,6 @@
         "upstreamdrift.react": {
           "state": "unsupported",
           "reason": "Active specification docs/specs/WIND_UNCERTAINTY_STRATEGY.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
-          "evidence_ids": []
-        }
-      }
-    },
-    {
-      "id": "spec.repository",
-      "category": "active_specification",
-      "title": "SPEC.md — Repository Specification Document",
-      "declaration": {
-        "kind": "active_release_spec",
-        "source_path": "SPEC.md",
-        "source_key": "heading.h1"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "unsupported",
-          "reason": "Active specification SPEC.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
-          "evidence_ids": []
-        },
-        "tools.react": {
-          "state": "unsupported",
-          "reason": "Active specification SPEC.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "Active specification SPEC.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "Active specification SPEC.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
-          "evidence_ids": []
-        }
-      }
-    },
-    {
-      "id": "spec.variation-visualization-performance",
-      "category": "active_specification",
-      "title": "Variation Visualization Performance Contract",
-      "declaration": {
-        "kind": "active_release_spec",
-        "source_path": "docs/rate_of_closure/variation_visualization_performance.md",
-        "source_key": "heading.h1"
-      },
-      "surfaces": {
-        "tools.pyqt6": {
-          "state": "unsupported",
-          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
-          "evidence_ids": []
-        },
-        "tools.react": {
-          "state": "unsupported",
-          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.pyqt6": {
-          "state": "unsupported",
-          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
-          "evidence_ids": []
-        },
-        "upstreamdrift.react": {
-          "state": "unsupported",
-          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
           "evidence_ids": []
         }
       }

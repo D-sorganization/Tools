@@ -29,6 +29,11 @@ from typing import cast
 import numpy as np
 
 from rate_of_closure._contracts import require
+from rate_of_closure.club.assembly_binding import SELECTED_HEAD_FRAME_ID
+from rate_of_closure.club.simulation_adapter import (
+    APP_FRAME_ID,
+    WorldFromHeadAttitude,
+)
 from rate_of_closure.model import ImpactScenario, solve
 from rate_of_closure.simulation.manual_delivery import (
     ManualDeliveryConfig,
@@ -212,6 +217,15 @@ class ManualSwingSource:
     def uses_declared_head_pose(self) -> bool:
         """Declare that delivery extraction must honor this source's pose."""
         return True
+
+    def world_from_selected_head(self, t: float) -> WorldFromHeadAttitude:
+        """Declare the manual source's exact selected-head attitude at ``t``."""
+        return WorldFromHeadAttitude(
+            from_frame_id=SELECTED_HEAD_FRAME_ID,
+            to_frame_id=APP_FRAME_ID,
+            rotation=self.sample(t).pose[:3, :3],
+            provenance="ManualSwingSource.world-from-selected-head/1",
+        )
 
     def sample(self, t: float) -> SwingSample:
         """Clubhead sample at ``t``; at the declared pose at window midpoint."""

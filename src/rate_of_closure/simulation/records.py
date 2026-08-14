@@ -8,7 +8,13 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from rate_of_closure._contracts import require
-from rate_of_closure.club import ClubSpec, ClubType
+from rate_of_closure.club import (
+    ClubAssemblyBinding,
+    ClubAssemblyImpactInputs,
+    ClubSpec,
+    ClubType,
+    WorldFromHeadAttitude,
+)
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation.contact import ContactMode, ImpactOutcome
 from rate_of_closure.simulation.manual_delivery import (
@@ -59,6 +65,9 @@ class SimulationConfig:
     plane: PlaneOrientation = field(default_factory=PlaneOrientation)
     impact_time_s: float | None = None
     impact_time_offset_s: float = 0.0
+    #: Qualified binding for the exact selected club (#4111 / #4341).
+    assembly_binding: ClubAssemblyBinding | None = None
+    world_from_head_attitude: WorldFromHeadAttitude | None = None
     flight_model: str = "waterloo_penner"
     swing_duration_s: float = 1.5
     contact_mode: ContactMode = ContactMode.DELIVERY_INSPECTION
@@ -120,6 +129,22 @@ class SimulationConfig:
             or isinstance(self.torque_library, TorqueProfileLibrary),
             "torque_library must be a TorqueProfileLibrary",
             self.torque_library,
+        )
+        require(
+            self.assembly_binding is None
+            or isinstance(self.assembly_binding, ClubAssemblyBinding),
+            "assembly_binding must be a ClubAssemblyBinding or None",
+        )
+        require(
+            self.world_from_head_attitude is None
+            or isinstance(self.world_from_head_attitude, WorldFromHeadAttitude),
+            "world_from_head_attitude must be a WorldFromHeadAttitude or None",
+        )
+        if self.assembly_binding is not None:
+            self.assembly_binding.assert_matches(self.club)
+        require(
+            self.world_from_head_attitude is None or self.assembly_binding is not None,
+            "world_from_head_attitude requires assembly_binding",
         )
         if self.swing_run_config.mode is SwingRunMode.PRESCRIBED:
             require(
@@ -194,9 +219,14 @@ class SimulationRun:
     flight_times: np.ndarray
     flight_positions: np.ndarray
     flight_velocities: np.ndarray
+    club_assembly_usage: ClubAssemblyImpactInputs
 
     def __post_init__(self) -> None:
         """Enforce coherent optional phases for hits and misses."""
+        require(
+            isinstance(self.club_assembly_usage, ClubAssemblyImpactInputs),
+            "club_assembly_usage must be ClubAssemblyImpactInputs",
+        )
         _validate_swing_shapes(self)
         _validate_flight_shapes(self)
         if self.impact_outcome.is_hit:

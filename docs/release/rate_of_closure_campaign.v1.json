@@ -24,194 +24,177 @@
       "pr": 4119,
       "branch": "feat/impact-simulation-platform",
       "base_branch": "main",
-      "head_sha": "bddac1b4bbcbcd2d83baf2b93cb5f6c9118cf61d",
+      "evidence_commit_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4133",
       "pr": 4133,
       "branch": "feat/impact-interval-dynamics",
       "base_branch": "feat/course-showcase",
-      "head_sha": "b8209dd866e308058c443cb81c3182d2437b46a9",
+      "evidence_commit_sha": "b8209dd866e308058c443cb81c3182d2437b46a9",
       "state": "merged",
       "merge_commit_sha": "bc8ce9b8b98f8cefc9458b903f5bf2f98f1fd9ba",
-      "protection_evidence": "not_protected",
-      "evidence_commit_sha": "b8209dd866e308058c443cb81c3182d2437b46a9"
+      "protection_evidence": "not_protected"
     },
     {
       "id": "pr-4167",
       "pr": 4167,
       "branch": "feat/4144-variation-visualizations",
       "base_branch": "feat/investigation-suite",
-      "head_sha": "91dc2174578a4fc472907d7141ca44c9ef36d3ab",
+      "evidence_commit_sha": "edaa56358a9ccf47809533fcab28e6415b336771",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "edaa56358a9ccf47809533fcab28e6415b336771"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4173",
       "pr": 4173,
       "branch": "feat/4163-impact-inspector",
       "base_branch": "feat/4144-variation-visualizations",
-      "head_sha": "bd48852d303db6281ed5891d4a271d99e76a94e6",
+      "evidence_commit_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4179",
       "pr": 4179,
       "branch": "feat/4162-wedge-impact-visualization",
       "base_branch": "feat/4166-wedge-turf-physics",
-      "head_sha": "7e5dfecf569b39dbbf8cc2101c7426cbc53a2771",
+      "evidence_commit_sha": "0eb804e70887c788421332369e42792411aff55a",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "0eb804e70887c788421332369e42792411aff55a"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4202",
       "pr": 4202,
       "branch": "feat/4189-dplane",
       "base_branch": "feat/4162-wedge-impact-visualization",
-      "head_sha": "9f83cd379ce8ae2805aa4a5608b5645a529f9c3c",
+      "evidence_commit_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4203",
       "pr": 4203,
       "branch": "feat/4181-launch-monitor-registry",
       "base_branch": "feat/4189-dplane",
-      "head_sha": "1e29c6e52169de5d984144af29664c0419b51a21",
+      "evidence_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4217",
       "pr": 4217,
       "branch": "codex/ballflight-campaign-integration",
       "base_branch": "feat/4181-launch-monitor-registry",
-      "head_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
+      "evidence_commit_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
       "state": "merged",
       "merge_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
-      "protection_evidence": "not_protected",
-      "evidence_commit_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e"
+      "protection_evidence": "not_protected"
     },
     {
       "id": "pr-4279",
       "pr": 4279,
       "branch": "feat/4218-toolstrip-workspace",
       "base_branch": "feat/4181-launch-monitor-registry",
-      "head_sha": "983805d799b76e5e1ad1dbdc7a5ab28957d805c8",
+      "evidence_commit_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4280",
       "pr": 4280,
       "branch": "feat/4144-variation-export-continuation",
       "base_branch": "feat/4218-toolstrip-workspace",
-      "head_sha": "7fb5d7f489db49742b7bc82ef009570ad2502456",
+      "evidence_commit_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4281",
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "73b7f6b45063ec71fa300a39d2185d3f935187b7",
+      "evidence_commit_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4282",
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "51033696634c624f7c92c3822d98a66875ff90a0",
+      "evidence_commit_sha": "bb101cedd555d07d493aae998b46050c68660cdd",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "bb101cedd555d07d493aae998b46050c68660cdd"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4283",
       "pr": 4283,
       "branch": "feat/4197-capability-observer",
       "base_branch": "feat/4199-wind-workflow",
-      "head_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
+      "evidence_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
       "state": "merged",
       "merge_commit_sha": "c1827bbdc50a6e11cc475db2636b4e47a4c15416",
-      "protection_evidence": "not_protected",
-      "evidence_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a"
+      "protection_evidence": "not_protected"
     },
     {
       "id": "pr-4285",
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "7a6f31b6cb36e05f903c591e207480d36f491c4d",
+      "evidence_commit_sha": "3235af71150a774954e7673fc81d7179330fbe76",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "3235af71150a774954e7673fc81d7179330fbe76"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4288",
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "8137621d7c77d9fa6941f5cd51d3fd161ebf4300",
+      "evidence_commit_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "evidence_commit_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4289",
       "pr": 4289,
       "branch": "feat/4197-capability-flight-evaluator",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
+      "evidence_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
       "state": "merged",
       "merge_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
-      "protection_evidence": "not_protected",
-      "evidence_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf"
+      "protection_evidence": "not_protected"
     },
     {
       "id": "pr-4294",
       "pr": 4294,
       "branch": "feat/4197-capability-optimization-ui",
       "base_branch": "feat/4197-capability-flight-evaluator",
-      "head_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647",
+      "evidence_commit_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647",
       "state": "merged",
       "merge_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
-      "protection_evidence": "not_protected",
-      "evidence_commit_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647"
+      "protection_evidence": "not_protected"
     },
     {
       "id": "pr-4302",
       "pr": 4302,
       "branch": "feat/4270-ground-impact-bounce",
       "base_branch": "feat/4269-flight-ground-transfer",
-      "head_sha": "62beb3e1aa951645fd556a53f9cbae4bb46c47e5",
+      "evidence_commit_sha": "62beb3e1aa951645fd556a53f9cbae4bb46c47e5",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -221,7 +204,7 @@
       "pr": 4304,
       "branch": "feat/4271-ground-skid-roll",
       "base_branch": "feat/4270-ground-impact-bounce",
-      "head_sha": "3f861c1faaa7455faee92eaa7f813174667208e0",
+      "evidence_commit_sha": "3f861c1faaa7455faee92eaa7f813174667208e0",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -231,7 +214,7 @@
       "pr": 4332,
       "branch": "feat/4271-regional-surface-transitions",
       "base_branch": "feat/4271-ground-skid-roll",
-      "head_sha": "5ac3c1f233de30dd42eeac57073cbdb149bde652",
+      "evidence_commit_sha": "5ac3c1f233de30dd42eeac57073cbdb149bde652",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -241,7 +224,7 @@
       "pr": 4335,
       "branch": "feat/4271-regional-wire-contract",
       "base_branch": "feat/4271-regional-surface-transitions",
-      "head_sha": "8f933ed8dcb29e55ece4ec6bb1e60813f6794d57",
+      "evidence_commit_sha": "8f933ed8dcb29e55ece4ec6bb1e60813f6794d57",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -251,7 +234,7 @@
       "pr": 4339,
       "branch": "feat/4274-regional-surface-ui",
       "base_branch": "feat/4271-regional-wire-contract",
-      "head_sha": "db335937afc4b587d235eb705e315f577519c5e6",
+      "evidence_commit_sha": "db335937afc4b587d235eb705e315f577519c5e6",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -261,7 +244,7 @@
       "pr": 4342,
       "branch": "feat/4274-regional-plan-io",
       "base_branch": "feat/4274-regional-surface-ui",
-      "head_sha": "de66a851aa5dded680279cf9a2b25a5094966593",
+      "evidence_commit_sha": "de66a851aa5dded680279cf9a2b25a5094966593",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -271,7 +254,7 @@
       "pr": 4350,
       "branch": "feat/4271-regional-execution-binding",
       "base_branch": "feat/4274-regional-plan-io",
-      "head_sha": "98f86990e9225903fbe84cd1f267ed38ef0a15d8",
+      "evidence_commit_sha": "98f86990e9225903fbe84cd1f267ed38ef0a15d8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -281,7 +264,7 @@
       "pr": 4351,
       "branch": "feat/4271-regional-execution-ui",
       "base_branch": "feat/4271-regional-execution-binding",
-      "head_sha": "4024c8a1ad2d3871c6b06ef6369250a873789c39",
+      "evidence_commit_sha": "4024c8a1ad2d3871c6b06ef6369250a873789c39",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -291,7 +274,7 @@
       "pr": 4352,
       "branch": "feat/4271-regional-result-readback",
       "base_branch": "feat/4271-regional-execution-ui",
-      "head_sha": "12fc80798d2a15b44c0215688ffb031dd99cbdd1",
+      "evidence_commit_sha": "12fc80798d2a15b44c0215688ffb031dd99cbdd1",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -301,7 +284,7 @@
       "pr": 4353,
       "branch": "feat/4271-regional-event-inspection",
       "base_branch": "feat/4271-regional-result-readback",
-      "head_sha": "e0433adbc3c82272745d098867f261462a790d08",
+      "evidence_commit_sha": "e0433adbc3c82272745d098867f261462a790d08",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -311,7 +294,7 @@
       "pr": 4354,
       "branch": "feat/4271-regional-trajectory-export",
       "base_branch": "feat/4271-regional-event-inspection",
-      "head_sha": "97925e4803f4fbd72d576eb1c11c47f8e61b0b66",
+      "evidence_commit_sha": "97925e4803f4fbd72d576eb1c11c47f8e61b0b66",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -321,7 +304,7 @@
       "pr": 4355,
       "branch": "feat/4271-repeated-bounce-wire",
       "base_branch": "feat/4271-regional-trajectory-export",
-      "head_sha": "a04d14e9308990e676e8c90ddb1d80e368dd1387",
+      "evidence_commit_sha": "a04d14e9308990e676e8c90ddb1d80e368dd1387",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -331,7 +314,7 @@
       "pr": 4356,
       "branch": "feat/4270-repeated-bounce-request-wire",
       "base_branch": "feat/4271-repeated-bounce-wire",
-      "head_sha": "2387430fc78baa92ba122c7ad008a498118bf62d",
+      "evidence_commit_sha": "2387430fc78baa92ba122c7ad008a498118bf62d",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -341,7 +324,7 @@
       "pr": 4357,
       "branch": "feat/4270-repeated-bounce-execution",
       "base_branch": "feat/4270-repeated-bounce-request-wire",
-      "head_sha": "c492b52f9f7615c5bc38e780965167cc8f64327c",
+      "evidence_commit_sha": "c492b52f9f7615c5bc38e780965167cc8f64327c",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -351,7 +334,7 @@
       "pr": 4359,
       "branch": "feat/4270-flight-bounce-execution",
       "base_branch": "feat/4270-repeated-bounce-execution",
-      "head_sha": "e53c6fb1bd273292c02085ee5d0a2b5497820871",
+      "evidence_commit_sha": "e53c6fb1bd273292c02085ee5d0a2b5497820871",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -361,7 +344,7 @@
       "pr": 4360,
       "branch": "feat/4271-flight-regional-ground-pipeline",
       "base_branch": "feat/4270-flight-bounce-execution",
-      "head_sha": "74f1ceafd87f952a76917dc868baa6414f856144",
+      "evidence_commit_sha": "74f1ceafd87f952a76917dc868baa6414f856144",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -371,7 +354,7 @@
       "pr": 4361,
       "branch": "codex/4273-flight-ground-study-adapter",
       "base_branch": "feat/4271-flight-regional-ground-pipeline",
-      "head_sha": "81de044075a4f72c6da8fedb972437df79a06ab8",
+      "evidence_commit_sha": "81de044075a4f72c6da8fedb972437df79a06ab8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -381,7 +364,7 @@
       "pr": 4363,
       "branch": "codex/4274-ground-playback-propagation",
       "base_branch": "codex/4273-flight-ground-study-adapter",
-      "head_sha": "ec50fdf059f91ca9e4664da891398af218e1ba65",
+      "evidence_commit_sha": "ec50fdf059f91ca9e4664da891398af218e1ba65",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -391,7 +374,7 @@
       "pr": 4364,
       "branch": "codex/4192-ground-target-projection",
       "base_branch": "codex/4274-ground-playback-propagation",
-      "head_sha": "f13f0908dd2a553cf4d114afd31bb474d1b967c7",
+      "evidence_commit_sha": "f13f0908dd2a553cf4d114afd31bb474d1b967c7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -401,7 +384,7 @@
       "pr": 4365,
       "branch": "codex/4273-seeded-ground-variation",
       "base_branch": "codex/4192-ground-target-projection",
-      "head_sha": "27d2a68d3738d61307af9235f3f97f7bd400e0f3",
+      "evidence_commit_sha": "27d2a68d3738d61307af9235f3f97f7bd400e0f3",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -411,7 +394,7 @@
       "pr": 4366,
       "branch": "codex/4273-ground-variation-persistence",
       "base_branch": "codex/4273-seeded-ground-variation",
-      "head_sha": "8dfb1189c13f0fce99901e1ffbba152d813f9006",
+      "evidence_commit_sha": "8dfb1189c13f0fce99901e1ffbba152d813f9006",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -421,7 +404,7 @@
       "pr": 4367,
       "branch": "codex/4273-ground-variation-file-ui",
       "base_branch": "codex/4273-ground-variation-persistence",
-      "head_sha": "0968a4ced5644aa8e2673ca278d261eeb92c31f8",
+      "evidence_commit_sha": "0968a4ced5644aa8e2673ca278d261eeb92c31f8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -431,7 +414,7 @@
       "pr": 4368,
       "branch": "codex/4273-ground-variation-file-controls",
       "base_branch": "codex/4273-ground-variation-file-ui",
-      "head_sha": "7d2d155b35f2ae55842de120864c4a343a5ebcb6",
+      "evidence_commit_sha": "7d2d155b35f2ae55842de120864c4a343a5ebcb6",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -441,7 +424,7 @@
       "pr": 4370,
       "branch": "codex/4369-regional-ground-execution-job",
       "base_branch": "codex/4273-ground-variation-file-controls",
-      "head_sha": "0a485958bd6ed46dce18e65fd3e3cd1fa797502a",
+      "evidence_commit_sha": "0a485958bd6ed46dce18e65fd3e3cd1fa797502a",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -451,7 +434,7 @@
       "pr": 4371,
       "branch": "codex/4369-validator-failure-stage",
       "base_branch": "codex/4369-regional-ground-execution-job",
-      "head_sha": "e2503a526dc84e241b9366ac8ed6d54134940a5f",
+      "evidence_commit_sha": "e2503a526dc84e241b9366ac8ed6d54134940a5f",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -461,7 +444,7 @@
       "pr": 4372,
       "branch": "codex/4369-ground-authority-capability",
       "base_branch": "codex/4369-validator-failure-stage",
-      "head_sha": "86adb42323ea210d1b4f85242abe51c7db06a5e9",
+      "evidence_commit_sha": "86adb42323ea210d1b4f85242abe51c7db06a5e9",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -471,7 +454,7 @@
       "pr": 4373,
       "branch": "codex/4369-imported-job-ui",
       "base_branch": "codex/4369-ground-authority-capability",
-      "head_sha": "cca7c839f8fcaeab57d43fcb9d6f3df3b428e3c4",
+      "evidence_commit_sha": "cca7c839f8fcaeab57d43fcb9d6f3df3b428e3c4",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -481,7 +464,7 @@
       "pr": 4374,
       "branch": "codex/4369-editor-job-preparation",
       "base_branch": "codex/4369-imported-job-ui",
-      "head_sha": "e1da8708c15f966afc926e20eae3fdf084ba8a16",
+      "evidence_commit_sha": "e1da8708c15f966afc926e20eae3fdf084ba8a16",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -491,7 +474,7 @@
       "pr": 4375,
       "branch": "codex/4369-flight-recompute-cancellation",
       "base_branch": "codex/4369-editor-job-preparation",
-      "head_sha": "9561dae8c048a511722619a7dfdaf065bb1667c7",
+      "evidence_commit_sha": "9561dae8c048a511722619a7dfdaf065bb1667c7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -501,7 +484,7 @@
       "pr": 4376,
       "branch": "codex/4369-authority-restart-recovery",
       "base_branch": "codex/4369-flight-recompute-cancellation",
-      "head_sha": "d14ce6f8ef2696ccaa8971443fa4df7e8d52f21f",
+      "evidence_commit_sha": "d14ce6f8ef2696ccaa8971443fa4df7e8d52f21f",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -511,7 +494,7 @@
       "pr": 4388,
       "branch": "codex/4378-static-inspection-runtime",
       "base_branch": "codex/4369-authority-restart-recovery",
-      "head_sha": "a35b259fd6a6ad57815544d228d73a806bb8d84e",
+      "evidence_commit_sha": "a35b259fd6a6ad57815544d228d73a806bb8d84e",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -521,7 +504,7 @@
       "pr": 4390,
       "branch": "codex/4379-same-origin-companion",
       "base_branch": "codex/4378-static-inspection-runtime",
-      "head_sha": "c3ecfd48910aa5aafb89962a256333690e8e72c5",
+      "evidence_commit_sha": "c3ecfd48910aa5aafb89962a256333690e8e72c5",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -531,7 +514,7 @@
       "pr": 4391,
       "branch": "codex/4380-playwright-production-browser",
       "base_branch": "codex/4379-same-origin-companion",
-      "head_sha": "0de3de8a41c018aec03dead8371a1f3ec6e1912f",
+      "evidence_commit_sha": "0de3de8a41c018aec03dead8371a1f3ec6e1912f",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -541,7 +524,7 @@
       "pr": 4392,
       "branch": "codex/4385-windows-state-security",
       "base_branch": "codex/4380-playwright-production-browser",
-      "head_sha": "dde43534babf385530a95b2ff6ce3477f73ac9b3",
+      "evidence_commit_sha": "dde43534babf385530a95b2ff6ce3477f73ac9b3",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -551,38 +534,37 @@
       "pr": 4298,
       "branch": "feat/4284-camera-snap-tracking",
       "base_branch": "feat/4199-wind-workflow",
+      "evidence_commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "head_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
-      "evidence_commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4301",
       "pr": 4301,
       "branch": "fix/rate-mobile-tools-menu",
       "base_branch": "feat/4284-camera-snap-tracking",
+      "evidence_commit_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "head_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4303",
       "pr": 4303,
       "branch": "fix/rate-pyqt-default-camera",
       "base_branch": "fix/rate-mobile-tools-menu",
+      "evidence_commit_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca",
       "state": "open",
       "merge_commit_sha": null,
-      "protection_evidence": "not_recorded",
-      "head_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca"
+      "protection_evidence": "not_recorded"
     },
     {
       "id": "pr-4305",
       "pr": 4305,
       "branch": "feat/4272-ground-material-profiles",
       "base_branch": "feat/4271-ground-skid-roll",
-      "head_sha": "a35fc8aac0cbc2aeeef757fd1d1c518987f2355c",
+      "evidence_commit_sha": "a35fc8aac0cbc2aeeef757fd1d1c518987f2355c",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -592,7 +574,7 @@
       "pr": 4306,
       "branch": "feat/4273-ground-study-projection",
       "base_branch": "feat/4272-ground-material-profiles",
-      "head_sha": "1e1b576c36cc01e27542dd88747f54f918ff16bf",
+      "evidence_commit_sha": "1e1b576c36cc01e27542dd88747f54f918ff16bf",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -602,7 +584,7 @@
       "pr": 4307,
       "branch": "feat/4273-ground-study-result-adapter",
       "base_branch": "feat/4273-ground-study-projection",
-      "head_sha": "40f5cd94d934bcebaf99c942a64852bcb4710a9e",
+      "evidence_commit_sha": "40f5cd94d934bcebaf99c942a64852bcb4710a9e",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -612,7 +594,7 @@
       "pr": 4308,
       "branch": "feat/4273-ground-study-scalar-adapter",
       "base_branch": "feat/4273-ground-study-result-adapter",
-      "head_sha": "c8ebf422669992c4a33db661b0c37dfe72b580ae",
+      "evidence_commit_sha": "c8ebf422669992c4a33db661b0c37dfe72b580ae",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -622,7 +604,7 @@
       "pr": 4309,
       "branch": "feat/4275-ground-reference-execution",
       "base_branch": "feat/4273-ground-study-scalar-adapter",
-      "head_sha": "c93c6f36d361f4c129d702565a9330149e175557",
+      "evidence_commit_sha": "c93c6f36d361f4c129d702565a9330149e175557",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"

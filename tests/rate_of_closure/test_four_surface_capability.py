@@ -247,10 +247,13 @@ def test_declared_scope_is_complete_and_deterministic(
     """All structured campaign programs and linked active specs are enumerated."""
     declared = derive_declared_capabilities(CAMPAIGN_PATH, REPO_ROOT)
     validate_declared_scope_completeness(manifest, CAMPAIGN_PATH, REPO_ROOT)
-    assert len(declared) == 34
+    # 15 campaign programs + 24 linked active specs. The ground families added
+    # five linked specifications (material profiles, impact bounce, skid roll,
+    # reference execution, result studies).
+    assert len(declared) == 39
     assert manifest.inventory.status == "declared_scope_complete"
     assert manifest.inventory.campaign_program_count == 15
-    assert manifest.inventory.active_specification_count == 19
+    assert manifest.inventory.active_specification_count == 24
     assert manifest.inventory.curated_capability_count == 6
     assert render_declared_scope(CAMPAIGN_PATH, REPO_ROOT) == render_declared_scope(
         CAMPAIGN_PATH, REPO_ROOT

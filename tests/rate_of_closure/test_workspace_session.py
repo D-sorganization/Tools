@@ -12,6 +12,7 @@ from rate_of_closure.application.capability_workflow import (
     build_capability_workflow,
 )
 from rate_of_closure.application.workspace_session import (
+    CANONICAL_MODULE_IDS,
     ExplorerWorkspaceState,
     LegacyCapabilityMigrationRequired,
     WorkspaceSessionMetadata,
@@ -107,18 +108,10 @@ def _state() -> ExplorerWorkspaceState:
                 spin_axis_tilt_deg=-3.5,
             )
         ),
-        module_order=(
-            "explorer",
-            "calculation",
-            "simulation",
-            "plots",
-            "flight",
-            "launch-monitor-analytics",
-            "capability-optimization",
-            "variation",
-            "putting",
-            "glossary",
-        ),
+        # Track the canonical registry rather than a copy of it: the module set
+        # grows whenever both clients gain a view (Ground Surfaces and Ground
+        # Playback arrived with the ground families).
+        module_order=CANONICAL_MODULE_IDS,
         visible_module_ids=("explorer", "simulation"),
         active_module_id="simulation",
         view_workspace=ViewWorkspace.default(),

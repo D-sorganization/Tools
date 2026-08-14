@@ -8,7 +8,12 @@ from dataclasses import dataclass
 import numpy as np
 
 from rate_of_closure._contracts import ensure, require
-from rate_of_closure.club import face_normal_at_offset
+from rate_of_closure.club import (
+    ClubAssemblyImpactInputs,
+    WorldFromHeadAttitude,
+    adapt_club_assembly_for_impact,
+    face_normal_at_offset,
+)
 from rate_of_closure.model import MPH_PER_MPS
 from rate_of_closure.simulation.contact import (
     ContactMode,
@@ -18,7 +23,10 @@ from rate_of_closure.simulation.contact import (
 )
 from rate_of_closure.simulation.delivery import delivery_at
 from rate_of_closure.simulation.records import SimulationConfig, SimulationRun
-from rate_of_closure.simulation.sources import MANUAL_SWING_DURATION_S
+from rate_of_closure.simulation.sources import (
+    MANUAL_SWING_DURATION_S,
+    ManualSwingSource,
+)
 from shared.python.swing_sim.flight import (
     derive_launch_conditions,
     from_flight_frame,
@@ -103,6 +111,7 @@ class _ImpactProducts:
     flight_times: np.ndarray
     flight_positions: np.ndarray
     flight_velocities: np.ndarray
+    club_assembly_usage: ClubAssemblyImpactInputs
 
 
 def execute_simulation(config: SimulationConfig) -> SimulationRun:
@@ -113,7 +122,7 @@ def execute_simulation(config: SimulationConfig) -> SimulationRun:
     products = (
         _solve_hit(config, source, impact_time_s)
         if impact_time_s is not None
-        else _empty_impact_products()
+        else _empty_impact_products(config)
     )
     return _assemble_run(config, aligned_swing, outcome, impact_time_s, products)
 
@@ -242,6 +251,11 @@ def _solve_hit(
         if bool(getattr(source, "uses_declared_head_pose", False))
         else np.eye(3)
     )
+    adapted = adapt_club_assembly_for_impact(
+        config.club,
+        config.assembly_binding,
+        _world_from_head_attitude(config, source, impact_time_s),
+    )
     solver = ImpactSolverAPI(
         ImpactModelType.RIGID_BODY,
         ImpactParameters(cg_depth=config.club.cg_depth_m),
@@ -251,8 +265,13 @@ def _solve_hit(
         clubhead_velocity=delivery.clubhead_velocity,
         clubhead_orientation=delivery.face_normal,
         impact_offset=delivery.impact_offset,
-        clubhead_mass=config.club.head_mass_kg,
+        clubhead_mass=adapted.head_mass_kg,
+        # Compatibility approximation: the impact scalar path is equivalent
+        # to an isotropic CG tensor, but ClubSpec's sourced value is about the
+        # shaft axis. Keep the axis/reference mismatch explicit until a
+        # provenance-backed CG tensor and complete head attitude are available.
         clubhead_moi=config.club.moi_about_shaft_kg_m2,
+        clubhead_moi_tensor=adapted.head_inertia_tensor_app_kg_m2,
         face_normal_at_offset=_face_normal_callable(config, head_rotation),
         record=False,
     )
@@ -265,7 +284,23 @@ def _solve_hit(
         times,
         positions,
         velocities,
+        adapted,
     )
+
+
+def _world_from_head_attitude(
+    config: SimulationConfig,
+    source: SwingSource,
+    impact_time_s: float,
+) -> WorldFromHeadAttitude | None:
+    """Return only an explicit config attitude or a declared manual attitude."""
+    if config.assembly_binding is None:
+        return None
+    if config.world_from_head_attitude is not None:
+        return config.world_from_head_attitude
+    if isinstance(source, ManualSwingSource):
+        return source.world_from_selected_head(impact_time_s)
+    return None
 
 
 def _face_normal_callable(config: SimulationConfig, head_rotation: np.ndarray):  # type: ignore[no-untyped-def]
@@ -324,7 +359,7 @@ def _launch_summary(
     }
 
 
-def _empty_impact_products() -> _ImpactProducts:
+def _empty_impact_products(config: SimulationConfig) -> _ImpactProducts:
     """Return typed empty downstream phases for a miss."""
     return _ImpactProducts(
         None,
@@ -333,6 +368,9 @@ def _empty_impact_products() -> _ImpactProducts:
         np.zeros((0,)),
         np.zeros((0, 3)),
         np.zeros((0, 3)),
+        adapt_club_assembly_for_impact(
+            config.club, config.assembly_binding, None
+        ).without_impact(),
     )
 
 
@@ -361,4 +399,5 @@ def _assemble_run(
         flight_times=products.flight_times,
         flight_positions=products.flight_positions,
         flight_velocities=products.flight_velocities,
+        club_assembly_usage=products.club_assembly_usage,
     )
