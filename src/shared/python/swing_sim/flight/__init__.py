@@ -15,7 +15,47 @@ Import from this facade only; module layout underneath is private.
 from __future__ import annotations
 
 from ._rust_facade import is_rust_available, simulate_trajectory_rust
+from .capability_contract import (
+    CapabilityObjective,
+    CapabilityParameter,
+    ClubCapability,
+    OptimizationAlternative,
+    OptimizationRequest,
+    OptimizationResult,
+    PlayerCapabilityProfile,
+    TargetDefinition,
+)
+from .capability_optimizer import CapabilityEvaluator, optimize_capability
 from .frames import from_flight_frame, to_flight_frame
+from .impact_solution_adapter import CenteredClubDeliveryAdapter
+from .impact_solution_contract import (
+    ClubProfileId,
+    ForwardEvaluation,
+    ForwardStatus,
+    ImpactSolutionRequest,
+    ImpactSolutionResult,
+    ModelAvailability,
+    ModelManifest,
+)
+from .impact_solution_solver import (
+    ImpactForwardEvaluator,
+    solve_impact_solution_families,
+)
+from .inverse_contract import (
+    DecisionVariable,
+    EvaluatedMetric,
+    EvaluationStatus,
+    FlightObjective,
+    InverseFlightRequest,
+    InverseFlightResult,
+    ObjectiveMode,
+    ObjectiveResidual,
+    ParameterValue,
+    SolutionCandidate,
+    SolverEvaluation,
+    SolverStatus,
+)
+from .inverse_solver import ForwardEvaluator, solve_inverse_flight
 from .launch import derive_launch_conditions
 from .models import (
     BallFlightModel,
@@ -55,8 +95,18 @@ __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
     "AvailabilityReason",
     "BallFlightModel",
+    "CapabilityEvaluator",
+    "CapabilityObjective",
+    "CapabilityParameter",
+    "ClubCapability",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
+    "CenteredClubDeliveryAdapter",
+    "ClubProfileId",
+    "DecisionVariable",
+    "EvaluatedMetric",
+    "EvaluationStatus",
+    "FlightObjective",
     "FlightModelRegistry",
     "FlightModelType",
     "FlightMetricCatalog",
@@ -68,10 +118,31 @@ __all__ = [
     "FlightResult",
     "FlightRunManifest",
     "FlightSimulatorProtocol",
+    "ForwardEvaluator",
+    "ForwardEvaluation",
+    "ForwardStatus",
     "GroundModelResult",
+    "ImpactForwardEvaluator",
+    "ImpactSolutionRequest",
+    "ImpactSolutionResult",
+    "InverseFlightRequest",
+    "InverseFlightResult",
     "LaunchConditions",
     "MacDonaldHanzelyModel",
     "MetricTrajectoryPoint",
+    "ModelAvailability",
+    "ModelManifest",
+    "ObjectiveMode",
+    "ObjectiveResidual",
+    "OptimizationAlternative",
+    "OptimizationRequest",
+    "OptimizationResult",
+    "ParameterValue",
+    "PlayerCapabilityProfile",
+    "SolutionCandidate",
+    "SolverEvaluation",
+    "SolverStatus",
+    "TargetDefinition",
     "TrajectoryPoint",
     "WaterlooPennerModel",
     "compare_models",
@@ -81,8 +152,11 @@ __all__ = [
     "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
+    "optimize_capability",
     "simulate",
     "simulate_trajectory_rust",
+    "solve_inverse_flight",
+    "solve_impact_solution_families",
     "to_flight_frame",
     "ValueStatus",
 ]

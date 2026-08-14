@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.11                                    |
-| **Spec Version**        | 1.13.11                                    |
+| **Current Version**     | 1.13.13                                    |
+| **Spec Version**        | 1.13.13                                    |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,43 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+### 2026-08-06 Impact-to-Flight Solution-Family Foundation
+
+- Python and TypeScript share strict `impact-solution-request/v1` and
+  `impact-solution-result/v1` contracts that declare the target and delivery
+  frames, impact reference point and event time, canonical units, display
+  convention, club profile, impact model, flight model, and model availability.
+- The Python adapter runs centered representative driver and iron deliveries
+  through the existing delivery, rigid-body impact, frame-conversion, launch,
+  and literature-flight pipeline. It fails closed for unknown model IDs,
+  unsupported variables, and nonpositive normal approach speed.
+- The deterministic inverse solver is reused without duplicating its sampler or
+  ranking logic. Feasible candidates are separated into normalized-radius
+  families with representative launch values, launch/flight residuals,
+  observed parameter intervals, within-family correlations, bounded local
+  sensitivities, provenance, and a diagnostic for every rejected sample.
+- The representative club mass/MOI values are engineering defaults, not fitted
+  equipment certifications. Shaft, off-center contact, turf, swing-generation,
+  uncertainty, capability and UI integration remain explicit future adapters.
+
+### 2026-08-06 Desired Ball-Flight Inverse-Solver Foundation
+
+- Python and TypeScript expose the same strict `inverse-flight-request/v1` and
+  `inverse-flight-result/v1` contracts over solver-eligible canonical flight
+  metrics, including exact units, target/maximize/minimize modes, tolerances,
+  weights, hard objective bounds, and bounded model parameters.
+- An injected forward evaluator preserves separation from any specific impact,
+  flight, wind, or ground model and reports complete, no-impact, failed, and
+  nonconverged evaluations without synthetic replacement values.
+- A deterministic Halton bounded search returns feasible-first ranked
+  candidates, per-objective normalized residuals and violations, diagnostic
+  counts, termination status, and algorithm/schema provenance. Cross-runtime
+  result serialization is pinned by a shared SHA-256 fixture.
+- This foundation does not claim continuous/global optimality or prove dynamic
+  infeasibility from a finite sample. Physics adapters, warm-start/refinement,
+  uncertainty propagation, UI controls, and target-volume integration remain
+  explicit downstream work.
+
 ### 2026-08-06 Canonical ball-flight result catalog
 
 - Python and TypeScript expose one versioned launch-monitor-style catalog with
@@ -2754,6 +2791,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-06 | 1.13.13 | feat(swing_sim, rate_of_closure, #4196): map desired flight to frame-explicit centered driver/iron delivery solution families with strict cross-runtime schemas, observed intervals/correlations, local sensitivities, complete residuals, model manifests, and rejected no-impact/miss diagnostics. |
+| 2026-08-06 | 1.13.12 | feat(swing_sim, rate_of_closure, #4195): add strict desired-flight inverse-solver contracts, deterministic bounded multi-objective search, ranked residual-rich candidates, typed infeasible/no-impact/nonconverged outcomes, and Python/TypeScript parity fixtures. |
 | 2026-08-06 | 1.13.11 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
