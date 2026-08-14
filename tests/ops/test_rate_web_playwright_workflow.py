@@ -164,10 +164,12 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     assert pr_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
         "${{ github.workspace }}/visual-baseline-candidates"
     )
+    assert pr_job["env"]["RATE_VISUAL_BASELINE_SOURCE_COMMIT"] == (
+        "${{ github.event.pull_request.head.sha }}"
+    )
     assert trusted_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
         "${{ github.workspace }}/visual-baseline-candidates"
     )
-
     assert pr_commands["Install locked web dependencies"] == "npm ci"
     assert trusted_commands["Install locked web dependencies"] == "npm ci"
     assert pr_commands["Install Playwright-pinned browser runtimes"] == (

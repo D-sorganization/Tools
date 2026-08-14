@@ -276,7 +276,10 @@ def main() -> int:
             "artifact_policy": (
                 "candidate-diagnostic-not-approved-until-protected-merge"
             ),
-            "source_commit": os.environ.get("GITHUB_SHA", "local-diagnostic"),
+            "source_commit": os.environ.get(
+                "RATE_VISUAL_BASELINE_SOURCE_COMMIT",
+                os.environ.get("GITHUB_SHA", "local-diagnostic"),
+            ),
             "surface": "pyqt",
             "environment": (
                 f"{os.name}-{os.environ.get('QT_QPA_PLATFORM', 'default')}"

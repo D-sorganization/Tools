@@ -29,9 +29,10 @@ requires every visible, enabled, focusable semantic control to expose a
 bounded accessible name; missing plot/list/slider/spin/combo names are fixed.
 The protected PyQt artifact retains exact tab/control counts and zero-finding
 arrays with the GitHub SHA and Qt/PyQt versions.
-Matplotlib's native Plots toolbar exposes 16 focusable controls on hosted Linux
-and 17 on Windows; that sole platform envelope is pinned while every observed
-control remains named and its exact count is retained in the artifact.
+The audit separately pins the exact registered semantic-control inventory and
+records the visible audited count. This avoids treating platform-dependent
+native visibility as missing application authority while every visible control
+still requires a bounded name.
 
 The first strict browser run found three low-contrast primary actions in Flight
 and Launch Monitor Analytics; their sky/emerald shades now meet the automated

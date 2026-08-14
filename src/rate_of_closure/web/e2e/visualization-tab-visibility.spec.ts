@@ -136,7 +136,8 @@ test("every registered React tab exposes its primary visual in the initial viewp
     schemaId: "rate-of-closure/visual-baseline-candidates",
     schemaVersion: 1,
     artifactPolicy: "candidate-diagnostic-not-approved-until-protected-merge",
-    sourceCommit: process.env.GITHUB_SHA ?? "local-diagnostic",
+    sourceCommit: process.env.RATE_VISUAL_BASELINE_SOURCE_COMMIT ??
+      process.env.GITHUB_SHA ?? "local-diagnostic",
     surface: "react",
     environment: `${process.platform}-chromium-desktop-1440x900-dark-reduced-motion`,
     captures: candidates,

@@ -93,6 +93,7 @@ jobs:
         working-directory: src/rate_of_closure/web
     env:
       RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
+      RATE_VISUAL_BASELINE_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 

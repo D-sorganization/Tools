@@ -108,7 +108,8 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
             "candidate-diagnostic-not-approved-until-protected-merge"
         )
         assert candidates["source_commit"] == os.environ.get(
-            "GITHUB_SHA", "local-diagnostic"
+            "RATE_VISUAL_BASELINE_SOURCE_COMMIT",
+            os.environ.get("GITHUB_SHA", "local-diagnostic"),
         )
         assert candidates["surface"] == "pyqt"
         captures = candidates["captures"]
