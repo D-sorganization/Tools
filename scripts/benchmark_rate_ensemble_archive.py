@@ -70,7 +70,9 @@ class _RssSampler:
 def _request(trials: int) -> SimulationEnsembleRequest:
     plan = VariationPlan(
         mode="delivery",
-        noise=(NoiseSpec("swing_sim.impact.delivery.face_angle_deg", scale=1.0),),
+        # A variable the request's per-row config binding can verify; the
+        # benchmark measures archive RSS scaling, not any one variable.
+        noise=(NoiseSpec("swing_sim.impact.delivery.impact_offset_toe_mm", scale=1.0),),
         n_runs=trials,
         seed=17,
     )
@@ -80,7 +82,14 @@ def _request(trials: int) -> SimulationEnsembleRequest:
         source_kind="manual",
         contact_mode=ContactMode.FIXED_BALL_CONTACT,
     )
-    return SimulationEnsembleRequest(plan, np.zeros((trials, 1)), (config,) * trials)
+    # A synthetic all-zero fixture, not the plan's RNG draws, so it declares
+    # that provenance rather than claiming reproducibility from the seed.
+    return SimulationEnsembleRequest(
+        plan,
+        np.zeros((trials, 1)),
+        (config,) * trials,
+        sample_provenance="explicit_design",
+    )
 
 
 def _header(request: SimulationEnsembleRequest, samples: int) -> EnsembleStreamHeader:

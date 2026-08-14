@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import threading
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -17,6 +18,7 @@ from rate_of_closure.variation.ensemble_request_identity import (
     request_identity_sha256,
 )
 from rate_of_closure.variation.simulation_adapter import run_simulation_ensemble_chunks
+from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.solver.solve import CancelledError
 
@@ -161,23 +163,49 @@ def test_request_identity_binds_every_config_not_only_plan() -> None:
     assert request_identity_sha256(first) != request_identity_sha256(second)
 
 
-def test_request_identity_binds_sample_bytes_and_config_order() -> None:
+def test_request_identity_binds_sample_bytes() -> None:
     first = _request(
         (
             _config(ContactMode.DELIVERY_INSPECTION, speed_mph=100.0),
             _config(ContactMode.DELIVERY_INSPECTION, speed_mph=101.0),
         )
     )
-    changed_inputs = type(first)(
+    # Rows that are not the plan's own RNG draws must declare that provenance,
+    # and each config is rebound to the row it is executed with, so the request
+    # remains a legal one whose only difference from `first` is the sample bytes.
+    mutated = np.array(first.sampled_inputs, copy=True) + np.array([[0.0], [0.25]])
+    changed_inputs = SimulationEnsembleRequest(
         first.plan,
-        np.array(first.sampled_inputs, copy=True) + np.array([[0.0], [0.25]]),
-        first.configs,
-    )
-    changed_order = type(first)(
-        first.plan,
-        first.sampled_inputs,
-        tuple(reversed(first.configs)),
+        mutated,
+        tuple(
+            replace(config, plane=replace(config.plane, yaw_deg=float(row[0])))
+            for config, row in zip(first.configs, mutated, strict=True)
+        ),
+        sample_provenance="explicit_design",
     )
 
     assert request_identity_sha256(first) != request_identity_sha256(changed_inputs)
-    assert request_identity_sha256(first) != request_identity_sha256(changed_order)
+
+
+def test_request_rejects_config_order_drift_outright() -> None:
+    """Config order is now guaranteed structurally, not just by the digest.
+
+    This previously asserted only that reordering the configs changed the
+    request identity. The per-row config binding makes a misordered request
+    unconstructable, which is the stronger property: the drift cannot reach the
+    digest at all.
+    """
+    first = _request(
+        (
+            _config(ContactMode.DELIVERY_INSPECTION, speed_mph=100.0),
+            _config(ContactMode.DELIVERY_INSPECTION, speed_mph=101.0),
+        )
+    )
+
+    with pytest.raises(ContractViolationError):
+        SimulationEnsembleRequest(
+            first.plan,
+            first.sampled_inputs,
+            tuple(reversed(first.configs)),
+            sample_provenance="explicit_design",
+        )

@@ -188,9 +188,14 @@ def read_launch_monitor_frame(path: Path) -> pd.DataFrame:
         if any(len(row) != len(headers) for row in rows[1:]):
             raise ValueError("Every CSV data row must match the header width")
         _validate_import_shape(len(rows) - 1, len(headers))
+        # `dtype=object` on purpose: from pandas 3 a bare construction coerces a
+        # None in an object column to NaN, and the browser policy this import
+        # mirrors yields null for an empty cell. An absent value must stay
+        # absent rather than becoming a floating-point quantity.
         return pd.DataFrame(
             [[_coerce_csv_cell(value) for value in row] for row in rows[1:]],
             columns=headers,
+            dtype=object,
         )
     if suffix == ".json":
         try:

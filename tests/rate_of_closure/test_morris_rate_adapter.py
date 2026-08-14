@@ -25,6 +25,10 @@ from rate_of_closure.variation.morris_rate_adapter import (
     evaluate_rate_morris_design,
 )
 from rate_of_closure.variation.simulation_types import ALL_OUTPUT_NAMES, APP_FRAME_ID
+from rate_of_closure.variation.trial_projection import (
+    TrialCapture,
+    project_simulation_outcome,
+)
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_BALL_SETUP,
@@ -196,6 +200,13 @@ def test_sample_maps_spec_ids_to_supported_simulation_variable_keys() -> None:
 
 def test_injected_hit_miss_and_failure_preserve_exact_availability() -> None:
     design = _design(_factor(_YAW), trajectories=1)
+    # `capture_simulation` requires the returned run to carry the exact config it
+    # was asked for, so a hit cannot be produced by handing the evaluator a run
+    # built from some other config -- and Rate Morris execution additionally
+    # requires the double_pendulum source, which misses. The hit case is
+    # therefore asserted against the projection that owns the availability rule,
+    # using a genuine manual-source hit, while the miss goes through the real
+    # evaluator end to end.
     manual_hit = run_simulation(
         dataclasses.replace(
             _base_config(),
@@ -203,14 +214,10 @@ def test_injected_hit_miss_and_failure_preserve_exact_availability() -> None:
             ball_setup=BallSetup(BallSupportMode.GROUND),
         )
     )
-    fixed_miss = run_simulation(_base_config())
-    runs = iter((manual_hit, fixed_miss))
-
-    hit_or_miss = RateMorrisEvaluator(
-        design, _base_config(), lambda _config: next(runs)
+    first = project_simulation_outcome(0, TrialCapture(manual_hit, None))
+    second = RateMorrisEvaluator(design, _base_config(), run_simulation)(
+        _sample(design, 1)
     )
-    first = hit_or_miss(_sample(design, 0))
-    second = hit_or_miss(_sample(design, 1))
 
     assert first.status == "evaluated_hit"
     assert all(first.values[name] is not None for name in ALL_OUTPUT_NAMES)
