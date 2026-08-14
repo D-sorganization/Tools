@@ -44,6 +44,48 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Serialization facade methods keep typed local return values so narrow mypy
   runs agree with full-repository type information.
 
+### 2026-07-31 P1AM Control System E-Stop and Shutdown Safe State
+
+- A commanded E-stop now de-energizes the heater. `POST /api/estop` opens the
+  heater relay coil as its first action on the wire — that coil is the only
+  thing commanding the 110 V element — and zeroes every PID setpoint. Success is
+  reported only once the controller acknowledges those writes; an unacknowledged
+  kill returns 502, leaves the controller latches raised, and tells the operator
+  the relay may still be closed.
+- The E-stop no longer writes the 64-register tag block. The firmware
+  republishes those registers from its own broker every scan and never reads
+  them back, so those writes could not affect the plant and only consumed the
+  kill path's Modbus budget.
+- Backend shutdown drives the plant safe before it closes anything. The
+  controllers latch, the heater relay opens, the power-supply command is zeroed
+  and the controller E-stop is asserted — each write verified individually and
+  escalated at CRITICAL if unacknowledged — and this runs on the error path as
+  well as a clean stop. The whole teardown is bounded by a deadline shorter than
+  the service unit's stop timeout, and the PLC-connect retry now waits on the
+  shutdown signal instead of sleeping through it, so the Modbus and historian
+  handles are closed in an orderly way rather than killed mid-transaction.
+- Direct tag writes fail loudly instead of silently doing nothing. A `TAG_n`
+  write on the P1AM driver resolves into the firmware-owned block and cannot
+  reach the plant, so it is now refused (HTTP 501) rather than reported as
+  applied. The PID auto-tuner's step goes through the PID setpoint command path
+  that does reach the device, and identification is skipped entirely unless the
+  step was acknowledged — previously it fitted and returned gains for a step the
+  plant never saw.
+- Every public write seam on the Modbus client honours the defense-in-depth
+  E-stop latch: direct tag writes and routing deploys join the coil and setpoint
+  seams in being forced to the safe direction (or refused) while the latch is
+  set, and a contract test fails if a new write seam is added without either
+  honouring the latch or being explicitly exempted.
+- The client exposes a host-heartbeat seam for the firmware's liveness
+  watchdog, which drives all outputs safe if it sees no host activity within its
+  timeout window. The heartbeat is deliberately exempt from the E-stop latch: it
+  reports that the host is alive, not that an output should move.
+- The new endpoint tests configure their credential posture per test rather than
+  by mutating the process environment when the module is imported. Import-time
+  mutation made the posture depend on collection order and worker assignment, so
+  a suite could report green purely because it was ordered favourably — an
+  unacceptable failure mode for the tests standing over an E-stop write path.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce

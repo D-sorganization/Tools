@@ -3,7 +3,7 @@ import logging
 import os
 import time
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from datetime import datetime, timezone
 
 try:
@@ -13,6 +13,7 @@ except ImportError:
 from typing import Any, cast
 
 import historian
+import shutdown_safety
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import (
     CREDENTIAL_HEADER_NAME,
@@ -312,7 +313,13 @@ async def modbus_connect_background() -> None:
             )
         except Exception as e:
             logger.debug(f"Background PLC connect attempt failed: {e}")
-        await asyncio.sleep(settings.connect_retry_interval_s)
+        # Wait on the shutdown event, not a blind sleep: a bare sleep only
+        # notices shutdown after it wakes, stalling teardown a whole retry
+        # interval and getting us SIGKILLed unsafed (issue #4005).
+        with suppress(TimeoutError):  # interval elapsed, no shutdown -> loop
+            await asyncio.wait_for(
+                shutdown_event.wait(), timeout=settings.connect_retry_interval_s
+            )
 
 
 def _publish_active_config(config: RoutingConfig) -> None:
@@ -491,14 +498,28 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             settings=settings,
         )
     )
-    yield
-    # Shutdown: signal task stop, close client connection & Alicat manager
-    shutdown_event.set()
-    await connect_task
-    await polling_task
-    await retention_task
-    await alicat_manager.stop()
-    await plc_client.disconnect()
+    try:
+        yield
+    finally:
+        # Stopping this process is a plant operation: the outputs are driven
+        # safe BEFORE any task is joined or any socket is closed, the whole
+        # sequence is bounded by a deadline shorter than the unit's
+        # TimeoutStopSec, and this runs on the exception path too (issue #4005).
+        await shutdown_safety.run_shutdown_sequence(
+            plc=plc_client,
+            controllers=(
+                control_context,
+                power_supply_service,
+                temperature_service,
+            ),
+            shutdown_event=shutdown_event,
+            tasks=(connect_task, polling_task, retention_task),
+            closers=(
+                ("Alicat manager stop", alicat_manager.stop),
+                ("PLC disconnect", plc_client.disconnect),
+            ),
+            log=logger,
+        )
 
 
 app = FastAPI(
@@ -694,7 +715,13 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
 # Clearing the E-stop (below) requires the admin credential.
 @app.post("/api/estop")
 async def trigger_estop() -> dict[str, str]:
-    """Immediate safety shutdown command, zeroing all tag variables."""
+    """Immediate safety shutdown: open the heater relay and zero every command.
+
+    Success is reported ONLY once the PLC acknowledges the de-energizing writes
+    — the heater relay coil above all, the only thing commanding the 110 V
+    element. An unacknowledged kill returns 502 with the controllers left
+    latched so the next poll re-asserts (issue #4000).
+    """
     control_context.engage_estop()
     # Latch the controllers FIRST so the next poll cycle cannot re-command a
     # setpoint / re-close the heater relay and re-energize after we zero below.
@@ -713,9 +740,16 @@ async def trigger_estop() -> dict[str, str]:
     if not ok:
         raise HTTPException(
             status_code=502,
-            detail="E-stop command was not acknowledged by the PLC; controller remains latched and will retry.",
+            detail=(
+                "E-stop de-energize NOT acknowledged — the heater relay may "
+                "still be closed. Controllers stay latched and will re-assert; "
+                "verify the plant and use the hardwired stop if in doubt."
+            ),
         )
-    return {"status": "success", "message": "Hardware E-stop triggered."}
+    return {
+        "status": "success",
+        "message": "Hardware E-stop triggered: heater relay open, setpoints zeroed.",
+    }
 
 
 @app.post("/api/estop/clear", dependencies=[Depends(require_admin_key)])
@@ -1100,7 +1134,13 @@ async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, st
             "message": f"Successfully forced simulated tag {tag_name} to {payload.value}.",
         }
 
-    success = await plc_client.write_tag(tag_name, payload.value)
+    try:
+        success = await plc_client.write_tag(tag_name, payload.value)
+    except NotImplementedError as exc:
+        # No host-writable register for this tag (the P1AM TAG_n block is
+        # republished by the firmware every scan) — say so rather than answer
+        # 200 for a write the plant never saw (issue #4015).
+        raise HTTPException(status_code=501, detail=str(exc)) from exc
     await backup_simulator.write_tag(tag_name, payload.value)
     if not success:
         raise HTTPException(
@@ -1167,7 +1207,14 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
 async def step_pid_tuning(
     pid_index: int, payload: PIDTuningStepPayload
 ) -> dict[str, str]:
-    """Executes a step change in the loop's control variable (CV)."""
+    """Executes a step change on the loop, through a seam that reaches the PLC.
+
+    The step used to go out via ``write_tag``, which resolves ``TAG_n`` into the
+    block the firmware republishes every scan and never reads — the plant never
+    saw it, yet identification ran anyway and returned fitted gains as
+    ``status="success"`` (issue #4015). It now goes through
+    ``write_pid_setpoint``, and the session is marked stepped only once acked.
+    """
     if pid_index not in control_context.tuning_sessions:
         raise HTTPException(
             status_code=400, detail="Tuning session not active for this PID loop."
@@ -1178,13 +1225,24 @@ async def step_pid_tuning(
     cv_tag = control_context.active_config.pids[pid_index].cv_tag
     initial_cv = _latest_tag_or_http_error(cv_tag, "CV", pid_index)
 
+    if plc_client.connected:
+        stepped = await plc_client.write_pid_setpoint(pid_index, payload.step_value)
+        await backup_simulator.write_pid_setpoint(pid_index, payload.step_value)
+    else:
+        stepped = await backup_simulator.write_pid_setpoint(
+            pid_index, payload.step_value
+        )
+    if not stepped:
+        raise HTTPException(
+            status_code=502,
+            detail=f"PID loop {pid_index} step was not acknowledged; none applied.",
+        )
+
     session["step_triggered"] = True
     session["step_time"] = time.time() - session["start_time"]
     session["initial_cv"] = initial_cv
     session["final_cv"] = payload.step_value
 
-    await plc_client.write_tag(cv_tag, payload.step_value)
-    await backup_simulator.write_tag(cv_tag, payload.step_value)
     control_context.write_tag(cv_tag, payload.step_value)
 
     logger.info(

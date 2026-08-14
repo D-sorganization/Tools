@@ -4,7 +4,6 @@ import logging
 import hardware
 from modbus_codec import (
     INTERLOCK_CHUNK_OFFSETS,
-    TAG_COUNT,
     decode_interlocks,
     decode_pid_configs,
     direct_tag_address,
@@ -13,7 +12,6 @@ from modbus_codec import (
     encode_tag_indices,
     float_to_registers,
     registers_to_float,
-    zero_float_registers,
 )
 from models import RoutingConfig
 from plc_interface import BasePLCClient
@@ -38,9 +36,13 @@ class AsyncModbusManager(BasePLCClient):
         self.pid_config_address = hardware.PID_CONFIG_BASE
         self.interlock_config_address = hardware.INTERLOCK_BASE
         self.save_to_flash_coil_address = hardware.SAVE_TO_FLASH_COIL
-        self.estop_registers_address = hardware.TAG_VALUE_BASE
         self.estop_reset_coil_address = hardware.ESTOP_RESET_COIL
         self.tag_value_registers_address = hardware.TAG_VALUE_BASE
+        self.heater_relay_coil_address = hardware.HEATER_RELAY_COIL
+        self.heartbeat_register_address = hardware.HOST_HEARTBEAT_REGISTER
+
+        # Free-running 16-bit host-liveness counter (see write_heartbeat).
+        self._heartbeat_counter = 0
 
         # Defense-in-depth E-stop interlock latch. When set, the low-level write
         # seams (write_coil / write_pid_setpoint) independently force any
@@ -153,7 +155,9 @@ class AsyncModbusManager(BasePLCClient):
                     high = response.registers[i * 2 + 1]
                     tags[f"TAG_{i}"] = registers_to_float(low, high)
                 return tags
-            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+            except (
+                Exception
+            ) as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during tag read: {e}")
                 self._connected = False
                 return None
@@ -224,12 +228,26 @@ class AsyncModbusManager(BasePLCClient):
     async def write_routing(self, config: RoutingConfig) -> bool:
         """Write the routing matrix configuration to the PLC.
 
+        Defense-in-depth E-stop interlock: a routing deploy carries the PID
+        block, setpoints included, so applying one while the write-seam latch is
+        set would re-command an output the E-stop just zeroed. The deploy is
+        refused outright rather than partially sanitised — configuration
+        deployment is never urgent enough to race a tripped plant, and a partial
+        write would leave the PLC holding a half-applied config (issue #4038).
+
         Args:
             config: RoutingConfig configuration model.
 
         Returns:
-            bool: True if writing succeeded, False otherwise.
+            bool: True if writing succeeded, False otherwise (including when
+            refused because the E-stop write-seam latch is set).
         """
+        if self._estop_active:
+            logger.warning(
+                "write_routing refused — E-stop interlock active; a routing "
+                "deploy would re-command PID setpoints."
+            )
+            return False
         async with self.lock:
             try:
                 client = self._get_client()
@@ -288,7 +306,9 @@ class AsyncModbusManager(BasePLCClient):
                 )
                 return True
 
-            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+            except (
+                Exception
+            ) as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception writing configuration to PLC: {e}")
                 self._connected = False
                 return False
@@ -313,19 +333,40 @@ class AsyncModbusManager(BasePLCClient):
                     return False
                 logger.info("Triggered Save to Flash Modbus Coil.")
                 return True
-            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+            except (
+                Exception
+            ) as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception saving config to PLC flash: {e}")
                 self._connected = False
                 return False
 
     async def trigger_estop(self) -> bool:
-        """Zero PID setpoints and tag values so outputs go to zero and hold.
+        """De-energize the heater relay and zero every PID setpoint.
+
+        Write order is a safety property, not a style choice. The heater relay
+        coil (``hardware.HEATER_RELAY_COIL``) is the ONLY thing that commands
+        the 110 V element, so it is opened FIRST — before any register write can
+        consume the scan budget or fail. Previously this method never touched
+        the coil at all, leaving the heater energized until the next
+        ``TemperatureService.poll()``: seconds to tens of seconds later, or
+        forever if the poll loop is wedged (issue #4000).
+
+        The old 64-register write at ``TAG_VALUE_BASE`` is gone. It was a
+        provable no-op: the firmware unconditionally rewrites registers 0..63
+        from its broker at the end of every scan and ``SyncModbusToDCS()`` never
+        reads that block back, so the host's zeros were overwritten within one
+        scan and were never observed by anything.
 
         Best-effort and non-atomic by design: a partial kill is unsafe, so on a
-        sub-write failure we do NOT early-return — every register is attempted so
-        the output is driven down as far as possible, and ``False`` is returned
-        only after all writes so the caller (and the poll-loop re-assert) knows
-        to retry. Returns True only when every write was acknowledged.
+        sub-write failure we do NOT early-return — every de-energizing write is
+        attempted so the plant is driven down as far as possible, and ``False``
+        is returned only after all of them so the caller (and the poll-loop
+        re-assert) knows to retry.
+
+        Returns:
+            bool: True only when EVERY de-energizing write was acknowledged,
+            including the heater relay coil. A caller must not report an E-stop
+            as successful on ``False`` — the heater may still be closed.
         """
         async with self.lock:
             if not self._connected:
@@ -333,9 +374,22 @@ class AsyncModbusManager(BasePLCClient):
             all_ok = True
             try:
                 client = self._get_client()
-                # PID setpoint is field 3 of each 10-register block.
-                for pid_index in range(4):
-                    sp_addr = self.pid_config_address + pid_index * 10 + 2
+                # FIRST: drop the heater relay. Hard error if it is not acked.
+                resp = await client.write_coil(
+                    address=hardware.HEATER_RELAY_COIL, value=False
+                )
+                if resp.isError():
+                    all_ok = False
+                    logger.critical(
+                        "E-stop: heater relay coil %d NOT acknowledged (%s) — "
+                        "the 110 V element may still be energized.",
+                        hardware.HEATER_RELAY_COIL,
+                        resp,
+                    )
+
+                # Then zero every analog command (PID setpoint pair).
+                for pid_index in range(hardware.PID_COUNT):
+                    sp_addr = hardware.pid_setpoint_address(pid_index)
                     resp = await client.write_registers(
                         address=sp_addr, values=float_to_registers(0.0)
                     )
@@ -345,22 +399,54 @@ class AsyncModbusManager(BasePLCClient):
                             f"E-stop: error zeroing PID {pid_index} setpoint: {resp}"
                         )
 
-                # Zero all tag values (covers any directly-driven, non-PID tag).
-                resp = await client.write_registers(
-                    address=self.estop_registers_address,
-                    values=zero_float_registers(TAG_COUNT),
+                if all_ok:
+                    logger.warning("E-stop: heater relay open, PID setpoints zeroed.")
+                else:
+                    logger.error("E-stop: one or more kill writes FAILED — retry.")
+                return all_ok
+            except (
+                Exception
+            ) as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+                logger.error(f"Exception during E-stop Modbus execution: {e}")
+                self._connected = False
+                return False
+
+    async def write_heartbeat(self) -> bool:
+        """Bump the firmware's host-liveness register (see #3999).
+
+        The firmware treats any CHANGE to ``hardware.HOST_HEARTBEAT_REGISTER``
+        as proof the host is alive; the value itself carries no meaning, so this
+        writes a free-running 16-bit counter. If the firmware sees neither a
+        Modbus TCP connection nor a heartbeat change for
+        ``hardware.HEARTBEAT_TIMEOUT_S`` it drives all analog outputs to 0 %,
+        opens the heater relay, asserts Inhibit and holds the PID loops.
+
+        Call once per successful scan. Deliberately NOT gated by the
+        ``_estop_active`` write-seam latch: this is a liveness counter, not a
+        plant output. Suppressing it during an operator E-stop would trip the
+        firmware watchdog on a host that is in fact alive, and would mask a
+        genuine host failure behind a deliberate operator action.
+
+        Returns:
+            bool: True if the heartbeat write was acknowledged.
+        """
+        if not self._connected:
+            return False
+        self._heartbeat_counter = (self._heartbeat_counter + 1) & 0xFFFF
+        async with self.lock:
+            try:
+                resp = await self._get_client().write_registers(
+                    address=hardware.HOST_HEARTBEAT_REGISTER,
+                    values=[self._heartbeat_counter],
                 )
                 if resp.isError():
-                    all_ok = False
-                    logger.error(f"Error writing E-stop registers: {resp}")
-
-                if all_ok:
-                    logger.warning("E-stop: PID setpoints and tag values zeroed.")
-                else:
-                    logger.error("E-stop: one or more zeroing writes FAILED — retry.")
-                return all_ok
-            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
-                logger.error(f"Exception during E-stop Modbus execution: {e}")
+                    logger.error("Heartbeat write failed: %s", resp)
+                    return False
+                return True
+            except (
+                Exception
+            ) as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+                logger.error("Heartbeat write exception: %s", exc)
                 self._connected = False
                 return False
 
@@ -389,7 +475,9 @@ class AsyncModbusManager(BasePLCClient):
                     return False
                 logger.warning("E-stop reset coil written to PLC successfully.")
                 return True
-            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+            except (
+                Exception
+            ) as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during E-stop reset Modbus execution: {e}")
                 self._connected = False
                 return False
@@ -440,7 +528,9 @@ class AsyncModbusManager(BasePLCClient):
                         value,
                         resp,
                     )
-                except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+                except (
+                    Exception
+                ) as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                     logger.error(
                         "write_pid_setpoint(%d, %f) exception: %s",
                         pid_index,
@@ -497,7 +587,9 @@ class AsyncModbusManager(BasePLCClient):
                     if not resp.isError():
                         return True
                     logger.error("write_coil(%d, %s) failed: %s", address, value, resp)
-                except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+                except (
+                    Exception
+                ) as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                     logger.error(
                         "write_coil(%d, %s) exception: %s", address, value, exc
                     )
@@ -516,17 +608,71 @@ class AsyncModbusManager(BasePLCClient):
                 )
             return False
 
+    def _is_republished_tag_register(self, address: int) -> bool:
+        """Whether ``address`` falls inside the firmware's broker-owned block.
+
+        The firmware rewrites registers ``TAG_VALUE_BASE .. +TAG_COUNT*2`` from
+        its tag broker at the end of every scan and never reads them back, so a
+        host write there is overwritten within one scan and cannot reach the
+        plant.
+        """
+        base: int = hardware.TAG_VALUE_BASE
+        width: int = hardware.TAG_COUNT * 2
+        return bool(base <= address < base + width)
+
     async def write_tag(self, tag_name: str, value: float) -> bool:
         """Write a 32-bit float directly to a tag register.
 
-        Supports dynamic tags by name or fallback to 'TAG_idx' format.
+        Supports dynamic tags mapped to a real V register. ``TAG_n`` names are
+        REFUSED: ``modbus_codec.direct_tag_address`` resolves them to holding
+        register ``n*2``, inside the block the firmware republishes from its
+        broker every scan and never reads back. Such a write cannot influence
+        the plant, so claiming success for it is worse than failing — it let the
+        API answer 200 for a command the plant never saw and let the PID
+        auto-tuner fit gains to a step that never happened (issue #4015). A
+        write seam that cannot write must not pretend otherwise, so this raises
+        rather than returning a bool the caller may read as a transient fault.
+
+        Defense-in-depth E-stop interlock: when the write-seam latch is set
+        (``set_estop_active(True)``) an energizing (non-zero) value is forced to
+        0 here, exactly as in ``write_coil`` / ``write_pid_setpoint``. This seam
+        previously skipped the latch entirely (issue #4038).
+
+        Raises:
+            TypeError: If ``tag_name`` is not a str.
+            NotImplementedError: If the tag resolves into the firmware's
+                republished broker block, i.e. the write can never take effect.
+
+        Returns:
+            bool: True if the write was acknowledged by the PLC.
         """
+        if not isinstance(tag_name, str):
+            raise TypeError(f"tag_name must be a str, got {type(tag_name).__name__}")
+
         address = direct_tag_address(tag_name, self.tag_map)
         if address is None:
             logger.error(
                 f"Invalid tag name or no mapped register for write: {tag_name}"
             )
             return False
+
+        if self._is_republished_tag_register(address):
+            raise NotImplementedError(
+                f"write_tag({tag_name!r}) resolves to holding register {address}, "
+                "inside the block the P1AM firmware republishes from its broker "
+                "every scan and never reads back. This write cannot reach the "
+                "plant. Use write_pid_setpoint (PID/AO command) or write_coil "
+                "(discrete output) instead."
+            )
+
+        # Interlock: force an energizing command to 0 while E-stop is latched.
+        if self._estop_active and value != 0.0:
+            logger.warning(
+                "write_tag(%s, %s) forced to 0 — E-stop interlock active",
+                tag_name,
+                value,
+            )
+            value = 0.0
 
         async with self.lock:
             if not self._connected:
@@ -546,7 +692,9 @@ class AsyncModbusManager(BasePLCClient):
                     f"Directly wrote {value} to tag {tag_name} at register {address}."
                 )
                 return True
-            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+            except (
+                Exception
+            ) as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during direct tag write for {tag_name}: {e}")
                 self._connected = False
                 return False
