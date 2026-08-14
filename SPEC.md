@@ -26,11 +26,30 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.89                                    |
-| **Spec Version**        | 1.16.89                                    |
+| **Current Version**     | 1.16.90                                    |
+| **Spec Version**        | 1.16.90                                    |
 | **Last Spec Update**    | 2026-08-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-13 Club Explorer bounded mesh and camera interaction (#4433)
+
+Version 1.16.90 adds matched focusable React/PyQt clubhead cameras: Arrow keys
+orbit, plus/minus zoom, and Home/Reset restore the canonical orthographic view
+without changing scientific inputs. Pointer orbit and wheel zoom use the same
+bounded state. Imported STL is local-only and capped before materialization at
+2 MiB and 2,048 raw triangles; renderer adoption is capped at 4,096 so the
+2,176-triangle Mallet Putter remains supported. Accepted geometry is immutable,
+normals are derived from winding, stale browser reads cannot replace a newer
+source, and parse/import failures retain the prior source and camera. Imported
+provenance records byte/raw/retained counts, SHA-256, and display-normalization
+revision; STL units, physical front/back, hosel registration, and mass centroid
+are explicitly not inferred. React evidence covers generated/imported/error at
+1440x900, 1280x720, and 390x844; PyQt diagnostics cover procedural/imported/
+error at DPI 1.0/1.5. These captures are diagnostic, not approved goldens.
+PyQt file loading is synchronous, so a painted loading state is not claimed.
+Render failures stop playback and may leave a stale image while retaining the
+selected source/camera; broader tab polish and approval remain open in #4433.
 
 ### 2026-08-13 Putting hosted typing closure (#4443)
 

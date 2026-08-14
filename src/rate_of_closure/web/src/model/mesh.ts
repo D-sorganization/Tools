@@ -3,13 +3,13 @@
  *
  * Parses both binary STL (80-byte header, uint32 count, 50-byte
  * records) and ASCII STL (`solid`/`facet`/`vertex`), then normalizes
- * arbitrary meshes onto the canonical head envelope (AffineDrift
- * frame: x target, y up, z right):
+ * arbitrary meshes into a bounded display envelope. STL units, physical
+ * face direction, and original handedness are not encoded or inferred.
  *
  * 1. Degenerate (zero-area) triangles are dropped.
  * 2. Axes are permuted by bounding-box extent — largest to z (heel-toe
  *    width), middle to x (face-to-back depth), smallest to y (crown
- *    height) — so the face plate ends up facing +x.
+ *    height), then a sign is compensated to keep a proper-handed transform.
  * 3. The bounding box is centered on the origin and scaled uniformly
  *    so the depth (x extent) equals `HEAD_DEPTH_M`.
  *
@@ -29,19 +29,27 @@ export interface HeadMesh {
 
 /** Canonical face-to-back depth of the head envelope [m]. */
 export const HEAD_DEPTH_M = 0.11;
+export const MAX_HEAD_SPAN_M = 0.33;
+export const MAX_STL_BYTES = 2 * 1024 * 1024;
+export const MAX_IMPORTED_MESH_TRIANGLES = 2_048;
+export const MAX_RENDER_MESH_TRIANGLES = 4_096;
 
 const BINARY_HEADER_BYTES = 80;
 const BINARY_RECORD_BYTES = 50;
-const MIN_AREA = 1e-20;
+const MIN_AREA = 1e-15;
 const ASCII_VERTEX = /vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)/g;
 
 function looksBinary(buffer: ArrayBuffer): boolean {
   if (buffer.byteLength < BINARY_HEADER_BYTES + 4) return false;
   const count = new DataView(buffer).getUint32(BINARY_HEADER_BYTES, true);
-  return (
+  const matchesLayout = (
     buffer.byteLength ===
     BINARY_HEADER_BYTES + 4 + count * BINARY_RECORD_BYTES
   );
+  if (matchesLayout && count > MAX_IMPORTED_MESH_TRIANGLES) {
+    throw new Error("STL must not exceed 2,048 triangles");
+  }
+  return matchesLayout;
 }
 
 function parseBinary(buffer: ArrayBuffer): Triangle[] {
@@ -66,12 +74,15 @@ function parseBinary(buffer: ArrayBuffer): Triangle[] {
 }
 
 function parseAscii(buffer: ArrayBuffer): Triangle[] {
-  const text = new TextDecoder("utf-8", { fatal: false }).decode(buffer);
+  const text = new TextDecoder("utf-8", { fatal: true }).decode(buffer);
   if (!text.trimStart().toLowerCase().startsWith("solid")) {
     throw new Error("not a valid STL: neither binary layout nor ASCII 'solid'");
   }
   const vertices: Vec3[] = [];
   for (const match of text.matchAll(ASCII_VERTEX)) {
+    if (vertices.length >= MAX_IMPORTED_MESH_TRIANGLES * 3) {
+      throw new Error("STL must not exceed 2,048 triangles");
+    }
     vertices.push([Number(match[1]), Number(match[2]), Number(match[3])]);
   }
   if (vertices.length === 0) {
@@ -90,6 +101,7 @@ function parseAscii(buffer: ArrayBuffer): Triangle[] {
 /** Parse STL bytes (binary or ASCII) into triangles. */
 export function parseStl(buffer: ArrayBuffer): Triangle[] {
   if (buffer.byteLength === 0) throw new Error("data must not be empty");
+  if (buffer.byteLength > MAX_STL_BYTES) throw new Error("STL must not exceed 2 MiB");
   const triangles = looksBinary(buffer)
     ? parseBinary(buffer)
     : parseAscii(buffer);
@@ -151,9 +163,20 @@ export function normalizeHead(
   depthM: number = HEAD_DEPTH_M,
 ): Triangle[] {
   if (!(depthM > 0)) throw new Error("depthM must be positive");
-  const solid = triangles.filter(
-    (tri) => Math.hypot(...triangleCross(tri)) > MIN_AREA,
-  );
+  if (triangles.length === 0 || triangles.length > MAX_RENDER_MESH_TRIANGLES) {
+    throw new Error("mesh must contain 1 to 4,096 triangles");
+  }
+  let magnitude = 0;
+  for (const triangle of triangles) for (const vertex of triangle) {
+    for (const coordinate of vertex) {
+      if (!Number.isFinite(coordinate)) throw new Error("triangles must be finite");
+      magnitude = Math.max(magnitude, Math.abs(coordinate));
+    }
+  }
+  if (!(magnitude > 0)) throw new Error("mesh has no non-degenerate triangles");
+  const scaled = triangles.map((triangle) => triangle.map((vertex) =>
+    vertex.map((coordinate) => coordinate / magnitude) as Vec3) as Triangle);
+  const solid = scaled.filter((tri) => Math.hypot(...triangleCross(tri)) > MIN_AREA);
   if (solid.length === 0) {
     throw new Error("mesh has no non-degenerate triangles");
   }
@@ -166,10 +189,16 @@ export function normalizeHead(
   const order = [0, 1, 2].sort((a, b) => extents[a] - extents[b] || a - b);
   // middle -> x (depth), smallest -> y (height), largest -> z (width).
   const permutation = [order[1], order[0], order[2]];
+  const inversions = permutation.reduce((count, source, left) => count
+    + permutation.slice(left + 1).filter((other) => source > other).length, 0);
   const permuted = solid.map(
     (tri) =>
       tri.map(
-        (v) => [v[permutation[0]], v[permutation[1]], v[permutation[2]]] as Vec3,
+        (v) => [
+          v[permutation[0]],
+          v[permutation[1]],
+          (inversions % 2 === 0 ? 1 : -1) * v[permutation[2]],
+        ] as Vec3,
       ) as Triangle,
   );
   const box = bounds(permuted);
@@ -179,17 +208,23 @@ export function normalizeHead(
     (box.max[2] + box.min[2]) / 2,
   ];
   const scale = depthM / extents[order[1]];
-  return permuted.map(
+  const normalized = permuted.map(
     (tri) =>
       tri.map(
         (v) =>
           [
-            (v[0] - center[0]) * scale,
-            (v[1] - center[1]) * scale,
-            (v[2] - center[2]) * scale,
+            (v[0] - center[0]) * scale || 0,
+            (v[1] - center[1]) * scale || 0,
+            (v[2] - center[2]) * scale || 0,
           ] as Vec3,
       ) as Triangle,
   );
+  const normalizedBox = bounds(normalized);
+  const spans = normalizedBox.max.map((value, axis) => value - normalizedBox.min[axis]);
+  if (spans.some((span) => span > MAX_HEAD_SPAN_M)) {
+    throw new Error("normalized mesh span exceeds 0.330 m");
+  }
+  return normalized;
 }
 
 /** Parse and normalize STL bytes into a renderable head mesh. */
@@ -198,5 +233,44 @@ export function loadHeadMesh(
   depthM: number = HEAD_DEPTH_M,
 ): HeadMesh {
   const triangles = normalizeHead(parseStl(buffer), depthM);
-  return { triangles, normals: triangleNormals(triangles) };
+  return snapshotHeadMesh({ triangles, normals: triangleNormals(triangles) });
+}
+
+/** Parse once while retaining the raw pre-degenerate triangle count. */
+export function loadHeadMeshReport(buffer: ArrayBuffer): {
+  readonly mesh: HeadMesh; readonly rawTriangleCount: number;
+} {
+  const parsed = parseStl(buffer);
+  const triangles = normalizeHead(parsed);
+  return Object.freeze({
+    mesh: snapshotHeadMesh({ triangles, normals: triangleNormals(triangles) }),
+    rawTriangleCount: parsed.length,
+  });
+}
+
+/** Deep-copy and freeze a fully validated mesh at an adoption boundary. */
+export function snapshotHeadMesh(mesh: HeadMesh): HeadMesh {
+  const count = mesh.triangles.length;
+  if (count === 0 || count > MAX_RENDER_MESH_TRIANGLES || mesh.normals.length !== count) {
+    throw new Error("mesh must contain 1 to 4,096 triangles with matching normals");
+  }
+  const triangles = mesh.triangles.map((triangle) => {
+    if (triangle.length !== 3) throw new Error("mesh triangles must be 3 by 3");
+    return Object.freeze(triangle.map((vertex) => {
+      if (vertex.length !== 3 || !vertex.every(Number.isFinite)) {
+        throw new Error("mesh vertices must be finite 3-vectors");
+      }
+      return Object.freeze([...vertex]) as Vec3;
+    })) as Triangle;
+  });
+  for (const normal of mesh.normals) {
+    if (normal.length !== 3 || !normal.every(Number.isFinite)) {
+      throw new Error("mesh normals must be finite 3-vectors");
+    }
+  }
+  const normals = triangleNormals(triangles).map((normal) => Object.freeze(normal) as Vec3);
+  return Object.freeze({
+    triangles: Object.freeze(triangles) as Triangle[],
+    normals: Object.freeze(normals) as Vec3[],
+  });
 }

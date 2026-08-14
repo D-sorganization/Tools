@@ -16,6 +16,7 @@ import {
   parametricHeadMesh,
   REFERENCE_HEAD_MASS_KG,
 } from "./club";
+import { MAX_RENDER_MESH_TRIANGLES } from "./mesh";
 
 const DRIVER = "Driver 10.5°";
 
@@ -133,6 +134,14 @@ describe("face curvature", () => {
 });
 
 describe("parametric head", () => {
+  it("keeps every trusted library head within the render cap", () => {
+    const counts = new Map(CLUB_LIBRARY.map((club) => [
+      club.name,
+      parametricHeadMesh(club).triangles.length,
+    ]));
+    expect(counts.get("Mallet Putter")).toBe(2_176);
+    expect(Math.max(...counts.values())).toBeLessThanOrEqual(MAX_RENDER_MESH_TRIANGLES);
+  });
   it("is closed and deterministic", () => {
     const first = buildParametricHead(getClub(DRIVER));
     const second = buildParametricHead(getClub(DRIVER));

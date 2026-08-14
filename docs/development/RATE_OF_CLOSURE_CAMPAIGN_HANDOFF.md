@@ -1,5 +1,22 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-13 #4433 Club Explorer bounded mesh and camera interaction
+
+- React and PyQt now expose one focusable, named clubhead camera with matched
+  Arrow/+/-/Home and pointer/wheel transitions, visible focus/status, bounded
+  camera state, and no scientific recomputation from presentation changes.
+- Imported STL fails closed before materialization at 2 MiB/2,048 raw triangles;
+  renderer adoption is 4,096 to include the 2,176-triangle Mallet. Immutable
+  snapshots and typed SHA/count/revision provenance retain exact prior source
+  and camera after import failure. Browser reader epochs bind the exact source.
+- Display normalization is unitless and not a measured registration. Physical
+  face/front, hosel, and mass centroid are not inferred. React pending reads are
+  observable; PyQt loads synchronously and makes no loading-paint claim.
+- Nine browser page captures, six PyQt DPI window captures, and six PyQt canvas
+  identity crops are diagnostic-only, not approved goldens. Renderer failure
+  stops playback and may leave a stale image. SPEC is
+  1.16.90; #4433 stays open for remaining tabs/approval/AT coverage.
+
 ## 2026-08-13 #4443 Putting hosted typing closure
 
 - The PyQt display-coordinate adapter now constructs the exact raw-index/x/y

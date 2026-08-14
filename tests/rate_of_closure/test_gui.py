@@ -284,10 +284,13 @@ class TestClub3DView:
         view.stop()
 
     def test_user_orbit_angles_survive_animation_redraw(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        from types import SimpleNamespace
+
         view = Club3DView()
         qtbot.addWidget(view)
         view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
         view._axes.view_init(elev=55.0, azim=12.0)
+        view._on_orbit_finished(SimpleNamespace(button=1))
         view._draw()
         assert float(view._axes.elev) == pytest.approx(55.0)
         assert float(view._axes.azim) == pytest.approx(12.0)

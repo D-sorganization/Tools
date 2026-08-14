@@ -36,7 +36,9 @@ function ExplorerWorkspace(props: Omit<WorkspacePanelProps, "active" | "morrisCl
     <ImpactExplorerPanel scenario={model.scenario} setScenario={model.setScenario}
       units={model.units} setUnits={model.setUnits} clubSpec={model.clubSpec}
       setClubSpec={model.setClubSpec} generatedHead={model.generatedHead}
-      setGeneratedHead={model.setGeneratedHead} explained={model.explained}
+      setGeneratedHead={model.setGeneratedHead} clubMeshSource={model.clubMeshSource}
+      setClubMeshSource={model.setClubMeshSource} clubCamera={model.clubCamera}
+      setClubCamera={model.setClubCamera} explained={model.explained}
       onExplainedChange={model.setExplained} onOpenGlossary={props.onOpenGlossary} />
   );
 }

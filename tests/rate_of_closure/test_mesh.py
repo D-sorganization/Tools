@@ -8,12 +8,19 @@ implementations in lock-step.
 
 from __future__ import annotations
 
+import itertools
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
 from rate_of_closure._contracts import PreconditionError
 from rate_of_closure.mesh import (
     HEAD_DEPTH_M,
+    MAX_IMPORTED_MESH_TRIANGLES,
+    MAX_RENDER_MESH_TRIANGLES,
+    MAX_STL_BYTES,
     load_head_mesh,
     normalize_head,
     parse_stl,
@@ -76,6 +83,42 @@ def _box_triangles(
 
 
 class TestParser:
+    def test_public_parser_enforces_byte_and_triangle_caps_before_materialization(
+        self,
+    ) -> None:
+        exact = _box_triangles((0, 0, 0), (2, 6, 4))
+        repeated = np.tile(exact[:1], (MAX_IMPORTED_MESH_TRIANGLES, 1, 1))
+        assert (
+            parse_stl(write_binary_stl(repeated)).shape[0]
+            == MAX_IMPORTED_MESH_TRIANGLES
+        )
+        too_many = np.tile(exact[:1], (MAX_IMPORTED_MESH_TRIANGLES + 1, 1, 1))
+        with pytest.raises(PreconditionError, match="2,048 triangles"):
+            parse_stl(write_binary_stl(too_many))
+        with pytest.raises(PreconditionError, match="2 MiB"):
+            parse_stl(b"solid x\n" + b" " * MAX_STL_BYTES)
+
+    def test_ascii_cap_is_incremental_and_accepts_exact_boundary(self) -> None:
+        facet = b"facet\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 1\nendfacet\n"
+        exact = b"solid x\n" + facet * MAX_IMPORTED_MESH_TRIANGLES + b"endsolid x\n"
+        assert parse_stl(exact).shape[0] == MAX_IMPORTED_MESH_TRIANGLES
+        with pytest.raises(PreconditionError, match="2,048 triangles"):
+            parse_stl(
+                b"solid x\n"
+                + facet * (MAX_IMPORTED_MESH_TRIANGLES + 1)
+                + b"endsolid x\n"
+            )
+
+    def test_render_boundary_accepts_every_generated_library_head(self) -> None:
+        from rate_of_closure.club import CLUB_LIBRARY, parametric_head_mesh
+
+        counts = {
+            name: parametric_head_mesh(spec).triangles.shape[0]
+            for name, spec in CLUB_LIBRARY.items()
+        }
+        assert counts["Mallet Putter"] == 2_176
+        assert max(counts.values()) <= MAX_RENDER_MESH_TRIANGLES
+
     def test_binary_round_trip(self) -> None:
         tris = build_example_head()
         parsed = parse_stl(write_binary_stl(tris))
@@ -136,6 +179,33 @@ class TestNormalizeHead:
         # The old-frame origin corner lands at this exact point.
         corner = np.array([-0.055, -0.0275, -0.0825])
         assert (np.abs(flat - corner).sum(axis=1) < 1e-12).any()
+
+    def test_all_axis_orders_are_proper_handed_and_clear_signed_zero(self) -> None:
+        fixture = json.loads(
+            (
+                Path(__file__).parents[2]
+                / "src/rate_of_closure/web/src/model/__fixtures__"
+                / "mesh_normalization_orientation_golden_v1.json"
+            ).read_text(encoding="utf-8")
+        )
+        canonical = _box_triangles((0, 0, 0), tuple(fixture["source_extents"]))
+        for permutation in fixture["permutations"]:
+            source = canonical[:, :, permutation].copy()
+            inversions = sum(
+                permutation[left] > permutation[right]
+                for left, right in itertools.combinations(range(3), 2)
+            )
+            if inversions % 2:
+                source[:, [1, 2]] = source[:, [2, 1]]
+            normalized = normalize_head(source)
+            flat = normalized.reshape(-1, 3)
+            np.testing.assert_allclose(
+                np.ptp(flat, axis=0), fixture["expected_spans_m"], atol=1e-12
+            )
+            a, b, c = normalized[:, 0], normalized[:, 1], normalized[:, 2]
+            signed_volume = float(np.einsum("ij,ij->i", a, np.cross(b, c)).sum() / 6)
+            assert signed_volume > 0.0
+            assert not np.signbit(normalized[normalized == 0.0]).any()
 
     def test_degenerate_triangles_are_dropped(self) -> None:
         tris = _box_triangles((0, 0, 0), (2, 6, 4))

@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Club Explorer bounded mesh and camera interaction (#4433)
+
+- One canonical camera powers Arrow/+/-/Home, pointer/wheel, visible status,
+  orthographic projection, focus retention, clamps, and Reset View in both UIs.
+- Local STL reads are bounded before allocation, incrementally parsed, strictly
+  decoded, immutable after validation, and provenance-bound to SHA-256 and
+  raw/retained counts. Stale React readers cannot publish after any source
+  replacement; PyQt import is synchronous and reports inline errors.
+- Imported geometry uses a proper-handed stable-extent display transform with
+  a 0.110 m depth and <=0.330 m spans. It carries no inferred physical face,
+  hosel, units, or mass centroid. Diagnostics are not approved goldens.
+- Playback is paused under reduced motion; paused views do no recurring work.
+  PyQt uses a 5 fps cadence with the same 1.92 s 1x cycle. SPEC is 1.16.90;
+  broader #4433 coverage remains open.
+
 ## 2026-08-13 Putting hosted typing closure (#4443)
 
 - The Matplotlib display-point adapter now names and converts its two

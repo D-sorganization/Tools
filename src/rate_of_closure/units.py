@@ -1,15 +1,8 @@
-"""Unit systems for the rate-of-closure impact explorer.
+"""Unit systems and field guidance for the impact explorer.
 
-The model is always canonical — mph, deg/s, mm, microseconds — and the
-UIs convert at the edge, the same pattern the UpstreamDrift apps use
-for their unit drop-downs. Each unit maps to the factor that converts
-one displayed unit into the canonical unit, so
-
-    canonical = displayed * factor        displayed = canonical / factor
-
-Also owns the per-field hover guidance: a suggested range for the golf
-swing plus where the suggestion comes from (kept vendor-neutral; the
-primary citations live in the AffineDrift closure-rate dossier).
+The model stays canonical in mph, deg/s, mm, and microseconds. UIs convert at
+the edge: ``canonical = displayed * factor``. Guidance remains vendor-neutral;
+primary citations live in the AffineDrift closure-rate dossier.
 """
 
 from __future__ import annotations
@@ -310,12 +303,10 @@ FIELD_GUIDANCE: dict[str, str] = {
         "manufacturer spec sheets."
     ),
     "show_cg_marker": (
-        "Suggested range: on to mark the head's center of gravity — "
-        "the geometric centroid of the generated head computed from "
-        "its closed mesh by the divergence theorem (falls back to the "
-        "spec CG for loaded STLs that are not watertight). Source: "
-        "divergence-theorem solid centroid (standard vector calculus); "
-        "typical published CG specs for the per-type bands."
+        "On marks the active display reference. Generated heads use their "
+        "uniform-density geometric centroid; procedural and imported STL views use "
+        "the scenario datum. STL does not encode density, registration, or mass CG. "
+        "Source: generated-head geometry or current scenario reference authority."
     ),
     "flight_side_visible": (
         "Suggested range: on for the side profile (height vs carry) — "

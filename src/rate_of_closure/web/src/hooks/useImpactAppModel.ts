@@ -3,6 +3,11 @@ import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import type { UnitSelections } from "../components/ImpactExplorerPanel";
 import { getClub, type ClubSpec } from "../model/club";
 import { generatedHeadFor, type GeneratedHead } from "../model/clubHeadGeneration";
+import { DEFAULT_CLUB_CAMERA, type ClubCamera } from "../model/clubCamera";
+import {
+  generatedMeshSource,
+  type ClubMeshSource,
+} from "../model/clubMeshSource";
 import { DEFAULT_SCENARIO, type ImpactScenario } from "../model/impact";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
@@ -16,6 +21,10 @@ export interface ImpactAppModel {
   readonly setUnits: Dispatch<SetStateAction<UnitSelections>>;
   readonly generatedHead: GeneratedHead;
   readonly setGeneratedHead: Dispatch<SetStateAction<GeneratedHead>>;
+  readonly clubMeshSource: ClubMeshSource;
+  readonly setClubMeshSource: Dispatch<SetStateAction<ClubMeshSource>>;
+  readonly clubCamera: ClubCamera;
+  readonly setClubCamera: Dispatch<SetStateAction<ClubCamera>>;
   readonly clubSpec: ClubSpec;
   readonly setClubSpec: Dispatch<SetStateAction<ClubSpec>>;
   readonly explained: string;
@@ -39,12 +48,16 @@ export function useImpactAppModel(): ImpactAppModel {
   const [units, setUnits] = useState(DEFAULT_UNITS);
   const [generatedHead, setGeneratedHead] = useState(() =>
     generatedHeadFor(defaultDriver));
+  const [clubMeshSource, setClubMeshSource] = useState(() =>
+    generatedMeshSource(generatedHeadFor(defaultDriver), defaultDriver.name, 0));
+  const [clubCamera, setClubCamera] = useState(DEFAULT_CLUB_CAMERA);
   const [clubSpec, setClubSpec] = useState(defaultDriver);
   const [explained, setExplained] = useState("pathDeviationDeg");
   const [glossaryTerm, setGlossaryTerm] = useState<string>();
   return {
     scenario, setScenario, spatialTarget, setSpatialTarget, units, setUnits,
     generatedHead, setGeneratedHead, clubSpec, setClubSpec, explained,
-    setExplained, glossaryTerm, setGlossaryTerm,
+    setExplained, glossaryTerm, setGlossaryTerm, clubMeshSource,
+    setClubMeshSource, clubCamera, setClubCamera,
   };
 }

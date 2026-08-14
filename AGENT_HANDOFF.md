@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-13
 
+## 2026-08-13 Club Explorer bounded mesh and camera interaction (#4433)
+
+Version 1.16.90 adds matched keyboard/pointer camera control and bounded local
+STL lifecycle to React and PyQt. Imports fail closed at 2 MiB/2,048 raw
+triangles; render adoption permits 4,096 to retain every authored library head.
+Immutable meshes, derived normals, exact-source browser epochs, SHA/count/
+normalization provenance, and inline retained-prior import errors are pinned.
+Imported geometry is display-normalized and does not infer units, physical
+front/back, hosel registration, or mass centroid. Nine React page captures,
+six PyQt window captures, and six PyQt canvas identity crops are diagnostic-only.
+PyQt loading is synchronous/not observable; a renderer
+failure stops playback and may leave a stale image. #4433 remains open.
+
 ## 2026-08-13 Putting hosted typing closure (#4443)
 
 Version 1.16.89 replaces a variadic tuple expression at the Matplotlib

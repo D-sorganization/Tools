@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import math
-
 from PyQt6.QtCore import QSettings, Qt, QTimer
 from PyQt6.QtWidgets import (
     QDialog,
@@ -16,18 +14,11 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.club import (
-    ClubSpec,
-    head_cog,
-    hosel_point,
-    parametric_head_mesh,
-)
 from rate_of_closure.derivation import (
     METRIC_EXPLANATIONS,
     RESULT_EXPLANATIONS,
 )
 from rate_of_closure.helptext import HELP_TEXTS
-from rate_of_closure.model import ImpactScenario, closure_metrics, solve
 from rate_of_closure.ui.pyqt6.app_style import showcase_stylesheet
 from rate_of_closure.ui.pyqt6.app_toolstrip import (
     ApplicationToolstrip,
@@ -41,12 +32,11 @@ from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (
     LaunchMonitorAnalyticsTab,
 )
+from rate_of_closure.ui.pyqt6.main_window_club import MainWindowClubMixin
 from rate_of_closure.ui.pyqt6.main_window_contracts import (
     _METRIC_ROWS,
-    _QUANTITY_ROWS,
     _RESULT_ROWS,
     _TAB_HELP_KEYS,
-    _UNITS,
 )
 from rate_of_closure.ui.pyqt6.main_window_layout import (
     PrimaryTabSpec,
@@ -72,7 +62,6 @@ from rate_of_closure.ui.pyqt6.workspace_navigation import (
     NavigationSettings,
     WorkspaceNavigationMixin,
 )
-from rate_of_closure.units import convert_from_canonical
 from shared.python.swing_sim.variation import VariationDataset
 
 __all__ = ["RateOfClosureMainWindow"]
@@ -103,7 +92,9 @@ except ImportError:  # standalone / vendored use
             """Match the themed mixin's interface; do nothing."""
 
 
-class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMainWindow):
+class RateOfClosureMainWindow(
+    MainWindowClubMixin, WorkspaceNavigationMixin, ThemedWindowMixin, QMainWindow
+):
     """Interactive explorer for rotation-induced impact-point deviations."""
 
     def __init__(
@@ -353,77 +344,6 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         """Bind launcher services after its post-construction setup completes."""
         self._bind_launcher_theme_menu()
         super().showEvent(event)
-
-    def _format_row(self, field: str, value: float) -> str:
-        """Format one row's value in the user's selected display unit."""
-        if not math.isfinite(value):
-            return "∞ (not closing)"
-        quantity = _QUANTITY_ROWS.get(field)
-        if quantity is None:
-            return f"{value:+.2f}{_UNITS[field]}"
-        unit = self._controls.unit_for(quantity)
-        displayed = convert_from_canonical(quantity, unit, value)
-        return f"{displayed:+.2f} {unit}"
-
-    def _on_club_head(self, spec: ClubSpec) -> None:
-        """Build the parametric head for a club spec and display it.
-
-        The generated head carries its per-type hosel point (the shaft
-        line attaches there) and its divergence-theorem volumetric COG
-        for the "Show CG" marker.
-        """
-        report = head_cog(spec)
-        self._club_view.set_head_mesh(
-            parametric_head_mesh(spec),
-            hosel_point=hosel_point(spec),
-            cog_point=report.cog,
-        )
-        status_bar = self.statusBar()
-        if status_bar is not None:
-            status_bar.showMessage(
-                f"Representative head generated: {spec.name} — loft "
-                f"{spec.loft_deg:.1f}°, "
-                + (
-                    "curved face (bulge "
-                    f"{spec.face_bulge_radius_m * 1000.0:.0f} mm, roll "
-                    f"{spec.face_roll_radius_m * 1000.0:.0f} mm)"
-                    if spec.face_bulge_radius_m is not None
-                    and spec.face_roll_radius_m is not None
-                    else "flat face"
-                )
-            )
-
-    def _on_scenario(self, scenario: ImpactScenario) -> None:
-        result = solve(scenario)
-        metrics = closure_metrics(scenario)
-        for field, _ in _RESULT_ROWS:
-            self._rows[field].value_label.setText(
-                self._format_row(field, getattr(result, field))
-            )
-        for field, _ in _METRIC_ROWS:
-            self._rows[field].value_label.setText(
-                self._format_row(field, getattr(metrics, field))
-            )
-        self._club_view.set_scenario(scenario)
-        self._plots_tab.set_scenario(scenario)
-        self._derivation_view.set_scenario(scenario)
-        self._simulation_tab.set_club_spec(self._controls.club_spec())
-        self._simulation_tab.set_scenario(scenario)
-        self._variation_tab.set_scenario(scenario)
-        config = self._simulation_tab.config()
-        self._variation_tab.set_simulation_config(config)
-        self._morris_tab.set_simulation_config(config)
-        status_bar = self.statusBar()
-        if status_bar is None:  # pragma: no cover - Qt always provides one here
-            return
-        status_bar.showMessage(
-            f"Reference {result.reference_speed_mph:.1f} mph — impact point "
-            f"path {result.path_deviation_deg:+.2f}° "
-            f"({'left' if result.path_deviation_deg < 0 else 'right'}), "
-            f"AoA {result.aoa_deviation_deg:+.2f}°, "
-            f"CCV {result.closure_rate_dps:.0f} °/s "
-            f"({result.normalized_closure_deg_per_ft:.1f} °/ft)"
-        )
 
     def closeEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
         """Stop the animation timers before the window goes away."""

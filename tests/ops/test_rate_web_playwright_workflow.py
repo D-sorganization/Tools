@@ -23,6 +23,9 @@ TRUSTED_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
 PR_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
 PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/club/**",
+    "src/rate_of_closure/club_camera.py",
+    "src/rate_of_closure/club_mesh_source.py",
+    "src/rate_of_closure/mesh.py",
     "src/rate_of_closure/model.py",
     "src/rate_of_closure/plotting/**",
     "src/rate_of_closure/putting.py",
@@ -37,6 +40,12 @@ PYQT_AUTHORITY_PATHS = {
     "src/shared/python/swing_sim/variation/**",
     "src/shared/python/swing_sim/putting.py",
     "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+    "tests/rate_of_closure/pyqt_club_camera_probe.py",
+    "tests/rate_of_closure/test_club_camera.py",
+    "tests/rate_of_closure/test_club_mesh_source.py",
+    "tests/rate_of_closure/test_club_view_camera.py",
+    "tests/rate_of_closure/test_mesh.py",
+    "tests/rate_of_closure/test_pyqt_club_camera_rendered.py",
     "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py",
     "tests/rate_of_closure/pyqt_variation_render_probe.py",
     "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
@@ -137,6 +146,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py "
         "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
         "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
+        "tests/rate_of_closure/test_pyqt_club_camera_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
     assert (
@@ -150,6 +160,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "python -m pytest "
         "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
         "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
+        "tests/rate_of_closure/test_pyqt_club_camera_rendered.py "
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
 

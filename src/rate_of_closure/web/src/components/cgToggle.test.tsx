@@ -10,6 +10,8 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import { ClubCanvas } from "./ClubCanvas";
+import { DEFAULT_CLUB_CAMERA } from "../model/clubCamera";
+import { proceduralMeshSource } from "../model/clubMeshSource";
 import { StrikeCanvas } from "./StrikeCanvas";
 import App from "../App";
 
@@ -35,8 +37,10 @@ describe("Show CG toggles", () => {
   });
 
   it("defaults on and toggles in the club canvas", () => {
-    render(<ClubCanvas scenario={DEFAULT_SCENARIO} />);
-    const check = screen.getByLabelText("Show CG") as HTMLInputElement;
+    render(<ClubCanvas scenario={DEFAULT_SCENARIO}
+      source={proceduralMeshSource()} onSourceChange={() => undefined}
+      camera={DEFAULT_CLUB_CAMERA} onCameraChange={() => undefined} />);
+    const check = screen.getByLabelText("Show reference marker") as HTMLInputElement;
     expect(check.checked).toBe(true);
     fireEvent.click(check);
     expect(check.checked).toBe(false);

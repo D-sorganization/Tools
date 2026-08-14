@@ -6,8 +6,11 @@
 
 import { describe, expect, it } from "vitest";
 
+import orientationFixture from "./__fixtures__/mesh_normalization_orientation_golden_v1.json";
 import {
   HEAD_DEPTH_M,
+  MAX_IMPORTED_MESH_TRIANGLES,
+  MAX_STL_BYTES,
   loadHeadMesh,
   normalizeHead,
   parseStl,
@@ -93,6 +96,24 @@ function extents(tris: Triangle[]): Vec3 {
 }
 
 describe("STL parser — parity with pytest", () => {
+  it("enforces byte and triangle limits at the public parser boundary", () => {
+    const tri = boxTriangles([0, 0, 0], [2, 6, 4])[0];
+    expect(parseStl(writeBinaryStl(Array(MAX_IMPORTED_MESH_TRIANGLES).fill(tri)))).toHaveLength(
+      MAX_IMPORTED_MESH_TRIANGLES,
+    );
+    expect(() => parseStl(writeBinaryStl(Array(MAX_IMPORTED_MESH_TRIANGLES + 1).fill(tri))))
+      .toThrow(/2,048 triangles/);
+    expect(() => parseStl(new ArrayBuffer(MAX_STL_BYTES + 1))).toThrow(/2 MiB/);
+  });
+
+  it("caps ASCII incrementally at the exact triangle boundary", () => {
+    const facet = "facet\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 1\nendfacet\n";
+    expect(parseStl(asciiBuffer(`solid x\n${facet.repeat(MAX_IMPORTED_MESH_TRIANGLES)}endsolid x`)))
+      .toHaveLength(MAX_IMPORTED_MESH_TRIANGLES);
+    expect(() => parseStl(asciiBuffer(
+      `solid x\n${facet.repeat(MAX_IMPORTED_MESH_TRIANGLES + 1)}endsolid x`,
+    ))).toThrow(/2,048 triangles/);
+  });
   it("parses the shared ASCII parity fixture to exact vertices", () => {
     const tris = parseStl(asciiBuffer(PARITY_ASCII));
     expect(tris).toEqual([
@@ -150,6 +171,32 @@ describe("triangle normals", () => {
 });
 
 describe("head normalization — pinned numbers shared with pytest", () => {
+  it("keeps every source-axis order proper handed with positive signed zero", () => {
+    const canonical = boxTriangles([0, 0, 0], orientationFixture.source_extents as Vec3);
+    for (const permutation of orientationFixture.permutations) {
+      const source = canonical.map((triangle) => triangle.map((vertex) =>
+        permutation.map((axis) => vertex[axis]) as Vec3) as Triangle);
+      const inversions = permutation.reduce((count, axis, left) => count
+        + permutation.slice(left + 1).filter((other) => axis > other).length, 0);
+      if (inversions % 2 !== 0) source.forEach((triangle) => {
+        [triangle[1], triangle[2]] = [triangle[2], triangle[1]];
+      });
+      const normalized = normalizeHead(source);
+      extents(normalized).forEach((span, axis) =>
+        expect(span).toBeCloseTo(orientationFixture.expected_spans_m[axis], 12),
+      );
+      let signedSixVolume = 0;
+      for (const [a, b, c] of normalized) {
+        signedSixVolume += a[0] * (b[1] * c[2] - b[2] * c[1])
+          + a[1] * (b[2] * c[0] - b[0] * c[2])
+          + a[2] * (b[0] * c[1] - b[1] * c[0]);
+      }
+      expect(signedSixVolume).toBeGreaterThan(0);
+      for (const coordinate of normalized.flat(2)) {
+        if (coordinate === 0) expect(Object.is(coordinate, -0)).toBe(false);
+      }
+    }
+  });
   it("maps the (2, 6, 4) cuboid exactly like the Python rule", () => {
     // largest (y=6) -> z, middle (z=4) -> x, smallest (x=2) -> y;
     // scale = 0.11 / 4 = 0.0275.

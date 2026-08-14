@@ -18,6 +18,11 @@ import {
   type Quantity,
 } from "../model/units";
 import { ClubCanvas } from "./ClubCanvas";
+import type { ClubCamera } from "../model/clubCamera";
+import {
+  generatedMeshSource,
+  type ClubMeshSource,
+} from "../model/clubMeshSource";
 import { ClubPanel } from "./ClubPanel";
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
@@ -210,6 +215,10 @@ interface ImpactExplorerPanelProps {
   readonly setClubSpec: (spec: ClubSpec) => void;
   readonly generatedHead: GeneratedHead;
   readonly setGeneratedHead: (head: GeneratedHead) => void;
+  readonly clubMeshSource: ClubMeshSource;
+  readonly setClubMeshSource: Dispatch<SetStateAction<ClubMeshSource>>;
+  readonly clubCamera: ClubCamera;
+  readonly setClubCamera: Dispatch<SetStateAction<ClubCamera>>;
   readonly explained: string;
   readonly onExplainedChange: (key: string) => void;
   readonly onOpenGlossary: (term: string | undefined) => void;
@@ -226,17 +235,23 @@ export function ImpactExplorerPanel(props: ImpactExplorerPanelProps) {
   const driveScenario = (comToFaceMm: number, lieAngleDeg: number) => {
     props.setScenario((scenario) => ({ ...scenario, comToFaceMm, lieAngleDeg }));
   };
+  const adoptGenerated = (head: GeneratedHead) => {
+    props.setGeneratedHead(head);
+    props.setClubMeshSource((prior) =>
+      generatedMeshSource(head, head.label, prior.generation + 1));
+  };
   return (
     <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
       <section aria-label="Scenario inputs" className="space-y-4">
         <UnitsCard units={props.units} onChange={props.setUnits} />
         <ClubPanel initialSpec={props.clubSpec} onDriveScenario={driveScenario}
-          onGenerate={props.setGeneratedHead} onSpecChange={props.setClubSpec} />
+          onGenerate={adoptGenerated} onSpecChange={props.setClubSpec} />
         <ScenarioCard scenario={props.scenario} units={props.units} onUpdate={update} />
       </section>
       <section className="order-first space-y-6 lg:order-none">
-        <ClubCanvas scenario={props.scenario} externalMesh={props.generatedHead.mesh}
-          hoselPoint={props.generatedHead.hosel} cogPoint={props.generatedHead.cog} />
+        <ClubCanvas scenario={props.scenario} source={props.clubMeshSource}
+          onSourceChange={props.setClubMeshSource} camera={props.clubCamera}
+          onCameraChange={props.setClubCamera} />
         <ResultsCard scenario={props.scenario} units={props.units}
           explained={props.explained} onExplainedChange={props.onExplainedChange}
           onOpenGlossary={props.onOpenGlossary} />

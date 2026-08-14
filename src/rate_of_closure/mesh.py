@@ -1,18 +1,17 @@
-"""STL clubhead meshes: pure-numpy parser, writer, and head normalization.
+"""STL clubhead meshes for bounded flat-shaded display normalization.
 
-Supports the optional photorealistic-clubhead rendering mode. Both STL
+Both STL
 flavours are handled with nothing beyond numpy: binary (80-byte header,
 uint32 triangle count, 50-byte records) and ASCII (``solid``/``facet``/
 ``vertex`` text). A user-supplied mesh arrives in arbitrary units and
-orientation, so :func:`normalize_head` maps it onto the same canonical
-envelope the procedural wireframe uses (AffineDrift frame: x target,
-y up, z right):
+orientation, so :func:`normalize_head` maps it into a bounded display
+envelope (AffineDrift frame: x target, y up, z right). STL units, physical
+face direction, and original handedness are not encoded or inferred:
 
 1. Degenerate (zero-area) triangles are dropped.
 2. Axes are permuted by bounding-box extent — largest to z (heel-toe
    width), middle to x (face-to-back depth), smallest to y (crown
-   height) — the proportions of every driver head, so the face plate
-   ends up facing +x.
+   height), with a compensating sign that keeps the transform proper-handed.
 3. The bounding box is centered on the origin and scaled uniformly so
    the depth (x extent) equals :data:`HEAD_DEPTH_M`.
 
@@ -32,10 +31,15 @@ from ._contracts import ensure, require
 
 __all__ = [
     "HEAD_DEPTH_M",
+    "MAX_HEAD_SPAN_M",
+    "MAX_IMPORTED_MESH_TRIANGLES",
+    "MAX_RENDER_MESH_TRIANGLES",
+    "MAX_STL_BYTES",
     "HeadMesh",
     "load_head_mesh",
     "normalize_head",
     "parse_stl",
+    "snapshot_head_mesh",
     "triangle_normals",
     "write_ascii_stl",
     "write_binary_stl",
@@ -44,13 +48,17 @@ __all__ = [
 #: Canonical face-to-back depth of the head envelope [m]; matches the
 #: procedural wireframe's ``_BODY_DEPTH`` in the PyQt6 club view.
 HEAD_DEPTH_M = 0.11
+MAX_HEAD_SPAN_M = 0.33
+MAX_STL_BYTES = 2 * 1024 * 1024
+MAX_IMPORTED_MESH_TRIANGLES = 2_048
+MAX_RENDER_MESH_TRIANGLES = 4_096
 
 _BINARY_HEADER_BYTES = 80
 _BINARY_RECORD = np.dtype(
     [("normal", "<f4", (3,)), ("vertices", "<f4", (3, 3)), ("attr", "<u2")]
 )
-_ASCII_VERTEX = re.compile(rb"vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)")
-_MIN_AREA = 1e-20
+_ASCII_VERTEX = re.compile(r"vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)")
+_MIN_AREA = 1e-15
 
 
 @dataclass(frozen=True)
@@ -66,6 +74,41 @@ class HeadMesh:
     triangles: np.ndarray
     normals: np.ndarray
 
+    def __post_init__(self) -> None:
+        raw_triangles = np.asarray(self.triangles)
+        raw_normals = np.asarray(self.normals)
+        require(
+            raw_triangles.dtype.kind in "fiu" and raw_normals.dtype.kind in "fiu",
+            "mesh geometry must use real numeric values",
+        )
+        triangles = np.array(self.triangles, dtype=np.float64, copy=True)
+        require(
+            triangles.ndim == 3 and triangles.shape[1:] == (3, 3),
+            "mesh triangles must be (n, 3, 3)",
+        )
+        require(
+            0 < triangles.shape[0] <= MAX_RENDER_MESH_TRIANGLES,
+            "mesh must contain 1 to 4,096 triangles",
+        )
+        supplied_normals = raw_normals
+        require(
+            supplied_normals.shape == (triangles.shape[0], 3),
+            "mesh normals must be (n, 3)",
+        )
+        require(
+            bool(np.isfinite(triangles).all() and np.isfinite(supplied_normals).all()),
+            "mesh geometry must be finite",
+        )
+        normals = triangle_normals(triangles)
+        triangles = np.frombuffer(triangles.tobytes(), dtype=np.float64).reshape(
+            triangles.shape
+        )
+        normals = np.frombuffer(normals.tobytes(), dtype=np.float64).reshape(
+            normals.shape
+        )
+        object.__setattr__(self, "triangles", triangles)
+        object.__setattr__(self, "normals", normals)
+
 
 def parse_stl(data: bytes) -> np.ndarray:
     """Parse STL bytes (binary or ASCII) into ``(n, 3, 3)`` triangles.
@@ -77,6 +120,7 @@ def parse_stl(data: bytes) -> np.ndarray:
     """
     require(isinstance(data, (bytes, bytearray)), "data must be bytes")
     require(len(data) > 0, "data must not be empty")
+    require(len(data) <= MAX_STL_BYTES, "STL must not exceed 2 MiB")
     triangles = (
         _parse_binary(bytes(data))
         if _looks_binary(bytes(data))
@@ -93,7 +137,15 @@ def _looks_binary(data: bytes) -> bool:
     count = int(
         np.frombuffer(data, dtype="<u4", count=1, offset=_BINARY_HEADER_BYTES)[0]
     )
-    return len(data) == _BINARY_HEADER_BYTES + 4 + count * _BINARY_RECORD.itemsize
+    matches_layout = (
+        len(data) == _BINARY_HEADER_BYTES + 4 + count * _BINARY_RECORD.itemsize
+    )
+    if matches_layout:
+        require(
+            count <= MAX_IMPORTED_MESH_TRIANGLES,
+            "STL must not exceed 2,048 triangles",
+        )
+    return matches_layout
 
 
 def _parse_binary(data: bytes) -> np.ndarray:
@@ -108,18 +160,30 @@ def _parse_binary(data: bytes) -> np.ndarray:
 
 
 def _parse_ascii(data: bytes) -> np.ndarray:
+    try:
+        text = data.decode("utf-8", errors="strict")
+    except UnicodeDecodeError as error:
+        require(False, "ASCII STL must be valid UTF-8")
+        raise AssertionError("unreachable") from error
     require(
-        data.lstrip()[:5].lower() == b"solid",
+        text.lstrip()[:5].lower() == "solid",
         "not a valid STL: neither binary layout nor ASCII 'solid'",
     )
-    matches = _ASCII_VERTEX.findall(data)
-    require(len(matches) > 0, "ASCII STL contains no vertex lines")
+    vertices: list[tuple[float, float, float]] = []
+    for match in _ASCII_VERTEX.finditer(text):
+        require(
+            len(vertices) < MAX_IMPORTED_MESH_TRIANGLES * 3,
+            "STL must not exceed 2,048 triangles",
+        )
+        values = match.groups()
+        vertices.append((float(values[0]), float(values[1]), float(values[2])))
+    require(len(vertices) > 0, "ASCII STL contains no vertex lines")
     require(
-        len(matches) % 3 == 0,
+        len(vertices) % 3 == 0,
         "ASCII STL vertex count must be a multiple of 3",
-        len(matches),
+        len(vertices),
     )
-    flat = np.array([[float(c) for c in m] for m in matches], dtype=np.float64)
+    flat = np.asarray(vertices, dtype=np.float64)
     return flat.reshape(-1, 3, 3)
 
 
@@ -149,13 +213,24 @@ def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.n
     require(tris.ndim == 3 and tris.shape[1:] == (3, 3), "triangles must be (n, 3, 3)")
     require(bool(np.isfinite(tris).all()), "triangles must be finite")
 
-    areas = np.linalg.norm(
-        np.cross(tris[:, 1] - tris[:, 0], tris[:, 2] - tris[:, 0]), axis=1
+    require(
+        0 < tris.shape[0] <= MAX_RENDER_MESH_TRIANGLES,
+        "mesh must contain 1 to 4,096 triangles",
     )
+    magnitude = float(np.max(np.abs(tris)))
+    require(
+        np.isfinite(magnitude) and magnitude > 0.0,
+        "mesh has no non-degenerate triangles",
+    )
+    scaled = tris / magnitude
+    areas = np.linalg.norm(
+        np.cross(scaled[:, 1] - scaled[:, 0], scaled[:, 2] - scaled[:, 0]), axis=1
+    )
+    scaled = scaled[areas > _MIN_AREA]
     tris = tris[areas > _MIN_AREA]
     require(tris.shape[0] > 0, "mesh has no non-degenerate triangles")
 
-    flat = tris.reshape(-1, 3)
+    flat = scaled.reshape(-1, 3)
     extents = flat.max(axis=0) - flat.min(axis=0)
     require(bool((extents > 0.0).all()), "mesh must have volume on all axes", extents)
 
@@ -163,25 +238,46 @@ def normalize_head(triangles: np.ndarray, depth_m: float = HEAD_DEPTH_M) -> np.n
     order = np.argsort(extents, kind="stable")
     # middle -> x (depth), smallest -> y (height), largest -> z (width).
     permutation = np.array([order[1], order[0], order[2]])
-    tris = tris[:, :, permutation]
+    scaled = scaled[:, :, permutation]
+    inversions = sum(
+        int(permutation[left] > permutation[right])
+        for left in range(3)
+        for right in range(left + 1, 3)
+    )
+    if inversions % 2:
+        scaled[:, :, 2] *= -1.0
 
-    flat = tris.reshape(-1, 3)
+    flat = scaled.reshape(-1, 3)
     center = (flat.max(axis=0) + flat.min(axis=0)) / 2.0
     scale = depth_m / extents[order[1]]
-    normalized = (tris - center) * scale
+    normalized = (scaled - center) * scale
+    normalized[normalized == 0.0] = 0.0
 
     span = normalized.reshape(-1, 3).max(axis=0) - normalized.reshape(-1, 3).min(axis=0)
     ensure(bool(np.isclose(span[0], depth_m, rtol=1e-9)), "depth must normalize")
     ensure(span[2] >= span[0] >= span[1], "extent ordering z >= x >= y must hold")
+    require(
+        bool((span <= MAX_HEAD_SPAN_M).all()),
+        "normalized mesh span exceeds 0.330 m",
+    )
     return np.asarray(normalized, dtype=np.float64)
 
 
 def load_head_mesh(path: str | Path, depth_m: float = HEAD_DEPTH_M) -> HeadMesh:
     """Parse an STL file and normalize it into a renderable head mesh."""
     stl_path = Path(path)
+    require(stl_path.suffix.lower() == ".stl", "mesh file must use the .stl suffix")
     require(stl_path.is_file(), "STL path must be an existing file", str(stl_path))
-    triangles = normalize_head(parse_stl(stl_path.read_bytes()), depth_m)
+    with stl_path.open("rb") as stream:
+        data = stream.read(MAX_STL_BYTES + 1)
+    require(len(data) <= MAX_STL_BYTES, "STL must not exceed 2 MiB")
+    triangles = normalize_head(parse_stl(data), depth_m)
     return HeadMesh(triangles=triangles, normals=triangle_normals(triangles))
+
+
+def snapshot_head_mesh(mesh: HeadMesh) -> HeadMesh:
+    """Validate and defensively freeze a mesh at an adoption boundary."""
+    return HeadMesh(mesh.triangles, mesh.normals)
 
 
 def write_binary_stl(triangles: np.ndarray, header: str = "rate_of_closure") -> bytes:

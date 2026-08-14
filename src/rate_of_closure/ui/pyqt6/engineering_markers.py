@@ -9,8 +9,10 @@ import numpy as np
 __all__ = ["draw_cg_marker"]
 
 
-def draw_cg_marker(axes: Any, point: np.ndarray, color: str) -> None:
-    """Draw a high-contrast circled-cross center-of-gravity symbol."""
+def draw_cg_marker(
+    axes: Any, point: np.ndarray, color: str, *, label: str, abbreviation: str
+) -> None:
+    """Draw a high-contrast circled-cross reference symbol."""
     axes.scatter(
         *point,
         facecolors="none",
@@ -26,7 +28,7 @@ def draw_cg_marker(axes: Any, point: np.ndarray, color: str) -> None:
         s=105,
         linewidths=1.8,
         marker="+",
-        label="volumetric CG",
+        label=label,
         zorder=8,
     )
-    axes.text(*point, "  CG", color=color, fontsize=8, zorder=8)
+    axes.text(*point, f"  {abbreviation}", color=color, fontsize=8, zorder=8)
