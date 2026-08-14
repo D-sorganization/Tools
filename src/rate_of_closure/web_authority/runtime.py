@@ -20,6 +20,7 @@ import platformdirs
 
 from .api import CAPABILITY_PATH
 from .capability import AuthorityCapability
+from .state_security import prepare_private_state_root
 
 LOOPBACK_HOST: Final = "127.0.0.1"
 AUTHORITY_URL_ENV: Final = "ROC_AUTHORITY_URL"
@@ -205,8 +206,12 @@ def start_authority(
         platformdirs.user_state_path("rate-of-closure", appauthor=False)
         / "regional-ground-authority-v1"
     )
-    root.mkdir(parents=True, exist_ok=True)
-    if os.name != "nt":
+    if os.name == "nt":
+        root.parent.mkdir(parents=True, exist_ok=True)
+        root_lease = prepare_private_state_root(root)
+        root_lease.close()
+    else:
+        root.mkdir(parents=True, exist_ok=True)
         root.chmod(0o700)
     spec = build_authority_process_spec(
         token=token,
