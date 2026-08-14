@@ -48,8 +48,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   and `firmware-compile` (arduino-cli against the `P1AM-100:samd` board package).
   The arduino-cli installer is pinned to a release tag (it is piped into a shell
   on a self-hosted runner, so `master` would mean the fleet runs whatever lands
-  there), and the compile job is gated against fork pull requests because this
-  repository is public. The board package and libraries are not yet
+  there), and **both** jobs are gated against fork pull requests: the compile job
+  pipes that installer into a shell and the unit-test job compiles and executes
+  contributor-authored code, both on `d-sorg-fleet` with a write-scoped token,
+  while this repository is public with fork-PR approval set to
+  `first_time_contributors_new_to_github`. The board package and libraries are not yet
   version-pinned; the resolved versions are recorded to the job summary so that
   pin becomes a mechanical follow-up.
 - `SignalBroker::kThermocoupleFullScaleC` is now a public constant in
@@ -72,7 +75,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   integral and derivative state, so a restored link cannot slam the output with a
   wound-up integral. Zeroing a setpoint now also resets the integrator, so a
   de-energized loop cannot keep commanding full output on its accumulated term
-  (issue #4002).
+  (issue #4002). The reset fires only on the non-zero -> 0 transition the issue
+  specifies, never on a change between two non-zero setpoints: `SyncModbusToDCS`
+  calls `SetSetpoint` on every scan whenever the host register differs, so
+  resetting on any change would clear the integrator once per scan for the whole
+  of a host-driven ramp and leave the loop running P+D only.
 - The scan integrates over the interval actually elapsed rather than the nominal
   100 ms, bounded to [1 ms, 1 s]. The scan does ~300 register reads, SPI
   thermocouple reads and sometimes a blocking flash write, so assuming 100 ms

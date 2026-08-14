@@ -51,6 +51,20 @@ permissions:
 jobs:
   firmware-unit-tests:
     name: Firmware host unit tests (g++)
+    # Never run on a pull request from a fork. `make test` COMPILES AND EXECUTES
+    # contributor-authored code, and it runs on d-sorg-fleet -- the owner's own
+    # machines -- with a write-scoped workflow token. This repository is public,
+    # forking is enabled, and fork-PR approval is set to
+    # `first_time_contributors_new_to_github`, so approval is required only of
+    # accounts brand new to GitHub: any pre-existing account could otherwise fork,
+    # open a PR touching a firmware path, and get arbitrary code execution on the
+    # fleet with no approval step. Adding an ungated job here would turn a latent
+    # policy weakness into a concrete path, so gate it even though the repo is
+    # broadly exposed -- that is a reason not to add to the exposure, not to match
+    # it. Same gate as firmware-compile below.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     # The d-sorg-fleet pool spans Linux, Windows and macOS hosts; this job needs
     # a POSIX toolchain for the Makefile, so pin it to the Linux label.
     runs-on: [d-sorg-fleet, Linux]

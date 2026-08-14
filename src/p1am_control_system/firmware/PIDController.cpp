@@ -140,12 +140,19 @@ float PIDController::GetSetpoint() const {
 
 void PIDController::SetSetpoint(float setpoint) {
   const float next = FiniteOrZero(setpoint);
-  if (next != setpoint_) {
-    // Bumpless transfer: carrying the old integral across a setpoint change
-    // means the accumulated term still reflects the previous target. On an
-    // E-stop -- whose only effect that reaches the plant is zeroing these
-    // setpoints -- a wound-up integral held the analog output at 100% for tens
-    // of seconds after the operator commanded a stop (issue #4002).
+  // Reset the accumulated state only when the setpoint is ZEROED, which is the
+  // condition issue #4002 specifies. An E-stop's only effect that reaches the
+  // plant is zeroing these setpoints, and a wound-up integral was holding the
+  // analog output at 100% for tens of seconds after the operator commanded a
+  // stop.
+  //
+  // Deliberately NOT `next != setpoint_`. SyncModbusToDCS calls this on every
+  // scan whenever the host register differs, so resetting on any change means a
+  // host-driven ramp -- or 1-LSB float jitter through the register round-trip --
+  // clears the integrator every scan and the loop silently runs P+D only, never
+  // closing steady-state offset. If reset-on-change is ever wanted for bumpless
+  // transfer on large steps, it needs a deadband, not an equality test.
+  if (next == 0.0f && setpoint_ != 0.0f) {
     ResetDynamicState();
   }
   setpoint_ = next;

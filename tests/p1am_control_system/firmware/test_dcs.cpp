@@ -290,8 +290,8 @@ void TestSoftFailRuntimeContracts() {
 }
 
 
-void TestPidResetsIntegralOnSetpointChange() {
-  std::cout << "Running TestPidResetsIntegralOnSetpointChange..." << std::endl;
+void TestPidResetsIntegralOnSetpointZeroed() {
+  std::cout << "Running TestPidResetsIntegralOnSetpointZeroed..." << std::endl;
   SignalBroker broker;
   PIDController pid;
 
@@ -310,12 +310,49 @@ void TestPidResetsIntegralOnSetpointChange() {
   assert(FloatEquals(broker.GetTag(4), 100.0f));
 
   // Commanding the setpoint to zero must drop the output on the NEXT scan,
-  // not decay towards it over many seconds.
+  // not decay towards it over many seconds. This is the issue #4002 condition:
+  // an E-stop's only effect reaching the plant is zeroing these setpoints.
   pid.SetSetpoint(0.0f);
   pid.Compute(broker, 0.1f);
   assert(FloatEquals(broker.GetTag(4), 0.0f));
 
-  std::cout << "TestPidResetsIntegralOnSetpointChange PASSED!" << std::endl;
+  std::cout << "TestPidResetsIntegralOnSetpointZeroed PASSED!" << std::endl;
+}
+
+void TestPidKeepsIntegralAcrossNonZeroSetpointChange() {
+  std::cout << "Running TestPidKeepsIntegralAcrossNonZeroSetpointChange..."
+            << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);
+  pid.SetKd(0.0f);
+
+  broker.SetTag(3, 0.0f);
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 100.0f));
+
+  // A change between two NON-ZERO setpoints must preserve the accumulated
+  // integral. SyncModbusToDCS calls SetSetpoint on every scan whenever the host
+  // register differs, so resetting on any change would clear the integrator
+  // once per scan for the whole of a host-driven ramp -- leaving the loop
+  // running P+D only, with a steady-state offset it can never close and no
+  // indication that integral action had been silently disabled.
+  pid.SetSetpoint(50.0f);
+  pid.Compute(broker, 0.1f);
+
+  // Error is still positive (PV = 0, SP = 50), so an intact integral keeps the
+  // output at its clamp. A reset would have dropped it to ki*error*dt = 5.0.
+  assert(FloatEquals(broker.GetTag(4), 100.0f));
+
+  std::cout << "TestPidKeepsIntegralAcrossNonZeroSetpointChange PASSED!"
+            << std::endl;
 }
 
 void TestPidDoesNotIntegrateWhileTripped() {
@@ -380,7 +417,8 @@ int main() {
   TestSafetyInterlock();
   TestStorageManager();
   TestSoftFailRuntimeContracts();
-  TestPidResetsIntegralOnSetpointChange();
+  TestPidResetsIntegralOnSetpointZeroed();
+  TestPidKeepsIntegralAcrossNonZeroSetpointChange();
   TestPidDoesNotIntegrateWhileTripped();
   TestCommsWatchdog();
   std::cout << "All C++ Core Firmware Tests Passed Successfully!" << std::endl;

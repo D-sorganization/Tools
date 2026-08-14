@@ -33,6 +33,13 @@ class PIDController {
   void SetCvTagId(int tag_id);
 
   float GetSetpoint() const;
+
+  // Set the target. Zeroing the setpoint (non-zero -> 0) also clears the
+  // accumulated integral/derivative state, so a loop commanded to stop cannot
+  // keep driving the output from its wound-up integral (issue #4002). A change
+  // between two non-zero setpoints deliberately preserves that state: this is
+  // called every scan whenever the host register differs, so resetting on any
+  // change would clear the integrator throughout a ramp.
   void SetSetpoint(float setpoint);
 
   float GetKp() const;
