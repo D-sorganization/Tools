@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Visual-baseline candidate authority (#4433)
+
+- Protected React and PyQt lanes now emit exactly nine initial-state reference
+  PNGs apiece with source commit, environment, filename, and SHA-256 manifests.
+- React is fixed to Chromium 1440x900, dark color scheme, device scale 1, UTC,
+  and reduced motion. PyQt is fixed to offscreen DPI 1.0 at 1440x900 and loads
+  bundled DejaVu Sans with an ASCII sanity check before capture.
+- Candidate artifacts are not approved goldens. Promotion still requires exact
+  hosted-image inspection, committed baseline bytes/digests and drift limits,
+  then protected merge. Narrow/150% evidence remains diagnostic. SPEC is
+  1.17.02.
+- PyQt Launch Monitor candidate inspection also closed a plot/status overlap by
+  reserving explicit space beneath the linked scatter; scientific and retained
+  row authority are unchanged.
+
 ## 2026-08-14 Cross-tab automated accessibility evidence (#4433)
 
 - `visualization-accessibility-evidence@1` exactly covers all nine React and

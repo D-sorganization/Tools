@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Visual-baseline candidate authority (#4433)
+
+Version 1.17.02 adds protected candidate generation for one deterministic
+initial-state reference capture per React and PyQt primary tab. React uses the
+1440x900 Chromium dark/reduced-motion environment; PyQt uses the 1440x900
+offscreen DPI-1.0 environment with bundled DejaVu Sans. Each surface emits an
+exact nine-entry SHA-256 manifest alongside the PNGs.
+
+These 18 images remain diagnostic candidates. They are not approved until the
+hosted artifacts are inspected, committed with exact digests and tolerances,
+and accepted through protected merge. Narrow React and PyQt DPI-1.5 captures
+remain diagnostic-only. Scientific behavior and evidence identity are unchanged.
+The PyQt Launch Monitor linked scatter now also reserves explicit space between
+its plot and compact retained-row status, closing the overlap found during
+candidate inspection without changing analysis or retained-data authority.
+
 ## 2026-08-14 Cross-tab automated accessibility evidence (#4433)
 
 Version 1.17.01 adds one immutable accessibility-evidence authority over the

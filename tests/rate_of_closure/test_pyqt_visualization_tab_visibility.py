@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -65,6 +66,10 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
         assert manifest["requested_scale"] == scale
         assert manifest["device_pixel_ratio"] == pytest.approx(scale)
         assert manifest["logical_window_size"] == [1440, 900]
+        assert manifest["font"] == {
+            "font_family": "DejaVu Sans",
+            "font_ascii_supported": True,
+        }
         assert len(manifest["tabs"]) == 9
         for tab in manifest["tabs"]:
             assert tab["workload"] == "initial-production-state", tab["tab_id"]
@@ -92,3 +97,25 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
             )
             assert tab["tab_bar_overlap"][2:] == [0, 0], tab["tab_id"]
             assert tab["interactive_overlaps"] == [], tab["tab_id"]
+
+    candidate_root = os.environ.get("RATE_VISUAL_BASELINE_CANDIDATE_DIR")
+    if candidate_root:
+        candidate_path = Path(candidate_root) / "pyqt" / "manifest.json"
+        candidates = json.loads(candidate_path.read_text(encoding="utf-8"))
+        assert candidates["schema_id"] == ("rate-of-closure/visual-baseline-candidates")
+        assert candidates["schema_version"] == 1
+        assert candidates["artifact_policy"] == (
+            "candidate-diagnostic-not-approved-until-protected-merge"
+        )
+        assert candidates["source_commit"] == os.environ.get(
+            "GITHUB_SHA", "local-diagnostic"
+        )
+        assert candidates["surface"] == "pyqt"
+        captures = candidates["captures"]
+        assert {entry["tab_id"] for entry in captures} == {
+            tab["tab_id"] for tab in manifests[0]["tabs"]
+        }
+        for entry in captures:
+            image = candidate_path.parent / entry["file"]
+            assert image.stat().st_size > 10_000
+            assert hashlib.sha256(image.read_bytes()).hexdigest() == entry["sha256"]

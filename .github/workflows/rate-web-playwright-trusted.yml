@@ -92,6 +92,8 @@ jobs:
     defaults:
       run:
         working-directory: src/rate_of_closure/web
+    env:
+      RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -141,5 +143,6 @@ jobs:
             src/rate_of_closure/web/playwright-report/
             src/rate_of_closure/web/test-results/
             rate-pyqt-screenshots/
+            visual-baseline-candidates/
           if-no-files-found: error
           retention-days: 14

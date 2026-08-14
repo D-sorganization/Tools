@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Visual-baseline candidate authority
+
+- The protected browser and PyQt jobs now retain 18 stable initial-state
+  baseline candidates: one for every registered tab at React 1440x900 and
+  PyQt DPI 1.0/1440x900. Each surface writes a strict manifest with exact source
+  SHA, reference environment, filenames, and SHA-256 digests.
+- Browser candidates inherit pinned dark/UTC/reduced-motion/device-scale-1
+  Playwright settings. PyQt installs bundled DejaVu Sans and verifies required
+  ASCII glyph support, closing the prior offscreen tofu risk before capture.
+- This step creates candidate evidence only. Hosted images must still be
+  reviewed and committed with exact baseline/diff authority; protected merge
+  is the approval event. Responsive and DPI-1.5 captures remain diagnostic.
+  SPEC is 1.17.02.
+- Candidate inspection found and closed a PyQt Launch Monitor overlap: the
+  linked scatter keeps its scientific plot area while a compact retained-row
+  status is separated beneath it. Analysis and retained-data identity did not
+  change.
+
 ## 2026-08-14 #4433 Cross-tab automated accessibility evidence
 
 - A packaged v1 authority exactly matches the visibility manifest's nine React

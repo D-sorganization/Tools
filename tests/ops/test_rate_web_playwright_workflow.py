@@ -19,8 +19,10 @@ PLAYWRIGHT_EVIDENCE_PATHS = (
     "src/rate_of_closure/web/playwright-report/\n"
     "src/rate_of_closure/web/test-results/\n"
 )
-TRUSTED_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
-PR_EVIDENCE_PATHS = PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\n"
+TRUSTED_EVIDENCE_PATHS = (
+    PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\nvisual-baseline-candidates/\n"
+)
+PR_EVIDENCE_PATHS = TRUSTED_EVIDENCE_PATHS
 PYQT_AUTHORITY_PATHS = {
     "src/rate_of_closure/club/**",
     "src/rate_of_closure/club_camera.py",
@@ -158,6 +160,13 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]["push-production-worker-e2e"]
     pr_commands = _run_steps(pr_job)
     trusted_commands = _run_steps(trusted_job)
+
+    assert pr_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
+        "${{ github.workspace }}/visual-baseline-candidates"
+    )
+    assert trusted_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
+        "${{ github.workspace }}/visual-baseline-candidates"
+    )
 
     assert pr_commands["Install locked web dependencies"] == "npm ci"
     assert trusted_commands["Install locked web dependencies"] == "npm ci"

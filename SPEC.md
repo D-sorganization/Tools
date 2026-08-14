@@ -26,11 +26,29 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.01                                    |
-| **Spec Version**        | 1.17.01                                    |
+| **Current Version**     | 1.17.02                                    |
+| **Spec Version**        | 1.17.02                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Visual-baseline candidate authority (#4433)
+
+Version 1.17.02 adds a protected, pre-approval capture stage. React emits one
+initial-state PNG for each of its nine registered tabs at Chromium 1440x900,
+dark mode, device scale 1, UTC, and reduced motion. PyQt emits one full-window
+PNG for each of its nine tabs at offscreen DPI 1.0/1440x900 after loading
+bundled DejaVu Sans and verifying required ASCII coverage. Each surface writes
+an exact source-commit/environment/file/SHA-256 manifest, and both workflows
+retain the candidates in their existing evidence artifact.
+
+Candidate generation does not approve a golden. Approval requires inspection
+of the hosted images, committed immutable baseline bytes and digests, explicit
+drift limits, and protected merge. React narrow and PyQt DPI-1.5 captures remain
+diagnostic. No scientific, result, selection, playback, layout-preference, or
+export authority changes in this capture stage. Candidate inspection also
+closed a PyQt Launch Monitor overlap by reserving explicit space between the
+linked scatter and its compact retained-row status.
 
 ### 2026-08-14 Cross-tab automated accessibility evidence (#4433)
 
@@ -4390,6 +4408,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.02 | test(rate-of-closure, #4433): generate exact hosted React/PyQt initial-state visual-baseline candidates with deterministic environments and SHA-256 manifests while retaining explicit pre-approval status. |
 | 2026-08-14 | 1.17.01 | feat(rate-of-closure, #4433): add exact all-tab automated accessibility evidence, strict React axe and PyQt semantic-control gates, corrected action contrast and control names, plus a controlled but not-yet-executed human AT qualification protocol. |
 | 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |
 | 2026-08-13 | 1.16.86 | fix(ci, #4441): classify only the PyQt Variation lifecycle subprocess probe as assertion-free support while preserving rejection of adjacent assertion-light tests. |
