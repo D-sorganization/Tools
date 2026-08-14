@@ -1,7 +1,21 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-13
+> Last updated: 2026-08-14
+
+## 2026-08-14 Plots bounded computation and exact inspector (#4433)
+
+Version 1.16.96 caps one workspace at eight plots, 512 sweep evaluations,
+eight series per plot, and 8,192 inspectable vertices before plot computation or
+inspector copying. React computes and caches immutable plot data after commit;
+PyQt computes only uncached visible panes. Selection, zoom, legend, and cached
+pane changes do not rerun simulation. Matched pointer/keyboard inspectors bind
+exact runtime-local series/raw indices, while histograms expose derived bins
+without calling them source samples. Failed recomputation retains prior data,
+selection, canvas, and export authority when available. Three Chromium
+selected captures and eight PyQt selected/error-prior window/canvas DPI PNGs
+are diagnostic only. Portable plot-workspace/selection archives, approved
+goldens, formal AT qualification, and remaining #4433 work stay open.
 
 ## 2026-08-13 Simulation exact scrub authority (#4433)
 

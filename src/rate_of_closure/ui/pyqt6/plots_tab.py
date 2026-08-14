@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
+from rate_of_closure.plot_workspace_limits import validate_plot_workspace
 from rate_of_closure.plotting import (
     BUILTIN_PLOTS,
     PlotData,
@@ -53,6 +54,8 @@ class PlotsTab(PlotExportMixin, QWidget):
         self._run: SimulationRun | None = None
         self._data: PlotData | None = None
         self._plot_panes: list[PlotCanvasPane] = []
+        self._plot_data: list[PlotData | None] = []
+        self._plot_data_current: list[bool] = []
 
         left = QWidget()
         left_layout = QVBoxLayout(left)
@@ -179,30 +182,37 @@ class PlotsTab(PlotExportMixin, QWidget):
         """
         self._scenario = scenario
         self._run = None
-        self._data = None
+        self._mark_plot_data_stale()
         self._refresh_if_visible()
 
     def set_run(self, run: SimulationRun) -> None:
         """Adopt a completed simulation run as the reference run."""
         self._run = run
-        self._data = None
+        self._mark_plot_data_stale()
         self._refresh_if_visible()
 
     def showEvent(self, event: QShowEvent | None) -> None:  # noqa: N802
         """Render any deferred scenario/run change on first show."""
         super().showEvent(event)
-        if self._data is None:
+        if not all(self._plot_data_current):
             self.refresh()
 
     def _refresh_if_visible(self) -> None:
         """Deferred refresh: sweeps re-run the simulation per grid point,
         far too heavy while the tab is hidden; showEvent catches up."""
-        self._data = None
         if self.isVisible():
             self.refresh()
 
+    def _mark_plot_data_stale(self) -> None:
+        self._plot_data_current = [False] * len(self._plot_panes)
+
     def add_spec(self, spec: PlotSpec, label: str | None = None) -> None:
         """Append a plot definition to the managed list and select it."""
+        items = [self._plot_list.item(row) for row in range(self._plot_list.count())]
+        specs = [
+            item.data(Qt.ItemDataRole.UserRole) for item in items if item is not None
+        ]
+        validate_plot_workspace([*specs, spec])
         display_label = label or spec.title or spec.x_key
         item = QListWidgetItem(display_label)
         item.setData(Qt.ItemDataRole.UserRole, spec)
@@ -213,8 +223,19 @@ class PlotsTab(PlotExportMixin, QWidget):
         self._plot_list.addItem(item)
         pane = PlotCanvasPane(display_label)
         self._plot_panes.append(pane)
+        self._plot_data.append(None)
+        self._plot_data_current.append(False)
         self._reflow_panes()
         self._plot_list.setCurrentItem(item)
+
+    def _try_add_spec(self, spec: PlotSpec, label: str | None = None) -> bool:
+        self._status.setText("")
+        try:
+            self.add_spec(spec, label)
+        except (TypeError, ValueError) as exc:
+            self._status.setText(str(exc))
+            return False
+        return True
 
     def current_spec(self) -> PlotSpec | None:
         """The selected plot definition, if any."""
@@ -240,28 +261,37 @@ class PlotsTab(PlotExportMixin, QWidget):
         return tuple(self._plot_panes)
 
     def refresh(self) -> None:
-        """Re-render the selected plot against the reference run."""
+        """Compute and render only uncached managed plots."""
         run = self.reference_run()
         if run is None:
             return
         errors: list[str] = []
-        self._data = None
         current_row = self._plot_list.currentRow()
-        for row, pane in enumerate(self._plot_panes):
-            item = self._plot_list.item(row)
-            if item is None:
-                continue
-            spec = item.data(Qt.ItemDataRole.UserRole)
-            try:
-                data = compute_plot_data(spec, run)
-                pane.render_data(data)
-                if row == current_row:
-                    self._data = data
-            except Exception as exc:  # noqa: BLE001 — plotting must not crash
-                logger.warning("plot render failed: %s", exc)
-                errors.append(f"{item.text()}: {exc}")
+        for row in range(len(self._plot_panes)):
+            if not self._plot_data_current[row]:
+                error = self._compute_row(row, run)
+                if error:
+                    errors.append(error)
+            if row == current_row:
+                self._data = self._plot_data[row]
         self._sync_selected_pane()
         self._status.setText("; ".join(errors))
+
+    def _compute_row(self, row: int, run: SimulationRun) -> str | None:
+        item = self._plot_list.item(row)
+        if item is None:
+            return None
+        spec = item.data(Qt.ItemDataRole.UserRole)
+        try:
+            data = compute_plot_data(spec, run)
+            self._plot_panes[row].render_data(data)
+            self._plot_data[row] = data
+            self._plot_data_current[row] = True
+        except Exception as exc:  # noqa: BLE001 — plotting must not crash
+            logger.warning("plot render failed: %s", exc)
+            retained = "; prior accepted plot retained" if self._plot_data[row] else ""
+            return f"{item.text()}: {exc}{retained}"
+        return None
 
     def current_data(self) -> PlotData | None:
         """The data behind the rendered plot (exports read this)."""
@@ -269,7 +299,7 @@ class PlotsTab(PlotExportMixin, QWidget):
 
     def _add_builtin(self, name: str) -> None:
         label, _factory = BUILTIN_PLOTS[name]
-        self.add_spec(builtin_spec(name, self._run), label)
+        self._try_add_spec(builtin_spec(name, self._run), label)
 
     def _on_add_builtin(self) -> None:
         self._add_builtin(str(self._builtin_combo.currentData()))
@@ -285,20 +315,22 @@ class PlotsTab(PlotExportMixin, QWidget):
         except Exception as exc:  # noqa: BLE001 — DbC message to the user
             QMessageBox.warning(self, "Custom Plot", str(exc))
             return
-        self.add_spec(spec)
+        self._try_add_spec(spec)
 
     def _on_duplicate(self) -> None:
         item = self._plot_list.currentItem()
         spec = self.current_spec()
         if item is None or spec is None:
             return
-        self.add_spec(spec, f"{item.text()} (Copy)")
+        self._try_add_spec(spec, f"{item.text()} (Copy)")
 
     def _on_remove(self) -> None:
         row = self._plot_list.currentRow()
         if row >= 0:
             self._plot_list.takeItem(row)
             pane = self._plot_panes.pop(row)
+            self._plot_data.pop(row)
+            self._plot_data_current.pop(row)
             pane.setParent(None)
             pane.deleteLater()
             self._reflow_panes()
@@ -306,7 +338,13 @@ class PlotsTab(PlotExportMixin, QWidget):
 
     def _on_selection_changed(self, _row: int) -> None:
         self._sync_selected_pane()
-        self._refresh_if_visible()
+        row = self._plot_list.currentRow()
+        if self.isVisible() and 0 <= row < len(self._plot_data):
+            if not self._plot_data_current[row]:
+                run = self.reference_run()
+                error = self._compute_row(row, run) if run is not None else None
+                self._status.setText(error or "")
+            self._data = self._plot_data[row]
 
     def _sync_selected_pane(self) -> None:
         row = self._plot_list.currentRow()
@@ -314,6 +352,7 @@ class PlotsTab(PlotExportMixin, QWidget):
             self._data = None
             return
         pane = self._plot_panes[row]
+        self._data = self._plot_data[row]
         self._figure = pane.figure()
         self._canvas = pane.canvas()
         self._toolbar = pane.toolbar()

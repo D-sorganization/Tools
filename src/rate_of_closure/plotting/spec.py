@@ -84,6 +84,7 @@ class PlotSpec:
                 "histogram needs a per-sample x variable",
                 self.x_key,
             )
+            require(not self.y_log, "histogram count axis cannot be logarithmic")
         elif self.kind == "sweep":
             require(
                 CATALOG[self.x_key].category == "Input",

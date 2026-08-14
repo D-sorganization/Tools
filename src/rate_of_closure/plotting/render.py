@@ -19,14 +19,23 @@ import csv
 import dataclasses
 import json
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 import numpy as np
 from matplotlib.figure import Figure
 
 from rate_of_closure._contracts import ensure, require
+from rate_of_closure.plot_point_inspector import (
+    MAX_ABS_PLOT_VALUE,
+    MAX_PLOT_SAMPLES,
+    MAX_PLOT_SERIES,
+    MAX_PLOT_VERTICES,
+    plan_plot_inspection,
+)
 from rate_of_closure.plotting.catalog import CATALOG, DISTANCE_KEYS, extract
 from rate_of_closure.plotting.spec import PlotSpec
 from rate_of_closure.simulation.session import (
@@ -89,17 +98,48 @@ class PlotData:
 
     spec: PlotSpec
     x: np.ndarray
-    series: dict[str, np.ndarray]
+    series: Mapping[str, np.ndarray]
     x_label: str
     y_label: str
 
     def __post_init__(self) -> None:
-        for label, values in self.series.items():
+        x_values = np.asarray(self.x, dtype=np.float64)
+        require(
+            x_values.ndim == 1 and 1 <= x_values.size <= MAX_PLOT_SAMPLES,
+            f"plot evidence must contain 1..{MAX_PLOT_SAMPLES} samples",
+        )
+        require(
+            np.all(np.isfinite(x_values))
+            and np.all(np.abs(x_values) <= MAX_ABS_PLOT_VALUE),
+            "plot x values must be finite and bounded",
+        )
+        require(
+            len(self.series) <= MAX_PLOT_SERIES,
+            f"plot supports at most {MAX_PLOT_SERIES} series",
+        )
+        require(
+            x_values.size * len(self.series) <= MAX_PLOT_VERTICES,
+            f"plot exceeds {MAX_PLOT_VERTICES} vertices",
+        )
+        checked: dict[str, np.ndarray] = {}
+        for label, raw_values in self.series.items():
             require(
-                values.shape == self.x.shape,
-                f"series {label!r} must match the x shape",
-                values.shape,
+                isinstance(label, str) and 1 <= len(label) <= 512,
+                "plot series label must contain 1..512 characters",
             )
+            values = np.asarray(raw_values, dtype=np.float64)
+            require(values.shape == x_values.shape, f"series {label!r} must match x")
+            finite = np.isfinite(values)
+            require(
+                np.all(np.isnan(values) | finite)
+                and np.all(np.abs(values[finite]) <= MAX_ABS_PLOT_VALUE),
+                f"series {label!r} must contain bounded values or NaN gaps",
+            )
+            checked[label] = np.frombuffer(values.tobytes(), dtype=np.float64)
+        x = np.frombuffer(x_values.tobytes(), dtype=np.float64)
+        series = MappingProxyType(checked)
+        object.__setattr__(self, "x", x)
+        object.__setattr__(self, "series", series)
 
 
 def _config_with(config: SimulationConfig, key: str, value: float) -> SimulationConfig:
@@ -228,9 +268,11 @@ def render_plot(data: PlotData, figure: Figure) -> None:
     axes = figure.add_subplot(111)
     spec = data.spec
     if spec.kind == "histogram":
+        plan = plan_plot_inspection("histogram", data.x, [])
+        edges = [plan.bins[0].lower, *(item.upper for item in plan.bins)]
         axes.hist(
             data.x,
-            bins=min(40, max(10, data.x.size // 10)),
+            bins=edges,
             color=get_chart_color(0),
             alpha=0.85,
         )

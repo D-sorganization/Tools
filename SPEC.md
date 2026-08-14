@@ -26,11 +26,27 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.95                                    |
-| **Spec Version**        | 1.16.95                                    |
-| **Last Spec Update**    | 2026-08-13                                 |
+| **Current Version**     | 1.16.96                                    |
+| **Spec Version**        | 1.16.96                                    |
+| **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Plots bounded computation and exact inspector (#4433)
+
+Version 1.16.96 defines one shared plot-workspace resource envelope: at most
+eight managed plots, 512 total sweep evaluations, eight series per plot, and
+8,192 inspectable vertices per inspector plan. React computation occurs after commit
+and caches immutable results by plot/context/executor authority; PyQt lazily
+computes only stale visible panes. Exact series/raw-index or derived histogram-
+bin selection is presentation-only and never reruns simulation or mutates
+export evidence. New accepted data clears selection; failed recomputation
+retains prior data, selection, pixels, and export ownership when present.
+Three Chromium selected viewports and two PyQt DPI selected/error-prior
+window/canvas pairs provide diagnostic evidence, not approved goldens.
+Runtime-local indices are not portable solver identities. Portable workspace
+archives, formal AT approval, performance qualification beyond the enforced
+resource caps, and remaining #4433 work stay open.
 
 ### 2026-08-13 Simulation exact scrub authority (#4433)
 

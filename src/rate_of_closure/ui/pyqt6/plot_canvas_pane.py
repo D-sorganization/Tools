@@ -5,9 +5,11 @@ from __future__ import annotations
 from collections.abc import Callable
 from textwrap import fill
 
+from matplotlib.artist import Artist
 from matplotlib.backend_bases import MouseEvent
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
 from matplotlib.figure import Figure
+from PyQt6.QtCore import QEvent, QObject
 from PyQt6.QtWidgets import (
     QComboBox,
     QFrame,
@@ -22,12 +24,13 @@ from rate_of_closure.plotting import PlotData, render_plot
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
+from rate_of_closure.ui.pyqt6.plot_canvas_inspector import PlotCanvasInspectorMixin
 
 _ZOOM_STEP = 1.25
 _TITLE_WRAP_CHARS = 42
 
 
-class PlotCanvasPane(QFrame):
+class PlotCanvasPane(PlotCanvasInspectorMixin, QFrame):
     """One plot with an independent canvas, transform, and legend policy."""
 
     def __init__(self, label: str, parent: QWidget | None = None) -> None:
@@ -77,6 +80,7 @@ class PlotCanvasPane(QFrame):
         layout.addLayout(controls)
         layout.addWidget(self._toolbar)
         layout.addWidget(self._canvas, stretch=1)
+        layout.addWidget(self._initialize_plot_inspector())
         self._canvas.mpl_connect("scroll_event", self._on_scroll)
 
     @staticmethod
@@ -87,18 +91,37 @@ class PlotCanvasPane(QFrame):
         return button
 
     def render_data(self, data: PlotData) -> None:
-        """Render new data and reset the viewport to a readable fit."""
+        """Stage and atomically publish new data with a fresh figure."""
+        plan, inspection_error = self._plan_for_data(data)
+        size = self._figure.get_size_inches()
+        candidate = Figure(
+            figsize=(float(size[0]), float(size[1])),
+            dpi=self._figure.dpi,
+            tight_layout=True,
+        )
+        render_plot(data, candidate)
+        self._wrap_figure_titles(candidate)
         self._data = data
-        render_plot(data, self._figure)
-        self._wrap_canvas_titles()
+        self._inspection_plan = plan
+        self._inspection_error = inspection_error
+        self._selection = None
+        self._selection_artists: list[Artist] = []
+        self._figure = candidate
+        self._canvas.figure = candidate
+        candidate.set_canvas(self._canvas)
         self._zoom = 1.0
         self._zoom_label.setText("100%")
         self._apply_legend()
+        self._update_inspection_status()
         self._canvas.draw_idle()
 
     def _wrap_canvas_titles(self) -> None:
         """Keep long scientific titles inside a compact application pane."""
-        for axes in self._figure.axes:
+        self._wrap_figure_titles(self._figure)
+
+    @staticmethod
+    def _wrap_figure_titles(figure: Figure) -> None:
+        for axes in figure.axes:
             title = axes.get_title()
             if len(title) > _TITLE_WRAP_CHARS:
                 axes.set_title(fill(title, width=_TITLE_WRAP_CHARS))
@@ -146,6 +169,7 @@ class PlotCanvasPane(QFrame):
         self._zoom = 1.0
         self._zoom_label.setText("100%")
         self._apply_legend()
+        self._draw_selection_marker()
         self._canvas.draw_idle()
 
     def _scale_limits(self, factor: float) -> None:
@@ -192,6 +216,11 @@ class PlotCanvasPane(QFrame):
             self.zoom_in()
         elif event.button == "down":
             self.zoom_out()
+
+    def eventFilter(self, watched: QObject | None, event: QEvent | None) -> bool:  # noqa: N802
+        if self._handle_inspection_event(watched, event):
+            return True
+        return bool(super().eventFilter(watched, event))
 
 
 __all__ = ["PlotCanvasPane"]

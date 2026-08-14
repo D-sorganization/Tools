@@ -1,7 +1,24 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-13
+> Last updated: 2026-08-14
+
+## 2026-08-14 Plots bounded computation and exact inspector (#4433)
+
+- Shared Python/TypeScript authority caps one workspace at eight plots, 512
+  sweep evaluations, eight series, and 8,192 inspectable vertices. React caches
+  post-commit immutable plot data; PyQt caches each pane and computes only stale
+  visible evidence.
+- Exact series/raw-index pointer and keyboard selection is synchronized with
+  one visible status. Histograms identify derived bins, log coordinates use
+  rendered transforms, and invalid/NaN inspection evidence fails closed.
+- Presentation changes and selection do not recompute simulation. New accepted
+  data clears selection; a failed recompute retains prior data, marker, pixels,
+  and export owner when available. Error text is bounded and single-owned.
+- Chromium selected evidence covers 1440x900, 1280x720, and 390x844 without
+  test scroll. Eight PyQt selected/error-prior window/canvas PNGs cover DPI
+  1.0/1.5 with exact canvas hashes. All remain diagnostic. SPEC is 1.16.96;
+  portable workspace replay, approved goldens, AT, and #4433 remain open.
 
 ## 2026-08-13 Simulation exact scrub authority (#4433)
 

@@ -73,6 +73,10 @@ describe("plot spec — JSON round-trip", () => {
         y_keys: ["swing.speed_mps"],
       }),
     ).toThrow(/unknown catalog/);
+    expect(() => specFromJson({
+      format: "rate_of_closure.plot_spec/1", kind: "histogram",
+      x_key: "flight.speed_mps", y_keys: [], y_log: true,
+    })).toThrow(/count axis/);
   });
 
   it("accepts a definition exported by the desktop app", () => {
@@ -132,5 +136,18 @@ describe("compute pipeline", () => {
     expect(payload.format).toBe("rate_of_closure.plot_data/1");
     expect(payload.rows.length).toBe(data.x.length);
     expect(specFromJson(payload.spec)).toEqual(spec);
+  });
+
+  it("publishes a deeply frozen PlotData snapshot", () => {
+    const spec = BUILTIN_PLOTS.find((b) => b.name === "swing_time_series")!.make(0.06);
+    const data = computePlotData(spec, ctx);
+    expect(Object.isFrozen(data)).toBe(true);
+    expect(Object.isFrozen(data.spec)).toBe(true);
+    expect(Object.isFrozen(data.spec.y_keys)).toBe(true);
+    expect(Object.isFrozen(data.x)).toBe(true);
+    expect(Object.isFrozen(data.series[0].values)).toBe(true);
+    expect(() => ((data.x as number[])[0] = 99)).toThrow();
+    expect(() => ((data.series[0].values as number[])[0] = 99)).toThrow();
+    expect(() => ((data.spec.y_keys as string[])[0] = "metric.carry_m")).toThrow();
   });
 });

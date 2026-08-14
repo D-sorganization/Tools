@@ -12,32 +12,22 @@ import { type ImpactScenario } from "../model/impact";
 import {
   axisLabel,
   supportedByCategory,
-  type PlotContext,
 } from "../model/plotcatalog";
 import {
   BUILTIN_PLOTS,
-  computePlotData,
   plotDataCsv,
   plotDataJson,
   specFromJson,
   specToJson,
-  type PlotSpec,
+  type PlotSimulationExecutor,
 } from "../model/plotspec";
-import {
-  runSimulation,
-  type SimulationInput,
-} from "../model/simulation";
 import { PlotCanvasCard } from "./PlotCanvasCard";
+import { usePlotsWorkspace } from "./usePlotsWorkspace";
 
 interface Props {
   scenario: ImpactScenario;
   loftDeg: number;
-}
-
-interface ManagedPlot {
-  id: number;
-  label: string;
-  spec: PlotSpec;
+  executeSimulation?: PlotSimulationExecutor;
 }
 
 const CUSTOM_CATEGORIES = ["Swing Sample", "Kinetics", "Flight"] as const;
@@ -51,16 +41,34 @@ function download(name: string, blob: Blob): void {
   URL.revokeObjectURL(url);
 }
 
-export function PlotsPanel({ scenario, loftDeg }: Props) {
+export function PlotsPanel({ scenario, loftDeg, executeSimulation }: Props) {
   const canvasRefs = useRef(new Map<number, HTMLCanvasElement>());
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const [plots, setPlots] = useState<ManagedPlot[]>(() => [
-    { id: 1, label: "Closure Sweep", spec: BUILTIN_PLOTS[0].make(0.06) },
-  ]);
-  const [selectedId, setSelectedId] = useState(1);
+  const initialPlot = useMemo(
+    () => ({
+      id: 1,
+      label: "Closure Sweep",
+      spec: BUILTIN_PLOTS[0].make(0.06),
+    }),
+    [],
+  );
+  const {
+    addPlot,
+    computed,
+    context,
+    plots,
+    removeSelected,
+    selectedId,
+    setSelectedId,
+    setWorkspaceError,
+    workspaceError,
+  } = usePlotsWorkspace({
+    initialPlot,
+    scenario,
+    loftDeg,
+    executeSimulation,
+  });
   const [builtin, setBuiltin] = useState(BUILTIN_PLOTS[0].name);
-  const [error, setError] = useState<string | null>(null);
-  const nextId = useRef(2);
 
   // Custom builder state (series categories only — the guided sweep
   // builder is a desktop feature for now).
@@ -72,47 +80,16 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
   const [customY, setCustomY] = useState("swing.speed_mps");
   const [customKind, setCustomKind] = useState<"line" | "scatter">("line");
 
-  const context: PlotContext = useMemo(() => {
-    const input: SimulationInput = {
-      sourceKind: "manual",
-      clubheadSpeedMph: scenario.clubheadSpeedMph,
-      omegaDps: [0, 0, 0],
-      loftDeg,
-      impactOffsetToeMm: scenario.impactOffsetToeMm,
-      impactOffsetHighMm: scenario.impactOffsetHighMm,
-      planeYawDeg: 0,
-      planeSideTiltDeg: -45,
-      planeForwardTiltDeg: 0,
-      impactTimeS: null,
-      swingDurationS: 1.5,
-    };
-    return { scenario, input, run: runSimulation(input) };
-  }, [scenario, loftDeg]);
-
   const selected = plots.find((p) => p.id === selectedId) ?? plots[0];
-  const computed = useMemo(() => plots.map((plot) => {
-    try {
-      return { plot, data: computePlotData(plot.spec, context), error: null };
-    } catch (exc) {
-      return { plot, data: null, error: String(exc) };
-    }
-  }), [plots, context]);
   const selectedComputed = computed.find((entry) => entry.plot.id === selectedId);
   const data = selectedComputed?.data ?? null;
-  const shownError = error ?? selectedComputed?.error ?? null;
-
-  const addPlot = (label: string, spec: PlotSpec): void => {
-    const id = nextId.current;
-    nextId.current += 1;
-    setPlots((list) => [...list, { id, label, spec }]);
-    setSelectedId(id);
-  };
+  const shownError = workspaceError;
 
   const addBuiltin = (): void => {
     const entry = BUILTIN_PLOTS.find((b) => b.name === builtin);
     if (!entry) return;
     const duration =
-      context.run.swing[context.run.swing.length - 1]?.t ?? 0.06;
+      context?.run.swing[context.run.swing.length - 1]?.t ?? 0.06;
     addPlot(entry.label, entry.make(duration));
   };
 
@@ -131,16 +108,8 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
         x_count: 25,
       });
     } catch (exc) {
-      setError(String(exc));
+      setWorkspaceError(String(exc));
     }
-  };
-
-  const removeSelected = (): void => {
-    setPlots((list) => {
-      const next = list.filter((p) => p.id !== selectedId);
-      if (next.length) setSelectedId(next[next.length - 1].id);
-      return next;
-    });
   };
 
   const exportPng = (): void => {
@@ -160,7 +129,7 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
         const spec = specFromJson(JSON.parse(text));
         addPlot(spec.title || spec.x_key, spec);
       } catch (exc) {
-        setError(String(exc));
+        setWorkspaceError(String(exc));
       }
     });
   };
@@ -382,7 +351,14 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
             selected={entry.plot.id === selectedId}
             onSelect={() => setSelectedId(entry.plot.id)}
             onCanvas={(canvas) => registerCanvas(entry.plot.id, canvas)}
+            notice={entry.error && entry.retained
+              ? `Recompute failed; prior accepted plot retained: ${entry.error}`
+              : entry.error}
           />
+        ) : entry.pending ? (
+          <p key={entry.plot.id} role="status" className="text-sm text-slate-400">
+            Computing {entry.plot.label}…
+          </p>
         ) : (
           <p key={entry.plot.id} role="alert" className="text-sm text-rose-300">
             {entry.plot.label}: {entry.error}

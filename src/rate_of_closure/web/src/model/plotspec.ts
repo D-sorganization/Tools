@@ -16,9 +16,11 @@ import {
   type PlotContext,
 } from "./plotcatalog";
 import { type ImpactScenario } from "./impact";
+import { snapshotPlotData } from "./plotDataSnapshot";
 import {
   runSimulation,
   type SimulationInput,
+  type SimulationRunTs,
 } from "./simulation";
 
 export const SPEC_FORMAT = "rate_of_closure.plot_spec/1";
@@ -26,26 +28,28 @@ export const SPEC_FORMAT = "rate_of_closure.plot_spec/1";
 export type PlotKind = "line" | "scatter" | "sweep" | "histogram";
 
 export interface PlotSpec {
-  kind: PlotKind;
-  x_key: string;
-  y_keys: string[];
-  series_key: string | null;
-  title: string;
-  x_log: boolean;
-  y_log: boolean;
-  x_start: number | null;
-  x_stop: number | null;
-  x_count: number;
+  readonly kind: PlotKind;
+  readonly x_key: string;
+  readonly y_keys: readonly string[];
+  readonly series_key: string | null;
+  readonly title: string;
+  readonly x_log: boolean;
+  readonly y_log: boolean;
+  readonly x_start: number | null;
+  readonly x_stop: number | null;
+  readonly x_count: number;
 }
 
 export interface PlotData {
   spec: PlotSpec;
-  x: number[];
+  x: readonly number[];
   /** Series label -> values (same length as x). Empty for histograms. */
-  series: Array<{ label: string; values: number[] }>;
+  series: readonly { readonly label: string; readonly values: readonly number[] }[];
   xLabel: string;
   yLabel: string;
 }
+
+export type PlotSimulationExecutor = (input: SimulationInput) => SimulationRunTs;
 
 const SWEEP_Y_CATEGORIES = new Set(["Impact", "Launch", "Metric"]);
 
@@ -59,6 +63,7 @@ export function validateSpec(spec: PlotSpec): void {
   if (spec.kind === "histogram") {
     if (!isSeries(spec.x_key))
       throw new Error("histogram needs a per-sample x variable");
+    if (spec.y_log) throw new Error("histogram count axis cannot be logarithmic");
     return;
   }
   if (spec.kind === "sweep") {
@@ -170,7 +175,7 @@ function extractArray(ctx: PlotContext, key: string): number[] {
   return value;
 }
 
-function sharedYLabel(yKeys: string[]): string {
+function sharedYLabel(yKeys: readonly string[]): string {
   if (yKeys.length === 1) return axisLabel(yKeys[0]);
   const units = new Set(yKeys.map((key) => catalogVariable(key).unit));
   if (units.size === 1) {
@@ -180,7 +185,11 @@ function sharedYLabel(yKeys: string[]): string {
   return "Value (Mixed Units)";
 }
 
-function sweepData(spec: PlotSpec, ctx: PlotContext): PlotData {
+function sweepData(
+  spec: PlotSpec,
+  ctx: PlotContext,
+  executeSimulation: PlotSimulationExecutor,
+): PlotData {
   const start = spec.x_start as number;
   const stop = spec.x_stop as number;
   const xs: number[] = [];
@@ -189,7 +198,7 @@ function sweepData(spec: PlotSpec, ctx: PlotContext): PlotData {
     const value = start + ((stop - start) * i) / (spec.x_count - 1);
     try {
       const swept = withInputValue(ctx.scenario, ctx.input, spec.x_key, value);
-      const run = runSimulation(swept.input);
+      const run = executeSimulation(swept.input);
       const pointCtx: PlotContext = { ...swept, run };
       const row = spec.y_keys.map((key) => extractScalar(pointCtx, key));
       xs.push(value);
@@ -200,7 +209,7 @@ function sweepData(spec: PlotSpec, ctx: PlotContext): PlotData {
   }
   if (xs.length < 2)
     throw new Error("sweep produced fewer than 2 feasible points");
-  return {
+  return snapshotPlotData({
     spec,
     x: xs,
     series: spec.y_keys.map((key, j) => ({
@@ -209,23 +218,27 @@ function sweepData(spec: PlotSpec, ctx: PlotContext): PlotData {
     })),
     xLabel: axisLabel(spec.x_key),
     yLabel: sharedYLabel(spec.y_keys),
-  };
+  });
 }
 
 /** Evaluate a definition against the current scenario / run context. */
-export function computePlotData(spec: PlotSpec, ctx: PlotContext): PlotData {
+export function computePlotData(
+  spec: PlotSpec,
+  ctx: PlotContext,
+  executeSimulation: PlotSimulationExecutor = runSimulation,
+): PlotData {
   validateSpec(spec);
-  if (spec.kind === "sweep") return sweepData(spec, ctx);
+  if (spec.kind === "sweep") return sweepData(spec, ctx, executeSimulation);
   const x = extractArray(ctx, spec.x_key);
   if (spec.kind === "histogram")
-    return {
+    return snapshotPlotData({
       spec,
       x,
       series: [],
       xLabel: axisLabel(spec.x_key),
       yLabel: "Count",
-    };
-  return {
+    });
+  return snapshotPlotData({
     spec,
     x,
     series: spec.y_keys.map((key) => ({
@@ -234,7 +247,7 @@ export function computePlotData(spec: PlotSpec, ctx: PlotContext): PlotData {
     })),
     xLabel: axisLabel(spec.x_key),
     yLabel: sharedYLabel(spec.y_keys),
-  };
+  });
 }
 
 const spec = (partial: Partial<PlotSpec> & Pick<PlotSpec, "kind" | "x_key">): PlotSpec => ({

@@ -119,7 +119,7 @@ def test_changed_configuration_is_stale_and_errors_are_inline(tab, monkeypatch) 
         raise RuntimeError("intentional physics failure")
 
     monkeypatch.setattr(
-        "rate_of_closure.ui.pyqt6.simulation_tab.run_simulation", fail_run
+        "rate_of_closure.ui.pyqt6.simulation_tab_publication.run_simulation", fail_run
     )
     assert tab.run_now() is None
     assert "Error" in tab._run_status.text()

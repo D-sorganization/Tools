@@ -28,6 +28,7 @@ from rate_of_closure.plotting import (  # noqa: E402
     BUILTIN_PLOTS,
     CATALOG,
     CATEGORIES,
+    PlotData,
     PlotSpec,
     builtin_spec,
     catalog_keys,
@@ -255,6 +256,14 @@ class TestPlotSpec:
         with pytest.raises(Exception, match="format"):
             PlotSpec.from_json_dict({"format": "other/9", "kind": "line"})
 
+    def test_histogram_count_axis_cannot_be_logarithmic(self) -> None:
+        with pytest.raises(ValueError, match="count axis"):
+            PlotSpec(
+                kind="histogram",
+                x_key="flight.speed_mps",
+                y_log=True,
+            )
+
 
 def _fast(spec: PlotSpec) -> PlotSpec:
     """Shrink sweep grids so the full-simulation sweeps stay quick."""
@@ -312,6 +321,23 @@ class TestPipeline:
         np.testing.assert_allclose(
             data.series["Impact-Point Path Deviation"], expected, atol=1e-9
         )
+
+    def test_plot_data_is_defensively_immutable_and_allows_nan_gaps(self, run) -> None:  # type: ignore[no-untyped-def]
+        data = compute_plot_data(builtin_spec("joint_power"), run)
+        assert all(np.isnan(values).all() for values in data.series.values())
+        with pytest.raises(ValueError, match="WRITEABLE"):
+            data.x.setflags(write=True)
+        values = next(iter(data.series.values()))
+        with pytest.raises(ValueError, match="WRITEABLE"):
+            values.setflags(write=True)
+        with pytest.raises(ValueError, match="series label"):
+            PlotData(
+                builtin_spec("swing_time_series"),
+                np.array([0.0]),
+                {1: np.array([1.0])},  # type: ignore[dict-item]
+                "X",
+                "Y",
+            )
 
 
 class TestExports:

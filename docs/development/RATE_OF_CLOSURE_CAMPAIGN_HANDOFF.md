@@ -1,5 +1,26 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Plots bounded computation and exact inspector
+
+- One shared authority rejects more than eight managed plots, 512 total sweep
+  evaluations, eight series, or 8,192 inspector vertices before scientific
+  computation or planner copying. Python/TypeScript planners consume the same
+  semantic golden without claiming cross-solver numeric identity.
+- React computes after commit and caches by plot, context, and executor. PyQt
+  retains per-pane accepted data and computes only stale visible panes.
+  Selecting, zooming, moving legends, or inspecting cached data does not rerun
+  simulation. Plot data is defensively immutable at publication.
+- Pointer and Arrow/Home/End/Escape interactions select one exact series/raw
+  point. Histogram selection is explicitly a derived bin. Twelve rendered
+  pixels, stable ties, log-axis projection, NaN-gap failure, and selection
+  reset/recovery are pinned on both surfaces.
+- Failure retains prior accepted data, marker/status, pixels, and export owner
+  when available. React evidence is selected-only across three production
+  viewports; PyQt adds a planted dependency error-prior at DPI 1.0/1.5. The
+  three React and eight PyQt PNGs are diagnostic, not approved baselines.
+  Portable workspace/selection replay, formal AT, approved goldens, and
+  broader performance qualification remain open. SPEC is 1.16.96.
+
 ## 2026-08-13 #4433 Simulation exact scrub authority
 
 - React range pointer release and Arrow/Home/End/Page keyboard commits construct

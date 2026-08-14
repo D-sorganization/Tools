@@ -17,6 +17,8 @@ import pytest
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
+from matplotlib.backend_bases import MouseEvent  # noqa: E402
+from PyQt6.QtCore import Qt  # noqa: E402
 from PyQt6.QtWidgets import QPushButton, QTabWidget  # noqa: E402
 
 from rate_of_closure.club import get_club  # noqa: E402
@@ -145,6 +147,122 @@ class TestPlotList:
         tab.refresh()
         title = tab.plot_panes()[0].figure().axes[0].get_title()
         assert "\n" in title
+
+    def test_selection_uses_cached_data_and_add_computes_only_the_new_plot(
+        self, tab, qtbot, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        import rate_of_closure.ui.pyqt6.plots_tab as plots_module
+
+        calls = 0
+        original = plots_module.compute_plot_data
+
+        def counted(spec, run):  # type: ignore[no-untyped-def]
+            nonlocal calls
+            calls += 1
+            return original(spec, run)
+
+        monkeypatch.setattr(plots_module, "compute_plot_data", counted)
+        tab.show()
+        tab.refresh()
+        assert calls == 1
+        index = tab._builtin_combo.findData("swing_time_series")
+        tab._builtin_combo.setCurrentIndex(index)
+        tab._on_add_builtin()
+        qtbot.wait(1)
+        assert calls == 2
+        tab._plot_list.setCurrentRow(0)
+        assert calls == 2
+        qtbot.keyClick(tab.plot_panes()[0].canvas(), Qt.Key.Key_Home)
+        assert calls == 2
+
+    def test_keyboard_and_pointer_select_exact_series_evidence(
+        self, tab, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        tab.show()
+        tab.refresh()
+        pane = tab.plot_panes()[0]
+        tab.activateWindow()
+        pane.canvas().setFocus()
+        qtbot.waitUntil(pane.canvas().hasFocus)
+        qtbot.keyClick(pane.canvas(), Qt.Key.Key_Home)
+        assert pane.selected_evidence() is not None
+        assert "source point 1/" in pane.inspection_status()
+        assert pane.canvas().hasFocus()
+
+        plan = pane._inspection_plan
+        assert plan is not None and plan.kind == "series"
+        axes = pane.figure().axes[0]
+        x_pixel, y_pixel = axes.transData.transform(
+            (plan.x[-1], plan.series[0].values[-1])
+        )
+        event = MouseEvent(
+            "button_press_event", pane.canvas(), x_pixel, y_pixel, button=1
+        )
+        pane._on_inspection_click(event)
+        selected = pane.selected_evidence()
+        assert selected is not None and selected.raw_index == plan.raw_count - 1
+
+    def test_new_plot_data_clears_selection_and_histogram_bins_are_derived(
+        self, tab, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        tab.show()
+        tab.refresh()
+        pane = tab.plot_panes()[0]
+        qtbot.keyClick(pane.canvas(), Qt.Key.Key_Home)
+        assert pane.selected_evidence() is not None
+        tab.set_run(tab.reference_run())
+        assert pane.selected_evidence() is None
+
+        tab.add_spec(
+            PlotSpec(kind="histogram", x_key="flight.speed_mps", title="Speed")
+        )
+        tab.refresh()
+        histogram = tab.plot_panes()[-1]
+        qtbot.keyClick(histogram.canvas(), Qt.Key.Key_Home)
+        assert "Histogram bin 1/" in histogram.inspection_status()
+
+    def test_failed_recompute_retains_prior_data_selection_and_figure(
+        self, tab, qtbot, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        import rate_of_closure.ui.pyqt6.plots_tab as plots_module
+
+        tab.show()
+        tab.refresh()
+        pane = tab.plot_panes()[0]
+        qtbot.keyClick(pane.canvas(), Qt.Key.Key_Home)
+        prior_data = tab.current_data()
+        prior_figure = pane.figure()
+        prior_selection = pane.selected_evidence()
+
+        def fail(_spec, _run):  # type: ignore[no-untyped-def]
+            raise RuntimeError("planted plot authority failure")
+
+        monkeypatch.setattr(plots_module, "compute_plot_data", fail)
+        tab.set_run(tab.reference_run())
+        assert tab.current_data() is prior_data
+        assert pane.figure() is prior_figure
+        assert pane.selected_evidence() == prior_selection
+        assert "prior accepted plot retained" in tab._status.text()
+
+    def test_ninth_plot_is_rejected_before_computation(self, tab, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+        import rate_of_closure.ui.pyqt6.plots_tab as plots_module
+
+        calls = 0
+
+        def counted(_spec, _run):  # type: ignore[no-untyped-def]
+            nonlocal calls
+            calls += 1
+            return None
+
+        monkeypatch.setattr(plots_module, "compute_plot_data", counted)
+        index = tab._builtin_combo.findData("swing_time_series")
+        tab._builtin_combo.setCurrentIndex(index)
+        for _ in range(8):
+            tab._on_add_builtin()
+
+        assert tab._plot_list.count() == 8
+        assert "at most 8 managed plots" in tab._status.text()
+        assert calls == 0
 
 
 class TestWizard:
