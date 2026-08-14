@@ -8,6 +8,9 @@ touching any internal widget of another component.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -229,7 +232,7 @@ class TestClubGroup:
         panel._club_combo.setCurrentText("7-Iron")
         panel._loft_spin.setValue(32.0)
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
             lambda *_args, **_kwargs: (str(output), "STL meshes (*.stl)"),
         )
 
@@ -248,11 +251,11 @@ class TestClubGroup:
         panel = ControlsPanel()
         qtbot.addWidget(panel)
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
             lambda *_args, **_kwargs: ("", ""),
         )
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.write_clubhead_stl_atomic",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.write_clubhead_stl_atomic",
             lambda *_args, **_kwargs: pytest.fail("cancel must not serialize"),
         )
 
@@ -267,7 +270,7 @@ class TestClubGroup:
         panel = ControlsPanel()
         qtbot.addWidget(panel)
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
             lambda *_args, **_kwargs: (str(output), "STL meshes (*.stl)"),
         )
         monkeypatch.setattr(
@@ -276,7 +279,7 @@ class TestClubGroup:
         )
         warnings: list[str] = []
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.QMessageBox.warning",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QMessageBox.warning",
             lambda _parent, _title, message: warnings.append(message),
         )
 
@@ -291,16 +294,16 @@ class TestClubGroup:
         panel = ControlsPanel()
         qtbot.addWidget(panel)
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
             lambda *_args, **_kwargs: (str(output), "STL meshes (*.stl)"),
         )
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.write_clubhead_stl_atomic",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.write_clubhead_stl_atomic",
             lambda *_args, **_kwargs: (_ for _ in ()).throw(OSError("disk full")),
         )
         warnings: list[str] = []
         monkeypatch.setattr(
-            "rate_of_closure.ui.pyqt6.controls_panel.QMessageBox.warning",
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QMessageBox.warning",
             lambda _parent, _title, message: warnings.append(message),
         )
 
@@ -309,6 +312,153 @@ class TestClubGroup:
         assert not output.exists()
         assert panel._export_status.text() == "STL export failed."
         assert warnings == ["disk full"]
+
+    def test_engineering_export_writes_strict_selected_head_sidecar(
+        self, qtbot, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        output = tmp_path / "selected-head.engineering.json"
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        panel._club_combo.setCurrentText("7-Iron")
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: (
+                str(output),
+                "Engineering JSON (*.engineering.json *.json)",
+            ),
+        )
+
+        panel._export_engineering_button.click()
+
+        document = json.loads(output.read_text(encoding="utf-8"))
+        assert document["format"] == "rate_of_closure.clubhead_engineering/1"
+        assert document["mass_properties"]["head"]["mass_kg"]["value"] == 0.25
+        assert (
+            document["mass_properties"]["head"]["center_of_mass_m"]["status"]
+            == "unavailable"
+        )
+        assert (
+            document["mass_properties"]["head"]["inertia_tensor_at_com_kg_m2"]["status"]
+            == "unavailable"
+        )
+        assert "Engineering sidecar exported: 7-Iron" in panel._export_status.text()
+
+    def test_engineering_export_cancel_does_not_serialize(
+        self, qtbot, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: ("", ""),
+        )
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.write_clubhead_engineering_sidecar_atomic",
+            lambda *_args, **_kwargs: pytest.fail("cancel must not serialize"),
+        )
+
+        panel._export_engineering_button.click()
+
+        assert panel._export_status.text() == ""
+
+    def test_engineering_export_reports_atomic_write_failure(
+        self, qtbot, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        output = tmp_path / "selected-head.engineering.json"
+        output.write_text("existing artifact", encoding="utf-8")
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: (str(output), "Engineering JSON (*.json)"),
+        )
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.write_clubhead_engineering_sidecar_atomic",
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(OSError("disk full")),
+        )
+        warnings: list[str] = []
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QMessageBox.warning",
+            lambda _parent, _title, message: warnings.append(message),
+        )
+
+        panel._export_engineering_button.click()
+
+        assert output.read_text(encoding="utf-8") == "existing artifact"
+        assert panel._export_status.text() == "Engineering sidecar export failed."
+        assert warnings == ["disk full"]
+
+    def test_imported_binding_unlocks_complete_engineering_properties(
+        self, qtbot, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "club_assembly_binding_driver_10_5.json"
+        )
+        output = tmp_path / "bound.engineering.json"
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        published_bindings: list[object] = []
+        panel.assemblyBindingChanged.connect(published_bindings.append)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getOpenFileName",
+            lambda *_args, **_kwargs: (str(fixture), "Club assembly binding"),
+        )
+
+        panel._import_assembly_button.click()
+
+        assert panel._assembly_binding is not None
+        assert published_bindings[-1] is panel._assembly_binding
+        assert "driver-qualified-2026-08" in panel._binding_status.text()
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: (str(output), "Engineering JSON"),
+        )
+        panel._export_engineering_button.click()
+        document = json.loads(output.read_text(encoding="utf-8"))
+        assert document["mass_properties"]["assembly"]["status"] == "available"
+        assert (
+            document["mass_properties"]["head"]["inertia_tensor_at_com_kg_m2"]["status"]
+            == "available"
+        )
+        assert document["frames"]["world_from_head"]["status"] == "unavailable"
+
+    def test_binding_import_mismatch_fails_closed_and_spec_edit_clears_binding(
+        self, qtbot, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "club_assembly_binding_driver_10_5.json"
+        )
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        published_bindings: list[object] = []
+        panel.assemblyBindingChanged.connect(published_bindings.append)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getOpenFileName",
+            lambda *_args, **_kwargs: (str(fixture), "Club assembly binding"),
+        )
+        warnings: list[str] = []
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.club_artifact_ui.QMessageBox.warning",
+            lambda _parent, _title, message: warnings.append(message),
+        )
+
+        panel._loft_spin.setValue(11.0)
+        panel._import_assembly_button.click()
+        assert panel._assembly_binding is None
+        assert "import failed" in panel._binding_status.text().lower()
+        assert warnings and "selected ClubSpec identity" in warnings[0]
+
+        panel._loft_spin.setValue(10.5)
+        panel._import_assembly_button.click()
+        assert panel._assembly_binding is not None
+        panel._loft_spin.setValue(11.0)
+        assert panel._assembly_binding is None
+        assert published_bindings[-1] is None
+        assert "specification changed" in panel._binding_status.text()
 
     def test_generate_loads_a_parametric_head_into_the_view(
         self, window, qtbot

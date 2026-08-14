@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useState } from "react";
 
 import {
-  DEFAULT_IMPACT_CLUB,
   runSimulation,
   type SimulationInput,
   type SimulationRunTs,
@@ -10,6 +9,7 @@ import {
 } from "../model/simulation";
 import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
+import { type ClubAssemblyBinding } from "../model/clubAssemblyBinding";
 import { type ImpactScenario } from "../model/impact";
 import { type TargetRegionTs } from "../model/targets";
 import { type ContactMode } from "../model/contact";
@@ -22,6 +22,9 @@ import { TorqueProfilePanel } from "./TorqueProfilePanel";
 import { JointLockControls } from "./JointLockControls";
 import { BallSetupControl } from "./BallSetupControl";
 import { SimulationDisplay } from "./SimulationDisplay";
+import { SimulationPhysicsStatus } from "./SimulationPhysicsStatus";
+import { simulationRunStatus } from "../model/simulationRunStatus";
+import { readBrowserFileText } from "../model/browserFileText";
 import {
   defaultBallSetupForClub,
   type BallSetup,
@@ -34,8 +37,6 @@ import {
 } from "../model/ballSetupPersistence";
 import {
   PASSIVE_DOUBLE_PENDULUM_RUN,
-  SHOULDER_JOINT_ID,
-  WRIST_JOINT_ID,
   type DoublePendulumRunConfig,
   type PendulumState,
 } from "../model/doublePendulum";
@@ -45,6 +46,8 @@ interface Props {
   loftDeg: number;
   /** Effective club spec from the Club group (H1: CG marker source). */
   clubSpec?: ClubSpec | null;
+  /** Exact selected-spec binding imported by the Club panel. */
+  assemblyBinding?: ClubAssemblyBinding;
   onScenarioChange: (updates: Partial<ImpactScenario>) => void;
   /** Target region (#4125 H7b), lifted to App for the Variation tie-in. */
   target: TargetRegionTs;
@@ -53,20 +56,11 @@ interface Props {
   distanceUnit?: string;
 }
 
-const readFileText = (file: File): Promise<string> => {
-  if (typeof file.text === "function") return file.text();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result ?? ""));
-    reader.onerror = () => reject(reader.error ?? new Error("Could not read file."));
-    reader.readAsText(file);
-  });
-};
-
 export function SimulationPanel({
   scenario,
   loftDeg,
   clubSpec = null,
+  assemblyBinding,
   onScenarioChange,
   target,
   onTargetChange,
@@ -126,6 +120,8 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      assemblyBinding,
+      assemblyClubSpec: assemblyBinding ? (clubSpec ?? undefined) : undefined,
     }),
     [
       sourceKind,
@@ -138,13 +134,10 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      assemblyBinding,
     ],
   );
   const inputSignature = useMemo(() => JSON.stringify(input), [input]);
-
-  const clubPhysicsGuidance = clubSpec
-    ? `Impact physics uses ${clubSpec.name}: ${clubSpec.headMassKg.toFixed(3)} kg head mass, ${clubSpec.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${clubSpec.loftDeg.toFixed(1)}° nominal loft. COR uses the ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} driver default because the club library does not yet define measured COR.`
-    : `No selected club specification was provided. Impact physics uses the default driver: ${DEFAULT_IMPACT_CLUB.headMassKg.toFixed(3)} kg head mass, ${DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} COR.`;
 
   const runWithInput = (simulationInput: SimulationInput) => {
     try {
@@ -158,27 +151,7 @@ export function SimulationPanel({
   };
   const doRun = () => runWithInput(input);
   const runIsStale = run !== null && lastRunSignature !== inputSignature;
-  const completedStatus = run?.impactOutcome.status === "miss"
-    ? "Completed — no club–ball impact"
-    : "Completed — impact and flight available";
-  const completedDetails = run
-    ? [
-        run.torqueRun.mode === "prescribed"
-          ? `prescribed torque profile ${run.torqueRun.profileId}`
-          : null,
-        run.torqueRun.lockedJointIds.includes(SHOULDER_JOINT_ID)
-          ? "Shoulder locked (absolute ground frame)"
-          : null,
-        run.torqueRun.lockedJointIds.includes(WRIST_JOINT_ID)
-          ? "Wrist locked (relative upper-segment frame)"
-          : null,
-      ].filter((detail): detail is string => detail !== null)
-    : [];
-  const runStatus = runError
-    ? `Run failed: ${runError}`
-    : runIsStale
-      ? "Inputs changed — run required"
-      : run ? [completedStatus, ...completedDetails].join("; ") : "Not run";
+  const runStatus = simulationRunStatus(run, runError, runIsStale);
 
   // Populate the default Swing view immediately instead of presenting a
   // blank canvas that depends on discovering the Run button first.
@@ -211,7 +184,9 @@ export function SimulationPanel({
   const importJson = async (file?: File) => {
     if (!file) return;
     try {
-      const imported = ballSetupFromSimulationDocument(JSON.parse(await readFileText(file)));
+      const imported = ballSetupFromSimulationDocument(
+        JSON.parse(await readBrowserFileText(file)),
+      );
       setBallSetup(imported);
       setBallSetupOverridden(true);
       const warning = saveBallSetupPreference({ setup: imported, userOverridden: true });
@@ -275,14 +250,12 @@ export function SimulationPanel({
           {ballSetupMessage && (
             <p role="status" className="mb-3 text-xs text-sky-300">{ballSetupMessage}</p>
           )}
-          <p
-            role="note"
-            aria-label="Impact club physics"
-            title={clubPhysicsGuidance}
-            className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/50 px-3 py-2 text-xs leading-relaxed text-slate-400"
-          >
-            {clubPhysicsGuidance}
-          </p>
+          <SimulationPhysicsStatus
+            clubSpec={clubSpec}
+            assemblyBinding={assemblyBinding}
+            run={run}
+            runIsStale={runIsStale}
+          />
           <PlaneTiltControls tilts={tilts} onChange={setTilts} />
           {sourceKind === "double_pendulum" && (
             <JointLockControls

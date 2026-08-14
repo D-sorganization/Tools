@@ -77,6 +77,41 @@ clickable reference-frame notes. Web numeric fields select the complete value
 on focus and accept intermediate signed decimal drafts (for example, `-12.5`
 degrees of spin-axis tilt) before committing on Enter or focus loss.
 
+Both Club panels can export the selected representative head as deterministic
+binary STL. The generator works in metres, while the unitless STL coordinates
+are written in conventional millimetres; the fixed header records
+`units=mm`, the head frame, and axes `x=target,y=up,z=toe`. Portable filenames
+handle Unicode-only and Windows-reserved club names. This visual parametric
+mesh is not a density-integrated CAD model and does not imply a measured 3×3
+inertia tensor.
+
+The adjacent **Engineering Sidecar JSON** action exports the strict versioned
+`rate_of_closure.clubhead_engineering/1` record on both surfaces. It identifies
+the exact portable-named companion STL by SHA-256 and byte length, declares its
+frame/units/transform and head mass provenance, and fails closed for the
+unavailable complete CG, symmetric CG inertia tensor, world attitude, and
+assembly properties. Partial CG offsets and the shaft-axis scalar remain
+labeled `evidence_only`; they are never emitted as substitute tensor or CG
+values.
+
+Both Club panels also expose **Import Assembly Binding JSON**. The versioned
+`rate_of_closure.club_assembly_binding/1` document must match the exact selected
+spec and embedded shared `golf_club.ClubAssembly` by deterministic SHA-256
+identity. Import additionally validates the unique head, head mass, SI units,
+component transform, complete physical tensors, and a qualified measured,
+manufacturer, CAD-integrated, or engineering-analysis source declaration.
+Only a valid binding makes complete head and assembled-club mass properties
+available in the exported sidecar; any identity-defining Club-panel edit clears
+it. The simulation adapter is deliberately narrower. Desktop impact consumes
+the validated head mass and rotates the head-CG tensor into the app frame only
+when the swing source explicitly declares the complete selected-head attitude;
+the manual source does, while the current pendulum sources do not. Browser
+impact remains scalar-MOI-only and consumes just the validated head mass. Full
+CG is unsupported by the current impact datum, and neither surface substitutes
+assembled-club properties for head properties. A no-contact run records the
+binding properties as not used and does not fabricate impact or flight. The
+repository's binding fixture is synthetic test evidence, not manufacturer data.
+
 ## Build a Standalone Executable
 
 Users can package the explorer and experiment without a Python
