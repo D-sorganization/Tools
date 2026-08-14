@@ -82,10 +82,7 @@ _ROOT_FIELDS = frozenset(
 
 
 def _variation_payload(request: GroundRegionalVariationRequest) -> dict[str, Any]:
-    payload = cast(
-        dict[str, Any],
-        strict_json_object(regional_ground_variation_request_to_json(request)),
-    )
+    payload = strict_json_object(regional_ground_variation_request_to_json(request))
     return payload
 
 

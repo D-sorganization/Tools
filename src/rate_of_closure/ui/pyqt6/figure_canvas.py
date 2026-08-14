@@ -16,6 +16,8 @@ __all__ = ["LifecycleSafeFigureCanvas"]
 class LifecycleSafeFigureCanvas(FigureCanvasQTAgg):
     """Own idle redraw work and tolerate destruction at the Qt update boundary."""
 
+    _draw_pending: bool
+
     def __init__(self, figure: Figure) -> None:
         super().__init__(figure)
         self._idle_draw_timer = QTimer(self)

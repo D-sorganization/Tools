@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 
@@ -266,10 +266,7 @@ class RegionalGroundExecutionResult(_WireRecord):
         """Parse an exact regional execution mapping."""
         from .regional_execution_wire import regional_execution_result_from_dict
 
-        return cast(
-            RegionalGroundExecutionResult,
-            regional_execution_result_from_dict(payload),
-        )
+        return regional_execution_result_from_dict(payload)
 
 
 __all__ = [

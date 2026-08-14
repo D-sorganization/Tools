@@ -14,6 +14,7 @@ import json
 import sys
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 _ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_ROOT / "src"))
@@ -103,7 +104,7 @@ def generated_fixture_texts() -> dict[Path, str]:
         "job_sha256": job.job_sha256,
     }
 
-    status_common = {
+    status_common: dict[str, Any] = {
         "job_id": job.job_id,
         "job_sha256": job.job_sha256,
         "total": job.execution_options.max_trials,

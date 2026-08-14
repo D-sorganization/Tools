@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, fields
 from types import MappingProxyType
-from typing import cast
+from typing import Any, cast
 
 from rate_of_closure.club import ClubSpec, ClubType, HeadStyle
 from rate_of_closure.model import ImpactScenario
@@ -196,7 +196,9 @@ def _club_data(club: ClubSpec) -> dict[str, FrozenJsonValue]:
 
 
 def _club_from_data(value: object) -> ClubSpec:
-    data = dict(_exact_mapping(value, _CLUB_FIELDS, "club_configuration.data"))
+    data: dict[str, Any] = dict(
+        _exact_mapping(value, _CLUB_FIELDS, "club_configuration.data")
+    )
     data["club_type"] = ClubType(data["club_type"])
     data["head_style"] = HeadStyle(data["head_style"])
     return ClubSpec(**data)
@@ -257,7 +259,10 @@ def document_from_state(
             view_workspace=VersionedPayload(
                 "rate_of_closure.view_workspace",
                 2,
-                workspace_to_document(state.view_workspace),
+                cast(
+                    Mapping[str, FrozenJsonValue],
+                    workspace_to_document(state.view_workspace),
+                ),
             ),
         ),
     )
@@ -372,7 +377,7 @@ def state_from_document(
             cast(Mapping[str, object], session_data["capability_request"])
         )
     return ExplorerWorkspaceState(
-        scenario=ImpactScenario(**scenario_data),
+        scenario=ImpactScenario(**cast(dict[str, Any], dict(scenario_data))),
         club=parsed_club,
         units=units,
         simulation=simulation,

@@ -193,7 +193,7 @@ def _bootstrap_mean_interval(
     losses: np.ndarray, *, seed: int, sample_count: int
 ) -> tuple[float, float]:
     state = (seed & _UINT32_MASK) or _MULBERRY32_INCREMENT
-    means = np.empty(sample_count, dtype=float)
+    means: np.ndarray = np.empty(sample_count, dtype=float)
     for sample_index in range(sample_count):
         total = 0.0
         for _ in losses:
@@ -205,8 +205,8 @@ def _bootstrap_mean_interval(
             random_fraction = ((value ^ (value >> 14)) & _UINT32_MASK) / 4_294_967_296
             total += float(losses[math.floor(random_fraction * len(losses))])
         means[sample_index] = total / len(losses)
-    low, high = np.quantile(means, _BOOTSTRAP_CI)
-    return float(low), float(high)
+    bounds = np.asarray(np.quantile(means, _BOOTSTRAP_CI), dtype=float)
+    return float(bounds[0]), float(bounds[1])
 
 
 def _cvar(losses: np.ndarray, tail_fraction: float) -> float:
@@ -248,7 +248,9 @@ def _metric_distributions(
         ]
         quantiles: tuple[float | None, float | None, float | None]
         if values:
-            raw_quantiles = np.quantile(values, (0.05, 0.5, 0.95))
+            raw_quantiles = np.asarray(
+                np.quantile(values, (0.05, 0.5, 0.95)), dtype=float
+            )
             quantiles = (
                 float(raw_quantiles[0]),
                 float(raw_quantiles[1]),

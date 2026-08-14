@@ -228,10 +228,11 @@ class GroundPlaybackTimeline:
         if lower.phase is not upper.phase:
             return self._frame(lower_index, clamped, lower.position_m, 0.0)
         fraction = (clamped - lower.time_s) / (upper.time_s - lower.time_s)
-        position = tuple(
-            lower.position_m[index]
-            + fraction * (upper.position_m[index] - lower.position_m[index])
-            for index in range(3)
+        low, high = lower.position_m, upper.position_m
+        position: tuple[float, float, float] = (
+            low[0] + fraction * (high[0] - low[0]),
+            low[1] + fraction * (high[1] - low[1]),
+            low[2] + fraction * (high[2] - low[2]),
         )
         return self._frame(lower_index, clamped, position, fraction)
 

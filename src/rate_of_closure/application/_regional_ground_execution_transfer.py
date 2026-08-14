@@ -77,7 +77,7 @@ def _records(
 def transfer_from_dict(value: object) -> FlightGroundTransferSettings:
     """Parse exact transfer settings and verify both embedded digests."""
     data = exact_mapping(value, _TRANSFER_FIELDS, "transfer")
-    surface, calibration, provenance = _records(data)
+    surface, calibration, provenance = _records(dict(data))
     max_time_s = positive(
         data["max_time_s"], "transfer max_time_s", MAX_EXECUTION_TIMEOUT_S
     )

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -62,7 +62,7 @@ def validated_sample_times(sample_times_s: np.ndarray) -> np.ndarray:
         "sample times must be strictly increasing",
         times,
     )
-    return times
+    return cast(np.ndarray, times)
 
 
 @dataclass(frozen=True)
@@ -200,7 +200,7 @@ class EnsemblePositionTraces:
     @property
     def impact_occurred(self) -> np.ndarray:
         """Boolean impact status for every trial without dropping misses."""
-        return self.impact_sample_indices >= 0
+        return cast(np.ndarray, self.impact_sample_indices >= 0)
 
     @property
     def n_no_impact(self) -> int:

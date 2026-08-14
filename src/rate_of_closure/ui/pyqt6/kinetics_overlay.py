@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from typing import cast
 
 import numpy as np
 
@@ -73,10 +74,13 @@ def _arc_points(
     radius = MIN_ARC_RADIUS_M + (MAX_ARC_RADIUS_M - MIN_ARC_RADIUS_M) * abs(fraction)
     sweep = math.radians(MAX_ARC_SWEEP_DEG) * fraction
     angles = np.linspace(0.0, sweep, _ARC_POINTS)
-    return np.asarray(
-        center
-        + radius * np.outer(np.cos(angles), x_axis)
-        + radius * np.outer(np.sin(angles), up_axis)
+    return cast(
+        np.ndarray,
+        np.asarray(
+            center
+            + radius * np.outer(np.cos(angles), x_axis)
+            + radius * np.outer(np.sin(angles), up_axis)
+        ),
     )
 
 

@@ -175,7 +175,7 @@ def ground_result_json(result: GroundSimulationResult) -> str:
     """Return the lossless canonical strict result document."""
     if type(result) is not GroundSimulationResult:
         raise TypeError("result must use the exact GroundSimulationResult type")
-    return cast(str, result.to_json())
+    return result.to_json()
 
 
 def _number(value: int | float) -> str:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -21,7 +21,7 @@ def _as_matrix(value: object) -> np.ndarray:
     except (TypeError, ValueError) as exc:
         require(False, "matrix must be a numeric square matrix", value)
         raise ValueError("matrix must be a numeric square matrix") from exc
-    return result
+    return cast(np.ndarray, result)
 
 
 def _validate_group_ids(group_id: str, spec_ids: tuple[str, ...]) -> None:
@@ -114,7 +114,7 @@ class PerturbationGroup:
         )
         matrix = np.asarray(self.matrix, dtype=float)
         if self.matrix_kind == "covariance":
-            return matrix.copy()
+            return cast(np.ndarray, matrix.copy())
         covariance: np.ndarray = (
             scale_array[:, np.newaxis] * matrix * scale_array[np.newaxis, :]
         )

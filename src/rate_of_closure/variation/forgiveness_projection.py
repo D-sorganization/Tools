@@ -21,7 +21,7 @@ def forgiveness_variation_dataset(
     metric_names = sorted({name for record in study.records for name in record.metrics})
     output_names = ("loss", "constraint_violated", *metric_names)
     outputs = np.full((len(study.records), len(output_names)), np.nan)
-    success = np.ones(len(study.records), dtype=bool)
+    success: np.ndarray = np.ones(len(study.records), dtype=bool)
     for record in study.records:
         values = (
             record.loss,

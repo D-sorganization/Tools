@@ -13,8 +13,9 @@ from .reference_execution_types import (
     GroundReferencePhase,
 )
 from .request_identity import ground_request_fingerprint
+from .skid_roll_result_types import SkidRollResult
 from .skid_roll_simulation import simulate_skid_roll
-from .surface_motion_types import SkidRollResult, SkidRollTerminationReason
+from .surface_motion_types import SkidRollTerminationReason
 
 _COMPOSABLE_SUFFIX_REASONS = frozenset(
     {

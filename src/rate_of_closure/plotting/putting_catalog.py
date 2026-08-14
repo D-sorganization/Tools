@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
@@ -63,7 +64,7 @@ class PuttingVariableSpec:
 
 
 def _series(values: tuple[float, ...]) -> np.ndarray:
-    return np.asarray(values, dtype=float)
+    return cast(np.ndarray, np.asarray(values, dtype=float))
 
 
 def _entries() -> list[PuttingVariableSpec]:

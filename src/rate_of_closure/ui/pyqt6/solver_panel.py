@@ -18,6 +18,7 @@ line — never tracebacks.
 from __future__ import annotations
 
 import logging
+from typing import Any, cast
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
@@ -214,7 +215,7 @@ class SolverPanel(QWidget):
     # ── editor -> solver inputs ─────────────────────────────────────
     def use_swing_source(self) -> bool:
         """Whether swing-source mode is selected."""
-        return self._swing_check.isChecked()
+        return cast("bool", self._swing_check.isChecked())
 
     def target_panel(self) -> TargetPanel:
         """The target-region editor (#4125 H7b) — wiring/test seam."""
@@ -240,13 +241,14 @@ class SolverPanel(QWidget):
             for name, row in self._goal_rows.items()
             if row.enabled.isChecked()
         }
+        goal_targets = cast(dict[str, Any], targets)
         if include_target:
             return ImpactGoal.of(
                 target_region=self._target_panel.region(),
                 target_region_weight=self._target_panel.weight(),
-                **targets,
+                **goal_targets,
             )
-        return ImpactGoal.of(**targets)
+        return ImpactGoal.of(**goal_targets)
 
     def build_partition(self) -> VariablePartition:
         """The VariablePartition described by the variable rows."""

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import numpy as np
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QComboBox, QFormLayout, QSlider, QWidget
@@ -118,7 +120,7 @@ class ArcFilterControls(QWidget):
     @property
     def phase_percent(self) -> int:
         """Return the displayed leading phase percentage."""
-        return self._phase.value()
+        return cast("int", self._phase.value())
 
     @property
     def outcome_filter(self) -> str | None:

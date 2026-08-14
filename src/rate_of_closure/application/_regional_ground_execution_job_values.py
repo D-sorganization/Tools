@@ -137,7 +137,7 @@ def _ball_setup_from_dict(value: object) -> BallSetup:
 
 def _spin_axis(launch: LaunchConditions) -> tuple[float, float, float]:
     if launch.spin_axis is not None:
-        axis = cast(tuple[float, float, float], launch.spin_axis)
+        axis = launch.spin_axis
         return axis
     if launch.spin_rate == 0.0:
         return (0.0, -1.0, 0.0)

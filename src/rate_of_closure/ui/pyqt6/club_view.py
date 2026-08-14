@@ -134,7 +134,7 @@ def _display(points: np.ndarray) -> np.ndarray:
     Matplotlib draws its z axis vertically, so plot (z, x, y): right of
     target across, target line into the page, up truly up.
     """
-    return np.asarray(points)[..., [2, 0, 1]]
+    return cast(np.ndarray, np.asarray(points)[..., [2, 0, 1]])
 
 
 class Club3DView(QWidget):
@@ -242,7 +242,7 @@ class Club3DView(QWidget):
 
     def is_playing(self) -> bool:
         """Whether the clubhead animation timer is running."""
-        return self._timer.isActive()
+        return cast("bool", self._timer.isActive())
 
     def set_view_mode(self, mode: str) -> None:
         """Select a display mode by name (see :data:`VIEW_MODES`)."""
@@ -253,7 +253,7 @@ class Club3DView(QWidget):
 
     def view_mode(self) -> str:
         """The active display mode name."""
-        return self._mode_combo.currentText()
+        return cast("str", self._mode_combo.currentText())
 
     def set_zoom(self, factor: float) -> None:
         """Set the camera zoom factor (0.3-4.0; larger = closer)."""
@@ -313,7 +313,10 @@ class Club3DView(QWidget):
         shifted with the mesh; ``None`` for the wireframe hosel."""
         if self._scenario is None or self._mesh is None or self._hosel is None:
             return None
-        return np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario))
+        return cast(
+            np.ndarray,
+            np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario)),
+        )
 
     def cg_marker_point(self) -> np.ndarray | None:
         """Model-frame CG marker location, or ``None`` when hidden."""
@@ -321,13 +324,18 @@ class Club3DView(QWidget):
             return None
         if self._mesh is None or self._cog is None:
             return np.zeros(3)  # spec CG fallback: the reference point
-        return np.asarray(self._cog + self._head_shift(self._mesh, self._scenario))
+        return cast(
+            np.ndarray,
+            np.asarray(self._cog + self._head_shift(self._mesh, self._scenario)),
+        )
 
     @staticmethod
     def _head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
         """+x shift placing the mesh's face plane at GC-to-face."""
         d = scenario.com_to_face_mm / 1000.0
-        return np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
+        return cast(
+            np.ndarray, np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
+        )
 
     def has_mesh(self) -> bool:
         """Whether an STL mesh is currently rendered."""

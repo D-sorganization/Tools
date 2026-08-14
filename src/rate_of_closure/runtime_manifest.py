@@ -360,7 +360,7 @@ def stable_runtime_manifest_json(manifest: CalculationRuntimeManifest) -> str:
     """Serialize a validated manifest with stable keys and numeric tokens."""
     if not isinstance(manifest, CalculationRuntimeManifest):
         raise TypeError("manifest must be a CalculationRuntimeManifest")
-    return cast(str, canonical_numeric_json(manifest.to_wire()))
+    return canonical_numeric_json(manifest.to_wire())
 
 
 __all__ = [

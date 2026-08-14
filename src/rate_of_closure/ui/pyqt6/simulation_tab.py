@@ -5,6 +5,7 @@ from __future__ import annotations
 import dataclasses
 import logging
 import math
+from typing import cast
 
 from PyQt6.QtCore import QSettings, Qt, pyqtSignal
 from PyQt6.QtWidgets import (
@@ -260,7 +261,7 @@ class SimulationTab(
 
     def contact_mode(self) -> ContactMode:
         """The selected contact policy."""
-        return self._contact_combo.currentData()
+        return cast(ContactMode, self._contact_combo.currentData())
 
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""

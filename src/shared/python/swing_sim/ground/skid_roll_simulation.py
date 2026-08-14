@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import cast
 
 from ._vector_math import cross, norm, subtract
 from .bounce_types import RepeatedBounceResult
@@ -73,7 +72,7 @@ def _typed_result(
     reason: SkidRollTerminationReason,
 ) -> SkidRollResult:
     """Return the runtime result across the skipped-import type boundary."""
-    return cast(SkidRollResult, run.result(reason))
+    return run.result(reason)
 
 
 def _event_result(
@@ -98,13 +97,12 @@ def _event_result(
 
 def _can_rest(run: SurfaceRun) -> bool:
     surface = run.active_surface
-    return cast(
-        bool,
+    return (
         surface.surface_velocity_m_s == _ZERO
         and stable_at_zero_speed(surface, run.body, run.settings.gravity_m_s2)
         and norm(run.state.velocity_m_s) <= run.settings.velocity_tolerance_m_s
         and norm(run.state.angular_velocity_rad_s)
-        <= run.settings.angular_tolerance_rad_s,
+        <= run.settings.angular_tolerance_rad_s
     )
 
 

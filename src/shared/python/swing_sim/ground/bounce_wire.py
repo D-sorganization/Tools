@@ -216,7 +216,7 @@ def repeated_bounce_result_to_dict(result: RepeatedBounceResult) -> dict[str, An
         raise ValueError(
             f"repeated bounce canonical evidence is invalid: {exc}"
         ) from exc
-    normalized = cast(dict[str, Any], record_to_dict(validated))
+    normalized = record_to_dict(validated)
     normalized.update(
         schema_version=REPEATED_BOUNCE_SCHEMA_VERSION,
         unit_system=UNIT_SYSTEM_SI,

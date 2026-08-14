@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import cast
 
 from rate_of_closure.club import ClubSpec, ClubType
 from shared.python.swing_sim.ball_setup import (
@@ -193,7 +194,9 @@ def simulation_workspace_from_payload(
         envelope["data"], _SIMULATION_DATA_FIELDS, "simulation_setup.data"
     )
     ball_setup, overridden = _ball_setup_from_document(data["ball_setup"], club)
-    target = spatial_target_from_json_dict(data["spatial_target"])
+    target = spatial_target_from_json_dict(
+        cast(Mapping[str, object], data["spatial_target"])
+    )
     state = SimulationWorkspaceState(ball_setup, overridden, target)
     validate_simulation_workspace(state, club)
     return state

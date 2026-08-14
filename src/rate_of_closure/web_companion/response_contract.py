@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Final, cast
+from typing import Final
 
 from rate_of_closure.application._workspace_validation import exact_mapping
 from rate_of_closure.application.regional_ground_authority_status import (
@@ -56,11 +56,8 @@ def _validated_success(text: str, operation: CompanionApiOperation) -> bytes:
         payload = AuthorityCapability.from_json(text).to_wire()
         return str(canonical_numeric_json(payload)).encode("utf-8")
     if operation is CompanionApiOperation.PREPARE:
-        canonical = cast(
-            str,
-            regional_ground_execution_job_to_json(
-                regional_ground_execution_job_from_json(text)
-            ),
+        canonical = regional_ground_execution_job_to_json(
+            regional_ground_execution_job_from_json(text)
         )
         return canonical.encode("utf-8")
     if operation in {
@@ -71,11 +68,8 @@ def _validated_success(text: str, operation: CompanionApiOperation) -> bytes:
         snapshot = regional_ground_authority_job_status_from_json(text)
         return str(canonical_numeric_json(snapshot.to_wire())).encode("utf-8")
     if operation is CompanionApiOperation.RESULT:
-        canonical = cast(
-            str,
-            regional_ground_execution_result_to_json(
-                regional_ground_execution_result_from_json(text)
-            ),
+        canonical = regional_ground_execution_result_to_json(
+            regional_ground_execution_result_from_json(text)
         )
         return canonical.encode("utf-8")
     raise AssertionError("unreachable companion operation")

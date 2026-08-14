@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import cast
 
 from rate_of_closure.variation.scalar_ensemble_contract import (
     SCALAR_ENSEMBLE_SCHEMA_VERSION,
@@ -207,10 +208,11 @@ def _target_attributes(study: GroundStudyProjection) -> dict[str, str | None]:
             isinstance(tolerance, SurfaceCorridorTolerance),
             "ground target must use a surface tolerance",
         )
+        corridor = cast(SurfaceCorridorTolerance, tolerance)
         geometry = "surface_corridor"
         dimensions = {
-            "target_half_length_m": str(tolerance.half_length_m),
-            "target_half_width_m": str(tolerance.half_width_m),
+            "target_half_length_m": str(corridor.half_length_m),
+            "target_half_width_m": str(corridor.half_width_m),
         }
     attributes: dict[str, str | None] = {
         "target_label": target.label,

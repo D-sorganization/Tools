@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QGridLayout,
@@ -124,7 +126,7 @@ class ChipForgivenessView(QWidget):
 
     def scope_text(self) -> str:
         """Return the visible ranking qualification for tests and accessibility."""
-        return self._scope.text()
+        return cast("str", self._scope.text())
 
     def set_summary(self, summary: ChipStudySummary) -> None:
         """Populate all decision and advanced-metric surfaces."""

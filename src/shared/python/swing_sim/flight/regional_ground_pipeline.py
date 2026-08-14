@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import cast
 
 from shared.python.swing_sim.ground.bounce_request_wire import (
     RepeatedBounceRequestResultPair,
@@ -145,7 +144,7 @@ def _validate_inputs(
         raise ValueError(
             "plan.base_surface must equal the launch-relative transfer surface"
         )
-    return cast(float, validated_capture)
+    return validated_capture
 
 
 def execute_regional_ground_from_flight(

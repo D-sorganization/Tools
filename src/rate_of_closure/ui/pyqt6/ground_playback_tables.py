@@ -184,6 +184,58 @@ def populate_ground_tables(
     _set_rows(warnings_table, warning_rows)
 
 
+def populate_ground_trajectory_table(
+    timeline: GroundPlaybackTimeline, table: QTableWidget
+) -> None:
+    """Populate one trajectory table from exact retained result samples.
+
+    Used by the optional comparison view, which owns a second pair of tables
+    rather than the primary evidence set. Row budgeting matches the primary
+    tables so a large comparison result cannot stall the UI thread.
+    """
+    trajectory = timeline.result.trajectory
+    _set_evidence_rows(
+        table,
+        (
+            (
+                index,
+                point.time_s,
+                point.time_s - timeline.start_time_s,
+                point.phase.value,
+                *point.position_m,
+                *point.velocity_m_s,
+                *point.angular_velocity_rad_s,
+            )
+            for index, point in enumerate(trajectory)
+        ),
+        total=len(trajectory),
+    )
+
+
+def populate_ground_event_table(
+    timeline: GroundPlaybackTimeline, table: QTableWidget
+) -> None:
+    """Populate one event table from the exact retained event ledger."""
+    events = timeline.result.events
+    _set_evidence_rows(
+        table,
+        (
+            (
+                event.sequence,
+                event.event_type.value,
+                event.time_s,
+                *event.position_m,
+                *event.velocity_before_m_s,
+                *event.velocity_after_m_s,
+                *event.angular_velocity_before_rad_s,
+                *event.angular_velocity_after_rad_s,
+            )
+            for event in events
+        ),
+        total=len(events),
+    )
+
+
 def _set_rows(table: QTableWidget, rows: Sequence[Sequence[object]]) -> None:
     table.setRowCount(len(rows))
     for row_index, row in enumerate(rows):
@@ -216,5 +268,7 @@ __all__ = [
     "TRAJECTORY_HEADERS",
     "create_ground_table",
     "evidence_window",
+    "populate_ground_event_table",
     "populate_ground_tables",
+    "populate_ground_trajectory_table",
 ]

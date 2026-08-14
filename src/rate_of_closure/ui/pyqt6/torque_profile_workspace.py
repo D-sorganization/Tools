@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from rate_of_closure.application.workspace_torque_session import (
     TorqueWorkspaceState,
@@ -50,7 +50,7 @@ class TorqueProfileWorkspaceMixin:
             )
         config = (
             DoublePendulumRunConfig.prescribed(
-                active_id,
+                cast(str, active_id),
                 joint_locks=self.joint_locks(),
             )
             if mode is RunMode.PRESCRIBED_TORQUE
