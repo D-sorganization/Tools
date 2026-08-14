@@ -26,11 +26,18 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.05                                    |
-| **Spec Version**        | 1.17.05                                    |
+| **Current Version**     | 1.17.06                                    |
+| **Spec Version**        | 1.17.06                                    |
 | **Last Spec Update**    | 2026-08-14                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-14 Visual-baseline hosted typing closure (#4433)
+
+Version 1.17.06 adds an explicit NumPy array cast at the decoded/copied RGB
+return boundary required by CPython 3.12/MyPy 1.13. The runtime array, pixel
+metrics, reference identities, drift tolerances, workflow authority, and
+scientific behavior are unchanged.
 
 ### 2026-08-14 Proposed protected visual baselines (#4433)
 
@@ -4447,6 +4454,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.17.06 | fix(rate-of-closure, #4433): add the explicit decoded-RGB NumPy return cast required by hosted MyPy 1.13 without changing runtime visual comparison behavior. |
 | 2026-08-14 | 1.17.05 | test(rate-of-closure, #4433): package 18 reviewed exact-head initial-state references and enforce commit-bound, digest-bound, bounded-pixel visual drift in PR and trusted-main evidence lanes, with protected merge as approval. |
 | 2026-08-14 | 1.17.04 | test(rate-of-closure, #4433): apply the declared dark/reduced-motion media before React baseline navigation and require Explorer playback paused for deterministic candidate capture. |
 | 2026-08-14 | 1.17.03 | fix(rate-of-closure, #4433): replace the platform-specific PyQt Variation registered-control count with the observed 160–161 envelope while preserving per-control accessible-name enforcement and evidence. |

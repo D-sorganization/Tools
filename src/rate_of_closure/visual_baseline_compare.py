@@ -11,7 +11,7 @@ from dataclasses import asdict, dataclass
 from importlib.resources import files
 from io import BytesIO
 from pathlib import Path, PurePath
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from PIL import Image, UnidentifiedImageError
@@ -188,7 +188,8 @@ def _pixels(data: bytes) -> np.ndarray[Any, np.dtype[np.uint8]]:
                 or width * height > _MAX_PIXELS
             ):
                 raise VisualBaselineComparisonError("PNG geometry is unsupported")
-            return np.asarray(image.convert("RGB"), dtype=np.uint8).copy()
+            pixels = np.asarray(image.convert("RGB"), dtype=np.uint8).copy()
+            return cast(np.ndarray[Any, np.dtype[np.uint8]], pixels)
     except (Image.DecompressionBombError, UnidentifiedImageError, OSError) as exc:
         raise VisualBaselineComparisonError("PNG decoding failed") from exc
 

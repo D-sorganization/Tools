@@ -3,6 +3,12 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Visual-baseline hosted typing closure (#4433)
+
+- SPEC 1.17.06 explicitly casts the already validated/copied RGB NumPy array at
+  the hosted MyPy 1.13 return boundary. Runtime pixels, digest/tolerance logic,
+  candidate identity, and scientific authority do not change.
+
 ## 2026-08-14 Proposed protected visual baselines (#4433)
 
 - SPEC 1.17.05 packages 18 reviewed initial-state references from successful

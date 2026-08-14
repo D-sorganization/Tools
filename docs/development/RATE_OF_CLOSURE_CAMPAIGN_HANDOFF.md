@@ -1,5 +1,12 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-14 #4433 Visual-baseline hosted typing closure
+
+- Version 1.17.06 adds only the explicit NumPy return cast required by hosted
+  CPython 3.12/MyPy 1.13 after RGB decode/copy validation.
+- Image bytes, pixel metrics, thresholds, workflows, and scientific authority
+  are unchanged.
+
 ## 2026-08-14 #4433 Proposed protected visual baselines
 
 - Version 1.17.05 packages all 18 reviewed initial-state PNGs from successful

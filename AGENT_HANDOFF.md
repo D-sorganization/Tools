@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-14
 
+## 2026-08-14 Visual-baseline hosted typing closure (#4433)
+
+Version 1.17.06 adds an explicit NumPy array cast at the decoded RGB return
+boundary required by hosted CPython 3.12/MyPy 1.13. The validated copy, dtype,
+geometry, hashes, tolerances, candidate pixels, and comparison behavior are
+unchanged.
+
 ## 2026-08-14 Proposed protected visual baselines (#4433)
 
 Version 1.17.05 packages the 18 reviewed initial-state PNGs emitted by the
