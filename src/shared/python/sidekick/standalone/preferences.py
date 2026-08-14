@@ -164,52 +164,6 @@ class StandalonePreferences:
             )
         self._store.set(_KEY_LLM_PROVIDER, provider_id)
 
-    # ------------------------------------------------------------------
-    # Theme token application
-    # ------------------------------------------------------------------
-
-    def apply_tokens(self, theme_colors: dict[str, str]) -> dict[str, str]:
-        """Map raw theme colors to Sidekick design tokens.
-
-        Uses ``shared.python.theme.sidekick_tokens.COLOR_TOKEN_MAP`` — no QSS
-        strings generated here, only the token dict returned to the caller.
-
-        .. warning::
-           ``shared.python.theme.sidekick_tokens`` does not exist in this repo
-           (under this spelling or the former bare ``theme.`` one), so calling
-           this method raises ``ModuleNotFoundError``. Pre-existing on ``main``
-           and unchanged here; this method has no callers and no tests. See
-           ``shared.python.sidekick.ui.design_tokens.get_token_dict`` for the
-           live token lookup.
-
-        Args:
-            theme_colors: Dict of theme-key → hex color.
-
-        Returns:
-            Dict of sidekick token name → hex color.
-
-        Precondition:  ``theme_colors`` is a non-empty dict.
-        Postcondition: every key in ``COLOR_TOKEN_MAP`` that maps to a key
-                       present in ``theme_colors`` appears in the result.
-        """
-        assert isinstance(theme_colors, dict) and theme_colors, (
-            "theme_colors must be a non-empty dict"
-        )
-        from shared.python.theme.sidekick_tokens import (
-            COLOR_TOKEN_MAP,
-            DEFAULT_SIDEKICK_TOKENS,
-        )
-
-        tokens: dict[str, str] = dict(DEFAULT_SIDEKICK_TOKENS)
-        for token_name, theme_key in COLOR_TOKEN_MAP.items():
-            if theme_key in theme_colors:
-                tokens[token_name] = theme_colors[theme_key]
-
-        assert all(isinstance(v, str) for v in tokens.values()), (
-            "postcondition: all token values must be strings"
-        )
-        return tokens
-
 
 # ---------------------------------------------------------------------------
 # Private helper
