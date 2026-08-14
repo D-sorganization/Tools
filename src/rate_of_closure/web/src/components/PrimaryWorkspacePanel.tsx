@@ -17,6 +17,11 @@ const LazyCapabilityOptimizationPanel = lazy(() =>
     default: module.CapabilityOptimizationPanel,
   })),
 );
+const LazyGroundPlaybackPanel = lazy(() =>
+  import("./GroundPlaybackPanel").then((module) => ({
+    default: module.GroundPlaybackPanel,
+  })),
+);
 
 interface WorkspacePanelProps {
   readonly active: PrimaryViewId;
@@ -58,6 +63,12 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
     case "flight":
       return <FlightExplorerPanel distanceUnit={model.units.distance}
         spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
+    case "ground-playback":
+      return (
+        <Suspense fallback={<section role="status" aria-label="Ground playback loading">Loading…</section>}>
+          <LazyGroundPlaybackPanel />
+        </Suspense>
+      );
     case "launch-monitor-analytics":
       return <LaunchMonitorAnalyticsPanel />;
     case "capability-optimization":

@@ -17,12 +17,45 @@ pub use request_v1::{
     adapt_samples_to_request_v1, canonical_request_v1_json, parse_request_v1_json,
     FlightToGroundRequestV1, GroundRequestV1Error,
 };
+mod execution_v1;
+mod result_geometry;
+mod result_v1;
+mod result_validation;
+mod strict_json;
+pub use execution_v1::{
+    parse_ground_reference_execution_v1_json, BounceExecutionSettingsV1,
+    GroundReferenceExecutionV1, GroundReferenceExecutionV1Error, GroundReferencePhaseV1,
+    GroundReferenceRuntimeCodeV1, GroundReferenceRuntimeErrorV1, SkidRollExecutionSettingsV1,
+};
+mod bounce_runtime;
+mod impact_runtime;
+mod reference_boundary;
+mod reference_runtime;
+mod resource_limits;
+mod runtime_math;
+mod surface_dynamics;
+mod surface_events;
+mod surface_runtime;
+pub use reference_boundary::{run_ground_reference_v1_json, GroundReferenceBoundaryErrorV1};
+pub use reference_runtime::{
+    canonical_ground_reference_runtime_error_v1_json, run_ground_reference_v1,
+};
+pub use result_v1::{
+    canonical_result_v1_json, parse_result_v1_json, FlightToGroundResultV1, GroundPhaseV1,
+    GroundResultStatusV1, GroundResultV1Error, GroundTerminationReasonV1,
+};
 #[cfg(feature = "python")]
 pub mod python;
+#[cfg(feature = "python")]
+pub mod python_reference;
 #[cfg(feature = "wasm")]
 mod wasm;
 #[cfg(feature = "wasm")]
+mod wasm_reference;
+#[cfg(feature = "wasm")]
 mod wasm_request;
+#[cfg(feature = "wasm")]
+mod wasm_result;
 
 const UNIT_TOLERANCE: f64 = 1.0e-9;
 const GRAZING_GAP_TOLERANCE: f64 = 1.0e-9;
