@@ -82,12 +82,11 @@ jobs:
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
             sparse_checkout: |
-              chat
-              contracts.py
-              python/src/utils
-              shared
-              sidekick
-              src/shared/python
+              src/chat
+              src/contracts.py
+              src/python/src/utils
+              src/shared
+              src/sidekick
               tests/shared_contracts
               tests/support
               vendor/ud-tools
