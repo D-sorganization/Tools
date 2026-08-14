@@ -46,8 +46,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
-<<<<<<< HEAD
-=======
 ### 2026-08-12 Production-Browser Qualification
 
 - The exact-revision production web bundle is exercised in Chromium, Firefox,
@@ -1953,7 +1951,6 @@ high_mm)` exposes the face-curvature normal (gradient of the
 - The frame, validation behavior, formulas, interchange contract, and known
   limits are specified in `docs/specs/GOLF_CLUB_SHAFT_PROFILES.md`.
 
->>>>>>> incoming
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
 - Shared golf-club assembly validation returns explicitly typed NumPy arrays
