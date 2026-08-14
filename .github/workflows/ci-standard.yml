@@ -204,7 +204,17 @@ jobs:
           python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
-          python -m pip install fastapi python-multipart
+          # `uvicorn` alongside `fastapi`: the Morris authority child
+          # (src/rate_of_closure/application/morris/child.py) imports it at
+          # module scope, so without it test_morris_authority_child.py fails at
+          # COLLECTION and aborts the whole run before any test executes. It is
+          # declared in the `rate-morris-authority` and `all` extras in
+          # pyproject.toml, neither of which this job installs.
+          # `psutil` for the same reason: scripts/benchmark_rate_ensemble_archive.py
+          # imports it at module scope and test_variation_ensemble_archive_memory.py
+          # runs that script as a subprocess, so a missing psutil fails the test
+          # rather than skipping it. It is declared nowhere else in the repo.
+          python -m pip install fastapi python-multipart uvicorn psutil
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
@@ -555,7 +565,17 @@ jobs:
           python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
-          python -m pip install fastapi python-multipart
+          # `uvicorn` alongside `fastapi`: the Morris authority child
+          # (src/rate_of_closure/application/morris/child.py) imports it at
+          # module scope, so without it test_morris_authority_child.py fails at
+          # COLLECTION and aborts the whole run before any test executes. It is
+          # declared in the `rate-morris-authority` and `all` extras in
+          # pyproject.toml, neither of which this job installs.
+          # `psutil` for the same reason: scripts/benchmark_rate_ensemble_archive.py
+          # imports it at module scope and test_variation_ensemble_archive_memory.py
+          # runs that script as a subprocess, so a missing psutil fails the test
+          # rather than skipping it. It is declared nowhere else in the repo.
+          python -m pip install fastapi python-multipart uvicorn psutil
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
