@@ -545,18 +545,39 @@ jobs:
       # participate; `rust-toolchain.toml` pins the compiler, so a channel change
       # must invalidate too; and the wheel is ABI-specific, hence `runner.os` and the
       # Python version in the key.
+      # Computed once into an output so the restore and the save cannot drift: a
+      # six-file `hashFiles` expression duplicated across two steps is a silent
+      # cache-never-hits bug waiting to happen.
+      - name: Compute tools_core wheel cache key
+        id: toolscore_key
+        if: ${{ matrix.python-version == '3.11' }}
+        shell: bash
+        run: |
+          # Double-quoted on purpose: `${{ }}` is substituted textually by the
+          # runner before the shell ever runs, so the single quotes inside the
+          # expression are GitHub string literals, not shell quoting. Every
+          # interpolated value here (os, python version, hash) is shell-safe.
+          echo "key=toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock', 'rust_core/tools-core/Cargo.toml', 'rust_core/tools-core/pyproject.toml', 'rust_core/tools-core/src/**/*.rs') }}" >> "$GITHUB_OUTPUT"
+
+      # `restore` + an explicit `save` immediately after the build, rather than
+      # `actions/cache`, which only saves in a post-job step.
+      #
+      # This is not a stylistic choice — it was measured. On the first run of this
+      # change the wheel built successfully and the job then failed downstream at
+      # `Collect Changed Coverage Inputs` (a `git fetch`). Because `actions/cache`
+      # saves at job end, the post step was skipped and the freshly built wheel was
+      # discarded, so the next run would rebuild it. In a fleet where downstream
+      # network steps fail routinely, a save-at-job-end cache would almost never
+      # populate, which defeats the entire purpose. Saving the moment the wheel
+      # exists means one successful build benefits every later run even if that run
+      # goes on to fail.
       - name: Restore cached tools_core wheel
         id: toolscore_wheel
         if: ${{ matrix.python-version == '3.11' }}
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: dist/tools-core-wheels
-          key: >-
-            toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
-            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
-                      'rust_core/tools-core/Cargo.toml',
-                      'rust_core/tools-core/pyproject.toml',
-                      'rust_core/tools-core/src/**/*.rs') }}
+          key: ${{ steps.toolscore_key.outputs.key }}
 
       # A cache hit is not proof of a usable wheel. If a previous run's build failed
       # after creating the output directory, the entry can exist but be empty, and
@@ -670,6 +691,22 @@ jobs:
           # drive-by change inside a caching fix.
           python -m pip install maturin
           python -m maturin build --release --manifest-path rust_core/tools-core/Cargo.toml --features python,extension-module --out dist/tools-core-wheels
+
+      # Saved here, not at job end. See the note on the restore step: the wheel is
+      # the expensive artifact, so it is banked the instant it exists and survives
+      # any later failure in this job.
+      #
+      # `continue-on-error` because the save is an optimisation and must never be
+      # able to fail the one required lane in this repo. Two jobs that both miss the
+      # cache will both try to reserve the same key, and the loser errors; that is a
+      # cache miss next run, not a broken build.
+      - name: Save tools_core wheel to cache
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: dist/tools-core-wheels
+          key: ${{ steps.toolscore_key.outputs.key }}
 
       # Runs on both paths — cached wheel or freshly built — so the import check
       # still gates every run. A poisoned cache entry therefore fails loudly here
