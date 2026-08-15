@@ -1,18 +1,18 @@
 ---
-title: "Incomplete NotImplementedError in base.py:201"
+title: "Incomplete Stub in client.py:53"
 labels: ['incomplete-implementation', 'critical', 'high-impact']
 assignee: "unassigned"
 status: "open"
 ---
 
 # Issue Description
-Found critical incomplete implementation in `src/shared/python/ai/adapters/base.py` at line 201.
+Found critical incomplete implementation in `src/shared/python/ai/mcp/client.py` at line 53.
 
 ## Context
-**Type**: NotImplementedError | **Location**: `src/shared/python/ai/adapters/base.py:201`
+**Type**: Stub | **Location**: `src/shared/python/ai/mcp/client.py:53`
 
 ```python
-# sufficient. The default implementations raise NotImplementedError
+name
 ```
 
 ## Audit Metrics

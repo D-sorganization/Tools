@@ -2707,6 +2707,12 @@ slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
 UI-independent assembly mass/CG/inertia, frame, length-datum, and persistence
 contracts that the later shaft, CAD, export, fitting, and UI issues consume.
 
+Pendulum simulator issue **#4406**, under UpstreamDrift epic **#8551**, is
+active on `research/shoulder-velocity-drift-transfer`. It adds reusable
+phase-resolved transfer metrics and a PyQt Drift Transfer tab for the qualified
+double-pendulum model. Triple/golfer attribution intentionally fails closed
+until their reaction-force allocation is independently qualified.
+
 Active infrastructure repair: #4155 hardens the Rust/PyO3 job against
 incomplete setup-python cache entries whose interpreter works but whose
 declared link library is missing. The repair is isolated on
