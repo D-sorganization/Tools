@@ -92,32 +92,40 @@ export const Histogram = React.forwardRef<SVGSVGElement, HistogramProps>(
         yLabel={props.yLabel}
         snapshotName="histogram"
       >
-        {Array.from({ length: nBins }, (_, i) => {
-          const left = x(binEdges[i]);
-          const right = x(binEdges[i + 1]);
-          const count = counts[i];
-          if (!Number.isFinite(count)) return null;
-          const top = y(Math.max(0, count));
-          const barWidth = Math.max(0, right - left);
-          const barHeight = Math.max(0, baseline - top);
-          return (
-            <rect
-              key={`bin-${i}`}
-              className="plot-bar"
-              x={left}
-              y={top}
-              width={barWidth}
-              height={barHeight}
-              fill={fill}
-              fillOpacity={activeBin === i ? 0.95 : 0.75}
-              stroke="var(--panel-border)"
-              strokeWidth={0.5}
-              data-bin={i}
-              onPointerEnter={() => setHoverBin(i)}
-              onPointerLeave={() => setHoverBin(null)}
-            />
-          );
-        })}
+        {(() => {
+          // ⚡ Bolt Optimization: Avoid Array.from({ length }) overhead by using new Array + for-loop
+          const bars = new Array(nBins);
+          for (let i = 0; i < nBins; i++) {
+            const left = x(binEdges[i]);
+            const right = x(binEdges[i + 1]);
+            const count = counts[i];
+            if (!Number.isFinite(count)) {
+              bars[i] = null;
+              continue;
+            }
+            const top = y(Math.max(0, count));
+            const barWidth = Math.max(0, right - left);
+            const barHeight = Math.max(0, baseline - top);
+            bars[i] = (
+              <rect
+                key={`bin-${i}`}
+                className="plot-bar"
+                x={left}
+                y={top}
+                width={barWidth}
+                height={barHeight}
+                fill={fill}
+                fillOpacity={activeBin === i ? 0.95 : 0.75}
+                stroke="var(--panel-border)"
+                strokeWidth={0.5}
+                data-bin={i}
+                onPointerEnter={() => setHoverBin(i)}
+                onPointerLeave={() => setHoverBin(null)}
+              />
+            );
+          }
+          return bars;
+        })()}
 
         {binTooltip}
       </PlotFrame>
