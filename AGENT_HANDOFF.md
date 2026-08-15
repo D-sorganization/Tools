@@ -73,6 +73,17 @@ and Overhead views. The local candidate now suppresses only display x, y, and z
 respectively for those canonical views; Isometric and custom free orbit restore
 all three labeled axes immediately without resetting the orbit.
 
+Pendulum simulator issue **#4406**, under UpstreamDrift epic **#8551**, is
+active on `research/shoulder-velocity-drift-transfer`. It adds reusable
+phase-resolved transfer metrics and a PyQt Drift Transfer tab for the qualified
+double-pendulum model. Triple/golfer attribution intentionally fails closed
+until their reaction-force allocation is independently qualified.
+
+Active infrastructure repair: #4155 hardens the Rust/PyO3 job against
+incomplete setup-python cache entries whose interpreter works but whose
+declared link library is missing. The repair is isolated on
+`fix/4155-rust-libpython-cache` and does not change simulation code.
+
 The base candidate's broad qualification was green: 929 Python/PyQt tests and
 118 React files with 750 tests, TypeScript, zero-warning ESLint, the 206-module
 production build, Ruff, Black, and focused MyPy. The exact rendered-review

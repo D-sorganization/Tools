@@ -19,7 +19,18 @@ and book. The active Tools branch is `feat/proximal-distal-workbench`: it adds
 one shared experiment/glossary catalog consumed by PyQt6 and React/Tauri,
 without importing either downstream publication repository.
 
-The tool also remains an **upstream physics source for rate_of_closure**:
+Dedicated transfer-diagnostics issue **#4406** is active under UpstreamDrift
+epic **#8551** on branch `research/shoulder-velocity-drift-transfer`. The first
+TDD slice adds a model-neutral transfer contract, exact double-pendulum
+drift/control grip-force attribution, integrated braking/work/impulse metrics,
+Pareto ranking, and a PyQt **Drift Transfer** analysis tab. The widget fails
+closed for triple and golfer tiers; do not relabel the double model's proximal
+link rate as anatomical shoulder or thorax velocity. The next qualified model
+tier must expose an unambiguous bilateral hand-force allocation and a rotating
+base before those claims enter the GUI.
+
+Apart from that issue, this tool's primary
+current relevance is as an **upstream physics source for rate_of_closure**:
 epic #4103 Phase 1 integrates this tool's double/triple pendulum models as
 `SwingSource` implementations, and epic #4120 V3's variation engine
 explicitly reuses this tool's `perturbation_analysis` machinery as one of
