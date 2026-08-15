@@ -12,7 +12,18 @@ class PIDController {
 
   // Compute PID output and write it to CV Tag in the SignalBroker.
   // Precondition: dt > 0.0f
+  // No-op while held (see Hold()).
   void Compute(SignalBroker& broker, float dt);
+
+  // Freeze the loop and shed accumulated state. Called while the safety
+  // interlock is tripped so a latched plant cannot wind up a controller that
+  // would then slam the output the moment the trip clears (issue #4002).
+  void Hold();
+
+  // Resume control from a clean integral.
+  void Release();
+
+  bool IsHeld() const;
 
   // Getters and Setters
   int GetPvTagId() const;
@@ -22,6 +33,13 @@ class PIDController {
   void SetCvTagId(int tag_id);
 
   float GetSetpoint() const;
+
+  // Set the target. Zeroing the setpoint (non-zero -> 0) also clears the
+  // accumulated integral/derivative state, so a loop commanded to stop cannot
+  // keep driving the output from its wound-up integral (issue #4002). A change
+  // between two non-zero setpoints deliberately preserves that state: this is
+  // called every scan whenever the host register differs, so resetting on any
+  // change would clear the integrator throughout a ramp.
   void SetSetpoint(float setpoint);
 
   float GetKp() const;
@@ -34,6 +52,9 @@ class PIDController {
   void SetKd(float kd);
 
  private:
+  // Clear integral/derivative history without touching tuning or routing.
+  void ResetDynamicState();
+
   int pv_tag_id_;
   int cv_tag_id_;
   float setpoint_;
@@ -44,6 +65,7 @@ class PIDController {
   float integral_;
   float last_error_;
   bool first_run_;
+  bool held_;
 };
 
 #endif  // P1AM_CONTROL_SYSTEM_FIRMWARE_PID_CONTROLLER_H_
