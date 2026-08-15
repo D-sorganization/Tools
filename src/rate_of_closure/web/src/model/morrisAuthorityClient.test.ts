@@ -106,7 +106,7 @@ describe("Morris authority client", () => {
   });
 
   it("types malformed content without reflecting response bodies", async () => {
-    const secret = "do-not-reflect-this-body";
+    const secret = "do-not-reflect-this-body"; // pragma: allowlist secret
     const client = createMorrisAuthorityClient({ fetchImpl: async () => new Response(secret, {
       status: 502, headers: { "Content-Type": "text/plain" },
     }) });

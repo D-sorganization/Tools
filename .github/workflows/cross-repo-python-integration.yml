@@ -88,7 +88,11 @@ jobs:
               tests/shared_contracts
           - repo: D-sorganization/UpstreamDrift
             path: _downstream
-            install: pip install -e ".[dev,gui-test]"
+            # The shared-contract lane injects this PR's Tools source through
+            # TOOLS_REPO_ROOT/PYTHONPATH below. Keep UpstreamDrift's editable
+            # install from rebuilding its UI or packaging its pinned Tools
+            # snapshot, which is a different release-authority boundary.
+            install: CI= SKIP_UI_BUILD=1 pip install -e ".[dev,gui-test]"
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
             sparse_checkout: |
