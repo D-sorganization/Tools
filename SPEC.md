@@ -4780,6 +4780,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+- **2026-10-27**: Replaced inline `Array.from` with `new Array` + `for` loops in `Histogram.tsx` and `DataExplorer.tsx` to eliminate iterator and closure execution overhead during UI drag/zoom events.
 
 ## 2026-08-11 Repeated-bounce evidence wire boundary
 
