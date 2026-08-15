@@ -112,7 +112,10 @@ class TestConsoleEnvironment(unittest.TestCase):
             self.env.set_user_library_path(user_lib_path)
 
             # Save code that raises SystemExit
-            self.env.save_user_code("import sys; sys.exit(1)")
+            # `import sys` is blocked by the scripting sandbox, so importing it to
+            # reach sys.exit never raises. SystemExit is a builtin, so raise it
+            # directly to test what this case is actually about: propagation.
+            self.env.save_user_code("raise SystemExit(1)")
 
             # Should propagate instead of being caught and logged
             with self.assertRaises(SystemExit):
