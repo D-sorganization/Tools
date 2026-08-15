@@ -385,7 +385,7 @@ jobs:
           fi
 
       - name: Security Scan (pip-audit)
-        timeout-minutes: 5
+        timeout-minutes: 15
         run: |
           # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
           # Ignored until a patched release is published upstream.
@@ -439,7 +439,7 @@ jobs:
   tests:
     # The required 3.11 lane must survive a first-use Python download plus
     # dependency installation, Rust-wheel build, and the actual test suite.
-    timeout-minutes: 90
+    timeout-minutes: 120
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -531,6 +531,9 @@ jobs:
       - name: Install Rust toolchain for tools_core wheel
         if: ${{ matrix.python-version == '3.11' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        env:
+          CARGO_NET_RETRY: "10"
+          CARGO_NET_TIMEOUT: "120"
 
       - name: Reject Raw Merge Conflict Markers
         run: |
