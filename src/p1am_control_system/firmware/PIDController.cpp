@@ -29,9 +29,33 @@ void PIDController::Reset() {
   integral_ = 0.0f;
   last_error_ = 0.0f;
   first_run_ = true;
+  held_ = false;
+}
+
+void PIDController::Hold() {
+  held_ = true;
+  ResetDynamicState();
+}
+
+void PIDController::Release() {
+  held_ = false;
+  ResetDynamicState();
+}
+
+bool PIDController::IsHeld() const {
+  return held_;
+}
+
+void PIDController::ResetDynamicState() {
+  integral_ = 0.0f;
+  last_error_ = 0.0f;
+  first_run_ = true;
 }
 
 void PIDController::Compute(SignalBroker& broker, float dt) {
+  if (held_) {
+    return;
+  }
   if (!std::isfinite(dt) || dt <= 0.0f) {
     return;
   }
@@ -115,7 +139,23 @@ float PIDController::GetSetpoint() const {
 }
 
 void PIDController::SetSetpoint(float setpoint) {
-  setpoint_ = FiniteOrZero(setpoint);
+  const float next = FiniteOrZero(setpoint);
+  // Reset the accumulated state only when the setpoint is ZEROED, which is the
+  // condition issue #4002 specifies. An E-stop's only effect that reaches the
+  // plant is zeroing these setpoints, and a wound-up integral was holding the
+  // analog output at 100% for tens of seconds after the operator commanded a
+  // stop.
+  //
+  // Deliberately NOT `next != setpoint_`. SyncModbusToDCS calls this on every
+  // scan whenever the host register differs, so resetting on any change means a
+  // host-driven ramp -- or 1-LSB float jitter through the register round-trip --
+  // clears the integrator every scan and the loop silently runs P+D only, never
+  // closing steady-state offset. If reset-on-change is ever wanted for bumpless
+  // transfer on large steps, it needs a deadband, not an equality test.
+  if (next == 0.0f && setpoint_ != 0.0f) {
+    ResetDynamicState();
+  }
+  setpoint_ = next;
 }
 
 float PIDController::GetKp() const {
