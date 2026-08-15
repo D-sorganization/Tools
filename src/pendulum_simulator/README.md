@@ -117,6 +117,16 @@ For every time step the simulator computes:
 - Zero-torque counterfactual accelerations and forces
 - Kinetic, potential, and total energy
 - Viscous dissipation at every joint
+- Phase-window drift/control grip work, negative grip work, opposing
+  along-path impulse, wrist-control work, peak grip force, distal energy gain,
+  and mixed-objective Pareto ranking for the qualified double-pendulum tier
+
+The desktop Analysis dock includes a **Drift Transfer** tab. It plots total,
+drift, and control grip power alongside distal speed and proximal-link angular
+velocity for a user-declared time window. The proximal coordinate is a model
+link rate, not an anatomical shoulder or torso measurement. Triple- and
+two-hand golfer-model attribution remain unavailable until their force
+allocation and reaction-force contracts are independently qualified.
 
 ## Installation
 

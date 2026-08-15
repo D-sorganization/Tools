@@ -1,0 +1,244 @@
+./src/data_processing/data_processor/python/data_processor/core/script_generator.py:619:            # The "TODO" below is intentional generated-script content for the user
+./src/media_processing/video_processor/constants_file.py:37:TEMPERATURE_C: float = 20.0  # [°C] Standard temperature
+./src/web_applications/urdf_viewer/app.py:308:        from urdf_builder_gui.anthropometric_model import TEMPLATE_SEGMENTS
+./src/web_applications/urdf_viewer/app.py:310:        return {"templates": list(TEMPLATE_SEGMENTS.keys())}
+./src/folder_tool/folder_tool_constants.py:40:MAX_RETRY_ATTEMPTS: Final[int] = (
+./src/folder_tool/folder_tool_constants.py:88:MAX_COUNTER_ATTEMPTS: Final[int] = (
+./src/folder_tool/folder_tool_constants.py:191:    if MAX_RETRY_ATTEMPTS <= 0:
+./src/folder_tool/folder_tool_constants.py:193:            f"MAX_RETRY_ATTEMPTS must be positive, got {MAX_RETRY_ATTEMPTS}",
+./src/folder_tool/folder_tool_constants.py:205:    if MAX_COUNTER_ATTEMPTS <= 0:
+./src/folder_tool/folder_tool_constants.py:207:            f"MAX_COUNTER_ATTEMPTS must be positive, got {MAX_COUNTER_ATTEMPTS}",
+./src/folder_tool/folder_tool_constants.py:244:    "MAX_RETRY_ATTEMPTS": ("attempts", "Industry standard retry limit"),
+./src/folder_tool/folder_tool_constants.py:258:    "MAX_COUNTER_ATTEMPTS": (
+./src/folder_tool/backup_copy.py:16:    MAX_COUNTER_ATTEMPTS,
+./src/folder_tool/backup_copy.py:18:    MAX_RETRY_ATTEMPTS,
+./src/folder_tool/backup_copy.py:187:        for attempt in range(MAX_RETRY_ATTEMPTS):
+./src/folder_tool/backup_copy.py:200:                if attempt < MAX_RETRY_ATTEMPTS - 1:
+./src/folder_tool/backup_copy.py:203:                        f"(attempt {attempt + 1}/{MAX_RETRY_ATTEMPTS})",
+./src/folder_tool/backup_copy.py:209:                if attempt < MAX_RETRY_ATTEMPTS - 1:
+./src/folder_tool/backup_copy.py:215:                        f"{MAX_RETRY_ATTEMPTS} attempts: {e}",
+./src/folder_tool/backup_copy.py:369:        while counter <= MAX_COUNTER_ATTEMPTS:
+./src/folder_tool/Folders_Tool_r0.py:20:    MAX_COUNTER_ATTEMPTS,
+./src/folder_tool/Folders_Tool_r0.py:26:    MAX_RETRY_ATTEMPTS,
+./src/shared/python/chat/export/html_exporter.py:31:_CSS_TEMPLATE = """
+./src/shared/python/chat/export/html_exporter.py:125:        css = _CSS_TEMPLATE.format(**_THEME)
+./src/shared/python/chat/terminal_runtime.py:46:        "TEMP",
+./src/shared/python/ai/adapters/gemini_adapter.py:33:A future PR (TODO(#2764)) should implement option A: translate
+./src/shared/python/ai/adapters/gemini_adapter.py:159:        TODO(#2764): replace this with a real translation from
+./src/shared/python/ai/mcp/client.py:45:_ALLOWLIST_ENV_KEYS = ("PATH", "HOME", "USERPROFILE", "SYSTEMROOT", "TEMP", "TMP")
+./src/shared/python/ai/auth/authentication.py:342:            f"OAuth login for provider {provider!r} is not implemented (TODO #5227). "
+./src/shared/python/ai/auth/authentication.py:370:            f"Email/password login for {email!r} is not implemented (TODO #5227). "
+./src/shared/python/ai/auth/authentication.py:471:                # TODO(#5227): Exchange refresh token for new access token
+./src/shared/python/theme/typography.py:85:    XXXL: ClassVar[int] = 32
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:13:    NORMAL_REFERENCE_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:24:_NORMAL_TEMPERATURE_K: float = NORMAL_REFERENCE_TEMPERATURE_K  # 273.15 K
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:32:assert _NORMAL_TEMPERATURE_K == 273.15  # noqa: S101 - import-time invariant
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:54:        temperature: float = 273.15,  # == _NORMAL_TEMPERATURE_K (DIN 1343, #3389)
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:122:                * (temperature / _NORMAL_TEMPERATURE_K)
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:129:                * (temperature / _NORMAL_TEMPERATURE_K)
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:154:                * (_NORMAL_TEMPERATURE_K / temperature)
+./src/shared/python/sidekick/calculators/conversion/tar_concentration_mixin.py:161:                * (_NORMAL_TEMPERATURE_K / temperature)
+./src/shared/python/sidekick/calculators/conversion/tables.py:112:    SCFM_60F_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/tables.py:113:    SCFM_70F_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/tables.py:126:    STP_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/tables.py:156:    "NORMAL_REFERENCE_TEMPERATURE_K",
+./src/shared/python/sidekick/calculators/conversion/tables.py:189:    STP = (STP_TEMPERATURE_K, STP_PRESSURE_PA, "STP (0°C, 100 kPa)")
+./src/shared/python/sidekick/calculators/conversion/tables.py:193:    STP_OLD = (STP_TEMPERATURE_K, STP_OLD_PRESSURE_PA, "Old STP (0°C, 101.325 kPa)")
+./src/shared/python/sidekick/calculators/conversion/tables.py:196:    SCFM_60F = (SCFM_60F_TEMPERATURE_K, SCFM_PRESSURE_PA, "SCFM at 60°F, 14.696 psia")
+./src/shared/python/sidekick/calculators/conversion/tables.py:197:    SCFM_70F = (SCFM_70F_TEMPERATURE_K, SCFM_PRESSURE_PA, "SCFM at 70°F, 14.696 psia")
+./src/shared/python/sidekick/calculators/conversion/tables.py:209:    STP_SI = (STP_TEMPERATURE_K, 100000.0, "SI Standard (0°C, 1 bar)")
+./src/shared/python/sidekick/calculators/conversion/tables.py:229:NORMAL_REFERENCE_TEMPERATURE_K: float = STP_TEMPERATURE_K
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:21:    NTP_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:24:    SATP_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:25:    SCFM_60F_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:29:    STP_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:67:    "STP": (STP_TEMPERATURE_K, STP_PRESSURE_PA, "Standard T&P (IUPAC, 0°C, 1 bar)"),
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:68:    "NTP": (NTP_TEMPERATURE_K, NTP_PRESSURE_PA, "Normal Temperature and Pressure"),
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:69:    "SATP": (SATP_TEMPERATURE_K, SATP_PRESSURE_PA, "Standard Ambient T&P"),
+./src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py:71:        SCFM_60F_TEMPERATURE_K,
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:60:    "BOILING_TEMPERATURE_WATER",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:67:    "CRITICAL_TEMPERATURE_WATER",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:68:    "DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:73:    "FALLBACK_BOILING_TEMPERATURE",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:78:    "MAX_TEMPERATURE_UI_K",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:80:    "MIN_TEMPERATURE_UI_K",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:88:    "SATURATED_FROM_TEMP_STATE",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:95:    "TRIPLE_POINT_TEMPERATURE",
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:132:BOILING_TEMPERATURE_WATER: float = 373.15  # [K] Boiling temperature of water at 1 atm
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:165:MIN_TEMPERATURE_UI_K: float = 273.15  # [K] Minimum temperature for UI (0°C)
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:166:MAX_TEMPERATURE_UI_K: float = 647.15  # [K] Maximum temperature for UI (374°C)
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:205:CRITICAL_TEMPERATURE_WATER: float = 647.15  # [K] Critical temperature of water
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:207:TRIPLE_POINT_TEMPERATURE: float = 273.16  # [K] Triple point temperature of water
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:211:DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS: float = (
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:220:FALLBACK_BOILING_TEMPERATURE: float = (
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:226:SATURATED_FROM_TEMP_STATE: int = (
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:544:            T_guess = DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:570:            return DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:869:            or temperature < TRIPLE_POINT_TEMPERATURE
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:870:            or temperature > CRITICAL_TEMPERATURE_WATER
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:874:                f"[{TRIPLE_POINT_TEMPERATURE}, {CRITICAL_TEMPERATURE_WATER}] K, "
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:902:        if temperature < TRIPLE_POINT_TEMPERATURE or temperature > 1000:
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:905:                f"[{TRIPLE_POINT_TEMPERATURE}, 1000] K for CoolProp"
+./src/shared/python/sidekick/utils/unit_constants.py:132:    "NTP_TEMPERATURE_K",
+./src/shared/python/sidekick/utils/unit_constants.py:151:    "SATP_TEMPERATURE_K",
+./src/shared/python/sidekick/utils/unit_constants.py:152:    "SCFM_60F_TEMPERATURE_K",
+./src/shared/python/sidekick/utils/unit_constants.py:153:    "SCFM_70F_TEMPERATURE_K",
+./src/shared/python/sidekick/utils/unit_constants.py:172:    "STP_TEMPERATURE_K",
+./src/shared/python/sidekick/utils/unit_constants.py:222:STP_TEMPERATURE_K: Final[float] = 273.15  # 0°C
+./src/shared/python/sidekick/utils/unit_constants.py:230:NTP_TEMPERATURE_K: Final[float] = 293.15  # 20°C
+./src/shared/python/sidekick/utils/unit_constants.py:234:SATP_TEMPERATURE_K: Final[float] = 298.15  # 25°C
+./src/shared/python/sidekick/utils/unit_constants.py:240:SCFM_60F_TEMPERATURE_K: Final[float] = 288.706  # 60°F
+./src/shared/python/sidekick/utils/unit_constants.py:241:SCFM_70F_TEMPERATURE_K: Final[float] = 294.261  # 70°F
+./src/shared/python/sidekick/utils/unit_constants.py:345:# TEMPERATURE - Note: These require special handling as they're not linear
+./src/shared/python/sidekick/process_calculators/constants.py:56:    STP_TEMPERATURE_K as _STP_TEMPERATURE_K,
+./src/shared/python/sidekick/process_calculators/constants.py:94:    "COMPRESSION_TEMP_CRITICAL_K",
+./src/shared/python/sidekick/process_calculators/constants.py:95:    "COMPRESSION_TEMP_WARNING_K",
+./src/shared/python/sidekick/process_calculators/constants.py:96:    "COOLING_WATER_APPROACH_TEMP",
+./src/shared/python/sidekick/process_calculators/constants.py:118:    "FLARE_COLD_TEMP_K",
+./src/shared/python/sidekick/process_calculators/constants.py:119:    "FLARE_COLD_TEMP_PENALTY",
+./src/shared/python/sidekick/process_calculators/constants.py:127:    "FLARE_HOT_TEMP_BOOST",
+./src/shared/python/sidekick/process_calculators/constants.py:128:    "FLARE_HOT_TEMP_K",
+./src/shared/python/sidekick/process_calculators/constants.py:146:    "IAPWS_CRITICAL_TEMP",
+./src/shared/python/sidekick/process_calculators/constants.py:147:    "IAPWS_TRIPLE_POINT_TEMP",
+./src/shared/python/sidekick/process_calculators/constants.py:149:    "INTERCOOLER_OUTLET_TEMP_K",
+./src/shared/python/sidekick/process_calculators/constants.py:201:    "NORMAL_TEMPERATURE_K",
+./src/shared/python/sidekick/process_calculators/constants.py:219:    "SATP_TEMPERATURE_C",
+./src/shared/python/sidekick/process_calculators/constants.py:220:    "SCRUBBER_OUTLET_GAS_TEMP",
+./src/shared/python/sidekick/process_calculators/constants.py:226:    "STP_TEMPERATURE_K",
+./src/shared/python/sidekick/process_calculators/constants.py:315:STP_TEMPERATURE_K: Final[float] = _STP_TEMPERATURE_K
+./src/shared/python/sidekick/process_calculators/constants.py:324:SATP_TEMPERATURE_C: Final[float] = 25.0
+./src/shared/python/sidekick/process_calculators/constants.py:339:# TEMPERATURE CONVERSIONS (additional)
+./src/shared/python/sidekick/process_calculators/constants.py:561:FLARE_COLD_TEMP_PENALTY: Final[float] = 0.02
+./src/shared/python/sidekick/process_calculators/constants.py:562:FLARE_HOT_TEMP_BOOST: Final[float] = 0.01
+./src/shared/python/sidekick/process_calculators/constants.py:566:FLARE_COLD_TEMP_K: Final[float] = 300.0
+./src/shared/python/sidekick/process_calculators/constants.py:567:FLARE_HOT_TEMP_K: Final[float] = 500.0
+./src/shared/python/sidekick/process_calculators/constants.py:634:COOLING_WATER_APPROACH_TEMP: Final[float] = 5.0
+./src/shared/python/sidekick/process_calculators/constants.py:637:SCRUBBER_OUTLET_GAS_TEMP: Final[float] = 38.0
+./src/shared/python/sidekick/process_calculators/constants.py:683:INTERCOOLER_OUTLET_TEMP_K: Final[float] = 313.15
+./src/shared/python/sidekick/process_calculators/constants.py:686:COMPRESSION_TEMP_WARNING_K: Final[float] = 473.15  # 200 C
+./src/shared/python/sidekick/process_calculators/constants.py:687:COMPRESSION_TEMP_CRITICAL_K: Final[float] = 523.15  # 250 C
+./src/shared/python/sidekick/process_calculators/constants.py:710:IAPWS_CRITICAL_TEMP: Final[float] = 647.096
+./src/shared/python/sidekick/process_calculators/constants.py:716:IAPWS_TRIPLE_POINT_TEMP: Final[float] = 273.16
+./src/shared/python/sidekick/process_calculators/constants.py:842:NORMAL_TEMPERATURE_K: Final[float] = 273.15
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:17:    FLARE_COLD_TEMP_K,
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:18:    FLARE_COLD_TEMP_PENALTY,
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:24:    FLARE_HOT_TEMP_BOOST,
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:25:    FLARE_HOT_TEMP_K,
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:286:        if temperature < FLARE_COLD_TEMP_K:
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:287:            efficiency -= FLARE_COLD_TEMP_PENALTY
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:288:        elif temperature > FLARE_HOT_TEMP_K:
+./src/shared/python/sidekick/process_calculators/flare_calculator.py:289:            efficiency += FLARE_HOT_TEMP_BOOST
+./src/shared/python/sidekick/process_calculators/scrubber_calculator.py:34:    COOLING_WATER_APPROACH_TEMP,
+./src/shared/python/sidekick/process_calculators/scrubber_calculator.py:50:    SCRUBBER_OUTLET_GAS_TEMP,
+./src/shared/python/sidekick/process_calculators/scrubber_calculator.py:773:    approach_temp_c: float = COOLING_WATER_APPROACH_TEMP,
+./src/shared/python/sidekick/process_calculators/scrubber_calculator.py:774:    outlet_gas_temp_c: float = SCRUBBER_OUTLET_GAS_TEMP,
+./src/shared/python/sidekick/process_calculators/syngas_compression_engine.py:30:    COMPRESSION_TEMP_CRITICAL_K,
+./src/shared/python/sidekick/process_calculators/syngas_compression_engine.py:31:    COMPRESSION_TEMP_WARNING_K,
+./src/shared/python/sidekick/process_calculators/syngas_compression_engine.py:33:    INTERCOOLER_OUTLET_TEMP_K,
+./src/shared/python/sidekick/process_calculators/syngas_compression_engine.py:327:                stage.inlet_temperature = INTERCOOLER_OUTLET_TEMP_K
+./src/shared/python/sidekick/process_calculators/syngas_compression_engine.py:374:        if final_temp > COMPRESSION_TEMP_WARNING_K:
+./src/shared/python/sidekick/process_calculators/syngas_compression_engine.py:380:        if final_temp > COMPRESSION_TEMP_CRITICAL_K:
+./src/shared/python/sidekick/process_calculators/syngas_compression_calculator.py:36:    INTERCOOLER_OUTLET_TEMP_K,
+./src/shared/python/sidekick/process_calculators/syngas_compression_calculator.py:623:                                inlet_temp if i == 0 else INTERCOOLER_OUTLET_TEMP_K
+./src/shared/python/sidekick/process_calculators/baghouse_calculator.py:42:    STP_TEMPERATURE_K,
+./src/shared/python/sidekick/process_calculators/baghouse_calculator.py:203:        vol_std_m3_s = molar_flow * R_UNIVERSAL * STP_TEMPERATURE_K / ATM_PA
+./src/shared/python/sidekick/process_calculators/syngas_water_calculator.py:33:    IAPWS_CRITICAL_TEMP,
+./src/shared/python/sidekick/process_calculators/syngas_water_calculator.py:38:    NORMAL_TEMPERATURE_K,
+./src/shared/python/sidekick/process_calculators/syngas_water_calculator.py:261:            "Tc": IAPWS_CRITICAL_TEMP,  # Critical temperature (K)
+./src/shared/python/sidekick/process_calculators/syngas_water_calculator.py:262:            "Pc": IAPWS_CRITICAL_TEMP / 29.356,  # Critical pressure (MPa) - derived
+./src/shared/python/sidekick/process_calculators/syngas_water_calculator.py:552:            / (R_GAS_DENSITY * NORMAL_TEMPERATURE_K)
+./src/shared/python/sidekick/process_calculators/water_vapor_pressure.py:34:    IAPWS_CRITICAL_TEMP,
+./src/shared/python/sidekick/process_calculators/water_vapor_pressure.py:35:    IAPWS_TRIPLE_POINT_TEMP,
+./src/shared/python/sidekick/process_calculators/water_vapor_pressure.py:181:    tc = IAPWS_CRITICAL_TEMP
+./src/shared/python/sidekick/process_calculators/water_vapor_pressure.py:183:    if temperature_k < IAPWS_TRIPLE_POINT_TEMP or tc < temperature_k:
+./src/shared/python/sidekick/tests/calculators/conversion/test_conversion_accuracy_3384_3388_3389.py:131:        NORMAL_REFERENCE_TEMPERATURE_K,
+./src/shared/python/sidekick/tests/calculators/conversion/test_conversion_accuracy_3384_3388_3389.py:135:    assert NORMAL_REFERENCE_TEMPERATURE_K == pytest.approx(273.15)
+./src/shared/python/sidekick/tests/calculators/conversion/test_conversion_accuracy_3384_3388_3389.py:138:    assert temp == pytest.approx(NORMAL_REFERENCE_TEMPERATURE_K)
+./src/shared/python/sidekick/tests/calculators/conversion/test_conversion_accuracy_3384_3388_3389.py:142:    assert tar._NORMAL_TEMPERATURE_K == pytest.approx(NORMAL_REFERENCE_TEMPERATURE_K)
+./src/p1am_control_system/backend/temperature_controller.py:353:            self._trips.add("HH_TEMP")
+./src/p1am_control_system/backend/power_supply_models.py:142:        description="Temperature trip threshold in degrees Celsius (HH_TEMP).",
+./src/p1am_control_system/backend/power_supply.py:253:            self._trips.add("HH_TEMP")
+./src/p1am_control_system/backend/tests/test_temperature_integration.py:121:            assert "HH_TEMP" in status.trips
+./src/p1am_control_system/backend/tests/test_power_supply.py:344:        assert "HH_TEMP" in c.trips
+./src/p1am_control_system/backend/tests/test_power_supply.py:356:        assert "HH_TEMP" not in c.trips
+./src/p1am_control_system/backend/tests/test_temperature_controller.py:375:        assert "HH_TEMP" in c.trips
+./src/p1am_control_system/backend/tests/test_temperature_controller.py:403:        assert "HH_TEMP" in c.trips
+./src/p1am_control_system/backend/tests/test_temperature_controller.py:425:        assert "HH_TEMP" in c.trips
+./src/p1am_control_system/backend/tests/test_temperature_controller.py:443:        assert "HH_TEMP" in c.trips
+./src/p1am_control_system/backend/tests/test_power_supply_runtime_safety.py:4:    - HH_POWER and HH_TEMP trip latching across safe subsequent ticks
+./src/p1am_control_system/backend/tests/test_power_supply_runtime_safety.py:29:# Trip logic — HH_POWER and HH_TEMP
+./src/p1am_control_system/backend/tests/test_power_supply_runtime_safety.py:64:        assert "HH_TEMP" in c.trips
+./src/p1am_control_system/backend/tests/test_power_supply_runtime_safety.py:75:        assert "HH_TEMP" in c.trips
+./src/python/src/utils/constants.py:46:STANDARD_TEMPERATURE_K: Final[float] = 273.15
+./src/python/src/utils/constants.py:49:ISO_STANDARD_TEMPERATURE_K: Final[float] = 288.15
+./src/urdf_builder_gui/python/urdf_builder_gui/anthropometric_model.py:190:TEMPLATE_SEGMENTS: dict[str, list[str]] = {
+./src/urdf_builder_gui/python/urdf_builder_gui/anthropometric_model.py:259:        template_name in TEMPLATE_SEGMENTS,
+./src/urdf_builder_gui/python/urdf_builder_gui/anthropometric_model.py:263:    return TEMPLATE_SEGMENTS[template_name]
+./src/urdf_builder_gui/python/urdf_builder_gui/anthropometric_model.py:269:    "TEMPLATE_SEGMENTS",
+./src/urdf_builder_gui/tests/test_urdf_builder_gui.py:27:    TEMPLATE_SEGMENTS,
+./src/urdf_builder_gui/tests/test_urdf_builder_gui.py:282:    """Tests for TEMPLATE_SEGMENTS and get_template_segments."""
+./src/urdf_builder_gui/tests/test_urdf_builder_gui.py:308:        for name, segs in TEMPLATE_SEGMENTS.items():
+./src/urdf_builder_gui/tests/test_urdf_builder_gui.py:313:        segment_sets = [frozenset(s) for s in TEMPLATE_SEGMENTS.values()]
+./src/urdf_builder_gui/tests/test_urdf_builder_gui.py:418:        for template_name in TEMPLATE_SEGMENTS:
+./src/urdf_builder_gui/tests/test_urdf_builder_gui.py:544:        for template in TEMPLATE_SEGMENTS:
+./src/urdf_builder_gui/tests/test_urdf_builder_gui.py:559:        for template in TEMPLATE_SEGMENTS:
+./src/solar_system_model/solar_system/core/constants.py:52:SUN_TEMPERATURE = 5778  # K (effective)
+./src/tools/matlab_quality_utils.py:324:        """Check for TRACKED_TASK, TRACKED_DEFECT, HACK, XXX, and placeholders."""
+./src/tools/matlab_quality_utils.py:331:            (r"\bTODO\b", "TRACKED_TASK placeholder found"),
+./src/tools/matlab_quality_utils.py:332:            (r"\bFIXME\b", "TRACKED_DEFECT placeholder found"),
+./src/tools/matlab_quality_utils.py:333:            (r"\bHACK\b", "HACK comment found"),
+./src/tools/matlab_quality_utils.py:334:            (r"\bXXX\b", "XXX comment found"),
+./src/tools/quality_utils.py:36:    (re.compile(r"\bTODO\b"), "TRACKED_TASK placeholder found"),
+./src/tools/quality_utils.py:37:    (re.compile(r"\bFIXME\b"), "TRACKED_DEFECT placeholder found"),
+./generate_real_assessments.py:37:todos = run_cmd("grep -rnw 'TODO' src/ | wc -l").strip()
+./generate_real_assessments.py:38:fixmes = run_cmd("grep -rnw 'FIXME' src/ | wc -l").strip()
+./generate_real_assessments.py:65:3. [MAJOR] High volume of technical debt ({todos} TODOs).
+./generate_real_assessments.py:90:            content += f"| {src_cat} | Multi | Mostly | Yes | No | {todos} TODOs found overall |\n"  # noqa: E501
+./generate_real_assessments.py:136:- {todos} TODOs and {fixmes} FIXMEs present in codebase.
+./generate_real_assessments.py:144:2. [MAJOR] {todos} TODOs left in codebase.
+./generate_real_assessments.py:146:4. [MAJOR] {fixmes} FIXMEs unresolved.
+./generate_real_assessments.py:157:| Code Hygiene | 6/10 | {todos} TODOs, {fixmes} FIXMEs | Clear technical debt |
+./generate_real_assessments.py:217:| TODOs | {todos} | Tech debt |
+./generate_real_assessments.py:218:| FIXMEs | {fixmes} | Urgent tech debt |
+./generate_real_assessments.py:243:3. **Reduce Technical Debt**: {todos} TODOs and {fixmes} FIXMEs need to be addressed.
+./scripts/analyze_completist_data.py:103:    fixme_markers = ["FIX" + "ME", "XXX", "HACK", "TEMP"]
+./scripts/legacy_tools/code_quality_check.py:34:    (re.compile(r"\bTODO\b"), "TRACKED_TASK placeholder found"),
+./scripts/legacy_tools/code_quality_check.py:35:    (re.compile(r"\bFIXME\b"), "TRACKED_DEFECT placeholder found"),
+./scripts/bump_vendor_pin.py:46:_PR_TITLE_TEMPLATE = "chore: bump Tools vendor pin to {tag}"
+./scripts/bump_vendor_pin.py:49:_PR_BODY_TEMPLATE = """\
+./scripts/bump_vendor_pin.py:124:    return _PR_BODY_TEMPLATE.format(
+./scripts/bump_vendor_pin.py:196:    title = _PR_TITLE_TEMPLATE.format(tag=tag)
+./scripts/pragmatic_programmer_review.py:221:                "recommendation": "Review TODOs",
+./scripts/setup_hooks.py:110:  - quality-check (no TODOs/FIXMEs)
+./scripts/generate_comprehensive_assessment.py:142:                stats["todos"] += content.count("TODO")
+./scripts/generate_comprehensive_assessment.py:143:                stats["fixmes"] += content.count("FIXME")
+./scripts/generate_comprehensive_assessment.py:342:    grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}")
+./scripts/generate_comprehensive_assessment.py:442:3. **Reduce Technical Debt**: Address TODOs and FIXMEs (Category O).
+./scripts/check_docs_governance.py:13:    ROOT / "docs" / "adr" / "ADR_TEMPLATE.md",
+./scripts/check_docs_governance.py:55:        and p not in {"docs/adr/README.md", "docs/adr/ADR_TEMPLATE.md"}
+./tests/ops/test_tauri_build_workflow.py:56:    assert "RUSTUP_HOME=$RUNNER_TEMP/rustup" in check_script
+./tests/ops/test_tauri_build_workflow.py:57:    assert "CARGO_HOME=$RUNNER_TEMP/cargo" in check_script
+./tests/ops/test_tauri_build_workflow.py:58:    assert "$RUNNER_TEMP/cargo/bin" in check_script
+./tests/ops/test_tauri_build_workflow.py:86:    assert "RUSTUP_HOME=$RUNNER_TEMP/rustup" in linux_script
+./tests/ops/test_tauri_build_workflow.py:87:    assert "CARGO_HOME=$RUNNER_TEMP/cargo" in linux_script
+./tests/ops/test_tauri_build_workflow.py:88:    assert "$RUNNER_TEMP/cargo/bin" in linux_script
+./tests/ops/test_tauri_build_workflow.py:89:    assert 'Join-Path $env:RUNNER_TEMP "rustup"' in windows_script
+./tests/ops/test_tauri_build_workflow.py:90:    assert 'Join-Path $env:RUNNER_TEMP "cargo"' in windows_script
+./tests/ops/test_ci_standard_web_dependencies.py:163:        assert 'python -m venv "$RUNNER_TEMP/ci-venv"' in venv_step["run"]
+./tests/ops/test_ci_standard_web_dependencies.py:164:        assert 'echo "$RUNNER_TEMP/ci-venv/bin" >> "$GITHUB_PATH"' in venv_step["run"]
+./tests/ops/test_ci_standard_web_dependencies.py:166:            'echo "VIRTUAL_ENV=$RUNNER_TEMP/ci-venv" >> "$GITHUB_ENV"'
+./tests/folder_tool/test_folder_tool_constants.py:81:        with patch.object(ftc, "MAX_RETRY_ATTEMPTS", 0):
+./tests/folder_tool/test_folder_tool_constants.py:82:            with pytest.raises(ValueError, match="MAX_RETRY_ATTEMPTS must be positive"):
+./tests/folder_tool/test_folder_tool_constants.py:98:        with patch.object(ftc, "MAX_COUNTER_ATTEMPTS", 0):
+./tests/folder_tool/test_folder_tool_constants.py:100:                ValueError, match="MAX_COUNTER_ATTEMPTS must be positive"
+./tests/shared/python/calculators/conversion/test_tables.py:41:    assert t_stp == pytest.approx(uc.STP_TEMPERATURE_K)
+./tests/shared/python/calculators/conversion/test_flow_rate_converter.py:42:    assert t_stp == uc.STP_TEMPERATURE_K
+./tests/shared/python/calculators/thermo/test_steam_engine_physics.py:18:    CRITICAL_TEMPERATURE_WATER,
+./tests/shared/python/calculators/thermo/test_steam_engine_physics.py:254:        assert_allclose(CRITICAL_TEMPERATURE_WATER, 647.15, rtol=0.001)
+./tests/shared/python/calculators/thermo/test_steam_engine.py:12:    DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS,
+./tests/shared/python/calculators/thermo/test_steam_engine.py:184:    assert result == pytest.approx(DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS)
+./tests/shared/python/utils/test_unit_constants.py:60:    STP_TEMPERATURE_K,
+./tests/shared/python/utils/test_unit_constants.py:94:        assert math.isclose(STP_TEMPERATURE_K, 273.15)
+./tests/shared/python/theme/test_typography.py:58:    assert typography.Sizes.XXXL == 32
+./tests/tools/test_matlab_quality_utils.py:86:        Path("script.m"), "% TODO: fix this", 5, issues
+./tests/tools/test_matlab_quality_utils.py:95:        Path("script.m"), "% FIXME: broken", 3, issues

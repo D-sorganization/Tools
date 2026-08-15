@@ -1,18 +1,18 @@
 ---
-title: "Incomplete NotImplementedError in authentication.py:341"
+title: "Incomplete Stub in client.py:52"
 labels: ['incomplete-implementation', 'critical', 'high-impact']
 assignee: "unassigned"
 status: "open"
 ---
 
 # Issue Description
-Found critical incomplete implementation in `src/shared/python/ai/auth/authentication.py` at line 341.
+Found critical incomplete implementation in `src/shared/python/ai/mcp/client.py` at line 52.
 
 ## Context
-**Type**: NotImplementedError | **Location**: `src/shared/python/ai/auth/authentication.py:341`
+**Type**: Stub | **Location**: `src/shared/python/ai/mcp/client.py:52`
 
 ```python
-raise NotImplementedError(
+name
 ```
 
 ## Audit Metrics
