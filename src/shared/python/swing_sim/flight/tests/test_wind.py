@@ -105,6 +105,23 @@ def test_python_matches_the_shared_cross_client_wind_fixture() -> None:
             seed=case["seed"],
             provenance=f"golden:{case['name']}",
         )
+        # This golden is produced by the TypeScript client and asserted here, so
+        # the comparison spans two runtimes' libm. An ABSOLUTE 1e-12 bound on a
+        # value of magnitude ~9.79 is ~1e-13 relative, which is below the
+        # reproducibility of a chained `sin`/`sqrt` evaluation across libm
+        # implementations: hosted Linux CI on Python 3.12.13 obtains
+        # 9.786440272809793 against the fixture's 9.7864402728063, an absolute
+        # difference of 3.494e-12 and a relative difference of 3.570e-13
+        # (~1600x double epsilon, i.e. ordinary accumulated transcendental
+        # error, not a physics divergence -- it is nanometres per second on a
+        # wind velocity).
+        #
+        # A RELATIVE bound is the right shape for cross-client parity: 1e-9 is
+        # ~2800x the observed drift yet still pins 9 significant digits, so a
+        # real divergence in the shared wind model still fails. The absolute
+        # bound is retained for components legitimately at or near zero, where
+        # a relative bound is meaningless. `pytest.approx` passes an element
+        # when either bound is satisfied.
         assert scenario.velocity_at(
             case["time_s"], case["position_m"]
-        ) == pytest.approx(case["expected_velocity_mps"], abs=1e-12)
+        ) == pytest.approx(case["expected_velocity_mps"], rel=1e-9, abs=1e-12)

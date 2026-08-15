@@ -44,6 +44,7 @@ pygments>=2.20.0,<2.21.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via
 
 # Process Coordination
 filelock>=3.16.0  # Process-lifetime lock guarding the Rate of Closure authority's SQLite/WAL store; src/rate_of_closure/web_authority/job_store.py imports it at module scope, so the CI test lanes need it even though pyproject only declares it under the rate-of-closure-web and full extras
+uvicorn>=0.30.0  # ASGI server the Rate of Closure authority spawns as an isolated loopback child (src/rate_of_closure/web_authority/runtime.py); without it that subprocess dies and every real-loopback test fails with "local Python authority exited before readiness". Same pyproject-extras-only gap as filelock above
 
 # Data Formats & Configuration
 pyyaml>=6.0.1  # YAML parser and emitter

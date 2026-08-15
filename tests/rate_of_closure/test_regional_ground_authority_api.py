@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import threading
 
 import pytest
@@ -192,7 +193,10 @@ def test_authority_process_spec_keeps_token_out_of_command(tmp_path) -> None:
     assert "test-ephemeral-token" not in " ".join(spec.command)
     assert spec.environment["ROC_AUTHORITY_TOKEN"] == "test-ephemeral-token"
     assert spec.environment["ROC_AUTHORITY_STATE_ROOT"] == str(state_root)
-    assert spec.environment["PYTHONPATH"].split(";")[0] == str(tmp_path)
+    # `build_authority_process_spec` joins PYTHONPATH with `os.pathsep`, so the
+    # split must use it too. A hardcoded ";" only splits on Windows; on POSIX it
+    # leaves the whole joined path as one element and the assertion fails.
+    assert spec.environment["PYTHONPATH"].split(os.pathsep)[0] == str(tmp_path)
 
 
 def test_authority_process_spec_accepts_only_bounded_import_factory(tmp_path) -> None:
