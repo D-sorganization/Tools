@@ -87,6 +87,8 @@
 | Jacobian equations topic                       | :white_check_mark: | Manipulability, ellipsoids                                                  |
 | Constraint Jacobian topic                      | :white_check_mark: | KKT, Lagrange multipliers                                                   |
 | **Random perturbation / consistency analysis** | :white_check_mark: | `perturbation_analysis.py` — Monte Carlo noise injection, variability stats |
+| **Phase-resolved drift-transfer diagnostics**  | :white_check_mark: | Exact grip-force closure, drift/control work, braking work, along-path impulse, peak force, and Pareto metrics for the double-pendulum tier |
+| **Drift Transfer GUI tab**                     | :white_check_mark: | User-declared time window with power, speed, work, braking, and model-boundary display; unsupported tiers fail closed |
 
 ## 5 Signal Generation & Torque Profiles
 
