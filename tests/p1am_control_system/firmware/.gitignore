@@ -1,0 +1,5 @@
+# Build output from `make test` (see Makefile). StorageManager persists to
+# config.bin when exercised on the host.
+*.o
+test_dcs
+config.bin

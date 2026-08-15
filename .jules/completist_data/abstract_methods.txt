@@ -1,0 +1,346 @@
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:205:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-206-    def _initialize_matrices(self, y: np.ndarray) -> None:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-207-        """Initialize model matrices based on data."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-208-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:209:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-210-    def _update_matrices(self, parameters: np.ndarray) -> None:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-211-        """Update matrices with new parameter values."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-212-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:213:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-214-    def _get_initial_parameters(self) -> np.ndarray:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-215-        """Get initial parameter values for optimization."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-216-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py:217:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-218-    def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-219-        """Convert parameter array to dictionary."""
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-220-
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-221-    def fit(self, y: np.ndarray) -> StateSpaceResult:
+./src/data_processing/data_processor/python/data_processor/core/state_space.py-222-        """Fit the state space model to data.
+--
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:36:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-37-    def name(self) -> str:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-38-        """Human-readable name for the command."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-39-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-40-    @property
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:41:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-42-    def description(self) -> str:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-43-        """Detailed description of what the command does."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-44-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:45:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-46-    def execute(self) -> Any:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-47-        """Execute the command and return the result."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-48-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py:49:    @abstractmethod
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-50-    def undo(self) -> Any:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-51-        """Reverse the command and return the previous state."""
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-52-
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-53-    def redo(self) -> Any:
+./src/data_processing/data_processor/python/data_processor/core/undo_redo.py-54-        """Re-execute the command. Default implementation calls execute()."""
+--
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py:145:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-146-    def get_matrix_size(self) -> tuple[int, int]:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-147-        """Return (rows, cols) for the mass matrix grid layout.
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-148-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-149-        Returns
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-150-        -------
+--
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py:155:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-156-    def get_matrix_entries(self, mc: dict) -> list:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-157-        """Build list of matrix cell entries for rendering.
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-158-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-159-        Parameters
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-160-        ----------
+--
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py:170:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-171-    def get_column_labels(self) -> list[str]:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-172-        """Return list of DOF (degree of freedom) column labels.
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-173-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-174-        Returns
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-175-        -------
+--
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py:180:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-181-    def _draw_coupling_ratio(self, painter: QPainter, mc: dict, y: int) -> int:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-182-        """Draw the coupling ratio bar. Subclass computes coupling metric.
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-183-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-184-        Parameters
+./src/pendulum_simulator/src/double_pendulum_golf/gui/matrix_widget_base.py-185-        ----------
+--
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py:129:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-130-    def _get_total_length(self) -> float:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-131-        """Return the maximum reach of the model for auto-scaling."""
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-132-        ...
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-133-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py:134:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-135-    def _draw_model(self, painter: QPainter) -> None:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-136-        """Draw the pendulum segments, joints, and model-specific overlays."""
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-137-        ...
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-138-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py:139:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-140-    def _draw_info(self, painter: QPainter) -> None:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-141-        """Draw frame info text overlay (time, angles, zoom)."""
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-142-        ...
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-143-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py:144:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-145-    def _draw_placeholder(self, painter: QPainter) -> None:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-146-        """Draw placeholder text when no simulation is loaded."""
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-147-        ...
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-148-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py:149:    @abstractmethod
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-150-    def _has_result(self) -> bool:
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-151-        """Return True if simulation data is currently loaded."""
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-152-        ...
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-153-
+./src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py-154-    # ------------------------------------------------------------------
+--
+./src/shared/python/model_generation/plugins/__init__.py:20:    @abstractmethod
+./src/shared/python/model_generation/plugins/__init__.py-21-    def name(self) -> str:
+./src/shared/python/model_generation/plugins/__init__.py-22-        """Plugin name."""
+./src/shared/python/model_generation/plugins/__init__.py-23-        ...
+./src/shared/python/model_generation/plugins/__init__.py-24-
+./src/shared/python/model_generation/plugins/__init__.py-25-    @property
+./src/shared/python/model_generation/plugins/__init__.py:26:    @abstractmethod
+./src/shared/python/model_generation/plugins/__init__.py-27-    def version(self) -> str:
+./src/shared/python/model_generation/plugins/__init__.py-28-        """Plugin version."""
+./src/shared/python/model_generation/plugins/__init__.py-29-        ...
+./src/shared/python/model_generation/plugins/__init__.py-30-
+./src/shared/python/model_generation/plugins/__init__.py:31:    @abstractmethod
+./src/shared/python/model_generation/plugins/__init__.py-32-    def initialize(self, context: dict[str, Any]) -> None:
+./src/shared/python/model_generation/plugins/__init__.py-33-        """Initialize the plugin with context."""
+./src/shared/python/model_generation/plugins/__init__.py-34-        ...
+./src/shared/python/model_generation/plugins/__init__.py-35-
+./src/shared/python/model_generation/plugins/__init__.py-36-    def shutdown(self) -> None:  # noqa: B027
+--
+./src/shared/python/model_generation/library/repository.py:79:    @abstractmethod
+./src/shared/python/model_generation/library/repository.py-80-    def name(self) -> str:
+./src/shared/python/model_generation/library/repository.py-81-        """Repository name."""
+./src/shared/python/model_generation/library/repository.py-82-        ...
+./src/shared/python/model_generation/library/repository.py-83-
+./src/shared/python/model_generation/library/repository.py-84-    @property
+./src/shared/python/model_generation/library/repository.py:85:    @abstractmethod
+./src/shared/python/model_generation/library/repository.py-86-    def description(self) -> str:
+./src/shared/python/model_generation/library/repository.py-87-        """Repository description."""
+./src/shared/python/model_generation/library/repository.py-88-        ...
+./src/shared/python/model_generation/library/repository.py-89-
+./src/shared/python/model_generation/library/repository.py:90:    @abstractmethod
+./src/shared/python/model_generation/library/repository.py-91-    def list_models(self) -> list[RepositoryModel]:
+./src/shared/python/model_generation/library/repository.py-92-        """List all models in the repository."""
+./src/shared/python/model_generation/library/repository.py-93-        ...
+./src/shared/python/model_generation/library/repository.py-94-
+./src/shared/python/model_generation/library/repository.py:95:    @abstractmethod
+./src/shared/python/model_generation/library/repository.py-96-    def download_model(
+./src/shared/python/model_generation/library/repository.py-97-        self,
+./src/shared/python/model_generation/library/repository.py-98-        model_path: str,
+./src/shared/python/model_generation/library/repository.py-99-        destination: Path,
+./src/shared/python/model_generation/library/repository.py-100-    ) -> Path:
+--
+./src/shared/python/model_generation/builders/base_builder.py:189:    @abstractmethod
+./src/shared/python/model_generation/builders/base_builder.py-190-    def build(self, **kwargs: Any) -> BuildResult:
+./src/shared/python/model_generation/builders/base_builder.py-191-        """
+./src/shared/python/model_generation/builders/base_builder.py-192-        Build the URDF model.
+./src/shared/python/model_generation/builders/base_builder.py-193-
+./src/shared/python/model_generation/builders/base_builder.py-194-        Returns:
+--
+./src/shared/python/model_generation/builders/base_builder.py:199:    @abstractmethod
+./src/shared/python/model_generation/builders/base_builder.py-200-    def clear(self) -> None:
+./src/shared/python/model_generation/builders/base_builder.py-201-        """Clear all links and joints."""
+./src/shared/python/model_generation/builders/base_builder.py-202-        ...
+./src/shared/python/model_generation/builders/base_builder.py-203-
+./src/shared/python/model_generation/builders/base_builder.py-204-    def validate(self) -> ValidationResult:
+--
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py:80:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-81-    def backend_name(self) -> str:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-82-        """Return the backend name."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-83-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-84-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-85-    @property
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py:86:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-87-    def is_available(self) -> bool:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-88-        """Check if the backend is available (installed, configured)."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-89-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-90-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py:91:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-92-    def generate(
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-93-        self,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-94-        params: BodyParameters,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-95-        output_dir: Path,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-96-        **kwargs: Any,
+--
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py:111:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-112-    def get_supported_segments(self) -> list[str]:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-113-        """Return list of segment names this backend can generate."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-114-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-115-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_primitive.py-116-
+--
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py:62:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-63-    def backend_name(self) -> str:
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-64-        """Return the backend name."""
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-65-        ...
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-66-
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-67-    @property
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py:68:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-69-    def is_available(self) -> bool:
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-70-        """Check if the backend is available (installed, configured)."""
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-71-        ...
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-72-
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py:73:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-74-    def generate(
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-75-        self,
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-76-        params: BodyParameters,
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-77-        output_dir: Path,
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-78-        **kwargs: Any,
+--
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py:93:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-94-    def get_supported_segments(self) -> list[str]:
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-95-        """Return list of segment names this backend can generate."""
+./src/shared/python/humanoid_character_builder/generators/_mesh_types.py-96-        ...
+--
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py:81:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-82-    def backend_name(self) -> str:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-83-        """Return the backend name."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-84-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-85-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-86-    @property
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py:87:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-88-    def is_available(self) -> bool:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-89-        """Check if the backend is available (installed, configured)."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-90-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-91-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py:92:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-93-    def generate(
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-94-        self,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-95-        params: BodyParameters,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-96-        output_dir: Path,
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-97-        **kwargs: Any,
+--
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py:112:    @abstractmethod
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-113-    def get_supported_segments(self) -> list[str]:
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-114-        """Return list of segment names this backend can generate."""
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-115-        ...
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-116-
+./src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py-117-
+--
+./src/shared/python/ai/adapters/base.py:115:    @abstractmethod
+./src/shared/python/ai/adapters/base.py-116-    def send_message(
+./src/shared/python/ai/adapters/base.py-117-        self,
+./src/shared/python/ai/adapters/base.py-118-        message: str,
+./src/shared/python/ai/adapters/base.py-119-        context: ConversationContext,
+./src/shared/python/ai/adapters/base.py-120-        tools: list[ToolDeclaration],
+--
+./src/shared/python/ai/adapters/base.py:143:    @abstractmethod
+./src/shared/python/ai/adapters/base.py-144-    def stream_response(
+./src/shared/python/ai/adapters/base.py-145-        self,
+./src/shared/python/ai/adapters/base.py-146-        message: str,
+./src/shared/python/ai/adapters/base.py-147-        context: ConversationContext,
+./src/shared/python/ai/adapters/base.py-148-        tools: list[ToolDeclaration],
+--
+./src/shared/python/ai/adapters/base.py:169:    @abstractmethod
+./src/shared/python/ai/adapters/base.py-170-    def capabilities(self) -> ProviderCapabilities:
+./src/shared/python/ai/adapters/base.py-171-        """Return the provider's capabilities.
+./src/shared/python/ai/adapters/base.py-172-
+./src/shared/python/ai/adapters/base.py-173-        This allows the AIP to adjust behavior based on what features
+./src/shared/python/ai/adapters/base.py-174-        the current provider supports.
+--
+./src/shared/python/ai/adapters/base.py:181:    @abstractmethod
+./src/shared/python/ai/adapters/base.py-182-    def validate_connection(self) -> tuple[bool, str]:
+./src/shared/python/ai/adapters/base.py-183-        """Test connection to the AI provider.
+./src/shared/python/ai/adapters/base.py-184-
+./src/shared/python/ai/adapters/base.py-185-        This method should perform a lightweight check to verify:
+./src/shared/python/ai/adapters/base.py-186-        1. Network connectivity
+--
+./src/shared/python/ai/adapters/base.py:204:    @abstractmethod
+./src/shared/python/ai/adapters/base.py-205-    def list_models(self) -> list[str]:
+./src/shared/python/ai/adapters/base.py-206-        """Return a non-empty list of model ids known to this adapter.
+./src/shared/python/ai/adapters/base.py-207-
+./src/shared/python/ai/adapters/base.py-208-        Implementations may probe a live API but MUST fall back to a
+./src/shared/python/ai/adapters/base.py-209-        static catalogue when the API is unreachable so unit tests and
+--
+./src/shared/python/ai/adapters/base.py:217:    @abstractmethod
+./src/shared/python/ai/adapters/base.py-218-    def thinking_capabilities(self) -> Any:
+./src/shared/python/ai/adapters/base.py-219-        """Return the :class:`ThinkingCapabilities` for the current model.
+./src/shared/python/ai/adapters/base.py-220-
+./src/shared/python/ai/adapters/base.py-221-        Returns:
+./src/shared/python/ai/adapters/base.py-222-            ``ThinkingCapabilities`` describing supported reasoning
+--
+./src/shared/python/ai/peer_review/base.py:34:    @abstractmethod
+./src/shared/python/ai/peer_review/base.py-35-    async def review(
+./src/shared/python/ai/peer_review/base.py-36-        self,
+./src/shared/python/ai/peer_review/base.py-37-        request: ReviewRequest,
+./src/shared/python/ai/peer_review/base.py-38-        subject: ReviewSubject,
+./src/shared/python/ai/peer_review/base.py-39-    ) -> ReviewVerdict:
+--
+./src/shared/python/ai/skills/base.py:67:    @abstractmethod
+./src/shared/python/ai/skills/base.py-68-    async def run(self, invocation: SkillInvocation) -> SkillResult:
+./src/shared/python/ai/skills/base.py-69-        """Execute the skill body. Must be async."""
+--
+./src/shared/python/sidekick/calculators/base.py:19:    @abstractmethod
+./src/shared/python/sidekick/calculators/base.py-20-    def calculate(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
+./src/shared/python/sidekick/calculators/base.py-21-        """Perform a calculation and return a JSON-serializable dictionary.
+./src/shared/python/sidekick/calculators/base.py-22-
+./src/shared/python/sidekick/calculators/base.py-23-        This method must be implemented by subclasses to define specific
+./src/shared/python/sidekick/calculators/base.py-24-        calculation logic.
+--
+./src/movement_optimizer/backend.py:30:    @abstractmethod
+./src/movement_optimizer/backend.py-31-    def forward_kinematics(self, q: NDArray) -> dict[str, NDArray]:
+./src/movement_optimizer/backend.py-32-        """Return named joint positions {name: (x, y)} for pose *q*."""
+./src/movement_optimizer/backend.py-33-
+./src/movement_optimizer/backend.py:34:    @abstractmethod
+./src/movement_optimizer/backend.py-35-    def bar_position(self, q: NDArray, exercise_type: str) -> NDArray:
+./src/movement_optimizer/backend.py-36-        """Return (x, y) barbell position for the given pose."""
+./src/movement_optimizer/backend.py-37-
+./src/movement_optimizer/backend.py:38:    @abstractmethod
+./src/movement_optimizer/backend.py-39-    def com_position(
+./src/movement_optimizer/backend.py-40-        self,
+./src/movement_optimizer/backend.py-41-        q: NDArray,
+./src/movement_optimizer/backend.py-42-        exercise_type: str = "squat",
+./src/movement_optimizer/backend.py-43-        bar_mass: float = 0.0,
+--
+./src/movement_optimizer/backend.py:47:    @abstractmethod
+./src/movement_optimizer/backend.py-48-    def inverse_dynamics(self, q: NDArray, qd: NDArray, qdd: NDArray) -> NDArray:
+./src/movement_optimizer/backend.py-49-        """Compute joint torques from motion: tau = M*qdd + C + G."""
+./src/movement_optimizer/backend.py-50-
+./src/movement_optimizer/backend.py:51:    @abstractmethod
+./src/movement_optimizer/backend.py-52-    def inverse_dynamics_batch(self, q: NDArray, qd: NDArray, qdd: NDArray) -> NDArray:
+./src/movement_optimizer/backend.py-53-        """Vectorised batch torques: q, qd, qdd are (N, n_dof)."""
+./src/movement_optimizer/backend.py-54-
+./src/movement_optimizer/backend.py:55:    @abstractmethod
+./src/movement_optimizer/backend.py-56-    def com_x_batch(self, q: NDArray, exercise_type: str, bar_mass: float) -> NDArray:
+./src/movement_optimizer/backend.py-57-        """Vectorised batch COM x-coordinate: q is (N, n_dof)."""
+./src/movement_optimizer/backend.py-58-
+./src/movement_optimizer/backend.py:59:    @abstractmethod
+./src/movement_optimizer/backend.py-60-    def mass_matrix(self, q: NDArray) -> NDArray:
+./src/movement_optimizer/backend.py-61-        """Return the n x n mass/inertia matrix M(q)."""
+./src/movement_optimizer/backend.py-62-
+./src/movement_optimizer/backend.py-63-    @property
+./src/movement_optimizer/backend.py:64:    @abstractmethod
+./src/movement_optimizer/backend.py-65-    def segment_lengths(self) -> NDArray:
+./src/movement_optimizer/backend.py-66-        """Lengths of the active kinematic chain segments."""
+./src/movement_optimizer/backend.py-67-
+./src/movement_optimizer/backend.py-68-    @property
+./src/movement_optimizer/backend.py:69:    @abstractmethod
+./src/movement_optimizer/backend.py-70-    def n_dof(self) -> int:
+./src/movement_optimizer/backend.py-71-        """Number of degrees of freedom."""
+./src/movement_optimizer/backend.py-72-
+./src/movement_optimizer/backend.py-73-    @property
+./src/movement_optimizer/backend.py:74:    @abstractmethod
+./src/movement_optimizer/backend.py-75-    def name(self) -> str:
+./src/movement_optimizer/backend.py-76-        """Human-readable backend name."""
+--
+./src/movement_optimizer/gui/commands.py:27:    @abstractmethod
+./src/movement_optimizer/gui/commands.py-28-    def execute(self) -> None:
+./src/movement_optimizer/gui/commands.py-29-        """Apply (or re-apply) the operation."""
+./src/movement_optimizer/gui/commands.py-30-        ...
+./src/movement_optimizer/gui/commands.py-31-
+./src/movement_optimizer/gui/commands.py:32:    @abstractmethod
+./src/movement_optimizer/gui/commands.py-33-    def undo(self) -> None:
+./src/movement_optimizer/gui/commands.py-34-        """Reverse the operation."""
+./src/movement_optimizer/gui/commands.py-35-        ...
+./src/movement_optimizer/gui/commands.py-36-
+./src/movement_optimizer/gui/commands.py-37-
+--
+./scripts/analyze_completist_data.py:182:        if f_path and l_no and c_txt and "@abstractmethod" in c_txt:
+./scripts/analyze_completist_data.py-183-            return {"file": f_path, "line": l_no, "text": c_txt, "type": "Abstract"}
+./scripts/analyze_completist_data.py-184-        return None
+./scripts/analyze_completist_data.py-185-
+./scripts/analyze_completist_data.py-186-    return _scan_completist_file("ABSTRACT", _parser)
+./scripts/analyze_completist_data.py-187-

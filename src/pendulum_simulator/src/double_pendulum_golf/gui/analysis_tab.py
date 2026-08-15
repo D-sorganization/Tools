@@ -231,6 +231,11 @@ class AnalysisTab:
         else:
             self._plot_tabs.addTab(_create_fallback_widget(), "Plotting")
 
+        from .transfer_strategy_panel import TransferStrategyPanel
+
+        self._transfer_panel = TransferStrategyPanel(self._plot_tabs)
+        self._plot_tabs.addTab(self._transfer_panel.widget(), "Drift Transfer")
+
     def widget(self) -> Any:
         """Return the top-level QWidget for embedding."""
         return self._widget
@@ -248,6 +253,8 @@ class AnalysisTab:
         self._populate_series_combos()
         if model_type != old_model:
             self._populate_surface_combos()
+        if result is not None:
+            self._transfer_panel.set_result(result, model_type)
 
     # Model-aware sweep variable definitions
     _SWEEP_VARS: dict[str, list[tuple[str, str, str, tuple[float, float]]]] = {
