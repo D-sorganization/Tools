@@ -8,6 +8,7 @@
 #include "PIDController.h"
 #include "SafetyInterlock.h"
 #include "StorageManager.h"
+#include "CommsWatchdog.h"
 
 // Ethernet Configuration (P1AM-ETH shield)
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -31,6 +32,25 @@ const unsigned long kScanIntervalMs = 100;
 // (Coil 0 = save-to-flash, coil 1 = E-stop reset, coil 3 = THM burnout
 // direction -- see kThmBurnoutCoil in P1AMHardware.h.)
 const int kHeaterRelayCoil = 2;
+
+// Dead-man timer on the SCADA link (issue #3999). Without it the heater relay
+// and analog outputs held their last command forever once the host died, with
+// no operator visibility -- the HMI is exactly what died.
+//
+// Two independent activity signals, because each misses a case the other
+// catches:
+//   * a live Modbus TCP client, which covers host power loss, a killed
+//     backend and a pulled cable (all drop the socket);
+//   * a host heartbeat register, which additionally catches a wedged backend
+//     that holds an idle socket open.
+// Either one re-arms the watchdog.
+// Sits immediately after the interlock block (300..555) and inside the
+// configured holding-register map -- see configureHoldingRegisters() in setup.
+const int kHostHeartbeatReg = 560;
+const unsigned long kCommsTimeoutMs = 2000;  // 20 scans at the nominal 100 ms
+CommsWatchdog commsWatchdog(kCommsTimeoutMs);
+uint16_t lastHeartbeatValue = 0;
+bool commsLostLatched = false;
 
 // Count of signed-on backplane modules (captured at boot, published to TAG_26).
 uint8_t g_moduleCount = 0;
@@ -183,8 +203,9 @@ void setup() {
   modbusServer.configureCoils(0, 10);
   // Holding-register window: tag values (0..63), input routing (100..105),
   // output routing (110..111), PID config (200..239), 4-limit interlocks
-  // (300..555 = 32 tags x 8 regs). Bump end to 560 with margin.
-  modbusServer.configureHoldingRegisters(0, 560);
+  // (300..555 = 32 tags x 8 regs), host heartbeat (560).
+  // Count is one past the highest address, so 561 makes 560 addressable.
+  modbusServer.configureHoldingRegisters(0, kHostHeartbeatReg + 1);
   Serial.println(F("[mb] Modbus TCP server started"));
 
   // Load saved NVRAM configuration; fall back to defaults on first boot.
@@ -237,6 +258,13 @@ void setup() {
 
   // Publish current config to Modbus registers.
   SyncDCSToModbus();
+  // Arm the comms watchdog before entering the loop. It starts running rather
+  // than waiting for first contact, so a PLC that boots into a dead network
+  // safes itself instead of sitting energized waiting for a host that is not
+  // coming.
+  commsWatchdog.Begin(millis());
+  lastHeartbeatValue = modbusServer.holdingRegisterRead(kHostHeartbeatReg);
+
   Serial.println(F("[setup] complete -- entering control loop"));
 }
 
@@ -245,8 +273,17 @@ void loop() {
   EthernetClient newClient = ethServer.available();
   if (newClient) {
     modbusServer.accept(newClient);
+    commsWatchdog.RecordActivity(millis());
   }
   modbusServer.poll();
+
+  // Host heartbeat: the backend bumps this register every scan. Any change is
+  // proof the host is alive even if the socket has been idle.
+  uint16_t heartbeat = modbusServer.holdingRegisterRead(kHostHeartbeatReg);
+  if (heartbeat != lastHeartbeatValue) {
+    lastHeartbeatValue = heartbeat;
+    commsWatchdog.RecordActivity(millis());
+  }
 
   // Save-to-flash trigger
   if (modbusServer.coilRead(0) == 1) {
@@ -268,19 +305,69 @@ void loop() {
   // timer so the SAMD21 USB CDC and Modbus library aren't starved.
   unsigned long now = millis();
   if (now - lastScanTime >= kScanIntervalMs) {
+    // Measure the interval actually elapsed rather than assuming the nominal
+    // one. This scan also does ~300 register reads, SPI thermocouple reads and
+    // (on a config deploy) a blocking flash write, so the real period runs
+    // well past 100 ms. Integrating as if 100 ms had passed understated Ki and
+    // overstated Kd whenever the scan overran (issue #4009).
+    float dt = static_cast<float>(now - lastScanTime) / 1000.0f;
+    // Bound dt so a long stall cannot inject a huge integral step or a
+    // near-zero derivative divisor.
+    if (dt < 0.001f) {
+      dt = 0.001f;
+    } else if (dt > 1.0f) {
+      dt = 1.0f;
+    }
     lastScanTime = now;
 
     SyncModbusToDCS();
     hw.Update();
     broker.ReadHardwareInputs(hw);
+
+    // Comms watchdog. A tripped interlock and a dead host are different
+    // conditions but demand the same output state, so both drive the same
+    // safe-state path below.
+    const bool comms_lost = commsWatchdog.IsExpired(now);
+    if (comms_lost && !commsLostLatched) {
+      commsLostLatched = true;
+      Serial.println(F("[watchdog] SCADA link lost -- forcing outputs safe"));
+    } else if (!comms_lost && commsLostLatched) {
+      commsLostLatched = false;
+      Serial.println(F("[watchdog] SCADA link restored"));
+    }
+
+    // While tripped or blind, freeze the loops and shed their accumulated
+    // state so recovery does not slam the outputs with a wound-up integral.
+    const bool outputs_inhibited = interlock.IsTripped() || comms_lost;
     for (int i = 0; i < 4; ++i) {
-      pids[i].Compute(broker, 0.1f);
+      if (outputs_inhibited) {
+        pids[i].Hold();
+      } else if (pids[i].IsHeld()) {
+        pids[i].Release();
+      }
+      pids[i].Compute(broker, dt);
     }
     interlock.Evaluate(broker, hw);
+
+    if (comms_lost) {
+      // The host is gone and cannot be trusted to have left a safe command
+      // behind. Drive every actuator to its de-energized state directly --
+      // this is the only protection that survives the host being absent.
+      for (int i = 0; i < SignalBroker::kNumOutputs; ++i) {
+        int tag_id = broker.GetOutputRouting(i);
+        if (tag_id != SignalBroker::kUnmappedTag) {
+          broker.SetTag(tag_id, 0.0f);
+        }
+        hw.WriteAnalogOutput(i, 0.0f);
+      }
+      hw.WriteHeaterRelay(false);
+      hw.WriteInhibit(true);
+    }
+
     // Heater relay (Modbus coil 2): the temperature controller commands it, but
     // the safety interlock always wins — a trip forces the relay off regardless.
     bool relay_cmd = (modbusServer.coilRead(kHeaterRelayCoil) == 1);
-    hw.WriteHeaterRelay(relay_cmd && !interlock.IsTripped());
+    hw.WriteHeaterRelay(relay_cmd && !interlock.IsTripped() && !comms_lost);
 
     // Thermocouple burnout direction (Modbus coil 3): an operator/HMI toggle
     // that flips the open-circuit fail direction. LOW-side (coil = 0) makes an

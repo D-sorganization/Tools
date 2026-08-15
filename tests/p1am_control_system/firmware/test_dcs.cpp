@@ -2,11 +2,20 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+
+// Every check in this suite is an assert(). Building with NDEBUG would compile
+// them all away and leave a binary that exits 0 without testing anything --
+// exactly the silent-pass failure mode this suite exists to prevent.
+#ifdef NDEBUG
+#error "test_dcs must be built with assertions enabled (do not define NDEBUG)"
+#endif
+
 #include "MockHardware.h"
 #include "SignalBroker.h"
 #include "PIDController.h"
 #include "SafetyInterlock.h"
 #include "StorageManager.h"
+#include "CommsWatchdog.h"
 
 // Helper to check approximate equality for floats
 bool FloatEquals(float a, float b, float epsilon = 0.001f) {
@@ -29,14 +38,20 @@ void TestSignalBroker() {
   broker.SetInputRouting(4, 5);
   assert(broker.GetInputRouting(4) == 5);
 
-  // Set physical values in mock hardware
-  hw.SetThermocouple(0, 350.0f);  // Should scale to 35.0%
-  hw.SetAnalogInput(0, 62.5f);    // Scaled raw
+  // Set physical values in mock hardware. The expected percentage is derived
+  // from the firmware's own full-scale constant rather than hardcoded, so a
+  // change to the range updates this expectation instead of silently breaking
+  // it (this assertion was stale at 35.0% from an earlier 1000 C full scale).
+  const float kTempC = 350.0f;
+  const float kExpectedPct =
+      kTempC * (100.0f / SignalBroker::kThermocoupleFullScaleC);
+  hw.SetThermocouple(0, kTempC);
+  hw.SetAnalogInput(0, 62.5f);  // Scaled raw
 
   broker.ReadHardwareInputs(hw);
 
   // Assert tag values were updated and scaled
-  assert(FloatEquals(broker.GetTag(2), 35.0f));
+  assert(FloatEquals(broker.GetTag(2), kExpectedPct));
   assert(FloatEquals(broker.GetTag(5), 62.5f));
 
   // Output routing
@@ -133,14 +148,21 @@ void TestStorageManager() {
   SignalBroker broker;
   PIDController pids[4];
 
-  float high_limits[SignalBroker::kNumTags];
+  // All four interlock tiers are persisted (kMagic was bumped to 0xDC52 when
+  // InterlockConfigData grew from 2 limits to 4). Round-trip every tier so a
+  // future struct change cannot silently drop lolo/hihi again.
+  float lolo_limits[SignalBroker::kNumTags];
   float low_limits[SignalBroker::kNumTags];
+  float high_limits[SignalBroker::kNumTags];
+  float hihi_limits[SignalBroker::kNumTags];
 
   // Initialize
   broker.Reset();
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    high_limits[i] = 100.0f;
+    lolo_limits[i] = -10.0f;
     low_limits[i] = 0.0f;
+    high_limits[i] = 100.0f;
+    hihi_limits[i] = 110.0f;
   }
 
   // Setup routing config
@@ -155,12 +177,15 @@ void TestStorageManager() {
   pids[0].SetKi(0.5f);
   pids[0].SetKd(0.1f);
 
-  // Setup specific limit
-  high_limits[5] = 85.5f;
+  // Setup specific limits across all four tiers
+  lolo_limits[5] = 3.25f;
   low_limits[5] = 12.5f;
+  high_limits[5] = 85.5f;
+  hihi_limits[5] = 97.75f;
 
   // Save
-  bool save_ok = storage.Save(broker, pids, high_limits, low_limits);
+  bool save_ok = storage.Save(broker, pids, lolo_limits, low_limits, high_limits,
+                              hihi_limits);
   assert(save_ok);
 
   // Mess up original state
@@ -169,12 +194,15 @@ void TestStorageManager() {
     pids[i].Reset();
   }
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    high_limits[i] = 0.0f;
+    lolo_limits[i] = 0.0f;
     low_limits[i] = 0.0f;
+    high_limits[i] = 0.0f;
+    hihi_limits[i] = 0.0f;
   }
 
   // Load
-  bool load_ok = storage.Load(broker, pids, high_limits, low_limits);
+  bool load_ok = storage.Load(broker, pids, lolo_limits, low_limits, high_limits,
+                              hihi_limits);
   assert(load_ok);
 
   // Verify
@@ -186,8 +214,12 @@ void TestStorageManager() {
   assert(FloatEquals(pids[0].GetKp(), 2.0f));
   assert(FloatEquals(pids[0].GetKi(), 0.5f));
   assert(FloatEquals(pids[0].GetKd(), 0.1f));
-  assert(FloatEquals(high_limits[5], 85.5f));
+  assert(FloatEquals(lolo_limits[5], 3.25f));
   assert(FloatEquals(low_limits[5], 12.5f));
+  assert(FloatEquals(high_limits[5], 85.5f));
+  assert(FloatEquals(hihi_limits[5], 97.75f));
+  // An untouched tag keeps the value it was saved with, not a zero fill.
+  assert(FloatEquals(hihi_limits[7], 110.0f));
 
   // Cleanup
   storage.Clear();
@@ -257,6 +289,127 @@ void TestSoftFailRuntimeContracts() {
   std::cout << "TestSoftFailRuntimeContracts PASSED!" << std::endl;
 }
 
+
+void TestPidResetsIntegralOnSetpointZeroed() {
+  std::cout << "Running TestPidResetsIntegralOnSetpointZeroed..." << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);  // integral-only, so the wind-up is unambiguous
+  pid.SetKd(0.0f);
+
+  // Wind the integral to its clamp against a large sustained error.
+  broker.SetTag(3, 0.0f);
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 100.0f));
+
+  // Commanding the setpoint to zero must drop the output on the NEXT scan,
+  // not decay towards it over many seconds. This is the issue #4002 condition:
+  // an E-stop's only effect reaching the plant is zeroing these setpoints.
+  pid.SetSetpoint(0.0f);
+  pid.Compute(broker, 0.1f);
+  assert(FloatEquals(broker.GetTag(4), 0.0f));
+
+  std::cout << "TestPidResetsIntegralOnSetpointZeroed PASSED!" << std::endl;
+}
+
+void TestPidKeepsIntegralAcrossNonZeroSetpointChange() {
+  std::cout << "Running TestPidKeepsIntegralAcrossNonZeroSetpointChange..."
+            << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);
+  pid.SetKd(0.0f);
+
+  broker.SetTag(3, 0.0f);
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 100.0f));
+
+  // A change between two NON-ZERO setpoints must preserve the accumulated
+  // integral. SyncModbusToDCS calls SetSetpoint on every scan whenever the host
+  // register differs, so resetting on any change would clear the integrator
+  // once per scan for the whole of a host-driven ramp -- leaving the loop
+  // running P+D only, with a steady-state offset it can never close and no
+  // indication that integral action had been silently disabled.
+  pid.SetSetpoint(50.0f);
+  pid.Compute(broker, 0.1f);
+
+  // Error is still positive (PV = 0, SP = 50), so an intact integral keeps the
+  // output at its clamp. A reset would have dropped it to ki*error*dt = 5.0.
+  assert(FloatEquals(broker.GetTag(4), 100.0f));
+
+  std::cout << "TestPidKeepsIntegralAcrossNonZeroSetpointChange PASSED!"
+            << std::endl;
+}
+
+void TestPidDoesNotIntegrateWhileTripped() {
+  std::cout << "Running TestPidDoesNotIntegrateWhileTripped..." << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);
+  pid.SetKd(0.0f);
+  broker.SetTag(3, 0.0f);
+
+  pid.Hold();  // interlock tripped: freeze the loop and shed accumulated state
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 0.0f));
+
+  // Releasing the hold starts from a clean integral, so the first scan after
+  // recovery contributes one step -- not 200 scans' worth.
+  pid.Release();
+  pid.Compute(broker, 0.1f);
+  assert(FloatEquals(broker.GetTag(4), 10.0f));  // ki * error * dt = 1*100*0.1
+
+  std::cout << "TestPidDoesNotIntegrateWhileTripped PASSED!" << std::endl;
+}
+
+void TestCommsWatchdog() {
+  std::cout << "Running TestCommsWatchdog..." << std::endl;
+  CommsWatchdog watchdog(2000);  // 2 s against a nominal 100 ms scan
+
+  watchdog.Begin(1000);
+  assert(!watchdog.IsExpired(1000));
+  assert(!watchdog.IsExpired(2999));
+
+  // Exactly at the timeout counts as expired -- fail safe, not fail late.
+  assert(watchdog.IsExpired(3000));
+  assert(watchdog.IsExpired(50000));
+
+  // Traffic re-arms it.
+  watchdog.RecordActivity(50000);
+  assert(!watchdog.IsExpired(51999));
+  assert(watchdog.IsExpired(52000));
+
+  // millis() wraps at ~49.7 days. Unsigned subtraction must carry the
+  // watchdog across the wrap rather than disarming it for another 49 days.
+  const unsigned long kNearWrap = 0xFFFFFF00UL;
+  watchdog.RecordActivity(kNearWrap);
+  assert(!watchdog.IsExpired(kNearWrap + 1999UL));
+  assert(watchdog.IsExpired(kNearWrap + 2000UL));  // wraps past zero
+
+  std::cout << "TestCommsWatchdog PASSED!" << std::endl;
+}
+
 int main() {
   std::cout << "=== DCS CORE FIRMWARE TDD TEST RUNNER ===" << std::endl;
   TestSignalBroker();
@@ -264,6 +417,10 @@ int main() {
   TestSafetyInterlock();
   TestStorageManager();
   TestSoftFailRuntimeContracts();
+  TestPidResetsIntegralOnSetpointZeroed();
+  TestPidKeepsIntegralAcrossNonZeroSetpointChange();
+  TestPidDoesNotIntegrateWhileTripped();
+  TestCommsWatchdog();
   std::cout << "All C++ Core Firmware Tests Passed Successfully!" << std::endl;
   return 0;
 }
