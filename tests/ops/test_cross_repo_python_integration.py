@@ -14,11 +14,10 @@ REQUIRED_SPARSE_PATHS = {
         "tests/shared_contracts",
     },
     "D-sorganization/UpstreamDrift": {
-        "src/chat",
-        "src/contracts.py",
-        "src/python/src/utils",
+        # UpstreamDrift moved its consumed packages under src/shared/python, so
+        # this is the narrow root that carries them. Deliberately NOT bare `src`
+        # -- see the assertions in the test below.
         "src/shared",
-        "src/sidekick",
         "tests/shared_contracts",
         "tests/support",
     },
@@ -74,13 +73,11 @@ def test_upstream_scope_includes_every_release_build_package_root() -> None:
     )
 
     scope = set(upstream["sparse_checkout"].splitlines())
-    assert {
-        "src/chat",
-        "src/contracts.py",
-        "src/python/src/utils",
-        "src/shared",
-        "src/sidekick",
-    } <= scope
+    # `src/shared` is the package root that actually carries the code this repo
+    # provides to UpstreamDrift; `pip install -e .` there resolves through
+    # hatchling's `packages = ["src"]`, and cone-mode sparse checkout gives it a
+    # populated `src/shared` without pulling all of `src`.
+    assert {"src/shared"} <= scope
 
 
 def test_upstream_install_uses_current_tools_without_repackaging_pinned_snapshot() -> (
