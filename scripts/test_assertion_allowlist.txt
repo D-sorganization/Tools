@@ -16,5 +16,9 @@ src/movement_optimizer/tests/**/__init__.py
 src/movement_optimizer/tests/**/conftest.py
 # P1AM power-supply test construction helpers shared by split runtime tests.
 src/p1am_control_system/backend/tests/_power_supply_helpers.py
+# P1AM route inventory helper: derives paths/methods from app.openapi() so the
+# authz-matrix tests are version-agnostic (fastapi 0.141's include_router no
+# longer flattens into app.routes). Exports methods_by_path/route_paths only.
+src/p1am_control_system/backend/tests/_route_inventory.py
 # pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
 src/document_processing/pdf_renamer/tests/conftest.py
