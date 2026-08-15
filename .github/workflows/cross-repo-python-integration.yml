@@ -32,7 +32,8 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+          LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
         shell: bash
         run: |
           MODE="${LOCAL_MODE:-local}"
@@ -48,6 +49,15 @@ jobs:
               exit 1
               ;;
             *)
+              # Public repos get free unmetered hosted runners, so there is no
+              # reason to fail closed when the fleet is merely saturated: the
+              # probe below counts `busy == false`, and the fleet routinely runs
+              # fully online with ZERO idle runners.
+              if [ "$REPOSITORY_PRIVATE" != "true" ]; then
+                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+                echo "Public repo - routing to free hosted runner (mode=$MODE)"
+                exit 0
+              fi
               AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
                 --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
                 2>/dev/null || echo "0")
@@ -82,14 +92,9 @@ jobs:
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
             sparse_checkout: |
-              src/chat
-              src/contracts.py
-              src/python/src/utils
               src/shared
-              src/sidekick
               tests/shared_contracts
               tests/support
-              vendor/ud-tools
 
     steps:
       - name: Checkout Tools
@@ -106,11 +111,6 @@ jobs:
           fetch-depth: 1
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
           sparse-checkout-cone-mode: true
-
-      - name: Initialize pinned Tools submodule
-        if: steps.checkout_downstream.outcome == 'success' && matrix.downstream.repo == 'D-sorganization/UpstreamDrift'
-        working-directory: ${{ matrix.downstream.path }}
-        run: git submodule update --init --depth 1 vendor/ud-tools
 
       - name: Select persistent Python tool cache
         run: |

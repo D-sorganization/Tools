@@ -21,6 +21,10 @@ changes downstream.
 - **#4205 / #4260 / #4267 / #4377 ground study and release qualification** — request,
   execution and playback paths exist; qualification evidence is still declaration-only.
 - **#4085–#4088 P1AM SCADA product and historian** — consolidated separately.
+- **#4406 pendulum drift-transfer diagnostics** (UpstreamDrift epic #8551) — landed on
+  `main`: phase-resolved transfer metrics plus a PyQt Drift Transfer tab for the qualified
+  double pendulum. Triple/golfer attribution deliberately fails closed until its
+  reaction-force allocation is independently qualified.
 - **#3973 (P0) NaN clears active alarms** — open and untouched by any PR; both engines
   affected.
 - **#3975 CI collects no embedded tests** — 162 test files under `src/**/tests/`

@@ -14,15 +14,12 @@ REQUIRED_SPARSE_PATHS = {
         "tests/shared_contracts",
     },
     "D-sorganization/UpstreamDrift": {
-        "chat",
-        "contracts.py",
-        "python/src/utils",
-        "shared",
-        "sidekick",
-        "src/shared/python",
+        # UpstreamDrift moved its consumed packages under src/shared/python, so
+        # this is the narrow root that carries them. Deliberately NOT bare `src`
+        # -- see the assertions in the test below.
+        "src/shared",
         "tests/shared_contracts",
         "tests/support",
-        "vendor/ud-tools",
     },
 }
 
@@ -76,39 +73,11 @@ def test_upstream_scope_includes_every_release_build_package_root() -> None:
     )
 
     scope = set(upstream["sparse_checkout"].splitlines())
-    assert {
-        "chat",
-        "contracts.py",
-        "python/src/utils",
-        "shared",
-        "sidekick",
-        "vendor/ud-tools",
-    } <= scope
-
-
-def test_upstream_initializes_the_pinned_tools_submodule_before_install() -> None:
-    workflow = _workflow()
-    steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]
-    initialize_index = next(
-        index
-        for index, step in enumerate(steps)
-        if step.get("name") == "Initialize pinned Tools submodule"
-    )
-    initialize = steps[initialize_index]
-    install_index = next(
-        index
-        for index, step in enumerate(steps)
-        if step.get("name") == "Install downstream dependencies"
-    )
-
-    assert initialize_index < install_index
-    assert initialize["working-directory"] == "${{ matrix.downstream.path }}"
-    expected_if = (
-        "steps.checkout_downstream.outcome == 'success' && "
-        "matrix.downstream.repo == 'D-sorganization/UpstreamDrift'"
-    )
-    assert initialize["if"] == expected_if
-    assert "git submodule update --init --depth 1 vendor/ud-tools" in initialize["run"]
+    # `src/shared` is the package root that actually carries the code this repo
+    # provides to UpstreamDrift; `pip install -e .` there resolves through
+    # hatchling's `packages = ["src"]`, and cone-mode sparse checkout gives it a
+    # populated `src/shared` without pulling all of `src`.
+    assert {"src/shared"} <= scope
 
 
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
