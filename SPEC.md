@@ -2688,6 +2688,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - 2026-05-26: feat(chat) — restored shared chat dock keybindings (Enter→submit, Shift+Enter→newline, busy-queue with steering), port-aware default WS URL (`UD_CHAT_WS_URL` / `GOLF_API_PORT` env), Ollama latency tuning (`keep_alive: "30m"`, `num_ctx: 4096`, native `tools` field), `_chat_dock_widget_qt.py` refactored into `_qt/` submodules (2091→1049 lines), and the animated "AI is thinking" indicator.
 - 2026-05-26: Chat dock resolves its default WebSocket URL per-instance, keeps the Steer action queue-only, and preserves typed import-safe runtime diagnostics for the optional Qt chat surface.
 
+## 1.1.415 - Optimized TrendChart SVG path generation
+
+- **2026-08-15**: perf(p1am) - Replaced `.forEach` with single-pass `for` loops in `TrendChart.tsx` path generation to eliminate closure allocation overhead and reduce garbage collection pressure.
+
 ### Version 1.1.205 (Palette - Rotation Converter Accessibility)
 
 - **2026-08-12**: feat(ux) — Wrapped inputs in `RotationConverter.tsx` in a `<form>` and dynamically mapped ID to `<label htmlFor>` using React `useId()`. Added `role="alert"` for error messages.
