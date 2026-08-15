@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import re
-import tomllib
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+try:  # tomllib is 3.11+; tomli is the 3.10 backport.
+    import tomllib
+except ImportError:  # pragma: no cover - exercised only on Python 3.10
+    import tomli as tomllib
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_DIR = REPO_ROOT / ".github" / "workflows"

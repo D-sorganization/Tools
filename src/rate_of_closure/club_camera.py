@@ -3,8 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import StrEnum
 from math import isfinite
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # `enum.StrEnum` is 3.11+; the shim covers the 3.10 lane.
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 MIN_ELEVATION_DEG = -80.0
 MAX_ELEVATION_DEG = 80.0
