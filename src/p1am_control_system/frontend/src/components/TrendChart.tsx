@@ -323,18 +323,23 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
       let areaD = `M ${paddingLeft} ${paddingTop + chartHeight} `;
 
       if (useSmoothed) {
-        smoothedData[tagId].forEach((val, sampleIdx) => {
+        // ⚡ Bolt Optimization: Use single-pass for loop to construct SVG paths without closure overhead
+        const data = smoothedData[tagId];
+        for (let sampleIdx = 0; sampleIdx < data.length; sampleIdx++) {
+          const val = data[sampleIdx];
           const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
           pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
           areaD += `L ${x} ${y} `;
-        });
+        }
       } else {
-        renderHistory.forEach((sample, sampleIdx) => {
+        // ⚡ Bolt Optimization: Use single-pass for loop to construct SVG paths without closure overhead
+        for (let sampleIdx = 0; sampleIdx < renderHistory.length; sampleIdx++) {
+          const sample = renderHistory[sampleIdx];
           const val = sample[tagId] ?? 0;
           const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
           pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
           areaD += `L ${x} ${y} `;
-        });
+        }
       }
 
       areaD += `L ${lastX} ${paddingTop + chartHeight} Z`;
