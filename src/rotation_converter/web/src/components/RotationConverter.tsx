@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, FormEvent, useId } from 'react';
 
 // Common interfaces mapping to the FastAPI Response/Request
 interface RotationRepresentations {
@@ -18,6 +18,7 @@ interface ConversionResponse {
 }
 
 export function RotationConverter() {
+    const id = useId();
     const [inputType, setInputType] = useState('quaternion');
     const [quaternion, setQuaternion] = useState([1, 0, 0, 0]);
     const [euler, setEuler] = useState([0, 0, 0]);
@@ -28,7 +29,8 @@ export function RotationConverter() {
     const [results, setResults] = useState<RotationRepresentations | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const handleCalculate = useCallback(async () => {
+    const handleCalculate = useCallback(async (e?: FormEvent) => {
+        e?.preventDefault();
         setError(null);
         let payloadValue: number[] = quaternion;
 
@@ -70,18 +72,19 @@ export function RotationConverter() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
             {/* Input Panel */}
-            <div className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">
+            <form onSubmit={handleCalculate} className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">
                 <h2 className="text-xl font-semibold mb-4 border-b border-slate-700 pb-2">Input Orientation</h2>
 
                 {error && (
-                    <div className="bg-red-900/50 border border-red-500 rounded p-3 text-red-200 text-sm">
+                    <div role="alert" className="bg-red-900/50 border border-red-500 rounded p-3 text-red-200 text-sm">
                         {error}
                     </div>
                 )}
 
                 <div>
-                    <label className="block text-sm text-slate-300 mb-1">Input Type</label>
+                    <label htmlFor={`${id}-inputType`} className="block text-sm text-slate-300 mb-1">Input Type</label>
                     <select
+                        id={`${id}-inputType`}
                         value={inputType}
                         onChange={(e) => setInputType(e.target.value)}
                         className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -97,8 +100,9 @@ export function RotationConverter() {
                     <div className="grid grid-cols-4 gap-2">
                         {['w', 'x', 'y', 'z'].map((axis, i) => (
                             <div key={axis}>
-                                <label className="block text-xs text-slate-400 mb-1">{axis.toUpperCase()}</label>
+                                <label htmlFor={`${id}-quat-${axis}`} className="block text-xs text-slate-400 mb-1">{axis.toUpperCase()}</label>
                                 <input
+                                    id={`${id}-quat-${axis}`}
                                     type="number"
                                     value={quaternion[i]}
                                     onChange={(e) => {
@@ -117,8 +121,9 @@ export function RotationConverter() {
                 {inputType === 'euler' && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm text-slate-300 mb-1">Convention</label>
+                            <label htmlFor={`${id}-eulerConv`} className="block text-sm text-slate-300 mb-1">Convention</label>
                             <input
+                                id={`${id}-eulerConv`}
                                 type="text"
                                 value={eulerConvention}
                                 onChange={(e) => setEulerConvention(e.target.value)}
@@ -129,8 +134,9 @@ export function RotationConverter() {
                         <div className="grid grid-cols-3 gap-2">
                             {['a', 'b', 'c'].map((label, i) => (
                                 <div key={label}>
-                                    <label className="block text-xs text-slate-400 mb-1">Axis {i + 1} (rad)</label>
+                                    <label htmlFor={`${id}-euler-${label}`} className="block text-xs text-slate-400 mb-1">Axis {i + 1} (rad)</label>
                                     <input
+                                        id={`${id}-euler-${label}`}
                                         type="number"
                                         value={euler[i]}
                                         onChange={(e) => {
@@ -151,8 +157,9 @@ export function RotationConverter() {
                     <div className="grid grid-cols-4 gap-2">
                         {['x', 'y', 'z', 'angle (rad)'].map((label, i) => (
                             <div key={label}>
-                                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                                <label htmlFor={`${id}-axisAngle-${i}`} className="block text-xs text-slate-400 mb-1">{label}</label>
                                 <input
+                                    id={`${id}-axisAngle-${i}`}
                                     type="number"
                                     value={axisAngle[i]}
                                     onChange={(e) => {
@@ -172,8 +179,9 @@ export function RotationConverter() {
                     <div className="grid grid-cols-3 gap-2">
                         {['rx', 'ry', 'rz'].map((label, i) => (
                             <div key={label}>
-                                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                                <label htmlFor={`${id}-rodrigues-${label}`} className="block text-xs text-slate-400 mb-1">{label}</label>
                                 <input
+                                    id={`${id}-rodrigues-${label}`}
                                     type="number"
                                     value={rodrigues[i]}
                                     onChange={(e) => {
@@ -191,13 +199,13 @@ export function RotationConverter() {
 
                 <div className="pt-4">
                     <button
-                        onClick={handleCalculate}
+                        type="submit"
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
                     >
                         Compute Equivalents
                     </button>
                 </div>
-            </div>
+            </form>
 
             {/* Results Panel */}
             <div className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">

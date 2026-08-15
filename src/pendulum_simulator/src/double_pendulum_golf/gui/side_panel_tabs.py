@@ -73,7 +73,9 @@ class SidePanelTabs(QTabWidget):
         parent: QWidget | None = None,
     ) -> None:
         if not settings_key or not settings_key.strip():
-            raise ValueError(f"settings_key must be a non-empty string, got {settings_key!r}")
+            raise ValueError(
+                f"settings_key must be a non-empty string, got {settings_key!r}"
+            )
         super().__init__(parent)
         self._settings_key: str = settings_key
         # Insertion-ordered: label → wrapped scroll area
@@ -124,7 +126,9 @@ class SidePanelTabs(QTabWidget):
         if widget is None:
             raise ValueError("widget must not be None")
         if label in self._panels:
-            raise ValueError(f"duplicate label {label!r} — already used by another panel")
+            raise ValueError(
+                f"duplicate label {label!r} — already used by another panel"
+            )
 
         wrapper = self._wrap(widget)
         index = self.addTab(wrapper, label)
