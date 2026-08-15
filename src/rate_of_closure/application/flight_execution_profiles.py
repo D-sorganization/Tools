@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from rate_of_closure.application._flight_execution_profile_runtime import (
     WATERLOO_SETTING_IDS,
@@ -29,6 +29,11 @@ from shared.python.swing_sim.flight import (
     FlightSimulationCancelled,
     LaunchConditions,
 )
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 FLIGHT_EXECUTION_PROFILE_REGISTRY_SCHEMA_VERSION = (
     "rate-of-closure/flight-execution-profile-registry/v1"

@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from enum import StrEnum
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 from rate_of_closure.application.regional_ground_execution_job import (
     REGIONAL_GROUND_EXECUTION_JOB_SCHEMA_VERSION,
@@ -20,6 +19,11 @@ from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationProgress,
 )
 from rate_of_closure.web_authority.capability import AuthorityCapability
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 
 class RegionalGroundPresentationState(StrEnum):

@@ -7,9 +7,8 @@ import json
 import logging
 import re
 import sys
-from enum import StrEnum
 from pathlib import Path
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from pydantic import (
     AliasChoices,
@@ -19,6 +18,11 @@ from pydantic import (
     ValidationError,
     model_validator,
 )
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = REPO_ROOT / "docs" / "release" / "rate_of_closure_campaign.v1.json"

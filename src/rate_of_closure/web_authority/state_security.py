@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from enum import StrEnum
 from pathlib import Path
-from typing import Final, Protocol
+from typing import TYPE_CHECKING, Final, Protocol
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 MAX_STATE_PATH_CHARS: Final = 1_024
 MAX_STATE_COMPONENT_CHARS: Final = 255

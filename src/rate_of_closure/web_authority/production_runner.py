@@ -9,7 +9,7 @@ match and preserves typed cancellation/failure behavior.
 from __future__ import annotations
 
 from dataclasses import replace
-from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from rate_of_closure.application.flight_execution_profiles import (
     FlightExecutionProfileQualificationError,
@@ -45,6 +45,11 @@ from shared.python.swing_sim.flight import (
     FlightSimulationCancelled,
     execute_regional_ground_from_flight,
 )
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 
 class ProductionRunnerPreflightReason(StrEnum):

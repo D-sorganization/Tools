@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import StrEnum
-from typing import Final, Literal, TypedDict, cast
+from typing import TYPE_CHECKING, Final, Literal, TypedDict, cast
 
 from rate_of_closure.application._regional_ground_execution_job_values import digest
 from rate_of_closure.application._workspace_validation import exact_mapping, stable_id
@@ -16,6 +15,11 @@ from shared.python.swing_sim.canonical_numeric_json import (
     canonical_numeric_json,
 )
 from shared.python.swing_sim.ground.strict_json import strict_json_object
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 AUTHORITY_JOB_STATUS_SCHEMA_VERSION: Final = (
     "rate-of-closure/regional-ground-authority-job-status/v1"

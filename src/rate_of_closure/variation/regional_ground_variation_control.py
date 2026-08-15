@@ -4,9 +4,14 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from shared.python.contracts import require
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 
 @dataclass(frozen=True)

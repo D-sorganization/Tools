@@ -12,22 +12,54 @@ from typing import Any, cast
 import pytest
 
 REPOSITORY_ROOT = Path(__file__).parents[2]
-STRING_ENUM_MODULES = (
-    Path("src/rate_of_closure/application/commands.py"),
-    Path("src/rate_of_closure/simulation/manual_delivery.py"),
-    Path("src/rate_of_closure/view_workspace.py"),
-    Path("src/shared/python/swing_sim/conventions/registry.py"),
-    Path("src/shared/python/swing_sim/flight/capability_contract.py"),
-    Path("src/shared/python/swing_sim/flight/capability_observation.py"),
-    Path("src/shared/python/swing_sim/flight/impact_solution_contract.py"),
-    Path("src/shared/python/swing_sim/flight/inverse_contract.py"),
-    Path("src/shared/python/swing_sim/flight/result_contract.py"),
-    Path("src/shared/python/swing_sim/impact/dplane.py"),
+#: Trees whose modules must run on the oldest interpreter in the CI matrix.
+#: Discovered rather than enumerated: an allowlist silently ignores whatever a
+#: later change adds, which is exactly how eight direct ``enum.StrEnum`` imports
+#: reached the 3.10 lane.
+SCANNED_TREES = (
+    Path("src/rate_of_closure"),
+    Path("src/shared/python/swing_sim"),
+    Path("scripts"),
 )
-UTC_MODULES = (
-    Path("src/rate_of_closure/application/_workspace_validation.py"),
-    Path("src/rate_of_closure/ui/pyqt6/torque_profile_controller.py"),
-)
+#: The only module allowed to reference the 3.11 names directly is the shim.
+COMPATIBILITY_SHIM = Path("src/shared/python/compatibility.py")
+
+
+def _scanned_modules() -> list[Path]:
+    found: list[Path] = []
+    for tree in SCANNED_TREES:
+        root = REPOSITORY_ROOT / tree
+        if not root.is_dir():
+            continue
+        found.extend(
+            path.relative_to(REPOSITORY_ROOT)
+            for path in sorted(root.rglob("*.py"))
+            if path.relative_to(REPOSITORY_ROOT) != COMPATIBILITY_SHIM
+        )
+    return found
+
+
+def _modules_referencing(symbol: str) -> list[Path]:
+    """Return scanned modules that import ``symbol`` at all."""
+    hits: list[Path] = []
+    for relative_path in _scanned_modules():
+        source = (REPOSITORY_ROOT / relative_path).read_text(encoding="utf-8")
+        if symbol not in source:
+            continue
+        tree = ast.parse(source, filename=str(relative_path))
+        if any(
+            isinstance(node, ast.ImportFrom)
+            and any(alias.name == symbol for alias in node.names)
+            for node in ast.walk(tree)
+        ):
+            hits.append(relative_path)
+    return hits
+
+
+STRING_ENUM_MODULES = tuple(_modules_referencing("StrEnum"))
+UTC_MODULES = tuple(_modules_referencing("UTC"))
+
+
 WORKSPACE_EXECUTION_TARGETS = (
     (Path("src/rate_of_closure/application/_workspace_validation.py"), ()),
     (Path("src/rate_of_closure/application/commands.py"), ("AppCommandId",)),
@@ -159,3 +191,14 @@ def _load_source_module(source_path: Path) -> ModuleType:
     finally:
         sys.modules.pop(module_name, None)
     return module
+
+
+def test_the_compatibility_guard_is_not_scanning_an_empty_set() -> None:
+    """A discovery-based guard must prove it actually found modules to check.
+
+    Without this, a refactor that moves or renames the scanned trees would make
+    every parametrized case above disappear and the suite would still be green.
+    """
+    assert len(STRING_ENUM_MODULES) >= 10
+    assert len(UTC_MODULES) >= 2
+    assert COMPATIBILITY_SHIM not in set(STRING_ENUM_MODULES)

@@ -9,7 +9,12 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, replace
-from enum import StrEnum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 Vector3 = tuple[float, float, float]
 
