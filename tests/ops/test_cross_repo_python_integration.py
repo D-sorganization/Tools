@@ -14,12 +14,10 @@ REQUIRED_SPARSE_PATHS = {
         "tests/shared_contracts",
     },
     "D-sorganization/UpstreamDrift": {
-        "chat",
-        "contracts.py",
-        "python/src/utils",
-        "shared",
-        "sidekick",
-        "src/shared/python",
+        # UpstreamDrift moved its consumed packages under src/shared/python, so
+        # this is the narrow root that carries them. Deliberately NOT bare `src`
+        # -- see the assertions in the test below.
+        "src/shared",
         "tests/shared_contracts",
         "tests/support",
         "vendor/ud-tools",
@@ -76,14 +74,15 @@ def test_upstream_scope_includes_every_release_build_package_root() -> None:
     )
 
     scope = set(upstream["sparse_checkout"].splitlines())
-    assert {
-        "chat",
-        "contracts.py",
-        "python/src/utils",
-        "shared",
-        "sidekick",
-        "vendor/ud-tools",
-    } <= scope
+    # `src/shared` is the package root that actually carries the code this repo
+    # provides to UpstreamDrift; `pip install -e .` there resolves through
+    # hatchling's `packages = ["src"]`, and cone-mode sparse checkout gives it a
+    # populated `src/shared` without pulling all of `src`.
+    #
+    # `vendor/ud-tools` is the pinned Tools gitlink that UpstreamDrift's own
+    # test_tools_vendoring.py resolves against, so the scope must carry it too;
+    # the step that initializes it is asserted by the test below.
+    assert {"src/shared", "vendor/ud-tools"} <= scope
 
 
 def test_upstream_initializes_the_pinned_tools_submodule_before_install() -> None:
