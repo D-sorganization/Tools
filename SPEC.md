@@ -46,6 +46,56 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
+
+- `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
+  is the host-side unit suite for the P1AM firmware. It builds the real firmware
+  sources against a fake `HardwareInterface`, so the safety interlock, PID loops
+  and storage round-trip are testable without a board. It was never executed by
+  CI and had stopped compiling; it is now repaired and green.
+- `.github/workflows/p1am-firmware.yml` adds two gates on changes under
+  `src/p1am_control_system/firmware/**`: `firmware-unit-tests` (g++ `make test`)
+  and `firmware-compile` (arduino-cli against the `P1AM-100:samd` board package).
+  The arduino-cli installer is pinned to a release tag (it is piped into a shell
+  on a self-hosted runner, so `master` would mean the fleet runs whatever lands
+  there), and **both** jobs are gated against fork pull requests: the compile job
+  pipes that installer into a shell and the unit-test job compiles and executes
+  contributor-authored code, both on `d-sorg-fleet` with a write-scoped token,
+  while this repository is public with fork-PR approval set to
+  `first_time_contributors_new_to_github`. The board package and libraries are not yet
+  version-pinned; the resolved versions are recorded to the job summary so that
+  pin becomes a mechanical follow-up.
+- `SignalBroker::kThermocoupleFullScaleC` is now a public constant in
+  `SignalBroker.h` (was a function-local literal in `SignalBroker.cpp`). It is
+  the firmware half of the percent/degC contract the backend's
+  `temp_full_scale_c` must match, and the single definition tests derive
+  expectations from.
+
+### 2026-08-14 P1AM Firmware Comms Watchdog and Bumpless Setpoints
+
+- `CommsWatchdog` is a host-liveness dead-man timer with two independent re-arm
+  signals — a live Modbus TCP client and a change on holding register 560 — and a
+  2000 ms timeout (20 nominal scans). Either signal alone misses a case: the
+  socket covers host power loss, a killed backend and a pulled cable, while the
+  heartbeat register additionally catches a wedged backend holding an idle socket
+  open. On expiry the scan drives both analog outputs to zero, opens the heater
+  relay and asserts Inhibit. Register 560 is the firmware half of a contract with
+  the backend's `HOST_HEARTBEAT_REGISTER`; both must agree (issue #3999).
+- `PIDController::Hold`/`Release`/`IsHeld` freeze a loop and shed its accumulated
+  integral and derivative state, so a restored link cannot slam the output with a
+  wound-up integral. Zeroing a setpoint now also resets the integrator, so a
+  de-energized loop cannot keep commanding full output on its accumulated term
+  (issue #4002). The reset fires only on the non-zero -> 0 transition the issue
+  specifies, never on a change between two non-zero setpoints: `SyncModbusToDCS`
+  calls `SetSetpoint` on every scan whenever the host register differs, so
+  resetting on any change would clear the integrator once per scan for the whole
+  of a host-driven ramp and leave the loop running P+D only.
+- The scan integrates over the interval actually elapsed rather than the nominal
+  100 ms, bounded to [1 ms, 1 s]. The scan does ~300 register reads, SPI
+  thermocouple reads and sometimes a blocking flash write, so assuming 100 ms
+  understated Ki and overstated Kd whenever it overran (issue #4009).
+
+
 ### 2026-08-10 Regional Surface-Plan Editor First Slice
 ### 2026-08-11 Matched Opt-In Clubhead Camera Tracking
 
@@ -3602,6 +3652,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.5.8 | fix(p1am-firmware, #3999, #4002): recover the Modbus comms watchdog, bumpless-setpoint/integral-reset handling and the measured-`dt` scan integration that were stranded on an unmerged branch, and repair plus CI-gate the host-side firmware test harness. Deliberately excludes the `SafetyInterlock` trip-tier change from the same commit; does not close #4001 or #4032. |
 | 2026-08-13 | 1.14.95 | merge(consolidated, #4446): fold `consolidated/ground-study-batch` (#4409) and `consolidated/rate-of-closure-batch` (#4410) into one carrier for the 32 already-closed PRs of the #4332-#4402 range, and repair the defects that kept both red: resolve raw conflict markers in 5 files as the union of all prepended sides after prior resolutions left `SPEC.md` unbalanced at 73 open against 104 close markers with 14 orphaned `=======` and 31 orphaned `>>>>>>>` lines; collapse the Identity version rows from 33/33/6 duplicates to one each; restore POSIX path keys to `.secrets.baseline` after it had been regenerated on Windows with backslash keys that no Linux scan can match; re-apply the CI-pinned `ruff==0.14.10` formatting to 100 files a different ruff had churned; revert a UP017 rewrite that contradicted its own Python 3.10 suppression; drop six undeclared `.codex-worktrees/` gitlinks referencing commits on no remote plus four agent scratch files from the repository root; and fix the 138 mypy errors across 42 new files that the marker failure had masked by short-circuiting `quality-gate` before its Type Check step. |
 | 2026-08-13 | 1.5.6 | fix(ci): drop the no-op `pick-runner` job from Convert Review Comments to Issues (it echoed only constants and fed nothing, while occupying a `d-sorg-fleet` slot per trigger) and narrow its `pull_request` trigger to `opened`, since `synchronize` and `closed` cannot surface new review comments; ignore `.codex-worktrees/` so agent scratch worktrees stop landing as gitlinks. |
 | 2026-08-13 | 1.5.6 | fix(pdf-renamer): close every `ResultCache` SQLite connection with `contextlib.closing` (the bare `sqlite3.connect` context manager commits the transaction but leaks the handle); make the sub-app's test package importable from its own conftest and repair two extractor tests whose patch targets invented unused attributes instead of intercepting the function-local `pypdf`/`fitz` imports. |

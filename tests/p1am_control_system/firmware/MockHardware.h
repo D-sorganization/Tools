@@ -4,10 +4,18 @@
 #include <cassert>
 #include "HardwareInterface.h"
 
+// Host-side fake for HardwareInterface.
+//
+// Beyond recording the latest value written to each output, this fake counts
+// writes and remembers the highest value an output was ever commanded to.
+// Safety tests need to distinguish "reads 0 now" from "was never energized",
+// which a bare last-value fake cannot express.
 class MockHardware : public HardwareInterface {
  public:
   MockHardware()
       : inhibit_active_(false),
+        heater_relay_on_(false),
+        heater_relay_write_count_(0),
         begin_called_(false),
         update_called_count_(0) {
     for (int i = 0; i < 4; ++i) {
@@ -16,6 +24,7 @@ class MockHardware : public HardwareInterface {
     for (int i = 0; i < 2; ++i) {
       analog_inputs_[i] = 0.0f;
       analog_outputs_[i] = 0.0f;
+      analog_output_max_seen_[i] = 0.0f;
     }
   }
 
@@ -44,10 +53,18 @@ class MockHardware : public HardwareInterface {
     assert(channel >= 0 && channel < 2);
     assert(value >= 0.0f && value <= 100.0f);
     analog_outputs_[channel] = value;
+    if (value > analog_output_max_seen_[channel]) {
+      analog_output_max_seen_[channel] = value;
+    }
   }
 
   void WriteInhibit(bool active) override {
     inhibit_active_ = active;
+  }
+
+  void WriteHeaterRelay(bool on) override {
+    heater_relay_on_ = on;
+    heater_relay_write_count_++;
   }
 
   // Helpers for testing
@@ -67,8 +84,23 @@ class MockHardware : public HardwareInterface {
     return analog_outputs_[channel];
   }
 
+  // Highest value this channel was ever commanded to. Lets a test assert an
+  // output was never energized, not merely that it is de-energized now.
+  float GetAnalogOutputMaxSeen(int channel) const {
+    assert(channel >= 0 && channel < 2);
+    return analog_output_max_seen_[channel];
+  }
+
   bool GetInhibitActive() const {
     return inhibit_active_;
+  }
+
+  bool GetHeaterRelayOn() const {
+    return heater_relay_on_;
+  }
+
+  int GetHeaterRelayWriteCount() const {
+    return heater_relay_write_count_;
   }
 
   bool WasBeginCalled() const {
@@ -83,7 +115,10 @@ class MockHardware : public HardwareInterface {
   float thermocouples_[4];
   float analog_inputs_[2];
   float analog_outputs_[2];
+  float analog_output_max_seen_[2];
   bool inhibit_active_;
+  bool heater_relay_on_;
+  int heater_relay_write_count_;
   bool begin_called_;
   int update_called_count_;
 };
