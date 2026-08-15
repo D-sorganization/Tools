@@ -32,6 +32,8 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          # Fleet-standard variable is CI_RUNNER_MODE; LOCAL_RUNNER_MODE is this
+          # repo's legacy name, kept as a fallback so the rename cannot break routing.
           LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
           REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
         shell: bash
@@ -99,6 +101,7 @@ jobs:
               src/sidekick
               tests/shared_contracts
               tests/support
+              vendor/ud-tools
 
     steps:
       - name: Checkout Tools
@@ -115,6 +118,11 @@ jobs:
           fetch-depth: 1
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
           sparse-checkout-cone-mode: true
+
+      - name: Initialize pinned Tools submodule
+        if: steps.checkout_downstream.outcome == 'success' && matrix.downstream.repo == 'D-sorganization/UpstreamDrift'
+        working-directory: ${{ matrix.downstream.path }}
+        run: git submodule update --init --depth 1 vendor/ud-tools
 
       - name: Select persistent Python tool cache
         run: |
