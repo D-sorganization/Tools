@@ -42,6 +42,9 @@ cryptography>=49.0.0  # Cryptographic recipes and primitives
 defusedxml>=0.7.0  # Safe XML parsing (mitigates XML bomb / XXE attacks)
 pygments>=2.20.0,<2.21.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
 
+# Process Coordination
+filelock>=3.16.0  # Process-lifetime lock guarding the Rate of Closure authority's SQLite/WAL store; src/rate_of_closure/web_authority/job_store.py imports it at module scope, so the CI test lanes need it even though pyproject only declares it under the rate-of-closure-web and full extras
+
 # Data Formats & Configuration
 pyyaml>=6.0.1  # YAML parser and emitter
 
