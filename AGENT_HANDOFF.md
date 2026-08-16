@@ -5,6 +5,13 @@
 
 ## 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 
+Version 1.17.10 closes the hosted Linux MyPy boundary exposed after the
+consolidated head was published. The extracted behavior mixin now calls typed
+concrete emission helpers instead of redeclaring `pyqtBoundSignal` attributes
+that conflict with the owning widget's `pyqtSignal` descriptors. Signal
+ownership, runtime MRO, emitted values, and scientific behavior are unchanged.
+The affected Python 3.12/MyPy 1.13 gate and 43 focused torque-profile tests pass.
+
 Version 1.17.09 reconciles the consolidated release with `main` at
 `9cc1a147a73d887dfb6bda72da692bd52144a5a5`, retaining the P1AM firmware
 recovery and SCADA safety batch, Data Explorer allocation repair, and

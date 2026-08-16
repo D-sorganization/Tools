@@ -5,6 +5,11 @@
 
 ## 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 
+- SPEC 1.17.10 removes the behavior mixin's static declarations of three Qt
+  bound signals and routes emission through typed helpers owned by the concrete
+  panel. This closes the six hosted Linux MyPy findings without changing signal
+  ownership, runtime MRO, emitted values, or torque science. The affected
+  Python 3.12/MyPy 1.13 check and 43 focused UI/history/presentation tests pass.
 - SPEC 1.17.09 carries the consolidated Rate tree onto `main` commit
   `9cc1a147a73d887dfb6bda72da692bd52144a5a5` while preserving its P1AM
   firmware/SCADA safety, Data Explorer, and required-lane wheel-cache changes.

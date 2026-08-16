@@ -40,6 +40,15 @@ class TorqueProfilePanel(TorqueProfilePanelBehaviorMixin, QWidget):
     jointLocksChanged = pyqtSignal(object)  # noqa: N815
     fitCurrentRunRequested = pyqtSignal(int)  # noqa: N815
 
+    def _emit_profile_changed(self, profile: object) -> None:
+        self.profileChanged.emit(profile)
+
+    def _emit_run_mode_changed(self, mode: object) -> None:
+        self.runModeChanged.emit(mode)
+
+    def _emit_joint_locks_changed(self, locks: object) -> None:
+        self.jointLocksChanged.emit(locks)
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._library = TorqueProfileLibraryAdapter()

@@ -2,6 +2,11 @@
 
 ## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
 
+- Version 1.17.10 closes six hosted Linux MyPy findings from the torque-panel
+  split. The behavior mixin no longer redeclares the concrete widget's Qt
+  signals; typed concrete emission helpers preserve the same signal instances,
+  values, runtime MRO, and scientific behavior. The affected Python 3.12/MyPy
+  1.13 check and 43 focused torque UI/history/presentation tests are green.
 - Version 1.17.09 reconciles the clean consolidated release with `main`
   `9cc1a147a73d887dfb6bda72da692bd52144a5a5`, retaining the P1AM firmware and
   SCADA safety batch, Data Explorer allocation, and `tools_core` wheel-cache

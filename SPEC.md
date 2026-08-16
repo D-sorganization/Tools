@@ -26,13 +26,21 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.09                                    |
-| **Spec Version**        | 1.17.09                                    |
+| **Current Version**     | 1.17.10                                    |
+| **Spec Version**        | 1.17.10                                    |
 | **Last Spec Update**    | 2026-08-15                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
+
+Version 1.17.10 closes the six hosted Linux MyPy findings introduced by the
+torque-panel responsibility split. The behavior mixin now invokes typed
+concrete emission helpers instead of redeclaring `pyqtBoundSignal` attributes
+that conflict with the owning widget's `pyqtSignal` descriptors. Signal
+ownership, runtime MRO, emitted values, scientific execution, and persisted
+profiles are unchanged. Python 3.12/MyPy 1.13 passes the affected sources, and
+43 focused torque UI, run-history, and presentation tests pass.
 
 Version 1.17.09 reconciles the consolidated release with `main` commit
 `9cc1a147a73d887dfb6bda72da692bd52144a5a5`, retaining the independent P1AM

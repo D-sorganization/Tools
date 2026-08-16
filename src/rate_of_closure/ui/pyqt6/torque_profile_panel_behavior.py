@@ -6,7 +6,6 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import pyqtBoundSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -67,9 +66,12 @@ class TorqueProfilePanelBehaviorMixin:
         _load_library_button: QPushButton
         _import_profile_button: QPushButton
         _export_profile_button: QPushButton
-        profileChanged: pyqtBoundSignal
-        runModeChanged: pyqtBoundSignal
-        jointLocksChanged: pyqtBoundSignal
+
+        def _emit_profile_changed(self, profile: object) -> None: ...
+
+        def _emit_run_mode_changed(self, mode: object) -> None: ...
+
+        def _emit_joint_locks_changed(self, locks: object) -> None: ...
 
     def _rebuild_assignment_rows(self) -> None:
         retained_locks = self.joint_locks().locked_joint_ids
@@ -177,12 +179,12 @@ class TorqueProfilePanelBehaviorMixin:
         self._status_label.setText(
             f"Staged {profile.name}: {len(profile.assignments)} joint assignment(s)."
         )
-        self.profileChanged.emit(profile)
+        self._emit_profile_changed(profile)
 
     def _on_mode_changed(self) -> None:
         mode = self._run_mode_combo.currentData()
         self._mode_description.setText(MODE_DESCRIPTIONS[mode])
-        self.runModeChanged.emit(mode)
+        self._emit_run_mode_changed(mode)
 
     def selection(self) -> TorqueExecutionSelection:
         """Return the validated selection consumed by simulation execution."""
@@ -221,14 +223,14 @@ class TorqueProfilePanelBehaviorMixin:
             return
         self._status_label.setText("Joint constraints updated: All joints free.")
         if emit:
-            self.jointLocksChanged.emit(JointLockConfig())
+            self._emit_joint_locks_changed(JointLockConfig())
 
     def _on_joint_locks_changed(self, *_args: object) -> None:
         locks = self.joint_locks()
         self._status_label.setText(
             f"Joint constraints updated: {self.joint_lock_summary()}."
         )
-        self.jointLocksChanged.emit(locks)
+        self._emit_joint_locks_changed(locks)
 
     def fit_current_run(
         self, run: SimulationRun, degree: int | None = None
@@ -246,7 +248,7 @@ class TorqueProfilePanelBehaviorMixin:
             f"Fitted {len(profile.assignments)} joint histories at degree "
             f"{selected_degree} and staged {profile.name}."
         )
-        self.profileChanged.emit(profile)
+        self._emit_profile_changed(profile)
         return profile
 
     def set_fit_error(self, message: str) -> None:
