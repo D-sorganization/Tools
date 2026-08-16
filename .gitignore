@@ -73,7 +73,6 @@ black_output.txt
 ruff_output.json
 flask_log.txt
 flask_pid.txt
-*.log
 *.bak
 
 # JavaScript
@@ -215,9 +214,13 @@ failed2852.txt
 
 # Browser-test output is uploaded by CI, never committed as a binary baseline.
 src/rate_of_closure/web/playwright-report/
-src/rate_of_closure/web/test-results/
 
-# SQLite WAL sidecar files (generated at runtime)
-src/p1am_control_system/backend/dcs_scada.db-wal
-src/p1am_control_system/backend/dcs_scada.db-shm
-src/p1am_control_system/backend/dcs_scada.db
+# P1AM SCADA historian DB + its SQLite WAL sidecars (generated at runtime).
+# Deliberately unanchored: these patterns contain no slash, so git matches them
+# at ANY depth. The backend historian normally lives in the backend package
+# directory, but anything that imports `main` with a different CWD (e.g.
+# `pytest src/p1am_control_system/backend/tests/` from the repo root) drops a
+# stray copy there, and `git add -A` would otherwise stage it.
+dcs_scada.db
+dcs_scada.db-wal
+dcs_scada.db-shm

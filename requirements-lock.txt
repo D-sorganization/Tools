@@ -5,7 +5,10 @@
 # Regenerate at the start of each sprint cycle or after any requirements.txt change.
 
 # Core Scientific Computing
-numpy==2.4.6
+# Held below 2.4.0 to satisfy requirements.txt's upper bound (numpy 2.4+
+# ships PEP 695 syntax in its bundled stubs, which breaks the pinned mypy).
+# The lock previously pinned 2.4.6, contradicting the very file it locks (#4014).
+numpy==2.3.5
 pandas==3.0.3
 scipy==1.17.1
 matplotlib==3.11.1

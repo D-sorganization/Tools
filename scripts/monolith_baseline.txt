@@ -269,3 +269,53 @@ src/p1am_control_system/backend/data_capture.py
 src/p1am_control_system/backend/modbus_client.py
 src/p1am_control_system/backend/temperature_integration.py
 src/p1am_control_system/backend/temperature_controller.py
+
+# --- Added by the P1AM SCADA safety consolidation (#4448) ---
+# These seven files crossed the 500-LOC budget by consolidating 11 safety PRs
+# whose fixes each fit the budget individually. `check_file_size_budget.py` did
+# not exist when that work was authored (the gate postdates the PRs, which show
+# no file-size-budget check at all), so this is inherited size, not a new
+# monolith authored against a known budget.
+#
+# Grandfathered rather than split because the content is the "nothing
+# de-energizes on fault" remediation for a gasifier control system, and delaying
+# safety fixes to do a line-count refactor of the polling path is the wrong
+# trade. Precedent: the baseline was last extended by consolidation #3912, and
+# already grandfathers ten p1am files including a test module
+# (backend/tests/test_temperature_controller.py) and the production siblings
+# data_capture.py and data_explorer_service.py.
+#
+# The genuine modularity debt is tracked, not accepted silently: poll_runtime.py
+# (216 -> 805 LOC) and test_data_capture.py (495 -> 905) both warrant splitting.
+# poll_runtime.py has clean seams (HistorianWriter, ThrottledHistorianSink,
+# HistorianRecord, _WriterCounters) that extract into a sibling module, but the
+# historian cluster is ~509 LOC on its own, so a correct split needs two modules
+# rather than one move.
+src/p1am_control_system/backend/poll_runtime.py
+src/p1am_control_system/backend/pid_tuning.py
+src/p1am_control_system/backend/tests/test_data_capture.py
+src/p1am_control_system/backend/tests/test_data_explorer_service.py
+src/p1am_control_system/backend/tests/test_backend.py
+src/p1am_control_system/desktop/main_window.py
+src/p1am_control_system/calibration/calibrate.py
+
+# --- Added by the rate-of-closure remainder consolidation (#4466) ---
+# Two more new PyQt6 modules over the budget, same shape as the #4447 and #4446
+# entries (a widget class carrying most of the file):
+#   ui/pyqt6/controls_panel.py   547 LOC
+#   ui/pyqt6/app_toolstrip.py    515 LOC
+#
+# Only these two are listed. The budget also flags torque_profile_panel.py,
+# regional_ground_execution_workspace.py and main_window.py on this branch, but
+# #4447 and #4446 add those entries and main requires branches be up to date, so
+# they arrive when this branch is re-synced after those merge. Listing them here
+# too would only duplicate lines and create conflicts between the three
+# consolidations.
+#
+# Worth naming the pattern rather than just grandfathering it one file at a time:
+# SIX modules under src/rate_of_closure/ui/pyqt6/ are over the 500-LOC budget
+# (615, 570, 547, 541, 515, and torque_profile_panel). That is the whole PyQt6 UI
+# layer, not a few outliers, so the right fix is a deliberate decomposition of
+# that package rather than six independent splits. Recorded in #4503.
+src/rate_of_closure/ui/pyqt6/controls_panel.py
+src/rate_of_closure/ui/pyqt6/app_toolstrip.py

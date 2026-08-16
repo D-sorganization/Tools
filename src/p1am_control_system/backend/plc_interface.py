@@ -143,3 +143,21 @@ class BasePLCClient(abc.ABC):
             bool: True if the coil write was accepted, False otherwise.
         """
         return False
+
+    async def write_heartbeat(self) -> bool:
+        """Bump the controller's host-liveness watchdog register.
+
+        The P1AM firmware drives every output safe if it sees neither a Modbus
+        TCP connection nor a change to its heartbeat register within
+        ``hardware.HEARTBEAT_TIMEOUT_S``. The poll loop must call this once per
+        successful scan so a wedged-but-connected host is caught by the
+        controller rather than left commanding the plant.
+
+        Concrete default returns True (nothing to keep alive) so simulated and
+        non-Modbus clients keep working unchanged; the Modbus client overrides
+        it with the real register write.
+
+        Returns:
+            bool: True if the heartbeat was accepted (or is not applicable).
+        """
+        return True
