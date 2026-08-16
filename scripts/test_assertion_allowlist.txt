@@ -9,6 +9,12 @@ tests/shared/python/ai/integrations/_bootstrap.py
 tests/rust_bindings/_tools_core_import.py
 tests/helpers/numerical.py
 tests/shared/python/ai/integrations/_bootstrap.py
+# Support module, not a test: detects the optional codemap (tree-sitter) deps
+# and exports the skipif marker the codemap test modules apply via
+# `pytestmark`. It holds no test functions, so it has nothing to assert about.
+# The skip lives here rather than in a conftest hook because a hook receives
+# the whole session's items and silenced the entire suite (issue #4497).
+tests/helpers/codemap_optional_deps.py
 # Vendored Movement Optimizer sub-app support files (migrated from D-sorganization/Movement_Optimizer; Tools#3407)
 src/movement_optimizer/tests/__init__.py
 src/movement_optimizer/tests/conftest.py

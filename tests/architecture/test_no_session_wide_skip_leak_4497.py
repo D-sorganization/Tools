@@ -23,6 +23,7 @@ against, so the guard has to observe real pytest outcomes.
 from __future__ import annotations
 
 import ast
+import importlib.util
 import subprocess
 import sys
 from pathlib import Path
@@ -129,6 +130,39 @@ def test_no_conftest_skips_items_it_does_not_own() -> None:
         + ". Prefer a module-level `pytestmark = pytest.mark.skipif(...)` in "
         "the affected test modules, which structurally cannot reach outside "
         "its own file."
+    )
+
+
+def test_codemap_tests_keep_real_assertions_despite_being_skipped() -> None:
+    """Being skipped must not become licence to hollow the tests out.
+
+    The codemap modules are skipped in CI (the ``codemap`` extra is never
+    installed), so nothing would notice if their bodies decayed into
+    assertion-free stubs -- the same "check that silently does nothing"
+    failure mode as #4497 itself. Reuses the repo's own gate implementation
+    rather than a second copy of the rule.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "_check_test_assertions_4497",
+        REPO_ROOT / "scripts" / "check_test_assertions.py",
+    )
+    assert spec is not None and spec.loader is not None
+    gate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gate)
+
+    modules = sorted(CODEMAP_TESTS.glob("test_*.py"))
+    assert modules, "no codemap test modules found -- the suite was deleted"
+
+    hollow = [
+        module.relative_to(REPO_ROOT).as_posix()
+        for module in modules
+        if not gate.has_behavioral_assertion(module.read_text(encoding="utf-8"))
+    ]
+
+    assert not hollow, (
+        "These codemap test modules no longer contain any behavioral "
+        "assertion: " + ", ".join(hollow) + ". They are skipped in CI, so a "
+        "stubbed-out body would never be noticed."
     )
 
 
