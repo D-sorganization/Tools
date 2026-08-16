@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import replace
 from hashlib import sha256
-from typing import Any, cast
+from typing import cast
 
 import pandas as pd
 
@@ -97,14 +97,15 @@ def _validate_request(frame: pd.DataFrame, request: AnalysisRequest) -> pd.DataF
     if missing:
         raise ValueError(f"Columns not present: {sorted(missing)}")
     projected = frame[list(selected)]
+    # pandas spelled the elementwise map `applymap` before 2.1 and removed it in
+    # 3.0. Resolve the legacy name lazily: on 3.x the attribute does not exist,
+    # so binding it eagerly raised AttributeError even though `.map` was there.
     mapper = getattr(projected, "map", None)
-    legacy_mapper: Any = projected.applymap
-    numeric = cast(
-        pd.DataFrame,
-        mapper(finite_launch_monitor_scalar)
-        if callable(mapper)
-        else legacy_mapper(finite_launch_monitor_scalar),
-    )
+    if not callable(mapper):
+        mapper = getattr(projected, "applymap", None)
+    if not callable(mapper):
+        raise AttributeError("pandas DataFrame exposes neither .map nor .applymap")
+    numeric = cast(pd.DataFrame, mapper(finite_launch_monitor_scalar))
     constants = [
         column for column in selected if numeric[column].dropna().nunique() < 2
     ]

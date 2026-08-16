@@ -188,9 +188,15 @@ def read_launch_monitor_frame(path: Path) -> pd.DataFrame:
         if any(len(row) != len(headers) for row in rows[1:]):
             raise ValueError("Every CSV data row must match the header width")
         _validate_import_shape(len(rows) - 1, len(headers))
+        # `_coerce_csv_cell` has already decided each cell's Python type, so let
+        # pandas store them verbatim instead of re-inferring. pandas 3.0 infers
+        # `StringDtype(na_value=nan)` for a text column, which turns the `None`
+        # that marks a blank field into `nan` and breaks the browser-policy
+        # contract that a blank field reads back as `null`/`None`.
         return pd.DataFrame(
             [[_coerce_csv_cell(value) for value in row] for row in rows[1:]],
             columns=headers,
+            dtype=object,
         )
     if suffix == ".json":
         try:

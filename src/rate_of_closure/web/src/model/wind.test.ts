@@ -64,7 +64,13 @@ describe("wind scenario contract", () => {
         golden.position_m as [number, number, number],
       );
       velocity.forEach((value, axis) => {
-        expect(value).toBeCloseTo(golden.expected_velocity_mps[axis], 12);
+        // Kept in lockstep with the Python assertion in
+        // `swing_sim/flight/tests/test_wind.py`: a parity contract has to state
+        // one tolerance, not two. 12 decimals is below what the turbulence hash
+        // reproduces across runtimes — it multiplies a sine by ~4.4e4 before
+        // `% 1.0`, so a 1-ulp libm difference moves the phase ~4e-12. 9 decimals
+        // is still eleven orders below any meaningful wind speed.
+        expect(value).toBeCloseTo(golden.expected_velocity_mps[axis], 9);
       });
     }
   });

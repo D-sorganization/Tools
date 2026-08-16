@@ -103,7 +103,10 @@ def test_start_reaps_child_and_closes_pipe_on_base_exception(
     interruption: BaseException,
 ) -> None:
     process = _FakeProcess()
-    monkeypatch.setattr(authority_runtime, "_spawn_child", lambda *_args: process)
+    diagnostics = io.StringIO()
+    monkeypatch.setattr(
+        authority_runtime, "_spawn_child", lambda *_args: (process, diagnostics)
+    )
 
     def interrupt(*_args: object) -> int:
         raise interruption
@@ -133,7 +136,10 @@ def test_start_preserves_original_interrupt_when_cleanup_itself_fails(
 ) -> None:
     process = _FakeProcess(fail_terminate=True, fail_close=True)
     interruption = KeyboardInterrupt()
-    monkeypatch.setattr(authority_runtime, "_spawn_child", lambda *_args: process)
+    diagnostics = io.StringIO()
+    monkeypatch.setattr(
+        authority_runtime, "_spawn_child", lambda *_args: (process, diagnostics)
+    )
 
     def interrupt(*_args: object) -> int:
         raise interruption

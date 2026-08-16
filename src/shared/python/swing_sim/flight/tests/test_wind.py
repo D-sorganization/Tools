@@ -105,6 +105,17 @@ def test_python_matches_the_shared_cross_client_wind_fixture() -> None:
             seed=case["seed"],
             provenance=f"golden:{case['name']}",
         )
+        # Stated at 1e-9 m/s, not 1e-12, because 1e-12 is not reproducible
+        # across the runtimes this fixture has to hold on. `_unit_noise` uses
+        # the `fract(sin(x) * 43758.5453)` hash, which multiplies a sine by
+        # ~4.4e4 before taking `% 1.0`; a 1-ulp `math.sin` difference between
+        # glibc and MSVC/V8 therefore lands ~4e-12 out in the phase. This test
+        # passed on Windows and failed on Linux at 1e-12 for that reason alone.
+        # 1e-9 m/s is eleven orders below any physically meaningful wind speed,
+        # so the Python/TypeScript equivalence this fixture guards is intact.
+        # Removing the instability itself (the hash can diverge by O(1) when the
+        # product lands near an integer boundary) is tracked in #4513. The
+        # `wind.test.ts` counterpart states the same tolerance.
         assert scenario.velocity_at(
             case["time_s"], case["position_m"]
-        ) == pytest.approx(case["expected_velocity_mps"], abs=1e-12)
+        ) == pytest.approx(case["expected_velocity_mps"], rel=1e-9, abs=1e-9)

@@ -9,11 +9,12 @@ import os
 import secrets
 import subprocess
 import sys
+import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import IO, Any
 
 from .contracts import MORRIS_JOB_SCHEMA_ID, MORRIS_REQUEST_SCHEMA_ID
 
@@ -32,6 +33,7 @@ _EXPECTED_CAPABILITY = {
 _POLL_INTERVAL_S = 0.05
 _CLOSE_TIMEOUT_S = 5.0
 _MAX_CAPABILITY_BYTES = 1_024
+_DIAGNOSTIC_TAIL_CHARS = 2_048
 logger = logging.getLogger(__name__)
 
 
@@ -54,10 +56,10 @@ class MorrisAuthorityRuntime:
         timeout = _startup_timeout(startup_timeout_s)
         root = _source_root(source_root)
         token = secrets.token_urlsafe(32)
-        process = _spawn_child(root, token)
+        process, diagnostics = _spawn_child(root, token)
         deadline = time.monotonic() + timeout
         try:
-            port = _ready_port(process, timeout)
+            port = _ready_port(process, diagnostics, timeout)
             base_url = f"http://127.0.0.1:{port}"
             remaining = deadline - time.monotonic()
             if remaining <= 0:
@@ -70,6 +72,8 @@ class MorrisAuthorityRuntime:
             except BaseException:
                 logger.warning("Morris authority startup cleanup failed")
             raise
+        finally:
+            diagnostics.close()
 
     @property
     def authorization_headers(self) -> dict[str, str]:
@@ -117,7 +121,7 @@ def _source_root(value: Path | None) -> Path:
     return root
 
 
-def _spawn_child(root: Path, token: str) -> subprocess.Popen[str]:
+def _spawn_child(root: Path, token: str) -> tuple[subprocess.Popen[str], IO[str]]:
     interpreter = Path(sys.executable).resolve()
     if not interpreter.is_file():
         raise RuntimeError("current Python interpreter path is unavailable")
@@ -127,18 +131,41 @@ def _spawn_child(root: Path, token: str) -> subprocess.Popen[str]:
     environment["PYTHONPATH"] = (
         str(root) if not prior_path else os.pathsep.join((str(root), prior_path))
     )
-    return subprocess.Popen(
-        [str(interpreter), "-m", "rate_of_closure.application.morris.child"],
-        env=environment,
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        text=True,
-        shell=False,
+    # Capture stderr to a temporary file rather than DEVNULL. A child that dies
+    # before announcing its port is otherwise indistinguishable from one that
+    # announced a malformed port, and the reason is gone. A file (not a PIPE)
+    # keeps that diagnosis without risking a deadlock on a full pipe buffer,
+    # since nothing drains the child's stderr while we wait on stdout.
+    diagnostics = tempfile.TemporaryFile(mode="w+", encoding="utf-8", errors="replace")
+    return (
+        subprocess.Popen(
+            [str(interpreter), "-m", "rate_of_closure.application.morris.child"],
+            env=environment,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
+            stderr=diagnostics,
+            text=True,
+            shell=False,
+        ),
+        diagnostics,
     )
 
 
-def _ready_port(process: subprocess.Popen[str], timeout_s: float) -> int:
+def _startup_diagnosis(process: subprocess.Popen[str], diagnostics: IO[str]) -> str:
+    """Summarise why a child never reached readiness, for the raised error."""
+    exit_code = process.poll()
+    try:
+        diagnostics.seek(0)
+        captured = diagnostics.read(_DIAGNOSTIC_TAIL_CHARS).strip()
+    except OSError:  # pragma: no cover - diagnosis must never mask the failure
+        captured = ""
+    state = "still running" if exit_code is None else f"exited with {exit_code}"
+    return f"child {state}; stderr: {captured or '<empty>'}"
+
+
+def _ready_port(
+    process: subprocess.Popen[str], diagnostics: IO[str], timeout_s: float
+) -> int:
     if process.stdout is None:
         raise RuntimeError("authority readiness channel is unavailable")
     pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="morris-ready")
@@ -146,9 +173,20 @@ def _ready_port(process: subprocess.Popen[str], timeout_s: float) -> int:
     try:
         line = future.result(timeout=timeout_s)
     except TimeoutError as exc:
-        raise TimeoutError("Morris authority child readiness timed out") from exc
+        raise TimeoutError(
+            f"Morris authority child readiness timed out: "
+            f"{_startup_diagnosis(process, diagnostics)}"
+        ) from exc
     finally:
         pool.shutdown(wait=False, cancel_futures=True)
+    if not line:
+        # EOF, not a malformed announcement: the child closed stdout without
+        # ever printing a port. Reporting this as "invalid readiness" sent
+        # every such failure to the wrong diagnosis.
+        raise RuntimeError(
+            f"Morris authority child closed stdout before announcing a port: "
+            f"{_startup_diagnosis(process, diagnostics)}"
+        )
     if not line.endswith("\n") or not line[:-1].isdigit() or len(line) > 6:
         raise RuntimeError("invalid Morris authority child readiness")
     port = int(line[:-1])
