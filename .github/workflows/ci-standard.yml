@@ -791,6 +791,11 @@ jobs:
             "tests/shared/python/test_safe_eval.py"
             # Architecture layer boundary enforcement
             "tests/architecture/test_layer_boundaries.py"
+            # Conftest hook scoping: a nested conftest's
+            # pytest_collection_modifyitems receives the whole session's items,
+            # so one could skip the entire run and still exit 0. Always-on
+            # precisely because its failure mode is a vacuous green.
+            "tests/architecture/test_conftest_hook_scoping.py"
             # Core rotation math (shared library used across many tools)
             "tests/rotation_converter/test_rotation_core.py"
             # Process calculator constants (always fast, catches unit regressions)
