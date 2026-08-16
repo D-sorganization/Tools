@@ -7,6 +7,11 @@ import subprocess
 from pathlib import Path
 
 from codemap import api, db
+from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
+
+# Scoped to this module only; a session-wide skip hook silenced the whole
+# suite here once already (issue #4497).
+pytestmark = CODEMAP_DEPS_SKIP
 
 
 def _insert_file(

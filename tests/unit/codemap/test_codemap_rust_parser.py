@@ -5,6 +5,11 @@ from dataclasses import dataclass, field
 from codemap._ts_common import ParsedSymbol
 
 from codemap import _lang_rust as rust_parser
+from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
+
+# Scoped to this module only; a session-wide skip hook silenced the whole
+# suite here once already (issue #4497).
+pytestmark = CODEMAP_DEPS_SKIP
 
 
 def test_extract_emits_imports_functions_structs_modules_and_impls(
