@@ -6,8 +6,8 @@
 ## 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 
 - SPEC 1.17.09 carries the consolidated Rate tree onto `main` commit
-  `48af2a683c96eeec3b956a758f25398c057e94e4` while preserving its P1AM,
-  Data Explorer, and required-lane wheel-cache changes.
+  `9cc1a147a73d887dfb6bda72da692bd52144a5a5` while preserving its P1AM
+  firmware/SCADA safety, Data Explorer, and required-lane wheel-cache changes.
 - The torque-profile UI is responsibility-split into four modules of 223, 397,
   46, and 42 lines. `TorqueProfilePanel` and `TorquePolynomialDialog` retain
   their import/API contracts.

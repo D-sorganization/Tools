@@ -241,14 +241,20 @@ class TestWriteRouting:
 
 
 class TestWriteTagAndSetpoint:
-    def test_write_tag_resolves_positional_address(self) -> None:
+    def test_write_tag_refuses_the_republished_broker_block(self) -> None:
+        """``TAG_n`` resolves to n*2 — a register the firmware republishes.
+
+        The firmware rewrites 0..63 from its broker every scan and never reads
+        them back, so this write can never reach the plant. It used to return
+        True and put a value on the wire anyway (issue #4015).
+        """
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
 
-        ok = asyncio.run(manager.write_tag("TAG_5", 42.5))
+        with pytest.raises(NotImplementedError):
+            asyncio.run(manager.write_tag("TAG_5", 42.5))
 
-        assert ok is True
-        assert fake.write_calls[0]["address"] == 10  # 5 * 2
+        assert fake.write_calls == []
 
     def test_write_tag_rejects_unknown_tag(self) -> None:
         fake = _FakeModbusClient()

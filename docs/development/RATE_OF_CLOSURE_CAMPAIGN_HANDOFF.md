@@ -3,9 +3,10 @@
 ## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
 
 - Version 1.17.09 reconciles the clean consolidated release with `main`
-  `48af2a683c96eeec3b956a758f25398c057e94e4`, retaining the P1AM firmware,
-  Data Explorer allocation, and `tools_core` wheel-cache work already trusted
-  there. Both independent SPEC changelog histories are preserved.
+  `9cc1a147a73d887dfb6bda72da692bd52144a5a5`, retaining the P1AM firmware and
+  SCADA safety batch, Data Explorer allocation, and `tools_core` wheel-cache
+  work already trusted there. Independent SPEC changelog histories are
+  preserved.
 - The 612-line torque-profile panel is split into four focused modules, all
   below 400 lines, while retaining public imports, signal wiring, execution
   selection, canonical profile JSON, and rendered behavior.

@@ -23,8 +23,7 @@ def test_manifest_gate_uses_system_python_without_toolcache_dependency() -> None
     steps = _manifest_steps()
 
     assert not any(
-        str(step.get("uses", "")).startswith("actions/setup-python@")
-        for step in steps
+        str(step.get("uses", "")).startswith("actions/setup-python@") for step in steps
     )
     assert all("pip cache purge" not in str(step.get("run", "")) for step in steps)
     assert _step("Generate tools.json and tool_surface_contract.json")["run"] == (
