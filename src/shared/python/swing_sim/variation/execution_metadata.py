@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-import re
 import struct
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -13,72 +12,36 @@ from typing import cast
 
 from shared.python.contracts import require
 
+from ._execution_metadata_schema import (
+    _DOCUMENT_FIELDS,
+    _IMPLEMENTATION_FIELDS,
+    _METADATA_FIELDS,
+    _PLAN_FIELDS,
+    _RNG_FIELDS,
+    _SHA256,
+    _VARIABLE_FIELDS,
+    EXECUTION_DOCUMENT_SCHEMA_ID,
+    EXECUTION_DOCUMENT_SCHEMA_VERSION,
+    EXECUTION_METADATA_SCHEMA_ID,
+    EXECUTION_METADATA_SCHEMA_VERSION,
+    LEGACY_CURRENT_REGISTRY_WARNING,
+    LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR,
+    VARIABLE_REGISTRY_SCHEMA_ID,
+    VARIABLE_REGISTRY_SCHEMA_VERSION,
+)
 from .registry import keys_for_mode, variable_registry
 from .spec import MAX_SAFE_INTEGER, SCHEMA_VERSION, VariationPlan
 
-EXECUTION_DOCUMENT_SCHEMA_ID = "rate-of-closure/variation-execution-document"
-EXECUTION_DOCUMENT_SCHEMA_VERSION = 2
-EXECUTION_METADATA_SCHEMA_ID = "rate-of-closure/variation-execution-metadata"
-EXECUTION_METADATA_SCHEMA_VERSION = 2
-VARIABLE_REGISTRY_SCHEMA_ID = "swing-sim/variation-variable-registry"
-VARIABLE_REGISTRY_SCHEMA_VERSION = 1
-LEGACY_CURRENT_REGISTRY_WARNING = (
-    "Legacy plan has no historical execution sidecar; resolved against the "
-    "current variable registry. This is not evidence of historical reproducibility."
-)
-LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR = (
-    "Execution document schema @1 lacks RNG and solver identity; load its raw "
-    "plan and resolve a fresh @2 sidecar. Historical replay remains unproven."
-)
-
-_DOCUMENT_FIELDS = frozenset({"schema_id", "schema_version", "plan", "metadata"})
-_METADATA_FIELDS = frozenset(
-    {
-        "schema_id",
-        "schema_version",
-        "plan_sha256",
-        "mode",
-        "flight_model",
-        "registry_schema_id",
-        "registry_schema_version",
-        "registry_sha256",
-        "resolved_variables",
-        "rng_identity",
-        "implementation_identity",
-    }
-)
-_VARIABLE_FIELDS = frozenset({"variable_key", "value", "unit", "dimension"})
-_RNG_FIELDS = frozenset(
-    {
-        "algorithm_id",
-        "algorithm_version",
-        "stream_derivation_id",
-        "stream_derivation_version",
-    }
-)
-_IMPLEMENTATION_FIELDS = frozenset(
-    {
-        "runtime_id",
-        "runtime_version",
-        "executor_id",
-        "executor_version",
-        "solver_id",
-        "solver_version",
-    }
-)
-_PLAN_FIELDS = frozenset(
-    {
-        "schema_version",
-        "mode",
-        "base_variables",
-        "noise",
-        "n_runs",
-        "seed",
-        "flight_model",
-        "groups",
-    }
-)
-_SHA256 = re.compile(r"^[0-9a-f]{64}$")
+__all__ = [
+    "EXECUTION_DOCUMENT_SCHEMA_ID",
+    "EXECUTION_DOCUMENT_SCHEMA_VERSION",
+    "EXECUTION_METADATA_SCHEMA_ID",
+    "EXECUTION_METADATA_SCHEMA_VERSION",
+    "LEGACY_CURRENT_REGISTRY_WARNING",
+    "LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR",
+    "VARIABLE_REGISTRY_SCHEMA_ID",
+    "VARIABLE_REGISTRY_SCHEMA_VERSION",
+]
 
 
 @dataclass(frozen=True)

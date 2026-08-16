@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
 )
 
 from p1am_control_system.desktop.auth import AuthManager, Role
+from p1am_control_system.desktop.guards import confirm_action, require_admin
 from shared.python.theme.theme_manager import get_theme_manager
 
 logger = logging.getLogger("p1am_control.desktop.header")
@@ -46,8 +47,12 @@ class HMIHeader(QWidget):
         # State variables
         self._current_role = "Operator"
         self._connection_state = "Offline"
+        # Alarm annunciation. ``_has_*`` describe the *condition* (colour);
+        # ``_unacked_*`` describe whether anyone has seen it (flash vs steady).
         self._has_hl_alarms = False
         self._has_hhll_alarms = False
+        self._unacked_hl_alarms = False
+        self._unacked_hhll_alarms = False
         self._flash_state = False
         self._pending_estop_clear = False
 
@@ -149,8 +154,7 @@ class HMIHeader(QWidget):
         self._update_estop_style(
             self.estop_btn.isChecked(), pending_clear=self._pending_estop_clear
         )
-        if not self._has_hl_alarms and not self._has_hhll_alarms:
-            self.ack_btn.setStyleSheet("font-weight: bold;")
+        self._refresh_alarm_button()
 
     def _on_role_changed(self, text: str) -> None:
         if text == "Admin":
@@ -183,16 +187,59 @@ class HMIHeader(QWidget):
             logger.info("Switched to Operator role.")
             self.roleChanged.emit("Operator")
 
+    def set_role(self, role: str) -> None:
+        """Set the active role without re-running the password prompt.
+
+        Args:
+            role: ``"Operator"`` or ``"Admin"``.
+
+        Raises:
+            TypeError: If ``role`` is not a string.
+        """
+        if not isinstance(role, str):
+            raise TypeError(f"role must be a str, got {type(role).__name__}")
+        self._current_role = role
+        self.role_combo.blockSignals(True)
+        self.role_combo.setCurrentText(role)
+        self.role_combo.blockSignals(False)
+
     def _on_estop_toggled(self, checked: bool) -> None:
         if checked:
             # Tripping is immediate and fail-safe: reflect it right away.
             self._update_estop_style(True)
-        else:
-            # Clearing must be confirmed by the controller before the button may
-            # show the green "CLEAR" state; until then show a pending state so the
-            # header never claims "clear" while the plant is still tripped.
-            self._update_estop_style(True, pending_clear=True)
-        self.estopTriggered.emit(checked)
+            self.estopTriggered.emit(True)
+            return
+
+        # Clearing re-energises the plant and is the least reversible action in
+        # the system, so it gets at least the guards an ordinary PLC tag write
+        # gets: an Admin role check plus a modal confirmation (issue #4021).
+        # A declined or denied clear latches the button back to tripped so a
+        # stray touch on the Pi touchscreen cannot silently release the plant.
+        if not require_admin(self, self._current_role, "clear the E-STOP"):
+            self._revert_estop_toggle()
+            return
+        if not confirm_action(
+            self,
+            "Confirm E-STOP release",
+            "Release the EMERGENCY STOP and re-enable plant outputs?\n\n"
+            "Confirm the hazard has been removed and the equipment is safe to "
+            "re-energise before continuing.",
+        ):
+            logger.info("E-STOP clear declined by operator.")
+            self._revert_estop_toggle()
+            return
+
+        # Confirmed: the controller must still acknowledge before the button may
+        # show the green "CLEAR" state, so show a pending state until it does.
+        self._update_estop_style(True, pending_clear=True)
+        self.estopTriggered.emit(False)
+
+    def _revert_estop_toggle(self) -> None:
+        """Latch the E-stop button back to tripped without re-emitting."""
+        self.estop_btn.blockSignals(True)
+        self.estop_btn.setChecked(True)
+        self.estop_btn.blockSignals(False)
+        self._update_estop_style(True)
 
     def confirm_estop_cleared(self) -> None:
         """Mark the E-stop as confirmed-cleared after the PLC acknowledged.
@@ -270,37 +317,94 @@ class HMIHeader(QWidget):
                 self._status_label_style(self._theme_color("error", "red"))
             )
 
-    def set_alarms_state(self, has_hl: bool, has_hhll: bool) -> None:
-        """Updates internal alarm flags to control flashing."""
-        self._has_hl_alarms = has_hl
-        self._has_hhll_alarms = has_hhll
-        if not has_hl and not has_hhll:
-            # Reset button styling immediately if no alarms
+    def set_alarms_state(
+        self,
+        has_hl: bool,
+        has_hhll: bool,
+        unacked_hl: bool | None = None,
+        unacked_hhll: bool | None = None,
+    ) -> None:
+        """Set the annunciator state.
+
+        Standard alarm management separates the two facts (issue #4012):
+
+        * ``has_hl``/``has_hhll`` — the condition is present *now*. Drives the
+          button's colour, so an acknowledged-but-still-active alarm stays
+          visible instead of vanishing.
+        * ``unacked_hl``/``unacked_hhll`` — nobody has acknowledged it yet.
+          Drives flashing; an acknowledged active alarm goes steady.
+
+        The ``unacked_*`` arguments default to the corresponding ``has_*`` value
+        so older two-argument callers keep the "flash while present" behaviour.
+
+        Raises:
+            TypeError: If any supplied argument is not a bool.
+        """
+        for name, value in (
+            ("has_hl", has_hl),
+            ("has_hhll", has_hhll),
+            ("unacked_hl", unacked_hl),
+            ("unacked_hhll", unacked_hhll),
+        ):
+            if value is not None and not isinstance(value, bool):
+                raise TypeError(f"{name} must be a bool, got {type(value).__name__}")
+
+        was_unacked = self._unacked_hl_alarms or self._unacked_hhll_alarms
+
+        self._has_hl_alarms = bool(has_hl)
+        self._has_hhll_alarms = bool(has_hhll)
+        self._unacked_hl_alarms = bool(has_hl if unacked_hl is None else unacked_hl)
+        self._unacked_hhll_alarms = bool(
+            has_hhll if unacked_hhll is None else unacked_hhll
+        )
+        now_unacked = self._unacked_hl_alarms or self._unacked_hhll_alarms
+
+        # Restart the flash on the visible ON phase only when an alarm becomes
+        # unacknowledged. This method is called from _refresh_annunciator on
+        # EVERY telemetry frame (~10 Hz), so forcing the phase here
+        # unconditionally overwrote _toggle_flash's OFF phase within ~100 ms and
+        # rendered an unacknowledged alarm effectively steady — destroying the
+        # flash-vs-steady distinction this whole annunciator change exists to
+        # create (issue #4012).
+        if now_unacked and not was_unacked:
+            self._flash_state = True
+        self._refresh_alarm_button()
+
+    def _active_alarm_colors(self) -> tuple[str, str] | None:
+        """Return ``(background, foreground)`` for the highest active severity."""
+        if self._has_hhll_alarms:
+            return (
+                self._theme_color("error", "red"),
+                self._theme_color("selection_text", "white"),
+            )
+        if self._has_hl_alarms:
+            return (self._theme_color("warning", "orange"), "black")
+        return None
+
+    def _refresh_alarm_button(self) -> None:
+        """Repaint the ACK button from the current alarm/flash state."""
+        colors = self._active_alarm_colors()
+        unacknowledged = self._unacked_hhll_alarms or self._unacked_hl_alarms
+
+        if colors is None:
+            # No condition present: nothing to annunciate.
             self.ack_btn.setStyleSheet("font-weight: bold;")
+            return
+        if unacknowledged and not self._flash_state:
+            # Off-phase of the flash cycle.
+            self.ack_btn.setStyleSheet("font-weight: bold;")
+            return
+        # Active + acknowledged -> steady; active + unacknowledged -> on-phase.
+        self.ack_btn.setStyleSheet(self._alarm_button_style(*colors))
 
     def _toggle_flash(self) -> None:
         if not self._has_hl_alarms and not self._has_hhll_alarms:
             return
+        if not (self._unacked_hhll_alarms or self._unacked_hl_alarms):
+            # Acknowledged but still active: hold a steady colour so the
+            # operator keeps seeing the condition without the nuisance flash.
+            self._refresh_alarm_button()
+            return
 
         self._flash_state = not self._flash_state
-
-        if self._flash_state:
-            # Flashing state color
-            if self._has_hhll_alarms:
-                # Flash Red for HH/LL alarms
-                self.ack_btn.setStyleSheet(
-                    self._alarm_button_style(
-                        self._theme_color("error", "red"),
-                        self._theme_color("selection_text", "white"),
-                    )
-                )
-            elif self._has_hl_alarms:
-                # Flash Yellow for H/L alarms
-                self.ack_btn.setStyleSheet(
-                    self._alarm_button_style(
-                        self._theme_color("warning", "orange"), "black"
-                    )
-                )
-        else:
-            # Default state color during flash
-            self.ack_btn.setStyleSheet("font-weight: bold;")
+        self._refresh_alarm_button()

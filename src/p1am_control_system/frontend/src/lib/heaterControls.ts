@@ -95,3 +95,14 @@ export function resolveStartTarget(
   }
   return null;
 }
+
+/**
+ * True when any trip name looks like a high-high temperature cutoff.
+ *
+ * Kept here with the other pure heater decisions rather than beside the banner
+ * it drives: the same predicate decides both the HH banner and whether the
+ * generic trips banner is suppressed, and a trip name is server-supplied text.
+ */
+export function hasHighHighTrip(trips: string[]): boolean {
+  return trips.some((t) => /(hh|high.?high|over.?temp)/i.test(t));
+}

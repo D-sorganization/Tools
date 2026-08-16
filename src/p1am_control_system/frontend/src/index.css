@@ -312,6 +312,74 @@ body {
   font-family: var(--font-mono);
 }
 
+/* --- Data-age indicator + stale process values (#4010) --------------------
+   The HMI used to report liveness as a boolean latched true by any successful
+   frame parse. Because every telemetry field is optional, a dead backend's
+   never-cleared `{}` kept it green forever and the trend appended the same
+   frozen value — which renders as a beautifully stable process. Liveness is
+   now an age, and once it crosses the threshold every live readout is greyed
+   and cross-hatched so FROZEN is visually distinguishable from STEADY. */
+.data-age {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.data-age .status-indicator {
+  align-self: center;
+}
+.data-age-live .status-indicator {
+  background-color: var(--color-success);
+}
+.data-age-stale .status-indicator {
+  background-color: var(--color-warning);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.data-age-offline .status-indicator {
+  background-color: var(--color-error);
+}
+.data-age-stale .data-age-label {
+  color: var(--color-warning);
+}
+.data-age-offline .data-age-label {
+  color: var(--color-error);
+}
+.data-age-value {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Any container carrying stale/offline data cross-hatches its live process
+   readouts. Deliberately scoped to VALUE elements: labels, buttons and the
+   status bar itself must stay fully legible so the operator can still act. */
+.dashboard-container[data-freshness="stale"] .mono-text,
+.dashboard-container[data-freshness="offline"] .mono-text,
+.dashboard-container[data-freshness="stale"] .ps-metric-value,
+.dashboard-container[data-freshness="offline"] .ps-metric-value,
+.dashboard-container[data-freshness="stale"] .ps-readout-value,
+.dashboard-container[data-freshness="offline"] .ps-readout-value,
+.dashboard-container[data-freshness="stale"] .tag-monitor-card,
+.dashboard-container[data-freshness="offline"] .tag-monitor-card {
+  color: var(--text-muted);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 4px,
+    rgba(148, 163, 184, 0.28) 4px,
+    rgba(148, 163, 184, 0.28) 6px
+  );
+}
+
+/* The data-age pill itself must never be cross-hatched — it is the one
+   readout that is still telling the truth. */
+.dashboard-container[data-freshness="stale"] .data-age-value,
+.dashboard-container[data-freshness="offline"] .data-age-value {
+  background-image: none;
+}
+
 .tag-monitor-card {
   background: var(--tag-card-bg);
   border: 1px solid var(--tag-card-border);
@@ -477,6 +545,24 @@ body {
   cursor: pointer;
 }
 .statusbar-ack:hover { filter: brightness(1.08); }
+
+/* Degraded-alarm-data banner (#4011): raised whenever an entry of the
+   active_alarms map failed validation and was dropped, so a shrunken alarm
+   list is never mistaken for a quiet plant. */
+.alarm-degraded {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.6rem 0 1rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--color-warning);
+  border-radius: 0 0 6px 6px;
+  border-top: none;
+  background: var(--panel-bg);
+  color: var(--color-warning);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
 
 /* Scrollable active-alarm list (no checkboxes) */
 .alarm-list {
