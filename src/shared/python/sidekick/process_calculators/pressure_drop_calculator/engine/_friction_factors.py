@@ -53,7 +53,7 @@ def friction_factor_laminar(reynolds_number: float) -> float:
         # would otherwise yield 0.064 with no error and a wrong ΔP.
         raise ValueError(f"Reynolds number must be positive, got {reynolds_number}")
 
-    result = LAMINAR_FRICTION_CONSTANT / reynolds_number
+    result: float = LAMINAR_FRICTION_CONSTANT / reynolds_number
     if not (result > 0):
         raise ValueError(f"Friction factor must be positive, got {result}")
     return result
@@ -190,7 +190,7 @@ def friction_factor_churchill(
     Re = reynolds_number
 
     if Re < 1:
-        return LAMINAR_FRICTION_CONSTANT
+        return float(LAMINAR_FRICTION_CONSTANT)
 
     term1 = (7.0 / Re) ** 0.9 + 0.27 * relative_roughness
     A = (-2.457 * math.log(term1)) ** 16

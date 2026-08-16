@@ -100,6 +100,7 @@ def _compute_gradient_component(
             parameter_names,
             perturbed.tolist(),
         )
+        val: float
         val, _, _ = evaluate_output(
             engine,
             base_params,
@@ -202,6 +203,9 @@ def _evaluate_and_record(
     if st is None:
         raise ValueError("st must be provided")
     overrides = _build_override_mapping(st.parameter_names, st.values.tolist())
+    objective: float
+    composition: dict[str, float]
+    state: dict[str, float]
     objective, composition, state = evaluate_output(
         engine, st.base_params, manual_hhv, st.output_name, overrides
     )

@@ -14,7 +14,7 @@ import zipfile
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import IO, TYPE_CHECKING, Any
 
 import defusedxml.ElementTree as DefusedET  # noqa: E402
 
@@ -336,7 +336,7 @@ class MDLParser:
 
         return model
 
-    def _parse_slx_xml(self, file, model: SimscapeModel) -> None:
+    def _parse_slx_xml(self, file: IO[bytes], model: SimscapeModel) -> None:
         """Parse SLX model XML content."""
         if file is None:
             raise ValueError("file must be provided")
