@@ -337,6 +337,7 @@ def calculate_erosional_velocity(
     """
     if density is None:
         raise ValueError("density must be provided")
+    C: float
     if service_type == "continuous":
         C = API_14E_C_CONTINUOUS
     elif service_type in ("intermittent", "non_corrosive"):
@@ -344,8 +345,8 @@ def calculate_erosional_velocity(
     else:
         C = API_14E_C_CONTINUOUS  # Conservative default
 
-    V_erosion = C / math.sqrt(density * KG_M3_TO_LB_FT3)
-    V_erosion_si = V_erosion * FT_S_TO_M_S
+    V_erosion: float = C / math.sqrt(density * KG_M3_TO_LB_FT3)
+    V_erosion_si: float = V_erosion * FT_S_TO_M_S
 
     _logger.debug(f"Erosional velocity: {V_erosion_si:.2f} m/s (C={C})")
     return V_erosion_si

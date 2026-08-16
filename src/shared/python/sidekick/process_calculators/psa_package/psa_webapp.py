@@ -220,11 +220,11 @@ class PSAModel:
             total_net_product_scfm=float(np.sum(net_product)),
             total_exhaust_scfm=float(np.sum(exhaust)),
             total_s2_tail_vent_scfm=float(np.sum(s2_tail_vent)),
-            mass_balance_error=float(
-                np.sum(fresh_feed)
-                - np.sum(exhaust)
-                - np.sum(s2_tail_vent)
-                - np.sum(net_product)
+            mass_balance_error=(
+                float(np.sum(fresh_feed))
+                - float(np.sum(exhaust))
+                - float(np.sum(s2_tail_vent))
+                - float(np.sum(net_product))
             ),
             s2_tail_h2_pct=float(compositions.s2_tail[h2_idx]),
             s2_tail_o2_pct=float(compositions.s2_tail[o2_idx]),

@@ -384,11 +384,12 @@ class MatplotlibRenderer:
         if spec is None:
             raise ValueError("spec must be provided")
         if fig is None:
-            fig, ax = plt.subplots(
+            new_fig, new_ax = plt.subplots(
                 figsize=(spec.width / 100, spec.height / 100),
             )
-        elif ax is None:
-            ax = fig.add_subplot(111)
+            return new_fig, new_ax
+        if ax is None:
+            return fig, fig.add_subplot(111)
         return fig, ax
 
     def _get_theme_colors(self) -> list[str]:
