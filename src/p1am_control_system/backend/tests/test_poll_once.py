@@ -8,7 +8,6 @@ or starting background tasks.
 from __future__ import annotations
 
 import sys
-from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -105,86 +104,64 @@ class _FakeAlarmEngine:
         return []
 
 
-class _FakeSession:
+class _FakeHistorian:
+    """Historian sink double — the scan queues records, it never writes SQLite."""
+
     def __init__(self) -> None:
-        self.added: list[EventLog] = []
-        self.commits = 0
-        self.rollbacks = 0
-        self.closed = False
+        self.records: list[Any] = []
 
-    def add(self, row: EventLog) -> None:
-        self.added.append(row)
-
-    def commit(self) -> None:
-        self.commits += 1
-
-    def rollback(self) -> None:
-        self.rollbacks += 1
-
-    def close(self) -> None:
-        self.closed = True
-
-
-def _session_factory(session: _FakeSession) -> Iterator[_FakeSession]:
-    yield session
+    def submit(self, record: Any) -> bool:
+        self.records.append(record)
+        return True
 
 
 @pytest.mark.asyncio
 async def test_poll_once_offline_falls_back_to_simulator_and_broadcasts_payload() -> (
     None
 ):
-    # When the PLC is NOT connected (offline / dev), the simulator drives tags.
-    session = _FakeSession()
+    # On a SIMULATOR driver the backup simulator drives the bench plant, and
+    # every row it produces is stamped as simulated (issue #4004).
+    hist = _FakeHistorian()
     latest = {"TAG_0": 0.0, "TAG_1": 0.0}
     plc = _FakePLC(connected=False, tags=None)
     simulator = _FakeSimulator({"TAG_0": 2.5, "TAG_1": 10.0})
     power = _FakePowerSupply()
     ws = _FakeWsManager()
-    logged_scans: list[dict[str, float]] = []
-
-    def fake_log_scan(
-        _session: _FakeSession,
-        tags: dict[str, float],
-        **_: object,
-    ) -> int:
-        logged_scans.append(dict(tags))
-        return len(tags)
 
     payload = await _poll_once(
         plc=plc,
         backup=simulator,
+        simulated=True,
         latest_tag_values=latest,
         ws=ws,
         alicats=_FakeAlicats(),
         power_supply=power,
         alarm_engine=_FakeAlarmEngine(),
         active_alarm_map={},
-        session_factory=lambda: _session_factory(session),
         estop_active=False,
-        log_scan=fake_log_scan,
+        historian=hist,
     )
 
     assert simulator.read_count == 1
     assert latest == {"TAG_0": 2.5, "TAG_1": 10.0}
     assert power.seen_tags == [{"TAG_0": 2.5, "TAG_1": 10.0}]
     assert payload["tags"][:2] == [2.5, 10.0]
+    assert payload["data_source"] == "simulated"
     assert payload["tag_samples"]["TAG_0"]["quality"] == "simulated"
     assert payload["comms_health"]["quality"] == "simulated"
     assert ws.messages == [payload]
-    assert logged_scans == [{"TAG_0": 2.5, "TAG_1": 10.0}]
-    assert len(session.added) == 1
-    assert session.commits == 1
-    assert session.rollbacks == 0
-    assert session.closed is True
+    assert len(hist.records) == 1
+    assert hist.records[0].tags == {"TAG_0": 2.5, "TAG_1": 10.0}
+    assert hist.records[0].quality == "simulated"
+    assert len(hist.records[0].events) == 1  # the TAG_1 High transition
 
 
 @pytest.mark.asyncio
 async def test_poll_once_connected_read_hiccup_holds_last_good() -> None:
-    # A connected PLC whose read momentarily fails (returns None) must HOLD the
-    # last good values, NOT substitute the offline simulator's fake readings —
-    # otherwise a comms hiccup shows as a spurious drop to ~0 and feeds the
-    # control law a false "cold".
-    session = _FakeSession()
+    # A connected PLC whose read momentarily fails (returns None) HOLDS the last
+    # good values for the HMI so the trace does not flicker to ~0 — but the held
+    # numbers are marked and must not reach the control law (issue #4004).
+    hist = _FakeHistorian()
     last_good = {"TAG_0": 56.5, "TAG_1": 2.5}
     latest = dict(last_good)
     plc = _FakePLC(connected=True, tags=None)  # connected but read fails
@@ -210,25 +187,27 @@ async def test_poll_once_connected_read_hiccup_holds_last_good() -> None:
         power_supply=power,
         alarm_engine=_FakeAlarmEngine(),
         active_alarm_map={},
-        session_factory=lambda: _session_factory(session),
         estop_active=False,
-        log_scan=lambda _s, _t, **_kw: 0,
+        historian=hist,
         process_events=process_events,
     )
 
     assert simulator.read_count == 0  # simulator never consulted while connected
     assert latest == last_good  # held, not zeroed
     assert payload["tags"][:2] == [56.5, 2.5]
+    assert payload["data_source"] == "held"
+    # The per-sample frame says *why* the trace is held, for the HMI badge...
     assert payload["tag_samples"]["TAG_0"]["quality"] == "stale"
     assert payload["tag_samples"]["TAG_0"]["diagnostic_reason"] == "read_timeout"
     assert payload["comms_health"]["quality"] == "stale"
-    assert power.seen_tags == [last_good]
+    # ...but a displayable value is not a trustworthy one (issue #4004).
+    assert power.seen_tags == [None]  # the control law is told there is no data
     assert alarm_calls == []
+    assert all(rec.tags is None for rec in hist.records)
 
 
 @pytest.mark.asyncio
 async def test_poll_once_reasserts_estop_every_connected_scan() -> None:
-    session = _FakeSession()
     plc = _FakePLC(connected=True, tags={"TAG_0": 1.0})
 
     await _poll_once(
@@ -240,7 +219,6 @@ async def test_poll_once_reasserts_estop_every_connected_scan() -> None:
         power_supply=_FakePowerSupply(),
         alarm_engine=_FakeAlarmEngine(),
         active_alarm_map={},
-        session_factory=lambda: _session_factory(session),
         estop_active=True,
     )
 
@@ -248,33 +226,26 @@ async def test_poll_once_reasserts_estop_every_connected_scan() -> None:
 
 
 @pytest.mark.asyncio
-async def test_poll_once_rolls_back_historian_and_alarm_transaction() -> None:
-    session = _FakeSession()
-
-    def failing_log_scan(
-        _session: _FakeSession,
-        _tags: dict[str, float],
-        **_: object,
-    ) -> int:
-        raise RuntimeError("disk unavailable")
+async def test_poll_once_never_touches_a_database_session() -> None:
+    """#4023: persistence is queued for the writer task, not done inline."""
+    hist = _FakeHistorian()
 
     await _poll_once(
         plc=_FakePLC(connected=False, tags=None),
         backup=_FakeSimulator({"TAG_1": 10.0}),
+        simulated=True,
         latest_tag_values={"TAG_1": 0.0},
         ws=_FakeWsManager(),
         alicats=_FakeAlicats(),
         power_supply=_FakePowerSupply(),
         alarm_engine=_FakeAlarmEngine(),
         active_alarm_map={},
-        session_factory=lambda: _session_factory(session),
         estop_active=False,
-        log_scan=failing_log_scan,
+        historian=hist,
     )
 
-    assert session.commits == 0
-    assert session.rollbacks == 1
-    assert session.closed is True
+    assert len(hist.records) == 1
+    assert isinstance(hist.records[0].events, tuple)
 
 
 @pytest.mark.asyncio
@@ -292,10 +263,8 @@ async def test_poll_frames_increment_one_shared_scan_sequence() -> None:
             power_supply=_FakePowerSupply(),
             alarm_engine=_FakeAlarmEngine(),
             active_alarm_map={},
-            session_factory=lambda: _session_factory(_FakeSession()),
             estop_active=False,
             signal_frames=factory,
-            log_scan=lambda _s, _t, **_kw: 0,
         )
         sequences.append(payload["comms_health"]["sequence"])
 

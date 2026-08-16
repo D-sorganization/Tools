@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from models import TagLog
+from models import DataSource, TagLog
 from signal_quality import SignalFrame
 
 try:
@@ -31,6 +31,7 @@ def log_scan(
     *,
     timestamp: datetime | None = None,
     signal_frame: SignalFrame | None = None,
+    quality: str = DataSource.LIVE.value,
 ) -> int:
     """Bulk-insert one scan's tag samples; return the number of rows written.
 
@@ -40,14 +41,23 @@ def log_scan(
         tags: Mapping of tag name -> value for this scan.
         timestamp: Sample time for every row; defaults to now (UTC). One shared
             timestamp keeps a scan atomic in time and avoids 32 clock reads.
+        signal_frame: Optional :class:`SignalFrame` for this scan. When given,
+            each row carries that sample's own provenance (per-sample quality,
+            diagnostic reason, sequence, source and source timestamp) and
+            ``quality`` is ignored — the frame is the finer-grained record.
+        quality: Provenance stamped on every row when no ``signal_frame`` is
+            supplied (see ``models.DataSource``). The caller must not persist
+            held or faulted scans at all — a gap is the truthful record of an
+            outage (issue #4004).
 
     Returns:
         Number of rows inserted (0 for an empty mapping).
 
     Raises:
-        TypeError: If ``session`` is not a Session, ``tags`` is not a dict, or
-            ``timestamp`` is not a datetime/None.
-        ValueError: If any tag value is not finite/convertible to float.
+        TypeError: If ``session`` is not a Session, ``tags`` is not a dict,
+            ``timestamp`` is not a datetime/None, or ``quality`` is not a str.
+        ValueError: If ``quality`` is blank or any tag value is not
+            finite/convertible to float.
     """
     if not isinstance(session, Session):
         raise TypeError(f"session must be a Session, got {type(session).__name__}")
@@ -57,6 +67,10 @@ def log_scan(
         raise TypeError(f"timestamp must be a datetime or None, got {type(timestamp)}")
     if signal_frame is not None and not isinstance(signal_frame, SignalFrame):
         raise TypeError("signal_frame must be a SignalFrame or None")
+    if not isinstance(quality, str):
+        raise TypeError(f"quality must be a str, got {type(quality).__name__}")
+    if not quality.strip():
+        raise ValueError("quality must be a non-empty string")
 
     if not tags:
         return 0
@@ -77,13 +91,15 @@ def log_scan(
         except (TypeError, ValueError) as exc:
             raise ValueError(f"tag {name!r} has non-numeric value {value!r}") from exc
         if signal_frame is None:
+            # No frame qualified this scan: stamp the caller's coarse
+            # ``DataSource`` provenance and mark the row unqualified.
             rows.append(
                 {
                     "tag_name": str(name),
                     "value": numeric,
                     "source_timestamp": ts,
                     "timestamp": ts,
-                    "quality": "uncertain",
+                    "quality": str(quality),
                     "diagnostic_reason": "legacy_unqualified",
                     "sequence": 0,
                     "source": "legacy.adapter",

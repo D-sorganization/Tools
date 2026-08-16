@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Any
 
 try:
     from datetime import UTC
@@ -7,13 +8,114 @@ except ImportError:
 
 import hardware
 from pydantic import BaseModel, field_validator
-from sqlalchemy import Index
+from sqlalchemy import DateTime, Index
+from sqlalchemy.types import TypeDecorator
 from sqlmodel import Field, SQLModel
+
+from shared.python.compatibility import StrEnum
 
 
 def utc_now() -> datetime:
     """Return an aware UTC timestamp for database defaults."""
     return datetime.now(UTC)
+
+
+# Spelled as literals so the wire values stay greppable and so the table default
+# below does not depend on enum attribute access (which the repo's
+# ``--follow-imports=skip`` mypy pass cannot see through).
+DATA_SOURCE_LIVE = "live"
+DATA_SOURCE_SIMULATED = "simulated"
+DATA_SOURCE_HELD = "held"
+DATA_SOURCE_FAULT = "fault"
+
+
+class DataSource(StrEnum):
+    """Provenance of a scan's tag values (issue #4004).
+
+    Safety-critical distinction: only :attr:`LIVE` (and :attr:`SIMULATED` on a
+    bench where the operator *chose* a simulator driver) is a measurement. A
+    :attr:`HELD` or :attr:`FAULT` scan carries no fresh reading and must never
+    be routed into the control laws, the alarm engine or the historian's tag
+    series — a gap in the trend is truthful, fabricated continuity is not.
+    """
+
+    LIVE = DATA_SOURCE_LIVE
+    SIMULATED = DATA_SOURCE_SIMULATED
+    HELD = DATA_SOURCE_HELD
+    FAULT = DATA_SOURCE_FAULT
+
+    @property
+    def is_measurement(self) -> bool:
+        """True when the values may drive control, alarms and the historian."""
+        return self in (DataSource.LIVE, DataSource.SIMULATED)
+
+
+#: Severity attached to the EventLog row emitted on a data-source transition.
+DATA_SOURCE_SEVERITY: dict[str, int] = {
+    DATA_SOURCE_LIVE: 0,
+    DATA_SOURCE_SIMULATED: 1,
+    DATA_SOURCE_HELD: 1,
+    DATA_SOURCE_FAULT: 2,
+}
+
+
+def ensure_utc(value: datetime) -> datetime:
+    """Normalize a datetime to an aware UTC instant.
+
+    A tz-naive value is *assumed* to already be UTC (that is what the historian
+    writes); an aware value is converted. This is the single place the codebase
+    decides what "naive means UTC" means — every timestamp crossing an API
+    boundary goes through it so no ``isoformat()`` can emit an offset-less
+    string (issue #4025).
+
+    Args:
+        value: The datetime to normalize.
+
+    Returns:
+        The same instant as an aware UTC ``datetime``.
+
+    Raises:
+        TypeError: If ``value`` is not a ``datetime``.
+    """
+    if not isinstance(value, datetime):
+        raise TypeError(f"value must be a datetime, got {type(value).__name__}")
+    if value.tzinfo is None:
+        return value.replace(tzinfo=UTC)
+    return value.astimezone(UTC)
+
+
+class UtcDateTime(TypeDecorator[datetime]):
+    """A ``DATETIME`` column that always round-trips an aware **UTC** instant.
+
+    SQLite has no native timestamp type: SQLAlchemy's SQLite ``DATETIME`` bind
+    processor formats the datetime's *wall-clock* fields and silently discards
+    ``tzinfo``, and its result processor hands back a tz-**naive** value. So a
+    plain ``DateTime(timezone=True)`` column is a lie on this dialect — an aware
+    ``05:00-07:00`` was stored as ``05:00`` and read back as ``05:00Z``, an
+    8-hour error, and every ``.isoformat()`` on the API boundary emitted an
+    offset-less string that the browser then re-parsed as *local* time.
+
+    This decorator closes both ends:
+        - bind: normalize to UTC before the dialect drops the offset, so the
+          stored wall clock is always UTC (byte-compatible with existing rows,
+          which the ``utc_now`` default already wrote as UTC).
+        - result: re-attach ``UTC`` so callers always receive aware datetimes.
+
+    Precondition: bound values must be ``datetime`` (or ``None``).
+    """
+
+    impl = DateTime
+    cache_ok = True
+
+    def process_bind_param(self, value: datetime | None, dialect: Any) -> Any:
+        if value is None:
+            return None
+        return ensure_utc(value)
+
+    def process_result_value(self, value: datetime | None, dialect: Any) -> Any:
+        if value is None:
+            return None
+        return ensure_utc(value)
 
 
 def _validate_loop_tag(value: str) -> str:
@@ -43,6 +145,15 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     ``tag_name``-only lookups, so no separate single-column ``tag_name`` index is
     needed. ``timestamp`` keeps its own index for the retention sweep's
     ``timestamp``-only range deletes.
+
+    ``quality`` records the provenance of the sample (see :class:`DataSource`)
+    so an analyst reading the trend a year later can tell a real measurement
+    from a bench simulation. Rows are only ever written for values that were
+    actually measured (or deliberately simulated): a comms outage leaves a gap
+    rather than a fabricated continuation of the last reading (issue #4004).
+
+    ``timestamp`` uses :class:`UtcDateTime` so reads return aware-UTC datetimes
+    and range bounds are compared in UTC whatever offset the caller supplied.
     """
 
     __table_args__ = (Index("ix_taglog_tag_name_timestamp", "tag_name", "timestamp"),)
@@ -54,8 +165,14 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     timestamp: datetime = Field(
         default_factory=utc_now,
         index=True,
+        sa_type=UtcDateTime,
     )
-    quality: str = Field(default="uncertain", index=True)
+    # One provenance column serves both designs: the coarse ``DataSource``
+    # values the historian write path stamps (``live``/``simulated``, issue
+    # #4004) and the finer ``SignalQuality`` values a ``SignalFrame`` carries
+    # (``good``/``stale``/...). ``max_length`` retains main's column bound; the
+    # ``uncertain`` default marks a row nobody qualified.
+    quality: str = Field(default="uncertain", index=True, max_length=16)
     diagnostic_reason: str | None = Field(default="legacy_unqualified")
     sequence: int = Field(default=0, index=True)
     source: str = Field(default="legacy.adapter", index=True)
@@ -100,7 +217,11 @@ class TagDefinitionDb(SQLModel, table=True):  # type: ignore[call-arg]
 
 
 class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
-    """SQLModel representing an event or alarm log in the database."""
+    """SQLModel representing an event or alarm log in the database.
+
+    ``timestamp`` uses :class:`UtcDateTime` (see :class:`TagLog`) so the
+    age-based event retention pass compares real UTC instants.
+    """
 
     id: int | None = Field(default=None, primary_key=True)
     event_type: str = Field(index=True)  # ALARM, SYSTEM, ACKNOWLEDGE
@@ -109,6 +230,7 @@ class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
     timestamp: datetime = Field(
         default_factory=utc_now,
         index=True,
+        sa_type=UtcDateTime,
     )
 
 

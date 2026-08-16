@@ -15,13 +15,14 @@ except ImportError:
         return False
 
 
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import Qt, QThread, QTimer, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QColor, QPalette
 from PyQt6.QtWidgets import (
     QDockWidget,
     QListWidget,
     QListWidgetItem,
     QMainWindow,
+    QMessageBox,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -32,6 +33,18 @@ load_dotenv()
 
 # Relative package imports
 # Import Sidekick Unified Tools Sidebar
+from p1am_control_system.desktop.alarm_state import (
+    AlarmEventDebouncer,
+    AlarmStateMachine,
+    InterlockLimitError,
+    interlock_for_index,
+    validate_interlocks,
+)
+from p1am_control_system.desktop.connection_state import (
+    CONNECTED,
+    OFFLINE,
+    derive_connection_status,
+)
 from p1am_control_system.desktop.control_tab import ControlTab
 from p1am_control_system.desktop.event_logger import EventLogger, EventLogViewerWidget
 from p1am_control_system.desktop.header import HMIHeader
@@ -79,7 +92,7 @@ class WebSocketClientThread(QThread):
         self.loop.run_until_complete(self._listen())
 
     async def _listen(self) -> None:
-        self.connectionStatusChanged.emit("Offline")
+        self.connectionStatusChanged.emit(OFFLINE)
         if _websockets is None:
             logger.error("websockets dependency is not installed")
             return
@@ -88,9 +101,12 @@ class WebSocketClientThread(QThread):
             try:
                 logger.info(f"Connecting to WebSocket: {self.uri}")
                 async with _websockets.connect(self.uri) as websocket:
-                    self.connectionStatusChanged.emit(
-                        "Simulating"
-                    )  # Default simulated state, updated on active Modbus
+                    # The link is up. Whether the values behind it are live or
+                    # simulated is decided per-frame by
+                    # ``derive_connection_status`` — the socket opening is not
+                    # evidence of a simulation, and labelling a live plant
+                    # "Simulating" is the dangerous direction (issue #4019).
+                    self.connectionStatusChanged.emit(CONNECTED)
                     logger.info("WebSocket connection established.")
                     while self.running:
                         message = await websocket.recv()
@@ -98,7 +114,7 @@ class WebSocketClientThread(QThread):
                         self.messageReceived.emit(payload)
             except Exception as e:
                 logger.error(f"WebSocket client error: {e}")
-                self.connectionStatusChanged.emit("Offline")
+                self.connectionStatusChanged.emit(OFFLINE)
 
             if not self.running:
                 break
@@ -132,11 +148,18 @@ class HMIMainWindow(QMainWindow):
         self.routing_config = None
         self.user_role = "Operator"
 
-        # Alarm tracking state
-        # Set of active alarms: (tag_id, alarm_type)
-        self.active_alarms = set()
-        # Set of active unacknowledged alarms: (tag_id, alarm_type)
-        self.unacknowledged_alarms = set()
+        # Alarm annunciation. The state machine owns the active/unacknowledged
+        # sets; the header's colour follows "active" and its flashing follows
+        # "unacknowledged" (issue #4012).
+        self.alarm_state = AlarmStateMachine()
+        # Snapshot of what the header was last showing, so ACK acknowledges the
+        # alarms the operator actually saw rather than blanket-clearing ones
+        # that arrived between the render and the click.
+        self._annunciated_alarms: frozenset = frozenset()
+        # Coalesce chattering alarm transitions before they hit SQLite (#4022).
+        self.alarm_event_debouncer = AlarmEventDebouncer(
+            window_s=float(os.getenv("HMI_ALARM_EVENT_WINDOW_S", "5.0"))
+        )
 
         # SQLite event database logger
         self.event_logger = EventLogger()
@@ -148,7 +171,15 @@ class HMIMainWindow(QMainWindow):
         self._on_theme_changed(self.theme_manager.get_current_theme_name())
 
         restore_window_settings(self, make_hmi_settings())
+        self._purge_expired_events()
         self._load_routing_config()
+
+        # Release coalesced alarm-event summaries even when the plant goes
+        # quiet, so a burst's tail is never lost.
+        self.alarm_flush_timer = QTimer(self)
+        self.alarm_flush_timer.setInterval(1000)
+        self.alarm_flush_timer.timeout.connect(self._flush_alarm_events)
+        self.alarm_flush_timer.start()
 
         # Start WebSocket client stream thread.
         self.ws_thread = WebSocketClientThread(self.ws_uri)
@@ -202,6 +233,10 @@ class HMIMainWindow(QMainWindow):
         # Connect settings tab visibility toggles
         self.settings_tab.tabVisibilityChanged.connect(self._handle_tab_visibility)
 
+        # The History table is only requeried when it is actually on screen
+        # (issue #4022); refresh it the moment it becomes current instead.
+        self.tab_widget.currentChanged.connect(self._on_current_tab_changed)
+
         # Add tabs initially
         self.tab_widget.addTab(self.mimic_tab, self.tab_titles["mimic"])
         self.tab_widget.addTab(self.trends_tab, self.tab_titles["trends"])
@@ -252,7 +287,32 @@ class HMIMainWindow(QMainWindow):
     def _on_load_routing_config_success(self, data):
         from models import RoutingConfig
 
-        self.routing_config = RoutingConfig(**data)
+        self._apply_routing_config(RoutingConfig(**data))
+
+    def _apply_routing_config(self, config) -> None:
+        """Validate and adopt a freshly fetched routing configuration.
+
+        Precondition: every interlock satisfies ``lolo <= low <= high <= hihi``.
+        A configuration that violates it cannot be mapped onto the firmware's
+        four-tier trip points, so it is rejected loudly (critical dialog +
+        ALARM event) rather than silently annunciating the wrong severity
+        (issue #4019).
+        """
+        try:
+            validate_interlocks(getattr(config, "interlocks", {}))
+        except (InterlockLimitError, TypeError) as exc:
+            logger.error("Rejected routing configuration: %s", exc)
+            self.log_event("ALARM", f"Invalid interlock configuration rejected: {exc}")
+            QMessageBox.critical(
+                self,
+                "Invalid interlock configuration",
+                "The PLC returned alarm setpoints that are not ordered "
+                "lolo <= low <= high <= hihi, so the HMI cannot annunciate "
+                f"severity consistently with the firmware.\n\n{exc}",
+            )
+            return
+
+        self.routing_config = config
 
         # Pass configuration to sub-widgets
         self.routing_tab.set_routing_config(self.routing_config)
@@ -290,6 +350,10 @@ class HMIMainWindow(QMainWindow):
     @pyqtSlot(dict)
     def _on_telemetry_update(self, payload: dict) -> None:
         """Processes real-time Modbus telemetry packet (10Hz)."""
+        # Connectivity is a property of the frame, not of the socket handshake
+        # (issue #4019); derive it before the empty-frame early return.
+        self._on_connection_status_changed(derive_connection_status(payload))
+
         tags = payload.get("tags", [])
         if not tags:
             return
@@ -301,78 +365,92 @@ class HMIMainWindow(QMainWindow):
         timestamp = time.time()
         self.trends_tab.add_telemetry_point(timestamp, tags)
 
-        # 2. Evaluate Alarm/Interlocks logic
+        # 2. Evaluate Alarm/Interlocks logic against the deployed four-tier
+        #    trip points, then repaint the annunciator.
         if self.routing_config:
-            for tag_id, val in enumerate(tags):
-                if tag_id >= len(self.routing_config.interlocks):
-                    break
+            self._evaluate_alarms(tags)
+            self._refresh_annunciator()
 
-                interlock = self.routing_config.interlocks[tag_id]
-                low_limit = interlock.low_limit
-                high_limit = interlock.high_limit
+    def _evaluate_alarms(self, tags) -> None:
+        """Fold one telemetry frame into the alarm state machine."""
+        interlocks = getattr(self.routing_config, "interlocks", None)
+        if not interlocks:
+            return
 
-                # HH: High-High threshold (exceeds high limit + 5.0 units)
-                # LL: Low-Low threshold (drops below low limit - 5.0 units)
-                hh_thresh = high_limit + 5.0
-                ll_thresh = low_limit - 5.0
+        for tag_id, val in enumerate(tags):
+            interlock = interlock_for_index(interlocks, tag_id)
+            if interlock is None:
+                continue
+            try:
+                transitions = self.alarm_state.evaluate(tag_id, val, interlock)
+            except (TypeError, ValueError) as exc:
+                # ValueError == non-finite reading (sensor fault). Skipping the
+                # tag is the fail-safe outcome: `evaluate` validates before it
+                # clears anything, so an alarm already latched for this tag stays
+                # latched instead of being resolved by a NaN that compares False
+                # against every limit.
+                logger.error("Skipping tag %s with unusable value: %s", tag_id, exc)
+                continue
+            for transition in transitions:
+                self._record_alarm_transition(transition)
 
-                # Check LL
-                if val <= ll_thresh:
-                    self._trigger_alarm(
-                        tag_id,
-                        "LL",
-                        f"Tag {tag_id} Low-Low limit violation ({val:.2f} <= {ll_thresh:.2f})",
-                    )
-                # Check HH
-                elif val >= hh_thresh:
-                    self._trigger_alarm(
-                        tag_id,
-                        "HH",
-                        f"Tag {tag_id} High-High limit violation ({val:.2f} >= {hh_thresh:.2f})",
-                    )
-                # Check L
-                elif val <= low_limit:
-                    self._trigger_alarm(
-                        tag_id,
-                        "L",
-                        f"Tag {tag_id} Low limit violation ({val:.2f} <= {low_limit:.2f})",
-                    )
-                # Check H
-                elif val >= high_limit:
-                    self._trigger_alarm(
-                        tag_id,
-                        "H",
-                        f"Tag {tag_id} High limit violation ({val:.2f} >= {high_limit:.2f})",
-                    )
-                else:
-                    # Clear active alarm if value returns to normal range
-                    for alarm_type in ["LL", "HH", "L", "H"]:
-                        alarm_key = (tag_id, alarm_type)
-                        if alarm_key in self.active_alarms:
-                            self.active_alarms.remove(alarm_key)
-                            self.log_event(
-                                "CLEAR", f"Tag {tag_id} alarm {alarm_type} cleared."
-                            )
+    def _record_alarm_transition(self, transition) -> None:
+        """Log an alarm edge, coalescing repeats from a chattering tag."""
+        if transition.kind == "raised":
+            level = "ALARM"
+            message = f"CRITICAL: {transition.message}"
+        else:
+            level = "CLEAR"
+            message = transition.message
 
-            # Update header alarm button flashing state
-            # Flashing yellow for H/L, flashing red for HH/LL
-            self.header.set_alarms_state(
-                has_hl=len(
-                    [a for a in self.unacknowledged_alarms if a[1] in ["H", "L"]]
-                )
-                > 0,
-                has_hhll=len(
-                    [a for a in self.unacknowledged_alarms if a[1] in ["HH", "LL"]]
-                )
-                > 0,
+        key = (transition.tag_id, transition.alarm_type, transition.kind)
+        for event_level, event_message in self.alarm_event_debouncer.submit(
+            key, level, message
+        ):
+            self.log_event(event_level, event_message)
+
+    def _flush_alarm_events(self) -> None:
+        """Release coalesced alarm-event summaries whose window has expired."""
+        for event_level, event_message in self.alarm_event_debouncer.flush():
+            self.log_event(event_level, event_message)
+
+    def _refresh_annunciator(self) -> None:
+        """Repaint the header from the alarm state and snapshot what it shows."""
+        state = self.alarm_state.annunciator_state()
+        self._annunciated_alarms = frozenset(self.alarm_state.unacknowledged_alarms)
+        self.header.set_alarms_state(
+            has_hl=state.has_hl,
+            has_hhll=state.has_hhll,
+            unacked_hl=state.unacked_hl,
+            unacked_hhll=state.unacked_hhll,
+        )
+
+    def _purge_expired_events(self) -> None:
+        """Apply the event-log retention window at startup."""
+        try:
+            retention_days = int(os.getenv("EVENT_LOG_RETENTION_DAYS", "90"))
+            removed = self.event_logger.purge_older_than(retention_days)
+        except Exception as exc:
+            logger.error("Event-log retention purge failed: %s", exc)
+            return
+        if removed:
+            logger.info(
+                "Purged %d event-log rows older than %d days", removed, retention_days
             )
 
-    def _trigger_alarm(self, tag_id: int, alarm_type: str, message: str) -> None:
-        alarm_key = (tag_id, alarm_type)
-        if alarm_key not in self.active_alarms:
-            self.active_alarms.add(alarm_key)
-            self.unacknowledged_alarms.add(alarm_key)
-            self.log_event("ALARM", f"CRITICAL: {message}")
+    @pyqtSlot(int)
+    def _on_current_tab_changed(self, _index: int) -> None:
+        """Refresh the History table only when it becomes the visible tab."""
+        if self.tab_widget.currentWidget() is self.event_log_viewer:
+            self._refresh_event_log_viewer()
+
+    def _refresh_event_log_viewer(self) -> None:
+        """Requery the History table, flushing queued writes first."""
+        try:
+            self.event_logger.flush_async(timeout=2.0)
+            self.event_log_viewer.apply_filters()
+        except Exception as exc:
+            logger.error("Failed to refresh the event-log viewer: %s", exc)
 
     def log_event(self, level: str, msg: str) -> None:
         """Formats and appends a color-coded event string to the bottom list widget and SQLite db."""
@@ -407,19 +485,23 @@ class HMIMainWindow(QMainWindow):
         self.log_list.addItem(item)
         self.log_list.scrollToBottom()
 
-        # Database Logging
+        # Database logging. Queued onto the writer thread so the Qt GUI thread
+        # never blocks on an fsync-backed commit while an alarm is active
+        # (issue #4022), and the History table is only requeried when the
+        # operator is actually looking at it.
         try:
-            self.event_logger.log_event(
+            self.event_logger.log_event_async(
                 event_type=event_type,
                 severity=severity,
                 operator=self.user_role,
                 description=msg,
             )
-            # Update viewer if tab is active
-            if hasattr(self, "event_log_viewer"):
-                self.event_log_viewer.apply_filters()
         except Exception as e:
             logger.error(f"Failed to log event to database: {e}")
+            return
+
+        if self.tab_widget.currentWidget() is self.event_log_viewer:
+            self._refresh_event_log_viewer()
 
     @pyqtSlot(str)
     def _on_role_changed(self, role: str) -> None:
@@ -469,10 +551,21 @@ class HMIMainWindow(QMainWindow):
 
     @pyqtSlot()
     def _on_alarm_acknowledged(self) -> None:
-        # Acknowledge all currently active alarms
-        self.unacknowledged_alarms.clear()
-        self.header.set_alarms_state(False, False)
-        self.log_event("ACTION", "All active alarms acknowledged by operator.")
+        """Acknowledge exactly the alarms the header was showing.
+
+        Acknowledging silences the flash but leaves every still-active alarm
+        annunciated (steady), and an alarm that arrived after the last repaint
+        stays unacknowledged so it is never silently swallowed (issue #4012).
+        """
+        acknowledged = self.alarm_state.acknowledge(self._annunciated_alarms)
+        self._refresh_annunciator()
+        if acknowledged:
+            summary = ", ".join(f"Tag {tag} {kind}" for tag, kind in acknowledged)
+            self.log_event("ACTION", f"Alarms acknowledged by operator: {summary}.")
+        else:
+            self.log_event(
+                "ACTION", "Alarm acknowledge pressed; nothing to acknowledge."
+            )
 
     @pyqtSlot(str)
     def _on_connection_status_changed(self, status: str) -> None:
@@ -486,6 +579,18 @@ class HMIMainWindow(QMainWindow):
         # Stop background thread on close
         self.ws_thread.stop()
         self.ws_thread.wait()
+        # Stop the periodic flush before tearing anything down: a timeout that
+        # fires after the widgets are gone would touch deleted C++ objects.
+        timer = getattr(self, "alarm_flush_timer", None)
+        if timer is not None:
+            timer.stop()
+        # Release any coalesced alarm summaries, then drain the writer thread so
+        # no queued event is lost on shutdown.
+        try:
+            self._flush_alarm_events()
+            self.event_logger.close()
+        except Exception as exc:  # pragma: no cover - shutdown safety net
+            logger.error("Failed to drain the event log on close: %s", exc)
         super().closeEvent(event)
 
 

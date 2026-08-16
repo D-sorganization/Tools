@@ -118,7 +118,14 @@ def test_main_window_restores_persisted_tab_visibility(
         def apply_theme_styles(self, _theme_name: str) -> None:
             return None
 
-        def set_alarms_state(self, _has_hl: bool, _has_hhll: bool) -> None:
+        def set_alarms_state(
+            self,
+            has_hl: bool,
+            has_hhll: bool,
+            unacked_hl: bool | None = None,
+            unacked_hhll: bool | None = None,
+        ) -> None:
+            """Match the real header's keyword contract; record nothing."""
             return None
 
         def set_connection_status(self, _status: str) -> None:

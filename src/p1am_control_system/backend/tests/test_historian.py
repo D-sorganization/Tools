@@ -80,7 +80,12 @@ class TestLogScan:
         assert row.source_timestamp == frame.samples["TAG_0"].source_timestamp.replace(
             tzinfo=None
         )
-        assert row.timestamp == frame.server_timestamp.replace(tzinfo=None)
+        # main's `UtcDateTime` column type returns `timestamp` tz-aware, so compare
+        # against the aware value rather than stripping tzinfo. Note the asymmetry:
+        # `source_timestamp` (added by this branch) is still a naive column, which is
+        # why the assertion above strips tzinfo. Unifying the two column types is a
+        # migration, tracked separately rather than done inside a merge resolution.
+        assert row.timestamp == frame.server_timestamp
 
     def test_signal_frame_must_match_logged_tag_contract(
         self, session: Session
@@ -97,20 +102,39 @@ class TestLogScan:
 
     def test_coerces_numeric_strings(self, session: Session) -> None:
         # float("3.5") works — the value is coerced, not rejected.
-        assert log_scan(session, {"TAG_0": "3.5"}) == 1  # type: ignore[dict-item]
+        assert log_scan(session, {"TAG_0": "3.5"}) == 1
 
     def test_rejects_non_session(self) -> None:
         with pytest.raises(TypeError):
-            log_scan(object(), {"TAG_0": 1.0})  # type: ignore[arg-type]
+            log_scan(object(), {"TAG_0": 1.0})
 
     def test_rejects_non_dict_tags(self, session: Session) -> None:
         with pytest.raises(TypeError):
-            log_scan(session, [("TAG_0", 1.0)])  # type: ignore[arg-type]
+            log_scan(session, [("TAG_0", 1.0)])
 
     def test_rejects_bad_timestamp(self, session: Session) -> None:
         with pytest.raises(TypeError):
-            log_scan(session, {"TAG_0": 1.0}, timestamp="2026")  # type: ignore[arg-type]
+            log_scan(session, {"TAG_0": 1.0}, timestamp="2026")
 
     def test_rejects_non_numeric_value(self, session: Session) -> None:
         with pytest.raises(ValueError, match="non-numeric"):
-            log_scan(session, {"TAG_0": "oops"})  # type: ignore[dict-item]
+            log_scan(session, {"TAG_0": "oops"})
+
+
+class TestSampleQuality:
+    def test_rows_default_to_live_quality(self, session: Session) -> None:
+        log_scan(session, {"TAG_0": 1.0})
+        session.commit()
+        assert session.exec(select(TagLog.quality)).one() == "live"
+
+    def test_quality_is_stamped_on_every_row(self, session: Session) -> None:
+        """#4004: a bench run must be distinguishable from a real measurement."""
+        log_scan(session, {"TAG_0": 1.0, "TAG_1": 2.0}, quality="simulated")
+        session.commit()
+        assert set(session.exec(select(TagLog.quality)).all()) == {"simulated"}
+
+    def test_quality_must_be_a_non_empty_string(self, session: Session) -> None:
+        with pytest.raises(ValueError):
+            log_scan(session, {"TAG_0": 1.0}, quality="  ")
+        with pytest.raises(TypeError):
+            log_scan(session, {"TAG_0": 1.0}, quality=None)

@@ -1,0 +1,80 @@
+# P1AM SCADA operator HMI — frontend gate
+#
+# The React operator HMI under src/p1am_control_system/frontend defines `lint`,
+# `build` (tsc && vite build) and `test` (vitest run) scripts, and until this
+# workflow NO CI job ran any of them: `grep -rn "p1am_control_system/frontend"
+# .github/workflows/` returned nothing (issue #3996).
+#
+# That is the part of the repo where a regression misleads a human standing next
+# to live hardware — a P1AM PLC, a DC power supply and heaters driven from a
+# Raspberry Pi touchscreen. The vitest suite covers the API client, the runtime
+# payload schemas, telemetry liveness, the setpoint-entry staging rules and the
+# plot components: exactly the code that decides whether an operator is shown a
+# true value, a frozen one, or an alarm list that has silently lost entries.
+# None of it ever executed.
+#
+# Runner: the self-hosted d-sorg-fleet pool is heterogeneous (linux, windows and
+# macos hosts). This job is pinned to a Linux host because the frontend
+# toolchain and the production image (nginx on the Pi) are Linux-only.
+#
+# Scope note: this gate covers the TypeScript frontend only. The FastAPI backend
+# under src/p1am_control_system/ is exercised by the repo-wide Python gates.
+
+name: P1AM Frontend (lint · build · test)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/p1am_control_system/frontend/**"
+      - ".github/workflows/p1am-frontend.yml"
+  pull_request:
+    paths:
+      - "src/p1am_control_system/frontend/**"
+      - ".github/workflows/p1am-frontend.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: p1am-frontend-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: src/p1am_control_system/frontend
+
+jobs:
+  frontend-gate:
+    name: HMI lint + typecheck/build + vitest
+    runs-on: [d-sorg-fleet, Linux]
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: src/p1am_control_system/frontend/package-lock.json
+
+      # `npm ci` (not `npm install`) so the lockfile is authoritative: the Pi
+      # runs whatever this build produces, and a silently-floated transitive
+      # dependency is not something to discover on the plant floor.
+      - name: Install dependencies (locked)
+        run: npm ci
+
+      - name: Lint (eslint)
+        run: npm run lint
+
+      # `build` is `tsc && vite build`, so this is the typecheck gate as well as
+      # proof the production bundle the Pi serves still compiles.
+      - name: Typecheck + production build
+        run: npm run build
+
+      - name: Unit tests (vitest)
+        run: npm run test

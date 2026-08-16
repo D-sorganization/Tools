@@ -2,9 +2,8 @@ import asyncio
 import logging
 import os
 import shutil
-import time
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from datetime import datetime, timedelta, timezone
 
 try:
@@ -13,32 +12,36 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
+import shutdown_safety
 from advisory_router import create_advisory_router
 from alarm_router import create_alarm_router
 from alarm_service import AlarmService, manager_from_routing
-from alicat_manager import AlicatManager, AlicatMFC
+from alicat_manager import create_default_manager
 from asset_health import (
     AssetHealthPolicy,
     AssetHealthReport,
     AssetHealthService,
     AssetObservation,
 )
+from audit import AuditMiddleware
 from audit_middleware import MutationAuditMiddleware
 from audit_router import create_audit_router
 from auth_config import (
     CREDENTIAL_HEADER_NAME,
     identity_service,
+    log_auth_configuration,
     require_admin_key,
     require_api_key,
     require_engineer_key,
+    require_read_auth,
     resolve_optional_principal,
     verify_operator_key,
 )
-from config_store import load_config, load_model, save_config
+from config_store import load_config, load_model, save_config, save_model
 from configuration_repository import SqliteRevisionRepository
 from configuration_router import create_configuration_router
 from configuration_workflow import ConfigurationWorkflow
-from cors_config import resolve_cors_settings
+from cors_config import RequestGuardMiddleware, resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
     CaptureConfig,
@@ -61,14 +64,12 @@ from fastapi import (
     HTTPException,
     Query,
     Request,
-    Security,
     UploadFile,
     WebSocket,
     WebSocketDisconnect,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
-from fastapi.security import APIKeyHeader
 from historian_wiring import build_historian_writer, shipper_stats
 from identity import Principal
 from identity_router import create_identity_router
@@ -76,8 +77,8 @@ from models import (
     AlicatGasPayload,
     AlicatMFCState,
     AlicatSetpointPayload,
+    DataSource,
     EventLog,
-    PIDTuningStepPayload,
     PlantArea,
     PlantEquipment,
     PlantUnit,
@@ -85,14 +86,27 @@ from models import (
     TagDefinitionDb,
     TagLog,
 )
-from mpc import simulate_pid_vs_mpc
 from operations_router import create_operations_router
 from operator_router import create_operator_router
-from performance import PerformanceConfig, PerformanceController, PerformanceMode
-from pid_tuning import identify_fopdt_and_tune
+from performance import (
+    PerformanceConfig,
+    PerformanceController,
+    PerformanceMode,
+    ScanScheduler,
+)
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
-from poll_runtime import _connect_once, _poll_once
+from poll_runtime import (
+    POLL_FAILURE_ESCALATION_THRESHOLD,
+    POLL_FAILURE_MAX_BACKOFF_S,
+    DataQualityTracker,
+    HistorianWriter,
+    ThrottledHistorianSink,
+    _connect_once,
+    _poll_once,
+    log_poll_failure,
+    loop_diagnostics,
+)
 from power_supply_integration import PowerSupplyService, create_power_supply_router
 from product_router import create_product_router
 from project_import import import_project_archive
@@ -116,6 +130,8 @@ from temperature_integration import (
     TemperatureService,
     create_temperature_router,
 )
+from tuning_router import create_tuning_router
+from ws_broadcast import ConnectionManager
 
 try:
     # Prefer the Rust-accelerated SCADA kernel when the compiled wheel is
@@ -142,15 +158,25 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
 settings = get_settings()
 
-# Truthy tokens for the opt-in read-auth env gate (mirrors auth_config).
-_TRUTHY = {"1", "true", "yes", "on"}
-# auto_error=False so require_read_auth can no-op when the gate is disabled
-# instead of FastAPI rejecting a missing header up front.
-_read_api_key_header = APIKeyHeader(name=CREDENTIAL_HEADER_NAME, auto_error=False)
+# Report the resolved credential posture at boot so a half-configured or
+# bypassed deployment is visible in journalctl immediately (#4041), not at the
+# operator's first control action.
+log_auth_configuration()
 
 plc_client = PLCFactory.create_client(settings)
 modbus_manager = plc_client  # Compatibility alias
+
+# The backup simulator still backs the routing/tag/E-stop endpoints (they mirror
+# commands into it so the bench HMI stays coherent), but it is wired into the
+# SCAN path only when the operator actually selected a simulator driver: on real
+# hardware a dropped link must surface as a fault, never as fabricated
+# continuity fed to the control laws, alarms and historian (issue #4004).
+PLC_DRIVER_IS_SIMULATED = settings.plc_driver_is_simulated
 backup_simulator = SimulatedPLCClient()
+if not PLC_DRIVER_IS_SIMULATED:
+    logger.info(
+        "PLC driver %r is real hardware; no scan back-fill.", settings.plc_driver
+    )
 
 
 # A session factory lets the services durably persist operator settings (config
@@ -191,90 +217,67 @@ _persisted_routing: RoutingConfig | None = None
 # without slowing the control/stream loop. Runtime-adjustable via /api/capture/config.
 capture_throttle = CaptureThrottle(settings.capture_interval_s)
 
-# Global performance mode: switches the scan-loop cadence between the fast
-# (performance) and slow (lightweight) intervals to conserve CPU / HMI load.
-# Defaults to lightweight — fast polling is opt-in (and the HMI auto-engages it
-# whenever its tab is hidden), so an unattended backend stays easy on the Pi.
+# Global performance mode. It governs ONLY how often the live frame is pushed
+# to the HMI: the scan/control/alarm cadence is pinned to settings.poll_interval_s
+# below. Defaults to lightweight, which is now a pure rendering choice — a hidden
+# browser tab can no longer slow the plant down (issue #4008).
 perf_controller = PerformanceController(
     settings.poll_interval_s,
     settings.lightweight_poll_interval_s,
     mode=PerformanceMode.LIGHTWEIGHT,
+    scan_interval_s=settings.poll_interval_s,
 )
 
+# THE control clock: a monotonic deadline schedule so the real period is the
+# configured period rather than `t_work + sleep`, with missed deadlines counted
+# and the phase resynchronised instead of accumulating lag (issue #4009).
+scan_scheduler = ScanScheduler(settings.poll_interval_s)
 
-# The scan-loop historian writer. Persists locally when the capture throttle
-# allows, then forwards the same scan to the remote plant historian if one is
-# configured. `historian_shipper` is None unless forwarding is enabled, in which
-# case no thread and no driver import happen at all.
-historian_writer, historian_shipper = build_historian_writer(
-    capture_throttle.due, settings
-)
+# Local write + remote plant-historian forward for ONE batched scan (PR #4065).
+# `historian_shipper` is None unless forwarding is enabled, in which case no
+# thread and no driver import happen at all.
+#
+# The capture throttle is deliberately NOT applied here: `_historian_sink`
+# (`ThrottledHistorianSink`, below) drops a non-due sample *before* it can reach
+# the queue, which is what stopped #4023 from opening a session for a scan that
+# was never going to be written. Consulting `capture_throttle.due` twice per scan
+# would also corrupt its state.
+_historian_forwarder, historian_shipper = build_historian_writer(lambda: True, settings)
 
 
-def _throttled_log_scan(
+def _forwarding_log_scan(
     session: Session,
     tags: dict[str, float],
     *,
     signal_frame: SignalFrame | None = None,
+    quality: str = DataSource.LIVE.value,
 ) -> int:
-    """Persist a scan to the historian only when the throttle says it's due.
+    """Persist one scan of a batch locally, then forward it best-effort.
 
-    Thin wrapper kept so the poll loop's injected callable has a stable name and
-    signature; the throttle, local write, and remote forward all live in
-    :class:`historian_sink.HistorianWriter`.
+    Injected into the queued :class:`poll_runtime.HistorianWriter`, so this runs
+    on that writer's worker thread inside the batch's single transaction — the
+    scan loop itself never touches SQLite (issue #4023).
 
-    ``signal_frame`` carries the per-scan quality metadata that
-    ``poll_runtime.ScanLogger`` requires (PR #4091) and is forwarded verbatim to
-    the local write, so quality survives consolidation with the historian
-    forwarding path (PR #4065).
+    ``quality`` is the scan's :class:`models.DataSource` provenance and
+    ``signal_frame`` its finer per-sample metadata; both are forwarded to the
+    local write so a bench run stays distinguishable from a real measurement
+    (issue #4004). Neither reaches the remote sink — that contract is a plain
+    ``{tag: value}`` + timestamp forward.
     """
     # Annotated local: the backend uses flat intra-package imports, which mypy
     # resolves to Any when it runs from the repo root rather than this
     # directory. Pinning the type here keeps the check honest either way.
-    rows: int = historian_writer.write(session, tags, signal_frame=signal_frame)
+    rows: int = _historian_forwarder.write(
+        session, tags, signal_frame=signal_frame, quality=quality
+    )
     return rows
 
 
-class ConnectionManager:
-    """Manages WebSocket client connections and broadcasts live updates."""
+# Historian writes happen on a worker thread, batched, off the event loop.
+historian_writer = HistorianWriter(get_session, log_scan=_forwarding_log_scan)
 
-    def __init__(self) -> None:
-        self.active_connections: list[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket) -> None:
-        await websocket.accept()
-        self.register_accepted(websocket)
-        logger.info("New WebSocket client connected.")
-
-    def register_accepted(self, websocket: WebSocket) -> None:
-        """Register an already-accepted socket without re-accepting it.
-
-        Used by the frame-authenticated path, which must ``accept()`` before it
-        can read the credential frame and therefore cannot call ``connect()``.
-        Routing the registration through the manager keeps connection
-        bookkeeping in one place instead of reaching into
-        ``active_connections`` directly.
-        """
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket) -> None:
-        if websocket in self.active_connections:
-            self.active_connections.remove(websocket)
-            logger.info("WebSocket client disconnected.")
-
-    async def broadcast(self, message: dict[str, Any]) -> None:
-        # Iterate a snapshot and prune any client whose send fails — otherwise a
-        # dead socket lingers forever and gets re-tried (and re-logged) at 10 Hz,
-        # a slow leak that degrades the loop over a long session.
-        dead: list[WebSocket] = []
-        for connection in list(self.active_connections):
-            try:
-                await connection.send_json(message)
-            except Exception as e:
-                logger.warning(f"Dropping unreachable WebSocket client: {e}")
-                dead.append(connection)
-        for connection in dead:
-            self.disconnect(connection)
+# Tracks tag provenance across scans so an outage is logged once, as an event.
+data_quality_tracker = DataQualityTracker()
 
 
 ws_manager = ConnectionManager()
@@ -284,37 +287,17 @@ shutdown_event = asyncio.Event()
 # that can't hold a WebSocket) can poll /api/snapshot as a streaming fallback.
 latest_frame: dict[str, Any] = {}
 
-POLL_FAILURE_ESCALATION_THRESHOLD = 3
-POLL_FAILURE_MAX_BACKOFF_S = 5.0
-
-# Instantiate global Alicat manager and default devices
-alicat_manager = AlicatManager()
-alicat_manager.add_device(
-    AlicatMFC(
-        device_id="A",
-        name="Oxygen MFC",
-        gas="O2",
-        max_flow=50.0,
-        connection_type="mock",
-    )
-)
-alicat_manager.add_device(
-    AlicatMFC(
-        device_id="B",
-        name="Nitrogen MFC",
-        gas="N2",
-        max_flow=100.0,
-        connection_type="mock",
-    )
-)
-alicat_manager.add_device(
-    AlicatMFC(
-        device_id="C",
-        name="Carbon Dioxide MFC",
-        gas="CO2",
-        max_flow=20.0,
-        connection_type="mock",
-    )
+# Instantiate the global Alicat manager and the rig's default devices.
+#
+# The transport is driven by settings (P1AM_ALICAT_CONNECTION_TYPE /
+# P1AM_ALICAT_PORT_OR_IP), NOT hardcoded to "mock". Registration refuses a
+# simulated gas path whenever plc_driver drives real hardware, so the backend
+# fails to start rather than letting an operator command an N2 purge that
+# "establishes" against a random-number generator (issue #4031).
+alicat_manager = create_default_manager(
+    connection_type=settings.alicat_connection_type,
+    port_or_ip=settings.alicat_port_or_ip,
+    plc_driver=settings.plc_driver,
 )
 
 
@@ -388,8 +371,19 @@ async def _deploy_approved_routing(config: RoutingConfig) -> None:
     if not await backup_simulator.save_to_flash():
         raise RuntimeError("simulator configuration was not saved")
     _apply_control_config(config)
+
+    # Persist the SCADA-authoritative routing (interlocks/alarm setpoints + PID)
+    # so it survives a restart independent of PLC flash, and refresh the overlay.
+    # Carried over from main's deploy endpoint, which this refactor replaced: the
+    # in-memory overlay alone is lost on restart, so without this the interlocks
+    # silently revert to whatever is in PLC flash.
     global _persisted_routing
     _persisted_routing = config
+    try:
+        with _config_session() as s:
+            save_model(s, "routing", config)
+    except Exception as exc:  # noqa: BLE001 - persistence must not fail a deploy
+        logger.warning("Persisting routing failed (non-fatal): %s", exc)
 
 
 configuration_workflow = ConfigurationWorkflow(
@@ -475,7 +469,13 @@ async def modbus_connect_background() -> None:
             )
         except Exception as e:
             logger.debug(f"Background PLC connect attempt failed: {e}")
-        await asyncio.sleep(settings.connect_retry_interval_s)
+        # Wait on the shutdown event, not a blind sleep: a bare sleep only
+        # notices shutdown after it wakes, stalling teardown a whole retry
+        # interval and getting us SIGKILLed unsafed (issue #4005).
+        with suppress(TimeoutError):  # interval elapsed, no shutdown -> loop
+            await asyncio.wait_for(
+                shutdown_event.wait(), timeout=settings.connect_retry_interval_s
+            )
 
 
 def _publish_active_config(config: RoutingConfig) -> None:
@@ -488,24 +488,6 @@ def _publish_active_config(config: RoutingConfig) -> None:
     if _persisted_routing is not None:
         config = config.model_copy(update={"interlocks": _persisted_routing.interlocks})
     _apply_control_config(config)
-
-
-def require_read_auth(
-    api_key: str | None = Security(_read_api_key_header),
-) -> None:
-    """Optional gate for the historian/plant read surface.
-
-    Enforces :func:`require_api_key` only when ``P1AM_REQUIRE_READ_AUTH`` is
-    enabled. When the setting is off (the default) this is a no-op so the read
-    endpoints stay public and the bench HMI keeps working unchanged. The
-    existing ``P1AM_DEV_NO_AUTH`` bypass still applies via ``require_api_key``.
-
-    The env var is read per-request (not the ``lru_cache``d settings singleton)
-    so the gate can be toggled without a process restart.
-    """
-    if os.environ.get("P1AM_REQUIRE_READ_AUTH", "").strip().lower() not in _TRUTHY:
-        return
-    require_api_key(api_key)
 
 
 def _reject_output_write_if_estopped() -> None:
@@ -526,74 +508,120 @@ def _require_latest_tag(tag_name: str, *, role: str) -> float:
         ) from exc
 
 
-async def poll_plc_loop() -> None:
-    """Background loop polling the PLC tags at 10Hz.
+# The scan's persistence seam: the capture throttle decides whether a sample
+# is due BEFORE the record reaches the queue, so a suppressed scan never opens
+# a session (issue #4023). Alarm/quality events are never throttled.
+_historian_sink = ThrottledHistorianSink(historian_writer, capture_throttle.due)
 
-    Saves data to DB and streams updates to WS.
+
+async def poll_plc_loop() -> None:
+    """Background loop scanning the PLC at the fixed control period.
+
+    The scan, the alarm evaluation, the heater-relay decision and the E-stop
+    re-assert all run at ``settings.poll_interval_s`` (10 Hz by default). The
+    performance mode may only decimate the WebSocket broadcast: a browser tab
+    going hidden must never change a control period (issue #4008).
+
+    Cycles are scheduled against a monotonic deadline rather than a fixed sleep
+    after the work, so the true period does not drift with load; a missed
+    deadline is counted, logged and resynchronised instead of accumulating lag
+    (issue #4009).
     """
     global latest_frame
     logger.info("Starting background PLC polling loop...")
+    historian_writer.rebind()
+    writer_task = asyncio.create_task(historian_writer.run(shutdown_event))
     consecutive_failures = 0
-    while not shutdown_event.is_set():
-        retry_delay = perf_controller.poll_interval_s
-        try:
-            frame = await _poll_once(
-                plc=plc_client,
-                backup=backup_simulator,
-                latest_tag_values=control_context.latest_tags,
-                ws=ws_manager,
-                alicats=alicat_manager,
-                power_supply=power_supply_service,
-                temperature=temperature_service,
-                alarm_engine=control_context.alarm_engine,
-                active_alarm_map=control_context.active_alarms,
-                session_factory=get_session,
-                estop_active=control_context.e_stop_active,
-                log_scan=_throttled_log_scan,
-            )
-            # Cache the frame for the /api/snapshot polling fallback. Reassigning
-            # the reference is atomic, so a concurrent reader sees a whole frame.
-            if frame:
-                latest_frame = frame
-                quality = frame.get("comms_health", {}).get("quality")
-                if quality in {"good", "uncertain", "simulated"}:
-                    professional_alarm_service.observe(frame.get("tags_dict", {}))
-            consecutive_failures = 0
-        except Exception as loop_err:
-            consecutive_failures += 1
-            retry_delay = min(
-                settings.poll_interval_s * (2 ** (consecutive_failures - 1)),
-                POLL_FAILURE_MAX_BACKOFF_S,
-            )
-            if consecutive_failures < POLL_FAILURE_ESCALATION_THRESHOLD:
-                logger.error(f"Unexpected error in PLC polling loop: {loop_err}")
-            elif consecutive_failures == POLL_FAILURE_ESCALATION_THRESHOLD:
-                logger.warning(
-                    "PLC polling loop degraded after %d consecutive failures; "
-                    "retrying in %.3fs: %s",
-                    consecutive_failures,
-                    retry_delay,
-                    loop_err,
+    scan_index = 0
+    try:
+        while not shutdown_event.is_set():
+            period = float(settings.poll_interval_s)
+            if period != scan_scheduler.period_s:
+                scan_scheduler.set_period_s(period)
+            scan_index += 1
+            failed = False
+            retry_delay = period
+            try:
+                frame = await _poll_once(
+                    plc=plc_client,
+                    backup=backup_simulator if PLC_DRIVER_IS_SIMULATED else None,
+                    simulated=PLC_DRIVER_IS_SIMULATED,
+                    latest_tag_values=control_context.latest_tags,
+                    ws=ws_manager,
+                    alicats=alicat_manager,
+                    power_supply=power_supply_service,
+                    temperature=temperature_service,
+                    alarm_engine=control_context.alarm_engine,
+                    active_alarm_map=control_context.active_alarms,
+                    estop_active=control_context.e_stop_active,
+                    historian=_historian_sink,
+                    quality_tracker=data_quality_tracker,
+                    broadcast=scan_index % perf_controller.broadcast_every_n == 0,
+                    diagnostics=loop_diagnostics(
+                        scheduler=scan_scheduler,
+                        perf=perf_controller,
+                        writer=historian_writer,
+                        ws=ws_manager,
+                    ),
                 )
-            else:
-                logger.debug(
-                    "PLC polling loop still degraded after %d consecutive failures; "
-                    "retrying in %.3fs: %s",
-                    consecutive_failures,
-                    retry_delay,
-                    loop_err,
-                )
-            if consecutive_failures >= POLL_FAILURE_ESCALATION_THRESHOLD:
-                latest_frame = {
-                    "polling_status": {
-                        "status": "degraded",
-                        "consecutive_failures": consecutive_failures,
-                        "retry_delay_s": retry_delay,
-                        "last_error": str(loop_err),
+                # Cache the frame for the /api/snapshot polling fallback.
+                # Reassigning the reference is atomic, so a concurrent reader
+                # sees a whole frame. Cached EVERY scan even when the broadcast
+                # is decimated, so HTTP pollers keep full resolution.
+                if frame:
+                    latest_frame = frame
+                    # The professional alarm service may only observe a sample
+                    # this scan actually measured. `data_source` is the authority
+                    # (issue #4004); the frame's quality catches the one case
+                    # `data_source` cannot express on its own — a simulator
+                    # driver whose read failed is still "simulated", but held.
+                    measured = frame.get("data_source") in {
+                        DataSource.LIVE.value,
+                        DataSource.SIMULATED.value,
                     }
-                }
-        # Sleep to maintain 10Hz frequency (100ms cycle)
-        await asyncio.sleep(retry_delay)
+                    quality = frame.get("comms_health", {}).get("quality")
+                    if measured and quality in {"good", "uncertain", "simulated"}:
+                        professional_alarm_service.observe(frame.get("tags_dict", {}))
+                consecutive_failures = 0
+            except Exception as loop_err:
+                failed = True
+                consecutive_failures += 1
+                # Back off from the ACTIVE control period. Previously the healthy
+                # delay came from the performance mode (2.0 s) while the backoff
+                # came from settings (0.1 s), so the FIRST failure made the loop
+                # poll 20x faster than healthy (issue #4009).
+                retry_delay = min(
+                    period * (2 ** (consecutive_failures - 1)),
+                    POLL_FAILURE_MAX_BACKOFF_S,
+                )
+                log_poll_failure(consecutive_failures, retry_delay, loop_err)
+                if consecutive_failures >= POLL_FAILURE_ESCALATION_THRESHOLD:
+                    latest_frame = {
+                        "polling_status": {
+                            "status": "degraded",
+                            "consecutive_failures": consecutive_failures,
+                            "retry_delay_s": retry_delay,
+                            "last_error": str(loop_err),
+                        }
+                    }
+            if failed:
+                scan_scheduler.resync(retry_delay)
+                await asyncio.sleep(retry_delay)
+                continue
+            overruns_before = scan_scheduler.overrun_count
+            sleep_s = scan_scheduler.next_sleep_s()
+            if scan_scheduler.overrun_count != overruns_before:
+                logger.warning(
+                    "PLC scan overran its %.3fs period by %.3fs "
+                    "(overrun #%d); resynchronising phase.",
+                    scan_scheduler.period_s,
+                    scan_scheduler.last_overrun_s,
+                    scan_scheduler.overrun_count,
+                )
+            await asyncio.sleep(sleep_s)
+    finally:
+        shutdown_event.set()
+        await writer_task
     logger.info("Background PLC polling loop stopped.")
 
 
@@ -662,20 +690,42 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             settings=settings,
         )
     )
-    yield
-    # Shutdown: signal task stop, close client connection & Alicat manager
-    shutdown_event.set()
-    await connect_task
-    await polling_task
-    await retention_task
-    await alicat_manager.stop()
-    await plc_client.disconnect()
-    # Flush the forward queue last, and with a bound. An unreachable historian
-    # must not be able to hold the controller in shutdown — the local SQLite
-    # copy is already durable, so anything still queued is expendable.
+    closers = [
+        ("Alicat manager stop", alicat_manager.stop),
+        ("PLC disconnect", plc_client.disconnect),
+    ]
     if historian_shipper is not None:
-        await asyncio.to_thread(
-            historian_shipper.close, timeout_s=settings.timescale_shutdown_flush_s
+        # Flush the forward queue LAST, and with a bound. An unreachable plant
+        # historian must not be able to hold the controller in shutdown — the
+        # local SQLite copy is already durable, so anything still queued is
+        # expendable. `run_shutdown_sequence` bounds this step as well.
+        closers.append(
+            (
+                "Plant historian flush",
+                lambda: asyncio.to_thread(
+                    historian_shipper.close,
+                    timeout_s=settings.timescale_shutdown_flush_s,
+                ),
+            )
+        )
+    try:
+        yield
+    finally:
+        # Stopping this process is a plant operation: the outputs are driven
+        # safe BEFORE any task is joined or any socket is closed, the whole
+        # sequence is bounded by a deadline shorter than the unit's
+        # TimeoutStopSec, and this runs on the exception path too (issue #4005).
+        await shutdown_safety.run_shutdown_sequence(
+            plc=plc_client,
+            controllers=(
+                control_context,
+                power_supply_service,
+                temperature_service,
+            ),
+            shutdown_event=shutdown_event,
+            tasks=(connect_task, polling_task, retention_task),
+            closers=tuple(closers),
+            log=logger,
         )
 
 
@@ -746,6 +796,20 @@ app.include_router(
 )
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
+# Direct tag writes, PID auto-tuning and the PID-vs-MPC comparison. Mounted
+# unconditionally: these are admin-gated control endpoints, not an optional
+# analysis feature. Collaborators are injected rather than imported by the
+# router, which would close an import cycle back onto this module.
+app.include_router(
+    create_tuning_router(
+        control_context=control_context,
+        plc_client=plc_client,
+        backup_simulator=backup_simulator,
+        reject_output_write_if_estopped=_reject_output_write_if_estopped,
+        require_admin_key=require_admin_key,
+        logger=logger,
+    )
+)
 
 # Data Explorer analysis suite (historian querying, filtering, correlation,
 # spectral, trendlines, PCA, export). It is numpy-backed; if numpy or the module
@@ -764,6 +828,16 @@ except Exception as exc:  # pragma: no cover - only when numpy/module absent
 # Restrict CORS to a configured allowlist (no wildcard with credentials).
 # See cors_config.resolve_cors_settings for env-driven configuration.
 _cors = resolve_cors_settings()
+
+# Middleware order note: the LAST one added is the OUTERMOST. So the effective
+# request path is CORS -> audit -> request guard -> routes. CORS stays outermost
+# so it answers OPTIONS preflights and decorates the guard's 403s; the audit
+# layer sits above the guard so a *refused* control attempt is recorded too.
+app.add_middleware(
+    RequestGuardMiddleware,
+    allowed_origins=list(_cors.allow_origins),
+)
+app.add_middleware(AuditMiddleware, session_factory=_config_session)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list(_cors.allow_origins),
@@ -876,7 +950,11 @@ async def root_info() -> str:
     """
 
 
-@app.get("/api/routing", response_model=RoutingConfig)
+@app.get(
+    "/api/routing",
+    response_model=RoutingConfig,
+    dependencies=[Depends(require_read_auth)],
+)
 async def get_routing() -> RoutingConfig:
     """Read the active routing and PID parameters from the PLC.
 
@@ -911,7 +989,13 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
 # Clearing the E-stop (below) requires the admin credential.
 @app.post("/api/estop")
 async def trigger_estop() -> dict[str, str]:
-    """Immediate safety shutdown command, zeroing all tag variables."""
+    """Immediate safety shutdown: open the heater relay and zero every command.
+
+    Success is reported ONLY once the PLC acknowledges the de-energizing writes
+    — the heater relay coil above all, the only thing commanding the 110 V
+    element. An unacknowledged kill returns 502 with the controllers left
+    latched so the next poll re-asserts (issue #4000).
+    """
     control_context.engage_estop()
     # Latch the controllers FIRST so the next poll cycle cannot re-command a
     # setpoint / re-close the heater relay and re-energize after we zero below.
@@ -930,9 +1014,16 @@ async def trigger_estop() -> dict[str, str]:
     if not ok:
         raise HTTPException(
             status_code=502,
-            detail="E-stop command was not acknowledged by the PLC; controller remains latched and will retry.",
+            detail=(
+                "E-stop de-energize NOT acknowledged — the heater relay may "
+                "still be closed. Controllers stay latched and will re-assert; "
+                "verify the plant and use the hardwired stop if in doubt."
+            ),
         )
-    return {"status": "success", "message": "Hardware E-stop triggered."}
+    return {
+        "status": "success",
+        "message": "Hardware E-stop triggered: heater relay open, setpoints zeroed.",
+    }
 
 
 @app.post("/api/estop/clear", dependencies=[Depends(require_admin_key)])
@@ -989,10 +1080,21 @@ async def get_snapshot() -> dict[str, Any]:
     return latest_frame
 
 
-@app.get("/api/alarms/active")
+@app.get("/api/alarms/active", dependencies=[Depends(require_read_auth)])
 async def get_active_alarms() -> list[dict[str, Any]]:
     """Get all currently active or unacknowledged alarms."""
     return list(control_context.active_alarms.values())
+
+
+class AlarmAckPayload(BaseModel):
+    """Optional body for an alarm acknowledgement.
+
+    ``user`` is recorded in the alarm engine's ``acknowledged_by`` audit field.
+    The body is optional so existing clients that POST nothing keep working;
+    those acknowledgements are attributed to the default operator.
+    """
+
+    user: str | None = PydanticField(default=None, min_length=1, max_length=64)
 
 
 @app.post(
@@ -1001,15 +1103,24 @@ async def get_active_alarms() -> list[dict[str, Any]]:
 )
 async def acknowledge_alarm(
     tag_id: str,
+    payload: AlarmAckPayload | None = None,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, str]:
-    """Acknowledge a specific active alarm."""
+    """Acknowledge a specific active alarm.
+
+    The acknowledgement is forwarded to the SCADA alarm engine (issue #4034),
+    which is what makes it survive a routing deploy or a PLC reconnect — both
+    rebuild the engine and the live alarm map.
+    """
     if tag_id in control_context.active_alarms:
+        user = payload.user if payload is not None else None
         # Log the acknowledgment
         try:
             event_log = EventLog(
                 event_type="ACKNOWLEDGE",
-                description=f"Alarm on Tag {tag_id} acknowledged by user.",
+                description=(
+                    f"Alarm on Tag {tag_id} acknowledged by {user or 'operator'}."
+                ),
                 severity=0,
             )
             db.add(event_log)
@@ -1022,7 +1133,7 @@ async def acknowledge_alarm(
                 detail=f"Failed to persist acknowledgment for alarm {tag_id}.",
             ) from e
 
-        if not control_context.acknowledge_alarm(tag_id):
+        if not control_context.acknowledge_alarm(tag_id, user=user):
             raise HTTPException(
                 status_code=409,
                 detail=f"Alarm {tag_id} could not be acknowledged.",
@@ -1206,7 +1317,11 @@ def export_data(
     )
 
 
-@app.get("/api/capture/status", response_model=CaptureStats)
+@app.get(
+    "/api/capture/status",
+    response_model=CaptureStats,
+    dependencies=[Depends(require_read_auth)],
+)
 def get_capture_status(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> CaptureStats:
@@ -1234,7 +1349,11 @@ async def get_historian_shipper_status() -> dict[str, object]:
     return stats
 
 
-@app.get("/api/capture/config", response_model=CaptureConfig)
+@app.get(
+    "/api/capture/config",
+    response_model=CaptureConfig,
+    dependencies=[Depends(require_read_auth)],
+)
 async def get_capture_config() -> CaptureConfig:
     """Return the current historian sampling interval (seconds between writes)."""
     return CaptureConfig(interval_s=capture_throttle.interval_s)
@@ -1266,10 +1385,22 @@ class PerformanceModeRequest(BaseModel):
     mode: PerformanceMode
 
 
-@app.get("/api/performance", response_model=PerformanceConfig)
+@app.get(
+    "/api/performance",
+    response_model=PerformanceConfig,
+    dependencies=[Depends(require_read_auth)],
+)
 async def get_performance() -> PerformanceConfig:
-    """Return the active performance mode + its resolved poll interval."""
-    return perf_controller.config()
+    """Return the active performance mode, both cadences and loop health.
+
+    The mode selects the broadcast period only; ``scan_interval_s`` is the
+    unchangeable control period, and the counters let an operator see whether
+    the loop is meeting its deadlines and the historian is keeping up.
+    """
+    return perf_controller.config(
+        scan_overruns=scan_scheduler.overrun_count,
+        historian_write_failures=historian_writer.write_failures,
+    )
 
 
 @app.put(
@@ -1284,12 +1415,15 @@ async def update_performance(req: PerformanceModeRequest) -> PerformanceConfig:
     except TypeError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     logger.info(
-        "Performance mode set to %s (poll %.3f s)",
+        "Performance mode set to %s (broadcast every %d scans, %.3f s); "
+        "control period unchanged at %.3f s",
         perf_controller.mode,
-        perf_controller.poll_interval_s,
+        perf_controller.broadcast_every_n,
+        perf_controller.broadcast_interval_s,
+        scan_scheduler.period_s,
     )
     _persist_setting("performance", {"mode": str(perf_controller.mode)})
-    return perf_controller.config()
+    return await get_performance()
 
 
 class CaptureClearRequest(BaseModel):
@@ -1323,187 +1457,11 @@ def clear_capture_data(
     return result
 
 
-class TagWritePayload(BaseModel):
-    value: float
-
-
-def _latest_tag_or_http_error(tag_name: str, role: str, pid_index: int) -> float:
-    """Return the latest tag value or raise a descriptive PID tuning error."""
-    try:
-        return float(control_context.latest_tags[tag_name])
-    except KeyError as exc:
-        raise HTTPException(
-            status_code=409,
-            detail=(
-                f"PID loop {pid_index} {role} tag '{tag_name}' is not mapped in "
-                "the latest tag values. Check PLC routing before tuning."
-            ),
-        ) from exc
-
-
-@app.post("/api/tags/{tag_id}", dependencies=[Depends(require_admin_key)])
-async def write_tag_value(tag_id: str, payload: TagWritePayload) -> dict[str, str]:
-    """Manually force/write a 32-bit float value directly to a tag register."""
-    _reject_output_write_if_estopped()
-    tag_name = tag_id
-    if tag_id.isdigit():
-        val_id = int(tag_id)
-        if not (0 <= val_id < 32):
-            raise HTTPException(
-                status_code=400,
-                detail="Tag ID must be between 0 and 31.",
-            )
-        tag_name = f"TAG_{tag_id}"
-
-    if not plc_client.connected:
-        success = await backup_simulator.write_tag(tag_name, payload.value)
-        if not success:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Tag '{tag_name}' not found in simulator registry.",
-            )
-        control_context.write_tag(tag_name, payload.value)
-        return {
-            "status": "success",
-            "message": f"Successfully forced simulated tag {tag_name} to {payload.value}.",
-        }
-
-    success = await plc_client.write_tag(tag_name, payload.value)
-    await backup_simulator.write_tag(tag_name, payload.value)
-    if not success:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Failed to write value {payload.value} to tag {tag_name}.",
-        )
-
-    control_context.write_tag(tag_name, payload.value)
-    return {
-        "status": "success",
-        "message": f"Successfully wrote {payload.value} to tag {tag_name}.",
-    }
-
-
-@app.post(
-    "/api/pid/{pid_index}/tuning/start",
-    dependencies=[Depends(require_admin_key)],
+@app.get(
+    "/api/alicats",
+    response_model=list[AlicatMFCState],
+    dependencies=[Depends(require_read_auth)],
 )
-async def start_pid_tuning(pid_index: int) -> dict[str, str]:
-    """Decouples the PID loop from automatic control and begins logging step change history."""
-    if not (0 <= pid_index < 4):
-        raise HTTPException(
-            status_code=400, detail="PID index must be between 0 and 3."
-        )
-
-    # Reject a double-start rather than silently overwriting an in-progress
-    # session (a double-click or race would otherwise wipe the captured initial
-    # PV/CV and step history). The operator must stop the loop first.
-    if pid_index in control_context.tuning_sessions:
-        raise HTTPException(
-            status_code=409,
-            detail=(
-                f"Tuning session already active for PID loop {pid_index}; "
-                "stop it before starting a new one."
-            ),
-        )
-
-    pv_tag = control_context.active_config.pids[pid_index].pv_tag
-    cv_tag = control_context.active_config.pids[pid_index].cv_tag
-    current_pv = _latest_tag_or_http_error(pv_tag, "PV", pid_index)
-    current_cv = _latest_tag_or_http_error(cv_tag, "CV", pid_index)
-
-    control_context.tuning_sessions[pid_index] = {
-        "start_time": time.time(),
-        "history": [],
-        "step_triggered": False,
-        "step_time": 0.0,
-        "initial_cv": current_cv,
-        "initial_pv": current_pv,
-        "final_cv": current_cv,
-        "final_pv": current_pv,
-    }
-    logger.info(f"Started tuning mode for PID loop {pid_index}")
-    return {
-        "status": "success",
-        "message": f"Tuning mode started for PID loop {pid_index}.",
-    }
-
-
-@app.post(
-    "/api/pid/{pid_index}/tuning/step",
-    dependencies=[Depends(require_admin_key)],
-)
-async def step_pid_tuning(
-    pid_index: int, payload: PIDTuningStepPayload
-) -> dict[str, str]:
-    """Executes a step change in the loop's control variable (CV)."""
-    if pid_index not in control_context.tuning_sessions:
-        raise HTTPException(
-            status_code=400, detail="Tuning session not active for this PID loop."
-        )
-
-    _reject_output_write_if_estopped()
-    session = control_context.tuning_sessions[pid_index]
-    cv_tag = control_context.active_config.pids[pid_index].cv_tag
-    initial_cv = _latest_tag_or_http_error(cv_tag, "CV", pid_index)
-
-    session["step_triggered"] = True
-    session["step_time"] = time.time() - session["start_time"]
-    session["initial_cv"] = initial_cv
-    session["final_cv"] = payload.step_value
-
-    await plc_client.write_tag(cv_tag, payload.step_value)
-    await backup_simulator.write_tag(cv_tag, payload.step_value)
-    control_context.write_tag(cv_tag, payload.step_value)
-
-    logger.info(
-        f"Tuning step triggered on loop {pid_index}: CV set to {payload.step_value}"
-    )
-    return {
-        "status": "success",
-        "message": f"Step change applied. CV set to {payload.step_value}.",
-    }
-
-
-@app.post(
-    "/api/pid/{pid_index}/tuning/stop",
-    dependencies=[Depends(require_admin_key)],
-)
-async def stop_pid_tuning(pid_index: int) -> dict[str, Any]:
-    """Stops the tuning session, calculates FOPDT process parameters, and recommends tuned gains."""
-    if pid_index not in control_context.tuning_sessions:
-        raise HTTPException(
-            status_code=400, detail="Tuning session not active for this PID loop."
-        )
-
-    session = control_context.tuning_sessions.pop(pid_index)
-    result = identify_fopdt_and_tune(
-        session["history"],
-        step_triggered=session["step_triggered"],
-        initial_pv=session["initial_pv"],
-        initial_cv=session["initial_cv"],
-        final_cv=session["final_cv"],
-        step_time=session["step_time"],
-    )
-    return cast(dict[str, Any], result.as_response())
-
-
-class MPCSimulatePayload(BaseModel):
-    prediction_horizon: int = PydanticField(10, ge=2, le=30)
-    control_horizon: int = PydanticField(3, ge=1, le=10)
-    setpoint: float = PydanticField(50.0, ge=0.0, le=100.0)
-    rho: float = PydanticField(0.1, ge=0.0, le=10.0)
-    process_gain: float = PydanticField(1.2, ge=0.1, le=5.0)
-    process_tau: float = PydanticField(5.0, ge=0.5, le=20.0)
-    process_delay: float = PydanticField(1.0, ge=0.0, le=5.0)
-
-
-@app.post("/api/mpc/simulate", dependencies=[Depends(require_admin_key)])
-async def simulate_mpc(payload: MPCSimulatePayload) -> dict[str, Any]:
-    """Simulates and compares standard PID versus Model Predictive Control (MPC)."""
-    return cast(dict[str, Any], simulate_pid_vs_mpc(payload))
-
-
-@app.get("/api/alicats", response_model=list[AlicatMFCState])
 async def get_alicats() -> list[AlicatMFCState]:
     """Retrieve live parameters for all configured Alicat Mass Flow Controllers."""
     return [AlicatMFCState(**d) for d in alicat_manager.get_devices_data()]
