@@ -46,6 +46,406 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-31 P1AM Control System E-Stop and Shutdown Safe State
+
+- A commanded E-stop now de-energizes the heater. `POST /api/estop` opens the
+  heater relay coil as its first action on the wire — that coil is the only
+  thing commanding the 110 V element — and zeroes every PID setpoint. Success is
+  reported only once the controller acknowledges those writes; an unacknowledged
+  kill returns 502, leaves the controller latches raised, and tells the operator
+  the relay may still be closed.
+- The E-stop no longer writes the 64-register tag block. The firmware
+  republishes those registers from its own broker every scan and never reads
+  them back, so those writes could not affect the plant and only consumed the
+  kill path's Modbus budget.
+- Backend shutdown drives the plant safe before it closes anything. The
+  controllers latch, the heater relay opens, the power-supply command is zeroed
+  and the controller E-stop is asserted — each write verified individually and
+  escalated at CRITICAL if unacknowledged — and this runs on the error path as
+  well as a clean stop. The whole teardown is bounded by a deadline shorter than
+  the service unit's stop timeout, and the PLC-connect retry now waits on the
+  shutdown signal instead of sleeping through it, so the Modbus and historian
+  handles are closed in an orderly way rather than killed mid-transaction.
+- Direct tag writes fail loudly instead of silently doing nothing. A `TAG_n`
+  write on the P1AM driver resolves into the firmware-owned block and cannot
+  reach the plant, so it is now refused (HTTP 501) rather than reported as
+  applied. The PID auto-tuner's step goes through the PID setpoint command path
+  that does reach the device, and identification is skipped entirely unless the
+  step was acknowledged — previously it fitted and returned gains for a step the
+  plant never saw.
+- Every public write seam on the Modbus client honours the defense-in-depth
+  E-stop latch: direct tag writes and routing deploys join the coil and setpoint
+  seams in being forced to the safe direction (or refused) while the latch is
+  set, and a contract test fails if a new write seam is added without either
+  honouring the latch or being explicitly exempted.
+- The client exposes a host-heartbeat seam for the firmware's liveness
+  watchdog, which drives all outputs safe if it sees no host activity within its
+  timeout window. The heartbeat is deliberately exempt from the E-stop latch: it
+  reports that the host is alive, not that an output should move.
+- The new endpoint tests configure their credential posture per test rather than
+  by mutating the process environment when the module is imported. Import-time
+  mutation made the posture depend on collection order and worker assignment, so
+  a suite could report green purely because it was ordered favourably — an
+  unacceptable failure mode for the tests standing over an E-stop write path.
+
+### 2026-07-31 P1AM Power Supply and Temperature: Units Contract and Sensor Faults
+
+- `hardware.THERMOCOUPLE_FULL_SCALE_C` plus `percent_to_celsius()` /
+  `celsius_to_percent()` are the single definition of the firmware's
+  percent-of-full-scale thermocouple encoding. `tests/test_units_contract.py`
+  parses the firmware source and fails if the two halves drift. Previously the
+  constant existed in three places (firmware, `temperature_models`,
+  `thermocouple_filter`) with only a comment holding them together.
+- The power-supply service now converts its thermocouple tag from percent to
+  degC. It had passed the raw tag through as if it were already degC while
+  scaling current and voltage correctly, which made the HH_TEMP trip — a degC
+  threshold — unreachable by any physically possible reading.
+- `PowerSupplyConfig.temp_full_scale_c` is new (defaults to the firmware
+  contract value).
+- A scan whose power-supply feedback is absent or non-finite now latches a new
+  `SENSOR_FAULT` trip and drives the output safe, instead of substituting 0.0
+  and reporting a confident, cold-looking supply with both HH trips disabled.
+  A genuine zero reading is still a reading.
+- `set_current_setpoint` / `set_power_setpoint` return the setpoint **in
+  effect**, not the request. A command rejected in IDLE or TRIPPED is no longer
+  reported to the operator as applied, nor persisted for HMI pre-fill.
+- Thermocouple deglitch filters are constructed per channel from that channel's
+  configured range, and rebuilt when the config changes. Both were previously
+  pinned to the default 1400 C full scale, so a shorter-range channel's
+  high-side burnout rail sat above any reachable reading and an open
+  thermocouple was accepted as a genuine measurement.
+
+### 2026-07-31 P1AM Control System PID Tuning and MPC Control Math
+
+- `src/p1am_control_system/backend/pid_tuning.py` no longer clamps recommended
+  PID gains to be non-negative. A reverse-acting process (identified `Kp < 0`)
+  tunes to negative Cohen-Coon gains; these are now reported with their sign
+  intact and `status="warning"`, with a message instructing the operator to
+  configure the loop reverse-acting before applying them. Previously the clamp
+  turned such a recommendation into `kp=ki=kd=0` and still reported success,
+  presenting an open-loop controller as a tuned one.
+- FOPDT identification now uses the published two-point 28.3%/63.2% pair with
+  `tau = 1.5*(t63 - t28)` and `theta = t63 - tau`. The former 10%/63.2% pair
+  biased dead time high and the time constant low by roughly `0.105*tau` each.
+- A tuning result is reported as `status="success"` only when it is
+  trustworthy. The identification is rejected outright, with zero gains, when
+  the first threshold crossing falls within two sample intervals of the step
+  (dead time unresolvable at the recorded sample rate), when both thresholds
+  are crossed on the same sample, when the process value never responds or
+  never crosses the thresholds, or when the process gain is too small to
+  invert. It is downgraded to `status="warning"` while still reporting gains
+  when the process is reverse-acting, when the dead time lands on the
+  minimum-time floor, when the step was too small to measure, when the
+  dead-time ratio falls outside the Cohen-Coon validity band, or when a gain
+  exceeds the sanity bound. Because `Kc` scales with `tau/theta`, an
+  under-resolved dead time previously inflated the recommendation by an order
+  of magnitude and offered it to the PLC as a success.
+- `src/p1am_control_system/backend/mpc.py` solves the Dynamic Matrix Control
+  problem for control _moves_ rather than absolute control values. The free
+  response already contains the full predicted effect of holding the current
+  CV, so optimising over the absolute CV counted the current input twice and
+  left the MPC trace of `/api/mpc/simulate` with a large permanent offset at
+  any nonzero operating point. The solver now starts from zero moves, bounds
+  the moves, and the caller integrates and clamps to the 0-100% output range.
+  At steady state on setpoint the optimal move is zero.
+- Every non-success tuning response now carries a diagnostic `message`
+  naming the specific guard that fired and, where applicable, the measured
+  quantity that failed it (crossing time, sample interval, dead-time ratio,
+  gain magnitude). Operators previously saw only a generic success string,
+  so a rejected or downgraded identification was indistinguishable from a
+  good one at the API surface.
+- The Cohen-Coon coefficient formulas themselves are unchanged and remain as
+  published in Cohen & Coon (1953).
+
+### 2026-07-31 P1AM Control System Poll-Loop Data Integrity and Cadence
+
+- `src/p1am_control_system/backend/poll_runtime.py` no longer feeds held or
+  simulated values to the control laws, the alarm engine or the historian. A
+  scan is classified by `models.DataSource` (`live` / `simulated` / `held` /
+  `fault`); only a real measurement drives control and alarms, so a link flap
+  can no longer clear an active HiHi to Normal. `TagLog` gains a `quality`
+  column (migrated in `database._migrate_taglog_quality_column`) so an outage
+  records a gap rather than fabricated continuity. The backup simulator is
+  wired into the scan path only when `settings.plc_driver` is a simulator
+  driver. Frames now carry `data_source`, `plc_connected` and `simulated`, and
+  a successful live scan strokes the firmware host-alive heartbeat.
+- `src/p1am_control_system/backend/performance.py` splits cadence in two: the
+  new `ScanScheduler` owns the fixed control period from
+  `settings.poll_interval_s` and schedules against a monotonic deadline with
+  overrun counting and phase resynchronisation, while `PerformanceController`
+  only decimates the WebSocket broadcast (`broadcast_every_n`). A hidden
+  browser tab can no longer change the PLC scan, alarm, heater-relay or E-stop
+  re-assert period. `/api/performance` reports both cadences plus the overrun
+  and historian-failure counters.
+- `src/p1am_control_system/backend/poll_runtime.py` adds `HistorianWriter`: a
+  bounded queue drained by a dedicated task via `asyncio.to_thread`, batching
+  several scans per transaction, retrying `OperationalError` so alarm
+  transitions survive a `VACUUM` lock, and dropping only resamplable tag
+  samples under backpressure.
+- `src/p1am_control_system/backend/main.py` `ConnectionManager` serialises each
+  frame once and hands it to a bounded per-client queue drained by its own
+  task, dropping the oldest frame when a client falls behind; the control loop
+  never awaits a socket.
+- `src/p1am_control_system/backend/modbus_client.py` passes an explicit
+  `timeout` sized to the scan period instead of inheriting pymodbus's 3 s
+  default, and the failure backoff is computed from the active control period.
+
+### 2026-07-31 P1AM Historian Retention, Timezone and Data-Explorer Correctness
+
+- The periodic historian retention sweep no longer freezes the controller. It runs on a
+  worker thread instead of the asyncio event loop, so the poll loop, the websocket
+  broadcast and every HTTP endpoint — E-stop included — stay responsive while it works.
+  Disk is reclaimed in bounded `incremental_vacuum` chunks rather than a whole-file
+  `VACUUM`, so no unattended maintenance step takes an open-ended lock; a legacy
+  database is converted to `auto_vacuum=INCREMENTAL` once at startup, before the
+  controller goes live. A failed sweep is logged and retried next interval.
+- Historian timestamps are stored and returned as timezone-aware UTC. Bounds supplied
+  with an explicit offset are honoured, an offset-less bound means UTC, and every
+  timestamp on the API boundary (capture status, CSV export, trends, Data Explorer
+  signal list) carries an explicit offset. Previously the offset was discarded on both
+  write and read, so a browser re-parsed the offset-less strings as local time and an
+  "export everything" window silently started hours late on a non-UTC host.
+- The size cap is enforced as two independently-tracked budgets — one for the tag
+  historian, one for the event log — each charged against its own on-disk footprint.
+  A large event log can no longer inflate the tag historian's cost-per-row and erase
+  trend history sweep after sweep. The event log also gains age-based retention, having
+  previously had none, and every purge logs what it deleted and why.
+- The Data Explorer decides whether a historian selection fits its memory budget from
+  row counts _before_ reading any rows, rather than after materialising them, and honours
+  the per-tag `max_points` the HMI already sends by decimating server-side as it streams.
+  Peak memory is now proportional to the returned dataset rather than to the time range.
+- A dataset export with unequal-length columns is rejected up front as a 400. Previously
+  the mismatch was only detected when no index was supplied — after the response had
+  begun — so the client received a truncated CSV body behind an HTTP 200.
+
+### 2026-07-31 P1AM Control System Deployment Security Hardening
+
+The in-source authorization was already correct — every hardware-mutating route
+carried `require_admin_key`, the WebSocket was authenticated, key comparisons
+used `hmac.compare_digest`, and `cors_config.py` failed closed. Every
+exploitable defect was in the deployment or in the client's inability to
+authenticate. This change closes all of them.
+
+- **Production installs no longer disable authentication (#4007).**
+  `deploy/install-services.sh` hardcoded `Environment=P1AM_DEV_NO_AUTH=1` into
+  the systemd unit, short-circuiting `require_api_key`, `require_admin_key` and
+  `verify_operator_key`. It now generates random operator/admin credentials into
+  a root-owned `EnvironmentFile` (`/etc/p1am/backend.env`, mode 0640, preserved
+  across re-runs), refuses to write a unit without one, and gates the bypass
+  behind an explicit `--bench` flag.
+- **The HMI can authenticate (#4007).** `frontend/src/api/credentials.ts` stores
+  the key per browser profile; `apiFetch` attaches `X-API-Key`, and
+  `useTelemetryStream` sends the key as the **first WebSocket frame** rather
+  than a query parameter (which would land in proxy logs). The kiosk launcher
+  seeds it via a URL fragment the HMI strips on load. Without this the bypass
+  flag was the only way to make the shipped product work.
+- **`vite preview` binds loopback (#4007).** `frontend/vite.config.ts` set
+  `preview: { host: true }` while also proxying `/api` and the WebSocket to the
+  loopback-bound backend, so `curl -X POST http://<pi-ip>:3002/api/estop/clear`
+  reached the control API from anywhere on the plant VLAN.
+- **Nested credential tiers (#4041).** `auth_config.verify_operator_key` keyed
+  off `P1AM_API_KEY` alone, so an admin-only deployment had full hardware
+  control behind a dead display (`/api/stream` closing 1008, alarm
+  acknowledgement 503). A configured admin key is now a valid operator
+  credential; the reverse is still refused. `log_auth_configuration` reports the
+  resolved posture at boot.
+- **Read surface gated by default (#4037).** `settings.require_read_auth`
+  defaults to `True`, and `require_read_auth` (moved to `auth_config.py` so the
+  service routers can attach it without importing the app) now covers
+  `/api/routing`, `/api/alarms/active`, `/api/capture/*`, `/api/performance`,
+  `/api/alicats` and the power-supply/temperature `/config` + `/status` pairs.
+- **CSRF / cross-origin guard (#4037).** `cors_config.RequestGuardMiddleware`
+  refuses a state-changing request whose `Origin` is outside the allowlist, and
+  requires a non-simple signal (`X-Requested-With`, `X-API-Key`, or
+  `Content-Type: application/json`) so the browser is forced into a preflight.
+  Bodyless control POSTs were otherwise CORS-"simple" and executable by any page
+  the kiosk Chromium opened. `POST /api/estop` is exempt from preflight forcing
+  only, so a panic stop stays reachable from a bare shell.
+- **Append-only audit trail (#4029).** `backend/audit.py` adds an `AuditEvent`
+  table and a pure-ASGI middleware recording route, redacted payload, resolved
+  credential tier, non-reversible key fingerprint, client IP and status for every
+  mutating request — middleware so a _new_ endpoint is audited by default. The
+  table is unreachable from the client-writable `POST /api/events` and untouched
+  by `POST /api/capture/clear`, so the trail can be neither forged nor erased.
+  Rows are mirrored to journald.
+- **Route-gating regression suite (#4028).**
+  `backend/tests/test_route_authz_matrix.py` boots the real app with credentials
+  set and `P1AM_DEV_NO_AUTH` cleared, driving an explicit
+  `(method, path, tier)` table. An unclassified route fails the suite, so a new
+  endpoint cannot ship ungated. Configuration is set explicitly per test so the
+  suite cannot pass vacuously through import-order coupling (#4061).
+- **Deployment can actually work (#4014/#4030/#4036).** A `p1am` extra in
+  `pyproject.toml` is the single source of truth for the backend runtime
+  dependencies (adding the previously missing `pydantic-settings` and
+  `python-multipart`); `backend/Dockerfile` mirrors it as exact pins, with drift
+  caught by `backend/tests/test_deployment_hardening.py`. The container binds
+  `0.0.0.0` internally and is isolated at the publish layer
+  (`127.0.0.1:8000:8000`); `docker-compose.yml` uses the env-var names
+  `settings.py` reads and mounts the historian at `/data` instead of over the
+  source tree; the HMI bundle is built at install time and both units carry
+  `Nice=`/`CPUWeight=`; `requirements-lock.txt` no longer contradicts
+  `requirements.txt`'s numpy bound; and `PLCFactory` logs an unmissable banner
+  when the simulator is driving the HMI's "live" values.
+
+### 2026-07-31 P1AM Temperature Controller Split Into Focused Modules
+
+- `src/p1am_control_system/frontend/src/components/TemperatureControl.tsx` was
+  1975 lines — 475 over the repo's 1500-line source budget — so the
+  `fleet-fast-guardrails` hook rejected any commit touching it. The heater
+  screen was therefore the one operator surface that could not be corrected
+  without first being restructured. It is now the container only: it owns the
+  controller state, the rolling trend buffer and every `/api/temperature/*`
+  call, and renders prop-driven sections (the shape PR #4053 used for
+  `TuningPanel`). No behaviour changes.
+- The extracted modules are `TemperatureTrend.tsx` (the SVG trend and its own
+  view state), `TemperatureStatusHeader.tsx`, `ThermocoupleSelector.tsx`,
+  `TemperatureConfigPanel.tsx`, `HeaterStartStopButton.tsx`, and the pure
+  sample/readout math in `lib/temperatureTrend.ts`. Every file is now well
+  under the budget, and the pure helpers are testable without a component
+  import.
+- The Start/Stop command button existed as two byte-identical copies on the
+  same screen (status header and setpoint card). On a control that energizes a
+  heater, that is two buttons that could come to disagree about whether a
+  command is safe to send; there is now one component, with the header/setpoint
+  variants differing only by an appended CSS class.
+- `TemperatureControl.recallSetpointText` now delegates to the shared
+  `seedDraftText` rule in `lib/operatorDraft.ts` instead of carrying its own
+  copy of the operator-ownership decision; the duplication had been left in
+  place only because the file could not be edited. The heater's domain types
+  moved to `src/types.ts`, which removes the import cycle that had
+  `useTelemetryStream` importing `TemperatureStatus` from a component.
+
+### 2026-07-31 P1AM Operator HMI Truthfulness and Setpoint Ownership
+
+- The HMI reports telemetry liveness as a **data age**, not as a boolean. Every
+  field of the stream payload is optional, so an empty object parses cleanly;
+  liveness now requires a frame carrying at least one recognised field. The
+  header states CONNECTED, STALE DATA or OFFLINE together with how old the data
+  is, and once the age passes the stale threshold every live process readout is
+  greyed and cross-hatched. A frozen value is therefore visually distinct from a
+  steady one, which the previous CONNECTED/OFFLINE flag could not express.
+- Alarm-map resilience is per entry. A single malformed alarm object now costs
+  that one alarm instead of erasing the entire active-alarm map, and whenever an
+  entry is dropped the operator is shown a degraded-data banner stating the list
+  is incomplete. The reassuring "All normal — no active alarms" summary is
+  suppressed while data is known to be missing.
+- The active-alarm list and the event log are reconciled from the REST endpoints
+  on mount and on a periodic refresh, independent of the live stream. The event
+  log previously only loaded as a side effect of acknowledging an alarm, and the
+  alarm list had no recovery path at all once the stream dropped entries.
+- Setpoint entries are owned by the operator from the first keystroke. The
+  Alicat mass-flow entry no longer re-seeds from live telemetry (which changes
+  every scan on real hardware and overwrote the field mid-entry), and the
+  device's own setpoint is shown as a separate read-only readout with a pending
+  indicator when the two disagree. The power-supply entry seeds from the
+  supply's real setpoint instead of a hard-coded zero, and its +/- buttons stage
+  a value rather than commanding it — Apply remains the only write path, as that
+  panel's contract always stated.
+- Power-supply approaching-alarm cues are computed from the server-enforced
+  configuration rather than the local uncommitted draft, and numeric config
+  entry rejects non-finite input, so an in-progress edit can no longer switch a
+  pre-alarm indication off while the supply is climbing.
+- `.github/workflows/p1am-frontend.yml` gates the operator HMI on every pull
+  request touching it: eslint, the TypeScript build, and the vitest suite. None
+  of these were previously executed by any workflow.
+
+### 2026-07-31 P1AM Desktop HMI Alarm, E-Stop and Event-Log Behaviour
+
+- The desktop operator HMI annunciator now follows standard alarm management:
+  the ACK button's **colour** reflects whether the process condition is
+  currently present, while **flashing versus steady** reflects whether an
+  operator has acknowledged it. Acknowledging a still-active alarm silences the
+  flash but keeps the alarm visible; a value returning to its normal band drops
+  the alarm from both the active and unacknowledged sets so a long-cleared alarm
+  no longer flashes forever. Acknowledging applies only to the alarms the header
+  was displaying, so an alarm arriving between the repaint and the click is not
+  silently acknowledged.
+- High-High and Low-Low severity is taken from the deployed `hihi_limit` and
+  `lolo_limit` interlock setpoints instead of being synthesised as
+  `high_limit ± 5`, so the HMI's severity matches the trip points the firmware
+  enforces. A routing configuration whose limits are not ordered
+  `lolo <= low <= high <= hihi` is rejected at load with a critical dialog and an
+  ALARM event rather than being used.
+- The PLC connection label is derived from each telemetry frame rather than
+  hardcoded. The HMI reports "Simulating" only when the frame positively says
+  the values are simulated, so a desktop driving a live plant is never
+  mislabelled as a bench simulation.
+- Clearing the E-Stop now requires the Admin role and a modal confirmation — the
+  same gate ordinary PLC tag writes already carry — and a declined or denied
+  clear latches the button back to its tripped state.
+- Alarm events are coalesced before being written: a tag chattering on its trip
+  point produces one event with a repeat count instead of one per scan. Event
+  rows are committed in batches on a background thread over a single persistent
+  connection, the History table is requeried only while that tab is on screen,
+  and rows older than the retention window (`EVENT_LOG_RETENTION_DAYS`, default
+  90 days) are purged at startup. The operator interface stays responsive while
+  an alarm is active.
+
+### 2026-07-31 P1AM Calibration Safe Shutdown, Alarm Acknowledgement, and MFC Transport
+
+Three P1 SCADA defects on the P1AM control system (#3997, #4034, #4031).
+
+**Calibration analog outputs are driven to 0 % on every exit path (#3997).**
+`src/p1am_control_system/calibration/calibrate.py` drives the P1AM analog
+outputs to up to 100 % (20 mA) through pass-through PIDs. The firmware's
+`SignalBroker::WriteHardwareOutputs` writes the routed _tag_ every scan and
+only forces `WriteAnalogOutput(i, 0.0f)` once the CHANNEL is unmapped, so
+unmapping the PID alone froze the AO at its last commanded value. `teardown`
+now commands each pass-through PID setpoint to `0.0`, reads the AO tag back to
+CONFIRM it reached 0 % (within `AO_ZERO_TOLERANCE_PERCENT`, retried
+`AO_ZERO_CONFIRM_ATTEMPTS` times), and only then unmaps the PIDs and releases
+the output routing so the firmware's own 0 % safe path takes over. `main()`
+wraps command dispatch in `except BaseException`, so an exception, `SystemExit`
+(every `PLC` method raises it on a Modbus error), or `KeyboardInterrupt` drives
+the AOs to 0 % before `plc.close()`; the emergency path swallows its own
+failures and logs at ERROR so the original cause is never masked. A successful
+`ao` command still leaves the output energized, as the operator needs it held to
+meter the terminals.
+
+**Alarm acknowledgement reaches the alarm engine (#4034).**
+`POST /api/alarms/{tag_id}/acknowledge` previously only flipped a flag in
+`SystemState.active_alarms`; `AlarmEngine.acknowledge_alarm(tag_id, user)` had
+no production caller, so the `acknowledged_by` audit field read `None` forever
+and `SystemState.apply_config` — which runs on every routing deploy and every
+reconnect-time `_publish_active_config` — silently discarded the ack.
+`SystemState.acknowledge_alarm(tag_id, user=None)` now forwards to the engine
+and records `acknowledged_by`; `apply_config` snapshots the outgoing engine's
+active alarms and replays them into the rebuilt engine through the public
+`update_tag` / `acknowledge_alarm` / `get_alarm_state` API, which is identical
+on the Rust `tools_core.scada` engine and the `scada_fallback` implementation.
+The rebuilt engine (not the snapshot) is authoritative on the resulting state,
+so alarms for tags dropped from the new config are correctly forgotten. The
+endpoint accepts an optional `{"user": ...}` body; requests without one are
+attributed to `state.DEFAULT_ACK_USER`. `alarm_processing.build_alarm_entry` and
+`state_name` are the single source of truth for the live alarm record shape.
+
+**Mass flow controller transport comes from settings, never hardcoded (#4031).**
+`main.py` registered every `AlicatMFC` with `connection_type="mock"`, so a
+deployed rig returned `random.uniform` flow, a constant 14.7 PSIA / 23.5 °C, and
+reported setpoint success with no device IO — an operator could watch an N2
+purge "establish" with no gas flowing. New settings
+`P1AM_ALICAT_CONNECTION_TYPE` (`mock`/`serial`/`tcp`, validated) and
+`P1AM_ALICAT_PORT_OR_IP` drive the transport. `alicat_manager.AlicatManager`
+takes the active `plc_driver` and refuses to register a mock device unless the
+driver is itself simulated; `create_default_manager` builds the rig's standard
+MFC complement and, when the combination is refused or unbuildable, returns an
+**empty** manager with `registration_error` set and logs CRITICAL — gas control
+is then plainly absent rather than silently simulated, while the rest of the
+backend (E-stop, heater, power supply) still starts. `AlicatMFC.__init__`
+validates `connection_type` and requires a `port_or_ip` for physical
+transports, and `parse_ascii_response` now applies a device-reported gas
+through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
+
+### 2026-07-31 P1AM Historian DB Path Anchoring
+
+- `src/p1am_control_system/backend/database.py` resolves the SQLite historian to
+  an absolute path anchored to the backend package directory rather than the
+  process CWD. A bare relative `sqlite:///dcs_scada.db` forked the historian into
+  a separate file per launch directory, so tag history appeared to vanish
+  depending on how the backend was started, and a test run from the repo root
+  left a stray untracked DB there. `P1AM_DB_PATH` overrides the location for
+  deployments keeping the historian on separate storage; the container default is
+  unchanged because the image's package directory is `/app`.
 ### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
 
 - `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
@@ -3654,6 +4054,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---- | ------- | ------- |
 | 2026-08-14 | 1.5.8 | fix(p1am-firmware, #3999, #4002): recover the Modbus comms watchdog, bumpless-setpoint/integral-reset handling and the measured-`dt` scan integration that were stranded on an unmerged branch, and repair plus CI-gate the host-side firmware test harness. Deliberately excludes the `SafetyInterlock` trip-tier change from the same commit; does not close #4001 or #4032. |
 | 2026-08-13 | 1.14.95 | merge(consolidated, #4446): fold `consolidated/ground-study-batch` (#4409) and `consolidated/rate-of-closure-batch` (#4410) into one carrier for the 32 already-closed PRs of the #4332-#4402 range, and repair the defects that kept both red: resolve raw conflict markers in 5 files as the union of all prepended sides after prior resolutions left `SPEC.md` unbalanced at 73 open against 104 close markers with 14 orphaned `=======` and 31 orphaned `>>>>>>>` lines; collapse the Identity version rows from 33/33/6 duplicates to one each; restore POSIX path keys to `.secrets.baseline` after it had been regenerated on Windows with backslash keys that no Linux scan can match; re-apply the CI-pinned `ruff==0.14.10` formatting to 100 files a different ruff had churned; revert a UP017 rewrite that contradicted its own Python 3.10 suppression; drop six undeclared `.codex-worktrees/` gitlinks referencing commits on no remote plus four agent scratch files from the repository root; and fix the 138 mypy errors across 42 new files that the marker failure had masked by short-circuiting `quality-gate` before its Type Check step. |
+| 2026-08-13 | 1.5.7 | fix(p1am, #3995-#4042): consolidated P1AM SCADA production-readiness remediation — E-stop and shutdown de-energize the heater relay, power-supply thermocouple scaling makes the HH trip reachable, missing/non-finite feedback latches SENSOR_FAULT, the poll loop separates trusted from display data, the historian retention sweep leaves the event loop, PID/MPC recommendations stop reporting untrustworthy tunings, HMI reports data age instead of a boolean, and the deployment is credential-gated. Supersedes PRs #4045, #4053, #4057, #4058, #4059, #4060, #4062, #4064, #4066, #4067, #4068. |
 | 2026-08-13 | 1.5.6 | fix(ci): drop the no-op `pick-runner` job from Convert Review Comments to Issues (it echoed only constants and fed nothing, while occupying a `d-sorg-fleet` slot per trigger) and narrow its `pull_request` trigger to `opened`, since `synchronize` and `closed` cannot surface new review comments; ignore `.codex-worktrees/` so agent scratch worktrees stop landing as gitlinks. |
 | 2026-08-13 | 1.5.6 | fix(pdf-renamer): close every `ResultCache` SQLite connection with `contextlib.closing` (the bare `sqlite3.connect` context manager commits the transaction but leaks the handle); make the sub-app's test package importable from its own conftest and repair two extractor tests whose patch targets invented unused attributes instead of intercepting the function-local `pypdf`/`fitz` imports. |
 | 2026-08-12 | 1.5.7 | feat(pendulum): add the shared proximal–distal experiment/glossary catalog, falsifiability and run-manifest contracts, searchable PyQt6 companion guide, responsive React/Tauri companion guide, package-data inclusion, and focused parity tests for UpstreamDrift epic #8511. |

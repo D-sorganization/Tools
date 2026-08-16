@@ -19,8 +19,11 @@ Boundary conventions
 * The kernels raise ``TypeError``/``ValueError``; the router maps those to 400.
 
 LOD: this is a shallow module. It imports only the sibling Data Explorer
-modules, ``numpy``, and the historian ``TagLog`` model — no cross-package edges
-to ``data_processing``/``sidekick``/etc.
+modules, ``numpy``, the historian models, and (lazily, inside the historian
+load) the historian read helpers in :mod:`data_capture` — no cross-package edges
+to ``data_processing``/``sidekick``/etc. Reusing ``data_capture`` rather than
+re-implementing bound parsing and streamed decimation keeps one definition of
+the historian read contract (DRY).
 """
 
 from __future__ import annotations
@@ -51,6 +54,7 @@ from data_explorer_models import (
     StatisticsResponse,
     TrendlineRequest,
     TrendlineResponse,
+    require_aligned_columns,
 )
 from data_explorer_signals import apply_filter, resample_series
 from data_explorer_stats import (
@@ -83,6 +87,18 @@ try:  # UTC alias (Python 3.10 lacks datetime.UTC)
     from datetime import UTC as _UTC
 except ImportError:  # pragma: no cover - depends on interpreter version
     _UTC = timezone.utc  # noqa: UP017
+
+
+def _ensure_utc(value: datetime) -> datetime:
+    """Normalize to aware UTC via the single fleet-wide rule in ``models``.
+
+    Imported lazily so this module keeps importing cleanly without SQLModel /
+    the hardware tag table present (the numeric kernels are unit-tested alone).
+    """
+    from models import ensure_utc
+
+    aware: datetime = ensure_utc(value)
+    return aware
 
 
 # --------------------------------------------------------------------------- #
@@ -123,6 +139,10 @@ _MAX_EPOCH_MS = 8.64e15
 # ~8 bytes/cell, 20M cells is ~160 MB of float64 — a safe ceiling for the Pi.
 _MAX_HISTORIAN_CELLS = 20_000_000
 
+# Per-tag sample budget when a caller omits ``HistorianSource.max_points``;
+# matches that field's own default so the two cannot drift apart.
+_DEFAULT_HISTORIAN_MAX_POINTS = 5_000
+
 
 def _epoch_ms_to_iso(ms: float) -> str:
     """Render epoch milliseconds as an ISO-8601 UTC string.
@@ -139,13 +159,22 @@ def validate_export(index: Sequence[float] | None, columns: Sequence[Column]) ->
     """DbC precheck for an export so bad input is a 400, not a corrupt 200.
 
     The CSV export streams lazily, so an exception raised *during* iteration
-    cannot be turned into an error status — the response has already begun. This
-    eager check lets the router reject a non-finite / out-of-range index up front.
+    cannot be turned into an error status — the response has already begun. Both
+    known ways to blow up mid-body are therefore checked eagerly:
+
+    * a non-finite / out-of-range epoch-ms index value, and
+    * ragged columns — :func:`dataset_to_csv_rows` takes its row count from the
+      first column and indexes every other column at ``i``, so a short column
+      raised ``IndexError`` after the 200 and the header had already been sent
+      (issue #4040). The old check skipped this entirely when ``index`` was
+      ``None``, which is exactly the case the router hits for an unindexed
+      export.
 
     Raises:
-        ValueError: if ``index`` contains a ``None``, non-finite, or
-            out-of-representable-range epoch-ms value.
+        ValueError: if the columns are ragged, or if ``index`` contains a
+            ``None``, non-finite, or out-of-representable-range epoch-ms value.
     """
+    require_aligned_columns(index, columns)
     if index is None:
         return
     for v in index:
@@ -156,10 +185,9 @@ def validate_export(index: Sequence[float] | None, columns: Sequence[Column]) ->
 
 
 def _to_epoch_ms(value: datetime) -> float:
-    """Convert a (possibly naive) datetime to epoch milliseconds."""
-    if value.tzinfo is None:
-        value = value.replace(tzinfo=_UTC)
-    return value.timestamp() * 1000.0
+    """Convert a (possibly naive) datetime to epoch milliseconds, treating a
+    naive value as UTC — the one interpretation the historian ever writes."""
+    return _ensure_utc(value).timestamp() * 1000.0
 
 
 # --------------------------------------------------------------------------- #
@@ -204,67 +232,147 @@ def list_signals(session: object) -> SignalListResponse:
 
 
 def _iso_of(value: object) -> str | None:
-    """Render a historian timestamp (datetime or str) as ISO, or ``None``."""
+    """Render a historian timestamp (datetime or str) as ISO-UTC, or ``None``.
+
+    Always emits an explicit offset: an offset-less string is re-parsed by the
+    browser as *local* time (issue #4025).
+    """
     if value is None:
         return None
     if isinstance(value, datetime):
-        if value.tzinfo is None:
-            value = value.replace(tzinfo=_UTC)
-        return value.isoformat()
+        return _ensure_utc(value).isoformat()
     return str(value)
 
 
-def _load_historian(
-    session: object, tags: Sequence[str], start: str, end: str
-) -> tuple[np.ndarray, dict[str, np.ndarray]]:
-    """Load and align tag series from the historian onto a common index.
+def _historian_row_counts(
+    session: object, tags: Sequence[str], start_dt: datetime, end_dt: datetime
+) -> dict[str, int]:
+    """Rows per tag inside the window, in one grouped indexed COUNT."""
+    from models import TagLog
+    from sqlmodel import col, func, select
 
-    Each tag's ``(timestamp, value)`` rows within ``[start, end]`` are pulled in
-    ascending time order. All series are linearly interpolated (``np.interp``,
-    edge-held out of range) onto the sorted union of every series' epoch-ms
-    timestamps, producing a rectangular dataset.
+    statement = (
+        select(TagLog.tag_name, func.count(col(TagLog.id)))
+        .where(col(TagLog.tag_name).in_(list(tags)))
+        .where(col(TagLog.timestamp) >= start_dt)
+        .where(col(TagLog.timestamp) <= end_dt)
+        .group_by(col(TagLog.tag_name))
+    )
+    counts = dict.fromkeys(tags, 0)
+    for name, count in session.exec(statement):  # type: ignore[attr-defined]
+        counts[str(name)] = int(count or 0)
+    return counts
+
+
+def _load_historian(
+    session: object,
+    tags: Sequence[str],
+    start: str,
+    end: str,
+    max_points: int = _DEFAULT_HISTORIAN_MAX_POINTS,
+) -> tuple[np.ndarray, dict[str, np.ndarray]]:
+    """Load, decimate and align tag series from the historian onto one index.
+
+    Each tag's ``(timestamp, value)`` rows within ``[start, end]`` are streamed
+    in ascending time order and decimated server-side to at most ``max_points``
+    samples spanning the *whole* window (see
+    :func:`data_capture.query_trend_series`). The decimated series are then
+    linearly interpolated (``np.interp``, edge-held out of range) onto the sorted
+    union of their epoch-ms timestamps, producing a rectangular dataset.
+
+    Two defects are addressed here (issue #4026):
+
+    * The memory guard used to append every row of every tag into Python lists
+      and only *then* compare the cell count against the ceiling — it could not
+      prevent the OOM it existed to prevent (64 tags x 30 days at 5 s is ~33 M
+      rows, >1.3 GB resident, before the 400 was raised). The budget is now
+      decided from row ``COUNT``s before a single row is read.
+    * ``HistorianSource.max_points`` was accepted by the model and sent by the
+      HMI but never read anywhere in the backend. It now bounds the load itself,
+      so peak memory is proportional to the *output* size, not the range.
+
+    ``start``/``end`` are parsed with :func:`data_capture.parse_query_bound`, so
+    an offset-less bound means UTC and an explicit offset is honoured rather
+    than silently compared against a different clock (issue #4025).
+
+    Args:
+        session: A SQLModel ``Session`` bound to the historian database.
+        tags: Tag names to load (duplicates collapse to one column).
+        start: ISO-8601 inclusive lower bound.
+        end: ISO-8601 inclusive upper bound.
+        max_points: Per-tag sample budget; clamped into the trend-read range.
 
     Returns:
         ``(index_ms, columns)`` where ``index_ms`` is the common epoch-ms index
         and ``columns`` maps each tag name to its aligned values.
-    """
-    from models import TagLog
-    from sqlmodel import col, select
 
-    start_dt = datetime.fromisoformat(start)
-    end_dt = datetime.fromisoformat(end)
+    Raises:
+        TypeError: If ``tags`` is not a sequence of str or ``max_points`` is not
+            an int.
+        ValueError: If the selection would exceed ``_MAX_HISTORIAN_CELLS``, or
+            if a bound is not a valid ISO datetime.
+    """
+    from data_capture import (
+        TRENDS_MAX_MAX_POINTS,
+        TRENDS_MIN_MAX_POINTS,
+        parse_query_bound,
+        query_trend_series,
+    )
+
+    if isinstance(tags, str) or not isinstance(tags, Sequence):
+        raise TypeError(f"tags must be a sequence of str, got {type(tags).__name__}")
+    if isinstance(max_points, bool) or not isinstance(max_points, int):
+        raise TypeError(f"max_points must be an int, got {type(max_points).__name__}")
+
+    # Preserve request order while collapsing duplicates: a repeated tag would
+    # otherwise be counted twice against the cell budget for one column.
+    unique_tags = list(dict.fromkeys(tags))
+    start_dt = parse_query_bound(start)
+    end_dt = parse_query_bound(end)
+    # The trend reader owns the decimation contract, including its bounds.
+    per_tag_cap = max(
+        TRENDS_MIN_MAX_POINTS, min(int(max_points), TRENDS_MAX_MAX_POINTS)
+    )
+
+    counts = _historian_row_counts(session, unique_tags, start_dt, end_dt)
+    total_rows = sum(counts.values())
+    n_tags = max(1, len(unique_tags))
+    # Upper bound on the union index: each tag contributes at most its own row
+    # count, and at most per_tag_cap + 1 after decimation (the +1 is the forced
+    # final sample). Reject BEFORE reading a single row.
+    est_index = min(total_rows, n_tags * (per_tag_cap + 1))
+    est_cells = est_index * n_tags
+    if est_cells > _MAX_HISTORIAN_CELLS:
+        raise ValueError(
+            f"historian selection too large: ~{est_index} samples x {n_tags} "
+            f"tags = ~{est_cells} cells (limit {_MAX_HISTORIAN_CELLS}); narrow "
+            f"the time range, select fewer tags, or lower max_points"
+        )
 
     raw: dict[str, tuple[_F64, _F64]] = {}
     union: list[float] = []
-    for tag in tags:
-        statement = (
-            select(TagLog.timestamp, TagLog.value)
-            .where(col(TagLog.tag_name) == tag)
-            .where(col(TagLog.timestamp) >= start_dt)
-            .where(col(TagLog.timestamp) <= end_dt)
-            .order_by(col(TagLog.timestamp).asc())
+    for tag in unique_tags:
+        timestamps, values, _ = query_trend_series(
+            session,
+            tag_name=tag,
+            start=start_dt,
+            end=end_dt,
+            max_points=per_tag_cap,
         )
-        times: list[float] = []
-        vals: list[float] = []
-        for ts, value in session.exec(statement):  # type: ignore[attr-defined]
-            times.append(_to_epoch_ms(ts))
-            vals.append(float(value))
-        raw[tag] = (np.asarray(times, dtype=float), np.asarray(vals, dtype=float))
+        times = [_to_epoch_ms(ts) for ts in timestamps]
+        raw[tag] = (np.asarray(times, dtype=float), np.asarray(values, dtype=float))
         union.extend(times)
 
     index: _F64 = np.unique(np.asarray(union, dtype=np.float64))
-    # Bound the materialized matrix so a wide range x many tags cannot exhaust
-    # the Pi's RAM. Reject up front (router -> 400) so the operator narrows the
-    # range or resamples, rather than OOM-killing the backend.
-    cells = int(index.size) * max(1, len(list(tags)))
+    # Belt and braces: the pre-check bounds the estimate, this bounds the fact.
+    cells = int(index.size) * n_tags
     if cells > _MAX_HISTORIAN_CELLS:
         raise ValueError(
-            f"historian selection too large: {index.size} samples x "
-            f"{len(list(tags))} tags = {cells} cells; narrow the time range "
-            f"or select fewer tags"
+            f"historian selection too large: {index.size} samples x {n_tags} "
+            f"tags = {cells} cells; narrow the time range or select fewer tags"
         )
     columns: dict[str, _F64] = {}
-    for tag in tags:
+    for tag in unique_tags:
         tag_times, tag_vals = raw[tag]
         if tag_times.size == 0:
             columns[tag] = np.full(index.size, np.nan, dtype=np.float64)
@@ -290,7 +398,9 @@ def _load_raw(
         return index, columns
     assert req.historian is not None  # guaranteed by the model validator
     src = req.historian
-    return _load_historian(session, src.tags, src.start_time, src.end_time)
+    return _load_historian(
+        session, src.tags, src.start_time, src.end_time, src.max_points
+    )
 
 
 def _resample(
