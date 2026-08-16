@@ -57,12 +57,14 @@ class TestThermalProfileErrorPath:
 
         req = self._valid_request()
         # Mock _solve_thermal_profile to raise ArithmeticError → caught by router
-        with patch(
-            "calc_backend.routers.thermal_profile._solve_thermal_profile",
-            side_effect=ArithmeticError("division by zero"),
+        with (
+            patch(
+                "calc_backend.routers.thermal_profile._solve_thermal_profile",
+                side_effect=ArithmeticError("division by zero"),
+            ),
+            pytest.raises(HTTPException) as exc_info,
         ):
-            with pytest.raises(HTTPException) as exc_info:
-                predict_thermal_profile(req)
+            predict_thermal_profile(req)
         assert exc_info.value.status_code == 422
         assert "division by zero" in exc_info.value.detail
 

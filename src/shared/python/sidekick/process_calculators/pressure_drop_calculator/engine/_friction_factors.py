@@ -260,14 +260,13 @@ def select_friction_factor_method(
 
     if method == "colebrook":
         return friction_factor_colebrook(reynolds_number, relative_roughness)
-    elif method in ("swamee-jain", "swamee_jain"):
+    if method in ("swamee-jain", "swamee_jain"):
         return friction_factor_swamee_jain(reynolds_number, relative_roughness)
-    elif method == "churchill":
+    if method == "churchill":
         return friction_factor_churchill(reynolds_number, relative_roughness)
-    elif method == "haaland":
+    if method == "haaland":
         return friction_factor_haaland(reynolds_number, relative_roughness)
-    else:
-        available = ["colebrook", "swamee-jain", "churchill", "haaland"]
-        raise ValueError(
-            f"Unknown friction factor method '{method}'. Available: {available}"
-        )
+    available = ["colebrook", "swamee-jain", "churchill", "haaland"]
+    raise ValueError(
+        f"Unknown friction factor method '{method}'. Available: {available}"
+    )

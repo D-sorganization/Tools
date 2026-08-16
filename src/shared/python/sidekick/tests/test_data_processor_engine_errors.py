@@ -71,12 +71,14 @@ class TestLoadFileErrorPath:
     def test_load_file_with_invalid_format_raises(self) -> None:
         """DataReader.read_file raising ValueError → re-raises as FileIOError."""
         engine = DataProcessorEngine()
-        with patch(
-            "upstream_drift_tools.data_processing.core.DataReader.read_file",
-            side_effect=ValueError("unsupported format"),
+        with (
+            patch(
+                "upstream_drift_tools.data_processing.core.DataReader.read_file",
+                side_effect=ValueError("unsupported format"),
+            ),
+            pytest.raises((FileIOError, ValueError)),
         ):
-            with pytest.raises((FileIOError, ValueError)):
-                engine.load_file("/tmp/bad.xyz")  # nosec B108
+            engine.load_file("/tmp/bad.xyz")  # nosec B108
 
     def test_load_file_empty_path_raises(self) -> None:
         engine = DataProcessorEngine()
@@ -146,12 +148,14 @@ class TestSmoothColumnErrorPath:
         """ValueError during moving_average → undo + TransformationError."""
         engine = _engine_with_data()
         # Patch rolling().mean() to raise ValueError
-        with patch(
-            "pandas.core.window.rolling.Rolling.mean",
-            side_effect=ValueError("bad window"),
+        with (
+            patch(
+                "pandas.core.window.rolling.Rolling.mean",
+                side_effect=ValueError("bad window"),
+            ),
+            pytest.raises(TransformationError),
         ):
-            with pytest.raises(TransformationError):
-                engine.smooth_column("x", "moving_average", window=5)
+            engine.smooth_column("x", "moving_average", window=5)
 
 
 # ---------------------------------------------------------------------------

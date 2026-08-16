@@ -600,7 +600,7 @@ def _render_o2_safety_tab(
     def highlight_danger(val: float) -> str:
         if isinstance(val, int | float) and val > 2.0:
             return "background-color: #ffcccc"
-        elif isinstance(val, int | float) and val > 1.5:
+        if isinstance(val, int | float) and val > 1.5:
             return "background-color: #ffffcc"
         return ""
 

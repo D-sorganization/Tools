@@ -65,14 +65,13 @@ def compute_trendline(
 
     if trend_type == "linear":
         return _linear(x_valid, y_valid, x_pred)
-    elif trend_type == "polynomial":
+    if trend_type == "polynomial":
         return _polynomial(x_valid, y_valid, x_pred, degree)
-    elif trend_type == "exponential":
+    if trend_type == "exponential":
         return _exponential(x_valid, y_valid, x_pred)
-    elif trend_type == "power":
+    if trend_type == "power":
         return _power(x_valid, y_valid, x_pred)
-    else:
-        raise ValueError(f"Unknown trend type: {trend_type}")
+    raise ValueError(f"Unknown trend type: {trend_type}")
 
 
 def _r_squared(y: np.ndarray, y_pred: np.ndarray) -> float:

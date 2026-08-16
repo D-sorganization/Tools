@@ -6115,3 +6115,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
 - **2026-10-27**: Replaced inline `Array.from` with `new Array` + `for` loops in `Histogram.tsx` and `DataExplorer.tsx` to eliminate iterator and closure execution overhead during UI drag/zoom events.
+
+## 2026-08-15: Normalise `src/shared/python` against consumers' lint baseline
+
+- **2026-08-15**: chore(shared) — Applied automated ruff pass across `src/shared/python` (`RET505`, `SIM108`, `SIM110`, `SIM117`, `C401`, `C416`, `C420`, `PERF102`) to bring Tools' shared code into parity with downstream consumers' lint baseline. 62 files updated with no behavioural changes.

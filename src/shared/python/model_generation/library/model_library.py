@@ -418,8 +418,7 @@ class ModelLibrary:
         try:
             if entry.model_format == ModelFormat.MJCF:
                 return self._load_mjcf(entry.urdf_path, entry.is_read_only)
-            else:
-                return self._parser.parse(entry.urdf_path, read_only=entry.is_read_only)
+            return self._parser.parse(entry.urdf_path, read_only=entry.is_read_only)
         except (OSError, ValueError, KeyError) as e:
             logger.error(f"Failed to load model {model_id}: {e}")
             return None

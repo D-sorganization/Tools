@@ -83,7 +83,7 @@ def cylinder_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    elif axis == "y":
+    if axis == "y":
         return {
             "ixx": i_perp,
             "iyy": i_axial,
@@ -92,15 +92,15 @@ def cylinder_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    else:  # z (default)
-        return {
-            "ixx": i_perp,
-            "iyy": i_perp,
-            "izz": i_axial,
-            "ixy": 0.0,
-            "ixz": 0.0,
-            "iyz": 0.0,
-        }
+    # z (default)
+    return {
+        "ixx": i_perp,
+        "iyy": i_perp,
+        "izz": i_axial,
+        "ixy": 0.0,
+        "ixz": 0.0,
+        "iyz": 0.0,
+    }
 
 
 def sphere_inertia(mass: float, radius: float) -> dict[str, float]:
@@ -194,7 +194,7 @@ def capsule_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    elif axis == "y":
+    if axis == "y":
         return {
             "ixx": i_perp,
             "iyy": i_axial,
@@ -203,15 +203,15 @@ def capsule_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    else:  # z (default)
-        return {
-            "ixx": i_perp,
-            "iyy": i_perp,
-            "izz": i_axial,
-            "ixy": 0.0,
-            "ixz": 0.0,
-            "iyz": 0.0,
-        }
+    # z (default)
+    return {
+        "ixx": i_perp,
+        "iyy": i_perp,
+        "izz": i_axial,
+        "ixy": 0.0,
+        "ixz": 0.0,
+        "iyz": 0.0,
+    }
 
 
 def ellipsoid_inertia(
@@ -288,7 +288,7 @@ def hollow_cylinder_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    elif axis == "y":
+    if axis == "y":
         return {
             "ixx": i_perp,
             "iyy": i_axial,
@@ -297,15 +297,15 @@ def hollow_cylinder_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    else:  # z (default)
-        return {
-            "ixx": i_perp,
-            "iyy": i_perp,
-            "izz": i_axial,
-            "ixy": 0.0,
-            "ixz": 0.0,
-            "iyz": 0.0,
-        }
+    # z (default)
+    return {
+        "ixx": i_perp,
+        "iyy": i_perp,
+        "izz": i_axial,
+        "ixy": 0.0,
+        "ixz": 0.0,
+        "iyz": 0.0,
+    }
 
 
 def cone_inertia(
@@ -343,7 +343,7 @@ def cone_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    elif axis == "y":
+    if axis == "y":
         return {
             "ixx": i_perp,
             "iyy": i_axial,
@@ -352,15 +352,15 @@ def cone_inertia(
             "ixz": 0.0,
             "iyz": 0.0,
         }
-    else:  # z (default)
-        return {
-            "ixx": i_perp,
-            "iyy": i_perp,
-            "izz": i_axial,
-            "ixy": 0.0,
-            "ixz": 0.0,
-            "iyz": 0.0,
-        }
+    # z (default)
+    return {
+        "ixx": i_perp,
+        "iyy": i_perp,
+        "izz": i_axial,
+        "ixy": 0.0,
+        "ixz": 0.0,
+        "iyz": 0.0,
+    }
 
 
 def parallel_axis(
