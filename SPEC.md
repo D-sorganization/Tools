@@ -6115,3 +6115,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
 - **2026-10-27**: Replaced inline `Array.from` with `new Array` + `for` loops in `Histogram.tsx` and `DataExplorer.tsx` to eliminate iterator and closure execution overhead during UI drag/zoom events.
+
+## 2026-08-15: `check_root_clutter` allowlists the Rust root entries (#4486)
+
+- **2026-08-15**: chore(hooks, #4486) — Added `Cargo.toml`, `Cargo.lock` and `target` to the `check_root_clutter` allowlist in `shared_scripts/fleet_hooks.py`, and hoisted the allowlist and scratch-suffix sets to the module-level constants `ROOT_ALLOWLIST` / `ROOT_SCRATCH_SUFFIXES` so they are assertable. The check keeps its deny-scratch default; the catch-all that would have made it deny-unless-allowlisted is deliberately **not** taken (it would newly reject 30-40 tracked root files per fleet repo). First test coverage for this fleet-wide hook: `tests/shared_scripts/test_fleet_hooks_root_clutter.py`.
