@@ -54,6 +54,41 @@ def test_runtime_fails_closed_when_interpreter_path_is_missing(
         MorrisAuthorityRuntime.start(startup_timeout_s=1.0)
 
 
+def test_child_runs_the_current_interpreter_without_resolving_symlinks(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A venv's `bin/python` symlinks to the base interpreter on POSIX.
+
+    Resolving it drops the venv's site-packages, and the child then dies on
+    its own imports. The spawned argv must be `sys.executable` verbatim.
+    """
+    base = tmp_path / "base-python"
+    base.write_text("", encoding="utf-8")
+    venv_bin = tmp_path / "venv" / "bin"
+    venv_bin.mkdir(parents=True)
+    venv_python = venv_bin / "python"
+    try:
+        venv_python.symlink_to(base)
+    except (OSError, NotImplementedError):  # pragma: no cover - needs privilege
+        pytest.skip("symlink creation is unavailable on this platform")
+    assert venv_python.resolve() == base.resolve(), "fixture must model a venv"
+
+    recorded: list[list[str]] = []
+
+    def _capture(command: list[str], **_kwargs: object) -> None:
+        recorded.append(command)
+        raise RuntimeError("stop before launching")
+
+    monkeypatch.setattr(authority_runtime.sys, "executable", str(venv_python))
+    monkeypatch.setattr(authority_runtime.subprocess, "Popen", _capture)
+    with pytest.raises(RuntimeError, match="stop before launching"):
+        MorrisAuthorityRuntime.start(startup_timeout_s=1.0)
+
+    assert recorded, "the child was never spawned"
+    assert recorded[0][0] == str(venv_python)
+    assert recorded[0][0] != str(base)
+
+
 class _CountingPipe(io.StringIO):
     def __init__(self, fail_close: bool = False) -> None:
         super().__init__()

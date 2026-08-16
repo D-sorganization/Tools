@@ -122,8 +122,14 @@ def _source_root(value: Path | None) -> Path:
 
 
 def _spawn_child(root: Path, token: str) -> tuple[subprocess.Popen[str], IO[str]]:
-    interpreter = Path(sys.executable).resolve()
-    if not interpreter.is_file():
+    # Deliberately NOT `.resolve()`. Inside a virtualenv on POSIX, `bin/python`
+    # is a symlink to the base interpreter, so resolving it hands the child the
+    # *base* interpreter and silently drops the venv's site-packages — the child
+    # then dies on `import uvicorn`. Windows venvs copy the executable instead,
+    # which is why this only ever failed on Linux CI. `sys.executable` is
+    # already absolute; keep the venv identity it encodes.
+    interpreter = Path(sys.executable)
+    if not interpreter.is_absolute() or not interpreter.is_file():
         raise RuntimeError("current Python interpreter path is unavailable")
     environment = os.environ.copy()
     environment[AUTHORITY_TOKEN_ENV] = token
