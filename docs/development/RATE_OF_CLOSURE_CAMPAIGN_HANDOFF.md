@@ -1,5 +1,22 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
+
+- Version 1.17.09 reconciles the clean consolidated release with `main`
+  `48af2a683c96eeec3b956a758f25398c057e94e4`, retaining the P1AM firmware,
+  Data Explorer allocation, and `tools_core` wheel-cache work already trusted
+  there. Both independent SPEC changelog histories are preserved.
+- The 612-line torque-profile panel is split into four focused modules, all
+  below 400 lines, while retaining public imports, signal wiring, execution
+  selection, canonical profile JSON, and rendered behavior.
+- The standard-library manifest gate now invokes system `python3` rather than
+  relying on a mutable setup-python cache. Its generator and layout checker
+  reproduce the committed manifests. The combined focused torque, manifest,
+  and workflow gate is 102 passed with three Linux-only fixtures skipped locally.
+- Exact MyPy 1.13, Ruff, generated-manifest identity, and the 500-line changed-
+  file budget are green. No scientific, archive, visual-baseline, or approval
+  authority changes in this release repair.
+
 ## 2026-08-14 #4142/#4433 clean main-based consolidation
 
 - Version 1.17.08 corrects the local typing evidence to the exact protected

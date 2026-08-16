@@ -1,7 +1,24 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-14
+> Last updated: 2026-08-15
+
+## 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
+
+- SPEC 1.17.09 carries the consolidated Rate tree onto `main` commit
+  `48af2a683c96eeec3b956a758f25398c057e94e4` while preserving its P1AM,
+  Data Explorer, and required-lane wheel-cache changes.
+- The torque-profile UI is responsibility-split into four modules of 223, 397,
+  46, and 42 lines. `TorqueProfilePanel` and `TorquePolynomialDialog` retain
+  their import/API contracts.
+- The tools-manifest gate uses system `python3` for its standard-library-only
+  generator and layout checker, removing the mutable setup-python dependency
+  that produced exit 127. The complete focused torque/manifest/workflow gate is
+  102 passed with three Linux-only fixtures skipped locally; regenerated
+  manifest identity is green.
+- Exact MyPy 1.13, Ruff, and the protected 500-line changed-file budget pass.
+  Torque science, execution selection, canonical JSON, manifest schemas, and
+  visual evidence do not change.
 
 ## 2026-08-14 Clean main-based campaign consolidation (#4142/#4433)
 

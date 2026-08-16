@@ -1,7 +1,25 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-14
+> Last updated: 2026-08-15
+
+## 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
+
+Version 1.17.09 reconciles the consolidated release with `main` at
+`48af2a683c96eeec3b956a758f25398c057e94e4`, retaining the P1AM firmware
+recovery, Data Explorer allocation repair, and required-lane `tools_core` wheel
+cache. The only changelog conflict preserves both independent authorities.
+
+The 612-line torque-profile panel is split by responsibility into panel,
+behavior, polynomial-dialog, and shared-widget modules of 223, 397, 46, and 42
+lines. Existing public panel imports and Qt behavior remain intact. The
+standard-library-only tools-manifest workflow now uses the fleet's stable
+`python3` instead of an unnecessary mutable `setup-python` cache whose missing
+`python` command produced exit 127. Focused evidence is 102 passing torque,
+manifest, and workflow tests with three Linux-only fixtures skipped locally,
+exact MyPy 1.13 and Ruff checks, generated-manifest identity, and the protected
+500-line changed-file budget. Scientific execution, profile JSON, manifest
+schemas, and approved visual evidence are unchanged.
 
 ## 2026-08-14 Clean main-based Rate campaign consolidation (#4142/#4433)
 

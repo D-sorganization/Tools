@@ -26,11 +26,32 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.17.08                                    |
-| **Spec Version**        | 1.17.08                                    |
-| **Last Spec Update**    | 2026-08-14                                 |
+| **Current Version**     | 1.17.09                                    |
+| **Spec Version**        | 1.17.09                                    |
+| **Last Spec Update**    | 2026-08-15                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
+
+Version 1.17.09 reconciles the consolidated release with `main` commit
+`48af2a683c96eeec3b956a758f25398c057e94e4`, retaining the independent P1AM
+firmware recovery, Data Explorer allocation correction, and required-lane
+`tools_core` wheel cache. Both sides of the SPEC changelog remain authoritative.
+
+The prior 612-line torque-profile panel is responsibility-split into a 223-line
+panel, 397-line behavior owner, 46-line polynomial dialog, and 42-line widget
+metadata module. Public panel/dialog imports, Qt signals, canonical profile JSON,
+execution selection, and scientific behavior remain unchanged. The
+standard-library-only tools-manifest gate now invokes system `python3`; it no
+longer depends on a mutable setup-python cache whose missing `python` executable
+caused both generator and summary steps to exit 127.
+
+Focused evidence is 102 passing torque, manifest, and workflow tests with three
+Linux-only fixtures skipped locally, exact MyPy 1.13 and Ruff checks,
+regenerated manifest identity, and the protected 500-line changed-file budget.
+Visual baselines, scientific authority, archive formats, and approval status
+are unchanged.
 
 ### 2026-08-14 Clean main-based Rate campaign consolidation (#4142/#4433)
 
@@ -2785,6 +2806,56 @@ high_mm)` exposes the face-curvature normal (gradient of the
   Serialization facade methods keep typed local return values so narrow mypy
   runs agree with full-repository type information.
 
+### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
+
+- `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
+  is the host-side unit suite for the P1AM firmware. It builds the real firmware
+  sources against a fake `HardwareInterface`, so the safety interlock, PID loops
+  and storage round-trip are testable without a board. It was never executed by
+  CI and had stopped compiling; it is now repaired and green.
+- `.github/workflows/p1am-firmware.yml` adds two gates on changes under
+  `src/p1am_control_system/firmware/**`: `firmware-unit-tests` (g++ `make test`)
+  and `firmware-compile` (arduino-cli against the `P1AM-100:samd` board package).
+  The arduino-cli installer is pinned to a release tag (it is piped into a shell
+  on a self-hosted runner, so `master` would mean the fleet runs whatever lands
+  there), and **both** jobs are gated against fork pull requests: the compile job
+  pipes that installer into a shell and the unit-test job compiles and executes
+  contributor-authored code, both on `d-sorg-fleet` with a write-scoped token,
+  while this repository is public with fork-PR approval set to
+  `first_time_contributors_new_to_github`. The board package and libraries are not yet
+  version-pinned; the resolved versions are recorded to the job summary so that
+  pin becomes a mechanical follow-up.
+- `SignalBroker::kThermocoupleFullScaleC` is now a public constant in
+  `SignalBroker.h` (was a function-local literal in `SignalBroker.cpp`). It is
+  the firmware half of the percent/degC contract the backend's
+  `temp_full_scale_c` must match, and the single definition tests derive
+  expectations from.
+
+### 2026-08-14 P1AM Firmware Comms Watchdog and Bumpless Setpoints
+
+- `CommsWatchdog` is a host-liveness dead-man timer with two independent re-arm
+  signals — a live Modbus TCP client and a change on holding register 560 — and a
+  2000 ms timeout (20 nominal scans). Either signal alone misses a case: the
+  socket covers host power loss, a killed backend and a pulled cable, while the
+  heartbeat register additionally catches a wedged backend holding an idle socket
+  open. On expiry the scan drives both analog outputs to zero, opens the heater
+  relay and asserts Inhibit. Register 560 is the firmware half of a contract with
+  the backend's `HOST_HEARTBEAT_REGISTER`; both must agree (issue #3999).
+- `PIDController::Hold`/`Release`/`IsHeld` freeze a loop and shed its accumulated
+  integral and derivative state, so a restored link cannot slam the output with a
+  wound-up integral. Zeroing a setpoint now also resets the integrator, so a
+  de-energized loop cannot keep commanding full output on its accumulated term
+  (issue #4002). The reset fires only on the non-zero -> 0 transition the issue
+  specifies, never on a change between two non-zero setpoints: `SyncModbusToDCS`
+  calls `SetSetpoint` on every scan whenever the host register differs, so
+  resetting on any change would clear the integrator once per scan for the whole
+  of a host-driven ramp and leave the loop running P+D only.
+- The scan integrates over the interval actually elapsed rather than the nominal
+  100 ms, bounded to [1 ms, 1 s]. The scan does ~300 register reads, SPI
+  thermocouple reads and sometimes a blocking flash write, so assuming 100 ms
+  understated Ki and overstated Kd whenever it overran (issue #4009).
+
+
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
 - Shared golf-club assembly validation returns explicitly typed NumPy arrays
@@ -4479,6 +4550,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-15 | 1.17.09 | fix(rate-of-closure, ci, #4142 #4433): reconcile the clean consolidation with current main, preserve both SPEC histories, responsibility-split the oversized torque-profile panel below 400 lines, and remove the standard-library manifest gate's broken setup-python dependency without changing scientific or schema authority. |
 | 2026-08-14 | 1.17.08 | fix(rate-of-closure, #4142 #4433): align the clean consolidation with the exact protected Python 3.12/MyPy 1.13 command over 368 changed production files through behavior-neutral explicit typing boundaries. |
 | 2026-08-14 | 1.17.07 | release(rate-of-closure, #4142 #4433): consolidate the approved Rate/swing/golf campaign directly onto current main without inherited non-Rate formatting or scratch-worktree gitlinks; reconcile visual package-data tests and hosted typing while retaining scientific behavior and explicit evidence gaps. |
 | 2026-08-14 | 1.17.06 | fix(rate-of-closure, #4433): add the explicit decoded-RGB NumPy return cast required by hosted MyPy 1.13 without changing runtime visual comparison behavior. |
@@ -4487,6 +4559,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-14 | 1.17.03 | fix(rate-of-closure, #4433): replace the platform-specific PyQt Variation registered-control count with the observed 160–161 envelope while preserving per-control accessible-name enforcement and evidence. |
 | 2026-08-14 | 1.17.02 | test(rate-of-closure, #4433): generate exact hosted React/PyQt initial-state visual-baseline candidates with deterministic environments and SHA-256 manifests while retaining explicit pre-approval status. |
 | 2026-08-14 | 1.17.01 | feat(rate-of-closure, #4433): add exact all-tab automated accessibility evidence, strict React axe and PyQt semantic-control gates, corrected action contrast and control names, plus a controlled but not-yet-executed human AT qualification protocol. |
+| 2026-08-14 | 1.5.8 | fix(p1am-firmware, #3999, #4002): recover the Modbus comms watchdog, bumpless-setpoint/integral-reset handling and the measured-`dt` scan integration that were stranded on an unmerged branch, and repair plus CI-gate the host-side firmware test harness. Deliberately excludes the `SafetyInterlock` trip-tier change from the same commit; does not close #4001 or #4032. |
 | 2026-08-13 | 1.5.6 | fix(ci): drop the no-op `pick-runner` job from Convert Review Comments to Issues (it echoed only constants and fed nothing, while occupying a `d-sorg-fleet` slot per trigger) and narrow its `pull_request` trigger to `opened`, since `synchronize` and `closed` cannot surface new review comments; ignore `.codex-worktrees/` so agent scratch worktrees stop landing as gitlinks. |
 | 2026-08-13 | 1.5.6 | fix(pdf-renamer): close every `ResultCache` SQLite connection with `contextlib.closing` (the bare `sqlite3.connect` context manager commits the transaction but leaks the handle); make the sub-app's test package importable from its own conftest and repair two extractor tests whose patch targets invented unused attributes instead of intercepting the function-local `pypdf`/`fitz` imports. |
 | 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |
@@ -5626,3 +5699,4 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+- **2026-10-27**: Replaced inline `Array.from` with `new Array` + `for` loops in `Histogram.tsx` and `DataExplorer.tsx` to eliminate iterator and closure execution overhead during UI drag/zoom events.

@@ -535,9 +535,91 @@ jobs:
             echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           fi
 
-      - name: Install Rust toolchain for tools_core wheel
+      # Cache the BUILT WHEEL, not merely the build inputs.
+      #
+      # This lane is the required check, and its most frequent failure is not a test
+      # but a download: the Rust toolchain, the crates.io registry, and maturin are
+      # re-fetched on every run. On a constrained-WAN runner that is the single
+      # largest source of red required checks, and it fails for reasons that have
+      # nothing to do with the change under test.
+      #
+      # Most pull requests do not touch `rust_core/`, so the wheel they need is
+      # byte-identical to the last one built. Keying a cache on everything that can
+      # change the wheel's contents or its ABI lets those runs skip the toolchain
+      # install, the crate downloads and the compile entirely.
+      #
+      # `tools_core` is a workspace member, so the root `Cargo.toml`/`Cargo.lock`
+      # participate; `rust-toolchain.toml` pins the compiler, so a channel change
+      # must invalidate too; and the wheel is ABI-specific, hence `runner.os` and the
+      # Python version in the key.
+      # `restore` + an explicit `save` immediately after the build, rather than
+      # `actions/cache`, which only saves in a post-job step.
+      #
+      # This is not a stylistic choice — it was measured. On the first run of this
+      # change the wheel built successfully and the job then failed downstream at
+      # `Collect Changed Coverage Inputs` (a `git fetch`). Because `actions/cache`
+      # saves at job end, the post step was skipped and the freshly built wheel was
+      # discarded, so the next run would rebuild it. In a fleet where downstream
+      # network steps fail routinely, a save-at-job-end cache would almost never
+      # populate, which defeats the entire purpose. Saving the moment the wheel
+      # exists means one successful build benefits every later run even if that run
+      # goes on to fail.
+      #
+      # KEEP THIS KEY BYTE-IDENTICAL TO THE ONE ON "Save tools_core wheel to cache".
+      # An earlier revision computed it once into a step output to stop the two from
+      # drifting, which is the better shape but is not expressible here: `hashFiles`
+      # is not valid inside a `run:` block, and using it there made the whole
+      # workflow fail to load with zero jobs created (run 31894981880). GitHub
+      # Actions has no YAML anchors, so duplication is the only option and this
+      # comment is the guard.
+      - name: Restore cached tools_core wheel
+        id: toolscore_wheel
         if: ${{ matrix.python-version == '3.11' }}
+        uses: actions/cache/restore@v6
+        with:
+          path: dist/tools-core-wheels
+          key: >-
+            toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
+            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+                      'rust_core/tools-core/Cargo.toml',
+                      'rust_core/tools-core/pyproject.toml',
+                      'rust_core/tools-core/src/**/*.rs') }}
+
+      # A cache hit is not proof of a usable wheel. If a previous run's build failed
+      # after creating the output directory, the entry can exist but be empty, and
+      # `actions/cache` will not overwrite a key that already matched. So decide from
+      # the filesystem rather than from `cache-hit`: a hit with no wheel simply falls
+      # back to building, which is today's behaviour and never worse than it.
+      - name: Decide whether the tools_core wheel must be built
+        id: toolscore_wheel_state
+        if: ${{ matrix.python-version == '3.11' }}
+        shell: bash
+        run: |
+          if compgen -G "dist/tools-core-wheels/*.whl" > /dev/null; then
+            echo "need_build=false" >> "$GITHUB_OUTPUT"
+            echo "Reusing cached wheel: $(ls dist/tools-core-wheels/*.whl)"
+          else
+            echo "need_build=true" >> "$GITHUB_OUTPUT"
+            echo "No cached wheel present; building from source."
+          fi
+
+      - name: Install Rust toolchain for tools_core wheel
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+
+      # Only reached on a wheel-cache miss. Mirrors the block in
+      # maturin-ai-backend.yml so the two Rust builds cache the same way.
+      - name: Cache Cargo registry and tools_core target
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
+        uses: actions/cache@v6
+        with:
+          path: |
+            .cargo-home/registry
+            .cargo-home/git
+            rust_core/tools-core/target
+          key: toolscore-cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'rust_core/tools-core/Cargo.toml') }}
+          restore-keys: |
+            toolscore-cargo-${{ runner.os }}-
 
       - name: Reject Raw Merge Conflict Markers
         run: |
@@ -595,8 +677,8 @@ jobs:
           python -m pip check
           python -c "import cv2, numpy, scipy; from scipy.signal import butter; assert cv2.__version__; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
 
-      - name: Build and install tools_core Rust wheel
-        if: ${{ matrix.python-version == '3.11' }}
+      - name: Build tools_core Rust wheel
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
         env:
           CARGO_HOME: ${{ github.workspace }}/.cargo-home
           CARGO_BUILD_JOBS: "1"
@@ -604,8 +686,46 @@ jobs:
           CARGO_TERM_COLOR: always
           RUST_MIN_STACK: "268435456"
         run: |
-          python -m pip install --force-reinstall --no-cache-dir maturin
+          # Installed from pip's cache, matching every other maturin call site in
+          # this repo (`maturin-ai-backend.yml`, `publish-artifacts.yml`, and the
+          # rust-quality-gate job below all use a plain `pip install maturin`).
+          # The previous `--force-reinstall --no-cache-dir` guaranteed a fresh PyPI
+          # download on every run of the *required* lane, which is one of the network
+          # steps that made this job fail for reasons unrelated to the change under
+          # test. Deliberately not pinned here: no call site in the repo pins maturin,
+          # and choosing a version is a separate reviewed decision rather than a
+          # drive-by change inside a caching fix.
+          python -m pip install maturin
           python -m maturin build --release --manifest-path rust_core/tools-core/Cargo.toml --features python,extension-module --out dist/tools-core-wheels
+
+      # Saved here, not at job end. See the note on the restore step: the wheel is
+      # the expensive artifact, so it is banked the instant it exists and survives
+      # any later failure in this job.
+      #
+      # `continue-on-error` because the save is an optimisation and must never be
+      # able to fail the one required lane in this repo. Two jobs that both miss the
+      # cache will both try to reserve the same key, and the loser errors; that is a
+      # cache miss next run, not a broken build.
+      # KEEP THIS KEY BYTE-IDENTICAL TO THE ONE ON "Restore cached tools_core wheel".
+      - name: Save tools_core wheel to cache
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: dist/tools-core-wheels
+          key: >-
+            toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
+            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+                      'rust_core/tools-core/Cargo.toml',
+                      'rust_core/tools-core/pyproject.toml',
+                      'rust_core/tools-core/src/**/*.rs') }}
+
+      # Runs on both paths — cached wheel or freshly built — so the import check
+      # still gates every run. A poisoned cache entry therefore fails loudly here
+      # rather than silently shipping an unusable extension module.
+      - name: Install and verify tools_core wheel
+        if: ${{ matrix.python-version == '3.11' }}
+        run: |
           python -m pip install dist/tools-core-wheels/*.whl --force-reinstall
           python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified in tests job')"
 
