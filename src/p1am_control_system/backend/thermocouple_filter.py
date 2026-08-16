@@ -30,12 +30,15 @@ import math
 import sys
 from dataclasses import dataclass
 
+import hardware
+
 if sys.version_info >= (3, 13):
     from typing import TypeIs
 else:
     from typing_extensions import TypeIs
 
 __all__ = [
+    "DEFAULT_MAX_STEP_C",
     "FilterSample",
     "ThermocoupleDeglitchFilter",
 ]
@@ -43,8 +46,13 @@ __all__ = [
 # Defaults tuned for a crucible heater (large thermal mass, 0-1400 C range).
 _ZERO_FLOOR_C = 5.0  # a reading at/below this is a candidate LOW-side burnout "0"
 _MIN_JUMP_C = 30.0  # ...only if it jumped at least this far from last-good
-_MAX_STEP_C = 250.0  # any single-scan change this large (either way) is non-physical
-_FULL_SCALE_C = 1400.0  # range top; a reading near here is a HIGH-side burnout rail
+# Public so callers can scale it to a channel whose range differs from the
+# firmware default (see TemperatureService._build_filter).
+DEFAULT_MAX_STEP_C = 250.0  # single-scan change this large (either way) is non-physical
+_MAX_STEP_C = DEFAULT_MAX_STEP_C
+# Range top; a reading near here is a HIGH-side burnout rail. Sourced from the
+# firmware contract rather than re-declared, so it cannot drift (issue #3998).
+_FULL_SCALE_C = hardware.THERMOCOUPLE_FULL_SCALE_C
 _RAIL_MARGIN_C = 20.0  # how close to full scale counts as the high rail
 _HOLD_TIMEOUT_S = 15.0  # hold through glitches this long, then trip (fail-safe)
 
