@@ -1,0 +1,34 @@
+[package]
+name = "swing-core"
+description = "Swing simulation kernel: double-pendulum swing dynamics on an oriented swing plane (Rust core for Python + WASM)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+name = "swing_core"
+# cdylib is required for PyO3 shared library output
+# rlib is required for Rust-to-Rust dependencies and tests
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+# Enable PyO3 bindings for cargo checks and local Rust tests.
+python = ["dep:pyo3", "dep:numpy", "math-primitives/python"]
+# Enable Python extension-module linkage only for maturin wheel builds.
+extension-module = ["pyo3/extension-module", "math-primitives/extension-module"]
+# Enable wasm-bindgen for WASM/NPM builds (wasm-pack)
+wasm = ["dep:wasm-bindgen", "math-primitives/wasm"]
+
+[dependencies]
+pyo3 = { workspace = true, optional = true }
+numpy = { workspace = true, optional = true }
+wasm-bindgen = { workspace = true, optional = true }
+serde = { workspace = true }
+nalgebra = "0.33"
+math-primitives = { path = "../math-primitives" }
+
+[dev-dependencies]
+proptest = { workspace = true }
+serde_json = { workspace = true }

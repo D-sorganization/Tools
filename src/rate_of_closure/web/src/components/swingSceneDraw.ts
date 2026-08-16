@@ -1,0 +1,308 @@
+/**
+ * Swing-scale scene renderer for the web Simulation panel (#4120 V2).
+ *
+ * Extracted from SimulationPanel so the panel stays under the repo's
+ * 500-LOC limit. Side-on orthographic projection (x right, y up); the
+ * scene holds SWING scale unless `showFlight` opts into the flight
+ * envelope past impact (scale separation — flight dwarfs the swing).
+ */
+
+import {
+  courseColors,
+  DEFAULT_COURSE_LAYOUT,
+  type CourseLayout,
+} from "../model/course";
+import { GOLF_BALL_RADIUS_M, type SimulationRunTs } from "../model/simulation";
+import { buildScrewGlyph, type Vec3 } from "../model/screwAnalysis";
+import { withAlpha } from "../model/theme";
+import { screwPresentation } from "./screwPresentation";
+import { drawWedgeGroundOverlay } from "./wedgeGroundOverlay";
+import type { WedgeGroundClearancePayloadTs } from "../model/wedgeGroundClearance";
+
+export interface SwingSceneOptions {
+  time: number;
+  showBall: boolean;
+  showGround: boolean;
+  /** Course furniture (#4125 H7a): green and flag. */
+  showCourse: boolean;
+  /** Opt-in flight display; off keeps the scene at swing scale. */
+  showFlight: boolean;
+  /** Opt-in clubhead trajectory; off prevents the path from obscuring the mechanism. */
+  showSwingTrail: boolean;
+  /** Engineering screw glyph for the selected club or joint. */
+  showScrew: boolean;
+  screwEntityId: string;
+  layout?: CourseLayout;
+  wedgeClearance?: WedgeGroundClearancePayloadTs | null;
+}
+
+type ScreenPoint = [number, number];
+
+function strokePolyline(
+  ctx: CanvasRenderingContext2D,
+  points: Vec3[],
+  project: (point: Vec3) => ScreenPoint,
+  color: string,
+  width: number,
+): void {
+  if (points.length < 2) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  points.forEach((point, index) => {
+    const [x, y] = project(point);
+    if (index === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.lineWidth = 1;
+}
+
+function drawScrewOverlay(
+  ctx: CanvasRenderingContext2D,
+  run: SimulationRunTs,
+  time: number,
+  entityId: string,
+  extent: number,
+  project: (point: Vec3) => ScreenPoint,
+): void {
+  const presentation = screwPresentation(run, time, entityId);
+  const glyph = buildScrewGlyph(presentation.motion, extent);
+  if (glyph === null) {
+    if (presentation.motion.kind !== "translation") return;
+    const end: Vec3 = presentation.motion.referencePointM.map((value, index) =>
+      value + presentation.motion.axisDirection[index] * extent * 0.7) as Vec3;
+    strokePolyline(ctx, [presentation.motion.referencePointM, end], project, "#e879f9", 2.5);
+    return;
+  }
+  strokePolyline(ctx, glyph.axisLineM, project, "#e879f9", 2.6);
+  strokePolyline(ctx, glyph.helixM, project, "#fb923c", 2.1);
+  strokePolyline(ctx, glyph.radiusLineM, project, "#22d3ee", 1.4);
+  const [tipX, tipY] = project(glyph.axisLineM[1]);
+  ctx.fillStyle = "#e879f9";
+  ctx.beginPath();
+  ctx.arc(tipX, tipY, 4, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.fillStyle = "#f0abfc";
+  ctx.font = "600 12px sans-serif";
+  ctx.fillText(`${presentation.label} Screw Axis`, 12, 52);
+}
+
+export function drawSwingScene(
+  canvas: HTMLCanvasElement,
+  run: SimulationRunTs | null,
+  {
+    time, showBall, showGround, showCourse, showFlight, showSwingTrail,
+    showScrew, screwEntityId, layout, wedgeClearance,
+  }: SwingSceneOptions,
+): void {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  const { width, height } = canvas;
+  ctx.clearRect(0, 0, width, height);
+  if (!run) {
+    ctx.fillStyle = "#64748b";
+    ctx.font = "14px sans-serif";
+    ctx.fillText("Run a simulation to populate the scene.", 16, 28);
+    return;
+  }
+  if (run.swing.length === 0) {
+    ctx.fillStyle = "#f59e0b";
+    ctx.font = "14px sans-serif";
+    ctx.fillText("This run contains no swing samples.", 16, 28);
+    return;
+  }
+
+  const swingEnd = run.swing[run.swing.length - 1].t;
+  const impactTime = run.impactTimeS;
+  // Scale separation (#4120): the scene stays at swing scale unless
+  // the opt-in 'Show Ball Flight' toggle expands it past impact.
+  const inFlight = impactTime !== null && time > impactTime && showFlight;
+  const extentX = inFlight
+    ? Math.max(10, ...run.flight.map((p) => Math.abs(p.position[0]))) * 1.05
+    : Math.max(
+        1.5,
+        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[0]))),
+      ) * 1.15;
+  const extentY = inFlight
+    ? Math.max(5, ...run.flight.map((p) => p.position[1])) * 1.3
+    : Math.max(
+        1.5,
+        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[1]))),
+      ) * 1.15;
+  const originX = inFlight ? 30 : width / 2;
+  const scaleX = (width - 60) / (inFlight ? extentX : 2 * extentX);
+  const scaleY = (height - 40) / (inFlight ? extentY : 2 * extentY);
+  const s = Math.min(scaleX, scaleY);
+  const groundY = inFlight ? height - 24 : height / 2 + extentY * s * 0.5;
+  const px = (x: number) => originX + x * s;
+  const py = (y: number) => groundY - y * s;
+
+  // Course-styled ground (#4125 H7a): grass fill below the ground line,
+  // with the green band + flag once 'Course Elements' is on. All
+  // tones derive from the shared chart palette (model/course.ts).
+  const course = courseColors();
+  const courseLayout = layout ?? DEFAULT_COURSE_LAYOUT;
+  if (showGround) {
+    ctx.fillStyle = withAlpha(course.rough, 0.35);
+    ctx.fillRect(0, py(0), width, height - py(0));
+    ctx.strokeStyle = course.fairway;
+    ctx.beginPath();
+    ctx.moveTo(0, py(0));
+    ctx.lineTo(width, py(0));
+    ctx.stroke();
+  }
+  if (showCourse) {
+    const { greenDistanceM: d, greenRadiusM: r } = courseLayout;
+    if (px(d - r) <= width) {
+      // Green band + flagstick at the hole (side-on projection).
+      ctx.fillStyle = withAlpha(course.green, 0.85);
+      ctx.fillRect(px(d - r), py(0) - 2, px(d + r) - px(d - r), 4);
+      ctx.strokeStyle = course.flag;
+      ctx.beginPath();
+      ctx.moveTo(px(d), py(0));
+      ctx.lineTo(px(d), py(0) - 14);
+      ctx.stroke();
+      ctx.fillStyle = course.flag;
+      ctx.beginPath();
+      ctx.moveTo(px(d), py(0) - 14);
+      ctx.lineTo(px(d) + 7, py(0) - 11);
+      ctx.lineTo(px(d), py(0) - 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+  const ballPosition = run.ballPositionM;
+  if (showBall && run.ballSetup.supportMode === "tee") {
+    const ballBottomY = ballPosition[1] - GOLF_BALL_RADIUS_M;
+    const centerX = px(ballPosition[0]);
+    const ground = py(0);
+    const cup = py(ballBottomY) + 2;
+    const gradient = ctx.createLinearGradient(centerX - 3, 0, centerX + 3, 0);
+    gradient.addColorStop(0, "#7f1d1d");
+    gradient.addColorStop(0.5, course.tee);
+    gradient.addColorStop(1, "#7f1d1d");
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 2, ground);
+    ctx.lineTo(centerX - 1, cup);
+    ctx.lineTo(centerX + 1, cup);
+    ctx.lineTo(centerX + 2, ground);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = course.tee;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(centerX, cup - 2, 7, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+    ctx.lineWidth = 1;
+  }
+  if (showBall) {
+    ctx.fillStyle = "#facc15";
+    ctx.beginPath();
+    ctx.arc(px(ballPosition[0]), py(ballPosition[1]), 4, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  // Swing path (faint full arc + traversed portion + head marker).
+  const drawPath = (
+    points: Array<{ position: [number, number, number] }>,
+    color: string,
+    widthPx: number,
+  ) => {
+    if (points.length < 2) return;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = widthPx;
+    ctx.beginPath();
+    points.forEach((point, index) => {
+      const cx = px(point.position[0]);
+      const cy = py(point.position[1]);
+      if (index === 0) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    });
+    ctx.stroke();
+    ctx.lineWidth = 1;
+  };
+  const boundedTime = Number.isFinite(time) ? Math.max(0, Math.min(time, swingEnd)) : 0;
+  const progress = swingEnd > 0 ? boundedTime / swingEnd : 0;
+  const swingIndex = Math.max(0, Math.min(
+    run.swing.length - 1,
+    Math.round(progress * (run.swing.length - 1)),
+  ));
+  if (showSwingTrail) drawPath(run.swing.slice(0, swingIndex + 1), "#38bdf8", 2);
+  const head = run.swing[swingIndex].position;
+  ctx.fillStyle = "#f472b6";
+  ctx.beginPath();
+  ctx.arc(px(head[0]), py(head[1]), 4, 0, 2 * Math.PI);
+  ctx.fill();
+
+  const joints = run.swing[swingIndex].joints;
+  if (joints.length >= 2) {
+    joints.slice(0, -1).forEach((joint, linkIndex) => {
+      const next = joints[linkIndex + 1];
+      ctx.strokeStyle = linkIndex === joints.length - 2 ? "#cbd5e1" : "#a78bfa";
+      ctx.lineWidth = linkIndex === joints.length - 2 ? 5 : 8;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(px(joint[0]), py(joint[1]));
+      ctx.lineTo(px(next[0]), py(next[1]));
+      ctx.stroke();
+    });
+    for (const joint of joints) {
+      ctx.fillStyle = "#f8fafc";
+      ctx.strokeStyle = "#7c3aed";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(px(joint[0]), py(joint[1]), 5, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.fillStyle = "#c4b5fd";
+    ctx.font = "600 12px sans-serif";
+    ctx.fillText(
+      `${run.sourceKind === "double_pendulum" ? "Double" : "Triple"} Pendulum — articulated links`,
+      12,
+      34,
+    );
+  }
+
+  if (showScrew && !inFlight) {
+    const project = (point: Vec3): ScreenPoint => [
+      px(point[0] + 0.25 * point[2]),
+      py(point[1] + 0.15 * point[2]),
+    ];
+    drawScrewOverlay(ctx, run, boundedTime, screwEntityId, Math.max(extentX, extentY), project);
+  }
+  if (wedgeClearance && !inFlight) {
+    const project = (point: Vec3): ScreenPoint => [
+      px(point[0] + 0.25 * point[2]),
+      py(point[1] + 0.15 * point[2]),
+    ];
+    drawWedgeGroundOverlay(ctx, wedgeClearance, boundedTime, project);
+  }
+
+  // Flight trajectory polyline: opt-in only (scale separation).
+  if (showFlight) drawPath(run.flight, "rgba(52,211,153,0.25)", 1);
+  if (inFlight) {
+    const flightT = time - (impactTime ?? 0);
+    const upto = run.flight.filter((p) => p.time <= flightT);
+    drawPath(upto, "#34d399", 2);
+    if (upto.length) {
+      const ball = upto[upto.length - 1].position;
+      ctx.fillStyle = "#facc15";
+      ctx.beginPath();
+      ctx.arc(px(ball[0]), py(ball[1]), 3, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
+
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "12px sans-serif";
+  ctx.fillText(
+    impactTime === null
+      ? `t = ${time.toFixed(3)} s (swing) — no impact; closest approach at ${run.impactOutcome.candidateTimeS.toFixed(3)} s`
+      : `t = ${time.toFixed(3)} s (${inFlight ? "flight" : "swing"}) — impact at ${impactTime.toFixed(3)} s`,
+    12,
+    16,
+  );
+}

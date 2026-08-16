@@ -18,3 +18,24 @@ src/movement_optimizer/tests/**/conftest.py
 src/p1am_control_system/backend/tests/_power_supply_helpers.py
 # pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
 src/document_processing/pdf_renamer/tests/conftest.py
+# Empty package markers for the self-contained swing_sim source tests.
+src/shared/python/swing_sim/tests/__init__.py
+src/shared/python/swing_sim/**/tests/__init__.py
+# Shared constructors consumed by the strict variation plot-definition tests.
+tests/rate_of_closure/_variation_plot_definition_support.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_variation_render_probe.py
+# Subprocess entrypoint; lifecycle and geometry assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_variation_visual_state_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_simulation_scrub_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_plot_point_inspector_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning tab-visibility test.
+tests/rate_of_closure/pyqt_visualization_tab_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_visual_layout_persistence_probe.py

@@ -1,0 +1,15 @@
+{
+  "schema": "rate-of-closure/club-camera/v1",
+  "initial": { "azimuth_deg": 150, "elevation_deg": 30, "zoom": 1.0 },
+  "limits": { "elevation_deg": [-80, 80], "zoom": [0.3, 4.0] },
+  "orbit_step_deg": 5,
+  "zoom_step": 1.1,
+  "cases": [
+    { "action": "left", "expected": { "azimuth_deg": 145, "elevation_deg": 30, "zoom": 1.0 } },
+    { "action": "right", "expected": { "azimuth_deg": 155, "elevation_deg": 30, "zoom": 1.0 } },
+    { "action": "up", "expected": { "azimuth_deg": 150, "elevation_deg": 35, "zoom": 1.0 } },
+    { "action": "down", "expected": { "azimuth_deg": 150, "elevation_deg": 25, "zoom": 1.0 } },
+    { "action": "zoom_in", "expected": { "azimuth_deg": 150, "elevation_deg": 30, "zoom": 1.1 } },
+    { "action": "zoom_out", "expected": { "azimuth_deg": 150, "elevation_deg": 30, "zoom": 0.9090909090909091 } }
+  ]
+}

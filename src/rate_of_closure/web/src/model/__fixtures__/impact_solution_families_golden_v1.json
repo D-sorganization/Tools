@@ -1,0 +1,139 @@
+{
+  "request": {
+    "club_profile_id": "centered_driver",
+    "convention_id": "app_native",
+    "delivery_frame_id": "app_frame:x_target,y_up,z_right",
+    "family_count": 1,
+    "family_radius": 0.2,
+    "flight_model_id": "waterloo_penner",
+    "impact_event_time_s": 0,
+    "impact_model_id": "rigid_body_centered",
+    "impact_reference_point": "ball_center_at_first_contact",
+    "inverse_request": {
+      "candidate_count": 1,
+      "max_evaluations": 1,
+      "objectives": [
+        {
+          "lower_bound": null,
+          "metric_id": "carry_distance",
+          "mode": "target",
+          "target_value": 100,
+          "tolerance": 10,
+          "unit": "m",
+          "upper_bound": null,
+          "weight": 1
+        }
+      ],
+      "problem_id": "golden-centered-driver",
+      "schema_version": "inverse-flight-request/v1",
+      "variables": [
+        {
+          "initial_value": 40,
+          "lower_bound": 30,
+          "parameter_id": "clubhead_speed_mps",
+          "unit": "m/s",
+          "upper_bound": 50
+        }
+      ]
+    },
+    "schema_version": "impact-solution-request/v1",
+    "sensitivity_fraction": 0.01,
+    "target_frame_id": "target_frame:x_downrange,y_up,z_right"
+  },
+  "result": {
+    "evaluations_attempted": 1,
+    "families": [
+      {
+        "correlations": [],
+        "family_id": "family-01",
+        "flight_residuals": [
+          {
+            "actual_value": 100,
+            "constraint_violation": 0,
+            "metric_id": "carry_distance",
+            "mode": "target",
+            "normalized_residual": 0,
+            "provenance": "golden.forward.flight",
+            "target_value": 100,
+            "unit": "m"
+          }
+        ],
+        "intervals": [
+          {
+            "lower_bound": 40,
+            "parameter_id": "clubhead_speed_mps",
+            "unit": "m/s",
+            "upper_bound": 40
+          }
+        ],
+        "launch_residuals": [],
+        "members": [
+          {
+            "evaluation_index": 0,
+            "feasible": true,
+            "flight_residuals": [
+              {
+                "actual_value": 100,
+                "constraint_violation": 0,
+                "metric_id": "carry_distance",
+                "mode": "target",
+                "normalized_residual": 0,
+                "provenance": "golden.forward.flight",
+                "target_value": 100,
+                "unit": "m"
+              }
+            ],
+            "launch_residuals": [],
+            "launch_values": [
+              {
+                "metric_id": "ball_speed",
+                "provenance": "golden.forward.launch",
+                "reference_event": "first_post_impact_ball_state",
+                "unit": "m/s",
+                "value": 60
+              }
+            ],
+            "parameters": [
+              {
+                "parameter_id": "clubhead_speed_mps",
+                "unit": "m/s",
+                "value": 40
+              }
+            ],
+            "score": 0
+          }
+        ],
+        "rank": 1,
+        "representative_evaluation_index": 0,
+        "sensitivities": [
+          {
+            "derivative": 5,
+            "method": "central_bounded_difference",
+            "metric_id": "carry_distance",
+            "metric_unit": "m",
+            "parameter_id": "clubhead_speed_mps",
+            "parameter_unit": "m/s"
+          }
+        ]
+      }
+    ],
+    "model_manifest": {
+      "flight_model_id": "waterloo_penner",
+      "flight_status": "available",
+      "impact_model_id": "rigid_body_centered",
+      "impact_status": "available",
+      "provenance": {
+        "pipeline": "golden parity evaluator"
+      }
+    },
+    "problem_id": "golden-centered-driver",
+    "provenance": {
+      "family_solver_id": "deterministic-normalized-radius-clustering",
+      "family_solver_version": "1.0.0"
+    },
+    "rejected_candidates": [],
+    "schema_version": "impact-solution-result/v1",
+    "status": "solved",
+    "termination_reason": "ranked_solution_families_found"
+  }
+}

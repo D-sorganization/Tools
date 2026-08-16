@@ -80,6 +80,24 @@ def test_upstream_scope_includes_every_release_build_package_root() -> None:
     assert {"src/shared"} <= scope
 
 
+def test_upstream_install_uses_current_tools_without_repackaging_pinned_snapshot() -> (
+    None
+):
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    upstream = next(
+        downstream
+        for downstream in downstreams
+        if downstream["repo"] == "D-sorganization/UpstreamDrift"
+    )
+
+    assert upstream["install"] == (
+        'CI= SKIP_UI_BUILD=1 pip install -e ".[dev,gui-test]"'
+    )
+
+
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
     workflow = _workflow()
     steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]

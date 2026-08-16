@@ -1,0 +1,14 @@
+{
+  "schema_id": "rate-of-closure/variation-visual-state-matrix",
+  "schema_version": 1,
+  "states": [
+    {"event": "invalidate", "phase": "empty", "visual_origin": "empty-preview", "announcement_role": "status"},
+    {"event": "start-empty", "phase": "loading", "visual_origin": "empty-preview", "announcement_role": "status"},
+    {"event": "start-retained", "phase": "loading", "visual_origin": "prior-accepted", "announcement_role": "status"},
+    {"event": "succeed", "phase": "result", "visual_origin": "current-accepted", "announcement_role": "status"},
+    {"event": "fail-empty", "phase": "error", "visual_origin": "empty-preview", "announcement_role": "alert"},
+    {"event": "fail-retained", "phase": "error", "visual_origin": "prior-accepted", "announcement_role": "alert"},
+    {"event": "cancel-empty", "phase": "empty", "visual_origin": "empty-preview", "announcement_role": "status"},
+    {"event": "cancel-retained", "phase": "result", "visual_origin": "prior-accepted", "announcement_role": "status"}
+  ]
+}
