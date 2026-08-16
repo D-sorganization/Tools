@@ -454,7 +454,16 @@ jobs:
     # ``fix-brick-toolcache`` removed from ``needs:`` — see ``quality-gate``
     # job comment for rationale (soft dependency, symlink persists).
     needs: [pick-runner]
-    runs-on: d-sorg-fleet
+    # Consume the dispatcher's decision instead of hardcoding the fleet. This
+    # job already declared `needs: [pick-runner]` while ignoring its `runner`
+    # output, so `tests` was the one lane that did not honour CI_RUNNER_MODE.
+    # That mattered because `tests (3.11)` is a required check: pinning it to
+    # `d-sorg-fleet` gated every merge on a pool that routinely sits at zero
+    # idle runners, so PRs stayed BLOCKED on queue depth rather than on any
+    # test result. `pick-runner` resolves to `ubuntu-latest` for public repos
+    # (free and unmetered), to `d-sorg-fleet` when CI_RUNNER_MODE=local, and
+    # fails closed for private repos with no idle fleet capacity.
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     strategy:
       # Do NOT cancel sibling Python lanes when one fails. Only ``tests (3.11)``
       # is a required check; an infra crash in the non-required 3.10/3.12 lanes
@@ -469,7 +478,13 @@ jobs:
       # Persistent per-host download cache.  Do not also enable setup-python's
       # Actions cache on this self-hosted lane: its post-job upload can occupy a
       # runner for tens of minutes on the constrained WAN.
-      PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
+      # The shared path only exists on the fleet hosts; a hosted runner cannot
+      # create it (different user, no write access above $HOME) and pip would
+      # abort before installing anything. Fall back to a workspace-local cache
+      # there — it buys no cross-job reuse, but the job is ephemeral anyway.
+      PIP_CACHE_DIR: ${{ needs.pick-runner.outputs.runner == 'd-sorg-fleet' &&
+        '/home/dieterolson/actions-runners/.shared-tool-cache/pip' ||
+        format('{0}/.pip-cache', github.workspace) }}
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
       # Keep matrix jobs isolated from stale runner-user packages. Python 3.12
