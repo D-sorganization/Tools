@@ -84,11 +84,7 @@ def test_root_declarations_agree_on_the_floor() -> None:
     )
 
 
-def test_ci_matrix_is_covered_by_some_declared_floor() -> None:
-    """Every interpreter CI tests must be supported by at least one package.
-
-    A lane below *every* declared floor tests nothing the repo supports.
-    """
+def _ci_lanes() -> list[tuple[int, ...]]:
     matrix_match = _MATRIX_RE.search(CI_STANDARD.read_text(encoding="utf-8"))
     assert matrix_match is not None, (
         "ci-standard.yml must declare a python-version matrix"
@@ -99,15 +95,57 @@ def test_ci_matrix_is_covered_by_some_declared_floor() -> None:
         if raw.strip()
     ]
     assert lanes, "the CI matrix must not be empty"
+    return lanes
 
-    floors = {_floor(ROOT_PYPROJECT)}
-    floors.update(_floor(path) for path in _sub_pyprojects())
-    lowest_floor = min(floors)
 
-    for lane in lanes:
-        assert lane >= lowest_floor, (
-            f"CI lane {lane} is below every declared requires-python floor "
-            f"(lowest is {lowest_floor}); either raise the matrix or lower a floor"
+def test_ci_matrix_starts_at_the_root_floor() -> None:
+    """The ci-standard matrix must not test below the root floor.
+
+    This job runs the root-package suite — ``core_tests`` is entirely
+    ``tests/**`` and ``src/shared/python/**``. Below the root floor the conftest
+    guard excludes all of it, so such a lane collects nothing and reports
+    configuration noise rather than a real result. Sub-packages that declare a
+    lower floor are gated on it by their own maturin build + parity workflows.
+    """
+    root_floor = _floor(ROOT_PYPROJECT)
+    for lane in _ci_lanes():
+        assert lane >= root_floor, (
+            f"ci-standard lane {lane} is below the root requires-python floor "
+            f"{root_floor}. That lane cannot run the root-package suite. If a "
+            "sub-package needs a lower interpreter, gate it in its own maturin "
+            "workflow instead of adding a lane here."
+        )
+
+
+def test_lower_floor_packages_keep_a_workflow_that_exercises_them() -> None:
+    """Dropping the low lane must not leave a 3.10 claim with nothing behind it.
+
+    Each sub-package declaring a floor below the root has to be covered by some
+    workflow matrix that actually runs that interpreter, otherwise the claim is
+    untested.
+    """
+    root_floor = _floor(ROOT_PYPROJECT)
+    lower = [path for path in _sub_pyprojects() if _floor(path) < root_floor]
+    if not lower:
+        pytest.skip("no sub-package declares a floor below the root")
+
+    workflows = REPO_ROOT / ".github" / "workflows"
+    covered: set[tuple[int, ...]] = set()
+    for workflow in workflows.glob("*.yml"):
+        if workflow == CI_STANDARD:
+            continue
+        for match in _MATRIX_RE.finditer(workflow.read_text(encoding="utf-8")):
+            for raw in match.group(1).split(","):
+                raw = raw.strip().strip("\"'")
+                if raw:
+                    covered.add(tuple(int(part) for part in raw.split(".")))
+
+    for pyproject in lower:
+        own = _floor(pyproject)
+        assert own in covered, (
+            f"{pyproject.relative_to(REPO_ROOT)} declares >={own[0]}.{own[1]} but "
+            "no workflow outside ci-standard runs that interpreter, so the claim "
+            "is untested"
         )
 
 

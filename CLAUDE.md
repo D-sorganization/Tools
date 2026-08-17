@@ -35,13 +35,22 @@ for downstream repos.
   `movement_optimizer`, `pendulum_simulator`, `pendulum-core`,
   `rotation_converter`, `tools-core`, `swing-core`, `ai_backend`,
   `data-processor-core`, `file_watcher`, and the movement-optimizer crate.
-- The CI matrix runs `["3.10", "3.11", "3.12"]` on purpose; only **3.11** is a
-  required check. The 3.10 lane exists to validate the sub-packages above, not
-  the root package. `conftest.py` reads each package's own declared floor and
-  skips collection of anything above the running interpreter, so root-package
-  tests never execute on 3.10. **Do not add per-file version guards** — the
-  conftest handles it, and `tests/test_python_version_contract.py` keeps every
-  declaration in agreement.
+- **`ci-standard.yml` runs `["3.11", "3.12"]` and must not go below 3.11.** That
+  job runs the root-package suite — `core_tests` is entirely `tests/**` and
+  `src/shared/python/**` — none of which can execute on 3.10, so a 3.10 lane
+  there collects nothing and reports configuration noise. Only **3.11** is a
+  required check.
+- **3.10 support is proven by the maturin workflows**, not by `ci-standard`.
+  Each crate's `maturin-*.yml` runs a build + parity gate across 3.10/3.11/3.12
+  that builds the wheel, installs it, and asserts the extension imports and the
+  native backend is selected. If a sub-package needs a lower interpreter, gate
+  it there — do not add a lane to `ci-standard`.
+- `conftest.py` reads each package's own declared floor and skips collection of
+  anything above the running interpreter, so root-package tests cannot run on a
+  sub-floor interpreter locally either. **Do not add per-file version guards** —
+  the conftest handles it, and `tests/test_python_version_contract.py` keeps
+  every declaration in agreement, including that no `ci-standard` lane drops
+  below the root floor and that every 3.10 claim still has a workflow behind it.
 - Use `python3`.
 - **Formatter:** Ruff format (NOT Black). 88-char line limit.
 - **Linter:** Ruff check. Both are separate CI steps.

@@ -466,14 +466,22 @@ jobs:
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     strategy:
       # Do NOT cancel sibling Python lanes when one fails. Only ``tests (3.11)``
-      # is a required check; an infra crash in the non-required 3.10/3.12 lanes
+      # is a required check; an infra crash in the non-required 3.12 lane
       # (e.g. SIGABRT/exit-134 from the Qt multi-widget headless segfault or an
       # OOM kill on a saturated self-hosted runner) must not cancel the required
-      # 3.11 lane before it runs. With the default ``fail-fast: true`` a 3.10
+      # 3.11 lane before it runs. With the default ``fail-fast: true`` a sibling
       # crash skipped 3.11 entirely and left the PR permanently BLOCKED.
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        # Starts at the root ``requires-python`` floor. This job runs the
+        # root-package suite (core_tests is entirely ``tests/**`` and
+        # ``src/shared/python/**`), none of which can execute below 3.11, so a
+        # 3.10 lane here collects nothing and only ever reported configuration
+        # noise. The ten sub-packages and crates that do declare >=3.10 are
+        # gated on 3.10 by their own maturin build + parity workflows, which is
+        # where that compatibility is actually proven.
+        # Enforced by tests/test_python_version_contract.py.
+        python-version: ["3.11", "3.12"]
     env:
       # Persistent per-host download cache.  Do not also enable setup-python's
       # Actions cache on this self-hosted lane: its post-job upload can occupy a
@@ -845,7 +853,9 @@ jobs:
           if [ "$BRANCH_NAME" = "codex/consolidate-open-prs-20260611-tools" ] || [ "$BRANCH_NAME" = "consolidate/open-prs-20260620" ]; then
             large_consolidation_branch=true
           fi
-          if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$large_consolidation_branch" != "true" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
+          # The former `!= "3.10"` guard here is gone with the 3.10 lane; every
+          # remaining lane is at or above the root floor and can run sidekick.
+          if [ "$large_consolidation_branch" != "true" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             sidekick_runtime_tests_required=false
             if grep -q -E '^src/shared/python/sidekick/(api|calculators|data_processing|lab|notes_|selected_tab_panel|symbolic_engine|tab_context_menu|ui|utils|workspace)' changed_python_files.txt; then
               sidekick_runtime_tests_required=true
@@ -958,40 +968,13 @@ jobs:
             run_changed_tests=false
           fi
 
-          # Below the root requires-python floor, conftest.py excludes
-          # root-package code from collection (see the Python floor section in
-          # CLAUDE.md). A change that touches only root-package tests therefore
-          # has nothing to run on such a lane, and pytest exits 5 "no tests
-          # collected". That is a legitimate pass here, not a selection bug.
-          #
-          # This tolerance is deliberately scoped to sub-floor lanes only. On the
-          # required lane, exit 5 still fails, which is what keeps the issue
-          # #3324 vacuous-selection protection meaningful.
-          root_floor="$(grep -m1 -E '^[[:space:]]*requires-python' pyproject.toml | grep -oE '[0-9]+\.[0-9]+' | head -n1)"
-          lane="${{ matrix.python-version }}"
-          allow_empty_collection=false
-          if [ -n "$root_floor" ] && [ "$lane" != "$root_floor" ] && [ "$(printf '%s\n%s\n' "$root_floor" "$lane" | sort -V | head -n1)" = "$lane" ]; then
-            allow_empty_collection=true
-            echo "Python $lane is below the root floor $root_floor; empty collection is allowed on this lane."
-          fi
-
-          run_pytest() {
-            local status=0
-            python -m pytest "$@" || status=$?
-            if [ "$status" -eq 5 ] && [ "$allow_empty_collection" = "true" ]; then
-              echo "::notice::No tests collected on the sub-floor Python $lane lane; nothing in this change claims support for it."
-              return 0
-            fi
-            return "$status"
-          }
-
           if [ "$run_changed_tests" = "true" ] && [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            run_pytest "${changed_test_files[@]}" "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+            python -m pytest "${changed_test_files[@]}" "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
           elif [ "$run_changed_tests" = "true" ] && [ "${#source_keyed_tests[@]}" -gt 0 ]; then
-            run_pytest "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+            python -m pytest "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
           else
-            run_pytest "${core_tests[@]}" "${pytest_args[@]}"
+            python -m pytest "${core_tests[@]}" "${pytest_args[@]}"
           fi
 
       - name: Provider-Contract Suite (Exported Packages)
