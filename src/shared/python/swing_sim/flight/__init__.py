@@ -14,6 +14,7 @@ Import from this facade only; module layout underneath is private.
 
 from __future__ import annotations
 
+from ._cancellation import raise_if_flight_cancelled
 from ._rust_facade import is_rust_available, simulate_trajectory_rust
 from .capability_contract import (
     CapabilityObjective,
@@ -24,6 +25,22 @@ from .capability_contract import (
     OptimizationResult,
     PlayerCapabilityProfile,
     TargetDefinition,
+)
+from .capability_flight_evaluator import (
+    CapabilityFlightEvaluatorConfig,
+    CapabilitySpinDefault,
+    make_capability_flight_evaluator,
+)
+from .capability_observation import (
+    CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION,
+    CancellationCheck,
+    CapabilityOptimizationCancelled,
+    CapabilityOptimizationHooks,
+    CapabilitySampleMetric,
+    CapabilitySampleObservation,
+    CapabilitySampleParameter,
+    CapabilitySampleStatus,
+    ObservationSink,
 )
 from .capability_optimizer import CapabilityEvaluator, optimize_capability
 from .direction import (
@@ -38,6 +55,13 @@ from .direction import (
     migrate_launch_direction_mapping,
 )
 from .frames import from_flight_frame, to_flight_frame
+from .ground_bounce_execution import execute_repeated_bounce_from_flight
+from .ground_transfer import (
+    FlightGroundTransferError,
+    FlightGroundTransferSettings,
+    build_ground_simulation_request,
+    launch_relative_surface,
+)
 from .impact_solution_adapter import CenteredClubDeliveryAdapter
 from .impact_solution_contract import (
     ClubProfileId,
@@ -72,10 +96,17 @@ from .models import (
     BallFlightModel,
     ConstantCoefficientModel,
     ConstantCoefficientSpec,
+    FlightCancellationCallbackError,
+    FlightSimulationCancelled,
     MacDonaldHanzelyModel,
     WaterlooPennerModel,
 )
 from .pipeline import FlightSimulatorProtocol, simulate
+from .regional_ground_pipeline import (
+    FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION,
+    FlightRegionalGroundPipelineResult,
+    execute_regional_ground_from_flight,
+)
 from .registry import FlightModelRegistry, FlightModelType, compare_models
 from .result_contract import (
     AvailabilityReason,
@@ -94,6 +125,8 @@ from .result_metrics import (
     MetricTrajectoryPoint,
     derive_flight_metric_result,
 )
+from .state import FlightStatePoint
+from .surface_simulation import SurfaceFlightSimulationSettings
 from .types import (
     DEFAULT_BACKSPIN_AXIS,
     FlightResult,
@@ -126,11 +159,22 @@ from .wind_uncertainty import (
 
 __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
+    "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
     "AvailabilityReason",
     "BallFlightModel",
     "CapabilityEvaluator",
+    "CapabilityFlightEvaluatorConfig",
+    "CapabilitySpinDefault",
+    "CapabilityOptimizationCancelled",
+    "CapabilityOptimizationHooks",
     "CapabilityObjective",
     "CapabilityParameter",
+    "CapabilitySampleMetric",
+    "CapabilitySampleObservation",
+    "CapabilitySampleParameter",
+    "CapabilitySampleStatus",
+    "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
+    "CancellationCheck",
     "ClubCapability",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
@@ -149,8 +193,14 @@ __all__ = [
     "FlightMetricResult",
     "FlightMetricValue",
     "FlightResult",
+    "FlightRegionalGroundPipelineResult",
+    "FlightGroundTransferError",
+    "FlightGroundTransferSettings",
+    "FlightCancellationCallbackError",
+    "FlightStatePoint",
     "FlightRunManifest",
     "FlightSimulatorProtocol",
+    "FlightSimulationCancelled",
     "ForwardEvaluator",
     "ForwardEvaluation",
     "ForwardStatus",
@@ -173,6 +223,7 @@ __all__ = [
     "OptimizationAlternative",
     "OptimizationRequest",
     "OptimizationResult",
+    "ObservationSink",
     "ParameterValue",
     "PlayerCapabilityProfile",
     "SolutionCandidate",
@@ -187,6 +238,7 @@ __all__ = [
     "DirectionalRisk",
     "PerfectInformationCounterfactual",
     "ScalarDistribution",
+    "SurfaceFlightSimulationSettings",
     "StrategyAnalysisConfig",
     "StrategyAnalysisRequest",
     "StrategyShotOutcome",
@@ -200,10 +252,14 @@ __all__ = [
     "WindTrial",
     "WindUncertaintySpec",
     "analyze_wind_strategies",
+    "build_ground_simulation_request",
+    "launch_relative_surface",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
     "derive_flight_metric_result",
+    "execute_regional_ground_from_flight",
+    "execute_repeated_bounce_from_flight",
     "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
@@ -211,7 +267,9 @@ __all__ = [
     "launch_direction_sign_labels",
     "launch_direction_to_flight_azimuth",
     "migrate_launch_direction_mapping",
+    "make_capability_flight_evaluator",
     "optimize_capability",
+    "raise_if_flight_cancelled",
     "simulate",
     "simulate_trajectory_rust",
     "solve_inverse_flight",

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import math
+import threading
+from collections.abc import Callable
 from dataclasses import dataclass, replace
 from typing import Literal
 
@@ -14,6 +16,36 @@ from .wind_uncertainty import WindTrial, WindUncertaintySpec, sample_wind_trials
 WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION = "wind-strategy-analysis/v2"
 OutcomeStatus = Literal["completed", "nonconverged", "invalid"]
 _GROUND_TOLERANCE_M = 1e-5
+
+
+class WindStrategyCancelledError(RuntimeError):
+    """Raised when a wind-strategy ensemble is cooperatively cancelled."""
+
+
+@dataclass(frozen=True)
+class WindStrategyProgress:
+    """Exact completed-outcome count for one ensemble run."""
+
+    completed_outcomes: int
+    total_outcomes: int
+
+    def __post_init__(self) -> None:
+        if not 0 <= self.completed_outcomes <= self.total_outcomes:
+            raise ValueError("progress must satisfy 0 <= completed <= total")
+
+
+@dataclass(frozen=True)
+class _RunControl:
+    progress_cb: Callable[[WindStrategyProgress], None] | None
+    cancel_event: threading.Event | None
+
+    def check_cancelled(self) -> None:
+        if self.cancel_event is not None and self.cancel_event.is_set():
+            raise WindStrategyCancelledError("wind strategy analysis cancelled")
+
+    def report(self, completed: int, total: int) -> None:
+        if self.progress_cb is not None:
+            self.progress_cb(WindStrategyProgress(completed, total))
 
 
 def _positive_finite(value: float, name: str) -> None:
@@ -269,9 +301,13 @@ def _counterfactual(result: _SimulationResult) -> PerfectInformationCounterfactu
 
 
 def _evaluate_strategy(
-    context: _TrialContext, strategy: WindStrategy
+    context: _TrialContext,
+    strategy: WindStrategy,
+    control: _RunControl,
 ) -> StrategyShotOutcome:
+    control.check_cancelled()
     actual = _safe_simulate_policy(context, strategy, context.estimated_wind)
+    control.check_cancelled()
     perfect = _safe_simulate_policy(context, strategy, context.true_wind)
     return StrategyShotOutcome(
         context.trial.trial_index,
@@ -292,24 +328,35 @@ def _evaluate_strategy(
 def _evaluate(
     request: StrategyAnalysisRequest,
     trials: tuple[WindTrial, ...],
+    control: _RunControl,
 ) -> tuple[StrategyShotOutcome, ...]:
     outcomes: list[StrategyShotOutcome] = []
+    total = len(trials) * len(request.strategies)
+    control.report(0, total)
     for trial in trials:
+        control.check_cancelled()
         true_wind = trial.true_scenario(request.uncertainty.provenance)
         estimated_wind = trial.estimated_scenario(request.uncertainty.provenance)
         context = _TrialContext(request, trial, true_wind, estimated_wind)
-        outcomes.extend(
-            _evaluate_strategy(context, item) for item in request.strategies
-        )
+        for strategy in request.strategies:
+            outcomes.append(_evaluate_strategy(context, strategy, control))
+            control.report(len(outcomes), total)
     return tuple(outcomes)
 
 
-def analyze_wind_strategies(request: StrategyAnalysisRequest) -> WindStrategyAnalysis:
+def analyze_wind_strategies(
+    request: StrategyAnalysisRequest,
+    *,
+    progress_cb: Callable[[WindStrategyProgress], None] | None = None,
+    cancel_event: threading.Event | None = None,
+) -> WindStrategyAnalysis:
     """Run paired strategy trials and summarize actual and counterfactual risk."""
     from .wind_strategy_metrics import summarize_strategy_outcomes
 
+    control = _RunControl(progress_cb, cancel_event)
+    control.check_cancelled()
     trials = sample_wind_trials(request.uncertainty)
-    outcomes = _evaluate(request, trials)
+    outcomes = _evaluate(request, trials, control)
     return WindStrategyAnalysis(
         schema_version=WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION,
         provenance=request.uncertainty.provenance,
@@ -331,5 +378,7 @@ __all__ = [
     "TargetPoint",
     "WindStrategy",
     "WindStrategyAnalysis",
+    "WindStrategyCancelledError",
+    "WindStrategyProgress",
     "analyze_wind_strategies",
 ]

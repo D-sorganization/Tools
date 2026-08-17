@@ -142,7 +142,15 @@ export function simulateFlight(
     t += dt;
     step += 1;
 
-    if (nextPos[2] < 0.0 && t > dt) {
+    // `pos[2] >= 0` is load-bearing, not defensive. A descending launch starts
+    // at height 0 and drops below ground on the first step, which `t > dt`
+    // skips; on the next step `pos[2]` is already negative, so the fraction
+    // below is negative and `tGround` can land before zero. That produced a
+    // trajectory point with a negative time, which the metric contract rejects
+    // outright — surfacing a descending launch as a RangeError rather than as
+    // the nonconverged result it is. Requiring the previous point to be above
+    // ground means such a launch simply never records a crossing.
+    if (pos[2] >= 0.0 && nextPos[2] < 0.0 && t > dt) {
       // Linear interpolation to the ground crossing.
       const frac = pos[2] / (pos[2] - nextPos[2]);
       const tGround = t - dt + frac * dt;
