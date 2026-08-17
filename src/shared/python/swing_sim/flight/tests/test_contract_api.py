@@ -8,7 +8,7 @@ surface changes so removals are always deliberate.
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, cast
+from typing import Any, Protocol, cast
 
 import pytest
 
@@ -16,11 +16,22 @@ from ... import flight
 
 EXPECTED_PUBLIC_API = {
     "DEFAULT_BACKSPIN_AXIS",
+    "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
     "AvailabilityReason",
     "BallFlightModel",
+    "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
+    "CancellationCheck",
     "CapabilityEvaluator",
+    "CapabilityFlightEvaluatorConfig",
+    "CapabilityOptimizationCancelled",
+    "CapabilityOptimizationHooks",
     "CapabilityObjective",
     "CapabilityParameter",
+    "CapabilitySampleMetric",
+    "CapabilitySampleObservation",
+    "CapabilitySampleParameter",
+    "CapabilitySampleStatus",
+    "CapabilitySpinDefault",
     "ClubCapability",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
@@ -40,8 +51,15 @@ EXPECTED_PUBLIC_API = {
     "FlightMetricResult",
     "FlightMetricValue",
     "FlightResult",
+    "FlightRegionalGroundPipelineResult",
+    "FlightGroundTransferError",
+    "FlightGroundTransferSettings",
+    "FlightCancellationCallbackError",
+    "FlightStatePoint",
     "FlightRunManifest",
     "FlightSimulatorProtocol",
+    "FlightSimulationCancelled",
+    "raise_if_flight_cancelled",
     "ForwardEvaluator",
     "ForwardEvaluation",
     "ForwardStatus",
@@ -64,6 +82,7 @@ EXPECTED_PUBLIC_API = {
     "OptimizationAlternative",
     "OptimizationRequest",
     "OptimizationResult",
+    "ObservationSink",
     "ParameterValue",
     "PlayerCapabilityProfile",
     "PerfectInformationCounterfactual",
@@ -71,6 +90,7 @@ EXPECTED_PUBLIC_API = {
     "SolverEvaluation",
     "SolverStatus",
     "ScalarDistribution",
+    "SurfaceFlightSimulationSettings",
     "StrategyAnalysisConfig",
     "StrategyAnalysisRequest",
     "StrategyShotOutcome",
@@ -90,10 +110,15 @@ EXPECTED_PUBLIC_API = {
     "WindTrial",
     "WindUncertaintySpec",
     "analyze_wind_strategies",
+    "build_ground_simulation_request",
+    "launch_relative_surface",
+    "make_capability_flight_evaluator",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
     "derive_flight_metric_result",
+    "execute_repeated_bounce_from_flight",
+    "execute_regional_ground_from_flight",
     "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
@@ -110,6 +135,13 @@ EXPECTED_PUBLIC_API = {
     "to_flight_frame",
     "ValueStatus",
 }
+
+
+class _FrozenDataclassType(Protocol):
+    """Structural view required by the frozen-value contract assertion."""
+
+    __name__: str
+    __dataclass_params__: Any
 
 
 @pytest.mark.contract
@@ -131,62 +163,75 @@ def test_swing_sim_top_level_facade_unchanged() -> None:
     assert "flight" not in swing_sim.__all__
 
 
+FROZEN_VALUE_TYPES = (
+    flight.LaunchConditions,
+    flight.TrajectoryPoint,
+    flight.FlightResult,
+    flight.FlightRegionalGroundPipelineResult,
+    flight.FlightGroundTransferSettings,
+    flight.FlightStatePoint,
+    flight.SurfaceFlightSimulationSettings,
+    flight.ConstantCoefficientSpec,
+    flight.LaunchDirection,
+    flight.FlightMetricDefinition,
+    flight.FlightMetricCatalog,
+    flight.MetricTrajectoryPoint,
+    flight.FlightMetricInputs,
+    flight.FlightMetricValue,
+    flight.FlightMetricResult,
+    flight.FlightRunManifest,
+    flight.GroundModelResult,
+    flight.DecisionVariable,
+    flight.FlightObjective,
+    flight.InverseFlightRequest,
+    flight.EvaluatedMetric,
+    flight.SolverEvaluation,
+    flight.ParameterValue,
+    flight.ObjectiveResidual,
+    flight.SolutionCandidate,
+    flight.InverseFlightResult,
+    flight.ImpactSolutionRequest,
+    flight.ForwardEvaluation,
+    flight.ModelManifest,
+    flight.ImpactSolutionResult,
+    flight.WindGust,
+    flight.WindScenario,
+    flight.ScalarDistribution,
+    flight.WindEstimateError,
+    flight.WindTrial,
+    flight.WindUncertaintySpec,
+    flight.DirectionalRisk,
+    flight.PerfectInformationCounterfactual,
+    flight.TargetPoint,
+    flight.WindStrategy,
+    flight.StrategyAnalysisConfig,
+    flight.StrategyAnalysisRequest,
+    flight.StrategyShotOutcome,
+    flight.StrategySummary,
+    flight.WindStrategyAnalysis,
+    flight.CapabilityParameter,
+    flight.CapabilityFlightEvaluatorConfig,
+    flight.CapabilitySpinDefault,
+    flight.ClubCapability,
+    flight.PlayerCapabilityProfile,
+    flight.TargetDefinition,
+    flight.OptimizationRequest,
+    flight.OptimizationAlternative,
+    flight.OptimizationResult,
+    flight.CapabilityOptimizationHooks,
+    flight.CapabilitySampleMetric,
+    flight.CapabilitySampleObservation,
+    flight.CapabilitySampleParameter,
+)
+
+
 @pytest.mark.contract
 def test_value_types_are_frozen_dataclasses() -> None:
-    for cls in (
-        flight.LaunchConditions,
-        flight.TrajectoryPoint,
-        flight.FlightResult,
-        flight.ConstantCoefficientSpec,
-        flight.LaunchDirection,
-        flight.FlightMetricDefinition,
-        flight.FlightMetricCatalog,
-        flight.MetricTrajectoryPoint,
-        flight.FlightMetricInputs,
-        flight.FlightMetricValue,
-        flight.FlightMetricResult,
-        flight.FlightRunManifest,
-        flight.GroundModelResult,
-        flight.DecisionVariable,
-        flight.FlightObjective,
-        flight.InverseFlightRequest,
-        flight.EvaluatedMetric,
-        flight.SolverEvaluation,
-        flight.ParameterValue,
-        flight.ObjectiveResidual,
-        flight.SolutionCandidate,
-        flight.InverseFlightResult,
-        flight.ImpactSolutionRequest,
-        flight.ForwardEvaluation,
-        flight.ModelManifest,
-        flight.ImpactSolutionResult,
-        flight.WindGust,
-        flight.WindScenario,
-        flight.ScalarDistribution,
-        flight.WindEstimateError,
-        flight.WindTrial,
-        flight.WindUncertaintySpec,
-        flight.DirectionalRisk,
-        flight.PerfectInformationCounterfactual,
-        flight.TargetPoint,
-        flight.WindStrategy,
-        flight.StrategyAnalysisConfig,
-        flight.StrategyAnalysisRequest,
-        flight.StrategyShotOutcome,
-        flight.StrategySummary,
-        flight.WindStrategyAnalysis,
-        flight.CapabilityParameter,
-        flight.ClubCapability,
-        flight.PlayerCapabilityProfile,
-        flight.TargetDefinition,
-        flight.OptimizationRequest,
-        flight.OptimizationAlternative,
-        flight.OptimizationResult,
-    ):
+    for cls in FROZEN_VALUE_TYPES:
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
-        dataclass_type = cast(Any, cls)
-        assert dataclass_type.__dataclass_params__.frozen, (
-            f"{dataclass_type.__name__} must be frozen"
+        value_type = cast(_FrozenDataclassType, cls)
+        assert value_type.__dataclass_params__.frozen, (
+            f"{value_type.__name__} must be frozen"
         )
 
 

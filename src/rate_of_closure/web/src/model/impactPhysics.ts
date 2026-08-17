@@ -1,4 +1,5 @@
 import { GOLF_BALL_RADIUS_M } from "./ballSetup";
+import { spinAxisTiltDeg } from "./spinAxisConvention";
 export { GOLF_BALL_RADIUS_M } from "./ballSetup";
 
 export type Vec3 = [number, number, number];
@@ -95,8 +96,7 @@ export function deliveryDiagnostics(input: DeliveryInput): DeliveryDiagnostics {
   return {
     spinLoftDeg: Math.acos(cosine) * 180 / Math.PI,
     faceToPathDeg: input.faceAngleDeg - input.clubPathDeg,
-    spinAxisTiltDeg: Math.atan2(-axis[1], Math.hypot(axis[0], axis[2]))
-      * 180 / Math.PI,
+    spinAxisTiltDeg: spinAxisTiltDeg(axis) ?? 0,
   };
 }
 
