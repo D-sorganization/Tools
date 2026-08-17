@@ -49,7 +49,6 @@ def _solve_thermal_profile(
             return power_w if t < step_time_s else 0.0
         return power_w
 
-
     # ODE: dT/dt = (Q_in - h*(T - T_amb)) / C_th
     thermal_mass: float = request.thermal_mass_j_per_k
     h: float = request.heat_loss_coeff_w_per_k
