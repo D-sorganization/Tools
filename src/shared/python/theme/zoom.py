@@ -228,7 +228,10 @@ def _coerce_percent(value: object, default: int) -> int:
     if isinstance(value, int):
         return value
     if isinstance(value, str):
-        return int(value)
+        try:
+            return int(value)
+        except ValueError:
+            return default
     return default
 
 
