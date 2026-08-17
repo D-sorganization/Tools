@@ -168,10 +168,18 @@ def _declared_python_floor(directory: Path) -> tuple[int, int]:
     return floor
 
 
-def _below_declared_floor(candidate: Path) -> bool:
-    """Return whether the running interpreter is below ``candidate``'s floor."""
+def _below_declared_floor(
+    candidate: Path, running: tuple[int, int] | None = None
+) -> bool:
+    """Return whether ``running`` is below ``candidate``'s declared floor.
+
+    ``running`` defaults to the live interpreter. It is a parameter so tests can
+    exercise other interpreters without patching ``sys.version_info``, which is
+    process-global and read by unrelated library code during a parallel run.
+    """
     directory = candidate if candidate.is_dir() else candidate.parent
-    return sys.version_info[:2] < _declared_python_floor(directory)
+    version = sys.version_info[:2] if running is None else running
+    return version < _declared_python_floor(directory)
 
 
 def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:

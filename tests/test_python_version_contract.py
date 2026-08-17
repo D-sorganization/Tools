@@ -40,6 +40,14 @@ def _floor(pyproject: Path) -> tuple[int, int]:
     return int(match.group(1)), int(match.group(2))
 
 
+def _path_is_within(candidate: Path, parent: Path) -> bool:
+    try:
+        candidate.resolve().relative_to(parent.resolve())
+    except ValueError:
+        return False
+    return True
+
+
 def _sub_pyprojects() -> list[Path]:
     found: list[Path] = []
     for path in REPO_ROOT.rglob("pyproject.toml"):
@@ -135,29 +143,42 @@ def test_sub_packages_that_claim_310_are_not_root_package_code() -> None:
 
 
 def test_conftest_reads_each_package_declared_floor() -> None:
-    """The guard resolves floors from the nearest pyproject, not a hardcoded list."""
+    """The guard resolves floors from the nearest pyproject, not a hardcoded list.
+
+    Every package is checked, and mismatches are reported together with the path
+    that failed. Path resolution is the part most likely to behave differently
+    across platforms, so a failure here should name the package rather than leave
+    it to be inferred from a downstream assertion.
+    """
     import conftest  # noqa: PLC0415 - guard under test
 
     root_code = REPO_ROOT / "src" / "p1am_control_system" / "backend" / "tests"
-    assert conftest._declared_python_floor(root_code) == _floor(ROOT_PYPROJECT)
+    assert conftest._declared_python_floor(root_code) == _floor(ROOT_PYPROJECT), (
+        "root-package code must inherit the root floor"
+    )
 
-    pendulum = REPO_ROOT / "src" / "pendulum_simulator"
-    if (pendulum / "pyproject.toml").is_file():
-        assert conftest._declared_python_floor(pendulum) == _floor(
-            pendulum / "pyproject.toml"
-        )
+    mismatches = []
+    for pyproject in _sub_pyprojects():
+        resolved = conftest._declared_python_floor(pyproject.parent)
+        declared = _floor(pyproject)
+        if resolved != declared:
+            mismatches.append(
+                f"{pyproject.relative_to(REPO_ROOT)}: declared {declared}, "
+                f"guard resolved {resolved}"
+            )
+    assert not mismatches, "guard mis-resolved declared floors:\n  " + "\n  ".join(
+        mismatches
+    )
 
 
-def test_root_package_tests_are_skipped_below_the_root_floor(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_root_package_tests_are_skipped_below_the_root_floor() -> None:
     """Root-package tests must not be collected on a sub-floor interpreter.
 
     This is the regression guard for the failure that motivated the contract.
     ``src/p1am_control_system`` is root-package code, so its tests must not run
     on the 3.10 lane — that is where a bare ``tomllib`` import aborted collection
-    and where ``asyncio.wait_for`` semantics differ. The interpreter version is
-    faked so this runs on every lane, including the required 3.11 one.
+    and where ``asyncio.wait_for`` semantics differ. The interpreter is passed in
+    rather than patched, so this runs on every lane including the required 3.11.
     """
     import conftest  # noqa: PLC0415 - guard under test
 
@@ -165,41 +186,57 @@ def test_root_package_tests_are_skipped_below_the_root_floor(
     root_floor = _floor(ROOT_PYPROJECT)
     below = (root_floor[0], root_floor[1] - 1)
 
-    conftest._floor_cache.clear()
-    monkeypatch.setattr(conftest.sys, "version_info", (*below, 0, "final", 0))
-    assert conftest._below_declared_floor(root_code), (
+    assert conftest._below_declared_floor(root_code, below), (
         f"root-package tests must be excluded on Python {below[0]}.{below[1]}"
     )
-
-    conftest._floor_cache.clear()
-    monkeypatch.setattr(conftest.sys, "version_info", (*root_floor, 0, "final", 0))
-    assert not conftest._below_declared_floor(root_code), (
+    assert not conftest._below_declared_floor(root_code, root_floor), (
         "root-package tests must still be collected at the declared floor"
     )
-    conftest._floor_cache.clear()
 
 
-def test_sub_package_tests_still_run_on_the_lower_lane(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """The guard must not over-reach and silence the 3.10 lane entirely.
+def test_each_sub_package_is_collected_at_its_own_declared_floor() -> None:
+    """The guard must not over-reach and silence the lower lane entirely.
 
-    A sub-package declaring >=3.10 must still be collected on 3.10; otherwise the
-    lane costs CI time while testing nothing.
+    Each package is checked at *its own* floor. Checking them all at the global
+    minimum would be wrong by construction: a package declaring >=3.10 is
+    legitimately excluded on 3.9, so a single lower-floored package elsewhere in
+    the tree would make this fail for reasons that are not a defect.
     """
     import conftest  # noqa: PLC0415 - guard under test
 
     root_floor = _floor(ROOT_PYPROJECT)
-    lower = [path.parent for path in _sub_pyprojects() if _floor(path) < root_floor]
+    lower = [path for path in _sub_pyprojects() if _floor(path) < root_floor]
     if not lower:
         pytest.skip("no sub-package declares a floor below the root")
 
-    lowest = min(_floor(package / "pyproject.toml") for package in lower)
-    conftest._floor_cache.clear()
-    monkeypatch.setattr(conftest.sys, "version_info", (*lowest, 0, "final", 0))
-    for package in lower:
-        assert not conftest._below_declared_floor(package), (
-            f"{package.relative_to(REPO_ROOT)} declares 3.10 support but the guard "
-            "would exclude it from the 3.10 lane"
+    for pyproject in lower:
+        own_floor = _floor(pyproject)
+        package = pyproject.parent
+        assert not conftest._below_declared_floor(package, own_floor), (
+            f"{package.relative_to(REPO_ROOT)} declares "
+            f">={own_floor[0]}.{own_floor[1]} but the guard would exclude it on "
+            "that very interpreter"
         )
-    conftest._floor_cache.clear()
+
+
+def test_nested_distributions_do_not_widen_their_parent_tree() -> None:
+    """A 3.10 distribution nested under root-package code must not leak upward.
+
+    ``src/shared/python/sidekick/process_calculators/psa_package`` is a real
+    distribution declaring >=3.10 while living inside root-package territory.
+    The nested package may claim 3.10, but its parent tree must stay at the root
+    floor — otherwise the lower lane would start collecting root code again.
+    """
+    import conftest  # noqa: PLC0415 - guard under test
+
+    root_floor = _floor(ROOT_PYPROJECT)
+    for pyproject in _sub_pyprojects():
+        if _floor(pyproject) >= root_floor:
+            continue
+        parent_tree = pyproject.parent.parent
+        if not _path_is_within(parent_tree, REPO_ROOT / "src" / "shared"):
+            continue
+        assert conftest._declared_python_floor(parent_tree) == root_floor, (
+            f"{parent_tree.relative_to(REPO_ROOT)} inherited a lowered floor from "
+            f"the nested distribution at {pyproject.relative_to(REPO_ROOT)}"
+        )
