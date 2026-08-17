@@ -26,10 +26,15 @@ What is asserted here:
 from __future__ import annotations
 
 import re
-import tomllib
+import sys
 from pathlib import Path
 
 import pytest
+
+if sys.version_info >= (3, 11):  # noqa: UP036
+    import tomllib
+else:
+    import tomli as tomllib
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _SYSTEM = _REPO_ROOT / "src" / "p1am_control_system"
