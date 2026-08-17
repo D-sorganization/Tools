@@ -411,10 +411,10 @@ export function useTelemetryStream(
     isConnected: freshness === "live",
     droppedAlarmCount,
     commsHealth,
-    isConnected,
     setAlicats,
     setActiveAlarms,
     setEStopActive,
     setDroppedAlarmCount,
   };
 }
+
