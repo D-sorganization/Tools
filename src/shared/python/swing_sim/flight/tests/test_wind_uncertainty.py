@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import threading
 from pathlib import Path
 
 import numpy as np
@@ -24,6 +25,10 @@ from shared.python.swing_sim.flight import (
     WindUncertaintySpec,
     analyze_wind_strategies,
     sample_wind_trials,
+)
+from shared.python.swing_sim.flight.wind_strategy import (
+    WindStrategyCancelledError,
+    WindStrategyProgress,
 )
 from shared.python.swing_sim.flight.wind_strategy_metrics import (
     summarize_strategy_outcomes,
@@ -146,6 +151,45 @@ def test_strategy_analysis_returns_scatter_cost_and_common_random_regret() -> No
     for trial_index in range(6):
         paired = [item for item in result.outcomes if item.trial_index == trial_index]
         assert len({item.true_wind for item in paired}) == 1
+
+
+def test_strategy_analysis_reports_exact_outcome_progress() -> None:
+    launch = LaunchConditions.from_imperial(150.0, 12.0, 2500.0)
+    request = StrategyAnalysisRequest(
+        uncertainty=_spec(3),
+        strategies=(
+            WindStrategy("straight", "Straight", launch),
+            WindStrategy("aimed", "Aimed", launch, math.radians(0.1)),
+        ),
+        target=TargetPoint(230.0, 0.0),
+    )
+    reports: list[WindStrategyProgress] = []
+
+    result = analyze_wind_strategies(request, progress_cb=reports.append)
+
+    assert len(result.outcomes) == 6
+    assert reports == [WindStrategyProgress(index, 6) for index in range(7)]
+
+
+def test_strategy_analysis_cancellation_is_cooperative_between_outcomes() -> None:
+    launch = LaunchConditions.from_imperial(150.0, 12.0, 2500.0)
+    request = StrategyAnalysisRequest(
+        uncertainty=_spec(4),
+        strategies=(WindStrategy("straight", "Straight", launch),),
+        target=TargetPoint(230.0, 0.0),
+    )
+    cancel_event = threading.Event()
+
+    def cancel_after_first(report: WindStrategyProgress) -> None:
+        if report.completed_outcomes == 1:
+            cancel_event.set()
+
+    with pytest.raises(WindStrategyCancelledError):
+        analyze_wind_strategies(
+            request,
+            progress_cb=cancel_after_first,
+            cancel_event=cancel_event,
+        )
 
 
 def test_nonconverged_flights_receive_declared_failure_cost() -> None:

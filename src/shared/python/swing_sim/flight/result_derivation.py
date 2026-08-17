@@ -20,6 +20,7 @@ from .result_metrics import (
     MetricTrajectoryPoint,
     Vector3,
 )
+from .spin_axis_convention import spin_axis_tilt_deg
 
 _MIN_SPEED_M_S = 1e-12
 
@@ -48,7 +49,11 @@ def _landing_state(points: tuple[MetricTrajectoryPoint, ...]) -> _LandingState |
 
 
 def _lerp_vector(first: Vector3, second: Vector3, fraction: float) -> Vector3:
-    return tuple(a + fraction * (b - a) for a, b in zip(first, second, strict=True))  # type: ignore[return-value]
+    return (
+        first[0] + fraction * (second[0] - first[0]),
+        first[1] + fraction * (second[1] - first[1]),
+        first[2] + fraction * (second[2] - first[2]),
+    )
 
 
 def _norm(value: Vector3) -> float:
@@ -106,12 +111,11 @@ def _launch_values(
         values[FlightMetricId.LAUNCH_DIRECTION] = _unavailable(
             FlightMetricId.LAUNCH_DIRECTION, AvailabilityReason.ZERO_HORIZONTAL_SPEED
         )
-    if spin_magnitude > _MIN_SPEED_M_S:
+    spin_axis_tilt = spin_axis_tilt_deg(inputs.spin_vector_rpm)
+    if spin_axis_tilt is not None:
         values[FlightMetricId.SPIN_AXIS_TILT] = _available(
             FlightMetricId.SPIN_AXIS_TILT,
-            math.degrees(
-                math.atan2(inputs.spin_vector_rpm[1], inputs.spin_vector_rpm[2])
-            ),
+            spin_axis_tilt,
             "derived.spin_vector_rpm",
         )
     else:
@@ -128,7 +132,7 @@ def _curve(points: tuple[MetricTrajectoryPoint, ...], heading: float) -> float:
         + math.cos(heading) * (point.position_m[2] - origin[2])
         for point in points
     )
-    return max(lateral, key=abs)
+    return float(max(lateral, key=abs))
 
 
 def _landing_values(
