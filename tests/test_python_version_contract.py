@@ -12,6 +12,7 @@ These tests pin the contract so the drift cannot happen silently again.
 from __future__ import annotations
 
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -49,17 +50,30 @@ def _path_is_within(candidate: Path, parent: Path) -> bool:
 
 
 def _sub_pyprojects() -> list[Path]:
-    found: list[Path] = []
-    for path in REPO_ROOT.rglob("pyproject.toml"):
-        if path == ROOT_PYPROJECT:
-            continue
-        parts = set(path.parts)
-        if parts & {".venv", "node_modules", "target", "build", "dist", ".git"}:
-            continue
-        if any(part.startswith((".codex", ".claude", "_")) for part in path.parts):
-            continue
-        found.append(path)
-    return found
+    """Return the repository's own sub-package pyprojects.
+
+    Selection is by git tracking rather than a directory denylist. A denylist is
+    unbounded: CI runners materialise trees that never exist locally — the cargo
+    registry cache under ``.cargo-home`` vendors pyo3's own ``pyproject.toml``
+    declaring ``>=3.7``, which is a third-party artifact and not a claim this
+    repository makes. Asking git which files it tracks answers "is this ours?"
+    directly, and cannot drift as new tool caches appear.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(REPO_ROOT), "ls-files", "-z", "*pyproject.toml"],
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:  # pragma: no cover
+        pytest.skip(f"git is required to enumerate tracked pyprojects: {error}")
+
+    tracked = [
+        REPO_ROOT / entry
+        for entry in result.stdout.decode("utf-8").split("\0")
+        if entry
+    ]
+    return [path for path in tracked if path != ROOT_PYPROJECT and path.is_file()]
 
 
 def test_root_declarations_agree_on_the_floor() -> None:
