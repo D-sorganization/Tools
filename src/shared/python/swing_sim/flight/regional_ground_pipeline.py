@@ -132,9 +132,13 @@ def _validate_inputs(
         raise ValueError("plan must be an exact GroundRegionalMaterialPlanRequest")
     if type(options) is not RegionalGroundExecutionOptions:
         raise ValueError("options must be an exact RegionalGroundExecutionOptions")
-    validated_capture = BounceModelSettings(
-        capture_speed_m_s=capture_speed_m_s
-    ).capture_speed_m_s
+    # `float(...)` is for the type checker, not the value: CI runs mypy with
+    # `--follow-imports=skip`, so `BounceModelSettings` resolves to `Any` and
+    # its attribute would be returned as `Any` from a `-> float` function.
+    # The settings object has already validated the number.
+    validated_capture = float(
+        BounceModelSettings(capture_speed_m_s=capture_speed_m_s).capture_speed_m_s
+    )
     expected_surface = launch_relative_surface(
         transfer.surface,
         launch.ball_radius,
