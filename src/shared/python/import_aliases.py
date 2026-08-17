@@ -221,6 +221,11 @@ class SharedImportAliasFinder(MetaPathFinder):
     ) -> ModuleSpec | None:
         if fullname == "shared.python" or fullname.startswith("shared.python."):
             return None
+        # A shared package's own ``tests`` subtree is imported directly by
+        # downstream suites (e.g. ``sidekick.tests.calculators...``). Aliasing
+        # those names resolves them to the wrong module object, so decline them.
+        if ".tests." in fullname or fullname.endswith(".tests"):
+            return None
         root, suffix = self._parse(fullname)
         if root is None:
             return None
