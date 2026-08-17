@@ -18,11 +18,14 @@ produce a consistently outward-wound, watertight solid.
 
 from __future__ import annotations
 
-from typing import cast
+from typing import TypeAlias
 
 import numpy as np
+import numpy.typing as npt
 
 from rate_of_closure._contracts import require
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 __all__ = [
     "RING_POINTS",
@@ -45,7 +48,7 @@ def superellipse_ring(
     half_width: float,
     points: int = RING_POINTS,
     exponent: float = SUPERELLIPSE_EXPONENT,
-) -> np.ndarray:
+) -> FloatArray:
     """Superellipse cross-section ring in the (y, z) plane at ``x``.
 
     Returns ``(points, 3)`` vertices circling from the toe (+z at
@@ -57,7 +60,8 @@ def superellipse_ring(
     power = 2.0 / exponent
     y = half_height * np.sign(np.sin(theta)) * np.abs(np.sin(theta)) ** power
     z = half_width * np.sign(np.cos(theta)) * np.abs(np.cos(theta)) ** power
-    return cast(np.ndarray, np.column_stack([np.full(points, x), y, z]))
+    ring: FloatArray = np.column_stack([np.full(points, x), y, z])
+    return ring
 
 
 def loft_band(
