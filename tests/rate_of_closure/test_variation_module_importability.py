@@ -20,10 +20,7 @@ from pathlib import Path
 import pytest
 
 _VARIATION_DIR = (
-    Path(__file__).resolve().parents[2]
-    / "src"
-    / "rate_of_closure"
-    / "variation"
+    Path(__file__).resolve().parents[2] / "src" / "rate_of_closure" / "variation"
 )
 
 
