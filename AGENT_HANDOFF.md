@@ -34,24 +34,32 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
 
 ## Open PR Situation — Read Before Filing Anything
 
-58 PRs are open; **39 are drafts**. Nearly all of that draft mass is a single
-superseded chain:
+**21 PRs are open and none are drafts.** The 39 `codex/4142-*` /
+`codex/4433-*` drafts were closed on 2026-08-16 as superseded by merged
+PR #4473 ("CONS-RATE: Complete #4142/#4433 visualization authority"), which
+says so in its own description. Their work is on `main` — the Morris chain as
+`src/rate_of_closure/application/morris/{host,client,contracts}.py`, the #4433
+chain as `flight_sample_inspector.py`, `putting_sample_inspector.py`,
+`plot_point_inspector.py`, `visual_state_frame.py`, and
+`visualization_tab_audit.py`. **Their branches are intact; reopen rather than
+rebase** — those branches have diverged far enough that merging one now would
+remove current `main` content. #4473 does **not** supersede #4438 (merged).
 
-- **28 `codex/4142-*` + 11 `codex/4433-*` drafts are superseded by merged
-  PR #4473** ("CONS-RATE: Complete #4142/#4433 visualization authority").
-  #4473's own description states it supersedes the remaining #4142/#4433 draft
-  chain after protected merge. It merged 2026-08-16. **These drafts should be
-  triaged and closed, not rebased.** Do not build on them.
-- #4473 explicitly does **not** supersede #4438 (already merged).
-
-Four consolidations remain open and are the real queue:
+The consolidations are the real queue:
 
 | PR    | Scope                                                                       |
 | ----- | --------------------------------------------------------------------------- |
-| #4466 | Rate of Closure remainder — club builder, impact tensor, flight, ground, web |
+| #4466 | Rate of Closure remainder — **cannot be merged as-is**, see below           |
 | #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)            |
 | #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)                |
 | #4446 | Ground study + rate-of-closure suites (supersedes #4409/#4410)               |
+
+**#4466 is blocked by a merge-base collapse.** After #4473 squash-merged, the
+shared merge-base falls back to a commit predating `src/rate_of_closure/`, so
+every overlapping file is a both-added conflict with no common ancestor (281 of
+them). It is being landed as standalone slices against current `main` instead —
+#4517 is the first (`swing_sim.ground`). Expect the other consolidations to hit
+the same wall; slice rather than fight the conflict.
 
 Other live non-golf work: `src/shared/python` hygiene (#4495 upstreaming
 orphaned consumer edits, #4507 lint normalisation, #4509 mypy debt), CI repairs
@@ -91,8 +99,13 @@ not caused by your diff; do not silently absorb them into an unrelated PR.
 
 ## Do-Not List
 
-- **Do not rebase or extend the `codex/4142-*` / `codex/4433-*` drafts.** They
-  are superseded by merged #4473. Close them instead.
+- **Do not reopen-and-rebase the closed `codex/4142-*` / `codex/4433-*`
+  branches.** They are superseded by merged #4473 and have diverged far enough
+  that merging one would remove current `main` content.
+- **Do not add per-file Python version guards.** `conftest.py` reads each
+  package's declared `requires-python` and skips collection below it; see the
+  Python floor section in `CLAUDE.md`. Adding `sys.version_info` checks or
+  `importorskip` calls per module is the whack-a-mole this replaced.
 - **Do not append a dated entry to this file.** It grew to 2,708 lines that
   way, 18x over the policy limit. Put history in the commit message.
 - Do not regenerate the sidekick API baseline
@@ -120,13 +133,12 @@ not caused by your diff; do not silently absorb them into an unrelated PR.
 
 ## Short-Term Roadmap (ordered)
 
-1. Triage and close the 39 superseded `#4142`/`#4433` drafts so the open-PR
-   list reflects real work.
-2. Land the four open consolidations (#4446, #4447, #4449, #4466), checking for
-   overlap against what #4473 already merged before resolving conflicts.
-3. Clear the `src/shared/python` hygiene trio (#4495, #4507, #4509) — these
+1. Land the consolidations as **slices against current `main`**, not merges —
+   #4517 is the pattern (`swing_sim.ground` out of #4466). Check each slice for
+   overlap with what #4473 already merged before resolving anything.
+2. Clear the `src/shared/python` hygiene trio (#4495, #4507, #4509) — these
    unblock downstream consumers.
-4. Land the CI repairs (#4454, #4469, #4504, #4506).
-5. Start #4130 Phase F1 (formulation document).
-6. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
-7. #4125 H5: stand up the public release-management repo (cross-repo).
+3. Land the CI repairs (#4454, #4469, #4504, #4506).
+4. Start #4130 Phase F1 (formulation document).
+5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+6. #4125 H5: stand up the public release-management repo (cross-repo).
