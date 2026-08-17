@@ -30,8 +30,15 @@ from shared.python.swing_sim.ground import (
     GroundSimulationResult,
     GroundTerminationReason,
     RegionalGroundExecutionStatus,
-    to_ground_model_result,
 )
+
+# Imported from the owning module, not the package. `to_ground_model_result` is
+# the explicitly *unqualified* compatibility adapter, and
+# `test_unqualified_compatibility_adapter_is_not_public` requires that
+# `swing_sim.ground` not re-export it — it is absent from both the package's
+# `__all__` and its lazy-import map. Reaching it by its module path keeps that
+# contract intact while making the unqualified dependency visible here.
+from shared.python.swing_sim.ground.result_adapter import to_ground_model_result
 
 MAX_REGIONAL_GROUND_STUDY_ROWS = 100_000
 _ADAPTER_ID = "flight-regional-ground/scalar-ensemble/v1"
