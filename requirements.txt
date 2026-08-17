@@ -14,6 +14,7 @@ sympy>=1.12  # Symbolic mathematics and algebra
 pytest>=9.0.3  # Testing framework
 pytest-qt>=4.4.0  # Pytest plugin for PyQt applications
 pytest-cov>=4.0.0  # Coverage plugin for pytest (code coverage metrics)
+jsonschema>=4.0.0  # Draft 2020-12 validator for the swing_sim ground profile schema tests
 ruff>=0.1.0  # Fast Python linter and formatter (replaces flake8/black)
 mypy==2.3.0  # Static type checker for Python (pinned to match CI workflow)
 types-PyYAML>=6.0.12.20260518  # Type stubs for PyYAML (static typing)

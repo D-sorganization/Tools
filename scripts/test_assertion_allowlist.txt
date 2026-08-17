@@ -21,6 +21,9 @@ src/document_processing/pdf_renamer/tests/conftest.py
 # Empty package markers for the self-contained swing_sim source tests.
 src/shared/python/swing_sim/tests/__init__.py
 src/shared/python/swing_sim/**/tests/__init__.py
+# Shared request/result constructors for the ground tests; every assertion about
+# what they build lives in the ground test modules that consume them.
+src/shared/python/swing_sim/ground/tests/_support.py
 # Shared constructors consumed by the strict variation plot-definition tests.
 tests/rate_of_closure/_variation_plot_definition_support.py
 # Subprocess entrypoint; semantic assertions live in the owning rendered test.

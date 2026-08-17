@@ -1,0 +1,843 @@
+{
+  "fixture_schema_version": "ground-regional-execution-golden/v1",
+  "representable": {
+    "result": {
+      "request_id": "surface-run-analytic",
+      "surface_id": "firm-fairway",
+      "plan_id": "regional-execution-plan-001",
+      "ground_request_sha256": "5d85aba0be00a56c0773008399c935d20a31675ab57f8f82c6b87cffb84ac89b",
+      "regional_plan_sha256": "92e859b3478342f4fc62602e944e192f17a9dc69df44796fe97acdaacf00a959",
+      "regional_plan": {
+        "request_id": "regional-execution-plan-001",
+        "base_surface": {
+          "surface_id": "firm-fairway",
+          "provider_id": "tools.planar-surface",
+          "provider_version": "1.0.0",
+          "frame": "target_frame:x_downrange,y_up,z_right",
+          "height_m": 0.0,
+          "normal_unit": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "surface_velocity_m_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "normal_restitution": 0.42,
+          "static_friction": 0.35,
+          "kinetic_friction": 0.28,
+          "rolling_resistance": 0.04,
+          "firmness_pa": 1200000.0,
+          "hardness_fraction": 0.7,
+          "grass_height_m": 0.012,
+          "compressibility_fraction": 0.2,
+          "compression_damping_fraction": 0.25,
+          "turf_density_kg_m3": 180.0,
+          "moisture_fraction": 0.3
+        },
+        "axis_origin_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "axis_unit": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "lower_coordinate_m": -1.0,
+        "upper_coordinate_m": 10.0,
+        "regions": [
+          {
+            "region_id": "rough-band",
+            "precedence": 10,
+            "lower_coordinate_m": 0.1,
+            "upper_coordinate_m": 1.1,
+            "surface": {
+              "surface_id": "regional-rough",
+              "provider_id": "tools.planar-surface",
+              "provider_version": "1.0.0",
+              "frame": "target_frame:x_downrange,y_up,z_right",
+              "height_m": 0.0,
+              "normal_unit": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "surface_velocity_m_s": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "normal_restitution": 0.42,
+              "static_friction": 0.35,
+              "kinetic_friction": 0.28,
+              "rolling_resistance": 0.1,
+              "firmness_pa": 1200000.0,
+              "hardness_fraction": 0.7,
+              "grass_height_m": 0.012,
+              "compressibility_fraction": 0.2,
+              "compression_damping_fraction": 0.25,
+              "turf_density_kg_m3": 180.0,
+              "moisture_fraction": 0.3
+            }
+          }
+        ],
+        "provenance": {
+          "producer": "tools.rate_of_closure",
+          "producer_version": "1.0.0",
+          "source_revision": "regional-execution-test-plan",
+          "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "geometry_model": "coplanar_static_material_overlays",
+        "limitations": [
+          "coplanar_static_surfaces_only",
+          "material_changes_only_no_geometry_or_velocity_discontinuities"
+        ],
+        "unit_system": "SI",
+        "schema_version": "ground-regional-material-plan-request/v1"
+      },
+      "status": "partial",
+      "failure_reason": null,
+      "ground_result": {
+        "request_id": "surface-run-analytic",
+        "surface_id": "firm-fairway",
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "model_id": "tools-ground-impact-bounce+tools-ground-skid-roll",
+        "model_version": "1.0.0+1.1.0",
+        "status": "partial",
+        "trajectory": [
+          {
+            "time_s": 1.005,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.0,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              2.0,
+              0.1,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ],
+            "phase": "impact"
+          },
+          {
+            "time_s": 1.025,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.04,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              2.0,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ],
+            "phase": "skid"
+          },
+          {
+            "time_s": 1.05508878303,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.1,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.98819719344,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -93.12399032494
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.065,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.11965728732,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.97847760985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -92.6687405082
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.075,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.13939303019,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.96867095985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -92.20941263935
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.085,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.15903070655,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.95886430985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -91.7500847705
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.095,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.17857031642,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.94905765985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -91.29075690164
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.105,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.19801185978,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.93925100985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -90.83142903279
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.115,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.21735533664,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.92944435985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -90.37210116394
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.125,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.23660074701,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.91963770985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -89.91277329509
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.135,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.25574809087,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.90983105985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -89.45344542623
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.145,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.27479736824,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.90002440985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -88.99411755738
+            ],
+            "phase": "roll"
+          },
+          {
+            "time_s": 1.155,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.2937485791,
+              0.02135,
+              0.0
+            ],
+            "velocity_m_s": [
+              1.89021775985,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_rad_s": [
+              0.0,
+              0.0,
+              -88.53478968853
+            ],
+            "phase": "roll"
+          }
+        ],
+        "events": [
+          {
+            "sequence": 0,
+            "event_type": "first_contact",
+            "time_s": 1.005,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.0,
+              0.02135,
+              0.0
+            ],
+            "velocity_before_m_s": [
+              2.0,
+              -0.1,
+              0.0
+            ],
+            "velocity_after_m_s": [
+              2.0,
+              0.1,
+              0.0
+            ],
+            "angular_velocity_before_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ],
+            "angular_velocity_after_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ]
+          },
+          {
+            "sequence": 1,
+            "event_type": "bounce",
+            "time_s": 1.025,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.04,
+              0.02135,
+              0.0
+            ],
+            "velocity_before_m_s": [
+              2.0,
+              -0.1,
+              0.0
+            ],
+            "velocity_after_m_s": [
+              2.0,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_before_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ],
+            "angular_velocity_after_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ]
+          },
+          {
+            "sequence": 2,
+            "event_type": "skid_to_roll",
+            "time_s": 1.025,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.04,
+              0.02135,
+              0.0
+            ],
+            "velocity_before_m_s": [
+              2.0,
+              0.0,
+              0.0
+            ],
+            "velocity_after_m_s": [
+              2.0,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_before_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ],
+            "angular_velocity_after_rad_s": [
+              0.0,
+              0.0,
+              -93.67681498829
+            ]
+          },
+          {
+            "sequence": 3,
+            "event_type": "surface_transition",
+            "time_s": 1.05508878303,
+            "frame": "target_frame:x_downrange,y_up,z_right",
+            "position_m": [
+              0.1,
+              0.02135,
+              0.0
+            ],
+            "velocity_before_m_s": [
+              1.98819719344,
+              0.0,
+              0.0
+            ],
+            "velocity_after_m_s": [
+              1.98819719344,
+              0.0,
+              0.0
+            ],
+            "angular_velocity_before_rad_s": [
+              0.0,
+              0.0,
+              -93.12399032494
+            ],
+            "angular_velocity_after_rad_s": [
+              0.0,
+              0.0,
+              -93.12399032494
+            ]
+          }
+        ],
+        "summary": {
+          "carry_distance_m": 0.0,
+          "bounce_air_distance_m": 0.04,
+          "skid_distance_m": 0.0,
+          "roll_distance_m": 0.25374857896,
+          "surface_path_distance_m": 0.25374857896,
+          "total_distance_m": 0.2937485791,
+          "final_downrange_m": 0.2937485791,
+          "final_offline_m": 0.0,
+          "bounce_count": 1
+        },
+        "termination": {
+          "reason": "time_limit",
+          "time_s": 1.155,
+          "completed": false
+        },
+        "calibration": {
+          "calibration_id": "literature-default-2026-08",
+          "kind": "literature",
+          "source": "documented literature basis",
+          "confidence": 0.6
+        },
+        "warnings": [
+          {
+            "code": "IMPACT_PREFIX_LIMITATION_001",
+            "severity": "info",
+            "message": "test prefix"
+          },
+          {
+            "code": "REGIONAL_PLANAR_V1",
+            "severity": "info",
+            "message": "Qualified for deterministic coplanar material regions; changing normals and surface velocity at boundaries remain unsupported."
+          },
+          {
+            "code": "AXIAL_SPIN_UNDAMPED",
+            "severity": "info",
+            "message": "Normal-axis spin is preserved because v1 has no calibrated torsional damping law."
+          },
+          {
+            "code": "CENSORED_ENDPOINT",
+            "severity": "warning",
+            "message": "Distance totals describe only the observed endpoint and are not projected final-rest metrics."
+          }
+        ],
+        "unavailable_fields": [],
+        "provenance": {
+          "producer": "tools.rate_of_closure",
+          "producer_version": "1.0.0",
+          "source_revision": "60ac5b46",
+          "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "unit_system": "SI",
+        "schema_version": "flight-to-ground-result/v1"
+      },
+      "plan_provenance": {
+        "producer": "tools.rate_of_closure",
+        "producer_version": "1.0.0",
+        "source_revision": "regional-execution-test-plan",
+        "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "executor_provenance": {
+        "producer": "tools-ground-regional-executor",
+        "producer_version": "1.0.0",
+        "source_revision": "ground-regional-execution-v1",
+        "input_sha256": "e2ec13db832f6c28bcd50e53acbef4038edf192de2b82dca09f04009d885db94"
+      },
+      "model_id": "tools-ground-impact-bounce+tools-ground-skid-roll",
+      "model_version": "1.0.0+1.1.0",
+      "transitions": [
+        {
+          "event_sequence": 3,
+          "time_s": 1.05508878303,
+          "position_m": [
+            0.1,
+            0.02135,
+            0.0
+          ],
+          "from_region_id": null,
+          "to_region_id": "rough-band",
+          "from_surface_id": "firm-fairway",
+          "to_surface_id": "regional-rough"
+        }
+      ],
+      "limitations": [
+        "coplanar_static_surfaces_only",
+        "material_changes_only_no_geometry_or_velocity_discontinuities"
+      ],
+      "unit_system": "SI",
+      "schema_version": "ground-regional-execution-result/v1"
+    },
+    "result_sha256": "2353a32bf2639d19871fdb06ec38e8eabcfffdc04216e404ea50f76b4262457c"
+  },
+  "cancelled": {
+    "result": {
+      "request_id": "surface-run-analytic",
+      "surface_id": "firm-fairway",
+      "plan_id": "regional-execution-plan-001",
+      "ground_request_sha256": "5d85aba0be00a56c0773008399c935d20a31675ab57f8f82c6b87cffb84ac89b",
+      "regional_plan_sha256": "92e859b3478342f4fc62602e944e192f17a9dc69df44796fe97acdaacf00a959",
+      "regional_plan": {
+        "request_id": "regional-execution-plan-001",
+        "base_surface": {
+          "surface_id": "firm-fairway",
+          "provider_id": "tools.planar-surface",
+          "provider_version": "1.0.0",
+          "frame": "target_frame:x_downrange,y_up,z_right",
+          "height_m": 0.0,
+          "normal_unit": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "surface_velocity_m_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "normal_restitution": 0.42,
+          "static_friction": 0.35,
+          "kinetic_friction": 0.28,
+          "rolling_resistance": 0.04,
+          "firmness_pa": 1200000.0,
+          "hardness_fraction": 0.7,
+          "grass_height_m": 0.012,
+          "compressibility_fraction": 0.2,
+          "compression_damping_fraction": 0.25,
+          "turf_density_kg_m3": 180.0,
+          "moisture_fraction": 0.3
+        },
+        "axis_origin_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "axis_unit": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "lower_coordinate_m": -1.0,
+        "upper_coordinate_m": 10.0,
+        "regions": [
+          {
+            "region_id": "rough-band",
+            "precedence": 10,
+            "lower_coordinate_m": 0.1,
+            "upper_coordinate_m": 1.1,
+            "surface": {
+              "surface_id": "regional-rough",
+              "provider_id": "tools.planar-surface",
+              "provider_version": "1.0.0",
+              "frame": "target_frame:x_downrange,y_up,z_right",
+              "height_m": 0.0,
+              "normal_unit": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "surface_velocity_m_s": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "normal_restitution": 0.42,
+              "static_friction": 0.35,
+              "kinetic_friction": 0.28,
+              "rolling_resistance": 0.1,
+              "firmness_pa": 1200000.0,
+              "hardness_fraction": 0.7,
+              "grass_height_m": 0.012,
+              "compressibility_fraction": 0.2,
+              "compression_damping_fraction": 0.25,
+              "turf_density_kg_m3": 180.0,
+              "moisture_fraction": 0.3
+            }
+          }
+        ],
+        "provenance": {
+          "producer": "tools.rate_of_closure",
+          "producer_version": "1.0.0",
+          "source_revision": "regional-execution-test-plan",
+          "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "geometry_model": "coplanar_static_material_overlays",
+        "limitations": [
+          "coplanar_static_surfaces_only",
+          "material_changes_only_no_geometry_or_velocity_discontinuities"
+        ],
+        "unit_system": "SI",
+        "schema_version": "ground-regional-material-plan-request/v1"
+      },
+      "status": "cancelled",
+      "failure_reason": "cancelled",
+      "ground_result": null,
+      "plan_provenance": {
+        "producer": "tools.rate_of_closure",
+        "producer_version": "1.0.0",
+        "source_revision": "regional-execution-test-plan",
+        "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "executor_provenance": {
+        "producer": "tools-ground-regional-executor",
+        "producer_version": "1.0.0",
+        "source_revision": "ground-regional-execution-v1",
+        "input_sha256": "e2ec13db832f6c28bcd50e53acbef4038edf192de2b82dca09f04009d885db94"
+      },
+      "model_id": "tools-ground-impact-bounce+tools-ground-skid-roll",
+      "model_version": "1.0.0+1.1.0",
+      "transitions": [],
+      "limitations": [
+        "coplanar_static_surfaces_only",
+        "material_changes_only_no_geometry_or_velocity_discontinuities"
+      ],
+      "unit_system": "SI",
+      "schema_version": "ground-regional-execution-result/v1"
+    },
+    "result_sha256": "3679b7432e991cc7219fd36c0ded51b35095e8635ea0f1b270141859e84419db"
+  },
+  "failed": {
+    "result": {
+      "request_id": "surface-run-analytic",
+      "surface_id": "firm-fairway",
+      "plan_id": "regional-execution-plan-001",
+      "ground_request_sha256": "5d85aba0be00a56c0773008399c935d20a31675ab57f8f82c6b87cffb84ac89b",
+      "regional_plan_sha256": "92e859b3478342f4fc62602e944e192f17a9dc69df44796fe97acdaacf00a959",
+      "regional_plan": {
+        "request_id": "regional-execution-plan-001",
+        "base_surface": {
+          "surface_id": "firm-fairway",
+          "provider_id": "tools.planar-surface",
+          "provider_version": "1.0.0",
+          "frame": "target_frame:x_downrange,y_up,z_right",
+          "height_m": 0.0,
+          "normal_unit": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "surface_velocity_m_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "normal_restitution": 0.42,
+          "static_friction": 0.35,
+          "kinetic_friction": 0.28,
+          "rolling_resistance": 0.04,
+          "firmness_pa": 1200000.0,
+          "hardness_fraction": 0.7,
+          "grass_height_m": 0.012,
+          "compressibility_fraction": 0.2,
+          "compression_damping_fraction": 0.25,
+          "turf_density_kg_m3": 180.0,
+          "moisture_fraction": 0.3
+        },
+        "axis_origin_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "axis_unit": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "lower_coordinate_m": -1.0,
+        "upper_coordinate_m": 10.0,
+        "regions": [
+          {
+            "region_id": "rough-band",
+            "precedence": 10,
+            "lower_coordinate_m": 0.1,
+            "upper_coordinate_m": 1.1,
+            "surface": {
+              "surface_id": "regional-rough",
+              "provider_id": "tools.planar-surface",
+              "provider_version": "1.0.0",
+              "frame": "target_frame:x_downrange,y_up,z_right",
+              "height_m": 0.0,
+              "normal_unit": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "surface_velocity_m_s": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "normal_restitution": 0.42,
+              "static_friction": 0.35,
+              "kinetic_friction": 0.28,
+              "rolling_resistance": 0.1,
+              "firmness_pa": 1200000.0,
+              "hardness_fraction": 0.7,
+              "grass_height_m": 0.012,
+              "compressibility_fraction": 0.2,
+              "compression_damping_fraction": 0.25,
+              "turf_density_kg_m3": 180.0,
+              "moisture_fraction": 0.3
+            }
+          }
+        ],
+        "provenance": {
+          "producer": "tools.rate_of_closure",
+          "producer_version": "1.0.0",
+          "source_revision": "regional-execution-test-plan",
+          "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "geometry_model": "coplanar_static_material_overlays",
+        "limitations": [
+          "coplanar_static_surfaces_only",
+          "material_changes_only_no_geometry_or_velocity_discontinuities"
+        ],
+        "unit_system": "SI",
+        "schema_version": "ground-regional-material-plan-request/v1"
+      },
+      "status": "failed",
+      "failure_reason": "step_limit",
+      "ground_result": null,
+      "plan_provenance": {
+        "producer": "tools.rate_of_closure",
+        "producer_version": "1.0.0",
+        "source_revision": "regional-execution-test-plan",
+        "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "executor_provenance": {
+        "producer": "tools-ground-regional-executor",
+        "producer_version": "1.0.0",
+        "source_revision": "ground-regional-execution-v1",
+        "input_sha256": "e2ec13db832f6c28bcd50e53acbef4038edf192de2b82dca09f04009d885db94"
+      },
+      "model_id": "tools-ground-impact-bounce+tools-ground-skid-roll",
+      "model_version": "1.0.0+1.1.0",
+      "transitions": [],
+      "limitations": [
+        "coplanar_static_surfaces_only",
+        "material_changes_only_no_geometry_or_velocity_discontinuities"
+      ],
+      "unit_system": "SI",
+      "schema_version": "ground-regional-execution-result/v1"
+    },
+    "result_sha256": "194a276e5ac748960c7c08d28000e273d7331f3d7704f7118bae8d346f24f751"
+  }
+}
