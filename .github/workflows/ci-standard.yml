@@ -958,13 +958,40 @@ jobs:
             run_changed_tests=false
           fi
 
+          # Below the root requires-python floor, conftest.py excludes
+          # root-package code from collection (see the Python floor section in
+          # CLAUDE.md). A change that touches only root-package tests therefore
+          # has nothing to run on such a lane, and pytest exits 5 "no tests
+          # collected". That is a legitimate pass here, not a selection bug.
+          #
+          # This tolerance is deliberately scoped to sub-floor lanes only. On the
+          # required lane, exit 5 still fails, which is what keeps the issue
+          # #3324 vacuous-selection protection meaningful.
+          root_floor="$(grep -m1 -E '^[[:space:]]*requires-python' pyproject.toml | grep -oE '[0-9]+\.[0-9]+' | head -n1)"
+          lane="${{ matrix.python-version }}"
+          allow_empty_collection=false
+          if [ -n "$root_floor" ] && [ "$lane" != "$root_floor" ] && [ "$(printf '%s\n%s\n' "$root_floor" "$lane" | sort -V | head -n1)" = "$lane" ]; then
+            allow_empty_collection=true
+            echo "Python $lane is below the root floor $root_floor; empty collection is allowed on this lane."
+          fi
+
+          run_pytest() {
+            local status=0
+            python -m pytest "$@" || status=$?
+            if [ "$status" -eq 5 ] && [ "$allow_empty_collection" = "true" ]; then
+              echo "::notice::No tests collected on the sub-floor Python $lane lane; nothing in this change claims support for it."
+              return 0
+            fi
+            return "$status"
+          }
+
           if [ "$run_changed_tests" = "true" ] && [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            python -m pytest "${changed_test_files[@]}" "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+            run_pytest "${changed_test_files[@]}" "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
           elif [ "$run_changed_tests" = "true" ] && [ "${#source_keyed_tests[@]}" -gt 0 ]; then
-            python -m pytest "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
+            run_pytest "${source_keyed_tests[@]}" "${core_tests[@]}" "${pytest_args[@]}"
           else
-            python -m pytest "${core_tests[@]}" "${pytest_args[@]}"
+            run_pytest "${core_tests[@]}" "${pytest_args[@]}"
           fi
 
       - name: Provider-Contract Suite (Exported Packages)
