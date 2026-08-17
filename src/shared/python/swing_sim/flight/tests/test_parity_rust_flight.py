@@ -8,7 +8,11 @@ RK4 vs adaptive RK45 + dt-quantised ground stop). Lift laws differ
 compared coarsely.
 
 Skips cleanly when ``tools_core`` is absent or is an older wheel that
-does not expose ``simulate_trajectory``.
+does not expose ``simulate_trajectory``. Capability comes in two tiers, so
+the tee-height test carries its own guard: a wheel can expose
+``simulate_trajectory`` and still lack the tee-aware full-state API, in
+which case the facade raises rather than degrading, and the module-level
+skip would not catch it.
 """
 
 from __future__ import annotations
@@ -25,6 +29,7 @@ from shared.python.swing_sim.flight import (
     is_rust_available,
     simulate_trajectory_rust,
 )
+from shared.python.swing_sim.flight._rust_facade import _RUST_FULL_STATE_AVAILABLE
 
 pytestmark = pytest.mark.skipif(
     not is_rust_available(),
@@ -106,6 +111,14 @@ def test_rust_result_preserves_full_signed_terminal_spin() -> None:
     assert terminal.angular_velocity_rad_s @ launch.get_spin_vector() > 0.0
 
 
+@pytest.mark.skipif(
+    not _RUST_FULL_STATE_AVAILABLE,
+    reason=(
+        "installed tools_core wheel exposes simulate_trajectory but not the "
+        "tee-aware full-state API; the module-level guard only covers a wheel "
+        "that is absent entirely"
+    ),
+)
 @pytest.mark.parity
 @pytest.mark.physics
 def test_rust_full_state_path_honors_tee_height() -> None:
