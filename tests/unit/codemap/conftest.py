@@ -1,47 +1,28 @@
-"""Skip every codemap unit test when tree-sitter (or any per-language pkg)
-isn't installed. The CI test lane runs on a stock Python that doesn't
-install the optional `codemap` extra; tests would otherwise spuriously
-fail because the parsers return empty results.
+"""Codemap test package configuration.
 
-The mandatory unit-test contract is satisfied by collection; the tests
-just no-op when the parser stack isn't available.
+This file intentionally defines **no** ``pytest_collection_modifyitems`` hook.
+
+It used to. The hook marked every item it was handed as skipped when the
+optional tree-sitter stack was missing, and pytest hands that hook the whole
+session's items -- not just the ones under this directory. Co-collecting this
+directory with any other tests silenced them all::
+
+    pytest tests/shared/python/theme                    -> 107 passed
+    pytest tests/shared/python/theme tests/unit/codemap -> 198 skipped, 0 passed
+
+The nightly full-suite lane reported 8411 collected / 8411 skipped and still
+exited 0, because skips are not failures and junit is written either way.
+See issue #4497.
+
+The optional-dependency skip now lives on each test module as::
+
+    from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
+
+    pytestmark = CODEMAP_DEPS_SKIP
+
+which cannot affect any module other than the one that declares it.
+``tests/architecture/test_no_session_wide_skip_leak_4497.py`` fails if a
+session-wide skip hook is reintroduced anywhere under ``tests/``.
 """
 
 from __future__ import annotations
-
-import pytest
-
-
-def _missing_deps() -> list[str]:
-    missing: list[str] = []
-    for name in (
-        "tree_sitter",
-        "tree_sitter_python",
-        "tree_sitter_javascript",
-        "tree_sitter_typescript",
-        "tree_sitter_rust",
-        "tree_sitter_markdown",
-        "pydantic",
-    ):
-        try:
-            __import__(name)
-        except ImportError:
-            missing.append(name)
-    return missing
-
-
-_MISSING = _missing_deps()
-
-
-def pytest_collection_modifyitems(config, items):  # noqa: ARG001
-    if not _MISSING:
-        return
-    skip_marker = pytest.mark.skip(
-        reason=(
-            "codemap optional deps missing: "
-            + ", ".join(_MISSING)
-            + " (install with: pip install -e '.[codemap]')"
-        )
-    )
-    for item in items:
-        item.add_marker(skip_marker)
