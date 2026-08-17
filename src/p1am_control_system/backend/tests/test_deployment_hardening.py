@@ -26,10 +26,24 @@ What is asserted here:
 from __future__ import annotations
 
 import re
-import tomllib
 from pathlib import Path
 
 import pytest
+
+# `tomllib` is stdlib only from Python 3.11. `pyproject.toml` declares
+# `requires-python = ">=3.11"`, but the CI matrix still runs a 3.10 lane, where a
+# bare `import tomllib` raises at collection time and aborts the *entire* pytest
+# session rather than just this module (1,218 tests collected, 1 error,
+# "Interrupted"). Falling back to `tomli` is not viable: it is declared only in
+# the `dev` extra, which CI does not install, and it is absent from both
+# requirements.txt and requirements-lock.txt. Skipping keeps the 3.10 lane honest
+# without adding a dependency for an interpreter the project does not support.
+tomllib = pytest.importorskip(
+    "tomllib",
+    reason=(
+        "tomllib is stdlib only on Python 3.11+; pyproject sets requires-python >=3.11"
+    ),
+)
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _SYSTEM = _REPO_ROOT / "src" / "p1am_control_system"
