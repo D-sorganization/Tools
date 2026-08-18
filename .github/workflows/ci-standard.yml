@@ -497,6 +497,14 @@ jobs:
       PIP_CACHE_DIR: ${{ needs.pick-runner.outputs.runner == 'd-sorg-fleet' &&
         '/home/dieterolson/actions-runners/.shared-tool-cache/pip' ||
         format('{0}/.pip-cache', github.workspace) }}
+      # xdist fan-out, chosen per runner class rather than globally.
+      # `-n 0` exists because the memory-constrained fleet hosts crashed xdist
+      # workers even at low fan-out. That constraint does not apply to a hosted
+      # runner (4 vCPU / 16 GB), and forcing serial there is what pushed this job
+      # into its timeout: the test step alone took 147.5 of 150 minutes on a
+      # hosted runner, while the same suite finished in 77.7 minutes serially on
+      # fleet hardware, which has faster cores.
+      PYTEST_FANOUT: ${{ needs.pick-runner.outputs.runner == 'd-sorg-fleet' && '0' || 'auto' }}
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
       # Keep matrix jobs isolated from stale runner-user packages. Python 3.12
@@ -919,9 +927,11 @@ jobs:
           fi
           # Large consolidation PRs can collect hundreds of changed tests. The
           # memory-constrained local runner fleet has repeatedly crashed xdist
-          # workers even at low fan-out, so override the repo-level `-n auto`
-          # addopt and report failures deterministically.
-          pytest_args+=(-n 0)
+          # workers even at low fan-out, so serial is still correct THERE. On a
+          # hosted runner it is not: see PYTEST_FANOUT above. `--dist loadscope`
+          # from the repo addopts keeps a module's tests on one worker, which
+          # matters for the load-sensitive Qt tests.
+          pytest_args+=(-n "${PYTEST_FANOUT:-0}")
 
           # Guard: every entry in the always-on core_tests smoke set must
           # actually collect at least one test. Six of these files were

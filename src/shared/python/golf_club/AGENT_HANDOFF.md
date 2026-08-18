@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — shared golf_club
 
 > Update this file in every implementation commit that changes this package.
-> Last updated: 2026-08-09
+> Last updated: 2026-08-18
 
 ## Stack and Integration Position
 
@@ -13,6 +13,18 @@
   exact head scope is a generic modern wedge, not the six-family completion.
 - Rate of Closure and UpstreamDrift must consume this public facade through
   thin adapters after the provider stack lands; do not copy the calculations.
+
+## Club Fitting Tester Epic (#4549)
+
+This package is the **shared-first** home for the clubfitting epic's physics
+and wires (design contract: `docs/specs/CLUB_FITTING_TESTER.md`).
+`mesh_mass_properties.py` (C1, #4550) is the mesh mass-property authority —
+watertightness, volume, centroid, and the full divergence-theorem inertia
+tensor with analytic cube/box/sphere gates; `rate_of_closure.club.volumetrics`
+delegates to it **lazily** (a module-scope import of this package reaches
+SciPy through the turf chain and breaks the Morris UI import contract).
+C2 (`shaft_delivery`) and C3 (`fitting_document`) land here next; tool-local
+packages hold only UI/pipeline bindings.
 
 ## Current CAD and Export Contract
 
