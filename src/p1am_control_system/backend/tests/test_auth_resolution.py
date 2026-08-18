@@ -9,6 +9,10 @@ The contract asserted here:
 
 - A configured admin key is a valid *operator* credential whenever no separate
   operator key is set (the operator tier is a subset of the admin tier).
+- On success the gates *return the resolved* :class:`identity.Principal`. They
+  are FastAPI dependencies whose value the routers consume for audit
+  attribution, so a ``None`` return is not an option (see
+  :func:`test_require_api_key_accepts_admin_key_when_only_admin_configured`).
 - A configured operator key is **never** promoted to the admin tier.
 - The fail-closed 503 fires only when *neither* key is configured.
 - The resolved configuration is introspectable (and logged at startup) so a
@@ -35,6 +39,7 @@ from auth_config import (  # noqa: E402
     verify_operator_key,
 )
 from fastapi import HTTPException, status  # noqa: E402
+from identity import Role  # noqa: E402
 
 _OPERATOR_KEY = "operator-secret"  # pragma: allowlist secret
 _ADMIN_KEY = "admin-secret"  # pragma: allowlist secret
@@ -71,9 +76,27 @@ def test_verify_operator_key_rejects_wrong_key_when_only_admin_configured(
 def test_require_api_key_accepts_admin_key_when_only_admin_configured(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """``/api/alarms/{id}/acknowledge`` must not 503 on an admin-only box."""
+    """``/api/alarms/{id}/acknowledge`` must not 503 on an admin-only box.
+
+    This assertion used to read ``is None``, which was the contract before named
+    principals landed. It is now the resolved ``Principal``, and that is the
+    contract that has to hold: ``require_api_key`` is wired directly as the
+    ``operator_dependency`` of the alarm, operations, advisory and product
+    routers, each of which hands the returned principal to its application
+    service so the action is attributable — ``service.acknowledge(tag,
+    principal)``, ``shifts.append(draft, principal)``,
+    ``investigations.save(spec, principal)``. A ``None`` return would strip the
+    actor out of the audit trail (and raise on the service contract checks), so
+    the old assertion was the stale side of the pair, not the implementation.
+
+    The admin-only deployment still resolves through the *operator* gate, which
+    is the #4041 property this module exists to protect: the returned principal
+    carries the admin role and satisfies the operator requirement.
+    """
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", _ADMIN_KEY)
-    assert require_api_key(_ADMIN_KEY) is None
+    principal = require_api_key(_ADMIN_KEY)
+    assert principal.role is Role.ADMIN
+    assert principal.allows(Role.OPERATOR) is True
 
 
 def test_require_api_key_rejects_missing_key_when_only_admin_configured(
@@ -83,6 +106,21 @@ def test_require_api_key_rejects_missing_key_when_only_admin_configured(
     monkeypatch.setenv("P1AM_ADMIN_API_KEY", _ADMIN_KEY)
     with pytest.raises(HTTPException) as exc:
         require_api_key(None)
+    assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_require_api_key_rejects_wrong_key_when_only_admin_configured(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Returning a Principal must not make a *wrong* credential succeed.
+
+    Guards the direction the contract change could plausibly have broken: the
+    gate now produces a value on success, so this pins that the failure path
+    still raises instead of resolving some default principal.
+    """
+    monkeypatch.setenv("P1AM_ADMIN_API_KEY", _ADMIN_KEY)
+    with pytest.raises(HTTPException) as exc:
+        require_api_key("not-the-admin-key")  # pragma: allowlist secret
     assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
 
 
