@@ -26,6 +26,16 @@ SciPy through the turf chain and breaks the Morris UI import contract).
 C2 (`shaft_delivery`) and C3 (`fitting_document`) land here next; tool-local
 packages hold only UI/pipeline bindings.
 
+## Heavy Hit Epic (#4562)
+
+`impact_coupling.py` (H1/H3) quantifies hand/body influence at impact: a
+ball-head-hands KV chain with **upper-bound semantics** (rigid-shaft worst
+case) and the tau-squared decoupling law verified by gate; physiological
+hands change driver ball speed by <1%. `swing_sim/model_interchange/` (H2)
+imports golfer models from MJCF/URDF/.osim (MuJoCo, Drake, Pinocchio,
+OpenSim) runtime-free and reduces a named hand selection to `GripBoundary`.
+Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
+
 ## Current CAD and Export Contract
 
 `wedge_parameters.py` and `wedge_serialization.py` own the immutable SI,
