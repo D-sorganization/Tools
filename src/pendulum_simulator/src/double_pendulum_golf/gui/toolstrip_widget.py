@@ -465,6 +465,15 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
 
         # Help / Equations buttons (#1136, #1144)
+        self.btn_companion = QPushButton("Companion Guide")
+        self.btn_companion.setStyleSheet(_BTN_SMALL)
+        self.btn_companion.setToolTip(
+            "Open guided proximal–distal experiments, falsifiers, tips, and glossary"
+        )
+        self.btn_companion.clicked.connect(self._show_companion_guide)
+        fit_button_to_text(self.btn_companion)
+        layout.addWidget(self.btn_companion)
+
         self.btn_eom = QPushButton("Equations of Motion")
         self.btn_eom.setStyleSheet(_BTN_SMALL)
         self.btn_eom.setToolTip("Show Equations of Motion derivation")
@@ -553,6 +562,12 @@ class ToolStrip(QWidget):
         from .equations_popup import EquationTopic, show_equations_popup
 
         show_equations_popup(self, EquationTopic.EQUATIONS_OF_MOTION)
+
+    def _show_companion_guide(self) -> None:
+        """Open the reader-oriented experiment and glossary guide."""
+        from .companion_dialog import show_companion_guide
+
+        self._companion_dialog = show_companion_guide(self)
 
     def _show_mass_matrix_popup(self) -> None:
         """Open the Mass Matrix popup (#1136)."""
