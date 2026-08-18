@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import threading
 
 import pytest
@@ -194,7 +195,7 @@ def test_authority_process_spec_keeps_token_out_of_command(tmp_path) -> None:
     assert spec.environment["ROC_AUTHORITY_TOKEN"] == "test-ephemeral-token"
     assert spec.environment["ROC_AUTHORITY_PORT"] == "54321"
     assert spec.environment["ROC_AUTHORITY_STATE_ROOT"] == str(state_root)
-    assert spec.environment["PYTHONPATH"].split(";")[0] == str(tmp_path)
+    assert spec.environment["PYTHONPATH"].split(os.pathsep)[0] == str(tmp_path)
 
 
 def test_authority_process_spec_accepts_only_bounded_import_factory(tmp_path) -> None:
