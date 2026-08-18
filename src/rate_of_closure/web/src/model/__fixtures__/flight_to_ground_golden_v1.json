@@ -1,0 +1,198 @@
+{
+  "fixture_schema_version": "flight-to-ground-golden/v1",
+  "numeric_policy_cases": {
+    "expected_json": "{\"half_away_negative\":-1.00000000001,\"half_away_positive\":1.00000000001,\"integer_float\":1,\"negative_zero\":0,\"small_exponent\":0.0000001}",
+    "rejected_values": {
+      "unpaired_surrogate": "\ud800",
+      "unsafe_integer": 9007199254740992
+    },
+    "values": {
+      "half_away_negative": -1.000000000005,
+      "half_away_positive": 1.000000000005,
+      "integer_float": 1.0,
+      "negative_zero": -0.0,
+      "small_exponent": 1e-7
+    }
+  },
+  "request": {
+    "ball_mass_kg": 0.04593,
+    "ball_radius_m": 0.02135,
+    "calibration": {
+      "calibration_id": "literature-default-2026-08",
+      "confidence": 0.6,
+      "kind": "literature",
+      "source": "documented literature basis"
+    },
+    "first_penetrating_state": {
+      "angular_velocity_rad_s": [0.0, 260.0, -4.0],
+      "frame": "target_frame:x_downrange,y_up,z_right",
+      "position_m": [210.0, 0.019, -3.0],
+      "time_s": 5.2,
+      "velocity_m_s": [31.0, -12.0, 1.5]
+    },
+    "last_separated_state": {
+      "angular_velocity_rad_s": [0.0, 260.0, -4.0],
+      "frame": "target_frame:x_downrange,y_up,z_right",
+      "position_m": [209.7, 0.024, -3.01],
+      "time_s": 5.19,
+      "velocity_m_s": [31.0, -12.0, 1.5]
+    },
+    "max_events": 64,
+    "max_time_s": 12.0,
+    "output_interval_s": 0.01,
+    "provenance": {
+      "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "producer": "tools.rate_of_closure",
+      "producer_version": "1.0.0",
+      "source_revision": "60ac5b46"
+    },
+    "request_id": "ground-run-001",
+    "rotational_inertia_factor": 0.4,
+    "schema_version": "flight-to-ground-request/v1",
+    "surface": {
+      "compressibility_fraction": 0.2,
+      "compression_damping_fraction": 0.25,
+      "firmness_pa": 1200000.0,
+      "frame": "target_frame:x_downrange,y_up,z_right",
+      "grass_height_m": 0.012,
+      "hardness_fraction": 0.7,
+      "height_m": 0.0,
+      "kinetic_friction": 0.28,
+      "moisture_fraction": 0.3,
+      "normal_restitution": 0.42,
+      "normal_unit": [0.0, 1.0, 0.0],
+      "provider_id": "tools.planar-surface",
+      "provider_version": "1.0.0",
+      "rolling_resistance": 0.04,
+      "static_friction": 0.35,
+      "surface_id": "firm-fairway",
+      "surface_velocity_m_s": [0.0, 0.0, 0.0],
+      "turf_density_kg_m3": 180.0
+    },
+    "unit_system": "SI"
+  },
+  "request_sha256": "ce1398702421d21dabd6a5879da32a0978b23012b4c826ea6713506cbbbf0f92",
+  "result": {
+    "calibration": {
+      "calibration_id": "literature-default-2026-08",
+      "confidence": 0.6,
+      "kind": "literature",
+      "source": "documented literature basis"
+    },
+    "events": [
+      {
+        "angular_velocity_after_rad_s": [0.0, 200.0, -2.0],
+        "angular_velocity_before_rad_s": [0.0, 210.0, -2.5],
+        "event_type": "first_contact",
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "position_m": [210.0, 0.02135, -3.0],
+        "sequence": 0,
+        "time_s": 5.2,
+        "velocity_after_m_s": [24.0, 6.0, 1.0],
+        "velocity_before_m_s": [31.0, -12.0, 1.5]
+      },
+      {
+        "angular_velocity_after_rad_s": [0.0, 200.0, -2.0],
+        "angular_velocity_before_rad_s": [0.0, 210.0, -2.5],
+        "event_type": "bounce",
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "position_m": [218.0, 0.02135, -2.8],
+        "sequence": 1,
+        "time_s": 5.5,
+        "velocity_after_m_s": [20.0, 2.0, 0.8],
+        "velocity_before_m_s": [24.0, -3.0, 1.0]
+      },
+      {
+        "angular_velocity_after_rad_s": [0.0, 200.0, -2.0],
+        "angular_velocity_before_rad_s": [0.0, 210.0, -2.5],
+        "event_type": "skid_to_roll",
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "position_m": [224.0, 0.02135, -2.5],
+        "sequence": 2,
+        "time_s": 6.0,
+        "velocity_after_m_s": [14.8, 0.0, 0.5],
+        "velocity_before_m_s": [15.0, 0.0, 0.5]
+      },
+      {
+        "angular_velocity_after_rad_s": [0.0, 0.0, 0.0],
+        "angular_velocity_before_rad_s": [0.0, 210.0, -2.5],
+        "event_type": "rest",
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "position_m": [228.0, 0.02135, -2.25],
+        "sequence": 3,
+        "time_s": 8.0,
+        "velocity_after_m_s": [0.0, 0.0, 0.0],
+        "velocity_before_m_s": [0.1, 0.0, 0.0]
+      }
+    ],
+    "frame": "target_frame:x_downrange,y_up,z_right",
+    "model_id": "tools-ground-reference",
+    "model_version": "0.1.0",
+    "provenance": {
+      "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "producer": "tools.rate_of_closure",
+      "producer_version": "1.0.0",
+      "source_revision": "60ac5b46"
+    },
+    "request_id": "ground-run-001",
+    "schema_version": "flight-to-ground-result/v1",
+    "status": "complete",
+    "summary": {
+      "bounce_air_distance_m": 3.0,
+      "bounce_count": 1,
+      "carry_distance_m": 210.0214274787,
+      "final_downrange_m": 228.0,
+      "final_offline_m": -2.25,
+      "roll_distance_m": 10.0,
+      "skid_distance_m": 5.0,
+      "surface_path_distance_m": 15.0,
+      "total_distance_m": 228.0111017034
+    },
+    "surface_id": "firm-fairway",
+    "termination": { "completed": true, "reason": "rest", "time_s": 8.0 },
+    "trajectory": [
+      {
+        "angular_velocity_rad_s": [0.0, 200.0, -2.0],
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "phase": "impact",
+        "position_m": [210.0, 0.02135, -3.0],
+        "time_s": 5.2,
+        "velocity_m_s": [24.0, 6.0, 1.0]
+      },
+      {
+        "angular_velocity_rad_s": [0.0, 200.0, -2.0],
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "phase": "skid",
+        "position_m": [218.0, 0.02135, -2.8],
+        "time_s": 5.5,
+        "velocity_m_s": [15.0, 0.0, 0.5]
+      },
+      {
+        "angular_velocity_rad_s": [0.0, 200.0, -2.0],
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "phase": "roll",
+        "position_m": [224.0, 0.02135, -2.5],
+        "time_s": 6.0,
+        "velocity_m_s": [15.0, 0.0, 0.5]
+      },
+      {
+        "angular_velocity_rad_s": [0.0, 0.0, 0.0],
+        "frame": "target_frame:x_downrange,y_up,z_right",
+        "phase": "rest",
+        "position_m": [228.0, 0.02135, -2.25],
+        "time_s": 8.0,
+        "velocity_m_s": [0.0, 0.0, 0.0]
+      }
+    ],
+    "unit_system": "SI",
+    "unavailable_fields": [],
+    "warnings": [
+      {
+        "code": "LITERATURE_CALIBRATION",
+        "message": "Validate against measured turf before decision use.",
+        "severity": "info"
+      }
+    ]
+  },
+  "result_sha256": "111694537ed2b4f555fa64b6a3e74641c7d998f6685b4abe49e1424669aae986"
+}

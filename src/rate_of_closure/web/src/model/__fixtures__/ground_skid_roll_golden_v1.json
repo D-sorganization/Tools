@@ -1,0 +1,22 @@
+{
+  "schema_version": "ground-skid-roll-golden/v1",
+  "case_id": "flat-solid-sphere-zero-spin",
+  "units": "SI",
+  "input": {
+    "initial_speed_m_s": 7.0,
+    "initial_spin_rad_s": 0.0,
+    "rotational_inertia_factor": 0.4,
+    "kinetic_friction": 0.2,
+    "rolling_resistance": 0.05,
+    "gravity_m_s2": 9.80665
+  },
+  "expected": {
+    "skid_duration_s": 1.0197162129779282,
+    "skid_to_roll_speed_m_s": 5.0,
+    "skid_distance_m": 6.118297277867569,
+    "roll_duration_s": 10.197162129779283,
+    "roll_distance_m": 25.492905324448206,
+    "surface_path_distance_m": 31.611202602315775,
+    "termination": "rest"
+  }
+}

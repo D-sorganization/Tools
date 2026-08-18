@@ -22,24 +22,37 @@ def _step_by_name(steps: list[dict[str, Any]], name: str) -> dict[str, Any]:
     return next(step for step in steps if step.get("name") == name)
 
 
-def test_ci_tests_job_builds_and_installs_tools_core_wheel_in_required_lane() -> None:
+def test_ci_tests_job_caches_builds_and_verifies_tools_core_required_lane() -> None:
     workflow = _ci_standard_workflow()
     tests_job = workflow["jobs"]["tests"]
     steps = tests_job["steps"]
 
     assert "3.11" in tests_job["strategy"]["matrix"]["python-version"]
 
-    wheel_step = _step_by_name(steps, "Build and install tools_core Rust wheel")
-    assert "matrix.python-version == '3.11'" in wheel_step["if"]
-
-    wheel_script = wheel_step["run"]
-    assert "maturin build" in wheel_script
-    assert (
-        "python -m pip install --force-reinstall --no-cache-dir maturin" in wheel_script
+    restore_step = _step_by_name(steps, "Restore cached tools_core wheel")
+    decide_step = _step_by_name(
+        steps, "Decide whether the tools_core wheel must be built"
     )
-    assert "rust_core/tools-core/Cargo.toml" in wheel_script
-    assert "python -m pip install" in wheel_script
-    assert "import tools_core" in wheel_script
+    build_step = _step_by_name(steps, "Build tools_core Rust wheel")
+    save_step = _step_by_name(steps, "Save tools_core wheel to cache")
+    verify_step = _step_by_name(steps, "Install and verify tools_core wheel")
+
+    assert "matrix.python-version == '3.11'" in restore_step["if"]
+    assert restore_step["uses"] == "actions/cache/restore@v6"
+    assert restore_step["with"]["path"] == "dist/tools-core-wheels"
+    assert "hashFiles(" in restore_step["with"]["key"]
+    assert "need_build=true" in decide_step["run"]
+    assert "need_build == 'true'" in build_step["if"]
+    assert "python -m pip install maturin" in build_step["run"]
+    assert "--no-cache-dir maturin" not in build_step["run"]
+    assert "maturin build" in build_step["run"]
+    assert "rust_core/tools-core/Cargo.toml" in build_step["run"]
+    assert save_step["uses"] == "actions/cache/save@v6"
+    assert save_step["continue-on-error"] is True
+    assert save_step["with"]["key"] == restore_step["with"]["key"]
+    assert "matrix.python-version == '3.11'" in verify_step["if"]
+    assert "python -m pip install dist/tools-core-wheels/*.whl" in verify_step["run"]
+    assert "import tools_core" in verify_step["run"]
 
 
 def test_ci_tests_job_runs_non_skippable_tools_core_contract_in_required_lane() -> None:

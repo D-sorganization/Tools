@@ -12,6 +12,11 @@ from codemap._ts_common import ParsedSymbol, ParseResult
 
 from codemap import db as codemap_db
 from codemap import indexer
+from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
+
+# Scoped to this module only; a session-wide skip hook silenced the whole
+# suite here once already (issue #4497).
+pytestmark = CODEMAP_DEPS_SKIP
 
 
 def _python_result(path: str | Path, _source: bytes | str) -> ParseResult:

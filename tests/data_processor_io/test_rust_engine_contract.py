@@ -385,6 +385,81 @@ class TestFilterExport:
             filter_export("missing.csv", tmp_path / "out.csv", "force > 0")
 
 
+# ── filter_export predicate validation ────────────────────────────────────────
+
+
+@pytest.mark.unit
+@pytest.mark.contract
+class TestFilterExportPredicateValidation:
+    """``filter_export`` must not hand an unvalidated predicate to pandas eval.
+
+    ``pd.DataFrame.query`` evaluates the predicate, so an attacker-controlled
+    predicate is a code-injection vector. The predicate must go through
+    ``validate_pandas_formula`` before it reaches ``df.query``.
+    """
+
+    @pytest.mark.parametrize(
+        "predicate",
+        [
+            "force.__class__ > 0",
+            "force.__class__.__mro__[1].__subclasses__() > 0",
+            "__import__('os').system('echo pwned') > 0",
+            "@force > 0",
+            "abs(force) > 0",
+        ],
+    )
+    def test_injection_predicate_rejected(
+        self, csv_file: Path, tmp_path: Path, predicate: str
+    ) -> None:
+        dst = tmp_path / "out.csv"
+
+        with pytest.raises(ValueError, match="Invalid predicate"):
+            filter_export(csv_file, dst, predicate)
+
+        assert not dst.exists()
+
+    @pytest.mark.parametrize(
+        "predicate",
+        [
+            "unknown_column > 0",
+            "note == 'start'",
+        ],
+    )
+    def test_predicate_outside_allowed_grammar_rejected(
+        self, csv_file: Path, tmp_path: Path, predicate: str
+    ) -> None:
+        """The allow-list grammar is numeric/boolean only, as elsewhere in Tools.
+
+        String comparison and unknown names are refused rather than evaluated,
+        matching ``shared.python.data_processing.processor``.
+        """
+        dst = tmp_path / "out.csv"
+
+        with pytest.raises(ValueError, match="Invalid predicate"):
+            filter_export(csv_file, dst, predicate)
+
+        assert not dst.exists()
+
+    def test_legitimate_predicate_still_filters(
+        self, csv_file: Path, tmp_path: Path
+    ) -> None:
+        dst = tmp_path / "out.csv"
+
+        n = filter_export(csv_file, dst, "force > 10.0 and time < 0.15")
+
+        assert n == 2
+        assert len(pd.read_csv(dst)) == 2
+
+    def test_validation_uses_projected_columns(
+        self, csv_file: Path, tmp_path: Path
+    ) -> None:
+        """A column dropped by ``columns=`` is no longer a valid predicate name."""
+        dst = tmp_path / "out.csv"
+
+        with pytest.raises(ValueError, match="Invalid predicate"):
+            filter_export(csv_file, dst, "force > 10.0", columns=["time", "note"])
+
+
 # ── cancel ────────────────────────────────────────────────────────────────────
 
 

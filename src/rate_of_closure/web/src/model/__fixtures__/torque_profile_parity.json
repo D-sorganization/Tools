@@ -1,0 +1,46 @@
+{
+  "assignments": [
+    {
+      "coefficients": [
+        10.0,
+        -2.0
+      ],
+      "fit_metadata": null,
+      "joint_id": "joint.shoulder"
+    },
+    {
+      "coefficients": [
+        0.0,
+        3.0,
+        -0.5
+      ],
+      "fit_metadata": {
+        "condition_number": 2.5,
+        "degree": 2,
+        "max_abs_error_nm": 0.1,
+        "original_sample_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "r_squared": 0.99,
+        "rmse_nm": 0.05
+      },
+      "joint_id": "joint.wrist"
+    }
+  ],
+  "coefficient_order": "ascending_c0_first",
+  "created_at_utc": "2026-08-05T12:00:00Z",
+  "description": "Literal Python-produced payload for TypeScript parity.",
+  "model_id": "model.double_pendulum.v1",
+  "modified_at_utc": "2026-08-05T12:30:00.123456Z",
+  "name": "Web Parity Profile",
+  "profile_id": "profile.web_parity.v1",
+  "schema_version": 1,
+  "source": "fitted_run",
+  "source_metadata": {
+    "author": "python-test-suite",
+    "run_id": "run.2026-08-05.001"
+  },
+  "time_domain_s": [
+    0.0,
+    1.25
+  ],
+  "torque_unit": "N*m"
+}

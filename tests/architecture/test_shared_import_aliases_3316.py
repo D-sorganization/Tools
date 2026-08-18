@@ -77,6 +77,51 @@ def test_canonical_alias_loader_delegates_runpy_code_lookup() -> None:
     assert requested == [canonical_name]
 
 
+def test_finder_does_not_redirect_internal_test_modules() -> None:
+    """``<root>.tests.<...>`` must load normally instead of being aliased.
+
+    Downstream repos import the shared packages' own test modules directly
+    (e.g. ``from sidekick.tests.calculators.conversion.test_conversion import
+    ...``). Redirecting those names through the alias machinery resolves them
+    to the wrong module object, so the finder must decline them outright.
+    """
+    finder = import_aliases.SharedImportAliasFinder()
+
+    declined = (
+        "sidekick.tests",
+        "sidekick.tests.calculators",
+        "sidekick.tests.calculators.conversion.test_conversion",
+        "upstream_drift_tools.tests.test_data_io",
+        "src.shared.python.sidekick.tests.test_data_io",
+    )
+    for fullname in declined:
+        assert finder.find_spec(fullname) is None, fullname
+
+
+def test_finder_still_redirects_non_test_submodules() -> None:
+    """The ``.tests`` carve-out must not disable ordinary alias redirection."""
+    finder = import_aliases.SharedImportAliasFinder()
+
+    for fullname in (
+        "sidekick.process_calculators",
+        "sidekick.ui.tools_sidebar.registry",
+    ):
+        assert finder.find_spec(fullname) is not None, fullname
+
+
+def test_internal_test_package_imports_under_alias_root() -> None:
+    """A shared package's own ``tests`` subpackage is importable, not aliased."""
+    install_shared_import_aliases()
+
+    module = importlib.import_module("sidekick.tests")
+
+    assert module.__name__ == "sidekick.tests"
+    canonical_root = Path(
+        importlib.import_module("shared.python.sidekick").__file__ or ""
+    ).parent
+    assert Path(module.__file__ or "").parent == canonical_root / "tests"
+
+
 def test_sidekick_aliases_share_one_registry_module() -> None:
     install_shared_import_aliases()
 

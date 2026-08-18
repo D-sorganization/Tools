@@ -1,0 +1,32 @@
+{
+  "schema_version": "ground-impact-bounce-golden/v1",
+  "gravity_m_s2": [0.0, -9.80665, 0.0],
+  "impact_case": {
+    "mass_kg": 1.0,
+    "radius_m": 0.1,
+    "rotational_inertia_factor": 0.4,
+    "normal_restitution": 0.5,
+    "static_friction": 0.5,
+    "kinetic_friction": 0.3,
+    "velocity_before_m_s": [2.0, -3.0, 0.0],
+    "angular_velocity_before_rad_s": [0.0, 0.0, 0.0],
+    "expected": {
+      "regime": "sticking",
+      "normal_impulse_n_s": 4.5,
+      "tangential_impulse_n_s": [-0.5714285714285714, 0.0, 0.0],
+      "velocity_after_m_s": [1.4285714285714286, 1.5, 0.0],
+      "angular_velocity_after_rad_s": [0.0, 0.0, -14.285714285714285],
+      "dissipation_j": 3.9464285714285716
+    }
+  },
+  "bounce_case": {
+    "incoming_normal_speed_m_s": 4.0,
+    "normal_restitution": 0.5,
+    "expected_event_elapsed_s": [
+      0.0,
+      0.4078864851911713,
+      0.611829727786757,
+      0.7138013490845498
+    ]
+  }
+}
