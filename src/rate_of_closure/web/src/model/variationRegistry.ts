@@ -10,6 +10,15 @@ import type { BallSetup } from "./ballSetup";
 
 export const CATEGORY_DELIVERY = "swing_sim.impact.delivery";
 export const CATEGORY_LAUNCH = "swing_sim.flight.launch";
+
+// Regional-ground adapter inputs. These are extension keys registered
+// through the shared seam rather than VARIABLE_REGISTRY entries, mirroring
+// register_ground_variation_variables() on the Python side; the key strings
+// must stay byte-identical to regional_ground_variation_dataset.py.
+export const GROUND_NORMAL_RESTITUTION_KEY =
+  `${CATEGORY_LAUNCH}.ground_normal_restitution`;
+export const GROUND_ROLLING_RESISTANCE_KEY =
+  `${CATEGORY_LAUNCH}.ground_rolling_resistance`;
 export const CATEGORY_SWING = "swing_sim.swing";
 export const CATEGORY_CLUB = "swing_sim.club";
 export const TEE_HEIGHT_VARIATION_KEY = "swing_sim.ball_setup.tee_height_m";
