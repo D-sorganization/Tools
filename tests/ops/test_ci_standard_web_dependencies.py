@@ -10,31 +10,6 @@ PYTHON_TOOLCACHE_RESTORE = (
     REPO_ROOT / ".github" / "scripts" / "restore-python-toolcache.sh"
 )
 
-# Label of the self-hosted fleet. The persistent Python tool-cache dance below
-# exists because fleet runners share one tool cache across concurrent jobs;
-# GitHub-hosted runners are ephemeral and need none of it. `quality-gate` moved
-# to `ubuntu-24.04` to keep the required PR gate off the constrained home WAN,
-# which is why these assertions are keyed on the runner rather than hard-coded
-# to a job-name list that silently rots when a job migrates.
-SELF_HOSTED_LABEL = "d-sorg-fleet"
-
-
-TOOLCACHE_STEP = "Select persistent Python tool cache"
-
-# The heavy self-hosted Python job that must always opt in. Lighter self-hosted
-# jobs (e.g. rust-quality-gate) provision Python without the tool-cache dance,
-# so requiring it of every self-hosted job would assert more than CI promises.
-TOOLCACHE_REQUIRED_JOBS = ("tests",)
-
-
-def _persistent_toolcache_jobs(workflow: dict) -> list[str]:
-    """Jobs that opt into the shared-tool-cache workaround."""
-    return [
-        name
-        for name, job in workflow["jobs"].items()
-        if any(step.get("name") == TOOLCACHE_STEP for step in job.get("steps") or ())
-    ]
-
 
 def test_ci_standard_installs_fastapi_multipart_parser() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
@@ -145,25 +120,6 @@ def test_ci_standard_uses_persistent_python_toolcache_and_cold_cache_budgets() -
     assert "cache" not in tests_setup.get("with", {})
     assert "${{ runner.temp }}/_tool_cache" not in tests_setup.get("env", {}).values()
 
-    # The shared-tool-cache workaround applies only where the cache is shared.
-    toolcache_jobs = _persistent_toolcache_jobs(workflow)
-    for required in TOOLCACHE_REQUIRED_JOBS:
-        assert required in toolcache_jobs, (
-            f"job {required!r} runs on the shared fleet tool cache and must keep "
-            f"its {TOOLCACHE_STEP!r} step"
-        )
-    for job_name in toolcache_jobs:
-        job = workflow["jobs"][job_name]
-        assert job.get("runs-on") == SELF_HOSTED_LABEL, (
-            f"{job_name!r} uses the persistent tool cache but is not on the "
-            "self-hosted fleet; hosted runners are ephemeral and need no such step"
-        )
-        cache_step = next(
-            step for step in job["steps"] if step.get("name") == TOOLCACHE_STEP
-        )
-        assert "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" in cache_step["run"]
-        assert "runner.temp" not in cache_step["run"]
-
 
 def test_ci_standard_rejects_semantically_broken_cached_python() -> None:
     """An executable empty/stub file must not satisfy the Python cache probe."""
@@ -184,34 +140,6 @@ def test_ci_standard_rejects_semantically_broken_cached_python() -> None:
     assert '"$interpreter" -m pip --version' in restore
     assert '[[ "$pip_version" != pip\\ *" from "* ]]' in restore
 
-<<<<<<< HEAD
-    # Cache clean/restore is a shared-tool-cache concern: self-hosted only.
-    # The version argument must track that job's own setup-python request, so a
-    # matrix or pin change cannot leave the cleaner scrubbing the wrong version.
-    for job_name in _persistent_toolcache_jobs(workflow):
-        job = workflow["jobs"][job_name]
-        setup_step = next(
-            step
-            for step in job["steps"]
-            if str(step.get("uses", "")).startswith("actions/setup-python@")
-        )
-        expected_version = setup_step["with"]["python-version"]
-        clean_step = next(
-            step
-            for step in job["steps"]
-            if step.get("name") == "Force-clean stale Python tool cache (NVMe runners)"
-        )
-        assert clean_step["run"] == (
-            f"bash .github/scripts/clean-python-toolcache.sh '{expected_version}'"
-        )
-        clean_index = job["steps"].index(clean_step)
-        assert job["steps"][clean_index - 1]["name"] == (
-            "Restore local Python tool cache"
-        )
-
-    # Runtime verification and venv isolation apply to every Python job,
-    # hosted or self-hosted.
-=======
     tests_job = workflow["jobs"]["tests"]
     clean_step = next(
         step
@@ -226,7 +154,6 @@ def test_ci_standard_rejects_semantically_broken_cached_python() -> None:
         "Restore local Python tool cache"
     )
 
->>>>>>> origin/main
     for job_name in ("quality-gate", "tests"):
         job = workflow["jobs"][job_name]
         setup_index = next(
