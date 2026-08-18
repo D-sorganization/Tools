@@ -89,3 +89,9 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+## 2026-08-13 - Replace chained .map().join() in CSV generation
+**Learning:** Using chained array methods like `.map().join()` for large data serialization (like CSV exports) allocates intermediate arrays for every row, putting immense pressure on the garbage collector and stalling the main thread.
+**Action:** Replace chained array map/join operations in data serialization hot paths with single-pass `for` loops and string concatenation to eliminate intermediate allocations.
+## 2026-10-27 - Remove Array.from allocations in hot paths like Histogram renders
+**Learning:** Found instances of `Array.from({ length: N }, ...)` directly inside React component render functions (e.g. `Histogram.tsx`). This allocates a new array, creates iterators, and calls a mapping function on every render, stalling the UI thread during drag/zoom events.
+**Action:** Replace inline `Array.from` renders with IIFEs that pre-allocate using `new Array(N)` and iterate with a standard `for` loop, eliminating closure and iterator overhead per element.

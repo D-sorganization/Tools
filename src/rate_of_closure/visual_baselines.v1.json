@@ -1,0 +1,224 @@
+{
+  "schema_id": "rate-of-closure/visual-baselines",
+  "schema_version": 1,
+  "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
+  "source_artifact_commit": "a714b62b8c12a7d07d7f7b795aae29afacf4fc7c",
+  "baselines": [
+    {
+      "surface": "react",
+      "tab_id": "explorer",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-explorer-1440x900.png",
+      "sha256": "fa4dbf59ac4a61c006099fd5dda6cd8552dcbfaf3a85b5293fe434af70cd224b",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "calculation",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-calculation-1440x900.png",
+      "sha256": "f3b4e55b599818e2bc0f178ba06f3e073a7e02d8c5fcb288753576a644a2d917",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "simulation",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-simulation-1440x900.png",
+      "sha256": "bad555a6b15bea25efea6463228f2587dc3d319ef10cc6f55fc17ea8363dd4ab",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "plots",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-plots-1440x900.png",
+      "sha256": "53f956c3e7099a5f6c29620c12422e1aeaa39e6cb558d76991043f7eeb733d3f",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "flight",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-flight-1440x900.png",
+      "sha256": "fb6af1677e1e0c4b059276e5e14a4f61c94317effff6560149f7fdab947429b4",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "launch-monitor-analytics",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-launch-monitor-analytics-1440x900.png",
+      "sha256": "2d16605f59136ca6dd1ca6b5ad18a47e2abcc8658dd9c999ac5e99d9146d1616",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "variation",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-variation-1440x900.png",
+      "sha256": "f57fc6447f411b5627b9b8e22c6f2179a0d969b2ef0a979af98a70f76445085d",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "putting",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-putting-1440x900.png",
+      "sha256": "bf106f8cd8e350b9eae11b57bac611f0f0719b6346982e211b5ee90aa8f9fff4",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "glossary",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-glossary-1440x900.png",
+      "sha256": "9fbfcb631d4d1866d76e6fd651e0a4dd64b822ab357c8aca918b0ee7ce7e9b06",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "clubhead",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-clubhead-dpi-1.0.png",
+      "sha256": "531fdc7ca009bba6a14742ca014d15919547f8d86f0684e6a4833bf51e5c8750",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "plots",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-plots-dpi-1.0.png",
+      "sha256": "aad819603dedab7059d9dd370bd32fd7c71b4cec0d1a99517f283d16bdafe2b4",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "calculation_description",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-calculation_description-dpi-1.0.png",
+      "sha256": "ddad7468f9b21083fa4117770317d7a92ad60294389170b455c211d8f8378284",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "simulation",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-simulation-dpi-1.0.png",
+      "sha256": "2a818c5cafd98634441f7d1b721c9ee6b98c1f402e3857e874f8f5d3117da814",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "flight_explorer",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-flight_explorer-dpi-1.0.png",
+      "sha256": "3c4307b86a963d43514c08d16107e9ae1ab6a884df4b63c044eb134b152bf890",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "launch_monitor_analytics",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-launch_monitor_analytics-dpi-1.0.png",
+      "sha256": "f84258bdcd862fcb3e8281fdc1236df1eda0409e63807a685602f2369f71190a",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "variation",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-variation-dpi-1.0.png",
+      "sha256": "37cde0181f0bf64efb093c764bad9814ed7722faad6b36b7948acd53fee01b31",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "putting",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-putting-dpi-1.0.png",
+      "sha256": "8622c395bbaa128958993bf24e3d46a9acc5495ff9e6b93776218b977b08e700",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "glossary",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-glossary-dpi-1.0.png",
+      "sha256": "7abf9e27e8192563c5b0fcf25967e7c74571fee611287763f3f53d9a2c992d03",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    }
+  ]
+}

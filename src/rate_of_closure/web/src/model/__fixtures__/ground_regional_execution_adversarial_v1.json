@@ -1,0 +1,80 @@
+{
+  "fixture_schema_version": "ground-regional-execution-adversarial/v1",
+  "cases": [
+    {
+      "name": "integral JSON number event sequence",
+      "overrides": {"event_sequence": 3.0},
+      "accepted": true,
+      "error": ""
+    },
+    {
+      "name": "fractional event sequence",
+      "overrides": {"event_sequence": 3.5},
+      "accepted": false,
+      "error": "integer"
+    },
+    {
+      "name": "unsafe event sequence",
+      "overrides": {"event_sequence": 9007199254740992},
+      "accepted": false,
+      "error": "safe range"
+    },
+    {
+      "name": "unsafe transition time",
+      "overrides": {"time_s": 9007199254740992},
+      "accepted": false,
+      "error": "safe range"
+    },
+    {
+      "name": "boolean transition time",
+      "overrides": {"time_s": true},
+      "accepted": false,
+      "error": "finite"
+    },
+    {
+      "name": "unsafe vector component",
+      "overrides": {"position_m": [0.1, 9007199254740992, 0]},
+      "accepted": false,
+      "error": "safe range"
+    },
+    {
+      "name": "short vector",
+      "overrides": {"position_m": [0.1, 0.02135]},
+      "accepted": false,
+      "error": "three components"
+    },
+    {
+      "name": "edge whitespace region",
+      "overrides": {"to_region_id": " rough-band"},
+      "accepted": false,
+      "error": "whitespace"
+    },
+    {
+      "name": "empty surface identity",
+      "overrides": {"to_surface_id": ""},
+      "accepted": false,
+      "error": "nonempty"
+    },
+    {
+      "name": "surrogate surface identity",
+      "overrides": {"to_surface_id": "regional\ud800rough"},
+      "accepted": false,
+      "error": "surrogate"
+    },
+    {
+      "name": "same surface identity",
+      "overrides": {"from_surface_id": "regional-rough"},
+      "accepted": false,
+      "error": "surface identities"
+    },
+    {
+      "name": "fabricated plan mapping",
+      "overrides": {
+        "from_region_id": "rough-band",
+        "to_region_id": null
+      },
+      "accepted": false,
+      "error": "regional plan"
+    }
+  ]
+}

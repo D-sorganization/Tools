@@ -42,6 +42,8 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<atmosphere::AtmosphereProperties>()?;
     m.add_class::<rrt::Obstacle>()?;
     m.add_class::<rrt::RRTPlanner>()?;
+    m.add_function(wrap_pyfunction!(ball_flight::py_simulate_trajectory, m)?)?;
+    m.add_function(wrap_pyfunction!(ball_flight::py_analyze_trajectory, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_lerp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_clamp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_deg_to_rad, m)?)?;

@@ -231,6 +231,11 @@ class AnalysisTab:
         else:
             self._plot_tabs.addTab(_create_fallback_widget(), "Plotting")
 
+        from .transfer_strategy_panel import TransferStrategyPanel
+
+        self._transfer_panel = TransferStrategyPanel(self._plot_tabs)
+        self._plot_tabs.addTab(self._transfer_panel.widget(), "Drift Transfer")
+
     def widget(self) -> Any:
         """Return the top-level QWidget for embedding."""
         return self._widget
@@ -248,6 +253,8 @@ class AnalysisTab:
         self._populate_series_combos()
         if model_type != old_model:
             self._populate_surface_combos()
+        if result is not None:
+            self._transfer_panel.set_result(result, model_type)
 
     # Model-aware sweep variable definitions
     _SWEEP_VARS: dict[str, list[tuple[str, str, str, tuple[float, float]]]] = {
@@ -319,8 +326,12 @@ class AnalysisTab:
         from ..data_extractor import extract_series
 
         try:
-            x_vals, x_desc, x_unit = extract_series(self._result, x_key, self._model_type)
-            y_vals, y_desc, y_unit = extract_series(self._result, y_key, self._model_type)
+            x_vals, x_desc, x_unit = extract_series(
+                self._result, x_key, self._model_type
+            )
+            y_vals, y_desc, y_unit = extract_series(
+                self._result, y_key, self._model_type
+            )
         except (KeyError, AttributeError) as exc:
             logger.error("Failed to extract series: %s", exc)
             return
@@ -510,7 +521,9 @@ class AnalysisTab:
         if z_key == "potential_energy":
 
             def _eval(angles: dict) -> float:
-                state = np.array([angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0])
+                state = np.array(
+                    [angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0]
+                )
                 return potential_energy(state, params)
 
             return _eval

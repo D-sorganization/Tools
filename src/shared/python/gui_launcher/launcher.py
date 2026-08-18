@@ -75,6 +75,7 @@ class LaunchConfig:
     settings_app: str | None = None
     min_size: tuple[int, int] | None = None
     organization: str = "D-sorganization"
+    window_kwargs: dict[str, Any] = field(default_factory=dict, repr=False)
 
 
 @dataclass
@@ -249,13 +250,15 @@ class GUILauncher:
             logger.error("No web_path specified for React app")
             return 1
 
-        return launch_web_app(
-            tool_name=self.config.tool_name,
-            web_dir=Path(self.config.web_path),
-            port=self.config.port,
-            auto_open_browser=self.config.auto_open_browser,
-            env_vars=self.config.env_vars,
-            process_started=self._set_process,
+        return int(
+            launch_web_app(
+                tool_name=self.config.tool_name,
+                web_dir=Path(self.config.web_path),
+                port=self.config.port,
+                auto_open_browser=self.config.auto_open_browser,
+                env_vars=self.config.env_vars,
+                process_started=self._set_process,
+            )
         )
 
     def _launch_tkinter(self) -> int:
@@ -356,7 +359,7 @@ def launch_pyqt6_app(config: LaunchConfig) -> int:
         app.setOrganizationName(config.organization)
 
         # Create the window
-        window_obj = window_class()
+        window_obj = window_class(**dict(config.window_kwargs))
 
         # If the class is a QMainWindow, use it directly.
         # If it's a QWidget, wrap it in a QMainWindow.

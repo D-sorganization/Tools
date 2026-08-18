@@ -190,7 +190,12 @@ def _reap_child(process: subprocess.Popen) -> int:
     return _SIGINT_EXIT_CODE
 
 
-def launch_web_from_gui_info(gui_info: dict[str, object], caller_file: str) -> int:
+def launch_web_from_gui_info(
+    gui_info: dict[str, object],
+    caller_file: str,
+    *,
+    env_vars: dict[str, str] | None = None,
+) -> int:
     """Launch a React web app from a ``GUI_INFO`` dict."""
     if gui_info is None:
         raise ValueError("gui_info must be provided")
@@ -209,4 +214,5 @@ def launch_web_from_gui_info(gui_info: dict[str, object], caller_file: str) -> i
         web_dir=web_dir,
         port=int(port),
         auto_open_browser=bool(auto_open),
+        env_vars=env_vars,
     )

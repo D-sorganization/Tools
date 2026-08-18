@@ -18,6 +18,8 @@ Design notes:
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from data_explorer_enums import (
     AggMethod,
     CorrelationMethod,
@@ -43,6 +45,40 @@ class Column(BaseModel):
     values: list[float | None]
 
 
+def require_aligned_columns(
+    index: Sequence[float] | None, columns: Sequence[Column]
+) -> None:
+    """DbC: every column must be the same length (and match ``index`` if given).
+
+    The single definition of "aligned" for every dataset-shaped payload. It is
+    deliberately unconditional on ``index``: the CSV export walks ``n`` from the
+    first column and indexes all the others at ``i``, so a *ragged column set
+    with no index* raised ``IndexError`` partway through a response that had
+    already been sent with HTTP 200 — the client received a silently truncated
+    CSV (issue #4040). Validating up front makes that a clean 400.
+
+    Args:
+        index: The shared epoch-ms index, or None when rows are numbered.
+        columns: The columns to check.
+
+    Raises:
+        ValueError: If any column's length differs from ``index`` (when given)
+            or from the first column's length.
+    """
+    if not columns:
+        return
+    expected = len(index) if index is not None else len(columns[0].values)
+    label = (
+        "index length" if index is not None else f"column {columns[0].name!r} length"
+    )
+    for column in columns:
+        if len(column.values) != expected:
+            raise ValueError(
+                f"column {column.name!r} length {len(column.values)} != "
+                f"{label} {expected}"
+            )
+
+
 class InlineData(BaseModel):
     """A dataset supplied directly by the client (e.g. a browser-parsed CSV).
 
@@ -54,13 +90,7 @@ class InlineData(BaseModel):
 
     @model_validator(mode="after")
     def _columns_match_index(self) -> InlineData:
-        n = len(self.index)
-        for c in self.columns:
-            if len(c.values) != n:
-                raise ValueError(
-                    f"column {c.name!r} has {len(c.values)} values, "
-                    f"expected {n} to match index"
-                )
+        require_aligned_columns(self.index, self.columns)
         return self
 
 
@@ -302,11 +332,7 @@ class ExportRequest(BaseModel):
 
     @model_validator(mode="after")
     def _columns_match_index(self) -> ExportRequest:
-        if self.index is not None:
-            n = len(self.index)
-            for c in self.columns:
-                if len(c.values) != n:
-                    raise ValueError(
-                        f"column {c.name!r} length {len(c.values)} != index length {n}"
-                    )
+        # Unconditional: ragged columns break the streaming CSV writer even when
+        # no index was supplied (issue #4040).
+        require_aligned_columns(self.index, self.columns)
         return self

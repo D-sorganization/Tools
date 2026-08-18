@@ -1,36 +1,71 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-16
+
+> **Current state only.** `CLAUDE.md` caps handoff docs at 150 lines and keeps
+> history in git. The 137 dated entries this file had accumulated through
+> 2026-08-15 are preserved verbatim in
+> [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
+> Do not append dated entries here again.
 
 ## Where This Repo Is Headed
 
 Tools is the D-sorganization fleet's shared engineering-tools monorepo (45+
 tools: PyQt6 GUIs, FastAPI/React web mirrors, Rust kernels). The current
-center of gravity is `src/rate_of_closure`, being grown from a single
-closure-rate calculator into a full swing → impact → ball-flight simulation
-platform under **Repository_Management#1390** (this handoff rollout) and a
-stack of golf-simulation epics:
+center of gravity is `src/rate_of_closure`, grown from a closure-rate
+calculator into a swing → impact → ball-flight simulation platform. Since
+early August the delivery pattern has shifted from long stacked PRs to
+**scoped consolidations rebuilt directly onto current `main`**.
 
-| Epic                                                                          | Status (one line)                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 — Swing–Impact–Ball-Flight Simulation Platform                          | Phases 0-6 implemented on branch `feat/impact-simulation-platform`, consolidated into PR **#4119** (open, auto-merge armed, awaiting review). Phase 7 (WASM web parity swap, Pages CI) still open.                  |
-| #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help)   | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119).                                      |
-| #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
-| #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
+| Epic  | Status (one line)                                                                                                                                                             |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 | Swing–Impact–Ball-Flight platform. Open. Original stack PR #4119 was **closed, not merged**; content landed via consolidations. Phase 7 (WASM web parity, Pages CI) still open. |
+| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                    |
+| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                             |
+| #4130 | Impact-interval club dynamics. Open, foundation only — F1 formulation doc not started, no PR.                                                                                  |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Visualization/authority slice landed via **#4473**.                                                            |
+| #4146 | Shared Club Builder. Open. First slice #4147 **closed**; assembly physics contracts landed in #4157.                                                                           |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                              |
 
-The separate shared Club Builder epic #4146 is active. Its first dependency
-slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
-UI-independent assembly mass/CG/inertia, frame, length-datum, and persistence
-contracts that the later shaft, CAD, export, fitting, and UI issues consume.
+Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
+#4473), `src/pendulum_simulator/AGENT_HANDOFF.md`,
+`src/rotation_converter/AGENT_HANDOFF.md`.
 
-Active infrastructure repair: #4155 hardens the Rust/PyO3 job against
-incomplete setup-python cache entries whose interpreter works but whose
-declared link library is missing. The repair is isolated on
-`fix/4155-rust-libpython-cache` and does not change simulation code.
+## Open PR Situation — Read Before Filing Anything
 
-See `src/rate_of_closure/AGENT_HANDOFF.md` for the detailed stack breakdown
-and architecture pointers for this tool specifically.
+**21 PRs are open and none are drafts.** The 39 `codex/4142-*` /
+`codex/4433-*` drafts were closed on 2026-08-16 as superseded by merged
+PR #4473 ("CONS-RATE: Complete #4142/#4433 visualization authority"), which
+says so in its own description. Their work is on `main` — the Morris chain as
+`src/rate_of_closure/application/morris/{host,client,contracts}.py`, the #4433
+chain as `flight_sample_inspector.py`, `putting_sample_inspector.py`,
+`plot_point_inspector.py`, `visual_state_frame.py`, and
+`visualization_tab_audit.py`. **Their branches are intact; reopen rather than
+rebase** — those branches have diverged far enough that merging one now would
+remove current `main` content. #4473 does **not** supersede #4438 (merged).
+
+The consolidations are the real queue:
+
+| PR    | Scope                                                                       |
+| ----- | --------------------------------------------------------------------------- |
+| #4466 | Rate of Closure remainder — **cannot be merged as-is**, see below           |
+| #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)            |
+| #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)                |
+| #4446 | Ground study + rate-of-closure suites (supersedes #4409/#4410)               |
+
+**#4466 is blocked by a merge-base collapse.** After #4473 squash-merged, the
+shared merge-base falls back to a commit predating `src/rate_of_closure/`, so
+every overlapping file is a both-added conflict with no common ancestor (281 of
+them). It is being landed as standalone slices against current `main` instead —
+#4517 is the first (`swing_sim.ground`). Expect the other consolidations to hit
+the same wall; slice rather than fight the conflict.
+
+Other live non-golf work: `src/shared/python` hygiene (#4495 upstreaming
+orphaned consumer edits, #4507 lint normalisation, #4509 mypy debt), CI repairs
+(#4454 merge-hold guard, #4469 architecture guards always-on, #4504 codemap
+session skip, #4506 hook allowlist), three dependabot bumps, and five
+Bolt/Palette micro-PRs.
 
 ## Must-Read Architecture Pointers
 
@@ -40,32 +75,13 @@ and architecture pointers for this tool specifically.
 2. `docs/architecture/CANONICAL_TOPOLOGY.md` — canonical repo topology policy.
 3. `SPEC.md` — living specification; §12 Change Log requires a dated row for
    every PR touching `src/` (enforced by `spec-check.yml`, see gates below).
-4. `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`,
-   `src/rotation_converter/AGENT_HANDOFF.md` — per-tool handoff docs.
-5. `docs/AGENT_HANDOFF_TEMPLATE.md` — template for adding a handoff doc to a
-   new tool.
-
-## In-Flight Branches (what stacks on what)
-
-```
-main
- └─ feat/impact-simulation-platform   (PR #4119, epic #4103, auto-merge armed)
-     └─ feat/investigation-suite      (PR #4124, epic #4120, stacked on #4119)
-         └─ feat/course-showcase      (PR #4129, epic #4125, stacked on #4124)
-docs/agent-handoff-1390               (this branch, off origin/main, Repository_Management#1390)
-```
-
-Other active non-golf branches worth knowing about: `fix/file-size-budget-bounded-checkout`
-(#4096, CI checkout-scope fix), `agent/scada-phase-a-foundation` (#4091, SCADA
-epic #4085), several `scada/pr*` branches (SCADA epics #4085-#4089), and a
-handful of Bolt/Palette/Sentinel micro-PRs (#4070-#4102) unrelated to the
-golf-sim stack.
+4. `docs/AGENT_HANDOFF_TEMPLATE.md` — template for a new tool's handoff doc.
 
 ## Gate Commands (repo-wide)
 
 ```bash
 python3 -m ruff check .                          # lint
-python3 -m ruff format --check .                  # format check
+python3 -m ruff format --check .                  # format check (Ruff, NOT Black)
 python3 -m pytest -n auto --timeout=60            # full test suite
 python3 -m pytest -m contract                     # API contract tests (downstream-facing)
 python3 -m pytest -m integration --timeout=60     # cross-repo integration
@@ -74,40 +90,55 @@ python3 -m pytest -m integration --timeout=60     # cross-repo integration
 SPEC freshness (CI job `spec-freshness` in `.github/workflows/spec-check.yml`):
 any PR touching `src/**`, `tests/**`, `config/**`, `pyproject.toml`,
 `Cargo.toml`, `package.json`, or `requirements.txt` must also modify
-`SPEC.md` in the same PR, or carry the `spec-exempt` label. Runs on the
-`d-sorg-fleet` self-hosted runner.
+`SPEC.md` in the same PR, or carry the `spec-exempt` label. This includes
+`src/<tool>/AGENT_HANDOFF.md` edits, since they live under `src/`.
+
+Note: `ruff format --check` currently reports four pre-existing failures under
+`src/data_processing/data_processor/python/tests/`. They are on `main` and are
+not caused by your diff; do not silently absorb them into an unrelated PR.
 
 ## Do-Not List
 
+- **Do not reopen-and-rebase the closed `codex/4142-*` / `codex/4433-*`
+  branches.** They are superseded by merged #4473 and have diverged far enough
+  that merging one would remove current `main` content.
+- **Do not add per-file Python version guards.** `conftest.py` reads each
+  package's declared `requires-python` and skips collection below it; see the
+  Python floor section in `CLAUDE.md`. Adding `sys.version_info` checks or
+  `importorskip` calls per module is the whack-a-mole this replaced.
+- **Do not append a dated entry to this file.** It grew to 2,708 lines that
+  way, 18x over the policy limit. Put history in the commit message.
+- Do not regenerate the sidekick API baseline
+  (`tests/sidekick_api_baseline.json`) with `--regenerate-api-baseline`. It
+  blesses whatever drift currently exists rather than only your change. Hand-edit
+  the baseline and coordinate a downstream migration.
 - Do not modify public function signatures in `src/shared/python/**` without
   opening coordinated migration issues in UpstreamDrift and Gasification_Model
   (see `CLAUDE.md` Cross-Repo Dependencies).
+- Do not edit the shared Python surface from inside a consumer's vendored copy;
+  Tools is the source of truth. #4495 exists because three fixes were orphaned
+  that way.
 - Do not import across package boundaries (e.g. `signal_processing_studio`
   importing from `sidekick.process_calculators`) — LoD is enforced.
 - Do not exceed the 500-LOC file budget on new/modified files in the golf-sim
   packages (`rate_of_closure`, `swing_sim`, `swing-core`) — sub-package,
-  don't grow monoliths.
+  don't grow monoliths. The repo-wide protected budget is 1,200 lines.
 - Do not use `git commit --no-verify` / `--push --no-verify` to bypass hooks;
   see `CLAUDE.md` Hook bypass policy.
-- Do not regenerate the sidekick API baseline (`tests/sidekick_api_baseline.json`)
-  without coordinating a breaking-change migration.
-- Do not merge #4124 or #4129 ahead of their base (#4119, #4124 respectively)
-  — they are stacked and will conflict/duplicate SPEC.md sections if merged
-  out of order.
-- Do not hand-roll a GitHub Pages deploy workflow for `rate_of_closure/web`
-  yet — Phase 7 of #4103 owns this; today Pages hosting elsewhere in the repo
-  (e.g. `unit_converter`) is done via manual branch-folder publish, not CI.
+- Do not assume delta CI covers you. Changed-file selection can hide
+  accumulated whole-tree debt on both the lint and type gates; a PR that touches
+  enough shared files will surface it all at once.
+- Do not hand-roll a GitHub Pages deploy workflow for `rate_of_closure/web` —
+  Phase 7 of #4103 owns this.
 
 ## Short-Term Roadmap (ordered)
 
-1. Land PR #4119 (base platform) — currently the long pole; everything else
-   stacks on it.
-2. Get #4124 out of draft-for-review and merge into `feat/investigation-suite`
-   → cascades onto #4119.
-3. Get #4129 out of draft-for-review and merge into `feat/course-showcase`
-   → cascades onto #4124.
-4. Start #4130 Phase F1 (formulation document) once #4125's stack is in.
-5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy for
-   `rate_of_closure/web`.
-6. #4125 H5: stand up the public release-management repo (cross-repo, not
-   started).
+1. Land the consolidations as **slices against current `main`**, not merges —
+   #4517 is the pattern (`swing_sim.ground` out of #4466). Check each slice for
+   overlap with what #4473 already merged before resolving anything.
+2. Clear the `src/shared/python` hygiene trio (#4495, #4507, #4509) — these
+   unblock downstream consumers.
+3. Land the CI repairs (#4454, #4469, #4504, #4506).
+4. Start #4130 Phase F1 (formulation document).
+5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+6. #4125 H5: stand up the public release-management repo (cross-repo).

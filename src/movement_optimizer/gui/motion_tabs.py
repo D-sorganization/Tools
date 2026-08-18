@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable
 from itertools import pairwise
 from typing import cast
 
@@ -53,6 +53,7 @@ from movement_optimizer.rendering import Palette, get_chart_color
 from . import plot_renderer
 from .motion_analysis_panel import MotionAnalysisPanel
 from .motion_controls import NumericControl, scrollable_control_panel
+from .motion_view import MotionViewMixin
 from .policy_trace_canvas import PolicyTraceCanvas, refresh_policy_trace_palette
 from .policy_worker import PolicyOptimizationWorker
 from .vector_overlay import (
@@ -64,6 +65,8 @@ from .vector_overlay import (
     auto_scale_factor,
     draw_overlay_scene,
 )
+
+_MotionViewMixin = MotionViewMixin
 
 
 # Canvas colours are sourced from the fleet shared theme (via rendering.Palette
@@ -128,7 +131,11 @@ def _swing_overlay_scene(
         for joint, magnitude in zip(SWING_POLICY_JOINT_NAMES, field.joint_torque_nm, strict=True):
             point = field.joint_points_m[joint]
             arcs.append(
-                TorqueArc((float(point[0]), float(point[1])), float(magnitude), VectorStyle(ARM))
+                TorqueArc(
+                    (float(point[0]), float(point[1])),
+                    float(magnitude),
+                    VectorStyle(ARM),
+                )
             )
     if com:
         markers.append(ComMarker(origin, VectorStyle(ACCENT)))
@@ -145,7 +152,10 @@ def _chain_overlay_scene(
     """Build the chain overlay scene from a per-link force field, filtered by toggles."""
     arrows: list[ForceArrow] = []
     for index in range(len(field.midpoints_m)):
-        origin = (float(field.midpoints_m[index][0]), float(field.midpoints_m[index][1]))
+        origin = (
+            float(field.midpoints_m[index][0]),
+            float(field.midpoints_m[index][1]),
+        )
         if gravity:
             vec = (float(field.gravity_n[index][0]), float(field.gravity_n[index][1]))
             arrows.append(ForceArrow(origin, vec, VectorStyle(LEG)))
@@ -153,7 +163,10 @@ def _chain_overlay_scene(
             vec = (float(field.tension_n[index][0]), float(field.tension_n[index][1]))
             arrows.append(ForceArrow(origin, vec, VectorStyle(CHAIN)))
         if net:
-            vec = (float(field.net_force_n[index][0]), float(field.net_force_n[index][1]))
+            vec = (
+                float(field.net_force_n[index][0]),
+                float(field.net_force_n[index][1]),
+            )
             arrows.append(ForceArrow(origin, vec, VectorStyle(ARM)))
     return OverlayScene(arrows=tuple(arrows))
 
@@ -323,96 +336,7 @@ class MotionCanvas(QWidget):
             )
 
 
-class _MotionViewMixin:
-    """Shared Animation/Plots subtab scaffolding for motion-analysis tabs.
-
-    Hosts the per-element animation layer toggles, the animation/plots
-    sub-tab split, and the plot-legend visibility control. Concrete tabs
-    must provide ``self.canvas`` (a :class:`MotionCanvas`),
-    ``self.analysis_panel`` (a :class:`MotionAnalysisPanel`), and the
-    ``self._layer_toggles`` / ``self._plot_legend_toggle`` attributes
-    referenced below.
-    """
-
-    canvas: MotionCanvas
-    analysis_panel: MotionAnalysisPanel
-    _layer_toggles: dict[str, QCheckBox]
-
-    def _build_animation_view(self) -> QWidget:
-        """The animation subtab: the motion canvas with full vertical room."""
-        view = QWidget()
-        view_layout = QVBoxLayout(view)
-        view_layout.setContentsMargins(0, 0, 0, 0)
-        view_layout.addWidget(self.canvas)
-        return view
-
-    def _build_plots_view(self) -> QWidget:
-        """The plots subtab: roomy analysis plots plus appearance controls."""
-        view = QWidget()
-        view_layout = QVBoxLayout(view)
-        view_layout.setContentsMargins(0, 0, 0, 0)
-        view_layout.setSpacing(6)
-        appearance = QHBoxLayout()
-        self._plot_legend_toggle = QCheckBox("Show plot legends")
-        self._plot_legend_toggle.setChecked(True)
-        self._plot_legend_toggle.setToolTip(
-            "Show or hide the legends on the analysis plots so they do not "
-            "obscure the plotted curves."
-        )
-        self._plot_legend_toggle.stateChanged.connect(self._refresh_plot_legends)
-        appearance.addWidget(self._plot_legend_toggle)
-        appearance.addStretch()
-        view_layout.addLayout(appearance)
-        plot_scroll = QScrollArea()
-        plot_scroll.setWidgetResizable(True)
-        plot_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
-        plot_scroll.setWidget(self.analysis_panel)
-        view_layout.addWidget(plot_scroll, stretch=1)
-        return view
-
-    def _build_layers_group(self, layer_keys: Sequence[str] | None = None) -> QGroupBox:
-        """Build the "Show in animation" checklist.
-
-        ``layer_keys`` restricts the checklist to the layers a given tab
-        actually draws (e.g. the chain tab has no articulated rider), so no
-        inert toggles are shown. Defaults to every canvas layer.
-        """
-        allowed = set(layer_keys) if layer_keys is not None else None
-        group = QGroupBox("Show in animation")
-        layout = QVBoxLayout(group)
-        layout.setSpacing(4)
-        tips = {
-            "grid": "Background reference grid.",
-            "chain": "Swing chain polyline.",
-            "rider": "Articulated rider body segments.",
-            "markers": "Anchor and seat pivot markers.",
-            "forces": "All force and torque vector overlays.",
-        }
-        for key, label in MotionCanvas.LAYERS:
-            if allowed is not None and key not in allowed:
-                continue
-            checkbox = QCheckBox(label)
-            checkbox.setChecked(self.canvas.is_layer_visible(key))
-            checkbox.setToolTip(tips.get(key, ""))
-            checkbox.stateChanged.connect(
-                lambda _state, name=key, box=checkbox: self.canvas.set_layer_visible(
-                    name, box.isChecked()
-                )
-            )
-            self._layer_toggles[key] = checkbox
-            layout.addWidget(checkbox)
-        return group
-
-    def _apply_plot_legend_visibility(self) -> None:
-        """Match analysis-plot legend visibility to the appearance toggle."""
-        self.analysis_panel.set_legends_visible(self._plot_legend_toggle.isChecked())
-
-    def _refresh_plot_legends(self, _state: int | None = None) -> None:
-        self._apply_plot_legend_visibility()
-        self.analysis_panel.draw()
-
-
-class SwingsetTab(_MotionViewMixin, QWidget):
+class SwingsetTab(MotionViewMixin, QWidget):
     """Interactive swingset model tab with cyclic policy optimization."""
 
     playbackStateChanged = pyqtSignal()  # noqa: N815 - Qt signal naming convention.
@@ -654,7 +578,13 @@ class SwingsetTab(_MotionViewMixin, QWidget):
             tooltip="Rider arm segment length (upper arm and forearm).",
         )
         self._add_control(
-            form, "arm_mass", "Arm segment kg", 0.2, 10.0, 2.0, tooltip="Rider arm segment mass."
+            form,
+            "arm_mass",
+            "Arm segment kg",
+            0.2,
+            10.0,
+            2.0,
+            tooltip="Rider arm segment mass.",
         )
         return group
 
@@ -740,7 +670,14 @@ class SwingsetTab(_MotionViewMixin, QWidget):
             form, "knee_samples", "Knee samples", 1, 8, 2, integer=True, refresh=False
         )
         self._add_control(
-            form, "phase_samples", "Phase samples", 1, 12, 2, integer=True, refresh=False
+            form,
+            "phase_samples",
+            "Phase samples",
+            1,
+            12,
+            2,
+            integer=True,
+            refresh=False,
         )
         self._add_control(form, "speed", "Playback speed", 0.25, 4.0, 1.0, refresh=False)
         layout.addLayout(form)
@@ -925,7 +862,10 @@ class SwingsetTab(_MotionViewMixin, QWidget):
         return CyclicPolicyBounds(
             frequency_hz=(self._value("freq_min"), self._value("freq_max")),
             hip_rate_rad_s=(self._value("hip_rate_min"), self._value("hip_rate_max")),
-            torso_rate_rad_s=(self._value("torso_rate_min"), self._value("torso_rate_max")),
+            torso_rate_rad_s=(
+                self._value("torso_rate_min"),
+                self._value("torso_rate_max"),
+            ),
             knee_ratio=(self._value("knee_ratio_min"), self._value("knee_ratio_max")),
         )
 

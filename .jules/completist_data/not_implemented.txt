@@ -1,0 +1,139 @@
+./src/data_processing/data_processor/python/benchmarks/performance_benchmark.py:520:                    pass  # Throughput data found, no action needed
+./src/data_processing/data_processor/python/data_processor/contracts.py:133:        pass  # Cannot mutate module-level _LEVEL in a closure-free stub
+./src/pendulum_simulator/src/double_pendulum_golf/gui/torque_history_widget.py:25:    pass  # SimulationResult variants handled via duck typing
+./src/pendulum_simulator/src/double_pendulum_golf/gui/diagnostics.py:214:            pass  # Best-effort persistence
+./src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel/_export_mixin.py:320:        raise NotImplementedError
+./src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel/_lifecycle_mixin.py:310:        raise NotImplementedError
+./src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel/_lifecycle_mixin.py:316:        Raises NotImplementedError in mixin context where QWidget is not yet
+./src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel/_lifecycle_mixin.py:319:        raise NotImplementedError
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:453:        raise NotImplementedError(
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:474:        raise NotImplementedError(
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:497:        raise NotImplementedError(
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:516:        raise NotImplementedError(
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:535:        raise NotImplementedError(
+./src/pendulum_simulator/tests/test_jacobians_golfer.py:542:            pass  # Some configs may be singular
+./src/pendulum_simulator/tests/test_v2_comprehensive.py:232:        pass  # Widget-level tests need qtbot, covered in test_ui_enhancements
+./src/shared/python/model_generation/explorer/model_explorer.py:61:class ModelFileSelectionRequiredError(NotImplementedError):
+./src/shared/python/model_generation/tests/test_unified_loader.py:796:                    pass  # non-numeric attribute value
+./src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py:28:    pass  # For type hints without runtime import
+./src/shared/python/programmatic_pid/tests/test_edge_cases.py:104:                pass  # may raise for missing fields, but not from schema
+./src/shared/python/chat/router_factory.py:261:    except NotImplementedError as exc:
+./src/shared/python/chat/router_factory.py:290:    except NotImplementedError as exc:
+./src/shared/python/chat/service_base.py:424:        Default implementation raises ``NotImplementedError``.  Subclasses
+./src/shared/python/chat/service_base.py:433:        raise NotImplementedError("refresh_models must be implemented by subclass")
+./src/shared/python/chat/service_base.py:438:        Default implementation raises ``NotImplementedError``.  Subclasses
+./src/shared/python/chat/service_base.py:450:        raise NotImplementedError("index_codebase must be implemented by subclass")
+./src/shared/python/chat/tests/test_chat_routing_lifecycle.py:233:        """Default service raises NotImplementedError -> structured error reply."""
+./src/shared/python/ai/adapters/gemini_adapter.py:28:  * raise :class:`NotImplementedError` if a caller passes a non-empty
+./src/shared/python/ai/adapters/gemini_adapter.py:95:    non-empty ``tools`` argument raises :class:`NotImplementedError` rather
+./src/shared/python/ai/adapters/gemini_adapter.py:173:        raise NotImplementedError(
+./src/shared/python/ai/adapters/gemini_adapter.py:194:            NotImplementedError: If ``tools`` is non-empty (see issue #2764).
+./src/shared/python/ai/adapters/gemini_adapter.py:222:            NotImplementedError: If ``tools`` is non-empty (see issue #2764).
+./src/shared/python/ai/adapters/base.py:201:    # sufficient. The default implementations raise NotImplementedError
+./src/shared/python/ai/integrations/obsidian.py:4:This module replaces the previous ``NotImplementedError`` stubs with a real
+./src/shared/python/ai/gui/_provider_config_widgets.py:66:        raise NotImplementedError
+./src/shared/python/ai/auth/authentication.py:15:    ``NotImplementedError`` unconditionally (Phase 1 of issue #2757).
+./src/shared/python/ai/auth/authentication.py:327:            Never returns — always raises ``NotImplementedError``.
+./src/shared/python/ai/auth/authentication.py:330:            NotImplementedError: Always. Real OAuth (PKCE + token exchange +
+./src/shared/python/ai/auth/authentication.py:341:        raise NotImplementedError(
+./src/shared/python/ai/auth/authentication.py:355:            Never returns — always raises ``NotImplementedError``.
+./src/shared/python/ai/auth/authentication.py:358:            NotImplementedError: Always. Email/password authentication requires
+./src/shared/python/ai/auth/authentication.py:369:        raise NotImplementedError(
+./src/shared/python/ai/auth/authentication.py:398:            ``login_with_email_password`` raising ``NotImplementedError``) no
+./src/shared/python/data_processor_io/rust_engine.py:18:for contract violations; ``NotImplementedError`` for operations not yet
+./src/shared/python/data_processor_io/rust_engine.py:312:        NotImplementedError: for format paths not yet implemented.
+./src/shared/python/data_processor_io/rust_engine.py:396:        # Phase 2: Rust scan_batch raises NotImplementedError — fall through to
+./src/shared/python/data_processor_io/rust_engine.py:403:        except NotImplementedError:
+./src/shared/python/data_processor_io/rust_engine.py:475:        except NotImplementedError:
+./src/shared/python/signal_toolkit/polynomial_generator.py:127:            pass  # Skip built-in theme; host app provides styling
+./src/shared/python/sidekick/calculators/thermo/steam_engine.py:525:                pass  # Fall back to Buck equation
+./src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py:45:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py:48:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py:51:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py:56:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py:31:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py:34:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py:37:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py:40:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py:43:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py:46:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/tab_display_names.py:78:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/state_profile_actions.py:21:        raise NotImplementedError
+./src/shared/python/sidekick/ui/tools_sidebar/state_profile_actions.py:24:        raise NotImplementedError
+./src/python/src/utils/integration_test_helpers.py:679:                pass  # Suppress logging
+./src/python/shared/performance_utils.py:106:                pass  # Skip inaccessible directories
+./src/document_processing/pdf_renamer/src/pdf_renamer/gui.py:981:        pass  # theme system not installed
+./src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py:315:        pass  # Roughness is looked up during calculation
+./src/solar_system_model/solar_system/visualization/renderer.py:899:        pass  # UI Renderer handles panels now via render_sidebar or similar
+./src/solar_system_model/solar_system/visualization/scene_event_mixin.py:289:            pass  # Placeholder for future hit testing logic
+./src/solar_system_model/solar_system/ui/widgets.py:406:            pass  # Invalid input, ignore
+./src/solar_system_model/solar_system/ui/widgets/date_time.py:127:            pass  # Invalid input, ignore
+./src/tools/quality_utils.py:41:    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
+./src/folder_packer_pro/pack_engine.py:388:            pass  # Not compressed or already decompressed
+./src/movement_optimizer/gui/animation_control.py:52:            raise NotImplementedError
+./src/movement_optimizer/gui/animation_control.py:56:            raise NotImplementedError
+./src/movement_optimizer/gui/optimization_mixin.py:69:            raise NotImplementedError
+./src/movement_optimizer/gui/optimization_mixin.py:73:            raise NotImplementedError
+./src/movement_optimizer/gui/optimization_mixin.py:77:            raise NotImplementedError
+./src/movement_optimizer/gui/optimization_mixin.py:220:        except NotImplementedError as exc:
+./src/movement_optimizer/tests/test_optimization_mixin_worker.py:56:        (NotImplementedError("nope"), "error"),
+./src/movement_optimizer/tests/test_commands.py:45:            pass  # real slider would emit valueChanged; we don't need that here
+./generate_real_assessments.py:39:not_impl = run_cmd("grep -rnw 'NotImplementedError' src/ | wc -l").strip()
+./generate_real_assessments.py:60:- Several tools are partially implemented (NotImplementedError found {not_impl} times).
+./generate_real_assessments.py:66:4. [MAJOR] Partial implementations raising NotImplementedError in production paths.
+./generate_real_assessments.py:77:| Implementation Completeness | Are all tools fully functional? | 2x | 6/10 | {not_impl} NotImplementedErrors | Implement missing features |
+./generate_real_assessments.py:107:- Address NotImplementedErrors in active paths.
+./generate_real_assessments.py:244:4. **Fix Incomplete Features**: {not_impl} `NotImplementedError` stubs found in active codepaths.
+./scripts/analyze_completist_data.py:204:        "NotImplementedError": 4,
+./scripts/legacy_tools/code_quality_check.py:37:    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
+./tests/contracts/test_chat_service_conformance.py:257:        Postcondition: refresh_models() raises NotImplementedError."""
+./tests/contracts/test_chat_service_conformance.py:269:        with pytest.raises(NotImplementedError):
+./tests/contracts/test_chat_service_conformance.py:274:        Postcondition: index_codebase() raises NotImplementedError."""
+./tests/contracts/test_chat_service_conformance.py:286:        with pytest.raises(NotImplementedError):
+./tests/integration/obsidian/test_vault_client.py:227:    The vault_client must not raise NotImplementedError — the issue #2938
+./tests/integration/obsidian/test_vault_client.py:228:    acceptance criterion is that Phase 2 replaced all NotImplementedError
+./tests/integration/obsidian/test_vault_client.py:231:    # If any of these raise NotImplementedError, the implementation is still a stub.
+./tests/shared/python/utils/test_logging.py:46:            pass  # Should not raise
+./tests/shared/python/chat/test_ai_memory_manager.py:230:        raise NotImplementedError
+./tests/shared/python/ai/test_authentication.py:63:    """login_with_oauth must raise NotImplementedError unconditionally."""
+./tests/shared/python/ai/test_authentication.py:67:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:72:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:77:        with pytest.raises(NotImplementedError, match="google"):
+./tests/shared/python/ai/test_authentication.py:82:        with pytest.raises(NotImplementedError, match="#5227"):
+./tests/shared/python/ai/test_authentication.py:88:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:95:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:101:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:112:    """login_with_email_password must raise NotImplementedError unconditionally."""
+./tests/shared/python/ai/test_authentication.py:116:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:121:        with pytest.raises(NotImplementedError, match="user@example.com"):
+./tests/shared/python/ai/test_authentication.py:126:        with pytest.raises(NotImplementedError, match="#5227"):
+./tests/shared/python/ai/test_authentication.py:132:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:139:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:145:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:164:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:166:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:227:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:234:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:241:        with pytest.raises(NotImplementedError):
+./tests/shared/python/ai/test_authentication.py:243:        with pytest.raises(NotImplementedError):
+./tests/shared/python/signal_toolkit/test_signal_loader.py:3:Covers issue #664: resolve NotImplementedError-style stubs in
+./tests/unit/ai/integrations/test_obsidian_vault.py:4:``NotImplementedError`` stubs left in place when Tools #2759 was closed
+./tests/unit/ai/integrations/test_obsidian_vault.py:315:    # NotImplementedError under any circumstance now.
+./tests/unit/ai/integrations/test_obsidian_vault.py:318:    except NotImplementedError as exc:  # pragma: no cover
+./tests/unit/ai/integrations/test_obsidian_vault.py:319:        pytest.fail(f"obsidian_read_note still raises NotImplementedError: {exc}")
+./tests/unit/ai/test_gemini_adapter.py:232:    with pytest.raises(NotImplementedError, match="2764"):
+./tests/unit/ai/test_gemini_adapter.py:245:    with pytest.raises(NotImplementedError, match="2764"):
+./tests/unit/sidekick/test_selected_tab_panel.py:89:    """TabSettingsMixin's placeholder methods raise NotImplementedError."""
+./tests/unit/sidekick/test_selected_tab_panel.py:91:    with pytest.raises(NotImplementedError):
+./tests/unit/sidekick/test_selected_tab_panel.py:93:    with pytest.raises(NotImplementedError):
+./tests/unit/sidekick/test_selected_tab_panel.py:95:    with pytest.raises(NotImplementedError):
+./tests/test_phase1_quick_wins.py:5:- #627: NotImplementedError stub fixes
+./tests/test_phase1_quick_wins.py:75:# #627 - NotImplementedError stubs
+./tests/test_phase1_quick_wins.py:79:class TestNotImplementedErrorFixes:
+./tests/test_phase1_quick_wins.py:80:    """Verify NotImplementedError stubs are properly handled."""
+./tests/test_phase1_quick_wins.py:84:        not NotImplementedError, for unhandled internal format keys.
+./tests/test_phase1_quick_wins.py:91:        # NotImplementedError must not appear
+./tests/test_phase1_quick_wins.py:92:        assert "NotImplementedError" not in content
+./tests/test_phase1_quick_wins.py:108:        # Must use ValueError, not NotImplementedError (issue #664)
+./tests/test_phase1_quick_wins.py:110:        assert "NotImplementedError" not in content
+./tests/tools/test_matlab_quality_utils.py:369:            pass  # Just verify no crash on normal call

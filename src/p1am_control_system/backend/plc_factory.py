@@ -39,10 +39,37 @@ class PLCFactory:
             )
             return AsyncModbusManager(host=settings.plc_ip, port=settings.plc_port)
         elif driver in ("simulator", "simulated"):
-            logger.info("Instantiating Simulated PLC Client")
+            PLCFactory._warn_simulated(driver, explicit=True)
             return SimulatedPLCClient()
         else:
-            logger.warning(
-                f"Unknown PLC_DRIVER '{driver}'. Defaulting to Simulated PLC Client."
-            )
+            PLCFactory._warn_simulated(driver, explicit=False)
             return SimulatedPLCClient()
+
+    @staticmethod
+    def _warn_simulated(driver: str, *, explicit: bool) -> None:
+        """Log an unmissable banner whenever the plant is being simulated.
+
+        A simulated client produces live-looking, fabricated process values that
+        an operator cannot distinguish from the real plant on the HMI. That is
+        fine on a bench and dangerous anywhere else — and it is exactly what a
+        misconfiguration produces, because an unrecognised (or missing) driver
+        name silently falls through to the simulator (issue #4030/#4036). One
+        ``INFO`` line was far too quiet for that; this is a banner in the boot
+        log a human scanning ``journalctl`` cannot miss.
+        """
+        reason = (
+            f"PLC_DRIVER={driver!r} selected the simulator"
+            if explicit
+            else f"PLC_DRIVER={driver!r} is not a known driver; FELL BACK to "
+            "the simulator"
+        )
+        logger.warning(
+            "\n"
+            "================================================================\n"
+            "  SIMULATED PLC — NO REAL HARDWARE IS CONNECTED\n"
+            "  %s.\n"
+            "  Every process value the HMI displays is FABRICATED.\n"
+            "  For the real plant set P1AM_PLC_DRIVER=modbus and P1AM_PLC_IP.\n"
+            "================================================================",
+            reason,
+        )

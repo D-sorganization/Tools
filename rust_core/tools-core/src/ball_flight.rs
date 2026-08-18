@@ -593,6 +593,71 @@ impl BallProperties {
             self.mass, self.diameter
         )
     }
+
+    #[getter]
+    fn get_mass(&self) -> f64 {
+        self.mass
+    }
+    #[setter]
+    fn set_mass(&mut self, value: f64) {
+        self.mass = value;
+    }
+    #[getter]
+    fn get_diameter(&self) -> f64 {
+        self.diameter
+    }
+    #[setter]
+    fn set_diameter(&mut self, value: f64) {
+        self.diameter = value;
+    }
+    #[getter]
+    fn get_cd0(&self) -> f64 {
+        self.cd0
+    }
+    #[setter]
+    fn set_cd0(&mut self, value: f64) {
+        self.cd0 = value;
+    }
+    #[getter]
+    fn get_cd1(&self) -> f64 {
+        self.cd1
+    }
+    #[setter]
+    fn set_cd1(&mut self, value: f64) {
+        self.cd1 = value;
+    }
+    #[getter]
+    fn get_cd2(&self) -> f64 {
+        self.cd2
+    }
+    #[setter]
+    fn set_cd2(&mut self, value: f64) {
+        self.cd2 = value;
+    }
+    #[getter]
+    fn get_cl0(&self) -> f64 {
+        self.cl0
+    }
+    #[setter]
+    fn set_cl0(&mut self, value: f64) {
+        self.cl0 = value;
+    }
+    #[getter]
+    fn get_cl1(&self) -> f64 {
+        self.cl1
+    }
+    #[setter]
+    fn set_cl1(&mut self, value: f64) {
+        self.cl1 = value;
+    }
+    #[getter]
+    fn get_cl2(&self) -> f64 {
+        self.cl2
+    }
+    #[setter]
+    fn set_cl2(&mut self, value: f64) {
+        self.cl2 = value;
+    }
 }
 
 #[cfg(feature = "python")]
@@ -620,6 +685,20 @@ impl LaunchConditions {
             self.velocity, self.launch_angle, self.spin_rate
         )
     }
+
+    /// Set the spin axis as a (not necessarily normalized) 3-vector.
+    ///
+    /// The default constructor pins pure backspin (`[0, -1, 0]`); this
+    /// setter lets Python callers (swing_sim flight facade, #4107) pass
+    /// tilted spin axes derived from impact solvers.
+    fn set_spin_axis(&mut self, x: f64, y: f64, z: f64) {
+        self.spin_axis = Vector3::new(x, y, z);
+    }
+
+    /// Return the spin axis as an `(x, y, z)` tuple.
+    fn get_spin_axis(&self) -> (f64, f64, f64) {
+        (self.spin_axis.x, self.spin_axis.y, self.spin_axis.z)
+    }
 }
 
 #[cfg(feature = "python")]
@@ -630,6 +709,37 @@ impl EnvironmentalConditions {
     #[pyo3(text_signature = "()")]
     fn py_new() -> Self {
         Self::default()
+    }
+
+    /// Set the wind velocity vector [m/s].
+    fn set_wind(&mut self, x: f64, y: f64, z: f64) {
+        self.wind_velocity = Vector3::new(x, y, z);
+    }
+
+    /// Return the wind velocity as an `(x, y, z)` tuple.
+    fn get_wind(&self) -> (f64, f64, f64) {
+        (
+            self.wind_velocity.x,
+            self.wind_velocity.y,
+            self.wind_velocity.z,
+        )
+    }
+
+    #[getter]
+    fn get_air_density(&self) -> f64 {
+        self.air_density
+    }
+    #[setter]
+    fn set_air_density(&mut self, value: f64) {
+        self.air_density = value;
+    }
+    #[getter]
+    fn get_gravity(&self) -> f64 {
+        self.gravity
+    }
+    #[setter]
+    fn set_gravity(&mut self, value: f64) {
+        self.gravity = value;
     }
 }
 
@@ -655,6 +765,18 @@ impl TrajectoryPoint {
     #[getter]
     fn spin_rate(&self) -> f64 {
         self.spin
+    }
+    #[getter]
+    fn vx(&self) -> f64 {
+        self.velocity.x
+    }
+    #[getter]
+    fn vy(&self) -> f64 {
+        self.velocity.y
+    }
+    #[getter]
+    fn vz(&self) -> f64 {
+        self.velocity.z
     }
 
     fn __repr__(&self) -> String {
@@ -691,6 +813,50 @@ impl TrajectoryAnalysis {
             self.carry_distance, self.max_height, self.flight_time
         )
     }
+}
+
+/// Simulate a complete ball flight trajectory (Python entry point).
+///
+/// Thin wrapper over [`simulate_trajectory`] that converts the release-mode
+/// precondition `assert!`s into `ValueError`s so invalid Python input never
+/// panics across the FFI boundary. Consumed by
+/// `src/shared/python/swing_sim/flight/_rust_facade.py` (#4107).
+#[cfg(feature = "python")]
+#[pyo3::prelude::pyfunction]
+#[pyo3(name = "simulate_trajectory")]
+pub fn py_simulate_trajectory(
+    ball: BallProperties,
+    env: EnvironmentalConditions,
+    launch: LaunchConditions,
+    max_time: f64,
+    dt: f64,
+) -> pyo3::PyResult<Vec<TrajectoryPoint>> {
+    use pyo3::exceptions::PyValueError;
+    if !(launch.velocity.is_finite() && launch.velocity > 0.0) {
+        return Err(PyValueError::new_err(format!(
+            "Launch velocity must be finite and positive, got {}",
+            launch.velocity
+        )));
+    }
+    if !(dt.is_finite() && dt > 0.0) {
+        return Err(PyValueError::new_err(format!(
+            "Time step must be finite and positive, got {dt}"
+        )));
+    }
+    if !(max_time.is_finite() && max_time > 0.0) {
+        return Err(PyValueError::new_err(format!(
+            "Max time must be finite and positive, got {max_time}"
+        )));
+    }
+    Ok(simulate_trajectory(&ball, &env, &launch, max_time, dt))
+}
+
+/// Analyze a completed trajectory (Python entry point).
+#[cfg(feature = "python")]
+#[pyo3::prelude::pyfunction]
+#[pyo3(name = "analyze_trajectory")]
+pub fn py_analyze_trajectory(trajectory: Vec<TrajectoryPoint>) -> TrajectoryAnalysis {
+    analyze_trajectory(&trajectory)
 }
 
 // ── WASM bindings ────────────────────────────────────────────────────────────

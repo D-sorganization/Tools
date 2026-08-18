@@ -1,0 +1,32 @@
+{
+  "schema_version": "capability-flight-evaluator-parity/v1",
+  "sample": {
+    "ball_speed": 74.65568,
+    "launch_angle": 10.9,
+    "launch_direction": 0.0
+  },
+  "spin_default": {
+    "club_id": "driver",
+    "total_spin_rpm": 2686.0,
+    "spin_axis_tilt_deg": 0.0,
+    "provenance": "test-fixture"
+  },
+  "expected_scalars": {
+    "apex_height": {"value": 28.226086329104245, "absolute_tolerance": 0.2},
+    "ball_speed": {"value": 74.65568, "absolute_tolerance": 1e-8},
+    "carry_distance": {"value": 247.48388437261087, "absolute_tolerance": 0.5},
+    "carry_offline": {"value": 0.0, "absolute_tolerance": 0.01},
+    "curve": {"value": 0.0, "absolute_tolerance": 0.01},
+    "flight_time": {"value": 6.278339756170403, "absolute_tolerance": 0.02},
+    "landing_angle": {"value": 35.1201956230131, "absolute_tolerance": 0.2},
+    "launch_direction": {"value": 0.0, "absolute_tolerance": 1e-8},
+    "spin_axis_tilt": {"value": 0.0, "absolute_tolerance": 1e-8},
+    "target_downrange_residual": {"value": 0.48388437261087347, "absolute_tolerance": 0.5},
+    "target_lateral_residual": {"value": 0.0, "absolute_tolerance": 0.01},
+    "target_residual": {"value": 0.48388437261087347, "absolute_tolerance": 0.5},
+    "terminal_direction": {"value": 0.0, "absolute_tolerance": 0.01},
+    "terminal_speed": {"value": 31.191002052325423, "absolute_tolerance": 0.2},
+    "total_spin": {"value": 2686.0, "absolute_tolerance": 1e-8},
+    "vertical_launch_angle": {"value": 10.9, "absolute_tolerance": 1e-8}
+  }
+}
