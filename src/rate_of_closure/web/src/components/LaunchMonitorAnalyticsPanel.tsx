@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 
 import { MAX_LINKED_SCATTER_ROWS } from "../model/launchMonitorLinkedScatter";
 import { LaunchMonitorLinkedScatter } from "./LaunchMonitorLinkedScatter";
@@ -62,6 +62,16 @@ function download(name: string, payload: unknown) {
 }
 
 export function LaunchMonitorAnalyticsPanel() {
+  const idConvention = useId();
+  const idOutcome = useId();
+  const idPredictors = useId();
+  const idMode = useId();
+  const idMethod = useId();
+  const idMissing = useId();
+  const idGroupBy = useId();
+  const idConfidence = useId();
+  const idMinSamples = useId();
+
   const [rows, setRows] = useState<LaunchMonitorRow[]>(DEMO_ROWS);
   const [sourceName, setSourceName] = useState("Built-In Demonstration Data");
   const [outcome, setOutcome] = useState("ball_speed");
@@ -161,8 +171,8 @@ export function LaunchMonitorAnalyticsPanel() {
       <div className="grid gap-5 xl:grid-cols-[340px_1fr]">
         <section aria-label="Analysis contract" className={`${card} space-y-4`}>
           <h3 className="font-semibold text-slate-200">Analysis Contract</h3>
-          <label className="block text-sm text-slate-300">Interpretation Convention
-            <select value={convention} title="Choose the documented parameter convention used to interpret canonical names"
+          <label htmlFor={idConvention} className="block text-sm text-slate-300">Interpretation Convention
+            <select id={idConvention} value={convention} title="Choose the documented parameter convention used to interpret canonical names"
               onChange={(event) => { setConvention(event.target.value as ConventionId); invalidate(); }} className={`${field} mt-1`}>
               {(["app_native", "trackman_comparable", "foresight_comparable"] as ConventionId[])
                 .map((id) => <option key={id} value={id}>{conventionLabel(id)}</option>)}
@@ -173,14 +183,14 @@ export function LaunchMonitorAnalyticsPanel() {
             device emulation or certification. {definition.label}: {definition.referencePoint.replace(/_/g, " ")}, {definition.eventTime.replace(/_/g, " ")}.
             {" "}<a className="underline" href={definition.sourceUrl} target="_blank" rel="noreferrer">Source definition</a>
           </div>
-          <label className="block text-sm text-slate-300">Outcome
-            <select value={outcome} title="Select the numeric outcome variable"
+          <label htmlFor={idOutcome} className="block text-sm text-slate-300">Outcome
+            <select id={idOutcome} value={outcome} title="Select the numeric outcome variable"
               onChange={(event) => { setOutcome(event.target.value); invalidate(); }} className={`${field} mt-1`}>
               {numeric.map((column) => <option key={column}>{column}</option>)}
             </select>
           </label>
-          <label className="block text-sm text-slate-300">Predictors
-            <select multiple value={predictors} title="Select one or more numeric predictor variables"
+          <label htmlFor={idPredictors} className="block text-sm text-slate-300">Predictors
+            <select id={idPredictors} multiple value={predictors} title="Select one or more numeric predictor variables"
               aria-label="Predictor Variables" onChange={(event) => {
                 setPredictors([...event.currentTarget.selectedOptions].map((option) => option.value));
                 invalidate();
@@ -189,37 +199,37 @@ export function LaunchMonitorAnalyticsPanel() {
             </select>
           </label>
           <div className="grid grid-cols-2 gap-3">
-            <label className="text-sm text-slate-300">Mode
-              <select value={mode} title="Choose correlation, regression, or both"
+            <label htmlFor={idMode} className="text-sm text-slate-300">Mode
+              <select id={idMode} value={mode} title="Choose correlation, regression, or both"
                 onChange={(event) => { setMode(event.target.value as AnalysisMode); invalidate(); }} className={`${field} mt-1`}>
                 <option value="comprehensive">Comprehensive</option><option value="correlation">Correlation</option><option value="regression">Regression</option>
               </select>
             </label>
-            <label className="text-sm text-slate-300">Correlation
-              <select value={method} title="Choose the correlation estimator"
+            <label htmlFor={idMethod} className="text-sm text-slate-300">Correlation
+              <select id={idMethod} value={method} title="Choose the correlation estimator"
                 onChange={(event) => { setMethod(event.target.value as CorrelationMethod); invalidate(); }} className={`${field} mt-1`}>
                 <option value="pearson">Pearson</option><option value="spearman">Spearman</option><option value="kendall">Kendall</option>
               </select>
             </label>
-            <label className="text-sm text-slate-300">Missing Data
-              <select value={missing} title="Choose how missing numeric values are handled"
+            <label htmlFor={idMissing} className="text-sm text-slate-300">Missing Data
+              <select id={idMissing} value={missing} title="Choose how missing numeric values are handled"
                 onChange={(event) => { setMissing(event.target.value as MissingPolicy); invalidate(); }} className={`${field} mt-1`}>
                 <option value="pairwise">Pairwise</option><option value="listwise">Listwise</option><option value="fail">Fail Closed</option>
               </select>
             </label>
-            <label className="text-sm text-slate-300">Group By
-              <select value={groupBy} title="Optionally compute separate results for each group"
+            <label htmlFor={idGroupBy} className="text-sm text-slate-300">Group By
+              <select id={idGroupBy} value={groupBy} title="Optionally compute separate results for each group"
                 onChange={(event) => { setGroupBy(event.target.value); invalidate(); }} className={`${field} mt-1`}>
                 <option value="">No Grouping</option>{grouping.map((column) => <option key={column}>{column}</option>)}
               </select>
             </label>
-            <label className="text-sm text-slate-300">Confidence
-              <input type="number" min="0.51" max="0.999" step="0.01" value={confidence}
+            <label htmlFor={idConfidence} className="text-sm text-slate-300">Confidence
+              <input id={idConfidence} type="number" min="0.51" max="0.999" step="0.01" value={confidence}
                 title="Set the confidence level for analytical intervals" aria-label="Confidence Level"
                 onChange={(event) => { setConfidence(Number(event.target.value)); invalidate(); }} className={`${field} mt-1`} />
             </label>
-            <label className="text-sm text-slate-300">Minimum N
-              <input type="number" min="3" step="1" value={minSamples}
+            <label htmlFor={idMinSamples} className="text-sm text-slate-300">Minimum N
+              <input id={idMinSamples} type="number" min="3" step="1" value={minSamples}
                 title="Set the minimum observations per analysis" aria-label="Minimum Sample Count"
                 onChange={(event) => { setMinSamples(Number(event.target.value)); invalidate(); }} className={`${field} mt-1`} />
             </label>
