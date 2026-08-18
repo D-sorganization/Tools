@@ -7,6 +7,11 @@ from collections.abc import Callable
 from typing import Any
 
 from codemap import mcp_server
+from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
+
+# Scoped to this module only; a session-wide skip hook silenced the whole
+# suite here once already (issue #4497).
+pytestmark = CODEMAP_DEPS_SKIP
 
 
 class _Dumpable:
