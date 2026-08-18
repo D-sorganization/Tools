@@ -21,6 +21,13 @@ pytestmark = [pytest.mark.unit, pytest.mark.contract]
 def test_public_facade_exports_the_stable_domain_api() -> None:
     assert set(golf_club.__all__) == {
         "CURRENT_FORMAT",
+        "FITTING_DOCUMENT_FORMAT",
+        "ClubFittingDocument",
+        "FaceGeometry",
+        "FittingProvenance",
+        "MeshReference",
+        "fitting_document_from_json",
+        "fitting_document_to_json",
         "GripKinematics",
         "MeshInertiaReport",
         "ShaftDeliveryDeltas",

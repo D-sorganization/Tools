@@ -6,6 +6,15 @@ component coordinates into the assembly frame.
 """
 
 from .assembly import ClubAssembly, assemble_mass_properties
+from .fitting_document import (
+    FITTING_DOCUMENT_FORMAT,
+    ClubFittingDocument,
+    FaceGeometry,
+    FittingProvenance,
+    MeshReference,
+    fitting_document_from_json,
+    fitting_document_to_json,
+)
 from .mesh_mass_properties import (
     MeshInertiaReport,
     is_watertight,
@@ -220,6 +229,13 @@ __all__ = [
     "export_wedge_artifacts",
     "evaluate_turf_contact",
     "evaluate_wedge_turf_wrench",
+    "FITTING_DOCUMENT_FORMAT",
+    "ClubFittingDocument",
+    "FaceGeometry",
+    "FittingProvenance",
+    "MeshReference",
+    "fitting_document_from_json",
+    "fitting_document_to_json",
     "MeshInertiaReport",
     "is_watertight",
     "mesh_inertia",
