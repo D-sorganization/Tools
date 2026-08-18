@@ -263,6 +263,9 @@ exclude = [
     "visual_baselines.v1.json",
     "visual_baselines/v1/react/*.png",
     "visual_baselines/v1/pyqt/*.png",
+    "web/dist/index.html",
+    "web/dist/*.json",
+    "web/dist/assets/*",
 ]
 
 [tool.setuptools.cmdclass]
