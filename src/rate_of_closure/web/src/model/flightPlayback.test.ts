@@ -24,6 +24,17 @@ describe("flight playback timeline", () => {
     expect(frameAtTime(points, 99).isLanding).toBe(true);
   });
 
+  it("steps to adjacent solver-owned samples and clamps at both endpoints", () => {
+    const timeline = new PlaybackTimeline(points);
+    expect(timeline.stepTime(0, 1)).toBe(1);
+    expect(timeline.stepTime(1.5, 1)).toBe(3);
+    expect(timeline.stepTime(1.5, -1)).toBe(1);
+    expect(timeline.stepTime(0, -1)).toBe(0);
+    expect(timeline.stepTime(3, 1)).toBe(3);
+    expect(() => timeline.stepTime(Number.NaN, 1)).toThrow(/finite/);
+    expect(() => timeline.stepTime(0, 0 as 1)).toThrow(/direction/);
+  });
+
   it("rejects malformed or non-monotonic samples", () => {
     expect(() => validatePlaybackPoints([])).toThrow(/at least one/);
     expect(() =>
