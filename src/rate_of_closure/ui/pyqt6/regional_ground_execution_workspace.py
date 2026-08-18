@@ -21,9 +21,6 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.application.regional_ground_execution_files import (
     read_regional_ground_execution_job,
-    write_regional_ground_execution_job_atomic,
-    write_regional_ground_execution_result_atomic,
-    write_regional_ground_execution_rows_csv_atomic,
 )
 from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
@@ -45,12 +42,22 @@ from .regional_ground_execution_controller import (
     RegionalGroundExecutionController,
     RegionalGroundExecutionSubmitter,
 )
+from .regional_ground_execution_files_mixin import (
+    RegionalGroundExecutionFilesMixin,
+)
+from .regional_ground_execution_status_mixin import (
+    RegionalGroundExecutionStatusMixin,
+)
 
 Confirmation = Callable[[RegionalGroundExecutionJob], bool]
 Preparation = Callable[[], RegionalGroundExecutionJob]
 
 
-class RegionalGroundExecutionWorkspace(QWidget):
+class RegionalGroundExecutionWorkspace(
+    RegionalGroundExecutionFilesMixin,
+    RegionalGroundExecutionStatusMixin,
+    QWidget,
+):
     """Strict import, explicit execution, and canonical result export surface."""
 
     def __init__(
@@ -446,116 +453,6 @@ class RegionalGroundExecutionWorkspace(QWidget):
                 "Execution failed with invalid terminal evidence.", "error"
             )
         self._render_actions()
-
-    def save_job_as(self) -> None:
-        job = self._job
-        if job is None:
-            self._set_status("Save unavailable: no execution job loaded.", "error")
-            return
-        self._save(
-            "Save Regional-Ground Execution Job As",
-            "regional-ground-execution-job.json",
-            lambda path: write_regional_ground_execution_job_atomic(job, path),
-        )
-
-    def save_result_as(self) -> None:
-        result = self._result
-        if result is None:
-            self._set_status("Save unavailable: no complete result retained.", "error")
-            return
-        self._save(
-            "Save Regional-Ground Execution Result As",
-            "regional-ground-execution-result.json",
-            lambda path: write_regional_ground_execution_result_atomic(result, path),
-        )
-
-    def export_rows_csv(self) -> None:
-        result = self._result
-        if result is None:
-            self._set_status(
-                "Export unavailable: no complete result retained.", "error"
-            )
-            return
-        self._save(
-            "Export Regional-Ground Execution Rows",
-            "regional-ground-execution-rows.csv",
-            lambda path: write_regional_ground_execution_rows_csv_atomic(result, path),
-            file_filter="CSV files (*.csv)",
-        )
-
-    def _save(
-        self,
-        title: str,
-        filename: str,
-        writer: Callable[[Path], bool],
-        *,
-        file_filter: str = "JSON files (*.json)",
-    ) -> None:
-        selected, _filter = QFileDialog.getSaveFileName(
-            self, title, self._initial_location(filename), file_filter
-        )
-        if not selected:
-            return
-        path = Path(selected)
-        try:
-            writer(path)
-        except (OSError, TypeError, ValueError):
-            self._set_status(
-                "Save failed: the destination could not be written atomically. "
-                "Retained evidence was preserved.",
-                "error",
-            )
-            return
-        self._recent_path = path
-        self._set_status(f"Saved {path.name} atomically.", "success")
-
-    def _initial_location(self, filename: str = "") -> str:
-        if self._recent_path is None:
-            return filename
-        return (
-            str(self._recent_path.parent / filename)
-            if filename
-            else str(self._recent_path.parent)
-        )
-
-    def _set_status(self, text: str, state: str) -> None:
-        self.status_label.setText(text)
-        self.status_label.setProperty("state", state)
-        self.status_label.setAccessibleName(
-            "Ground study execution error"
-            if state == "error"
-            else "Ground study execution status"
-        )
-
-    def _render_actions(self, *, force_running: bool = False) -> None:
-        running = force_running or self.is_running
-        has_job = self._job is not None
-        has_result = self._result is not None
-        executable = self._capability.regional_ground_execution
-        self.open_button.setEnabled(not running)
-        self.save_job_button.setEnabled(has_job and not running)
-        self.run_button.setEnabled(
-            has_job and executable and not self._prepared_stale and not running
-        )
-        self.prepare_button.setEnabled(self._preparation is not None and not running)
-        self.cancel_button.setEnabled(running)
-        self.save_result_button.setEnabled(has_result and not running)
-        self.export_csv_button.setEnabled(has_result and not running)
-        reason = "" if executable else self._capability.detail
-        if self._prepared_stale:
-            self.run_button.setToolTip(
-                "Prepared editor snapshot is stale; prepare it again before running"
-            )
-        else:
-            self.run_button.setToolTip(reason or "Confirm and run the accepted job")
-        self.prepare_button.setToolTip(
-            "Prepare a job without running it"
-            if self._preparation is not None
-            else "No qualified current-editor preparation authority is injected"
-        )
-        self.cancel_button.setToolTip(
-            "Request cooperative cancellation" if running else "No study is running"
-        )
 
     def shutdown(self, timeout_ms: int = 10_000) -> None:
         """Cancel and join the owned controller before QWidget destruction."""
