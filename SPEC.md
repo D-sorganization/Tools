@@ -26,16 +26,3195 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.6                                      |
-| **Spec Version**        | 1.5.6                                      |
-| **Last Spec Update**    | 2026-08-05                                 |
+| **Current Version**     | 1.17.10                                    |
+| **Spec Version**        | 1.17.10                                    |
+| **Last Spec Update**    | 2026-08-15                                 |
 
 ## 2. Purpose & Mission
 
+### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
+
+Version 1.17.10 closes the six hosted Linux MyPy findings introduced by the
+torque-panel responsibility split. The behavior mixin now invokes typed
+concrete emission helpers instead of redeclaring `pyqtBoundSignal` attributes
+that conflict with the owning widget's `pyqtSignal` descriptors. Signal
+ownership, runtime MRO, emitted values, scientific execution, and persisted
+profiles are unchanged. Python 3.12/MyPy 1.13 passes the affected sources, and
+43 focused torque UI, run-history, and presentation tests pass.
+
+Version 1.17.09 reconciles the consolidated release with `main` commit
+`9cc1a147a73d887dfb6bda72da692bd52144a5a5`, retaining the independent P1AM
+firmware recovery and SCADA safety batch, Data Explorer allocation correction,
+and required-lane `tools_core` wheel cache. The independent SPEC changelog
+authorities remain intact.
+
+The prior 612-line torque-profile panel is responsibility-split into a 223-line
+panel, 397-line behavior owner, 46-line polynomial dialog, and 42-line widget
+metadata module. Public panel/dialog imports, Qt signals, canonical profile JSON,
+execution selection, and scientific behavior remain unchanged. The
+standard-library-only tools-manifest gate now invokes system `python3`; it no
+longer depends on a mutable setup-python cache whose missing `python` executable
+caused both generator and summary steps to exit 127.
+
+Focused evidence is 102 passing torque, manifest, and workflow tests with three
+Linux-only fixtures skipped locally, exact MyPy 1.13 and Ruff checks,
+regenerated manifest identity, and the protected 500-line changed-file budget.
+Visual baselines, scientific authority, archive formats, and approval status
+are unchanged.
+
+### 2026-08-14 Clean main-based Rate campaign consolidation (#4142/#4433)
+
+Version 1.17.08 corrects the consolidation's typing authority to the exact
+protected Python 3.12/MyPy 1.13 selection of 368 changed production files.
+Explicit NumPy, Qt, mapping, and constructor narrowings across 31 source files
+pass both the pinned and stricter analyzers without changing runtime or
+scientific behavior.
+
+Version 1.17.07 publishes the approved Rate/swing/golf campaign as one scoped
+tree on current `main`, excluding inherited non-Rate formatter churn and six
+local scratch-worktree gitlinks while retaining the current-main CI and
+PDF-renamer changes. The cumulative package-data contract now exactly includes
+the visual baseline manifest and both PNG sets. Explicit Qt and NumPy return
+narrowing closes seven hosted MyPy findings without changing runtime values,
+analysis, persistence, or scientific identity.
+
+Local evidence is 2,381 Python/PyQt/shared tests, 1,080 React tests, 123 Rust
+tests, 70 governance/baseline tests, Ruff over 589 Python files, and MyPy 1.13
+over 371 production modules, plus TypeScript, ESLint, production build, clean
+diff, and the protected 1,200-line module budget. Thirty-five historical
+foundation modules remain above the later 400-line slice policy but do not grow
+in this consolidation. Protected merge remains the approval event for the 18
+visual references; responsive/DPI-1.5 references, manual AT qualification, and
+portable cross-platform pixel identity remain open.
+
+### 2026-08-14 Visual-baseline hosted typing closure (#4433)
+
+Version 1.17.06 adds an explicit NumPy array cast at the decoded/copied RGB
+return boundary required by CPython 3.12/MyPy 1.13. The runtime array, pixel
+metrics, reference identities, drift tolerances, workflow authority, and
+scientific behavior are unchanged.
+
+### 2026-08-14 Proposed protected visual baselines (#4433)
+
+Version 1.17.05 packages the 18 reviewed initial-state PNGs produced by the
+successful protected `a714b62b8c12a7d07d7f7b795aae29afacf4fc7c` run. The
+strict v1 manifest exactly covers the visualization-tab authority and binds
+each React/PyQt reference to its environment, basename, SHA-256, and a narrow
+one-channel, 100-microunit mean/fraction raster envelope. Inputs are bounded to
+10 MiB, 4096 pixels per dimension, and 16,777,216 pixels before RGB comparison.
+
+Both PR-hosted and trusted-main workflows regenerate all 18 candidates, require
+their manifests to name the exact evaluated commit, validate coverage and
+digests, then fail closed when decoded geometry or pixels exceed the reference
+contract. The references remain proposed on this branch; protected merge is
+their approval event. Responsive React, PyQt DPI-1.5, manual AT execution, and
+cross-platform pixel identity remain open. No scientific, result, playback,
+selection, persistence, or export authority changes in this promotion.
+
+### 2026-08-14 Deterministic Explorer candidate capture (#4433)
+
+Version 1.17.04 explicitly applies the declared dark and reduced-motion media
+environment before each React candidate navigation and requires the Explorer
+playback control to be paused before its initial-state PNG is written. Two
+consecutive local production-Chromium runs produced the same Explorer digest.
+This changes only the protected capture harness, not runtime playback, camera,
+mesh-source, result, or scientific authority.
+
+### 2026-08-14 Cross-platform accessibility inventory correction (#4433)
+
+Version 1.17.03 records the observed 160–161 registered semantic-control
+envelope for the PyQt Variation tab instead of asserting one platform-specific
+count. Every actual visible, enabled, focusable semantic control is still
+audited for a nonempty name bounded to 512 characters, and the protected
+artifact records both registered and visible counts. Candidate pixels,
+scientific behavior, and retained evidence are unchanged.
+
+### 2026-08-14 Visual-baseline candidate authority (#4433)
+
+Version 1.17.02 adds a protected, pre-approval capture stage. React emits one
+initial-state PNG for each of its nine registered tabs at Chromium 1440x900,
+dark mode, device scale 1, UTC, and reduced motion. PyQt emits one full-window
+PNG for each of its nine tabs at offscreen DPI 1.0/1440x900 after loading
+bundled DejaVu Sans and verifying required ASCII coverage. Each surface writes
+an exact source-commit/environment/file/SHA-256 manifest, and both workflows
+retain the candidates in their existing evidence artifact.
+
+Candidate generation does not approve a golden. Approval requires inspection
+of the hosted images, committed immutable baseline bytes and digests, explicit
+drift limits, and protected merge. React narrow and PyQt DPI-1.5 captures remain
+diagnostic. No scientific, result, selection, playback, layout-preference, or
+export authority changes in this capture stage. Candidate inspection also
+closed a PyQt Launch Monitor overlap by reserving explicit space between the
+linked scatter and its compact retained-row status.
+
+### 2026-08-14 Cross-tab automated accessibility evidence (#4433)
+
+Version 1.17.01 introduces
+`rate-of-closure/visualization-accessibility-evidence@1`, whose tab identities
+must exactly equal the existing visibility authority. React evidence uses
+axe-core 4.13.0 WCAG A/AA rules through WCAG 2.2 against each initial primary
+tab in production Chromium. The protected attachment preserves every tab's
+violation array. The first strict run found three contrast failures; corrected
+sky/emerald action shades now produce zero detected violations across all nine
+React tabs.
+
+PyQt evidence constructs the real main window and audits visible, enabled,
+focusable semantic controls. Buttons may use their text; line edits may use an
+explicit placeholder; labeled fields may use their `QLabel` buddy; all other
+audited controls require an explicit accessible name. Names are nonempty and
+bounded to 512 characters. This closes the reproduced unnamed canvas, list,
+combo, slider, and numeric-input gaps across the nine PyQt tabs.
+The protected PyQt artifact records the exact tab/control counts, findings,
+GitHub SHA, and Qt/PyQt versions as JSON.
+The audit separately pins the exact registered semantic-control inventory and
+records the visible audited count. Platform-dependent native visibility cannot
+masquerade as missing application authority, and every visible control remains
+subject to the name/length audit.
+
+The companion controlled protocol covers keyboard traversal, focus, primary
+tasks, status/error/result announcements, 200% scaling, exact environment and
+build identity, evidence retention, defects, evaluator, and approval. It is a
+protocol, not a completed qualification record. No human screen-reader run or
+sign-off is claimed. Automated rule success does not prove manual AT, voice or
+switch access, cognitive accessibility, arbitrary browsers/platforms, or
+approved-golden status.
+
+### 2026-08-14 Persisted visual-layout preferences (#4433)
+
+Version 1.17.00 defines `visual-layout-preferences@1` as presentation-only
+state. React durably restores the primary tab/order, canonical Club camera, and
+module-help disclosure; the disclosure is placed after the primary workspace
+so restoring it cannot push the visual below the first viewport. PyQt durably
+restores the primary tab/order, canonical Club camera, and main-shell sidebar
+fraction, constrained to 0.20-0.38 with non-collapsible sidebar and workspace.
+
+Readers reject malformed, nonfinite, out-of-range, and unknown-version values
+to exact defaults. Writers bound payloads and treat storage failure as nonfatal.
+No scientific result, imported mesh, selected sample, playback phase, or export
+owner enters this preference schema. Browser reload evidence covers 1440x900
+and 390x844; real-main-window restart evidence covers PyQt DPI 1.0 and 1.5 with
+four state captures stored as eight diagnostic window/canvas PNGs. These are
+not approved baselines or formal AT evidence. Per-tab inner layout, portable
+workspace/archive replay, cross-device synchronization, approved goldens, and
+manual assistive-technology qualification remain open.
+
+### 2026-08-14 Plot-worker Bandit directive closure (#4433)
+
+Version 1.16.99 gives the two bounded internal plot-worker IPC deserializations
+the explicit Bandit B301 suppression required by the protected security gate.
+This is static-only: request hashing, exact payload/result validation, process
+ownership, scientific computation, and evidence are unchanged from 1.16.98.
+
+### 2026-08-14 Cross-tab performance hosted typing closure (#4433)
+
+Version 1.16.98 narrows the canonical PyQt plot-worker selection to an explicit
+boolean and resolves the Windows priority API through a runtime attribute
+boundary. This is a static-only correction for the protected Linux MyPy 1.13
+gate; process selection, scheduling, scientific computation, and evidence are
+unchanged from 1.16.97.
+
+### 2026-08-14 Cross-tab visualization performance budgets (#4433)
+
+Version 1.16.97 introduces `visualization-performance-budgets@1`, an immutable
+authority over the exact nine React and nine PyQt tab identities already owned
+by the visibility manifest. For the initial production state it bounds cold tab
+open, resize settling, stable-frame geometry, and post-settle movement. React
+uses 2.5/1.5-second open/resize ceilings and canonical CLS <= 0.1 after excluding
+recent-input shifts. PyQt uses 5/4-second ceilings and exact geometry at DPI
+1.0/1.5 because Qt has no browser CLS metric.
+
+The first PyQt probe reproduced a 7.8–10.6-second Plots open while a 41-point
+closure sweep held the GUI thread. Production plot computation now runs through
+a generation-bound, killable Qt subprocess. IPC accepts only complete bounded
+plot payloads; stale/malformed results fail closed, prior panes remain visible,
+scientific-library child threads are capped, and work is terminated after 120
+seconds. The simulation, plot, selection, and export identities are unchanged.
+These thresholds are protected diagnostics for the declared workload, not user-
+hardware qualification, result-state coverage, approved visual goldens, or
+formal assistive-technology evidence. Persisted layout remains open under #4433.
+
+### 2026-08-14 Plots bounded computation and exact inspector (#4433)
+
+Version 1.16.96 defines one shared plot-workspace resource envelope: at most
+eight managed plots, 512 total sweep evaluations, eight series per plot, and
+8,192 inspectable vertices per inspector plan. React computation occurs after commit
+and caches immutable results by plot/context/executor authority; PyQt lazily
+computes only stale visible panes. Exact series/raw-index or derived histogram-
+bin selection is presentation-only and never reruns simulation or mutates
+export evidence. New accepted data clears selection; failed recomputation
+retains prior data, selection, pixels, and export ownership when present.
+Three Chromium selected viewports and two PyQt DPI selected/error-prior
+window/canvas pairs provide diagnostic evidence, not approved goldens.
+Runtime-local indices are not portable solver identities. Portable workspace
+archives, formal AT approval, performance qualification beyond the enforced
+resource caps, and remaining #4433 work stay open.
+
+### 2026-08-13 Simulation exact scrub authority (#4433)
+
+Version 1.16.95 requires React pointer, keyboard, and Auto tau actions to
+execute the exact candidate impact-time request before result publication.
+Failures retain the prior accepted scene or an honest empty state and surface a
+bounded status. PyQt retains its existing exact keyboard/Auto behavior and
+extracts successful-run publication into a focused mixin. Both runtime
+manifests identify execution as synchronous with no observable loading state.
+Three Chromium viewports and two PyQt DPI scales provide diagnostic result,
+stale, and error-prior evidence; the PyQt diagnostic scrolls the setup pane to
+show the persistent error while separately proving exact retained canvas
+identity. These artifacts are not approved goldens. Async/cancel semantics,
+formal AT approval, performance qualification, and remaining #4433 tabs are
+still open.
+
+### 2026-08-13 Flight hosted typing closure (#4433)
+
+Version 1.16.94 makes the accepted-flight NumPy snapshot return explicit,
+keeps Qt signals and event filtering on the concrete view, and supplies
+`TYPE_CHECKING`-only optional result fields to the execution mixin. Pinned
+Python 3.12 / MyPy 1.13 accepts all 13 changed Flight source files. Runtime
+science, atomic publication, interaction, artifacts, and open #4433 boundaries
+are unchanged.
+
+### 2026-08-13 Flight synchronized sample inspector (#4433)
+
+Version 1.16.93 adds matched React/PyQt inspection of exact runtime-local flight
+samples. React direct entry and PyQt direct/delivery each produce an immutable
+generation-bound bundle containing the complete producing context,
+launch/model/kernel/wind provenance, aligned time/position/velocity evidence,
+optional calm comparison, validated summaries, and a time/position plan capped
+at 1,002 samples before planner copying/allocation. The separate target overlay is
+transactionally refreshed from the accepted trajectory. Canonical tee origin,
+launch velocity, ground floor, landing,
+and wind-delta cohesion fail closed. The current primary cohort alone is
+selectable; the calm trace is a comparison ghost with no inferred raw-index
+correspondence. Twelve-pixel pointer selection and Arrow/Home/End/Escape update
+side/top markers, status, and the sole 3D playback timestamp without scientific
+recomputation. React and PyQt retain prior or honest empty authority on failure;
+PyQt publication spans target, renderer, controls, rows, deltas, statuses, and
+public references, while a failed pixel rollback is explicitly labeled stale.
+Three Chromium React selected viewport and eight PyQt selected/error window/canvas DPI PNGs are
+diagnostic-only, not approved goldens. Raw indices are runtime-local rather than
+portable solver identity, and broader #4433 tab/approval work remains open.
+
+### 2026-08-13 Club Explorer hosted typing closure (#4433)
+
+Version 1.16.91 closes the pinned Python 3.12 / MyPy 1.13 Club Explorer
+diagnostics with type-only mixin contracts and explicit NumPy/bytes return
+types. It changes no runtime, scientific, visual, interaction, or evidence
+behavior; #4433 remains open.
+
+### 2026-08-13 Club Explorer bounded mesh and camera interaction (#4433)
+
+Version 1.16.90 adds matched focusable React/PyQt clubhead cameras: Arrow keys
+orbit, plus/minus zoom, and Home/Reset restore the canonical orthographic view
+without changing scientific inputs. Pointer orbit and wheel zoom use the same
+bounded state. Imported STL is local-only and capped before materialization at
+2 MiB and 2,048 raw triangles; renderer adoption is capped at 4,096 so the
+2,176-triangle Mallet Putter remains supported. Accepted geometry is immutable,
+normals are derived from winding, stale browser reads cannot replace a newer
+source, and parse/import failures retain the prior source and camera. Imported
+provenance records byte/raw/retained counts, SHA-256, and display-normalization
+revision; STL units, physical front/back, hosel registration, and mass centroid
+are explicitly not inferred. React evidence covers generated/imported/error at
+1440x900, 1280x720, and 390x844; PyQt diagnostics cover procedural/imported/
+error at DPI 1.0/1.5. These captures are diagnostic, not approved goldens.
+PyQt file loading is synchronous, so a painted loading state is not claimed.
+Render failures stop playback and may leave a stale image while retaining the
+selected source/camera; broader tab polish and approval remain open in #4433.
+
+### 2026-08-13 Putting hosted typing closure (#4443)
+
+Version 1.16.89 explicitly constructs the PyQt Matplotlib display-point tuple
+as `(raw index, float x, float y)` and narrows Qt scalar/text returns. This
+closes pinned MyPy 1.13 inference at binding boundaries without changing
+scientific identity, UI behavior, geometry, artifact status, or the remaining
+#4433 scope.
+
+### 2026-08-13 Putting synchronized sample inspector (#4433)
+
+Version 1.16.88 adds a matched React/PyQt inspector over one accepted putting
+result. One immutable O(raw) presentation plan retains exact zero-based solver
+indices, cumulative distance, time, path coordinates, speed, and skid/pure-roll
+phase while rendering at most 1,024 exact samples. Required endpoints, the
+first pure-roll sample, and stable path/speed extrema survive deterministic
+decimation; selection never replans, interpolates, reruns the solver, or changes
+exports. Pointer hit-testing uses rendered pixels with a 12 px radius and
+lower-index ties; Left/Right/Home/End/Escape navigate displayed samples and one
+selection drives both markers and the polite status. Scientific result
+replacement clears selection synchronously, while presentation-unit changes
+preserve selection and retained error. Result, fixed plan, coherent scalar/raw
+summary, complete producing context, and generation publish atomically; a
+failed replacement retains that immutable bundle and a first failure is honest
+empty state. The visible context identifies putter/spec, resolved pace, stimp,
+grade, aspect, hole, and kernel. TypeScript GreenConditions enforce Python
+domains; both editors expose speed 0.2-6 m/s, backstroke 5-100 cm, stimp 3-16 ft,
+grade 0-10%, aspect -360..360 degrees, and hole 0.1-40 m. A Python-owned golden
+pins explicit half-up decimation, planner semantics, and rendered-pixel ties;
+it does not claim that independent Python and TypeScript solver arrays are
+portable identities. Production evidence is three React selected-result PNGs
+(1440x900, 1280x720, 390x844) and four PyQt selected/error-prior PNGs at DPI
+1.0/1.5. React failure remains unit-level because bounded production editors do
+not expose a genuine failing dependency; no browser-only state injection is used.
+Automatic loading is not applicable because putting execution remains
+synchronous; approved cross-runtime raw-array goldens and broader tab coverage
+remain open under #4433.
+
+### 2026-08-13 Variation accepted-result prominence (#4433)
+
+Version 1.16.87 makes an accepted React Variation result reveal its actual
+joint matrix or individual sensitivity landmark once after an eligible pointer
+Run, but only when ancestor-clipped geometry is below the manifest-owned
+desktop or narrow threshold. Keyboard, focus-visible, stale, loading, failure,
+and cancel paths never trigger the reveal; reduced motion uses instant
+navigation, and automatic navigation never focuses a result. A persistent
+Return action restores the compact Run/Cancel group. Reserved state/progress
+slots prevent lifecycle changes from shifting that operational viewport.
+PyQt intentionally performs no motion because its production right pane is
+already at least 240x240; both DPI probes require identical visual geometry,
+splitter sizes, selected result tab, and editor focus before/after success.
+This presentation-only policy does not recompute or change accepted authority.
+
+### 2026-08-13 Variation lifecycle probe assertion-policy closure (#4441)
+
+Version 1.16.86 adds only
+`tests/rate_of_closure/pyqt_variation_visual_state_probe.py` to the explicit
+assertion-free support allowlist. The probe is a subprocess artifact producer;
+its owning rendered test remains responsible for lifecycle, geometry,
+artifact-size, and occlusion assertions. A parameterized policy regression
+proves the exact exemption does not admit an adjacent assertion-light test.
+This correction changes no runtime, scientific result, evidence approval, or
+automatic-prominence behavior.
+
+### 2026-08-13 Variation worker authority binding correction (#4441)
+
+Version 1.16.85 binds every in-session PyQt Variation callback to the exact
+worker owner, generation, and construction-time execution identity: plan,
+resolved registry defaults, complete simulation configuration, and sensitivity
+policy. Foreign callbacks are inert; a current-owner identity mismatch fails
+closed while retaining the prior accepted bundle. Dataset and ensemble archive
+schemas still do not persist this complete identity, so portable replay remains
+open. PyQt diagnostic geometry records the actual offscreen window/tab viewport
+and enforces the manifest-owned 240x240 visible landmark minimum rather than
+claiming the requested 1440 width was honored by every hosted platform.
+
+### 2026-08-13 Variation state-preserving visual shell (#4433)
+
+Version 1.16.84 defines one immutable empty/loading/result/error/cancel matrix
+for matched React and PyQt Variation views. A rerun retains at most the last
+fully accepted visual and export bundle, and only when complete internal
+execution identity still matches. Every scientific editor invalidates prior
+evidence; transient invalid editor values remain editable but cannot run or
+export. Result plan, ensemble plan, sensitivity policy/shapes, generation, and
+complete simulation authority are verified before staged presentation commit.
+Cancellation is operational status, not scientific error. Diagnostics cover
+six states at React desktop/narrow and PyQt 100/150% DPI; browser diagnostics
+scroll the exact visual into view, so they prove inspectability rather than
+automatic post-Run viewport prominence. Portable archive/replay identity,
+approved goldens, assistive-technology validation, and other #4433 tabs remain
+open.
+
+### 2026-08-13 Linked-scatter Unicode-scalar parity closure (#4433)
+
+Version 1.16.83 validates well-formed Unicode scalar text before UTF-8 field
+accounting. JSON keys and string scalars reject unmatched UTF-16 high or low
+surrogates in Python and React. Valid surrogate pairs remain accepted; Python
+normalizes an escaped pair into its supplementary scalar before duplicate-key
+detection, matching JavaScript semantics. The shared limits golden pins both
+invalid forms and one valid pair. This does not promote diagnostic evidence or
+close #4433.
+
+### 2026-08-13 Linked-scatter import-limit parity closure (#4433)
+
+Version 1.16.82 defines one 65,536-byte UTF-8 ceiling for every imported CSV
+header/cell and JSON key/string scalar. A Python-owned golden pins ASCII and
+multibyte boundaries, including an input above Python's implicit CSV field
+threshold. Python performs a local quoted-field byte preflight and does not
+mutate the process-global `csv.field_size_limit`; React validates the same
+decoded fields. Both runtimes also directly prove rejection above 250,000
+rows, 256 union columns, and two million dense cells without constructing
+oversized test datasets. This does not promote diagnostics or close #4433;
+approved baselines, AT validation, archive integration, and remaining visual
+work stay open.
+
+### 2026-08-13 Linked-scatter extreme/import contract closure (#4433)
+
+Version 1.16.81 makes accepted finite plotting values renderable at their
+extremes through a shared bounded unitless projection, while raw values remain
+visible in selected-row status. A Python-owned golden covers crossing maxima,
+constant maxima, signed zero/subnormal, integer, and near-maximum ULP inputs.
+CSV/JSON ingestion now validates suffix before reads, enforces eight MiB,
+250,000-row, 256-union-column, and two-million-dense-cell limits, decodes UTF-8
+fatally, and rejects malformed CSV, duplicate JSON keys, and nonportable
+scalars without truncation. Successful replacement resets all dataset-bound
+controls and evidence atomically; failed imports preserve current evidence,
+and stale browser reads or PyQt callbacks cannot overwrite a newer generation.
+This does not make runtime-local fingerprints portable or promote diagnostic
+captures. Approved goldens, AT validation, archive integration, and remaining
+#4433 visualization work remain open.
+
+### 2026-08-13 Linked-scatter diagnostic static closure (#4433)
+
+Version 1.16.80 gives the PyQt selected-state diagnostic an explicit
+analytics-tab type boundary and direct preview access. This is a static-gate
+correction only: it does not change linked-scatter behavior, promote diagnostic
+captures, or close any remaining #4433 release gap.
+
+### 2026-08-13 Linked launch-monitor scatter interaction (#4433)
+
+Version 1.16.79 defines a matched React/PyQt presentation contract over the
+retained launch-monitor rows. A Python-owned golden pins strict decimal
+projection, finite-pair counts, stable zero-based retained ordinals,
+deterministic display capping at 2,000 points, selected-row preservation, and
+navigation. Each surface exposes one focusable direct-interaction scatter with
+pointer and Left/Right/Home/End/Escape controls, a selected marker, and status
+that reports only source fields actually present. Selection changes never
+rerun statistical analysis; analysis-contract/axis edits instead clear stale
+results and export until Run Analysis succeeds. Raw retained records remain available to
+analysis/export and the chosen missing-data policy controls analytical
+inclusion. Flat CSV/JSON import rejects ragged, nested, nonportable, or
+unsupported records and is capped before presentation at 250,000 retained
+rows. Evidence captures remain diagnostic. Analysis fingerprints are
+runtime-local trace values and must not be compared across runtimes. Portable
+fingerprint canonicalization, approved golden baselines, assistive-technology
+validation, archive integration, and the remaining #4433 visualization work
+are outside this bounded child and remain open.
+
+### 2026-08-13 Full-window PyQt dependency closure (#4433)
+
+Version 1.16.78 declares bounded pandas, SciPy, and SymPy runtimes in the shared
+`gui` extra because registered analytics, flight, and simulation tabs import
+them during full-window construction. Both PR and trusted rendered workflows
+already install `.[gui,dev]`; a packaging/workflow regression now proves that
+shared extra contains those exact runtime dependencies. This corrects hosted
+environment assembly without `all`/MuJoCo or visualization-evidence changes.
+
+### 2026-08-13 Narrow command-strip and assertion-policy closure (#4433)
+
+Version 1.16.77 prevents the application command strip from contributing a
+one-pixel document overflow at the 390x844 authority viewport. Its narrow outer
+row now permits flex-item contraction while the Impact/Swing/Flight command
+group consumes the remaining width and owns its internal horizontal scroll.
+The assertion-quality gate also recognizes the exact PyQt visualization-tab
+subprocess probe as support code; a policy regression proves the neighboring
+assertion-light test remains rejected. This is a CI correction only and does
+not broaden the diagnostic-only visualization evidence claim.
+
+### 2026-08-13 Meaningful narrow geometry and trusted trigger closure (#4433)
+
+Version 1.16.76 requires at least 180 visible vertical pixels for every visual
+landmark at the 390x844 reference viewport. Python and TypeScript reject a
+smaller responsive authority, and Playwright proves that a one-pixel-high
+clipped sliver is below the contract before auditing all nine tabs. The trusted
+main workflow's PyQt lane is now triggered by the same rendered source,
+dependency, probe, and test authorities as the ephemeral PR lane. Its browser
+install and selection remain explicitly Chromium-only. These closures improve
+sustained geometry evidence but do not establish approved goldens, formal AT
+evidence, or exhaustive noninitial-state geometry.
+
+### 2026-08-13 Visualization manifest authority hardening (#4433)
+
+Version 1.16.75 makes `visualization-tab-visibility@1` a strict, immutable
+cross-runtime authority. React responsive-control locators must cover exactly
+the React visual entries derived from the same document; PyQt cannot carry
+React-only responsive fields. Every pixel value is a positive shared safe
+integer, with viewports additionally bounded to the practical 10,000-pixel
+domain. `visual-first`, `form-led-live-preview`, and `form-led-evidence` all
+require a 240-pixel visual landmark at reference desktop sizes;
+`reference-utility` is the only semantic-content classification. Both readers
+freeze or proxy every nested entry, state, viewport, environment, and locator
+map. Adversarial tests reject malformed/non-finite/duplicate JSON, exact-field
+and control-key drift, semantic downgrades, unsafe numbers, mutation, clipped
+slivers, hidden controls, and the full audited PyQt interactive-control set.
+This correction does not promote diagnostic captures to approved goldens or
+close the formal accessibility and noninitial-state evidence gaps.
+
+### 2026-08-13 Visualization tab first-screen contract (#4433)
+
+Version 1.16.74 defines `visualization-tab-visibility@1`, a packaged JSON
+authority for all 18 React/PyQt primary tabs. Entries declare exact tab
+identity, classification, content-bearing landmark type and locator, complete
+empty/loading/result/error presentation, reference viewport or DPI scale, and
+a meaningful desktop visible-height minimum. Registry governance prevents an
+undocumented primary tab from entering either application.
+
+React audits open every tab at 1440x900, 1280x720, and 390x844; the two desktop
+sizes require 240 visible landmark pixels in both dimensions; narrow uses
+explicit manifest minimum dimensions and exact visual-before-control ordering,
+with zero horizontal document overflow throughout. PyQt audits
+run at 100%/150% DPI, resolve actual canvas leaves or nonblank semantic content,
+clip visibility through ancestors and scroll viewports, enforce 240 pixels for
+visual landmarks, reject tab-bar/control overlap, and capture one diagnostic
+PNG per tab and DPI. The audit drove visual-
+first ordering, low-height chrome compaction, reference-width single-column
+plots, and an explicit Variation workflow preview without removing scientific
+text. Captured screenshots/JSON are diagnostic and are not approved visual
+goldens. Formal axe/screen-reader/manual AT evidence, pixel-diff baselines, and
+exhaustive loading/result/error-state geometry remain open.
+
+### 2026-08-13 Hosted PyQt declared-plugin closure (#4422)
+
+Version 1.16.73 replaces the incomplete hand-selected hosted PyQt test
+bootstrap with editable `.[gui,dev]`, while retaining the bounded SciPy range
+and exact `pytest-benchmark==5.2.3` pin. The declared development extra is the
+repository authority for pytest-asyncio, pytest-qt, pytest-timeout, xdist, and
+the other plugins consumed by `pyproject.toml`. Consequently the ephemeral PR
+lane can interpret `asyncio_default_fixture_loop_scope` before collecting the
+rendered-interaction test. The workflow contract pins the exact install
+command. This is CI-only dependency closure: product behavior, scientific
+contracts, runner trust, evidence semantics, and open AT/golden limitations do
+not change.
+
+### 2026-08-13 Hosted PyQt and assertion-policy closure (#4422)
+
+Version 1.16.72 closes two exact hosted-CI failures in the R14.5 evidence
+slice. The ephemeral PR workflow installs pinned `pytest-benchmark==5.2.3`,
+which owns the repository-level `--benchmark-disable` option consumed before
+the focused PyQt test runs. The workflow contract test binds this dependency
+to the install command so a reduced hosted environment cannot regress to an
+unrecognized pytest option.
+
+The changed-test assertion policy now exempts only
+`tests/rate_of_closure/pyqt_variation_render_probe.py`. That file is a
+subprocess entrypoint producing artifacts and a semantic manifest; behavioral
+assertions remain in its owning `test_pyqt_variation_rendered_interactions.py`.
+An adversarial policy regression proves this exact helper passes while an
+adjacent assertion-light `test_pyqt_render_smoke.py` still fails. The complete
+changed Python set against published #4417 passes the assertion gate; no glob
+or broader test exemption was introduced.
+Correction gates pass 8/8 focused PyQt, 20/20 workflow/assertion/validator
+tests, the exact published-#4417 changed-file assertion command, all 67
+workflow validations, pinned actionlint 1.7.11, Ruff/format, documentation
+governance, module-size, and diff checks.
+
+### 2026-08-13 Cross-browser workflow selection closure (#4142 R14.5)
+
+Version 1.16.71 makes installed browser runtimes and selected Playwright
+projects an exact workflow contract. The persistent trusted main-push lane
+installs Chromium and explicitly runs only `chromium-desktop` and
+`chromium-narrow`; it can no longer accidentally select Firefox/WebKit from a
+shared configuration on a warm or cold runner cache. The untrusted PR lane
+continues to install and run all three engines only on `ubuntu-latest`.
+
+The PR path filter now follows every Python authority imported by the rendered
+probe: club/model inputs, plotting, simulation, variation, PyQt6 visualization,
+shared swing-variation science, dependency metadata, its harness, and the
+workflow-contract test. A math, mesh, plot-data, solver, or UI change cannot
+silently skip the rendered interaction gate. Regression tests pin both path
+ownership and the trusted Chromium-only command; no test scope, artifact
+semantics, or trust boundary was weakened.
+Correction gates pass 874/874 React tests, 9/9 all-engine Playwright scenarios,
+7/7 explicit trusted-Chromium scenarios, and 20/20 focused PyQt/workflow/
+validator tests, plus TypeScript, ESLint, Vite build, strict harness Mypy,
+Ruff/format, workflow validation, docs governance, size, and diff checks.
+Pinned actionlint 1.7.11 also passes all workflow files.
+
+### 2026-08-13 Cross-browser and rendered PyQt interaction evidence (#4142 R14.5)
+
+Version 1.16.70 adds a bounded production-Worker Playwright scenario for
+Chromium, Firefox, and WebKit. It exercises localized shoulder/wrist torque,
+a third independent geometric input, accessible keyboard activation, actual
+full-rank confidence-surface rendering, camera movement/reset, legend
+semantics, and positive-area control-overlap checks. The public React camera
+state is a semantic `output`, so interaction tests verify state instead of
+relying on pixels or a download side effect.
+
+PyQt6 interaction evidence runs in separate Qt processes at exact 100% and
+150% scale factors. It checks keyboard activation, ellipsoid toggle/metric,
+explicit 3-D camera orientation, plot zoom/auto-fit, legend hide/restore,
+device-pixel ratio, rendered dimensions, and control overlap. PNGs and
+Playwright screenshots are retained as diagnostic artifacts; deterministic
+state assertions and manifests are the test authority. They are deliberately
+not approved pixel-perfect goldens.
+
+Untrusted pull-request code runs only on `ubuntu-latest`; it never reaches the
+persistent fleet workflow. External workflow actions remain immutable-SHA
+pinned. No axe dependency was added: this bounded slice covers semantic roles,
+accessible names, focus, Enter/Space, and camera keyboard controls, but does
+not claim screen-reader/AT certification, pixel identity, mobile Firefox/
+WebKit, prescribed-profile Worker transport, or protected publication.
+Local gates pass all 874 React unit tests, 9/9 production Playwright scenarios,
+8/8 focused PyQt tests including both DPI subprocesses, 7/7 workflow/runner-
+guard tests, strict Mypy for the new Python harnesses, TypeScript, ESLint,
+Vite build, Ruff/format, documentation governance, and size/diff checks.
+
+### 2026-08-13 Integrated localized execution and confidence mesh (#4142)
+
+Version 1.16.69 normally merges approved localized-execution head
+`84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-
+mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second. The merge retains
+request-bound passive localized execution, strict schema-v2 swing-ensemble
+authority, typed source provenance/export, bounded confidence-ellipsoid mesh
+generation, PyQt6/React surface rendering, constant-space camera bounds,
+schema-v3 plot persistence, and the exact assertion-helper exemption.
+
+The only overlapping production component combines the two orthogonal parent
+changes: localized torque factors keep accessible spec/window/joint source
+labels, while Gaussian position-content ellipsoids remain opt-in with their
+controls, rendering, legend, status text, and persisted plot intent. This merge
+does not expand the production Worker/UI beyond passive torque execution or
+claim Rust parity, complete RK4 half-step history, cross-browser/assistive-
+technology certification, approved visual baselines, import UI, protected
+publication, or completion of the remaining #4142 scope.
+
+Integrated-tree evidence passes 275/275 localized/variation Python tests,
+167/167 shared swing tests with one expected optional Rust-wheel skip, 74/74
+mesh/assertion tests, 102/102 focused React tests, all 874/874 React tests, and
+6/6 production Playwright scenarios. The exact hosted Python 3.12 + Mypy 1.13
+policy passes all 10 changed production Python files; Ruff/format, assertion
+policy, TypeScript, ESLint, Vite build, docs governance, size, and diff gates
+also pass.
+
+### 2026-08-13 React localized result-authority closure (#4142)
+
+Version 1.16.67 makes accepted React swing ensembles a reconstruction of their
+declared authority rather than a collection of independently trusted finite
+objects. The Worker boundary binds default passive input to its request. The
+schema-v2 reader derives one invariant custom base input from trial zero and
+reapplies each deterministic sampled plan row; every resulting input must match
+exactly. This binds plan/spec IDs, sampled values, localized commands, initial
+state, run configuration, locks, and every finite offset magnitude/window/joint
+while preserving legitimate unvaried custom input authority.
+
+Each evaluated trial must contain exactly
+`round(duration / 0.001 s) + 1` state and torque samples at `index * 0.001 s`.
+The passive torque summary is recomputed from the validated configuration and
+time grid. Setup-derived ball position is immutable across run and impact
+records; fixed-contact geometry is recomputed from the trace and delivery-
+inspection geometry from its canonical policy. Miss total duration equals the
+effective swing duration; hit total duration equals that duration plus the
+validated flight time. Duplicate times, truncated histories, forged finite ball
+positions, numeric strings, and spatial `swing.*` torque joints fail closed.
+
+Local evidence passes 846/846 Vitest, 274/274 selected Rate/localized Python
+tests, all 167 shared swing tests with one expected optional Rust-wheel skip,
+6/6 Playwright, TypeScript, ESLint, and Vite production build. Production
+Worker/UI transport remains passive-only. Prescribed-profile transport, Rust
+parity, full RK4 half-step torque history, cross-browser/AT evidence, approved
+visual baselines, protected publication, and remaining #4142 remain open.
+
+### 2026-08-13 React localized execution review hardening (#4142)
+
+Version 1.16.66 makes `round(duration / 0.001 s) * 0.001 s` the canonical
+effective duration for localized browser preflight, matching the fixed-step
+Python/reference pipeline. A half-open window whose end exceeds that rounded
+duration fails before sampling or Worker trial execution.
+
+The Worker boundary now validates the request's exact deterministic sample
+matrix, reconstructs and binds every default passive trial input, and checks
+nested finite swing/flight vectors, rotations, monotonic times, torque history,
+impact/launch availability, typed result rows, and localized source provenance.
+Schema-v2 ensemble JSON has a strict finite writer and duplicate-field-aware
+parser, preventing JavaScript's nonfinite-to-null coercion. Swing and localized
+CSV exporters reuse formula-neutral cell serialization for `=`, `+`, `-`, `@`,
+tab, and carriage-return prefixes without changing numeric negative values.
+
+The TypeScript kernel supports passive and prescribed additive torques; Python-
+owned golden/unit coverage pins both. The Variation request/UI and production
+hashed Worker currently transport and exercise passive mode only. Prescribed
+profile Worker/UI transport, Rust parity, full raw RK4 half-step torque history,
+cross-browser/assistive-technology evidence, approved visual baselines,
+protected publication, and remaining #4142 remain open.
+Local correction evidence passes 846/846 Vitest, 290/290 selected Python tests
+with one expected missing-Rust-wheel skip, 6/6 Playwright, TypeScript, ESLint,
+and Vite production build.
+
+### 2026-08-13 React localized-torque execution and export (#4142 R13.3/R14.3)
+
+Version 1.16.65 executes the two already-authored localized commanded-torque
+variables through the browser's TypeScript-reference double-pendulum kernel.
+Each sampled shoulder or wrist command is additive to passive or prescribed
+torque at its stable topological `joint.*` target and exact half-open
+`[start, end)` window. The command callback is evaluated at every classical
+RK4 substep. Non-double-pendulum sources and arbitrary spatial `swing.*` loci
+remain fail-closed through an explicit capability contract.
+
+Trial results retain `evaluated_hit`, `evaluated_no_impact`, and
+`numerical_failure` outcomes. Every trial also carries its stable spec ID,
+variable key, window, joint, `N*m` unit, sampled magnitude, and provenance.
+The result surface exposes those sources as accessible labels; schema-v2 swing
+ensemble JSON and a dedicated CSV preserve the same authority. The normal
+swing-trace export continues to use spatial `swing.*` point IDs, never torque
+joint IDs. Sampled on-grid torque history is retained, but RK4 half-step torque
+history is not represented as a complete raw archive.
+
+The numerical oracle is a Python-owned `shared.python.swing_sim.reference`
+golden covering passive and prescribed additive commands across exact window
+boundaries. TypeScript matches those states to 13 decimal places. The full
+React suite, strict Worker transport validation, deterministic seeded replay,
+typed misses/failures, TypeScript, ESLint, Vite production build, and a real
+hashed-Worker Chromium run/cancel/rerun/CSV+JSON export case are required gates.
+Local evidence passes 845/845 Vitest tests, 290/290 selected localized and
+variation Python tests with one expected missing-Rust-wheel skip, and 6/6
+production Playwright tests across deterministic desktop/narrow layouts and
+the hashed Worker lifecycle; TypeScript, ESLint, and Vite build also pass.
+Rust parity, full raw RK4-substep torque persistence, WebKit/Firefox,
+assistive-technology automation, approved visual baselines, protected
+publication, and complete #4142 remain open.
+### 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
+
+Version 1.16.68 normally merges approved confidence-mesh head
+`45800feed2954d221e6a829f0430f87d9817d582` first and published dispersion-policy
+head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` second. It retains the complete
+bounded Python/TypeScript mesh authority, PyQt6/React surface rendering,
+constant-auxiliary-space camera bounds, strict immutable public Python
+constructor, schema-v3 persistence, and their tests.
+
+The exact Changed Test Assertion Check exemption for the constructor-only
+plot-definition support helper and its adjacent-real-test fail-closed
+regression are retained without broadening. This merge changes no scientific,
+runtime, schema, UI, or policy contract and does not claim protected
+publication or completion of the remaining #4142 scope.
+
+Local integration evidence is 74 focused Python tests, all 868 React tests,
+five production-Worker Chromium E2E tests, the exact assertion-policy check,
+Python 3.12/MyPy 1.13 across 10 changed production files, Ruff/format,
+TypeScript, ESLint, production build, documentation governance, diff checks,
+and the official 500-LOC changed-file budget.
+
+### 2026-08-13 Confidence-mesh render/constructor closure (#4142 R12.1)
+
+Version 1.16.67 removes the last unbounded camera-bounds operation from the
+React variation renderer. Bounds are accumulated in constant auxiliary space
+by streaming trace points and bounded mesh vertices without flattening or
+variadic extrema calls. A maximum supported 500-trial by 1,501-sample regression
+measures the complete render, closes the former V8 variadic-argument
+`RangeError`, and verifies finite mesh projection within the linked camera.
+
+The public Python `ConfidenceEllipsoidMesh` constructor now applies the
+builder's named 48-ellipsoid, 2,976-vertex, and 5,760-triangle maxima. It
+requires genuine non-Boolean built-in integer sample indices and per-surface
+counts, exact tensor shapes and triangle-index closure, and finite real vertex
+and integer triangle arrays. Arrays are copied into read-only owned storage,
+so direct construction cannot retain mutable caller authority.
+
+This contract closure does not expand claims around cross-browser or
+assistive-technology E2E, approved visual baselines, plot-definition import
+UI, protected publication, or completion of the remaining #4142 scope.
+
+### 2026-08-13 Confidence-mesh contract hardening (#4142 R12.1)
+
+Version 1.16.66 makes the bounded surface contract enforceable on every public
+mesh-construction path. Python and TypeScript require genuine integer
+tessellation and allocation budgets and reject negative, fractional, Boolean,
+or over-limit values against named 12-longitude, 6-latitude,
+48-ellipsoid, 2,976-vertex, and 5,760-triangle maxima. Per-surface counts and
+zero capacity are determined before unit-sphere allocation.
+
+TypeScript validates final transformed world vertices so finite operands that
+overflow cannot poison projection or camera bounds. The shared cross-toolkit
+fixture now uses a non-symmetric canonical orthonormal frame, and captured
+PyQt and React renderer regressions verify coordinate projection and
+mesh-inclusive bounds. This hardening does not expand the prior claims around
+mean confidence intervals, cross-browser or assistive-technology E2E,
+approved screenshots, plot-definition import UI, protected publication, or
+completion of #4142.
+
+### 2026-08-13 Bounded confidence-ellipsoid surfaces (#4142 R12.1)
+
+Version 1.16.65 renders actual Gaussian position-content ellipsoid surfaces in
+the PyQt6 and React three-dimensional variation views. Both toolkits consume
+the existing covariance authority, require the exact application frame, and
+render only full-rank estimable samples. The default-off control is available
+only with confidence-ellipsoid volume; rank-deficient, insufficient, invalid,
+or malformed geometry never produces a surface.
+
+Python and TypeScript share a golden orientation/units fixture and identical
+12-by-6 tessellation and temporal decimation. Rendering is capped at 48
+ellipsoids, 2,976 vertices, and 5,760 triangles. Yellow sparse 2-sigma
+principal-axis glyphs remain distinct from cyan translucent content surfaces;
+the latter describe plug-in sample-position content and are not confidence
+intervals for a population mean. Plot-definition schema v3 persists the
+surface toggle and strictly migrates exact v1/v2 documents with surfaces off.
+
+This slice does not claim confidence regions for the mean, WebKit/Firefox or
+assistive-technology E2E, approved screenshot baselines, plot-definition
+import UI, protected publication, or completion of #4142.
+### 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
+
+Version 1.16.65 adds one exact-path Changed Test Assertion Check exemption for
+the constructor-only variation plot-definition support module. The policy
+regression proves the exemption does not match an adjacent assertion-light
+real test. No scientific, runtime, schema, persistence, or UI contract changes.
+
+### 2026-08-13 Integrated dispersion and localized-locus/browser stack (#4142)
+
+Version 1.16.64 is a normal non-fast-forward merge with approved dispersion
+head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` as first parent and published
+localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda`
+as second parent. It does not rebase or rewrite either history. The strict
+dispersion metric, plot-definition, PyQt/React visualization, localized-torque
+locus authoring, identity, and browser trust contracts now coexist.
+
+All implementation and workflow changes from both parents are retained. The
+unexpected React test conflict preserves the localized-locus persistence cases
+and the newer dispersion analysis block in its existing split file. That file
+required only two assertion updates from superseded RMS-specific
+accessible labels to the integrated metric-generic labels.
+
+Integrated verification passes 338 combined dispersion/PyQt/shared variation
+tests, all 841 React tests, seven workflow/runner-policy tests, and the exact
+23-source Python 3.12/Mypy 1.13 cumulative delta. Ruff/format, TypeScript,
+ESLint, Vite production build, documentation governance, and the official
+500-line changed-file gate also pass, together with all five production-Worker
+Chromium checks.
+
+Protected publication and complete #4142 remain open. Plot-definition import
+UI, full confidence-ellipsoid meshes, WebKit/Firefox and assistive-technology
+automation, approved visual baselines, React localized execution/results/
+export, Rust parity, and complete raw persistence are not claimed here.
+
+### 2026-08-13 Plot-definition compatibility/static closure (#4142 R12.1/R12.2)
+
+Version 1.16.63 preserves compatibility with an authentic historical v1 form
+while retaining the complete v2 applicability matrix. A v1 scalar-scatter or
+distribution-matrix document may contain the exact application frame emitted
+by the former writer; Python and TypeScript migration normalize that field to
+null. An arbitrary legacy frame remains invalid. Current v2 documents remain
+strict and cannot assign geometry fields to non-geometric plot types.
+
+Python dictionary serialization canonicalizes tuple-backed `variable_keys` to
+a JSON array, so its result round-trips directly through the strict dictionary
+reader. PyQt dispersion-definition kwargs now have a precise `TypedDict` and
+pass the exact Python 3.12/Mypy 1.13 hosted changed-source command. Migration
+and contract-domain tests are split by responsibility, keeping every changed
+production and test file below 400 lines. Verification passes 1,163 Rate
+Python/PyQt and 804 React tests, including focused 70-case Python and 58-case
+TypeScript suites, plus Ruff and pinned Mypy. This closure does not add plot-
+definition import UI, a rendered confidence-ellipsoid mesh, cross-browser E2E,
+protected publication, or complete #4142.
+
+### 2026-08-12 Plot-definition complete-domain hardening (#4142 R12.1/R12.2)
+
+Version 1.16.62 defines a complete, symmetric applicability domain for every
+plot-definition kind. Scalar scatter permits x/y variable keys and its selected
+trial; distribution matrix permits only its bounded unique variable-key list;
+geometric plots permit their declared point/frame/unit/alignment, dispersion,
+cohort filters, and plot-specific camera/selection state. Every other nullable
+field must be null, including `variable_keys` on geometric plots. Current
+geometric definitions require the exact application-frame identifier
+`app_frame:x_target,y_up,z_right`, rather than accepting an arbitrary label.
+
+All stable persisted strings reject C0, C1, and DEL controls as well as empty,
+leading-whitespace, and trailing-whitespace forms. Python direct constructors
+normalize supported finite `numbers.Real` and `numbers.Integral` values,
+including covered NumPy and `Fraction` cases, to built-in float/int values
+before serialization. The Python reader remains a strict JSON wire-domain
+parser and rejects non-JSON numeric objects; TypeScript likewise requires
+primitive finite numbers and genuine integer fields. PyQt and React exporters
+emit null coordinate frames for non-geometric plots, and exact v1 migration
+rejects fields that are inapplicable under v2 validation.
+
+Local verification passes 1,160 Rate Python/PyQt tests and 802 React tests,
+including 67 Python and 56 TypeScript plot-definition contract cases, plus
+Ruff/format, scoped MyPy, TypeScript, ESLint, and the production web build. This
+hardening does not add plot-definition import UI, a rendered confidence-
+ellipsoid mesh, cross-browser E2E, protected publication, or complete #4142.
+
+### 2026-08-12 Dispersion plot-definition domain closure (#4142 R12.1/R12.2)
+
+Version 1.16.61 applies the strict plot-definition domain to direct constructors
+and writers as well as JSON readers. Python and TypeScript require exact plot
+kinds; stable non-empty trimmed identifiers; canonical outcome filters; a
+source whenever a perturbation band is selected; metres and common simulation
+time for geometric state; genuine non-Boolean trial indices; finite yaw, pitch,
+zoom, and phase values; pitch in [-90°, 90°]; positive zoom; and displayed phase
+in (0, 1]. Exact v1 migration defaults satisfy the strengthened v2 contract.
+
+Python revalidates immediately before `json.dumps(..., allow_nan=False)`.
+TypeScript reparses the complete object before `JSON.stringify`, preventing
+JavaScript's native NaN/infinity-to-null conversion from creating a plausible
+but false document. Undeclared constructor fields cannot override generated
+result identity. React timeline copy now correctly says that selection criteria
+persist, while adequacy counts and ranked quiet intervals are recalculated from
+the loaded ensemble.
+
+Local verification passes 1,138 Rate Python/PyQt tests, 786 React tests, the
+production web build, Ruff/format, scoped MyPy, TypeScript, ESLint, and secret
+scanning. Black is not installed in this workspace; Ruff is the repository's
+available Python formatting authority.
+
+This correction does not add plot-definition import UI, a rendered confidence-
+ellipsoid mesh, cross-browser E2E, protected publication, or complete #4142.
+
+### 2026-08-12 Dispersion consumer review hardening (#4142 R12.1/R12.2)
+
+Version 1.16.60 makes displayed quiet-interval rank explicitly local to the
+selected modeled point on both UI surfaces. PyQt scopes shared multi-point
+criteria before ranking, and a two-point Python/TypeScript golden regression
+pins dense, stable point-local ranks.
+
+The React df=3 chi-square inverse now evaluates regularized-gamma lower and
+upper tails and uses a bracketed solver instead of an approximate complementary
+error function. SciPy-owned reference quantiles validate confidence radius and
+unit-covariance ellipsoid volume at `1e-12`, `1e-8`, 0.5, 0.9, 0.95, 0.99, and
+`0.999999999999`, and the closest binary64 value below one, spanning the
+declared confidence domain.
+
+Python and TypeScript expose strict plot-definition readers. Exact v2 documents
+round-trip; exact v1 documents migrate without implicit string/boolean/float-to-
+integer coercion. V1 geometric plots become RMS-radius definitions in metres,
+preserve a positive legacy threshold, default a null legacy threshold to 0.005
+m, and declare zero minimum duration plus one minimum sample. Unknown, missing,
+nonfinite, and coercively typed fields fail closed. PyQt's five new dispersion
+controls also expose accessible names and keyboard label buddies.
+
+This hardening does not add a rendered confidence-ellipsoid mesh, cross-browser
+E2E, protected publication, or complete #4142.
+
+### 2026-08-12 Dispersion visualization consumers (#4142 R12.1/R12.2)
+
+Version 1.16.59 wires the existing confidence-dispersion authority into both
+Rate of Closure variation surfaces. PyQt6 and React can select RMS radius,
+largest principal sigma, or confidence-ellipsoid volume and declare a
+metric-specific threshold, minimum duration, and minimum sample count.
+Confidence is selectable only for volume. Authority and plot-definition values
+remain m or m³, while visible controls and timelines convert to mm or mm³.
+Plot-definition schema v2 records the metric, authority unit, threshold,
+applicable confidence, duration, and sample count.
+
+Every timeline reports estimable, rank-deficient, insufficient-sample,
+invalid-covariance, and selected-metric unavailable counts. Quiet intervals use
+the shared dense ranking by mean-to-threshold score. Volume is described as a
+Gaussian position-content region obtained from plug-in sample covariance, not
+a confidence region for the unknown population mean. React uses a bounded 3-D
+eigensolver and chi-square inversion pinned to a Python-authority golden fixture
+and rejects unequal grids and nonfinite coordinates instead of truncating.
+
+The 3-D view continues to draw sparse two-sigma principal-axis glyphs and labels
+them accordingly. This slice does not claim a full confidence-ellipsoid mesh,
+cross-browser end-to-end validation, protected publication, or completion of
+the wider variation epic.
+### 2026-08-12 PR #4414 hosted MyPy hardening (#4142)
+
+Version 1.16.63 closes the two actionable hosted MyPy 1.13 findings without
+changing runtime behavior. The localized locus editor now narrows its nullable
+variable key before querying the string-keyed variable-to-joint map. The noise
+row returns the locus editor's declared Boolean applicability result directly,
+removing a redundant type cast. The exact 15 changed source files relative to
+PR base `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` pass pinned MyPy 1.13.0 with
+redundant-cast warnings enabled. Focused locus tests and repository lint,
+format, documentation, diff, and size gates also pass. Protected current-head
+CI and publication remain open.
+
+### 2026-08-12 Integrated localized locus and Playwright browser stack (#4142)
+
+Version 1.16.62 preserves the exact localized-locus UI head at
+`05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent and the exact
+published browser head at `8bcd055f5711c122ec5332b8da8c41d6a974dfcb`
+as second parent in a normal non-fast-forward merge. All scientific, UI, test,
+browser, workflow, and trust-policy implementations from both parents are
+retained without manual code resolution. Only the four durable handoff/spec
+documents are reconciled here, retaining both histories.
+
+The strict localized execution and authoring stack, symmetric Python/React wire
+contracts, and 400-line source/test policy now coexist with the trust-separated
+production-Worker Playwright foundation. The pull-request workflow remains
+hosted-only; the trusted workflow remains main-push-only. Five Chromium tests
+exercise the built Vite application's real hashed Worker, progress,
+cancellation, deterministic reruns, navigation cleanup, and responsive layout.
+
+Protected publication and full R14.5 certification remain open. The browser
+coverage is bundled Chromium only; screenshots are review artifacts rather
+than cross-platform golden baselines. WebKit, Firefox, assistive-technology
+automation, PyQt interaction E2E, protected runner evidence, approved visual
+baselines, React localized dynamics/results/export, Rust parity, and complete
+raw persistence remain open.
+
+### 2026-08-12 Integrated localized torque and Playwright stack (#4142)
+
+Version 1.16.59 merges the exact localized-torque history at
+`10524cc2151c7b60c4a097939b29202158aff012` above the reviewed Playwright
+history at `6df0ed09388ba36630c5fc6be7a31a334a4b6243` with a normal two-parent merge.
+The strict Python localized-torque execution, validation, typed miss, and PyQt
+filtering contracts coexist with the trust-separated production-Worker browser
+gate; neither scientific nor browser authority is weakened. Protected
+publication, full R14.5 certification, localized locus authoring, additional
+sources, Rust parity, and complete state/event/torque persistence remain open.
+Integrated verification passes 171 localized changed-test cases, 18 Playwright
+workflow/security tests, and five real production-Worker Chromium tests, plus
+scoped Ruff/format, documentation governance, workflow validation, and diff
+hygiene.
+
+### 2026-08-12 Real-browser variation Worker foundation (#4142 R14.5)
+
+Version 1.16.57 pins Playwright Test 1.62.1 inside the Rate web package and
+adds a dedicated deterministic Chromium configuration with separate trust
+domains. The pull-request workflow contains only one ephemeral `ubuntu-latest`
+job and no persistent-fleet or self-hosted reference. A separate trusted
+workflow runs only for pushes to `main` and checks out the push event commit.
+It has no PR or manual-dispatch workflow-definition ref seam. Every external
+action reference in both Playwright workflows is pinned to a full immutable
+commit SHA. The gate builds and previews the production Vite output. Role/label
+locators drive the real hashed module Worker through a seeded 24-run study,
+observe at least one strict intermediate progress value before completion, and
+prove an identical rerun. A 500-run swing/OAT cancellation observes Worker
+termination before two identical seeded reruns, proving the cancelled generation
+cannot publish a partial, late, or stale result. Primary-tab navigation also
+terminates active work before the Variation panel unmounts. The test context
+blocks service workers but not the tested dedicated module Worker.
+
+Desktop 1440x1000 and narrow 390x844 projects enforce zero document-level
+horizontal overflow and attach deterministic full-page screenshots. Reports,
+failure screenshots, traces, and videos are retained as attempt-identified CI
+artifacts. Local
+evidence is 5/5 Playwright tests and 743/743 Vitest tests, with TypeScript,
+ESLint, and the Vite production build green.
+
+This is a narrow R14.5 foundation rather than R14.5 completion. The screenshots
+are review artifacts, not CI-authority or cross-platform pixel baselines. Only
+bundled Chromium is exercised; WebKit, Firefox, assistive-technology automation,
+PyQt interaction, protected runner execution, and an approved visual baseline
+remain open. No scientific, plan, result, or persistence contract changed.
+
+### 2026-08-12 Localized torque identity and 400-line policy closure (#4142)
+
+Version 1.16.61 makes variation-plan identity wires noncoercive on both shared
+Python and React readers. Mode, variable, distribution, flight-model, and
+matrix-kind fields must be actual strings. Spec, group, point, and group-member
+IDs must additionally be nonempty, trimmed, C0/C1-control-free stable strings;
+ID collections must be actual arrays and reject duplicates. Scalar strings,
+numbers, controls, and duplicate stand-ins fail before model construction.
+
+The remaining oversized cumulative localized-authoring files are split along
+their existing responsibilities. PyQt worker lifecycle is separate from tab
+construction, registry mode policy is separate from variable definitions, and
+PyQt/React test suites are divided by construction, persistence, execution, and
+analysis concerns. Every cumulative changed Python, TypeScript, or TSX source or
+test file is now at or below the repository's 400-line policy, while both the
+official 500-line gate and an explicit 400-line audit pass.
+
+Evidence is 190 focused Python/PyQt/core tests, all 780 React tests, TypeScript
+type/lint/build, scoped Ruff/format, 15-file changed-source MyPy, documentation
+governance, and diff/size checks. React localized dynamics/results/export,
+Rust parity, complete raw persistence, cross-platform visual E2E, protected
+publication, and remaining epic #4142 work remain open.
+
+### 2026-08-12 Localized torque authoring review hardening (#4142)
+
+Version 1.16.60 closes the independent review findings on localized torque
+authoring without broadening execution support. PyQt locus ownership now lives
+in focused editor helpers: the changed `variation_tab.py` and
+`variation_rows.py` modules are 482 and 292 lines respectively, below the
+official 500-line changed-module limit. Imported high-precision locus endpoints
+are tracked independently, so changing only the start preserves the exact
+loaded end and changing only the end preserves the exact loaded start.
+
+The React v2 plan decoder now validates numeric wire domains before model
+construction. Schema versions, run counts, seeds, scales, bounds, base values,
+time-window endpoints, and correlation-matrix entries require finite JavaScript
+numbers, with integer-only fields also rejecting booleans and non-integral
+values. Numeric strings and boolean stand-ins therefore fail closed instead of
+being coerced. Shared-fixture coverage remains the cross-runtime authority.
+
+Evidence is 173 focused Python/PyQt/core tests, all 763 React tests, TypeScript
+type/lint/build, scoped Ruff/format, changed-source MyPy, the official file-size
+gate, documentation governance, and diff checks. React localized dynamics,
+results, and export presentation remain fail-closed; Rust execution parity,
+complete raw persistence, cross-platform visual E2E, protected publication,
+and the remaining epic #4142 scope remain open.
+
+### 2026-08-12 Localized torque authoring parity (#4142)
+
+Version 1.16.59 exposes the two registered commanded-torque perturbations only
+where their complete locus can be authored. The PyQt swing editor makes them
+available only for the double-pendulum source and uses the source's effective
+RK4 duration. The React swing editor uses its fixed 1.5 s double-pendulum
+contract. Both surfaces provide required finite half-open start/end controls
+and a disabled, variable-constrained topological selector for
+`joint.shoulder` or `joint.wrist`; accessible guidance distinguishes those
+torque joints from spatial `swing.*` trace points.
+
+One shared v2 JSON fixture proves Python/TypeScript parity for exact custom
+spec IDs, high-precision windows/scales, point IDs, groups, and unrelated plan
+authority. Import validation and visible edit/save validation reject missing,
+reversed, off-duration, or mismatched loci before state/storage mutation.
+Changing a variable initializes its valid locus atomically while preserving
+group references to custom spec IDs. Global rows retain their compact layout.
+
+Evidence is 49 focused Python/PyQt/core tests, all 752 React tests, TypeScript
+type/lint/build, scoped Ruff/format, changed-source MyPy, and diff checks. The
+React browser still rejects localized dynamics execution, so localized result
+and export presentation there is not complete. Rust execution parity, complete
+raw state/event/torque persistence, cross-platform visual E2E, protected
+publication, and the rest of epic #4142 remain open.
+
+### 2026-08-12 Localized torque static-gate closure (#4142)
+
+Version 1.16.58 closes the final cumulative changed-source static-analysis
+findings without changing runtime behavior. The variation CSV reader explicitly
+types its input and success arrays as NumPy arrays, satisfying the repository's
+`follow-imports=skip` delta MyPy gate. The Rate simulation pipeline returns the
+already typed `SwingSource` from `make_source` directly instead of wrapping it
+in a redundant cast. The source factory also uses the type narrowing guaranteed
+by its run-config contract instead of recasting the validated non-`None` branch.
+Behavioral contracts and serialized data are unchanged.
+
+Evidence is the exact cumulative 16-file changed-source MyPy command, 147/147
+localized contract tests, and scoped Ruff/format/diff gates. UI locus authoring,
+Rust parity, protected publication, and epic completion remain open.
+
+### 2026-08-12 Source execution and dataset discriminator hardening (#4142)
+
+Version 1.16.57 removes a truthiness-based source-configuration fallback.
+`make_source` now requires `run_config` to be `None` or an actual
+`DoublePendulumRunConfig` before constructing a default, so falsey and truthy
+wrong-type objects cannot silently select passive execution or reach incidental
+attribute errors. Manual and triple-pendulum sources accept only the default
+passive, profile-free, lock-free, localized-offset-free execution declaration;
+all non-default double-pendulum semantics fail before source construction.
+
+The outer variation dataset JSON reader now applies the same genuine
+non-Boolean integer schema discriminator used by `VariationPlan`. `True`,
+`1.5`, and `"1"` cannot select dataset schema v1 through coercion. The sibling
+Morris observation reader already performs an exact integer type check. Local
+evidence is 34/34 focused and 1,483/1,483 broader shared-swing, variation, and
+Rate tests, with one expected missing-Rust-wheel skip. UI locus authoring, Rust
+parity, protected publication, and epic completion remain open.
+
+### 2026-08-12 Localized torque source and wire hardening (#4142)
+
+Version 1.16.56 makes the double-pendulum-only localized-torque capability
+fail closed at every nearby public boundary. The source factory rejects a
+non-empty `commanded_torque_offsets` collection for both manual and triple-
+pendulum discriminators instead of silently dropping the command. The run
+configuration validates the raw collection as a tuple or list before
+canonical tuple conversion, so `None` and other malformed domains raise
+`ContractViolationError` rather than incidental `TypeError`.
+
+`VariationPlan.from_json_dict` now requires `schema_version` to be a genuine
+non-Boolean integer before normalization. Boolean, float, and string lookalikes
+cannot select a wire schema through coercion; emitted v2 and supported integer
+v1 migration documents retain their existing behavior. Evidence is 102/102
+focused tests and 1,464/1,464 broader shared-swing, variation, and Rate tests,
+with one expected missing-Rust-wheel skip. UI locus authoring, Rust parity,
+protected publication, and epic completion remain open.
+
+### 2026-08-12 Localized torque adversarial corrections (#4142)
+
+Version 1.16.55 closes three fail-closed gaps in the initial localized torque
+core. `NoiseSpec` numeric scale, bounds, and time loci and `VariationPlan` base
+values reject Boolean, string, and nonfinite raw values; run count and seed
+require genuine non-Boolean integers. Normal JSON integer/float documents and
+v1 migration remain supported. Public localized helpers likewise validate base
+torques, command collections, sample times, and duration before use and report
+contract violations rather than coercion or incidental Python exceptions.
+
+A shared fixed-step grid function is now authoritative for effective RK4
+duration in request, configuration, source, and fallback trace-grid paths.
+Localized windows must fit that effective duration before sampling or trial
+execution. The existing PyQt variation picker excludes contextual localized
+torque entries because it has no locus editor; an imported localized plan fails
+atomically with an explicit unrepresentable/locus-editor explanation. This does
+not claim PyQt or React locus authoring. Evidence is 118 correction-focused and
+1,455 broader passing tests, with one expected missing-Rust-wheel skip.
+
+### 2026-08-12 Localized double-pendulum torque execution (#4142)
+
+Version 1.16.54 introduces the first dynamics-backed localized perturbation
+contract. A `LocalizedTorqueOffset` targets exactly one topological
+double-pendulum joint, `joint.shoulder` or `joint.wrist`, over a required finite
+half-open time window `[start_s, end_s)` wholly inside the run. The finite N.m
+value adds to passive or prescribed commanded torque at every Python RK4 stage.
+Topological torque IDs remain intentionally distinct from spatial output point
+IDs, including `swing.wrist`.
+
+Two registry variables map deterministic variation samples to those exact
+joint loci. Validation rejects unsupported variables, non-torque localized
+sources, absent/multiple/mismatched point IDs or windows, out-of-duration
+windows, base-only localized use, incompatible swing sources, and explicit Rust
+before simulation. Automatic backend selection uses Python whenever localized
+commands are present. Recorded torque history obeys the same half-open rule;
+chunk-size changes do not alter deterministic outcomes; and a physically valid
+miss remains typed no-impact data with closest-approach evidence.
+
+This version is a narrow core execution seam. PyQt and React authoring and
+presentation, other localized variables/source kinds, Rust parity, complete
+raw state/event/torque persistence, protected publication, and #4142 completion
+remain open. Evidence is 99 focused tests and 1,413 broader shared-swing,
+variation, and Rate tests with one expected missing-Rust-wheel skip, plus Ruff,
+format, and changed-source MyPy.
+
+### 2026-08-12 Bounded ensemble chunk lifecycle foundation (#4142 R11.5)
+
+Version 1.16.53 adds a bounded in-process execution lifecycle for complete Rate
+ensembles. An immutable header announces the plan and spatial/time layout;
+immutable result chunks carry contiguous canonical trial rows; an injected sink
+accepts provisional chunks and exposes authority only on commit. Chunk-level
+contracts bind each row to the header's exact sampled inputs, typed outcomes,
+positions, validity, and impact markers while limiting each chunk to 500,000
+position cells. Validity and impact categorical arrays must have genuine
+Boolean and representable non-Boolean integer domains before immutable
+conversion. Sample inputs and positions require real, non-Boolean numeric
+domains; headers require the canonical app frame; named input and position-cell
+limits are checked before owned allocation.
+
+The compatibility runner now holds at most one chunk of complete simulation
+captures before projection. Cancellation is checked before and after every
+solver call and before sink acceptance. Cancellation and executor/sink errors
+abort once and do not commit partial authority; progress reports only the
+accepted canonical prefix. Chunk sizes 1, 2, 3, and larger-than-study values are
+semantically identical for the current result contract apart from elapsed wall
+time.
+
+This is an R11.5 foundation, not completion. The compatibility collector still
+materializes the final trace tensor, sampled inputs and configs remain eager,
+and no durable chunk archive, resume/checksum protocol, complete event/state/
+torque record, non-materializing production sink, or measured peak-memory gate
+is claimed. Exact evidence is 55 focused lifecycle/adapter tests, 330 broader
+Rate/shared-variation tests, the hosted Python 3.12 / NumPy 2.3.5 / Mypy 1.13
+type combination, and Ruff/format.
+
+### 2026-08-12 Hosted NumPy typing boundary compatibility (#4142)
+
+Version 1.16.52 addresses the first protected PR #4405 quality-gate result.
+Python 3.12 with NumPy 2.3.5 exposes stricter array and `finfo` typing than the
+development runtime. Explicit annotations/casts now mark NumPy arrays returned
+from the bounded JSON primitives, while machine epsilon and minimum-normal
+values cross a built-in-float boundary before scientific arithmetic. The exact
+hosted combination of Python 3.12, Mypy 1.13.0, and NumPy 2.3.5 passes all nine
+changed production modules locally. Runtime values, numerical conventions, and
+the persistence wire representation are unchanged.
+
+### 2026-08-12 Complete trial scalar wire-domain closure (#4142 R11.4)
+
+Version 1.16.51 closes the final independent-review finding on typed ensemble
+persistence. `SimulationTrialOutcome` accepts only finite real non-boolean
+available scalars and normalizes accepted Python/NumPy real values to built-in
+floats. A typed result can therefore no longer serialize a boolean that the
+strict reader rejects or retain a NumPy scalar the JSON writer cannot encode.
+Five TDD cases cover boolean and non-real rejection plus NumPy float/integer
+normalization and writer-reader closure; all 39 focused persistence tests pass.
+
+### 2026-08-12 Integrated variation release-candidate typing boundary (#4142)
+
+Version 1.16.50 records the integrated local release candidate containing the
+strict current-v1 ensemble persistence contract, confidence-scaled dispersion
+metrics, and asynchronous React Monte Carlo worker. The final CI-pinned Mypy
+1.13 pass required an explicit Python `float` conversion at the NumPy epsilon
+tolerance boundary; this is a type-boundary correction with no runtime or
+scientific change.
+
+Exact integrated evidence is 1,200/1,200 Python/PyQt/shared tests and 743/743
+React tests, with Ruff, Ruff format, Mypy 1.13, TypeScript, ESLint, Vite build,
+documentation governance, diff, assertion, and changed-file size gates green.
+This evidence does not close the protected publication gate or the remaining
+UI import/dispersion, cross-runtime reader, streaming, full state/torque,
+localized perturbation, and Playwright/screenshot requirements.
+
+### 2026-08-12 Rate ensemble persistence contract hardening (#4142 R11.4)
+
+Version 1.16.49 makes the current-schema ensemble reader and writer symmetric.
+One shared scientific-limit contract now governs typed Rate results and decoded
+archives. The typed result binds canonical sampled-input/output columns, scalar
+outcomes, success status, trace availability, impact status, and nearest-sample
+impact provenance before either writer can observe it. Generic variation
+datasets continue to support pairwise-missing analysis inputs and partial
+evaluated traces; the stricter finite sampled-input rule belongs to the complete
+Rate ensemble boundary.
+
+Raw sample counts and all nested tensor axes are checked before corresponding
+NumPy allocation. File writes encode with standard finite JSON, measure the
+exact UTF-8 bytes that will be written, and fail before creating an unreadable
+file. Deep-recursion, oversized-integer, Unicode, and ordinary JSON decoder
+failures are normalized to the public contract exception. Boundary tests cover
+every scientific axis/cell limit, allocation order, writer byte/finite
+preflight, crossed typed authority, and decoder resource failures.
+
+This is strict outer-schema v1 persistence, not a migration implementation.
+Unknown outer versions remain rejected. A future schema change still requires
+an explicit reviewed migration and fixtures for its actual legacy origin.
+Local evidence is 245 passing shared-variation/Rate tests (14 known Hypothesis
+collection warnings), including 34 focused reader tests, plus scoped Ruff and
+MyPy. The broader 1,187-test Rate sweep had 1,186 passes and one unrelated
+Morris child-readiness timeout under 14-worker load; that exact test passed in
+3.96 seconds when rerun alone.
+
+### 2026-08-12 Strict typed Rate ensemble reader (#4142 R11.4)
+
+Version 1.16.44 introduced the typed Python reader and current-schema JSON
+round trip for the complete Rate ensemble writer. The outer ensemble schema
+remains version 1 and accepts only the exact current representation with an
+embedded lossless plan-v2 document; there is no implicit outer-schema or plan
+migration. Future versions require an explicit reviewed migration rather than
+coercion or best-effort defaults.
+
+The reader retains stable plan/spec/group IDs, seed and sampled-input
+provenance, canonical trial order, typed hit/no-impact/numerical-failure
+availability, all scalar outputs, coordinate frame and units, point IDs,
+sample validity, impact markers, and explicit available/unavailable traces. It rejects
+unknown or duplicate fields, noncanonical scalar types, nonfinite values,
+truncated/invalid UTF-8 JSON, crossed outcome/scalar/status/impact evidence,
+corrupt trace axes, and impact markers inconsistent with the recorded impact
+time. File bytes, decoded depth/nodes, trials, samples, points, and position
+cells are bounded before corresponding scientific arrays are materialized.
+All imported NumPy arrays are owned and read-only; `VariationDataset` now
+applies the same immutable-ownership rule to every construction path.
+
+This slice does not implement schema migration and does not add a browser
+reader, UI import action, chunked streaming,
+event ledgers, impact/shot objects beyond the existing scalar authority, or
+complete state/torque traces. Those broader R11/R14 requirements remain open.
+
+### 2026-08-12 Morris observation CI type contract (#4142)
+
+Version 1.16.43 explicitly types both Morris observation value-array
+allocations as NumPy arrays. This satisfies the protected Mypy 1.13 delta gate
+without changing array construction, runtime behavior, or either wire schema.
+
+### 2026-08-12 Confidence-scaled dispersion and quiet metrics (#4142 R12.1/R12.2)
+
+Version 1.16.45 defines a UI-neutral 3D dispersion-ellipsoid contract for every
+modeled point and common-grid time sample. A caller declares a confidence
+level in the supported `[1e-12, 1)` numerical domain; semi-axis lengths equal
+the principal sample standard deviations multiplied by the square root of the
+exact chi-square quantile for
+three degrees of freedom. This is a Gaussian position-content region using the
+existing unbiased plug-in sample covariance, not a confidence region for the
+unknown population mean. The plot-ready immutable result retains center,
+canonical principal directions, semi-axis lengths, confidence, quantile,
+coordinate frame, count, adequacy, and volume.
+
+Sample adequacy is explicit. Fewer than two valid trials is
+`insufficient-samples`; nonfinite covariance evidence is `invalid-covariance`;
+otherwise a sample is `rank-deficient` until it has at least four trials and
+three positive principal variances. Volume is finite only for an `estimable`
+full-rank 3D ellipsoid and is `NaN` for every other state.
+
+Quiet-zone analysis now selects one declared metric: RMS radius in metres,
+largest principal sigma in metres, or confidence-ellipsoid volume in cubic
+metres. Each interval retains metric, unit, optional confidence, bounds,
+duration evidence, mean, maximum, dimensionless mean/threshold score, and rank.
+Lower scores rank first; exactly equal IEEE-754 scores share a dense rank, while
+stable point ID and sample bounds determine presentation order. Insufficient or
+invalid evidence never qualifies, and volume additionally requires full-rank
+estimability. Existing RMS-only APIs remain unchanged. Python/PyQt/React UI
+selectors and renderers plus a serialized cross-runtime fixture remain open.
+
+### 2026-08-12 React worker transport hardening (#4142 R14.3)
+
+Version 1.16.47 makes the React worker transport fail closed. One terminal
+lifecycle owns cleanup for result, abort, worker error, response decoding error,
+malformed protocol data, and synchronous request-cloning failure. Progress is
+accepted only when its count is consecutive, total matches the planned bounded
+work, and phase matches the joint-then-individual execution order. Returned
+plans and the dataset, sensitivity, and swing-ensemble result envelopes are
+validated against the initiating request before acceptance.
+
+An injected Worker factory provides direct deterministic tests of the production
+transport service, including cleanup and late-event behavior. These unit tests
+do not constitute browser/Playwright interaction or screenshot evidence; R14.5
+remains open. This release does not complete #4142 or authorize an UpstreamDrift
+consumer pin.
+
+### 2026-08-12 Dispersion scientific-boundary hardening (#4142 R12.1/R12.2)
+
+Version 1.16.48 hardens that scientific boundary after adversarial review.
+Plot-ready covariance evidence must be finite and symmetric, with descending
+positive-semidefinite eigenvalues and finite orthonormal principal axes that
+reconstruct the covariance within a scale-aware tolerance. Negative roots no
+larger than documented floating-point roundoff are normalized to zero-rank
+directions; materially negative, unordered, inconsistent, or nonfinite
+evidence is `invalid-covariance`, has unavailable geometry/metrics, and cannot
+qualify for quiet-zone ranking. Estimable and rank-deficient result objects
+independently require finite centers and orthonormal plot axes.
+
+The three-dimensional chi-square quantile now uses SciPy's regularized-gamma
+inverse, avoiding upper-tail cancellation through every representable
+confidence value below one; the explicit `1e-12` lower bound prevents an
+unrepresentable near-zero content region. Quiet criteria accept only finite real,
+non-boolean thresholds and durations, normalize supported NumPy real scalars
+to Python floats, and reject malformed point IDs through `ContractViolationError`.
+Local evidence is 27 focused tests within 189 passing scientific tests. The
+1,184-test shared-variation/full-Rate gate passed 1,183 tests with 29 known
+warnings; its one Morris child readiness timeout passed immediately in the
+permitted isolated retry. This evidence does not double-count focused subsets.
+
+### 2026-08-12 React Monte Carlo worker execution (#4142 R14.3)
+
+Version 1.16.46 moves React Monte Carlo execution from the UI click handler to
+one bounded module worker per study. Joint and one-at-a-time work retains the
+existing seeded plan and result semantics. Progress advances only after a model
+evaluation completes, so the determinate count is scientific work completed,
+not elapsed-time estimation. The UI exposes busy, progress, and Cancel states.
+
+The execution service accepts an AbortSignal and progress observer. Worker
+termination, generation identity checks, configuration invalidation, and
+unmount cleanup ensure partial, cancelled, superseded, or detached results are
+never accepted. Cancellation permits an immediate independent rerun. The 733
+React tests, TypeScript, ESLint, and Vite production build pass and the build
+contains a dedicated variation worker chunk. Browser/Playwright interaction and
+screenshot coverage remain open under R14.5; #4142 and the protected release
+stack are not complete.
+
+### 2026-08-12 Variation authority cross-review hardening (#4142)
+
+Version 1.16.42 makes PyQt precision retention field-specific, binds every
+completed aggregate Morris report to recomputation from its raw observations
+outside the registry lifecycle mutex, applies symmetric sample/cell limits
+before parsing or serializing archive records, and prevents unavailable OAT
+cells from becoming dominant inputs or normalized zeroes. Python and React keep
+all-unavailable columns as `NaN` while genuine finite zero spread stays zero.
+
+### 2026-08-12 Pairwise-finite variation attribution (#4142 R13.1)
+
+Version 1.16.41 defines one missing-data policy for local OAT spread and
+Spearman rank attribution in Python and React. Statistics use only evaluated
+rows where the particular values needed are finite. OAT selects each output
+independently and requires two observations. Spearman selects each input/output
+pair independently, requires three paired observations, and reports `NaN` for
+constant or insufficient columns. Failed or unavailable trials remain evidence
+and cannot silently contribute ranks, zeros, or cross-row pairings. One shared
+fixture is the cross-runtime authority. OAT dominance ignores unavailable cells,
+fails closed for an all-unavailable output, and distinguishes unavailable
+normalization from genuine zero sensitivity. Public shapes remain unchanged.
+
+### 2026-08-12 Lossless PyQt variation-plan v2 round trip (#4142 R10.4/R11.4)
+
+Version 1.16.40 makes the PyQt Variation plan editor a lossless host for the
+shared version-2 plan contract. Loading and rebuilding a plan preserves custom
+`spec_id` values, temporal `time_window_s`, spatial `point_ids`, exact unedited
+numeric authority, and complete correlation/covariance groups. Intentional
+visible edits retain stable identity and locus metadata. Plan loads preflight
+run count, seed, flight model, registry membership, and numeric control ranges
+before mutation, so invalid plans leave the previous runnable state intact.
+Per-field edit tracking keeps untouched scale and bound values exact when an
+unrelated distribution or selector changes.
+Group matrices and loci remain retained but are not yet editable in this UI.
+
+### 2026-08-12 Raw Morris scalar-evidence foundation (#4142 R11)
+
+Version 1.16.38 introduced the strict scalar-observation foundation contract
+`swing-sim/morris-observation-archive@1` without changing the existing
+Morris aggregate report or job-envelope schemas. Each raw design-point record
+is bound to the exact design digest and canonical ordinal and retains physical
+factor values/units, typed outcome, nullable outputs, and bounded failure
+diagnostics. The archive retains immutable design arrays and explicit
+request/report provenance; its exact-field parser rejects reordered, crossed,
+tampered, nonfinite, or scientifically fabricated data. It enforces the shared
+100,000-sample limit before constructing design arrays and the 1,000,000-cell
+limit before parsing output objects or allocating observation matrices; archive
+factories enforce the same limits.
+All archive construction paths reject incomplete evaluated-hit impact or shot
+outputs. The registry recomputes the aggregate report from raw observations
+outside its lifecycle mutex before completion, rejecting same-request crossed
+evidence.
+Version 1.16.39 added the pre-allocation bounds, archive-construction invariant,
+and exact aggregate/raw binding hardening while preserving the v1 wire schema.
+
+The Rate Morris evaluator preserves canonical numerical-failure diagnostics.
+The public service keeps its report-dictionary return contract; an explicit
+extended service path and completed-job registry retain raw scalar authority
+under a weighted cell budget. This version
+does not yet expose the raw archive through the PyQt/React workspace or export
+surfaces; bounded transport/chunking and cross-runtime UI integration remain
+subsequent requirements. It is scalar evidence only: complete event ledgers,
+impact/shot objects, and pre-impact state/torque traces remain outside this
+contract and therefore R11.1 remains incomplete.
+
+### 2026-08-12 Lossless Morris workspace v1 (#4142 R13.8)
+
+Version 1.16.37 defines a strict, immutable Morris workspace document shared by
+Python and React. Its allowlisted setup preserves the exact authority base,
+bounded design controls, fixed export scope, and all ten canonical factor rows,
+including disabled invalid raw text and its validation state. Optional evidence
+is a completed-only request/job/report archive bound by typed equality across
+base, enabled factors, design, sample totals, request identity, and report
+sources. IDs remain inert provenance and imported evidence is unverified-live.
+
+The standalone PyQt workflow provides atomic save/load and deterministic
+aggregate CSV export. It fully parses and validates a bounded document before
+checking the current host base or cancelling work, then restores controls,
+factor drafts, and archived results as one state transition. CSV contains the
+four effect metrics, complete denominators, adequacy/availability, source and
+target provenance, and design metadata. Raw Morris samples are unavailable
+because the authority retains aggregates only; custom scenario and torque data
+outside the authority base are excluded by the labeled export scope.
+The cross-runtime limits are exactly 2,000,000 UTF-8 bytes, 25,000 decoded
+nodes, 32 nesting levels, 128 characters per raw bound, trajectories 2..5000,
+and seed 0..2^31-1. Bound lexemes use a shared ASCII decimal/exponent grammar,
+must be finite and within +/-1e9, and reject C0/C1 controls. Valid disabled
+ground-tee rows have no validation error; applicability is represented solely
+by `enabled=false`. All nested base state is recursively immutable, and PyQt
+preflights every control/bound before active-work invalidation.
+An imported invalid draft cannot be enabled and submitted through a stale
+spin-box numeric value; execution remains blocked until a valid numeric edit
+explicitly replaces that draft state.
+CSV export prefixes formula-significant text (`=`, `+`, `-`, `@`, tab, or
+carriage return) with an apostrophe while retaining numeric fields as numbers.
+React and PyQt now provide equivalent atomic import, archive-only completed
+evidence, and deterministic CSV behavior. Browser files are size-rejected before
+read, the import action is keyboard reachable, and the duplicate scanner applies
+the depth budget before recursion. The parity fixture is byte-identical across
+both test surfaces; raw authority observations remain unavailable by design.
+
+### 2026-08-12 Morris UI stack alignment
+
+Version 1.16.34 records the ordinary merge of current PyQt PR #4400 head
+`9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee` into the React integration branch.
+The combined runtime and scientific behavior remains unchanged; the integration
+inherits the test-format and internal immutable-constant file-size repairs.
+
+### 2026-08-12 PyQt Morris protected-CI format repair
+
+PR #4400's exact-head quality gate identified a formatting-only defect in its
+new workflow test. Version 1.16.32 records the mechanical Ruff format repair;
+runtime behavior, public contracts, and scientific semantics are unchanged.
+The same follow-up restores the 500-line changed-file budget by extracting
+immutable UI labels and bounds to internal `variation_constants.py`; public
+behavior, contracts, and scientific semantics remain unchanged.
+
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
-## 3. Goals & Non-Goals
+### 2026-08-12 React Morris elementary-effects workflow (#4142 R13.7)
 
+- The Rate React app owns and injects its same-origin Morris client. Variation
+  exposes Monte Carlo and global Morris screening as sibling workflows; a
+  missing or unreachable Python authority disables execution and is never
+  replaced by browser-side physics.
+- Factor suggestions retain canonical order and center on the actual authority
+  base at plus/minus two shared registry scales with physical endpoint clamps.
+  Ground support omits tee height. Custom club specifications or unrepresented
+  scenario differences from the pinned passive fixed-ball authority fail closed
+  with an actionable explanation.
+- One operation is current at a time. Capability/create/status/cancel each have
+  a 30-second deadline; Run disables before POST; polling is sequential through
+  nonterminal cancellation; unmount and base changes abort work. Create must
+  echo the submitted request ID, and every later envelope must retain the pinned
+  request and job IDs.
+- Real factor/design edits clear old evidence while no-op commits preserve it.
+  Reports are ranked within one output target and retain submitted bounds/design,
+  effect estimates and uncertainty, availability/adequacy, typed no-impact,
+  failure and nonfinite counts, assumptions, and the interaction caveat.
+- The existing Monte Carlo persistence schema is intentionally not reused for
+  Morris because it cannot represent the authority request losslessly.
+
+### 2026-08-12 PyQt Morris Screening workflow (#4142 R13.7)
+
+- The Rate Variation module exposes two independent sibling workflows:
+  `Monte Carlo & Dispersion` retains its existing implementation, while
+  `Morris Screening` submits strict versioned requests only to the authenticated
+  numeric-IPv4-loopback authority.
+- The standalone PyQt launcher owns the private authority for exactly the Qt
+  application lifetime. A repr-hidden constructor-kwargs seam injects the
+  strict client; widgets cannot read secrets or authority environment values.
+- Morris controls expose canonical ordered factor bounds, trajectories, even
+  grid levels, seed, minimum valid effects, and bounded workers. Networking is
+  off-thread and sequential, with capability gating, cooperative cancellation,
+  request/job identity pinning, nonblocking deferred close with retained worker
+  ownership, and generation-based stale-result suppression. Any base, design,
+  or factor edit invalidates completed output immediately.
+- Results are ranked only within one selected target and preserve μ*, its
+  standard error, μ, σ, units/frame provenance, availability and adequacy, and
+  the exact valid/typed-no-impact/no-impact-unavailable/failed/nonfinite
+  denominators. Constant output remains a rankable zero; unavailable values are
+  explicitly unranked. Scientific result cells are read-only.
+- The UI does not provide a physics fallback. A base configuration must
+  round-trip the pinned authority request exactly; unrepresented manual/contact,
+  custom torque, or run semantics disable execution rather than being dropped.
+  Authority dependency/startup failure is an honest unavailable state while the
+  rest of the app remains usable.
+- The existing `configChanged` derivation contract remains unchanged. A separate
+  exact simulation-config stream updates both variation workflows after ordinary
+  control, torque-mode/profile, and joint-lock edits; invalid/incomplete inputs
+  publish an explicit unavailable state and cannot leave an earlier base runnable.
+- Monte Carlo invalidates and cancels an active generation when that base changes,
+  clears all result tables and plots, and accepts callbacks only from the exact
+  current generation/worker so superseded output cannot reappear.
+- Morris persistence/export and the React presentation are separate follow-up
+  contracts and are not claimed by this slice.
+
+### 2026-08-11 Kinetics module-budget repair
+
+- The established `rate_of_closure.simulation.kinetics` module remains the
+  public façade for swing kinetics. Immutable result validation now lives in
+  `_kinetics_series.py`, and pure double-pendulum inverse/forward dynamics and
+  reaction-force helpers live in `_kinetics_dynamics.py`.
+- Public constants, classes, and functions retain identity-preserving imports;
+  the historical private `_reaction_forces` test/consumer seam remains an
+  alias to the extracted implementation. Physics, SI units, frames, numerical
+  fixtures, UI behavior, and serialization contracts are unchanged.
+- This extraction repairs the proactively reproduced changed-file failure:
+  exact head `572bf525d` versus `HEAD~1` selected the Ruff-formatted
+  `kinetics.py` at 646 LOC, above the ungrandfathered 500-LOC ceiling. The
+  façade and its focused implementation modules are now 222, 205, and 131 LOC.
+
+### 2026-08-10 D-plane ndarray typing boundary repair
+
+- The private D-plane vector conversion and horizontal-projection helpers bind
+  NumPy expression results to explicit ndarray locals before returning them.
+- This preserves the existing numerical calculations and DbC validation while
+  satisfying the changed-file MyPy `no-any-return` contract on Python 3.12.
+- No public API, reference frame, serialized schema, physics assumption, or UI
+  behavior changes in this repair.
+
+### 2026-08-06 GUI module-budget repair
+
+- Movement Optimizer motion palette and chain-length helpers live in a small
+  reusable module instead of further growing the Swingset tab implementation.
+- Rotation Converter consumes its existing canonical plot-helper module rather
+  than retaining a second copy of vector/matrix formatting, parsing, theme
+  colors, and Matplotlib styling.
+- The refactor preserves widget behavior while restoring the protected
+  module-size budget for the complete stacked Rate feature branches.
+
+## 3. Goals & Non-Goals
+### 2026-08-06 Impact-to-Flight Solution-Family Foundation
+
+- Python and TypeScript share strict `impact-solution-request/v1` and
+  `impact-solution-result/v1` contracts that declare the target and delivery
+  frames, impact reference point and event time, canonical units, display
+  convention, club profile, impact model, flight model, and model availability.
+- The Python adapter runs centered representative driver and iron deliveries
+  through the existing delivery, rigid-body impact, frame-conversion, launch,
+  and literature-flight pipeline. It fails closed for unknown model IDs,
+  unsupported variables, and nonpositive normal approach speed.
+- The deterministic inverse solver is reused without duplicating its sampler or
+  ranking logic. Feasible candidates are separated into normalized-radius
+  families with representative launch values, launch/flight residuals,
+  observed parameter intervals, within-family correlations, bounded local
+  sensitivities, provenance, and a diagnostic for every rejected sample.
+- The representative club mass/MOI values are engineering defaults, not fitted
+  equipment certifications. Shaft, off-center contact, turf, swing-generation,
+  uncertainty, capability and UI integration remain explicit future adapters.
+
+### 2026-08-06 Desired Ball-Flight Inverse-Solver Foundation
+
+- Python and TypeScript expose the same strict `inverse-flight-request/v1` and
+  `inverse-flight-result/v1` contracts over solver-eligible canonical flight
+  metrics, including exact units, target/maximize/minimize modes, tolerances,
+  weights, hard objective bounds, and bounded model parameters.
+- An injected forward evaluator preserves separation from any specific impact,
+  flight, wind, or ground model and reports complete, no-impact, failed, and
+  nonconverged evaluations without synthetic replacement values.
+- A deterministic Halton bounded search returns feasible-first ranked
+  candidates, per-objective normalized residuals and violations, diagnostic
+  counts, termination status, and algorithm/schema provenance. Cross-runtime
+  result serialization is pinned by a shared SHA-256 fixture.
+- This foundation does not claim continuous/global optimality or prove dynamic
+  infeasibility from a finite sample. Physics adapters, warm-start/refinement,
+  uncertainty propagation, UI controls, and target-volume integration remain
+  explicit downstream work.
+
+### 2026-08-06 Canonical ball-flight result catalog
+
+- Python and TypeScript expose one versioned launch-monitor-style catalog with
+  stable metric IDs, units, definitions, frames, signs, event references,
+  provenance, typed availability, solver eligibility, and explicit convention
+  coverage.
+- A pure target-frame derivation interpolates first ground contact and computes
+  launch, carry, offline, apex, time, landing, curve, terminal, and target
+  metrics while retaining raw vectors.
+- Total, roll, bounce, and final-offline values remain typed unavailable unless
+  an identified qualified ground model supplies them; carry is never relabeled
+  as total distance.
+- Complete catalog and result serialization is deterministic and pinned by a
+  cross-language SHA-256 fixture. UI, API, and Rust/WASM adapters remain
+  explicit downstream integration work.
+
+### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
+
+- Python and TypeScript share a versioned, golden-fixture-pinned sampler for
+  true meteorological wind and correlated player-estimation errors. Seed,
+  true-wind distributions, systematic under/overestimation, error spread,
+  speed/bearing correlation, units, frame, and provenance are explicit.
+- Club/aim strategies run on identical wind draws (common random numbers),
+  retaining completed landing scatter and explicit nonconverged/invalid
+  cohorts. The v2 output distinguishes actual estimate-driven decisions, the
+  same policy evaluated with true-wind information, and hindsight selection of
+  the best declared preset; the latter is no longer presented as if it were
+  perfect information.
+- Summaries report target-circle hold probability, empirical miss-distance CVaR
+  at an explicit alpha, and short/long/left/right frequency and severity.
+  Failure cohorts remain in hold and tail-risk denominators through an explicit
+  miss-distance penalty and never receive invented landing directions.
+- The bounded foundation is deterministic decision support, not a weather
+  forecast or an automatic club recommendation. UI workflow, terrain effects,
+  measured forecast ingestion, and statistically justified player-specific
+  calibration remain follow-on work.
+
+### 2026-08-06 Reproducible ball-flight wind physics
+
+- One versioned Python/TypeScript wind scenario defines wind-to velocity in
+  the flight frame, with an explicit meteorological from-bearing adapter,
+  vertical wind, altitude shear, declared smooth gusts, deterministic seeded
+  turbulence, and provenance.
+- Every supported flight integrator evaluates relative air speed at physical
+  trajectory time and position. Dynamic wind is not silently collapsed into a
+  steady vector for the Rust fast path.
+- React and PyQt6 run common-input no-wind and selected-wind trajectories,
+  show both paths, and report wind-minus-calm deltas. Two-dimensional and
+  three-dimensional flight plots use locked physical scale.
+- The shared golden fixture pins wind-field parity. The synthetic turbulence
+  model is reproducible decision-support input, not a claim of site-specific
+  atmospheric prediction.
+
+### 2026-08-06 Interactive 3D Ball-Flight Playback
+
+- PyQt6 and React interpolate the same physical trajectory timestamps and
+  expose accessible play, pause, scrub, speed, restart, Launch, Apex, and
+  Landing controls with no ambiguous swing-impact event on a flight-only path.
+- Both clients preserve a locked physical metre scale while the user rotates
+  and zooms the 3D view; paired calm and selected-wind paths remain visible.
+- Playback uses one cancellable animation loop and resets deterministically
+  when a new trajectory replaces the current run.
+
+### 2026-08-06 Spatial Target Contract
+
+- One immutable version-1 target contract defines canonical app-frame
+  downrange, elevation, and right coordinates plus explicit source-frame
+  provenance and exact flight-frame conversion.
+- Surface circles and corridors and 3D spheres and boxes report deterministic
+  acceptance, signed closest-point miss vectors, and strict Python/TypeScript
+  serialization with explicit legacy green/fairway migration.
+- PyQt6 and React expose one canonical interactive editor across Flight
+  Explorer and integrated Simulation, render the active target in side,
+  top-down, and orbitable 3D views even before a run, and preserve it across
+  navigation, versioned run/project JSON, CSV metadata, and solver/variation
+  manifests. Invalid drafts retain the last valid target and field-linked
+  errors without interrupting a completed physics run.
+- Aerial passage uses continuous segment intersection with interpolated event
+  time; landing assessment projects the ball center onto the declared course
+  surface. Ground-only solver and variation objectives fail closed for aerial
+  targets rather than silently optimizing incompatible geometry.
+
+### 2026-08-06 Launch-monitor convention registry
+
+- Python and TypeScript expose the same immutable, versioned catalog for app,
+  TrackMan-comparable, and Foresight-comparable club-delivery and ball-launch
+  quantities.
+- Every definition carries its reference point, event time, coordinate frame,
+  geometry contract, sign rule, unit, availability rule, quantity status,
+  primary-source URL, and retrieval date. Vendor-comparable values remain
+  explicitly distinct from device measurements.
+- Direct comparison is rejected when parameter, datum, time, frame, geometry,
+  unit, or availability contracts differ. Point changes use the exact rigid-body
+  identity `v_point = v_reference + omega x r`; frame changes require a proper
+  orthonormal rotation.
+- A canonical cross-client JSON checksum, strict deserialization, and an
+  explicit v0 field migration prevent silent schema or semantic drift.
+
+### 2026-08-06 Comprehensive 3D D-plane geometry
+
+- One shared, frame-explicit kernel computes the D-plane from the declared
+  travel vector and face normal, including exact three-dimensional spin loft,
+  the planar `|dynamic loft - attack angle|` approximation, and its residual.
+- Results retain typed zero-speed, parallel, and antiparallel states; no spin
+  axis or shaded plane is fabricated when the defining cross product is
+  singular.
+- Impact inspection distinguishes reference-point, rigid-body face-center, and
+  actual contact-point D-planes. Face-center velocity always includes
+  `omega x r`, and curved-face contact normals use the declared impact offset.
+- PyQt6 and React provide independently persistent face-normal,
+  face-center-travel, D-plane-normal, projected-path, and shaded spin-loft
+  layers with locked physical scaling and vector/data export support.
+- D-plane geometry alone is not described as a complete prediction of ball
+  launch or spin; collision interval, friction, impact location, gear effect,
+  and aerodynamic models remain explicit downstream boundaries.
+
+### 2026-08-05 Exact-event wedge impact visualization
+
+- Impact geometry and kinematic vectors are evaluated at the exact inspection
+  time with linear twist/translation interpolation, shortest-arc orientation
+  interpolation, and articulated wrist interpolation. The nearest retained
+  sample index remains audit metadata only.
+- One versioned UI-independent scene contract provides the physical shaft line,
+  wedge face/body, declared contact point, ball, ground, leading edge, face
+  normal, arc tangent, screw axis, and the exact rigid-body identity
+  `v_contact = v_axis + v_shaft + v_other`.
+- PyQt6 and React expose orbitable, locked-scale impact views, named camera
+  presets, independently toggleable vector components, and high-resolution PNG,
+  true-vector SVG, and strict JSON data exports.
+- Every advanced metric is visibly interactive and discloses its equation,
+  frame, units, assumptions, and availability. AoA attribution must be labeled
+  as a nonlinear counterfactual or Shapley quantity, never as additive Euler
+  angles.
+- A closest-approach miss remains labeled as a miss, an articulated source
+  without a torsional head state reports shaft rotation as unavailable/limited,
+  and the visualization does not imply turf-force feedback or flexible-shaft
+  dynamics that the retained run did not solve.
+
+### 2026-08-05 Shared impact-event inspection and wedge kinematics
+
+- Every retained simulation run has one canonical inspection event: physical
+  impact for a hit, or explicitly labeled sampled closest approach for a miss.
+- PyQt6 and React provide an exact jump control for that event and pause
+  playback before moving the timeline.
+- The Rate adapter maps retained twist, pose, club/contact geometry, and either
+  the scenario shaft datum or measured articulated wrist-to-head line into the
+  shared `golf_club` wedge-kinematics engine.
+- Readouts report contact/reference AoA, the remove-shaft counterfactual,
+  shaft-induced vertical velocity, shaft rate, face-normal rate, leading-edge
+  relative rate where available, screw-axis distance, geometry provenance, and
+  model limitations.
+- A pendulum with no shaft-twist degree of freedom must report that limitation;
+  it must not fabricate shaft rotation. A miss must not be labeled impact.
+- When maximum reference speed is a flat plateau, automatic inspection selects
+  the temporal midpoint. This makes the manual source's auto event coincide
+  with its documented square-pose instant at 30 ms.
+
+### 2026-08-06 Rate of Closure ensemble visualization contracts
+
+- Variation results retain every hit, miss, and numerical-failure cohort while
+  drawing linked scatter, distribution-matrix, swing-arc, and pointwise
+  variability views from one canonical dataset. Trial selection, filters,
+  camera state, performance caps, and deterministic exports are shared across
+  the professional PyQt and web inspection workflows.
+- All visualization calculations remain outside widget/rendering code, preserve
+  stable point and variable identifiers, disclose unavailable downstream
+  values, and keep reproducible sampling seeds and exact cohort counts.
+
+### 2026-08-10 Rate of Closure Python 3.10 datetime boundary
+
+- Rate of Closure modules must import `UTC` from
+  `shared.python.compatibility`, never directly from `datetime`, because
+  `datetime.UTC` is unavailable on the supported Python 3.10 runtime.
+- An AST-based regression guard scans the complete Rate source tree so future
+  user-interface or persistence work cannot silently restore the incompatible
+  import.
+
+### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
+
+- Rate of Closure and shared swing simulation string enums use Python 3.10-safe
+  `str, Enum` declarations instead of the Python 3.11-only standard library
+  `StrEnum`, preserving string-valued enum behavior across contact outcomes,
+  variation statuses, run configuration, torque profiles, and the torque
+  profile controller.
+
+### 2026-08-05 Rate of Closure physical ball setup and variation workflows
+
+- Simulation configuration now carries a canonical ground/tee support record.
+  Tee height is the ground-plane clearance to the bottom of the ball; drivers
+  default to Tee at 38.1 mm and other clubs default to Ground. Explicit user
+  overrides survive club changes, legacy runs migrate to Ground, and the
+  derived ball center drives contact, alignment, impact records, flight origin,
+  and both standalone renderers.
+- Python and React consume the same version-1 golden ball-setup fixture. Its
+  strict metadata fixes SI metre units and the
+  `ground_plane_to_ball_bottom` reference; its cases pin club defaults,
+  explicit overrides, Ground's zero effective tee height, derived geometry,
+  serialization, invalid-height rejection, and legacy migration.
+- Visual verification uses semantic state and structural image contracts, not
+  pixel-perfect baselines: Playwright records default Tee and rerun Ground web
+  states with zero browser errors, while the hidden-window PyQt harness pins
+  canonical center/artist state and nonblank, distinct Ground/Tee captures.
+- Variation plans retain their complete v2 schema and can be saved, loaded,
+  duplicated, and deleted from a versioned local library. Users can select
+  simultaneous, one-at-a-time, or combined analyses, while paired common-
+  reference propagation reports time/frame/point-aligned geometric displacement
+  without discarding valid miss trajectories.
+- Shared Matplotlib canvases own and cancel their deferred draw timers during
+  Qt teardown, preventing stale callbacks from touching deleted widgets across
+  all Rate of Closure plot views.
+
+### 2026-08-05 Rate of Closure interaction and rendering hardening
+
+- Every directional engineering entry now exposes a visible, clickable
+  reference-frame disclosure, and launch-number rows expose their definitions
+  as whole-row buttons in the web interface. Web numeric editing uses a
+  draft/commit control that selects the complete value on focus, preserves
+  intermediate empty/minus/decimal states, accepts negative spin-axis tilt,
+  clamps only at commit, and provides a full-field focus treatment.
+- Swing sessions carry explicit joint positions. Both renderers draw the
+  complete double- or triple-pendulum skeleton, the web implementation adds
+  the parity-pinned triple-pendulum source, and the initial simulation runs
+  automatically so the Swing view is never an unexplained blank canvas.
+- Both interfaces start with a representative 10.5-degree driver and visible
+  engineering-style CG target. Parametric heads use 64-point rings, refined
+  body stations, and five face rings (1,792 driver triangles), with matched
+  deterministic Python/TypeScript geometry, watertight volumetrics, steel
+  shading, specular highlights, and a regenerated bundled example STL.
+
+### 2026-08-04 Course showcase — golf-course scene, target optimization, launcher styling, yards units (epic #4125, H7 + H6)
+
+- **H7a golf-course scene**: the simulation/flight displays render as a
+  course. `rate_of_closure/ui/course.py` derives every scene tone from
+  the shared chart palette (blends of the palette green toward
+  black/white — rough/fairway/green one grass family, hole/flag/tee
+  from palette red/yellow; no widget hex) with a configurable
+  `CourseLayout` (green distance/radius, fairway half-width);
+  `ui/pyqt6/course_scene.py` paints the swing 3D ground plane, the
+  side-profile ground band + green/flagstick, and the top-down
+  rough/fairway/green/hole/tee. Ball/Ground checkboxes stay; a new
+  'Course Elements' checkbox (sourced guidance) gates the furniture in
+  the swing scene and FlightView. Web mirror: `model/theme.ts` (shared
+  chartColors + blend/withAlpha) and `model/course.ts` (same blend
+  fractions, parity-tested) drive course-styled `swingSceneDraw` and
+  `FlightCanvases` with the same checkbox.
+- **H7b target optimization**: `swing_sim/solver/targets.py`
+  `TargetRegion` — green (circle at distance, optional lateral offset,
+  radius) or fairway (distance band × half-width corridor) with an
+  exact signed distance (negative inside), containment test, and a
+  residual = distance-outside-region (0 inside) + a small centering
+  term. `ImpactGoal` gains an additive `target_region` (+weight); the
+  objective appends one carry-scaled residual and `solve()` reports
+  `landing_lateral_m` / `target_distance_m` (+ a `target_region_m`
+  per-goal entry). App facade `simulation/targets.py` adds
+  `hold_stats`/`hold_fraction` (Variation headline: share of
+  Monte-Carlo landings holding the target) and the course-layout
+  bridge. PyQt6: `TargetPanel` on the Solver panel (kind/geometry/
+  weight entries — the cheap place/edit seam, the flight top-down view
+  renders the region live — plus 'Optimize to Target' reusing the
+  partition/progress/cancel machinery; solver row widgets split into
+  `solver_rows.py` for the 500-LOC budget); FlightView overlays the
+  dashed region + the Variation landing scatter with an
+  "N/M shots hold the target (x%)" title (VariationTab
+  `studyCompleted` → main-window wiring). Web: `model/targets.ts`
+  parity mirror pinned against the Python tests, the TS solver
+  extended with the region goal ('Optimize to Target' button + signed-
+  distance result row), a `TargetSection` (entries + containment
+  readout) on the flight view, dashed target on the top-down canvas,
+  and the Variation landing canvas colored by containment with the
+  hold-% headline. Tests: signed-distance inside/boundary/outside pins
+  for both kinds (both languages), optimizer reaching a reachable
+  green from a cold start (both solvers), hand-counted 3-of-5 hold
+  fixture matching `hold_fraction`.
+- **H6 showcase styling + yards**: `ui/pyqt6/app_style.py` applies the
+  UpstreamDrift launcher's visual language app-wide (hover-highlighted
+  buttons with a subtle bottom-edge shadow, rounded launcher-card
+  group boxes, hover/selected tabs), all colors derived from the live
+  QPalette (tests pin: no hex, palette/rgba only); web accent hexes in
+  KineticsSection/ClubCanvas aligned onto the shared `model/theme.ts`
+  palette. New 'Distance' quantity: `DISTANCE_UNITS` (yd default, m
+  selectable; canonical stays SI metres) joins `QUANTITY_UNITS` — a
+  Distance drop-down in both UIs' Units sections — applied to flight
+  result rows (carry/lateral/putt roll-out; apex stays metres),
+  FlightView + putting axes (tick formatters, canonical data),
+  plotting-catalog flight/putting distance variables (`DISTANCE_KEYS`
+  - render-pipeline conversion incl. CSV headers), variation output
+    stats, and the target-region entries (canonical round-trip).
+    Conversion + default-is-yards tests both sides.
+
+### 2026-08-04 Realistic type-specific heads, volumetric COG, putters, hosel-true shafts (epic #4125, H1)
+
+- `src/rate_of_closure/club/head_profiles.py` — per-club-type parametric
+  head profiles (superellipse loft cross-sections with per-section
+  vertical centers, at a per-type reference mass): woods keep the
+  historical rounded-crown envelope; hybrids are an intermediate ~70%
+  depth silhouette; irons are blade profiles (thin topline, ~22 mm
+  face-to-back vs ~110 mm for a wood, cavity-back recess via an inset
+  tail-cap fan); wedges are iron-like with rear mass biased toward the
+  sole; putters come in two generic, unbranded forms — a deep
+  semicircular-plan **mallet** and an anser-style **blade** (shallow
+  rectangle, lower flange back, plumber's-neck hosel offset ~9.5 mm
+  behind the face). `ClubSpec` gains a `HeadStyle` enum
+  (`AUTO`/`MALLET`/`BLADE`); `profile_for`/`mass_scale`/
+  `face_center_point`/`hosel_point` are the public seams.
+- `parametric_head.build_parametric_head` now drives off the type
+  profile and winds the whole solid consistently outward (body bands
+  were previously wound inward — invisible under `|n·L|` shading but
+  fatal to signed-volume integrals); wood meshes are bit-identical to
+  the previous generator, so all prior parity pins stand.
+- `src/rate_of_closure/club/volumetrics.py` — closed-mesh volume and
+  centroid via the divergence theorem (signed tetrahedra to the
+  origin), DbC-gated by a combinatorial watertightness check (every
+  directed edge exactly once with its reverse present) and a positive/
+  sane-volume postcondition; validated against analytic solids (cube
+  exact, UV sphere <1%); `head_cog(spec)` reports the geometric COG in
+  spec-sheet convention (depth back from the face, height above the
+  sole) alongside the spec's published-typical CG values, and a test
+  asserts both land in per-type plausible bands.
+- Hosel-true shafts: both renderers (PyQt6 `Club3DView`, web
+  `ClubCanvas`) attach the shaft line at the generated head's per-type
+  hosel point along the lie angle (heel-top for irons/wedges/putters
+  with the blade putter's plumber's-neck set-back, heel-crown
+  transition for woods/hybrids); a GUI test pins shaft attachment ==
+  hosel point under the face-plane shift.
+- 'Show CG' checkboxes (sourced tooltip: divergence-theorem centroid)
+  in the 3D clubhead view and the strike views of both UIs — marker at
+  the volumetric COG (themed `get_chart_color`; spec-CG/reference-point
+  fallback for non-watertight loaded STLs).
+- Library grows to 16 clubs: the generic "Putter" is replaced by
+  "Blade Putter" (350 g, 2500 g·cm², CG 12/14 mm) and "Mallet Putter"
+  (360 g, 4500 g·cm², CG 35/14 mm) — typical published values, SI.
+- Glossary: hosel, plumber's neck, bounce, mallet/blade putter,
+  centroid, divergence theorem (67 terms; TS mirror + fixture
+  regenerated).
+- Web parity: `clubHeads.ts` (profiles/hosel) + `volumetrics.ts`
+  (same algorithm), volume/COG/hosel parity-pinned against pytest on
+  the driver and blade-putter fixtures; CG checkbox on ClubCanvas and
+  StrikeCanvas; strike-view face extents now per-type. Tests:
+  `tests/rate_of_closure/test_club_heads.py`, `web/src/model/
+heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
+  `test_gui.py`/`test_viewers_gui.py`.
+
+### 2026-08-04 Swing kinetics — torques, forces, powers with plots and 3D overlays (epic #4125, H2)
+
+- Kinetics core: `rate_of_closure/simulation/kinetics.py` — per-sample
+  inverse dynamics over the double-pendulum swing using the swing_sim
+  EOM surfaces (mass_matrix / coriolis_vector / gravity_vector /
+  damping_vector): a frozen `KineticsSeries` (t, net / gravity /
+  damping / applied torque breakdown per joint, joint powers τ·ω,
+  Newton–Euler joint reaction forces in the app frame, point-mass
+  clubhead-force estimate, ball-aligned joint geometry). Sign
+  convention documented (positive torque counter-clockwise about the
+  swing-plane normal — introduced here; the movement optimizer states
+  none). `simulate_forced` (RK4 with an applied torque profile) backs
+  the test suite: inverse-dynamics round trip recovers a known torque
+  profile to O(dt²), applied power integrates to ΔE (undamped forced),
+  net joint power integrates to ΔKE (passive), static-hang force pin.
+  New public `DoublePendulumSwing.state_at` accessor exposes the joint
+  trajectory (additive swing_sim change).
+- Presentation pattern-matched to the movement optimizer
+  (`src/movement_optimizer/gui/plot_renderer.py`, `vector_overlay.py`,
+  `models/swingset_forces.py` — credited in docstrings): "Time (s)" /
+  "Torque (N·m)" / "Power (W)" / "Force (N)" axis labels
+  (parenthesised units, middle dot), unit-suffixed field names, faint
+  zero lines on signed series, dashed total overlay on the power plot,
+  chart-cycle per-joint colors, 270°-sweep torque arcs with sign as
+  direction and capped auto-scaled force arrows.
+- Plotting catalog: new series category "Kinetics" (11 keys: net /
+  gravity / damping torques, powers, force magnitudes per joint) wired
+  into the custom wizard on both UIs; extractors yield all-NaN for
+  sources without joint states (manual / triple pendulum) rather than
+  fabricating numbers. Built-in plots 'Joint Torques', 'Joint Power',
+  'Reaction Forces'. Parity fixture regenerated (51 keys).
+- PyQt6: 'Show Kinetics' checkbox in the swing viewer drawing
+  per-joint torque arcs (radius ∝ |τ|, sweep direction by sign) and
+  capped force arrows at the joint positions each frame with a
+  magnitude-carrying legend (`ui/pyqt6/kinetics_overlay.py`); Kinetics
+  sub-tab in the Simulation tab (`ui/pyqt6/kinetics_panel.py`) with
+  the three plots, a peak table (peak |torque| / |power| / |force| per
+  joint with timing as % of the downswing), and glossary-linked
+  explanations (KINETICS_EXPLANATIONS; new glossary terms
+  inverse_dynamics, joint_reaction_force, moment_of_force, power).
+- Web parity: `model/kinetics.ts` mirrors the inverse dynamics /
+  breakdown / powers / force magnitudes, parity-pinned tightly against
+  the pytest-generated `__fixtures__/kinetics_parity.json`; Kinetics
+  view in the Simulation panel (three canvas charts + peak table);
+  catalog keys mirrored. DEVIATIONS: the 3D playback overlay is
+  deferred to the P7 WASM pass (the web scene has no pose-level
+  drawing yet); triple-pendulum kinetics deferred (separate
+  absolute-angle formulation — kinetics return None/NaN for it);
+  the issue text's `joint_torque_breakdown` helper did not exist in
+  swing_sim — the breakdown is computed here from the EOM surfaces.
+
+### 2026-08-04 Putting vertical — impact, skid/roll, green sim, Putting tab (epic #4125, H3)
+
+- Physics: new self-façaded subpackage
+  `src/shared/python/swing_sim/putting/` (parent `swing_sim/__init__.py`
+  untouched, same policy as `impact`/`variation`), all derivations from
+  first principles in the module docstrings.
+  (a) `impact.py`: putter-ball impact — 1-D COR impulse along the
+  lofted face normal (putter-face COR 0.78, typical published value)
+  plus the 2/7 rolling-cap tangential transfer giving launch angle and
+  the initial backspin "slide" state; pendulum backstroke→speed proxy
+  `v = A·sqrt(g/L)`; H3-local `MINIMAL_PUTTERS` clearly marked for H1
+  club-library reconciliation.
+  (b) `roll.py`: skid phase closed forms (`dv/dt = -μ_k g`,
+  `dω/dt = (5/2)μ_k g/r`, pure roll at `v = ωr` ⇒
+  `v_roll = (5v₀+2ω₀r)/7`); stimpmeter green speed derived from the
+  USGA geometry (36 in ramp, 20° release, V-groove inertia ⇒ release
+  speed ≈ 1.83 m/s) inverted to `μ_r = v²/(2gS)` — the stimp → μ_r →
+  roll-out chain round-trips exactly (test-enforced).
+  (c) `green.py`: uniform planar slope (grade % + downhill aspect),
+  deterministic fixed-step RK4 (2 ms) with a SLIDING/ROLLING mode
+  machine; break, skid/roll split, and a geometric lip-capture bound
+  (ball must fall half a diameter crossing the hole mouth ⇒
+  `v_capture = R·sqrt(g/2r) ≈ 0.82 m/s`; Holmes 1991 cited for the
+  full-chord ~1.6 m/s variant).
+- App: 'Putting' tab in both UIs. PyQt6
+  `ui/pyqt6/putting_tab.py` (putter picker preferring the H1 library
+  putter via `rate_of_closure/putting.py`, clubhead-speed or
+  backstroke pace input, stimp/grade/aspect/distance controls with
+  sourced tooltips, clickable result rows → explanations with glossary
+  links, matplotlib top-down green with phase-coded path + downhill
+  arrow over a speed-vs-distance plot with the capture bound). Web
+  `web/src/model/putting.ts` mirror (same constants, same RK4) with
+  `components/PuttingPanel.tsx` (SVG green view adapting UpstreamDrift
+  `PuttingGreen.tsx` concepts, credited) — parity pins in
+  `putting.test.ts` mirror `tests/rate_of_closure/test_putting.py`
+  value-for-value.
+- Additive registrations: `plotting/putting_catalog.py` (PuttResult-
+  scoped variable registry, pinned SimulationRun catalog untouched);
+  5 new glossary terms (stimp, skid, pure_roll, capture_speed, break)
+  in new `glossary_entries_putting.py` + TS mirror + regenerated
+  parity fixture; `helptext.py`/`helptext.ts` Putting entries;
+  `FIELD_TO_TERM` putt-field mappings.
+- Tests: skid→roll continuity (v = ωr), stimp round-trip, slope
+  mirror symmetry, capture-bound behaviour (dying putt drops, slammed
+  putt runs past), flat-green speed monotonicity, determinism,
+  Python↔TS parity pins on reference putts, GUI smoke + tooltip and
+  help sweeps extended to the new tab.
+
+### 2026-08-04 Rate of Closure glossary, help system & full-model derivations (epic #4120, phase V4)
+
+- Selected-value clarity: clicking any result/metric/launch row applies
+  a persistent selected state (PyQt6: `ResultRow.set_selected` dynamic
+  property + a palette-derived stylesheet — highlight color at low
+  alpha, no hard-coded colors; web: the aria-pressed row styling
+  strengthened with a ring + stronger tint). One selection at a time
+  across all row groups per host, and every explanation panel now leads
+  with the selected row's NAME as a prominent header
+  (`explanation_html`). Test-enforced (exclusivity, header-matches-
+  label, palette-only styling).
+- Glossary: `src/rate_of_closure/glossary.py` — a DbC dict of 60
+  sourced terms covering the whole app vocabulary (delivery terms,
+  CCV/HTV/SPV, R_ISA/ISA/screw pitch/twist, D-plane/spin loft, COR/
+  effective mass/MOI tensor/CG depth/gear effect/bulge/roll, 2/7
+  friction cap, launch/flight terms, Monte-Carlo/sensitivity/Spearman/
+  2-sigma ellipse/NoiseSpec distributions, pendulum mass matrix/
+  Coriolis/plane inclination, ...), each definition naming its source.
+  PyQt6: searchable Glossary tab (`ui/pyqt6/glossary_tab.py`) with
+  `select_term` deep-linking; every explanation panel carries a
+  `glossary:<term>` link that jumps there pre-selected
+  (`FIELD_TO_TERM` maps EVERY explanation field, contract-tested).
+  Web: generated `model/glossary.ts` mirror + Glossary tab with search
+  - links from the explanation card; the key list is pinned key-for-key
+    by a Python-generated fixture checked from both test suites.
+- Tab rename: 'Derivation && Traceability' -> 'Calculation Description'
+  (both UIs, docstrings/strings updated).
+- Full-model derivations: `derivation_models.py` (DerivationConfig +
+  DerivationSection) assembles sectioned coverage from per-domain
+  content modules under the 500-LOC budget — (a) the existing closure
+  chain, (b) `derivation_impact.py`: impulse-momentum with COR,
+  MOI-tensor triple-product effective mass, the 2/7 friction spin cap,
+  D-plane, and the gear-effect recoil derivation (sourced from the
+  swing_sim.impact docstrings), (c) `derivation_flight.py`: flight EOM
+  with drag/lift/Magnus plus the ACTIVE literature model's coefficient
+  law and citation pulled live from the flight registry metadata, and
+  spin decay, (d) `derivation_swing.py`: double-pendulum Lagrangian
+  (mass matrix, Coriolis, plane-tilt gravity projection substituting
+  the live tilts) with a conditional triple-pendulum step. Sections
+  render conditionally per the current configuration — SimulationTab
+  emits `configChanged` and the DerivationView re-renders. Web mirror
+  `derivationModels.ts` + sectioned `Derivation.tsx`; parity tests pin
+  section keys/toggling and the in-plane-gravity mirror; every formula
+  parses as matplotlib mathtext (pytest) and strict KaTeX (vitest).
+- Help system: `helptext.py` — cold-user help per tab (what it does,
+  workflow, control reference, tips); a '?' corner button on the PyQt6
+  tab bar opens the current tab's rich-text help panel. Web:
+  `helptext.ts` + a collapsible 'How to Use This Page' section at the
+  top of every tab. Contract tests assert every tab has substantive
+  help (>300 chars) with workflow coverage.
+- Hover-hint completeness sweep: PyQt6 headless walk over every
+  (nested) tab asserting an effective tooltip on all interactive
+  widgets; web vitest render-and-assert title/aria-label on the
+  interactive elements of every panel. Gaps found by the tests fixed
+  across both UIs (playback, presets, tab nav, unit selects, result
+  rows, run/export/solver controls).
+
+### 2026-08-04 Shared variation / Monte-Carlo engine + Variation tab (epic #4120, phase V3)
+
+- New shared engine `src/shared/python/swing_sim/variation/` (not
+  re-exported from `swing_sim`'s top level, same policy as `solver`):
+  - `registry.py` — ONE namespaced 'how parameters vary' vocabulary:
+    `VariableDef` entries keyed `<category>.<name>` across
+    `swing_sim.impact.delivery` (8 delivery variables),
+    `swing_sim.swing` (pendulum plane tilts, impact timing, damping),
+    `swing_sim.club` (head mass / MOI / COR into the impact solve), and
+    `swing_sim.flight.launch` (direct launch conditions); each entry
+    carries a label, unit, default, typical noise scale, and sourced
+    guidance. `register_variable` is the extension seam so other
+    packages adopt the same scheme instead of another one-off.
+  - `spec.py` — frozen `NoiseSpec` (normal | uniform | triangular,
+    additive scale, optional clip truncation) and `VariationPlan`
+    (mode `delivery`/`swing`/`launch`, base overrides, noise list,
+    `n_runs`, `seed`, flight model) with lossless JSON round-trip
+    (`schema_version` 1) for reproducible studies.
+  - `engine.py` / `pipeline.py` — seeded (`numpy` `default_rng` with
+    per-variable, subset-stable seed sequences keyed
+    `[seed, crc32(key)]` — deliberately not the surveyed `base_seed+i`
+    idiom), chunked `concurrent.futures` N-run executor over the
+    appropriate pipeline slice (delivery→impact→flight,
+    pendulum→impact→flight, or launch→flight) collecting a
+    `VariationDataset` (inputs matrix, outputs matrix incl. delivery,
+    launch, carry/lateral/apex/landing columns, per-run success flags —
+    failed runs recorded as NaN rows, never batch aborts). Reuses the
+    solver's `ProgressReport`/`CancelledError`/`cancel_event` shapes
+    verbatim so GUI plumbing is identical; results are worker-count
+    invariant (test-pinned).
+  - `analysis.py` — per-output mean/std/percentiles; one-at-a-time
+    sensitivity (rerun with a single spec active, paired draws via the
+    per-variable streams) producing raw + column-normalized matrices
+    (which input drives which output); Spearman rank correlation as a
+    cheap global-sensitivity cross-check; 2-sigma landing-dispersion
+    ellipse from the carry/lateral covariance eigen-decomposition.
+  - `dataset_io.py` — documented CSV + JSON dataset schemas with
+    import back (JSON embeds the plan; CSV import takes it).
+  - Overlap review (credited in module docstrings): UpstreamDrift
+    `EnhancedBallFlightSimulator.monte_carlo_simulation` (seeded-loop
+    shape), `perturbation/` `PerturbationConfig`/`MetricStatistics`/
+    failure-capture semantics, `pendulum_simulator/perturbation_analysis`
+    noise generators, `movement_optimizer` parallel/progress/cancel
+    machinery (already mirrored in `swing_sim.solver.solve`). Genuinely
+    new: per-variable NoiseSpec vocabulary with truncation, namespaced
+    registry, OAT sensitivity + Spearman (no sensitivity analysis
+    existed anywhere in the surveyed prior art), landing ellipse.
+- PyQt6: new top-level "Variation" tab (`ui/pyqt6/variation_tab.py`,
+  rows editor `variation_rows.py`, results widgets
+  `variation_results.py`, `QThread` worker `variation_worker.py`):
+  pipeline mode + base-scenario source (registry defaults or current
+  explorer scenario), registry-driven noise rows (grouped variable
+  picker, distribution, unit-aware scale with sourced tooltips,
+  optional clipping), runs + seed, Run/Cancel with live progress and a
+  sensitivity phase, results tabs (summary stats table, sensitivity
+  heat table, Spearman table, landing scatter with 2σ ellipse on the
+  tab's own small themed matplotlib canvas), CSV/JSON dataset export
+  and plan save/load. Tooltips on every input (test-enforced).
+- Web (practical parity): `model/variation.ts` + `variationRegistry.ts`
+  - `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
+    `VariationLanding.tsx`): the same plan JSON schema (desktop plans
+    load in the browser and vice versa), seeded mulberry32 PRNG with
+    Box–Muller normals and FNV-1a per-variable streams (documented:
+    exact numpy-PCG64 parity deliberately not attempted), delivery +
+    launch modes over the existing TS physics (swing mode and the club
+    category stay desktop-only until the P7 WASM kernels), worker-less
+    bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
+    landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
+    Python-generated fixture (`model/__fixtures__/variation_parity.json`)
+    is re-checked tightly by pytest and loosely (statistical band) by
+    vitest for the same plan+seed.
+
+### 2026-08-04 Rate of Closure investigative plotting suite (epic #4120, phase V1)
+
+- `src/rate_of_closure/plotting/` adds the plotting suite behind the new
+  Plots tab: `catalog.py` is a DbC-validated registry of all 40
+  plottable variables of a `SimulationRun` (key, Title Case label,
+  unit, category Input | Swing Sample | Impact | Launch | Flight |
+  Metric, extractor callable, axis-scale hint) with the key list pinned
+  by contract test; `spec.py` defines the frozen `PlotSpec` (x_key,
+  y_keys, optional series key, kind line | scatter | sweep | histogram,
+  title, log flags, sweep range) with JSON round-trip under the
+  `rate_of_closure.plot_spec/1` schema shared verbatim with the web
+  clone; `render.py` is the one compute/render pipeline (`sweep` kind
+  re-runs the full swing → impact → flight simulation per grid point;
+  themed matplotlib rendering via the shared `get_chart_color` palette;
+  CSV/JSON exports of exactly the plotted data); `builtins.py` ships
+  the built-in advanced plots as PlotSpec factories — the migrated
+  closure sweep, delivery-vs-τ sweep (path/AoA/face-to-path over the
+  impact-time offset), launch-vs-toe and launch-vs-high offset maps
+  (ball speed/spin), the swing time series, and side/top-down flight
+  profiles.
+- Documented deviation: the swing time series plots clubhead speed and
+  clubhead angular speed rather than pendulum joint angles θ/ω —
+  `SimulationRun` stores clubhead poses/twists, not joint states.
+- PyQt6: the new Plots tab (`ui/pyqt6/plots_tab.py`) replaces and
+  absorbs the Closure Sweep tab — managed plot list (add built-in /
+  duplicate / remove), the 3-step Custom Plot wizard
+  (`ui/pyqt6/plot_wizard.py`: data-source scope → X/Y from the catalog
+  grouped by category (+ sweep range) → style/kind with a live
+  preview), themed canvas with the standard navigation toolbar, and
+  export buttons (PNG, SVG, data CSV/JSON, save/load plot definition
+  .json). The tab adopts each Simulation-tab run as its reference run
+  and lazily builds a manual-source run otherwise; rendering defers
+  while hidden so explorer keystrokes stay cheap. Tooltips on every new
+  control.
+- Web parity (practical): `web/src/model/plotcatalog.ts` mirrors the
+  catalog key-for-key (pinned against the pytest-exported
+  `plotcatalog.fixture.json`; entries the TS physics port cannot
+  extract yet — clubhead angular state, impact-model diagnostics — are
+  marked unsupported and hidden from the builder, P7 WASM territory);
+  `plotspec.ts` ports the spec schema, validation, and compute pipeline
+  (sweeps re-run the TS simulation); the Plots tab (`PlotsPanel.tsx`)
+  offers the built-in picker, a simplified custom builder (X/Y selects
+  over series categories), canvas line/scatter rendering with axis
+  labels/units, PNG via `canvas.toBlob`, CSV/JSON downloads, and
+  plot-definition import/export interoperable with the desktop app.
+- Tests: `tests/rate_of_closure/test_plotting.py` (pinned catalog keys
+  - fixture parity, extractor shapes/finiteness, PlotSpec validation +
+    JSON round-trip, every builtin rendering headlessly on Agg, closure
+    sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
+    PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
+    tab, list management, wizard completion for line/sweep/histogram
+    scopes, export files in tmp, tooltip coverage); web
+    `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
+    builtins, exports).
+
+### 2026-08-06 Rate of Closure real-time 3D ball-flight playback (#4200)
+
+- A shared `TimedTrajectory` contract validates finite, strictly increasing
+  solver timestamps and app-frame SI positions, then deterministically
+  interpolates by physical time with launch/impact endpoint clamping.
+- PyQt6 composes `FlightView` with accessible play/pause, scrub, speed,
+  restart, launch, and impact controls in both the Simulation and standalone
+  Flight Explorer surfaces. One owned precise timer advances physical time;
+  mutable ball artists preserve the user's Matplotlib 3D rotation and zoom.
+- React adds a dependency-free orthographic 3D canvas with pointer rotation,
+  wheel zoom, the same transport controls, and a single cancellable
+  `requestAnimationFrame` lifecycle. The projection uses one pixel scale per
+  physical metre so camera rotation and responsive sizing do not distort the
+  trajectory. Existing static side/top plots and paired wind overlays remain.
+
+### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
+
+- Three purpose-built, scale-separated viewers replace the single
+  mixed-scale scene in the Simulation tab's display area (sub-tabs
+  Strike / Swing / Flight, each with its own display-parameter
+  checklist whose state persists for the session):
+  - `ui/pyqt6/strike_view.py` — impact-zone view at FACE scale
+    (millimetres, hard-capped at ±120 mm — `STRIKE_MAX_EXTENT_MM`;
+    never shows flight): superellipse face outline sized from the
+    club's mass envelope, bulge/roll sagitta contours when the face is
+    curved, impact-offset marker plus a strike-history scatter, the
+    delivered club-path / face-normal / attack-angle vectors projected
+    into the face plane, and a club-info annotation.
+  - Swing view (`simulation_view.py`) — the existing 3D scene scoped
+    to SWING scale: the flight polyline is removed from the default
+    display and the scene extent stays at the swing envelope; a new
+    'Show Ball Flight' checkbox (default OFF, with guidance warning
+    that the flight envelope dwarfs the swing) opts back into the old
+    expand-to-flight behaviour.
+  - `ui/pyqt6/flight_view.py` — dedicated FLIGHT-scale viewer: side
+    profile (height vs carry) + top-down (lateral vs carry) 2D panels
+    plus the 3D polyline, landing point and apex annotated, reusable
+    with a bare trajectory (no swing) via `set_trajectory`.
+- Standalone Ball-Flight Explorer: new top-level PyQt6 tab
+  (`ui/pyqt6/flight_explorer_tab.py`) over a pure logic layer
+  (`simulation/flight_explorer.py`): direct entry of launch conditions
+  (ball speed with mph / m/s unit drop-down, launch angle, azimuth,
+  spin rpm, spin-axis tilt — app signs: + = right of target / fade
+  side) OR impact-delivery parameters run through
+  `swing_sim.impact.delivery` + the rigid-body impact model, a model
+  picker across all 7 literature flight models, rendering in the
+  flight viewer, and clickable result rows (carry, apex, flight time,
+  landing angle, lateral — `lateral_m` explanation added to
+  `LAUNCH_EXPLANATIONS`). No swing required.
+- Small-window layout defect fixed: window minimum lowered to
+  1024×700 (registration updated), every control column scrolls
+  (`QScrollArea`), typed entries carry minimum widths (≥ 84 px spins),
+  result-row labels tooltip their full text and values keep a minimum
+  width; `tests/rate_of_closure/test_layout_minsize.py` resizes the
+  window to 1024×700 headlessly, walks every (nested) tab, and asserts
+  every visible QLineEdit/QDoubleSpinBox is ≥ 64 px wide with no
+  zero-height visible widgets.
+- Web practical parity: Strike / Swing / Flight segmented views in the
+  Simulation panel (strike-zone canvas with face outline + offset
+  marker + delivery vectors; side + top-down flight profile canvases
+  with landing annotations), a 'Show Ball Flight' toggle separated
+  from the swing canvas scale, and a standalone Flight Explorer tab
+  (`model/flightExplorer.ts` + `components/FlightExplorerPanel.tsx`)
+  parity-banded against the pytest pinned case (167 mph / 10.9° /
+  2,686 rpm → carry ≈ 247.5 m under Waterloo/Penner); responsive
+  min-widths (`min-w-*`, truncation with title attributes). The
+  7-model picker and delivery mode stay Python-side until P7 WASM.
+- Tests: viewer scale invariants (strike extents never exceed face
+  scale; the flight toggle changes the swing-view limits and restores
+  them), flight-explorer end-to-end pins in both entry modes, sign
+  conventions (+ azimuth / fade tilt land right), all-7-model runs, TS
+  parity pins, GUI smoke for every new tab, sourced tooltips
+  test-enforced on every new control. Non-goals here: the Closure
+  Sweep plotting suite (V1, separate branch), the Monte Carlo
+  variation engine (V3), and the help system (V4).
+
+### 2026-08-04 Rate of Closure solver panel — goal-driven optimization UI (epic #4103, #4109 #4110)
+
+- PyQt6: new "Solver" tab inside the Simulation tab's right-hand tab
+  stack (`ui/pyqt6/solver_panel.py`, editor spec tables in
+  `solver_specs.py`): checkbox-enabled weighted goal targets over every
+  `swing_sim.solver` goal quantity, a per-variable Optimize
+  (min/max bounds) | Fix (value) partition editor with a swing-source
+  mode toggle that swaps the derived delivery variables for the
+  double-pendulum swing variables, a start-count spinner, and Run /
+  Cancel. Every new input carries sourced hover guidance
+  ("Suggested range … Source: …", test-enforced); theming stays with
+  the shared ThemeManager palette (no hard-coded colors).
+- The solve runs on a `QThread` worker (`solver_worker.py`) — the UI
+  never blocks; the solver's `ProgressReport` callback drives the
+  progress bar (evaluation count against the multi-start budget) and a
+  status line with best cost and the stall heuristic; Cancel sets the
+  cooperative `cancel_event`, and in-flight starts unwind at their next
+  residual evaluation.
+- Results view: achieved-vs-goal table with per-goal errors, residual
+  norm + convergence flag + evaluation counts in the summary, and
+  expandable per-start diagnostics (cost, evals, status, message,
+  solution vector). Apply loads the solved variables back into the
+  simulation session and reruns so the optimized swing/impact shows in
+  the 3D scene: both modes land the solved impact offsets in the
+  scenario; delivery mode selects the manual source and sets the
+  scenario clubhead speed; swing-source mode selects the double
+  pendulum, drives the plane-tilt inputs, and shifts tau by the solved
+  impact-time offset. Documented deviation: the session's delivery
+  convention is a square face at the club's loft, so solved face-angle
+  / dynamic-loft values inform the goal table but are not replayed.
+- DbC validation errors (no goals checked, inverted bounds, …) surface
+  as friendly status-line messages, never tracebacks.
+- Web (practical parity): `model/solver.ts` reuses the parity-ported TS
+  physics as the objective — goals limited to what it computes
+  (path/face/AoA/loft, ball speed, launch angles, spin, carry) over the
+  delivery variables, solved with a bounded Nelder-Mead (candidates
+  clamped into bounds) and a small deterministic multi-start; the
+  `SolverPanel` section in the Simulation tab mirrors the goal /
+  partition editors, results table, and an Apply that loads the solved
+  clubhead speed and impact offsets into the scenario. Parity-tested
+  against the pytest-pinned easy case (150 mph ball-speed goal solves
+  to ~45.825 m/s clubhead speed in both implementations). Progress,
+  cancellation, the swing-source mode, and a web-worker/WASM objective
+  land with the P7 kernels (deliberate deferral).
+
+### 2026-08-04 Swing impact-parameter solver (epic #4103, #4109)
+
+- New self-facaded subpackage `src/shared/python/swing_sim/solver/`:
+  goal-driven robust optimization over golf delivery/swing variables.
+  Scaffolding modeled on UpstreamDrift's
+  `src/shared/python/movement_optimizer` (pure cost module, multi-start
+  parallel driver, `ProgressReport`/`cancel_event` plumbing, named tuning
+  constants) with golf-impact semantics replacing the barbell/balance
+  costs.
+- `goals.py`: `ImpactGoal` — optionally weighted targets over any subset
+  of club_path/face_angle/attack_angle/dynamic_loft [deg], ball_speed
+  [mph], launch_angle/launch_azimuth [deg], spin [RPM], spin-axis tilt
+  [deg, + = fade side], carry [m] — and `VariablePartition`, which splits
+  the delivery front-end variables (plus toe/high impact offsets) into
+  optimizer-controlled (bounded) vs user-fixed, with DbC validation
+  (disjointness, finite bounds, unknown names). A swing-source mode swaps
+  in double-pendulum variables (the three sequential plane tilts, the
+  impact-time offset relative to peak clubhead speed, and the damping
+  parameters) and derives clubhead speed/path/attack angle from the
+  sampled pendulum twist.
+- `objective.py`: pure residual builder — candidate variables run
+  delivery → rigid-body impact with physics-based gear effect (→ launch
+  derivation → ball flight only when the goal requires it) and score as
+  `weight * (achieved - target) / scale` with launch-monitor-resolution
+  scales from `tuning.py`. `evaluate_candidate(variables, partition,
+goal) -> residuals` is the documented seam a later Rust port replaces
+  behind a facade (no Rust added in this PR).
+- `solve.py`: bounded `scipy.optimize.least_squares` (trf) multi-start
+  driver — Latin-hypercube starts across the bounds (start 0 = caller
+  `x0` or midpoint), parallel starts via `concurrent.futures`,
+  thread-safe progress tracking with the movement_optimizer
+  `ProgressReport` shape and stall heuristic, cooperative cancellation
+  via `threading.Event` (`CancelledError`), best-of selection, and a
+  `SolverResult` carrying the solution variables, achieved quantities,
+  per-goal errors, residual norm, eval counts, elapsed time, convergence
+  flag, and all per-start summaries.
+- In-package tests (`unit` / `physics` / `contract` markers):
+  exact-recovery from a cold start, underdetermined and conflicting-goal
+  behaviour, bounds enforcement, cancellation (pre-set and mid-solve),
+  progress-report shape, partition validation errors, and a contract
+  test pinning the `swing_sim.solver` public API. The parent
+  `swing_sim/__init__.py` facade is deliberately untouched.
+
+### 2026-08-04 Rate of Closure Simulation Session (epic #4103 — #4105 #4107 #4108 #4110)
+
+- `src/rate_of_closure/simulation/` integrates the swing_sim packages
+  into the app: app-frame swing sources (`sources.py` — a manual
+  constant-twist source wrapping the explorer's `ImpactScenario`, the
+  shared `DoublePendulumSwing` behind an `AppFrameSwing` frame adapter,
+  and a NEW planar triple pendulum with an absolute-angle n-link EOM,
+  RK4, energy-conservation-tested); `session.py` orchestrating swing →
+  delivery → `swing_sim.impact` rigid-body solve with gear effect (the
+  club package's `face_normal_at_offset` bulge/roll callable wired in)
+  → `swing_sim.flight` launch derivation + literature flight model,
+  producing one exportable `SimulationRun` (time-stamped swing samples
+  with SE(3) poses + twists, impact instant + delivery diagnostics,
+  launch summary, flight trajectory). The impact-time scrubber keeps
+  the ball at a FIXED world position and translates the swing so the
+  clubhead at τ meets it, with delivery numbers updating live;
+  `isa.py` is the single thin adapter over
+  `rotation_converter.screw_visualization.extract_screw_axes_from_trajectory`
+  (DeprecationWarning confined, per-step θ divided by dt into deg/s,
+  R_ISA from the midpoint-to-axis distance); `export.py` writes the
+  phase-tagged CSV time series and a JSON summary/params document.
+- The PyQt6 app grows a Simulation tab: source/plane-tilt/club/flight
+  pickers (sourced hover guidance on every new input), scrub slider
+  with auto (max-clubhead-speed) reset, launch result rows
+  (ball speed, launch angle/azimuth, spin, carry, apex, flight time,
+  landing angle) with click-through explanations added to
+  `derivation.LAUNCH_EXPLANATIONS`, a 3D scene (ball and ground behind
+  independent checkboxes, flight trajectory polyline, toggleable
+  screw-axis overlay annotated with rate/pitch/R_ISA) with full video
+  playback — play/pause, whole-timeline scrub, frame step ±, loop, and
+  rate presets (0.1×/0.25×/0.5×/1× real-time/2×) — plus a sortable
+  run-data inspector with CSV/JSON export. Scene colors come from the
+  shared theme palette (`get_chart_color`) only. The clickable result
+  row is extracted to `ui/pyqt6/result_row.py` and shared with the
+  main window.
+- Web parity (practical degree): `web/src/model/simulation.ts` +
+  `flight.ts` port the minimal physics (double-pendulum RK4 from
+  `reference.py`, scalar-MOI rigid-body impact with the 2/7 friction
+  cap, launch derivation, Waterloo/Penner flight on fixed-step RK4)
+  with vitest parity pins against the pytest numbers (tight for the
+  formula-for-formula ports, banded for RK45-vs-RK4 flight); a
+  Simulation tab hosts source/tilt inputs, the τ scrubber, ball/ground
+  toggles, a canvas scene with the trajectory polyline, video playback
+  with the same rate presets, and JSON export as a download. The WASM
+  kernels replace the hand port in P7, which also brings gear effect,
+  the triple pendulum, and the screw-axis overlay to the web (noted in
+  code). Tests: `tests/rate_of_closure/test_simulation.py` (sources,
+  session bands, scrubber coincidence, ISA vs `twist_to_screw`, export
+  round-trips) and `test_simulation_gui.py` (tab smoke, playback,
+  toggles, guidance, inspector).
+
+### 2026-08-04 Rate of Closure Club Library, Inertial Model & Parametric Head (P2, #4106)
+
+- `src/rate_of_closure/club/` adds the club-modeling package: a frozen
+  SI `ClubSpec` dataclass with DbC bounds (`types.py`); a 15-club
+  library (driver 9.5/10.5/12°, 3/5-wood, 3-hybrid, 3/5/7/9-irons,
+  PW/GW/SW/LW, putter) normalized to SI from typical published
+  manufacturer specs via UpstreamDrift's MuJoCo
+  `club_configurations.py` imperial/CGS table (`library.py`); a
+  composite head+shaft+grip inertial model (total mass, balance point,
+  MOI about the grip and shaft axes from point-mass + rod + sleeve
+  composition with the parallel-axis theorem, `inertia.py`); shared
+  superellipse-loft mesh helpers (`geometry.py`, now also backing the
+  example-head script); and a deterministic parametric head generator
+  (`parametric_head.py`) whose envelope scales as cbrt(head mass /
+  200 g) and whose face patch honors bulge (horizontal) and roll
+  (vertical) curvature via the circular sagitta R - sqrt(R² - t²) with
+  loft tilting the face plane. `face_normal_at_offset(spec, toe_mm,
+high_mm)` exposes the face-curvature normal (gradient of the
+  curved-face surface, loft-rotated) for the future impact package —
+  in Python AND TypeScript with pinned parity tests; flat face when
+  bulge/roll are off (curvature does not affect impact physics yet).
+  The PyQt6 controls panel grows a Club group (library picker driving
+  GC-to-face and lie with overrides preserved, loft override,
+  bulge/roll toggle + radius entries, "Generate Representative Head"
+  loading the parametric mesh through the existing mesh render path),
+  every new input carrying sourced hover guidance in the
+  FIELD_GUIDANCE pattern. The web clone mirrors all of it —
+  `web/src/model/club.ts` (spec/library/inertia/parametric head,
+  vitest-pinned against pytest), a ClubPanel component, and
+  client-side head generation into the existing canvas mesh path.
+  Tests: `tests/rate_of_closure/test_club.py` (inertia hand-computed
+  cases, sagitta-vs-circle-formula, mesh determinism, Python↔TS
+  parity pins) plus Club-group GUI smoke tests.
+
+### 2026-08-04 Swing simulation ball-flight package (epic #4103, #4107)
+
+- New self-facaded subpackage `src/shared/python/swing_sim/flight/` porting
+  UpstreamDrift's pure-Python flight stack (`physics/flight_models.py`):
+  `FlightModelRegistry` with all 7 literature models (Waterloo/Penner
+  quadratic-Cd + power-law-Cl, MacDonald-Hanzely spin decay, and the five
+  constant-coefficient presets — Nathan, Ballantyne, J. Cole, Rospie DL,
+  Charry L3 — keeping their `ConstantCoefficientSpec`
+  name/description/reference citation metadata), scipy `solve_ivp` RK45
+  integration with a terminal ground event, and `FlightResult` metrics
+  (carry, max height, flight time, landing angle, lateral deviation).
+  Constants are vendored with citations into `flight/_constants.py`.
+- Public launch deriver `derive_launch_conditions` (port of the pipeline
+  `_LaunchConditionsDeriver` in UpstreamDrift's
+  `swing_ball_flight_pipeline.py`): post-impact ball velocity/spin vectors
+  → speed, launch angle, azimuth, spin rate [RPM], unit spin axis; the
+  optional `LaunchConditions.spin_axis` override makes the derivation
+  round-trip exactly through `get_initial_velocity`/`get_spin_vector`.
+- Frame adapters `to_flight_frame`/`from_flight_frame` between the app
+  frame (x target, y up, z right) and the UpstreamDrift flight frame
+  (x forward, y left, z up), tested for round-trip and handedness.
+- Graceful Rust fast path (`flight/_rust_facade.py`, aerodynamics-facade
+  posture — scipy is a fully supported fallback, unlike the strict swing
+  facade): `is_rust_available()` + `simulate_trajectory_rust()` over the
+  canonical `rust_core/tools-core/src/ball_flight.rs` RK4 kernel, which now
+  exposes `simulate_trajectory`/`analyze_trajectory` pyfunctions plus
+  property setters (ball/environment scalars, spin axis, wind) and
+  trajectory velocity getters; results are converted into the flight frame.
+  Parity tests compare Rust vs the Python Penner model (tight for zero-spin
+  drag, banded for spinning shots whose lift laws differ) and skip cleanly
+  when the wheel is absent or predates the new bindings.
+- Pipeline seam `flight/pipeline.py`: runtime-checkable
+  `FlightSimulatorProtocol` (satisfied by every registry model) and a
+  `simulate(launch, model_name="waterloo_penner")` convenience mirroring
+  UpstreamDrift's DI design so the impact stage (#4106) plugs in directly.
+  The parent `swing_sim` facade is unchanged.
+
+### 2026-08-04 Swing impact package (epic #4103, #4106)
+
+- New self-façaded subpackage `src/shared/python/swing_sim/impact/`
+  (types/models/solver/utils split mirroring UpstreamDrift's
+  `physics/impact_model`, all constants vendored with citations into
+  `constants.py`): rigid-body COR impulse model with the 2/7 rolling-cap
+  friction spin derivation, spring-damper (Kelvin-Voigt) model,
+  finite-time model, energy-balance validator, and `ImpactRecorder` /
+  `ImpactSolverAPI`. The parent `swing_sim/__init__.py` façade is
+  deliberately untouched (epic integration wires it later).
+- Three defect fixes relative to the UpstreamDrift source: (a)
+  `solve_with_gear_effect` no longer drops `impact_offset` when computing
+  the base impulse — off-center hits now get the MOI effective-mass
+  reduction (regression test pins off-center ball speed < center); (b)
+  opt-in full 3-D inertia treatment via a 3x3 `clubhead_moi_tensor`
+  (`1/m_eff = 1/m + (r x n)^T I^-1 (r x n)`; a diagonal tensor matching
+  the scalar MOI reproduces the scalar path exactly); (c) friction-spin
+  axis sign corrected to `t x n` (the ported `n x t` spun lofted strikes
+  toward topspin and contradicted its own slip-reduction cap logic).
+- New `delivery.py` front-end: launch-monitor delivery numbers (club
+  path/face/attack/dynamic loft/lie deg, clubhead speed, toe/high offsets
+  in mm) → impact-model vectors in the AffineDrift frame (x target,
+  y up, z right; path + = in-to-out, face + = open), with spin-loft and
+  D-plane diagnostics (`spin_axis = unit(v x n)`, signed tilt; + = fade).
+- New physics-based `gear_effect.py` replacing the old three-empirical-
+  constants version: head rotation recoil `I^-1 (r x (-J n))` with the
+  CG-depth lever arm (`DRIVER_CG_DEPTH_M`), time-averaged tangential
+  face-surface sweep, and the same 2/7-capped friction impulse converting
+  it to ball spin. Bulge/roll enters through an app-agnostic
+  `face_normal_at_offset(toe_m, high_m)` callable seam (club package, PR
+  #4112). Signature tests: toe hit → draw-side spin, high hit → reduced
+  backspin, bulge partially offsetting toe-hit pull.
+- In-package tests (`unit` / `physics` / `regression` / `contract`
+  markers): hand-computed impulse pins, COR monotonicity, spin cap,
+  energy balance vs `1/2 mu v^2 (1-e^2)`, both bug-fix regressions,
+  delivery round-trips, gear-effect signatures, and a contract test
+  pinning the `swing_sim.impact` public API.
+
+### 2026-08-04 Swing simulation foundation (epic #4103, P0 #4104)
+
+- New Rust workspace member `rust_core/swing-core` (Python wheel `swing_core`
+  via maturin, WASM NPM package via wasm-pack): double-pendulum swing
+  equations of motion ported from UpstreamDrift's `double_pendulum.py`
+  (mass matrix, Coriolis/centripetal, gravity, viscous damping, RK4),
+  generalised so gravity enters as an in-plane 2-vector computed from a
+  swing-plane pose built by three sequential intrinsic tilts (yaw about
+  world-up, side tilt about the rotated axis, forward/back tilt). Feature
+  contract (`python` / `extension-module` / `wasm`, cdylib+rlib, per-crate
+  maturin pyproject, dual `#[cfg_attr]` bindings split under `py_bindings/`
+  and `wasm_bindings/`) copies `tools-core` exactly.
+- New shared Python package `src/shared/python/swing_sim/`: frozen DbC
+  dataclasses (`PlaneOrientation`, `PendulumParameters`, `PendulumState`,
+  `SwingSample` with SE(3) pose + 6-twist, `SwingTrajectory`), the
+  `SwingSource` protocol with a `DoublePendulumSwing` implementation, a
+  strict Rust façade (`_rust_facade.py`, bilateral_rust posture: raise at
+  call time when the wheel is missing for hot loops) and a pure-Python
+  reference implementation used as the Rust parity oracle and one-shot
+  fallback. In-package tests carry `unit` / `parity` / `contract` markers.
+- CI: `ci-standard.yml` rust-quality-gate change filter also watches
+  `src/shared/python/swing_sim/**` and builds/verifies the swing-core WASM
+  package; new `maturin-swing-core.yml` per-crate workflow builds the wheel
+  on Python 3.10–3.12, asserts the extension imports, and runs the parity
+  suite non-skipped. NPM publishing is deferred to epic P7.
+
+### 2026-08-03 Rate of Closure STL Clubhead Rendering
+
+- `src/rate_of_closure/mesh.py` adds an optional photorealistic-clubhead
+  mode: a dependency-free pure-numpy STL parser/writer (binary and
+  ASCII) with DbC contracts that normalizes any user-supplied mesh onto
+  the procedural head envelope — degenerate triangles dropped, axes
+  permuted by bounding-box extent so the face plate points +x (largest
+  extent to z/width, middle to x/depth, smallest to y/height), bounding
+  box centered and scaled to the canonical 0.11 m depth. The PyQt6 club
+  view grows "Load Clubhead STL…" / "Procedural Head" playback-bar
+  buttons and renders loaded meshes as a Poly3DCollection with flat
+  lambert-ish shading (ambient + |normal . light|), driven by the same
+  Rodrigues rotation and translation as the wireframe; the web clone
+  mirrors it with a client-side FileReader STL input
+  (`web/src/model/mesh.ts`, parity-tested in vitest against the pinned
+  pytest numbers) and flat-shaded painter's-algorithm triangles
+  depth-sorted along the camera's forward axis on the existing canvas.
+  A stylized example driver head is generated programmatically
+  (`scripts/generate_example_head.py`, superellipse loft — no licensed
+  geometry) and shipped as `assets/example_driver_head.stl`; tests in
+  `tests/rate_of_closure/test_mesh.py` plus GUI load/reset smoke tests.
+
+### 2026-08-03 Rate of Closure Impact Explorer
+
+- `src/rate_of_closure/` adds a new Biomechanics tool quantifying the
+  difference between a launch monitor's reported geometric-center path and
+  the impact point's actual delivery for a rotating clubhead (twist model,
+  v(P) = v(ref) + omega x r). PyQt6 desktop app (animated 3D clubhead +
+  closure sweep, ThemedWindowMixin) plus a React/Vite/Tauri web clone in
+  `src/rate_of_closure/web/` whose TypeScript model is pinned test-for-test
+  against the Python implementation. Conventions and rate data follow the
+  AffineDrift launch-monitor research: the standard launch-monitor frame
+  (x target, y up, z right), Cheetham 2014 tour HTV 1,307 +/- 304 deg/s,
+  CCV = HTV sin(lie) + SPV cos(lie) ~ 2,100 deg/s, deg/ft normalized
+  closure (omega/v = 1/R_ISA), and the openly published ~3 degree
+  GC-vs-face-center worked example; brand names are kept out of program
+  strings. Both UIs carry playback controls (speed, play/pause, head
+  fixed vs moving through space), clickable result rows with
+  explanations, and a Derivation & Traceability tab typesetting the full
+  calculation with live numeric substitution (matplotlib mathtext on
+  desktop, bundled KaTeX on web). `build_executable.py` packages the
+  desktop app with PyInstaller; the web app packages via Tauri.
+  Registered in `tool_manifest.yaml` (web port 5193); tests in
+  `tests/rate_of_closure/`.
+### 2026-08-05 Wedge impact-point kinematics and AoA attribution
+
+- `shared.python.golf_club` defines an immutable, frame-explicit rigid-body
+  state at a declared contact point and physical shaft-axis line.
+- Contact velocity decomposes exactly into shaft-datum translation, shaft-axis
+  rotation, and all other rotation, independent of the selected twist reference
+  point.
+- The analysis reports direct and Shapley shaft contributions to angle of
+  attack, signed vertical share, leading-edge rates relative to ground and arc,
+  full 3D face-normal rate, and instantaneous screw-axis/contact clearance.
+- Undefined geometries return typed missing metrics rather than fabricated
+  angles; strict unit-vector and orthogonality contracts reject ambiguous input.
+- `docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md` documents equations, frames, the
+  worked example, sign dependence, verification, and simulation-adapter limits.
+
+### 2026-08-05 Swept wedge ground-clearance analysis
+
+- `shared.python.golf_club` derives nine stable leading-edge and sole contact
+  candidates from the same canonical profile consumed by the exact CAD build.
+- Retained rigid-head poses are swept between samples; planar crossings are
+  refined, and first-contact feature, time, pose, normal velocity, tangential
+  velocity, low point, ball/ground sequence, and clearance margins are typed.
+- Ball-contact metrics distinguish leading-edge clearance, sole-entry margin,
+  delivered bounce, path-projected effective bounce, reference AoA, and the
+  explicitly geometric bounce-utilization angle margin.
+- Common-frame translation, time-origin, and linear timestep-refinement
+  invariants are regression tested alongside all hit/miss sequence classes.
+- The Rate adapter passes complete retained poses/twists and only a real impact
+  time, so closest approach remains an explicitly labeled miss.
+- A versioned, unit- and frame-explicit JSON payload carries the complete swept
+  envelope, event transform/velocity, sequence, metrics, and limitations to
+  React and PyQt without duplicating physics in presentation code.
+- The Rate adapter registers the canonical face point to its scenario lever and
+  shifts the retained twist to the wedge datum; the PyQt engineering readout
+  exposes the resulting sequence and margins only for wedge selections while
+  labeling its generic mid-bounce geometry and inherited contact limitations.
+- `docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md` specifies frames, algorithms,
+  metrics, test evidence, shortest-arc SLERP, and the strict boundary between
+  rigid geometric clearance and future turf-contact mechanics.
+
+### 2026-08-05 Passive wedge/turf interaction foundation
+
+- `shared.python.golf_club` provides a replaceable unilateral Kelvin-Voigt
+  normal law with regularized Coulomb friction, explicit ground frames, force
+  and moment, stored energy, dissipation, penetration limits, and typed status.
+- Generic firm-fairway, soft-turf, and sand-like profiles are visibly
+  illustrative and uncalibrated; strict versioned JSON preserves their
+  calibration state, parameter basis, uncertainty, and source URI.
+- A nine-point quadrature evaluates the shared named leading-edge and sole
+  candidates, aggregates the wrench at the head origin, supports sloped planes,
+  and gates turf-supported rankings on an explicitly calibrated profile.
+- The reduced effective-mass diagnostic supports cooperative cancellation,
+  caller-controlled timesteps, explicit unilateral separation loss, and an
+  auditable coarse-to-fine convergence study for impulse, peak penetration,
+  and dissipated energy.
+- The Rate adapter consumes registered retained poses and twists at first
+  geometric ground contact while stating that it does not replay the swing
+  under turf force. `evaluate_wedge_turf_wrench` is the separate force-coupling
+  seam for a full dynamics solver.
+- `docs/specs/GOLF_CLUB_TURF_CONTACT.md` defines equations, signs, units,
+  evidence gates, tests, integration boundaries, and remaining calibration.
+
+### 2026-08-05 Exact modern-wedge CAD foundation
+
+- `shared.python.golf_club` defines a provenance-bearing, immutable modern-wedge
+  family with editable handedness, loft, lie, bounce, face dimensions, sole
+  width, topline, leading-edge radius, rear curvature, face progression, hollow
+  hosel geometry, density, and target mass.
+- The pinned build123d/OpenCascade stack generates one valid exact solid and
+  independently recovers loft, lie, bounce, face span, volume, mass, and target
+  residual from its B-Rep.
+- Strict versioned parameter JSON and deterministic STEP, BREP, and configurable
+  STL export include units, kernel metadata, provenance, requested values, and
+  measured residuals. STEP re-import and byte-determinism are regression tested.
+- `docs/specs/GOLF_CLUB_WEDGE_CAD.md` defines frames, datums, supported claims,
+  dependency/licensing evidence, and the remaining grind/cavity/optimization
+  release boundary.
+
+### 2026-08-05 Measured golf-shaft profiles and flexible reference models
+
+- `shared.python.golf_club` defines immutable, station-based shaft profiles in
+  SI units, including geometry, linear density, directional bending stiffness,
+  torsional stiffness, damping, spine orientation, trimming, insertion depth,
+  and measurement provenance.
+- Profiles support strict, versioned JSON and self-contained CSV interchange,
+  explicit what-if scaling, cut-shaft mass/inertia integration, and a static
+  Euler-Bernoulli/Saint-Venant cantilever reference.
+- A consistent-mass Euler-Bernoulli finite-element eigenproblem returns
+  auditable undamped bending modes on both transverse axes. It is validated
+  against the uniform-cantilever closed form and explicitly excludes nonlinear
+  swing dynamics, shear deformation, material-property inference, and
+  uncalibrated head/grip boundary dynamics.
+- The frame, validation behavior, formulas, interchange contract, and known
+  limits are specified in `docs/specs/GOLF_CLUB_SHAFT_PROFILES.md`.
+
+### 2026-08-05 Golf Club assembly type-checking compatibility
+
+- Shared golf-club assembly validation returns explicitly typed NumPy arrays
+  from the numeric-sequence and inertia-tensor adaptation seams, preserving the
+  new assembly physics contracts while satisfying the changed-file mypy gate.
+  Serialization facade methods keep typed local return values so narrow mypy
+  runs agree with full-repository type information.
+
+### 2026-07-31 P1AM Control System E-Stop and Shutdown Safe State
+
+- A commanded E-stop now de-energizes the heater. `POST /api/estop` opens the
+  heater relay coil as its first action on the wire — that coil is the only
+  thing commanding the 110 V element — and zeroes every PID setpoint. Success is
+  reported only once the controller acknowledges those writes; an unacknowledged
+  kill returns 502, leaves the controller latches raised, and tells the operator
+  the relay may still be closed.
+- The E-stop no longer writes the 64-register tag block. The firmware
+  republishes those registers from its own broker every scan and never reads
+  them back, so those writes could not affect the plant and only consumed the
+  kill path's Modbus budget.
+- Backend shutdown drives the plant safe before it closes anything. The
+  controllers latch, the heater relay opens, the power-supply command is zeroed
+  and the controller E-stop is asserted — each write verified individually and
+  escalated at CRITICAL if unacknowledged — and this runs on the error path as
+  well as a clean stop. The whole teardown is bounded by a deadline shorter than
+  the service unit's stop timeout, and the PLC-connect retry now waits on the
+  shutdown signal instead of sleeping through it, so the Modbus and historian
+  handles are closed in an orderly way rather than killed mid-transaction.
+- Direct tag writes fail loudly instead of silently doing nothing. A `TAG_n`
+  write on the P1AM driver resolves into the firmware-owned block and cannot
+  reach the plant, so it is now refused (HTTP 501) rather than reported as
+  applied. The PID auto-tuner's step goes through the PID setpoint command path
+  that does reach the device, and identification is skipped entirely unless the
+  step was acknowledged — previously it fitted and returned gains for a step the
+  plant never saw.
+- Every public write seam on the Modbus client honours the defense-in-depth
+  E-stop latch: direct tag writes and routing deploys join the coil and setpoint
+  seams in being forced to the safe direction (or refused) while the latch is
+  set, and a contract test fails if a new write seam is added without either
+  honouring the latch or being explicitly exempted.
+- The client exposes a host-heartbeat seam for the firmware's liveness
+  watchdog, which drives all outputs safe if it sees no host activity within its
+  timeout window. The heartbeat is deliberately exempt from the E-stop latch: it
+  reports that the host is alive, not that an output should move.
+- The new endpoint tests configure their credential posture per test rather than
+  by mutating the process environment when the module is imported. Import-time
+  mutation made the posture depend on collection order and worker assignment, so
+  a suite could report green purely because it was ordered favourably — an
+  unacceptable failure mode for the tests standing over an E-stop write path.
+
+### 2026-07-31 P1AM Power Supply and Temperature: Units Contract and Sensor Faults
+
+- `hardware.THERMOCOUPLE_FULL_SCALE_C` plus `percent_to_celsius()` /
+  `celsius_to_percent()` are the single definition of the firmware's
+  percent-of-full-scale thermocouple encoding. `tests/test_units_contract.py`
+  parses the firmware source and fails if the two halves drift. Previously the
+  constant existed in three places (firmware, `temperature_models`,
+  `thermocouple_filter`) with only a comment holding them together.
+- The power-supply service now converts its thermocouple tag from percent to
+  degC. It had passed the raw tag through as if it were already degC while
+  scaling current and voltage correctly, which made the HH_TEMP trip — a degC
+  threshold — unreachable by any physically possible reading.
+- `PowerSupplyConfig.temp_full_scale_c` is new (defaults to the firmware
+  contract value).
+- A scan whose power-supply feedback is absent or non-finite now latches a new
+  `SENSOR_FAULT` trip and drives the output safe, instead of substituting 0.0
+  and reporting a confident, cold-looking supply with both HH trips disabled.
+  A genuine zero reading is still a reading.
+- `set_current_setpoint` / `set_power_setpoint` return the setpoint **in
+  effect**, not the request. A command rejected in IDLE or TRIPPED is no longer
+  reported to the operator as applied, nor persisted for HMI pre-fill.
+- Thermocouple deglitch filters are constructed per channel from that channel's
+  configured range, and rebuilt when the config changes. Both were previously
+  pinned to the default 1400 C full scale, so a shorter-range channel's
+  high-side burnout rail sat above any reachable reading and an open
+  thermocouple was accepted as a genuine measurement.
+
+### 2026-07-31 P1AM Control System PID Tuning and MPC Control Math
+
+- `src/p1am_control_system/backend/pid_tuning.py` no longer clamps recommended
+  PID gains to be non-negative. A reverse-acting process (identified `Kp < 0`)
+  tunes to negative Cohen-Coon gains; these are now reported with their sign
+  intact and `status="warning"`, with a message instructing the operator to
+  configure the loop reverse-acting before applying them. Previously the clamp
+  turned such a recommendation into `kp=ki=kd=0` and still reported success,
+  presenting an open-loop controller as a tuned one.
+- FOPDT identification now uses the published two-point 28.3%/63.2% pair with
+  `tau = 1.5*(t63 - t28)` and `theta = t63 - tau`. The former 10%/63.2% pair
+  biased dead time high and the time constant low by roughly `0.105*tau` each.
+- A tuning result is reported as `status="success"` only when it is
+  trustworthy. The identification is rejected outright, with zero gains, when
+  the first threshold crossing falls within two sample intervals of the step
+  (dead time unresolvable at the recorded sample rate), when both thresholds
+  are crossed on the same sample, when the process value never responds or
+  never crosses the thresholds, or when the process gain is too small to
+  invert. It is downgraded to `status="warning"` while still reporting gains
+  when the process is reverse-acting, when the dead time lands on the
+  minimum-time floor, when the step was too small to measure, when the
+  dead-time ratio falls outside the Cohen-Coon validity band, or when a gain
+  exceeds the sanity bound. Because `Kc` scales with `tau/theta`, an
+  under-resolved dead time previously inflated the recommendation by an order
+  of magnitude and offered it to the PLC as a success.
+- `src/p1am_control_system/backend/mpc.py` solves the Dynamic Matrix Control
+  problem for control _moves_ rather than absolute control values. The free
+  response already contains the full predicted effect of holding the current
+  CV, so optimising over the absolute CV counted the current input twice and
+  left the MPC trace of `/api/mpc/simulate` with a large permanent offset at
+  any nonzero operating point. The solver now starts from zero moves, bounds
+  the moves, and the caller integrates and clamps to the 0-100% output range.
+  At steady state on setpoint the optimal move is zero.
+- Every non-success tuning response now carries a diagnostic `message`
+  naming the specific guard that fired and, where applicable, the measured
+  quantity that failed it (crossing time, sample interval, dead-time ratio,
+  gain magnitude). Operators previously saw only a generic success string,
+  so a rejected or downgraded identification was indistinguishable from a
+  good one at the API surface.
+- The Cohen-Coon coefficient formulas themselves are unchanged and remain as
+  published in Cohen & Coon (1953).
+
+### 2026-07-31 P1AM Control System Poll-Loop Data Integrity and Cadence
+
+- `src/p1am_control_system/backend/poll_runtime.py` no longer feeds held or
+  simulated values to the control laws, the alarm engine or the historian. A
+  scan is classified by `models.DataSource` (`live` / `simulated` / `held` /
+  `fault`); only a real measurement drives control and alarms, so a link flap
+  can no longer clear an active HiHi to Normal. `TagLog` gains a `quality`
+  column (migrated in `database._migrate_taglog_quality_column`) so an outage
+  records a gap rather than fabricated continuity. The backup simulator is
+  wired into the scan path only when `settings.plc_driver` is a simulator
+  driver. Frames now carry `data_source`, `plc_connected` and `simulated`, and
+  a successful live scan strokes the firmware host-alive heartbeat.
+- `src/p1am_control_system/backend/performance.py` splits cadence in two: the
+  new `ScanScheduler` owns the fixed control period from
+  `settings.poll_interval_s` and schedules against a monotonic deadline with
+  overrun counting and phase resynchronisation, while `PerformanceController`
+  only decimates the WebSocket broadcast (`broadcast_every_n`). A hidden
+  browser tab can no longer change the PLC scan, alarm, heater-relay or E-stop
+  re-assert period. `/api/performance` reports both cadences plus the overrun
+  and historian-failure counters.
+- `src/p1am_control_system/backend/poll_runtime.py` adds `HistorianWriter`: a
+  bounded queue drained by a dedicated task via `asyncio.to_thread`, batching
+  several scans per transaction, retrying `OperationalError` so alarm
+  transitions survive a `VACUUM` lock, and dropping only resamplable tag
+  samples under backpressure.
+- `src/p1am_control_system/backend/main.py` `ConnectionManager` serialises each
+  frame once and hands it to a bounded per-client queue drained by its own
+  task, dropping the oldest frame when a client falls behind; the control loop
+  never awaits a socket.
+- `src/p1am_control_system/backend/modbus_client.py` passes an explicit
+  `timeout` sized to the scan period instead of inheriting pymodbus's 3 s
+  default, and the failure backoff is computed from the active control period.
+
+### 2026-07-31 P1AM Historian Retention, Timezone and Data-Explorer Correctness
+
+- The periodic historian retention sweep no longer freezes the controller. It runs on a
+  worker thread instead of the asyncio event loop, so the poll loop, the websocket
+  broadcast and every HTTP endpoint — E-stop included — stay responsive while it works.
+  Disk is reclaimed in bounded `incremental_vacuum` chunks rather than a whole-file
+  `VACUUM`, so no unattended maintenance step takes an open-ended lock; a legacy
+  database is converted to `auto_vacuum=INCREMENTAL` once at startup, before the
+  controller goes live. A failed sweep is logged and retried next interval.
+- Historian timestamps are stored and returned as timezone-aware UTC. Bounds supplied
+  with an explicit offset are honoured, an offset-less bound means UTC, and every
+  timestamp on the API boundary (capture status, CSV export, trends, Data Explorer
+  signal list) carries an explicit offset. Previously the offset was discarded on both
+  write and read, so a browser re-parsed the offset-less strings as local time and an
+  "export everything" window silently started hours late on a non-UTC host.
+- The size cap is enforced as two independently-tracked budgets — one for the tag
+  historian, one for the event log — each charged against its own on-disk footprint.
+  A large event log can no longer inflate the tag historian's cost-per-row and erase
+  trend history sweep after sweep. The event log also gains age-based retention, having
+  previously had none, and every purge logs what it deleted and why.
+- The Data Explorer decides whether a historian selection fits its memory budget from
+  row counts _before_ reading any rows, rather than after materialising them, and honours
+  the per-tag `max_points` the HMI already sends by decimating server-side as it streams.
+  Peak memory is now proportional to the returned dataset rather than to the time range.
+- A dataset export with unequal-length columns is rejected up front as a 400. Previously
+  the mismatch was only detected when no index was supplied — after the response had
+  begun — so the client received a truncated CSV body behind an HTTP 200.
+
+### 2026-07-31 P1AM Control System Deployment Security Hardening
+
+The in-source authorization was already correct — every hardware-mutating route
+carried `require_admin_key`, the WebSocket was authenticated, key comparisons
+used `hmac.compare_digest`, and `cors_config.py` failed closed. Every
+exploitable defect was in the deployment or in the client's inability to
+authenticate. This change closes all of them.
+
+- **Production installs no longer disable authentication (#4007).**
+  `deploy/install-services.sh` hardcoded `Environment=P1AM_DEV_NO_AUTH=1` into
+  the systemd unit, short-circuiting `require_api_key`, `require_admin_key` and
+  `verify_operator_key`. It now generates random operator/admin credentials into
+  a root-owned `EnvironmentFile` (`/etc/p1am/backend.env`, mode 0640, preserved
+  across re-runs), refuses to write a unit without one, and gates the bypass
+  behind an explicit `--bench` flag.
+- **The HMI can authenticate (#4007).** `frontend/src/api/credentials.ts` stores
+  the key per browser profile; `apiFetch` attaches `X-API-Key`, and
+  `useTelemetryStream` sends the key as the **first WebSocket frame** rather
+  than a query parameter (which would land in proxy logs). The kiosk launcher
+  seeds it via a URL fragment the HMI strips on load. Without this the bypass
+  flag was the only way to make the shipped product work.
+- **`vite preview` binds loopback (#4007).** `frontend/vite.config.ts` set
+  `preview: { host: true }` while also proxying `/api` and the WebSocket to the
+  loopback-bound backend, so `curl -X POST http://<pi-ip>:3002/api/estop/clear`
+  reached the control API from anywhere on the plant VLAN.
+- **Nested credential tiers (#4041).** `auth_config.verify_operator_key` keyed
+  off `P1AM_API_KEY` alone, so an admin-only deployment had full hardware
+  control behind a dead display (`/api/stream` closing 1008, alarm
+  acknowledgement 503). A configured admin key is now a valid operator
+  credential; the reverse is still refused. `log_auth_configuration` reports the
+  resolved posture at boot.
+- **Read surface gated by default (#4037).** `settings.require_read_auth`
+  defaults to `True`, and `require_read_auth` (moved to `auth_config.py` so the
+  service routers can attach it without importing the app) now covers
+  `/api/routing`, `/api/alarms/active`, `/api/capture/*`, `/api/performance`,
+  `/api/alicats` and the power-supply/temperature `/config` + `/status` pairs.
+- **CSRF / cross-origin guard (#4037).** `cors_config.RequestGuardMiddleware`
+  refuses a state-changing request whose `Origin` is outside the allowlist, and
+  requires a non-simple signal (`X-Requested-With`, `X-API-Key`, or
+  `Content-Type: application/json`) so the browser is forced into a preflight.
+  Bodyless control POSTs were otherwise CORS-"simple" and executable by any page
+  the kiosk Chromium opened. `POST /api/estop` is exempt from preflight forcing
+  only, so a panic stop stays reachable from a bare shell.
+- **Append-only audit trail (#4029).** `backend/audit.py` adds an `AuditEvent`
+  table and a pure-ASGI middleware recording route, redacted payload, resolved
+  credential tier, non-reversible key fingerprint, client IP and status for every
+  mutating request — middleware so a _new_ endpoint is audited by default. The
+  table is unreachable from the client-writable `POST /api/events` and untouched
+  by `POST /api/capture/clear`, so the trail can be neither forged nor erased.
+  Rows are mirrored to journald.
+- **Route-gating regression suite (#4028).**
+  `backend/tests/test_route_authz_matrix.py` boots the real app with credentials
+  set and `P1AM_DEV_NO_AUTH` cleared, driving an explicit
+  `(method, path, tier)` table. An unclassified route fails the suite, so a new
+  endpoint cannot ship ungated. Configuration is set explicitly per test so the
+  suite cannot pass vacuously through import-order coupling (#4061).
+- **Deployment can actually work (#4014/#4030/#4036).** A `p1am` extra in
+  `pyproject.toml` is the single source of truth for the backend runtime
+  dependencies (adding the previously missing `pydantic-settings` and
+  `python-multipart`); `backend/Dockerfile` mirrors it as exact pins, with drift
+  caught by `backend/tests/test_deployment_hardening.py`. The container binds
+  `0.0.0.0` internally and is isolated at the publish layer
+  (`127.0.0.1:8000:8000`); `docker-compose.yml` uses the env-var names
+  `settings.py` reads and mounts the historian at `/data` instead of over the
+  source tree; the HMI bundle is built at install time and both units carry
+  `Nice=`/`CPUWeight=`; `requirements-lock.txt` no longer contradicts
+  `requirements.txt`'s numpy bound; and `PLCFactory` logs an unmissable banner
+  when the simulator is driving the HMI's "live" values.
+
+### 2026-07-31 P1AM Temperature Controller Split Into Focused Modules
+
+- `src/p1am_control_system/frontend/src/components/TemperatureControl.tsx` was
+  1975 lines — 475 over the repo's 1500-line source budget — so the
+  `fleet-fast-guardrails` hook rejected any commit touching it. The heater
+  screen was therefore the one operator surface that could not be corrected
+  without first being restructured. It is now the container only: it owns the
+  controller state, the rolling trend buffer and every `/api/temperature/*`
+  call, and renders prop-driven sections (the shape PR #4053 used for
+  `TuningPanel`). No behaviour changes.
+- The extracted modules are `TemperatureTrend.tsx` (the SVG trend and its own
+  view state), `TemperatureStatusHeader.tsx`, `ThermocoupleSelector.tsx`,
+  `TemperatureConfigPanel.tsx`, `HeaterStartStopButton.tsx`, and the pure
+  sample/readout math in `lib/temperatureTrend.ts`. Every file is now well
+  under the budget, and the pure helpers are testable without a component
+  import.
+- The Start/Stop command button existed as two byte-identical copies on the
+  same screen (status header and setpoint card). On a control that energizes a
+  heater, that is two buttons that could come to disagree about whether a
+  command is safe to send; there is now one component, with the header/setpoint
+  variants differing only by an appended CSS class.
+- `TemperatureControl.recallSetpointText` now delegates to the shared
+  `seedDraftText` rule in `lib/operatorDraft.ts` instead of carrying its own
+  copy of the operator-ownership decision; the duplication had been left in
+  place only because the file could not be edited. The heater's domain types
+  moved to `src/types.ts`, which removes the import cycle that had
+  `useTelemetryStream` importing `TemperatureStatus` from a component.
+
+### 2026-07-31 P1AM Operator HMI Truthfulness and Setpoint Ownership
+
+- The HMI reports telemetry liveness as a **data age**, not as a boolean. Every
+  field of the stream payload is optional, so an empty object parses cleanly;
+  liveness now requires a frame carrying at least one recognised field. The
+  header states CONNECTED, STALE DATA or OFFLINE together with how old the data
+  is, and once the age passes the stale threshold every live process readout is
+  greyed and cross-hatched. A frozen value is therefore visually distinct from a
+  steady one, which the previous CONNECTED/OFFLINE flag could not express.
+- Alarm-map resilience is per entry. A single malformed alarm object now costs
+  that one alarm instead of erasing the entire active-alarm map, and whenever an
+  entry is dropped the operator is shown a degraded-data banner stating the list
+  is incomplete. The reassuring "All normal — no active alarms" summary is
+  suppressed while data is known to be missing.
+- The active-alarm list and the event log are reconciled from the REST endpoints
+  on mount and on a periodic refresh, independent of the live stream. The event
+  log previously only loaded as a side effect of acknowledging an alarm, and the
+  alarm list had no recovery path at all once the stream dropped entries.
+- Setpoint entries are owned by the operator from the first keystroke. The
+  Alicat mass-flow entry no longer re-seeds from live telemetry (which changes
+  every scan on real hardware and overwrote the field mid-entry), and the
+  device's own setpoint is shown as a separate read-only readout with a pending
+  indicator when the two disagree. The power-supply entry seeds from the
+  supply's real setpoint instead of a hard-coded zero, and its +/- buttons stage
+  a value rather than commanding it — Apply remains the only write path, as that
+  panel's contract always stated.
+- Power-supply approaching-alarm cues are computed from the server-enforced
+  configuration rather than the local uncommitted draft, and numeric config
+  entry rejects non-finite input, so an in-progress edit can no longer switch a
+  pre-alarm indication off while the supply is climbing.
+- `.github/workflows/p1am-frontend.yml` gates the operator HMI on every pull
+  request touching it: eslint, the TypeScript build, and the vitest suite. None
+  of these were previously executed by any workflow.
+
+### 2026-07-31 P1AM Desktop HMI Alarm, E-Stop and Event-Log Behaviour
+
+- The desktop operator HMI annunciator now follows standard alarm management:
+  the ACK button's **colour** reflects whether the process condition is
+  currently present, while **flashing versus steady** reflects whether an
+  operator has acknowledged it. Acknowledging a still-active alarm silences the
+  flash but keeps the alarm visible; a value returning to its normal band drops
+  the alarm from both the active and unacknowledged sets so a long-cleared alarm
+  no longer flashes forever. Acknowledging applies only to the alarms the header
+  was displaying, so an alarm arriving between the repaint and the click is not
+  silently acknowledged.
+- High-High and Low-Low severity is taken from the deployed `hihi_limit` and
+  `lolo_limit` interlock setpoints instead of being synthesised as
+  `high_limit ± 5`, so the HMI's severity matches the trip points the firmware
+  enforces. A routing configuration whose limits are not ordered
+  `lolo <= low <= high <= hihi` is rejected at load with a critical dialog and an
+  ALARM event rather than being used.
+- The PLC connection label is derived from each telemetry frame rather than
+  hardcoded. The HMI reports "Simulating" only when the frame positively says
+  the values are simulated, so a desktop driving a live plant is never
+  mislabelled as a bench simulation.
+- Clearing the E-Stop now requires the Admin role and a modal confirmation — the
+  same gate ordinary PLC tag writes already carry — and a declined or denied
+  clear latches the button back to its tripped state.
+- Alarm events are coalesced before being written: a tag chattering on its trip
+  point produces one event with a repeat count instead of one per scan. Event
+  rows are committed in batches on a background thread over a single persistent
+  connection, the History table is requeried only while that tab is on screen,
+  and rows older than the retention window (`EVENT_LOG_RETENTION_DAYS`, default
+  90 days) are purged at startup. The operator interface stays responsive while
+  an alarm is active.
+
+### 2026-07-31 P1AM Calibration Safe Shutdown, Alarm Acknowledgement, and MFC Transport
+
+Three P1 SCADA defects on the P1AM control system (#3997, #4034, #4031).
+
+**Calibration analog outputs are driven to 0 % on every exit path (#3997).**
+`src/p1am_control_system/calibration/calibrate.py` drives the P1AM analog
+outputs to up to 100 % (20 mA) through pass-through PIDs. The firmware's
+`SignalBroker::WriteHardwareOutputs` writes the routed _tag_ every scan and
+only forces `WriteAnalogOutput(i, 0.0f)` once the CHANNEL is unmapped, so
+unmapping the PID alone froze the AO at its last commanded value. `teardown`
+now commands each pass-through PID setpoint to `0.0`, reads the AO tag back to
+CONFIRM it reached 0 % (within `AO_ZERO_TOLERANCE_PERCENT`, retried
+`AO_ZERO_CONFIRM_ATTEMPTS` times), and only then unmaps the PIDs and releases
+the output routing so the firmware's own 0 % safe path takes over. `main()`
+wraps command dispatch in `except BaseException`, so an exception, `SystemExit`
+(every `PLC` method raises it on a Modbus error), or `KeyboardInterrupt` drives
+the AOs to 0 % before `plc.close()`; the emergency path swallows its own
+failures and logs at ERROR so the original cause is never masked. A successful
+`ao` command still leaves the output energized, as the operator needs it held to
+meter the terminals.
+
+**Alarm acknowledgement reaches the alarm engine (#4034).**
+`POST /api/alarms/{tag_id}/acknowledge` previously only flipped a flag in
+`SystemState.active_alarms`; `AlarmEngine.acknowledge_alarm(tag_id, user)` had
+no production caller, so the `acknowledged_by` audit field read `None` forever
+and `SystemState.apply_config` — which runs on every routing deploy and every
+reconnect-time `_publish_active_config` — silently discarded the ack.
+`SystemState.acknowledge_alarm(tag_id, user=None)` now forwards to the engine
+and records `acknowledged_by`; `apply_config` snapshots the outgoing engine's
+active alarms and replays them into the rebuilt engine through the public
+`update_tag` / `acknowledge_alarm` / `get_alarm_state` API, which is identical
+on the Rust `tools_core.scada` engine and the `scada_fallback` implementation.
+The rebuilt engine (not the snapshot) is authoritative on the resulting state,
+so alarms for tags dropped from the new config are correctly forgotten. The
+endpoint accepts an optional `{"user": ...}` body; requests without one are
+attributed to `state.DEFAULT_ACK_USER`. `alarm_processing.build_alarm_entry` and
+`state_name` are the single source of truth for the live alarm record shape.
+
+**Mass flow controller transport comes from settings, never hardcoded (#4031).**
+`main.py` registered every `AlicatMFC` with `connection_type="mock"`, so a
+deployed rig returned `random.uniform` flow, a constant 14.7 PSIA / 23.5 °C, and
+reported setpoint success with no device IO — an operator could watch an N2
+purge "establish" with no gas flowing. New settings
+`P1AM_ALICAT_CONNECTION_TYPE` (`mock`/`serial`/`tcp`, validated) and
+`P1AM_ALICAT_PORT_OR_IP` drive the transport. `alicat_manager.AlicatManager`
+takes the active `plc_driver` and refuses to register a mock device unless the
+driver is itself simulated; `create_default_manager` builds the rig's standard
+MFC complement and, when the combination is refused or unbuildable, returns an
+**empty** manager with `registration_error` set and logs CRITICAL — gas control
+is then plainly absent rather than silently simulated, while the rest of the
+backend (E-stop, heater, power supply) still starts. `AlicatMFC.__init__`
+validates `connection_type` and requires a `port_or_ip` for physical
+transports, and `parse_ascii_response` now applies a device-reported gas
+through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
+
+### 2026-07-31 P1AM Historian DB Path Anchoring
+
+- `src/p1am_control_system/backend/database.py` resolves the SQLite historian to
+  an absolute path anchored to the backend package directory rather than the
+  process CWD. A bare relative `sqlite:///dcs_scada.db` forked the historian into
+  a separate file per launch directory, so tag history appeared to vanish
+  depending on how the backend was started, and a test run from the repo root
+  left a stray untracked DB there. `P1AM_DB_PATH` overrides the location for
+  deployments keeping the historian on separate storage; the container default is
+  unchanged because the image's package directory is `/app`.
 ### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
 
 - `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
@@ -1780,11 +4959,190 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-17 | 1.17.24 | fix(rate-of-closure): repair three `variation` modules that were unimportable on `main`. `regional_ground_study_adapter` imported `to_ground_model_result` from `shared.python.swing_sim.ground`, but #4517 had removed that re-export because the ground package's own `test_unqualified_compatibility_adapter_is_not_public` requires the unqualified compatibility adapter to stay private — it is absent from both `__all__` and the lazy-import map. #4520 then landed the consumer against the package path. Neither PR's tests imported the adapter module, so both were green while `regional_ground_study_adapter`, `regional_ground_variation`, and `regional_ground_target_projection` could not be loaded at all. The import now names the owning module, `shared.python.swing_sim.ground.result_adapter`, which legitimately exports it — keeping the package contract intact while making the unqualified dependency explicit at the call site. Adds `tests/rate_of_closure/test_variation_module_importability.py`, which imports every module in the package: a suite can be entirely green while a module in it cannot be loaded, and this catches that class — a symbol dropped from a package's `__all__`, a rename, or a new circular import. Verified to fail on all three modules with the fix reverted. |
+| 2026-08-17 | 1.17.23 | feat(rate-of-closure, #4103): land the ground-playback slice of `consolidated/rate-closure-remainder-2026-08-13` — `ground_playback`, `ground_playback_comparison`, and the three `ground_playback_workspace` modules under `src/rate_of_closure/simulation/`. This slice was blocked until `swing_sim.ground` (#4517), `swing_sim.flight` (#4518), and `rate_of_closure.club` (#4519) were on `main`; all five modules now import cleanly against them. Net-new files only: of the six files the branch also modifies, `sources.py` is the sole branch-superset (`world_from_selected_head`) and the new modules do not reference it, so every modified file stays at `main`'s version. One `no-any-return` finding from the changed-file MyPy gate is fixed where `--follow-imports=skip` degrades `GroundSimulationResult` to `Any` — `ground_result_json` now converts explicitly, the exact-type precondition above it already guaranteeing the runtime value. Verified: 2,635 tests pass across `tests/rate_of_closure` and `src/shared/python/swing_sim`, the Morris UI contract still imports with SciPy, FastAPI, and uvicorn blocked, and the changed-test assertion gate passes. |
+| 2026-08-17 | 1.17.21 | feat(rate-of-closure, #4103): land the `variation` slice of `consolidated/rate-closure-remainder-2026-08-13` — 20 new modules covering capability observation, Morris host/child adapters, regional ground variation and its control surface, scalar ensemble contract/IO/wire, and the wind-strategy plot adapter. Only net-new files are taken: for the 16 files the branch also modifies, `main` is a **superset** and the branch copies are far older (`ensemble_chunks.py` −360, `plot_definition.py` −312, `_ensemble_parser.py` −340, `confidence_ellipsoid_mesh.py` −296), so taking them would revert work already on `main` including `from_json_dict`, `read_plot_definition`, `build_dispersion_metric_variability`, and `apply_global_simulation_values`. `simulation_adapter.py` genuinely diverges (`run_simulation_ensemble_chunks` on `main` versus `_TRIAL_FAILURES` on the branch) and is likewise left at `main`'s version pending a separate reconciliation. Two `no-any-return` findings from the changed-file MyPy gate are fixed at the boundary where `--follow-imports=skip` degrades imported types to `Any`: `capability_observation_ensemble_json` now converts explicitly, and `_spin_axis` unpacks the three components rather than returning the attribute directly, which also pins the arity its annotation promises. |
+| 2026-08-17 | 1.17.19 | feat(rate-of-closure, #4103): land the `club` and `plotting` slices of `consolidated/rate-closure-remainder-2026-08-13`. Adds six club modules (assembly binding and its atomic file I/O, engineering sidecar, simulation adapter, STL export) and splits the plot catalog into `_catalog_entries`, `_catalog_scalar_entries`, `_catalog_series_entries`, and `_catalog_entry_types`. The split was verified entry-for-entry — 78 catalog identifiers before and after, none dropped — because a catalog is data and a lost entry would not appear in a public-symbol comparison. `plotting/render.py` and `plotting/spec.py` deliberately keep `main`'s versions: the source branch predates the plot point-inspector and series-selection work already on `main`, and taking its copies regressed 13 tests. Makes `rate_of_closure.club` lazily export `assembly_binding`, `engineering_sidecar`, and `simulation_adapter`, matching the `swing_sim.ground` lazy-export shape. Those three reach `shared.python.golf_club`, which transitively pulls `swing_sim.variation → solver → flight → scipy.integrate`, so eagerly importing them from `__init__` meant even `rate_of_closure.club.types` — a leaf module of frozen specs — dragged SciPy in and broke the Morris UI import contract. All 23 lazily exported names and all 45 `__all__` entries still resolve. |
+| 2026-08-17 | 1.17.18 | docs(rate-of-closure): bring `src/rate_of_closure/AGENT_HANDOFF.md` back under the `CLAUDE.md` handoff policy. The file had grown to 2,205 lines across 140 dated entries — the same append-only drift the root handoff already recorded and corrected for itself at 2,708 lines. Those entries move verbatim to `docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`, matching the existing root-log archive convention, and the live document is rewritten as 103 lines of current state: what the tool is, where the PyQt6 and React surfaces and the `swing_sim` physics packages live, why PR #4466 cannot be merged by any strategy (measured — `-X theirs` gives 47 failures and 40 errors, `-X ours` gives 19 collection errors), the four files where the source branch is *older* than `main` and would silently revert shipped work, what remains of #4466 by area, and the local-environment traps that cost real debugging time (mypy 1.13 crashing on Python 3.13 for multi-file sets, the two-tier `tools_core` capability, and PowerShell rewrites normalising `SPEC.md` to CRLF). No source or test behaviour changes. |
+| 2026-08-16 | 1.17.15 | feat(swing-sim, rate-of-closure, #4103): land the `swing_sim.flight` slice of `consolidated/rate-closure-remainder-2026-08-13` with its React counterpart, so the Python and TypeScript sides of the ball-flight contract move together. Adds 21 `swing_sim/flight/**` modules (capability observation/evaluator, ground transfer and bounce execution, regional ground pipeline, surface simulation, spin-axis convention, cancellation) plus `spinAxisConvention.ts`, `capabilityFlightEvaluator.ts`, and the `capability_flight_evaluator_parity_v1` fixture. Unifies the spin-axis tilt convention on fade/right-positive: `spin_axis_tilt` becomes `positive_right` with `atan2(-omega_y,omega_z)` in both `result_catalog_data.py` and `ballFlightMetricContract.ts`, `deliveryDiagnostics` now reuses the shared `spinAxisTiltDeg` helper instead of an inlined formula, and `ball_flight_metrics_golden_v1.json` is regenerated for the new sign. Repairs a ground-crossing defect in `web/src/model/flight.ts`: the interpolation guard tested only the next point's height, so a descending launch — which starts at height 0 and is skipped on the first step by `t > dt` — interpolated from an already-below-ground point, producing a negative fraction and a trajectory time before zero. The metric contract then rejected it, surfacing a descending launch as a `RangeError` instead of the nonconverged result it is. The guard now also requires the previous point to be above ground. `tests/test_wind.py` deliberately keeps `main`'s 1e-9 parity tolerance; the source branch still carries the 1e-12 value that fails on Linux (see #4513). Verified: 1,163 `swing_sim` tests and 1,095 React tests pass, `tsc --noEmit` and `eslint` are clean. |
+| 2026-08-16 | 1.17.14 | fix(ci, tests): enforce the two-tier Python floor instead of letting the 3.10 lane run code that requires 3.11. The root distribution declares `requires-python = ">=3.11"` while ten sub-packages and Rust crates declare `>=3.10` and ship 3.10 wheels, so the 3.10 matrix lane is intentional — but it was running the whole suite, including root-package code. That produced failures that looked like defects and were not: a bare `tomllib` import aborting collection, and an `asyncio.wait_for` timeout in the p1am e-stop shutdown test whose cancellation semantics changed in 3.11. `conftest.py` now reads each package's own `requires-python` (regex-parsed, since `tomllib` is unavailable on the interpreter the guard must run on) and skips collection of anything above the running interpreter; it is a strict no-op on 3.11+, verified by identical collection counts. `CLAUDE.md` previously advertised a flat “Python 3.10+” that the root distribution rejects and now states the real two-tier contract. New `tests/test_python_version_contract.py` locks `requires-python`, the mypy target, the classifiers, the CI matrix, and `CLAUDE.md` together so the declarations cannot drift apart silently again. The `ci-standard` matrix drops to `["3.11", "3.12"]`: that job runs the root-package suite (`core_tests` is entirely `tests/**` and `src/shared/python/**`), so a 3.10 lane there collected nothing once the floor guard was correct. The ten sub-packages declaring >=3.10 are gated on 3.10 by their own maturin build + parity workflows, which is verified by a new contract test. |
+| 2026-08-16 | 1.17.13 | feat(swing-sim, #4103): land the `swing_sim.ground` skid/roll/bounce module as a self-contained slice of `consolidated/rate-closure-remainder-2026-08-13` against current `main`, rather than merging that branch wholesale. Adds 92 `swing_sim/ground/**` files, `swing_sim/canonical_numeric_json.py`, and the 10 shared Python/TypeScript ground golden fixtures under `src/rate_of_closure/web/src/model/__fixtures__/`. Ground's three other dependencies (`flight/result_metrics`, `solver/spatial_targets`, `solver/target_serialization`) were already byte-identical on `main`, so the module needed no other source changes. Repairs six tests that fail on the source branch itself: four `test_skid_roll_passivity` cases never passed `SurfaceRun`'s `active_surface` argument (added with regional-surface support) and raised `TypeError` before asserting any passivity property; `test_bounce_cancellation_is_typed_and_retains_request_identity` hardcoded a termination time and elapsed span that violate `RepeatedBounceResult`'s chronology invariants; and `ground/__init__.py` eagerly imported `to_ground_model_result`, leaking the explicitly unqualified compatibility adapter into the package namespace despite its exclusion from both `__all__` and the lazy-import map. 321 ground tests pass. |
+| 2026-08-16 | 1.17.12 | fix(p1am, ci): stop `test_deployment_hardening.py` aborting the whole Python 3.10 test session. The module imported `tomllib`, which is stdlib only from 3.11, so on the `tests (3.10)` matrix lane it raised at collection time and interrupted the entire run — 1,218 tests collected, 1 error, zero executed — turning `CI Standard` red on `main` and blocking every open PR. A `tomli` fallback is not viable (declared only in the uninstalled `dev` extra, absent from requirements.txt and requirements-lock.txt), so the module now uses `pytest.importorskip("tomllib")` and skips on interpreters below the `requires-python = ">=3.11"` floor the project already declares. All 31 tests still run and pass on 3.11+. |
+| 2026-08-16 | 1.17.11 | docs(agent-handoff, Repository_Management#1390): restore the root and `src/pendulum_simulator` handoff docs to current-state accuracy and to the 150-line policy in `CLAUDE.md`. The root doc had accumulated 137 dated entries across 2,708 lines — 18x the limit — while still describing PR #4119 as open with auto-merge armed and #4124/#4129 as open drafts, when #4119 closed unmerged and both others merged; epics #4142 and #4433 were absent entirely. Every dated entry is preserved verbatim in the new `docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md` rather than deleted, and the live doc now records the seven active epics, the four open consolidations as the real queue, the 39 `codex/4142-*`/`codex/4433-*` drafts superseded by merged #4473, and the four pre-existing `ruff format` failures on main. The pendulum doc had described issue #4406 as active on `research/shoulder-velocity-drift-transfer` when it closed via consolidation #4450; it now records the shipped drift-transfer scope, keeps the fail-closed triple/golfer tier boundary as an explicit do-not, and cross-references the UpstreamDrift #8684 qualification state including the 0-of-384 finite-ground screen. |
+| 2026-08-15 | 1.17.09 | fix(rate-of-closure, ci, #4142 #4433): reconcile the clean consolidation with current main, preserve both SPEC histories, responsibility-split the oversized torque-profile panel below 400 lines, and remove the standard-library manifest gate's broken setup-python dependency without changing scientific or schema authority. |
+| 2026-08-14 | 1.17.08 | fix(rate-of-closure, #4142 #4433): align the clean consolidation with the exact protected Python 3.12/MyPy 1.13 command over 368 changed production files through behavior-neutral explicit typing boundaries. |
+| 2026-08-14 | 1.17.07 | release(rate-of-closure, #4142 #4433): consolidate the approved Rate/swing/golf campaign directly onto current main without inherited non-Rate formatting or scratch-worktree gitlinks; reconcile visual package-data tests and hosted typing while retaining scientific behavior and explicit evidence gaps. |
+| 2026-08-14 | 1.17.06 | fix(rate-of-closure, #4433): add the explicit decoded-RGB NumPy return cast required by hosted MyPy 1.13 without changing runtime visual comparison behavior. |
+| 2026-08-14 | 1.17.05 | test(rate-of-closure, #4433): package 18 reviewed exact-head initial-state references and enforce commit-bound, digest-bound, bounded-pixel visual drift in PR and trusted-main evidence lanes, with protected merge as approval. |
+| 2026-08-14 | 1.17.04 | test(rate-of-closure, #4433): apply the declared dark/reduced-motion media before React baseline navigation and require Explorer playback paused for deterministic candidate capture. |
+| 2026-08-14 | 1.17.03 | fix(rate-of-closure, #4433): replace the platform-specific PyQt Variation registered-control count with the observed 160–161 envelope while preserving per-control accessible-name enforcement and evidence. |
+| 2026-08-14 | 1.17.02 | test(rate-of-closure, #4433): generate exact hosted React/PyQt initial-state visual-baseline candidates with deterministic environments and SHA-256 manifests while retaining explicit pre-approval status. |
+| 2026-08-14 | 1.17.01 | feat(rate-of-closure, #4433): add exact all-tab automated accessibility evidence, strict React axe and PyQt semantic-control gates, corrected action contrast and control names, plus a controlled but not-yet-executed human AT qualification protocol. |
 | 2026-08-14 | 1.5.8 | fix(p1am-firmware, #3999, #4002): recover the Modbus comms watchdog, bumpless-setpoint/integral-reset handling and the measured-`dt` scan integration that were stranded on an unmerged branch, and repair plus CI-gate the host-side firmware test harness. Deliberately excludes the `SafetyInterlock` trip-tier change from the same commit; does not close #4001 or #4032. |
+| 2026-08-13 | 1.5.7 | fix(p1am, #3995-#4042): consolidated P1AM SCADA production-readiness remediation — E-stop and shutdown de-energize the heater relay, power-supply thermocouple scaling makes the HH trip reachable, missing/non-finite feedback latches SENSOR_FAULT, the poll loop separates trusted from display data, the historian retention sweep leaves the event loop, PID/MPC recommendations stop reporting untrustworthy tunings, HMI reports data age instead of a boolean, and the deployment is credential-gated. Supersedes PRs #4045, #4053, #4057, #4058, #4059, #4060, #4062, #4064, #4066, #4067, #4068. |
 | 2026-08-13 | 1.5.6 | fix(ci): drop the no-op `pick-runner` job from Convert Review Comments to Issues (it echoed only constants and fed nothing, while occupying a `d-sorg-fleet` slot per trigger) and narrow its `pull_request` trigger to `opened`, since `synchronize` and `closed` cannot surface new review comments; ignore `.codex-worktrees/` so agent scratch worktrees stop landing as gitlinks. |
 | 2026-08-13 | 1.5.6 | fix(pdf-renamer): close every `ResultCache` SQLite connection with `contextlib.closing` (the bare `sqlite3.connect` context manager commits the transaction but leaks the handle); make the sub-app's test package importable from its own conftest and repair two extractor tests whose patch targets invented unused attributes instead of intercepting the function-local `pypdf`/`fitz` imports. |
+| 2026-08-13 | 1.16.88 | feat(rate-of-closure, #4433): add bounded generation-bound Putting sample inspection, synchronized exact path/speed selection, atomic retained-result context, and diagnostic React/PyQt evidence. |
+| 2026-08-13 | 1.16.86 | fix(ci, #4441): classify only the PyQt Variation lifecycle subprocess probe as assertion-free support while preserving rejection of adjacent assertion-light tests. |
+| 2026-08-13 | 1.16.76 | fix(rate-of-closure, #4433): require a 180-pixel narrow visual height with sliver rejection and mirror every PyQt rendered authority into the trusted main trigger while retaining Chromium-only trust. |
+| 2026-08-13 | 1.16.77 | fix(rate-of-closure, #4433): eliminate narrow command-strip document overflow and narrowly exempt the rendered PyQt subprocess probe from the changed-test assertion gate. |
+| 2026-08-13 | 1.16.78 | fix(rate-of-closure, #4433): close the shared GUI extra over registered analytics, flight, and simulation tabs' bounded pandas/SciPy/SymPy runtimes. |
+| 2026-08-13 | 1.16.79 | feat(rate-of-closure, #4433): add bounded identity-safe linked-scatter interaction, strict flat import/projection parity, and presentation-only retained-row selection in React and PyQt. |
+| 2026-08-13 | 1.16.80 | fix(rate-of-closure, #4433): make the PyQt selected-state diagnostic use an exact tab-type boundary and direct preview access without changing the runtime contract. |
+| 2026-08-13 | 1.16.81 | fix(rate-of-closure, #4433): bound extreme plotting projection, strict retained-data resources, and generation-safe atomic dataset replacement across React and PyQt. |
+| 2026-08-13 | 1.16.85 | fix(rate-of-closure, #4441): bind every PyQt Variation callback to its exact worker, generation, and captured execution identity; report honest hosted viewport geometry. |
+| 2026-08-13 | 1.16.84 | feat(rate-of-closure, #4433): retain only complete identity-bound Variation visuals across production loading/failure with atomic publication and diagnostic state evidence. |
+| 2026-08-13 | 1.16.83 | fix(rate-of-closure, #4433): reject malformed Unicode surrogate text before shared field-byte accounting while accepting normalized supplementary scalars. |
+| 2026-08-13 | 1.16.82 | fix(rate-of-closure, #4433): define shared UTF-8 field limits and direct row, union-column, and dense-cell cap evidence without process-global parser mutation. |
+| 2026-08-13 | 1.16.75 | fix(rate-of-closure, #4433): make the visualization manifest deeply immutable and enforce exact surface/control authority, shared safe-integer pixels, and nonsemantic visual-led classifications with adversarial cross-runtime coverage. |
+| 2026-08-13 | 1.16.74 | feat(rate-of-closure, #4433): add the strict 18-tab React/PyQt visibility manifest, content-leaf geometry audits, responsive visual-first layouts, per-tab DPI diagnostics, and explicit diagnostic-only evidence limits. |
+| 2026-08-13 | 1.16.73 | fix(ci, #4422): install the repository-declared `.[gui,dev]` pytest plugin authority in the ephemeral PyQt lane, retaining bounded SciPy and pinned pytest-benchmark, so all `pyproject.toml` configuration keys are recognized before collection. |
+| 2026-08-13 | 1.16.72 | fix(ci, #4422): install pinned pytest-benchmark for the repository-owned `--benchmark-disable` PyQt gate and exempt only the subprocess render-probe entrypoint from changed-test assertions, with exact regressions preserving rejection of adjacent assertion-light tests. |
+| 2026-08-13 | 1.16.71 | fix(ci, #4142 R14.5): bind the trusted fleet lane's Chromium-only install to explicit Chromium desktop/narrow projects and expand the ephemeral PR gate's path ownership across every imported club/model, plotting, simulation, variation, PyQt6, shared dispersion, dependency, harness, and workflow authority it exercises. |
+| 2026-08-13 | 1.16.70 | test(rate-of-closure, #4142 R14.5): add production Firefox/WebKit parity for localized variation, confidence-mesh gating, semantic keyboard camera/reset, and no-overlap checks; add deterministic PyQt6 rendered interaction artifacts/manifests at 100%/150% DPI; keep untrusted execution on ephemeral hosted runners and distinguish diagnostic screenshots from golden authority. |
+| 2026-08-13 | 1.16.69 | merge(rate-of-closure, #4142): normally integrate approved localized-execution head `84498e2dd42e86adcfc9507eb1d4542b04bd8f78` first and published confidence-mesh/policy head `0b38346ce3b56aeee620c6304ab0a27041bc4940` second; retain both implementation histories and combine readable localized source labels with bounded optional ellipsoid surfaces in the sole overlapping production component. |
+| 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142): bind persisted and Worker swing inputs to one plan/sample authority; validate every passive localized run-config field; enforce the exact canonical RK4 state/torque grid and duration; and recompute setup-derived ball position, passive torque summaries, and deterministic impact geometry to reject six adversarial tamper bypasses. |
+| 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142): preflight localized windows against canonical rounded RK4 duration; bind and deeply validate Worker trial inputs/results/provenance; add strict finite schema-v2 ensemble JSON parsing/writing and formula-neutral CSV; narrow production Worker claims to the currently transported passive mode. |
+| 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142): execute authored localized shoulder/wrist torque factors additively through the TypeScript-reference RK4 double pendulum; retain typed outcomes and plan/provenance authority in accessible results and schema-v2 JSON/CSV exports; pin passive/prescribed boundary behavior to a Python-owned golden and production-Worker cancel/rerun/export coverage. |
+| 2026-08-13 | 1.16.68 | merge(rate-of-closure, #4142): normally integrate approved confidence-mesh head `45800feed2954d221e6a829f0430f87d9817d582` first and published assertion-policy head `e0be5a725fe051d4bf9b44f1fcd672f1d11348a0` second, preserving both implementation histories and exact policy boundaries. |
+| 2026-08-13 | 1.16.67 | fix(rate-of-closure, #4142 R12.1): stream bounded React camera extrema at 500-by-1,501 scale and close public Python mesh-constructor cap, integer, shape, index, and immutable-array bypasses. |
+| 2026-08-13 | 1.16.66 | fix(rate-of-closure, #4142 R12.1): enforce genuine integer and named hard mesh budgets before allocation; reject transformed TypeScript overflow; use a non-symmetric cross-toolkit frame golden; and verify captured PyQt/React projection and mesh-aware camera bounds. |
+| 2026-08-13 | 1.16.65 | feat(rate-of-closure, #4142 R12.1): render bounded full-rank Gaussian position-content ellipsoid surfaces with PyQt6/React parity; preserve exact frame, SI axes, deterministic temporal decimation, accessible distinct legends, and default-off controls; persist visibility in strict plot-definition v3 with exact v1/v2 migration. |
+| 2026-08-13 | 1.16.65 | fix(ci, #4142 #4415): classify the variation plot-definition constructor module as exact-path test support and prove the exemption cannot admit an adjacent assertion-light real test. |
+| 2026-08-13 | 1.16.64 | merge(rate-of-closure, #4142): normally integrate approved dispersion head `71634bf7393c8343a53f9acaa9f4db76cb4ac8db` first and published localized-locus/browser head `393f80e8e6b7ebcc7207136aa8a7aa47899a6eda` second; retain both histories and implementations while aligning two stale split-test accessibility labels with the metric-generic contract. |
+| 2026-08-13 | 1.16.63 | fix(rate-of-closure, #4142 R12.1/R12.2): normalize only the authentic legacy application frame on v1 non-geometric definitions; preserve arbitrary-frame rejection; emit JSON-list variable keys from Python dictionaries; type PyQt dispersion kwargs for hosted Mypy 1.13; and split changed production/tests below 400 lines. |
 | 2026-08-12 | 1.5.6 | feat(pendulum, #4406): add a model-neutral transfer-signal contract with exact drift/control grip-force closure, phase-window work/braking/impulse metrics, mixed-objective Pareto ranking, a qualified double-pendulum adapter, and a PyQt Drift Transfer tab that visualizes power and speed while failing closed for unqualified model tiers. |
+| 2026-08-12 | 1.16.62 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce a complete plot-type applicability/null matrix, exact application frame for current geometry, control-free stable identifiers, JSON-native Python constructor numerics, strict wire numerics, and non-geometric exporter/migration parity. |
+| 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142 R12.1/R12.2): enforce complete Python/TypeScript plot-definition constructor and writer invariants; reject nonfinite, Boolean, unbounded, unstable, invalid outcome/source, or inapplicable state before NaN-safe serialization; and correct React copy to distinguish persisted selection criteria from computed adequacy and ranked-interval results. |
+| 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142 R12.1/R12.2): scope quiet-interval ranks to the selected point; replace approximate React chi-square tails with regularized-gamma bracketed inversion pinned to SciPy across the declared domain; add strict exact v2 readers and explicit v1 RMS/m migration defaults in Python and TypeScript; and associate accessible PyQt labels with every new dispersion control while preserving open mesh, E2E, publication, and epic gates. |
+| 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142 R12.1/R12.2): add parity PyQt6/React selectors for RMS radius, largest principal sigma, and Gaussian confidence-ellipsoid volume; preserve SI authority and readable mm/mm³ display units in plot-definition v2; expose adequacy, unavailable counts, and dense-ranked quiet intervals; and pin strict React grid/domain behavior to a Python-authority golden fixture without claiming a rendered ellipsoid mesh or cross-browser E2E. |
+| 2026-08-12 | 1.16.63 | fix(rate-of-closure, #4142 #4414): narrow the nullable localized-locus variable key before stable joint lookup and remove a redundant Boolean cast so the exact 15-file PR source delta passes hosted-equivalent MyPy 1.13 without changing runtime behavior. |
+| 2026-08-12 | 1.16.62 | merge(rate-of-closure, #4142): preserve exact localized-locus UI head `05d9d9bba22940b738d1d3d447ca5ab95642511d` as first parent and published browser head `8bcd055f5711c122ec5332b8da8c41d6a974dfcb` as second parent; retain both implementations and histories while keeping protected publication and incomplete R14.5/localized surfaces open. |
+| 2026-08-12 | 1.16.61 | fix(rate-of-closure, #4142): reject coercive and control-bearing plan identity wires symmetrically in Python/React; require actual unique stable-ID arrays; and split PyQt lifecycle, registry policy, and GUI/React tests so every cumulative changed Python/TS/TSX source or test satisfies the 400-line policy. |
+| 2026-08-12 | 1.16.60 | fix(rate-of-closure, #4142): extract focused PyQt locus/row editor helpers to satisfy the 500-line changed-module gate; retain exact imported start/end authority independently; and make React v2 variation-plan numeric decoding strict and noncoercive across discriminators, parameters, loci, execution controls, base values, and correlation entries. |
+| 2026-08-12 | 1.16.59 | feat(rate-of-closure, #4142): add exact PyQt/React localized shoulder/wrist torque locus authoring with half-open time controls, constrained topological joint IDs, atomic validation, lossless grouped-plan persistence, and a shared cross-surface fixture; keep React dynamics execution and remaining presentation/export work fail-closed and open. |
+| 2026-08-12 | 1.16.58 | fix(rate-of-closure, #4142): close the cumulative 16-source static gate with explicit NumPy CSV array annotations and removal of redundant pipeline/source-config casts; restore the missing 1.16.55-1.16.58 append-only history while preserving runtime and wire behavior. |
+| 2026-08-12 | 1.16.57 | fix(rate-of-closure, #4142): validate source run configurations before exact-`None` fallback; reject prescribed mode/profile, locks, and localized offsets on manual/triple sources; require a genuine non-Boolean integer outer variation-dataset schema discriminator; remove manual dispatch from the self-hosted Playwright workflow; observe strict intermediate production-Worker progress; and prove cancellation terminates the old Worker before deterministic reruns accept results. |
+| 2026-08-12 | 1.16.56 | fix(rate-of-closure, #4142): reject localized torque offsets on unsupported manual/triple sources; validate run-config offset collections before tuple conversion; require genuine non-Boolean integer variation-plan schema versions; split the ephemeral PR Playwright gate from the trusted main workflow; and pin all external actions to immutable SHAs. |
+| 2026-08-12 | 1.16.55 | fix(rate-of-closure, #4142): fail closed on malformed localized numeric/collection domains; make the fixed-step effective RK4 duration authoritative for windows; hide or atomically reject localized PyQt factors until locus authoring exists; and isolate pull-request browser execution on ephemeral hosted runners while retaining the locked production gate. |
+| 2026-08-12 | 1.16.54 | feat(rate-of-closure, #4142): execute additive shoulder/wrist commanded-torque offsets over strict half-open one-point loci at every Python RK4 stage; bind deterministic variation samples to exact topological joint IDs; fail closed on unsupported source, locus, duration, and Rust contracts; preserve typed no-impact and distinct spatial provenance while keeping UI, persistence, protected release, and epic completion open. |
+| 2026-08-12 | 1.16.53 | feat(rate-of-closure, #4142 R11.5): add immutable resource-bounded ensemble stream headers/result chunks and an injected commit/abort sink lifecycle; project and release one chunk of complete runs at a time; retain the existing materialized API through a compatibility collector; and keep durable streaming/archive/memory claims explicitly open. |
+| 2026-08-12 | 1.16.52 | fix(rate-of-closure, #4142): satisfy the exact protected Python 3.12 / NumPy 2.3.5 / Mypy 1.13 typing boundary with explicit array annotations/casts and built-in-float `finfo` normalization; retain unchanged numerical and wire behavior. |
+| 2026-08-12 | 1.16.51 | fix(rate-of-closure, #4142 R11.4): require complete trial output scalars to be finite real non-booleans; normalize accepted NumPy real scalars to built-in floats; and prove typed-object writer/reader domain closure with five TDD cases and 39 focused persistence tests. |
+| 2026-08-12 | 1.16.50 | fix(rate-of-closure, #4142): add the explicit Python `float` boundary required by CI-pinned Mypy 1.13 for the NumPy epsilon dispersion tolerance; record the exact integrated 1,200 Python/PyQt/shared and 743 React local gates while keeping protected publication and incomplete epic surfaces open. |
+| 2026-08-12 | 1.16.49 | fix(rate-of-closure, #4142 R11.4): centralize symmetric typed/reader/writer ensemble limits and authority binding; preflight sample/tensor axes before NumPy allocation; require strict finite size-bounded file output; normalize decoder resource errors; and clarify that outer v1 rejection is a future-migration policy, not a completed migration. |
+| 2026-08-12 | 1.16.48 | fix(rate-of-closure, #4142 R12.1/R12.2): fail closed on materially negative, unordered, nonfinite, nonorthonormal, or covariance-inconsistent eigensystems; retain roundoff-scale zero-rank directions; use cancellation-safe chi-square inversion over the explicit `[1e-12, 1)` domain; normalize strict real criteria; and correct unique-test evidence. |
+| 2026-08-12 | 1.16.47 | fix(rate-of-closure, #4142 R14.3): fail closed across React worker result/error/decoding/clone boundaries with single-settlement cleanup, exact progress sequencing, request-bound result validation, late-event safety, and direct injected-Worker transport tests while retaining browser/Playwright as an open R14.5 gate. |
+| 2026-08-12 | 1.16.46 | feat(rate-of-closure, #4142 R14.3): execute React Monte Carlo and OAT studies in a bounded worker with completed-evaluation progress, cooperative AbortSignal cancellation, immediate rerun, stale-generation suppression, unmount safety, and unchanged deterministic plan/result semantics. |
+| 2026-08-12 | 1.16.45 | feat(rate-of-closure, #4142 R12.1/R12.2): add immutable plot-ready confidence-scaled 3D Gaussian position-content ellipsoids with exact chi-square scaling, explicit full-rank/sample adequacy, selectable RMS/principal-sigma/ellipsoid-volume quiet metrics, and deterministic dimensionless interval scoring with stable dense ties; retain UI/parity serialization as open work. |
+| 2026-08-12 | 1.16.44 | feat(rate-of-closure, #4142 R11.4): introduce a strict bounded current-v1 reader for complete Rate ensemble JSON; retain plan/spec/group/trial/point provenance, typed hit/no-impact/failure availability and trace validity; reject duplicate, corrupt, truncated, noncanonical, crossed, and resource-excess documents; make all `VariationDataset` arrays owned and read-only. |
+| 2026-08-12 | 1.16.43 | fix(rate-of-closure, #4142): make the Morris observation value-array types explicit for the protected Mypy 1.13 delta gate without changing runtime or wire contracts. |
+| 2026-08-12 | 1.16.42 | fix(rate-of-closure, #4142): retain PyQt numeric authority per field; bind raw Morris observations to exact recomputed aggregate reports outside the registry mutex; enforce symmetric pre-materialization archive limits; and preserve unavailable OAT dominance/normalization across Python and React. |
+| 2026-08-12 | 1.16.41 | fix(rate-of-closure, #4142 R13.1): make Python/React OAT and Spearman attribution pairwise finite with explicit minimum counts and constant-column unavailability, pinned by one shared missing-data fixture. |
+| 2026-08-12 | 1.16.40 | fix(rate-of-closure, #4142 R10.4/R11.4): make PyQt plan-v2 load/build/save lossless for stable spec IDs, localized loci, unedited numeric authority, and dependence groups; preflight all editor representability before atomic mutation. |
+| 2026-08-12 | 1.16.39 | fix(rate-of-closure, #4142 R11): enforce Morris archive sample/output-cell limits before parser allocation and require scientifically complete impact/shot availability for every evaluated hit at the archive-construction invariant. |
+| 2026-08-12 | 1.16.38 | feat(rate-of-closure, #4142 R11): add the separate strict Morris scalar-observation archive foundation with stable sample/design identities, physical factor values and units, typed outcomes, nullable scalar outputs, bounded failure diagnostics, immutable parsed arrays, and weighted ephemeral registry retention without changing the aggregate report wire contract. |
+| 2026-08-12 | 1.16.37 | merge(rate-of-closure, #4142 R13.8): combine exact independently reviewed Python/PyQt Morris workspace commit `8968f6f3544203029fea8e07659ab494eb050c67` and React parity commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`; preserve one byte-identical fixture and exact limits, Unicode semantics, immutable evidence binding, atomic imports, archived-ID isolation, accessible pre-read browser defenses, fail-closed invalid draft execution, report caps, and formula-neutral aggregate CSV. Protected CI, dependency-ordered publication, raw-observation retention, UpstreamDrift consumption, and epic completion remain open. |
+| 2026-08-12 | 1.16.36 | fix(rate-of-closure, #4142 R13.8): align React workspace import with the canonical Python/PyQt edge profile: 2 MB bytes, depth/node and raw-text caps, C0/C1 rejection, decimal/exponent-only finite bounds within +/-1e9, trajectories 2..5000, signed-32-bit seed, exact synthesized invalid-row errors, and null error for valid disabled ground tee; recursively freeze imported setup/evidence; reject oversized browser files before FileReader and use a keyboard-focusable focus-visible import button. |
+| 2026-08-12 | 1.16.35 | feat(rate-of-closure, #4142 R13.8): add the dedicated lossless Morris workspace v1 contract and React import/export surface; preserve all canonical factor drafts including disabled invalid raw text, exact authority base and design controls, and only completed aggregate request/job evidence; enforce bounded duplicate-safe exact parsing and cross-layer identity checks before atomic install; label imports archived and unverified-live with inert IDs; export deterministic aggregate CSV with complete provenance and typed denominators; pin Python/React parity to one shared fixture. UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
+| 2026-08-12 | 1.16.34 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee` through an ordinary merge. Preserve both independently reviewed workflows while inheriting the PyQt test-format repair and internal immutable UI-constant extraction that restores its 500-line changed-file gate. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
+| 2026-08-12 | 1.16.33 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `398415ef6bd4109978c68ee2fd4fc1c5fe034e50` through an ordinary merge. Preserve both independently reviewed implementations; the parent delta is limited to canonical Ruff formatting for one test and its handoff evidence. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
+| 2026-08-12 | 1.16.32 | merge(rate-of-closure, #4142 R13.7): integrate the independently reviewed React Morris workflow above the reviewed standalone PyQt child; preserve both exact implementations and reconcile all four handoff documents. React now owns same-origin authority injection, base-centered canonical factor suggestions, fail-closed canonical club/pinned scenario context, bounded single-operation create/status/cancel with immutable request/job identity, terminal cancellation polling, base/unmount abort, and factor/design stale-evidence invalidation. Retain Morris persistence/export, UpstreamDrift replacement, protected parent-first CI/merge, and epic completion as open gates. |
+| 2026-08-12 | 1.16.31 | feat(rate-of-closure, #4142 R13.7): add the standalone PyQt Morris Screening workflow as an explicit sibling of unchanged Monte Carlo dispersion; own the authenticated private authority for exactly the Qt event loop; inject the repr-hidden strict loopback client through launcher/window/workspace seams; provide capability gating, canonical editable factors, bounded design controls, sequential off-thread polling and cancellation, stale-generation suppression, target-local ranked mu-star with uncertainty and complete typed miss/failure denominators, accessible honest unavailable/error states, and fail-closed exact base-config compatibility without a local physics fallback. Retain React presentation, workspace persistence/export, UpstreamDrift consumption, protected CI, dependency-order release, and epic completion as open gates. |
+| 2026-08-12 | 1.16.30 | feat(rate-of-closure, #4142 R13.6): add the UI-neutral Morris application seam shared conceptually across Python and TypeScript: canonical tee-aware factor order and registry-derived bounded drafts, full represented-`SimulationConfig` round-trip with fail-closed pinned semantics, exact request serialization including authority base-physics/vocabulary and named sample/observation resource parity, strict frozen capability/job/report consumers, same-origin/direct-loopback authenticated clients with 16 MiB success and 8 KiB error bounds, exact scientific metric and denominator validation, target-scoped stable `mu*` presentation, and one cross-runtime fixture pinned and verified against Python. Retain widgets, hooks/polling, launchers/host routes, exports, persistence, local physics fallback, UpstreamDrift consumption, and epic completion as open gates. |
+| 2026-08-12 | 1.16.29 | feat(rate-of-closure, #4142 R13.5): add a bounded private Morris authority host for the standalone React development launcher: exclusive ephemeral IPv4 loopback child socket, exact authenticated capability readiness, redacted bearer, no-store/nosniff no-CORS FastAPI host including sanitized authenticated errors, explicit pre-lifespan-to-ASGI exact-once registry ownership transfer, BaseException-safe startup cleanup and pipe closure that preserve the primary error through secondary cleanup failures, graceful authenticated shutdown with bounded reap fallback, and a strict server-only Vite proxy at the canonical `/api/rate-of-closure/v1` prefix. Declare the optional FastAPI/Uvicorn/SciPy host dependencies and retain UI polling/presentation, export, persistence, static or deployed authority hosting, UpstreamDrift consumption, and epic completion as open gates. |
+| 2026-08-12 | 1.16.28 | feat(rate-of-closure, #4142 R13.5): add exact primitive-only Morris request/job v1 contracts, deterministic execution into unchanged report v1, a dependency-injected mountable FastAPI router with strict bounded raw JSON and lock-linearized ephemeral jobs, and a strict TypeScript parser plus injected transport. Retain presentation, export, persistence, host registration, UpstreamDrift consumption, and a genuine fixed-ball double-pendulum hit as open gates. |
+| 2026-08-12 | 1.16.27 | feat(rate-of-closure, #4142 R13.3): add the bounded Rate fixed-ball Morris evaluator for ten exact global simulation variables and the current 17-scalar output contract; extract shared trial capture/projection so ensemble and Morris execution retain identical hit/miss/numerical-failure availability, apply samples through one public immutable config seam, reject fixed-contact timing no-ops/localized or invalid factors, and validate a genuine double-pendulum miss while retaining double-pendulum fixed-hit validation, UI/export, per-sample failure diagnostics, and UpstreamDrift consumption as open gates. |
+| 2026-08-12 | 1.16.26 | feat(rate-of-closure, #4142 R13.3): add a bounded UI-neutral Morris execution adapter with immutable physical sample identity, injected typed evaluators that explicitly normalize their own domain failures, exact per-output availability, deterministic serial/parallel tensors and completed-prefix progress every eight samples plus final, cooperative no-partial-result cancellation, and named worker/sample/observation-cell resource limits; retain Rate, UI, export, and `evaluate_run` integration as later scope. |
+| 2026-08-12 | 1.16.25 | fix(rate-of-closure, #4142 R13.4): mirror the Morris producer's serialized clamp exactly by requiring `sigma` and `mu*` standard error to be either zero or strictly above `64*epsilon*max(1,mu*)`; apply clamp uncertainty only to zero-valued squared terms, use scale-normalized identity arithmetic with ordinary floating tolerance for nonzero metrics, reject finite magnitudes that cannot be squared safely, and move cohesive metric validation to a dedicated bounded module. |
+| 2026-08-12 | 1.16.24 | fix(rate-of-closure, #4142 R13.4): replace the Morris squared-identity unit-floor tolerance with the Python producer's exact metric clamp `64*epsilon*max(1, mu*)`, propagate that delta through every squared statistic and `n/(n-1)` term, and add a clamp-scale degeneracy check so an impossible `sigma=1e-8` is rejected when `mu*=abs(mu)` and standard error is zero while serializer-scale perturbations near `1e-14` remain accepted; pin valid identities at `n=4`, `n=12`, and metric scale `10^6`. |
+| 2026-08-12 | 1.16.23 | fix(rate-of-closure, #4142 R13.4): harden the strict Morris report consumer to accept only plain/null-prototype records, reject C0/C1 controls and composite-identity ambiguity, require complete unique source-target matrices with stable provenance, and verify `mu`, `mu*`, `mu*` standard error, and `sigma` are jointly possible for the declared valid-pair count using the sample-moment identity and a bounded scale-aware tolerance of 256 IEEE-754 epsilons; require zero `mu*` to mean an exact all-zero `constant-output` estimate and enforce zero-sigma implications without weakening explicit null unavailable states. |
+| 2026-08-12 | 1.16.22 | feat(rate-of-closure, #4142 R13.4): add the strict UI-neutral TypeScript consumer for the Morris global-sensitivity report, give the cross-runtime wire contract the stable `swing-sim/morris-global-sensitivity-report` identity independent of its method vocabulary, and fail closed on unknown/malformed/non-finite payloads, grid/sample provenance errors, invalid units/frames/loci/bounds, unavailable-estimate encoding, typed availability/adequacy states, and denominator inconsistencies; retain UI/export/execution and UpstreamDrift integration as follow-up scope. |
+| 2026-08-12 | 1.16.21 | feat(swing-sim, #4142 R13.2-R13.4): add deterministic validated Morris elementary-effects design/analysis contracts with registered units and finite bounds, source-locus and downstream target attribution, canonical typed hit/no-impact/failure handling, per-output availability, total typed-miss plus unavailable-miss denominators, sample-adequacy and unavailable states, uncertainty/interaction caveats, exact design provenance, JSON-safe report serialization, and a versioned cross-runtime golden fixture; retain finite no-impact state metrics without fabricating impact/shot outputs, while deferring execution adapters, UI/export, and UpstreamDrift consumption. |
+| 2026-08-11 | 1.16.20 | merge(rate-of-closure, #4279 #4280): normally merge exact variation-export child `9b45bd5beca38370c1d541f8c488ef0edad08517` first with exact workspace/toolstrip parent `983805d799b76e5e1ad1dbdc7a5ab28957d805c8` second; preserve the configured base, variation export/continuation behavior, workspace/plot/toolstrip contracts, both append-only histories, and the explicit pre-manifest boundary. |
+| 2026-08-11 | 1.16.19 | merge(rate-of-closure, #4279 #4280): normally merge exact published variation-export child `e6c7460a01082631565fb9ed48aa32538bd7772c` first with exact reconciled workspace/toolstrip parent `89af587c8f4141680bb923fc4295e261829f5c75` second while preserving PR #4280's `feat/4218-toolstrip-workspace` base and both histories; retain variation export, selected-scatter parity, linked selection, accessible evidence, and workspace behavior while inheriting the parent's exact D-plane format-repair ancestry; preserve both append-only handoffs, use one new monotonic unique SPEC version, and keep publication, protected CI, review, unresolved-thread, dependency, and release gates open. |
+| 2026-08-11 | 1.16.18 | merge(rate-of-closure, #4279 #4280): normally merge exact published variation-export child `3337945699966b63cb5cd8e52d7c3b194315e911` first with exact newly published workspace/toolstrip parent `efbca84095b617b4018732f7802c2da3f0525387` second while preserving PR #4280's `feat/4218-toolstrip-workspace` base and both histories; retain selected-scatter CSV parity, typed unavailable outcomes, bounded accessible tables, linked selection, and all-trial arc analysis while inheriting current workspace, launch-monitor/D-plane ancestry, split kinetics, and behavior-preserving Qt primitive-return boundaries; keep review, ordinary publication, protected exact-head CI, unresolved-thread checks, dependency integration, and release open. |
+| 2026-08-11 | 1.16.17 | merge(rate-of-closure, #4279 #4280): normally merge exact reviewed workspace/toolstrip parent `ccd0e026c580c93038fdf5c59d5d452a85ba27a0` into exact remote variation-export child `668ba96746f79f7a12e8092161bd610054197f58` with child-first parent order and no history rewrite; preserve selected-scatter CSV parity, typed unavailable outcomes, bounded accessible tables, linked selection, and all-trial arc analysis while inheriting the parent kinetics split, Ground/Tee parity contracts, and complete workspace/toolstrip behavior; resolve the obsolete monolithic kinetics overlap to the validated parent façade and normalize seven duplicate automation edits to exact protected Ruff 0.14.10 parent blobs while keeping their commit reachable; require independent review and fresh exact-head protected CI before publication. |
+| 2026-08-11 | 1.16.16 | merge(rate-of-closure, #4203 #4279): normally merge exact published workspace/toolstrip child `ccd0e026c580c93038fdf5c59d5d452a85ba27a0` first with exact newly published launch-registry parent `7abce9ad767fe8311da66a1e5998b892ea3ca9de` second while preserving PR #4279's `feat/4181-launch-monitor-registry` base and both histories; retain workspace, toolstrip, visibility, navigation, playback, and independent-plot behavior while inheriting current launch-monitor/D-plane ancestry, split kinetics, and behavior-preserving Qt primitive-return boundaries; keep review, ordinary publication, protected exact-head CI, unresolved-thread checks, dependency integration, and release open. |
+| 2026-08-11 | 1.16.15 | merge(rate-of-closure, #4279): ordinarily reconcile exact local workspace/toolstrip head `0b22c401a26c31441a599d8d9b39de123706e7ea` with divergent remote automation head `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving every commit and the existing stack topology; recognize 15 already-identical parent paths, normalize seven incompatible formatting edits back to protected Ruff 0.14.10 output, and resolve the sole obsolete pre-split kinetics conflict in favor of the current `pendulum.sample(...)` façade implementation; preserve workspace, toolstrip, visibility, navigation, playback, independent plots, physics, frames, units, schemas, and public contracts; require independent review and fresh exact-head protected CI before publication. |
+| 2026-08-11 | 1.16.14 | merge(rate-of-closure, #4203 #4279): normally propagate exact published launch-registry parent `3796b49e40b677fbac4e05739f8be49f905df2cb` into exact workspace/toolstrip child `7806a16f58e1c6999d32f0127a187fbb21f839a1` without rewriting stack topology; inherit only four static NumPy-array casts while preserving runtime arrays, physics, frames, units, public contracts, workspace behavior, and UI behavior; require fresh current-head protected CI and review. |
+| 2026-08-11 | 1.16.13 | merge(rate-of-closure, #4203 #4279): normally propagate exact launch-registry parent `0216a547aa79727091a2939b96e779e8ddbd7304` into the workspace/toolstrip child without rewriting stack topology; preserve the child's workspace, toolstrip, module-visibility, navigation, playback, and independent-plot behavior while inheriting the parent's identity-preserving kinetics split and pinned formatting repair; require fresh current-head protected CI and review. |
+| 2026-08-11 | 1.16.12 | merge(rate-of-closure, #4203 #4279): normally merge exact workspace/toolstrip child `89af587c8f4141680bb923fc4295e261829f5c75` first with exact launch-monitor-registry parent `1e29c6e52169de5d984144af29664c0419b51a21` second; preserve the configured base, workspace/plot/toolstrip behavior, registry and D-plane contracts, both append-only histories, and the explicit pre-manifest boundary. |
+| 2026-08-11 | 1.16.11 | merge(rate-of-closure, #4203 #4279): normally merge exact published workspace/toolstrip child `ccd0e026c580c93038fdf5c59d5d452a85ba27a0` first with exact newly published launch-registry parent `7abce9ad767fe8311da66a1e5998b892ea3ca9de` second while preserving PR #4279's `feat/4181-launch-monitor-registry` base and both histories; retain workspace, toolstrip, visibility, navigation, playback, and independent-plot behavior while inheriting current launch-monitor/D-plane ancestry, split kinetics, and behavior-preserving Qt primitive-return boundaries; keep review, ordinary publication, protected exact-head CI, unresolved-thread checks, dependency integration, and release open. |
+| 2026-08-11 | 1.16.10 | merge(rate-of-closure, #4279): ordinarily reconcile exact local workspace/toolstrip head `0b22c401a26c31441a599d8d9b39de123706e7ea` with divergent remote automation head `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving every commit and the existing stack topology; recognize 15 already-identical parent paths, normalize seven incompatible formatting edits back to protected Ruff 0.14.10 output, and resolve the sole obsolete pre-split kinetics conflict in favor of the current `pendulum.sample(...)` façade implementation; preserve workspace, toolstrip, visibility, navigation, playback, independent plots, physics, frames, units, schemas, and public contracts; require independent review and fresh exact-head protected CI before publication. |
+| 2026-08-11 | 1.16.9 | merge(rate-of-closure, #4203 #4279): normally propagate exact published launch-registry parent `3796b49e40b677fbac4e05739f8be49f905df2cb` into exact workspace/toolstrip child `7806a16f58e1c6999d32f0127a187fbb21f839a1` without rewriting stack topology; inherit only four static NumPy-array casts while preserving runtime arrays, physics, frames, units, public contracts, workspace behavior, and UI behavior; require fresh current-head protected CI and review. |
+| 2026-08-11 | 1.16.8 | merge(rate-of-closure, #4203 #4279): normally propagate exact launch-registry parent `0216a547aa79727091a2939b96e779e8ddbd7304` into the workspace/toolstrip child without rewriting stack topology; preserve the child's workspace, toolstrip, module-visibility, navigation, playback, and independent-plot behavior while inheriting the parent's identity-preserving kinetics split and pinned formatting repair; require fresh current-head protected CI and review. |
+| 2026-08-11 | 1.16.7 | merge(rate-of-closure, #4202 #4203): normally compose exact launch-monitor-registry child `9ce2c70f11a15420f0ba2d3b4fef6726b6eacefa` with exact D-plane parent `9f83cd379ce8ae2805aa4a5608b5645a529f9c3c`; preserve the configured base, registry/analytics contracts, cross-runtime fixture, D-plane ndarray repair, split typed kinetics façade, and append-only histories without reconstructing the absent strict campaign release manifest. |
+| 2026-08-11 | 1.16.6 | fix(ci, #4179 #4202): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into the D-plane visualization stack while preserving its configured base, ndarray typing repair, frame-explicit scientific behavior, and additive handoff, campaign, and specification histories. |
+| 2026-08-10 | 1.16.5 | fix(swing-sim, d-plane, #4202): add explicit ndarray result boundaries to the private vector conversion and horizontal-projection helpers, closing the exact changed-file MyPy `no-any-return` failures without changing numerical semantics, DbC validation, frames, schemas, or UI behavior. |
+| 2026-08-10 | 1.16.4 | feat/fix(rate-of-closure, swing-sim, #4179 #4182 #4183 #4189 #4202): retain typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact impact-visualization parent; extract persisted D-plane layer controls to restore the protected simulation-view module budget. |
+| 2026-08-11 | 1.16.3 | fix(ci, #4162 #4167 #4173 #4174 #4178 #4179): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into wedge impact visualization while preserving its configured base and additive scientific, presentation, handoff, campaign, and specification histories. |
+| 2026-08-11 | 1.16.2 | fix(ci, #4167 #4173 #4174 #4178): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into wedge turf physics while preserving its configured base and additive scientific, handoff, campaign, and specification histories. |
+| 2026-08-11 | 1.16.1 | fix(ci, #4167 #4173 #4174): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into swept wedge ground clearance while preserving the configured base, scientific behavior, and additive handoff/specification history. |
+| 2026-08-11 | 1.16.0 | fix(ci, #4167 #4173): propagate the workflow-pinned Ruff 0.14.10 five-file format repair normally into the impact-inspector child; no scientific, persistence, API, schema, test, or UI behavior changes, and the ordinary carrier/protected gates remain open. |
+| 2026-08-11 | 1.14.17 | docs(rate-of-closure, #4202 #4203): restore four exact append-only D-plane parent history rows omitted during the local current-parent reconciliation; preserve the candidate implementation, tests, topology, base, and quality evidence while keeping independent re-review, normal publication, protected exact-head CI, downstream propagation, and release open. |
+| 2026-08-11 | 1.14.16 | fix(rate-of-closure, #4203): close four exact-delta MyPy 1.13 Qt-stub boundaries by narrowing responsive-event handling, legend visibility, ball-setup event filtering, and visible status text to their already declared primitive return contracts; preserve values and UI behavior while retaining normal parent reconciliation and protected release gates. |
+| 2026-08-11 | 1.14.15 | merge(rate-of-closure, #4202 #4203): normally compose exact published launch-monitor-registry child `217e36dc93d30f79826847f958fbcd10805e58ed` with exact current D-plane parent `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`; retain the split typed kinetics facade at the sole formatting conflict, preserve parent behavior and history, and keep independent review, protected exact-head CI, downstream propagation, and release open. |
+| 2026-08-11 | 1.14.14 | fix(rate-of-closure, #4203): close four hosted MyPy `no-any-return` findings from the kinetics size split with explicit NumPy-array return narrowing at force-norm, RK4 concatenation, and app-frame projection boundaries; preserve exact runtime arrays, physics, frames, units, public contracts, and stack order. |
+| 2026-08-11 | 1.14.13 | refactor(rate-of-closure, #4203): split the 646-LOC swing-kinetics monolith into an identity-preserving 222-LOC public façade, 205-LOC pure-dynamics module, and 131-LOC immutable-series contract; preserve physics, frames, fixtures, UI behavior, and established imports while satisfying the changed-file 500-LOC gate. |
+| 2026-08-11 | 1.14.12 | style(rate-of-closure, #4203): apply repository-pinned Ruff 0.14.10 formatting to the eight files reported by current-head CI without changing physics, behavior, public contracts, schemas, UI layout, or stack order. |
+| 2026-08-10 | 1.14.13 | feat/fix(variation, #4144 #4218 #4279 #4280): normally propagate repaired workspace parent `61b7f48b5aeb7d57246b4963da3df086e79cbe15` into the variation-export child without feature-code conflict or history rewrite; preserve selected-scatter CSV parity, typed unavailable outcomes, bounded accessible tables, linked selection, all-trial arc analysis, and the complete workspace/toolstrip behavior; verify the reconciliation with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
+| 2026-08-10 | 1.14.12 | fix(rate-of-closure, d-plane, #4202 #4203 #4279): normally propagate exact repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the workspace/toolstrip child without rewriting the stack; inherit explicit ndarray result boundaries while preserving numerical semantics, frames, schemas, and UI behavior; verify the reconciled tree with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
+| 2026-08-10 | 1.14.11 | feat/fix(rate-of-closure, #4203 #4218 #4279): normally propagate exact launch-registry parent `31cbc007d4c85b5479b7cd0fb0969124eab2af67` into the workspace/toolstrip child while preserving granular playback, path trails, module visibility, and independent plot controls; reuse the parent's single persisted impact-layer mapping and canonical navigation constants without duplicating state; and retain its focused triple-pendulum, plotting-catalog, and primary-navigation repairs. |
+| 2026-08-10 | 1.14.10 | fix(compatibility, #4279): make workspace UTC timestamp parsing deterministic across Python 3.10-3.12 with one anchored canonical grammar, consistent zero- through six-digit fractional-second parsing, and rejection of greater-than-microsecond precision instead of interpreter-dependent rejection or truncation. |
+| 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |
+| 2026-08-09 | 1.14.8 | feat(rate_of_closure, #4218 #4279): add a UI-neutral File/View/Tools command registry, strict atomic workspace documents, matched PyQt6/React top toolstrips, persistent module visibility and order, direct Impact/Swing/Flight navigation, deterministic replay/loop/speed controls, and independent per-plot canvases with zoom, Auto Fit, and movable or hidden legends. Propagate exact launch-registry parent `08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` normally while retaining its Linux-safe facade and Python 3.10 compatibility contracts, and type the Qt legend-visibility boundary explicitly for the pinned changed-file mypy gate. |
+| 2026-08-10 | 1.14.11 | test/fix(rate-of-closure, #4143 #4202 #4203 #4325): normally propagate repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the shared Ground/Tee parity and rendered-evidence child without production/test-code conflict or history rewrite. |
+| 2026-08-10 | 1.14.10 | test(rate-of-closure, #4143): record deterministic Ground/Tee visual evidence through semantic Playwright checks and a hidden-window PyQt capture regression, retaining screenshots as external digested artifacts instead of brittle pixel baselines or repository binaries. |
+| 2026-08-10 | 1.14.9 | test(rate-of-closure, #4143): add one strict versioned SI golden fixture consumed by Python and React to pin Ground/Tee defaults, explicit overrides, physical height and center geometry, serialization, invalid finite-domain handling, and backward-compatible legacy migration without changing production behavior. |
+| 2026-08-10 | 1.14.8 | feat/fix/refactor(rate-of-closure, #4202 #4203): propagate the exact D-plane parent into the launch-monitor registry without rewriting the stack; preserve the responsive `SimulationViewControlsMixin` architecture while making `ImpactLayerControls` the single owner of persisted D-plane checkbox state; retain the existing automation compatibility seam as an identity alias; and repair the original child's three ungrandfathered size blockers through identity-preserving extractions for triple-pendulum dynamics, immutable plotting metadata, and versioned primary-navigation state. |
+| 2026-08-09 | 1.14.7 | fix(compatibility, #4203): route the PyQt torque-profile controller's UTC constant through the shared Python 3.10 compatibility module, preserving UTC timestamp serialization and workspace behavior while removing the remaining parent-owned `datetime.UTC` collection boundary. |
+| 2026-08-09 | 1.14.6 | fix(compatibility, #4203): route seven Rate/shared swing string-enum runtime imports through the existing Python 3.10 compatibility contract while retaining native enum typing under `TYPE_CHECKING`; preserve all wire values, schemas, physics, and UI behavior, and add a source-level regression exercised with real CPython 3.10.20. |
+| 2026-08-09 | 1.14.5 | fix(ci, #4203): keep the in-package swing flight and solver facade-contract tests in pytest's active package namespace by using relative imports, preventing editable Linux collection from crossing between `src.shared...` and `shared...` before assertions while leaving production APIs and physics unchanged. |
+| 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |
+| 2026-08-07 | 1.14.3 | fix(variation, #4144): preserve trial identity when filtering finite landing coordinates so carry/lateral values from different incomplete trials cannot form fictitious points; use one paired-row contract for Python/TypeScript ellipse analysis, PyQt/React rendering, and exact plotted-count status. Clarify that the wedge kernel's 20 mm example is synthetic and separately pin the generated Pitching Wedge face-center/hosel cross-check and current UI-state limitations. |
+| 2026-08-06 | 1.14.2 | feat(rate_of_closure, #4192 #4234): complete the shared spatial-target workflows in PyQt6 and React with canonical cross-tab state, versioned JSON/CSV/manifest persistence, no-run 2D/3D rendering, continuous aerial passage, surface-projected landing assessment, field-linked validation, stale-solver protection, high-DPI canvases, responsive wrapped PyQt forms, collapsible engineering detail/layer controls, and movable or hideable legends; keep aerial requests fail-closed where solver/variation objectives remain ground-only. |
+| 2026-08-06 | 1.14.1 | feat(ball-flight integration, #4192-#4200 #4205): integrate the canonical metric catalog, Launch Direction conventions, inverse and impact-family solvers, capability-aware objectives, spatial targets, reproducible wind and uncertainty analysis, responsive locked-aspect plots, and timestamp-accurate Launch/Apex/Landing 3D playback across the shared Python contracts and the PyQt6/React Rate of Closure clients. |
+| 2026-08-06 | 1.14.0 | feat(swing_sim, rate_of_closure, #4192): add the UI-neutral `swing_sim.spatial_target` version-1 contract with canonical app-frame downrange/elevation/right coordinates, source-frame provenance and flight-frame conversion, surface-circle/corridor and 3D sphere/box acceptance geometry, signed closest-point miss vectors, deterministic Python/TypeScript serialization, and explicit legacy green/fairway migration. |
+| 2026-08-06 | 1.13.16 | feat(swing_sim, rate_of_closure, #4196): map desired flight to frame-explicit centered driver/iron delivery solution families with strict cross-runtime schemas, observed intervals/correlations, local sensitivities, complete residuals, model manifests, and rejected no-impact/miss diagnostics. |
+| 2026-08-06 | 1.13.15 | feat(swing_sim, rate_of_closure, #4195): add strict desired-flight inverse-solver contracts, deterministic bounded multi-objective search, ranked residual-rich candidates, typed infeasible/no-impact/nonconverged outcomes, and Python/TypeScript parity fixtures. |
+| 2026-08-06 | 1.13.14 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
+| 2026-08-06 | 1.13.13 | fix(ball-flight, #4199): migrate strategy output to v2; separate policy-fixed true-wind counterfactuals from preset-oracle regret and add failure-inclusive target-hold, miss-distance CVaR, and directional risk metrics with Python/TypeScript parity. |
+| 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
+| 2026-08-06 | 1.13.11 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/Launch/Apex/Landing controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
+| 2026-08-10 | 1.13.11 | fix(swing-sim, d-plane, #4202): add explicit ndarray result boundaries to the private vector conversion and horizontal-projection helpers, closing the exact changed-file MyPy `no-any-return` failures without changing numerical semantics, DbC validation, frames, schemas, or UI behavior. |
+| 2026-08-10 | 1.13.10 | feat/fix(rate-of-closure, swing-sim, #4179 #4182 #4183 #4189 #4202): retain typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact impact-visualization parent; extract persisted D-plane layer controls to restore the protected simulation-view module budget. |
+| 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
+| 2026-08-10 | 1.13.9 | feat/fix(rate-of-closure, #4162 #4167 #4173 #4174 #4178 #4179): retain exact-event pose/twist/wrist interpolation, the versioned impact-scene contract, locked-scale PyQt6 and React views, named cameras, accessible metrics, and PNG/SVG/JSON exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact turf-physics parent. |
+| 2026-08-10 | 1.13.8 | feat/fix(golf-club, rate-of-closure, #4166 #4167 #4173 #4174 #4178): retain the passive provenance-gated turf proxy, nine-point wedge contact wrench, strict profile persistence, convergence diagnostics, and explicit force-coupling boundary while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact stacked parent. |
+| 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
+| 2026-08-10 | 1.13.7 | fix(rate-of-closure, #4167 #4173 #4174): propagate the Python 3.10 UTC compatibility repair and source-wide AST guard through the impact-inspector parent into swept wedge ground clearance without rewriting the stacked child or changing its ground-contact contracts. |
+| 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |
+| 2026-08-10 | 1.13.6 | fix(rate-of-closure, #4167 #4173): propagate the Python 3.10 UTC compatibility repair into the impact-inspector child without rewriting its history; torque-profile persistence now uses the shared compatibility export and a source-wide AST guard prevents direct, aliased, or module-attribute `datetime.UTC` regressions. |
+| 2026-08-06 | 1.13.5 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |
+| 2026-08-05 | 1.13.4 | feat(rate_of_closure, golf-club, #4158 #4160 #4163): integrate frame-explicit wedge contact/shaft kinematics into retained Rate runs; add honest impact-or-closest-approach jump controls and engineering readouts to PyQt6 and React; restore manual web angular velocity; and select the documented 30 ms square pose for flat automatic speed plateaus. |
+| 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
+| 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
+| 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
+| 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
+| 2026-08-04 | 1.13.0 | feat(rate_of_closure, swing_sim, #4125 H6-H7): course showcase — H7a themed golf-course scene (palette-derived grass family, fairway strip, green + hole/flag at a configurable distance, tee marker; Course Elements toggle; both UIs incl. web canvas mirrors with a shared chart-palette module); H7b target regions (`solver/targets.py` green circle / fairway corridor with exact signed distance + containment, additive ImpactGoal region residual with centering term, Optimize-to-Target on both solver UIs reusing partition/progress/cancel, target editing reflected live in the course scene, Variation landing-scatter overlay with the hold-% headline via hold_fraction, TS parity mirror pinned test-for-test); H6 launcher-language styling (palette-only QSS: button hover/pressed + subtle shadow, launcher-card group boxes, hover tabs; web accents aligned onto the shared palette) and the yards-default Distance quantity (yd/m drop-down in both UIs, SI-canonical internals, applied to flight/putting result rows, view axes, plotting catalog distance variables incl. exports, variation stats, and target entries; conversion + default-is-yards tests). |
+| 2026-08-04 | 1.12.0 | feat(rate_of_closure, swing_sim, #4125 H1-H3): H1 realistic type-specific parametric heads — per-type `head_profiles` (woods/hybrids/iron+wedge blades with cavity-back recess, generic mallet + anser-style blade putters), divergence-theorem `volumetrics` (watertightness-gated volume/centroid, cube-exact + sphere <1% validation, per-type COG-vs-spec bands), hosel-true shaft attachment in both renderers, 'Show CG' volumetric-COG markers in both UIs, 16-club library with Blade/Mallet putter entries, consistent outward mesh winding, TS parity (`clubHeads.ts`, `volumetrics.ts`) with volume/COG/hosel pins. H2 swing kinetics — `simulation/kinetics.py` per-sample inverse dynamics over the double-pendulum swing (net/gravity/damping/applied torque breakdown, joint powers, Newton–Euler reaction forces, clubhead-force estimate, documented sign convention, `simulate_forced` round-trip/energy/statics tests, public `DoublePendulumSwing.state_at`); 'Kinetics' catalog category (11 series keys) + Joint Torques/Power/Reaction Forces built-ins in both UIs; PyQt6 'Show Kinetics' 3D overlay + Kinetics sub-tab (plots, downswing-timed peak table); web `kinetics.ts` mirror parity-pinned vs a pytest fixture (web playback overlay and triple-pendulum kinetics deferred, documented). H3 putting vertical — self-façaded `shared/python/swing_sim/putting/` package (COR impulse with the 2/7 rolling-cap derivation, stimpmeter-derived rolling resistance with exact round-trip, sloped-green RK4 with break and the lip-capture bound, Holmes 1991 cited); 'Putting' tab in both UIs with phase-coded green view and capture-bound plot; additive putting plot catalog; Python↔TS parity pins on reference putts; UpstreamDrift putting assets credited. Glossary union across the three verticals: 76 terms, TS mirror + fixture regenerated. |
+| 2026-08-04 | 1.11.0 | feat(rate_of_closure, #4120 V4): investigation-suite polish — persistent selected-row highlight (palette-derived, both UIs) with the row name leading every explanation panel; 60-term sourced DbC glossary with searchable PyQt6 tab / web section, explanation-panel deep links, and a fixture-pinned TS mirror; Derivation & Traceability renamed Calculation Description; sectioned full-model derivations (closure chain + impact impulse/COR/MOI-tensor/2-7 cap/D-plane/gear effect + flight EOM with the active literature model's cited coefficient law + pendulum Lagrangian with live plane-tilt gravity) rendering conditionally per configuration in mathtext/KaTeX; per-tab cold-user help (PyQt6 '?' corner button, web collapsible How-to sections) contract-tested >300 chars; hover-hint completeness sweeps test-enforced across every interactive widget/element of both UIs. |
+| 2026-08-04 | 1.10.0 | feat(swing_sim, rate_of_closure, #4120 V3): shared variation/Monte-Carlo engine — `shared/python/swing_sim/variation/` (namespaced variable registry, NoiseSpec/VariationPlan JSON schema, seeded parallel N-run engine with solver-shaped progress/cancel, dispersion + one-at-a-time sensitivity + Spearman + 2-sigma landing ellipse, CSV/JSON dataset IO), the PyQt6 "Variation" tab in the Rate of Closure explorer, and the web mirror (seeded mulberry32 engine, capped <=500 runs, shared plan schema, statistical parity fixture vs the Python engine). Prior-art survey of UpstreamDrift Monte-Carlo/perturbation/movement_optimizer machinery credited in module docstrings. |
+| 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V1): investigative plotting suite — `plotting/` package (40-variable DbC data catalog with pinned keys, frozen JSON-round-trip PlotSpec `rate_of_closure.plot_spec/1`, one compute/render pipeline with full-simulation sweeps and themed palette, built-in advanced plots: migrated closure sweep, delivery-vs-τ, launch-vs-toe/high offset maps, swing time series, side/top-down flight profiles); PyQt6 Plots tab replacing the Closure Sweep tab (plot list add/duplicate/remove, 3-step Custom Plot wizard with live preview, navigation toolbar, PNG/SVG/CSV/JSON + save/load definition exports, tooltips everywhere); web parity via plotcatalog.ts (key list pinned against the pytest-exported fixture), plotspec.ts (shared schema + pipeline), and a Plots tab with built-in picker, simplified custom builder, canvas rendering, PNG/CSV/JSON downloads, and definition import/export interoperable with the desktop app. |
+| 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V2): scale-separated viewers + standalone Flight Explorer + small-window layout fixes. PyQt6: Strike/Swing/Flight display sub-tabs in the Simulation tab — new face-scale StrikeView (superellipse face outline sized from the club mass envelope, bulge/roll sagitta contours, impact marker + strike-history scatter, path/face/AoA vectors in the face plane, club info; extents hard-capped at ±120 mm), swing view scoped to swing scale with the flight polyline behind a default-OFF 'Show Ball Flight' checkbox (guidance warns flight dwarfs the swing), new flight-scale FlightView (side + top-down profiles + 3D polyline, landing/apex annotated); new top-level Flight Explorer tab over `simulation/flight_explorer.py` (direct launch entry with unit drop-down or impact-delivery entry through swing_sim.impact + rigid-body solve, 7-model picker, result rows with explanations incl. new lateral_m); window minimum lowered to 1024×700 with scrolling control columns, ≥84 px entry minimums, and a headless small-window layout test. Web: Strike/Swing/Flight segmented views (strike + flight profile canvases), separated Show-Ball-Flight toggle, standalone Flight Explorer panel parity-banded against the pytest pinned case (167 mph / 10.9° / 2686 rpm → ~247.5 m carry); responsive min-widths with title-attribute truncation. |
+| 2026-08-04 | 1.9.0 | feat(rate_of_closure, #4109 #4110): solver panel — goal-driven optimization UI. PyQt6 Solver tab in the Simulation tab (checkbox-enabled weighted ImpactGoal targets, Optimize-with-bounds / Fix VariablePartition editor with a double-pendulum swing-source mode, start-count spinner, Run/Cancel on a QThread worker with ProgressReport-driven progress bar and cooperative cancel_event, achieved-vs-goal table with per-goal errors / residual norm / convergence / expandable per-start diagnostics, Apply loading solved variables into the simulation session and rerunning the 3D scene; sourced tooltips throughout, DbC errors as friendly status messages). Web: model/solver.ts bounded Nelder-Mead over the TS-physics objective (delivery variables, deterministic multi-start) + SolverPanel section with apply-to-scenario, parity-pinned against the pytest easy case (150 mph ball speed -> ~45.825 m/s clubhead speed); WASM/worker upgrade deferred to P7. |
+| 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
+| 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |
+| 2026-08-04 | 1.8.0 | feat(swing_sim, #4109): add the impact-parameter solver subpackage `src/shared/python/swing_sim/solver/` — goal-driven robust optimization (`ImpactGoal` weighted targets over launch-monitor quantities incl. carry; `VariablePartition` free-with-bounds vs fixed delivery/swing variables, with a double-pendulum swing-source mode covering the three plane tilts, impact-time offset, and damping); pure residual builder with the documented Rust-portable `evaluate_candidate` seam; bounded scipy trf multi-start driver (Latin-hypercube starts, parallel via concurrent.futures, movement_optimizer-shaped ProgressReport/cancel_event plumbing, per-start diagnostics in `SolverResult`). Scaffolding modeled on UpstreamDrift's movement_optimizer. |
+| 2026-08-04 | 1.7.0 | feat(swing_sim, #4106): add the impact physics subpackage `src/shared/python/swing_sim/impact/` — rigid-body COR impulse model (2/7 rolling-cap friction spin) + spring-damper + finite-time models, energy-balance validator, and recorder ported self-contained from UpstreamDrift's `physics/impact_model` with three fixes (off-center base impulse no longer drops `impact_offset`; opt-in 3x3 club MOI tensor effective mass `1/m_eff = 1/m + (r x n)^T I^-1 (r x n)`; friction-spin axis sign corrected to `t x n`); new launch-monitor delivery front-end (`delivery.py`, AffineDrift frame, spin-loft + D-plane diagnostics) and physics-based gear effect (`gear_effect.py`, head recoil × CG-depth lever arm, bulge/roll via `face_normal_at_offset` callable seam) replacing the empirical three-constant version. |
+| 2026-08-04 | 1.6.0 | feat(swing_sim, #4104): add the swing simulation foundation — new `rust_core/swing-core` workspace crate (double-pendulum EOM with plane-oriented in-plane gravity, PyO3 wheel `swing_core` + wasm-bindgen bindings) and shared `src/shared/python/swing_sim` package (DbC value types, `SwingSource` protocol, `DoublePendulumSwing`, strict Rust façade with pure-Python parity oracle); wire swing-core into the rust quality gate's wasm build and add the `maturin-swing-core.yml` build/import/parity workflow. |
+| 2026-08-04 | 1.5.6 | feat(rate_of_closure): club library, inertial model, and parametric head with bulge & roll (P2, #4106) — frozen SI ClubSpec with DbC bounds, 15-club library normalized from typical published specs (UpstreamDrift club_configurations.py source), head+shaft+grip composite inertia (balance point, grip-axis and shaft-axis MOI), deterministic superellipse-loft parametric head whose face honors bulge/roll sagitta and loft tilt with mass-scaled envelope, face_normal_at_offset exposed for the future impact package in Python and TypeScript with pinned parity tests, PyQt6 Club group (picker drives GC-to-face/lie with overrides preserved; sourced tooltips) and web ClubPanel generating heads client-side into the existing mesh render paths. |
+| 2026-08-03 | 1.5.5 | feat(rate_of_closure): optional photorealistic STL clubhead rendering — pure-numpy binary/ASCII STL parser with head-envelope normalization (mesh.py), PyQt6 Load Clubhead STL/Procedural Head playback-bar controls with lambert-shaded Poly3DCollection rendering, web-clone FileReader STL input with painter's-algorithm flat-shaded triangles (TS parser parity-tested against pytest), and a programmatically generated example driver-head STL free of licensing risk. |
+| 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data; playback controls with head-fixed/head-moving display modes, clickable result explanations, a live-substituted Derivation & Traceability tab (mathtext / KaTeX), independent cross-validation tests, PyInstaller/Tauri packaging, and brand-neutral program strings; review round adds unit drop-downs (speed/rotation/length) with a canonical-unit model core, arrow-free typed inputs with sourced golf-swing range tooltips, a Common Closure Metrics panel (CCV, deg/ft, deg/in, deg/ms, R_ISA, time-to-square, toe-heel speed delta), a derivation-tab scroll fix, and removal of the duplicated Theme menu. |
+| 2026-08-05 | 1.5.9 | feat(golf-club, #4160): add exact physical-shaft-axis contact velocity decomposition, counterfactual and Shapley AoA attribution, ground/arc leading-edge rates, 3D face-normal rate, screw-axis clearance, strict frame contracts, and the -10 degree worked example. |
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
+| 2026-08-05 | 1.5.6 | fix(ci): include and shallow-initialize UpstreamDrift's pinned `vendor/ud-tools` submodule in the narrow cross-repository checkout so editable metadata generation can validate exact package provenance without broadening checkout to the full `src` or `ui` trees. |
 | 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
 | 2026-08-04 | 1.5.4 | docs(agent-handoff, Repository_Management#1390): add root `AGENT_HANDOFF.md` plus per-tool `AGENT_HANDOFF.md` under `src/rate_of_closure`, `src/pendulum_simulator`, and `src/rotation_converter`; add `docs/AGENT_HANDOFF_TEMPLATE.md` for future tools; add the "Agent Handoff & PR Policy" section to `CLAUDE.md`. |
@@ -2688,10 +6046,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 - 2026-05-26: feat(chat) — restored shared chat dock keybindings (Enter→submit, Shift+Enter→newline, busy-queue with steering), port-aware default WS URL (`UD_CHAT_WS_URL` / `GOLF_API_PORT` env), Ollama latency tuning (`keep_alive: "30m"`, `num_ctx: 4096`, native `tools` field), `_chat_dock_widget_qt.py` refactored into `_qt/` submodules (2091→1049 lines), and the animated "AI is thinking" indicator.
 - 2026-05-26: Chat dock resolves its default WebSocket URL per-instance, keeps the Steer action queue-only, and preserves typed import-safe runtime diagnostics for the optional Qt chat surface.
 
-## 1.1.415 - Optimized TrendChart SVG path generation
-
-- **2026-08-15**: perf(p1am) - Replaced `.forEach` with single-pass `for` loops in `TrendChart.tsx` path generation to eliminate closure allocation overhead and reduce garbage collection pressure.
-
 ### Version 1.1.205 (Palette - Rotation Converter Accessibility)
 
 - **2026-08-12**: feat(ux) — Wrapped inputs in `RotationConverter.tsx` in a `<form>` and dynamically mapped ID to `<label htmlFor>` using React `useId()`. Added `role="alert"` for error messages.
@@ -2765,3 +6119,8 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+- **2026-10-27**: Replaced inline `Array.from` with `new Array` + `for` loops in `Histogram.tsx` and `DataExplorer.tsx` to eliminate iterator and closure execution overhead during UI drag/zoom events.
+
+## 2026-08-15: Upstream three orphaned shared fixes from consumers
+
+- **2026-08-15**: fix(shared) — Upstreamed three fixes from consumers' vendored trees: (1) `data_processor_io.rust_engine.filter_export` now validates predicates with `validate_pandas_formula` to block code injection before `DataFrame.query`; (2) `SharedImportAliasFinder.find_spec` skips `<root>.tests.<...>` module names so package internal test modules resolve correctly; (3) `theme.zoom._coerce_percent` catches `ValueError` and falls back to the configured default on malformed persisted zoom settings.

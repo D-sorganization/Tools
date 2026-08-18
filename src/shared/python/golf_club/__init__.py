@@ -14,6 +14,63 @@ from .serialization import (
     assembly_to_json,
     assembly_to_json_dict,
 )
+from .shaft_assembly import shaft_component_mass_properties
+from .shaft_dynamics import (
+    ShaftModalResponse,
+    ShaftModalSettings,
+    solve_shaft_bending_modes,
+)
+from .shaft_profile import (
+    ExtrapolationPolicy,
+    ShaftProfile,
+    ShaftProfileProvenance,
+    ShaftStation,
+)
+from .shaft_scaling import ShaftProfileScaling, scale_shaft_profile
+from .shaft_serialization import (
+    SHAFT_PROFILE_FORMAT,
+    shaft_profile_from_csv,
+    shaft_profile_from_json,
+    shaft_profile_from_json_dict,
+    shaft_profile_to_csv,
+    shaft_profile_to_json,
+    shaft_profile_to_json_dict,
+)
+from .shaft_statics import (
+    ShaftTipLoad,
+    ShaftTipResponse,
+    solve_cantilever_tip_response,
+)
+from .turf_contact import (
+    TurfCalibrationStatus,
+    TurfContactKinematics,
+    TurfContactProfile,
+    TurfContactResponse,
+    TurfContactStatus,
+    TurfPreset,
+    TurfProfileProvenance,
+    evaluate_turf_contact,
+    turf_profile_preset,
+)
+from .turf_convergence import TurfConvergenceStudy, run_turf_convergence_study
+from .turf_dynamics import ReducedTurfContactResult, simulate_reduced_turf_contact
+from .turf_serialization import (
+    TURF_PROFILE_FORMAT,
+    turf_profile_from_json,
+    turf_profile_from_json_dict,
+    turf_profile_to_json,
+    turf_profile_to_json_dict,
+)
+from .turf_variation import (
+    CATEGORY_TURF,
+    TURF_DAMPING_KEY,
+    TURF_FRICTION_KEY,
+    TURF_PENETRATION_LIMIT_KEY,
+    TURF_STIFFNESS_KEY,
+    TURF_VARIABLE_KEYS,
+    TurfVariationPlan,
+    turf_profiles_for_variation_plan,
+)
 from .types import (
     AssembledMassProperties,
     ClubComponent,
@@ -23,9 +80,62 @@ from .types import (
     ComponentRole,
     RigidTransform,
 )
+from .wedge_cad import WedgeMeasuredMetrics, WedgeSolidResult, build_wedge_solid
+from .wedge_export import (
+    WEDGE_EXPORT_FORMAT,
+    WedgeExportArtifact,
+    WedgeExportFormat,
+    WedgeExportRequest,
+    WedgeExportResult,
+    export_wedge_artifacts,
+)
+from .wedge_geometry import (
+    WedgeContactCandidate,
+    WedgeContactFeature,
+    wedge_body_profile_m,
+    wedge_contact_candidates,
+    wedge_face_contact_point_m,
+)
+from .wedge_ground_contact import (
+    ContactSequence,
+    GroundPlane,
+    WedgeClearanceSample,
+    WedgeGroundClearanceAnalysis,
+    WedgeGroundContactEvent,
+    analyze_wedge_ground_clearance,
+)
+from .wedge_ground_serialization import (
+    WEDGE_GROUND_CLEARANCE_FORMAT,
+    wedge_ground_clearance_to_json_dict,
+)
+from .wedge_kinematics import (
+    InstantaneousScrewAxis,
+    WedgeKinematicAnalysis,
+    WedgeKinematicState,
+    analyze_wedge_kinematics,
+    angle_of_attack_deg,
+)
+from .wedge_parameters import (
+    Handedness,
+    WedgeGeometryProvenance,
+    WedgeHeadParameters,
+    WedgePreset,
+    wedge_preset,
+)
+from .wedge_serialization import (
+    WEDGE_PARAMETERS_FORMAT,
+    wedge_parameters_from_json,
+    wedge_parameters_to_json,
+)
+from .wedge_turf_interaction import (
+    WedgeTurfPatchResponse,
+    WedgeTurfWrench,
+    evaluate_wedge_turf_wrench,
+)
 
 __all__ = [
     "CURRENT_FORMAT",
+    "CATEGORY_TURF",
     "LEGACY_FORMAT",
     "AssembledMassProperties",
     "ClubAssembly",
@@ -34,10 +144,93 @@ __all__ = [
     "ClubLengthMeasurement",
     "ComponentMassProperties",
     "ComponentRole",
+    "ContactSequence",
+    "ExtrapolationPolicy",
+    "Handedness",
+    "GroundPlane",
+    "InstantaneousScrewAxis",
     "RigidTransform",
+    "ReducedTurfContactResult",
+    "SHAFT_PROFILE_FORMAT",
+    "ShaftProfile",
+    "ShaftProfileProvenance",
+    "ShaftProfileScaling",
+    "ShaftStation",
+    "ShaftModalResponse",
+    "ShaftModalSettings",
+    "ShaftTipLoad",
+    "ShaftTipResponse",
+    "TURF_PROFILE_FORMAT",
+    "TURF_DAMPING_KEY",
+    "TURF_FRICTION_KEY",
+    "TURF_PENETRATION_LIMIT_KEY",
+    "TURF_STIFFNESS_KEY",
+    "TURF_VARIABLE_KEYS",
+    "TurfVariationPlan",
+    "TurfCalibrationStatus",
+    "TurfContactKinematics",
+    "TurfContactProfile",
+    "TurfContactResponse",
+    "TurfContactStatus",
+    "TurfConvergenceStudy",
+    "TurfPreset",
+    "TurfProfileProvenance",
+    "WedgeHeadParameters",
+    "WedgeClearanceSample",
+    "WedgeContactCandidate",
+    "WedgeContactFeature",
+    "WedgeGroundClearanceAnalysis",
+    "WedgeGroundContactEvent",
+    "WedgeTurfPatchResponse",
+    "WedgeTurfWrench",
+    "WedgeKinematicAnalysis",
+    "WedgeKinematicState",
+    "WedgeGeometryProvenance",
+    "WEDGE_EXPORT_FORMAT",
+    "WEDGE_GROUND_CLEARANCE_FORMAT",
+    "WedgeExportArtifact",
+    "WedgeExportFormat",
+    "WedgeExportRequest",
+    "WedgeExportResult",
+    "WedgeMeasuredMetrics",
+    "WedgePreset",
+    "WedgeSolidResult",
+    "WEDGE_PARAMETERS_FORMAT",
     "assemble_mass_properties",
+    "analyze_wedge_kinematics",
+    "analyze_wedge_ground_clearance",
+    "angle_of_attack_deg",
     "assembly_from_json",
     "assembly_from_json_dict",
     "assembly_to_json",
     "assembly_to_json_dict",
+    "build_wedge_solid",
+    "export_wedge_artifacts",
+    "evaluate_turf_contact",
+    "evaluate_wedge_turf_wrench",
+    "scale_shaft_profile",
+    "shaft_component_mass_properties",
+    "shaft_profile_from_csv",
+    "shaft_profile_from_json",
+    "shaft_profile_from_json_dict",
+    "shaft_profile_to_csv",
+    "shaft_profile_to_json",
+    "shaft_profile_to_json_dict",
+    "solve_shaft_bending_modes",
+    "solve_cantilever_tip_response",
+    "simulate_reduced_turf_contact",
+    "run_turf_convergence_study",
+    "turf_profile_from_json",
+    "turf_profile_from_json_dict",
+    "turf_profile_preset",
+    "turf_profile_to_json",
+    "turf_profile_to_json_dict",
+    "turf_profiles_for_variation_plan",
+    "wedge_preset",
+    "wedge_body_profile_m",
+    "wedge_contact_candidates",
+    "wedge_face_contact_point_m",
+    "wedge_ground_clearance_to_json_dict",
+    "wedge_parameters_from_json",
+    "wedge_parameters_to_json",
 ]

@@ -92,7 +92,10 @@
 ## 2026-08-13 - Replace chained .map().join() in CSV generation
 **Learning:** Using chained array methods like `.map().join()` for large data serialization (like CSV exports) allocates intermediate arrays for every row, putting immense pressure on the garbage collector and stalling the main thread.
 **Action:** Replace chained array map/join operations in data serialization hot paths with single-pass `for` loops and string concatenation to eliminate intermediate allocations.
-
 ## 2024-11-20 - Replace .forEach with for loops in SVG path hot paths
 **Learning:** When rendering SVG paths with thousands of data points, using `.forEach()` incurs significant closure allocation and function call overhead for every single coordinate pair, which balloons CPU usage and garbage collection pauses in React hot paths.
 **Action:** Always replace `.forEach()` iterations over large numerical arrays (like chart plot histories) with standard single-pass `for` loops when constructing strings like SVG `d` paths to bypass function call overhead entirely.
+
+## 2026-10-27 - Remove Array.from allocations in hot paths like Histogram renders
+**Learning:** Found instances of `Array.from({ length: N }, ...)` directly inside React component render functions (e.g. `Histogram.tsx`). This allocates a new array, creates iterators, and calls a mapping function on every render, stalling the UI thread during drag/zoom events.
+**Action:** Replace inline `Array.from` renders with IIFEs that pre-allocate using `new Array(N)` and iterate with a standard `for` loop, eliminating closure and iterator overhead per element.

@@ -150,6 +150,13 @@ jobs:
           if total < 500:
               print(f"Full suite collected only {total} tests (<500) — collection broken (issue #3324).", file=sys.stderr)
               sys.exit(1)
+          # `total` counts skipped tests, so an all-skipped session sails past
+          # the collection floor above while executing nothing. A single
+          # conftest hook did exactly that: 8411 collected, 8411 skipped,
+          # exit 0 (issue #4497). Require a floor on tests that actually ran.
+          if passed < 500:
+              print(f"Full suite executed only {passed} tests ({skipped} skipped of {total} collected) — the suite is being silenced (issue #4497).", file=sys.stderr)
+              sys.exit(1)
           PYEOF
           echo "### Tail of test output" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"

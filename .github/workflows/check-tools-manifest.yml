@@ -6,6 +6,7 @@ concurrency:
 on:
   push:
     paths:
+      - ".github/workflows/check-tools-manifest.yml"
       - "src/**/gui_registration.py"
       - "src/**/launch_gui.py"
       - "src/**/launch_pyqt6.py"
@@ -16,6 +17,7 @@ on:
       - "tool_surface_contract.json"
   pull_request:
     paths:
+      - ".github/workflows/check-tools-manifest.yml"
       - "src/**/gui_registration.py"
       - "src/**/launch_gui.py"
       - "src/**/launch_pyqt6.py"
@@ -82,20 +84,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v6
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-        with:
-          python-version: "3.11"
-          cache: pip
-
-      - name: Purge pip cache
-        run: python -m pip cache purge || true
       - name: Generate tools.json and tool_surface_contract.json
-        run: python scripts/generate_tools_json.py
+        run: python3 scripts/generate_tools_json.py
 
       - name: Check launcher-backed tool registrations
-        run: python scripts/check_tools_manifest_layout.py
+        run: python3 scripts/check_tools_manifest_layout.py
 
       - name: Check tools.json for changes
         run: |
@@ -117,7 +110,7 @@ jobs:
         if: always()
         run: |
           echo "## Tool Surface Contract" >> "$GITHUB_STEP_SUMMARY"
-          python -c "
+          python3 -c "
           import json
           c = json.load(open('tool_surface_contract.json'))
           tools = c['tools']

@@ -1,0 +1,328 @@
+"""Tests for the rate-of-closure impact model.
+
+The model answers one question: when a clubhead translates *and* rotates,
+how different is the velocity (path, attack angle, speed) of the actual
+impact point from the velocity of the tracked reference point (COM or
+geometric center)?
+
+Frame convention under test — the AffineDrift house convention
+(Launch Monitor Technology Review, sections/02-parameters.tex): x along
+the target line, y up, z right of target. Club path positive =
+in-to-out (right); negative horizontal deviation = path moving LEFT.
+"""
+
+from __future__ import annotations
+
+import math
+
+import numpy as np
+import pytest
+
+from rate_of_closure.model import (
+    ImpactScenario,
+    solve,
+    sweep,
+)
+
+pytestmark = pytest.mark.unit
+
+
+def _scenario(**overrides: object) -> ImpactScenario:
+    """A representative tour-driver scenario; fields overridable per test."""
+    defaults: dict[str, object] = {
+        "clubhead_speed_mph": 120.0,
+        "omega_plane_dps": 2200.0,
+        "omega_shaft_dps": 1700.0,
+        "lie_angle_deg": 58.0,
+        "com_to_face_mm": 35.0,
+        "impact_offset_toe_mm": 0.0,
+        "impact_offset_high_mm": 0.0,
+        "contact_duration_us": 450.0,
+    }
+    defaults.update(overrides)
+    return ImpactScenario(**defaults)  # type: ignore[arg-type]
+
+
+class TestReferenceCase:
+    """With zero rotation the impact point moves exactly with the COM."""
+
+    def test_zero_rotation_means_zero_deviation(self) -> None:
+        result = solve(_scenario(omega_plane_dps=0.0, omega_shaft_dps=0.0))
+        assert result.path_deviation_deg == pytest.approx(0.0, abs=1e-12)
+        assert result.aoa_deviation_deg == pytest.approx(0.0, abs=1e-12)
+        assert result.speed_delta_mph == pytest.approx(0.0, abs=1e-12)
+
+    def test_reference_speed_is_preserved(self) -> None:
+        result = solve(_scenario())
+        assert result.reference_speed_mph == pytest.approx(120.0)
+
+
+class TestCommenterCase:
+    """The forum case: 35 mm offset, 2000 deg/s about a vertical axis.
+
+    omega * r = 34.907 rad/s * 0.035 m = 1.2217 m/s = 2.733 mph, which is a
+    1.30 degree angular deviation at 120 mph — not the 1.2 mph the online
+    calculator was read as (that was m/s).
+    """
+
+    def test_tangential_speed_matches_hand_calculation(self) -> None:
+        # Pure vertical-axis closure: lie 90 puts the shaft axis vertical.
+        result = solve(
+            _scenario(omega_plane_dps=0.0, omega_shaft_dps=2000.0, lie_angle_deg=90.0)
+        )
+        assert result.tangential_speed_mph == pytest.approx(2.733, abs=0.005)
+
+    def test_path_deviation_is_about_1p3_degrees(self) -> None:
+        result = solve(
+            _scenario(omega_plane_dps=0.0, omega_shaft_dps=2000.0, lie_angle_deg=90.0)
+        )
+        assert result.path_deviation_deg == pytest.approx(-1.30, abs=0.01)
+
+    def test_speed_change_is_negligible_even_when_direction_is_not(self) -> None:
+        """The perpendicular component redirects; it barely changes speed."""
+        result = solve(
+            _scenario(omega_plane_dps=0.0, omega_shaft_dps=2000.0, lie_angle_deg=90.0)
+        )
+        assert abs(result.speed_delta_mph) < 0.05
+        assert abs(result.path_deviation_deg) > 1.0
+
+
+class TestSignConventions:
+    """Closing rotation must move the contact-point path LEFT and the
+    in-plane swing rotation must add loft (shallow the delivery)."""
+
+    def test_closure_shifts_path_left(self) -> None:
+        result = solve(_scenario(omega_plane_dps=0.0))
+        assert result.path_deviation_deg < 0.0
+
+    def test_plane_rotation_alone_also_shifts_path_left(self) -> None:
+        result = solve(_scenario(omega_shaft_dps=0.0))
+        assert result.path_deviation_deg < 0.0
+
+    def test_plane_rotation_shallows_delivery(self) -> None:
+        result = solve(_scenario(omega_shaft_dps=0.0))
+        assert result.aoa_deviation_deg > 0.0
+
+    def test_combined_tour_case_matches_prototype(self) -> None:
+        result = solve(_scenario())
+        assert result.path_deviation_deg == pytest.approx(-1.70, abs=0.02)
+        assert result.aoa_deviation_deg == pytest.approx(0.63, abs=0.02)
+
+    def test_reversing_rotation_mirrors_the_deviation(self) -> None:
+        left = solve(_scenario())
+        right = solve(_scenario(omega_plane_dps=-2200.0, omega_shaft_dps=-1700.0))
+        assert right.path_deviation_deg == pytest.approx(
+            -left.path_deviation_deg, abs=1e-9
+        )
+
+
+class TestScaling:
+    """The deviation angle scales like omega*r/v — small-angle linear."""
+
+    def test_deviation_doubles_with_offset(self) -> None:
+        base = solve(_scenario())
+        double = solve(_scenario(com_to_face_mm=70.0))
+        ratio = double.path_deviation_deg / base.path_deviation_deg
+        assert ratio == pytest.approx(2.0, abs=0.02)
+
+    def test_deviation_halves_with_speed(self) -> None:
+        base = solve(_scenario())
+        fast = solve(_scenario(clubhead_speed_mph=240.0))
+        ratio = base.path_deviation_deg / fast.path_deviation_deg
+        assert ratio == pytest.approx(2.0, abs=0.02)
+
+
+class TestFaceRotationDuringContact:
+    def test_closure_during_contact_is_about_a_degree(self) -> None:
+        result = solve(_scenario())
+        assert 0.8 < result.closure_during_contact_deg < 1.6
+
+    def test_zero_contact_time_means_zero_rotation(self) -> None:
+        result = solve(_scenario(contact_duration_us=0.0))
+        assert result.closure_during_contact_deg == pytest.approx(0.0)
+        assert result.loft_gain_during_contact_deg == pytest.approx(0.0)
+
+
+class TestImpactLocation:
+    """Off-center impact points get their own velocity — the launch-monitor
+    geometric-center question."""
+
+    def test_toe_impact_differs_from_center(self) -> None:
+        center = solve(_scenario())
+        toe = solve(_scenario(impact_offset_toe_mm=15.0))
+        assert toe.path_deviation_deg != pytest.approx(
+            center.path_deviation_deg, abs=1e-6
+        )
+
+    def test_high_face_impact_changes_delivered_speed(self) -> None:
+        center = solve(_scenario())
+        high = solve(_scenario(impact_offset_high_mm=10.0))
+        assert high.speed_delta_mph != pytest.approx(center.speed_delta_mph, abs=1e-6)
+
+
+class TestSweep:
+    def test_sweep_is_vectorized_and_monotonic(self) -> None:
+        omegas = np.linspace(0.0, 4000.0, 9)
+        deviations = sweep(_scenario(omega_plane_dps=0.0), "omega_shaft_dps", omegas)
+        assert deviations.shape == (9,)
+        assert deviations[0] == pytest.approx(0.0, abs=1e-9)
+        assert np.all(np.diff(deviations) < 0.0)  # more closure -> further left
+
+    def test_sweep_matches_pointwise_solve(self) -> None:
+        omegas = np.array([500.0, 1500.0, 3000.0])
+        swept = sweep(_scenario(), "omega_shaft_dps", omegas)
+        for value, expected in zip(omegas, swept, strict=True):
+            single = solve(_scenario(omega_shaft_dps=float(value)))
+            assert expected == pytest.approx(single.path_deviation_deg, abs=1e-9)
+
+
+class TestAffineDriftAlignment:
+    """Pins against the AffineDrift closure-rate dossier and derivation."""
+
+    def test_closure_rate_is_the_ccv_reconciliation(self) -> None:
+        """closure_rate must equal CCV = HTV*sin(lie) + SPV*cos(lie)."""
+        scenario = _scenario(omega_plane_dps=1870.0, omega_shaft_dps=1307.0)
+        result = solve(scenario)
+        expected = 1307.0 * math.sin(math.radians(58.0)) + 1870.0 * math.cos(
+            math.radians(58.0)
+        )
+        assert result.closure_rate_dps == pytest.approx(expected, abs=1e-9)
+
+    def test_default_scenario_reproduces_dossier_ccv_mean(self) -> None:
+        """Defaults (HTV 1,307, SPV 1,870, lie 58) give CCV ~ 2,100 deg/s."""
+        result = solve(ImpactScenario(clubhead_speed_mph=120.0))
+        assert result.closure_rate_dps == pytest.approx(2100.0, abs=5.0)
+
+    def test_normalized_closure_is_omega_over_v_in_deg_per_ft(self) -> None:
+        """The speed-invariant unit: deg/ft = closure rate / speed [ft/s]."""
+        result = solve(ImpactScenario(clubhead_speed_mph=120.0))
+        speed_fts = (120.0 / 3600.0) * 5280.0
+        assert result.normalized_closure_deg_per_ft == pytest.approx(
+            result.closure_rate_dps / speed_fts, abs=1e-9
+        )
+
+    def test_path_gap_tracks_normalized_closure_across_speeds(self) -> None:
+        """The path gap is d / R_ISA and 1 / R_ISA = omega / v, so the
+        deviation scales with deg/ft, not with either rate or speed
+        alone — the dossier's argument for the unit."""
+        slow = solve(_scenario(clubhead_speed_mph=60.0))
+        fast = solve(_scenario(clubhead_speed_mph=120.0))
+        assert slow.path_deviation_deg / fast.path_deviation_deg == pytest.approx(
+            slow.normalized_closure_deg_per_ft / fast.normalized_closure_deg_per_ft,
+            rel=0.02,
+        )
+
+    def test_trackman_worked_example_reproduces_3_degree_gap(self) -> None:
+        """the openly published ~3 deg GC-vs-face-center path gap, d=40mm."""
+        result = solve(
+            ImpactScenario(
+                clubhead_speed_mph=120.0,
+                omega_plane_dps=1870.0,
+                omega_shaft_dps=3575.0,
+                com_to_face_mm=40.0,
+            )
+        )
+        assert result.path_deviation_deg == pytest.approx(-3.0, abs=0.02)
+
+
+class TestCrossValidation:
+    """Independent checks of the analytic solution.
+
+    The model computes v_P = v_ref + omega x r in closed form. These
+    tests recompute the same quantities by entirely different routes -
+    finite-difference rotation of the actual point, and the Lagrange
+    identity for the cross-product magnitude - so an algebra or sign
+    slip in either path cannot pass both.
+    """
+
+    @staticmethod
+    def _rotation_matrix(omega: np.ndarray, dt: float) -> np.ndarray:
+        """Rodrigues rotation - independent of the model's cross product."""
+        theta = float(np.linalg.norm(omega)) * dt
+        if theta == 0.0:
+            return np.eye(3)
+        axis = omega / np.linalg.norm(omega)
+        k = np.array(
+            [
+                [0.0, -axis[2], axis[1]],
+                [axis[2], 0.0, -axis[0]],
+                [-axis[1], axis[0], 0.0],
+            ]
+        )
+        return np.eye(3) + math.sin(theta) * k + (1.0 - math.cos(theta)) * (k @ k)
+
+    def test_point_velocity_matches_finite_difference_rotation(self) -> None:
+        """d/dt [R(t) r + v t] at t=0 must equal v + omega x r."""
+        scenario = _scenario(impact_offset_toe_mm=12.0, impact_offset_high_mm=6.0)
+        result = solve(scenario)
+        omega = np.radians(np.array(result.omega_dps))
+        lever = (
+            np.array(
+                [
+                    scenario.com_to_face_mm,
+                    scenario.impact_offset_high_mm,
+                    scenario.impact_offset_toe_mm,
+                ]
+            )
+            / 1000.0
+        )
+        v_ref = np.array([scenario.clubhead_speed_mph * 0.44704, 0.0, 0.0])
+        dt = 1e-7
+        forward = self._rotation_matrix(omega, dt) @ lever + v_ref * dt
+        backward = self._rotation_matrix(omega, -dt) @ lever - v_ref * dt
+        numeric = (forward - backward) / (2.0 * dt)
+        assert numeric == pytest.approx(np.array(result.point_velocity_mps), abs=1e-6)
+
+    def test_tangential_magnitude_matches_lagrange_identity(self) -> None:
+        """|omega x r|^2 = |omega|^2 |r|^2 - (omega . r)^2."""
+        scenario = _scenario(impact_offset_toe_mm=-9.0, impact_offset_high_mm=4.0)
+        result = solve(scenario)
+        omega = np.radians(np.array(result.omega_dps))
+        lever = (
+            np.array(
+                [
+                    scenario.com_to_face_mm,
+                    scenario.impact_offset_high_mm,
+                    scenario.impact_offset_toe_mm,
+                ]
+            )
+            / 1000.0
+        )
+        expected_sq = (omega @ omega) * (lever @ lever) - (omega @ lever) ** 2
+        tangential_mps = result.tangential_speed_mph * 0.44704
+        assert tangential_mps**2 == pytest.approx(expected_sq, rel=1e-9)
+
+    def test_pure_vertical_axis_matches_closed_form(self) -> None:
+        """Lie 90, no plane rotation: path = -atan(omega d / v) exactly."""
+        scenario = _scenario(
+            omega_plane_dps=0.0, omega_shaft_dps=2000.0, lie_angle_deg=90.0
+        )
+        result = solve(scenario)
+        omega = math.radians(2000.0)
+        d = scenario.com_to_face_mm / 1000.0
+        v = scenario.clubhead_speed_mph * 0.44704
+        assert result.path_deviation_deg == pytest.approx(
+            -math.degrees(math.atan(omega * d / v)), abs=1e-9
+        )
+        assert result.aoa_deviation_deg == pytest.approx(0.0, abs=1e-9)
+
+
+class TestGeometryOutputs:
+    """The 3D view consumes these; they must be consistent unit vectors."""
+
+    def test_frame_vectors_are_orthonormal(self) -> None:
+        result = solve(_scenario())
+        shaft = np.array(result.shaft_axis)
+        normal = np.array(result.plane_normal)
+        assert np.linalg.norm(shaft) == pytest.approx(1.0)
+        assert np.linalg.norm(normal) == pytest.approx(1.0)
+        assert float(shaft @ normal) == pytest.approx(0.0, abs=1e-12)
+
+    def test_angular_velocity_vector_recombines(self) -> None:
+        scenario = _scenario()
+        result = solve(scenario)
+        omega = np.array(result.omega_dps)
+        magnitude = math.hypot(scenario.omega_plane_dps, scenario.omega_shaft_dps)
+        # plane normal and shaft axis are orthogonal, so magnitudes add in
+        # quadrature exactly.
+        assert np.linalg.norm(omega) == pytest.approx(magnitude)
