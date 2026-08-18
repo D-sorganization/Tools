@@ -104,7 +104,7 @@ def test_ci_standard_uses_bounded_checkout_history() -> None:
 
 
 def test_ci_standard_uses_persistent_python_toolcache_and_cold_cache_budgets() -> None:
-    """Cold setup downloads must not consume the entire protected-job budget."""
+    """Only the self-hosted matrix may use the persistent runner tool cache."""
     import yaml
 
     workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
@@ -117,13 +117,33 @@ def test_ci_standard_uses_persistent_python_toolcache_and_cold_cache_budgets() -
         job = workflow["jobs"][job_name]
         assert int(job["timeout-minutes"]) >= minimum_timeout
 
-        setup_step = next(
-            step
-            for step in job["steps"]
-            if str(step.get("uses", "")).startswith("actions/setup-python@")
-        )
-        setup_environment = setup_step.get("env", {})
-        assert "${{ runner.temp }}/_tool_cache" not in setup_environment.values()
+    quality_job = workflow["jobs"]["quality-gate"]
+    assert not any(
+        step.get("name") == "Select persistent Python tool cache"
+        for step in quality_job["steps"]
+    )
+    quality_setup = next(
+        step
+        for step in quality_job["steps"]
+        if str(step.get("uses", "")).startswith("actions/setup-python@")
+    )
+    assert quality_setup["with"]["cache"] == "pip"
+
+    tests_job = workflow["jobs"]["tests"]
+    cache_step = next(
+        step
+        for step in tests_job["steps"]
+        if step.get("name") == "Select persistent Python tool cache"
+    )
+    assert "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" in cache_step["run"]
+    assert "runner.temp" not in cache_step["run"]
+    tests_setup = next(
+        step
+        for step in tests_job["steps"]
+        if str(step.get("uses", "")).startswith("actions/setup-python@")
+    )
+    assert "cache" not in tests_setup.get("with", {})
+    assert "${{ runner.temp }}/_tool_cache" not in tests_setup.get("env", {}).values()
 
     # The shared-tool-cache workaround applies only where the cache is shared.
     toolcache_jobs = _persistent_toolcache_jobs(workflow)
@@ -164,6 +184,7 @@ def test_ci_standard_rejects_semantically_broken_cached_python() -> None:
     assert '"$interpreter" -m pip --version' in restore
     assert '[[ "$pip_version" != pip\\ *" from "* ]]' in restore
 
+<<<<<<< HEAD
     # Cache clean/restore is a shared-tool-cache concern: self-hosted only.
     # The version argument must track that job's own setup-python request, so a
     # matrix or pin change cannot leave the cleaner scrubbing the wrong version.
@@ -190,6 +211,22 @@ def test_ci_standard_rejects_semantically_broken_cached_python() -> None:
 
     # Runtime verification and venv isolation apply to every Python job,
     # hosted or self-hosted.
+=======
+    tests_job = workflow["jobs"]["tests"]
+    clean_step = next(
+        step
+        for step in tests_job["steps"]
+        if step.get("name") == "Force-clean stale Python tool cache (NVMe runners)"
+    )
+    assert clean_step["run"] == (
+        "bash .github/scripts/clean-python-toolcache.sh '${{ matrix.python-version }}'"
+    )
+    clean_index = tests_job["steps"].index(clean_step)
+    assert tests_job["steps"][clean_index - 1]["name"] == (
+        "Restore local Python tool cache"
+    )
+
+>>>>>>> origin/main
     for job_name in ("quality-gate", "tests"):
         job = workflow["jobs"][job_name]
         setup_index = next(
@@ -294,41 +331,26 @@ def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in workflow
 
 
-def test_quality_gate_dependency_install_does_not_use_shared_pip_cache() -> None:
-    """quality-gate must install into an isolated environment, never a shared one.
-
-    The mechanism changed when this job moved to ``ubuntu-24.04``: an ephemeral
-    hosted runner has no cross-job pip cache to poison, so the old per-step
-    ``PIP_NO_CACHE_DIR``/``PIP_CACHE_DIR`` pinning was dropped in favour of a
-    dedicated venv under ``$RUNNER_TEMP`` plus ``PYTHONNOUSERSITE``. Assert the
-    isolation that is actually in force, and that no shared cache sneaks back.
-    """
+def test_quality_gate_dependency_install_uses_only_hosted_download_cache() -> None:
     import yaml
 
     workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
-    job = workflow["jobs"]["quality-gate"]
-
-    # User-site leakage is the failure this originally guarded against: pip
-    # landing packages in ~/.local where a different interpreter picks them up.
-    assert str(job["env"]["PYTHONNOUSERSITE"]) == "1"
-
-    venv_step = next(
-        step
-        for step in job["steps"]
-        if step.get("name") == "Create isolated CI virtual environment"
-    )
-    assert 'python -m venv "$RUNNER_TEMP/ci-venv"' in venv_step["run"]
-
+    quality_job = workflow["jobs"]["quality-gate"]
     install_step = next(
-        step for step in job["steps"] if step.get("name") == "Install Dependencies"
+        step
+        for step in quality_job["steps"]
+        if step.get("name") == "Install Dependencies"
     )
-    install_environment = {
-        str(key): str(value) for key, value in (install_step.get("env") or {}).items()
-    }
-    shared_cache = install_environment.get("PIP_CACHE_DIR", "")
-    assert not shared_cache or "runner.temp" in shared_cache, (
-        f"quality-gate pip cache must stay runner-local, got {shared_cache!r}"
+    setup_step = next(
+        step
+        for step in quality_job["steps"]
+        if str(step.get("uses", "")).startswith("actions/setup-python@")
     )
+
+    assert setup_step["with"]["cache"] == "pip"
+    assert "/home/dieterolson/actions-runners" not in str(quality_job)
+    assert "PIP_CACHE_DIR" not in install_step.get("env", {})
+    assert "PIP_NO_CACHE_DIR" not in install_step.get("env", {})
 
 
 def test_workflow_lint_installs_actionlint_without_sudo() -> None:

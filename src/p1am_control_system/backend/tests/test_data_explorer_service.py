@@ -10,7 +10,7 @@ and the CSV/JSON export helpers.
 from __future__ import annotations
 
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -483,3 +483,164 @@ def test_assert_columns_aligned_accepts_matched() -> None:
     _svc._assert_columns_aligned(
         np.array([0.0, 1.0]), {"a": np.array([1.0, 2.0]), "b": np.array([3.0, 4.0])}
     )
+
+
+# --------------------------------------------------------------------------- #
+# Regression #4026: historian load must respect its budget BEFORE materializing #
+# --------------------------------------------------------------------------- #
+
+
+def test_load_historian_rejects_oversized_selection_before_reading_rows(
+    session: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The old guard appended every row for every tag into Python lists and only
+    # then compared `cells` against the ceiling — it could not prevent the OOM it
+    # existed to prevent. The budget check must fire off row COUNTs alone.
+    t0 = datetime(2026, 1, 1, tzinfo=UTC)
+    _seed(
+        session,
+        [("TAG_0", float(i), t0 + timedelta(seconds=i)) for i in range(50)]
+        + [("TAG_1", float(i), t0 + timedelta(seconds=i)) for i in range(50)],
+    )
+    monkeypatch.setattr(_svc, "_MAX_HISTORIAN_CELLS", 4)
+
+    def _must_not_load(*_a: object, **_kw: object) -> None:
+        raise AssertionError("rows were streamed before the budget was checked")
+
+    import data_capture
+
+    monkeypatch.setattr(data_capture, "query_trend_series", _must_not_load)
+
+    with pytest.raises(ValueError, match="too large"):
+        _svc._load_historian(
+            session,
+            ["TAG_0", "TAG_1"],
+            t0.isoformat(),
+            (t0 + timedelta(seconds=60)).isoformat(),
+            max_points=5000,
+        )
+
+
+def test_build_dataset_historian_honours_max_points(session: Session) -> None:
+    # #4026: HistorianSource.max_points was accepted by the model and sent by the
+    # HMI but never read anywhere in the backend.
+    t0 = datetime(2026, 1, 1, tzinfo=UTC)
+    _seed(session, [("TAG_0", float(i), t0 + timedelta(seconds=i)) for i in range(500)])
+    req = DatasetRequest(
+        historian=HistorianSource(
+            tags=["TAG_0"],
+            start_time=t0.isoformat(),
+            end_time=(t0 + timedelta(seconds=500)).isoformat(),
+            max_points=10,
+        ),
+        max_points=200_000,  # do not let the post-pipeline downsample do the work
+    )
+    resp = build_dataset(session, req)
+    assert resp.row_count <= 11  # decimated server-side at load time
+    # The whole window is still covered (endpoints preserved).
+    assert resp.columns[0].values[0] == 0.0
+    assert resp.columns[0].values[-1] == 499.0
+
+
+def test_build_dataset_historian_small_range_is_not_decimated(
+    session: Session,
+) -> None:
+    t0 = datetime(2026, 1, 1, tzinfo=UTC)
+    _seed(session, [("TAG_0", float(i), t0 + timedelta(seconds=i)) for i in range(20)])
+    req = DatasetRequest(
+        historian=HistorianSource(
+            tags=["TAG_0"],
+            start_time=t0.isoformat(),
+            end_time=(t0 + timedelta(seconds=60)).isoformat(),
+            max_points=5000,
+        )
+    )
+    resp = build_dataset(session, req)
+    assert resp.row_count == 20
+
+
+def test_load_historian_window_bounds_are_utc_normalized(session: Session) -> None:
+    # #4025: an offset-less bound must be read as UTC, and an explicit offset
+    # must be honoured — otherwise "export everything" starts hours late.
+    t0 = datetime(2026, 1, 1, 12, tzinfo=UTC)
+    _seed(session, [("TAG_0", 1.0, t0), ("TAG_0", 2.0, t0 + timedelta(hours=8))])
+
+    naive = _svc._load_historian(
+        session, ["TAG_0"], "2026-01-01T00:00:00", "2026-01-02T00:00:00"
+    )
+    assert naive[0].size == 2
+
+    # 13:00-07:00 == 20:00Z, so only the later sample is in range.
+    offset = _svc._load_historian(
+        session, ["TAG_0"], "2026-01-01T13:00:00-07:00", "2026-01-02T00:00:00Z"
+    )
+    assert offset[0].size == 1
+
+
+def test_load_historian_rejects_bad_types(session: Session) -> None:
+    t0 = datetime(2026, 1, 1, tzinfo=UTC).isoformat()
+    with pytest.raises(TypeError):
+        _svc._load_historian(session, "TAG_0", t0, t0)
+    with pytest.raises(TypeError):
+        _svc._load_historian(session, ["TAG_0"], t0, t0, max_points="lots")
+
+
+def test_list_signals_emits_explicit_offset(session: Session) -> None:
+    t0 = datetime(2026, 1, 1, tzinfo=UTC)
+    _seed(session, [("TAG_0", 1.0, t0)])
+    info = list_signals(session).signals[0]
+    assert info.start_time is not None and info.start_time.endswith("+00:00")
+    assert info.end_time is not None and info.end_time.endswith("+00:00")
+
+
+# --------------------------------------------------------------------------- #
+# Regression #4040: ragged columns must 400 before the CSV body starts         #
+# --------------------------------------------------------------------------- #
+
+
+def test_validate_export_rejects_ragged_columns_without_index() -> None:
+    # dataset_to_csv_rows takes n from columns[0] and indexes every other column
+    # at i -> IndexError mid-stream, i.e. a TRUNCATED body behind an HTTP 200.
+    with pytest.raises(ValueError, match="length"):
+        _svc.validate_export(
+            None,
+            [
+                _Column(name="a", values=[1.0, 2.0, 3.0]),
+                _Column(name="b", values=[1.0]),
+            ],
+        )
+
+
+def test_validate_export_rejects_ragged_columns_with_index() -> None:
+    with pytest.raises(ValueError, match="length"):
+        _svc.validate_export(
+            [0.0, 1.0],
+            [
+                _Column(name="a", values=[1.0, 2.0]),
+                _Column(name="b", values=[1.0]),
+            ],
+        )
+
+
+def test_validate_export_accepts_equal_length_columns_without_index() -> None:
+    _svc.validate_export(
+        None,
+        [
+            _Column(name="a", values=[1.0, 2.0]),
+            _Column(name="b", values=[3.0, 4.0]),
+        ],
+    )
+
+
+def test_export_request_model_rejects_ragged_columns_without_index() -> None:
+    from data_explorer_models import ExportRequest
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        ExportRequest(
+            index=None,
+            columns=[
+                Column(name="a", values=[1.0, 2.0]),
+                Column(name="b", values=[1.0]),
+            ],
+        )

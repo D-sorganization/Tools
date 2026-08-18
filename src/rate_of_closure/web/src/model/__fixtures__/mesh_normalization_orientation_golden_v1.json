@@ -1,0 +1,10 @@
+{
+  "schema": "rate-of-closure/imported-mesh-normalization/v1",
+  "source_extents": [2, 4, 6],
+  "expected_spans_m": [0.11, 0.055, 0.165],
+  "permutations": [
+    [0, 1, 2], [0, 2, 1], [1, 0, 2],
+    [1, 2, 0], [2, 0, 1], [2, 1, 0]
+  ],
+  "contract": "proper-handed axis inference; normalized signed zero is positive; imported centroid is never inferred"
+}

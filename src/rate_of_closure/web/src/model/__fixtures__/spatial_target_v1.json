@@ -1,0 +1,1 @@
+{"elevation_source":"absolute","frame":"app","ground_source":null,"kind":"aerial_waypoint","label":"Apex Gate","position_m":{"elevation":24.25,"right":-3.25,"x":137.5},"schema":"swing_sim.spatial_target","schema_version":1,"source_frame":"flight","tolerance":{"half_extents_m":{"elevation":2.5,"right":3.5,"x":4.5},"kind":"box"},"units":"m"}

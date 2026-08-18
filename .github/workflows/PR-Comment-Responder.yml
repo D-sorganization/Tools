@@ -23,6 +23,12 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    # Same pre-filter as collect-comment below, hoisted so a plain issue
+    # comment never occupies a fleet runner just to be skipped one job later.
+    # Evaluated by GitHub before scheduling, so a skip costs no capacity.
+    if: |
+      (github.event_name == 'pull_request_review_comment') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -32,7 +38,8 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+          LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
         shell: bash
         run: |
           MODE="${LOCAL_MODE:-local}"
@@ -48,6 +55,15 @@ jobs:
               exit 1
               ;;
             *)
+              # Public repos get free unmetered hosted runners, so there is no
+              # reason to fail closed when the fleet is merely saturated: the
+              # probe below counts `busy == false`, and the fleet routinely runs
+              # fully online with ZERO idle runners.
+              if [ "$REPOSITORY_PRIVATE" != "true" ]; then
+                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+                echo "Public repo - routing to free hosted runner (mode=$MODE)"
+                exit 0
+              fi
               AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
                 --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
                 2>/dev/null || echo "0")

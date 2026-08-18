@@ -47,7 +47,9 @@ def double_state() -> np.ndarray:
 @pytest.fixture()
 def triple_state() -> np.ndarray:
     """Triple pendulum state: [theta1, phi1, phi2, dtheta1, dphi1, dphi2]."""
-    return np.array([np.radians(45.0), np.radians(-30.0), np.radians(20.0), 0.5, -0.3, 0.2])
+    return np.array(
+        [np.radians(45.0), np.radians(-30.0), np.radians(20.0), 0.5, -0.3, 0.2]
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -83,9 +85,9 @@ class TestZeroTorqueDouble:
         fx, fy = result["shoulder"]
         expected_fy = (double_params.m1 + double_params.m2) * double_params.g
         assert abs(fx) < 1e-8, f"No horizontal force at rest, got fx={fx}"
-        assert abs(fy - expected_fy) < 1e-4, (
-            f"Shoulder fy={fy:.4f}, expected {expected_fy:.4f}"
-        )
+        assert (
+            abs(fy - expected_fy) < 1e-4
+        ), f"Shoulder fy={fy:.4f}, expected {expected_fy:.4f}"
 
     def test_differs_from_driven_forces_when_torque_nonzero(
         self, double_state: np.ndarray, double_params: PendulumParams
@@ -110,9 +112,9 @@ class TestZeroTorqueDouble:
 
         # With 50 Nm at shoulder, forces should differ meaningfully
         diff_shoulder = abs(actual["shoulder"][1] - counterfactual["shoulder"][1])
-        assert diff_shoulder > 1.0, (
-            f"Expected driven vs zero-torque to differ; got diff={diff_shoulder:.3f}"
-        )
+        assert (
+            diff_shoulder > 1.0
+        ), f"Expected driven vs zero-torque to differ; got diff={diff_shoulder:.3f}"
 
     def test_zero_gravity_hanging_position(self, double_params: PendulumParams) -> None:
         """With g=0, zero-torque counterfactual gives near-zero forces at rest."""
@@ -127,9 +129,9 @@ class TestZeroTorqueDouble:
         result = zero_torque_joint_forces_double(state, params_no_g)
         for key in ("shoulder", "wrist"):
             fx, fy = result[key]
-            assert abs(fx) < 1e-8 and abs(fy) < 1e-8, (
-                f"No gravity + no motion → zero force at {key}, got ({fx:.2e},{fy:.2e})"
-            )
+            assert (
+                abs(fx) < 1e-8 and abs(fy) < 1e-8
+            ), f"No gravity + no motion → zero force at {key}, got ({fx:.2e},{fy:.2e})"
 
     def test_invalid_state_shape_raises(self, double_params: PendulumParams) -> None:
         """Non-(4,) state must raise AssertionError."""
@@ -139,7 +141,9 @@ class TestZeroTorqueDouble:
     def test_nonfinite_state_raises(self, double_params: PendulumParams) -> None:
         """NaN state must raise AssertionError."""
         with pytest.raises((ValueError, TypeError)):
-            zero_torque_joint_forces_double(np.array([np.nan, 0.0, 0.0, 0.0]), double_params)
+            zero_torque_joint_forces_double(
+                np.array([np.nan, 0.0, 0.0, 0.0]), double_params
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -163,11 +167,13 @@ class TestZeroTorqueTriple:
         result = zero_torque_joint_forces_triple(triple_state, triple_params)
         for key in ("shoulder", "wrist1", "wrist2"):
             fx, fy = result[key]
-            assert np.isfinite(fx) and np.isfinite(fy), (
-                f"{key} forces not finite: ({fx}, {fy})"
-            )
+            assert np.isfinite(fx) and np.isfinite(
+                fy
+            ), f"{key} forces not finite: ({fx}, {fy})"
 
-    def test_static_hanging_shoulder_force(self, triple_params: TriplePendulumParams) -> None:
+    def test_static_hanging_shoulder_force(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         """At rest hanging straight down, shoulder force ≈ (m1+m2+m3)*g."""
         state = np.zeros(6)
         result = zero_torque_joint_forces_triple(state, triple_params)
@@ -178,6 +184,8 @@ class TestZeroTorqueTriple:
         assert abs(fx) < 1e-8
         assert abs(fy - expected_fy) < 1e-4, f"fy={fy}, expected {expected_fy}"
 
-    def test_invalid_state_shape_raises(self, triple_params: TriplePendulumParams) -> None:
+    def test_invalid_state_shape_raises(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         with pytest.raises((ValueError, TypeError)):
             zero_torque_joint_forces_triple(np.zeros(5), triple_params)

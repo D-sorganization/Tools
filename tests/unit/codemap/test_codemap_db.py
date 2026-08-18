@@ -4,6 +4,11 @@ import sqlite3
 from pathlib import Path
 
 from codemap import db as codemap_db
+from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
+
+# Scoped to this module only; a session-wide skip hook silenced the whole
+# suite here once already (issue #4497).
+pytestmark = CODEMAP_DEPS_SKIP
 
 
 def test_path_helpers_use_canonical_codemap_locations(tmp_path: Path) -> None:
@@ -118,8 +123,7 @@ def test_init_schema_migrates_legacy_fts_alias_schema() -> None:
     conn = sqlite3.connect(":memory:")
 
     try:
-        conn.executescript(
-            """
+        conn.executescript("""
             CREATE TABLE meta (
                 key   TEXT PRIMARY KEY,
                 value TEXT NOT NULL
@@ -158,8 +162,7 @@ def test_init_schema_migrates_legacy_fts_alias_schema() -> None:
             CREATE TRIGGER symbols_ai AFTER INSERT ON symbols BEGIN
                 SELECT 1;
             END;
-            """
-        )
+            """)
 
         codemap_db.init_schema(conn)
 

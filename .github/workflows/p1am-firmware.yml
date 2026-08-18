@@ -1,0 +1,167 @@
+# P1AM firmware — host unit tests + sketch compile
+#
+# The P1AM-100 firmware is the half of the SCADA system that keeps the plant
+# safe when the Raspberry Pi host is gone: it owns the safety interlock, the
+# four PID loops, and the analog/relay outputs. Until this workflow existed,
+# nothing in CI compiled it and nothing ran its tests (issue #3995).
+#
+# A host-side harness already existed at tests/p1am_control_system/firmware/ --
+# a Makefile that builds the real firmware sources against a fake
+# HardwareInterface, plus assertions covering scaling, anti-windup, trip
+# latching and NaN soft-fail. It sat inside a directory pytest collects but
+# holds no .py files, so it was never executed and had rotted: MockHardware no
+# longer implemented the interface and the StorageManager round-trip still
+# used the pre-lolo/hihi 4-argument signature.
+#
+# Two gates, cheapest first:
+#   firmware-unit-tests  plain g++, no board toolchain, seconds. Catches logic
+#                        regressions and is the TDD vehicle for firmware work.
+#   firmware-compile     arduino-cli against the real board package. Catches
+#                        signature and library breakage the host harness cannot
+#                        see, since the harness never includes P1AM.h/Ethernet.h.
+#
+# Pinned toolchain versions are printed to the job summary on every run so a
+# firmware binary can be traced back to the toolchain that produced it -- a
+# requirement for any industrial system where "what was running when this
+# happened?" must be answerable.
+
+name: P1AM Firmware
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/p1am_control_system/firmware/**"
+      - "tests/p1am_control_system/firmware/**"
+      - ".github/workflows/p1am-firmware.yml"
+  pull_request:
+    paths:
+      - "src/p1am_control_system/firmware/**"
+      - "tests/p1am_control_system/firmware/**"
+      - ".github/workflows/p1am-firmware.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: p1am-firmware-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  firmware-unit-tests:
+    name: Firmware host unit tests (g++)
+    # Never run on a pull request from a fork. `make test` COMPILES AND EXECUTES
+    # contributor-authored code, and it runs on d-sorg-fleet -- the owner's own
+    # machines -- with a write-scoped workflow token. This repository is public,
+    # forking is enabled, and fork-PR approval is set to
+    # `first_time_contributors_new_to_github`, so approval is required only of
+    # accounts brand new to GitHub: any pre-existing account could otherwise fork,
+    # open a PR touching a firmware path, and get arbitrary code execution on the
+    # fleet with no approval step. Adding an ungated job here would turn a latent
+    # policy weakness into a concrete path, so gate it even though the repo is
+    # broadly exposed -- that is a reason not to add to the exposure, not to match
+    # it. Same gate as firmware-compile below.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    # The d-sorg-fleet pool spans Linux, Windows and macOS hosts; this job needs
+    # a POSIX toolchain for the Makefile, so pin it to the Linux label.
+    runs-on: [d-sorg-fleet, Linux]
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Show toolchain
+        run: |
+          g++ --version
+          make --version | head -1
+
+      - name: Build and run firmware unit tests
+        working-directory: tests/p1am_control_system/firmware
+        run: make test
+
+      - name: Reject a vacuous build
+        working-directory: tests/p1am_control_system/firmware
+        # Every check in the suite is an assert(). test_dcs.cpp #errors out if
+        # NDEBUG is defined, but that guard only helps if the suite is actually
+        # built the way we think it is -- so assert on the binary's own output
+        # rather than trusting a zero exit code.
+        run: |
+          output="$(./test_dcs)"
+          echo "$output"
+          echo "$output" | grep -q "All C++ Core Firmware Tests Passed Successfully!"
+
+  firmware-compile:
+    name: Firmware sketch compile (arduino-cli)
+    # Never run on a pull request from a fork. This job executes a third-party
+    # installer and downloads a board package onto a SELF-HOSTED runner whose
+    # workspace and tool caches are shared with every other fleet job. This
+    # repository is public and set to the weakest fork-PR approval, so without
+    # this gate any external contributor could run code on the fleet by opening
+    # a PR that touches a firmware path.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [d-sorg-fleet, Linux]
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install arduino-cli
+        env:
+          # Pinned to a release tag, NOT `master`. This installer is fetched and
+          # piped straight into a shell on a self-hosted runner, so tracking a
+          # moving branch means the fleet executes whatever lands on it. Bump
+          # deliberately, and check the diff of install.sh when you do.
+          ARDUINO_CLI_REF: v1.5.1
+          ARDUINO_CLI_VERSION: 1.5.1
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL \
+            "https://raw.githubusercontent.com/arduino/arduino-cli/${ARDUINO_CLI_REF}/install.sh" \
+            | BINDIR="$HOME/.local/bin" sh -s -- "${ARDUINO_CLI_VERSION}"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/arduino-cli" version
+
+      - name: Install P1AM board package and libraries
+        # The board package and libraries are intentionally NOT version-pinned
+        # here. Pinning them is worth doing, but it requires a version set
+        # verified against the FACTS board-manager index and the Arduino library
+        # index; inventing plausible-looking versions would break this gate on
+        # its first run. The resolved versions are recorded to the job summary by
+        # the step below, which is what makes a later pin a mechanical change.
+        # Unlike the installer above this is not a code-execution concern: it
+        # runs the arduino-cli binary already pinned in the previous step.
+        run: |
+          arduino-cli config init --overwrite
+          arduino-cli config add board_manager.additional_urls \
+            https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json
+          arduino-cli core update-index
+          arduino-cli core install P1AM-100:samd
+          arduino-cli lib install P1AM ArduinoModbus ArduinoRS485 Ethernet FlashStorage
+
+      - name: Compile firmware sketch
+        run: |
+          arduino-cli compile \
+            --fqbn P1AM-100:samd:P1AM-100_native \
+            --warnings all \
+            src/p1am_control_system/firmware \
+            --output-dir "${RUNNER_TEMP}/p1am-build"
+
+      - name: Record toolchain versions
+        if: always()
+        run: |
+          {
+            echo "### P1AM firmware toolchain"
+            echo
+            echo '```'
+            arduino-cli version
+            echo
+            arduino-cli core list
+            echo
+            arduino-cli lib list
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

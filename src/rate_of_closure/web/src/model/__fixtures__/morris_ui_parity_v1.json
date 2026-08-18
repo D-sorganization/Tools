@@ -1,0 +1,48 @@
+{
+  "schema_id": "rate-of-closure/morris-ui-parity",
+  "schema_version": 1,
+  "authority_club_names": ["Driver 9.5°", "Driver 10.5°", "Driver 12°", "3-Wood", "5-Wood", "3-Hybrid", "3-Iron", "5-Iron", "7-Iron", "9-Iron", "Pitching Wedge", "Gap Wedge", "Sand Wedge", "Lob Wedge", "Blade Putter", "Mallet Putter"],
+  "authority_flight_models": ["waterloo_penner", "macdonald_hanzely", "nathan", "ballantyne", "jcole", "rospie_dl", "charry_l3"],
+  "base_summary": {"club_name": "Driver 10.5°", "support_mode": "tee", "source_kind": "double_pendulum", "contact_mode": "fixed_ball_contact"},
+  "factor_drafts": [
+    {"variable_key": "swing_sim.swing.yaw_deg", "enabled": true, "lower": -3.0, "upper": 3.0},
+    {"variable_key": "swing_sim.swing.side_tilt_deg", "enabled": true, "lower": -3.0, "upper": 3.0}
+  ],
+  "expected_factor_rows": [
+    {"spec_id": "swing_sim.swing.yaw_deg", "variable_key": "swing_sim.swing.yaw_deg", "label": "Swing-Plane Yaw", "unit": "deg", "guidance": "Typical variation: 1-3 deg about vertical. Source: 3-D motion-capture swing-plane studies collected in the AffineDrift dossier.", "applicability": null, "enabled": true, "applicable": true, "lower": -3.0, "upper": 3.0, "validation_error": null},
+    {"spec_id": "swing_sim.swing.side_tilt_deg", "variable_key": "swing_sim.swing.side_tilt_deg", "label": "Swing-Plane Side Tilt", "unit": "deg", "guidance": "Typical variation: 1-3 deg about the plane lean. Source: 3-D motion-capture swing-plane studies collected in the AffineDrift dossier.", "applicability": null, "enabled": true, "applicable": true, "lower": -3.0, "upper": 3.0, "validation_error": null}
+  ],
+  "submitted_request": {
+    "schema_id": "rate-of-closure/morris-request", "schema_version": 1, "request_id": "parity-request",
+    "base": {"club_name": "Driver 10.5°", "support_mode": "tee", "tee_height_m": 0.0381, "plane_yaw_deg": 0.0, "plane_side_tilt_deg": 0.0, "plane_forward_tilt_deg": 0.0, "pendulum_m1_kg": 7.5, "pendulum_l1_m": 0.75, "pendulum_lc1_m": 0.3375, "pendulum_i1_kg_m2": 1.2058593750000002, "pendulum_m2_kg": 0.35, "pendulum_l2_m": 1.0, "pendulum_lc2_m": 0.7557142857142858, "pendulum_i2_kg_m2": 0.24023500000000003, "damping_shoulder": 0.4, "damping_wrist": 0.25, "swing_duration_s": 0.05, "flight_model": "waterloo_penner", "impact_offset_toe_mm": 0.0, "impact_offset_high_mm": 0.0},
+    "factors": [
+      {"spec_id": "swing_sim.swing.yaw_deg", "variable_key": "swing_sim.swing.yaw_deg", "lower": -3.0, "upper": 3.0, "unit": "deg"},
+      {"spec_id": "swing_sim.swing.side_tilt_deg", "variable_key": "swing_sim.swing.side_tilt_deg", "lower": -3.0, "upper": 3.0, "unit": "deg"}
+    ],
+    "trajectories": 12, "levels": 4, "seed": 73, "minimum_effects": 2, "worker_count": 1
+  },
+  "completed_job": {
+    "schema_id": "rate-of-closure/morris-job", "schema_version": 1, "job_id": "parity-job", "request_id": "parity-request", "status": "completed", "completed_samples": 36, "total_samples": 36, "cancel_requested": false,
+    "report": {
+      "schema_id": "swing-sim/morris-global-sensitivity-report", "schema_version": 1, "method": "morris-elementary-effects",
+      "design": {"trajectories": 12, "levels": 4, "seed": 73, "total_samples": 36, "normalized_step": 0.6666666666666666},
+      "assumptions": ["Factors are independently screened over declared finite bounds.", "The evaluator is deterministic or its stochastic stream is controlled.", "Elementary effects are scaled to a full normalized factor range.", "Only paired finite outputs from non-failed endpoints are estimable."],
+      "interaction_caveat": "Morris sigma is a screening indicator that conflates nonlinearity and interaction; it does not isolate either effect or establish causality.",
+      "estimates": [
+        {"source": {"spec_id": "face-window", "variable_key": "swing_sim.impact.delivery.face_angle_deg", "unit": "deg", "bounds": [0.0, 1.0], "time_window_s": [0.01, 0.02], "point_ids": ["clubhead"]}, "target": {"name": "clubhead_x_m", "unit": "m", "kind": "state-point", "time_s": 0.03, "point_id": "clubhead", "coordinate_frame": "app_frame:x_target,y_up,z_right"}, "effects": {"mu": 2.0, "mu_star": 2.0, "mu_star_standard_error": 0.0, "sigma": 0.0}, "availability": "available", "sample_adequacy": "adequate", "denominator": {"total_pairs": 12, "valid_pairs": 12, "typed_no_impact_pairs": 0, "no_impact_unavailable_pairs": 0, "failed_pairs": 0, "nonfinite_pairs": 0}},
+        {"source": {"spec_id": "speed-global", "variable_key": "swing_sim.impact.delivery.clubhead_speed_mps", "unit": "m/s", "bounds": [0.0, 1.0], "time_window_s": null, "point_ids": []}, "target": {"name": "clubhead_x_m", "unit": "m", "kind": "state-point", "time_s": 0.03, "point_id": "clubhead", "coordinate_frame": "app_frame:x_target,y_up,z_right"}, "effects": {"mu": 3.0, "mu_star": 3.0, "mu_star_standard_error": 0.0, "sigma": 0.0}, "availability": "available", "sample_adequacy": "adequate", "denominator": {"total_pairs": 12, "valid_pairs": 12, "typed_no_impact_pairs": 0, "no_impact_unavailable_pairs": 0, "failed_pairs": 0, "nonfinite_pairs": 0}}
+      ]
+    },
+    "error": null
+  },
+  "expected_job_presentation": {"status": "completed", "terminal": true, "completed_samples": 36, "total_samples": 36, "progress_fraction": 1.0, "cancel_requested": false, "can_cancel": false, "can_present_results": true, "message": "Morris study completed", "error_code": null, "error_message": null},
+  "expected_tables": {
+    "clubhead_x_m": {
+      "target": {"name": "clubhead_x_m", "label": "Clubhead X M", "unit": "m", "kind": "state-point", "time_s": 0.03, "point_id": "clubhead", "coordinate_frame": "app_frame:x_target,y_up,z_right"},
+      "rows": [
+        {"rank": 1, "spec_id": "speed-global", "variable_key": "swing_sim.impact.delivery.clubhead_speed_mps", "label": "Clubhead Speed", "source_unit": "m/s", "source_lower": 0.0, "source_upper": 1.0, "mu": 3.0, "mu_star": 3.0, "mu_star_standard_error": 0.0, "sigma": 0.0, "availability": "available", "sample_adequacy": "adequate", "total_pairs": 12, "valid_pairs": 12, "typed_no_impact_pairs": 0, "no_impact_unavailable_pairs": 0, "failed_pairs": 0, "nonfinite_pairs": 0},
+        {"rank": 2, "spec_id": "face-window", "variable_key": "swing_sim.impact.delivery.face_angle_deg", "label": "Face Angle", "source_unit": "deg", "source_lower": 0.0, "source_upper": 1.0, "mu": 2.0, "mu_star": 2.0, "mu_star_standard_error": 0.0, "sigma": 0.0, "availability": "available", "sample_adequacy": "adequate", "total_pairs": 12, "valid_pairs": 12, "typed_no_impact_pairs": 0, "no_impact_unavailable_pairs": 0, "failed_pairs": 0, "nonfinite_pairs": 0}
+      ]
+    }
+  }
+}

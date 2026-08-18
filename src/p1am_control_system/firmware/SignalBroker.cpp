@@ -93,11 +93,7 @@ int SignalBroker::GetOutputRouting(int channel) const {
 
 void SignalBroker::ReadHardwareInputs(HardwareInterface& hw) {
   // Read and scale 4 Thermocouples (channels 0 to 3).
-  // Type-K range is ~0-1372 C; we scale 0-1400 C -> 0.0%-100.0% tag values so
-  // the heater controller's full 0-1400 C span fits the 0-100% broker tag.
-  // NOTE: this full-scale (1400) MUST match the backend temperature
-  // controller's temp_full_scale_c so the reported deg C is correct.
-  static const float kThermocoupleFullScaleC = 1400.0f;
+  // Full scale is declared once in SignalBroker.h; see the contract note there.
   for (int i = 0; i < 4; ++i) {
     int target_tag = input_routing_[i];
     if (target_tag != kUnmappedTag) {

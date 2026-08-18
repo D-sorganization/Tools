@@ -17,7 +17,7 @@ from collections.abc import Callable
 from typing import Any, cast
 
 import hardware
-from auth_config import require_admin_key
+from auth_config import require_admin_key, require_read_auth
 from config_store import load_config, load_model, save_config, save_model
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -27,8 +27,13 @@ from temperature_models import (
     TemperatureConfig,
     TemperatureState,
     TemperatureStatus,
+    ThermocoupleChannel,
 )
-from thermocouple_filter import FilterSample, ThermocoupleDeglitchFilter
+from thermocouple_filter import (
+    DEFAULT_MAX_STEP_C,
+    FilterSample,
+    ThermocoupleDeglitchFilter,
+)
 
 __all__ = [
     "BurnoutModeRequest",
@@ -81,8 +86,13 @@ class TemperatureService:
         # heater (fail-safe). The controlling channel's filtered value is what the
         # control law and the HMI see; both channels are always filtered so a
         # switch lands on an already-warm filter.
-        self._k_filter = ThermocoupleDeglitchFilter()
-        self._r_filter = ThermocoupleDeglitchFilter()
+        # Each filter must be told its own channel's full scale. Constructing
+        # them bare pinned both to the module default (1400 C) regardless of
+        # what the channel was configured for, so on a shorter-range channel
+        # the high-side burnout rail sat above any reachable reading and an
+        # open thermocouple was accepted as genuine (issue #4035).
+        self._k_filter = self._build_filter(self.controller.config.type_k)
+        self._r_filter = self._build_filter(self.controller.config.type_r)
         # True when the CONTROLLING channel's reading is currently being held
         # (a live glitch is being ridden out). Surfaced in status() so the HMI can
         # warn the operator that the control sensor is acting up.
@@ -157,6 +167,33 @@ class TemperatureService:
         await self._assert_burnout_coil()
         return self.status()
 
+    def _rebuild_filters(self) -> None:
+        """Re-create both deglitch filters from the controller's live config."""
+        config = self.controller.config
+        self._k_filter = self._build_filter(config.type_k)
+        self._r_filter = self._build_filter(config.type_r)
+        self._control_sensor_holding = False
+
+    @staticmethod
+    def _build_filter(channel: ThermocoupleChannel) -> ThermocoupleDeglitchFilter:
+        """Construct a deglitch filter matched to one channel's range.
+
+        Constructing the filters bare pinned both to the module default full
+        scale regardless of what the channel was configured for. On a
+        shorter-range channel the high-side burnout rail then sat above any
+        reachable reading, so an open thermocouple was accepted as a genuine
+        measurement -- the exact condition the filter exists to catch
+        (issue #4035).
+
+        ``max_step_c`` is scaled with the range too, so "non-physical
+        single-scan step" means the same fraction of span on every channel.
+        """
+        span_ratio = channel.full_scale_c / hardware.THERMOCOUPLE_FULL_SCALE_C
+        return ThermocoupleDeglitchFilter(
+            full_scale_c=channel.full_scale_c,
+            max_step_c=DEFAULT_MAX_STEP_C * span_ratio,
+        )
+
     @staticmethod
     def _control_value(sample: FilterSample) -> float:
         """The value to feed the control law from a filtered sample.
@@ -225,6 +262,11 @@ class TemperatureService:
             TypeError: if new_config is not a TemperatureConfig (from controller).
         """
         self.controller.update_config(new_config)
+        # Rebuild the filters against the new ranges. A filter carrying state
+        # from the previous scaling would see the rescaled reading as a
+        # non-physical step and hold, then trip TC_FAULT mid-run for a change
+        # that only touched a conversion factor (issue #4035).
+        self._rebuild_filters()
         self._persist_config()
         config: TemperatureConfig = self.controller.config
         return config
@@ -467,7 +509,11 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
     router = APIRouter(prefix="/api/temperature", tags=["temperature"])
     controller = service.controller
 
-    @router.get("/config", response_model=TemperatureConfig)
+    @router.get(
+        "/config",
+        response_model=TemperatureConfig,
+        dependencies=[Depends(require_read_auth)],
+    )
     async def get_temperature_config() -> TemperatureConfig:
         config: TemperatureConfig = controller.config
         return config
@@ -482,7 +528,11 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
     ) -> TemperatureConfig:
         return service.update_config(new_config)
 
-    @router.get("/status", response_model=TemperatureStatus)
+    @router.get(
+        "/status",
+        response_model=TemperatureStatus,
+        dependencies=[Depends(require_read_auth)],
+    )
     async def get_temperature_status() -> TemperatureStatus:
         return service.status()
 

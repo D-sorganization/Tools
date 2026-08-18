@@ -104,8 +104,7 @@ def test_legacy_sidekick_aliases_share_canonical_module_objects() -> None:
             "-W",
             "ignore::DeprecationWarning",
             "-c",
-            textwrap.dedent(
-                """
+            textwrap.dedent("""
                 import importlib
 
                 canonical = importlib.import_module(
@@ -122,8 +121,7 @@ def test_legacy_sidekick_aliases_share_canonical_module_objects() -> None:
                     "src.shared.python.sidekick.ui.tools_sidebar.registry"
                 )
                 assert src_alias is None or src_alias is canonical
-                """
-            ),
+                """),
         ],
         cwd=REPO_ROOT,
         env=env,
