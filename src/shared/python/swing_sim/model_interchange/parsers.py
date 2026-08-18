@@ -27,7 +27,12 @@ expansion is not processed by ElementTree.
 from __future__ import annotations
 
 import math
-from xml.etree import ElementTree
+
+# ElementTree is deliberate: these parsers read local model files the
+# caller supplies (MJCF/URDF/.osim), the formats carry no DTDs, and stdlib
+# ElementTree does not process external entities. Matches the repo's URDF
+# tooling convention (see humanoid_character_builder tests).
+from xml.etree import ElementTree  # nosec B405
 
 from shared.python.contracts import require
 
@@ -58,7 +63,8 @@ _URDF_JOINT_TYPES = {
 def _parse_xml(text: str, kind: str) -> ElementTree.Element:
     require(isinstance(text, str) and text.strip() != "", f"{kind} must be nonempty")
     try:
-        return ElementTree.fromstring(text)
+        # Local caller-supplied model file; no DTD/entity processing in stdlib.
+        return ElementTree.fromstring(text)  # nosec B314
     except ElementTree.ParseError as exc:
         raise ValueError(f"{kind} is not well-formed XML: {exc}") from exc
 
