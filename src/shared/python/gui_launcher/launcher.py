@@ -261,7 +261,6 @@ class GUILauncher:
             )
         )
 
-
     def _launch_tkinter(self) -> int:
         """Launch a Tkinter application."""
         if self.config.entry_point:
