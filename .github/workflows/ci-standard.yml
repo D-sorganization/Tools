@@ -267,9 +267,11 @@ jobs:
         run: |
           if [ -s changed_python_files.txt ]; then
             echo "Linting changed files..."
-            # Mirror the exclude list from pyproject.toml [tool.ruff]:
+            # Mirror the exclude list from ruff.toml (authoritative).
+            # src/data_processing/ is deliberately absent: it is not excluded
+            # in ruff.toml, and it passes both ruff check and ruff format.
             # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            grep -v -E '^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_lint_files.txt || true
             if [ -s ruff_lint_files.txt ]; then
               xargs -r -d '\n' python -m ruff check < ruff_lint_files.txt
@@ -283,9 +285,11 @@ jobs:
       - name: Format Check (ruff-format)
         run: |
           if [ -s changed_python_files.txt ]; then
-            # Mirror the exclude list from pyproject.toml [tool.ruff]:
+            # Mirror the exclude list from ruff.toml (authoritative).
+            # src/data_processing/ is deliberately absent: it is not excluded
+            # in ruff.toml, and it passes both ruff check and ruff format.
             # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            grep -v -E '^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_format_files.txt || true
             if [ -s ruff_format_files.txt ]; then
               xargs -r -d '\n' python -m ruff format --check < ruff_format_files.txt
