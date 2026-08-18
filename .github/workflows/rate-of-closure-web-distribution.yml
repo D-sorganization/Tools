@@ -66,7 +66,7 @@ jobs:
           npm run type-check
           npm run lint
           npm test
-          npm run build
+          npm run build:release
       - name: Run package-side distribution contracts
         env:
           ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -215,7 +215,7 @@ jobs:
         working-directory: src/rate_of_closure/web
         env:
           ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: npm run build
+        run: npm run build:release
       - name: Install packaged companion and test contracts
         env:
           ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}

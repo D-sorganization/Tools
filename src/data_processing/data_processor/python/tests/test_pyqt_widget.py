@@ -1,19 +1,25 @@
-"""Tests for the PyQt6 DataProcessorWidget."""
+"""Tests for the PyQt6 DataProcessorWidget.
 
-import sys
+The widget loads and processes asynchronously: user actions spawn ``QThread``
+workers and results come back via queued signals. Tests must therefore wait
+for the observable outcome AND for the worker to be reaped before asserting.
+Asserting immediately races the worker, and letting a worker outlive its test
+aborts the interpreter when the ``QThread`` wrapper is garbage-collected --
+under xdist that is the "node down: Not properly terminated" crash, and in a
+serial run it hangs the session at exit, after the last test, where no
+pytest-level timeout is armed.
+
+``QApplication`` is supplied by pytest-qt via ``qtbot``; creating one at
+import time put global Qt state into every process that so much as collected
+this module.
+"""
+
 from unittest.mock import patch
 
 import pandas as pd
 import pytest
+from data_processor.pyqt_widget import DataProcessorWidget
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QApplication
-
-# Ensure QApplication exists
-app = QApplication.instance()
-if app is None:
-    app = QApplication(sys.argv)
-
-from data_processor.pyqt_widget import DataProcessorWidget  # noqa: E402
 
 
 @pytest.fixture
@@ -57,7 +63,7 @@ def test_load_file_cancel(widget):
         assert widget.file_label.text() == "No file loaded"
 
 
-def test_load_file_success(widget, tmp_path):
+def test_load_file_success(widget, qtbot, tmp_path):
     """Test successful file loading."""
     # Create a dummy DataFrame to return
     df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
@@ -72,14 +78,18 @@ def test_load_file_success(widget, tmp_path):
     ):
         widget.load_file()
 
-        # Verify loader was called
-        widget.mock_loader.load_csv_file.assert_called_with(csv_path)
+        # Loading happens on a DataLoadWorker thread; wait for the result to
+        # land and for the widget to reap the worker before asserting.
+        qtbot.waitUntil(lambda: widget.current_df is df, timeout=5000)
+        qtbot.waitUntil(lambda: widget._load_worker is None, timeout=5000)
 
-        # Verify UI updates
-        assert widget.current_df is df
-        assert widget.file_label.text() == "test.csv"
-        assert widget.signal_list.count() == 2
-        assert widget.result_table.rowCount() == 3
+    # Verify loader was called
+    widget.mock_loader.load_csv_file.assert_called_with(csv_path)
+
+    # Verify UI updates
+    assert widget.file_label.text() == "test.csv"
+    assert widget.signal_list.count() == 2
+    assert widget.result_table.rowCount() == 3
 
 
 def test_process_no_file(widget):
@@ -103,7 +113,7 @@ def test_process_no_selection(widget, tmp_path):
         assert "select at least one signal" in mock_warning.call_args[0][2]
 
 
-def test_process_success(widget):
+def test_process_success(widget, qtbot):
     """Test successful processing."""
     # Simulate loaded file
     df = pd.DataFrame({"A": [1.0, 2.0, 3.0], "B": [4.0, 5.0, 6.0]})
@@ -122,9 +132,15 @@ def test_process_success(widget):
     # Select filter
     widget.filter_combo.setCurrentText("Moving Average")
 
-    # Mock MessageBox to avoid blocking
+    # The success dialog fires from a queued signal after the worker
+    # finishes, so the patch must stay active until the worker is reaped --
+    # otherwise the real modal QMessageBox opens during teardown and blocks
+    # the session with nobody to dismiss it.
     with patch("PyQt6.QtWidgets.QMessageBox.information") as mock_info:
         widget.process_data()
+
+        qtbot.waitUntil(lambda: widget.processed_df is filtered_df, timeout=5000)
+        qtbot.waitUntil(lambda: widget._process_worker is None, timeout=5000)
 
         # Verify processor called
         widget.mock_processor.apply_filter.assert_called_once()
@@ -132,9 +148,8 @@ def test_process_success(widget):
         # Verify success message
         mock_info.assert_called_once()
 
-        # Verify UI updates
-        assert widget.processed_df is filtered_df
-        assert "A" in widget.processed_df.columns
-        assert widget.result_table.rowCount() == 3
-        # Check that table shows filtered values
-        assert widget.result_table.item(0, 0).text() == "1.1"
+    # Verify UI updates
+    assert "A" in widget.processed_df.columns
+    assert widget.result_table.rowCount() == 3
+    # Check that table shows filtered values
+    assert widget.result_table.item(0, 0).text() == "1.1"

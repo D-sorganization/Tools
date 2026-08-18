@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QComboBox,
@@ -212,6 +213,41 @@ class DataProcessorWidget(QWidget):
             self._process_worker.deleteLater()
         self._process_worker = None
         self._set_busy(False)
+
+    def closeEvent(self, event: QCloseEvent | None) -> None:  # noqa: N802 - Qt API
+        """Join background workers before the widget is destroyed.
+
+        A ``QThread`` that outlives its owner is destroyed while running,
+        which aborts the process, or blocks interpreter shutdown while Qt
+        waits on it. Either way the failure surfaces far from its cause, so
+        the widget refuses to close with live workers unaccounted for.
+        """
+        self.shutdown_workers()
+        super().closeEvent(event)
+
+    def shutdown_workers(self, timeout_ms: int = 5000) -> None:
+        """Block until background workers exit; terminate as a last resort.
+
+        Preconditions: ``timeout_ms`` must be positive.
+        Postconditions: both worker attributes are ``None`` and no worker
+        thread started by this widget is still running.
+        """
+        if timeout_ms <= 0:
+            raise ValueError("timeout_ms must be positive")
+        for name in ("_load_worker", "_process_worker"):
+            worker = getattr(self, name)
+            if worker is None:
+                continue
+            if worker.isRunning() and not worker.wait(timeout_ms):
+                logger.error(
+                    "%s did not finish within %d ms; terminating it to avoid "
+                    "aborting the process at interpreter shutdown",
+                    name,
+                    timeout_ms,
+                )
+                worker.terminate()
+                worker.wait(1000)
+            setattr(self, name, None)
 
     def _set_busy(self, busy: bool) -> None:
         self.load_btn.setEnabled(not busy)
