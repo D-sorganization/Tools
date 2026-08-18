@@ -16,21 +16,26 @@ def create_system_router(
     health: SystemHealthService,
     engineer_dependency: Callable[..., Principal],
     admin_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
     """Build recovery endpoints over narrow application services."""
     if not isinstance(recovery, RecoveryPackageService):
         raise TypeError("recovery must be a RecoveryPackageService")
     if not isinstance(health, SystemHealthService):
         raise TypeError("health must be a SystemHealthService")
-    if not callable(engineer_dependency) or not callable(admin_dependency):
+    if (
+        not callable(engineer_dependency)
+        or not callable(admin_dependency)
+        or not callable(read_dependency)
+    ):
         raise TypeError("system authorization dependencies must be callable")
     router = APIRouter(prefix="/api/system", tags=["system-health"])
 
-    @router.get("/identity")
+    @router.get("/identity", dependencies=[Depends(read_dependency)])
     async def identity() -> DeploymentIdentity:
         return health.identity()
 
-    @router.get("/health")
+    @router.get("/health", dependencies=[Depends(read_dependency)])
     async def report() -> SystemHealthReport:
         return health.report()
 

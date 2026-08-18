@@ -52,21 +52,36 @@ def create_product_router(
     connectors: ConnectorManager,
     notifications: NotificationService,
     availability: AvailabilityService,
-    operator_dependency: Callable[..., Principal],
+    command_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
+    """Build the representative control-product surface.
+
+    Args:
+        procedure: Simulator-only procedure state machine.
+        connectors: Connector plugin manager backing the sample surface.
+        notifications: Notification policy/audit service.
+        availability: High-availability health service.
+        command_dependency: Gate for procedure command dispatch. This is the
+            sequence-control surface (start/run/hold/stop/abort/recover), so it
+            is wired to the *admin* credential rather than the operator one —
+            see the ROUTE_TIERS row in ``tests/test_route_authz_matrix.py``.
+        read_dependency: Read-surface gate applied to the status route.
+    """
     if not all(
         (
             isinstance(procedure, SyntheticProcedure),
             isinstance(connectors, ConnectorManager),
             isinstance(notifications, NotificationService),
             isinstance(availability, AvailabilityService),
-            callable(operator_dependency),
+            callable(command_dependency),
+            callable(read_dependency),
         )
     ):
         raise TypeError("product router dependencies do not satisfy their contracts")
     router = APIRouter(prefix="/api/operator", tags=["control-product"])
 
-    @router.get("/product-status")
+    @router.get("/product-status", dependencies=[Depends(read_dependency)])
     async def product_status() -> ProductStatus:
         return ProductStatus(
             procedure_state=procedure.state,
@@ -82,7 +97,7 @@ def create_product_router(
     async def procedure_command(
         command: ProcedureCommand,
         body: ProcedureCommandBody,
-        principal: Principal = Depends(operator_dependency),  # noqa: B008
+        principal: Principal = Depends(command_dependency),  # noqa: B008
     ) -> ProcedureEvent:
         try:
             return procedure.dispatch(command, principal, body.reason)

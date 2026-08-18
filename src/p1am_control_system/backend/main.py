@@ -742,12 +742,14 @@ app.include_router(
         professional_alarm_service,
         operator_dependency=require_api_key,
         engineer_dependency=require_engineer_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(
     create_operator_router(
         protection_service,
         engineer_dependency=require_engineer_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(
@@ -756,6 +758,7 @@ app.include_router(
         shift_log_service,
         asset_report_provider=_representative_asset_health,
         operator_dependency=require_api_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(
@@ -764,13 +767,18 @@ app.include_router(
         representative_product.connectors,
         representative_product.notifications,
         representative_product.availability,
-        operator_dependency=require_api_key,
+        # Procedure sequence control (start/run/hold/stop/abort/recover) is the
+        # command surface of the representative product, so it takes the admin
+        # credential — not the operator one it originally shipped with.
+        command_dependency=require_admin_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(
     create_advisory_router(
         representative_product.advisories,
         operator_dependency=require_api_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(
@@ -778,6 +786,7 @@ app.include_router(
         configuration_workflow,
         engineer_dependency=require_engineer_key,
         admin_dependency=require_admin_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(
@@ -786,12 +795,14 @@ app.include_router(
         system_health_service,
         engineer_dependency=require_engineer_key,
         admin_dependency=require_admin_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(
     create_scenario_router(
         identity_provider=_acceptance_identity,
         admin_dependency=require_admin_key,
+        read_dependency=require_read_auth,
     )
 )
 app.include_router(create_power_supply_router(power_supply_service))

@@ -69,6 +69,7 @@ def _client() -> TestClient:
             operator_dependency=lambda: Principal(
                 "operator.one", "Operator One", Role.OPERATOR
             ),
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app)

@@ -24,6 +24,7 @@ def _client(role: Role = Role.ENGINEER) -> tuple[TestClient, ProtectionService]:
         create_operator_router(
             service,
             engineer_dependency=lambda: Principal("engineer", "Engineer", role),
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app), service

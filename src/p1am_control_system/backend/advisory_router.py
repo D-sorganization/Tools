@@ -18,15 +18,18 @@ from identity import Principal
 def create_advisory_router(
     service: AdvisoryService,
     operator_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
     """Create review-only routes; no authoritative command route is defined."""
     if not isinstance(service, AdvisoryService):
         raise TypeError("service must be an AdvisoryService")
     if not callable(operator_dependency):
         raise TypeError("operator_dependency must be callable")
+    if not callable(read_dependency):
+        raise TypeError("read_dependency must be callable")
     router = APIRouter(prefix="/api/operator/advisories", tags=["advisories"])
 
-    @router.get("/representative")
+    @router.get("/representative", dependencies=[Depends(read_dependency)])
     async def representative_advisory() -> AdvisoryResult:
         return service.evaluate(representative_advisory_request())
 

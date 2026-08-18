@@ -55,19 +55,24 @@ def create_configuration_router(
     workflow: ConfigurationWorkflow,
     engineer_dependency: Callable[..., Principal],
     admin_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
     """Build the only public mutation path for protected configuration."""
     if not isinstance(workflow, ConfigurationWorkflow):
         raise TypeError("workflow must be a ConfigurationWorkflow")
-    if not callable(engineer_dependency) or not callable(admin_dependency):
+    if (
+        not callable(engineer_dependency)
+        or not callable(admin_dependency)
+        or not callable(read_dependency)
+    ):
         raise TypeError("configuration authorization dependencies must be callable")
     router = APIRouter(prefix="/api/configurations", tags=["configuration"])
 
-    @router.get("")
+    @router.get("", dependencies=[Depends(read_dependency)])
     async def revisions() -> list[ConfigurationRevision]:
         return cast(list[ConfigurationRevision], workflow.list())
 
-    @router.get("/active")
+    @router.get("/active", dependencies=[Depends(read_dependency)])
     async def active() -> ConfigurationRevision | None:
         return workflow.active()
 
@@ -80,11 +85,11 @@ def create_configuration_router(
             lambda: workflow.create_draft(request.payload, principal, request.reason)
         )
 
-    @router.get("/{revision_id}")
+    @router.get("/{revision_id}", dependencies=[Depends(read_dependency)])
     async def get_revision(revision_id: str) -> ConfigurationRevision:
         return _domain_call(lambda: workflow.get(revision_id))
 
-    @router.get("/{revision_id}/diff")
+    @router.get("/{revision_id}/diff", dependencies=[Depends(read_dependency)])
     async def diff(
         revision_id: str,
         base_revision_id: str | None = Query(default=None),

@@ -36,15 +36,20 @@ def create_alarm_router(
     service: AlarmService,
     operator_dependency: Callable[..., Principal],
     engineer_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
     """Build a role-aware router over one alarm application service."""
     if not isinstance(service, AlarmService):
         raise TypeError("service must be an AlarmService")
-    if not callable(operator_dependency) or not callable(engineer_dependency):
+    if (
+        not callable(operator_dependency)
+        or not callable(engineer_dependency)
+        or not callable(read_dependency)
+    ):
         raise TypeError("alarm authorization dependencies must be callable")
     router = APIRouter(prefix="/api/alarm-management", tags=["alarm-management"])
 
-    @router.get("/active")
+    @router.get("/active", dependencies=[Depends(read_dependency)])
     async def active() -> list[AlarmSnapshot]:
         return cast(list[AlarmSnapshot], service.active())
 

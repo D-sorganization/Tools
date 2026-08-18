@@ -49,6 +49,7 @@ def _client() -> tuple[TestClient, AlarmService]:
             service,
             operator_dependency=lambda: OPERATOR,
             engineer_dependency=lambda: ENGINEER,
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app), service

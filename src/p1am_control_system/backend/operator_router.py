@@ -55,19 +55,22 @@ def _translate_domain(
 def create_operator_router(
     protections: ProtectionService,
     engineer_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
     """Build the bounded representative operator API."""
     if not isinstance(protections, ProtectionService):
         raise TypeError("protections must be a ProtectionService")
     if not callable(engineer_dependency):
         raise TypeError("engineer_dependency must be callable")
+    if not callable(read_dependency):
+        raise TypeError("read_dependency must be callable")
     router = APIRouter(prefix="/api/operator", tags=["operator"])
 
-    @router.get("/overview")
+    @router.get("/overview", dependencies=[Depends(read_dependency)])
     async def overview() -> ProcessOverview:
         return synthetic_process_overview()
 
-    @router.get("/protections")
+    @router.get("/protections", dependencies=[Depends(read_dependency)])
     async def protection_snapshot() -> ProtectionSnapshot:
         return ProtectionSnapshot(
             definitions=protections.definitions(),

@@ -26,6 +26,7 @@ def _client() -> tuple[TestClient, FastAPI]:
             operator_dependency=lambda: Principal(
                 "operator.one", "Operator One", Role.OPERATOR
             ),
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app), app

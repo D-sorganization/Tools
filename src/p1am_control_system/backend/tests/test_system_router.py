@@ -76,6 +76,7 @@ async def _client() -> TestClient:
             health,
             engineer_dependency=lambda: engineer,
             admin_dependency=lambda: admin,
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app)

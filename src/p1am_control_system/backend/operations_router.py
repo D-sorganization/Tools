@@ -46,12 +46,17 @@ def create_operations_router(
     shifts: ShiftLogService,
     asset_report_provider: Callable[[], AssetHealthReport],
     operator_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
     if not isinstance(investigations, InvestigationService):
         raise TypeError("investigations must be an InvestigationService")
     if not isinstance(shifts, ShiftLogService):
         raise TypeError("shifts must be a ShiftLogService")
-    if not callable(asset_report_provider) or not callable(operator_dependency):
+    if (
+        not callable(asset_report_provider)
+        or not callable(operator_dependency)
+        or not callable(read_dependency)
+    ):
         raise TypeError("operations providers and dependencies must be callable")
     router = APIRouter(prefix="/api/operator", tags=["operator-operations"])
 
@@ -64,13 +69,19 @@ def create_operations_router(
         assert isinstance(result, SavedInvestigation)
         return result
 
-    @router.get("/investigations/{investigation_id}")
+    @router.get(
+        "/investigations/{investigation_id}",
+        dependencies=[Depends(read_dependency)],
+    )
     async def get_investigation(investigation_id: str) -> SavedInvestigation:
         result = _domain_call(lambda: investigations.get(investigation_id))
         assert isinstance(result, SavedInvestigation)
         return result
 
-    @router.get("/investigations/{investigation_id}/export")
+    @router.get(
+        "/investigations/{investigation_id}/export",
+        dependencies=[Depends(read_dependency)],
+    )
     async def export_investigation(investigation_id: str) -> StreamingResponse:
         try:
             artifact = investigations.export(investigation_id)
@@ -88,7 +99,10 @@ def create_operations_router(
             },
         )
 
-    @router.get("/assets/health/representative")
+    @router.get(
+        "/assets/health/representative",
+        dependencies=[Depends(read_dependency)],
+    )
     async def representative_asset_health() -> AssetHealthReport:
         return asset_report_provider()
 
@@ -101,7 +115,7 @@ def create_operations_router(
         assert isinstance(result, ShiftEntry)
         return result
 
-    @router.get("/shift-log")
+    @router.get("/shift-log", dependencies=[Depends(read_dependency)])
     async def search_shift_entries(
         query: str = Query(default="", max_length=200),
     ) -> list[ShiftEntry]:

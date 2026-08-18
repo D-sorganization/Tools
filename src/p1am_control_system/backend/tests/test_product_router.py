@@ -70,9 +70,10 @@ def _client() -> TestClient:
             connectors,
             notifications,
             availability,
-            operator_dependency=lambda: Principal(
+            command_dependency=lambda: Principal(
                 "operator.one", "Operator One", Role.OPERATOR
             ),
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app)

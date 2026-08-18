@@ -50,6 +50,7 @@ def _client() -> tuple[TestClient, list[RoutingConfig]]:
             workflow,
             engineer_dependency=lambda: engineer,
             admin_dependency=lambda: admin,
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app), deployed

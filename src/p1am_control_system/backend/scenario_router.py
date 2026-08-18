@@ -63,13 +63,18 @@ def representative_scenario() -> ScenarioDefinition:
 def create_scenario_router(
     identity_provider: IdentityProvider,
     admin_dependency: Callable[..., Principal],
+    read_dependency: Callable[..., object],
 ) -> APIRouter:
     """Build a runner that can only instantiate the isolated representative adapter."""
-    if not callable(identity_provider) or not callable(admin_dependency):
+    if (
+        not callable(identity_provider)
+        or not callable(admin_dependency)
+        or not callable(read_dependency)
+    ):
         raise TypeError("scenario providers must be callable")
     router = APIRouter(prefix="/api/acceptance/scenarios", tags=["acceptance"])
 
-    @router.get("/representative")
+    @router.get("/representative", dependencies=[Depends(read_dependency)])
     async def representative() -> ScenarioDefinition:
         return representative_scenario()
 

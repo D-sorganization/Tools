@@ -21,6 +21,7 @@ def _client() -> TestClient:
         create_scenario_router(
             identity_provider=lambda: ("software-test-1", "cfg-000001-proof"),
             admin_dependency=lambda: Principal("admin", "Admin", Role.ADMIN),
+            read_dependency=lambda: None,
         )
     )
     return TestClient(app)
