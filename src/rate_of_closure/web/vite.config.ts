@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: process.env.ROC_RELEASE_REVISION === undefined,
     rollupOptions: {
       output: {
         manualChunks(id) {
