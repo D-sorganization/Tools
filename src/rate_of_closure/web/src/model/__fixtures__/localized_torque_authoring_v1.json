@@ -1,0 +1,38 @@
+{
+  "schema_version": 2,
+  "mode": "swing",
+  "base_variables": {},
+  "noise": [
+    {
+      "variable_key": "swing_sim.swing.shoulder_commanded_torque_offset_nm",
+      "distribution": "normal",
+      "scale": 1.123456789,
+      "lower": null,
+      "upper": null,
+      "spec_id": "shoulder-window",
+      "time_window_s": [0.123456789, 0.456789123],
+      "point_ids": ["joint.shoulder"]
+    },
+    {
+      "variable_key": "swing_sim.swing.wrist_commanded_torque_offset_nm",
+      "distribution": "normal",
+      "scale": 0.987654321,
+      "lower": null,
+      "upper": null,
+      "spec_id": "wrist-window",
+      "time_window_s": [0.2, 0.6],
+      "point_ids": ["joint.wrist"]
+    }
+  ],
+  "n_runs": 4,
+  "seed": 8,
+  "flight_model": "waterloo_penner",
+  "groups": [
+    {
+      "group_id": "joint-torque-group",
+      "spec_ids": ["shoulder-window", "wrist-window"],
+      "matrix_kind": "correlation",
+      "matrix": [[1, 0.25], [0.25, 1]]
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 import types
 from pathlib import Path
@@ -104,6 +105,83 @@ def _path_is_within(candidate: Path, parent: Path) -> bool:
     return True
 
 
+# --------------------------------------------------------------------------- #
+# Python floor enforcement                                                     #
+#                                                                              #
+# This repository is deliberately two-tier. The root distribution declares      #
+# ``requires-python = ">=3.11"``, while ten sub-packages and Rust crates        #
+# (movement_optimizer, pendulum_simulator, rotation_converter, tools-core,      #
+# swing-core, ...) declare ``>=3.10`` and ship 3.10 wheels from the maturin     #
+# workflows. The CI matrix therefore runs a 3.10 lane on purpose.               #
+#                                                                              #
+# That lane must only exercise code that actually claims 3.10 support. Running  #
+# the whole suite there tests root-package code against an interpreter it does  #
+# not support, which surfaces as failures that look like real defects but are   #
+# not: a bare ``import tomllib`` (stdlib only on 3.11+) aborting collection,    #
+# or ``asyncio.wait_for`` cancellation semantics that changed in 3.11.          #
+#                                                                              #
+# The floor is read from each package's own ``pyproject.toml`` rather than      #
+# hardcoded here, so adding a sub-package or moving a floor needs no edit to    #
+# this file. ``requires-python`` is parsed with a regex on purpose: ``tomllib`` #
+# does not exist on the very interpreter this guard has to run on.              #
+# --------------------------------------------------------------------------- #
+
+_REQUIRES_PYTHON_RE = re.compile(
+    r"""^\s*requires-python\s*=\s*["'][^"']*?>=\s*(\d+)\.(\d+)""",
+    re.MULTILINE,
+)
+
+_floor_cache: dict[Path, tuple[int, int]] = {}
+
+
+def _declared_python_floor(directory: Path) -> tuple[int, int]:
+    """Return the ``requires-python`` floor governing ``directory``.
+
+    Walks upward to the nearest ``pyproject.toml`` inside the repository and
+    returns its declared minimum. Falls back to the root declaration when no
+    nearer one exists, and to ``(3, 11)`` if nothing can be parsed — failing
+    closed rather than silently widening support.
+    """
+    cached = _floor_cache.get(directory)
+    if cached is not None:
+        return cached
+
+    floor = (3, 11)
+    for parent in (directory, *directory.parents):
+        if not _path_is_within(parent, REPO_ROOT) and parent != REPO_ROOT:
+            continue
+        pyproject = parent / "pyproject.toml"
+        if pyproject.is_file():
+            try:
+                match = _REQUIRES_PYTHON_RE.search(
+                    pyproject.read_text(encoding="utf-8")
+                )
+            except OSError:
+                match = None
+            if match is not None:
+                floor = (int(match.group(1)), int(match.group(2)))
+            break
+        if parent == REPO_ROOT:
+            break
+
+    _floor_cache[directory] = floor
+    return floor
+
+
+def _below_declared_floor(
+    candidate: Path, running: tuple[int, int] | None = None
+) -> bool:
+    """Return whether ``running`` is below ``candidate``'s declared floor.
+
+    ``running`` defaults to the live interpreter. It is a parameter so tests can
+    exercise other interpreters without patching ``sys.version_info``, which is
+    process-global and read by unrelated library code during a parallel run.
+    """
+    directory = candidate if candidate.is_dir() else candidate.parent
+    version = sys.version_info[:2] if running is None else running
+    return version < _declared_python_floor(directory)
+
+
 def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
     """Avoid double-collecting embedded suites that are bridged into ``tests/``.
 
@@ -111,6 +189,12 @@ def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool 
     the direct path-based behavior.
     """
     candidate = Path(collection_path)
+
+    # Never collect code whose own pyproject declares a floor above the running
+    # interpreter. See the Python floor enforcement note above.
+    if _below_declared_floor(candidate):
+        return True
+
     explicit_targets = [
         (config.rootpath / arg).resolve()
         for arg in config.args

@@ -22,7 +22,36 @@ for downstream repos.
 
 ## Python and Tooling
 
-- **Python 3.10+**. Use `python3`.
+**The Python floor is two-tier, and the distinction matters.**
+
+- **Root distribution: Python 3.11+.** `pyproject.toml` declares
+  `requires-python = ">=3.11"`, the classifiers list 3.11/3.12, and
+  `[tool.mypy] python_version` is 3.11. Everything not owned by a sub-package —
+  `src/shared/python/`, `src/p1am_control_system/`, the top-level `tests/` tree —
+  is root-package code and may use 3.11-only features (`tomllib`, the 3.11
+  `asyncio.wait_for`/`asyncio.timeouts` semantics, and so on).
+- **Sub-packages and Rust crates: Python 3.10+.** Ten distributions declare
+  `requires-python = ">=3.10"` and ship 3.10 wheels from the maturin workflows —
+  `movement_optimizer`, `pendulum_simulator`, `pendulum-core`,
+  `rotation_converter`, `tools-core`, `swing-core`, `ai_backend`,
+  `data-processor-core`, `file_watcher`, and the movement-optimizer crate.
+- **`ci-standard.yml` runs `["3.11", "3.12"]` and must not go below 3.11.** That
+  job runs the root-package suite — `core_tests` is entirely `tests/**` and
+  `src/shared/python/**` — none of which can execute on 3.10, so a 3.10 lane
+  there collects nothing and reports configuration noise. Only **3.11** is a
+  required check.
+- **3.10 support is proven by the maturin workflows**, not by `ci-standard`.
+  Each crate's `maturin-*.yml` runs a build + parity gate across 3.10/3.11/3.12
+  that builds the wheel, installs it, and asserts the extension imports and the
+  native backend is selected. If a sub-package needs a lower interpreter, gate
+  it there — do not add a lane to `ci-standard`.
+- `conftest.py` reads each package's own declared floor and skips collection of
+  anything above the running interpreter, so root-package tests cannot run on a
+  sub-floor interpreter locally either. **Do not add per-file version guards** —
+  the conftest handles it, and `tests/test_python_version_contract.py` keeps
+  every declaration in agreement, including that no `ci-standard` lane drops
+  below the root floor and that every 3.10 claim still has a workflow behind it.
+- Use `python3`.
 - **Formatter:** Ruff format (NOT Black). 88-char line limit.
 - **Linter:** Ruff check. Both are separate CI steps.
 
