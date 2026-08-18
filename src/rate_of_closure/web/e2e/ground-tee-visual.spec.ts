@@ -38,6 +38,8 @@ async function capture(
   };
 }
 
+test.use({ viewport: { width: 1600, height: 1200 } });
+
 test("records deterministic Driver Ground and Tee visual evidence", async ({ page }, testInfo) => {
   const problems: BrowserProblem[] = [];
   page.on("console", (message) => {
