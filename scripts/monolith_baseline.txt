@@ -319,3 +319,4 @@ src/p1am_control_system/calibration/calibrate.py
 # just create a duplicate line and a needless conflict.
 src/rate_of_closure/ui/pyqt6/regional_ground_execution_workspace.py
 src/rate_of_closure/ui/pyqt6/main_window.py
+src/rate_of_closure/ui/pyqt6/torque_profile_panel.py
