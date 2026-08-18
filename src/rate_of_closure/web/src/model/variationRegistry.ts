@@ -237,6 +237,22 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     typicalScale: 1.5,
     guidance: "Positive = fade/slice side.",
   },
+  {
+    key: GROUND_NORMAL_RESTITUTION_KEY,
+    label: "Ground Normal Restitution",
+    unit: "1",
+    default: 0.4,
+    typicalScale: 0.05,
+    guidance: "Base-surface normal restitution for a regional-ground study.",
+  },
+  {
+    key: GROUND_ROLLING_RESISTANCE_KEY,
+    label: "Ground Rolling Resistance",
+    unit: "1",
+    default: 0.04,
+    typicalScale: 0.01,
+    guidance: "Base-surface rolling resistance for a regional-ground study.",
+  },
 ];
 
 const REGISTRY_BY_KEY = new Map(VARIABLE_REGISTRY.map((d) => [d.key, d]));
