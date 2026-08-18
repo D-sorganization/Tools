@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from PyQt6.QtWidgets import QLabel, QProgressBar, QPushButton
 
 from rate_of_closure.application.regional_ground_execution_job import (
@@ -33,13 +35,17 @@ class RegionalGroundExecutionStatusMixin:
     cancel_button: QPushButton
     save_result_button: QPushButton
     export_csv_button: QPushButton
-    is_running: bool
     _job: RegionalGroundExecutionJob | None
     _result: RegionalGroundExecutionResult | None
     _capability: AuthorityCapability
     _controller: RegionalGroundExecutionController | None
     _prepared_stale: bool
-    _preparation: object | None
+
+    @property
+    def is_running(self) -> bool:  # pragma: no cover - provided by the host
+        raise NotImplementedError
+
+    _preparation: Callable[[], RegionalGroundExecutionJob] | None
 
     def _set_status(self, text: str, state: str) -> None:
         self.status_label.setText(text)

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import cast
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QValidator
@@ -71,7 +70,7 @@ def number_input(
         maximum=_MAX_SAFE_FLOAT,
         decimals=11,
     )
-    return cast(QDoubleSpinBox, engineering_number_input(name, value, resolved_spec))
+    return engineering_number_input(name, value, resolved_spec)
 
 
 def coordinate_input(name: str, value: float) -> QDoubleSpinBox:
