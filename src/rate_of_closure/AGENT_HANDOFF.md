@@ -29,9 +29,7 @@ ground transfer, wind strategy), `ground/` (skid/roll/bounce, surface profiles),
 
 ## Delivery Pattern — Read This Before Touching #4466
 
-Long stacked PRs are dead here. PR #4119, which everything stacked on, was
-**closed unmerged**; #4124 and #4129 read "merged" but merged only into their own
-stacked bases and died with it.
+Long stacked PRs are dead here: #4119 closed unmerged and took its stack with it.
 
 Content now lands as **consolidations and slices rebuilt onto current `main`**.
 
@@ -82,6 +80,12 @@ that **delete** shipped work — `flight_explorer_run.py` (−324),
 `web_companion`, `web_distribution` and the React `model`/component/hook layers
 have all landed.
 
+## Active Epic: Club Fitting Tester (#4549)
+
+Contract `docs/specs/CLUB_FITTING_TESTER.md`; children #4550–#4556. **Shared-first**:
+physics/wires in `shared/python/{golf_club,swing_sim}`; tool-local = UI binding only.
+Order: C1 ✓ → C2 shaft deltas → C3 document → C5 interchange → C4 engine → C6/C7 GUIs.
+
 ## Must-Read Architecture Pointers
 
 1. `src/rate_of_closure/README.md` — frame and unit conventions, run/build.
@@ -127,16 +131,12 @@ python3 scripts/check_test_assertions.py --changed-files <file-list>
   3.13 batch run tells you nothing:
   `MYPYPATH='src;src/python/src' py -3.12 -m mypy --ignore-missing-imports --follow-imports=skip <every changed non-test file>`
   CI excludes `tests/` from mypy entirely, so findings there do not matter.
-- **`tools_core` capability is two-tier.** A wheel can expose
-  `simulate_trajectory` while lacking the tee-aware full-state API. Guard on the
-  specific capability, not `is_rust_available()`.
-- `test_club_view_camera.py`'s playback-cadence test asserts wall-clock time and
-  fails under `-n auto` load. Main-owned; passes in isolation.
-- Rewriting `SPEC.md` with PowerShell `Set-Content` normalises it to CRLF and
-  turns the next merge into a whole-file conflict. Edit it in place. Python's
-  `pathlib.write_text` has the same effect on LF files — it rewrote three
-  `.ts` files as CRLF and turned a four-line edit into an 834-line diff. Read and
-  write with `io.open(..., newline="")` and match the file's existing endings.
+- **`tools_core` capability is two-tier** — a wheel can expose `simulate_trajectory`
+  yet lack the tee-aware full-state API; guard on the specific capability.
+- `test_club_view_camera.py`'s cadence test asserts wall-clock time; flaky under load.
+- PowerShell `Set-Content` and Python `pathlib.write_text` both rewrite LF files
+  as CRLF (an 834-line phantom diff from a 4-line edit). Use
+  `io.open(..., newline="")` and match the file's existing endings.
 - **`detect_secrets scan` writes native separators**, so on Windows it must be
   run *before* normalising the baseline to forward slashes, never after.
   `tests/ops/test_detect_secrets_baseline.py` rejects backslash keys, and that
