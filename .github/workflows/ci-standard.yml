@@ -233,7 +233,7 @@ jobs:
           python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
-          python -m pip install fastapi python-multipart uvicorn
+          python -m pip install fastapi python-multipart uvicorn filelock
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
