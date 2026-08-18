@@ -6,6 +6,12 @@ component coordinates into the assembly frame.
 """
 
 from .assembly import ClubAssembly, assemble_mass_properties
+from .mesh_mass_properties import (
+    MeshInertiaReport,
+    is_watertight,
+    mesh_inertia,
+    mesh_volume_centroid,
+)
 from .serialization import (
     CURRENT_FORMAT,
     LEGACY_FORMAT,
@@ -208,6 +214,10 @@ __all__ = [
     "export_wedge_artifacts",
     "evaluate_turf_contact",
     "evaluate_wedge_turf_wrench",
+    "MeshInertiaReport",
+    "is_watertight",
+    "mesh_inertia",
+    "mesh_volume_centroid",
     "scale_shaft_profile",
     "shaft_component_mass_properties",
     "shaft_profile_from_csv",
