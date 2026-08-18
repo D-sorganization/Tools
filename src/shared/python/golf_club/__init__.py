@@ -15,6 +15,15 @@ from .fitting_document import (
     fitting_document_from_json,
     fitting_document_to_json,
 )
+from .fitting_engine import (
+    FITTING_REPORT_FORMAT,
+    ClubOutcome,
+    CounterfactualSpec,
+    FittingReport,
+    compare_counterfactuals,
+    evaluate_club,
+    fitting_report_to_json,
+)
 from .mesh_mass_properties import (
     MeshInertiaReport,
     is_watertight,
@@ -236,6 +245,13 @@ __all__ = [
     "MeshReference",
     "fitting_document_from_json",
     "fitting_document_to_json",
+    "FITTING_REPORT_FORMAT",
+    "ClubOutcome",
+    "CounterfactualSpec",
+    "FittingReport",
+    "compare_counterfactuals",
+    "evaluate_club",
+    "fitting_report_to_json",
     "MeshInertiaReport",
     "is_watertight",
     "mesh_inertia",
