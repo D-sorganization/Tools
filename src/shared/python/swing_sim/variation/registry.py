@@ -401,9 +401,15 @@ SWING_DERIVED_KEYS = swing_derived_keys(CATEGORY_DELIVERY)
 
 def keys_for_mode(mode: str) -> tuple[str, ...]:
     """Registry keys legal as base/noise variables for a pipeline mode."""
-    return resolve_keys_for_mode(
+    # Bound to an annotated local rather than returned directly. CI runs mypy on
+    # changed files only, so `registry_mode_policy` is unchecked here and
+    # `ignore_missing_imports` makes its `keys_for_mode` resolve to `Any`, which
+    # trips `warn_return_any` on a direct return. The delegate really is annotated
+    # `-> tuple[str, ...]`, so this narrows rather than asserts something untrue.
+    keys: tuple[str, ...] = resolve_keys_for_mode(
         mode, MODE_CATEGORIES, variables_in_category, SWING_DERIVED_KEYS
     )
+    return keys
 
 
 __all__ = [
