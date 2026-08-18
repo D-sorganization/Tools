@@ -1,5 +1,15 @@
 """Real-process qualification for the PyQt regional-ground loopback adapter."""
 
+# These tests each spawn a real authority subprocess (uvicorn) and wait for it
+# to report its listener within _PORT_REPORT_TIMEOUT_S (15 s). pytest runs with
+# `-n auto --dist loadscope`, so this module gets one worker, but other
+# subprocess-spawning modules run on other workers at the same time. On a box
+# already saturated -- two full suites at once, for instance -- the children can
+# starve and fail with "authority child did not report its listener". That is
+# oversubscription, not a defect: the same tests pass in isolation and in CI.
+# Do not raise _PORT_REPORT_TIMEOUT_S to chase it; that constant guards real
+# production hangs.
+
 from __future__ import annotations
 
 import json
