@@ -74,9 +74,18 @@ ADMIN = "admin"
 #: The authorization contract, one row per (method, path) the app exposes.
 #:
 #: ``PUBLIC``   - deliberately reachable with no credential.
-#: ``READ``     - historian / configuration disclosure; operator key or better.
+#: ``READ``     - historian / configuration disclosure; a credential is required
+#:                but no elevated role is. A row may be enforced *more* strictly
+#:                than READ (``GET /api/audit`` and
+#:                ``GET /api/alarm-management/performance`` both sit behind
+#:                ``require_engineer_key``); READ is the floor this suite proves.
 #: ``OPERATOR`` - state change an operator may perform.
-#: ``ADMIN``    - hardware-mutating or destructive; admin key required.
+#: ``ADMIN``    - elevated. The discriminating assertion for this tier is "an
+#:                operator credential is refused with 403", so it covers the
+#:                engineer role as well as the admin role — ``require_engineer_key``
+#:                enforces exactly that. Anything that mutates hardware, bypasses
+#:                or trips a protection, activates configuration, or backs up /
+#:                restores the system belongs here.
 ROUTE_TIERS: dict[tuple[str, str], str] = {
     # --- FastAPI/OpenAPI scaffolding -------------------------------------- #
     ("GET", "/"): PUBLIC,
@@ -140,6 +149,84 @@ ROUTE_TIERS: dict[tuple[str, str], str] = {
     ("POST", "/api/temperature/tc_type"): ADMIN,
     ("POST", "/api/temperature/burnout_mode"): ADMIN,
     ("POST", "/api/temperature/acknowledge_trip"): ADMIN,
+    # --- Identity / login surface (identity_router) ------------------------#
+    # Deliberately NOT given an extra dependency here: the router authenticates
+    # these itself. ``POST /session`` *is* the login call (it answers 401 for a
+    # missing/invalid key), ``DELETE /session`` revokes the caller's own bearer
+    # token, and ``GET /me`` sits behind ``require_role(service, Role.VIEWER)``.
+    # Bolting ``require_api_key`` on would break logout for a viewer-role
+    # session, which holds a bearer token and no operator key. READ is therefore
+    # the floor these rows assert: a credential is required, no role beyond
+    # VIEWER is.
+    ("POST", "/api/auth/session"): READ,
+    ("DELETE", "/api/auth/session"): READ,
+    ("GET", "/api/auth/me"): READ,
+    # --- Operator workspace: reads ----------------------------------------- #
+    ("GET", "/api/operator/overview"): READ,
+    ("GET", "/api/operator/protections"): READ,
+    ("GET", "/api/operator/product-status"): READ,
+    ("GET", "/api/operator/shift-log"): READ,
+    ("GET", "/api/operator/investigations/{investigation_id}"): READ,
+    ("GET", "/api/operator/investigations/{investigation_id}/export"): READ,
+    ("GET", "/api/operator/assets/health/representative"): READ,
+    ("GET", "/api/operator/advisories/representative"): READ,
+    ("GET", "/api/acceptance/scenarios/representative"): READ,
+    ("GET", "/api/alarm-management/active"): READ,
+    # Enforced at ENGINEER (see the READ note above) — alarm KPIs expose the
+    # plant's nuisance/flood history, not just current state.
+    ("GET", "/api/alarm-management/performance"): READ,
+    ("GET", "/api/configurations"): READ,
+    ("GET", "/api/configurations/active"): READ,
+    ("GET", "/api/configurations/{revision_id}"): READ,
+    ("GET", "/api/configurations/{revision_id}/diff"): READ,
+    ("GET", "/api/system/health"): READ,
+    ("GET", "/api/system/identity"): READ,
+    ("GET", "/api/historian/shipper"): READ,
+    # Enforced at ENGINEER via the router-level dependency — the audit trail
+    # names every actor and every control action they took.
+    ("GET", "/api/audit"): READ,
+    # --- Operator tier: recording intent / acknowledging state ------------- #
+    # These write attributable records. None of them moves an output or defeats
+    # a protection, and the shift operator must be able to perform all of them,
+    # so gating them at ADMIN would push the crew toward sharing the admin key.
+    ("POST", "/api/alarm-management/{tag}/acknowledge"): OPERATOR,
+    ("POST", "/api/alarm-management/{tag}/shelf"): OPERATOR,
+    ("DELETE", "/api/alarm-management/{tag}/shelf"): OPERATOR,
+    ("POST", "/api/operator/shift-log"): OPERATOR,
+    ("POST", "/api/operator/shift-log/{entry_id}/signoff"): OPERATOR,
+    ("POST", "/api/operator/shift-log/{entry_id}/handover"): OPERATOR,
+    ("POST", "/api/operator/investigations"): OPERATOR,
+    ("POST", "/api/operator/advisories/{advisory_id}/dispositions"): OPERATOR,
+    # --- Admin/elevated tier ---------------------------------------------- #
+    # Protection bypass and manual trip: the two operations that defeat or fire
+    # a safety function. Enforced at ENGINEER.
+    ("POST", "/api/operator/protections/{protection_id}/bypasses"): ADMIN,
+    ("POST", "/api/operator/protections/{protection_id}/trips"): ADMIN,
+    # Suppressing an alarm hides a protection's annunciation from the crew, so
+    # it is elevated even though acknowledging/shelving is not. ENGINEER.
+    ("POST", "/api/alarm-management/{tag}/suppression"): ADMIN,
+    # Configuration lifecycle. Every stage is elevated: a draft/validate/review/
+    # approve step (ENGINEER) is the audited chain of custody for the register
+    # map and interlock limits, and activate/rollback (ADMIN) push a revision at
+    # the running plant.
+    ("POST", "/api/configurations/drafts"): ADMIN,
+    ("POST", "/api/configurations/{revision_id}/validate"): ADMIN,
+    ("POST", "/api/configurations/{revision_id}/review"): ADMIN,
+    ("POST", "/api/configurations/{revision_id}/approve"): ADMIN,
+    ("POST", "/api/configurations/{revision_id}/activate"): ADMIN,
+    ("POST", "/api/configurations/{revision_id}/rollback"): ADMIN,
+    # Backup emits the full configuration as a downloadable artifact; restore
+    # ingests one. ADMIN and ENGINEER respectively.
+    ("POST", "/api/system/backups"): ADMIN,
+    ("POST", "/api/system/restores"): ADMIN,
+    # Runs an acceptance scenario and mints the evidence package. ADMIN.
+    ("POST", "/api/acceptance/scenarios/run"): ADMIN,
+    # Procedure sequence control (start/run/hold/stop/abort/recover). This is
+    # the command surface of the control product, so it is gated at ADMIN — a
+    # deliberate tightening of the operator gate it originally shipped with.
+    # The panic stop stays PUBLIC (see /api/estop above), so raising this gate
+    # never removes the crew's ability to de-energize the plant.
+    ("POST", "/api/operator/procedure/commands/{command}"): ADMIN,
 }
 
 #: Data Explorer rows, kept separate because main.py mounts that router only
@@ -164,6 +251,15 @@ PATH_PARAM_SAMPLES: dict[str, str] = {
     "tag_id": "TAG_0",
     "pid_index": "0",
     "device_id": "MFC_1",
+    "tag": "TAG_0",
+    "protection_id": "PROT_1",
+    "revision_id": "cfg-000001",
+    "investigation_id": "INV_1",
+    "entry_id": "ENTRY_1",
+    "advisory_id": "ADV_1",
+    # Must be a real ProcedureCommand member: an unparseable value would make
+    # FastAPI answer 422 and the tier assertion would stop measuring authz.
+    "command": "start",
 }
 
 _DENIED = (401, 403)
