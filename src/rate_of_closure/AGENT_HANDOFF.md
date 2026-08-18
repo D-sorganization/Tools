@@ -60,14 +60,14 @@ standard or leave the file alone.
 
 ## Remaining From #4466
 
-Roughly 60 files, and they are **not** blocked on effort — they are blocked on
-one thing: the camera-controls cluster.
+52 files as of 2026-08-18, and they are **not** blocked on effort — they are
+blocked on one thing: the camera-controls cluster.
 
 | area | left | blocker |
 | --- | --- | --- |
-| `web/src` | ~30 | ground playback 3D, chip forgiveness, view compositor |
-| `tests/rate_of_closure` | ~27 | assert APIs `main`'s modules lack |
-| `web/tests` | 10 | in flight with the companion slice |
+| `tests/rate_of_closure` | 19 | assert APIs `main`'s modules lack |
+| `web/src` | 18 | ground playback 3D, chip forgiveness, view compositor |
+| other | 15 | `web/tests` remnants, unrelated trees |
 
 **The camera cluster is a reimplementation, not a migration — measured, not
 assumed.** Wiring `CameraViewportMixin` into `simulation_view` and `flight_view`
