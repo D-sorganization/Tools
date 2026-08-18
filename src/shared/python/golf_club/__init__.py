@@ -24,6 +24,14 @@ from .fitting_engine import (
     evaluate_club,
     fitting_report_to_json,
 )
+from .impact_coupling import (
+    IMPACT_COUPLING_REPORT_FORMAT,
+    CoupledImpactConfig,
+    CoupledImpactResult,
+    GripBoundary,
+    impact_coupling_report,
+    simulate_coupled_impact,
+)
 from .mesh_mass_properties import (
     MeshInertiaReport,
     is_watertight,
@@ -252,6 +260,12 @@ __all__ = [
     "compare_counterfactuals",
     "evaluate_club",
     "fitting_report_to_json",
+    "IMPACT_COUPLING_REPORT_FORMAT",
+    "CoupledImpactConfig",
+    "CoupledImpactResult",
+    "GripBoundary",
+    "impact_coupling_report",
+    "simulate_coupled_impact",
     "MeshInertiaReport",
     "is_watertight",
     "mesh_inertia",
