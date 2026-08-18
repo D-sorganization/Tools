@@ -21,6 +21,12 @@ from .serialization import (
     assembly_to_json_dict,
 )
 from .shaft_assembly import shaft_component_mass_properties
+from .shaft_delivery import (
+    GripKinematics,
+    ShaftDeliveryDeltas,
+    ShaftTipMass,
+    solve_shaft_delivery,
+)
 from .shaft_dynamics import (
     ShaftModalResponse,
     ShaftModalSettings,
@@ -226,6 +232,10 @@ __all__ = [
     "shaft_profile_to_csv",
     "shaft_profile_to_json",
     "shaft_profile_to_json_dict",
+    "GripKinematics",
+    "ShaftDeliveryDeltas",
+    "ShaftTipMass",
+    "solve_shaft_delivery",
     "solve_shaft_bending_modes",
     "solve_cantilever_tip_response",
     "simulate_reduced_turf_contact",
