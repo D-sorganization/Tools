@@ -31,7 +31,10 @@ __all__ = [
     "SensitivityPlotWidget",
 ]
 
-matplotlib.use("QtAgg")
+try:
+    matplotlib.use("QtAgg")
+except (ImportError, ValueError):
+    pass
 
 
 class MplCanvas(FigureCanvas):
