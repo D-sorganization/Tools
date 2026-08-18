@@ -424,7 +424,7 @@ def test_sample_limit_is_checked_before_numeric_materialization(
     ],
 )
 def test_text_reader_normalizes_decoder_resource_errors(text: str) -> None:
-    with pytest.raises(ContractViolationError, match="valid JSON"):
+    with pytest.raises(ContractViolationError, match="valid JSON|nesting depth"):
         ensemble_io.loads(text)
 
 

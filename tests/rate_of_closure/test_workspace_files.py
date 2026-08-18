@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from rate_of_closure.application import workspace_files
+from rate_of_closure.application import atomic_text_files, workspace_files
 from rate_of_closure.application.workspace_document import (
     VersionedPayload,
     WorkspaceDocument,
@@ -70,13 +70,15 @@ def test_serialization_failure_does_not_touch_existing_file(
 def test_replace_failure_preserves_existing_and_removes_temporary_file(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    from rate_of_closure.application import atomic_text_files
+
     target = tmp_path / "showcase.json"
     target.write_text("last-known-good", encoding="utf-8")
 
     def fail_replace(_source: str | Path, _target: str | Path) -> None:
         raise OSError("replace failed")
 
-    monkeypatch.setattr(workspace_files.os, "replace", fail_replace)
+    monkeypatch.setattr(atomic_text_files.os, "replace", fail_replace)
 
     with pytest.raises(OSError, match="replace failed"):
         workspace_files.write_workspace_atomic(_document("New"), target)
@@ -90,3 +92,22 @@ def test_read_rejects_invalid_document(tmp_path: Path) -> None:
 
     with pytest.raises((TypeError, ValueError)):
         workspace_files.read_workspace(target)
+
+
+def test_atomic_text_export_preserves_existing_file_on_replace_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    target = tmp_path / "layout.json"
+    target.write_text("last-known-good", encoding="utf-8")
+
+    def fail_replace(_source: str | Path, _target: str | Path) -> None:
+        raise OSError("replace failed")
+
+    # write_text_atomic delegates to the shared atomic-text boundary, so the
+    # replace failure has to be injected where the replacement happens.
+    monkeypatch.setattr(atomic_text_files.os, "replace", fail_replace)
+
+    with pytest.raises(OSError, match="replace failed"):
+        workspace_files.write_text_atomic('{"new":true}\n', target)
+    assert target.read_text(encoding="utf-8") == "last-known-good"
+    assert not list(tmp_path.glob(".*.tmp"))
