@@ -36,6 +36,8 @@ export const MAX_RENDER_MESH_TRIANGLES = 4_096;
 
 const BINARY_HEADER_BYTES = 80;
 const BINARY_RECORD_BYTES = 50;
+const BINARY_PREFIX_BYTES = BINARY_HEADER_BYTES + 4;
+const MAX_UINT32 = 0xffff_ffff;
 const MIN_AREA = 1e-15;
 const ASCII_VERTEX = /vertex\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)\s+([-+0-9.eE]+)/g;
 
@@ -273,4 +275,58 @@ export function snapshotHeadMesh(mesh: HeadMesh): HeadMesh {
     triangles: Object.freeze(triangles) as Triangle[],
     normals: Object.freeze(normals) as Vec3[],
   });
+}
+
+function binaryHeader(header: string): Uint8Array {
+  const encoded = new Uint8Array(BINARY_HEADER_BYTES);
+  let offset = 0;
+  for (const character of header) {
+    if (offset >= BINARY_HEADER_BYTES) break;
+    const codePoint = character.codePointAt(0);
+    encoded[offset] =
+      codePoint !== undefined && codePoint <= 0x7f ? codePoint : 0x3f;
+    offset += 1;
+  }
+  return encoded;
+}
+
+/** Serialize finite triangles as deterministic little-endian binary STL. */
+export function writeBinaryStl(
+  triangles: Triangle[],
+  header = "rate_of_closure",
+): ArrayBuffer {
+  if (triangles.length === 0) throw new Error("cannot write an empty STL");
+  if (triangles.length > MAX_UINT32) throw new Error("too many STL triangles");
+  for (const triangle of triangles) {
+    for (const vertex of triangle) {
+      if (!vertex.every(Number.isFinite)) {
+        throw new Error("STL vertices must be finite");
+      }
+    }
+  }
+  const normals = triangleNormals(triangles);
+  const buffer = new ArrayBuffer(
+    BINARY_PREFIX_BYTES + triangles.length * BINARY_RECORD_BYTES,
+  );
+  const bytes = new Uint8Array(buffer);
+  const view = new DataView(buffer);
+  bytes.set(binaryHeader(header));
+  view.setUint32(BINARY_HEADER_BYTES, triangles.length, true);
+  for (
+    let triangleIndex = 0;
+    triangleIndex < triangles.length;
+    triangleIndex += 1
+  ) {
+    const recordOffset =
+      BINARY_PREFIX_BYTES + triangleIndex * BINARY_RECORD_BYTES;
+    const values = [normals[triangleIndex], ...triangles[triangleIndex]];
+    for (let vectorIndex = 0; vectorIndex < values.length; vectorIndex += 1) {
+      const vectorOffset = recordOffset + vectorIndex * 12;
+      const vector = values[vectorIndex];
+      for (let axis = 0; axis < 3; axis += 1) {
+        view.setFloat32(vectorOffset + axis * 4, vector[axis], true);
+      }
+    }
+  }
+  return buffer;
 }
