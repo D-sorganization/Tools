@@ -95,6 +95,12 @@ chat = [
 ]
 # Voice-to-text addon for ChatDockWidget (Tools issue #2744).
 # Install with: pip install "tools[chat-voice]"
+rate-of-closure-web = [
+    "fastapi>=0.100.0",
+    "filelock>=3.16.0",
+    "scipy>=1.10.0,<1.18",
+    "uvicorn>=0.30.0",
+]
 chat-voice = [
     "SpeechRecognition>=3.10.0",
     "PyAudio>=0.2.13",
@@ -213,6 +219,7 @@ dev = [
 ]
 
 [project.scripts]
+rate-of-closure-web = "rate_of_closure.web_companion.cli:main"
 sidekick = "sidekick.__main__:main"
 urdf-gen = "shared.python.model_generation.cli:main"
 generate-pid = "shared.python.programmatic_pid.cli:main"
@@ -256,7 +263,13 @@ exclude = [
     "visual_baselines.v1.json",
     "visual_baselines/v1/react/*.png",
     "visual_baselines/v1/pyqt/*.png",
+    "web/dist/index.html",
+    "web/dist/*.json",
+    "web/dist/assets/*",
 ]
+
+[tool.setuptools.cmdclass]
+build_py = "build_hooks.RateWebBuildPy"
 
 # =============================================================================
 # Pytest Configuration
