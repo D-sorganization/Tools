@@ -14,6 +14,7 @@ from rate_of_closure.view_workspace import (
     workspace_from_document,
     workspace_to_document,
 )
+from rate_of_closure.view_workspace_recovery import recover_workspace_document
 
 
 def test_default_workspace_is_a_single_swing_view() -> None:
@@ -68,8 +69,23 @@ def test_workspace_document_round_trip_is_strict_and_versioned() -> None:
 
     document = workspace_to_document(workspace)
 
-    assert document["format"] == "rate_of_closure.view_workspace/1"
+    assert document["format"] == "rate_of_closure.view_workspace/2"
+    assert document["camera_preferences"]["format"] == "camera-preferences/v1"
     assert workspace_from_document(document) == workspace
+
+
+def test_strict_v1_migration_adds_declared_camera_defaults() -> None:
+    current = workspace_to_document(ViewWorkspace.default())
+    legacy = {
+        key: value for key, value in current.items() if key != "camera_preferences"
+    }
+    legacy["format"] = "rate_of_closure.view_workspace/1"
+
+    migrated = workspace_from_document(legacy)
+
+    assert migrated.camera_preferences.viewports["impact"].zoom == 1.0
+    assert migrated.camera_preferences.viewports["swing"].zoom == 2.0
+    assert migrated.camera_preferences.viewports["flight"].zoom == 2.0
 
 
 @pytest.mark.parametrize(
@@ -133,3 +149,62 @@ def test_document_rejects_unknown_or_incomplete_fields() -> None:
     invalid_slot = {**valid, "slots": [{"id": "swing", "kind": "swing"}]}
     with pytest.raises(ValueError, match="missing"):
         workspace_from_document(invalid_slot)
+
+
+def test_recovery_drops_unknown_view_ids_and_preserves_valid_playback() -> None:
+    document = workspace_to_document(
+        ViewWorkspace(
+            layout=ViewLayout.GRID,
+            slots=(
+                ViewSlot(id="future", kind=ViewKind.PLOT, plot_id="future"),
+                ViewSlot(id="swing", kind=ViewKind.SWING),
+                ViewSlot(id="flight", kind=ViewKind.FLIGHT),
+            ),
+            active_slot_id="future",
+            playback=PlaybackState(time_s=0.42, loop=True, rate=0.5),
+        )
+    )
+
+    recovered = recover_workspace_document(document)
+
+    assert [slot.id for slot in recovered.slots] == ["swing", "flight"]
+    assert recovered.active_slot_id == "swing"
+    assert recovered.layout is ViewLayout.SPLIT_HORIZONTAL
+    assert recovered.playback == PlaybackState(time_s=0.42, loop=True, rate=0.5)
+
+
+def test_recovery_migrates_legacy_visible_views_with_safe_fallback() -> None:
+    recovered = recover_workspace_document(
+        {
+            "version": 1,
+            "layout": "split_horizontal",
+            "views": ["impact", "future", "flight"],
+            "active": "future",
+        }
+    )
+
+    assert [slot.id for slot in recovered.slots] == ["impact", "flight"]
+    assert recovered.active_slot_id == "impact"
+    assert recovered.layout is ViewLayout.SPLIT_HORIZONTAL
+
+
+def test_recovery_normalizes_three_views_to_grid_without_blocking_launch() -> None:
+    recovered = recover_workspace_document(
+        {
+            "format": "rate_of_closure.view_workspace/1",
+            "layout": "split_vertical",
+            "slots": [
+                {"id": "impact", "kind": "impact", "legend": "hidden"},
+                {"id": "swing", "kind": "swing", "legend": "outside_right"},
+                {"id": "flight", "kind": "flight", "legend": "hidden"},
+            ],
+            "active_slot_id": "impact",
+        }
+    )
+
+    assert recovered.layout is ViewLayout.GRID
+    assert [slot.legend for slot in recovered.slots] == [
+        LegendPlacement.HIDDEN,
+        LegendPlacement.OUTSIDE_RIGHT,
+        LegendPlacement.HIDDEN,
+    ]

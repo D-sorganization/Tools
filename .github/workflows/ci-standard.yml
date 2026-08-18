@@ -233,7 +233,7 @@ jobs:
           python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
-          python -m pip install fastapi python-multipart uvicorn
+          python -m pip install fastapi python-multipart uvicorn filelock
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
@@ -446,7 +446,7 @@ jobs:
   tests:
     # The required 3.11 lane must survive a first-use Python download plus
     # dependency installation, Rust-wheel build, and the actual test suite.
-    timeout-minutes: 90
+    timeout-minutes: 150
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
