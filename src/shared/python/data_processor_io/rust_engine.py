@@ -30,6 +30,8 @@ from typing import Any, cast
 
 import pandas as pd
 
+from shared.python.safe_pandas_eval import validate_pandas_formula
+
 logger = logging.getLogger(__name__)
 
 
@@ -473,6 +475,13 @@ def filter_export(
     df = pd.read_csv(p) if fmt == "csv" else pd.read_parquet(p)
 
     df = _select_columns(df, columns)
+    # ``df.query`` runs the predicate through pandas eval, so an unvalidated
+    # predicate is a code-injection vector. Restrict it to the shared
+    # numeric/boolean allow-list grammar before it is evaluated.
+    try:
+        validate_pandas_formula(predicate, allowed_columns=df.columns)
+    except ValueError as error:
+        raise ValueError(f"Invalid predicate: {error}") from error
     filtered = df.query(predicate)
 
     if active_token.is_cancelled():
