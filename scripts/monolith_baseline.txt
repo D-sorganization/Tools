@@ -319,3 +319,6 @@ src/p1am_control_system/calibration/calibrate.py
 # that package rather than six independent splits. Recorded in #4503.
 src/rate_of_closure/ui/pyqt6/controls_panel.py
 src/rate_of_closure/ui/pyqt6/app_toolstrip.py
+src/rate_of_closure/ui/pyqt6/torque_profile_panel.py
+src/rate_of_closure/ui/pyqt6/regional_ground_execution_workspace.py
+src/rate_of_closure/ui/pyqt6/main_window.py

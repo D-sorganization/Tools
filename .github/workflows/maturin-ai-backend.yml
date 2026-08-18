@@ -66,6 +66,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Restore local Python toolcache
+        shell: bash
+        run: .github/scripts/restore-python-toolcache.sh
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
         with:
@@ -131,6 +135,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Restore local Python toolcache
+        shell: bash
+        run: .github/scripts/restore-python-toolcache.sh
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
