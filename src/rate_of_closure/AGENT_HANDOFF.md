@@ -43,7 +43,7 @@ Wiring `CameraViewportMixin` into `simulation_view`/`flight_view` passes 20 of
 legend placement, the accessibility control-count pin), and matching the
 branch's Face-On behaviour needs ~20 more `ui/pyqt6` files that **delete**
 shipped work (`flight_explorer_run.py` −324, `flight_view_bundle.py` −200).
-**Give it its own epic; do not slice it, and do not close #4466 until it exists.**
+**Epic #4571 owns it; do not slice it, and do not close #4466 until #4571 lands.**
 
 **The branch is not uniformly newer than `main`.** Files taken wholesale would
 have reverted shipped work — `test_wind.py` (a 1e-12 tolerance failing on Linux,

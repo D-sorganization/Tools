@@ -52,8 +52,8 @@ landed as 22 slices instead (#4517–#4547). **Only the camera-controls cluster
 is left, and it is a reimplementation, not a migration**: wiring
 `CameraViewportMixin` in passes 20/20 camera GUI tests but regresses three
 `main`-owned ones, and matching the branch's Face-On behaviour needs ~20 more
-`ui/pyqt6` files that _delete_ shipped work. **File it as its own epic; do not
-slice it, and do not close #4466 until that epic exists.**
+`ui/pyqt6` files that _delete_ shipped work. **#4571 is that epic; do not slice it, and
+do not close #4466 until #4571 lands.**
 
 The 39 `codex/4142-*` / `codex/4433-*` drafts were closed on 2026-08-16 as
 superseded by merged #4473, and their work is on `main` (Morris chain under
@@ -140,7 +140,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    physics and wires are merged and shared-first; these are binding work.
    `src/rate_of_closure/AGENT_HANDOFF.md` carries the exact four-manifest
    recipe — read it first, it is the non-obvious part.
-2. **File the camera-cluster epic** so #4466 can finally close.
+2. **Land the camera-cluster epic #4571** so #4466 can finally close.
 3. Clear the `src/shared/python` hygiene pair (#4507, #4509) — these unblock
    downstream consumers.
 4. Land the CI repairs (#4454, #4469) and fix the filed reds (#4561, #4569).
