@@ -37,6 +37,29 @@ APPLICABILITIES: tuple[str, ...] = (
 
 LOCALIZED_TORQUE_VARIABLE_JOINTS: Mapping[str, str]
 
+UNIT_DIMENSIONS: Mapping[str, str] = MappingProxyType(
+    {
+        "": "dimensionless",
+        "deg": "angle",
+        "kg": "mass",
+        "kg·m²": "moment_of_inertia",
+        "m": "length",
+        "m/s": "speed",
+        "mm": "length",
+        "mph": "speed",
+        "N·m": "torque",
+        "N·m·s": "torque_time",
+        "rpm": "angular_frequency",
+        "s": "time",
+    }
+)
+
+
+def unit_dimension(unit: str) -> str:
+    """Return the stable physical dimension for one registered unit."""
+    require(unit in UNIT_DIMENSIONS, "registered variable unit has no dimension", unit)
+    return UNIT_DIMENSIONS[unit]
+
 
 @dataclass(frozen=True)
 class VariableDef:
@@ -77,6 +100,11 @@ class VariableDef:
     def name(self) -> str:
         """The short name portion of :attr:`key`."""
         return self.key.rsplit(".", 1)[1]
+
+    @property
+    def dimension(self) -> str:
+        """Stable physical dimension derived from the registered unit."""
+        return unit_dimension(self.unit)
 
 
 _REGISTRY: dict[str, VariableDef] = {}
@@ -373,9 +401,15 @@ SWING_DERIVED_KEYS = swing_derived_keys(CATEGORY_DELIVERY)
 
 def keys_for_mode(mode: str) -> tuple[str, ...]:
     """Registry keys legal as base/noise variables for a pipeline mode."""
-    return resolve_keys_for_mode(
+    # Bound to an annotated local rather than returned directly. CI runs mypy on
+    # changed files only, so `registry_mode_policy` is unchecked here and
+    # `ignore_missing_imports` makes its `keys_for_mode` resolve to `Any`, which
+    # trips `warn_return_any` on a direct return. The delegate really is annotated
+    # `-> tuple[str, ...]`, so this narrows rather than asserts something untrue.
+    keys: tuple[str, ...] = resolve_keys_for_mode(
         mode, MODE_CATEGORIES, variables_in_category, SWING_DERIVED_KEYS
     )
+    return keys
 
 
 __all__ = [
@@ -389,9 +423,11 @@ __all__ = [
     "MODE_CATEGORIES",
     "LOCALIZED_TORQUE_VARIABLE_JOINTS",
     "SWING_DERIVED_KEYS",
+    "UNIT_DIMENSIONS",
     "VariableDef",
     "keys_for_mode",
     "register_variable",
+    "unit_dimension",
     "variable_registry",
     "variables_in_category",
 ]

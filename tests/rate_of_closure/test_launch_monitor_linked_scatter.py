@@ -65,7 +65,15 @@ def test_100k_rows_remain_bounded_and_fast() -> None:
     elapsed = time.perf_counter() - started
     assert plan.displayed_count == 2_000
     assert any(point.raw_index == 50_001 for point in plan.points)
-    assert elapsed < 0.5
+    # A coarse complexity guard, not a performance SLA. What it exists to catch
+    # is an accidental super-linear pass over the rows, which at 100k inputs
+    # costs minutes rather than fractions of a second -- so any ceiling in this
+    # range catches it equally well. The previous 0.5 s budget was tight enough
+    # that ordinary CI contention tripped it (main failed at 0.5146 s once the
+    # suite began running under xdist, #4548), reporting a scheduling accident
+    # as a code regression. Assert the bound that actually distinguishes the
+    # two, and let `displayed_count` above carry the deterministic contract.
+    assert elapsed < 5.0
 
 
 def test_numeric_string_grammar_rejects_hex_and_accepts_decimal_exponents() -> None:

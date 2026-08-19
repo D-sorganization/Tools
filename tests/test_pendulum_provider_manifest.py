@@ -31,6 +31,7 @@ def test_pendulum_provider_manifest_declares_shared_launcher_metadata() -> None:
         "simulation",
         "optimization",
         "biomechanics",
+        "proximal-distal-companion",
     ]
     assert entry["launcher"] == {
         "category": "tool",
@@ -51,6 +52,9 @@ def test_pendulum_provider_manifest_points_at_console_entry_module() -> None:
         "double_pendulum_golf.__main__:main"
     )
     assert entry["path"] == "src/double_pendulum_golf/__main__.py"
+    assert entry["embed_adapter"] == (
+        "src/double_pendulum_golf/_embed_adapter.py::get_dockable_ui"
+    )
 
 
 def test_pendulum_provider_manifest_stays_in_expected_location() -> None:

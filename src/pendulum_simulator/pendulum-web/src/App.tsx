@@ -44,6 +44,7 @@ import { PendulumCanvas } from "./components/PendulumCanvas";
 import { TriplePendulumCanvas } from "./components/TriplePendulumCanvas";
 import { GolferCanvas } from "./components/GolferCanvas";
 import { UnitSelector } from "./components/UnitSelector";
+import { CompanionGuide } from "./components/CompanionGuide";
 import {
   isDoubleSimulationResult,
   isGolferSimulationResult,
@@ -618,6 +619,7 @@ export default function App() {
         <span className="app-title">Pendulum Models — Golf Swing Dynamics</span>
         <span className="app-status">{status}</span>
       </header>
+      <CompanionGuide onSelectModel={setModelType} />
 
       <div
         className="app-body"

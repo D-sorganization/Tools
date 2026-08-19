@@ -110,6 +110,9 @@ jobs:
       - name: Run Rust<->Python parity suite (gate, non-skipped)
         env:
           PYTHONPATH: src
+          # This Rust-only lane must not import unrelated plugins cached on a
+          # self-hosted runner (for example pytest-qt without PyQt6 installed).
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: |
           python -m pytest \
             src/shared/python/swing_sim/tests/test_parity_rust.py \
