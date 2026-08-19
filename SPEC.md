@@ -6156,3 +6156,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-15: Upstream three orphaned shared fixes from consumers
 
 - **2026-08-15**: fix(shared) — Upstreamed three fixes from consumers' vendored trees: (1) `data_processor_io.rust_engine.filter_export` now validates predicates with `validate_pandas_formula` to block code injection before `DataFrame.query`; (2) `SharedImportAliasFinder.find_spec` skips `<root>.tests.<...>` module names so package internal test modules resolve correctly; (3) `theme.zoom._coerce_percent` catches `ValueError` and falls back to the configured default on malformed persisted zoom settings.
+
+## 2026-08-19 - Optimized SVG path generation in TrendChart
+
+- **2026-08-19**: perf(p1am) — Replaced `.forEach` array iterations with a single-pass `for` loop in the `seriesPaths` useMemo block within `src/p1am_control_system/frontend/src/components/TrendChart.tsx`. This eliminates closure allocation overhead per data point in SVG path string generation, reducing garbage collection pressure during high-frequency renders.
