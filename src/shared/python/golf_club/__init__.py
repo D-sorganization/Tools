@@ -6,6 +6,38 @@ component coordinates into the assembly frame.
 """
 
 from .assembly import ClubAssembly, assemble_mass_properties
+from .fitting_document import (
+    FITTING_DOCUMENT_FORMAT,
+    ClubFittingDocument,
+    FaceGeometry,
+    FittingProvenance,
+    MeshReference,
+    fitting_document_from_json,
+    fitting_document_to_json,
+)
+from .fitting_engine import (
+    FITTING_REPORT_FORMAT,
+    ClubOutcome,
+    CounterfactualSpec,
+    FittingReport,
+    compare_counterfactuals,
+    evaluate_club,
+    fitting_report_to_json,
+)
+from .impact_coupling import (
+    IMPACT_COUPLING_REPORT_FORMAT,
+    CoupledImpactConfig,
+    CoupledImpactResult,
+    GripBoundary,
+    impact_coupling_report,
+    simulate_coupled_impact,
+)
+from .mesh_mass_properties import (
+    MeshInertiaReport,
+    is_watertight,
+    mesh_inertia,
+    mesh_volume_centroid,
+)
 from .serialization import (
     CURRENT_FORMAT,
     LEGACY_FORMAT,
@@ -15,6 +47,12 @@ from .serialization import (
     assembly_to_json_dict,
 )
 from .shaft_assembly import shaft_component_mass_properties
+from .shaft_delivery import (
+    GripKinematics,
+    ShaftDeliveryDeltas,
+    ShaftTipMass,
+    solve_shaft_delivery,
+)
 from .shaft_dynamics import (
     ShaftModalResponse,
     ShaftModalSettings,
@@ -208,6 +246,30 @@ __all__ = [
     "export_wedge_artifacts",
     "evaluate_turf_contact",
     "evaluate_wedge_turf_wrench",
+    "FITTING_DOCUMENT_FORMAT",
+    "ClubFittingDocument",
+    "FaceGeometry",
+    "FittingProvenance",
+    "MeshReference",
+    "fitting_document_from_json",
+    "fitting_document_to_json",
+    "FITTING_REPORT_FORMAT",
+    "ClubOutcome",
+    "CounterfactualSpec",
+    "FittingReport",
+    "compare_counterfactuals",
+    "evaluate_club",
+    "fitting_report_to_json",
+    "IMPACT_COUPLING_REPORT_FORMAT",
+    "CoupledImpactConfig",
+    "CoupledImpactResult",
+    "GripBoundary",
+    "impact_coupling_report",
+    "simulate_coupled_impact",
+    "MeshInertiaReport",
+    "is_watertight",
+    "mesh_inertia",
+    "mesh_volume_centroid",
     "scale_shaft_profile",
     "shaft_component_mass_properties",
     "shaft_profile_from_csv",
@@ -216,6 +278,10 @@ __all__ = [
     "shaft_profile_to_csv",
     "shaft_profile_to_json",
     "shaft_profile_to_json_dict",
+    "GripKinematics",
+    "ShaftDeliveryDeltas",
+    "ShaftTipMass",
+    "solve_shaft_delivery",
     "solve_shaft_bending_modes",
     "solve_cantilever_tip_response",
     "simulate_reduced_turf_contact",

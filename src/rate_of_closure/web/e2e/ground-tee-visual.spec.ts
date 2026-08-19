@@ -38,6 +38,8 @@ async function capture(
   };
 }
 
+// The captured evidence is only comparable at a fixed viewport; declare it
+// here rather than relying on whichever project runs this spec.
 test.use({ viewport: { width: 1600, height: 1200 } });
 
 test("records deterministic Driver Ground and Tee visual evidence", async ({ page }, testInfo) => {
