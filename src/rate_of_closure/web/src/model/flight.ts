@@ -8,22 +8,14 @@
  */
 
 import {
-  AIR_DENSITY_KG_M3,
-  GOLF_BALL_MASS_KG,
-  GOLF_BALL_RADIUS_M,
-  GRAVITY_M_S2,
-  MAX_LIFT_COEFFICIENT,
-  add,
-  cross,
   norm,
   scale,
-  sub,
   type Vec3,
 } from "./impactPhysics";
-import { windVelocityAt, type WindScenario } from "./wind";
+import { integrateFlight } from "./flightIntegrator";
+import { type WindScenario } from "./wind";
 
 const RPM_TO_RAD_S = (2.0 * Math.PI) / 60.0;
-const deg = (r: number): number => (r * 180.0) / Math.PI;
 
 // --- Launch derivation + Waterloo/Penner flight --------------------------
 
@@ -60,13 +52,26 @@ export interface FlightPoint {
   velocity: Vec3;
 }
 
+/** Flight sample with the complete signed angular state required at landing. */
+export interface AngularFlightPoint extends FlightPoint {
+  angularVelocityRadS: Vec3; // flight frame
+}
+
 export interface FlightResult {
-  trajectory: FlightPoint[];
+  trajectory: AngularFlightPoint[];
   carryM: number;
   maxHeightM: number;
   flightTimeS: number;
   landingAngleDeg: number;
   lateralM: number;
+}
+
+export interface FlightSimulationOptions {
+  readonly maxTimeS?: number;
+  readonly stepS?: number;
+  readonly sampleEvery?: number;
+  /** Positive while separated; zero at physical sphere/surface contact. */
+  readonly terminalGapM?: (positionFlightM: Vec3) => number;
 }
 
 /**
@@ -80,103 +85,17 @@ export function simulateFlight(
   dt = 0.001,
   sampleEvery = 10,
 ): FlightResult {
-  const [cd0, cd1, cd2, cl1, cl2] = [0.21, 0.05, 0.02, 0.7, 0.645];
-  const area = Math.PI * GOLF_BALL_RADIUS_M ** 2;
-  const omega = scale(launch.spinAxis, launch.spinRpm * RPM_TO_RAD_S);
-  const omegaMag = norm(omega);
+  return simulateFlightWithOptions(launch, {
+    maxTimeS: maxTime,
+    stepS: dt,
+    sampleEvery,
+  });
+}
 
-  const accel = (time: number, position: Vec3, velocity: Vec3): Vec3 => {
-    const wind = launch.windScenario
-      ? windVelocityAt(launch.windScenario, time, position)
-      : [0, 0, 0] as Vec3;
-    const v = sub(velocity, wind);
-    const speed = norm(v);
-    if (speed < 0.1) return [0, 0, -GRAVITY_M_S2];
-    const vu = scale(v, 1.0 / speed);
-    const s = (omegaMag * GOLF_BALL_RADIUS_M) / speed;
-    const cd = cd0 + cd1 * s + cd2 * s * s;
-    const cl = Math.min(MAX_LIFT_COEFFICIENT, s > 0 ? cl1 * s ** cl2 : 0.0);
-    const q = 0.5 * AIR_DENSITY_KG_M3 * speed * speed * (area / GOLF_BALL_MASS_KG);
-    let acc = scale(vu, -q * cd);
-    if (omegaMag > 0) {
-      const c = cross(scale(omega, 1.0 / omegaMag), vu);
-      const cNorm = norm(c);
-      if (cNorm > 1e-10) acc = add(acc, scale(c, (q * cl) / cNorm));
-    }
-    return [acc[0], acc[1], acc[2] - GRAVITY_M_S2];
-  };
-
-  let pos: Vec3 = [0, 0, 0];
-  let vel: Vec3 = [
-    launch.ballSpeedMps * Math.cos(launch.launchAngleRad) * Math.cos(launch.azimuthRad),
-    launch.ballSpeedMps * Math.cos(launch.launchAngleRad) * Math.sin(launch.azimuthRad),
-    launch.ballSpeedMps * Math.sin(launch.launchAngleRad),
-  ];
-  const trajectory: FlightPoint[] = [{ time: 0, position: pos, velocity: vel }];
-  let maxHeight = 0.0;
-  let t = 0.0;
-  let step = 0;
-
-  while (t < maxTime) {
-    // RK4 on (pos, vel).
-    const k1v = accel(t, pos, vel);
-    const k1p = vel;
-    const halfTime = t + dt / 2;
-    const k2Position = add(pos, scale(k1p, dt / 2));
-    const k2p = add(vel, scale(k1v, dt / 2));
-    const k2v = accel(halfTime, k2Position, k2p);
-    const k3Position = add(pos, scale(k2p, dt / 2));
-    const k3p = add(vel, scale(k2v, dt / 2));
-    const k3v = accel(halfTime, k3Position, k3p);
-    const k4Position = add(pos, scale(k3p, dt));
-    const k4p = add(vel, scale(k3v, dt));
-    const k4v = accel(t + dt, k4Position, k4p);
-    const nextVel = add(
-      vel,
-      scale(add(add(k1v, scale(add(k2v, k3v), 2)), k4v), dt / 6),
-    );
-    const nextPos = add(
-      pos,
-      scale(add(add(k1p, scale(add(k2p, k3p), 2)), k4p), dt / 6),
-    );
-    t += dt;
-    step += 1;
-
-    // `pos[2] >= 0` is load-bearing, not defensive. A descending launch starts
-    // at height 0 and drops below ground on the first step, which `t > dt`
-    // skips; on the next step `pos[2]` is already negative, so the fraction
-    // below is negative and `tGround` can land before zero. That produced a
-    // trajectory point with a negative time, which the metric contract rejects
-    // outright — surfacing a descending launch as a RangeError rather than as
-    // the nonconverged result it is. Requiring the previous point to be above
-    // ground means such a launch simply never records a crossing.
-    if (pos[2] >= 0.0 && nextPos[2] < 0.0 && t > dt) {
-      // Linear interpolation to the ground crossing.
-      const frac = pos[2] / (pos[2] - nextPos[2]);
-      const tGround = t - dt + frac * dt;
-      const posGround = add(pos, scale(sub(nextPos, pos), frac));
-      const velGround = add(vel, scale(sub(nextVel, vel), frac));
-      trajectory.push({ time: tGround, position: posGround, velocity: velGround });
-      pos = posGround;
-      vel = velGround;
-      t = tGround;
-      break;
-    }
-    pos = nextPos;
-    vel = nextVel;
-    maxHeight = Math.max(maxHeight, pos[2]);
-    if (step % sampleEvery === 0) {
-      trajectory.push({ time: t, position: pos, velocity: vel });
-    }
-  }
-
-  const vHoriz = Math.hypot(vel[0], vel[1]);
-  return {
-    trajectory,
-    carryM: Math.hypot(pos[0], pos[1]),
-    maxHeightM: maxHeight,
-    flightTimeS: t,
-    landingAngleDeg: vHoriz > 0.1 ? deg(Math.atan2(-vel[2], vHoriz)) : 90.0,
-    lateralM: pos[1],
-  };
+/** Simulate to an explicit physical contact surface or the launch plane. */
+export function simulateFlightWithOptions(
+  launch: Launch,
+  options: FlightSimulationOptions = {},
+): FlightResult {
+  return integrateFlight(launch, options);
 }
