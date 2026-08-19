@@ -43,11 +43,15 @@ class TestEquationsOfMotionWithTorqueLimits:
         def huge_torque(t):
             return (1e6, 1e6, 1e6)
 
-        state_dot = equations_of_motion(state, 0.0, params, huge_torque, torque_limits=limits)
+        state_dot = equations_of_motion(
+            state, 0.0, params, huge_torque, torque_limits=limits
+        )
         assert state_dot.shape == (6,)
         assert np.all(np.isfinite(state_dot))
 
-    def test_with_large_limits_passes_through(self, params: TriplePendulumParams) -> None:
+    def test_with_large_limits_passes_through(
+        self, params: TriplePendulumParams
+    ) -> None:
         """With infinite limits, torques pass through unchanged."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([np.inf, np.inf, np.inf])
@@ -55,7 +59,9 @@ class TestEquationsOfMotionWithTorqueLimits:
         def tau_fn(t):
             return (5.0, -3.0, 2.0)
 
-        state_dot = equations_of_motion(state, 0.0, params, tau_fn, torque_limits=limits)
+        state_dot = equations_of_motion(
+            state, 0.0, params, tau_fn, torque_limits=limits
+        )
         assert state_dot.shape == (6,)
         assert np.all(np.isfinite(state_dot))
 
@@ -64,7 +70,9 @@ class TestEquationsOfMotionWithTorqueLimits:
     ) -> None:
         """Without limits, result should match None path."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
-        sd_no_limits = equations_of_motion(state, 0.0, params, zero_torque, torque_limits=None)
+        sd_no_limits = equations_of_motion(
+            state, 0.0, params, zero_torque, torque_limits=None
+        )
         assert np.all(np.isfinite(sd_no_limits))
 
 

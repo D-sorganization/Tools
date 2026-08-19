@@ -6,6 +6,8 @@ import importlib.util
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 SCRIPT_PATH = (
     Path(__file__).resolve().parents[2] / "scripts" / "check_test_assertions.py"
 )
@@ -82,6 +84,111 @@ def test_allowlisted_fixture_file_without_assertions_passes(tmp_path: Path) -> N
     )
 
     assert violations == []
+
+
+def test_swing_sim_package_marker_exemption_rejects_adjacent_test(
+    tmp_path: Path,
+) -> None:
+    module = _load_module()
+    patterns = module.load_allowlist(
+        Path(__file__).resolve().parents[2] / "scripts" / "test_assertion_allowlist.txt"
+    )
+    package_marker = _write(
+        tmp_path / "src" / "shared" / "python" / "swing_sim" / "tests" / "__init__.py",
+        '"""Test package marker."""\n',
+    )
+    nested_marker = _write(
+        tmp_path
+        / "src"
+        / "shared"
+        / "python"
+        / "swing_sim"
+        / "flight"
+        / "tests"
+        / "__init__.py",
+        '"""Nested test package marker."""\n',
+    )
+    adjacent_test = _write(
+        tmp_path
+        / "src"
+        / "shared"
+        / "python"
+        / "swing_sim"
+        / "flight"
+        / "tests"
+        / "test_marker.py",
+        "def test_marker():\n    build_marker()\n",
+    )
+
+    violations = module.check_test_files(
+        [package_marker, nested_marker, adjacent_test],
+        allowlist_patterns=patterns,
+        root=tmp_path,
+    )
+
+    assert violations == [adjacent_test]
+
+
+def test_plot_definition_support_exemption_is_exact(tmp_path: Path) -> None:
+    module = _load_module()
+    patterns = module.load_allowlist(
+        Path(__file__).resolve().parents[2] / "scripts" / "test_assertion_allowlist.txt"
+    )
+    support_file = _write(
+        tmp_path
+        / "tests"
+        / "rate_of_closure"
+        / "_variation_plot_definition_support.py",
+        "def make_definition():\n    return {'schema': 2}\n",
+    )
+    real_test = _write(
+        tmp_path / "tests" / "rate_of_closure" / "test_plot_definition.py",
+        "def test_definition():\n    make_definition()\n",
+    )
+
+    violations = module.check_test_files(
+        [support_file, real_test],
+        allowlist_patterns=patterns,
+        root=tmp_path,
+    )
+
+    assert violations == [real_test]
+
+
+@pytest.mark.parametrize(
+    "probe_name",
+    [
+        "pyqt_variation_render_probe.py",
+        "pyqt_variation_visual_state_probe.py",
+        "pyqt_putting_sample_inspector_probe.py",
+        "pyqt_flight_sample_inspector_probe.py",
+        "pyqt_simulation_scrub_probe.py",
+        "pyqt_plot_point_inspector_probe.py",
+        "pyqt_visualization_tab_probe.py",
+        "pyqt_visual_layout_persistence_probe.py",
+    ],
+)
+def test_pyqt_render_probe_exemption_is_exact(tmp_path: Path, probe_name: str) -> None:
+    module = _load_module()
+    patterns = module.load_allowlist(
+        Path(__file__).resolve().parents[2] / "scripts" / "test_assertion_allowlist.txt"
+    )
+    render_probe = _write(
+        tmp_path / "tests" / "rate_of_closure" / probe_name,
+        "def main():\n    render_diagnostic_artifacts()\n",
+    )
+    adjacent_test = _write(
+        tmp_path / "tests" / "rate_of_closure" / f"test_{probe_name}",
+        "def test_render():\n    render_widget()\n",
+    )
+
+    violations = module.check_test_files(
+        [render_probe, adjacent_test],
+        allowlist_patterns=patterns,
+        root=tmp_path,
+    )
+
+    assert violations == [adjacent_test]
 
 
 def test_non_test_python_file_is_not_checked(tmp_path: Path) -> None:

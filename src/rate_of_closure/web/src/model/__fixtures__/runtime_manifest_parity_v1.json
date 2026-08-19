@@ -1,0 +1,145 @@
+{
+  "numeric_policy_cases": {
+    "safe_boundaries": [
+      -9007199254740991,
+      9007199254740991
+    ],
+    "expected_canonical_json": "[-9007199254740991,9007199254740991]",
+    "unsafe_magnitudes": [
+      9007199254740992,
+      1e16,
+      -1e20
+    ]
+  },
+  "reason_policy_cases": {
+    "valid_astral_reason": "No qualified 😀 ground producer was selected.",
+    "boundary_whitespace": [
+      "\t",
+      "\n",
+      "\u000b",
+      "\f",
+      "\r",
+      "\u0020",
+      "\u0085",
+      "\u00a0",
+      "\u1680",
+      "\u2000",
+      "\u2001",
+      "\u2002",
+      "\u2003",
+      "\u2004",
+      "\u2005",
+      "\u2006",
+      "\u2007",
+      "\u2008",
+      "\u2009",
+      "\u200a",
+      "\u2028",
+      "\u2029",
+      "\u202f",
+      "\u205f",
+      "\u3000"
+    ],
+    "unpaired_surrogate": "\ud800"
+  },
+  "placeholder_policy_cases": {
+    "tokens": [
+      "fixme",
+      "placeholder",
+      "tbd",
+      "todo",
+      "unknown"
+    ],
+    "stable_id_separators": [
+      ".",
+      "_",
+      "/",
+      "-"
+    ],
+    "valid_substrings": [
+      "fixmeasured",
+      "placeholderish",
+      "tbdx",
+      "todolist",
+      "unknownable"
+    ]
+  },
+  "expected_canonical_json": "{\"build\":{\"build_id\":\"tools-rate-pyqt6/1.5.0\",\"package_name\":\"ud-tools\",\"package_version\":\"1.5.0\",\"tools_commit\":\"16a1167c31126238163297983862004afc5001d9\"},\"calculations\":[{\"backend\":\"python\",\"domain\":\"impact\",\"frame_id\":\"rate.app-target/v1\",\"implementation_authority\":\"shared.python.swing_sim.impact\",\"integrator\":\"not-applicable\",\"model_id\":\"rigid-body-impulse\",\"model_version\":\"impact-solver/v1\",\"numerical_options\":[{\"option_id\":\"restitution-model\",\"unit\":null,\"value\":\"constant\"}],\"reason\":null,\"request_schema\":\"impact-solver-request/v1\",\"result_schema\":\"impact-solver-result/v1\",\"status\":\"available\",\"unit_system_id\":\"si/v1\"},{\"backend\":\"python\",\"domain\":\"flight\",\"frame_id\":\"rate.flight/v1\",\"implementation_authority\":\"shared.python.swing_sim.flight\",\"integrator\":\"scipy-rk45\",\"model_id\":\"waterloo-penner\",\"model_version\":\"waterloo-penner/v1\",\"numerical_options\":[{\"option_id\":\"relative-tolerance\",\"unit\":\"1\",\"value\":0.00000001}],\"reason\":null,\"request_schema\":\"ball-flight-request/v1\",\"result_schema\":\"ball-flight-result/v1\",\"status\":\"available\",\"unit_system_id\":\"si/v1\"},{\"backend\":null,\"domain\":\"ground\",\"frame_id\":null,\"implementation_authority\":null,\"integrator\":null,\"model_id\":null,\"model_version\":null,\"numerical_options\":[],\"reason\":\"No qualified ground producer was selected for this run.\",\"request_schema\":null,\"result_schema\":null,\"status\":\"unavailable\",\"unit_system_id\":null}],\"provenance\":{\"evidence_ids\":[\"issue-4261\",\"fixture-runtime-manifest-v1\"],\"source_kind\":\"test_fixture\",\"source_reference\":\"runtime-manifest-parity/v1\"},\"schema_version\":\"calculation-runtime-manifest/v1\",\"surface_id\":\"tools.pyqt6\"}",
+  "manifest": {
+    "schema_version": "calculation-runtime-manifest/v1",
+    "surface_id": "tools.pyqt6",
+    "build": {
+      "package_name": "ud-tools",
+      "package_version": "1.5.0",
+      "tools_commit": "16a1167c31126238163297983862004afc5001d9",
+      "build_id": "tools-rate-pyqt6/1.5.0"
+    },
+    "calculations": [
+      {
+        "domain": "impact",
+        "status": "available",
+        "reason": null,
+        "model_id": "rigid-body-impulse",
+        "model_version": "impact-solver/v1",
+        "implementation_authority": "shared.python.swing_sim.impact",
+        "backend": "python",
+        "integrator": "not-applicable",
+        "request_schema": "impact-solver-request/v1",
+        "result_schema": "impact-solver-result/v1",
+        "frame_id": "rate.app-target/v1",
+        "unit_system_id": "si/v1",
+        "numerical_options": [
+          {
+            "option_id": "restitution-model",
+            "value": "constant",
+            "unit": null
+          }
+        ]
+      },
+      {
+        "domain": "flight",
+        "status": "available",
+        "reason": null,
+        "model_id": "waterloo-penner",
+        "model_version": "waterloo-penner/v1",
+        "implementation_authority": "shared.python.swing_sim.flight",
+        "backend": "python",
+        "integrator": "scipy-rk45",
+        "request_schema": "ball-flight-request/v1",
+        "result_schema": "ball-flight-result/v1",
+        "frame_id": "rate.flight/v1",
+        "unit_system_id": "si/v1",
+        "numerical_options": [
+          {
+            "option_id": "relative-tolerance",
+            "value": 1e-8,
+            "unit": "1"
+          }
+        ]
+      },
+      {
+        "domain": "ground",
+        "status": "unavailable",
+        "reason": "No qualified ground producer was selected for this run.",
+        "model_id": null,
+        "model_version": null,
+        "implementation_authority": null,
+        "backend": null,
+        "integrator": null,
+        "request_schema": null,
+        "result_schema": null,
+        "frame_id": null,
+        "unit_system_id": null,
+        "numerical_options": []
+      }
+    ],
+    "provenance": {
+      "source_kind": "test_fixture",
+      "source_reference": "runtime-manifest-parity/v1",
+      "evidence_ids": [
+        "issue-4261",
+        "fixture-runtime-manifest-v1"
+      ]
+    }
+  }
+}

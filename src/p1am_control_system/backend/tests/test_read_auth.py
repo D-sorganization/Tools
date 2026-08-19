@@ -1,15 +1,20 @@
-"""Tests for the opt-in read-authentication gate (``P1AM_REQUIRE_READ_AUTH``).
+"""Tests for the read-authentication gate (``P1AM_REQUIRE_READ_AUTH``).
 
-The read surface (historian trends/export, snapshot, events, plant tree, ladder
-explorer, and the whole ``/api/explorer`` router) is public by default so the
-bench HMI works without a credential. Setting ``P1AM_REQUIRE_READ_AUTH`` (and
-leaving ``P1AM_DEV_NO_AUTH`` off) flips those routes behind the operator API key
-via :func:`main.require_read_auth`.
+The read surface (``/api/routing``, historian trends/export, snapshot, events,
+plant tree, ladder explorer, the service ``/config`` + ``/status`` pairs and the
+whole ``/api/explorer`` router) is credential-gated **by default** as of issue
+#4037: ``GET /api/routing`` alone discloses the full register map, every scale
+factor and every interlock trip limit. ``P1AM_REQUIRE_READ_AUTH=0`` (or
+``P1AM_DEV_NO_AUTH=1``) opts a bench setup back out.
 
 These tests build tiny FastAPI apps around the real dependency and the explorer
 router (mirroring ``tests/test_data_explorer_router.py``) rather than booting the
-full backend, so the gate is exercised in isolation. Default-off behavior — a
-200 without any key — is asserted explicitly to guard the HMI contract.
+full backend, so the gate is exercised in isolation. Both directions are pinned
+explicitly: secure when unset, public only when opted out.
+
+Every variable the gate reads is set to an explicit value per test rather than
+left unset, so the outcome cannot depend on which sibling module imported first
+(#4061).
 """
 
 from __future__ import annotations
@@ -35,11 +40,13 @@ os.environ.setdefault("PLC_DRIVER", "modbus")
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from auth_config import CREDENTIAL_HEADER_NAME  # noqa: E402
+from auth_config import (
+    CREDENTIAL_HEADER_NAME,  # noqa: E402
+    require_read_auth,  # noqa: E402
+)
 from data_explorer_router import create_data_explorer_router  # noqa: E402
 from fastapi import Depends, FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
-from main import require_read_auth  # noqa: E402
 
 _TEST_KEY = "read-surface-secret"  # pragma: allowlist secret
 
@@ -81,22 +88,27 @@ def _explorer_app() -> FastAPI:
 
 
 # --------------------------------------------------------------------------- #
-# Default OFF: public read surface (HMI bench contract)                        #
+# Default ON: the read surface is gated unless explicitly opted out (#4037)    #
 # --------------------------------------------------------------------------- #
 
 
-def test_read_route_public_when_setting_unset() -> None:
+def test_read_route_gated_when_setting_unset(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Secure by default: an unset variable must NOT mean a public API."""
+    monkeypatch.setenv("P1AM_API_KEY", _TEST_KEY)
     resp = TestClient(_read_app()).get("/api/snapshot")
-    assert resp.status_code == 200
-    assert resp.json() == {"status": "ok"}
+    assert resp.status_code in (401, 403)
 
 
 def test_read_route_public_when_setting_false(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """The bench opt-out still works, but it now has to be asked for."""
     monkeypatch.setenv("P1AM_REQUIRE_READ_AUTH", "false")
     resp = TestClient(_read_app()).get("/api/snapshot")
     assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
 
 
 def test_explorer_route_public_when_setting_off(
@@ -183,7 +195,8 @@ def test_dev_no_auth_bypasses_gate(monkeypatch: pytest.MonkeyPatch) -> None:
     assert resp.status_code == 200
 
 
-def test_setting_default_is_false() -> None:
+def test_setting_default_is_true(monkeypatch: pytest.MonkeyPatch) -> None:
     from settings import P1AMSettings
 
-    assert P1AMSettings(_env_file=None).require_read_auth is False
+    monkeypatch.delenv("P1AM_REQUIRE_READ_AUTH", raising=False)
+    assert P1AMSettings(_env_file=None).require_read_auth is True

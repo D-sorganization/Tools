@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 from collections.abc import Generator
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -6,7 +7,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 os.environ["PLC_DRIVER"] = "modbus"
-os.environ["P1AM_DEV_NO_AUTH"] = "1"
 
 pytest.importorskip("sqlmodel")
 pytest.importorskip("httpx")
@@ -25,7 +25,27 @@ test_engine = create_engine(
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
-client = TestClient(app)
+# The HMI marker header: cors_config.RequestGuardMiddleware refuses a
+# state-changing request that carries no preflight-forcing signal, because a
+# bodyless control POST is otherwise a CORS-"simple" request any page can make
+# (#4037). Set it once on the client so every request below is HMI-shaped.
+
+
+@pytest.fixture(autouse=True)
+def _bench_no_auth(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Re-establish the bench auth bypass for EVERY test in this module.
+
+    This used to be a bare ``os.environ`` assignment at import time, which is
+    order-dependent: a sibling suite that clears the variable at *its* import
+    time silently disables the bypass for this whole module, and the tests then
+    fail with 503 ("no credential configured") depending only on collection
+    order and xdist worker assignment (#4061). A per-test ``monkeypatch`` is
+    immune to that and unwinds cleanly afterwards.
+    """
+    monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
+
+
+client = TestClient(app, headers={"X-Requested-With": "p1am-hmi"})
 
 
 def override_get_session() -> Generator[object, None, None]:
@@ -127,7 +147,9 @@ def test_acknowledge_alarm_reports_failed_ack_result() -> None:
 
     assert response.status_code == 409
     assert "could not be acknowledged" in response.json()["detail"]
-    acknowledge.assert_called_once_with("TAG_8")
+    # The operator identity is forwarded so the alarm engine can record it
+    # in acknowledged_by (issue #4034).
+    acknowledge.assert_called_once_with("TAG_8", user=None)
 
 
 def test_pid_tuning_start_rejects_unmapped_tags() -> None:
@@ -228,38 +250,115 @@ def test_pid_tuning_stop_without_step_returns_warning() -> None:
     assert data["recommended_pid"] == {"kp": 0.0, "ki": 0.0, "kd": 0.0}
 
 
-def test_pid_tuning_stop_recommends_expected_pid_for_fixed_history() -> None:
-    backend_main.control_context.tuning_sessions[1] = {
+# The fixed reference plant for the tuning-route tests: Kp=1, tau=1 s,
+# theta=0.5 s, stepped from CV 10% to CV 20%.
+REF_PLANT_GAIN = 1.0
+REF_PLANT_TAU = 1.0
+REF_PLANT_THETA = 0.5
+REF_INITIAL_PV = 10.0
+REF_INITIAL_CV = 10.0
+REF_FINAL_CV = 20.0
+
+# The under-sampled recording of that same plant this file used before the
+# 28.3%/63.2% identification correction. Kept as a rejection fixture.
+UNDERSAMPLED_HISTORY: list[tuple[float, float, float]] = [
+    (0.5, 20.0, 11.0),
+    (1.5, 20.0, 16.32),
+    *((float(t), 20.0, 20.0) for t in range(2, 12)),
+]
+
+
+def _fopdt_step_history(
+    *, dt: float, duration: float
+) -> list[tuple[float, float, float]]:
+    """Sample a noise-free step response of the reference plant.
+
+    Returns ``(time_offset, cv, pv)`` triples with the step applied at t=0.
+    """
+    delta_cv = REF_FINAL_CV - REF_INITIAL_CV
+    history: list[tuple[float, float, float]] = []
+    for i in range(int(round(duration / dt)) + 1):
+        t = i * dt
+        if t < REF_PLANT_THETA:
+            pv = REF_INITIAL_PV
+        else:
+            pv = REF_INITIAL_PV + REF_PLANT_GAIN * delta_cv * (
+                1.0 - math.exp(-(t - REF_PLANT_THETA) / REF_PLANT_TAU)
+            )
+        history.append((round(t, 4), REF_FINAL_CV, pv))
+    return history
+
+
+def _tuning_session(history: list[tuple[float, float, float]]) -> dict[str, object]:
+    return {
         "start_time": 0.0,
-        "history": [
-            (0.5, 20.0, 11.0),
-            (1.5, 20.0, 16.32),
-            (2.0, 20.0, 20.0),
-            (3.0, 20.0, 20.0),
-            (4.0, 20.0, 20.0),
-            (5.0, 20.0, 20.0),
-            (6.0, 20.0, 20.0),
-            (7.0, 20.0, 20.0),
-            (8.0, 20.0, 20.0),
-            (9.0, 20.0, 20.0),
-            (10.0, 20.0, 20.0),
-            (11.0, 20.0, 20.0),
-        ],
+        "history": history,
         "step_triggered": True,
         "step_time": 0.0,
-        "initial_cv": 10.0,
-        "initial_pv": 10.0,
-        "final_cv": 20.0,
+        "initial_cv": REF_INITIAL_CV,
+        "initial_pv": REF_INITIAL_PV,
+        "final_cv": REF_FINAL_CV,
         "final_pv": 20.0,
     }
+
+
+def test_pid_tuning_stop_recommends_expected_pid_for_fixed_history() -> None:
+    """A properly sampled step response yields the expected recommendation.
+
+    This test previously hard-coded a 12-sample history whose PV values 11.0
+    and 16.32 were exactly the 10% and 63.2% thresholds of the *old* two-point
+    identification, recorded at a 1 s sample interval with only two points on
+    the transient. That fixture encoded the biased 10%/63.2% method: under the
+    corrected 28.3%/63.2% identification the same data is unresolvable,
+    because the first threshold crossing lands within two sample intervals of
+    the step. The guard rejecting it is the correct behaviour and is pinned by
+    ``test_pid_tuning_stop_rejects_undersampled_step`` below.
+
+    The plant is unchanged (Kp=1, tau=1 s, theta=0.5 s); only the sampling is
+    now fine enough to identify it. The residual tau/theta error against the
+    true plant is sample quantisation: first-crossing detection snaps the
+    28.3% crossing up to the next 0.1 s sample boundary.
+    """
+    backend_main.control_context.tuning_sessions[1] = _tuning_session(
+        _fopdt_step_history(dt=0.1, duration=15.0)
+    )
 
     response = client.post("/api/pid/1/tuning/stop")
 
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "success"
-    assert data["parameters"] == {"kp": 1.0, "tau": 1.0, "theta": 0.5}
-    assert data["recommended_pid"] == {"kp": 2.916, "ki": 2.833, "kd": 0.486}
+    assert data["parameters"] == {"kp": 1.0, "tau": 0.9, "theta": 0.6}
+    # Kc for this identification is 2.24950, which sits directly on the
+    # 3-decimal rounding boundary the response applies, so it is pinned with a
+    # tolerance rather than exact equality. 1e-3 is still tight enough to
+    # catch any Cohen-Coon coefficient typo, which moves the gains by percent.
+    assert data["recommended_pid"] == pytest.approx(
+        {"kp": 2.2495, "ki": 1.9093, "kd": 0.4377}, abs=1e-3
+    )
+
+
+def test_pid_tuning_stop_rejects_undersampled_step() -> None:
+    """An under-sampled step response must not produce recommended gains.
+
+    Because Kc is proportional to tau/theta, a dead time that cannot be
+    resolved at the recorded sample rate inflates the recommendation without
+    bound -- this fixture used to yield Kc=2.916 for a plant whose properly
+    sampled identification gives 2.249. The route must refuse to emit gains
+    rather than hand an unresolvable identification to the operator.
+    """
+    backend_main.control_context.tuning_sessions[1] = _tuning_session(
+        UNDERSAMPLED_HISTORY
+    )
+
+    response = client.post("/api/pid/1/tuning/stop")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] != "success"
+    assert data["status"] == "warning"
+    assert data["recommended_pid"] == {"kp": 0.0, "ki": 0.0, "kd": 0.0}
+    assert "sample interval" in data["message"].lower()
 
 
 @pytest.mark.asyncio

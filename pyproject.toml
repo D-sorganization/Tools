@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0,<84", "wheel"]
+requires = ["setuptools>=61.0,<85", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -31,6 +31,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Private loopback authority used by the Rate React launcher.
+rate-morris-authority = [
+    "fastapi>=0.100.0",
+    "filelock>=3.12.0",
+    "scipy>=1.10.0,<1.18",
+    "uvicorn>=0.30.0",
+]
 # Full installation with all features
 all = [
     "scipy>=1.10.0,<1.18",
@@ -40,6 +47,9 @@ all = [
     "mujoco>=3.0.0",
     "PyQt6>=6.5.0",
     "sympy>=1.12",
+    "fastapi>=0.100.0",
+    "filelock>=3.12.0",
+    "uvicorn>=0.30.0",
 ]
 # AI and simulation models
 ai = [
@@ -72,6 +82,9 @@ gui = [
     "PyQt6>=6.5.0",
     "pyqtgraph>=0.13.7",
     "matplotlib>=3.7.0",
+    "pandas>=2.0,<3",
+    "scipy>=1.10.0,<1.18",
+    "sympy>=1.12",
 ]
 # Shared chat facade, WebSocket router, and optional Qt dock widget.
 chat = [
@@ -82,6 +95,12 @@ chat = [
 ]
 # Voice-to-text addon for ChatDockWidget (Tools issue #2744).
 # Install with: pip install "tools[chat-voice]"
+rate-of-closure-web = [
+    "fastapi>=0.100.0",
+    "filelock>=3.16.0",
+    "scipy>=1.10.0,<1.18",
+    "uvicorn>=0.30.0",
+]
 chat-voice = [
     "SpeechRecognition>=3.10.0",
     "PyAudio>=0.2.13",
@@ -141,10 +160,34 @@ video-analyzer = [
     "opencv-python>=4.8.0",
     "mediapipe>=0.10.0",
 ]
+# P1AM SCADA control-system backend runtime (issue #4014).
+#
+# THE single source of truth for what the FastAPI backend needs in order to
+# import and run. `deploy/install-services.sh` installs `.[p1am]` into the
+# venv the systemd unit executes, and `backend/Dockerfile` mirrors this list as
+# exact pins (its build context cannot see this file). The mirror is kept
+# honest by tests/test_deployment_hardening.py, which fails if the two drift.
+#
+# Nothing here is optional at runtime: omitting pydantic-settings (imported by
+# settings.py) or python-multipart (required by main.py's File(...) upload)
+# makes the app raise ModuleNotFoundError at import, which under
+# `restart: always` is an invisible crash loop.
+p1am = [
+    "fastapi>=0.115.0,<0.140.0",
+    "uvicorn[standard]>=0.30.0,<0.50.0",
+    "pydantic>=2.7.0,<3.0.0",
+    "pydantic-settings>=2.2.0,<3.0.0",
+    "sqlmodel>=0.0.22,<0.1.0",
+    "pymodbus>=3.6.0,<4.0.0",
+    "websockets>=12.0,<17.0",
+    "python-multipart>=0.0.9,<0.1.0",
+    "numpy>=2.0.1,<2.4.0",
+]
 # Test/runtime dependencies imported during full-suite collection.
 test = [
     "ezdxf[draw]>=1.4.3",
     "fastapi>=0.100.0",
+    "filelock>=3.12.0",
     "httpx>=0.25.0",
     "opencv-python-headless>=4.8.0",
     "pydantic-settings>=2.0.0",
@@ -152,6 +195,7 @@ test = [
     "python-multipart>=0.0.7",
     "requests>=2.32.0",
     "sqlmodel>=0.0.22",
+    "uvicorn>=0.30.0",
 ]
 # Development tools
 dev = [
@@ -175,6 +219,7 @@ dev = [
 ]
 
 [project.scripts]
+rate-of-closure-web = "rate_of_closure.web_companion.cli:main"
 sidekick = "sidekick.__main__:main"
 urdf-gen = "shared.python.model_generation.cli:main"
 generate-pid = "shared.python.programmatic_pid.cli:main"
@@ -199,6 +244,7 @@ include = [
     "web_applications*",
     "contracts*",
     "lower_body_model*",
+    "rate_of_closure*",
     "codemap*",
     "video_analyzer*",
 ]
@@ -210,6 +256,20 @@ exclude = [
 [tool.setuptools.package-data]
 # Include py.typed marker for PEP 561 type hint support
 "*" = ["py.typed"]
+"rate_of_closure" = [
+    "visualization_tabs.v1.json",
+    "visualization_performance.v1.json",
+    "visualization_accessibility.v1.json",
+    "visual_baselines.v1.json",
+    "visual_baselines/v1/react/*.png",
+    "visual_baselines/v1/pyqt/*.png",
+    "web/dist/index.html",
+    "web/dist/*.json",
+    "web/dist/assets/*",
+]
+
+[tool.setuptools.cmdclass]
+build_py = "build_hooks.RateWebBuildPy"
 
 # =============================================================================
 # Pytest Configuration

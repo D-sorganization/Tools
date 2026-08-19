@@ -7,6 +7,11 @@ from dataclasses import dataclass, field
 import pytest
 
 from codemap import _ts_common as ts_common
+from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
+
+# Scoped to this module only; a session-wide skip hook silenced the whole
+# suite here once already (issue #4497).
+pytestmark = CODEMAP_DEPS_SKIP
 
 
 @pytest.fixture(autouse=True)

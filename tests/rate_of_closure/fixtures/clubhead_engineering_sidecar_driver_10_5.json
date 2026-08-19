@@ -1,0 +1,153 @@
+{
+  "capabilities": {
+    "assembly_mass_properties": {
+      "reason": "No validated golf_club.ClubAssembly is bound to the selected Rate of Closure ClubSpec.",
+      "status": "unavailable"
+    },
+    "head_center_of_mass": {
+      "missing": [
+        "heel_toe_coordinate_m",
+        "reconciled_head_frame_origin_transform"
+      ],
+      "status": "unavailable"
+    },
+    "head_full_inertia_tensor": {
+      "missing": [
+        "all six independent tensor components about the complete head CG",
+        "complete CG and shaft-axis reference transform"
+      ],
+      "status": "unavailable"
+    },
+    "head_mass": {
+      "status": "available"
+    },
+    "mesh_identity": {
+      "status": "available"
+    },
+    "world_from_head_attitude": {
+      "missing": [
+        "complete world-from-head rotation"
+      ],
+      "status": "unavailable"
+    }
+  },
+  "format": "rate_of_closure.clubhead_engineering/1",
+  "frames": {
+    "head": {
+      "axes": {
+        "x_positive": "toward target",
+        "y_positive": "up",
+        "z_positive": "toward toe"
+      },
+      "frame_id": "rate_of_closure.head",
+      "handedness": "right",
+      "length_unit": "m",
+      "origin": "parametric mesh head-frame origin; not reconciled to the physical center of mass"
+    },
+    "stl_from_head": {
+      "coordinate_scale_mm_per_m": 1000.0,
+      "rotation": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "status": "available",
+      "translation_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "world_from_head": {
+      "reason": "The selected static ClubSpec and STL do not carry a complete world-from-head attitude.",
+      "status": "unavailable"
+    }
+  },
+  "limitations": [
+    "The representative render mesh is not a measured or density-integrated inertia CAD model.",
+    "Two datum-relative CG offsets do not define a three-coordinate CG in the declared head frame.",
+    "One shaft-axis scalar moment cannot determine a symmetric tensor about the head CG.",
+    "A face normal or static loft does not define the complete world-from-head attitude.",
+    "No validated shared golf-club assembly record is connected to this selected club specification."
+  ],
+  "mass_properties": {
+    "assembly": {
+      "reason": "No validated golf_club.ClubAssembly is bound to the selected Rate of Closure ClubSpec.",
+      "status": "unavailable"
+    },
+    "head": {
+      "center_of_mass_m": {
+        "evidence_only": {
+          "cg_depth_m": {
+            "datum": "back from the face",
+            "value": 0.025
+          },
+          "cg_height_m": {
+            "datum": "above the sole plane",
+            "value": 0.028
+          }
+        },
+        "missing": [
+          "heel_toe_coordinate_m",
+          "reconciled_head_frame_origin_transform"
+        ],
+        "reason": "The available offsets are not a complete vector in rate_of_closure.head.",
+        "status": "unavailable"
+      },
+      "inertia_tensor_at_com_kg_m2": {
+        "evidence_only": {
+          "moi_about_shaft_kg_m2": {
+            "reference": "shaft axis; not a full tensor about the complete head CG",
+            "value": 0.00052
+          }
+        },
+        "reason": "A single shaft-axis scalar does not determine the six independent components of a symmetric tensor.",
+        "status": "unavailable"
+      },
+      "mass_kg": {
+        "provenance": "selected ClubSpec representative input; not a measurement certificate",
+        "status": "available",
+        "value": 0.2
+      }
+    }
+  },
+  "mesh": {
+    "byte_length": 89684,
+    "companion_filename": "driver-10-5.stl",
+    "format": "binary_stl",
+    "generator": "rate_of_closure.parametric_head/1",
+    "mesh_defining_inputs": {
+      "club_type": "Driver",
+      "face_bulge_radius_m": 0.3,
+      "face_roll_radius_m": 0.28,
+      "head_mass_kg": 0.2,
+      "head_style": "Auto",
+      "loft_deg": 10.5
+    },
+    "sha256": "3ea68a083099ce3780418e9eff0900e7178b835608261bf7d89825bddef243c8"
+  },
+  "provenance": {
+    "application": "Rate of Closure Impact Explorer",
+    "mass_property_authority": "selected ClubSpec fields only; no measured or CAD-integrated tensor source",
+    "selected_spec": {
+      "kind": "rate_of_closure.club.ClubSpec",
+      "name": "Driver 10.5\u00b0"
+    }
+  },
+  "subject": {
+    "kind": "selected_representative_clubhead",
+    "name": "Driver 10.5\u00b0"
+  }
+}

@@ -288,20 +288,20 @@ export function downloadCsv(
   }
   assertNonEmptyString(filename, "downloadCsv", "filename");
 
-  // ⚡ Bolt Optimization: Build CSV string with a single-pass loop and string concatenation
-  // to avoid allocating intermediate arrays on every row with .map().join().
+  // ⚡ Bolt Optimization: Replace intermediate array allocations (.map().join())
+  // with a single-pass string concatenation loop to reduce garbage collection
+  // overhead during large CSV exports.
   let csvString = "";
   for (let i = 0; i < headers.length; i++) {
+    if (i > 0) csvString += ",";
     csvString += escapeCsvValue(headers[i]);
-    if (i < headers.length - 1) csvString += ",";
   }
-
   for (let i = 0; i < rows.length; i++) {
     csvString += "\r\n";
     const row = rows[i];
     for (let j = 0; j < row.length; j++) {
+      if (j > 0) csvString += ",";
       csvString += escapeCsvValue(row[j]);
-      if (j < row.length - 1) csvString += ",";
     }
   }
 

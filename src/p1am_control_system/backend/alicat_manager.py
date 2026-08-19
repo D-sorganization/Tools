@@ -8,7 +8,74 @@ from typing import Any
 logger = logging.getLogger("dcs_backend.alicat_manager")
 
 VALID_GASES = ["O2", "N2", "CO2", "He", "H2", "Air"]
-PHYSICAL_CONNECTION_TYPES = {"serial", "tcp"}
+MOCK_CONNECTION_TYPE = "mock"
+PHYSICAL_CONNECTION_TYPES = frozenset({"serial", "tcp"})
+VALID_CONNECTION_TYPES = frozenset({MOCK_CONNECTION_TYPE}) | PHYSICAL_CONNECTION_TYPES
+
+# PLC drivers that are themselves simulated. Only against one of these may the
+# gas subsystem be simulated too; pairing a real PLC with mock MFCs lets an
+# operator "establish" a purge that does not exist (issue #4031).
+SIMULATED_PLC_DRIVERS = frozenset({"simulator", "simulated"})
+
+# The bench rig's standard MFC complement. Single source of truth so main.py's
+# registration block and the tests cannot drift.
+DEFAULT_MFC_SPECS: tuple[dict[str, Any], ...] = (
+    {"device_id": "A", "name": "Oxygen MFC", "gas": "O2", "max_flow": 50.0},
+    {"device_id": "B", "name": "Nitrogen MFC", "gas": "N2", "max_flow": 100.0},
+    {"device_id": "C", "name": "Carbon Dioxide MFC", "gas": "CO2", "max_flow": 20.0},
+)
+
+
+def validate_connection_type(connection_type: str) -> str:
+    """Normalise and validate an MFC transport name.
+
+    Raises:
+        TypeError: If ``connection_type`` is not a str.
+        ValueError: If it is not one of :data:`VALID_CONNECTION_TYPES`.
+    """
+    if not isinstance(connection_type, str):
+        raise TypeError(
+            f"connection_type must be a str, got {type(connection_type).__name__}"
+        )
+    normalized = connection_type.strip().lower()
+    if normalized not in VALID_CONNECTION_TYPES:
+        raise ValueError(
+            f"connection_type must be one of {sorted(VALID_CONNECTION_TYPES)}; "
+            f"got {connection_type!r}"
+        )
+    return normalized
+
+
+def is_simulated_plc_driver(plc_driver: str) -> bool:
+    """Whether ``plc_driver`` names a simulated (non-hardware) PLC."""
+    if not isinstance(plc_driver, str):
+        raise TypeError(f"plc_driver must be a str, got {type(plc_driver).__name__}")
+    return plc_driver.strip().lower() in SIMULATED_PLC_DRIVERS
+
+
+def ensure_gas_control_matches_plc(connection_type: str, plc_driver: str) -> None:
+    """Refuse a simulated gas path paired with a real PLC driver (#4031).
+
+    Preconditions:
+        ``connection_type`` is already normalised via
+        :func:`validate_connection_type`.
+
+    Raises:
+        TypeError: If either argument is not a str.
+        ValueError: If ``connection_type`` is ``"mock"`` while ``plc_driver``
+            drives real hardware.
+    """
+    if validate_connection_type(connection_type) != MOCK_CONNECTION_TYPE:
+        return
+    if is_simulated_plc_driver(plc_driver):
+        return
+    raise ValueError(
+        f"Refusing to register a simulated (mock) Alicat MFC while "
+        f"PLC_DRIVER={plc_driver!r} drives real hardware: an operator would "
+        f"see a purge 'establish' with no gas flowing. Set "
+        f"P1AM_ALICAT_CONNECTION_TYPE to 'serial' or 'tcp' (with "
+        f"P1AM_ALICAT_PORT_OR_IP), or run the simulated PLC driver."
+    )
 
 
 class AlicatMFC:
@@ -23,11 +90,33 @@ class AlicatMFC:
         name: str,
         gas: str = "Air",
         max_flow: float = 50.0,
-        connection_type: str = "mock",
+        connection_type: str = MOCK_CONNECTION_TYPE,
         port_or_ip: str | None = None,
     ) -> None:
+        """Create an MFC handle.
+
+        Preconditions:
+            ``gas`` is in :data:`VALID_GASES`; ``connection_type`` is in
+            :data:`VALID_CONNECTION_TYPES`; a physical transport carries a
+            ``port_or_ip``.
+
+        Raises:
+            TypeError: If ``connection_type`` is not a str.
+            ValueError: If ``gas`` or ``connection_type`` is unsupported, or a
+                serial/TCP device is missing its ``port_or_ip``.
+        """
         if gas not in VALID_GASES:
             raise ValueError(f"Invalid gas: {gas}. Must be one of {VALID_GASES}.")
+
+        connection_type = validate_connection_type(connection_type)
+        if (
+            connection_type in PHYSICAL_CONNECTION_TYPES
+            and not (port_or_ip or "").strip()
+        ):
+            raise ValueError(
+                f"A {connection_type} Alicat MFC requires a port_or_ip "
+                f"(serial device or host); got {port_or_ip!r}."
+            )
 
         self.device_id = device_id
         self.name = name
@@ -43,24 +132,27 @@ class AlicatMFC:
         self.pressure: float = 14.7  # PSIA
         self.temperature: float = 23.5  # °C
         self.connection_state: str = (
-            "simulated" if connection_type == "mock" else "disconnected"
+            "simulated" if connection_type == MOCK_CONNECTION_TYPE else "disconnected"
         )
 
         # Internals for simulation response curves
         self._target_setpoint: float = 0.0
 
     def update_setpoint(self, value: float) -> bool:
-        """Update target flow setpoint (clamped within range)."""
-        next_setpoint = max(0.0, min(value, self.max_flow))
-        if self.connection_type == "mock":
-            self._target_setpoint = next_setpoint
-            self.setpoint = self._target_setpoint
-            return True
+        """Update target flow setpoint (clamped within range).
+
+        Returns:
+            True if the setpoint was applied. Physical (serial/TCP) transports
+            return False because the device IO is not implemented — they must
+            never report a purge established that is not.
+        """
         if self.connection_type in PHYSICAL_CONNECTION_TYPES:
             self._mark_physical_io_unsupported("setpoint update")
             return False
 
-        self._target_setpoint = next_setpoint
+        # connection_type is validated in __init__, so this is the mock branch.
+        self._target_setpoint = max(0.0, min(value, self.max_flow))
+        self.setpoint = self._target_setpoint
         return True
 
     def update_gas(self, new_gas: str) -> None:
@@ -139,10 +231,28 @@ class AlicatMFC:
                 self.mass_flow = float(tokens[4])
                 self.setpoint = float(tokens[5])
                 if len(tokens) >= 7:
-                    self.gas = tokens[6]
+                    self._apply_reported_gas(tokens[6])
         except Exception as parse_err:
             logger.error(
                 f"Error parsing Alicat ASCII response '{response}': {parse_err}"
+            )
+
+    def _apply_reported_gas(self, gas: str) -> None:
+        """Adopt a device-reported gas, going through the VALID_GASES check.
+
+        The previous direct ``self.gas = tokens[6]`` assignment bypassed the
+        validation every other write path honours (issue #4031), letting an
+        unrecognised gas name into the API payload and the operator's readout.
+        """
+        try:
+            self.update_gas(gas)
+        except ValueError:
+            logger.error(
+                "Alicat MFC %s reported unsupported gas %r; keeping %r. Check "
+                "the controller's gas table against VALID_GASES.",
+                self.device_id,
+                gas,
+                self.gas,
             )
 
     def to_dict(self) -> dict[str, Any]:
@@ -164,15 +274,36 @@ class AlicatMFC:
 
 
 class AlicatManager:
-    """Manages collection of active MFCs and periodic query loops."""
+    """Manages collection of active MFCs and periodic query loops.
 
-    def __init__(self) -> None:
+    Args:
+        plc_driver: The active PLC driver name. Registering a simulated (mock)
+            MFC is refused unless this names a simulated PLC (issue #4031).
+    """
+
+    def __init__(self, *, plc_driver: str = "simulator") -> None:
+        if not isinstance(plc_driver, str):
+            raise TypeError(
+                f"plc_driver must be a str, got {type(plc_driver).__name__}"
+            )
+        self.plc_driver = plc_driver
         self.devices: dict[str, AlicatMFC] = {}
         self.polling_task: asyncio.Task | None = None
         self._running: bool = False
+        # Why the registry is empty, when startup refused to register devices.
+        self.registration_error: str | None = None
 
     def add_device(self, mfc: AlicatMFC) -> None:
-        """Add mass flow controller to registry."""
+        """Add mass flow controller to registry.
+
+        Raises:
+            TypeError: If ``mfc`` is not an :class:`AlicatMFC`.
+            ValueError: If a mock device is registered while ``plc_driver``
+                drives real hardware.
+        """
+        if not isinstance(mfc, AlicatMFC):
+            raise TypeError(f"mfc must be an AlicatMFC, got {type(mfc).__name__}")
+        ensure_gas_control_matches_plc(mfc.connection_type, self.plc_driver)
         self.devices[mfc.device_id] = mfc
 
     def get_devices_data(self) -> list[dict[str, Any]]:
@@ -223,3 +354,67 @@ class AlicatManager:
             except asyncio.CancelledError:
                 pass
             self.polling_task = None
+
+
+def create_default_manager(
+    *,
+    connection_type: str,
+    plc_driver: str,
+    port_or_ip: str | None = None,
+) -> AlicatManager:
+    """Build the rig's standard MFC complement on the configured transport.
+
+    The transport comes from settings rather than being hardcoded, and a
+    simulated gas path against a real PLC driver is refused — the combination
+    that let an operator watch a purge "establish" with no gas flowing (issue
+    #4031).
+
+    A refused or unbuildable configuration yields an **empty** manager with
+    :attr:`AlicatManager.registration_error` set, logged at CRITICAL. Gas
+    control is then plainly unavailable (``/api/alicats`` returns nothing)
+    rather than silently simulated — and the rest of the SCADA backend, which
+    owns the E-stop, heater, and power supply, still comes up.
+
+    Args:
+        connection_type: ``"mock"``, ``"serial"``, or ``"tcp"``.
+        plc_driver: The active PLC driver name (``settings.plc_driver``).
+        port_or_ip: Serial device or host shared by the controllers; required
+            for serial/TCP.
+
+    Raises:
+        TypeError: If an argument has the wrong type.
+        ValueError: If ``connection_type`` is not a known transport.
+    """
+    connection_type = validate_connection_type(connection_type)
+    manager = AlicatManager(plc_driver=plc_driver)
+
+    try:
+        ensure_gas_control_matches_plc(connection_type, plc_driver)
+        for spec in DEFAULT_MFC_SPECS:
+            manager.add_device(
+                AlicatMFC(
+                    device_id=str(spec["device_id"]),
+                    name=str(spec["name"]),
+                    gas=str(spec["gas"]),
+                    max_flow=float(spec["max_flow"]),
+                    connection_type=connection_type,
+                    port_or_ip=port_or_ip,
+                )
+            )
+    except ValueError as exc:
+        manager.devices.clear()
+        manager.registration_error = str(exc)
+        logger.critical(
+            "%s NO mass flow controllers were registered: gas control is "
+            "UNAVAILABLE until the configuration is corrected.",
+            exc,
+        )
+        return manager
+
+    logger.info(
+        "Registered %d Alicat MFCs on the %s transport (plc_driver=%s).",
+        len(manager.devices),
+        connection_type,
+        plc_driver,
+    )
+    return manager

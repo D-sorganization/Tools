@@ -71,15 +71,20 @@ class _NullAsyncLock:
 
 
 class TestPowerSupplyServicePoll:
-    def test_poll_with_no_tags_uses_zero_feedback(self) -> None:
+    def test_poll_with_no_tags_raises_a_sensor_fault(self) -> None:
+        """A scan with no feedback is a fault, not three readings of zero.
+
+        Substituting zeros made HH_POWER and HH_TEMP permanently un-trippable
+        and reported a confident, cold-looking supply while the output stayed
+        energized (issue #4016).
+        """
+
         async def _go() -> None:
             plc = _FakePLC()
             svc = PowerSupplyService(plc, logging.getLogger("test"))
             status = await svc.poll(None)
-            assert status.measured_current_a == 0.0
-            assert status.measured_voltage_v == 0.0
-            assert status.measured_temp_c == 0.0
-            assert status.state == PowerSupplyState.IDLE
+            assert "SENSOR_FAULT" in status.trips
+            assert status.state == PowerSupplyState.TRIPPED
 
         asyncio.run(_go())
 
@@ -94,7 +99,9 @@ class TestPowerSupplyServicePoll:
             # The service delegates to the client's public seam (PID 0 = the
             # power-supply actuator). It no longer reaches into write_registers.
             assert plc.write_pid_setpoint.await_count >= 1
-            assert plc.write_pid_setpoint.await_args.args[0] == 0
+            call = plc.write_pid_setpoint.await_args
+            assert call is not None
+            assert call.args[0] == 0
 
         asyncio.run(_go())
 
@@ -105,16 +112,18 @@ class TestPowerSupplyServicePoll:
         svc.controller.update_config(cfg)
         # 50 % on current feedback tag → 100 A
         # 25 % on voltage feedback tag → 25 V
-        # Temp passes through unchanged
+        # Temp is a PERCENT of full scale like the other tags, not degC. This
+        # assertion previously pinned the pass-through as correct, which is why
+        # the HH_TEMP trip could never fire (issue #4003).
         tags = {
             cfg.current_feedback_tag: 50.0,
             cfg.voltage_feedback_tag: 25.0,
-            cfg.temp_tag: 800.0,
+            cfg.temp_tag: 50.0,
         }
         current_a, voltage_v, temp_c = svc._inputs_from_tags(tags)
         assert current_a == pytest.approx(100.0)
         assert voltage_v == pytest.approx(25.0)
-        assert temp_c == pytest.approx(800.0)
+        assert temp_c == pytest.approx(cfg.temp_full_scale_c / 2.0)
 
 
 # --------------------------------------------------------------------------

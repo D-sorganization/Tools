@@ -58,7 +58,8 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
+          LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
         shell: bash
         run: |
           MODE="${LOCAL_MODE:-local}"
@@ -74,6 +75,15 @@ jobs:
               exit 1
               ;;
             *)
+              # Public repos get free unmetered hosted runners, so there is no
+              # reason to fail closed when the fleet is merely saturated: the
+              # probe below counts `busy == false`, and the fleet routinely runs
+              # fully online with ZERO idle runners.
+              if [ "$REPOSITORY_PRIVATE" != "true" ]; then
+                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+                echo "Public repo - routing to free hosted runner (mode=$MODE)"
+                exit 0
+              fi
               AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
                 --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet-fast-io")] | length' \
                 2>/dev/null || echo "0")
@@ -178,7 +188,7 @@ jobs:
       # Cache cargo registry/git only. Restored target/ fingerprints can point
       # at missing dep-info files on self-hosted runners after interrupted jobs.
       - name: Cache Rust dependencies (check)
-        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        uses: Swatinem/rust-cache@258712b0b7b1ddf8bddc9fc3b0faca682b2736c3 # v2
         with:
           workspaces: ${{ matrix.path }}/src-tauri -> target
           key: ${{ matrix.app }}-check
@@ -350,7 +360,7 @@ jobs:
       # Cache cargo registry/git only. Build target/ caches are large and can
       # become inconsistent across interrupted self-hosted runner jobs.
       - name: Cache Rust dependencies (build)
-        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        uses: Swatinem/rust-cache@258712b0b7b1ddf8bddc9fc3b0faca682b2736c3 # v2
         with:
           workspaces: ${{ matrix.app.path }}/src-tauri -> target
           key: ${{ matrix.app.name }}-${{ matrix.platform.target }}-release

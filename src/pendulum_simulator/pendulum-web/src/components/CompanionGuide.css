@@ -1,0 +1,114 @@
+.companion-guide {
+  margin: 0.75rem;
+  border: 1px solid #3f5278;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, #17233a, #16162e);
+  color: #eef4ff;
+}
+
+.companion-guide__heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+}
+
+.companion-guide__heading h2,
+.companion-guide h3,
+.companion-guide p {
+  margin: 0 0 0.45rem;
+}
+
+.companion-guide__heading p {
+  color: #c4d4ed;
+  max-width: 70rem;
+}
+
+.companion-guide__content {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 0 1rem 1rem;
+}
+
+.companion-guide__content > div {
+  border-top: 1px solid #3f5278;
+  padding-top: 0.75rem;
+}
+
+.companion-guide label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+}
+
+.companion-guide select,
+.companion-guide input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 0.55rem;
+  border: 1px solid #6f82aa;
+  border-radius: 0.3rem;
+  background: #101827;
+  color: #fff;
+  padding: 0.55rem;
+}
+
+.companion-guide select:focus-visible,
+.companion-guide input:focus-visible,
+.companion-guide button:focus-visible {
+  outline: 3px solid #f5c451;
+  outline-offset: 2px;
+}
+
+.companion-guide ul {
+  margin-top: 0;
+  padding-left: 1.2rem;
+}
+
+.companion-guide li {
+  margin-bottom: 0.35rem;
+}
+
+.companion-guide__glossary dl {
+  max-height: 18rem;
+  overflow: auto;
+  margin: 0;
+}
+
+.companion-guide__term {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid #2f405f;
+}
+
+.companion-guide__term dt {
+  font-weight: 700;
+}
+
+.companion-guide__term dd {
+  margin: 0.15rem 0 0;
+  color: #cbd8ec;
+}
+
+.companion-guide__term span {
+  white-space: nowrap;
+  color: #9fb4d4;
+}
+
+@media (max-width: 960px) {
+  .companion-guide__content {
+    grid-template-columns: 1fr;
+  }
+
+  .companion-guide__heading {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-guide * {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}

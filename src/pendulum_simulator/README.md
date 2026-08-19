@@ -117,6 +117,16 @@ For every time step the simulator computes:
 - Zero-torque counterfactual accelerations and forces
 - Kinetic, potential, and total energy
 - Viscous dissipation at every joint
+- Phase-window drift/control grip work, negative grip work, opposing
+  along-path impulse, wrist-control work, peak grip force, distal energy gain,
+  and mixed-objective Pareto ranking for the qualified double-pendulum tier
+
+The desktop Analysis dock includes a **Drift Transfer** tab. It plots total,
+drift, and control grip power alongside distal speed and proximal-link angular
+velocity for a user-declared time window. The proximal coordinate is a model
+link rate, not an anatomical shoulder or torso measurement. Triple- and
+two-hand golfer-model attribution remain unavailable until their force
+allocation and reaction-force contracts are independently qualified.
 
 ## Installation
 
@@ -129,6 +139,22 @@ pip install -e ".[gpu]"   # requires JAX, diffrax, optax
 ```
 
 ## Usage
+
+### Proximal–Distal Companion Guide
+
+Both interfaces load the same canonical experiment and glossary catalog from
+`src/double_pendulum_golf/resources/companion_catalog.json`. Open **Companion
+Guide** in the PyQt6 toolstrip or use the guide above the React workbench. Each
+experiment declares its purpose, hypothesis, observable outputs, workflow,
+interpretation tips, falsifier, and limitations before the model is run.
+
+The guide covers two-link passive transfer and distal-torque timing, a
+three-link cascade, bilateral hand-force/equivalent-couple mechanics, pointwise
+versus forward zero-torque counterfactuals, and a parameter-robustness envelope.
+It supplements the simulator; it does not turn model output into a measured
+biomechanical fact. Exported studies should retain the experiment ID, parameter
+values, units, model version, and `exploratory_model_output` status through
+`build_run_manifest()`.
 
 ### PyQt6 Desktop App
 

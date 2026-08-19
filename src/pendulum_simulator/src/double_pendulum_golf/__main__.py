@@ -30,7 +30,9 @@ class _WheelBlockFilter(QObject):
     range and the value survives across launches via QSettings.
     """
 
-    def eventFilter(self, obj: QObject | None, event: QEvent | None) -> bool:  # noqa: N802
+    def eventFilter(
+        self, obj: QObject | None, event: QEvent | None
+    ) -> bool:  # noqa: N802
         if event is not None and event.type() == QEvent.Type.Wheel:
             wheel: QWheelEvent = event  # type: ignore[assignment]
             # Ctrl+Wheel → font zoom (delegated to MainWindow for bounds + persist)
@@ -82,6 +84,13 @@ def _configure_logging() -> None:
 
 
 __version__ = "0.1.0"
+
+
+def get_dockable_ui(parent: object | None = None) -> MainWindow:
+    """Delegate to the provider-safe embedding adapter."""
+    from ._embed_adapter import get_dockable_ui as create_window
+
+    return create_window(parent)
 
 
 def main() -> None:

@@ -20,6 +20,30 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 ROOT = Path.cwd()
+
+# Root entries exempt from the scratch-suffix check in check_root_clutter.
+ROOT_ALLOWLIST = {
+    ".gitignore",
+    ".pre-commit-config.yaml",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "LICENSE",
+    "Makefile",
+    "README.md",
+    "SPEC.md",
+    "pyproject.toml",
+    "requirements.txt",
+    "uv.lock",
+    # Legitimate root entries in any Rust-bearing repo (issue #4486). These are
+    # inert under the current deny-scratch default — none of them carries a
+    # scratch suffix — and exist so the allowlist is already correct if the
+    # stricter deny-unless-allowlisted default is ever adopted.
+    "Cargo.toml",
+    "Cargo.lock",
+    "target",
+}
+ROOT_SCRATCH_SUFFIXES = {".log", ".tmp", ".bak", ".zip", ".7z"}
+
 DEFAULT_MAX_BYTES = 1_000_000
 DEFAULT_MAX_SOURCE_LINES = 1500
 OVERSIZED_SOURCE_LINE_BASELINES = {
@@ -258,25 +282,22 @@ def check_error_handling(args: argparse.Namespace) -> int:
 
 
 def check_root_clutter(args: argparse.Namespace) -> int:
-    allowed = {
-        ".gitignore",
-        ".pre-commit-config.yaml",
-        "AGENTS.md",
-        "CLAUDE.md",
-        "LICENSE",
-        "Makefile",
-        "README.md",
-        "SPEC.md",
-        "pyproject.toml",
-        "requirements.txt",
-        "uv.lock",
-    }
+    """Reject scratch/output files staged at the repo root.
+
+    Note the direction of the test: this is *deny-scratch*, not
+    *deny-unless-allowlisted*. ``ROOT_ALLOWLIST`` therefore only exempts an
+    entry from the suffix check below — it is not the set of things permitted
+    at the root. Inverting that default would newly reject 30-40 tracked,
+    ordinary root files (``.gitattributes``, ``.gitmodules``, ``.editorconfig``,
+    ...) in every fleet repo; see issue #4486 for the measurements and for the
+    ``--warn-only`` rollout that any such change needs.
+    """
     failures: list[str] = []
     for path in staged_files():
         posix = path.replace("\\", "/")
-        if "/" in posix or posix in allowed:
+        if "/" in posix or posix in ROOT_ALLOWLIST:
             continue
-        if Path(posix).suffix.lower() in {".log", ".tmp", ".bak", ".zip", ".7z"}:
+        if Path(posix).suffix.lower() in ROOT_SCRATCH_SUFFIXES:
             failures.append(f"{posix} looks like root-level scratch/output")
     return fail_or_warn("repo root clutter", failures, args.warn_only)
 

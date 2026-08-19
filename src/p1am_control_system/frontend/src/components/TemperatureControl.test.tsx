@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { recallSetpointText } from "./TemperatureControl";
 import {
-  recallSetpointText,
   formatTcReadout,
   heatUpRateReadout,
   plotPxToTime,
-} from "./TemperatureControl";
+} from "../lib/temperatureTrend";
 
 /**
  * Unit tests for the pure setpoint-recall helper. Rendering the full

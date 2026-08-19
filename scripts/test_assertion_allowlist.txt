@@ -9,6 +9,12 @@ tests/shared/python/ai/integrations/_bootstrap.py
 tests/rust_bindings/_tools_core_import.py
 tests/helpers/numerical.py
 tests/shared/python/ai/integrations/_bootstrap.py
+# Support module, not a test: detects the optional codemap (tree-sitter) deps
+# and exports the skipif marker the codemap test modules apply via
+# `pytestmark`. It holds no test functions, so it has nothing to assert about.
+# The skip lives here rather than in a conftest hook because a hook receives
+# the whole session's items and silenced the entire suite (issue #4497).
+tests/helpers/codemap_optional_deps.py
 # Vendored Movement Optimizer sub-app support files (migrated from D-sorganization/Movement_Optimizer; Tools#3407)
 src/movement_optimizer/tests/__init__.py
 src/movement_optimizer/tests/conftest.py
@@ -16,5 +22,40 @@ src/movement_optimizer/tests/**/__init__.py
 src/movement_optimizer/tests/**/conftest.py
 # P1AM power-supply test construction helpers shared by split runtime tests.
 src/p1am_control_system/backend/tests/_power_supply_helpers.py
+# P1AM backend package conftest: an autouse fixture that clears the shared
+# `control_context` E-stop latch on both boundaries of every test, so one
+# module cannot change another module's expected responses under xdist
+# (#4548). It holds no test functions, so it has nothing to assert about;
+# the behaviour it protects is asserted by the modules it isolates.
+src/p1am_control_system/backend/tests/conftest.py
 # pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
 src/document_processing/pdf_renamer/tests/conftest.py
+# Empty package markers for the self-contained swing_sim source tests.
+src/shared/python/swing_sim/tests/__init__.py
+src/shared/python/swing_sim/**/tests/__init__.py
+# Shared request/result constructors for the ground tests; every assertion about
+# what they build lives in the ground test modules that consume them.
+src/shared/python/swing_sim/ground/tests/_support.py
+# Shared pipeline request/result constructors for the flight ground tests;
+# the assertions about what they build live in the consuming modules.
+src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py
+# Shared constructors consumed by the strict variation plot-definition tests.
+tests/rate_of_closure/_variation_plot_definition_support.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_variation_render_probe.py
+# Subprocess entrypoint; lifecycle and geometry assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_variation_visual_state_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_simulation_scrub_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_plot_point_inspector_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning tab-visibility test.
+tests/rate_of_closure/pyqt_visualization_tab_probe.py
+# Subprocess entrypoint; semantic assertions live in the owning rendered test.
+tests/rate_of_closure/pyqt_visual_layout_persistence_probe.py
+# Playwright companion harness; semantic assertions live in the browser specs.
+tests/rate_of_closure/browser_companion_harness.py

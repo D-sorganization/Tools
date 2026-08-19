@@ -10,6 +10,15 @@ class SignalBroker {
   static const int kNumOutputs = 2;   // 2 Analog Outputs
   static const int kUnmappedTag = 255;
 
+  // Degrees C represented by a 100.0% thermocouple tag value. Type-K range is
+  // ~0-1372 C; 0-1400 C spans the heater controller's full working range.
+  //
+  // This is the firmware half of a two-sided contract: the backend's
+  // temp_full_scale_c must agree or every reported temperature is wrong by the
+  // ratio (issue #3998). Exposed here so tests and any future read-back
+  // register can reference one definition instead of copying the literal.
+  static constexpr float kThermocoupleFullScaleC = 1400.0f;
+
   SignalBroker();
 
   // Reset the broker to default state (all tags at 0.0, all routing disabled).
