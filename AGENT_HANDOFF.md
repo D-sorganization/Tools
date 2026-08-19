@@ -26,7 +26,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4146 | Shared Club Builder. Open. First slice #4147 **closed**; assembly physics contracts landed in #4157.                                                                                                                                      |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                         |
 | #4549 | Club Fitting Tester (OEM-grade). Open. **C1-C5 merged in #4557** - mesh inertia tensor, shaft delivery deltas, OEM fitting document, delivery interchange, counterfactual engine. **C6/C7 (GUI tabs) remain.**                            |
-| #4562 | Heavy Hit - hand/body coupling at impact. Open. **H1-H3 merged in #4568**; H5 pin bump is UD #8767. Headline: physiological hands change driver ball speed **<1%**. **H4 (GUI) remains.**                                                 |
+| #4562 | Heavy Hit - hand/body coupling at impact. Open. **H1-H3 merged in #4568**; H5 pin bump merged as UD #8767. Headline: physiological hands change driver ball speed **<1%**. **H4 (GUI) remains.**                                          |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
 #4473), `src/pendulum_simulator/AGENT_HANDOFF.md`,
@@ -34,9 +34,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
 
 ## Open PR Situation — Read Before Filing Anything
 
-**16 PRs are open, none are drafts.** The golf queue is empty: everything from
-the #4549 and #4562 epics has merged. What remains open is unrelated to the
-golf platform except #4466.
+**No PR is a draft, and the golf queue is empty** — everything from the #4549
+and #4562 epics has merged. Check `gh pr list` for the live count rather than
+trusting a number here; what matters is the shape below, which changes slowly.
 
 | PR    | Scope                                                                      |
 | ----- | -------------------------------------------------------------------------- |
