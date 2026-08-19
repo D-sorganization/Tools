@@ -14,27 +14,58 @@
 - Rate of Closure and UpstreamDrift must consume this public facade through
   thin adapters after the provider stack lands; do not copy the calculations.
 
-## Club Fitting Tester Epic (#4549)
+## Club Fitting Tester Epic (#4549) — physics merged, GUI open
 
-This package is the **shared-first** home for the clubfitting epic's physics
-and wires (design contract: `docs/specs/CLUB_FITTING_TESTER.md`).
-`mesh_mass_properties.py` (C1, #4550) is the mesh mass-property authority —
-watertightness, volume, centroid, and the full divergence-theorem inertia
-tensor with analytic cube/box/sphere gates; `rate_of_closure.club.volumetrics`
-delegates to it **lazily** (a module-scope import of this package reaches
-SciPy through the turf chain and breaks the Morris UI import contract).
-C2 (`shaft_delivery`) and C3 (`fitting_document`) land here next; tool-local
-packages hold only UI/pipeline bindings.
+This package is the **shared-first** home for the clubfitting epic's physics and
+wires (contract: `docs/specs/CLUB_FITTING_TESTER.md`). **C1–C5 all merged in
+#4557**; only the GUI children remain (C6 #4555, C7 #4556), and they must bind
+to these modules rather than recompute anything.
 
-## Heavy Hit Epic (#4562)
+| Module                    | Owns                                                                                                                                                                                   |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mesh_mass_properties.py` | C1 — watertightness, volume, centroid, full divergence-theorem inertia tensor, with analytic cube/box/sphere gates. `rate_of_closure.club.volumetrics` delegates here.                 |
+| `shaft_delivery.py`       | C2 — `quasi_static_centrifugal_alignment/1`: tension stiffening `1 + N/P_cr`, alignment restoring `k_θ·θ = F_c·(d − cg_drop·θ)`; **refuses beyond β = 0.8** rather than extrapolating. |
+| `fitting_document.py`     | C3 — `golf_club.fitting_document/1`, the OEM interchange wire.                                                                                                                         |
+| `fitting_engine.py`       | C4 — `CounterfactualSpec`, `compare_counterfactuals`, `golf_club.fitting_report/1`.                                                                                                    |
+
+C5's delivery-trajectory interchange and its Drake/MuJoCo/OpenSim adapters live
+next door in `shared/python/swing_sim/delivery_interchange/`.
+
+**Import trap, load-bearing:** `rate_of_closure.club.volumetrics` delegates to
+`mesh_mass_properties` **lazily, inside the function body**. A module-scope
+import of this package executes `golf_club/__init__`, whose eager surface reaches
+SciPy through the turf chain and breaks the Morris UI import contract. Keep it
+lazy, and do not add eager imports to `__init__` that reach `swing_sim.variation`.
+
+## Heavy Hit Epic (#4562) — physics merged, GUI open
 
 `impact_coupling.py` (H1/H3) quantifies hand/body influence at impact: a
-ball-head-hands KV chain with **upper-bound semantics** (rigid-shaft worst
-case) and the tau-squared decoupling law verified by gate; physiological
-hands change driver ball speed by <1%. `swing_sim/model_interchange/` (H2)
-imports golfer models from MJCF/URDF/.osim (MuJoCo, Drake, Pinocchio,
-OpenSim) runtime-free and reduces a named hand selection to `GripBoundary`.
-Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
+ball–head–hands Kelvin-Voigt chain integrated in the **body frame** (fixed grip
+anchor, ball approaches — the anchor does no work, so energy accounting is
+exact). Physiological hands (3 kg, 5e4 N/m) change driver ball speed by **<1%**;
+the model always reports the **rigid-shaft upper bound** alongside, because any
+lumped `k_s` only approximates contact-timescale impedance. H4 (#4566) is the
+open GUI child. Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
+
+`swing_sim/model_interchange/` (H2) imports golfer models from MJCF, URDF and
+`.osim` — MuJoCo, Drake, Pinocchio, OpenSim — by **runtime-free XML parsing**
+(no engine imports), and reduces an **explicitly named** hand-body selection to
+`GripBoundary`; nothing is guessed from body names. URDF carries no joint
+stiffness, so an explicit override is the sanctioned supply path there.
+
+**Two physics facts learned by probe — do not "simplify" them back:**
+
+1. The τ² decoupling law holds at _finite_ shaft stiffness (4× contact time →
+   16.0× influence, measured), but a **rigid** shaft's coupling is quasi-static
+   added mass and therefore τ-independent. The first gate draft assumed the
+   τ-law for the rigid case and was wrong.
+2. Kelvin-Voigt restitution is **reduced-mass dependent** (ζ = c/2√(kμ)), so
+   welding the head to a large mass legitimately makes it bouncier than
+   `(1+e_free)·v₀`. Cross-case ceilings from a fixed `e` are invalid — bound
+   with the elastic `2·v₀` instead.
+
+Bandit flags stdlib `ElementTree` (B405/B314) in the parsers; the repo's
+convention is `# nosec` with a written justification, not `defusedxml`.
 
 ## Current CAD and Export Contract
 
@@ -84,15 +115,16 @@ The environment currently lacks some pytest plugins declared by root config;
 the focused command therefore disables plugin autoload and clears `addopts`.
 Unknown-config warnings are environment evidence, not test failures.
 
-Latest local evidence on 2026-08-09:
+Latest local evidence, 2026-08-18 (after the C1–C5 and H1–H3 merges):
 
-- all `tests/shared/python/golf_club`: 121 passed;
-- Ruff check and format: 31 package/test files passed;
-- mypy: 17 package files passed with no issues;
-- Black check: seven changed Python/test files unchanged (the global Python
-  3.13 Black executable emitted its known target-parser warning);
-- 400-line package module/file budgets, documentation governance, changed-test
-  assertion policy, and `git diff --check`: passed.
+- `tests/shared/python/golf_club` plus
+  `src/shared/python/swing_sim/model_interchange`: **216 passed, 2 skipped**;
+- the two epics' physics gates are inside that run — the free-head/welded
+  limits, the τ² law, energy conservation, the sub-percent physiological band,
+  and the MJCF-file → `GripBoundary` → coupled-result end-to-end path.
+
+Older evidence (2026-08-09, pre-epic): 121 passed; Ruff check/format clean over
+31 files; mypy clean over 17 package files.
 
 ## Residual #4149 / #4146 Scope
 
