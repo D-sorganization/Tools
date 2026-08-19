@@ -7,3 +7,4 @@ self-hosted-runner:
     - ubuntu-latest
     - ubuntu-22.04
     - ubuntu-24.04
+    - d-sorg-windows-security
