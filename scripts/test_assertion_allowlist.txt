@@ -22,6 +22,12 @@ src/movement_optimizer/tests/**/__init__.py
 src/movement_optimizer/tests/**/conftest.py
 # P1AM power-supply test construction helpers shared by split runtime tests.
 src/p1am_control_system/backend/tests/_power_supply_helpers.py
+# P1AM backend package conftest: an autouse fixture that clears the shared
+# `control_context` E-stop latch on both boundaries of every test, so one
+# module cannot change another module's expected responses under xdist
+# (#4548). It holds no test functions, so it has nothing to assert about;
+# the behaviour it protects is asserted by the modules it isolates.
+src/p1am_control_system/backend/tests/conftest.py
 # pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
 src/document_processing/pdf_renamer/tests/conftest.py
 # Empty package markers for the self-contained swing_sim source tests.
