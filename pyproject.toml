@@ -247,6 +247,7 @@ include = [
     "rate_of_closure*",
     "codemap*",
     "video_analyzer*",
+    "rotation_converter*",
 ]
 exclude = [
     "*.tests*",
