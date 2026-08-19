@@ -1,0 +1,257 @@
+name: Rate of Closure Web Distribution
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/rate-of-closure-web-distribution.yml"
+      - "MANIFEST.in"
+      - "build_hooks.py"
+      - "pyproject.toml"
+      - "scripts/check_rate_web_wheel.py"
+      - "src/rate_of_closure/**"
+      - "tests/rate_of_closure/test_web_asset_distribution.py"
+      - "tests/rate_of_closure/browser_companion_harness.py"
+      - "tests/rate_of_closure/test_browser_*.py"
+      - "tests/rate_of_closure/test_web_companion_*.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/rate-of-closure-web-distribution.yml"
+      - "MANIFEST.in"
+      - "build_hooks.py"
+      - "pyproject.toml"
+      - "scripts/check_rate_web_wheel.py"
+      - "src/rate_of_closure/**"
+      - "tests/rate_of_closure/browser_companion_harness.py"
+      - "tests/rate_of_closure/test_web_companion_*.py"
+      - "tests/rate_of_closure/test_browser_*.py"
+
+concurrency:
+  group: rate-web-distribution-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  wheel:
+    name: Exact static wheel and clean install
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Fetch exact public head without credentials
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          ROC_SOURCE_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+        run: |
+          git init .
+          git remote add origin "https://github.com/${ROC_SOURCE_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$ROC_RELEASE_REVISION"
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$ROC_RELEASE_REVISION"
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/rate_of_closure/web/package-lock.json
+      - name: Build exact static frontend
+        working-directory: src/rate_of_closure/web
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          npm ci
+          npm run type-check
+          npm run lint
+          npm test
+          npm run build:release
+      - name: Run package-side distribution contracts
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m pip install --disable-pip-version-check \
+            pytest==9.0.2 \
+            pytest-asyncio==1.3.0 \
+            pytest-benchmark==5.2.3 \
+            pytest-xdist==3.8.0 \
+            'httpx>=0.25.0' \
+            '.[rate-of-closure-web]'
+          python -m pytest -q \
+            tests/rate_of_closure/test_web_asset_distribution.py \
+            tests/rate_of_closure/test_web_companion_app.py \
+            tests/rate_of_closure/test_web_companion_bundle.py \
+            tests/rate_of_closure/test_web_companion_contracts.py \
+            tests/rate_of_closure/test_web_companion_runtime.py \
+            tests/rate_of_closure/test_regional_ground_authority_api.py
+      - name: Build and verify exact wheel
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m pip install --disable-pip-version-check build==1.3.0
+          python -m build --wheel --outdir wheelhouse
+          python - <<'PY'
+          from pathlib import Path
+          wheels = list(Path("wheelhouse").glob("*.whl"))
+          if len(wheels) != 1:
+              raise SystemExit(f"expected one wheel, found {len(wheels)}")
+          Path("wheel-path.txt").write_text(str(wheels[0]), encoding="utf-8")
+          PY
+          WHEEL=$(cat wheel-path.txt)
+          PYTHONPATH=src python scripts/check_rate_web_wheel.py \
+            --wheel "$WHEEL" --expected-revision "$ROC_RELEASE_REVISION"
+          python -m venv clean-install
+          clean-install/bin/python -m pip install --no-index --no-deps "$WHEEL"
+          mkdir "unrelated cwd ü"
+          cd "unrelated cwd ü"
+          ../clean-install/bin/python -I -m rate_of_closure.web_distribution.verify_install \
+            --expected-revision "$ROC_RELEASE_REVISION"
+          cd ..
+          python -m venv runtime-install
+          WHEEL_URI=$(python - <<'PY'
+          from pathlib import Path
+          wheel = Path(Path("wheel-path.txt").read_text(encoding="utf-8").strip())
+          print(wheel.resolve().as_uri())
+          PY
+          )
+          runtime-install/bin/python -m pip install \
+            "ud-tools[rate-of-closure-web] @ $WHEEL_URI"
+          RUNTIME_PYTHON="$PWD/runtime-install/bin/python"
+          cd "unrelated cwd ü"
+          PATH=/nonexistent "$RUNTIME_PYTHON" -I - <<'PY'
+          import json
+          import os
+          import re
+          from http.client import HTTPConnection
+          from importlib.metadata import entry_points
+
+          from rate_of_closure.web_authority.api import CAPABILITY_PATH
+          from rate_of_closure.web_companion.runtime import start_companion
+
+          scripts = tuple(
+              entry_points(group="console_scripts", name="rate-of-closure-web")
+          )
+          assert len(scripts) == 1
+          assert scripts[0].value == "rate_of_closure.web_companion.cli:main"
+          runtime = start_companion(open_browser=False)
+          try:
+              assert runtime.url.startswith("http://127.0.0.1:")
+              assert runtime.authority.process.poll() is None
+              connection = HTTPConnection("127.0.0.1", runtime.port, timeout=10)
+              connection.request("GET", "/")
+              response = connection.getresponse()
+              index = response.read().decode("utf-8")
+              connection.close()
+              assert response.status == 200
+              match = re.search(
+                  r'<script id="rate-of-closure-web-runtime" type="application/json">(.*?)</script>',
+                  index,
+              )
+              assert match is not None
+              descriptor = json.loads(match.group(1))
+              assert descriptor["mode"] == "local_companion"
+              assert descriptor["release_revision"] == os.environ["ROC_RELEASE_REVISION"]
+              connection = HTTPConnection("127.0.0.1", runtime.port, timeout=10)
+              connection.request("GET", CAPABILITY_PATH)
+              capability_response = connection.getresponse()
+              capability = json.loads(capability_response.read())
+              connection.close()
+              assert capability_response.status == 200
+              assert capability["regional_ground_execution"] is True
+          finally:
+              runtime.close()
+          assert runtime.authority.process.poll() is not None
+          PY
+      - name: Prove generic-wheel branch
+        run: |
+          if env -u ROC_RELEASE_REVISION python -m build --wheel --outdir must-reject; then
+            echo "build hook admitted web assets without exact revision" >&2
+            exit 1
+          fi
+          rm -rf src/rate_of_closure/web/dist
+          python -m build --sdist --outdir generic-sdist
+          python -m pip wheel --no-deps generic-sdist/*.tar.gz --wheel-dir sdist-wheel
+          python -m build --wheel --outdir generic-wheel
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          for directory in ("generic-wheel", "sdist-wheel"):
+              wheels = list(Path(directory).glob("*.whl"))
+              if len(wheels) != 1:
+                  raise SystemExit(f"expected one {directory} wheel, found {len(wheels)}")
+              with ZipFile(wheels[0]) as archive:
+                  if any(name.startswith("rate_of_closure/web/dist/") for name in archive.namelist()):
+                      raise SystemExit(f"{directory} contains qualified web distribution data")
+          PY
+
+  production-browser:
+    name: Production browser qualification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Fetch exact public head without credentials
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          ROC_SOURCE_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+        run: |
+          git init .
+          git remote add origin "https://github.com/${ROC_SOURCE_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$ROC_RELEASE_REVISION"
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$ROC_RELEASE_REVISION"
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/rate_of_closure/web/package-lock.json
+      - name: Install exact browser qualification environment
+        working-directory: src/rate_of_closure/web
+        run: npm ci
+      - name: Build exact production web bundle
+        working-directory: src/rate_of_closure/web
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run build:release
+      - name: Install packaged companion and test contracts
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python -m pip install --disable-pip-version-check \
+            pytest==9.0.2 \
+            pytest-asyncio==1.3.0 \
+            pytest-benchmark==5.2.3 \
+            pytest-xdist==3.8.0 \
+            httpx2==2.10.0 \
+            '.[rate-of-closure-web]'
+          python -m pytest -q \
+            tests/rate_of_closure/test_browser_companion_harness.py \
+            tests/rate_of_closure/test_web_companion_app.py
+      - name: Install qualified browser engines
+        working-directory: src/rate_of_closure/web
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Run production browser smoke qualification
+        working-directory: src/rate_of_closure/web
+        env:
+          CI: "true"
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/browser-smoke.json
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run test:browser:smoke
+      - name: Run production browser lifecycle qualification
+        working-directory: src/rate_of_closure/web
+        env:
+          CI: "true"
+          PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/browser-lifecycle.json
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: npm run test:browser:lifecycle
+      - name: Upload structured qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rate-of-closure-production-browser-qualification
+          path: src/rate_of_closure/web/test-results/*.json
+          if-no-files-found: warn
+          retention-days: 14

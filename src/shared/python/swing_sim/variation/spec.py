@@ -24,6 +24,7 @@ import numpy as np
 
 from shared.python.contracts import require
 from shared.python.swing_sim._numeric_contracts import finite_real, integer
+from shared.python.swing_sim.flight.registry import FlightModelType
 
 from .group_spec import PerturbationGroup
 from .identity_contracts import stable_id as require_stable_id
@@ -44,6 +45,21 @@ from .registry import (
     variable_registry,
     variables_in_category,
 )
+
+MAX_SAFE_INTEGER = 9_007_199_254_740_991
+"""Largest integer represented exactly by both Python and JavaScript plan wires."""
+
+
+def _normalize_json_signed_zero(value: Any) -> Any:
+    """Return a JSON-shaped value with floating signed zero canonicalized."""
+    if isinstance(value, float):
+        return 0.0 if value == 0.0 else value
+    if isinstance(value, Mapping):
+        return {key: _normalize_json_signed_zero(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_normalize_json_signed_zero(item) for item in value]
+    return value
+
 
 DISTRIBUTIONS: tuple[str, ...] = ("normal", "uniform", "triangular")
 """Supported sampling distributions (see :class:`NoiseSpec.scale`)."""
@@ -264,8 +280,16 @@ class VariationPlan:
 
     def __post_init__(self) -> None:
         require(self.mode in MODES, f"mode must be one of {MODES}", self.mode)
+        require(
+            isinstance(self.flight_model, str)
+            and self.flight_model in {model.value for model in FlightModelType},
+            "flight_model must be a registered FlightModelType value",
+            self.flight_model,
+        )
         n_runs = integer(cast(object, self.n_runs), "n_runs", minimum=1)
         seed = integer(cast(object, self.seed), "seed", minimum=0)
+        require(n_runs <= MAX_SAFE_INTEGER, "n_runs must be a safe integer", n_runs)
+        require(seed <= MAX_SAFE_INTEGER, "seed must be a safe integer", seed)
         require(len(self.noise) > 0, "plan must vary at least one variable", None)
         legal = set(keys_for_mode(self.mode))
         base = {
@@ -317,16 +341,21 @@ class VariationPlan:
 
     def to_json_dict(self) -> dict[str, Any]:
         """Plain-JSON representation (schema shared with the web port)."""
-        return {
-            "schema_version": SCHEMA_VERSION,
-            "mode": self.mode,
-            "base_variables": dict(self.base_variables),
-            "noise": [spec.to_json_dict() for spec in self.noise],
-            "n_runs": self.n_runs,
-            "seed": self.seed,
-            "flight_model": self.flight_model,
-            "groups": [group.to_json_dict() for group in self.groups],
-        }
+        return cast(
+            dict[str, Any],
+            _normalize_json_signed_zero(
+                {
+                    "schema_version": SCHEMA_VERSION,
+                    "mode": self.mode,
+                    "base_variables": dict(self.base_variables),
+                    "noise": [spec.to_json_dict() for spec in self.noise],
+                    "n_runs": self.n_runs,
+                    "seed": self.seed,
+                    "flight_model": self.flight_model,
+                    "groups": [group.to_json_dict() for group in self.groups],
+                }
+            ),
+        )
 
     @classmethod
     def from_json_dict(cls, data: Mapping[str, Any]) -> VariationPlan:
@@ -379,6 +408,7 @@ __all__ = [
     "CATEGORY_LAUNCH",
     "CATEGORY_SWING",
     "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+    "MAX_SAFE_INTEGER",
     "DISTRIBUTIONS",
     "MODES",
     "MODE_CATEGORIES",

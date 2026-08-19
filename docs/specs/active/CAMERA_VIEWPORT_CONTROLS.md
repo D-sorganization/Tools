@@ -1,0 +1,130 @@
+# Camera Viewport Controls
+
+Status: implemented locally for Tools issue #4284; protected integration and
+UpstreamDrift consumer parity remain open.
+
+## Camera-preference persistence contract
+
+`camera-preferences/v1` is keyed by stable `impact`, `swing`, and `flight`
+viewport IDs. Each value contains one canonical preset, explicit face-on side,
+zoom bounded to 0.25 through 8, tracking enabled, and Auto Fit enabled. It does
+not serialize the moving target, canvas yaw/pitch from a manual orbit, or the
+runtime manual-suspension flag.
+
+`rate_of_closure.view_workspace/2` embeds the complete preference document.
+Strict v1 import deterministically supplies #4303 defaults: neutral 1x Impact
+and 2x tracking/Auto-Fit Swing and Flight. Unknown keys, missing viewports,
+unsupported enums, out-of-range/non-finite zoom, and future formats reject.
+PyQt6 QSettings and File operations and React localStorage and File operations
+use the same document. The two native and three browser camera adapters restore
+controls without moving the current subject target; only deliberate camera
+controls notify storage, so playback tracking cannot produce per-frame writes.
+
+## PR #4331 stack repair
+
+The local publication candidate normally merges exact current PR #4330 parent
+`304a069b1777dcf8cf107de26caa3b9fbe96dbb3` after exact live PR #4331 child
+`c7bccbccc6cda0c9b938b2862ed660cebdcb7597`. This corrects ancestry only: it
+removes the parent's formatting and worktree-pointer files from the effective
+child comparison while preserving the camera implementation and every command
+contract below. Protected exact-head CI and independent review remain release
+gates.
+
+Root `SPEC.md` version `1.14.30` now carries the same orthographic-axis
+presentation contract as this active specification. The synchronization is
+documentation-only; the previously validated runtime tree is unchanged.
+
+Fresh merged-tree verification covers 71 Python/PyQt camera, compositor,
+layout, main-window, and manifest tests; exact-delta Ruff/format, pinned MyPy
+1.13, Bandit, Spec Check, version/governance, module-size, assertion,
+whitespace, and diff gates;
+the complete 114-file / 686-test React suite; TypeScript; zero-warning ESLint;
+the 199-module production build; and four serial desktop/constrained-2x-DPR
+Playwright camera cases. The dependency audit reports zero vulnerabilities in
+337 packages.
+## PR #4303 current-parent repair
+
+The local publication candidate normally merges exact live child
+`2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current
+mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`
+second. This repairs stale ancestry without changing the default-camera
+contract below. Independent review and protected exact-head CI remain release
+gates.
+
+Fresh merged-tree verification covers 49 focused native camera, layout, and
+simulation tests; 14 campaign/launcher-manifest tests; exact-delta Ruff/format,
+pinned MyPy 1.13, Bandit, governance, size, assertion, whitespace, and diff
+gates; the complete 111-file / 673-test React suite; TypeScript; zero-warning
+ESLint; the 195-module production build; and six serial desktop/constrained-
+2x-DPR Playwright camera/toolstrip cases.
+
+## Problem and scope
+
+Moving clubheads and balls can leave a manually framed 3D view. Every Tools
+PyQt6 and React swing, impact, and flight 3D viewport therefore consumes one
+UI-neutral camera contract. Physics, trajectory, and geometry are unchanged.
+
+## Frame and commands
+
+The app frame is x downrange, y up, z right. Stable command identifiers are
+`camera.view.isometric`, `camera.view.face_on`,
+`camera.view.down_the_line`, `camera.view.overhead`, `camera.auto_fit`,
+`camera.recenter`, and `camera.track_subject`. Down-the-line looks from behind
+along +x; overhead looks along -y. Face-on is explicit: right-side looks along
+-z and left-side along +z. A snap is idempotent and sets orientation only; it
+does not silently change target or zoom.
+
+Exact orthographic presets suppress the complete Matplotlib presentation
+(axis container, label, line, pane, and tick artists) only for the display axis
+perpendicular to the screen: display x/right for Face On, display y/downrange
+for Down the Line, and display z/up for Overhead. This explicit artist-level
+contract prevents cached Axes3D depth labels from surviving a snap. The two
+visible axes retain their physical labels, ticks, and engineering units.
+Reset/isometric and any manual orbit restore all three axes, so hidden
+presentation state cannot leak between camera modes. Visible axes retain
+Matplotlib's native one-sided tick-artist selection; the adapter never forces
+both tick-label sides on and therefore cannot create duplicate labels.
+
+## Tracking and interaction
+
+Tracking is user-controllable and each viewport owns its own state. Moving
+clubhead and ball-flight viewports start in a share-ready 2x, tracking, Auto Fit
+state so their animated subject cannot silently leave an overly broad initial
+frame; static viewports retain the neutral contract default. The target
+advances toward the current clubhead or ball by at most the adapter's positive,
+finite per-frame step. Zoom is preserved when the subject clearance radius
+fits; Auto Fit only caps an unsafe zoom with 16% clearance. Users may disable
+either option independently. Manual orbit suspends tracking predictably.
+Recenter targets the subject in one action and resumes tracking. Reset selects
+the canonical isometric orientation.
+
+All command buttons have visible labels, stable IDs, tooltips, native keyboard
+focus, and focus-visible styling. Controls remain available while playback is
+paused, playing, looping, restarted, stepped by solver-owned sample, resized,
+or rendered at high DPI.
+
+## Architecture and contracts
+
+- Python authority: `src/rate_of_closure/application/camera_commands.py`
+- PyQt adapter: `src/rate_of_closure/ui/pyqt6/camera_controls.py`
+- TypeScript authority: `src/rate_of_closure/web/src/model/cameraCommands.ts`
+- Cross-runtime fixture:
+  `src/rate_of_closure/web/src/model/__fixtures__/camera_commands_v1.json`
+
+Contracts reject non-finite vectors, non-unit or non-perpendicular camera
+bases, invalid zoom, and non-positive tracking steps. The shared
+`moving_subject_camera_state` initializer prevents PyQt6/React default drift;
+no adapter infers a view convention from an arbitrary club pose.
+
+## Validation and remaining gates
+
+Unit and headless GUI/component tests cover exact orientations, parity,
+idempotence, orthographic depth-axis suppression and restoration, focusable
+controls, tracking bounds, zoom clearance, manual suspension, recentering, and
+complete swing/flight horizons. Playwright covers a bounded camera/playback
+interaction matrix in desktop Chromium and at a 520 x 900 viewport with 2x
+device scale, including responsive control containment and the canvas backing
+store. Camera preferences are persisted through the strict view-workspace v2
+contract in this slice. Final issue closure still requires protected carrier
+integration, hosted CI/review, fresh rendered Playwright and native QA, and
+UpstreamDrift consumer parity.

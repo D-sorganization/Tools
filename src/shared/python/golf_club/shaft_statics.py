@@ -30,15 +30,26 @@ class ShaftTipLoad:
 
     The shaft axis points from fixed butt toward the tip. Positive transverse
     forces produce positive deflection on their named axes. Right-handed
-    moments give positive rotations.
+    moments give positive rotations. ``moment_about_y_nm`` bends in the x
+    plane (pairs with ``force_x_n``); ``moment_about_x_nm`` bends in the y
+    plane (pairs with ``force_y_n``). The moment terms default to zero so
+    pre-existing callers are unchanged (added for club-tester C2, #4551).
     """
 
     force_x_n: float = 0.0
     force_y_n: float = 0.0
     torque_about_shaft_nm: float = 0.0
+    moment_about_x_nm: float = 0.0
+    moment_about_y_nm: float = 0.0
 
     def __post_init__(self) -> None:
-        for name in ("force_x_n", "force_y_n", "torque_about_shaft_nm"):
+        for name in (
+            "force_x_n",
+            "force_y_n",
+            "torque_about_shaft_nm",
+            "moment_about_x_nm",
+            "moment_about_y_nm",
+        ):
             object.__setattr__(
                 self,
                 name,
@@ -77,11 +88,13 @@ def solve_cantilever_tip_response(
     deflection_x, rotation_y = _bending_response(
         profile,
         load.force_x_n,
+        load.moment_about_y_nm,
         "ei_about_y_n_m2",
     )
     deflection_y, rotation_x_magnitude = _bending_response(
         profile,
         load.force_y_n,
+        load.moment_about_x_nm,
         "ei_about_x_n_m2",
     )
     twist = load.torque_about_shaft_nm * _compliance_integral(
@@ -102,17 +115,29 @@ def solve_cantilever_tip_response(
 def _bending_response(
     profile: ShaftProfile,
     force_n: float,
+    moment_nm: float,
     stiffness_name: str,
 ) -> tuple[float, float]:
+    # Unit-load compliances: a tip force sees the lever arm once per unit-load
+    # diagram (rotation ~ ∫ lever/EI, deflection ~ ∫ lever²/EI); a tip moment's
+    # unit diagram is constant (rotation ~ ∫ 1/EI, deflection ~ ∫ lever/EI).
     rotation = force_n * _compliance_integral(
         profile,
         stiffness_name,
         power=1,
+    ) + moment_nm * _compliance_integral(
+        profile,
+        stiffness_name,
+        power=0,
     )
     deflection = force_n * _compliance_integral(
         profile,
         stiffness_name,
         power=2,
+    ) + moment_nm * _compliance_integral(
+        profile,
+        stiffness_name,
+        power=1,
     )
     return deflection, rotation
 

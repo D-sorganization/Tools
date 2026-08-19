@@ -1,0 +1,61 @@
+{
+  "plan": {
+    "schema_version": 2,
+    "mode": "launch",
+    "base_variables": {},
+    "noise": [
+      {
+        "variable_key": "swing_sim.flight.launch.ball_speed_mph",
+        "distribution": "normal",
+        "scale": 1.0,
+        "lower": null,
+        "upper": null,
+        "spec_id": "swing_sim.flight.launch.ball_speed_mph",
+        "time_window_s": null,
+        "point_ids": []
+      },
+      {
+        "variable_key": "swing_sim.flight.launch.launch_angle_deg",
+        "distribution": "normal",
+        "scale": 0.5,
+        "lower": null,
+        "upper": null,
+        "spec_id": "swing_sim.flight.launch.launch_angle_deg",
+        "time_window_s": null,
+        "point_ids": []
+      },
+      {
+        "variable_key": "swing_sim.flight.launch.spin_rpm",
+        "distribution": "normal",
+        "scale": 100.0,
+        "lower": null,
+        "upper": null,
+        "spec_id": "swing_sim.flight.launch.spin_rpm",
+        "time_window_s": null,
+        "point_ids": []
+      },
+      {
+        "variable_key": "swing_sim.flight.launch.launch_azimuth_deg",
+        "distribution": "normal",
+        "scale": 0.8,
+        "lower": null,
+        "upper": null,
+        "spec_id": "swing_sim.flight.launch.launch_azimuth_deg",
+        "time_window_s": null,
+        "point_ids": []
+      }
+    ],
+    "n_runs": 300,
+    "seed": 42,
+    "flight_model": "waterloo_penner",
+    "groups": []
+  },
+  "selection": {
+    "schema": "rate_of_closure.variation_workspace_selection",
+    "schema_version": 1,
+    "data": {
+      "analysis_execution": "both",
+      "selected_output_metrics": ["carry_m", "lateral_m", "apex_m"]
+    }
+  }
+}
