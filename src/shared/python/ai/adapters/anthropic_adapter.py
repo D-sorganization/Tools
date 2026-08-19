@@ -417,13 +417,19 @@ class AnthropicAdapter(BaseAgentAdapter):
                 }
             )
 
-        # Add current message
-        messages.append(
-            {
-                "role": "user",
-                "content": current_message,
-            }
-        )
+        # Add current message.
+        #
+        # `chat_service` calls with `current_message=""` when the message the
+        # user just sent is already the tail of `context.messages`. Appending
+        # an empty trailing user turn there corrupts the request: providers
+        # either reject it or answer the blank turn instead of the real one.
+        if current_message.strip():
+            messages.append(
+                {
+                    "role": "user",
+                    "content": current_message,
+                }
+            )
 
         # Ensure alternating roles (Anthropic requirement)
         messages = self._ensure_alternating_roles(messages)
