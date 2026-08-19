@@ -26,6 +26,12 @@ src/p1am_control_system/backend/tests/_power_supply_helpers.py
 # authz-matrix tests are version-agnostic (fastapi 0.141's include_router no
 # longer flattens into app.routes). Exports methods_by_path/route_paths only.
 src/p1am_control_system/backend/tests/_route_inventory.py
+# P1AM backend package conftest: an autouse fixture that clears the shared
+# `control_context` E-stop latch on both boundaries of every test, so one
+# module cannot change another module's expected responses under xdist
+# (#4548). It holds no test functions, so it has nothing to assert about;
+# the behaviour it protects is asserted by the modules it isolates.
+src/p1am_control_system/backend/tests/conftest.py
 # pdf_renamer sub-app: conftest only puts the sub-app's own src root on sys.path.
 src/document_processing/pdf_renamer/tests/conftest.py
 # Empty package markers for the self-contained swing_sim source tests.
@@ -55,3 +61,5 @@ tests/rate_of_closure/pyqt_plot_point_inspector_probe.py
 tests/rate_of_closure/pyqt_visualization_tab_probe.py
 # Subprocess entrypoint; semantic assertions live in the owning rendered test.
 tests/rate_of_closure/pyqt_visual_layout_persistence_probe.py
+# Playwright companion harness; semantic assertions live in the browser specs.
+tests/rate_of_closure/browser_companion_harness.py

@@ -48,7 +48,7 @@ class _UnavailableConnector:
     def diagnostics(self) -> dict[str, object]:
         return {  # pragma: allowlist secret
             "state": "offline",
-            "password": "demonstration-redaction-value",
+            "password": "demonstration-redaction-value",  # pragma: allowlist secret
         }
 
 

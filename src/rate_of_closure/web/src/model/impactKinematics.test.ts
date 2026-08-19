@@ -39,6 +39,7 @@ describe("impact kinematics", () => {
     expect(metrics.eventLabel).toBe("Impact");
     expect(metrics.contactAoaDeg).toBeCloseTo(expected.aoaDeviationDeg, 10);
     expect(metrics.shaftAoaContributionDeg).toBeLessThan(0);
+    expect(metrics.shaftAoaShapleyDeg).not.toBeNull();
     expect(metrics.shaftRotationRateDps).toBeCloseTo(1307, 10);
     const vectors = Object.fromEntries(metrics.vectors.map((vector) => [vector.key, vector.vectorMps]));
     const reconstructed = vectors.axisTranslation.map((value: number, index: number) =>

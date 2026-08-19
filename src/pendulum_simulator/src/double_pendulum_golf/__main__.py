@@ -86,6 +86,13 @@ def _configure_logging() -> None:
 __version__ = "0.1.0"
 
 
+def get_dockable_ui(parent: object | None = None) -> MainWindow:
+    """Delegate to the provider-safe embedding adapter."""
+    from ._embed_adapter import get_dockable_ui as create_window
+
+    return create_window(parent)
+
+
 def main() -> None:
     # Handle --version flag before any GUI initialization
     if "--version" in sys.argv:

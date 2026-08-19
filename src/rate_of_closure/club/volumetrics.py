@@ -1,15 +1,17 @@
 """Closed-mesh volume and centroid via the divergence theorem (H1, #4125).
 
-For a watertight triangle mesh with outward winding, the divergence
-theorem turns the volume integral into a surface sum of signed
-tetrahedra to the origin:
+The math authority moved to the shared layer for the club-tester epic
+(#4549 C1): :mod:`shared.python.golf_club.mesh_mass_properties` owns
+watertightness, volume, centroid, and the full inertia tensor, so
+UpstreamDrift reaches one implementation through ``vendor/ud-tools``.
+This module keeps the two functions its public API always had as
+call-time delegates and the tool-local :func:`head_cog` report on top.
 
-    V   = Σ det(a, b, c) / 6
-    COG = Σ V_i · (a_i + b_i + c_i) / 4  /  V
-
-(each tetrahedron's centroid is the average of its four vertices; the
-origin contributes zero). Both are exact for polyhedra and independent
-of the origin's location as long as the mesh is closed.
+The delegation is deliberately **lazy**: importing the shared function at
+module scope executes ``golf_club/__init__``, whose eager surface reaches
+SciPy through the turf chain — which breaks the Morris UI import contract
+(``test_morris_ui_client``). Same rule as this package's ``__init__``
+lazy-export map; do not "simplify" it back to a top-level import.
 
 Design by Contract: :func:`mesh_volume_centroid` requires a watertight
 mesh — every directed edge must appear exactly once with its reverse
@@ -24,14 +26,16 @@ on the generated driver head.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-import numpy as np
-
-from rate_of_closure._contracts import ensure, require
+from rate_of_closure._contracts import ensure
 
 from .head_profiles import face_center_point
 from .parametric_head import build_parametric_head
 from .types import ClubSpec
+
+if TYPE_CHECKING:
+    import numpy as np
 
 __all__ = [
     "HEAD_VOLUME_BOUNDS_M3",
@@ -41,59 +45,34 @@ __all__ = [
     "mesh_volume_centroid",
 ]
 
-#: Sanity band for generated-head volumes [m³]: from a compact blade
-#: putter (~5e-5 = 50 cc) up to the 460 cc USGA driver limit with
-#: margin.
-HEAD_VOLUME_BOUNDS_M3 = (2.0e-5, 8.0e-4)
-
-
-def _directed_edges(triangles: np.ndarray) -> dict[tuple[bytes, bytes], int]:
-    """Count of each directed edge, keyed by exact vertex bytes."""
-    edges: dict[tuple[bytes, bytes], int] = {}
-    for tri in triangles:
-        keys = [np.ascontiguousarray(v).tobytes() for v in tri]
-        for i in range(3):
-            edge = (keys[i], keys[(i + 1) % 3])
-            edges[edge] = edges.get(edge, 0) + 1
-    return edges
-
 
 def is_watertight(triangles: np.ndarray) -> bool:
     """Whether every directed edge appears once with its reverse present.
 
-    Exact-bit vertex matching: generated meshes share ring vertices
-    bit-for-bit, so this is a true closure check for them; independently
-    authored STLs with re-tessellated seams may fail and fall back to
-    spec CG display.
+    Delegates to :func:`shared.python.golf_club.mesh_mass_properties.is_watertight`
+    (see the module docstring for why the import is call-time).
     """
-    tris = np.asarray(triangles, dtype=np.float64)
-    require(tris.ndim == 3 and tris.shape[1:] == (3, 3), "triangles must be (n, 3, 3)")
-    edges = _directed_edges(tris)
-    return all(
-        count == 1 and edges.get((b, a), 0) == 1 for (a, b), count in edges.items()
-    )
+    from shared.python.golf_club import mesh_mass_properties
+
+    return mesh_mass_properties.is_watertight(triangles)
 
 
 def mesh_volume_centroid(triangles: np.ndarray) -> tuple[float, np.ndarray]:
     """Volume [m³] and centroid [m] of a closed, outward-wound mesh.
 
-    Raises:
-        PreconditionError: If the mesh is not watertight.
-        PostconditionError: If the signed volume is not positive/finite
-            (inward winding or a degenerate solid).
+    Delegates to the shared authority; raises the same
+    ``PreconditionError`` / ``PostconditionError`` contracts it always
+    did (the shim and the shared module share exception classes).
     """
-    tris = np.asarray(triangles, dtype=np.float64)
-    require(tris.ndim == 3 and tris.shape[1:] == (3, 3), "triangles must be (n, 3, 3)")
-    require(bool(np.isfinite(tris).all()), "triangles must be finite")
-    require(is_watertight(tris), "mesh must be watertight (closed, matched edges)")
+    from shared.python.golf_club import mesh_mass_properties
 
-    a, b, c = tris[:, 0], tris[:, 1], tris[:, 2]
-    signed = np.einsum("ij,ij->i", a, np.cross(b, c)) / 6.0
-    volume = float(signed.sum())
-    ensure(np.isfinite(volume) and volume > 0.0, "volume must be positive", volume)
-    centroid = (signed[:, None] * (a + b + c) / 4.0).sum(axis=0) / volume
-    ensure(bool(np.isfinite(centroid).all()), "centroid must be finite")
-    return volume, np.asarray(centroid)
+    return mesh_mass_properties.mesh_volume_centroid(triangles)
+
+
+#: Sanity band for generated-head volumes [m³]: from a compact blade
+#: putter (~5e-5 = 50 cc) up to the 460 cc USGA driver limit with
+#: margin.
+HEAD_VOLUME_BOUNDS_M3 = (2.0e-5, 8.0e-4)
 
 
 @dataclass(frozen=True)

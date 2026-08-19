@@ -246,11 +246,19 @@ async def test_estop_trigger() -> None:
         patch.object(modbus_manager, "_connected", True),
         patch.object(modbus_manager, "trigger_estop", mock_estop),
     ):
-        response = client.post("/api/estop")
-        assert response.status_code == 200
-        assert "E-stop triggered" in response.json()["message"]
-        mock_estop.assert_called_once()
-        control_context.clear_estop()
+        try:
+            response = client.post("/api/estop")
+            assert response.status_code == 200
+            assert "E-stop triggered" in response.json()["message"]
+            mock_estop.assert_called_once()
+        finally:
+            # `control_context` is a module-level singleton shared by every
+            # test in this package. The clear used to be the last statement of
+            # the body, so any assertion above failing left E-stop latched for
+            # whatever ran next on the same xdist worker -- which surfaced as
+            # test_pid_tuning_tag_guards failing with "E-stop active; output
+            # writes are inhibited." instead of its own expected message.
+            control_context.clear_estop()
 
 
 def test_export_data() -> None:

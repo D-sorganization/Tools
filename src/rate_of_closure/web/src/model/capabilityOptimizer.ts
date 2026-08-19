@@ -10,7 +10,22 @@ import {
   type PlayerCapabilityProfile,
 } from "./capabilityContract";
 import { covarianceFactor, primeBases, radicalInverse } from "./capabilityMath";
+import { CapabilityOptimizationCancelled } from "./capabilityObservationContract";
+import type {
+  CapabilityEffectiveStatus,
+  CapabilityObservedParameter,
+  CapabilityOptimizationOptions,
+  CapabilitySampleObservation,
+} from "./capabilityObservationContract";
+import { FLIGHT_METRIC_IDS } from "./ballFlightMetricContract";
+import type { EvaluatedMetric, EvaluationStatus, SolverEvaluation } from "./inverseFlightContract";
 import { contains, type TargetRegionTs } from "./targets";
+
+export { CapabilityOptimizationCancelled, capabilitySampleObservationWire } from "./capabilityObservationContract";
+export type {
+  CapabilityEffectiveStatus, CapabilityObservedParameter, CapabilityOptimizationOptions,
+  CapabilitySampleObservation, CapabilitySampleObservationWire,
+} from "./capabilityObservationContract";
 
 const FAILURE_PENALTY = 1_000_000;
 const BOUNDARY_TOLERANCE = 1e-9;
@@ -24,10 +39,40 @@ const PROVENANCE = Object.freeze({
 interface Landing { readonly carryM: number; readonly offlineM: number }
 interface Counts { readonly completed: number; readonly noImpact: number; readonly failed: number }
 interface CandidateSummary { readonly alternative: OptimizationAlternative | null; readonly counts: Counts }
+interface CandidateContext { readonly candidateOrdinal: number; readonly clubCandidateOrdinal: number }
+interface CandidateEvaluationInput {
+  readonly club: ClubCapability; readonly nominal: Readonly<Record<string, number>>;
+  readonly profile: PlayerCapabilityProfile; readonly request: OptimizationRequest;
+  readonly evaluator: CapabilityEvaluator; readonly context: CandidateContext;
+  readonly options: CapabilityOptimizationOptions;
+}
+interface NormalizedEvaluation {
+  readonly sourceStatus: EvaluationStatus | null; readonly effectiveStatus: CapabilityEffectiveStatus;
+  readonly reasonCode: string | null; readonly sourceReason: string | null;
+  readonly metrics: readonly EvaluatedMetric[]; readonly landing: Landing | null;
+}
+interface ObservationIdentity {
+  readonly attemptOrdinal: number; readonly attemptedCount: number; readonly totalCount: number;
+  readonly candidateOrdinal: number; readonly clubCandidateOrdinal: number; readonly sampleOrdinal: number;
+}
+interface SampleObservationInput {
+  readonly club: ClubCapability; readonly nominal: Readonly<Record<string, number>>;
+  readonly perturbed: Readonly<Record<string, number>>; readonly evaluation: NormalizedEvaluation;
+  readonly request: OptimizationRequest; readonly context: CandidateContext; readonly sampleOrdinal: number;
+}
 interface RiskMetrics {
   readonly meanCarryM: number; readonly expectedMissM: number;
   readonly holdProbability: number; readonly dispersionRmsM: number;
   readonly cvarMissM: number; readonly downsideCarryM: number;
+}
+interface ConstraintInput {
+  readonly club: ClubCapability; readonly nominal: Readonly<Record<string, number>>;
+  readonly successFraction: number; readonly extrapolated: boolean; readonly request: OptimizationRequest;
+}
+interface SummaryInput {
+  readonly club: ClubCapability; readonly nominal: Readonly<Record<string, number>>;
+  readonly landings: readonly Landing[]; readonly counts: Counts;
+  readonly profile: PlayerCapabilityProfile; readonly request: OptimizationRequest;
 }
 
 const clubById = (profile: PlayerCapabilityProfile, clubId: string): ClubCapability => {
@@ -74,12 +119,114 @@ const perturbedParameters = (
   ]));
 };
 
-const parseLanding = (evaluation: ReturnType<CapabilityEvaluator>): Landing | null => {
+const parseLanding = (evaluation: SolverEvaluation): Landing | null => {
   if (evaluation.status !== "complete") return null;
   const carry = evaluation.metrics.find((item) => item.metricId === "carry_distance")?.value;
   const offline = evaluation.metrics.find((item) => item.metricId === "carry_offline")?.value;
   if (!Number.isFinite(carry) || !Number.isFinite(offline)) return null;
   return Object.freeze({ carryM: carry as number, offlineM: offline as number });
+};
+
+const validEvaluationSemantics = (
+  status: EvaluationStatus, metrics: readonly EvaluatedMetric[], reason: string | null,
+): boolean => {
+  if (new Set(metrics.map(({ metricId }) => metricId)).size !== metrics.length) return false;
+  if (status === "complete") return metrics.length > 0 && reason === null;
+  return metrics.length === 0 && reason !== null && reason.trim() !== "";
+};
+
+const asEvaluation = (value: unknown): SolverEvaluation | null => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const source = value as Record<string, unknown>;
+  const statuses: readonly EvaluationStatus[] = ["complete", "no_impact", "failed", "nonconverged"];
+  if (!statuses.includes(source.status as EvaluationStatus) || !Array.isArray(source.metrics)) return null;
+  if (source.reason !== null && typeof source.reason !== "string") return null;
+  const metrics: EvaluatedMetric[] = [];
+  for (const valueMetric of source.metrics) {
+    if (!valueMetric || typeof valueMetric !== "object" || Array.isArray(valueMetric)) return null;
+    const metric = valueMetric as Record<string, unknown>;
+    if (typeof metric.metricId !== "string"
+      || !FLIGHT_METRIC_IDS.includes(metric.metricId as EvaluatedMetric["metricId"])
+      || typeof metric.value !== "number" || !Number.isFinite(metric.value)
+      || typeof metric.provenance !== "string" || metric.provenance.trim() === "") return null;
+    metrics.push(Object.freeze({
+      metricId: metric.metricId as EvaluatedMetric["metricId"],
+      value: metric.value,
+      provenance: metric.provenance,
+    }));
+  }
+  const status = source.status as EvaluationStatus;
+  const reason = source.reason as string | null;
+  if (!validEvaluationSemantics(status, metrics, reason)) return null;
+  return Object.freeze({
+    status,
+    metrics: Object.freeze(metrics),
+    reason,
+  });
+};
+
+const failedEvaluation = (reasonCode: string): NormalizedEvaluation => Object.freeze({
+  sourceStatus: null, effectiveStatus: "failed", reasonCode, sourceReason: null,
+  metrics: Object.freeze([]), landing: null,
+});
+
+const normalizeEvaluation = (evaluator: () => unknown): NormalizedEvaluation => {
+  let raw: unknown;
+  try { raw = evaluator(); }
+  catch { return failedEvaluation("evaluator_exception"); }
+  const evaluation = asEvaluation(raw);
+  if (!evaluation) return failedEvaluation("invalid_evaluator_result");
+  const landing = parseLanding(evaluation);
+  if (evaluation.status === "complete") return Object.freeze({
+    sourceStatus: evaluation.status,
+    effectiveStatus: landing ? "complete" : "failed",
+    reasonCode: landing ? null : "missing_required_landing_metrics",
+    sourceReason: null, metrics: evaluation.metrics, landing,
+  });
+  return Object.freeze({
+    sourceStatus: evaluation.status,
+    effectiveStatus: evaluation.status === "no_impact" ? "no_impact" : "failed",
+    reasonCode: evaluation.reason, sourceReason: evaluation.reason,
+    metrics: evaluation.metrics, landing: null,
+  });
+};
+
+const observedParameters = (
+  club: ClubCapability,
+  nominal: Readonly<Record<string, number>>,
+  perturbed: Readonly<Record<string, number>>,
+): readonly CapabilityObservedParameter[] => Object.freeze(club.parameters.map((parameter) => Object.freeze({
+  parameterId: parameter.parameterId, unit: parameter.unit,
+  nominalValue: nominal[parameter.parameterId], perturbedValue: perturbed[parameter.parameterId],
+})));
+
+const observationIdentity = (
+  request: OptimizationRequest, context: CandidateContext, sampleOrdinal: number,
+): ObservationIdentity => {
+  const { candidateOrdinal, clubCandidateOrdinal } = context;
+  const totalCount = request.candidateBudget * request.ensembleSize;
+  const attemptOrdinal = candidateOrdinal * request.ensembleSize + sampleOrdinal;
+  const ordinals = [candidateOrdinal, clubCandidateOrdinal, sampleOrdinal, attemptOrdinal, totalCount];
+  if (ordinals.some((value) => !Number.isInteger(value) || value < 0)) {
+    throw new RangeError("observation identity values must be nonnegative integers");
+  }
+  if (candidateOrdinal >= request.candidateBudget || sampleOrdinal >= request.ensembleSize
+    || attemptOrdinal >= totalCount) throw new RangeError("observation identity exceeds optimization bounds");
+  return Object.freeze({
+    attemptOrdinal, attemptedCount: attemptOrdinal + 1, totalCount,
+    candidateOrdinal, clubCandidateOrdinal, sampleOrdinal,
+  });
+};
+
+const sampleObservation = (input: SampleObservationInput): CapabilitySampleObservation => {
+  const { club, nominal, perturbed, evaluation, request, context, sampleOrdinal } = input;
+  const identity = observationIdentity(request, context, sampleOrdinal);
+  return Object.freeze({
+    schemaVersion: "capability-sample-observation/v1", problemId: request.problemId,
+    ...identity, clubId: club.clubId, parameters: observedParameters(club, nominal, perturbed),
+    sourceStatus: evaluation.sourceStatus, effectiveStatus: evaluation.effectiveStatus,
+    reasonCode: evaluation.reasonCode, sourceReason: evaluation.sourceReason, metrics: evaluation.metrics,
+  });
 };
 
 const tailMean = (values: readonly number[], alpha: number, reverse: boolean): number => {
@@ -88,13 +235,8 @@ const tailMean = (values: readonly number[], alpha: number, reverse: boolean): n
   return ordered.slice(0, count).reduce((sum, value) => sum + value, 0) / count;
 };
 
-const limitingConstraints = (
-  club: ClubCapability,
-  nominal: Readonly<Record<string, number>>,
-  successFraction: number,
-  extrapolated: boolean,
-  request: OptimizationRequest,
-): readonly string[] => {
+const limitingConstraints = (input: ConstraintInput): readonly string[] => {
+  const { club, nominal, successFraction, extrapolated, request } = input;
   const limiting = club.parameters.flatMap((item) => {
     if (Math.abs(nominal[item.parameterId] - item.lowerBound) <= BOUNDARY_TOLERANCE) return [`${item.parameterId}:lower_safe_bound`];
     if (Math.abs(nominal[item.parameterId] - item.upperBound) <= BOUNDARY_TOLERANCE) return [`${item.parameterId}:upper_safe_bound`];
@@ -118,14 +260,8 @@ const objectiveScore = (
   return Math.abs(risk.meanCarryM - targetDistance) + risk.dispersionRmsM;
 };
 
-const summarize = (
-  club: ClubCapability,
-  nominal: Readonly<Record<string, number>>,
-  landings: readonly Landing[],
-  counts: Counts,
-  profile: PlayerCapabilityProfile,
-  request: OptimizationRequest,
-): OptimizationAlternative | null => {
+const summarize = (input: SummaryInput): OptimizationAlternative | null => {
+  const { club, nominal, landings, counts, profile, request } = input;
   if (landings.length === 0) return null;
   const target = targetRegion(request);
   const centerOffline = target.kind === "green" ? target.lateralM : 0;
@@ -155,35 +291,37 @@ const summarize = (
     targetHoldProbability: holdProbability, cvarMissM, downsideCarryM,
     sampleCount: request.ensembleSize, successfulCount: counts.completed,
     noImpactCount: counts.noImpact, failedCount: counts.failed, failureFraction, confidence,
-    limitingConstraints: limitingConstraints(club, nominal, successFraction, extrapolated, request),
+    limitingConstraints: limitingConstraints(Object.freeze({
+      club, nominal, successFraction, extrapolated, request,
+    })),
     extrapolated, paretoEfficient: false,
   });
 };
 
-const evaluateCandidate = (
-  club: ClubCapability,
-  nominal: Readonly<Record<string, number>>,
-  profile: PlayerCapabilityProfile,
-  request: OptimizationRequest,
-  evaluator: CapabilityEvaluator,
-): CandidateSummary => {
+const evaluateCandidate = (input: CandidateEvaluationInput): CandidateSummary => {
+  const { club, nominal, profile, request, evaluator, context, options } = input;
   const landings: Landing[] = [];
   let counts: Counts = { completed: 0, noImpact: 0, failed: 0 };
   for (let sampleIndex = 0; sampleIndex < request.ensembleSize; sampleIndex += 1) {
-    let evaluation: ReturnType<CapabilityEvaluator>;
-    try { evaluation = evaluator(club.clubId, perturbedParameters(club, nominal, sampleIndex, request.seed)); }
-    catch { counts = { ...counts, failed: counts.failed + 1 }; continue; }
-    const landing = parseLanding(evaluation);
-    if (!landing) {
-      counts = evaluation.status === "no_impact"
-        ? { ...counts, noImpact: counts.noImpact + 1 }
-        : { ...counts, failed: counts.failed + 1 };
-      continue;
-    }
-    counts = { ...counts, completed: counts.completed + 1 };
-    landings.push(landing);
+    const attemptOrdinal = context.candidateOrdinal * request.ensembleSize + sampleIndex;
+    const totalCount = request.candidateBudget * request.ensembleSize;
+    if (options.shouldCancel?.()) throw new CapabilityOptimizationCancelled(attemptOrdinal, totalCount);
+    const perturbed = perturbedParameters(club, nominal, sampleIndex, request.seed);
+    const evaluation = normalizeEvaluation(() => evaluator(club.clubId, perturbed));
+    options.observationSink?.(sampleObservation(Object.freeze({
+      club, nominal, perturbed, evaluation, request, context, sampleOrdinal: sampleIndex,
+    })));
+    if (evaluation.effectiveStatus === "complete") {
+      counts = { ...counts, completed: counts.completed + 1 };
+      landings.push(evaluation.landing as Landing);
+    } else if (evaluation.effectiveStatus === "no_impact") {
+      counts = { ...counts, noImpact: counts.noImpact + 1 };
+    } else counts = { ...counts, failed: counts.failed + 1 };
   }
-  return { alternative: summarize(club, nominal, landings, counts, profile, request), counts };
+  return {
+    alternative: summarize(Object.freeze({ club, nominal, landings, counts, profile, request })),
+    counts,
+  };
 };
 
 const paretoMark = (
@@ -206,7 +344,17 @@ export function optimizeCapability(
   profile: PlayerCapabilityProfile,
   request: OptimizationRequest,
   evaluator: CapabilityEvaluator,
+  options: CapabilityOptimizationOptions = {},
 ): OptimizationResult {
+  if (options.observationSink !== undefined && typeof options.observationSink !== "function") {
+    throw new TypeError("observationSink must be a function");
+  }
+  if (options.shouldCancel !== undefined && typeof options.shouldCancel !== "function") {
+    throw new TypeError("shouldCancel must be a function");
+  }
+  const hooks = Object.freeze({
+    observationSink: options.observationSink, shouldCancel: options.shouldCancel,
+  });
   const clubs = request.clubIds.map((clubId) => clubById(profile, clubId));
   const indices = new Map(clubs.map((club) => [club.clubId, 0]));
   const alternatives: OptimizationAlternative[] = [];
@@ -215,7 +363,11 @@ export function optimizeCapability(
     const club = clubs[evaluationIndex % clubs.length];
     const candidateIndex = indices.get(club.clubId) as number;
     indices.set(club.clubId, candidateIndex + 1);
-    const summary = evaluateCandidate(club, candidateParameters(club, candidateIndex, request.seed), profile, request, evaluator);
+    const summary = evaluateCandidate(Object.freeze({
+      club, nominal: candidateParameters(club, candidateIndex, request.seed), profile, request, evaluator,
+      context: Object.freeze({ candidateOrdinal: evaluationIndex, clubCandidateOrdinal: candidateIndex }),
+      options: hooks,
+    }));
     aggregate = { completed: aggregate.completed + summary.counts.completed, noImpact: aggregate.noImpact + summary.counts.noImpact, failed: aggregate.failed + summary.counts.failed };
     if (summary.alternative) alternatives.push(summary.alternative);
   }

@@ -9,7 +9,10 @@ try:
 except ImportError:  # Python 3.10 — repo supports 3.10+
     UTC = timezone.utc  # noqa: UP017
 
-from _route_inventory import route_paths
+try:
+    from ._route_inventory import route_paths
+except ImportError:
+    from _route_inventory import route_paths
 from advisory_router import create_advisory_router
 from advisory_workspace import AdvisoryService
 from fastapi import FastAPI

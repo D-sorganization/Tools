@@ -171,7 +171,7 @@ export function useTelemetryStream(
   const [commsHealth, setCommsHealth] = useState<CommsHealth | undefined>(
     undefined,
   );
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [_isConnected, setIsConnected] = useState<boolean>(false);
 
   const wsRef = useRef<WebSocket | null>(null);
   const onConnectRef = useRef(options.onConnect);

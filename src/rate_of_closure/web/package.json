@@ -14,7 +14,11 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:browser": "playwright test --config playwright.browser.config.ts",
+    "test:browser:smoke": "playwright test --config playwright.browser.config.ts tests/browser/static-inspection.spec.ts tests/browser/companion-smoke.spec.ts",
+    "test:browser:lifecycle": "playwright test --config playwright.browser.config.ts tests/browser/companion-lifecycle.spec.ts tests/browser/companion-execution.spec.ts",
+    "build:release": "tsc && vite build && node release/generateReleaseArtifacts.mjs"
   },
   "dependencies": {
     "katex": "^0.18.1",

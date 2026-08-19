@@ -69,8 +69,8 @@ def test_successful_mutation_is_attributed_and_secret_redacted(audited_app) -> N
         "/api/setpoint",
         json={
             "value": 12.5,
-            "password": "never-store-this",
-        },  # noqa: E501  # pragma: allowlist secret
+            "password": "never-store-this",  # pragma: allowlist secret
+        },
         headers={
             "X-Change-Reason": "Commissioning check",
             "X-Correlation-ID": "work-order-17",

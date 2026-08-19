@@ -298,3 +298,4 @@ src/p1am_control_system/backend/tests/test_data_explorer_service.py
 src/p1am_control_system/backend/tests/test_backend.py
 src/p1am_control_system/desktop/main_window.py
 src/p1am_control_system/calibration/calibrate.py
+src/p1am_control_system/backend/tests/test_route_authz_matrix.py
