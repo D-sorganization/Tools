@@ -225,7 +225,7 @@ jobs:
             pytest-asyncio==1.3.0 \
             pytest-benchmark==5.2.3 \
             pytest-xdist==3.8.0 \
-            httpx2==2.10.0 \
+            'httpx>=0.25.0' \
             '.[rate-of-closure-web]'
           python -m pytest -q \
             tests/rate_of_closure/test_browser_companion_harness.py \
