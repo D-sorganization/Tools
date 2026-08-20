@@ -307,21 +307,29 @@ export const TuningPanel: React.FC<Props> = ({
 
                 {/* PID PV path (purple) */}
                 {(() => {
-                  const points = mpcSimData.time.map((_, idx) => {
+                  // ⚡ Bolt Optimization: Build the SVG path string in a single pass instead of
+                  // allocating an intermediate array of segment strings with .map().join(" ").
+                  let points = "";
+                  for (let idx = 0; idx < mpcSimData.time.length; idx++) {
                     const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
                     const y = 200 - (mpcSimData.pid.pv[idx] * 2);
-                    return `${x},${y}`;
-                  }).join(" ");
+                    if (idx > 0) points += " ";
+                    points += `${x},${y}`;
+                  }
                   return <polyline fill="none" stroke="var(--accent-purple)" strokeWidth="2" points={points} />;
                 })()}
 
                 {/* MPC PV path (cyan) */}
                 {(() => {
-                  const points = mpcSimData.time.map((_, idx) => {
+                  // ⚡ Bolt Optimization: Build the SVG path string in a single pass instead of
+                  // allocating an intermediate array of segment strings with .map().join(" ").
+                  let points = "";
+                  for (let idx = 0; idx < mpcSimData.time.length; idx++) {
                     const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
                     const y = 200 - (mpcSimData.mpc.pv[idx] * 2);
-                    return `${x},${y}`;
-                  }).join(" ");
+                    if (idx > 0) points += " ";
+                    points += `${x},${y}`;
+                  }
                   return <polyline fill="none" stroke="var(--accent-cyan)" strokeWidth="2" points={points} />;
                 })()}
               </svg>
