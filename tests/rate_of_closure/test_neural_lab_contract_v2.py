@@ -75,9 +75,15 @@ def test_portable_bundle_requires_manifest_hash_and_warns_ood() -> None:
         "targets": ["carry"],
         "split": {"column": "player", "policy_approved": True},
     }
-    manifest_sha = __import__("hashlib").sha256(
-        json.dumps(training_manifest, sort_keys=True, separators=(",", ":")).encode()
-    ).hexdigest()
+    manifest_sha = (
+        __import__("hashlib")
+        .sha256(
+            json.dumps(
+                training_manifest, sort_keys=True, separators=(",", ":")
+            ).encode()
+        )
+        .hexdigest()
+    )
     bundle = load_portable_model(
         {
             "schema": "launch-monitor-neural-bundle/v2",

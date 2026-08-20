@@ -14,13 +14,13 @@ const rows: LaunchMonitorRow[] = Array.from({ length: 12 }, (_, index) => ({
 describe("LaunchMonitorPlayerWorkspace", () => {
   it("fails closed until a player identity column is explicitly attested", async () => {
     render(<LaunchMonitorPlayerWorkspace rows={rows} sourceName="test.csv" />);
-    expect(screen.getByRole("button", { name: /run player covariation/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /run offline compatibility covariation/i })).toBeDisabled();
     fireEvent.change(screen.getByLabelText("Player identity column"), { target: { value: "player_id" } });
     fireEvent.click(screen.getByLabelText(/I attest/i));
     await waitFor(() => expect(
-      screen.getByRole("button", { name: /run player covariation/i }),
+      screen.getByRole("button", { name: /run offline compatibility covariation/i }),
     ).toBeEnabled());
-    fireEvent.click(screen.getByRole("button", { name: /run player covariation/i }));
+    fireEvent.click(screen.getByRole("button", { name: /run offline compatibility covariation/i }));
     await waitFor(() => expect(screen.getByText(/2 player groups analyzed/i)).toBeInTheDocument());
   });
 

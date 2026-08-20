@@ -318,22 +318,19 @@ def load_portable_model(source: Path | Mapping[str, object]) -> PortableModel:
     training_manifest = payload.get("training_manifest")
     if not isinstance(training_manifest, dict):
         raise ValueError("portable model must embed its reference-only manifest")
-    manifest_text = json.dumps(
-        training_manifest, sort_keys=True, separators=(",", ":")
-    )
+    manifest_text = json.dumps(training_manifest, sort_keys=True, separators=(",", ":"))
     manifest_digest = sha256(manifest_text.encode()).hexdigest()
     declared_manifest_digest = _digest(
         payload.get("training_manifest_sha256"), "training manifest SHA-256"
     )
     if manifest_digest != declared_manifest_digest:
         raise ValueError("embedded training manifest SHA-256 does not match")
-    declared_dataset_digest = _digest(
-        payload.get("dataset_sha256"), "dataset SHA-256"
-    )
+    declared_dataset_digest = _digest(payload.get("dataset_sha256"), "dataset SHA-256")
     manifest_dataset = training_manifest.get("dataset")
-    if not isinstance(manifest_dataset, dict) or manifest_dataset.get(
-        "sha256"
-    ) != declared_dataset_digest:
+    if (
+        not isinstance(manifest_dataset, dict)
+        or manifest_dataset.get("sha256") != declared_dataset_digest
+    ):
         raise ValueError("training manifest dataset SHA-256 does not match model")
     return PortableModel(
         _text(payload.get("model_id"), "model id"),

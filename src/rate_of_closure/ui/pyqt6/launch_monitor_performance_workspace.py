@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import cast
 
 import pandas as pd
 from matplotlib.figure import Figure
@@ -222,13 +223,18 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
         form.addRow(self.trend_status)
         return page
 
-    def set_dataset(self, frame: pd.DataFrame, source_name: str) -> None:
+    def set_dataset(
+        self,
+        frame: pd.DataFrame,
+        source_name: str,
+        numeric_fields: list[str] | None = None,
+    ) -> None:
         """Bind controls to a new retained dataset and invalidate results."""
 
         self._frame = frame
         self._source_name = source_name
         all_columns = sorted(str(column) for column in frame.columns)
-        numbers = numeric_columns(frame)
+        numbers = numeric_columns(frame) if numeric_fields is None else numeric_fields
         for combo, values in (
             (self.carry_combo, numbers),
             (self.lateral_combo, numbers),
@@ -332,8 +338,11 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
             "lateral_unit": self.lateral_unit.currentText(),
             "target_yards": self.target_distance.value(),
         }
-        return performance_document(
-            reference, settings, self._dispersion, self._proxy, self._trend
+        return cast(
+            dict[str, object],
+            performance_document(
+                reference, settings, self._dispersion, self._proxy, self._trend
+            ),
         )
 
     def save_dialog(self) -> None:

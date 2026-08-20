@@ -27,10 +27,36 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.50                                    |
-| **Last Spec Update**    | 2026-08-19                                 |
+| **Spec Version**        | 1.17.51                                    |
+| **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
+
+### Governed Launch-Monitor Analytics Release
+
+Version 1.17.51 consolidates the launch-monitor research platform onto current
+Rate-of-Closure PyQt6 and React/Vite clients. Both surfaces provide explicit-
+identity player projects, arbitrary-variable analysis, persistence and backing
+exports, unit-aware dispersion, target-error proxy, attested session trends,
+and a safe Neural Model Lab. Expected-strokes SG is explicitly user supplied;
+source-backed strokes gained remains unavailable until a versioned benchmark
+and required course-state inputs exist.
+
+The PyQt client can load the manifest-verified private authority containing
+261,666 rows across 27 sources from `LAUNCH_MONITOR_DATA_ROOT` or an explicitly
+selected directory. All rows remain available to analysis/export while plot
+rendering is deterministically bounded to 2,000 points. Untrusted CSV/JSON
+imports retain the shared 250,000-row and resource limits. Numeric-column
+discovery uses a vectorized native-numeric path, and redundant Qt refreshes are
+signal-blocked; the full authority loads in 0.88 seconds and binds in 2.69
+seconds on the release workstation.
+
+UpstreamDrift contract v2 is the canonical analytics seam. Private capability
+metadata governs vendor operations, restricted rows never enter the browser
+bundle, unsafe executable model formats are rejected, and all current vendor
+training remains fail-closed because no approved repeating split group exists.
+Release B remains `protocol_ready`: its paired-device protocol is complete but
+no paired observations have been collected.
 
 ### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 

@@ -21,6 +21,11 @@ capability to one repository and tracking issue.
 Restricted data never flows into a public repository or browser bundle. Tools
 may use an authenticated local/API bridge, source identifiers, and immutable
 hashes, but it does not copy private rows into project files by default.
+The PyQt desktop client additionally supports a user-authorized, manifest-
+verified local load of all 261,666 qualified-authority rows across 27 sources;
+its interactive scatter is bounded to 2,000 displayed points while analysis and
+explicit export retain the full frame. This desktop-only access does not weaken
+the browser or ordinary file-import boundaries.
 
 ## Scientific boundaries
 

@@ -1,29 +1,29 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-19T00:00:00-07:00",
+  "generated_at": "2026-08-20T00:00:00-07:00",
   "program_issue": "D-sorganization/Tools#4583",
   "repositories": [
     {
       "name": "D-sorganization/Tools",
-      "main_commit": "c285a33f6cba26b74b4189e3371e9394831ed47b",
+      "main_commit": "979608f8df1b220236288da4f7d7a8bf8d6c5567",
       "role": "Rate-of-Closure PyQt6 and React/Vite clients, physics, and convention registry",
       "contains_restricted_shot_rows": false
     },
     {
       "name": "D-sorganization/UpstreamDrift",
-      "main_commit": "4b898d2370c0b62c706b8e634c554656f3e6cd91",
+      "main_commit": "5ea0d08821ee8a1cacb93d22239abddee4813fca",
       "role": "Canonical Python analytics engine, API, and standalone desktop workbench",
       "contains_restricted_shot_rows": false
     },
     {
       "name": "D-sorganization/AffineDrift",
-      "main_commit": "ab4406045a39ee8dcb3489024a45b64f40dcf39e",
+      "main_commit": "87a15686565b1fd10feb3cc1d60fef597bf6dd16",
       "role": "Reviewed paper and published evidence narrative",
       "contains_restricted_shot_rows": false
     },
     {
       "name": "D-sorganization/Launch-Monitor-Data",
-      "main_commit": "8eaf489e3d41f2e42bd27b2f9523f06ee5503654",
+      "main_commit": "3de743812e3910bf7b69d26319af407c5c9787a1",
       "role": "Public schema, access client, and exact private-authority lock",
       "contains_restricted_shot_rows": false
     },
@@ -86,7 +86,7 @@
       "id": "analysis-contract-v2",
       "owner": "D-sorganization/UpstreamDrift",
       "tracking_issue": "D-sorganization/UpstreamDrift#8790",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "id": "corpus-use-qualification",
@@ -128,13 +128,13 @@
       "id": "strokes-gained-and-proxy",
       "owner": "D-sorganization/Tools",
       "tracking_issue": "D-sorganization/Tools#4584",
-      "status": "planned"
+      "status": "in_progress"
     },
     {
       "id": "professional-evidence-publication",
       "owner": "D-sorganization/AffineDrift",
       "tracking_issue": "D-sorganization/AffineDrift#3883",
-      "status": "planned"
+      "status": "complete"
     }
   ]
 }

@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any
 
 from rate_of_closure.launch_monitor_performance import (
     DispersionResult,
@@ -21,7 +20,7 @@ def performance_document(
     dispersion: DispersionResult | None,
     target_error: ScoreResult | None,
     trend: TrendResult | None,
-) -> dict[str, Any]:
+) -> dict[str, object]:
     """Return the fingerprint-bound saved-analysis document."""
 
     return {

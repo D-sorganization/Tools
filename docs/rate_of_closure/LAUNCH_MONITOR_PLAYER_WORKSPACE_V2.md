@@ -80,14 +80,25 @@ UpstreamDrift v2 endpoint is implemented and qualified:
 - fixed- and random-effects Fisher-z synthesis;
 - between-player versus within-player decomposition;
 - longitudinal improvement models;
-- out-of-core private-corpus querying from the Tools clients; and
-- neural-vendor training or inference.
+- out-of-core private-corpus querying from the browser client; and
+- vendor-model training when the capability manifest denies eligibility.
 
 Basic attested session/cumulative summaries are now available. Inferential
 longitudinal improvement models, uncertainty bands, and causal improvement
 claims remain unavailable pending the UpstreamDrift v2 backend.
 
-The private corpus may be referenced by exact repository revision, relative
-path, row count, and hash, but it is not copied into a saved Tools project.
+The PyQt client can load the complete authorized source-partitioned Parquet
+authority from the directory selected by the user or
+`LAUNCH_MONITOR_DATA_ROOT`. The loader verifies the corpus manifest, total row
+count, and exact source-ID set before exposing the frame. The current governed
+authority contains 261,666 rows across 27 sources. All rows remain available to
+desktop analysis and explicit export; the linked scatter renders a deterministic
+maximum of 2,000 points and reports both the finite-pair count and full retained
+row count. Ordinary untrusted CSV/JSON imports retain the shared 250,000-row,
+8-MiB and dense-cell limits. React consumes immutable references and private API
+responses and never bundles restricted rows.
+
+Saved projects continue to reference the private corpus by exact repository
+revision, relative path, row count, and hash; they do not copy corpus rows.
 
 All displayed associations are descriptive and do not establish causation.

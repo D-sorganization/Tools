@@ -23,8 +23,8 @@ describe("LaunchMonitorPerformanceWorkspace", () => {
   it("fails trend and strokes gained closed until required trust/source inputs exist", () => {
     render(<LaunchMonitorPerformanceWorkspace rows={rows} sourceName="test.csv" />);
     expect(screen.getByRole("button", { name: /run session trend/i })).toBeDisabled();
-    expect(screen.getByRole("button", { name: /calculate strokes gained/i })).toBeDisabled();
-    expect(screen.getByText(/unavailable: provide expected-stroke columns and a cited baseline/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /calculate user-supplied sg/i })).toBeDisabled();
+    expect(screen.getByText(/source-backed strokes gained unavailable/i)).toBeInTheDocument();
   });
 
   it("exposes save/load analysis and plot/data export with explanatory titles", () => {

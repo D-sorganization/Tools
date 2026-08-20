@@ -115,13 +115,18 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         self.export_button.clicked.connect(self.export_dialog)
         self._refresh_enabled()
 
-    def set_dataset(self, frame: pd.DataFrame, source_name: str) -> None:
+    def set_dataset(
+        self,
+        frame: pd.DataFrame,
+        source_name: str,
+        numeric_fields: list[str] | None = None,
+    ) -> None:
         """Replace the referenced rows and reset identity attestation."""
 
         self._frame = frame
         self._source_name = source_name
         string_columns = sorted(str(column) for column in frame.columns)
-        numbers = numeric_columns(frame)
+        numbers = numeric_columns(frame) if numeric_fields is None else numeric_fields
         for combo, values in (
             (self.identity_combo, string_columns),
             (self.x_combo, numbers),

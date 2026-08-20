@@ -101,9 +101,12 @@ class LaunchMonitorPreviewCanvas(LifecycleSafeFigureCanvas):
         outcome: str,
         predictors: tuple[str, ...],
         selected_raw_index: int | None = None,
+        numeric_fields: tuple[str, ...] | None = None,
     ) -> LinkedScatterPlan:
         """Render finite paired values without altering the retained records."""
-        numeric = tuple(numeric_columns(frame))
+        numeric = (
+            tuple(numeric_columns(frame)) if numeric_fields is None else numeric_fields
+        )
         if len(numeric) < 2:
             raise ValueError("linked scatter requires two eligible numeric columns")
         outcome = outcome if outcome in numeric else numeric[0]
