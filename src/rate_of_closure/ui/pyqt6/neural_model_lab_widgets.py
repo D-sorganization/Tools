@@ -2,9 +2,19 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+from typing import Protocol
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPainter, QPen
 from PyQt6.QtWidgets import QWidget
+
+
+class VendorCapabilityView(Protocol):
+    """Minimum immutable capability fields needed by the chart."""
+
+    vendor: str
+    strict_row_count: int
 
 
 class CapabilityCanvas(QWidget):
@@ -20,7 +30,7 @@ class CapabilityCanvas(QWidget):
         )
         self._rows: tuple[tuple[str, int], ...] = ()
 
-    def set_capabilities(self, vendors: object) -> None:
+    def set_capabilities(self, vendors: Iterable[VendorCapabilityView]) -> None:
         self._rows = tuple(
             (str(item.vendor), int(item.strict_row_count)) for item in vendors
         )
