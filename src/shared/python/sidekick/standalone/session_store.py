@@ -13,9 +13,10 @@ from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
 import platformdirs
-from sidekick.persistence.schema import ProfilePayload
 
 from shared.python.contracts import StateError
+
+from ..persistence.schema import ProfilePayload
 
 logger = logging.getLogger(__name__)
 

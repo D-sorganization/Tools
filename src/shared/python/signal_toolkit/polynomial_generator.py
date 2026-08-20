@@ -27,7 +27,10 @@ from PyQt6 import QtCore, QtWidgets
 
 # Configure logging - use standard logging for standalone operation
 try:
-    from shared.python.logging_config import configure_gui_logging, get_logger
+    from shared.python.logging_pkg.logging_config import (
+        configure_gui_logging,
+        get_logger,
+    )
 
     configure_gui_logging()
     logger = get_logger(__name__)
