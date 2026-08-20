@@ -7,8 +7,9 @@ right.  Profile ``calc-first`` reverses the ratio.
 If a panel fails to construct (e.g. chat service unreachable), an inline
 placeholder label is shown instead of crashing.
 
-The module depends only on ``sidekick.*`` and
-``ai.gui.assistant_panel.AIAssistantPanel`` — never on ``src.launchers.*``.
+The module depends only on its own ``shared.python.sidekick.*`` package and
+``shared.python.ai.gui.assistant_panel.AIAssistantPanel`` — never on
+``src.launchers.*``.
 """
 
 from __future__ import annotations
@@ -27,7 +28,8 @@ from PyQt6.QtWidgets import (
     QSplitter,
     QWidget,
 )
-from sidekick.persistence.schema import ProfilePayload
+
+from ..persistence.schema import ProfilePayload
 
 logger = logging.getLogger(__name__)
 
@@ -238,7 +240,7 @@ class StandaloneSidekickWindow(QMainWindow):
 
     def _create_chat_panel(self) -> QWidget:
         try:
-            from ai.gui.assistant_panel import AIAssistantPanel
+            from shared.python.ai.gui.assistant_panel import AIAssistantPanel
 
             return _require_widget(AIAssistantPanel(), "AIAssistantPanel")
         except _PANEL_FALLBACK_ERRORS:
@@ -247,7 +249,7 @@ class StandaloneSidekickWindow(QMainWindow):
 
     def _create_sidebar_panel(self) -> QWidget:
         try:
-            from sidekick.ui.tools_sidebar.sidebar import UnifiedToolsSidebar
+            from ..ui.tools_sidebar.sidebar import UnifiedToolsSidebar
 
             return _require_widget(UnifiedToolsSidebar(), "UnifiedToolsSidebar")
         except _PANEL_FALLBACK_ERRORS:

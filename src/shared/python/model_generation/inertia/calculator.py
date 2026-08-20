@@ -117,7 +117,9 @@ class InertiaResult:
 
     def is_valid(self) -> bool:
         """Check if inertia values are physically valid."""
-        return self.to_inertia().is_positive_definite()
+        # to_inertia() widens to Any under CI's --follow-imports=skip, which
+        # trips mypy.ini's warn_return_any. Repo idiom (_mr_kinematics.py:99).
+        return self.to_inertia().is_positive_definite()  # type: ignore[no-any-return]
 
     @precondition(lambda new_mass: new_mass > 0, "New mass must be positive")
     def scale_to_mass(self, new_mass: float) -> InertiaResult:
@@ -574,7 +576,7 @@ class InertiaCalculator:
 
         # Import anthropometry data
         try:
-            from shared.python.model_generation.humanoid.anthropometry import (
+            from shared.python.humanoid_character_builder.core.anthropometry import (
                 estimate_segment_inertia_from_gyration,
             )
 

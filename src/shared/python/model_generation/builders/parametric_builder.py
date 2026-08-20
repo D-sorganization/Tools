@@ -341,7 +341,7 @@ class ParametricBuilder(BaseURDFBuilder):
     ) -> tuple[Callable[[str, float], float], Callable[[str, float], float]]:
         """Get helper functions for anthropometric data lookup."""
         try:
-            from shared.python.model_generation.humanoid.anthropometry import (
+            from shared.python.humanoid_character_builder.core.anthropometry import (
                 get_segment_length_ratio,
                 get_segment_mass_ratio,
             )
