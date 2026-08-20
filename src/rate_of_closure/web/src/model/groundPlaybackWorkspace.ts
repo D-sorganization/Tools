@@ -167,8 +167,25 @@ const csvCell = (value: string): string =>
 const csv = (
   headers: readonly string[],
   rows: readonly (readonly string[])[],
-): string =>
-  [headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\n") + "\n";
+): string => {
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations during large CSV serializations.
+  let result = "";
+  for (let j = 0; j < headers.length; j++) {
+    if (j > 0) result += ",";
+    result += csvCell(headers[j]);
+  }
+  result += "\n";
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) result += ",";
+      result += csvCell(row[j]);
+    }
+    result += "\n";
+  }
+  return result;
+};
 const vector = (value: GroundVec3): string[] => value.map(numeric);
 
 export const groundTrajectoryCsv = (result: FlightToGroundResult): string =>
