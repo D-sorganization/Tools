@@ -213,8 +213,33 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
     assert (
         trusted_commands["Exercise production Worker lifecycle and layouts"]
-        == "npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow"
+        == "npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow "
+        "--grep-invert=@trusted-isolated"
     )
+    assert trusted_commands["Build production web bundle once"] == "npm run build"
+    assert trusted_commands["Audit primary-tab accessibility in isolation"] == (
+        "npm run test:e2e -- e2e/visualization-accessibility.spec.ts "
+        "--project=chromium-desktop"
+    )
+    assert trusted_commands["Measure protected visualization budgets in isolation"] == (
+        "npm run test:e2e -- e2e/visualization-performance.spec.ts "
+        "--project=chromium-desktop"
+    )
+    assert trusted_job["env"]["RATE_E2E_PREBUILT"] == "1"
+    assert trusted_job["timeout-minutes"] == 30
+    trusted_steps = {
+        str(step.get("name")): step for step in trusted_job["steps"] if "name" in step
+    }
+    assert trusted_steps["Exercise production Worker lifecycle and layouts"]["env"] == {
+        "RATE_E2E_EVIDENCE_PHASE": "functional"
+    }
+    assert trusted_steps["Audit primary-tab accessibility in isolation"]["env"] == {
+        "RATE_E2E_EVIDENCE_PHASE": "accessibility"
+    }
+    performance_step = trusted_steps[
+        "Measure protected visualization budgets in isolation"
+    ]
+    assert performance_step["env"] == {"RATE_E2E_EVIDENCE_PHASE": "performance"}
     assert trusted_commands["Install declared PyQt render dependencies"] == (
         'python -m pip install -e ".[gui,dev]"'
     )

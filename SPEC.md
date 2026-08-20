@@ -27,12 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.70                                    |
+| **Spec Version**        | 1.17.71                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.71 makes the trusted Rate Playwright lane deterministic under
+runner contention without relaxing any accessibility, open-latency,
+resize-settling, or CLS budget. It builds the production bundle once, starts a
+fresh preview/worker for functional, Axe, and performance phases, preserves
+phase-specific artifacts, and evaluates each governed tab independently. The
+performance phase warms the production bundle/browser cache before measuring
+the unchanged interaction budgets; its evidence remains a protected diagnostic,
+not user-hardware qualification. Local worktrees can select a bounded alternate
+preview port without changing the trusted lane's loopback-only default.
 
 Version 1.17.70 approves the hosted Linux PyQt launch-monitor visual captured
 from the exact #4599 feature tree after its protected merge. The approved PNG,
@@ -5041,6 +5051,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.71 | fix(rate-of-closure, ci): isolate trusted functional, Axe, and protected performance phases in fresh Playwright processes; build once; warm the bundle/cache before unchanged interaction budgets; split Axe and timing evidence by tab/viewport; and retain phase-specific reports without weakening WCAG, latency, resize, or CLS standards. | #4602 |
 | 2026-08-20 | 1.17.70 | test(rate-of-closure): approve the post-merge hosted Linux PyQt launch-monitor reference from #4599, pinning its exact PNG hash and protected merge authority while leaving every other baseline unchanged. | #4600 |
 | 2026-08-20 | 1.17.69 | feat(rate-of-closure): consume the canonical source-backed strokes-gained v2 endpoint with PyQt6/React parity, exact state strata, uncertainty, structured exclusions, explicit grouping attestations, and a labelled local compatibility fallback. | #4584, UpstreamDrift#8803 |
 | 2026-08-20 | 1.17.64 | fix(ci): treat an empty merge-hold timeline as a successful no-hold result under pipefail and errexit. | #4583 |

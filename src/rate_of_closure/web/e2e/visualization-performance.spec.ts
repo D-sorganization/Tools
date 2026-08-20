@@ -74,45 +74,50 @@ const layoutShiftMicrounits = async (page: Page): Promise<number> => page.evalua
   Math.round((window as Window & { __rateLayoutShiftValues: number[] })
     .__rateLayoutShiftValues.reduce((total, value) => total + value, 0) * 1_000_000));
 
-test("all React tabs satisfy protected open, resize, and layout-stability budgets", async (
-  { page }, testInfo,
-) => {
-  test.skip(testInfo.project.name !== "chromium-desktop", "single Chromium budget authority");
-  await page.addInitScript(() => {
-    const target = window as Window & { __rateLayoutShiftValues: number[] };
-    target.__rateLayoutShiftValues = [];
-    new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        const shift = entry as PerformanceEntry & {
-          hadRecentInput?: boolean; value?: number;
-        };
-        const value = shift.value;
-        if (shift.hadRecentInput !== true && typeof value === "number" && Number.isFinite(value)) {
-          target.__rateLayoutShiftValues.push(value);
-        }
-      }
-    }).observe({ type: "layout-shift", buffered: true });
-  });
-  const errors = capturePageErrors(page);
-  const budget = visualizationPerformanceBudgets.react;
-  const expectedCls = budget.maxLayoutShiftScoreMicrounits;
-  if (expectedCls === null) throw new Error("React CLS budget is required");
-  const performanceTabs = visualizationPerformanceTabs("react");
-  const visibility = new Map(visualizationTabs("react").map((entry) => [entry.tabId, entry]));
-  const references = visualizationReferenceEnvironments.react;
-  const viewports = [references.viewportPx, ...references.additionalViewportsPx]
-    .map(([width, height]) => ({ width, height }));
-  const evidence: Array<{ viewport: { width: number; height: number };
-    tabs: TabPerformanceEvidence[] }> = [];
+const performanceTabs = visualizationPerformanceTabs("react");
+const visibility = new Map(visualizationTabs("react").map((entry) => [entry.tabId, entry]));
+const references = visualizationReferenceEnvironments.react;
+const viewports = [references.viewportPx, ...references.additionalViewportsPx]
+  .map(([width, height]) => ({ width, height }));
 
-  for (const viewport of viewports) {
-    await page.setViewportSize(viewport);
-    await page.goto("/");
-    const tabs: TabPerformanceEvidence[] = [];
-    for (const entry of performanceTabs) {
+for (const viewport of viewports) {
+  for (const entry of performanceTabs) {
+    test(`@trusted-isolated ${entry.tabId} satisfies protected budgets at ${viewport.width}x${viewport.height}`, async (
+      { page }, testInfo,
+    ) => {
+      test.skip(testInfo.project.name !== "chromium-desktop", "single Chromium budget authority");
+      await page.addInitScript(() => {
+        const target = window as Window & { __rateLayoutShiftValues: number[] };
+        target.__rateLayoutShiftValues = [];
+        new PerformanceObserver((list) => {
+          for (const observed of list.getEntries()) {
+            const shift = observed as PerformanceEntry & {
+              hadRecentInput?: boolean; value?: number;
+            };
+            const value = shift.value;
+            if (shift.hadRecentInput !== true
+              && typeof value === "number" && Number.isFinite(value)) {
+              target.__rateLayoutShiftValues.push(value);
+            }
+          }
+        }).observe({ type: "layout-shift", buffered: true });
+      });
+      const errors = capturePageErrors(page);
+      const budget = visualizationPerformanceBudgets.react;
+      const expectedCls = budget.maxLayoutShiftScoreMicrounits;
+      if (expectedCls === null) throw new Error("React CLS budget is required");
       const visualEntry = visibility.get(entry.tabId);
       if (visualEntry === undefined) throw new Error(`missing visual entry ${entry.tabId}`);
+
+      // Prime the production bundle and browser cache before measuring the tab
+      // interaction. The protected interaction/settling budgets remain unchanged.
+      await page.setViewportSize(viewport);
+      await page.goto("/");
+      await expect(page.locator("[role=tablist]")).toBeVisible();
+      await page.goto("/");
+      await expect(page.locator("[role=tablist]")).toBeVisible();
       await resetLayoutShift(page);
+
       const started = Date.now();
       await page.locator(`#primary-tab-${entry.tabId}`).click();
       const visual = page.locator(visualEntry.primaryVisualLocator);
@@ -151,21 +156,21 @@ test("all React tabs satisfy protected open, resize, and layout-stability budget
       const postSettleShiftPx = rectShift(beforeQuiet, afterQuiet);
       expect.soft(postSettleShiftPx, `${label} post-settle movement`)
         .toBeLessThanOrEqual(budget.maxPostSettleShiftPx);
-      tabs.push({
+      const evidence: TabPerformanceEvidence = {
         tabId: entry.tabId, workload: entry.workload, openMs, resizeSettleMs,
         maxOpenStepPx: opened.maxStepPx,
         maxResizeStepPx: Math.max(shrunk.maxStepPx, restored.maxStepPx),
         postSettleShiftPx, layoutShiftScoreMicrounits: cls,
+      };
+
+      await testInfo.attach(`visualization-performance-react-${entry.tabId}`, {
+        body: Buffer.from(JSON.stringify({
+          measurementPolicy: "protected-warm-cache-diagnostic-not-user-hardware-qualification",
+          budget, viewport, evidence,
+        }, null, 2)),
+        contentType: "application/json",
       });
-    }
-    evidence.push({ viewport, tabs });
+      expect(errors).toEqual([]);
+    });
   }
-  await testInfo.attach("visualization-performance-react-v1", {
-    body: Buffer.from(JSON.stringify({
-      measurementPolicy: "protected-diagnostic-not-user-hardware-qualification",
-      budget, evidence,
-    }, null, 2)),
-    contentType: "application/json",
-  });
-  expect(errors).toEqual([]);
-});
+}

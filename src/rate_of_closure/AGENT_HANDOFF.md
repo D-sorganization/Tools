@@ -59,7 +59,8 @@ endpoint into both clients with exact lie/context/target strata, optional
 benchmark uncertainty, structured exclusions, and explicitly attested grouped
 summaries. A blank authority URL retains a labelled local compatibility path;
 no baseline or inferred identity is bundled. #4600 owns the inspected
-post-merge PyQt visual-reference approval.
+post-merge PyQt visual-reference approval. #4602 isolates the trusted React
+functional, Axe, and protected timing phases while retaining unchanged budgets.
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
