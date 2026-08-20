@@ -15,6 +15,7 @@ on:
       - "src/python/**"
       - "manifests/**"
       - ".github/workflows/cross-repo-python-integration.yml"
+  workflow_dispatch:
 
 concurrency:
   group: cross-repo-python-${{ github.ref }}
@@ -83,9 +84,6 @@ jobs:
             install: pip install -r requirements.txt
             test_command: xvfb-run pytest tests/shared_contracts/ -v --tb=short
             env_name: REQUIRE_REAL_UPSTREAM_DRIFT_TOOLS
-            sparse_checkout: |
-              src
-              tests/shared_contracts
           - repo: D-sorganization/UpstreamDrift
             path: _downstream
             # The shared-contract lane injects this PR's Tools source through
@@ -95,10 +93,6 @@ jobs:
             install: CI= SKIP_UI_BUILD=1 pip install -e ".[dev,gui-test]"
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
-            sparse_checkout: |
-              src/shared
-              tests/shared_contracts
-              tests/support
 
     steps:
       - name: Checkout Tools
@@ -113,8 +107,6 @@ jobs:
           path: ${{ matrix.downstream.path }}
           token: ${{ secrets.RUNNER_CHECK_TOKEN || github.token }}
           fetch-depth: 1
-          sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
-          sparse-checkout-cone-mode: true
 
       - name: Select persistent Python tool cache
         run: |
