@@ -6169,3 +6169,4 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-19: Sidekick Unified Integration Epic
 
 - **2026-08-19**: docs(development) — Establish and publish specification for the unified Sidekick integration epic (`docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`) covering phases S1–S5 for bidirectional state seeding and standalone/host-embedded launcher parity across Rate of Closure and all UpstreamDrift launcher tiles.
+- **2026-08-19**: feat(rate_of_closure, sidekick) — Deliver Phase S1/S2 Sidekick unified integration: (1) Synced `src/shared/python/gui_launcher/tools_sidebar_integration.py` host installation contract; (2) Docked `UnifiedToolsSidebar` in `RateOfClosureMainWindow` with `_seed_sidekick_workspace` (`active_club`, `simulation_run`, `variation_dataset`) and `toggle_sidekick_sidebar`; (3) Added full integration test suite in `tests/rate_of_closure/test_sidekick_integration.py`.
