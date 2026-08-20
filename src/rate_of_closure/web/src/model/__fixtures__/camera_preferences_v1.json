@@ -1,0 +1,26 @@
+{
+  "format": "camera-preferences/v1",
+  "viewports": {
+    "impact": {
+      "preset_id": "camera.view.face_on",
+      "face_on_side": "left",
+      "zoom": 1.25,
+      "tracking_enabled": false,
+      "auto_fit_enabled": false
+    },
+    "swing": {
+      "preset_id": "camera.view.down_the_line",
+      "face_on_side": "right",
+      "zoom": 2.5,
+      "tracking_enabled": true,
+      "auto_fit_enabled": true
+    },
+    "flight": {
+      "preset_id": "camera.view.overhead",
+      "face_on_side": "right",
+      "zoom": 3.5,
+      "tracking_enabled": true,
+      "auto_fit_enabled": false
+    }
+  }
+}

@@ -104,11 +104,41 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "range and source.",
     ],
   },
+  "Ground Surfaces": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Build a strict regional-material request using one static coplanar SI base " +
+        "surface and up to eight bounded overlays. The loaded values are explicitly " +
+        "illustrative and unvalidated, not measured course data. Replace the base " +
+        "and overlay material values, supply stable identities and a source revision, " +
+        "and keep every metre interval inside the base domain.",
+      "Validate and preview delegates to the shared regional wire validator, which " +
+        "rejects duplicate identities or precedence, non-finite or out-of-range " +
+        "material values, invalid intervals, and unsupported geometry. The readback " +
+        "shows schema, SI units, source revision, and a digest bound to the actual " +
+        "draft. This first slice is session-only and does not run physics, playback, " +
+        "or workspace model-input persistence.",
+    ],
+  },
+  "Ground Playback": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Import either one strict flight-to-ground-result/v1 result or one validated ground-regional-execution-result/v1 envelope with the explicit matching control. The viewer reuses the regional envelope's nested result and never executes physics. Failed, cancelled, empty, or summary-free evidence is rejected while the last valid result remains loaded.",
+      "Use Play, Pause, exact-frame steps, restart, the absolute-time scrubber, phase jumps, speed, and Loop. Drag to orbit, wheel to zoom, or reset the locked-scale view. Carry marks first contact; complete runs end at Rest or End / left surface, while partial runs say Observed end. Phase transitions hold the preceding exact sample, and neutral axes avoid claiming terrain geometry that result v1 does not contain.",
+    ],
+  },
   "Launch Monitor Analytics": {
     title: "How to Use This Page",
     paragraphs: [
       "Import a local CSV or JSON launch-monitor export, or begin with the built-in demonstration data. Every source column stays available. Select any compatible numeric outcome and one or more predictors, choose Pearson, Spearman, or Kendall association, and optionally fit multivariable ordinary least squares. Missing-data behavior, confidence level, minimum sample count, and grouping are explicit controls rather than hidden defaults.",
       "Results include pair-specific sample counts, multiplicity-adjusted p-values, confidence intervals, OLS coefficient uncertainty, residual diagnostics, grouped estimates, and a deterministic dataset fingerprint. TrackMan-Comparable and Foresight-Comparable labels describe documented interpretation frames only; they do not claim device emulation or certification. Export both retained records and the complete analysis evidence as JSON.",
+    ],
+  },
+  "Shot Optimizer": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Build an auditable player-and-club capability profile, then search for robust launch conditions using the full Waterloo/Penner ball-flight model. Set the ball-speed, launch-angle, and launch-direction centers and standard deviations; fixed total spin and spin-axis tilt are shown explicitly with user-authored provenance. Set the landing target, objective, candidate count, trials per candidate, retained alternatives, and deterministic seed before running.",
+      "Optimization runs in a background worker with exact progress and cancellation. Ranked alternatives report carry, expected miss, dispersion, target-hold probability, confidence, and limiting constraints. Select any nominal input, perturbed input, flight metric, or target diagnostic for the scatter axes; paired-finite and unavailable counts remain visible, and the paged raw table preserves failed trials without inventing values. Save or load the strict versioned workflow and export every observation as lossless CSV or stable JSON. The current evaluator is still-air carry to first ground crossing: wind, bounce, roll, and total distance are not silently included.",
     ],
   },
   Variation: {

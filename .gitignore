@@ -221,3 +221,8 @@ failed2852.txt
 dcs_scada.db
 dcs_scada.db-wal
 dcs_scada.db-shm
+
+# Playwright output. Self-hosted runners reuse work directories, so these
+# survive between jobs and detect-secrets scans them as if they were source.
+playwright-report/
+test-results/

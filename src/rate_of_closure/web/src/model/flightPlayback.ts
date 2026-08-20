@@ -82,6 +82,25 @@ export class PlaybackTimeline {
     };
   }
 
+  /** Return the adjacent solver-owned sample time, clamped to the trajectory. */
+  stepTime(requestedTime: number, direction: -1 | 1): number {
+    if (!Number.isFinite(requestedTime)) {
+      throw new Error("playback time must be finite");
+    }
+    if (direction !== -1 && direction !== 1) {
+      throw new Error("playback step direction must be -1 or 1");
+    }
+    const frame = this.frameAt(requestedTime);
+    if (direction === 1) {
+      const nextIndex = Math.min(frame.lowerIndex + 1, this.points.length - 1);
+      return this.points[nextIndex].time;
+    }
+    const previousIndex = frame.fraction > 0
+      ? frame.lowerIndex
+      : Math.max(frame.lowerIndex - 1, 0);
+    return this.points[previousIndex].time;
+  }
+
   private endpointFrame(index: number, time: number): PlaybackFrame {
     return {
       time,

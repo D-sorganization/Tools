@@ -44,6 +44,23 @@ class _SlowTrainer:
         return {"ok": True, "rows": len(data)}
 
 
+def _join(worker: QThread, timeout_ms: int = 10_000) -> bool:
+    """Join ``worker`` no matter how the test body exited.
+
+    A ``QThread`` that is still running when its Python wrapper is
+    garbage-collected aborts the whole process -- under xdist that is the
+    "node down: Not properly terminated" crash that forced CI to ``-n 0``.
+    Joining in a ``finally`` guarantees the thread cannot outlive its test
+    even when ``qtbot.waitUntil`` raises; termination is a last resort that
+    trades an undefined thread state for not killing the interpreter.
+    """
+    joined = worker.wait(timeout_ms)
+    if not joined:
+        worker.terminate()
+        worker.wait(2_000)
+    return bool(joined)
+
+
 @pytest.fixture
 def sample_df() -> pd.DataFrame:
     return pd.DataFrame({"x": range(100), "y": range(100)})
@@ -60,14 +77,17 @@ def test_worker_runs_off_main_thread(qtbot: Any, sample_df: pd.DataFrame) -> Non
     worker.result_ready.connect(results.append)
     worker.start()
 
-    qtbot.waitUntil(lambda: bool(results), timeout=5000)
-    worker.wait(2000)
+    try:
+        qtbot.waitUntil(lambda: bool(results), timeout=5000)
+    finally:
+        joined = _join(worker)
 
+    assert joined, "worker thread did not finish within 10 s"
     assert results == [{"ok": True, "rows": 100}]
     assert trainer.train_thread is not None
-    assert (
-        trainer.train_thread != main_thread_id
-    ), "train() ran on the Qt main thread — UI would freeze"
+    assert trainer.train_thread != main_thread_id, (
+        "train() ran on the Qt main thread — UI would freeze"
+    )
 
 
 def test_worker_ui_stays_responsive(qtbot: Any, sample_df: pd.DataFrame) -> None:
@@ -88,8 +108,12 @@ def test_worker_ui_stays_responsive(qtbot: Any, sample_df: pd.DataFrame) -> None
         ticks += 1
         return bool(done)
 
-    qtbot.waitUntil(still_ticking, timeout=5000)
-    worker.wait(2000)
+    try:
+        qtbot.waitUntil(still_ticking, timeout=5000)
+    finally:
+        joined = _join(worker)
+
+    assert joined, "worker thread did not finish within 10 s"
     assert ticks > 1, "Event loop did not tick during training — UI was blocked"
 
 
@@ -101,8 +125,12 @@ def test_worker_emits_error_on_failure(qtbot: Any, sample_df: pd.DataFrame) -> N
     errors: list[str] = []
     worker.error.connect(errors.append)
     worker.start()
-    qtbot.waitUntil(lambda: bool(errors), timeout=5000)
-    worker.wait(2000)
+    try:
+        qtbot.waitUntil(lambda: bool(errors), timeout=5000)
+    finally:
+        joined = _join(worker)
+
+    assert joined, "worker thread did not finish within 10 s"
     assert errors == ["boom"]
 
 
