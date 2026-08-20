@@ -6,7 +6,7 @@ Provides a visual interface for the model library with display controls.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from shared.python.model_generation.explorer.display_config import DISPLAY_OPTIONS
 
@@ -22,7 +22,7 @@ def get_explorer_window() -> type[ModelExplorerWindow]:
         ModelExplorerWindow,
     )
 
-    return ModelExplorerWindow
+    return cast(type[ModelExplorerWindow], ModelExplorerWindow)
 
 
 __all__ = ["DISPLAY_OPTIONS", "get_explorer_window"]

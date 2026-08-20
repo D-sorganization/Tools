@@ -96,7 +96,7 @@ def convert_urdf_to_mjcf(
 
     config = MJCFConfig(**config_options) if config_options else None
     converter = MJCFConverter(config)
-    return converter.urdf_to_mjcf(source, output_path)
+    return str(converter.urdf_to_mjcf(source, output_path))
 
 
 def convert_mjcf_to_urdf(
