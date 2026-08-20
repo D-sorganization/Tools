@@ -10,21 +10,57 @@ import pytest
 
 from rate_of_closure.launch_monitor_strokes_gained import (
     SourceBackedStrokesGainedRequest,
+    TrustedSummaryRequest,
     baseline_table_hash,
+    build_source_backed_strokes_gained_payload,
     calculate_source_backed_strokes_gained,
     load_strokes_gained_baseline,
+)
+from rate_of_closure.launch_monitor_strokes_gained_baseline import (
+    StrokesGainedBaseline as BaselineArtifact,
+)
+from rate_of_closure.launch_monitor_strokes_gained_baseline import (
+    load_strokes_gained_baseline as load_baseline_artifact,
 )
 
 
 def _baseline(path: Path) -> Path:
     states = [
-        {"lie": "fairway", "distance_yards": 100.0, "expected_strokes": 2.8},
-        {"lie": "fairway", "distance_yards": 200.0, "expected_strokes": 3.8},
-        {"lie": "green", "distance_yards": 0.0, "expected_strokes": 0.0},
-        {"lie": "green", "distance_yards": 20.0, "expected_strokes": 1.5},
+        {
+            "lie": "fairway",
+            "context": "standard",
+            "target": "hole-1",
+            "distance_yards": 100.0,
+            "expected_strokes": 2.8,
+            "standard_error": 0.1,
+        },
+        {
+            "lie": "fairway",
+            "context": "standard",
+            "target": "hole-1",
+            "distance_yards": 200.0,
+            "expected_strokes": 3.8,
+            "standard_error": 0.14,
+        },
+        {
+            "lie": "green",
+            "context": "standard",
+            "target": "hole-1",
+            "distance_yards": 0.0,
+            "expected_strokes": 0.0,
+            "standard_error": 0.0,
+        },
+        {
+            "lie": "green",
+            "context": "standard",
+            "target": "hole-1",
+            "distance_yards": 20.0,
+            "expected_strokes": 1.5,
+            "standard_error": 0.08,
+        },
     ]
     payload = {
-        "contract_version": "launch-monitor-strokes-gained-baseline/1.0.0",
+        "contract_version": "launch-monitor-strokes-gained-baseline/2.0.0",
         "baseline_id": "licensed-test-baseline",
         "version": "2026.1",
         "source_url": "https://example.org/methodology",
@@ -40,20 +76,30 @@ def test_source_backed_sg_verifies_hash_and_interpolates_course_state(
     tmp_path: Path,
 ) -> None:
     baseline = load_strokes_gained_baseline(_baseline(tmp_path / "baseline.json"))
+    assert baseline.table_sha256 == (
+        "5250552cc6ec58da60dfe8ebf50f7238534d28016b0725bf42d8098054404428"
+    )
     result = calculate_source_backed_strokes_gained(
         pd.DataFrame(
             {
                 "before_lie": ["fairway", "fairway"],
+                "before_context": ["standard", "standard"],
+                "target": ["hole-1", "hole-1"],
                 "before_distance": [150.0, 200.0],
                 "after_lie": ["green", "green"],
+                "after_context": ["standard", "standard"],
                 "after_distance": [20.0, 0.0],
             }
         ),
         baseline,
         SourceBackedStrokesGainedRequest(
             "before_lie",
+            "before_context",
+            "target",
             "before_distance",
             "after_lie",
+            "after_context",
+            "target",
             "after_distance",
             "yd",
             "yd",
@@ -66,6 +112,16 @@ def test_source_backed_sg_verifies_hash_and_interpolates_course_state(
     assert result.baseline_version == "2026.1"
     assert result.table_sha256 == baseline.table_sha256
     assert result.backing_rows[0].expected_before == pytest.approx(3.3)
+
+
+def test_baseline_artifact_seam_is_reexported_by_sg_facade(tmp_path: Path) -> None:
+    """The artifact authority remains reusable without the calculation façade."""
+
+    direct = load_baseline_artifact(_baseline(tmp_path / "baseline.json"))
+    facade = load_strokes_gained_baseline(tmp_path / "baseline.json")
+
+    assert isinstance(direct, BaselineArtifact)
+    assert direct == facade
 
 
 def test_source_backed_sg_fails_closed_for_tamper_and_out_of_range(
@@ -82,16 +138,54 @@ def test_source_backed_sg_fails_closed_for_tamper_and_out_of_range(
     frame = pd.DataFrame(
         {
             "before_lie": ["rough"],
+            "before_context": ["standard"],
+            "target": ["hole-1"],
             "before_distance": [150.0],
             "after_lie": ["green"],
+            "after_context": ["standard"],
             "after_distance": [10.0],
         }
     )
     request = SourceBackedStrokesGainedRequest(
-        "before_lie", "before_distance", "after_lie", "after_distance", "yd", "yd"
+        "before_lie",
+        "before_context",
+        "target",
+        "before_distance",
+        "after_lie",
+        "after_context",
+        "target",
+        "after_distance",
+        "yd",
+        "yd",
     )
     with pytest.raises(ValueError, match="outside the baseline"):
         calculate_source_backed_strokes_gained(frame, baseline, request)
+
+
+def test_canonical_payload_only_groups_explicitly_attested_identities(
+    tmp_path: Path,
+) -> None:
+    baseline = load_strokes_gained_baseline(_baseline(tmp_path / "baseline.json"))
+    frame = pd.DataFrame({"player": ["p1"], "order": [1]})
+    request = SourceBackedStrokesGainedRequest(
+        "start_lie",
+        "start_context",
+        "target",
+        "start_distance",
+        "finish_lie",
+        "finish_context",
+        "target",
+        "finish_distance",
+        "yd",
+        "yd",
+        TrustedSummaryRequest(player_column="player", order_column="order"),
+    )
+
+    payload = build_source_backed_strokes_gained_payload(frame, baseline, request)
+    wire = payload["request"]
+    assert isinstance(wire, dict)
+    assert wire["summaries"][0]["trust_level"] == "explicit_user_attested"
+    assert wire["longitudinal"]["group_dimension"] == "player"
 
 
 def test_pyqt_source_backed_sg_requires_verified_baseline_and_course_state(
@@ -107,8 +201,11 @@ def test_pyqt_source_backed_sg_requires_verified_baseline_and_course_state(
         pd.DataFrame(
             {
                 "before_lie": ["fairway"],
+                "before_context": ["standard"],
+                "target": ["hole-1"],
                 "before_distance": [150.0],
                 "after_lie": ["green"],
+                "after_context": ["standard"],
                 "after_distance": [20.0],
             }
         )
@@ -116,8 +213,12 @@ def test_pyqt_source_backed_sg_requires_verified_baseline_and_course_state(
     assert not widget.calculate_button.isEnabled()
     widget.load_path(_baseline(tmp_path / "baseline.json"))
     widget.before_lie.setCurrentText("before_lie")
+    widget.before_context.setCurrentText("before_context")
+    widget.before_target.setCurrentText("target")
     widget.before_distance.setCurrentText("before_distance")
     widget.after_lie.setCurrentText("after_lie")
+    widget.after_context.setCurrentText("after_context")
+    widget.after_target.setCurrentText("target")
     widget.after_distance.setCurrentText("after_distance")
     assert widget.calculate_button.isEnabled()
     result = widget.calculate()

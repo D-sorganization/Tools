@@ -26,6 +26,10 @@ describe("LaunchMonitorPerformanceWorkspace", () => {
     expect(screen.getByRole("button", { name: /calculate user-supplied sg/i })).toBeDisabled();
     expect(screen.getByText(/source-backed strokes gained unavailable/i)).toBeInTheDocument();
     expect(screen.getByLabelText("Load verified strokes-gained baseline")).toBeInTheDocument();
+    expect(screen.getByLabelText("Upstream strokes-gained authority URL")).toBeInTheDocument();
+    expect(screen.getByLabelText("Before context column")).toBeInTheDocument();
+    expect(screen.getByLabelText("Before target or hole column")).toBeInTheDocument();
+    expect(screen.getByLabelText("Attest strokes-gained grouping identities and longitudinal order")).not.toBeChecked();
     expect(screen.getByRole("button", { name: /calculate source-backed sg/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /run longitudinal inference/i })).toBeDisabled();
   });

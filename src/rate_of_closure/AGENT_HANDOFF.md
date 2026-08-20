@@ -29,29 +29,13 @@ fitting epics is the sibling `shared/python/golf_club/`.
 Long stacked PRs are dead here: #4119 closed unmerged and took its stack with
 it. Content lands as **slices rebuilt onto current `main`**.
 
-PR #4466 **cannot be merged by any strategy** — after #4473 squash-merged, its
-merge-base collapses to a commit predating `src/rate_of_closure/`, so all 281
-overlapping files are both-added conflicts with no common ancestor (`-X theirs`
-→ 47 failed / 40 errors; `-X ours` → 19 collection errors). It landed as 22
-slices, #4517–#4547, each slice's reasoning in its SPEC.md §12 row (1.17.x).
-`swing_sim`, `application`, `web_authority`, `ui/pyqt6`, `web_companion`,
-`web_distribution` and the React layers are **done**. One cluster remains:
-
-**The camera cluster is a reimplementation, not a migration — measured.**
-Wiring `CameraViewportMixin` into `simulation_view`/`flight_view` passes 20 of
-20 camera GUI tests but regresses three `main`-owned ones (named-camera azimuth,
-legend placement, the accessibility control-count pin), and matching the
-branch's Face-On behaviour needs ~20 more `ui/pyqt6` files that **delete**
-shipped work (`flight_explorer_run.py` −324, `flight_view_bundle.py` −200).
-**Epic #4571 owns it; do not slice it, and do not close #4466 until #4571 lands.**
-
-**The branch is not uniformly newer than `main`.** Files taken wholesale would
-have reverted shipped work — `test_wind.py` (a 1e-12 tolerance failing on Linux,
-#4513), `web/src/model/flight.ts` (a net reduction), `plotting/render.py` (13
-failures), 16 `variation` files. Diff before copying. **But "it deletes lines"
-is not disqualifying**: #4542 and #4545 delete only their own helpers being
-reshaped, and were taken only after `main`'s entire existing suite passed
-against the swapped-in version, before any new tests. Meet that bar or skip it.
+PR #4466 cannot be merged: its merge-base predates this package, leaving 281
+both-added conflicts. Twenty-two current-main slices landed as #4517–#4547.
+Only the camera cluster remains, owned by #4571. It is a reimplementation:
+wiring the mixin passes 20 camera tests but regresses three main-owned tests and
+requires about 20 more UI files. Do not merge/slice #4466 or close it before
+#4571. The old branch is not uniformly newer; diff every candidate and require
+main's existing suite to pass before adding new tests.
 
 ## Active Epics — Golf Epics Merged
 
@@ -70,18 +54,17 @@ artifacts and attested longitudinal player/population inference in both clients;
 no baseline data is bundled. Do not claim vendor emulation or paired-device
 validation: Release B remains open and has no real paired observations.
 
-Both golf epics and their GUI surfaces are **physics & GUI complete and merged** (#4577, #4579):
+The active #4584 slice replaces the specialized local-only scoring boundary
+with UpstreamDrift's canonical source-backed strokes-gained v2 endpoint in both
+clients. It adds exact lie/context/target strata, optional benchmark
+uncertainty, structured exclusions, and explicitly attested
+player/session/club/longitudinal summaries. A blank authority URL retains a
+clearly labelled local compatibility calculation. No baseline is bundled and
+no player identity or session order is inferred.
 
-- **#4549 Club Fitting Tester** — **COMPLETED** (PR #4577): Mesh inertia tensor,
-  shaft delivery deltas, OEM fitting document, counterfactual engine, C6 #4555
-  (PyQt6 tab), C7 #4556 (React panel, 488 LOC).
-- **#4562 Heavy Hit** — **COMPLETED** (PR #4577): Coupled hand/body impact model,
-  MJCF/URDF/.osim model interchange, coupling report, H4 #4566 (GUI panels).
-- **#4579 Packaging & Wheel Distribution**: Fixed setuptools package discovery
-  for `rotation_converter*` and normalized `httpx` dependencies.
-
-Contracts: `docs/specs/CLUB_FITTING_TESTER.md`, `docs/specs/HEAVY_HIT_COUPLING.md`.
-**Shared-first is satisfied** — calculations live in `shared/python/{golf_club,swing_sim}`.
+Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
+merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
+see the two contracts under `docs/specs/`.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

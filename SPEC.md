@@ -27,12 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.68                                    |
+| **Spec Version**        | 1.17.69                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.69 makes UpstreamDrift's source-backed strokes-gained endpoint the
+canonical online authority for both Rate clients. PyQt6 and React now build and
+validate the same baseline-v2 request/result contracts, including exact
+lie/context/target strata, optional benchmark uncertainty, structured
+exclusions, and explicitly attested player/session/club/longitudinal summaries.
+The local calculation remains available only as a labelled compatibility path;
+no benchmark table is bundled and no identity is inferred.
 
 Version 1.17.68 keeps the scheduled merge-hold sweep on the REST API. The
 scheduled token can create labels and read pull requests through REST on the
@@ -5028,6 +5036,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.69 | feat(rate-of-closure): consume the canonical source-backed strokes-gained v2 endpoint with PyQt6/React parity, exact state strata, uncertainty, structured exclusions, explicit grouping attestations, and a labelled local compatibility fallback. | #4584, UpstreamDrift#8803 |
 | 2026-08-20 | 1.17.64 | fix(ci): treat an empty merge-hold timeline as a successful no-hold result under pipefail and errexit. | #4583 |
 | 2026-08-20 | 1.17.63 | feat(rate_of_closure, sidekick): deliver Phase S1/S2 unified sidekick integration (dock widget, context provider, toggle visibility, and fallback support in RateOfClosureMainWindow). | #4585 |
 | 2026-08-20 | 1.17.62 | chore(shared): normalise src/shared/python against the consumers' lint baseline across shared python modules. | #4507 |
