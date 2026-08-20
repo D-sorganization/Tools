@@ -96,3 +96,6 @@
 ## 2026-10-27 - Remove Array.from allocations in hot paths like Histogram renders
 **Learning:** Found instances of `Array.from({ length: N }, ...)` directly inside React component render functions (e.g. `Histogram.tsx`). This allocates a new array, creates iterators, and calls a mapping function on every render, stalling the UI thread during drag/zoom events.
 **Action:** Replace inline `Array.from` renders with IIFEs that pre-allocate using `new Array(N)` and iterate with a standard `for` loop, eliminating closure and iterator overhead per element.
+## 2026-05-20 - Eliminate .forEach closure overhead in SVG hot paths
+**Learning:** In high-frequency React UI rendering paths (e.g., highly dynamic animation frames building SVG paths), using `.forEach` inside hot render loops causes unnecessary closure allocation overhead and function call overhead for every point.
+**Action:** Replace `.forEach` iterations with a standard `for` loop to eliminate closure allocation overhead and avoid function invocation penalties per data point in hot paths.
