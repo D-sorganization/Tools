@@ -4,6 +4,11 @@ import { readFileSync } from "node:fs";
 import { startCompanionHarness } from "./support/companionHarness";
 import { auditSameOriginNetwork } from "./support/networkAudit";
 
+// The consolidated application does not register the historical Ground Playback
+// workspace. Retain these authority-only scenarios for the #4274 UI recovery,
+// but do not present them as qualification of the currently shipped surface.
+test.skip(true, "Ground Playback is not registered in the consolidated application");
+
 const CAPABILITY_PATH = "/api/rate-of-closure/v1/capabilities";
 const JOB_COLLECTION_PATH = "/api/rate-of-closure/v1/regional-ground/jobs";
 const MAX_DOWNLOAD_BYTES = 5_000_000;

@@ -69,14 +69,22 @@ class LaunchMonitorLinkedScatterPanel(QWidget):
         self._connect_selection()
 
     def set_frame(
-        self, frame: pd.DataFrame, outcome: str, predictors: tuple[str, ...]
+        self,
+        frame: pd.DataFrame,
+        outcome: str,
+        predictors: tuple[str, ...],
+        numeric_fields: tuple[str, ...] | None = None,
     ) -> LinkedScatterPlan:
         """Render without analyzing or mutating the retained records."""
         self._frame = frame
         self._outcome = outcome
         self._predictors = predictors
         plan = self.preview.set_frame(
-            frame, outcome, predictors, self.selected_raw_index
+            frame,
+            outcome,
+            predictors,
+            self.selected_raw_index,
+            numeric_fields,
         )
         self.status.setText(self._status_text(plan, self.selected_raw_index))
         return plan

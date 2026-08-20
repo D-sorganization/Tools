@@ -2,14 +2,14 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "a714b62b8c12a7d07d7f7b795aae29afacf4fc7c",
+  "source_artifact_commit": "c0ff9b86c36590cf5834734b04bb0023b1d608df",
   "baselines": [
     {
       "surface": "react",
       "tab_id": "explorer",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-explorer-1440x900.png",
-      "sha256": "fa4dbf59ac4a61c006099fd5dda6cd8552dcbfaf3a85b5293fe434af70cd224b",
+      "sha256": "c59d5f6a59995664de508efe16d5bf8ce4c4b3e8523e6507d0a5681c9bf0e02a",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -21,7 +21,7 @@
       "tab_id": "calculation",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-calculation-1440x900.png",
-      "sha256": "f3b4e55b599818e2bc0f178ba06f3e073a7e02d8c5fcb288753576a644a2d917",
+      "sha256": "51db43e0f8217dbf8a8e7182d6194d677d0b735a7ccdf4492b8a479f830409c5",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -33,7 +33,7 @@
       "tab_id": "simulation",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-simulation-1440x900.png",
-      "sha256": "bad555a6b15bea25efea6463228f2587dc3d319ef10cc6f55fc17ea8363dd4ab",
+      "sha256": "849fce43e1d3f7149b4f4e9b154e15c55926aeb7f4b87d26759a2579d9066ae0",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -45,7 +45,7 @@
       "tab_id": "plots",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-plots-1440x900.png",
-      "sha256": "53f956c3e7099a5f6c29620c12422e1aeaa39e6cb558d76991043f7eeb733d3f",
+      "sha256": "508d4c4cb454ae0bf42753a62a86bce736f73b90d0fa84617a0a3ef51d380f20",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -57,7 +57,7 @@
       "tab_id": "flight",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-flight-1440x900.png",
-      "sha256": "fb6af1677e1e0c4b059276e5e14a4f61c94317effff6560149f7fdab947429b4",
+      "sha256": "47ff2555389ee325118ab0cc2eeb3db330e77277b1645f55366f1a9e2bf845e4",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -69,7 +69,19 @@
       "tab_id": "launch-monitor-analytics",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-launch-monitor-analytics-1440x900.png",
-      "sha256": "2d16605f59136ca6dd1ca6b5ad18a47e2abcc8658dd9c999ac5e99d9146d1616",
+      "sha256": "b24c438bfa91118221f78cdd6ec6614e8e8c68c59d001eb850062c9644941317",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "react",
+      "tab_id": "neural-model-lab",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "file": "initial-neural-model-lab-1440x900.png",
+      "sha256": "2577b11c4d7a7e2b80310a604735c0d67d7f425316b87ee00e0d60dcd76215f4",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -81,7 +93,7 @@
       "tab_id": "variation",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-variation-1440x900.png",
-      "sha256": "f57fc6447f411b5627b9b8e22c6f2179a0d969b2ef0a979af98a70f76445085d",
+      "sha256": "712142b2d5987d2e3c3532444b71160c8682fed2f76fba39b4041c0e8b95129d",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -93,7 +105,7 @@
       "tab_id": "putting",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-putting-1440x900.png",
-      "sha256": "bf106f8cd8e350b9eae11b57bac611f0f0719b6346982e211b5ee90aa8f9fff4",
+      "sha256": "d011bd11f9c7a118d0db18565297b400ad86dcf2dc8123e7fc983fecab55b24c",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -105,7 +117,7 @@
       "tab_id": "glossary",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-glossary-1440x900.png",
-      "sha256": "9fbfcb631d4d1866d76e6fd651e0a4dd64b822ab357c8aca918b0ee7ce7e9b06",
+      "sha256": "5115f8fae5e0a1b8297a23688ca5d8a316875f9976b350f59e953afa11c34fc7",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -117,7 +129,7 @@
       "tab_id": "clubhead",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-clubhead-dpi-1.0.png",
-      "sha256": "531fdc7ca009bba6a14742ca014d15919547f8d86f0684e6a4833bf51e5c8750",
+      "sha256": "cccb6e180d856afef8f21b71f9891bc5ea661a019ba4603c619f4f38e530dbac",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -129,7 +141,7 @@
       "tab_id": "plots",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-plots-dpi-1.0.png",
-      "sha256": "aad819603dedab7059d9dd370bd32fd7c71b4cec0d1a99517f283d16bdafe2b4",
+      "sha256": "823ae0b7c9260853f6889a6d9977bafc852cd3e1792e4892345ea9c5cac59b49",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -141,7 +153,7 @@
       "tab_id": "calculation_description",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-calculation_description-dpi-1.0.png",
-      "sha256": "ddad7468f9b21083fa4117770317d7a92ad60294389170b455c211d8f8378284",
+      "sha256": "ec0aca97e903f2650f319a7ddc8e5b6481a5b868656341cabe85b3bb3ea18baa",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -153,7 +165,7 @@
       "tab_id": "simulation",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-simulation-dpi-1.0.png",
-      "sha256": "2a818c5cafd98634441f7d1b721c9ee6b98c1f402e3857e874f8f5d3117da814",
+      "sha256": "111c753131650ade867e2e87014df90b4f7ff73fa5154ffe06ad0b3938402c90",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -165,7 +177,7 @@
       "tab_id": "flight_explorer",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-flight_explorer-dpi-1.0.png",
-      "sha256": "3c4307b86a963d43514c08d16107e9ae1ab6a884df4b63c044eb134b152bf890",
+      "sha256": "c7d4538d81256e5143f6fc8006767f5f2c2c8afd16a3abe1fd758e3311fddd5c",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -177,7 +189,19 @@
       "tab_id": "launch_monitor_analytics",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-launch_monitor_analytics-dpi-1.0.png",
-      "sha256": "f84258bdcd862fcb3e8281fdc1236df1eda0409e63807a685602f2369f71190a",
+      "sha256": "8a33c463592551c6e690ce86e304e2f81ec9f385c819ccc6711720a02468da1e",
+      "tolerance": {
+        "changed_channel_threshold": 1,
+        "max_mean_channel_delta_microunits": 100,
+        "max_changed_pixel_fraction_microunits": 100
+      }
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "neural_model_lab",
+      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "file": "initial-neural_model_lab-dpi-1.0.png",
+      "sha256": "0b06ce2be450dc1c0080bfcc632940841e37910c9abd87072aad120f99fea083",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -189,7 +213,7 @@
       "tab_id": "variation",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-variation-dpi-1.0.png",
-      "sha256": "37cde0181f0bf64efb093c764bad9814ed7722faad6b36b7948acd53fee01b31",
+      "sha256": "b4ddc595a044ea0856f2bb77464d7812174a41b0b4beccb45101950a3c053c6c",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -201,7 +225,7 @@
       "tab_id": "putting",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-putting-dpi-1.0.png",
-      "sha256": "8622c395bbaa128958993bf24e3d46a9acc5495ff9e6b93776218b977b08e700",
+      "sha256": "45109bd99051ad05eeb1a9e7db7f5f13202e027e46c1540b81bc235a6b400337",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -213,7 +237,7 @@
       "tab_id": "glossary",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-glossary-dpi-1.0.png",
-      "sha256": "7abf9e27e8192563c5b0fcf25967e7c74571fee611287763f3f53d9a2c992d03",
+      "sha256": "aedf5325b2908cadd1f86ad52faa3ad9bb40312fb8a48a01849df92ebe2d88bd",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,

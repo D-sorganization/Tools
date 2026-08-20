@@ -5,6 +5,7 @@ import { FlightExplorerPanel } from "./FlightExplorerPanel";
 import { GlossaryPanel } from "./GlossaryPanel";
 import { ImpactExplorerPanel } from "./ImpactExplorerPanel";
 import { LaunchMonitorAnalyticsPanel } from "./LaunchMonitorAnalyticsPanel";
+import { NeuralModelLabPanel } from "./NeuralModelLabPanel";
 import { PlotsPanel } from "./PlotsPanel";
 import { PuttingPanel } from "./PuttingPanel";
 import { SimulationPanel } from "./SimulationPanel";
@@ -65,6 +66,8 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
         spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
     case "launch-monitor-analytics":
       return <LaunchMonitorAnalyticsPanel />;
+    case "neural-model-lab":
+      return <NeuralModelLabPanel />;
     case "plots":
       return <PlotsPanel scenario={model.scenario} loftDeg={10.5} />;
     case "simulation":

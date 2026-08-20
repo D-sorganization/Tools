@@ -58,6 +58,7 @@ def demo_frame() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "shot_id": [f"demo-{item + 1}" for item in index],
+            "player_id": np.where(index < 60, "demo-player-a", "demo-player-b"),
             "session_id": np.where(index < 60, "demo-a", "demo-b"),
             "monitor_vendor": np.where(index % 2, "FlightScope", "TrackMan"),
             "observation_kind": "shot",
@@ -100,9 +101,12 @@ class LaunchMonitorPreviewCanvas(LifecycleSafeFigureCanvas):
         outcome: str,
         predictors: tuple[str, ...],
         selected_raw_index: int | None = None,
+        numeric_fields: tuple[str, ...] | None = None,
     ) -> LinkedScatterPlan:
         """Render finite paired values without altering the retained records."""
-        numeric = tuple(numeric_columns(frame))
+        numeric = (
+            tuple(numeric_columns(frame)) if numeric_fields is None else numeric_fields
+        )
         if len(numeric) < 2:
             raise ValueError("linked scatter requires two eligible numeric columns")
         outcome = outcome if outcome in numeric else numeric[0]
