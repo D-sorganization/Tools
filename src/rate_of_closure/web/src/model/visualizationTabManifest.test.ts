@@ -23,6 +23,7 @@ describe("visualization tab manifest governance", () => {
         plots: "section[aria-label='Plot management']",
         flight: "section[aria-label='Flight explorer inputs']",
         "launch-monitor-analytics": "section[aria-label='Analysis contract']",
+        "neural-model-lab": "section[aria-label='Neural Model Lab']",
         variation: "section[aria-label='Variation setup']",
         putting: "section[aria-label='Putt setup']",
       },

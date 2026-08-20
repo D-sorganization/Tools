@@ -32,6 +32,9 @@ class NeuralTrainingActionsMixin:
                 for item in manifest.vendors
             )
         )
+        plot = getattr(self, "capability_plot", None)
+        if plot is not None:
+            plot.set_capabilities(manifest.vendors)
 
     def _load_capabilities(self) -> None:
         name, _ = QFileDialog.getOpenFileName(

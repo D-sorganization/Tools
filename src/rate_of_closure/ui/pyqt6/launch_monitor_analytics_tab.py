@@ -15,12 +15,14 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
+    QFrame,
     QHBoxLayout,
     QLabel,
     QListWidget,
     QMessageBox,
     QPlainTextEdit,
     QPushButton,
+    QScrollArea,
     QSpinBox,
     QSplitter,
     QTableWidget,
@@ -196,21 +198,33 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.details.setAccessibleName("Launch Monitor Analysis Traceability")
         self.player_workspace = LaunchMonitorPlayerWorkspace()
         self.performance_workspace = LaunchMonitorPerformanceWorkspace()
-        output = QSplitter(Qt.Orientation.Vertical)
-        output.addWidget(self.preview_panel)
-        output.addWidget(self.result_table)
-        output.addWidget(self.details)
-        output.addWidget(self.player_workspace)
-        output.addWidget(self.performance_workspace)
-        output.setSizes([320, 240, 160])
+        output_widget = QWidget()
+        output_layout = QVBoxLayout(output_widget)
+        output_layout.setContentsMargins(0, 0, 0, 0)
+        output_layout.addWidget(self.preview_panel)
+        output_layout.addWidget(self.result_table)
+        output_layout.addWidget(self.details)
+        output_layout.addWidget(self.player_workspace)
+        output_layout.addWidget(self.performance_workspace)
+        right_scroll = QScrollArea()
+        right_scroll.setWidgetResizable(True)
+        right_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        right_scroll.setWidget(output_widget)
 
-        body = QSplitter(Qt.Orientation.Horizontal)
         controls_widget = QWidget()
         controls_layout = QVBoxLayout(controls_widget)
+        controls_layout.setContentsMargins(0, 0, 0, 0)
         controls_layout.addLayout(form)
         controls_layout.addStretch(1)
-        body.addWidget(controls_widget)
-        body.addWidget(output)
+        left_scroll = QScrollArea()
+        left_scroll.setWidgetResizable(True)
+        left_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        left_scroll.setWidget(controls_widget)
+        left_scroll.setMinimumWidth(340)
+
+        body = QSplitter(Qt.Orientation.Horizontal)
+        body.addWidget(left_scroll)
+        body.addWidget(right_scroll)
         body.setSizes([360, 900])
 
         layout = QVBoxLayout(self)

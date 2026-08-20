@@ -7,6 +7,42 @@ from PyQt6.QtGui import QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
 
+class CapabilityCanvas(QWidget):
+    """Always-visible, unit-labelled vendor eligibility comparison."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.setMinimumHeight(240)
+        self.setAccessibleName("Vendor Strict Eligible Input Rows Chart")
+        self.setToolTip(
+            "Strict complete five-input row counts; policy blockers still govern "
+            "whether training is allowed."
+        )
+        self._rows: tuple[tuple[str, int], ...] = ()
+
+    def set_capabilities(self, vendors: object) -> None:
+        self._rows = tuple(
+            (str(item.vendor), int(item.strict_row_count)) for item in vendors
+        )
+        self.update()
+
+    def paintEvent(self, event: object) -> None:  # noqa: N802
+        del event
+        painter = QPainter(self)
+        painter.setPen(QPen(self.palette().text().color()))
+        painter.drawText(8, 18, "Strict eligible input rows (count)")
+        maximum = max((count for _, count in self._rows), default=1)
+        usable = max(1, self.width() - 190)
+        for index, (vendor, count) in enumerate(self._rows):
+            y = 44 + index * 55
+            painter.drawText(8, y + 18, vendor)
+            painter.setPen(QPen(Qt.GlobalColor.cyan, 22))
+            width = max(1, round(usable * count / maximum))
+            painter.drawLine(105, y + 10, 105 + width, y + 10)
+            painter.setPen(QPen(self.palette().text().color()))
+            painter.drawText(115 + width, y + 18, f"{count:,} rows")
+
+
 class ResidualPlot(QWidget):
     """Small row-aligned residual plot with explicit unavailable state."""
 
@@ -66,4 +102,4 @@ class ResidualPlot(QWidget):
             painter.drawPoint(int(x), int(y))
 
 
-__all__ = ["ResidualPlot"]
+__all__ = ["CapabilityCanvas", "ResidualPlot"]

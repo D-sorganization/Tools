@@ -8,6 +8,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+pytest.importorskip("pyarrow", reason="pyarrow required for parquet corpus test")
+
 from rate_of_closure.launch_monitor_private_corpus import (
     CORPUS_RELATIVE_PATH,
     load_private_corpus,

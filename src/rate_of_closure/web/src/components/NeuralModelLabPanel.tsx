@@ -19,6 +19,17 @@ async function fileSha256(file: File): Promise<string> {
   return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join("");
 }
 
+function CapabilityPlot({ vendors }: { readonly vendors: typeof defaultCapabilities.vendors }) {
+  const maximum = Math.max(1, ...vendors.map((vendor) => vendor.strictRowCount));
+  return <svg viewBox="0 0 640 190" role="img" aria-label="Vendor strict eligible input rows chart" className="mt-3 w-full rounded bg-slate-950">
+    <title>Strict five-input rows by vendor; availability remains policy governed</title>
+    <text x="12" y="18" fill="#94a3b8">Strict eligible input rows (count)</text>
+    {vendors.map((vendor, index) => { const width = 480 * vendor.strictRowCount / maximum; const y = 38 + index * 46;
+      return <g key={vendor.vendor}><text x="12" y={y + 18} fill="#cbd5e1">{vendor.vendor}</text>
+        <rect x="120" y={y} width={Math.max(1, width)} height="24" fill="#38bdf8"/><text x={128 + width} y={y + 18} fill="#e2e8f0">{vendor.strictRowCount.toLocaleString()} rows</text></g>; })}
+  </svg>;
+}
+
 function ResidualPlot({ model }: { readonly model: PortableModel }) {
   const rows = model.residuals.rows ?? [];
   if (model.residuals.state !== "available" || !rows.length) return <p role="status" className="text-amber-300">
@@ -75,6 +86,7 @@ export function NeuralModelLabPanel() {
       <p className="mt-2 text-sm text-slate-300">Safe client for private, group-safe vendor-comparable surrogate training. This browser never trains on or persists private rows. Models are descriptive and are not device emulation or certification.</p>
       <input ref={capabilityInput} type="file" className="hidden" accept=".json" aria-label="Private capability manifest" onChange={(event) => { const file = event.target.files?.[0]; if (file) void file.text().then((value) => { try { setCapabilities(parseCapabilityManifest(JSON.parse(value))); setMessage("Loaded user-authorized private capability metadata; no private rows or path were persisted."); } catch (error) { setMessage(error instanceof Error ? error.message : String(error)); } }); }} />
       <button type="button" title="Load a user-authorized private capability manifest without persisting its path or rows" className="mt-2 rounded border border-slate-700 px-3 py-1" onClick={() => capabilityInput.current?.click()}>Load Capability Manifest</button>
+      <CapabilityPlot vendors={capabilities.vendors}/>
       <div className="mt-3 grid gap-3 md:grid-cols-3">{capabilities.vendors.map((item) => <article key={item.vendor} className="rounded border border-slate-700 p-3" title={item.blockers.join(" ")}>
         <h3 className="font-semibold">{item.vendor}: unavailable</h3><p>{item.rowCount.toLocaleString()} rows / {item.strictRowCount.toLocaleString()} strict</p>
         <p className="text-xs text-amber-300">Artifact: {item.artifactState}</p><ul className="list-disc pl-4 text-xs text-slate-400">{item.blockers.map((reason) => <li key={reason}>{reason}</li>)}</ul>

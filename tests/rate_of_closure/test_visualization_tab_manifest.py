@@ -173,6 +173,7 @@ def test_reference_environments_reject_cross_surface_and_unbounded_fields() -> N
         "launch-monitor-analytics": "section[aria-label='Analysis contract']",
         "variation": "section[aria-label='Variation setup']",
         "putting": "section[aria-label='Putt setup']",
+        "neural-model-lab": "section[aria-label='Neural Model Lab']",
     }
     assert pyqt.responsive_control_locators == {}
     assert max(react.viewport_px or ()) <= 10_000

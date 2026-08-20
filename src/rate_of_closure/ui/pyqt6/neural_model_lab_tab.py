@@ -31,7 +31,10 @@ from rate_of_closure.neural_lab_contract import (
 from rate_of_closure.ui.pyqt6.neural_model_lab_training import (
     NeuralTrainingActionsMixin,
 )
-from rate_of_closure.ui.pyqt6.neural_model_lab_widgets import ResidualPlot
+from rate_of_closure.ui.pyqt6.neural_model_lab_widgets import (
+    CapabilityCanvas,
+    ResidualPlot,
+)
 
 
 class NeuralModelLabTab(NeuralTrainingActionsMixin, QWidget):
@@ -79,6 +82,8 @@ class NeuralModelLabTab(NeuralTrainingActionsMixin, QWidget):
             "hard-coded in this UI."
         )
         self._show_capabilities(manifest)
+        self.capability_plot = CapabilityCanvas()
+        self.capability_plot.set_capabilities(manifest.vendors)
         self.load_capabilities = QPushButton("Load Capability Manifest…")
         self.load_capabilities.setAccessibleName(
             "Load a user-authorized private capability manifest"
@@ -88,6 +93,7 @@ class NeuralModelLabTab(NeuralTrainingActionsMixin, QWidget):
             "or any private rows."
         )
         layout.addWidget(self.load_capabilities)
+        layout.addWidget(self.capability_plot)
         layout.addWidget(self.capability)
 
         self.dataset_button = QPushButton("Select Custom Dataset…")
