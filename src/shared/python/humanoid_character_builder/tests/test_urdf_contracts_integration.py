@@ -101,8 +101,7 @@ class TestURDFContracts:
         # Mock internal methods to avoid actual computation (which might fail due to defaults)
         # and mock _build_urdf_xml to return invalid XML to trigger the postcondition
         with (
-            patch.object(HumanoidURDFGenerator, "_generate_link"),
-            patch.object(HumanoidURDFGenerator, "_generate_joint"),
+            patch.object(HumanoidURDFGenerator, "build_model"),
             patch.object(
                 HumanoidURDFGenerator, "_build_urdf_xml", return_value="invalid xml"
             ),
