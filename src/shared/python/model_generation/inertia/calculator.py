@@ -117,9 +117,7 @@ class InertiaResult:
 
     def is_valid(self) -> bool:
         """Check if inertia values are physically valid."""
-        # to_inertia() widens to Any under CI's --follow-imports=skip, which
-        # trips mypy.ini's warn_return_any. Repo idiom (_mr_kinematics.py:99).
-        return self.to_inertia().is_positive_definite()  # type: ignore[no-any-return]
+        return self.to_inertia().is_positive_definite()
 
     @precondition(lambda new_mass: new_mass > 0, "New mass must be positive")
     def scale_to_mass(self, new_mass: float) -> InertiaResult:
