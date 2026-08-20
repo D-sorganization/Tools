@@ -387,7 +387,7 @@ class RateOfClosureMainWindow(
         """Provide host-specific context for Sidekick assist."""
         return {
             "tool_name": "rate_of_closure",
-            "active_club": getattr(self, "_club_spec", None),
+            "active_club": self._controls.club_spec() if hasattr(self, "_controls") else None,
         }
 
     def _seed_sidekick_workspace(self) -> None:

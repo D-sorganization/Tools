@@ -41,3 +41,26 @@ def test_null_tools_sidebar_fallback(qapp: QApplication) -> None:
     assert fallback.sidekick_tokens == {}
     assert fallback.widget() is not None
 
+
+def test_sidekick_context_provider(qapp: QApplication) -> None:
+    win = RateOfClosureMainWindow()
+    try:
+        ctx = win._get_sidekick_context()
+        assert isinstance(ctx, dict)
+        assert ctx.get("tool_name") == "rate_of_closure"
+        assert ctx.get("active_club") is not None
+    finally:
+        win.close()
+
+
+def test_sidekick_themed_app_integration(qapp: QApplication) -> None:
+    from shared.python.theme import setup_themed_app
+
+    win = RateOfClosureMainWindow()
+    try:
+        setup_themed_app(qapp, win, settings_app="RateOfClosureTest")
+        assert win._sidekick_status.installed is True
+    finally:
+        win.close()
+
+
