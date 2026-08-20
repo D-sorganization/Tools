@@ -199,11 +199,17 @@ jobs:
 
             # ---- signal 1: explicit hold labels -----------------------------
             for hold in $HOLD_LABEL $EXTRA_HOLD_LABELS; do
-              has_label "$hold" && add_reason "\`$hold\` label"
+              # The runner invokes bash with -e. Keep a normal absent-label
+              # predicate inside an if condition so it cannot terminate the job.
+              if has_label "$hold"; then
+                add_reason "\`$hold\` label"
+              fi
             done
 
             # ---- signal 2: draft --------------------------------------------
-            [ "$DRAFT" = "true" ] && add_reason "PR is a draft"
+            if [ "$DRAFT" = "true" ]; then
+              add_reason "PR is a draft"
+            fi
 
             # ---- signal 3: disarmed by a human since the last push -----------
             # One timeline fetch serves both the hold signal and the escalation
