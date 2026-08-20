@@ -442,7 +442,7 @@ class ModelGenerationAPI:
         if not result.success:
             return APIResponse.error(result.error_message or "Build failed")
 
-        urdf_string = result.urdf_xml
+        urdf_string = result.urdf_xml or ""
 
         if request.query_params.get("download") == "true":
             return APIResponse.file(urdf_string, f"{robot_name}.urdf")
@@ -512,7 +512,9 @@ class ModelGenerationAPI:
         }
 
         if request.query_params.get("download") == "true":
-            return APIResponse.file(result.urdf_string, f"{result.robot_name}.urdf")
+            return APIResponse.file(
+                result.urdf_string or "", f"{result.robot_name}.urdf"
+            )
 
         return APIResponse.ok(response_data)
 
@@ -867,7 +869,11 @@ class ModelGenerationAPI:
         """List models in library."""
         if request is None:
             raise ValueError("request must be provided")
-        from shared.python.model_generation.library import ModelLibrary
+        from shared.python.model_generation.library import (
+            ModelCategory,
+            ModelLibrary,
+            RepositorySource,
+        )
 
         library = ModelLibrary()
 
@@ -880,9 +886,23 @@ class ModelGenerationAPI:
             else None
         )
 
+        cat_enum = None
+        if category:
+            try:
+                cat_enum = ModelCategory(category)
+            except ValueError:
+                pass
+
+        src_enum = None
+        if source:
+            try:
+                src_enum = RepositorySource(source)
+            except ValueError:
+                pass
+
         models = library.list_models(
-            category=category,
-            source=source,
+            category=cat_enum,
+            source=src_enum,
             search=search,
             tags=tags,
         )
