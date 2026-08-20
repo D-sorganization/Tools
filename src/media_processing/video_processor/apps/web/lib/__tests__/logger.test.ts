@@ -4,13 +4,13 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockDebug = vi.fn();
-const mockInfo = vi.fn();
-const mockWarn = vi.fn();
-const mockError = vi.fn();
-const mockChild = vi.fn();
-
 vi.mock('pino', () => {
+  const mockDebug = vi.fn();
+  const mockInfo = vi.fn();
+  const mockWarn = vi.fn();
+  const mockError = vi.fn();
+  const mockChild = vi.fn();
+
   const pinoFn = () => ({
     debug: mockDebug,
     info: mockInfo,
@@ -31,6 +31,12 @@ vi.mock('pino', () => {
 
   return { default: pinoFn };
 });
+
+const mockDebug = vi.mocked((await import('pino')).default().debug);
+const mockInfo = vi.mocked((await import('pino')).default().info);
+const mockWarn = vi.mocked((await import('pino')).default().warn);
+const mockError = vi.mocked((await import('pino')).default().error);
+const mockChild = vi.mocked((await import('pino')).default().child);
 
 // Import after mock setup
 import { logger } from '../logger';

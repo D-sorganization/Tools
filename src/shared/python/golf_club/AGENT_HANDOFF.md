@@ -14,12 +14,11 @@
 - Rate of Closure and UpstreamDrift must consume this public facade through
   thin adapters after the provider stack lands; do not copy the calculations.
 
-## Club Fitting Tester Epic (#4549) — physics merged, GUI open
+## Club Fitting Tester Epic (#4549) — COMPLETED (#4557, #4577)
 
 This package is the **shared-first** home for the clubfitting epic's physics and
-wires (contract: `docs/specs/CLUB_FITTING_TESTER.md`). **C1–C5 all merged in
-#4557**; only the GUI children remain (C6 #4555, C7 #4556), and they must bind
-to these modules rather than recompute anything.
+wires (contract: `docs/specs/CLUB_FITTING_TESTER.md`). **C1–C7 all merged in
+#4557 and #4577** (including PyQt6 Club Tester tab and React panel).
 
 | Module                    | Owns                                                                                                                                                                                   |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -37,15 +36,15 @@ import of this package executes `golf_club/__init__`, whose eager surface reache
 SciPy through the turf chain and breaks the Morris UI import contract. Keep it
 lazy, and do not add eager imports to `__init__` that reach `swing_sim.variation`.
 
-## Heavy Hit Epic (#4562) — physics merged, GUI open
+## Heavy Hit Epic (#4562) — COMPLETED (#4568, #4577)
 
 `impact_coupling.py` (H1/H3) quantifies hand/body influence at impact: a
 ball–head–hands Kelvin-Voigt chain integrated in the **body frame** (fixed grip
 anchor, ball approaches — the anchor does no work, so energy accounting is
 exact). Physiological hands (3 kg, 5e4 N/m) change driver ball speed by **<1%**;
 the model always reports the **rigid-shaft upper bound** alongside, because any
-lumped `k_s` only approximates contact-timescale impedance. H4 (#4566) is the
-open GUI child. Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
+lumped `k_s` only approximates contact-timescale impedance. H4 GUI panels
+landed in PR #4577. Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
 
 `swing_sim/model_interchange/` (H2) imports golfer models from MJCF, URDF and
 `.osim` — MuJoCo, Drake, Pinocchio, OpenSim — by **runtime-free XML parsing**

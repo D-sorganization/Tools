@@ -227,7 +227,8 @@ jobs:
           # Keep pip and python bound to the same setup-python interpreter so
           # pytest plugins land in the environment that later runs `python -m pytest`.
           python -m pip install --upgrade click setuptools wheel
-          python -m pip install --upgrade --force-reinstall --no-cache-dir "build>=1.2.2" "platformdirs>=4.2.0"
+          # Pin build<=1.2.2.post1 to avoid HTTP 502 failures when pulling 1.5.0 from pypi (due to intermittent network issues or bad metadata)
+          python -m pip install --upgrade --force-reinstall --no-cache-dir "build>=1.2.2,<=1.2.2.post1" "platformdirs>=4.2.0"
           python -c "import build, platformdirs; assert build.__version__; assert platformdirs.__version__"
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install mypy==1.13.0
@@ -396,7 +397,7 @@ jobs:
           fi
 
       - name: Security Scan (pip-audit)
-        timeout-minutes: 5
+        timeout-minutes: 15
         run: |
           # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
           # Ignored until a patched release is published upstream.
@@ -641,6 +642,9 @@ jobs:
       - name: Install Rust toolchain for tools_core wheel
         if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        env:
+          CARGO_NET_RETRY: "10"
+          CARGO_NET_TIMEOUT: "120"
 
       # Only reached on a wheel-cache miss. Mirrors the block in
       # maturin-ai-backend.yml so the two Rust builds cache the same way.
@@ -694,7 +698,8 @@ jobs:
           # Match the plugin install interpreter to the `python -m pytest`
           # invocation below so benchmark support is always discoverable.
           python -m pip install --upgrade click setuptools wheel
-          python -m pip install --upgrade --force-reinstall --no-cache-dir "build>=1.2.2" "platformdirs>=4.2.0"
+          # Pin build<=1.2.2.post1 to avoid HTTP 502 failures when pulling 1.5.0 from pypi (due to intermittent network issues or bad metadata)
+          python -m pip install --upgrade --force-reinstall --no-cache-dir "build>=1.2.2,<=1.2.2.post1" "platformdirs>=4.2.0"
           python -c "import build, platformdirs; assert build.__version__; assert platformdirs.__version__"
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps --no-cache-dir "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
