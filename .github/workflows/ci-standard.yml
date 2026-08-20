@@ -313,7 +313,7 @@ jobs:
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src:src/python/src
               echo "Linting changed files with Mypy..."
-              xargs -r -d '\n' python -m mypy --ignore-missing-imports --follow-imports=skip --install-types --non-interactive < filtered_mypy_files.txt
+              xargs -r -d '\n' python -m mypy --ignore-missing-imports --follow-imports=silent --install-types --non-interactive < filtered_mypy_files.txt
             else
               echo "No changed source Python files to type-check (after filtering legacy)."
             fi
