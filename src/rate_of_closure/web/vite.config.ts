@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     globals: true,
-    exclude: [...configDefaults.exclude, "e2e/**"],
+    exclude: [...configDefaults.exclude, "e2e/**", "tests/**"],
     // Physics optimization and Monte Carlo cases contend under Vitest's
     // parallel pool; retain a bounded but CI-realistic per-test ceiling.
     testTimeout: 15_000,
@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {

@@ -1,0 +1,3 @@
+include build_hooks.py
+prune src/rate_of_closure/web/dist
+prune src/rate_of_closure/web/node_modules
