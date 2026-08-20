@@ -16,7 +16,7 @@ const states = [
 
 describe("source-backed strokes gained", () => {
   it("verifies the artifact hash and interpolates within each course lie", async () => {
-    expect(await baselineTableHash([...states].reverse())).toBe("5250552cc6ec58da60dfe8ebf50f7238534d28016b0725bf42d8098054404428");
+    expect(await baselineTableHash([...states].reverse())).toBe("5250552cc6ec58da60dfe8ebf50f7238534d28016b0725bf42d8098054404428"); // pragma: allowlist secret
     const baseline = await parseStrokesGainedBaseline(JSON.stringify({
       contract_version: "launch-monitor-strokes-gained-baseline/2.0.0",
       baseline_id: "licensed-test", version: "2026.1",

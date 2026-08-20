@@ -77,7 +77,7 @@ def test_source_backed_sg_verifies_hash_and_interpolates_course_state(
 ) -> None:
     baseline = load_strokes_gained_baseline(_baseline(tmp_path / "baseline.json"))
     assert baseline.table_sha256 == (
-        "5250552cc6ec58da60dfe8ebf50f7238534d28016b0725bf42d8098054404428"
+        "5250552cc6ec58da60dfe8ebf50f7238534d28016b0725bf42d8098054404428"  # noqa: E501  # pragma: allowlist secret
     )
     result = calculate_source_backed_strokes_gained(
         pd.DataFrame(
