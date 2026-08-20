@@ -390,9 +390,7 @@ class RateOfClosureMainWindow(
 
     def _get_sidekick_context(self) -> dict[str, object]:
         """Provide host-specific context for Sidekick assist."""
-        active_club = (
-            self._controls.club_spec() if hasattr(self, "_controls") else None
-        )
+        active_club = self._controls.club_spec() if hasattr(self, "_controls") else None
         return {
             "tool_name": "rate_of_closure",
             "active_club": active_club,
@@ -422,4 +420,3 @@ class RateOfClosureMainWindow(
             dock = self._sidekick_status.dock
             if hasattr(dock, "isVisible") and hasattr(dock, "setVisible"):
                 dock.setVisible(not dock.isVisible())
-

@@ -62,5 +62,3 @@ def test_sidekick_themed_app_integration(qapp: QApplication) -> None:
         assert win._sidekick_status.installed is True
     finally:
         win.close()
-
-
