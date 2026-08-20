@@ -71,7 +71,7 @@ branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
 the workflow is scoped to Chromium meanwhile), #4569 (two `1.17.40` SPEC rows
 glued onto one table line by a union merge), #4558/#4559/#4560 (cross-runtime
-fixture parity gaps). #4602 owns trusted Playwright Axe/performance isolation.
+fixture parity gaps). #4602/#4608 own trusted Playwright/PyQt isolation.
 
 ## Must-Read Architecture Pointers
 

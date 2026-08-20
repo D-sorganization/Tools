@@ -78,6 +78,9 @@ on:
       - "tests/rate_of_closure/test_visual_layout_gui.py"
       - "tests/rate_of_closure/test_visual_layout_preferences.py"
       - "tests/ops/test_rate_web_playwright_workflow.py"
+      - "tests/scripts/test_check_rate_pyqt_environment.py"
+      - "scripts/check_rate_pyqt_environment.py"
+      - "requirements-rate-pyqt.txt"
       - "pyproject.toml"
       - ".github/workflows/rate-web-playwright.yml"
       - ".github/workflows/rate-web-playwright-trusted.yml"
@@ -149,9 +152,30 @@ jobs:
           e2e/visualization-performance.spec.ts
           --project=chromium-desktop
 
-      - name: Install declared PyQt render dependencies
+      - name: Declare isolated PyQt paths
         working-directory: .
-        run: python -m pip install -e ".[gui,dev]"
+        run: |-
+          echo "RATE_PYQT_VENV=${RUNNER_TEMP}/rate-pyqt-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
+          echo "PYTEST_DEBUG_TEMPROOT=${RUNNER_TEMP}/rate-pyqt-pytest-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
+
+      - name: Create isolated PyQt environment
+        working-directory: .
+        run: >-
+          python -m venv "$RATE_PYQT_VENV" &&
+          mkdir -p "$PYTEST_DEBUG_TEMPROOT"
+
+      - name: Install constrained PyQt render dependencies
+        working-directory: .
+        run: >-
+          "$RATE_PYQT_VENV/bin/python" -m pip install --no-cache-dir
+          --constraint requirements-rate-pyqt.txt -e ".[gui,dev]"
+
+      - name: Verify isolated PyQt runtime
+        working-directory: .
+        run: >-
+          "$RATE_PYQT_VENV/bin/python" -m pip check &&
+          "$RATE_PYQT_VENV/bin/python" scripts/check_rate_pyqt_environment.py
+          --constraints requirements-rate-pyqt.txt
 
       - name: Exercise protected PyQt tab visibility
         working-directory: .
@@ -159,7 +183,7 @@ jobs:
           QT_QPA_PLATFORM: offscreen
           RATE_PYQT_EVIDENCE_DIR: rate-pyqt-screenshots
         run: >-
-          python -m pytest
+          "$RATE_PYQT_VENV/bin/python" -m pytest
           tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py
           tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py
           tests/rate_of_closure/test_pyqt_club_camera_rendered.py
@@ -173,7 +197,7 @@ jobs:
       - name: Enforce protected visual baseline drift
         working-directory: .
         run: >-
-          python -m rate_of_closure.visual_baseline_compare
+          "$RATE_PYQT_VENV/bin/python" -m rate_of_closure.visual_baseline_compare
           --candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR"
           --candidate-commit "$GITHUB_SHA"
 

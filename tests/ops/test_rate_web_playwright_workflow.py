@@ -24,6 +24,8 @@ TRUSTED_EVIDENCE_PATHS = (
 )
 PR_EVIDENCE_PATHS = TRUSTED_EVIDENCE_PATHS
 PYQT_AUTHORITY_PATHS = {
+    "requirements-rate-pyqt.txt",
+    "scripts/check_rate_pyqt_environment.py",
     "src/rate_of_closure/club/**",
     "src/rate_of_closure/club_camera.py",
     "src/rate_of_closure/club_mesh_source.py",
@@ -96,6 +98,7 @@ PYQT_AUTHORITY_PATHS = {
     "tests/rate_of_closure/test_visual_baseline_compare.py",
     "tests/rate_of_closure/test_visual_layout_gui.py",
     "tests/rate_of_closure/test_visual_layout_preferences.py",
+    "tests/scripts/test_check_rate_pyqt_environment.py",
     "tests/ops/test_rate_web_playwright_workflow.py",
     "pyproject.toml",
 }
@@ -168,10 +171,25 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
 
     trusted_step_names = [step.get("name") for step in trusted_job["steps"]]
     setup_python_index = trusted_step_names.index("Set up Python")
+    declare_pyqt_index = trusted_step_names.index("Declare isolated PyQt paths")
+    create_pyqt_index = trusted_step_names.index("Create isolated PyQt environment")
     install_pyqt_index = trusted_step_names.index(
-        "Install declared PyQt render dependencies"
+        "Install constrained PyQt render dependencies"
     )
-    assert setup_python_index < install_pyqt_index
+    smoke_pyqt_index = trusted_step_names.index("Verify isolated PyQt runtime")
+    exercise_pyqt_index = trusted_step_names.index(
+        "Exercise protected PyQt tab visibility"
+    )
+    baseline_index = trusted_step_names.index("Enforce protected visual baseline drift")
+    assert (
+        setup_python_index
+        < declare_pyqt_index
+        < create_pyqt_index
+        < install_pyqt_index
+        < smoke_pyqt_index
+        < exercise_pyqt_index
+        < baseline_index
+    )
 
     assert pr_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
         "${{ github.workspace }}/visual-baseline-candidates"
@@ -226,6 +244,8 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "--project=chromium-desktop"
     )
     assert trusted_job["env"]["RATE_E2E_PREBUILT"] == "1"
+    assert "RATE_PYQT_VENV" not in trusted_job["env"]
+    assert "PYTEST_DEBUG_TEMPROOT" not in trusted_job["env"]
     assert trusted_job["timeout-minutes"] == 30
     trusted_steps = {
         str(step.get("name")): step for step in trusted_job["steps"] if "name" in step
@@ -240,11 +260,26 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "Measure protected visualization budgets in isolation"
     ]
     assert performance_step["env"] == {"RATE_E2E_EVIDENCE_PHASE": "performance"}
-    assert trusted_commands["Install declared PyQt render dependencies"] == (
-        'python -m pip install -e ".[gui,dev]"'
+    assert trusted_commands["Declare isolated PyQt paths"] == (
+        'echo "RATE_PYQT_VENV=${RUNNER_TEMP}/rate-pyqt-'
+        '${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"\n'
+        'echo "PYTEST_DEBUG_TEMPROOT=${RUNNER_TEMP}/rate-pyqt-pytest-'
+        '${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"'
+    )
+    assert trusted_commands["Create isolated PyQt environment"] == (
+        'python -m venv "$RATE_PYQT_VENV" && mkdir -p "$PYTEST_DEBUG_TEMPROOT"'
+    )
+    assert trusted_commands["Install constrained PyQt render dependencies"] == (
+        '"$RATE_PYQT_VENV/bin/python" -m pip install --no-cache-dir '
+        '--constraint requirements-rate-pyqt.txt -e ".[gui,dev]"'
+    )
+    assert trusted_commands["Verify isolated PyQt runtime"] == (
+        '"$RATE_PYQT_VENV/bin/python" -m pip check && '
+        '"$RATE_PYQT_VENV/bin/python" scripts/check_rate_pyqt_environment.py '
+        "--constraints requirements-rate-pyqt.txt"
     )
     assert trusted_commands["Exercise protected PyQt tab visibility"] == (
-        "python -m pytest "
+        '"$RATE_PYQT_VENV/bin/python" -m pytest '
         "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
         "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
         "tests/rate_of_closure/test_pyqt_club_camera_rendered.py "
@@ -261,7 +296,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         '--candidate-commit "$RATE_VISUAL_BASELINE_SOURCE_COMMIT"'
     )
     assert trusted_commands["Enforce protected visual baseline drift"] == (
-        "python -m rate_of_closure.visual_baseline_compare "
+        '"$RATE_PYQT_VENV/bin/python" -m rate_of_closure.visual_baseline_compare '
         '--candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR" '
         '--candidate-commit "$GITHUB_SHA"'
     )
