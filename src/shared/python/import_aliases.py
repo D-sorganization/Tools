@@ -51,7 +51,9 @@ _SHARED_ROOTS = frozenset(
         "upstream_drift_tools",
     }
 )
-_DOWNSTREAM_SRC_ALIAS_ROOTS = frozenset({"chat", "sidekick", "upstream_drift_tools"})
+_DOWNSTREAM_SRC_ALIAS_ROOTS = frozenset(
+    {"chat", "contracts", "sidekick", "upstream_drift_tools"}
+)
 _TOOLS_SRC_ROOT = Path(__file__).resolve().parents[2]
 
 
