@@ -126,8 +126,19 @@ const csvCell = (value: unknown): string => {
 
 const rowsToCsv = (rows: LaunchMonitorRow[]): string => {
   const columns = [...new Set(rows.flatMap((row) => Object.keys(row)))];
-  return `${[columns, ...rows.map((row) => columns.map((column) => row[column]))]
-    .map((row) => row.map(csvCell).join(",")).join("\n")}\n`;
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports
+  let csv = columns.map(csvCell).join(",") + "\n";
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    let rowString = "";
+    for (let j = 0; j < columns.length; j++) {
+      if (j > 0) rowString += ",";
+      rowString += csvCell(row[columns[j]]);
+    }
+    csv += rowString + "\n";
+  }
+  return csv;
 };
 
 export async function createAnalysisExportBundle(
