@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 
@@ -82,7 +83,13 @@ class UpstreamV2Client:
     """Small replaceable client; statistics remain in UpstreamDrift."""
 
     def __init__(self, base_url: str, *, timeout_seconds: float = 30.0) -> None:
-        self.base_url = base_url.rstrip("/")
+        normalized = base_url.rstrip("/")
+        parsed = urlparse(normalized)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("Upstream authority URL must use HTTP(S) with a host")
+        if timeout_seconds <= 0:
+            raise ValueError("Upstream authority timeout must be positive")
+        self.base_url = normalized
         self.timeout_seconds = timeout_seconds
 
     def analyze(self, payload: dict[str, object]) -> AnalysisResponseV2:
@@ -92,6 +99,7 @@ class UpstreamV2Client:
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        with urlopen(request, timeout=self.timeout_seconds) as response:  # noqa: S310 - configured local/private authority
+        # The constructor admits only HTTP(S) authorities; file/custom schemes fail.
+        with urlopen(request, timeout=self.timeout_seconds) as response:  # nosec B310
             value: Any = json.loads(response.read().decode("utf-8"))
         return validate_v2_response(value)

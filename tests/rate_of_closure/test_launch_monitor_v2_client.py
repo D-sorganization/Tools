@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from rate_of_closure.launch_monitor_v2_client import validate_v2_response
+from rate_of_closure.launch_monitor_v2_client import (
+    UpstreamV2Client,
+    validate_v2_response,
+)
 
 
 def _response() -> dict[str, object]:
@@ -56,3 +59,10 @@ def test_v2_client_rejects_unknown_or_claim_unsafe_response() -> None:
     response["claims"] = {**response["claims"], "device_emulation": True}  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="emulation"):
         validate_v2_response(response)
+
+
+def test_v2_client_rejects_non_http_authorities_and_invalid_timeouts() -> None:
+    with pytest.raises(ValueError, match=r"HTTP\(S\)"):
+        UpstreamV2Client("file:///tmp/private.json")
+    with pytest.raises(ValueError, match="positive"):
+        UpstreamV2Client("https://analysis.example", timeout_seconds=0)
