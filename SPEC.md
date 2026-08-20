@@ -27,10 +27,36 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.50                                    |
-| **Last Spec Update**    | 2026-08-19                                 |
+| **Spec Version**        | 1.17.51                                    |
+| **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
+
+### Governed Launch-Monitor Analytics Release
+
+Version 1.17.51 consolidates the launch-monitor research platform onto current
+Rate-of-Closure PyQt6 and React/Vite clients. Both surfaces provide explicit-
+identity player projects, arbitrary-variable analysis, persistence and backing
+exports, unit-aware dispersion, target-error proxy, attested session trends,
+and a safe Neural Model Lab. Expected-strokes SG is explicitly user supplied;
+source-backed strokes gained remains unavailable until a versioned benchmark
+and required course-state inputs exist.
+
+The PyQt client can load the manifest-verified private authority containing
+261,666 rows across 27 sources from `LAUNCH_MONITOR_DATA_ROOT` or an explicitly
+selected directory. All rows remain available to analysis/export while plot
+rendering is deterministically bounded to 2,000 points. Untrusted CSV/JSON
+imports retain the shared 250,000-row and resource limits. Numeric-column
+discovery uses a vectorized native-numeric path, and redundant Qt refreshes are
+signal-blocked; the full authority loads in 0.88 seconds and binds in 2.69
+seconds on the release workstation.
+
+UpstreamDrift contract v2 is the canonical analytics seam. Private capability
+metadata governs vendor operations, restricted rows never enter the browser
+bundle, unsafe executable model formats are rejected, and all current vendor
+training remains fail-closed because no approved repeating split group exists.
+Release B remains `protocol_ready`: its paired-device protocol is complete but
+no paired observations have been collected.
 
 ### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 
@@ -4959,7 +4985,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-20 | 1.17.56 | chore(shared): normalise src/shared/python against the consumers' lint baseline across shared python modules. | #4507 |
+| 2026-08-20 | 1.17.62 | chore(shared): normalise src/shared/python against the consumers' lint baseline across shared python modules. | #4507 |
+| 2026-08-20 | 1.17.59 | feat(rate-of-closure): deliver governed launch-monitor platform with private corpus loading, neural model lab, linked scatter analytics, and cross-surface manifest registration. | #4587 |
 | 2026-08-19 | 1.17.52 | fix(ci): Isolate the benchmark suite in a job-local virtual environment so an internally inconsistent self-hosted pip installation cannot contaminate dependency installation or benchmark evidence. Add workflow contract tests and retain the benchmark lane as advisory. | #4582 |
 | 2026-08-19 | 1.17.51 | feat(golf-club, rate-of-closure, #4549 C6/C7, #4562 H4): deliver Club Tester GUI tab (PyQt6), React web panel, and Heavy Hit coupling visualization. **PyQt6 Club Tester tab (`ui/pyqt6/club_tester_tab.py`, `club_tester_controls.py`, `club_tester_models.py`, `club_tester_results.py`)**: side-by-side baseline vs counterfactual comparison table, delivered shaft dynamics readouts (dynamic loft add, face closure, kick speed, 1st mode frequency), and Heavy Hit transient impact coupling readout (decoupling fraction, coupled exit speed vs free-head speed, contact force/duration, and rigid-shaft upper bound). Golfer model import natively parses MJCF (MuJoCo), URDF (Drake/Pinocchio), and OpenSim `.osim` models. **React Club Tester Panel (`web/src/components/ClubTesterPanel.tsx`, `web/src/model/clubFitting.ts`)**: complete feature and wire parity with PyQt6 implementation, full fixture parsing and validation for `golf_club.fitting_document/1`, `golf_club.fitting_report/1`, `golf_club.impact_coupling_report/1`, and `swing_sim.body_chain/1`. **Security & Auth Fixes (UpstreamDrift#8770, #4569)**: sanitized user/credential logging across `src/shared/python/ai/auth/authentication.py`, updated `NotImplementedError` citations to UpstreamDrift#8770, and resolved duplicated glued markdown table row in SPEC.md. Verified: 1,583 React tests across 195 test files passing, PyQt6 GUI tests with full accessibility control name audit passing, 26 manifest and visual baseline compare tests passing, ruff and mypy clean. | #4555, #4556, #4566, #4569 |
 | 2026-08-19 | 1.17.50 | fix(ai-adapters): restore four guards that a downstream consolidation dropped, found while triaging UpstreamDrift CI (UpstreamDrift #8771). **BitNet prompt validation**: `_MAX_PROMPT_BYTES` (64 KiB) and `_build_validated_prompt()` are back, and run before any `Popen`/`run` on both the sync and streaming paths - the prompt is a single `-p` argv element, so an unbounded one risks E2BIG and a lone surrogate failed deep inside `subprocess` after the fork with nothing tying it to the prompt. **Empty-turn guard** in the Ollama, OpenAI and Anthropic formatters: `chat_service` passes `current_message=""` when the user's turn is already the tail of `context.messages`, and appending a blank user turn made providers answer the empty turn instead of the real one. **Gemini `_build_chat_session`** takes `current_message` again and lifts the trailing user turn out of the history, so the message is not replayed as history *and* answered as blank. **Ollama typed transport errors**: `httpx.ConnectError`/`TimeoutException` are pre-checked by type before the base classifier's message scan, which reported `ConnectError("broken")` as a generic provider error and never fired the "Is Ollama running?" hint. Adds 9 regression tests; `tests/shared/python/ai` goes 408 -> 417 passing. |

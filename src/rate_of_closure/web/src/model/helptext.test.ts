@@ -22,6 +22,7 @@ const TABS = [
   "Variation",
   "Putting",
   "Glossary",
+  "Neural Model Lab",
 ] as const;
 
 describe("per-tab help", () => {

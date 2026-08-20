@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-18
+> Last updated: 2026-08-20
 
 > **Current state only**, capped at 150 lines; history lives in git and in
 > [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
@@ -54,6 +54,16 @@ reshaped, and were taken only after `main`'s entire existing suite passed
 against the swapped-in version, before any new tests. Meet that bar or skip it.
 
 ## Active Epics — Golf Epics Merged
+
+Launch-monitor epic #4583 is in consolidated Release A delivery. PyQt6 and
+React now share explicit-identity projects, arbitrary-variable analysis,
+dispersion/target-error, attested session summaries, persistence/export, and a
+safe capability-driven Neural Model Lab. The desktop client can load all
+261,666 manifest-verified private-authority rows from an explicitly authorized
+local root while its plot stays bounded. UpstreamDrift v2 is the canonical
+contract; embedded calculations are labeled compatibility/offline. Do not claim
+vendor emulation, source-backed strokes gained, paired-device validation, or
+population meta-analysis: #4584, Release B, and #4277 remain open respectively.
 
 Both golf epics and their GUI surfaces are **physics & GUI complete and merged** (#4577, #4579):
 

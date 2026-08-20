@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-19
+> Last updated: 2026-08-20
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -27,6 +27,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                         |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs). |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout). |
+| #4583 | Professional launch-monitor program. Consolidated PyQt6/React release PR pending; private campaign, Upstream contract v2, public data facade, and AffineDrift paper are merged. #4277 meta-analysis and #4584 source-backed SG remain open. |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
 #4473/#4577), `src/pendulum_simulator/AGENT_HANDOFF.md`,
@@ -57,14 +58,12 @@ is left, and it is a reimplementation, not a migration**: wiring
 do not close #4466 until #4571 lands.**
 
 The 39 `codex/4142-*` / `codex/4433-*` drafts were closed on 2026-08-16 as
-superseded by merged #4473, and their work is on `main` (Morris chain under
-`application/morris/`, the #4433 inspectors under `ui/pyqt6/`). **Their
-branches are intact; reopen rather than rebase** — merging one now would remove
-current `main` content. #4473 does **not** supersede #4438 (merged).
+superseded by merged #4473 (Morris chain under `application/morris/`, #4433
+inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
-Other live non-golf work: `src/shared/python` hygiene (#4507 lint
-normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469
-architecture guards always-on), and eight Bolt/Palette micro-PRs.
+Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
+
+**Inbound from UpstreamDrift#8770.** UD's child-copy contract forbids fixing `src/shared/python/ai/auth/authentication.py` there (pending us). Lines 342/370 cite `TODO #5227` (retarget to UpstreamDrift#8770); lines 240/245/316 trip semgrep `python-logger-credential-disclosure` by logging user ids on credential paths.
 
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
@@ -144,7 +143,8 @@ Note: `ruff format --check` reports four pre-existing failures under
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
 4. Complete #4142 and companion #4430 after their registered model/UI gates.
-5. Clear the `src/shared/python` hygiene pair (#4507, #4509).
+5. Clear the `src/shared/python` hygiene pair (#4507, #4509) plus the auth fix
+   for UpstreamDrift#8770 — all unblock downstream consumers.
 6. Land the CI repairs (#4454, #4469) and fix the filed reds (#4561, #4569).
 7. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 8. #4125 H5: stand up the public release-management repo (cross-repo).

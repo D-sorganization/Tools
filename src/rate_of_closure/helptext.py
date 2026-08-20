@@ -182,6 +182,24 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "Comparable describe sourced definition frames; they do not emulate or "
         "certify vendor devices.</p>",
     ),
+    "neural_model_lab": _entry(
+        "Neural Model Lab",
+        "<h3>What this tab does</h3>"
+        "<p>Acts as a safe client for private group-safe vendor-comparable "
+        "surrogate training and validates portable non-executable JSON models.</p>"
+        "<h3>Workflow</h3><ol><li>Review data-driven vendor eligibility and "
+        "blockers.</li><li>Select custom data, provide its immutable repository "
+        "commit, explicit features and targets, and a policy-approved repeating "
+        "split group.</li><li>Export or submit the reference-only request to a "
+        "private CLI and monitor its process.</li><li>Load a validated portable "
+        "model, inspect its card and held-out metrics, query unit-labelled inputs, "
+        "and export the inspection evidence.</li></ol>"
+        "<h3>Tips and Scientific Boundary</h3><p>This app never trains in-process. It "
+        "rejects row-like split groups and requires at least three groups with a "
+        "repeat. Out-of-domain inputs warn. Residual plots remain unavailable "
+        "unless aligned held-out rows were exported. Vendor-comparable does not "
+        "mean device emulation or certification.</p>",
+    ),
     "variation": _entry(
         "Variation",
         "<h3>What this tab does</h3>"

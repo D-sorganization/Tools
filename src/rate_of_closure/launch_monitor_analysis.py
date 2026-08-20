@@ -7,7 +7,9 @@ from dataclasses import replace
 from hashlib import sha256
 from typing import cast
 
+import numpy as np
 import pandas as pd
+from pandas.api.types import is_bool_dtype, is_numeric_dtype
 
 from rate_of_closure.launch_monitor_numeric import finite_launch_monitor_scalar
 
@@ -45,11 +47,17 @@ from ._launch_monitor_analysis_types import (
 def numeric_columns(frame: pd.DataFrame) -> list[str]:
     """Return columns with at least three numeric values, including source fields."""
 
-    return sorted(
-        str(column)
-        for column in frame.columns
-        if frame[column].map(finite_launch_monitor_scalar).notna().sum() >= 3
-    )
+    eligible: list[str] = []
+    for column in frame.columns:
+        series = frame[column]
+        if is_numeric_dtype(series.dtype) and not is_bool_dtype(series.dtype):
+            values = pd.to_numeric(series, errors="coerce").to_numpy(dtype=float)
+            count = int(np.isfinite(values).sum())
+        else:
+            count = int(series.map(finite_launch_monitor_scalar).notna().sum())
+        if count >= 3:
+            eligible.append(str(column))
+    return sorted(eligible)
 
 
 def _strings(frame: pd.DataFrame, column: str) -> tuple[str, ...]:
