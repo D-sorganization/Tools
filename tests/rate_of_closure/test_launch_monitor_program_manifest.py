@@ -64,6 +64,6 @@ def test_program_manifest_assigns_one_owner_to_each_capability() -> None:
     assert all(item["owner"] in REQUIRED_REPOSITORIES for item in capabilities)
     assert all(item["tracking_issue"] for item in capabilities)
     assert all(
-        item["status"] in {"planned", "in_progress", "complete"}
+        item["status"] in {"planned", "in_progress", "protocol_ready", "complete"}
         for item in capabilities
     )

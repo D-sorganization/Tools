@@ -29,7 +29,7 @@
     },
     {
       "name": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
-      "main_commit": "97f3ecfba4560017f142c992cda58bdbb4b17f33",
+      "main_commit": "78f0a42540e523ac883d843394b30a636311bf9d",
       "role": "Restricted data authority, campaign execution, and trained artifacts",
       "contains_restricted_shot_rows": true
     }
@@ -92,19 +92,19 @@
       "id": "corpus-use-qualification",
       "owner": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
       "tracking_issue": "D-sorganization/Launch-Monitor-Flight-Model-Campaign#21",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "id": "multi-source-flight-model-campaign",
       "owner": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
       "tracking_issue": "D-sorganization/Launch-Monitor-Flight-Model-Campaign#21",
-      "status": "in_progress"
+      "status": "complete"
     },
     {
       "id": "paired-device-validation",
       "owner": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
       "tracking_issue": "D-sorganization/Launch-Monitor-Flight-Model-Campaign#22",
-      "status": "planned"
+      "status": "protocol_ready"
     },
     {
       "id": "rate-client-feature-parity",

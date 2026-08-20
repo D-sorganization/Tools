@@ -29,6 +29,11 @@ It can report agreement with vendor outputs, not independent device accuracy.
 Release B requires simultaneous same-shot observations from multiple devices and
 an independent reference wherever feasible.
 
+The Release B protocol, capture schema, validator, synthetic fixture, and
+confirmatory 252-pair power plan are ready in the private authority. Its status
+is `protocol_ready`, not complete: no paired observations have been collected,
+so cross-device validation remains unavailable.
+
 ShotLink-derived rows remain internal and cannot train a vendor surrogate.
 Foresight, FlightScope, and other vendor-named surrogates remain unavailable
 until an approved row-level dataset supports them. Player-level analysis requires
