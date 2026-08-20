@@ -91,7 +91,7 @@ export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
 
   return <section aria-label="Player analytics workspace" className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
     <h3 className="font-semibold text-slate-200">Player Covariation Workspace</h3>
-    <p className="mt-1 text-xs text-slate-400">Identity is never inferred from session, club, filename, or row order. Per-player estimates delegate to the existing analysis adapter pending the UpstreamDrift v2 endpoint.</p>
+    <p className="mt-1 text-xs text-slate-400">Identity is never inferred from session, club, filename, or row order. The replaceable client validates canonical UpstreamDrift v2 responses. With no authority URL configured in this standalone build, Run is explicitly the local v1 compatibility/offline calculation; row-aligned residuals are unavailable.</p>
     <div className="mt-3 grid gap-3 sm:grid-cols-3">
       <label className="text-sm text-slate-300">Player identity
         <select aria-label="Player identity column" title="Choose a real player identifier supplied by the dataset owner" value={identity}
@@ -118,8 +118,8 @@ export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
       I attest this column identifies a player; it was not inferred from session, club, filename, or row order.
     </label>
     <div className="mt-3 flex flex-wrap gap-2">
-      <button type="button" disabled={!ready} title="Run player-group covariation through the analysis adapter" onClick={run}
-        className="rounded bg-emerald-700 px-3 py-2 text-sm disabled:opacity-40">Run Player Covariation</button>
+      <button type="button" disabled={!ready} title="Run the explicitly labelled local v1 compatibility calculation" onClick={run}
+        className="rounded bg-emerald-700 px-3 py-2 text-sm disabled:opacity-40">Run Offline Compatibility Covariation</button>
       <button type="button" disabled={!ready} title="Save a persistent reference-only project that does not embed private rows"
         onClick={() => download("analysis.lmproject.json", serializeLaunchMonitorProject(project()))}
         className="rounded border border-slate-700 px-3 py-2 text-sm disabled:opacity-40">Save Project</button>

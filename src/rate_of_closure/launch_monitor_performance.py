@@ -113,7 +113,7 @@ class ScoreResult:
 def calculate_strokes_gained(
     frame: pd.DataFrame, request: StrokesGainedRequest
 ) -> ScoreResult:
-    """Compute source-backed strokes gained as E(before) - 1 - E(after)."""
+    """Compute user-supplied expected-strokes SG without validating a baseline."""
 
     parsed = urlparse(request.baseline_source_url)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
@@ -126,11 +126,12 @@ def calculate_strokes_gained(
         raise ValueError("strokes gained requires finite expected-stroke state")
     result = tuple(float(value) for value in values)
     return ScoreResult(
-        "strokes_gained",
+        "user_supplied_expected_strokes_sg",
         "strokes",
         result,
         float(np.mean(result)),
-        "SG = expected_strokes_before - 1 - expected_strokes_after",
+        "User-supplied expected-strokes SG = E(before) - 1 - E(after); "
+        "the app did not reproduce or validate the cited baseline table.",
         request.baseline_source_url,
     )
 

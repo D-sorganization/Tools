@@ -30,17 +30,21 @@ def test_dispersion_reports_units_and_directional_outcomes() -> None:
     assert result.points[2].carry_yards == pytest.approx(111.55, rel=1e-4)
 
 
-def test_true_strokes_gained_requires_cited_expected_stroke_state() -> None:
+def test_user_supplied_expected_strokes_sg_is_not_claimed_as_source_backed() -> None:
     frame = pd.DataFrame({"before": [3.2, 3.1], "after": [2.0, 1.8]})
     with pytest.raises(ValueError, match="source"):
         calculate_strokes_gained(frame, StrokesGainedRequest("before", "after", ""))
     result = calculate_strokes_gained(
         frame,
-        StrokesGainedRequest("before", "after", "https://example.org/baseline"),
+        StrokesGainedRequest(
+            "before", "after", "https://datagolf.com/frequently-asked-questions"
+        ),
     )
     assert result.values == pytest.approx((0.2, 0.3))
     assert result.mean == pytest.approx(0.25)
     assert result.unit == "strokes"
+    assert result.metric_name == "user_supplied_expected_strokes_sg"
+    assert "did not reproduce or validate" in result.formula
 
 
 def test_distance_only_metric_is_named_target_error_not_strokes_gained() -> None:

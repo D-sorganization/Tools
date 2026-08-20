@@ -53,7 +53,7 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             "I attest this column identifies a player; it was not inferred "
             "from session, club, or row order."
         )
-        self.run_button = QPushButton("Run Player Covariation")
+        self.run_button = QPushButton("Run Offline Compatibility Covariation")
         self.save_button = QPushButton("Save Project...")
         self.load_button = QPushButton("Load Project...")
         self.export_button = QPushButton("Export Full Bundle...")
@@ -66,7 +66,7 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             (self.attestation, "Explicit player identity attestation"),
             (
                 self.run_button,
-                "Run player-group covariation through the analysis adapter",
+                "Run local v1 compatibility calculation; canonical v2 is preferred",
             ),
             (
                 self.save_button,
@@ -93,6 +93,17 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             buttons.addWidget(button)
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("Player Covariation Workspace"))
+        boundary = QLabel(
+            "Canonical UpstreamDrift v2 is preferred. This standalone run is an "
+            "explicit local v1 compatibility/offline calculation; row-aligned "
+            "residuals are unavailable."
+        )
+        boundary.setWordWrap(True)
+        boundary.setAccessibleName("Player analytics authority status")
+        boundary.setToolTip(
+            "Explains why this embedded calculation is not a canonical v2 response."
+        )
+        layout.addWidget(boundary)
         layout.addLayout(form)
         layout.addLayout(buttons)
         layout.addWidget(self.status)

@@ -17,15 +17,17 @@ describe("launch monitor performance adapter", () => {
     expect(result.points[0].lateralYards).toBeCloseTo(-10);
   });
 
-  it("fails true strokes gained closed without a cited baseline", () => {
+  it("labels user-supplied expected-strokes SG as not source-backed", () => {
     const rows = [{ before: 3.2, after: 2.0 }, { before: 3.1, after: 1.8 }];
     expect(() => calculateStrokesGained(rows, {
       expectedBeforeColumn: "before", expectedAfterColumn: "after", baselineSourceUrl: "",
     })).toThrow(/source/i);
-    expect(calculateStrokesGained(rows, {
+    const result = calculateStrokesGained(rows, {
       expectedBeforeColumn: "before", expectedAfterColumn: "after",
-      baselineSourceUrl: "https://example.org/baseline",
-    }).mean).toBeCloseTo(0.25);
+      baselineSourceUrl: "https://datagolf.com/frequently-asked-questions",
+    });
+    expect(result.metricName).toBe("user_supplied_expected_strokes_sg");
+    expect(result.mean).toBeCloseTo(0.25);
   });
 
   it("names launch-only performance radial target error, never strokes gained", () => {

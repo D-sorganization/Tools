@@ -28,13 +28,11 @@ from rate_of_closure.launch_monitor_performance import (
     DispersionRequest,
     DispersionResult,
     ScoreResult,
-    StrokesGainedRequest,
     TargetErrorRequest,
     TrendRequest,
     TrendResult,
     analyze_dispersion,
     analyze_session_trend,
-    calculate_strokes_gained,
     calculate_target_error,
 )
 from rate_of_closure.launch_monitor_workspace import dataset_reference_for_frame
@@ -46,9 +44,12 @@ from rate_of_closure.ui.pyqt6.launch_monitor_performance_files import (
 from rate_of_closure.ui.pyqt6.launch_monitor_performance_presenter import (
     present_value_error,
 )
+from rate_of_closure.ui.pyqt6.launch_monitor_performance_strokes import (
+    PerformanceStrokesMixin,
+)
 
 
-class LaunchMonitorPerformanceWorkspace(QWidget):
+class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
     """Present descriptive metrics without inferring identity or baseline state."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -88,9 +89,10 @@ class LaunchMonitorPerformanceWorkspace(QWidget):
         self.before_combo = self._combo("Expected strokes before column")
         self.after_combo = self._combo("Expected strokes after column")
         self.baseline_url = QLineEdit()
-        self.strokes_button = QPushButton("Calculate Strokes Gained")
+        self.strokes_button = QPushButton("Calculate User-Supplied SG")
         self.strokes_status = QLabel(
-            "Unavailable: provide expected-stroke columns and a cited baseline source."
+            "Unavailable — source-backed strokes gained: current data lacks "
+            "course-state inputs and no validated baseline manifest/table is loaded."
         )
         self.strokes_status.setWordWrap(True)
 
@@ -120,8 +122,14 @@ class LaunchMonitorPerformanceWorkspace(QWidget):
             ),
             (self.before_combo, "Expected strokes before column"),
             (self.after_combo, "Expected strokes after column"),
-            (self.baseline_url, "HTTP(S) source for the expected-strokes baseline"),
-            (self.strokes_button, "Calculate source-backed strokes gained"),
+            (
+                self.baseline_url,
+                "User citation URL; the app does not validate its baseline table",
+            ),
+            (
+                self.strokes_button,
+                "Calculate user-supplied expected-strokes SG; not source-backed",
+            ),
             (self.player_attest, "Explicit trusted player identity attestation"),
             (
                 self.session_attest,
@@ -158,8 +166,8 @@ class LaunchMonitorPerformanceWorkspace(QWidget):
         layout = QVBoxLayout(self)
         layout.addWidget(
             QLabel(
-                "Performance Analytics — formulas and availability are shown "
-                "in each tab"
+                "Performance Analytics — explicit local v1 compatibility/offline "
+                "bookkeeping; canonical v2 is the inferential authority"
             )
         )
         layout.addWidget(tabs)
@@ -196,7 +204,7 @@ class LaunchMonitorPerformanceWorkspace(QWidget):
         form = QFormLayout(page)
         form.addRow("Expected before:", self.before_combo)
         form.addRow("Expected after:", self.after_combo)
-        form.addRow("Baseline source URL:", self.baseline_url)
+        form.addRow("User citation URL:", self.baseline_url)
         form.addRow(self.strokes_button)
         form.addRow(self.strokes_status)
         return page
@@ -290,21 +298,6 @@ class LaunchMonitorPerformanceWorkspace(QWidget):
 
     def run_dispersion_safely(self) -> None:
         present_value_error(self, "Dispersion Unavailable", self.run_dispersion)
-
-    def run_strokes(self) -> ScoreResult:
-        result = calculate_strokes_gained(
-            self._frame,
-            StrokesGainedRequest(
-                self.before_combo.currentText(),
-                self.after_combo.currentText(),
-                self.baseline_url.text().strip(),
-            ),
-        )
-        self.strokes_status.setText(
-            f"Mean {result.mean:.3f} strokes. {result.formula}. "
-            f"Source: {result.source_url}"
-        )
-        return result
 
     def run_strokes_safely(self) -> None:
         present_value_error(self, "Strokes Gained Unavailable", self.run_strokes)

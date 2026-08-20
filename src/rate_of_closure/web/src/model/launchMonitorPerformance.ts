@@ -65,9 +65,9 @@ export function calculateStrokesGained(rows: LaunchMonitorRow[], request: Stroke
   });
   if (!values.length) throw new RangeError("Strokes gained requires finite expected-stroke state");
   return {
-    metricName: "strokes_gained" as const, unit: "strokes" as const, values,
+    metricName: "user_supplied_expected_strokes_sg" as const, unit: "strokes" as const, values,
     mean: values.reduce((sum, value) => sum + value, 0) / values.length,
-    formula: "SG = expected_strokes_before - 1 - expected_strokes_after",
+    formula: "User-supplied expected-strokes SG = E(before) - 1 - E(after); the app did not reproduce or validate the cited baseline table.",
     sourceUrl: request.baselineSourceUrl,
   };
 }

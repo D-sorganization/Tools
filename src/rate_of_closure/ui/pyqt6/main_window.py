@@ -45,6 +45,7 @@ from rate_of_closure.ui.pyqt6.main_window_layout import (
 )
 from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
 from rate_of_closure.ui.pyqt6.morris_worker import MorrisAuthorityPort
+from rate_of_closure.ui.pyqt6.neural_model_lab_tab import NeuralModelLabTab
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
@@ -130,6 +131,7 @@ class RateOfClosureMainWindow(
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
+        self._neural_model_lab_tab = NeuralModelLabTab()
         self._variation_tab = VariationTab()
         self._morris_tab = MorrisScreeningTab(morris_client)
         self._morris_tab.shutdownReady.connect(self._resume_pending_close)
@@ -193,6 +195,7 @@ class RateOfClosureMainWindow(
                 self._launch_monitor_analytics_tab,
                 "Launch Monitor Analytics",
             ),
+            ("neural_model_lab", self._neural_model_lab_tab, "Neural Model Lab"),
             ("variation", self._variation_workspace, "Variation"),
             ("putting", self._putting_tab, "Putting"),
             ("glossary", self._glossary_tab, "Glossary"),
