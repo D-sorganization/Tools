@@ -27,27 +27,27 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.61                                    |
+| **Spec Version**        | 1.17.67                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
 
-Version 1.17.61 repairs the merge-hold guard's no-hold path under the runner's
+Version 1.17.64 repairs the merge-hold guard's no-hold path under the runner's
 implicit `bash -e`. Absent labels and a non-draft state are now evaluated in
 explicit conditional blocks, so an ordinary clean PR succeeds while actual
 labels, drafts, reviewer disarms, and unacknowledged deletions retain the same
 enforcement behavior.
 
-Version 1.17.60 hardens the hosted delivery path for this release. The trusted
+Version 1.17.67 hardens the hosted delivery path for this release. The trusted
 Rate web visual job provisions a pinned Python 3.12 runtime before installing
 and exercising the PyQt mirror. Release Automation now transfers generated
 commit notes between jobs as a retained artifact and supplies GitHub release
 notes by file, preventing large histories from exceeding process-environment
 or command-line limits. Workflow contract tests pin both properties.
 
-Version 1.17.53 closes the software gaps tracked by #4584/#4229 and #4230.
+Version 1.17.66 closes the software gaps tracked by #4584/#4229 and #4230.
 PyQt6 and React now load the same versioned expected-strokes artifact, verify
 its canonical table SHA-256 and provenance fields, require explicit before/after
 course state, constrain interpolation within one lie, and export every lookup.
@@ -57,7 +57,7 @@ longitudinal analysis with session uncertainty, per-player OLS slopes,
 fixed/random population synthesis, improvement direction, unit-labelled plots,
 backing exports, and explicit non-causal limitations.
 
-Version 1.17.52 adds the identity-safe population covariation layer tracked by
+Version 1.17.65 adds the identity-safe population covariation layer tracked by
 #4277. The Python authority and React/PyQt clients now separate raw pooled,
 player-mean-centered, between-player, per-player, and fixed/random-effects
 Pearson estimates; retain descriptive Spearman estimates; flag aggregation
@@ -5022,8 +5022,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-20 | 1.17.62 | chore(shared): normalise src/shared/python against the consumers' lint baseline across shared python modules. | #4507 |
 | 2026-08-20 | 1.17.61 | fix(shared): clear the 18 pre-existing mypy errors in src/shared/python across mdl_parser, matplotlib_renderer, trendline, optimization, and pressure drop/PSA calculators. | #4509 |
 | 2026-08-20 | 1.17.60 | fix(ci): run tests/architecture/ guards on every PR, and fix import resolvability, god modules, and sidekick external import boundary guards. | #4469 |
-| 2026-08-20 | 1.17.61 | fix(ci): make absent merge-hold signals safe under the runner's implicit errexit mode while preserving actual hold enforcement. | #4583 |
-| 2026-08-20 | 1.17.60 | ci(release): provision Python in the trusted Rate visual lane and carry release notes between jobs as a file artifact, eliminating the unbounded process-environment and command-line seam. | #4583 |
+| 2026-08-20 | 1.17.67 | ci(release): provision Python in the trusted Rate visual lane and carry release notes between jobs as a file artifact, eliminating the unbounded process-environment and command-line seam. | #4583 |
+| 2026-08-20 | 1.17.66 | feat(rate-of-closure): add governed source-backed strokes-gained and attested longitudinal player/population analysis with PyQt/React parity. | #4230, #4584, #4229 |
+| 2026-08-20 | 1.17.65 | feat(rate-of-closure): add identity-safe within-player covariation, aggregation diagnostics, fixed/random meta-analysis, and exploratory pair scanning with PyQt/React parity. | #4277 |
+| 2026-08-20 | 1.17.64 | fix(ci): make absent merge-hold signals safe under the runner's implicit errexit mode while preserving actual hold enforcement. | #4583 |
 | 2026-08-20 | 1.17.59 | feat(rate-of-closure): deliver governed launch-monitor platform with private corpus loading, neural model lab, linked scatter analytics, and cross-surface manifest registration. | #4587 |
 | 2026-08-19 | 1.17.52 | fix(ci): Isolate the benchmark suite in a job-local virtual environment so an internally inconsistent self-hosted pip installation cannot contaminate dependency installation or benchmark evidence. Add workflow contract tests and retain the benchmark lane as advisory. | #4582 |
 | 2026-08-19 | 1.17.51 | feat(golf-club, rate-of-closure, #4549 C6/C7, #4562 H4): deliver Club Tester GUI tab (PyQt6), React web panel, and Heavy Hit coupling visualization. **PyQt6 Club Tester tab (`ui/pyqt6/club_tester_tab.py`, `club_tester_controls.py`, `club_tester_models.py`, `club_tester_results.py`)**: side-by-side baseline vs counterfactual comparison table, delivered shaft dynamics readouts (dynamic loft add, face closure, kick speed, 1st mode frequency), and Heavy Hit transient impact coupling readout (decoupling fraction, coupled exit speed vs free-head speed, contact force/duration, and rigid-shaft upper bound). Golfer model import natively parses MJCF (MuJoCo), URDF (Drake/Pinocchio), and OpenSim `.osim` models. **React Club Tester Panel (`web/src/components/ClubTesterPanel.tsx`, `web/src/model/clubFitting.ts`)**: complete feature and wire parity with PyQt6 implementation, full fixture parsing and validation for `golf_club.fitting_document/1`, `golf_club.fitting_report/1`, `golf_club.impact_coupling_report/1`, and `swing_sim.body_chain/1`. **Security & Auth Fixes (UpstreamDrift#8770, #4569)**: sanitized user/credential logging across `src/shared/python/ai/auth/authentication.py`, updated `NotImplementedError` citations to UpstreamDrift#8770, and resolved duplicated glued markdown table row in SPEC.md. Verified: 1,583 React tests across 195 test files passing, PyQt6 GUI tests with full accessibility control name audit passing, 26 manifest and visual baseline compare tests passing, ruff and mypy clean. | #4555, #4556, #4566, #4569 |
