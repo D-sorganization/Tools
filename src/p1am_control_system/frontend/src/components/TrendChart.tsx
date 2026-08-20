@@ -479,6 +479,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             className="btn"
             style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
             title={view.paused ? "Resume Live Stream" : "Pause / Freeze Plot"}
+            aria-label={view.paused ? "Resume live stream" : "Pause / freeze plot"}
           >
             {view.paused ? <Play size={12} color="var(--color-success)" /> : <Pause size={12} />}
             <span>{view.paused ? "Live" : "Freeze"}</span>
@@ -489,6 +490,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             className="btn"
             style={{ padding: "0.25rem 0.5rem" }}
             title="Scroll back in time (older)"
+            aria-label="Scroll back in time (older)"
           >
             <ChevronLeft size={12} />
           </button>
@@ -498,6 +500,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             className="btn"
             style={{ padding: "0.25rem 0.5rem" }}
             title="Scroll toward now (newer)"
+            aria-label="Scroll toward now (newer)"
           >
             <ChevronRight size={12} />
           </button>
@@ -507,6 +510,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             className="btn"
             style={{ padding: "0.25rem 0.5rem" }}
             title="Reset Plot Zoom/Pan Settings"
+            aria-label="Reset Plot Zoom/Pan Settings"
           >
             <RotateCcw size={12} />
           </button>
@@ -521,6 +525,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             className="btn"
             style={{ padding: "0.25rem 0.5rem" }}
             title="Zoom In"
+            aria-label="Zoom In"
           >
             <ZoomIn size={12} />
           </button>
@@ -530,6 +535,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             className="btn"
             style={{ padding: "0.25rem 0.5rem" }}
             title="Zoom Out"
+            aria-label="Zoom Out"
           >
             <ZoomOut size={12} />
           </button>
