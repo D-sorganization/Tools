@@ -1,0 +1,2373 @@
+{
+  "schema_version": "rate-of-closure-campaign/v1",
+  "repository": "D-sorganization/Tools",
+  "as_of": "2026-08-12",
+  "default_branch": "main",
+  "required_main_checks": [
+    "quality-gate",
+    "tests (3.11)"
+  ],
+  "release_stage_definitions": [
+    "specified_only",
+    "implemented_on_feature_stack",
+    "protected_merged_to_parent",
+    "released_to_main"
+  ],
+  "campaign_release": {
+    "status": "not_released",
+    "branch": "main",
+    "sha": null
+  },
+  "carriers": [
+    {
+      "id": "pr-4119",
+      "pr": 4119,
+      "branch": "feat/impact-simulation-platform",
+      "base_branch": "main",
+      "evidence_commit_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4133",
+      "pr": 4133,
+      "branch": "feat/impact-interval-dynamics",
+      "base_branch": "feat/course-showcase",
+      "evidence_commit_sha": "b8209dd866e308058c443cb81c3182d2437b46a9",
+      "state": "merged",
+      "merge_commit_sha": "bc8ce9b8b98f8cefc9458b903f5bf2f98f1fd9ba",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4167",
+      "pr": 4167,
+      "branch": "feat/4144-variation-visualizations",
+      "base_branch": "feat/investigation-suite",
+      "evidence_commit_sha": "edaa56358a9ccf47809533fcab28e6415b336771",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4173",
+      "pr": 4173,
+      "branch": "feat/4163-impact-inspector",
+      "base_branch": "feat/4144-variation-visualizations",
+      "evidence_commit_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4179",
+      "pr": 4179,
+      "branch": "feat/4162-wedge-impact-visualization",
+      "base_branch": "feat/4166-wedge-turf-physics",
+      "evidence_commit_sha": "0eb804e70887c788421332369e42792411aff55a",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4202",
+      "pr": 4202,
+      "branch": "feat/4189-dplane",
+      "base_branch": "feat/4162-wedge-impact-visualization",
+      "evidence_commit_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4203",
+      "pr": 4203,
+      "branch": "feat/4181-launch-monitor-registry",
+      "base_branch": "feat/4189-dplane",
+      "evidence_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4217",
+      "pr": 4217,
+      "branch": "codex/ballflight-campaign-integration",
+      "base_branch": "feat/4181-launch-monitor-registry",
+      "evidence_commit_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
+      "state": "merged",
+      "merge_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4279",
+      "pr": 4279,
+      "branch": "feat/4218-toolstrip-workspace",
+      "base_branch": "feat/4181-launch-monitor-registry",
+      "evidence_commit_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4280",
+      "pr": 4280,
+      "branch": "feat/4144-variation-export-continuation",
+      "base_branch": "feat/4218-toolstrip-workspace",
+      "evidence_commit_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4281",
+      "pr": 4281,
+      "branch": "feat/4199-wind-scalar-adapter",
+      "base_branch": "feat/4144-variation-export-continuation",
+      "evidence_commit_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4282",
+      "pr": 4282,
+      "branch": "feat/4199-wind-workflow",
+      "base_branch": "feat/4199-wind-scalar-adapter",
+      "evidence_commit_sha": "bb101cedd555d07d493aae998b46050c68660cdd",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4283",
+      "pr": 4283,
+      "branch": "feat/4197-capability-observer",
+      "base_branch": "feat/4199-wind-workflow",
+      "evidence_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
+      "state": "merged",
+      "merge_commit_sha": "c1827bbdc50a6e11cc475db2636b4e47a4c15416",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4285",
+      "pr": 4285,
+      "branch": "feat/4268-ground-contract",
+      "base_branch": "feat/4197-capability-observer",
+      "evidence_commit_sha": "3235af71150a774954e7673fc81d7179330fbe76",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4288",
+      "pr": 4288,
+      "branch": "feat/4269-flight-ground-transfer",
+      "base_branch": "feat/4268-ground-contract",
+      "evidence_commit_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4289",
+      "pr": 4289,
+      "branch": "feat/4197-capability-flight-evaluator",
+      "base_branch": "feat/4197-capability-observer",
+      "evidence_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
+      "state": "merged",
+      "merge_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4294",
+      "pr": 4294,
+      "branch": "feat/4197-capability-optimization-ui",
+      "base_branch": "feat/4197-capability-flight-evaluator",
+      "evidence_commit_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647",
+      "state": "merged",
+      "merge_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4302",
+      "pr": 4302,
+      "branch": "feat/4270-ground-impact-bounce",
+      "base_branch": "feat/4269-flight-ground-transfer",
+      "evidence_commit_sha": "62beb3e1aa951645fd556a53f9cbae4bb46c47e5",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4304",
+      "pr": 4304,
+      "branch": "feat/4271-ground-skid-roll",
+      "base_branch": "feat/4270-ground-impact-bounce",
+      "evidence_commit_sha": "3f861c1faaa7455faee92eaa7f813174667208e0",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4332",
+      "pr": 4332,
+      "branch": "feat/4271-regional-surface-transitions",
+      "base_branch": "feat/4271-ground-skid-roll",
+      "evidence_commit_sha": "5ac3c1f233de30dd42eeac57073cbdb149bde652",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4335",
+      "pr": 4335,
+      "branch": "feat/4271-regional-wire-contract",
+      "base_branch": "feat/4271-regional-surface-transitions",
+      "evidence_commit_sha": "8f933ed8dcb29e55ece4ec6bb1e60813f6794d57",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4339",
+      "pr": 4339,
+      "branch": "feat/4274-regional-surface-ui",
+      "base_branch": "feat/4271-regional-wire-contract",
+      "evidence_commit_sha": "db335937afc4b587d235eb705e315f577519c5e6",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4342",
+      "pr": 4342,
+      "branch": "feat/4274-regional-plan-io",
+      "base_branch": "feat/4274-regional-surface-ui",
+      "evidence_commit_sha": "de66a851aa5dded680279cf9a2b25a5094966593",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4350",
+      "pr": 4350,
+      "branch": "feat/4271-regional-execution-binding",
+      "base_branch": "feat/4274-regional-plan-io",
+      "evidence_commit_sha": "98f86990e9225903fbe84cd1f267ed38ef0a15d8",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4351",
+      "pr": 4351,
+      "branch": "feat/4271-regional-execution-ui",
+      "base_branch": "feat/4271-regional-execution-binding",
+      "evidence_commit_sha": "4024c8a1ad2d3871c6b06ef6369250a873789c39",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4352",
+      "pr": 4352,
+      "branch": "feat/4271-regional-result-readback",
+      "base_branch": "feat/4271-regional-execution-ui",
+      "evidence_commit_sha": "12fc80798d2a15b44c0215688ffb031dd99cbdd1",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4353",
+      "pr": 4353,
+      "branch": "feat/4271-regional-event-inspection",
+      "base_branch": "feat/4271-regional-result-readback",
+      "evidence_commit_sha": "e0433adbc3c82272745d098867f261462a790d08",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4354",
+      "pr": 4354,
+      "branch": "feat/4271-regional-trajectory-export",
+      "base_branch": "feat/4271-regional-event-inspection",
+      "evidence_commit_sha": "97925e4803f4fbd72d576eb1c11c47f8e61b0b66",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4355",
+      "pr": 4355,
+      "branch": "feat/4271-repeated-bounce-wire",
+      "base_branch": "feat/4271-regional-trajectory-export",
+      "evidence_commit_sha": "a04d14e9308990e676e8c90ddb1d80e368dd1387",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4356",
+      "pr": 4356,
+      "branch": "feat/4270-repeated-bounce-request-wire",
+      "base_branch": "feat/4271-repeated-bounce-wire",
+      "evidence_commit_sha": "2387430fc78baa92ba122c7ad008a498118bf62d",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4357",
+      "pr": 4357,
+      "branch": "feat/4270-repeated-bounce-execution",
+      "base_branch": "feat/4270-repeated-bounce-request-wire",
+      "evidence_commit_sha": "c492b52f9f7615c5bc38e780965167cc8f64327c",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4359",
+      "pr": 4359,
+      "branch": "feat/4270-flight-bounce-execution",
+      "base_branch": "feat/4270-repeated-bounce-execution",
+      "evidence_commit_sha": "e53c6fb1bd273292c02085ee5d0a2b5497820871",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4360",
+      "pr": 4360,
+      "branch": "feat/4271-flight-regional-ground-pipeline",
+      "base_branch": "feat/4270-flight-bounce-execution",
+      "evidence_commit_sha": "74f1ceafd87f952a76917dc868baa6414f856144",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4361",
+      "pr": 4361,
+      "branch": "codex/4273-flight-ground-study-adapter",
+      "base_branch": "feat/4271-flight-regional-ground-pipeline",
+      "evidence_commit_sha": "81de044075a4f72c6da8fedb972437df79a06ab8",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4363",
+      "pr": 4363,
+      "branch": "codex/4274-ground-playback-propagation",
+      "base_branch": "codex/4273-flight-ground-study-adapter",
+      "evidence_commit_sha": "ec50fdf059f91ca9e4664da891398af218e1ba65",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4364",
+      "pr": 4364,
+      "branch": "codex/4192-ground-target-projection",
+      "base_branch": "codex/4274-ground-playback-propagation",
+      "evidence_commit_sha": "f13f0908dd2a553cf4d114afd31bb474d1b967c7",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4365",
+      "pr": 4365,
+      "branch": "codex/4273-seeded-ground-variation",
+      "base_branch": "codex/4192-ground-target-projection",
+      "evidence_commit_sha": "27d2a68d3738d61307af9235f3f97f7bd400e0f3",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4366",
+      "pr": 4366,
+      "branch": "codex/4273-ground-variation-persistence",
+      "base_branch": "codex/4273-seeded-ground-variation",
+      "evidence_commit_sha": "8dfb1189c13f0fce99901e1ffbba152d813f9006",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4367",
+      "pr": 4367,
+      "branch": "codex/4273-ground-variation-file-ui",
+      "base_branch": "codex/4273-ground-variation-persistence",
+      "evidence_commit_sha": "0968a4ced5644aa8e2673ca278d261eeb92c31f8",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4368",
+      "pr": 4368,
+      "branch": "codex/4273-ground-variation-file-controls",
+      "base_branch": "codex/4273-ground-variation-file-ui",
+      "evidence_commit_sha": "7d2d155b35f2ae55842de120864c4a343a5ebcb6",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4370",
+      "pr": 4370,
+      "branch": "codex/4369-regional-ground-execution-job",
+      "base_branch": "codex/4273-ground-variation-file-controls",
+      "evidence_commit_sha": "0a485958bd6ed46dce18e65fd3e3cd1fa797502a",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4371",
+      "pr": 4371,
+      "branch": "codex/4369-validator-failure-stage",
+      "base_branch": "codex/4369-regional-ground-execution-job",
+      "evidence_commit_sha": "e2503a526dc84e241b9366ac8ed6d54134940a5f",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4372",
+      "pr": 4372,
+      "branch": "codex/4369-ground-authority-capability",
+      "base_branch": "codex/4369-validator-failure-stage",
+      "evidence_commit_sha": "86adb42323ea210d1b4f85242abe51c7db06a5e9",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4373",
+      "pr": 4373,
+      "branch": "codex/4369-imported-job-ui",
+      "base_branch": "codex/4369-ground-authority-capability",
+      "evidence_commit_sha": "cca7c839f8fcaeab57d43fcb9d6f3df3b428e3c4",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4374",
+      "pr": 4374,
+      "branch": "codex/4369-editor-job-preparation",
+      "base_branch": "codex/4369-imported-job-ui",
+      "evidence_commit_sha": "e1da8708c15f966afc926e20eae3fdf084ba8a16",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4375",
+      "pr": 4375,
+      "branch": "codex/4369-flight-recompute-cancellation",
+      "base_branch": "codex/4369-editor-job-preparation",
+      "evidence_commit_sha": "9561dae8c048a511722619a7dfdaf065bb1667c7",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4376",
+      "pr": 4376,
+      "branch": "codex/4369-authority-restart-recovery",
+      "base_branch": "codex/4369-flight-recompute-cancellation",
+      "evidence_commit_sha": "d14ce6f8ef2696ccaa8971443fa4df7e8d52f21f",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4388",
+      "pr": 4388,
+      "branch": "codex/4378-static-inspection-runtime",
+      "base_branch": "codex/4369-authority-restart-recovery",
+      "evidence_commit_sha": "a35b259fd6a6ad57815544d228d73a806bb8d84e",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4390",
+      "pr": 4390,
+      "branch": "codex/4379-same-origin-companion",
+      "base_branch": "codex/4378-static-inspection-runtime",
+      "evidence_commit_sha": "c3ecfd48910aa5aafb89962a256333690e8e72c5",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4391",
+      "pr": 4391,
+      "branch": "codex/4380-playwright-production-browser",
+      "base_branch": "codex/4379-same-origin-companion",
+      "evidence_commit_sha": "0de3de8a41c018aec03dead8371a1f3ec6e1912f",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4392",
+      "pr": 4392,
+      "branch": "codex/4385-windows-state-security",
+      "base_branch": "codex/4380-playwright-production-browser",
+      "evidence_commit_sha": "dde43534babf385530a95b2ff6ce3477f73ac9b3",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4298",
+      "pr": 4298,
+      "branch": "feat/4284-camera-snap-tracking",
+      "base_branch": "feat/4199-wind-workflow",
+      "evidence_commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4301",
+      "pr": 4301,
+      "branch": "fix/rate-mobile-tools-menu",
+      "base_branch": "feat/4284-camera-snap-tracking",
+      "evidence_commit_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4303",
+      "pr": 4303,
+      "branch": "fix/rate-pyqt-default-camera",
+      "base_branch": "fix/rate-mobile-tools-menu",
+      "evidence_commit_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4305",
+      "pr": 4305,
+      "branch": "feat/4272-ground-material-profiles",
+      "base_branch": "feat/4271-ground-skid-roll",
+      "evidence_commit_sha": "a35fc8aac0cbc2aeeef757fd1d1c518987f2355c",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4306",
+      "pr": 4306,
+      "branch": "feat/4273-ground-study-projection",
+      "base_branch": "feat/4272-ground-material-profiles",
+      "evidence_commit_sha": "1e1b576c36cc01e27542dd88747f54f918ff16bf",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4307",
+      "pr": 4307,
+      "branch": "feat/4273-ground-study-result-adapter",
+      "base_branch": "feat/4273-ground-study-projection",
+      "evidence_commit_sha": "40f5cd94d934bcebaf99c942a64852bcb4710a9e",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4308",
+      "pr": 4308,
+      "branch": "feat/4273-ground-study-scalar-adapter",
+      "base_branch": "feat/4273-ground-study-result-adapter",
+      "evidence_commit_sha": "c8ebf422669992c4a33db661b0c37dfe72b580ae",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4309",
+      "pr": 4309,
+      "branch": "feat/4275-ground-reference-execution",
+      "base_branch": "feat/4273-ground-study-scalar-adapter",
+      "evidence_commit_sha": "c93c6f36d361f4c129d702565a9330149e175557",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    }
+  ],
+  "test_evidence": [
+    {
+      "id": "windows-state-security-local-dde4",
+      "kind": "local",
+      "commit_sha": "dde43534babf385530a95b2ff6ce3477f73ac9b3",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_authority_state_security.py tests/rate_of_closure/test_regional_ground_authority_store.py -q",
+        "python -m pytest tests/rate_of_closure -q",
+        "python -m ruff check src/rate_of_closure tests/rate_of_closure scripts/qualify_windows_authority_state_install.py",
+        "python -m ruff format --check src/rate_of_closure tests/rate_of_closure scripts/qualify_windows_authority_state_install.py",
+        "installed-wheel python -I scripts/qualify_windows_authority_state_install.py --phase seed --state-root <isolated-state> --job-fixture <job> --result-fixture <result> --report <report>",
+        "installed-wheel python -I scripts/qualify_windows_authority_state_install.py --phase recover --state-root <isolated-state> --job-fixture <job> --result-fixture <result> --report <report>"
+      ],
+      "summary": "The published Windows state-security child passed focused native/store/API/loopback/workflow qualification, independent review, and clean Python 3.11 and 3.12 installed-wheel recovery checks. Four local symlink-privilege cases and the POSIX-mode case skipped as expected. Dedicated protected Windows 3.11/3.12 evidence remains blocked because no registered runner has the restricted d-sorg-windows-security label.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "rate-stack-local-c182",
+      "kind": "local",
+      "commit_sha": "c1827bbdc50a6e11cc475db2636b4e47a4c15416",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure src/shared/python/swing_sim -q",
+        "npm test -- --run"
+      ],
+      "summary": "1426 Python Rate and shared-swing tests and 624 React tests passed on the consolidated capability head; this is local, not protected-release evidence.",
+      "source_paths": [
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "variation-local-d71",
+      "kind": "local",
+      "commit_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure src/shared/python/swing_sim -q",
+        "npm test -- --run"
+      ],
+      "summary": "890 Python/PyQt/shared-swing tests and 545 React tests passed for the variation export continuation, with one optional Rust skip.",
+      "source_paths": [
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "toolstrip-local-c36",
+      "kind": "local",
+      "commit_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure src/shared/python/swing_sim -q",
+        "npm test -- --run"
+      ],
+      "summary": "890 Python/PyQt/shared-swing tests and 545 React tests passed for the toolstrip and independent plot workspace carrier.",
+      "source_paths": [
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "swing-parity-hosted-3186",
+      "kind": "hosted",
+      "commit_sha": "3186a265b10a1648391bb7f6e92042aab0caa35c",
+      "outcome": "failed",
+      "commands": [
+        "Run Rust<->Python parity suite (gate, non-skipped)"
+      ],
+      "summary": "The wheel built and loaded, but cached pytest-qt plugin auto-loading failed before parity test collection because PyQt6 was absent.",
+      "source_paths": [
+        "AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "swing-parity-isolation-18fe",
+      "kind": "local",
+      "commit_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/ops/test_maturin_swing_core_workflow.py -q"
+      ],
+      "summary": "One workflow contract test passed and proves the Rust-only parity step disables unrelated third-party pytest plugin auto-loading.",
+      "source_paths": [
+        "tests/ops/test_maturin_swing_core_workflow.py"
+      ]
+    },
+    {
+      "id": "campaign-composition-local-2c1",
+      "kind": "local",
+      "commit_sha": "2c1a77baa115c4521f8995a4476d6a530b16b47d",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q tests/rate_of_closure",
+        "npm run type-check && npm run lint && npm test && npm run build",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py tests/ops/test_maturin_swing_core_workflow.py"
+      ],
+      "summary": "The composed capability, diagnostics, web-release, and campaign-manifest continuation passed 828 Rate Python/PyQt tests, 104 React files and 642 tests, TypeScript, zero-warning ESLint, the 188-module production build, and nine manifest/parity contracts.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-impact-local-63a6",
+      "kind": "local",
+      "commit_sha": "63a6f4bec63c58d28bceed2e8cf348a618c8e366",
+      "outcome": "passed",
+      "commands": [
+        "uv run --no-project --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "python -m ruff check src/shared/python/swing_sim/ground && python -m ruff format --check src/shared/python/swing_sim/ground",
+        "python -m mypy --no-incremental src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The published impact/bounce evidence commit passed the complete 82-test ground suite on CPython 3.10.20, 3.11.9, and 3.13.3, pinned Ruff and mypy gates, manifest validation and eight manifest tests, documentation governance, structural budgets, and exact shared-golden verification; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-skid-roll-local-f475",
+      "kind": "local",
+      "commit_sha": "f475ae85feea1b2c628f756699b2aba6ea9334fb",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "uv run --no-project --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --python 3.11 --with mypy==1.13.0 -- python -m mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The independently reviewed static-plane skid/roll head passed all 115 ground tests on CPython 3.11.9 and real CPython 3.10.20, pinned MyPy and Ruff, manifest and documentation governance, changed-test assertions, structural budgets, diff checks, and adversarial oblique-slope, request-binding, terminal-consistency, and finite-edge regressions; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-flight-bounce-local-869b",
+      "kind": "local",
+      "commit_sha": "869b626e2d3ebd4097ae76b8fc9720cda6696947",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests src/shared/python/swing_sim/ground/tests",
+        "python -m mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/flight/ground_bounce_execution.py",
+        "python -m ruff check src/shared/python/swing_sim/flight tests && python -m ruff format --check src/shared/python/swing_sim/flight tests",
+        "python scripts/rate_campaign_manifest.py"
+      ],
+      "summary": "The ready PR #4359 implementation passed 17 focused facade tests, all 365 flight-plus-ground tests, strict transfer-failure non-execution coverage, Ruff, MyPy, Bandit, documentation/governance, manifest, structural, and changed-file gates; protected review and checks remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/FLIGHT_TO_GROUND_CONTRACT.md",
+        "docs/specs/GROUND_IMPACT_BOUNCE.md"
+      ]
+    },
+    {
+      "id": "ground-flight-regional-local-090e",
+      "kind": "local",
+      "commit_sha": "090e835477d1f19614f37f978a1b8a0e2f50ae21",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests src/shared/python/swing_sim/ground/tests",
+        "python -m pytest -q src/shared/python/swing_sim/flight/tests/test_regional_ground_pipeline.py src/shared/python/swing_sim/flight/tests/test_contract_api.py src/shared/python/swing_sim/ground/tests/test_regional_execution.py",
+        "python -m mypy --no-incremental --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/flight/regional_ground_pipeline.py src/shared/python/swing_sim/ground/regional_execution.py src/shared/python/swing_sim/ground/regional_execution_records.py src/shared/python/swing_sim/ground/regional_plan_records.py",
+        "python -m ruff check src/shared/python/swing_sim/flight src/shared/python/swing_sim/ground && python -m ruff format --check src/shared/python/swing_sim/flight src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py"
+      ],
+      "summary": "The ready PR #4360 implementation passed all 377 flight-plus-ground tests, 39 focused pipeline/public/regional tests, an independent 28-test and strict-MyPy gate, static analysis, documentation/governance, manifest, assertion, and structural qualification; protected review and checks remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/FLIGHT_TO_GROUND_CONTRACT.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-regional-local-1a48",
+      "kind": "local",
+      "commit_sha": "1a48d749af508843fac2a5102f4dd56294429bda",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "npm test -- --run",
+        "uvx --from mypy==1.13.0 mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The published PR #4332 regional-material child passed all 121 ground tests, 106 React files and 662 tests, TypeScript, zero-warning ESLint, the 189-module production build, pinned MyPy and Ruff, manifest and documentation governance, changed-test assertions, structural budgets, diff checks, and randomized piecewise-analytic transition qualification; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-regional-wire-local-74a0",
+      "kind": "local",
+      "commit_sha": "74a053d2d544da9f44a88007660ad28c0127f285",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "npm test -- --run",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from mypy==1.13.0 mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The published PR #4335 regional-plan wire child passed all 132 ground tests, 107 React files and 666 tests, TypeScript, zero-warning ESLint, the 190-module production build, pinned MyPy and Ruff, manifest and documentation governance, structural budgets, diff checks, and exact cross-runtime canonical JSON/SHA-256 qualification; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-regional-ui-local-cbb9",
+      "kind": "local",
+      "commit_sha": "cbb9c0a6bdc6a50f59f7a661139b9d53e1892980",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q",
+        "npm test -- --run",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from ruff==0.14.10 ruff check src tests && uvx --from ruff==0.14.10 ruff format --check src tests",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The published PR #4339 regional editor child passed 870 Python/PyQt tests and 672 React tests, TypeScript, zero-warning ESLint, the 198-module production build, Ruff, MyPy, manifest and documentation governance, structural budgets, and rendered stale-validation qualification; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-regional-ui-helper-local-d217",
+      "kind": "local",
+      "commit_sha": "d21741e312b849a63f73cabf351a15d9de80fb94",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_regional_surface_plan.py tests/rate_of_closure/test_gui.py tests/rate_of_closure/test_layout_minsize.py -q",
+        "npm test -- --run",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from ruff==0.14.10 ruff check src/rate_of_closure tests/rate_of_closure && uvx --from ruff==0.14.10 ruff format --check src/rate_of_closure tests/rate_of_closure"
+      ],
+      "summary": "The current PR #4339 parent passed focused Python/PyQt and React qualification plus the complete 672-test React suite after replacing its six-parameter number-input helper with a frozen specification and three-parameter helper. This remains local evidence, not protected release evidence.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-regional-io-local-8e1c",
+      "kind": "local",
+      "commit_sha": "8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_regional_surface_plan.py tests/rate_of_closure/test_regional_surface_plan_io.py tests/rate_of_closure/test_workspace_files.py -q",
+        "npm test -- --run src/components/RegionalSurfacePlanPanel.test.tsx",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from ruff==0.14.10 ruff check src/rate_of_closure tests/rate_of_closure && uvx --from ruff==0.14.10 ruff format --check src/rate_of_closure tests/rate_of_closure"
+      ],
+      "summary": "The published PR #4342 child passed strict native atomic and bounded browser regional request I/O qualification, safe-number parity, bounded UTF-8 import, static analysis, build, and governance gates before parent reconciliation. Fresh protected evidence remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "camera-local-2095",
+      "kind": "local",
+      "commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_camera_commands.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_simulation_gui.py -q",
+        "npm test -- --run",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "npm run type-check && npm run lint && npm run build"
+      ],
+      "summary": "The published camera evidence commit passed 39 focused Python/PyQt tests, 107 React files and 650 tests, four Playwright browser tests, TypeScript, zero-warning ESLint, and the 193-module Vite production build; protected and native visual evidence remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "mobile-toolstrip-local-ebd8",
+      "kind": "local",
+      "commit_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5",
+      "outcome": "passed",
+      "commands": [
+        "npm test",
+        "npm run type-check && npm run lint && npm run build",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The published constrained-toolstrip evidence commit passed 108 React files and 653 tests, six Chrome Playwright cases across desktop and constrained 2x-DPR projects, TypeScript, zero-warning ESLint, the 194-module production build, manifest validation, and 11 manifest tests; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "legend-rail-local-83b4",
+      "kind": "local",
+      "commit_sha": "83b4baa3be7424777db4dd50883b7a9e45c8ca91",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -n 4 --dist loadscope tests/rate_of_closure/test_compact_simulation_layout.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_plots_gui.py tests/rate_of_closure/test_simulation_gui.py tests/rate_of_closure/test_wedge_ground_clearance_gui.py tests/rate_of_closure/test_campaign_release_manifest.py -q",
+        "python -m pytest -q tests/rate_of_closure/test_compact_simulation_layout.py -k legend",
+        "python -m ruff check <changed Python files> && python -m ruff format --check <changed Python files>",
+        "python -m mypy --namespace-packages --explicit-package-bases --ignore-missing-imports --follow-imports=skip <changed Python production files>",
+        "node --experimental-strip-types <520 px plot-layout contract>",
+        "esbuild.build({ bundle: true, write: false }) for PlotCanvasCard.tsx",
+        "npm ci",
+        "npm test -- src/components/PlotsPanel.test.tsx --reporter=verbose",
+        "npm test -- --reporter=verbose",
+        "npm run type-check",
+        "npx --no-install eslint src/components/PlotCanvasCard.tsx src/components/PlotsPanel.test.tsx src/components/plotLayout.ts --report-unused-disable-directives --max-warnings 0",
+        "npm run build"
+      ],
+      "summary": "Exact follow-up evidence passed 69 focused PyQt6, plot, camera, simulation, wedge, and campaign-manifest tests plus the isolated default-xdist legend regression; changed Python lint, format, and pinned typing; and installed React evidence comprising the focused one-file/four-test layout regression, all 111 files and 674 tests, TypeScript, scoped zero-warning ESLint, and the 196-module production build. npm ci audited 337 packages with zero vulnerabilities. Rendered native qualification remains open.",
+      "source_paths": [
+        "tests/rate_of_closure/test_compact_simulation_layout.py",
+        "src/rate_of_closure/web/src/components/PlotsPanel.test.tsx"
+      ]
+    },
+    {
+      "id": "moving-camera-local-01ae",
+      "kind": "local",
+      "commit_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_camera_commands.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_compact_simulation_layout.py tests/rate_of_closure/test_simulation_gui.py -q",
+        "npm test && npm run type-check && npm run lint && npm run build",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The moving-subject camera continuation passed 49 focused Python/PyQt tests, 108 React files and 653 tests, six desktop/constrained-HiDPI Chrome Playwright cases, TypeScript, zero-warning ESLint, production build, pinned MyPy, Ruff, manifest validation, and 11 manifest contracts; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md"
+      ]
+    },
+    {
+      "id": "ground-profiles-local-3645",
+      "kind": "local",
+      "commit_sha": "3645fc4d28e332785eb23cd2198ed0be931614d0",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --isolated --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --isolated --python 3.11 --with mypy==1.13.0 -- python -m mypy --no-incremental --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The independently audited strict ground-profile, persistence, applicability-binding, and neutral Upstream terrain-adapter implementation passed all 167 ground tests on CPython 3.11.9 and real CPython 3.10.20, 75 focused adversarial/API tests, pinned MyPy and Ruff, manifest and documentation governance, changed-test assertions, structural/file-size budgets, and diff checks; production presets, UI, consumers, and protected integration remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_MATERIAL_PROFILES.md"
+      ]
+    },
+    {
+      "id": "ground-study-local-0de7",
+      "kind": "local",
+      "commit_sha": "0de714842cf4cd1207944044c883c2d8dc83a7ba",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest -q src/shared/python/swing_sim/ground/tests -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground/tests/test_study_projection.py src/shared/python/swing_sim/ground/tests/test_study_state.py src/shared/python/swing_sim/ground/tests/test_study_validation.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "py -3.12 -m ruff check src/shared/python/swing_sim/ground",
+        "py -3.12 -m mypy src/shared/python/swing_sim/ground/study_derivation.py src/shared/python/swing_sim/ground/study_geometry.py src/shared/python/swing_sim/ground/study_projection.py src/shared/python/swing_sim/ground/study_record.py src/shared/python/swing_sim/ground/study_target.py src/shared/python/swing_sim/ground/study_types.py src/shared/python/swing_sim/ground/study_wire.py src/shared/python/swing_sim/ground/validation.py",
+        "py -3.12 scripts/rate_campaign_manifest.py docs/release/rate_of_closure_campaign.v1.json && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed strict ground-study projection passed all 192 ground tests, 47 focused state/wire/API tests, MyPy and Ruff, manifest validation and eight manifest tests, documentation governance, structural/file-size policy, and adversarial targetless endpoint, airborne/penetration, target, summary, profile, warning, and status-integrity checks; protected integration and downstream carriers remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_RESULT_STUDIES.md"
+      ]
+    },
+    {
+      "id": "ground-study-qualification-local-9405",
+      "kind": "local",
+      "commit_sha": "940563f222065c4f343b587699c52062c6e1db59",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest -q src/shared/python/swing_sim/ground/tests -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/flight/tests/test_result_metrics.py src/shared/python/swing_sim/flight/tests/test_result_contract.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py -o addopts=",
+        "py -3.12 -m ruff check src/shared/python/swing_sim/ground src/shared/python/swing_sim/flight/models.py src/shared/python/swing_sim/flight/surface_simulation.py",
+        "py -3.12 -m mypy src/shared/python/swing_sim/ground/study_derivation.py src/shared/python/swing_sim/ground/study_projection.py src/shared/python/swing_sim/ground/study_record.py src/shared/python/swing_sim/ground/study_types.py src/shared/python/swing_sim/ground/study_wire.py src/shared/python/swing_sim/ground/result_adapter.py",
+        "py -3.12 scripts/rate_campaign_manifest.py docs/release/rate_of_closure_campaign.v1.json && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed model-evidence qualification repair passed 194 ground tests, 27 flight-first import/result/transfer tests, 75 focused adversarial tests, Ruff, MyPy, manifest validation and eight manifest tests, documentation governance, and strict calibration/provenance parsing; estimated, unvalidated, zero-confidence, forged-stale eligibility, public legacy bypass, and import-order regressions fail closed.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_RESULT_STUDIES.md"
+      ]
+    },
+    {
+      "id": "ground-study-metric-adapter-local-6c29",
+      "kind": "local",
+      "commit_sha": "6c296ab35471fc8d2070d229f2921d200f7defdb",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest -q src/shared/python/swing_sim/ground/tests -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/flight/tests/test_result_metrics.py src/shared/python/swing_sim/flight/tests/test_result_contract.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground/tests/test_study_result_adapter.py src/shared/python/swing_sim/ground/tests/test_contract.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "py -3.12 -m ruff check src/shared/python/swing_sim/ground src/shared/python/swing_sim/flight/models.py src/shared/python/swing_sim/flight/surface_simulation.py",
+        "py -3.12 -m mypy src/shared/python/swing_sim/ground/result_adapter.py src/shared/python/swing_sim/ground/study_derivation.py src/shared/python/swing_sim/ground/study_record.py",
+        "py -3.12 scripts/rate_campaign_manifest.py docs/release/rate_of_closure_campaign.v1.json && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts="
+      ],
+      "summary": "The independently re-reviewed qualified-study metric adapter passed 198 ground tests, 27 flight-first import/result/transfer tests, 44 focused adapter/compatibility/API tests, Ruff, MyPy, manifest and documentation gates, and structural policy. Missing profile, unvalidated model calibration, wrong exact type, and public legacy bypass fail closed; target miss does not hide qualified physics, and the lossy DTO is documented as non-authoritative provenance.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_RESULT_STUDIES.md"
+      ]
+    },
+    {
+      "id": "ground-study-scalar-adapter-local-b71b",
+      "kind": "local",
+      "commit_sha": "b71bf88b6ed888248ad152f69a2bd2de3892e256",
+      "outcome": "passed",
+      "commands": [
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground -o addopts=",
+        "py -3.12 -m pytest -q tests/rate_of_closure/test_ground_study_scalar_adapter.py tests/rate_of_closure/test_scalar_ensemble_contract.py -o addopts=",
+        "py -3.12 -m mypy src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py --ignore-missing-imports",
+        "py -3.12 -m ruff check src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py && py -3.12 -m black --check src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+        "py -3.12 scripts/rate_campaign_manifest.py && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed explicit-identity ground-study scalar adapter passed 198 ground and 19 adapter/shared-scalar tests, Ruff, Black, MyPy, manifest and documentation gates, and structural policy. It binds target-derived scalars to exact target geometry and a whole-study digest, rejects duplicate/non-iterable/overflow input, preserves numeric censored observations, and retains failed/unavailable rows with truthful null scalars and typed evidence.",
+      "source_paths": [
+        "src/rate_of_closure/variation/ground_study_scalar_adapter.py",
+        "tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+        "docs/specs/GROUND_RESULT_STUDIES.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-reference-execution-local-c93c",
+      "kind": "local",
+      "commit_sha": "c93c6f36d361f4c129d702565a9330149e175557",
+      "outcome": "passed",
+      "commands": [
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground/tests/test_reference_execution.py src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "uv run --no-project --isolated --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest -q src/shared/python/swing_sim/ground/tests/test_reference_execution.py src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py src/shared/python/swing_sim/ground/tests/test_contract_api.py -o addopts=",
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/flight/tests/test_contract_api.py src/shared/python/swing_sim/flight/tests/test_result_contract.py src/shared/python/swing_sim/flight/tests/test_ground_transfer.py -o addopts=",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground/reference_execution.py src/shared/python/swing_sim/ground/reference_execution_types.py src/shared/python/swing_sim/ground/tests/test_reference_execution.py src/shared/python/swing_sim/ground/tests/test_reference_execution_contract.py",
+        "uv run --no-project --isolated --with mypy==1.13.0 -- python -m mypy --no-incremental --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/reference_execution.py src/shared/python/swing_sim/ground/reference_execution_types.py",
+        "py -3.12 scripts/rate_campaign_manifest.py && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed bounded ground-reference executor passed 219 full ground tests, 44 focused executor/API tests on CPython 3.12 and isolated 3.10, 26 flight compatibility tests, pinned Ruff, Black, MyPy, manifest, documentation, assertion, structural, import-order, fixture-byte, and diff gates. It preflights resolver compatibility before physics, reuses one cancellation callback without an extra probe, composes only representable phase outcomes, and fails closed for every other typed terminal state.",
+      "source_paths": [
+        "src/shared/python/swing_sim/ground/reference_execution.py",
+        "src/shared/python/swing_sim/ground/reference_execution_types.py",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-compiled-runtime-local-5068",
+      "kind": "local",
+      "commit_sha": "50682f251d5e9c0424ba633d1ce5be7fa1379a3c",
+      "outcome": "passed",
+      "commands": [
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml --all -- --check && cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-wheel-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheelhouse'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_runtime.py; & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_parity.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests\\wasm_ground_reference_runtime.cjs",
+        "python scripts/rate_campaign_manifest.py && python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py && python scripts/check_docs_governance.py",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d"
+      ],
+      "summary": "The independently reviewed compiled ground-reference implementation at exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c passes 180 default, 195 Python-feature, and 192 WASM-feature Rust tests; strict default and scoped feature Clippy; 219 Python ground-authority tests; fresh unique-venv CPython 3.13 PyO3 and rebuilt Node/WASM runtime/parity scripts; manifest, documentation, assertion, changed-Python, line-budget, and diff gates. Independent output, step, event, and total-trajectory limits fail closed without conflating their dimensions; runtime step exhaustion, derived numeric failures, event censoring, cancellation, and large-epoch representability remain typed and deterministic. This is local commit-bound evidence, not a hosted check, protected merge, release, or performance qualification.",
+      "source_paths": [
+        "rust_core/tools-core/src/flight_ground/reference_runtime.rs",
+        "rust_core/tools-core/src/flight_ground/resource_limits.rs",
+        "rust_core/tools-core/src/flight_ground/surface_runtime.rs",
+        "rust_core/tools-core/src/flight_ground/surface_events.rs",
+        "rust_core/tools-core/tests/ground_reference_limits.rs",
+        "rust_core/tools-core/tests/ground_reference_runtime.rs",
+        "rust_core/tools-core/tests/python_ground_reference_runtime.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_runtime.cjs",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-scientific-conformance-local-9df3",
+      "kind": "local",
+      "commit_sha": "9df3928a1ef32d81db2e568884ca24d8c576d49a",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "python -m pytest src/shared/python/swing_sim/ground/tests/test_reference_conformance.py -q",
+        "python -m mypy --no-incremental --ignore-missing-imports src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "python -m ruff check src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py rust_core/tools-core/tests/python_ground_reference_conformance.py && python -m ruff format --check src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml -- --check && npx prettier --check rust_core/tools-core/tests/ground_reference_conformance_support.cjs rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-conformance-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheel'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_conformance.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref 64506a54d546021f3c16fbe0b627f35057ec6dd1 --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref 64506a54d546021f3c16fbe0b627f35057ec6dd1",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed scientific corpus at exact implementation commit 9df3928a1ef32d81db2e568884ca24d8c576d49a passes 227 Python ground tests; 184 default, 199 Python-feature, and 196 WASM-feature Rust tests; eight focused Python contract tests; four native conformance tests; strict default and scoped feature Clippy; MyPy, Ruff, formatting, manifest, documentation, structural, installed CPython 3.13 PyO3-wheel, and rebuilt Node/WASM checks. Five immutable horizontal-plane cases use independent closed-form observables, strict duplicate-key and RFC 6901 semantics, a pinned template reference, explicit units, and bounded tolerances. Corpus SHA-256 is f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310. This is local commit-bound evidence, not hosted or protected-release qualification.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "rust_core/tools-core/tests/ground_reference_conformance.rs",
+        "rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-inclined-passivity-local-5d33",
+      "kind": "local",
+      "commit_sha": "5d333a4448d6484f8c98e78c9878cb83b40aa522",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "python -m pytest src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py -q",
+        "python -m mypy --no-incremental --ignore-missing-imports src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "python -m ruff check src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py && python -m ruff format --check src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml -- --check && npx prettier --check rust_core/tools-core/tests/ground_reference_conformance_support.cjs rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-conformance-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheel'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_conformance.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref 7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref 7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py"
+      ],
+      "summary": "Exact implementation commit 5d333a4448d6484f8c98e78c9878cb83b40aa522 passes 238 Python ground tests; 191 default, 206 Python-feature, and 203 WASM-feature Rust tests; 19 focused conformance/passivity tests; four native six-case corpus tests; strict Clippy, MyPy, Ruff, formatting, policy, documentation, and 500-line structural gates; a fresh installed CPython 3.13 PyO3 wheel; and a rebuilt Node/WASM harness. Independent adversarial review is READY. The sixth analytic case pins zero-resistance pure roll on n=[0,sqrt(0.99),0.1], while per-segment passivity, bounded canonical projection, rolling-resistance cusp handling, independent slip/velocity tolerances, and same-step stationary REST remain fail closed. Corpus SHA-256 is 502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76. This is local commit-bound evidence, not hosted or protected-release qualification.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/skid_roll_dynamics.py",
+        "src/shared/python/swing_sim/ground/skid_roll_runtime.py",
+        "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py",
+        "rust_core/tools-core/src/flight_ground/runtime_math.rs",
+        "rust_core/tools-core/src/flight_ground/surface_dynamics.rs",
+        "rust_core/tools-core/src/flight_ground/surface_runtime.rs",
+        "rust_core/tools-core/tests/ground_reference_conformance.rs",
+        "rust_core/tools-core/tests/ground_reference_holding.rs",
+        "rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-mirrored-property-local-08d6",
+      "kind": "local",
+      "commit_sha": "08d631d7169019aee9067f3739051a50d88b9554",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --test ground_reference_conformance",
+        "python -m maturin build --release --manifest-path rust_core/tools-core/Cargo.toml --out <temporary-wheelhouse> && <fresh-cpython-3.13> rust_core/tools-core/tests/python_ground_reference_conformance.py && <fresh-cpython-3.13> rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python -m mypy --no-incremental --ignore-missing-imports --follow-imports=silent src/shared/python/swing_sim/ground/_vector_math.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/surface_motion_types.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_surface_resolver.py rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "python -m ruff check <seven changed Python sources> && python -m ruff format --check <seven changed Python sources> && npx prettier --check src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py && python scripts/check_changed_python_policy.py --base-ref 8b065dd299acc7cab39321b0e2d7f34ca64f159b"
+      ],
+      "summary": "Exact implementation commit 08d631d7169019aee9067f3739051a50d88b9554 passes 247 Python ground tests; four native Rust seven-case corpus tests; a fresh CPython 3.13 PyO3 seven-case corpus and deterministic seed-4275 20-case tilted property sweep; a fresh release WASM build and Node seven-case harness; and pinned MyPy, Ruff, formatting, manifest, governance, changed-Python, file-size, and diff gates. The reflected incline applies the polar/axial vector distinction, and the Python default unbounded plane derives a deterministic intrinsic tangent for arbitrary valid normals while preserving explicit finite axes. Corpus SHA-256 is c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465. Ready PR #4323 current head 3957f013eeadd448ffa381f12d65b6a076abe21b additionally repairs the exact hosted eight-path MyPy boundary failure without runtime semantic change; protected checks, review, parent integration, and release remain open.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/_vector_math.py",
+        "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
+        "src/shared/python/swing_sim/ground/surface_motion_types.py",
+        "src/shared/python/swing_sim/ground/tests/conformance_support.py",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "src/shared/python/swing_sim/ground/tests/test_surface_resolver.py",
+        "rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    }
+  ],
+  "programs": [
+    {
+      "issue": 4103,
+      "title": "Swing-Impact-Ball-Flight Simulation Platform",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4103"
+        },
+        {
+          "kind": "repository_path",
+          "value": "SPEC.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [
+        "pr-4119"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The outer main-targeting carrier is conflicting, and conflict resolution requires fresh protected checks.",
+      "limitations": [
+        "The platform is not released to main and downstream application parity is incomplete.",
+        "Impact-interval PR 4133 merged after its parent stack propagated and requires explicit reconciliation."
+      ],
+      "depends_on_issues": [],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4120,
+      "title": "Investigation and Variation Suite",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4120"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/shared/python/swing_sim/variation/spec.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/rate_of_closure/variation_visualization_performance.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_variation_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceVariationSession.ts"
+        }
+      ],
+      "tracked_issue_ids": [
+        4142,
+        4144
+      ],
+      "carrier_ids": [
+        "pr-4167",
+        "pr-4280"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "variation-local-d71"
+      ],
+      "evidence_gap": "Protected CI, nonlinear global sensitivity, bounded large-ensemble evidence, and downstream release remain open.",
+      "limitations": [
+        "Feature-stack plots and exports do not establish default-branch availability.",
+        "Not every many-evaluation runner has released cross-surface visualization parity."
+      ],
+      "depends_on_issues": [
+        4103
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4125,
+      "title": "Realistic Clubs, Swing Kinetics, Putting, and Showcase",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4125"
+        },
+        {
+          "kind": "repository_path",
+          "value": "SPEC.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4146,
+        4158
+      ],
+      "carrier_ids": [
+        "pr-4119",
+        "pr-4179"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "implemented_unverified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The complete showcase scope lacks one protected release run and installed-package evidence.",
+      "limitations": [
+        "Representative geometry is not equivalent to qualified manufacturing CAD.",
+        "The current feature stack has not been released through the outer platform PR."
+      ],
+      "depends_on_issues": [
+        4120
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4130,
+      "title": "Impact-Interval Club Dynamics",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4130"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [
+        "pr-4133"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "implemented_unverified",
+        "tools.react": "contract_only",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [],
+      "evidence_gap": "PR 4133 is absent from the current outer platform head and has no current-carrier protected evidence.",
+      "limitations": [
+        "A merge into a historical feature parent did not propagate this implementation toward main.",
+        "Downstream and user-interface integration must be requalified after reconciliation."
+      ],
+      "depends_on_issues": [
+        4125
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4142,
+      "title": "Ensemble Variation, Quiet Zones, and Sensitivity Attribution",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4142"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/shared/python/swing_sim/variation/spec.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/rate_of_closure/variation_visualization_performance.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4144
+      ],
+      "carrier_ids": [
+        "pr-4167",
+        "pr-4280"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "variation-local-d71"
+      ],
+      "evidence_gap": "Global nonlinear sensitivity, localized execution, performance budgets, and downstream parity remain open.",
+      "limitations": [
+        "Existing local visualization evidence is not protected release evidence.",
+        "UpstreamDrift does not yet consume an immutable released variation authority."
+      ],
+      "depends_on_issues": [
+        4120
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4146,
+      "title": "Shared Golf Club Builder",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4146"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_SHAFT_PROFILES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_WEDGE_CAD.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4147,
+        4148,
+        4149,
+        4150,
+        4151,
+        4152
+      ],
+      "carrier_ids": [
+        "pr-4173"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "implemented_unverified",
+        "tools.react": "not_started",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [],
+      "evidence_gap": "Only the assembly-contract child is closed; complete CAD export, image fitting, standalone workflow, and downstream qualification lack program-level evidence.",
+      "limitations": [
+        "Shaft and wedge CAD slices are carried through a later integration branch but their epic remains incomplete.",
+        "STEP and manufacturing-mesh qualification and calibrated three-view image fitting remain open."
+      ],
+      "depends_on_issues": [
+        4125
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4158,
+      "title": "Wedge Delivery Kinematics, Bounce, and Chip-Shot Explorer",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4158"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_TURF_CONTACT.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/WEDGE_IMPACT_VISUALIZATION.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4159,
+        4160,
+        4161,
+        4162,
+        4163,
+        4164,
+        4165,
+        4166
+      ],
+      "carrier_ids": [
+        "pr-4173",
+        "pr-4179"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The complete wedge stack lacks protected release, downstream parity, and final scientific qualification.",
+      "limitations": [
+        "The worked shaft-rotation example is a declared sensitivity case rather than a measured wedge population norm.",
+        "Current turf and forgiveness outputs remain model-conditional."
+      ],
+      "depends_on_issues": [
+        4142,
+        4146
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4181,
+      "title": "Launch Monitor Convention Registry and Comparability",
+      "kind": "program",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "implemented",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4181"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/LAUNCH_MONITOR_CONVENTIONS.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/LAUNCH_MONITOR_ANALYTICS.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4193,
+        4194
+      ],
+      "carrier_ids": [
+        "pr-4203",
+        "pr-4217"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The implemented registry has not reached a protected main release or immutable downstream pin.",
+      "limitations": [
+        "Unavailable vendor conventions remain visibly unavailable rather than inferred.",
+        "Cross-application convention parity is not released."
+      ],
+      "depends_on_issues": [
+        4158
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4189,
+      "title": "Comprehensive 3D D-Plane Calculation and Visualization",
+      "kind": "program",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "implemented",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4189"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/D_PLANE_GEOMETRY.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [
+        "pr-4202",
+        "pr-4203"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "D-plane parity has no protected main or downstream release evidence.",
+      "limitations": [
+        "The feature remains nested below the launch-monitor and wedge carrier chain.",
+        "Vendor comparison depends on explicitly available convention definitions."
+      ],
+      "depends_on_issues": [
+        4158,
+        4181
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4191,
+      "title": "Shot Design, Wind Strategy, Inverse Flight, and 3D Playback",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4191"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/INVERSE_FLIGHT_SOLVER.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/IMPACT_SOLUTION_FAMILIES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/WIND_PHYSICS.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/WIND_UNCERTAINTY_STRATEGY.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/BALL_FLIGHT_PLAYBACK.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/CAPABILITY_OPTIMIZATION.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/variation/regional_ground_target_projection.py"
+        }
+      ],
+      "tracked_issue_ids": [
+        4192,
+        4193,
+        4194,
+        4195,
+        4196,
+        4197,
+        4198,
+        4199,
+        4200,
+        4201
+      ],
+      "carrier_ids": [
+        "pr-4217",
+        "pr-4281",
+        "pr-4282",
+        "pr-4283",
+        "pr-4289",
+        "pr-4294"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "campaign-composition-local-2c1",
+        "rate-stack-local-c182",
+        "swing-parity-hosted-3186",
+        "swing-parity-isolation-18fe"
+      ],
+      "evidence_gap": "The current carriers require fresh hosted parity, protected main integration, scientific qualification, and downstream parity. A local exact-#4361 child now projects complete-rest regional-ground endpoints onto existing landing SpatialTarget geometry with bounded target ensembles, but it has no PR or protected evidence and deliberately excludes aerial trajectory evaluation, UI, persistence, solver/capability invocation, and compiled-runtime parity.",
+      "limitations": [
+        "Capability optimization is still-air carry to first ground crossing and excludes bounce, roll, and total distance.",
+        "The local post-ground target candidate admits only regional COMPLETE plus ground COMPLETE/REST/summary evidence; aerial targets remain typed as requiring the flight trajectory and no solver consumes these target rows yet.",
+        "Feature-parent merges for capability slices were not protected main releases."
+      ],
+      "depends_on_issues": [
+        4181,
+        4189
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4201,
+      "title": "Cross-Interface Validation, Documentation, and Release Evidence",
+      "kind": "release_gate",
+      "delivery_stage": "specified_only",
+      "completion": "specified",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4201"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/rate_of_closure_campaign.v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [],
+      "supported_surfaces": {
+        "tools.pyqt6": "contract_only",
+        "tools.react": "contract_only",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "campaign-composition-local-2c1",
+        "swing-parity-hosted-3186",
+        "swing-parity-isolation-18fe"
+      ],
+      "evidence_gap": "No exact protected main merge SHA, installed-package matrix, immutable UpstreamDrift pin, or complete release evidence exists.",
+      "limitations": [
+        "Local test totals cannot satisfy this release gate.",
+        "A successful workflow configuration regression does not replace the queued hosted parity execution."
+      ],
+      "depends_on_issues": [
+        4191,
+        4218,
+        4234,
+        4260,
+        4267
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4218,
+      "title": "Modern Toolstrip, Persistence, and Workspace Modules",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4218"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_document.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/view_workspace.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/camera_commands.py"
+        },
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4300"
+        },
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4224"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_simulation_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceSimulationSession.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_torque_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceTorqueSession.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_variation_session.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/workspaceVariationSession.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/capability_workflow.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/capabilityWorkflow.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/ui/pyqt6/simulation_scene_renderer.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/components/plotLayout.ts"
+        }
+      ],
+      "tracked_issue_ids": [
+        4219,
+        4220,
+        4221,
+        4222,
+        4223,
+        4224,
+        4225,
+        4284,
+        4300
+      ],
+      "carrier_ids": [
+        "pr-4279",
+        "pr-4298",
+        "pr-4301",
+        "pr-4303"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "toolstrip-local-c36",
+        "camera-local-2095",
+        "mobile-toolstrip-local-ebd8",
+        "legend-rail-local-83b4",
+        "moving-camera-local-01ae"
+      ],
+      "evidence_gap": "Complete persistence adapters, synchronized multi-view state, camera snap controls, accessibility, and protected release remain open.",
+      "limitations": [
+        "Unavailable persistence actions remain disabled rather than simulating success.",
+        "The camera tracking and canonical snap-view child has no implementation carrier.",
+        "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
+        "The explorer-session v2 child persists ball support/default provenance and the full canonical spatial target on Tools PyQt6 and React, while legacy v1 migration requires an explicit current-state fallback; protected integration remains open.",
+        "The explorer-session v3 child locally persists the canonical torque-profile library, source-derived active selection, passive/prescribed run contract, and joint locks on Tools PyQt6 and React; legacy v1/v2 migration is explicit and conflict-safe, while protected integration remains open.",
+        "The explorer-session v5 child locally persists authored variation inputs plus the strict capability optimizer input specification on Tools PyQt6 and React. Full-document authority preserves accepted evidence and advanced policy while controls overlay represented fields; interactive projection requires the exact ordered canonical units and a 3-by-3 correlation basis, rejecting alternate units, covariance, and unsupported shapes before mutation without conversion. Stale native workers cannot publish across generations, and oversized numeric wire values fail closed. Capability results, observation ensembles, runtime objects, wind-aware optimizer inputs, UpstreamDrift consumers, and protected integration remain open.",
+        "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open.",
+        "The bounded issue 4224 default-legend rail slice has immutable local evidence at 83b4baa3be7424777db4dd50883b7a9e45c8ca91 on a child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; installed React qualification passes while persistence/export qualification, native review, and protected integration remain open.",
+        "Draft PR 4303 publishes share-ready moving-subject camera defaults across PyQt6 and React at immutable evidence commit 01ae99f0f42876c7a6948c30f50e13618da14eca; protected integration and remaining issue 4300 layout work remain open.",
+        "The local #4218/#4284 camera-preference continuation composes exact published #4343, #4331, and #4303 heads and adds strict cross-runtime view-workspace v2 persistence across QSettings, localStorage, File operations, and five camera adapters without persisting targets or per-frame tracking; immutable commit evidence, protected review/CI, rendered qualification, and UpstreamDrift consumers remain open."
+      ],
+      "depends_on_issues": [
+        4191
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4234,
+      "title": "Production-Grade Visual Design, Layout, Context, and Error UX",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4234"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4235,
+        4236,
+        4237,
+        4238,
+        4239
+      ],
+      "carrier_ids": [
+        "pr-4279",
+        "pr-4282"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "implemented_unverified",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "campaign-composition-local-2c1",
+        "toolstrip-local-c36",
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "High-DPI, keyboard, reduced-motion, stable pixel baselines, and full responsive React evidence remain open.",
+      "limitations": [
+        "Rendered fixes cover selected desktop sizes rather than the complete product matrix.",
+        "Current Calculation and error-recovery acceptance criteria are not complete across four surfaces."
+      ],
+      "depends_on_issues": [
+        4218
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4260,
+      "title": "Golf Impact and Flight Authority with Four-Surface Parity",
+      "kind": "epic",
+      "delivery_stage": "specified_only",
+      "completion": "specified",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4260"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/regionalGroundResultImport.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/__fixtures__/regional_ground_scalar_ensemble_golden_v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/four_surface_capability.v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/four_surface_capability.v1.schema.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/runtime_manifest.py"
+        }
+      ],
+      "tracked_issue_ids": [
+        4261,
+        4262,
+        4263,
+        4264,
+        4265,
+        4266
+      ],
+      "carrier_ids": [],
+      "supported_surfaces": {
+        "tools.pyqt6": "contract_only",
+        "tools.react": "contract_only",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [],
+      "evidence_gap": "No machine-readable four-surface capability matrix, immutable Tools pin, or installed conformance run exists. The local strict React import adapter for Python-owned regional scalar results is contract-only and does not establish browser physics or four-surface execution parity.",
+      "limitations": [
+        "A launcher tile does not establish an independent surface implementation.",
+        "Current UpstreamDrift source resolution and React routing do not satisfy parity.",
+        "Strict result import preserves Python evidence but does not establish a browser Run claim, physics authority, or downstream integration.",
+        "The machine-readable matrix is complete for its governed declared scope but must not be treated as exhaustive for narrative features that have not been promoted into a structured campaign record or linked active specification."
+      ],
+      "depends_on_issues": [
+        4191
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4267,
+      "title": "Qualified Landing, Bounce, Roll, and Ground-Surface Modeling",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4267"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_IMPACT_BOUNCE.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_SKID_ROLL.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/variation/regional_ground_study_adapter.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/variation/regional_ground_target_projection.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/variation/regional_ground_variation.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/variation/regional_ground_variation_control.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/variation/regional_ground_variation_execution.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_variation_request.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/regionalGroundVariationWorkspace.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/hooks/useRegionalGroundVariationWorkspace.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/App.workspaceState.test.tsx"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/simulation/ground_playback.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_execution_job.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/flight_execution_profiles.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_job_preparation.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_job_preparation_request.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/regionalGroundJobPreparationRequest.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/regionalGroundExecutionJob.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/__fixtures__/regional_ground_execution_job_golden_v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/scalarEnsembleWire.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/regionalGroundResultImport.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/__fixtures__/regional_ground_scalar_ensemble_golden_v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "tests/rate_of_closure/test_regional_ground_result_golden.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web_authority/api.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web_authority/jobs.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web_authority/production_runner.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web_authority/runtime.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/regionalGroundAuthority.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_execution_result.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/model/regionalGroundExecutionResult.ts"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/ui/pyqt6/regional_ground_execution_controller.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_authority_status.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_authority_transport.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/regional_ground_loopback_submitter.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "tests/rate_of_closure/test_regional_ground_real_loopback.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_MATERIAL_PROFILES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_RESULT_STUDIES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_REFERENCE_EXECUTION.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4268,
+        4269,
+        4270,
+        4271,
+        4272,
+        4273,
+        4274,
+        4275,
+        4276,
+        4369,
+        4377,
+        4378,
+        4379,
+        4380,
+        4385
+      ],
+      "carrier_ids": [
+        "pr-4285",
+        "pr-4288",
+        "pr-4302",
+        "pr-4304",
+        "pr-4332",
+        "pr-4335",
+        "pr-4339",
+        "pr-4342",
+        "pr-4350",
+        "pr-4351",
+        "pr-4352",
+        "pr-4353",
+        "pr-4354",
+        "pr-4355",
+        "pr-4356",
+        "pr-4357",
+        "pr-4359",
+        "pr-4360",
+        "pr-4361",
+        "pr-4363",
+        "pr-4364",
+        "pr-4365",
+        "pr-4366",
+        "pr-4367",
+        "pr-4368",
+        "pr-4370",
+        "pr-4371",
+        "pr-4372",
+        "pr-4373",
+        "pr-4374",
+        "pr-4375",
+        "pr-4376",
+        "pr-4388",
+        "pr-4390",
+        "pr-4391",
+        "pr-4392",
+        "pr-4305",
+        "pr-4306",
+        "pr-4307",
+        "pr-4308",
+        "pr-4309"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "implemented_unverified",
+        "tools.react": "implemented_unverified",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "ground-impact-local-63a6",
+        "ground-skid-roll-local-f475",
+        "ground-flight-bounce-local-869b",
+        "ground-flight-regional-local-090e",
+        "ground-regional-local-1a48",
+        "ground-regional-wire-local-74a0",
+        "ground-regional-ui-local-cbb9",
+        "ground-regional-ui-helper-local-d217",
+        "ground-regional-io-local-8e1c",
+        "windows-state-security-local-dde4",
+        "ground-profiles-local-3645",
+        "ground-study-local-0de7",
+        "ground-study-qualification-local-9405",
+        "ground-study-metric-adapter-local-6c29",
+        "ground-study-scalar-adapter-local-b71b",
+        "ground-reference-execution-local-c93c",
+        "ground-compiled-runtime-local-5068",
+        "ground-scientific-conformance-local-9df3",
+        "ground-inclined-passivity-local-5d33",
+        "ground-mirrored-property-local-08d6"
+      ],
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, matched ground-playback, post-ground target, and seeded base-material variation carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, 4363, 4364, 4365, 4366, 4367, 4368, 4370, 4371, 4372, 4373, 4374, 4375, 4376, 4388, 4390, 4391, and 4392. The #4369 continuation includes strict canonical request persistence, App-owned React editor state, matched File commands, execution job/result/status authorities, complete-only execution controls, the registered Waterloo/Penner flight profile and qualified production runner, authenticated loopback APIs and clients, visible imported-job workflows, strict Python-authoritative current-editor job preparation, and cooperative cancellation through qualified Waterloo/Penner integration and evidence serialization. Published PR #4376 adds a locked versioned SQLite/WAL source-loopback authority store, fail-closed hard-loss reconciliation with no physics replay, exact complete-result survival, and explicit React GET-only retained-status recovery. The #4378 child on PR #4388 adds descriptor-bound network-silent static inspection, a deterministic web asset manifest, immutable Python readiness, no public source maps, fail-closed exact-revision wheel admission, stale-staging cleanup, and credential-free exact-head hosted clean-install qualification without claiming execution. The #4379 child on PR #4390 adds a Python-only exact-bundle same-origin companion, immutable in-memory runtime overlay, closed route broker, strict Host/origin/fetch/body and route-specific response-domain policies, event-loop-safe authority transport, all-method security headers, partial-start cleanup, child-owned ephemeral authority binding, token/port argv removal, normal reaping, and pre-request fresh-token hard-loss replacement without replay. Published PR #4391 for #4380 adds exact-revision Chromium, Firefox, and WebKit harness contracts plus an independent protected-job definition for static inspection and the same-origin companion. PR #4392 for #4385 adds fixed-local-NTFS state admission, exact protected owner/SYSTEM/Administrators DACLs, retained anti-substitution handles, reparse/hard-link/ADS rejection, bounded in-place migration and rollback, explicit retention, and clean installed-wheel restart recovery. The final handoff head still requires fresh protected evidence; the dedicated Windows 3.11/3.12 jobs cannot run until a restricted d-sorg-windows-security runner is registered. Frozen qualification, forced descendant-tree cleanup, fresh protected release evidence, regional-overlay variation, variable-wind scenario wire, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, compiled-runtime physics, and downstream parity remain absent.",
+      "limitations": [
+        "The strict imported-job child mounts visible React Run/Cancel/progress/reconciliation and canonical job/result/CSV downloads over one App-owned authenticated authority workspace. PyQt6 mounts a dedicated Ground Study using bounded import, exact evidence, explicit confirmation, QThread cancellation, and atomic job/result/CSV writes; the source standalone injects the direct qualified Python runner. PR #4374 adds Python-authoritative current-editor preparation with strict bounded request/response binding, no enqueue or auto-run, exact Ground/Tee setup, current-hit staleness protection, and explicit UNVALIDATED calibration disclosure. PR #4375 makes qualified flight recomputation cooperatively cancellable; PR #4376 durably preserves source-loopback lifecycle evidence without automatic replay and removes obsolete retained rows only through static parameterized SQL. They do not enable static hosting, qualify frozen distributions or PyQt direct-worker restart recovery, prove compiled/downstream parity, or complete protected release.",
+        "Historical prerequisite: matched Python/TypeScript presentation models first exposed exact compact job/model/provenance/input-digest identity while their controls remained disabled and unmounted. The newer imported-job child supersedes that UI state with visible, strict, authority-bound workflows without adding current-editor job construction.",
+        "Hosted PR #4372 quality-gate evidence at head e91ef8dcde8cdd8e6545ffc0ea7cb755058ec2fb found one pinned MyPy 1.13 redundant exact-bool cast after checkout, dependencies, Ruff, and formatting passed. The semantic-neutral correction at ff1310c09c066a32e57b50e4daee4da5a40d7bf3 passes the matching local profile and the protected quality gate; queued runner-selector, toolcache, and security jobs plus the ancestor stack remain unresolved.",
+        "The composed #4369 authority continuation has a deterministically generated profile-qualified job/status/result fixture family, a qualified single-flight-solve seeded regional-ground runner, an authenticated real-loopback success path, and exact capability admission. The headless admission slice atomically binds that runner to an exact ready capability, validates readiness evidence, joins the manager worker on shutdown, and admits only exact qualified React controller evidence. Independent review adds deterministic submit-versus-close and exceptional-lifespan regressions plus exact cross-runtime reason, detail-length, and media-type validation; older no-runner statements are historical slice evidence. The newer imported-job child mounts visible authority-bound PyQt6 and React controls while live current-editor job construction and compiled parity remain open because the local interpreter has no swing_core wheel.",
+        "Independent review reproduced and closed submit-versus-close and exceptional-lifespan-exit races. Python and React now share exact runtime reason, detail-length, media-type, and bounded-body capability validation. Complete local headless-admission qualification passes 2,014 Python/PyQt/shared-simulation tests with one optional Rust-wheel parity skip and 860 React tests across 132 files, plus pinned MyPy 1.13 and Ruff 0.14.10, Ruff format, high-severity Bandit, TypeScript, zero-warning ESLint, the 214-module production build, deterministic fixtures, campaign-manifest, governance, and diff-hygiene gates. Protected exact-head evidence and ancestor integration remain open.",
+        "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
+        "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
+        "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
+        "Published open PR #4365 supports seeded variation only on the base surface; unpublished children add canonical request persistence, React session-state ownership, matched contextual File controls, and strict import-only React parsing of Python regional scalar results. Browser download destinations and replacement behavior remain browser-owned; result workspace/persistence, regional overlays, UI pipeline execution, browser physics/Run claims, and solver/capability consumption remain absent.",
+        "The local #4369 batch-control, PyQt port, authority manager, and qualified runner provide cooperative cancellation, typed progress/cancel/failure signals, complete-only publication, QThread lifecycle control around an injected submitter, one daemon authority worker, and a job-bound flight-through-regional-ground execution path. PR #4375 interrupts the registered Waterloo/Penner solver and its application-layer post-processing while preserving fail-closed behavior for any future uncooperative injected solver; the imported-job child exposes enabled controls only when the exact runtime capability is qualified.",
+        "The local #4369 browser authority starts an authenticated isolated loopback process, uses an explicit fixed-host readiness probe, keeps the bearer token outside commands and responses, and exposes bounded submit/status/cancel/result endpoints. Runner cancellation/failure totals must match the submitted job and cannot regress observed progress. The default factory now atomically registers the qualified runner and exact service-level capability; this admits headless job execution but does not add a visible Run button or current-editor job constructor.",
+        "The local #4369 production runner consumes one exact versioned Waterloo/Penner profile that binds strict settings to launch-relative planar-contact recomputation and releases flight only after both declared digests match. The generated canonical fixture qualifies, and the runner reuses one flight solve across seeded regional trials with typed cancellation/failure and complete-only job-bound publication. Default local injection and service capability are now qualified; per-job preflight remains authoritative.",
+        "The local #4369 result envelope and authority result endpoint bind complete canonical scalar evidence to exact job/input identities and require result ID, trial count/order, and series identity matching. SHA-256 proves integrity/provenance, not authentication or that the declared physics executed; an explicit string local keeps isolated skipped-import and full PR-delta MyPy 1.13 roots clean; partial publication, persistence/restart recovery, compiled physics, and downstream parity remain absent.",
+        "The local #4369 React authority client reserves strict submit/status/POST-cancel/result contracts, exact lifecycle/error parsing, and abortable stale-safe capability polling. It now admits only the exact Python v1 qualified capability and enables the headless submission control state. No visible mounted Run control, execution-job authoring, result persistence, static-host authority, or downstream integration is added.",
+        "The local #4369 React execution controller admits at most one exact job, polls serially with abort and stale-generation guards, exposes exact progress and typed terminal failure, delegates POST cancellation, and publishes only the strict client's complete job-bound result. Production admission now derives from the strict qualified capability with no test-only bypass. Visible controls, job authoring, TypeScript physics, persistence, and release evidence remain absent.",
+        "The local #4369 canonical status-wire child centralizes strict Python construction and bounded duplicate-safe parsing in a transport-neutral application module, makes the server manager consume it, and proves Python-produced canonical byte and semantic parity in React for all six states and every stable failure code/stage. It adds no transport adapter, model invocation, UI, persistence, capability promotion, or execution claim.",
+        "The local #4369 Python loopback-submitter child reuses the runtime-owned fixed loopback host, port, bearer token, canonical status parser, and expected-job result validator. It provides bounded polling/backoff, cooperative POST cancellation, accepted-job best-effort cleanup on client failure, and stale/late suppression, but remains unconstructed and unregistered in the visible PyQt workflow despite the qualified headless service capability and adds no UI execution claim.",
+        "The local #4369 real-loopback qualification starts actual Uvicorn/FastAPI processes and exercises bearer rejection, qualified submit/status/result, cancel-after-success, client close/join, manager shutdown, and process reaping through the production HTTP transport. The default environment factory now advertises and executes the qualified runner, but this is headless service evidence rather than released visible Run integration.",
+        "Published open PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge; open PR #4332 adds bounded coplanar material overlays; open PR #4335 adds a strict Python/TypeScript plan wire boundary and Python resolver; open PR #4339 adds matched PyQt6/React request editors; open PR #4342 adds editor-qualified canonical request import/export with native atomic semantics and explicit browser limitations; open PR #4350 adds UI-neutral Python regional execution plus an embedded-plan-bound result/provenance envelope with validated transition crossings; open PR #4351 adds matched strict plan-bound evidence import/readback; open PR #4352 completes all frozen summary/result fields, warnings, calibration, provider identity, and observed-phase readback; open PR #4353 adds bounded ground-event and regional-transition ledger inspection; open PR #4354 adds bounded raw trajectory inspection plus native-atomic and browser-download canonical evidence export; open PR #4355 adds strict import-only Python/TypeScript RepeatedBounceResult evidence serialization and parsing with exact nested invariants, a 1 MiB bound, and canonical SHA parity; open PR #4356 adds the strict paired request envelope; open PR #4357 adds the UI-neutral Python request-to-solver binding; open PR #4359 adds strict composition from qualified flight output through the existing transfer and request boundaries to that executor; open PR #4360 composes the existing flight, bounce, regional skid/roll, and complete-result authorities behind one strict non-fabricating evidence contract; open PR #4361 adds a complete-rest-only Python adapter into existing metric and scalar-ensemble contracts without promoting censored numeric endpoints; open PR #4363 adds strict phase-safe import-only playback to matched PyQt6/React workspaces; and open PR #4364 evaluates only qualified landing targets while retaining typed nulls for aerial and every unqualified outcome. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, direct editor handoff, persistence, aerial target trajectory evaluation, measured calibration, workspace model-input persistence, rendered visual QA, camera presets/tracking, compiled or TypeScript regional physics, solver/capability invocation, variation UI, wind strategy, and downstream surface adapters remain unimplemented.",
+        "The #4271 slice qualifies one immutable planar profile and optional finite tangent-axis edge; material regions, changing normals, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI, compiled runtimes, and downstream adapters remain unimplemented.",
+        "The #4272 contract slice defines no production material preset or calibration claim and its one-way Upstream snapshot adapter is a local tangent-plane projection, not regional-terrain parity.",
+        "The #4273 foundation projects one result into typed target and solver evidence; it does not yet integrate ensemble variation, wind, optimizers, user interfaces, compiled runtimes, or UpstreamDrift consumers.",
+        "The #4273 scalar adapter exposes bounded explicit-identity rows but does not execute ensembles, reinterpret final-rest target miss as a flight target residual, or provide rendered dispersion controls.",
+        "The bounded #4275 Python reference executor composes only settled bounce prefixes with representable skid/roll suffix outcomes; exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c adds compiled execution for one immutable planar profile but no UI, regional terrain, production calibration, hosted evidence, or downstream consumer parity.",
+        "The existing GroundModelResult DTO is provenance-lossy; qualified-study consumers must retain the study record alongside it.",
+        "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint.",
+        "Solver admission preserves declared result calibration and provenance and rejects estimated, unvalidated, or zero-confidence calibration; provenance is auditable context rather than producer certification."
+      ],
+      "depends_on_issues": [
+        4191
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    }
+  ]
+}

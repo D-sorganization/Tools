@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from .chip_forgiveness import ChipStudySummary, ChipTrialCohort
 from .ensemble_chunks import (
     CollectingEnsembleSink,
     EnsembleChunkSink,
     EnsembleStreamHeader,
     SimulationResultChunk,
 )
+from .forgiveness_projection import forgiveness_variation_dataset
+from .forgiveness_runner import ChipForgivenessStudy
 from .morris_rate_adapter import (
     RATE_MORRIS_OUTPUTS,
     RATE_MORRIS_VARIABLE_KEYS,
@@ -44,6 +47,9 @@ from .trial_projection import (
 __all__ = [
     "APP_FRAME_ID",
     "CONTACT_OUTPUT_NAMES",
+    "ChipForgivenessStudy",
+    "ChipStudySummary",
+    "ChipTrialCohort",
     "CollectingEnsembleSink",
     "EVALUATED_HIT",
     "EVALUATED_NO_IMPACT",
@@ -57,17 +63,18 @@ __all__ = [
     "SHOT_OUTPUT_NAMES",
     "SimulationEnsembleRequest",
     "SimulationEnsembleResult",
-    "SimulationTrialOutcome",
     "SimulationExecutor",
     "SimulationResultChunk",
+    "SimulationTrialOutcome",
+    "TEE_HEIGHT_VARIABLE_KEY",
     "TrialCapture",
     "TrialEvaluationStatus",
-    "TEE_HEIGHT_VARIABLE_KEY",
     "apply_ball_setup_sample",
     "apply_global_simulation_values",
     "build_simulation_ensemble_request",
     "capture_simulation",
     "evaluate_rate_morris_design",
+    "forgiveness_variation_dataset",
     "project_simulation_outcome",
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",

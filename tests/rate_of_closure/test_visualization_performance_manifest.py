@@ -141,12 +141,21 @@ def test_all_visualization_authorities_are_declared_as_package_data() -> None:
     project = tomllib.loads(
         (Path(__file__).parents[2] / "pyproject.toml").read_text(encoding="utf-8")
     )
-    packaged = project["tool"]["setuptools"]["package-data"]["rate_of_closure"]
-    assert set(packaged) == {
+    packaged = set(project["tool"]["setuptools"]["package-data"]["rate_of_closure"])
+    authorities = {
         "visualization_tabs.v1.json",
         "visualization_performance.v1.json",
         "visualization_accessibility.v1.json",
         "visual_baselines.v1.json",
         "visual_baselines/v1/react/*.png",
         "visual_baselines/v1/pyqt/*.png",
+    }
+    # Every visualization authority must be declared -- that is this test's
+    # contract. It is deliberately not an equality check: the built web
+    # distribution is also legitimate package data, and pinning the whole list
+    # to one feature's entries makes any other feature's packaging a failure.
+    # Anything outside both sets is still rejected, so drift is still caught.
+    assert authorities <= packaged
+    assert not {
+        entry for entry in packaged - authorities if not entry.startswith("web/dist/")
     }

@@ -19,6 +19,7 @@ _EXPORT_MODULE = {
     "workspace_from_json": ".workspace_document",
     "workspace_to_json": ".workspace_document",
     "read_workspace": ".workspace_files",
+    "write_text_atomic": ".workspace_files",
     "write_workspace_atomic": ".workspace_files",
 }
 
