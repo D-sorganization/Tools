@@ -27,12 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.60                                    |
+| **Spec Version**        | 1.17.61                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.61 repairs the merge-hold guard's no-hold path under the runner's
+implicit `bash -e`. Absent labels and a non-draft state are now evaluated in
+explicit conditional blocks, so an ordinary clean PR succeeds while actual
+labels, drafts, reviewer disarms, and unacknowledged deletions retain the same
+enforcement behavior.
 
 Version 1.17.60 hardens the hosted delivery path for this release. The trusted
 Rate web visual job provisions a pinned Python 3.12 runtime before installing
@@ -5016,6 +5022,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-20 | 1.17.62 | chore(shared): normalise src/shared/python against the consumers' lint baseline across shared python modules. | #4507 |
 | 2026-08-20 | 1.17.61 | fix(shared): clear the 18 pre-existing mypy errors in src/shared/python across mdl_parser, matplotlib_renderer, trendline, optimization, and pressure drop/PSA calculators. | #4509 |
 | 2026-08-20 | 1.17.60 | fix(ci): run tests/architecture/ guards on every PR, and fix import resolvability, god modules, and sidekick external import boundary guards. | #4469 |
+| 2026-08-20 | 1.17.61 | fix(ci): make absent merge-hold signals safe under the runner's implicit errexit mode while preserving actual hold enforcement. | #4583 |
 | 2026-08-20 | 1.17.60 | ci(release): provision Python in the trusted Rate visual lane and carry release notes between jobs as a file artifact, eliminating the unbounded process-environment and command-line seam. | #4583 |
 | 2026-08-20 | 1.17.59 | feat(rate-of-closure): deliver governed launch-monitor platform with private corpus loading, neural model lab, linked scatter analytics, and cross-surface manifest registration. | #4587 |
 | 2026-08-19 | 1.17.52 | fix(ci): Isolate the benchmark suite in a job-local virtual environment so an internally inconsistent self-hosted pip installation cannot contaminate dependency installation or benchmark evidence. Add workflow contract tests and retain the benchmark lane as advisory. | #4582 |
