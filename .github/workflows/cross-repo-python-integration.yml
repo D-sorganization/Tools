@@ -200,8 +200,10 @@ jobs:
         if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
         working-directory: ${{ matrix.downstream.path }}
         run: |
+          touch "${{ github.workspace }}/src/__init__.py" "${{ github.workspace }}/src/shared/__init__.py"
           mkdir -p src/shared/python vendor/ud-tools/src/shared/python
           touch src/shared/python/__init__.py vendor/ud-tools/src/shared/python/__init__.py
+          touch src/shared/python/contracts.py vendor/ud-tools/src/shared/python/contracts.py
           tools_repo_root="${{ github.workspace }}"
           tools_link="$(dirname "$PWD")/Tools"
           ln -sfn "$tools_repo_root" "$tools_link"
