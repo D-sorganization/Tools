@@ -254,30 +254,39 @@ def _evaluate_precondition(
     args: tuple[Any, ...],
     kwargs: dict[str, Any],
 ) -> bool:
-    """Try to evaluate a precondition, using argument-name binding as a fallback.
-
-    First attempts to call *condition* with the same ``(args, kwargs)`` that
-    the decorated function received.  If that produces a ``TypeError`` (e.g.
-    the condition only accepts a subset of arguments by name), it falls back
-    to matching parameters by name from the decorated function's signature.
-
-    Raises:
-        PreconditionEvaluationError: If the condition evaluation fails with an error
-            other than a simple argument-matching TypeError.
-    """
+    """Evaluate a precondition, matching arguments by name from the decorated function."""
     if condition is None:
         raise ValueError("condition must be provided")
-    try:
-        inspect.signature(condition).bind(*args, **kwargs)
-    except TypeError:
-        return _evaluate_precondition_by_name(condition, func, args, kwargs)
-    except ValueError:
-        pass
 
     try:
-        return bool(condition(*args, **kwargs))
+        func_sig = inspect.signature(func)
+        bound = func_sig.bind(*args, **kwargs)
+        bound.apply_defaults()
+        all_arguments: dict[str, Any] = dict(bound.arguments)
+
+        cond_sig = inspect.signature(condition)
+        cond_params = cond_sig.parameters
+        if any(name in all_arguments for name in cond_params):
+            call_args = {
+                name: all_arguments[name]
+                for name in cond_params
+                if name in all_arguments
+            }
+            if len(call_args) == len(cond_params):
+                return bool(condition(**call_args))
+    except (TypeError, ValueError):
+        pass
     except Exception as exc:
-        # Preserve the original exception type and chain for predicate body errors.
+        raise PreconditionEvaluationError(
+            f"Failed to evaluate precondition for {func.__qualname__}: {exc!r}", exc
+        ) from exc
+
+    try:
+        inspect.signature(condition).bind(*args, **kwargs)
+        return bool(condition(*args, **kwargs))
+    except TypeError:
+        return _evaluate_precondition_by_name(condition, func, args, kwargs)
+    except Exception as exc:
         raise PreconditionEvaluationError(
             f"Failed to evaluate precondition for {func.__qualname__}: {exc!r}", exc
         ) from exc
