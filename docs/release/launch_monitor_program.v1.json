@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-19T00:00:00-07:00",
+  "program_issue": "D-sorganization/Tools#4583",
+  "repositories": [
+    {
+      "name": "D-sorganization/Tools",
+      "main_commit": "c285a33f6cba26b74b4189e3371e9394831ed47b",
+      "role": "Rate-of-Closure PyQt6 and React/Vite clients, physics, and convention registry",
+      "contains_restricted_shot_rows": false
+    },
+    {
+      "name": "D-sorganization/UpstreamDrift",
+      "main_commit": "4b898d2370c0b62c706b8e634c554656f3e6cd91",
+      "role": "Canonical Python analytics engine, API, and standalone desktop workbench",
+      "contains_restricted_shot_rows": false
+    },
+    {
+      "name": "D-sorganization/AffineDrift",
+      "main_commit": "ab4406045a39ee8dcb3489024a45b64f40dcf39e",
+      "role": "Reviewed paper and published evidence narrative",
+      "contains_restricted_shot_rows": false
+    },
+    {
+      "name": "D-sorganization/Launch-Monitor-Data",
+      "main_commit": "8eaf489e3d41f2e42bd27b2f9523f06ee5503654",
+      "role": "Public schema, access client, and exact private-authority lock",
+      "contains_restricted_shot_rows": false
+    },
+    {
+      "name": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
+      "main_commit": "97f3ecfba4560017f142c992cda58bdbb4b17f33",
+      "role": "Restricted data authority, campaign execution, and trained artifacts",
+      "contains_restricted_shot_rows": true
+    }
+  ],
+  "policies": [
+    {
+      "id": "canonical-statistics-authority",
+      "status": "approved",
+      "rule": "UpstreamDrift owns statistical semantics; Tools consumes a versioned contract and does not create a competing authority."
+    },
+    {
+      "id": "shotlink-training-quarantine",
+      "status": "approved",
+      "rule": "ShotLink-derived rows remain internal and are excluded from vendor-surrogate training and public row-level outputs until separately approved."
+    },
+    {
+      "id": "release-a-release-b-boundary",
+      "status": "approved",
+      "rule": "Release A qualifies the software against existing evidence; Release B requires controlled same-shot paired-device validation."
+    },
+    {
+      "id": "explicit-player-identity",
+      "status": "approved",
+      "rule": "Player analysis requires an explicitly selected trustworthy identity and never infers identity from session, club, source, filename, or row order."
+    }
+  ],
+  "releases": [
+    {
+      "id": "release-a",
+      "label": "Professional analytics platform",
+      "requires_paired_device_data": false,
+      "completion_evidence": [
+        "qualified corpus and use-policy verifier",
+        "canonical backend contract and cross-client parity",
+        "current-main PyQt6 and React/Vite functionality",
+        "reproducible campaigns and trained-model artifacts",
+        "green protected release checks and published documentation"
+      ]
+    },
+    {
+      "id": "release-b",
+      "label": "Controlled paired-device scientific validation",
+      "requires_paired_device_data": true,
+      "completion_evidence": [
+        "preregistered simultaneous-measurement protocol",
+        "same-shot device and reference-instrument observations",
+        "device, calibration, environment, ball, club, and strike metadata",
+        "bias, repeatability, heterogeneity, interaction, and uncertainty report"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "analysis-contract-v2",
+      "owner": "D-sorganization/UpstreamDrift",
+      "tracking_issue": "D-sorganization/UpstreamDrift#8790",
+      "status": "in_progress"
+    },
+    {
+      "id": "corpus-use-qualification",
+      "owner": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
+      "tracking_issue": "D-sorganization/Launch-Monitor-Flight-Model-Campaign#21",
+      "status": "in_progress"
+    },
+    {
+      "id": "multi-source-flight-model-campaign",
+      "owner": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
+      "tracking_issue": "D-sorganization/Launch-Monitor-Flight-Model-Campaign#21",
+      "status": "in_progress"
+    },
+    {
+      "id": "paired-device-validation",
+      "owner": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
+      "tracking_issue": "D-sorganization/Launch-Monitor-Flight-Model-Campaign#22",
+      "status": "planned"
+    },
+    {
+      "id": "rate-client-feature-parity",
+      "owner": "D-sorganization/Tools",
+      "tracking_issue": "D-sorganization/Tools#4226",
+      "status": "in_progress"
+    },
+    {
+      "id": "within-player-covariation",
+      "owner": "D-sorganization/Tools",
+      "tracking_issue": "D-sorganization/Tools#4277",
+      "status": "in_progress"
+    },
+    {
+      "id": "neural-model-lab",
+      "owner": "D-sorganization/Tools",
+      "tracking_issue": "D-sorganization/Tools#4240",
+      "status": "in_progress"
+    },
+    {
+      "id": "strokes-gained-and-proxy",
+      "owner": "D-sorganization/Tools",
+      "tracking_issue": "D-sorganization/Tools#4584",
+      "status": "planned"
+    },
+    {
+      "id": "professional-evidence-publication",
+      "owner": "D-sorganization/AffineDrift",
+      "tracking_issue": "D-sorganization/AffineDrift#3883",
+      "status": "planned"
+    }
+  ]
+}
