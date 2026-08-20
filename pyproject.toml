@@ -234,7 +234,6 @@ Homepage = "https://github.com/D-sorganization/Tools"
 Repository = "https://github.com/D-sorganization/Tools"
 
 [tool.setuptools.package-dir]
-"" = "src"
 "utils" = "src/python/src/utils"
 "tile_launcher" = "src/python/src/tile_launcher"
 "core" = "src/python/src/core"
