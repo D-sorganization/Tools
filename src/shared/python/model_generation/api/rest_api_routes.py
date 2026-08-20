@@ -982,8 +982,7 @@ class ModelGenerationAPI:
                         "category": entry.category.value,
                     }
                 )
-            else:
-                return APIResponse.error("Failed to add model")
+            return APIResponse.error("Failed to add model")
         finally:
             Path(temp_path).unlink(missing_ok=True)
 

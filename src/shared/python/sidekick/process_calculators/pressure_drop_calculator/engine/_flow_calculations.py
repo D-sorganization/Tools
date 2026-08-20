@@ -172,10 +172,9 @@ def classify_flow_regime(reynolds_number: float) -> str:
     """
     if reynolds_number < RE_LAMINAR_UPPER:
         return "laminar"
-    elif reynolds_number < RE_TURBULENT_LOWER:
+    if reynolds_number < RE_TURBULENT_LOWER:
         return "transitional"
-    else:
-        return "turbulent"
+    return "turbulent"
 
 
 def calculate_frictional_pressure_drop(

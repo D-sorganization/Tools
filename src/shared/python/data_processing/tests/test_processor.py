@@ -405,12 +405,14 @@ class TestApplyFormula:
 
     def test_apply_formula_numexpr_unavailable_raises(self, dp: DataProcessor):
         """If numexpr is not installed, eval must raise rather than silently fall back."""
-        with patch(
-            "pandas.DataFrame.eval",
-            side_effect=ImportError("numexpr not installed"),
+        with (
+            patch(
+                "pandas.DataFrame.eval",
+                side_effect=ImportError("numexpr not installed"),
+            ),
+            pytest.raises(RuntimeError, match="numexpr"),
         ):
-            with pytest.raises(RuntimeError, match="numexpr"):
-                dp.apply_formula("result", "x + y")
+            dp.apply_formula("result", "x + y")
 
 
 # ──────────────────────────────────────────────────────────────────────────────

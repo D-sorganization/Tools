@@ -343,7 +343,7 @@ class ModelCache:
             raise ValueError("path must be provided")
         if path.is_file():
             return path.stat().st_size
-        elif path.is_dir():
+        if path.is_dir():
             return sum(f.stat().st_size for f in path.rglob("*") if f.is_file())
         return 0
 

@@ -429,8 +429,7 @@ class CollisionGeometryGenerator:
             result = trimesh.load(output_path)
             if isinstance(result, trimesh.Scene):
                 return list(result.geometry.values())
-            else:
-                return [result]
+            return [result]
 
     def _generate_primitives(
         self,

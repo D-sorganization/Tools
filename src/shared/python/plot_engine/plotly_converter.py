@@ -56,16 +56,15 @@ class PlotlyConverter:
         """
         if isinstance(spec, SurfacePlotSpec):
             return self._surface(spec)
-        elif isinstance(spec, ContourPlotSpec):
+        if isinstance(spec, ContourPlotSpec):
             return self._contour(spec)
-        elif isinstance(spec, HeatmapSpec):
+        if isinstance(spec, HeatmapSpec):
             return self._heatmap(spec)
-        elif isinstance(spec, HistogramSpec):
+        if isinstance(spec, HistogramSpec):
             return self._histogram(spec)
-        elif isinstance(spec, FilterComparisonSpec):
+        if isinstance(spec, FilterComparisonSpec):
             return self._filter_comparison(spec)
-        else:
-            return self._line_scatter(spec)
+        return self._line_scatter(spec)
 
     # ── Type-specific converters ─────────────────────────────────────────────
 

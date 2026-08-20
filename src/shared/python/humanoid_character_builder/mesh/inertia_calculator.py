@@ -399,13 +399,12 @@ class MeshInertiaCalculator:
                 mass,
                 InertiaMode.MESH_SPECIFIED_MASS,
             )
-        else:
-            final_mass = volume * effective_density
-            return (
-                inertia_unit * effective_density,
-                final_mass,
-                InertiaMode.MESH_UNIFORM_DENSITY,
-            )
+        final_mass = volume * effective_density
+        return (
+            inertia_unit * effective_density,
+            final_mass,
+            InertiaMode.MESH_UNIFORM_DENSITY,
+        )
 
     def _repair_mesh(self, mesh: Any) -> Any:
         """

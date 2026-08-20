@@ -508,7 +508,7 @@ def _preview_source(value: Any) -> Any:
         return _bounded_sequence(array_values)
     if isinstance(value, dict):
         items = list(value.items())[:PREVIEW_MAX_COLUMNS]
-        result = {key: item_value for key, item_value in items}
+        result = dict(items)
         if len(value) > PREVIEW_MAX_COLUMNS:
             result["..."] = "..."
         return result

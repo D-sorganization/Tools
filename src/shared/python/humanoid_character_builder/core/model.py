@@ -295,11 +295,10 @@ class HumanoidModel:
 
         if geom and geom.get("type") == "box":
             return self._compute_box_footprint(geom["size"])
-        elif geom and geom.get("type") in ("cylinder", "capsule"):
+        if geom and geom.get("type") in ("cylinder", "capsule"):
             return self._compute_cylinder_footprint(geom["radius"], geom["length"])
-        else:
-            # Just use COM
-            return [list(link.origin_xyz)]
+        # Just use COM
+        return [list(link.origin_xyz)]
 
     def _compute_box_footprint(
         self, size: tuple[float, float, float]

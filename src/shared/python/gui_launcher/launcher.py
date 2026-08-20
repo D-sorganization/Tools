@@ -193,13 +193,13 @@ class GUILauncher:
             base_deps = ["PyQt6"] + self.config.dependencies
             return check_python_dependencies(base_deps)
 
-        elif self.config.gui_type == GUIType.REACT:
+        if self.config.gui_type == GUIType.REACT:
             if self.config.web_path:
                 web_path = Path(self.config.web_path)
                 return check_node_dependencies(web_path)
             return DependencyStatus(ok=False, missing=["web_path"], guidance={})
 
-        elif self.config.gui_type == GUIType.TKINTER:
+        if self.config.gui_type == GUIType.TKINTER:
             return check_python_dependencies(["tkinter"] + self.config.dependencies)
 
         return DependencyStatus(ok=True, missing=[], guidance={})
@@ -218,12 +218,12 @@ class GUILauncher:
         try:
             if self.config.gui_type == GUIType.PYQT6:
                 return self._launch_pyqt6()
-            elif self.config.gui_type == GUIType.REACT:
+            if self.config.gui_type == GUIType.REACT:
                 return self._launch_react()
-            elif self.config.gui_type == GUIType.TKINTER:
+            if self.config.gui_type == GUIType.TKINTER:
                 return self._launch_tkinter()
-            else:  # GUIType.BROWSER
-                return self._launch_browser()
+            # GUIType.BROWSER
+            return self._launch_browser()
         except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Failed to launch {self.config.tool_name}: {e}")
             return 1

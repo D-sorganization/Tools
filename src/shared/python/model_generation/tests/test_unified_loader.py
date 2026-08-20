@@ -298,12 +298,14 @@ class TestConversionApi:
         source.write_text("<mujoco model='x'><worldbody></mujoco>")
         loader = UnifiedModelLoader(prefs_dir=tmp_path)
 
-        with caplog.at_level(
-            logging.ERROR,
-            logger="model_generation.library.unified_loader",
+        with (
+            caplog.at_level(
+                logging.ERROR,
+                logger="model_generation.library.unified_loader",
+            ),
+            pytest.raises(ConversionError) as exc_info,
         ):
-            with pytest.raises(ConversionError) as exc_info:
-                loader.convert_to_urdf(source)
+            loader.convert_to_urdf(source)
 
         assert "Unable to convert MJCF source to URDF" in str(exc_info.value)
         assert exc_info.value.__cause__ is not None
@@ -323,12 +325,14 @@ class TestConversionApi:
         source.write_text("<robot name='x'><link name='base'></robot>")
         loader = UnifiedModelLoader(prefs_dir=tmp_path)
 
-        with caplog.at_level(
-            logging.ERROR,
-            logger="model_generation.library.unified_loader",
+        with (
+            caplog.at_level(
+                logging.ERROR,
+                logger="model_generation.library.unified_loader",
+            ),
+            pytest.raises(ConversionError) as exc_info,
         ):
-            with pytest.raises(ConversionError) as exc_info:
-                loader.convert_to_mjcf(source)
+            loader.convert_to_mjcf(source)
 
         assert "Unable to convert URDF source to MJCF" in str(exc_info.value)
         assert exc_info.value.__cause__ is not None

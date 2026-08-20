@@ -4985,8 +4985,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-20 | 1.17.64 | fix(shared): clear the 18 pre-existing mypy errors in src/shared/python across mdl_parser, matplotlib_renderer, trendline, optimization, and pressure drop/PSA calculators. | #4509 |
 | 2026-08-20 | 1.17.63 | feat(rate_of_closure, sidekick): deliver Phase S1/S2 unified sidekick integration (dock widget, context provider, toggle visibility, and fallback support in RateOfClosureMainWindow). | #4585 |
+| 2026-08-20 | 1.17.62 | chore(shared): normalise src/shared/python against the consumers' lint baseline across shared python modules. | #4507 |
+| 2026-08-20 | 1.17.61 | fix(shared): clear the 18 pre-existing mypy errors in src/shared/python across mdl_parser, matplotlib_renderer, trendline, optimization, and pressure drop/PSA calculators. | #4509 |
 | 2026-08-20 | 1.17.60 | fix(ci): run tests/architecture/ guards on every PR, and fix import resolvability, god modules, and sidekick external import boundary guards. | #4469 |
 | 2026-08-20 | 1.17.59 | feat(rate-of-closure): deliver governed launch-monitor platform with private corpus loading, neural model lab, linked scatter analytics, and cross-surface manifest registration. | #4587 |
 | 2026-08-19 | 1.17.52 | fix(ci): Isolate the benchmark suite in a job-local virtual environment so an internally inconsistent self-hosted pip installation cannot contaminate dependency installation or benchmark evidence. Add workflow contract tests and retain the benchmark lane as advisory. | #4582 |
