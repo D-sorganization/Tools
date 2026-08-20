@@ -27,12 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.52                                    |
+| **Spec Version**        | 1.17.53                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.53 closes the software gaps tracked by #4584/#4229 and #4230.
+PyQt6 and React now load the same versioned expected-strokes artifact, verify
+its canonical table SHA-256 and provenance fields, require explicit before/after
+course state, constrain interpolation within one lie, and export every lookup.
+No expected-strokes data is bundled; unavailable, user-supplied, radial-error,
+and source-backed modes remain distinct. Both clients also provide attested
+longitudinal analysis with session uncertainty, per-player OLS slopes,
+fixed/random population synthesis, improvement direction, unit-labelled plots,
+backing exports, and explicit non-causal limitations.
 
 Version 1.17.52 adds the identity-safe population covariation layer tracked by
 #4277. The Python authority and React/PyQt clients now separate raw pooled,

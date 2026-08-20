@@ -64,9 +64,11 @@ local root while its plot stays bounded. UpstreamDrift v2 is the canonical
 contract; embedded calculations are labeled compatibility/offline. The current
 #4277 slice adds identity-attested pooled, player-centered, between-player,
 per-player and random-effects covariation plus exploratory all-pairs scans to
-both clients, with unit-labelled plots and complete backing exports. Do not
-claim vendor emulation, source-backed strokes gained, or paired-device
-validation: #4584 and Release B remain open.
+both clients, with unit-labelled plots and complete backing exports. The next
+performance slice adds hash-verified, user-authorized expected-strokes baseline
+artifacts and attested longitudinal player/population inference in both clients;
+no baseline data is bundled. Do not claim vendor emulation or paired-device
+validation: Release B remains open and has no real paired observations.
 
 Both golf epics and their GUI surfaces are **physics & GUI complete and merged** (#4577, #4579):
 
