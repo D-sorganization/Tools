@@ -233,8 +233,15 @@ video-analyzer = "video_analyzer.launch_video_analyzer:main"
 Homepage = "https://github.com/D-sorganization/Tools"
 Repository = "https://github.com/D-sorganization/Tools"
 
+[tool.setuptools.package-dir]
+"" = "src"
+"utils" = "src/python/src/utils"
+"tile_launcher" = "src/python/src/tile_launcher"
+"core" = "src/python/src/core"
+"help" = "src/python/src/help"
+
 [tool.setuptools.packages.find]
-where = ["src/python/src", "src"]
+where = ["src"]
 include = [
     "shared*",
     "upstream_drift_tools*",
@@ -247,6 +254,7 @@ include = [
     "rate_of_closure*",
     "codemap*",
     "video_analyzer*",
+    "rotation_converter*",
 ]
 exclude = [
     "*.tests*",
