@@ -21,3 +21,12 @@ def test_absent_hold_signals_do_not_trip_runner_errexit() -> None:
     assert 'if [ "$DRAFT" = "true" ]; then' in text
     assert 'LAST_DISARM="$(grep -v' not in text
     assert "LAST_DISARM=\"$(awk -F'\\t'" in text
+
+
+def test_scheduled_sweep_uses_rest_instead_of_graphql() -> None:
+    text = WORKFLOW.read_text(encoding="utf-8")
+
+    assert "gh pr list" not in text
+    assert "gh api --paginate" in text
+    assert '"repos/$REPO/pulls?state=open&per_page=100"' in text
+    assert "select(.auto_merge != null)" in text
