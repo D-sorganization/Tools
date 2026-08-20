@@ -64,6 +64,10 @@ from rate_of_closure.ui.pyqt6.workspace_navigation import (
     NavigationSettings,
     WorkspaceNavigationMixin,
 )
+from shared.python.gui_launcher.tools_sidebar_integration import (
+    ToolsSidebarInstallStatus,
+    install_tools_sidebar,
+)
 from shared.python.swing_sim.variation import VariationDataset
 
 __all__ = ["RateOfClosureMainWindow"]
@@ -177,6 +181,12 @@ class RateOfClosureMainWindow(
         QTimer.singleShot(0, self._reapply_visual_layout_geometry)
         self.setStatusBar(QStatusBar())
         self.setStyleSheet(showcase_stylesheet(self.palette()))
+        self._sidekick_status: ToolsSidebarInstallStatus = install_tools_sidebar(
+            self,
+            context_provider=self._get_sidekick_context,
+        )
+        if self._sidekick_status.dock and hasattr(self._sidekick_status.dock, "hide"):
+            self._sidekick_status.dock.hide()
 
     def _primary_tab_specs(self) -> tuple[PrimaryTabSpec, ...]:
         """Return stable primary-module registrations in first-run order."""
@@ -242,6 +252,7 @@ class RateOfClosureMainWindow(
         # result instead of empty axes that look like a rendering failure.
         self._simulation_tab.run_now()
         self._show_explanation(_RESULT_ROWS[0][0])
+        self._seed_sidekick_workspace()
 
     # ── behaviour ───────────────────────────────────────────────────
     def _show_explanation(self, field: str) -> None:
@@ -376,3 +387,36 @@ class RateOfClosureMainWindow(
         """Retry a deferred close after all retained transport threads finish."""
         if self._close_pending:
             QTimer.singleShot(0, self.close)
+
+    def _get_sidekick_context(self) -> dict[str, object]:
+        """Provide host-specific context for Sidekick assist."""
+        active_club = self._controls.club_spec() if hasattr(self, "_controls") else None
+        return {
+            "tool_name": "rate_of_closure",
+            "active_club": active_club,
+        }
+
+    def _seed_sidekick_workspace(self) -> None:
+        """Publish live simulation and club models into Sidekick's workspace."""
+        if not (hasattr(self, "_sidekick_status") and self._sidekick_status.sidebar):
+            return
+        registry = getattr(self._sidekick_status.sidebar, "registry", None)
+        if registry is None or not hasattr(registry, "set"):
+            return
+        if hasattr(self, "_controls"):
+            registry.set("active_club", self._controls.club_spec())
+        if hasattr(self, "_plots_tab"):
+            run = getattr(self._plots_tab, "_run", None)
+            if run is not None:
+                registry.set("simulation_run", run)
+        if hasattr(self, "_variation_tab"):
+            dataset = getattr(self._variation_tab, "_dataset", None)
+            if dataset is not None:
+                registry.set("variation_dataset", dataset)
+
+    def toggle_sidekick_sidebar(self) -> None:
+        """Toggle visibility of the embedded Sidekick Tools dock."""
+        if hasattr(self, "_sidekick_status") and self._sidekick_status.dock:
+            dock = self._sidekick_status.dock
+            if hasattr(dock, "isVisible") and hasattr(dock, "setVisible"):
+                dock.setVisible(not dock.isVisible())
