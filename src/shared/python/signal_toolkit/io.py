@@ -355,7 +355,7 @@ class SignalExporter:
 
         signals = [signal] if isinstance(signal, Signal) else signal
 
-        data = {"time": signals[0].time}
+        data: dict[str, Any] = {"time": signals[0].time}
         for sig in signals:
             data[sig.name] = sig.values
 

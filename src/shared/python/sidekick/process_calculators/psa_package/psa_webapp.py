@@ -10,7 +10,7 @@ Run with: streamlit run psa_webapp.py
 """
 
 from dataclasses import dataclass, field
-from typing import TypedDict
+from typing import Any, TypedDict
 
 import numpy as np
 import pandas as pd
@@ -597,7 +597,7 @@ def _render_o2_safety_tab(
     # Table with highlighting
     st.markdown("**Detailed Values (Red = Dangerous >2%)**")
 
-    def highlight_danger(val: float) -> str:
+    def highlight_danger(val: Any) -> str:
         if isinstance(val, int | float) and val > 2.0:
             return "background-color: #ffcccc"
         if isinstance(val, int | float) and val > 1.5:
