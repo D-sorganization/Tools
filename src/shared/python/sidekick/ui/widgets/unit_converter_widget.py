@@ -478,9 +478,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
         saved = self.saved_conversions
         if index < 3:
             return recent[index] if index < len(recent) else None
-        else:
-            idx = index - 3
-            return saved[idx] if idx < len(saved) else None
+        idx = index - 3
+        return saved[idx] if idx < len(saved) else None
 
     def _save_conversion(self, index: int) -> None:
         if index is None:

@@ -179,9 +179,9 @@ def parse_cli_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def launch_gui(args: argparse.Namespace) -> int:
     """Launch the standalone GUI with deferred imports for headless parsing."""
-    from sidekick.launcher_factory import create_launcher_config, launch_app
-    from sidekick.standalone.session_store import StandaloneSessionStore
-    from sidekick.standalone.window import (
+    from .launcher_factory import create_launcher_config, launch_app
+    from .standalone.session_store import StandaloneSessionStore
+    from .standalone.window import (
         StandaloneSidekickConfig,
         StandaloneSidekickWindow,
     )
@@ -212,7 +212,7 @@ def launch_gui(args: argparse.Namespace) -> int:
 
 def run_headless(args: argparse.Namespace) -> int:
     """Run a headless calculator and write the results to stdout or a file."""
-    from sidekick.standalone.runner import run_calculator
+    from .standalone.runner import run_calculator
 
     # args.output is a pathlib.Path if provided, or None
     output_path = str(args.output) if args.output is not None else "-"

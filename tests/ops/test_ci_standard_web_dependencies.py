@@ -54,7 +54,7 @@ def test_ci_standard_installs_standalone_build_and_runtime_dependencies() -> Non
 
         assert (
             "python -m pip install --upgrade --force-reinstall --no-cache-dir "
-            '"build>=1.2.2" "platformdirs>=4.2.0"'
+            '"build>=1.2.2,<=1.2.2.post1" "platformdirs>=4.2.0"'
         ) in install_commands
         assert (
             'python -c "import build, platformdirs; '

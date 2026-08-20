@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from sidekick.standalone.session_store import FileSessionStore
+    from .session_store import FileSessionStore
 
 logger = logging.getLogger(__name__)
 
@@ -164,41 +164,6 @@ class StandalonePreferences:
             )
         self._store.set(_KEY_LLM_PROVIDER, provider_id)
 
-    # ------------------------------------------------------------------
-    # Theme token application
-    # ------------------------------------------------------------------
-
-    def apply_tokens(self, theme_colors: dict[str, str]) -> dict[str, str]:
-        """Map raw theme colors to Sidekick design tokens.
-
-        Uses ``theme.sidekick_tokens.COLOR_TOKEN_MAP`` — no QSS strings
-        generated here, only the token dict returned to the caller.
-
-        Args:
-            theme_colors: Dict of theme-key → hex color.
-
-        Returns:
-            Dict of sidekick token name → hex color.
-
-        Precondition:  ``theme_colors`` is a non-empty dict.
-        Postcondition: every key in ``COLOR_TOKEN_MAP`` that maps to a key
-                       present in ``theme_colors`` appears in the result.
-        """
-        assert isinstance(theme_colors, dict) and theme_colors, (
-            "theme_colors must be a non-empty dict"
-        )
-        from theme.sidekick_tokens import COLOR_TOKEN_MAP, DEFAULT_SIDEKICK_TOKENS
-
-        tokens: dict[str, str] = dict(DEFAULT_SIDEKICK_TOKENS)
-        for token_name, theme_key in COLOR_TOKEN_MAP.items():
-            if theme_key in theme_colors:
-                tokens[token_name] = theme_colors[theme_key]
-
-        assert all(isinstance(v, str) for v in tokens.values()), (
-            "postcondition: all token values must be strings"
-        )
-        return tokens
-
 
 # ---------------------------------------------------------------------------
 # Private helper
@@ -207,7 +172,7 @@ class StandalonePreferences:
 
 def _default_store() -> FileSessionStore:
     """Return a FileSessionStore in the platform config directory."""
-    from sidekick.standalone.session_store import FileSessionStore
+    from .session_store import FileSessionStore
 
     try:
         import platformdirs

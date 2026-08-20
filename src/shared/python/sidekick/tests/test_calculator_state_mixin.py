@@ -337,15 +337,17 @@ def test_restore_splitter_state_with_load(qapp) -> None:
     calc = MockCalculator("MyCalc2")
     splitter = QSplitter(Qt.Orientation.Horizontal)
 
-    with patch.object(
-        calc,
-        "load_calculator_state",
-        return_value={"splitter_states": {"s1": {"sizes": [11, 22]}}},
+    with (
+        patch.object(
+            calc,
+            "load_calculator_state",
+            return_value={"splitter_states": {"s1": {"sizes": [11, 22]}}},
+        ),
+        patch.object(splitter, "setSizes") as mock_set,
     ):
-        with patch.object(splitter, "setSizes") as mock_set:
-            calc.register_splitter(splitter, "s1")
-            # register_splitter calls restore_splitter_state implicitly
-            mock_set.assert_called_with([11, 22])
+        calc.register_splitter(splitter, "s1")
+        # register_splitter calls restore_splitter_state implicitly
+        mock_set.assert_called_with([11, 22])
 
 
 def test_set_calculator_state_geometry(qapp) -> None:

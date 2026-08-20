@@ -65,23 +65,22 @@ def compute_trendline(
 
     if trend_type == "linear":
         return _linear(x_valid, y_valid, x_pred)
-    elif trend_type == "polynomial":
+    if trend_type == "polynomial":
         return _polynomial(x_valid, y_valid, x_pred, degree)
-    elif trend_type == "exponential":
+    if trend_type == "exponential":
         return _exponential(x_valid, y_valid, x_pred)
-    elif trend_type == "power":
+    if trend_type == "power":
         return _power(x_valid, y_valid, x_pred)
-    else:
-        raise ValueError(f"Unknown trend type: {trend_type}")
+    raise ValueError(f"Unknown trend type: {trend_type}")
 
 
 def _r_squared(y: np.ndarray, y_pred: np.ndarray) -> float:
     """Compute R-squared (coefficient of determination)."""
     if y is None:
         raise ValueError("y must be provided")
-    ss_res = np.sum((y - y_pred) ** 2)
-    ss_tot = np.sum((y - np.mean(y)) ** 2)
-    return float(1.0 - (ss_res / ss_tot)) if ss_tot > 0 else 0.0
+    ss_res = float(np.sum((y - y_pred) ** 2))
+    ss_tot = float(np.sum((y - np.mean(y)) ** 2))
+    return 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
 
 def _linear(x: np.ndarray, y: np.ndarray, x_pred: np.ndarray) -> TrendlineResult:

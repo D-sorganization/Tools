@@ -291,14 +291,13 @@ class UnifiedModelLoader:
 
         if fmt == ModelFormat.URDF:
             return self._load_urdf(path)
-        elif fmt == ModelFormat.MJCF:
+        if fmt == ModelFormat.MJCF:
             return self._load_mjcf(path)
-        else:
-            # Try URDF first, then MJCF
-            result = self._load_urdf(path)
-            if result.success:
-                return result
-            return self._load_mjcf(path)
+        # Try URDF first, then MJCF
+        result = self._load_urdf(path)
+        if result.success:
+            return result
+        return self._load_mjcf(path)
 
     @postcondition(
         lambda result: isinstance(result, LoadResult), "Must return LoadResult"

@@ -42,6 +42,7 @@ _SHARED_ROOTS = frozenset(
         "logging_pkg",
         "model_generation",
         "notes",
+        "plot_engine",
         "programmatic_pid",
         "rotation_transforms",
         "safe_eval",

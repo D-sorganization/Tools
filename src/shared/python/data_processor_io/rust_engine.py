@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import logging
 import os
-from collections.abc import Generator, Iterator, Sequence
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
@@ -227,17 +227,15 @@ def inspect(path: str | os.PathLike[str]) -> SchemaInfo:
     file_size_bytes = Path(p).stat().st_size
 
     if fmt == "csv":
-        df_header = pd.read_csv(p, nrows=0)
-        columns_list = list(df_header.columns)
-        # Full scan for row count (cheap for CI test fixtures)
         df_full = pd.read_csv(p)
+        columns_list = [str(c) for c in df_full.columns]
         row_count = len(df_full)
-        column_types = {col: str(dtype) for col, dtype in df_full.dtypes.items()}
+        column_types = {str(col): str(dtype) for col, dtype in df_full.dtypes.items()}
     else:  # parquet
         df_full = pd.read_parquet(p)
-        columns_list = list(df_full.columns)
+        columns_list = [str(c) for c in df_full.columns]
         row_count = len(df_full)
-        column_types = {col: str(dtype) for col, dtype in df_full.dtypes.items()}
+        column_types = {str(col): str(dtype) for col, dtype in df_full.dtypes.items()}
 
     return SchemaInfo(
         columns=columns_list,
@@ -281,10 +279,7 @@ def preview(
         return pd.DataFrame(rows, columns=list(columns) if columns else None)
 
     # ── pandas fallback ──────────────────────────────────────────────────────
-    if fmt == "csv":
-        df = pd.read_csv(p, nrows=nrows)
-    else:
-        df = pd.read_parquet(p).head(nrows)
+    df = pd.read_csv(p, nrows=nrows) if fmt == "csv" else pd.read_parquet(p).head(nrows)
 
     return _select_columns(df, columns)
 
@@ -335,10 +330,7 @@ def convert(
     # ── pandas fallback ──────────────────────────────────────────────────────
     src_fmt = _detect_format(p_src)
 
-    if src_fmt == "csv":
-        df = pd.read_csv(p_src)
-    else:
-        df = pd.read_parquet(p_src)
+    df = pd.read_csv(p_src) if src_fmt == "csv" else pd.read_parquet(p_src)
 
     if active_token.is_cancelled():
         raise OperationCancelled("convert cancelled before write")
@@ -407,9 +399,7 @@ def scan_batch(
 
     # ── pandas fallback ──────────────────────────────────────────────────────
     if fmt == "csv":
-        reader: Generator[pd.DataFrame, None, None] = pd.read_csv(
-            p, chunksize=batch_size
-        )
+        reader: Any = pd.read_csv(p, chunksize=batch_size)
         for chunk in reader:
             if active_token.is_cancelled():
                 logger.info("scan_batch cancelled after %d rows", len(chunk))
@@ -478,10 +468,7 @@ def filter_export(
             pass
 
     # ── pandas fallback ──────────────────────────────────────────────────────
-    if fmt == "csv":
-        df = pd.read_csv(p)
-    else:
-        df = pd.read_parquet(p)
+    df = pd.read_csv(p) if fmt == "csv" else pd.read_parquet(p)
 
     df = _select_columns(df, columns)
     # ``df.query`` runs the predicate through pandas eval, so an unvalidated

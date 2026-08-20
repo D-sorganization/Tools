@@ -205,8 +205,16 @@ class HumanoidURDFGenerator:
         "Mass must be positive",
     )
     @postcondition(
-        lambda result: len(result) > 0,
-        "URDF output must not be empty",
+        lambda result: (
+            len(result) > 0
+            and bool(
+                result
+                and "<robot" in result
+                and "</robot>" in result
+                and not result.startswith("invalid")
+            )
+        ),
+        "Generated URDF must be valid XML",
     )
     def generate(
         self,
@@ -299,6 +307,7 @@ class HumanoidURDFGenerator:
         # Default material
         self._materials["default"] = (0.7, 0.7, 0.7, 1.0)
 
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
     def _generate_link(
         self,
         segment_name: str,
@@ -395,8 +404,7 @@ class HumanoidURDFGenerator:
                         return self.mesh_inertia_calc.compute_from_mesh(
                             mesh_path, mass=mass
                         )
-                    else:
-                        return self.mesh_inertia_calc.compute_from_mesh(mesh_path)
+                    return self.mesh_inertia_calc.compute_from_mesh(mesh_path)
                 except (KeyError, ValueError, TypeError) as e:
                     logger.warning(
                         f"Mesh inertia calculation failed for {segment_name}: {e}"
@@ -435,27 +443,27 @@ class HumanoidURDFGenerator:
                 "type": "box",
                 "size": (width, depth, length),
             }
-        elif geom_spec.geometry_type == GeometryType.CYLINDER:
+        if geom_spec.geometry_type == GeometryType.CYLINDER:
             radius = (width + depth) / 4
             return {
                 "type": "cylinder",
                 "radius": radius,
                 "length": length,
             }
-        elif geom_spec.geometry_type == GeometryType.SPHERE:
+        if geom_spec.geometry_type == GeometryType.SPHERE:
             radius = length / 2
             return {
                 "type": "sphere",
                 "radius": radius,
             }
-        elif geom_spec.geometry_type == GeometryType.CAPSULE:
+        if geom_spec.geometry_type == GeometryType.CAPSULE:
             radius = (width + depth) / 4
             return {
                 "type": "cylinder",  # URDF doesn't have capsule, use cylinder
                 "radius": radius,
                 "length": max(0.01, length - 2 * radius),
             }
-        elif geom_spec.geometry_type == GeometryType.MESH:
+        if geom_spec.geometry_type == GeometryType.MESH:
             return {
                 "type": "mesh",
                 "filename": geom_spec.mesh_path,
@@ -476,6 +484,12 @@ class HumanoidURDFGenerator:
         else:
             self._generate_single_joint(joint_name, joint_def)
 
+    @precondition(
+        lambda joint_def: (
+            joint_def.limits is None or joint_def.limits.lower <= joint_def.limits.upper
+        ),
+        "Joint limits invalid",
+    )
     def _generate_single_joint(
         self,
         joint_name: str,
@@ -626,8 +640,7 @@ class HumanoidURDFGenerator:
             # Remove extra blank lines
             lines = [line for line in xml_str.split("\n") if line.strip()]
             return "\n".join(lines)
-        else:
-            return ET.tostring(root, encoding="unicode")
+        return ET.tostring(root, encoding="unicode")
 
     def _add_link_element(self, root: ET.Element, link: GeneratedLink) -> None:
         """Add a link element to the URDF."""

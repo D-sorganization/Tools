@@ -53,7 +53,7 @@ def friction_factor_laminar(reynolds_number: float) -> float:
         # would otherwise yield 0.064 with no error and a wrong ΔP.
         raise ValueError(f"Reynolds number must be positive, got {reynolds_number}")
 
-    result = LAMINAR_FRICTION_CONSTANT / reynolds_number
+    result: float = LAMINAR_FRICTION_CONSTANT / reynolds_number
     if not (result > 0):
         raise ValueError(f"Friction factor must be positive, got {result}")
     return result
@@ -190,7 +190,7 @@ def friction_factor_churchill(
     Re = reynolds_number
 
     if Re < 1:
-        return LAMINAR_FRICTION_CONSTANT
+        return float(LAMINAR_FRICTION_CONSTANT)
 
     term1 = (7.0 / Re) ** 0.9 + 0.27 * relative_roughness
     A = (-2.457 * math.log(term1)) ** 16
@@ -260,14 +260,13 @@ def select_friction_factor_method(
 
     if method == "colebrook":
         return friction_factor_colebrook(reynolds_number, relative_roughness)
-    elif method in ("swamee-jain", "swamee_jain"):
+    if method in ("swamee-jain", "swamee_jain"):
         return friction_factor_swamee_jain(reynolds_number, relative_roughness)
-    elif method == "churchill":
+    if method == "churchill":
         return friction_factor_churchill(reynolds_number, relative_roughness)
-    elif method == "haaland":
+    if method == "haaland":
         return friction_factor_haaland(reynolds_number, relative_roughness)
-    else:
-        available = ["colebrook", "swamee-jain", "churchill", "haaland"]
-        raise ValueError(
-            f"Unknown friction factor method '{method}'. Available: {available}"
-        )
+    available = ["colebrook", "swamee-jain", "churchill", "haaland"]
+    raise ValueError(
+        f"Unknown friction factor method '{method}'. Available: {available}"
+    )

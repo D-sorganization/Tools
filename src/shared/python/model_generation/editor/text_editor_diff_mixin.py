@@ -8,7 +8,7 @@ from __future__ import annotations  # noqa: E402, F404
 
 import difflib  # noqa: E402
 import re  # noqa: E402
-from typing import TYPE_CHECKING  # noqa: E402
+from typing import TYPE_CHECKING, Any  # noqa: E402
 
 if TYPE_CHECKING:
     from .text_editor import DiffResult
@@ -16,6 +16,10 @@ if TYPE_CHECKING:
 
 class TextEditorDiffMixin:
     """Mixin providing diff computation for URDFTextEditor."""
+
+    _original_content: str
+    _content: str
+    _history: list[Any]
 
     def get_diff_from_original(self) -> DiffResult:
         """Get diff between current content and original.

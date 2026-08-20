@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import functools
 import os
 import subprocess
 import sys
@@ -22,7 +23,14 @@ _ALLOWED_FILES = {
 _AMBIGUOUS_NON_SHARED_APP_ROOTS = {"data_processing"}
 
 
+@functools.lru_cache(maxsize=1)
 def _shared_python_roots() -> tuple[str, ...]:
+    """Return the shared-package roots whose bare spelling is deprecated.
+
+    Cached deliberately: ``_root_matches`` calls this once per import node in
+    every ``src/**/*.py`` file, and the uncached directory scan (~8 ms) made
+    the guard take ~67 s — over the repo-wide 60 s pytest timeout.
+    """
     roots = {
         path.name
         for path in SHARED_PYTHON.iterdir()

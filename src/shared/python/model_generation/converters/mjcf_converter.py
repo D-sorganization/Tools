@@ -361,7 +361,7 @@ class MJCFConverter:
             half_size = f"{size[0] / 2:.6g} {size[1] / 2:.6g} {size[2] / 2:.6g}"
             return f'{indent}<geom type="box" size="{half_size}" pos="{pos_str}"/>'
 
-        elif geometry.geometry_type == GeometryType.CYLINDER:
+        if geometry.geometry_type == GeometryType.CYLINDER:
             radius, length = geometry.dimensions
             # MuJoCo cylinder: radius and half-length
             return (
@@ -369,25 +369,24 @@ class MJCFConverter:
                 f'size="{radius:.6g} {length / 2:.6g}" pos="{pos_str}"/>'
             )
 
-        elif geometry.geometry_type == GeometryType.SPHERE:
+        if geometry.geometry_type == GeometryType.SPHERE:
             radius = geometry.dimensions[0]
             return f'{indent}<geom type="sphere" size="{radius:.6g}" pos="{pos_str}"/>'
 
-        elif geometry.geometry_type == GeometryType.CAPSULE:
+        if geometry.geometry_type == GeometryType.CAPSULE:
             radius, length = geometry.dimensions
             return (
                 f'{indent}<geom type="capsule" '
                 f'size="{radius:.6g} {length / 2:.6g}" pos="{pos_str}"/>'
             )
 
-        elif geometry.geometry_type == GeometryType.MESH:
+        if geometry.geometry_type == GeometryType.MESH:
             mesh_name = (
                 Path(geometry.mesh_filename).stem if geometry.mesh_filename else "mesh"
             )
             return f'{indent}<geom type="mesh" mesh="{mesh_name}" pos="{pos_str}"/>'
 
-        else:
-            return f'{indent}<geom type="box" size="0.05 0.05 0.05" pos="{pos_str}"/>'
+        return f'{indent}<geom type="box" size="0.05 0.05 0.05" pos="{pos_str}"/>'
 
     def _parse_mjcf(self, root: ET.Element) -> ParsedModel:
         """Parse MJCF into ParsedModel."""
@@ -455,7 +454,7 @@ class MJCFConverter:
                 mass=mass,
                 center_of_mass=com,
             )
-        elif full_str:
+        if full_str:
             full = [float(v) for v in full_str.split()]
             return Inertia(
                 ixx=full[0],
@@ -467,8 +466,7 @@ class MJCFConverter:
                 mass=mass,
                 center_of_mass=com,
             )
-        else:
-            return Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=mass, center_of_mass=com)
+        return Inertia(ixx=0.1, iyy=0.1, izz=0.1, mass=mass, center_of_mass=com)
 
     def _parse_body_visual(
         self,
@@ -610,12 +608,12 @@ class MJCFConverter:
                 Geometry.box(sizes[0] * 2, sizes[1] * 2, sizes[2] * 2),
                 origin,
             )
-        elif geom_type == "sphere" and len(sizes) >= 1:
+        if geom_type == "sphere" and len(sizes) >= 1:
             return Geometry.sphere(sizes[0]), origin
-        elif geom_type == "cylinder" and len(sizes) >= 2:
+        if geom_type == "cylinder" and len(sizes) >= 2:
             # MuJoCo: size="radius half-length"
             return Geometry.cylinder(sizes[0], sizes[1] * 2), origin
-        elif geom_type == "capsule":
+        if geom_type == "capsule":
             if fromto_str:
                 try:
                     vals = [float(v) for v in fromto_str.split()]
@@ -644,9 +642,9 @@ class MJCFConverter:
                 if length <= 1e-12:
                     return Geometry.sphere(radius), Origin(xyz=midpoint)
                 return Geometry.capsule(radius, length), Origin(xyz=midpoint)
-            elif len(sizes) >= 2:
+            if len(sizes) >= 2:
                 return Geometry.capsule(sizes[0], sizes[1] * 2), origin
-            elif len(sizes) >= 1:
+            if len(sizes) >= 1:
                 return Geometry.sphere(sizes[0]), origin
 
         return None, origin

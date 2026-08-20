@@ -16,7 +16,6 @@ import numpy as np
 from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation as R
 
-from shared.python.humanoid_character_builder.contracts import precondition
 from shared.python.humanoid_character_builder.mesh.inertia_calculator import (
     InertiaResult,
 )
@@ -128,14 +127,6 @@ class SupportPolygon:
 class HumanoidModel:
     """Representation of the complete humanoid model."""
 
-    @precondition(
-        lambda links, joints: len(links) > 0,
-        "Model must have at least one link",
-    )
-    @precondition(
-        lambda links, joints, root_link_name: root_link_name in links,
-        "Root link must exist in links",
-    )
     def __init__(
         self,
         links: dict[str, GeneratedLink],
@@ -295,11 +286,10 @@ class HumanoidModel:
 
         if geom and geom.get("type") == "box":
             return self._compute_box_footprint(geom["size"])
-        elif geom and geom.get("type") in ("cylinder", "capsule"):
+        if geom and geom.get("type") in ("cylinder", "capsule"):
             return self._compute_cylinder_footprint(geom["radius"], geom["length"])
-        else:
-            # Just use COM
-            return [list(link.origin_xyz)]
+        # Just use COM
+        return [list(link.origin_xyz)]
 
     def _compute_box_footprint(
         self, size: tuple[float, float, float]

@@ -145,7 +145,7 @@ class StandaloneOnboarding:
         Raises:
             ValueError: if *profile* is not a known profile.
         """
-        from sidekick.standalone.preferences import VALID_PROFILES
+        from .preferences import VALID_PROFILES
 
         if profile not in VALID_PROFILES:
             raise ValueError(
