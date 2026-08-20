@@ -27,6 +27,7 @@ DEFAULT_TAB_IDS: tuple[str, ...] = (
     "simulation",
     "flight_explorer",
     "launch_monitor_analytics",
+    "neural_model_lab",
     "variation",
     "putting",
     "glossary",
