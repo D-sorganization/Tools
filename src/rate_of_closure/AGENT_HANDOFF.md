@@ -53,22 +53,20 @@ is not disqualifying**: #4542 and #4545 delete only their own helpers being
 reshaped, and were taken only after `main`'s entire existing suite passed
 against the swapped-in version, before any new tests. Meet that bar or skip it.
 
-## Active Epics — Only GUI Surfaces Remain
+## Active Epics — Golf Epics Merged
 
-Both golf epics are **physics-complete and merged**; what is left is binding
-work in this tool.
+Both golf epics and their GUI surfaces are **physics & GUI complete and merged** (#4577, #4579):
 
-- **#4549 Club Fitting Tester** — C1–C5 merged (#4557): mesh inertia tensor,
-  shaft delivery deltas, OEM fitting document, delivery interchange,
-  counterfactual engine. Open: **C6 #4555** (PyQt6 tab), **C7 #4556** (React).
-- **#4562 Heavy Hit** — H1–H3 merged (#4568): coupled hand/body impact model,
-  MJCF/URDF/.osim import, coupling report. Open: **H4 #4566** (GUI panels).
+- **#4549 Club Fitting Tester** — **COMPLETED** (PR #4577): Mesh inertia tensor,
+  shaft delivery deltas, OEM fitting document, counterfactual engine, C6 #4555
+  (PyQt6 tab), C7 #4556 (React panel, 488 LOC).
+- **#4562 Heavy Hit** — **COMPLETED** (PR #4577): Coupled hand/body impact model,
+  MJCF/URDF/.osim model interchange, coupling report, H4 #4566 (GUI panels).
+- **#4579 Packaging & Wheel Distribution**: Fixed setuptools package discovery
+  for `rotation_converter*` and normalized `httpx` dependencies.
 
 Contracts: `docs/specs/CLUB_FITTING_TESTER.md`, `docs/specs/HEAVY_HIT_COUPLING.md`.
-**Shared-first is already satisfied** — every calculation lives in
-`shared/python/{golf_club,swing_sim}`. A GUI child adds **no physics**: import
-`fitting_engine.compare_counterfactuals` and
-`impact_coupling.impact_coupling_report`, render their existing report wires.
+**Shared-first is satisfied** — calculations live in `shared/python/{golf_club,swing_sim}`.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
