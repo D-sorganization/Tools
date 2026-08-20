@@ -183,6 +183,8 @@ class RateOfClosureMainWindow(
             self,
             context_provider=self._get_sidekick_context,
         )
+        if self._sidekick_status.dock and hasattr(self._sidekick_status.dock, "hide"):
+            self._sidekick_status.dock.hide()
 
     def _primary_tab_specs(self) -> tuple[PrimaryTabSpec, ...]:
         """Return stable primary-module registrations in first-run order."""
@@ -385,9 +387,12 @@ class RateOfClosureMainWindow(
 
     def _get_sidekick_context(self) -> dict[str, object]:
         """Provide host-specific context for Sidekick assist."""
+        active_club = (
+            self._controls.club_spec() if hasattr(self, "_controls") else None
+        )
         return {
             "tool_name": "rate_of_closure",
-            "active_club": self._controls.club_spec() if hasattr(self, "_controls") else None,
+            "active_club": active_club,
         }
 
     def _seed_sidekick_workspace(self) -> None:
