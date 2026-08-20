@@ -30,4 +30,16 @@ describe("LaunchMonitorPlayerWorkspace", () => {
     expect(screen.getByRole("button", { name: /export full bundle/i })).toHaveAttribute("title", expect.stringMatching(/backing rows/i));
     expect(screen.getByLabelText("Load saved launch-monitor project")).toBeInTheDocument();
   });
+
+  it("locks advanced population analysis to the attested identity", () => {
+    render(<LaunchMonitorPlayerWorkspace rows={rows} sourceName="test.csv" />);
+    expect(screen.queryByLabelText("Covariation player column")).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Player identity column"), {
+      target: { value: "player_id" },
+    });
+    fireEvent.click(screen.getByLabelText(/I attest/i));
+    expect(screen.getByLabelText("Covariation player column")).toHaveValue("player_id");
+    expect(screen.getByLabelText("Covariation player column")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Analyze Player Covariation" })).toHaveAttribute("title");
+  });
 });

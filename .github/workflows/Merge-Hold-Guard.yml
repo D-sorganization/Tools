@@ -199,11 +199,17 @@ jobs:
 
             # ---- signal 1: explicit hold labels -----------------------------
             for hold in $HOLD_LABEL $EXTRA_HOLD_LABELS; do
-              has_label "$hold" && add_reason "\`$hold\` label"
+              # The runner invokes bash with -e. Keep a normal absent-label
+              # predicate inside an if condition so it cannot terminate the job.
+              if has_label "$hold"; then
+                add_reason "\`$hold\` label"
+              fi
             done
 
             # ---- signal 2: draft --------------------------------------------
-            [ "$DRAFT" = "true" ] && add_reason "PR is a draft"
+            if [ "$DRAFT" = "true" ]; then
+              add_reason "PR is a draft"
+            fi
 
             # ---- signal 3: disarmed by a human since the last push -----------
             # One timeline fetch serves both the hold signal and the escalation
@@ -215,7 +221,9 @@ jobs:
                         | "\((.actor.type // "User"))\t\(.created_at)"' \
               > "$TIMELINE" 2>/dev/null || : > "$TIMELINE"
 
-            LAST_DISARM="$(grep -v '^Bot	' "$TIMELINE" | cut -f2 | sort | tail -1)"
+            # awk exits successfully when there are no matching human events;
+            # grep would return 1 and trip the runner's implicit pipefail/-e.
+            LAST_DISARM="$(awk -F'\t' '$1 != "Bot" { print $2 }' "$TIMELINE" | sort | tail -1)"
             HEAD_DATE="$(gh api "repos/$REPO/commits/$HEAD_SHA" \
               --jq '.commit.committer.date' 2>/dev/null)" || HEAD_DATE=""
             if [ -n "$LAST_DISARM" ] && [ -n "$HEAD_DATE" ] && [[ "$LAST_DISARM" > "$HEAD_DATE" ]]; then

@@ -37,7 +37,7 @@ const erf = (value: number): number => {
   return sign * (1 - polynomial * Math.exp(-(x ** 2)));
 };
 
-const normalCdf = (value: number) => 0.5 * (1 + erf(value / Math.sqrt(2)));
+export const normalCdf = (value: number) => 0.5 * (1 + erf(value / Math.sqrt(2)));
 
 const logGamma = (value: number): number => {
   const coefficients = [
@@ -101,13 +101,13 @@ const regularizedBeta = (x: number, a: number, b: number): number => {
     : 1 - front * betaFraction(b, a, 1 - x) / b;
 };
 
-const studentTwoSidedP = (tStatistic: number, degrees: number): number => {
+export const studentTwoSidedP = (tStatistic: number, degrees: number): number => {
   if (!Number.isFinite(tStatistic) || degrees <= 0) return 0;
   const x = degrees / (degrees + tStatistic ** 2);
   return Math.min(1, Math.max(0, regularizedBeta(x, degrees / 2, 0.5)));
 };
 
-const normalQuantile = (probability: number): number => {
+export const normalQuantile = (probability: number): number => {
   let low = -8;
   let high = 8;
   for (let index = 0; index < 80; index += 1) {
@@ -118,7 +118,7 @@ const normalQuantile = (probability: number): number => {
   return (low + high) / 2;
 };
 
-const studentQuantile = (probability: number, degrees: number): number => {
+export const studentQuantile = (probability: number, degrees: number): number => {
   let low = -20;
   let high = 20;
   for (let index = 0; index < 90; index += 1) {

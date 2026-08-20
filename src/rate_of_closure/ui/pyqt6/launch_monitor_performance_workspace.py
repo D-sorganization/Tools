@@ -37,6 +37,9 @@ from rate_of_closure.launch_monitor_performance import (
 )
 from rate_of_closure.launch_monitor_workspace import dataset_reference_for_frame
 from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
+from rate_of_closure.ui.pyqt6.launch_monitor_longitudinal_widget import (
+    LaunchMonitorLongitudinalWidget,
+)
 from rate_of_closure.ui.pyqt6.launch_monitor_performance_files import (
     load_performance_settings,
     performance_document,
@@ -46,6 +49,9 @@ from rate_of_closure.ui.pyqt6.launch_monitor_performance_presenter import (
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_performance_strokes import (
     PerformanceStrokesMixin,
+)
+from rate_of_closure.ui.pyqt6.launch_monitor_source_backed_sg import (
+    LaunchMonitorSourceBackedStrokesGainedWidget,
 )
 
 
@@ -95,6 +101,8 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
             "course-state inputs and no validated baseline manifest/table is loaded."
         )
         self.strokes_status.setWordWrap(True)
+        self.source_backed_sg = LaunchMonitorSourceBackedStrokesGainedWidget()
+        self.longitudinal = LaunchMonitorLongitudinalWidget()
 
         self.player_combo = self._combo("Trusted player identity column")
         self.session_combo = self._combo("Trusted session identity column")
@@ -154,7 +162,9 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
         tabs = QTabWidget()
         tabs.addTab(self._dispersion_page(), "Dispersion")
         tabs.addTab(self._strokes_page(), "Strokes Gained")
+        tabs.addTab(self.source_backed_sg, "Source-Backed SG")
         tabs.addTab(self._trend_page(), "Session Trends")
+        tabs.addTab(self.longitudinal, "Longitudinal Inference")
         buttons = QHBoxLayout()
         for button in (
             self.save_button,
@@ -250,6 +260,8 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
         self.player_attest.setChecked(False)
         self.session_attest.setChecked(False)
         self._dispersion = self._proxy = self._trend = None
+        self.source_backed_sg.set_dataset(frame)
+        self.longitudinal.set_dataset(frame)
         self._refresh_enabled()
 
     def _refresh_enabled(self) -> None:
@@ -337,9 +349,12 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
             "lateral_unit": self.lateral_unit.currentText(),
             "target_yards": self.target_distance.value(),
         }
-        return performance_document(
+        document: dict[str, object] = performance_document(
             reference, settings, self._dispersion, self._proxy, self._trend
         )
+        document["source_backed_strokes_gained"] = self.source_backed_sg.document()
+        document["longitudinal_inference"] = self.longitudinal.document()
+        return document
 
     def save_dialog(self) -> None:
         selected, _ = QFileDialog.getSaveFileName(

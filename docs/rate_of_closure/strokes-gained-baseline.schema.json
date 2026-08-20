@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/D-sorganization/Tools/docs/rate_of_closure/strokes-gained-baseline.schema.json",
+  "title": "Launch Monitor Strokes Gained Baseline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "baseline_id", "version", "source_url", "license", "table_sha256", "states"],
+  "properties": {
+    "contract_version": {"const": "launch-monitor-strokes-gained-baseline/1.0.0"},
+    "baseline_id": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "source_url": {"type": "string", "format": "uri", "pattern": "^https?://"},
+    "license": {"type": "string", "minLength": 1},
+    "table_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "states": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["lie", "distance_yards", "expected_strokes"],
+        "properties": {
+          "lie": {"type": "string", "minLength": 1},
+          "distance_yards": {"type": "number", "minimum": 0},
+          "expected_strokes": {"type": "number", "minimum": 0}
+        }
+      }
+    }
+  }
+}
