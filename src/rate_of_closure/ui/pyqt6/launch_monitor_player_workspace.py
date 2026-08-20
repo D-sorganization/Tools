@@ -2,18 +2,21 @@
 
 from __future__ import annotations
 
+from dataclasses import asdict
 from pathlib import Path
 
 import pandas as pd
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
+    QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
     QHBoxLayout,
     QLabel,
     QMessageBox,
     QPushButton,
+    QSpinBox,
     QVBoxLayout,
     QWidget,
 )
@@ -33,6 +36,16 @@ from rate_of_closure.launch_monitor_workspace import (
     load_project,
     save_project,
 )
+from rate_of_closure.player_covariation import (
+    CovariationRequest,
+    PairScanRequest,
+    PlayerCovariationAnalysis,
+    analyze_player_covariation,
+    scan_covariation_pairs,
+)
+from rate_of_closure.ui.pyqt6.launch_monitor_covariation_view import (
+    LaunchMonitorCovariationView,
+)
 
 
 class LaunchMonitorPlayerWorkspace(QWidget):
@@ -43,17 +56,29 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         self._frame = pd.DataFrame()
         self._source_name = "Unloaded"
         self._result: AnalysisResult | None = None
+        self.covariation_result: PlayerCovariationAnalysis | None = None
+        self._export_payload: dict[str, object] = {}
         self._build_ui()
 
     def _build_ui(self) -> None:
         self.identity_combo = QComboBox()
         self.x_combo = QComboBox()
         self.y_combo = QComboBox()
+        self.method_combo = QComboBox()
+        self.method_combo.addItems(["Pearson", "Spearman"])
+        self.min_samples_spin = QSpinBox()
+        self.min_samples_spin.setRange(4, 1_000_000)
+        self.min_samples_spin.setValue(10)
+        self.confidence_spin = QDoubleSpinBox()
+        self.confidence_spin.setRange(0.51, 0.999)
+        self.confidence_spin.setDecimals(3)
+        self.confidence_spin.setValue(0.95)
         self.attestation = QCheckBox(
             "I attest this column identifies a player; it was not inferred "
             "from session, club, or row order."
         )
         self.run_button = QPushButton("Run Offline Compatibility Covariation")
+        self.scan_button = QPushButton("Rank Variable Pairs")
         self.save_button = QPushButton("Save Project...")
         self.load_button = QPushButton("Load Project...")
         self.export_button = QPushButton("Export Full Bundle...")
@@ -63,10 +88,17 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             (self.identity_combo, "Player identity column"),
             (self.x_combo, "Player covariation X variable"),
             (self.y_combo, "Player covariation Y variable"),
+            (self.method_combo, "Displayed covariation coefficient"),
+            (self.min_samples_spin, "Minimum pairwise-complete shots per player"),
+            (self.confidence_spin, "Pearson confidence level"),
             (self.attestation, "Explicit player identity attestation"),
             (
                 self.run_button,
                 "Run local v1 compatibility calculation; canonical v2 is preferred",
+            ),
+            (
+                self.scan_button,
+                "Exploratory scan of all numeric pairs with multiplicity warning",
             ),
             (
                 self.save_button,
@@ -82,10 +114,14 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         form.addRow("Player identity:", self.identity_combo)
         form.addRow("X variable:", self.x_combo)
         form.addRow("Y variable:", self.y_combo)
+        form.addRow("Coefficient:", self.method_combo)
+        form.addRow("Minimum N/player:", self.min_samples_spin)
+        form.addRow("Confidence:", self.confidence_spin)
         form.addRow(self.attestation)
         buttons = QHBoxLayout()
         for button in (
             self.run_button,
+            self.scan_button,
             self.save_button,
             self.load_button,
             self.export_button,
@@ -107,9 +143,12 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         layout.addLayout(form)
         layout.addLayout(buttons)
         layout.addWidget(self.status)
+        self.covariation_view = LaunchMonitorCovariationView()
+        layout.addWidget(self.covariation_view)
         self.attestation.toggled.connect(self._refresh_enabled)
         self.identity_combo.currentTextChanged.connect(self._refresh_enabled)
         self.run_button.clicked.connect(self.run_safely)
+        self.scan_button.clicked.connect(self.scan_safely)
         self.save_button.clicked.connect(self.save_dialog)
         self.load_button.clicked.connect(self.load_dialog)
         self.export_button.clicked.connect(self.export_dialog)
@@ -141,12 +180,15 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             self.y_combo.setCurrentText("club_path")
         self.attestation.setChecked(False)
         self._result = None
+        self.covariation_result = None
+        self._export_payload = {}
         self.status.setText("Select and attest an explicit player identity column.")
         self._refresh_enabled()
 
     def _refresh_enabled(self) -> None:
         ready = bool(self.identity_combo.currentText()) and self.attestation.isChecked()
         self.run_button.setEnabled(ready)
+        self.scan_button.setEnabled(ready)
         self.save_button.setEnabled(ready)
         self.export_button.setEnabled(ready and self._result is not None)
 
@@ -160,7 +202,10 @@ class LaunchMonitorPlayerWorkspace(QWidget):
                 self.identity_combo.currentText(), self.attestation.isChecked()
             ),
             selection=AnalysisSelection(
-                self.x_combo.currentText(), self.y_combo.currentText()
+                self.x_combo.currentText(),
+                self.y_combo.currentText(),
+                self.min_samples_spin.value(),
+                self.confidence_spin.value(),
             ),
         )
 
@@ -180,6 +225,18 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             ),
         )
         self._result = result
+        self.covariation_result = analyze_player_covariation(
+            self._frame,
+            CovariationRequest(
+                x_column=project.selection.x,
+                y_column=project.selection.y,
+                player_column=project.identity.column,
+                min_samples=project.selection.min_samples,
+                confidence_level=project.selection.confidence_level,
+            ),
+        )
+        self._export_payload = self._covariation_payload(self.covariation_result)
+        self.covariation_view.populate(self.covariation_result)
         group_count = len(result.groups)
         self.status.setText(
             f"{group_count} player groups analyzed. Associations are not causal; "
@@ -187,6 +244,63 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         )
         self._refresh_enabled()
         return result
+
+    def run_pair_scan(self) -> None:
+        """Rank all numeric pairs using the same attested player identity."""
+
+        project = self.project()
+        analysis = scan_covariation_pairs(
+            self._frame,
+            PairScanRequest(
+                player_column=project.identity.column,
+                numeric_columns=tuple(numeric_columns(self._frame)),
+                min_samples=project.selection.min_samples,
+                confidence_level=project.selection.confidence_level,
+            ),
+        )
+        self._export_payload = {
+            "contract_version": "player-covariation-scan/1.0.0",
+            "mode": "exploratory_pair_scan",
+            "request": {
+                "player_column": project.identity.column,
+                "numeric_columns": list(numeric_columns(self._frame)),
+                "min_samples": project.selection.min_samples,
+                "confidence_level": project.selection.confidence_level,
+            },
+            "ranking": analysis.ranking.to_dict(orient="records"),
+            "warnings": list(analysis.warnings),
+            "method_description": analysis.method_description,
+        }
+        self.covariation_view.populate_scan(analysis.ranking)
+        self.status.setText(
+            f"{len(analysis.ranking)} exploratory pairs ranked. Multiple-comparison "
+            "control or held-out confirmation is required."
+        )
+
+    def scan_safely(self) -> None:
+        try:
+            self.run_pair_scan()
+        except ValueError as error:
+            QMessageBox.warning(self, "Pair Scan Not Run", str(error))
+
+    @staticmethod
+    def _covariation_payload(
+        analysis: PlayerCovariationAnalysis,
+    ) -> dict[str, object]:
+        return {
+            "contract_version": "player-covariation/1.0.0",
+            "request": asdict(analysis.request),
+            "units": analysis.units,
+            "definitions": analysis.definitions,
+            "pooled": asdict(analysis.pooled),
+            "within_player": asdict(analysis.within_player),
+            "between_player": asdict(analysis.between_player),
+            "meta_analysis": asdict(analysis.meta_analysis),
+            "per_player": analysis.per_player.to_dict(orient="records"),
+            "backing_data": analysis.backing_data.to_dict(orient="records"),
+            "warnings": list(analysis.warnings),
+            "method_description": analysis.method_description,
+        }
 
     def run_safely(self) -> None:
         try:
@@ -218,6 +332,8 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             self.identity_combo.setCurrentText(project.identity.column)
             self.x_combo.setCurrentText(project.selection.x)
             self.y_combo.setCurrentText(project.selection.y)
+            self.min_samples_spin.setValue(project.selection.min_samples)
+            self.confidence_spin.setValue(project.selection.confidence_level)
             self.attestation.setChecked(project.identity.user_attested)
         except (OSError, ValueError) as error:
             QMessageBox.warning(self, "Project Not Loaded", str(error))
@@ -230,7 +346,7 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             export_analysis_bundle(
                 Path(selected) / "launch-monitor-analysis-bundle",
                 self.project(),
-                self._result.to_wire(),
+                self._export_payload,
                 self._frame,
             )
 

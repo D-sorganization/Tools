@@ -25,6 +25,9 @@ describe("LaunchMonitorPerformanceWorkspace", () => {
     expect(screen.getByRole("button", { name: /run session trend/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /calculate user-supplied sg/i })).toBeDisabled();
     expect(screen.getByText(/source-backed strokes gained unavailable/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Load verified strokes-gained baseline")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /calculate source-backed sg/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /run longitudinal inference/i })).toBeDisabled();
   });
 
   it("exposes save/load analysis and plot/data export with explanatory titles", () => {

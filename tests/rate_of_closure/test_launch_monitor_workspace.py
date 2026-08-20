@@ -130,6 +130,7 @@ def test_pyqt_player_workspace_runs_grouped_analysis_only_after_attestation(
     )
     panel.set_dataset(frame, "test.csv")
     panel.identity_combo.setCurrentText("player_id")
+    panel.min_samples_spin.setValue(4)
     assert not panel.run_button.isEnabled()
     panel.attestation.setChecked(True)
     assert panel.run_button.isEnabled()
@@ -138,3 +139,11 @@ def test_pyqt_player_workspace_runs_grouped_analysis_only_after_attestation(
     assert result.request.group_by == "player_id"
     assert len(result.groups) == 2
     assert "2 player groups analyzed" in panel.status.text()
+    assert panel.covariation_result is not None
+    assert panel.covariation_result.meta_analysis.contributor_count == 2
+    assert panel.covariation_view.table.rowCount() == 2
+    assert "unknown" in panel.covariation_view.axes[0].get_xlabel()
+    assert panel._export_payload["backing_data"]
+    panel.run_pair_scan()
+    assert panel._export_payload["mode"] == "exploratory_pair_scan"
+    assert panel.covariation_view.table.rowCount() > 0
