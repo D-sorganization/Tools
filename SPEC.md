@@ -27,12 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.67                                    |
+| **Spec Version**        | 1.17.68                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.68 keeps the scheduled merge-hold sweep on the REST API. The
+scheduled token can create labels and read pull requests through REST on the
+fleet runner, while the equivalent GraphQL-backed `gh pr list` request returns
+HTTP 401. Event-driven enforcement and hold semantics are unchanged.
 
 Version 1.17.64 makes an empty auto-merge timeline a successful no-hold result.
 The guard now selects human disarm timestamps with `awk`, which exits zero when
