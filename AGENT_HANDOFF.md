@@ -56,14 +56,16 @@ is left, and it is a reimplementation, not a migration**: wiring
 do not close #4466 until #4571 lands.**
 
 The 39 `codex/4142-*` / `codex/4433-*` drafts were closed on 2026-08-16 as
-superseded by merged #4473, and their work is on `main` (Morris chain under
-`application/morris/`, the #4433 inspectors under `ui/pyqt6/`). **Their
-branches are intact; reopen rather than rebase** — merging one now would remove
-current `main` content. #4473 does **not** supersede #4438 (merged).
+superseded by merged #4473 (Morris chain under `application/morris/`, #4433
+inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
-Other live non-golf work: `src/shared/python` hygiene (#4507 lint
-normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469
-architecture guards always-on), and eight Bolt/Palette micro-PRs.
+Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
+
+**Inbound from UpstreamDrift#8770.** UD's child-copy contract forbids fixing
+`src/shared/python/ai/auth/authentication.py` there, so it excluded that dir
+from its placeholder gate pending us. Lines 342/370 cite `TODO #5227` (closed,
+unrelated — retarget to UpstreamDrift#8770); lines 240/245/316 trip semgrep
+`python-logger-credential-disclosure` by logging user ids on credential paths.
 
 **Known-red on `main`, already filed — do not re-diagnose:** #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -140,8 +142,8 @@ Note: `ruff format --check` reports four pre-existing failures under
    (Phases S1–S5: dock widget in Rate of Closure, workspace seeding, standalone &
    UpstreamDrift launcher parity).
 2. **Land the camera-cluster epic #4571** so #4466 can finally close.
-3. Clear the `src/shared/python` hygiene pair (#4507, #4509) — these unblock
-   downstream consumers.
+3. Clear the `src/shared/python` hygiene pair (#4507, #4509) plus the auth fix
+   for UpstreamDrift#8770 — all unblock downstream consumers.
 4. Land the CI repairs (#4454, #4469) and fix the filed reds (#4561, #4569).
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
