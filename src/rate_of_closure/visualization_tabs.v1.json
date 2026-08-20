@@ -3,7 +3,7 @@
   "schema_version": 1,
   "artifact_policy": "diagnostic-only-not-approved-golden",
   "reference_environments": {
-    "react": { "viewport_px": [1440, 900], "additional_viewports_px": [[1280, 720], [390, 844]], "minimum_visible_width_px": 240, "responsive_minimum_visible_height_px": 180, "responsive_minimum_visible_width_px": 120, "responsive_control_locators": { "explorer": "section[aria-label='Scenario inputs']", "simulation": "section[aria-label='Simulation setup']", "plots": "section[aria-label='Plot management']", "flight": "section[aria-label='Flight explorer inputs']", "launch-monitor-analytics": "section[aria-label='Analysis contract']", "variation": "section[aria-label='Variation setup']", "putting": "section[aria-label='Putt setup']", "neural-model-lab": "section[aria-label='Neural Model Lab']" }, "dpi_scales": [] },
+    "react": { "viewport_px": [1440, 900], "additional_viewports_px": [[1280, 720], [390, 844]], "minimum_visible_width_px": 240, "responsive_minimum_visible_height_px": 180, "responsive_minimum_visible_width_px": 120, "responsive_control_locators": { "explorer": "section[aria-label='Scenario inputs']", "simulation": "section[aria-label='Simulation setup']", "plots": "section[aria-label='Plot management']", "flight": "section[aria-label='Flight explorer inputs']", "launch-monitor-analytics": "section[aria-label='Analysis contract']", "variation": "section[aria-label='Variation setup']", "putting": "section[aria-label='Putt setup']", "neural-model-lab": "section[aria-label='Neural Model Lab controls']" }, "dpi_scales": [] },
     "pyqt": { "viewport_px": [1440, 900], "minimum_visible_width_px": 240, "dpi_scales": [1.0, 1.5] }
   },
   "tabs": [

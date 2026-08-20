@@ -11,6 +11,9 @@ describe("NeuralModelLabPanel", () => {
     expect(screen.getByText(/retired_non_group_safe/)).toBeInTheDocument();
     expect(screen.getByText(/2,794 rows \/ 0 strict/)).toBeInTheDocument();
     expect(screen.getByText(/never trains on or persists private rows/i)).toBeInTheDocument();
+    const chart = screen.getByRole("img", { name: "Vendor strict eligible input rows chart" });
+    const controls = screen.getByRole("region", { name: "Neural Model Lab controls" });
+    expect(chart.compareDocumentPosition(controls) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByRole("button", { name: "Submit / Export Request" })).toHaveAttribute("title");
   });
 });

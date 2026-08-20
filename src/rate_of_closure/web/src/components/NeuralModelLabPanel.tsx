@@ -21,7 +21,7 @@ async function fileSha256(file: File): Promise<string> {
 
 function CapabilityPlot({ vendors }: { readonly vendors: typeof defaultCapabilities.vendors }) {
   const maximum = Math.max(1, ...vendors.map((vendor) => vendor.strictRowCount));
-  return <svg viewBox="0 0 640 190" role="img" aria-label="Vendor strict eligible input rows chart" className="mt-3 w-full rounded bg-slate-950">
+  return <svg viewBox="0 0 640 190" role="img" aria-label="Vendor strict eligible input rows chart" className="mb-3 h-64 w-full rounded bg-slate-950">
     <title>Strict five-input rows by vendor; availability remains policy governed</title>
     <text x="12" y="18" fill="#94a3b8">Strict eligible input rows (count)</text>
     {vendors.map((vendor, index) => { const width = 480 * vendor.strictRowCount / maximum; const y = 38 + index * 46;
@@ -82,17 +82,17 @@ export function NeuralModelLabPanel() {
   } catch (error) { setMessage(error instanceof Error ? error.message : String(error)); } };
 
   return <section aria-label="Neural Model Lab" className="space-y-5">
-    <div className={card}><h2 className="text-xl font-semibold text-sky-200">Neural Model Lab</h2>
+    <div className={card}><CapabilityPlot vendors={capabilities.vendors}/>
+      <h2 className="text-xl font-semibold text-sky-200">Neural Model Lab</h2>
       <p className="mt-2 text-sm text-slate-300">Safe client for private, group-safe vendor-comparable surrogate training. This browser never trains on or persists private rows. Models are descriptive and are not device emulation or certification.</p>
       <input ref={capabilityInput} type="file" className="hidden" accept=".json" aria-label="Private capability manifest" onChange={(event) => { const file = event.target.files?.[0]; if (file) void file.text().then((value) => { try { setCapabilities(parseCapabilityManifest(JSON.parse(value))); setMessage("Loaded user-authorized private capability metadata; no private rows or path were persisted."); } catch (error) { setMessage(error instanceof Error ? error.message : String(error)); } }); }} />
       <button type="button" title="Load a user-authorized private capability manifest without persisting its path or rows" className="mt-2 rounded border border-slate-700 px-3 py-1" onClick={() => capabilityInput.current?.click()}>Load Capability Manifest</button>
-      <CapabilityPlot vendors={capabilities.vendors}/>
       <div className="mt-3 grid gap-3 md:grid-cols-3">{capabilities.vendors.map((item) => <article key={item.vendor} className="rounded border border-slate-700 p-3" title={item.blockers.join(" ")}>
         <h3 className="font-semibold">{item.vendor}: unavailable</h3><p>{item.rowCount.toLocaleString()} rows / {item.strictRowCount.toLocaleString()} strict</p>
         <p className="text-xs text-amber-300">Artifact: {item.artifactState}</p><ul className="list-disc pl-4 text-xs text-slate-400">{item.blockers.map((reason) => <li key={reason}>{reason}</li>)}</ul>
       </article>)}</div>
     </div>
-    <div className={card}><h3 className="font-semibold">Private training request</h3>
+    <section aria-label="Neural Model Lab controls" className={card}><h3 className="font-semibold">Private training request</h3>
       <input ref={datasetInput} type="file" className="hidden" accept=".csv,.json" aria-label="Custom training dataset" onChange={(event) => { const file = event.target.files?.[0]; if (file) void Promise.all([readLaunchMonitorFile(file), fileSha256(file)]).then(([data, hash]) => { setRows(data); setDatasetName(file.name); setDatasetSha(hash); setMessage(`Loaded ${data.length} local rows by reference; rows are not submitted until a private authority is configured.`); }).catch((error) => setMessage(String(error))); }} />
       <button type="button" title="Select a custom local CSV or JSON dataset" className="mt-2 rounded bg-sky-700 px-3 py-1" onClick={() => datasetInput.current?.click()}>Select Custom Dataset</button>
       <p className="mt-2 text-xs text-slate-400">{datasetName || "No dataset"} — {rows.length} rows — SHA-256 {datasetSha || "unavailable"}</p>
@@ -106,7 +106,7 @@ export function NeuralModelLabPanel() {
       <div className="mt-3 flex gap-2"><button type="button" title="Submit to a private API or export a CLI request" className="rounded bg-emerald-700 px-3 py-1" onClick={() => void submit()}>Submit / Export Request</button>
         <button type="button" title="Poll the configured private training API" className="rounded border border-slate-700 px-3 py-1" onClick={() => void monitor()}>Monitor Job</button></div>
       <p role="status" className="mt-2 text-sm text-amber-200">{message}</p>{job && <pre className="overflow-auto text-xs">{JSON.stringify(job, null, 2)}</pre>}
-    </div>
+    </section>
     <div className={card}><h3 className="font-semibold">Validated portable inference</h3>
       <input ref={modelInput} type="file" className="hidden" accept=".json" aria-label="Portable neural model JSON" onChange={(event) => { const file = event.target.files?.[0]; if (file) void file.text().then((value) => { try { const next = parsePortableModel(JSON.parse(value)); setModel(next); setInputs(Object.fromEntries(next.features.map((feature) => [feature.name, feature.mean]))); setPrediction(null); setMessage(`Validated ${next.modelId}.`); } catch (error) { setModel(null); setMessage(error instanceof Error ? error.message : String(error)); } }); }} />
       <button type="button" title="Load a non-executable JSON model after schema and hash validation" className="mt-2 rounded bg-sky-700 px-3 py-1" onClick={() => modelInput.current?.click()}>Load Portable Model</button>
