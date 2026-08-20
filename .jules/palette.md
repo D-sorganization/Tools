@@ -52,3 +52,8 @@
 ## 2024-05-31 - React `useId()` for Input Labels
 **Learning:** When improving accessibility for React form inputs where explicit IDs are missing, using hardcoded IDs can cause conflicts if components render multiple times.
 **Action:** When improving accessibility for React form inputs where explicit IDs are missing, use the `useId()` hook to safely generate unique, deterministic identifiers for reliably mapping `<label htmlFor={...}>` to `<input id={...}>` elements.
+
+## 2026-08-16 - Focus Rings on ODE Solver Inputs
+**Learning:** Found an accessibility issue pattern where inputs and textareas in ODE Solver have `focus:outline-none` but lack focus indicators, making keyboard navigation difficult.
+**Action:** Replace `focus:outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.
+

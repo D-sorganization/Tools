@@ -49,6 +49,21 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Verify Python runtime
+        run: |
+          python -c 'import sys; assert sys.version_info[:2] == (3, 11), sys.version'
+
+      # Never repair or install into the setup-python interpreter in place.
+      # A stale self-hosted pip package can contain metadata from one version
+      # and modules from another. venv bootstraps a job-local pip and keeps all
+      # benchmark mutations under RUNNER_TEMP.
+      - name: Create isolated benchmark virtual environment
+        run: |
+          python -m venv "$RUNNER_TEMP/benchmark-venv"
+          echo "$RUNNER_TEMP/benchmark-venv/bin" >> "$GITHUB_PATH"
+          echo "VIRTUAL_ENV=$RUNNER_TEMP/benchmark-venv" >> "$GITHUB_ENV"
+          "$RUNNER_TEMP/benchmark-venv/bin/python" -m pip --version
+
       # Cache pip downloads — typical install in this workflow is ~17min cold,
       # drops to <60s on a warm cache. Key includes both pyproject.toml and
       # requirements*.txt so any dependency change invalidates the cache.
@@ -65,7 +80,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m ensurepip --upgrade
           python -m pip install --ignore-installed "pip<26.1" "setuptools>=61.0,<82" wheel
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
@@ -73,7 +87,7 @@ jobs:
           python -m pip install --ignore-installed --no-deps ruff==0.14.10
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install -r requirements-ci.txt
-          python -m pip install numpy>=2.0.1
+          python -m pip install "numpy>=2.0.1"
           python -m pip install fastapi httpx pytest-cov pytest-xdist pytest-benchmark bandit==1.7.7 pip-audit types-PyYAML types-requests
           python -m pip install --ignore-installed mypy==1.13.0
           python -m pip install -e ".[dev]"
