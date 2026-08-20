@@ -221,7 +221,9 @@ jobs:
                         | "\((.actor.type // "User"))\t\(.created_at)"' \
               > "$TIMELINE" 2>/dev/null || : > "$TIMELINE"
 
-            LAST_DISARM="$(grep -v '^Bot	' "$TIMELINE" | cut -f2 | sort | tail -1)"
+            # awk exits successfully when there are no matching human events;
+            # grep would return 1 and trip the runner's implicit pipefail/-e.
+            LAST_DISARM="$(awk -F'\t' '$1 != "Bot" { print $2 }' "$TIMELINE" | sort | tail -1)"
             HEAD_DATE="$(gh api "repos/$REPO/commits/$HEAD_SHA" \
               --jq '.commit.committer.date' 2>/dev/null)" || HEAD_DATE=""
             if [ -n "$LAST_DISARM" ] && [ -n "$HEAD_DATE" ] && [[ "$LAST_DISARM" > "$HEAD_DATE" ]]; then
