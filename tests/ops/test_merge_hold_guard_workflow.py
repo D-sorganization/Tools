@@ -19,3 +19,5 @@ def test_absent_hold_signals_do_not_trip_runner_errexit() -> None:
     assert '[ "$DRAFT" = "true" ] && add_reason' not in text
     assert 'if has_label "$hold"; then' in text
     assert 'if [ "$DRAFT" = "true" ]; then' in text
+    assert "LAST_DISARM=\"$(grep -v" not in text
+    assert "LAST_DISARM=\"$(awk -F'\\t'" in text
