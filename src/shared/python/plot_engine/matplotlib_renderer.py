@@ -72,16 +72,15 @@ class MatplotlibRenderer:
         """
         if isinstance(spec, SurfacePlotSpec):
             return self.render_surface(spec, fig)
-        elif isinstance(spec, ContourPlotSpec):
+        if isinstance(spec, ContourPlotSpec):
             return self.render_contour(spec, fig, ax)
-        elif isinstance(spec, HeatmapSpec):
+        if isinstance(spec, HeatmapSpec):
             return self.render_heatmap(spec, fig, ax)
-        elif isinstance(spec, HistogramSpec):
+        if isinstance(spec, HistogramSpec):
             return self.render_histogram(spec, fig, ax)
-        elif isinstance(spec, FilterComparisonSpec):
+        if isinstance(spec, FilterComparisonSpec):
             return self.render_filter_comparison(spec, fig)
-        else:
-            return self.render_line_plot(spec, fig, ax)
+        return self.render_line_plot(spec, fig, ax)
 
     def render_line_plot(
         self,
@@ -385,11 +384,12 @@ class MatplotlibRenderer:
         if spec is None:
             raise ValueError("spec must be provided")
         if fig is None:
-            fig, ax = plt.subplots(
+            new_fig, new_ax = plt.subplots(
                 figsize=(spec.width / 100, spec.height / 100),
             )
-        elif ax is None:
-            ax = fig.add_subplot(111)
+            return new_fig, new_ax
+        if ax is None:
+            return fig, fig.add_subplot(111)
         return fig, ax
 
     def _get_theme_colors(self) -> list[str]:

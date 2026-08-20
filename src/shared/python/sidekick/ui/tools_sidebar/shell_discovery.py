@@ -104,10 +104,7 @@ def _discover_windows_shells() -> list[ShellDescriptor]:
         if path is None:
             continue
         command: tuple[str, ...]
-        if identifier in {"pwsh", "powershell"}:
-            command = (path, "-NoLogo")
-        else:
-            command = (path,)
+        command = (path, "-NoLogo") if identifier in {"pwsh", "powershell"} else (path,)
         found.append(
             ShellDescriptor(identifier=identifier, label=label, command=command),
         )

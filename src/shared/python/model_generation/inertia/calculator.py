@@ -212,17 +212,16 @@ class InertiaCalculator:
         # Route to appropriate method
         if mode == InertiaMode.MANUAL:
             return self._compute_manual(source, mass)
-        elif mode == InertiaMode.PRIMITIVE:
+        if mode == InertiaMode.PRIMITIVE:
             return self._compute_primitive(source, mass, dimensions)
-        elif mode in (
+        if mode in (
             InertiaMode.MESH_UNIFORM_DENSITY,
             InertiaMode.MESH_SPECIFIED_MASS,
         ):
             return self._compute_mesh(source, mass, density, mode)
-        elif mode == InertiaMode.ANTHROPOMETRIC:
+        if mode == InertiaMode.ANTHROPOMETRIC:
             return self._compute_anthropometric(source, mass, dimensions, **kwargs)
-        else:
-            raise ValueError(f"Unsupported inertia mode: {mode}")
+        raise ValueError(f"Unsupported inertia mode: {mode}")
 
     def compute_from_geometry(
         self,
@@ -433,10 +432,9 @@ class InertiaCalculator:
         """Resolve source to a mesh file path."""
         if isinstance(source, Geometry) and source.mesh_filename:
             return Path(source.mesh_filename)
-        elif isinstance(source, str | Path):
+        if isinstance(source, str | Path):
             return Path(source)
-        else:
-            raise ValueError(f"Mesh mode requires path, got {type(source)}")
+        raise ValueError(f"Mesh mode requires path, got {type(source)}")
 
     def _load_mesh(
         self, mesh_path: Path, mode: InertiaMode, mass: float | None
@@ -534,15 +532,13 @@ class InertiaCalculator:
             if volume and volume > 0:
                 computed_density = mass / volume
                 return raw_inertia * computed_density, mass
-            else:
-                raw_mass = np.trace(raw_inertia) / 3.0
-                if raw_mass > 0:
-                    scale = mass / raw_mass
-                    return raw_inertia * scale, mass
-                return raw_inertia, mass
-        else:
-            final_mass = volume * density if volume else mass or 1.0
-            return raw_inertia * density, final_mass
+            raw_mass = np.trace(raw_inertia) / 3.0
+            if raw_mass > 0:
+                scale = mass / raw_mass
+                return raw_inertia * scale, mass
+            return raw_inertia, mass
+        final_mass = volume * density if volume else mass or 1.0
+        return raw_inertia * density, final_mass
 
     def _create_default_inertia_result(
         self, mass: float | None, mode: InertiaMode, source_path: str
@@ -609,15 +605,14 @@ class InertiaCalculator:
         """Create geometry from dimensions dict."""
         if "radius" in dimensions and "length" in dimensions:
             return Geometry.cylinder(dimensions["radius"], dimensions["length"])
-        elif "length" in dimensions and "width" in dimensions:
+        if "length" in dimensions and "width" in dimensions:
             depth = dimensions.get("depth", dimensions["width"])
             return Geometry.box(dimensions["length"], dimensions["width"], depth)
-        elif "radius" in dimensions:
+        if "radius" in dimensions:
             return Geometry.sphere(dimensions["radius"])
-        else:
-            # Default to small box
-            size = dimensions.get("size", 0.1)
-            return Geometry.box(size, size, size)
+        # Default to small box
+        size = dimensions.get("size", 0.1)
+        return Geometry.box(size, size, size)
 
     def clear_cache(self) -> None:
         """Clear the computation cache."""

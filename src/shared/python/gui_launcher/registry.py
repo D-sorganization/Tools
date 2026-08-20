@@ -180,7 +180,7 @@ class GUIRegistry:
         Returns:
             Sorted list of category names
         """
-        categories = set(reg.category for reg in self._registrations.values())
+        categories = {reg.category for reg in self._registrations.values()}
         return sorted(categories)
 
     def get_available_gui_types(self, tool_name: str) -> list[GUIType]:

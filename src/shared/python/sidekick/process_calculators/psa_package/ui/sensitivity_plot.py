@@ -31,7 +31,10 @@ __all__ = [
     "SensitivityPlotWidget",
 ]
 
-matplotlib.use("QtAgg")
+try:
+    matplotlib.use("QtAgg")
+except (ImportError, ValueError):
+    pass
 
 
 class MplCanvas(FigureCanvas):
@@ -168,12 +171,11 @@ class SensitivityPlotWidget(QWidget):
 
         if show_lines and show_markers:
             return "-", "o"
-        elif show_lines:
+        if show_lines:
             return "-", ""
-        elif show_markers:
+        if show_markers:
             return "", "o"
-        else:
-            return "-", ""  # Default to lines
+        return "-", ""  # Default to lines
 
     def _plot_recovery_vs_recycle(self) -> None:
         """Plot H2 recovery vs recycle fractions."""

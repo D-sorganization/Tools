@@ -102,7 +102,10 @@ def create_slider(  # noqa: F811
     return slider
 
 
-matplotlib.use("QtAgg")  # noqa: F821
+try:
+    matplotlib.use("QtAgg")  # noqa: F821
+except (ImportError, ValueError):
+    pass
 
 
 class MplCanvas(FigureCanvas):  # noqa: F811, F821

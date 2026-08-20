@@ -962,10 +962,9 @@ class SteamCalculationEngine:
 
                 if pressure > P_sat:
                     return "liquid", 0.0
-                elif abs(pressure - P_sat) / P_sat < 0.001:  # Close to saturation
+                if abs(pressure - P_sat) / P_sat < 0.001:  # Close to saturation
                     return "two-phase", 0.5
-                else:
-                    return "vapor", 1.0
+                return "vapor", 1.0
 
             except (ValueError, ZeroDivisionError, OverflowError, TypeError):
                 return "unknown", 0.0

@@ -31,23 +31,28 @@ def _solve_thermal_profile(
     request: ThermalProfileRequest,
 ) -> ThermalProfileResponse:
     """Solve the thermal ODE using RK4 integration."""
-    # Build power function
-    power_w = request.power_w
-    profile = request.power_profile
+    # Build power function.  The pydantic contract declares these fields
+    # float/str, but the changed-file mypy lane runs --follow-imports=skip, so
+    # the contract module resolves to Any from here; bind annotated locals to
+    # keep the numeric types visible.
+    power_w: float = request.power_w
+    profile: str = request.power_profile
+    ramp_rate_w_per_s: float = request.ramp_rate_w_per_s
+    step_time_s: float = request.step_time_s
 
     def power_func(t: float) -> float:
         if profile == "constant":
             return power_w
-        elif profile == "linear_ramp":
-            return power_w + request.ramp_rate_w_per_s * t
-        elif profile == "step":
-            return power_w if t < request.step_time_s else 0.0
+        if profile == "linear_ramp":
+            return power_w + ramp_rate_w_per_s * t
+        if profile == "step":
+            return power_w if t < step_time_s else 0.0
         return power_w
 
     # ODE: dT/dt = (Q_in - h*(T - T_amb)) / C_th
-    thermal_mass = request.thermal_mass_j_per_k
-    h = request.heat_loss_coeff_w_per_k
-    t_amb = request.ambient_temp_c
+    thermal_mass: float = request.thermal_mass_j_per_k
+    h: float = request.heat_loss_coeff_w_per_k
+    t_amb: float = request.ambient_temp_c
 
     def deriv(t: float, temp: float) -> float:
         if t is None:
@@ -57,9 +62,9 @@ def _solve_thermal_profile(
         return (q_in - q_loss) / thermal_mass
 
     # RK4 integration
-    dt = (request.t_end_s - request.t_start_s) / (request.num_points - 1)
+    dt: float = (request.t_end_s - request.t_start_s) / (request.num_points - 1)
     data: list[ThermalProfileDataPoint] = []
-    temp = request.initial_temp_c
+    temp: float = request.initial_temp_c
 
     for i in range(request.num_points):
         t = request.t_start_s + i * dt
