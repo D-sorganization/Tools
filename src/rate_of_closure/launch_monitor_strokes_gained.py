@@ -4,38 +4,19 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from hashlib import sha256
-from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
 
 import numpy as np
 import pandas as pd
 
-CONTRACT_VERSION = "launch-monitor-strokes-gained-baseline/1.0.0"
-MAX_BASELINE_BYTES = 10 * 1024 * 1024
+from .launch_monitor_strokes_gained_baseline import (
+    CONTRACT_VERSION,
+    StrokesGainedBaseline,
+    baseline_table_hash,
+    load_strokes_gained_baseline,
+)
+
 YARDS_PER_METRE = 1.0936132983377078
-
-
-@dataclass(frozen=True)
-class BaselineState:
-    """One expected-strokes point for a declared course lie and distance."""
-
-    lie: str
-    distance_yards: float
-    expected_strokes: float
-
-
-@dataclass(frozen=True)
-class StrokesGainedBaseline:
-    """Versioned provenance plus an immutable expected-strokes table."""
-
-    baseline_id: str
-    version: str
-    source_url: str
-    license: str
-    table_sha256: str
-    states: tuple[BaselineState, ...]
 
 
 @dataclass(frozen=True)
@@ -43,11 +24,28 @@ class SourceBackedStrokesGainedRequest:
     """Map retained course-state columns to one verified baseline."""
 
     before_lie_column: str
+    before_context_column: str
+    before_target_column: str
     before_distance_column: str
     after_lie_column: str
+    after_context_column: str
+    after_target_column: str
     after_distance_column: str
     before_distance_unit: str
     after_distance_unit: str
+    trusted_summary: TrustedSummaryRequest | None = None
+
+
+@dataclass(frozen=True)
+class TrustedSummaryRequest:
+    """Explicit user attestation for grouped and longitudinal SG summaries."""
+
+    player_column: str = ""
+    session_column: str = ""
+    club_column: str = ""
+    order_column: str = ""
+    order_unit: str = "session"
+    evidence: str = "Explicit user attestation in the Tools scoring UI."
 
 
 @dataclass(frozen=True)
@@ -56,8 +54,12 @@ class StrokesGainedBackingRow:
 
     source_index: int
     before_lie: str
+    before_context: str
+    before_target: str
     before_distance_yards: float
     after_lie: str
+    after_context: str
+    after_target: str
     after_distance_yards: float
     expected_before: float
     expected_after: float
@@ -81,103 +83,90 @@ class SourceBackedStrokesGainedResult:
     formula: str
 
 
-def baseline_table_hash(states: list[dict[str, object]]) -> str:
-    """Return the canonical SHA-256 used by baseline artifacts."""
-
-    payload = json.dumps(
-        states, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-    ).encode("utf-8")
-    return sha256(payload).hexdigest()
-
-
-def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    output: dict[str, Any] = {}
-    for key, value in pairs:
-        if key in output:
-            raise ValueError(f"duplicate JSON key: {key}")
-        output[key] = value
-    return output
-
-
-def _required_text(payload: dict[str, Any], key: str) -> str:
-    value = payload.get(key)
-    if not isinstance(value, str) or not value.strip():
-        raise ValueError(f"baseline {key} must be non-empty text")
-    return value.strip()
-
-
-def _valid_source_url(value: str) -> str:
-    parsed = urlparse(value)
-    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
-        raise ValueError("baseline source_url must be HTTP(S)")
-    return value
-
-
-def _state(value: object) -> BaselineState:
-    if not isinstance(value, dict) or set(value) != {
-        "lie",
-        "distance_yards",
-        "expected_strokes",
-    }:
-        raise ValueError(
-            "each baseline state requires lie, distance_yards, expected_strokes"
-        )
-    lie = _required_text(value, "lie").lower()
-    distance = value["distance_yards"]
-    expected = value["expected_strokes"]
-    if isinstance(distance, bool) or not isinstance(distance, (int, float)):
-        raise ValueError("baseline distance_yards must be numeric")
-    if isinstance(expected, bool) or not isinstance(expected, (int, float)):
-        raise ValueError("baseline expected_strokes must be numeric")
-    if not np.isfinite(distance) or float(distance) < 0:
-        raise ValueError("baseline distance_yards must be finite and nonnegative")
-    if not np.isfinite(expected) or float(expected) < 0:
-        raise ValueError("baseline expected_strokes must be finite and nonnegative")
-    return BaselineState(lie, float(distance), float(expected))
-
-
-def load_strokes_gained_baseline(path: Path) -> StrokesGainedBaseline:
-    """Load a bounded baseline artifact and verify schema and table digest."""
-
-    if path.stat().st_size > MAX_BASELINE_BYTES:
-        raise ValueError("strokes-gained baseline exceeds the 10 MiB limit")
-    payload = json.loads(
-        path.read_text(encoding="utf-8"), object_pairs_hook=_unique_object
-    )
-    expected_keys = {
-        "contract_version",
-        "baseline_id",
-        "version",
-        "source_url",
-        "license",
-        "table_sha256",
-        "states",
+def _baseline_document(baseline: StrokesGainedBaseline) -> dict[str, object]:
+    return {
+        "contract_version": CONTRACT_VERSION,
+        "baseline_id": baseline.baseline_id,
+        "version": baseline.version,
+        "source_url": baseline.source_url,
+        "license": baseline.license,
+        "table_sha256": baseline.table_sha256,
+        "states": [
+            {
+                "lie": state.lie,
+                "context": state.context,
+                "target": state.target,
+                "distance_yards": state.distance_yards,
+                "expected_strokes": state.expected_strokes,
+                "standard_error": state.standard_error,
+            }
+            for state in baseline.states
+        ],
     }
-    if isinstance(payload, dict) and set(payload) != expected_keys:
-        raise ValueError("baseline artifact fields do not match the contract")
-    if (
-        not isinstance(payload, dict)
-        or payload.get("contract_version") != CONTRACT_VERSION
-    ):
-        raise ValueError(f"baseline contract_version must be {CONTRACT_VERSION}")
-    raw_states = payload.get("states")
-    if not isinstance(raw_states, list) or len(raw_states) < 2:
-        raise ValueError("baseline states must contain at least two rows")
-    declared_hash = _required_text(payload, "table_sha256").lower()
-    if len(declared_hash) != 64 or baseline_table_hash(raw_states) != declared_hash:
-        raise ValueError("baseline table SHA-256 does not match states")
-    states = tuple(_state(item) for item in raw_states)
-    identities = {(state.lie, state.distance_yards) for state in states}
-    if len(identities) != len(states):
-        raise ValueError("baseline contains duplicate lie/distance states")
-    return StrokesGainedBaseline(
-        _required_text(payload, "baseline_id"),
-        _required_text(payload, "version"),
-        _valid_source_url(_required_text(payload, "source_url")),
-        _required_text(payload, "license"),
-        declared_hash,
-        states,
+
+
+def build_source_backed_strokes_gained_payload(
+    frame: pd.DataFrame,
+    baseline: StrokesGainedBaseline,
+    request: SourceBackedStrokesGainedRequest,
+) -> dict[str, object]:
+    """Build the canonical Upstream request without performing statistics."""
+
+    records = json.loads(frame.to_json(orient="records", date_format="iso"))
+    request_document: dict[str, object] = {
+        "start": {
+            "lie_column": request.before_lie_column,
+            "context_column": request.before_context_column,
+            "target_column": request.before_target_column,
+            "distance_column": request.before_distance_column,
+            "distance_unit": request.before_distance_unit,
+        },
+        "finish": {
+            "lie_column": request.after_lie_column,
+            "context_column": request.after_context_column,
+            "target_column": request.after_target_column,
+            "distance_column": request.after_distance_column,
+            "distance_unit": request.after_distance_unit,
+        },
+        "min_samples": 1,
+    }
+    if request.trusted_summary is not None:
+        request_document.update(_trusted_summary_document(request.trusted_summary))
+    return {
+        "records": records,
+        "baseline": _baseline_document(baseline),
+        "request": request_document,
+    }
+
+
+def _trusted_summary_document(spec: TrustedSummaryRequest) -> dict[str, object]:
+    columns = (
+        ("player", spec.player_column),
+        ("session", spec.session_column),
+        ("club", spec.club_column),
     )
+    summaries = [
+        {
+            "dimension": dimension,
+            "column": column,
+            "trust_level": "explicit_user_attested",
+            "evidence": spec.evidence,
+        }
+        for dimension, column in columns
+        if column
+    ]
+    output: dict[str, object] = {"summaries": summaries}
+    if spec.player_column and spec.order_column:
+        output["longitudinal"] = {
+            "order_column": spec.order_column,
+            "order_unit": spec.order_unit,
+            "group_column": spec.player_column,
+            "group_dimension": "player",
+            "trust_level": "explicit_user_attested",
+            "evidence": spec.evidence,
+            "min_samples": 3,
+        }
+    return output
 
 
 def _yards(value: object, unit: str) -> float | None:
@@ -191,9 +180,25 @@ def _yards(value: object, unit: str) -> float | None:
     raise ValueError("distance unit must be 'yd' or 'm'")
 
 
-def _expected(baseline: StrokesGainedBaseline, lie: str, distance: float) -> float:
+def _course_state_text(value: Any) -> str:
+    """Normalize an optional course-state label without propagating pandas Any."""
+
+    return "" if pd.isna(value) else str(value).strip().lower()
+
+
+def _expected(
+    baseline: StrokesGainedBaseline,
+    lie: str,
+    context: str,
+    target: str,
+    distance: float,
+) -> float:
     candidates = sorted(
-        (state for state in baseline.states if state.lie == lie),
+        (
+            state
+            for state in baseline.states
+            if (state.lie, state.context, state.target) == (lie, context, target)
+        ),
         key=lambda state: state.distance_yards,
     )
     if (
@@ -201,7 +206,10 @@ def _expected(baseline: StrokesGainedBaseline, lie: str, distance: float) -> flo
         or distance < candidates[0].distance_yards
         or distance > candidates[-1].distance_yards
     ):
-        raise ValueError(f"course state {lie}/{distance:g} yd is outside the baseline")
+        raise ValueError(
+            f"course state {lie}/{context}/{target}/{distance:g} yd "
+            "is outside the baseline"
+        )
     return float(
         np.interp(
             distance,
@@ -218,8 +226,12 @@ def _backing_rows(
 ) -> tuple[StrokesGainedBackingRow, ...]:
     columns = (
         request.before_lie_column,
+        request.before_context_column,
+        request.before_target_column,
         request.before_distance_column,
         request.after_lie_column,
+        request.after_context_column,
+        request.after_target_column,
         request.after_distance_column,
     )
     missing = sorted(set(columns).difference(frame.columns))
@@ -228,9 +240,17 @@ def _backing_rows(
     rows: list[StrokesGainedBackingRow] = []
     for source_index, (_, row) in enumerate(frame.iterrows()):
         before_value = row[request.before_lie_column]
+        before_context_value = row[request.before_context_column]
+        before_target_value = row[request.before_target_column]
         after_value = row[request.after_lie_column]
-        before_lie = "" if pd.isna(before_value) else str(before_value).strip().lower()
-        after_lie = "" if pd.isna(after_value) else str(after_value).strip().lower()
+        after_context_value = row[request.after_context_column]
+        after_target_value = row[request.after_target_column]
+        before_lie = _course_state_text(before_value)
+        before_context = _course_state_text(before_context_value)
+        before_target = _course_state_text(before_target_value)
+        after_lie = _course_state_text(after_value)
+        after_context = _course_state_text(after_context_value)
+        after_target = _course_state_text(after_target_value)
         before_distance = _yards(
             row[request.before_distance_column], request.before_distance_unit
         )
@@ -239,20 +259,40 @@ def _backing_rows(
         )
         if (
             not before_lie
+            or not before_context
+            or not before_target
             or not after_lie
+            or not after_context
+            or not after_target
             or before_distance is None
             or after_distance is None
         ):
             continue
-        expected_before = _expected(baseline, before_lie, before_distance)
-        expected_after = _expected(baseline, after_lie, after_distance)
+        expected_before = _expected(
+            baseline,
+            before_lie,
+            before_context,
+            before_target,
+            before_distance,
+        )
+        expected_after = _expected(
+            baseline,
+            after_lie,
+            after_context,
+            after_target,
+            after_distance,
+        )
         gained = expected_before - 1.0 - expected_after
         rows.append(
             StrokesGainedBackingRow(
                 source_index,
                 before_lie,
+                before_context,
+                before_target,
                 before_distance,
                 after_lie,
+                after_context,
+                after_target,
                 after_distance,
                 expected_before,
                 expected_after,
@@ -287,7 +327,8 @@ def calculate_source_backed_strokes_gained(
         baseline.table_sha256,
         rows,
         "SG = verified E(before course state) - 1 - verified E(after course "
-        "state); linear interpolation occurs only within the same lie.",
+        "state); linear interpolation occurs only within the same exact "
+        "lie/context/target stratum.",
     )
 
 
@@ -296,7 +337,9 @@ __all__ = [
     "SourceBackedStrokesGainedRequest",
     "SourceBackedStrokesGainedResult",
     "StrokesGainedBaseline",
+    "TrustedSummaryRequest",
     "baseline_table_hash",
+    "build_source_backed_strokes_gained_payload",
     "calculate_source_backed_strokes_gained",
     "load_strokes_gained_baseline",
 ]

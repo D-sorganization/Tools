@@ -27,7 +27,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                         |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs). |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout). |
-| #4583 | Professional launch-monitor program. Release A is merged. Current local commits close #4277 covariation, #4584/#4229 source-backed SG artifact support, and #4230 inferential longitudinal analysis with PyQt6/React parity. Release B physical collection remains external and open. |
+| #4583 | Professional launch-monitor program. Release A is merged. #4277 covariation and #4230 longitudinal analysis are merged; #4584 is the active canonical UpstreamDrift source-backed SG client slice. Release B physical collection remains external and open. |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
 #4473/#4577), `src/pendulum_simulator/AGENT_HANDOFF.md`,
@@ -42,6 +42,7 @@ work. Check `gh pr list` for the live count rather than trusting a number here.
 | PR    | Scope                                                                      |
 | ----- | -------------------------------------------------------------------------- |
 | #4585 | Sidekick Phase S1/S2 integration; active protected delivery               |
+| #4584 | Canonical source-backed SG v2 client parity; active protected delivery     |
 | #4466 | Rate of Closure remainder — **content-complete except the camera cluster** |
 | #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)          |
 | #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)              |
@@ -143,8 +144,7 @@ Note: `ruff format --check` reports four pre-existing failures under
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
 4. Complete #4142 and companion #4430 after their registered model/UI gates.
-5. Clear the `src/shared/python` hygiene pair (#4507, #4509) plus the auth fix
-   for UpstreamDrift#8770 — all unblock downstream consumers.
-6. Land the CI repairs (#4454, #4469) and fix the filed reds (#4561, #4569).
-7. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
-8. #4125 H5: stand up the public release-management repo (cross-repo).
+5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+6. #4125 H5: stand up the public release-management repo (cross-repo).
+7. Complete #4584 after UpstreamDrift #8803: canonical SG authority in both Rate
+   clients, with no bundled baseline and identity-safe grouped summaries.
