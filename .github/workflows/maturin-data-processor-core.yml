@@ -54,18 +54,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Select persistent Python tool cache
-        run: |
-          if [ -z "${RUNNER_TOOL_CACHE:-}" ]; then
-            echo "::error::RUNNER_TOOL_CACHE is unavailable"
-            exit 1
-          fi
-          echo "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" >> "$GITHUB_ENV"
-
-      - name: Restore local Python toolcache
-        shell: bash
-        run: .github/scripts/restore-python-toolcache.sh
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
         with:
@@ -110,7 +98,7 @@ jobs:
           python - <<'PY'
           from shared.python.data_processor_io import rust_engine
           assert rust_engine._RUST_AVAILABLE, (
-              "rust_engine._RUST_AVAILABLE is False; data_processor_core was not selected"
+              "rust_engine did not detect the data_processor_core extension"
           )
-          print("rust_engine selected native backend:", rust_engine._RUST_AVAILABLE)
+          print("data_processor_core backend gate OK: rust available")
           PY

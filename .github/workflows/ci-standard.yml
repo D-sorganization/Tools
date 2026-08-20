@@ -1151,8 +1151,6 @@ jobs:
           # Features `python` and `wasm` use mutually-exclusive FFI systems
           # (PyO3 vs wasm-bindgen), so we test them individually.
           cargo test
-          export LIBRARY_PATH="${pythonLocation}/lib:${LIBRARY_PATH:-}"
-          export LD_LIBRARY_PATH="${pythonLocation}/lib:${LD_LIBRARY_PATH:-}"
           cargo test --features python
 
       - name: Security Audit (cargo-audit)
