@@ -147,3 +147,16 @@ def test_pyqt_player_workspace_runs_grouped_analysis_only_after_attestation(
     panel.run_pair_scan()
     assert panel._export_payload["mode"] == "exploratory_pair_scan"
     assert panel.covariation_view.table.rowCount() > 0
+
+
+def test_workspace_documentation_matches_released_grouped_analytics() -> None:
+    root = Path(__file__).resolve().parents[2]
+    text = (
+        root / "docs" / "rate_of_closure" / "LAUNCH_MONITOR_PLAYER_WORKSPACE_V2.md"
+    ).read_text(encoding="utf-8")
+
+    assert "not a complete hierarchical" not in text
+    assert "pending the UpstreamDrift v2 backend" not in text
+    assert "WITHIN_PLAYER_COVARIATION.md" in text
+    assert "LONGITUDINAL_PLAYER_ANALYSIS.md" in text
+    assert "SOURCE_BACKED_STROKES_GAINED.md" in text
