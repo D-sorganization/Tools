@@ -9,6 +9,7 @@ import {
   serializeLaunchMonitorProject,
   type LaunchMonitorProject,
 } from "../model/launchMonitorWorkspace";
+import { LaunchMonitorCovariation } from "./LaunchMonitorCovariation";
 
 interface Props { rows: LaunchMonitorRow[]; sourceName: string }
 
@@ -131,5 +132,13 @@ export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
         onClick={() => void exportBundle()} className="rounded border border-slate-700 px-3 py-2 text-sm disabled:opacity-40">Export Full Bundle</button>
     </div>
     <p role="status" className="mt-3 text-sm text-slate-400">{message}</p>
+    {identity && attested && <div className="mt-5 border-t border-slate-800 pt-5">
+      <LaunchMonitorCovariation rows={rows} lockedPlayerColumn={identity}
+        savedSettings={{
+          playerColumn: identity, xColumn: x, yColumn: y, selectedPlayer: "",
+          method: "pearson", minSamples: 10, confidenceLevel: 0.95,
+        }}
+        onSettingsChange={(settings) => { setX(settings.xColumn); setY(settings.yColumn); }} />
+    </div>}
   </section>;
 }

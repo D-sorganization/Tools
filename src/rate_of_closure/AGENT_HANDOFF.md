@@ -55,15 +55,18 @@ against the swapped-in version, before any new tests. Meet that bar or skip it.
 
 ## Active Epics — Golf Epics Merged
 
-Launch-monitor epic #4583 is in consolidated Release A delivery. PyQt6 and
+Launch-monitor epic #4583 has merged consolidated Release A. PyQt6 and
 React now share explicit-identity projects, arbitrary-variable analysis,
 dispersion/target-error, attested session summaries, persistence/export, and a
 safe capability-driven Neural Model Lab. The desktop client can load all
 261,666 manifest-verified private-authority rows from an explicitly authorized
 local root while its plot stays bounded. UpstreamDrift v2 is the canonical
-contract; embedded calculations are labeled compatibility/offline. Do not claim
-vendor emulation, source-backed strokes gained, paired-device validation, or
-population meta-analysis: #4584, Release B, and #4277 remain open respectively.
+contract; embedded calculations are labeled compatibility/offline. The current
+#4277 slice adds identity-attested pooled, player-centered, between-player,
+per-player and random-effects covariation plus exploratory all-pairs scans to
+both clients, with unit-labelled plots and complete backing exports. Do not
+claim vendor emulation, source-backed strokes gained, or paired-device
+validation: #4584 and Release B remain open.
 
 Both golf epics and their GUI surfaces are **physics & GUI complete and merged** (#4577, #4579):
 

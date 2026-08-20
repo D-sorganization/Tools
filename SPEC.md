@@ -27,12 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.51                                    |
+| **Spec Version**        | 1.17.52                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.52 adds the identity-safe population covariation layer tracked by
+#4277. The Python authority and React/PyQt clients now separate raw pooled,
+player-mean-centered, between-player, per-player, and fixed/random-effects
+Pearson estimates; retain descriptive Spearman estimates; flag aggregation
+reversals; and rank arbitrary numeric pairs as explicitly exploratory. Blank
+identities fail closed, meta-effects require at least two eligible players,
+centered confidence limits remain unavailable without clustered inference, and
+exports retain raw and centered backing rows. Both clients label chart units
+and place the advanced analysis behind the existing explicit user attestation.
 
 Version 1.17.51 consolidates the launch-monitor research platform onto current
 Rate-of-Closure PyQt6 and React/Vite clients. Both surfaces provide explicit-
