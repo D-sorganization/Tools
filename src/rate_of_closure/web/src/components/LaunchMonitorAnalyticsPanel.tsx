@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 
 import { MAX_LINKED_SCATTER_ROWS } from "../model/launchMonitorLinkedScatter";
 import { LaunchMonitorLinkedScatter } from "./LaunchMonitorLinkedScatter";
+import { LaunchMonitorPlayerWorkspace } from "./LaunchMonitorPlayerWorkspace";
 import {
   analyzeLaunchMonitorData,
   numericLaunchMonitorColumns,
@@ -27,6 +28,7 @@ const DEMO_ROWS: LaunchMonitorRow[] = Array.from({ length: 120 }, (_, index) => 
   const ballSpeed = clubSpeed * 1.46 + attackAngle * 0.08 + Math.sin(index) * 0.25;
   return {
     shot_id: `demo-${index + 1}`,
+    player_id: index < 60 ? "demo-player-a" : "demo-player-b",
     session_id: index < 60 ? "demo-a" : "demo-b",
     monitor_vendor: index % 2 ? "FlightScope" : "TrackMan",
     observation_kind: "shot",
@@ -272,6 +274,7 @@ export function LaunchMonitorAnalyticsPanel() {
           )}
         </div>
       </div>
+      <LaunchMonitorPlayerWorkspace rows={rows} sourceName={sourceName} />
     </section>
   );
 }

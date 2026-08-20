@@ -44,6 +44,9 @@ from rate_of_closure.ui.pyqt6.launch_monitor_linked_scatter_panel import (
     LaunchMonitorLinkedScatterPanel,
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_preview import demo_frame
+from rate_of_closure.ui.pyqt6.launch_monitor_player_workspace import (
+    LaunchMonitorPlayerWorkspace,
+)
 from shared.python.swing_sim.conventions import (
     ConventionId,
     ParameterId,
@@ -165,10 +168,12 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.details = QPlainTextEdit()
         self.details.setReadOnly(True)
         self.details.setAccessibleName("Launch Monitor Analysis Traceability")
+        self.player_workspace = LaunchMonitorPlayerWorkspace()
         output = QSplitter(Qt.Orientation.Vertical)
         output.addWidget(self.preview_panel)
         output.addWidget(self.result_table)
         output.addWidget(self.details)
+        output.addWidget(self.player_workspace)
         output.setSizes([320, 240, 160])
 
         body = QSplitter(Qt.Orientation.Horizontal)
@@ -257,6 +262,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.result_table.clearContents()
         self.result_table.setRowCount(0)
         self.details.clear()
+        self.player_workspace.set_dataset(self.frame, self.source_name)
         self._refresh_preview()
         self._refresh_convention_evidence()
 

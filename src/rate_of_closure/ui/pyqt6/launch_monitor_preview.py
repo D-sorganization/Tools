@@ -58,6 +58,7 @@ def demo_frame() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "shot_id": [f"demo-{item + 1}" for item in index],
+            "player_id": np.where(index < 60, "demo-player-a", "demo-player-b"),
             "session_id": np.where(index < 60, "demo-a", "demo-b"),
             "monitor_vendor": np.where(index % 2, "FlightScope", "TrackMan"),
             "observation_kind": "shot",
