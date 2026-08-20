@@ -93,12 +93,13 @@ jobs:
     name: Rate web production Worker E2E (trusted push)
     if: github.event_name == 'push'
     runs-on: d-sorg-fleet
-    timeout-minutes: 20
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: src/rate_of_closure/web
     env:
       RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
+      RATE_E2E_PREBUILT: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -120,8 +121,33 @@ jobs:
       - name: Install Playwright-pinned Chromium runtime
         run: npx --no-install playwright install --with-deps chromium
 
+      - name: Build production web bundle once
+        run: npm run build
+
       - name: Exercise production Worker lifecycle and layouts
-        run: npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow
+        env:
+          RATE_E2E_EVIDENCE_PHASE: functional
+        run: >-
+          npm run test:e2e --
+          --project=chromium-desktop
+          --project=chromium-narrow
+          --grep-invert=@trusted-isolated
+
+      - name: Audit primary-tab accessibility in isolation
+        env:
+          RATE_E2E_EVIDENCE_PHASE: accessibility
+        run: >-
+          npm run test:e2e --
+          e2e/visualization-accessibility.spec.ts
+          --project=chromium-desktop
+
+      - name: Measure protected visualization budgets in isolation
+        env:
+          RATE_E2E_EVIDENCE_PHASE: performance
+        run: >-
+          npm run test:e2e --
+          e2e/visualization-performance.spec.ts
+          --project=chromium-desktop
 
       - name: Install declared PyQt render dependencies
         working-directory: .
