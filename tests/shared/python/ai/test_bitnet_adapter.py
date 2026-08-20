@@ -452,3 +452,65 @@ class TestTimeouts:
         assert "timed out" in chunks[-1].content.lower()
         # The hung child must have been killed/reaped.
         mock_process.kill.assert_called_once()
+
+
+class TestPromptValidation:
+    """The prompt is a single argv element, so it is bounded and encodable.
+
+    `llama-cli` receives the whole conversation as one `-p` argument. Without
+    these guards an unbounded prompt risks E2BIG or a silently truncated
+    argument list, and text carrying a lone surrogate (reachable from a chat
+    surface fed an undecodable upstream byte string) fails deep inside
+    `subprocess` after the fork, with nothing tying the error back to the
+    prompt. Both checks run before any process is spawned.
+    """
+
+    def test_send_message_rejects_oversize_prompt(self, adapter) -> None:
+        message = "x" * (adapter._MAX_PROMPT_BYTES + 1)
+
+        with (
+            patch(
+                "src.shared.python.ai.adapters.bitnet_adapter.subprocess.run"
+            ) as mock_run,
+            pytest.raises(AIProviderError, match="maximum size"),
+        ):
+            adapter.send_message(message, ConversationContext(), [])
+
+        mock_run.assert_not_called()
+
+    def test_send_message_rejects_invalid_utf8_prompt(self, adapter) -> None:
+        with (
+            patch(
+                "src.shared.python.ai.adapters.bitnet_adapter.subprocess.run"
+            ) as mock_run,
+            pytest.raises(AIProviderError, match="valid UTF-8 text"),
+        ):
+            adapter.send_message("bad\udcff", ConversationContext(), [])
+
+        mock_run.assert_not_called()
+
+    def test_stream_response_rejects_invalid_utf8_prompt(self, adapter) -> None:
+        with patch(
+            "src.shared.python.ai.adapters.bitnet_adapter.subprocess.Popen"
+        ) as mock_popen:
+            chunks = list(
+                adapter.stream_response("bad\udcff", ConversationContext(), [])
+            )
+
+        mock_popen.assert_not_called()
+        assert len(chunks) == 1
+        assert chunks[0].is_final is True
+        assert "valid UTF-8 text" in chunks[0].content
+
+    def test_stream_response_rejects_oversize_prompt(self, adapter) -> None:
+        message = "x" * (adapter._MAX_PROMPT_BYTES + 1)
+
+        with patch(
+            "src.shared.python.ai.adapters.bitnet_adapter.subprocess.Popen"
+        ) as mock_popen:
+            chunks = list(adapter.stream_response(message, ConversationContext(), []))
+
+        mock_popen.assert_not_called()
+        assert len(chunks) == 1
+        assert chunks[0].is_final is True
+        assert "maximum size" in chunks[0].content

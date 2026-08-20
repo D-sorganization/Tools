@@ -208,6 +208,13 @@ jobs:
           fi
 
       - name: Install Dependencies
+        # Download caching stays ON (job-level PIP_CACHE_DIR points at the
+        # host-shared persistent cache): the force-reinstall guards below
+        # protect against a corrupted *installed* toolcache package, which
+        # is orthogonal to pip's *download* cache. Disabling the download
+        # cache here made quality-gate re-fetch the full dependency set
+        # (85 MB PyQt6-Qt6 included) every run, which blew the 60-minute
+        # job budget whenever the fleet's uplink was slow.
         # Force-reinstall sortedcontainers (and hypothesis) before anything
         # else: the shared self-hosted runner toolcache occasionally carries a
         # half-installed `sortedcontainers` where pip metadata claims 2.4.0 but
@@ -227,7 +234,7 @@ jobs:
           python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
-          python -m pip install fastapi python-multipart
+          python -m pip install fastapi python-multipart uvicorn filelock
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
@@ -261,9 +268,11 @@ jobs:
         run: |
           if [ -s changed_python_files.txt ]; then
             echo "Linting changed files..."
-            # Mirror the exclude list from pyproject.toml [tool.ruff]:
+            # Mirror the exclude list from ruff.toml (authoritative).
+            # src/data_processing/ is deliberately absent: it is not excluded
+            # in ruff.toml, and it passes both ruff check and ruff format.
             # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            grep -v -E '^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_lint_files.txt || true
             if [ -s ruff_lint_files.txt ]; then
               xargs -r -d '\n' python -m ruff check < ruff_lint_files.txt
@@ -277,9 +286,11 @@ jobs:
       - name: Format Check (ruff-format)
         run: |
           if [ -s changed_python_files.txt ]; then
-            # Mirror the exclude list from pyproject.toml [tool.ruff]:
+            # Mirror the exclude list from ruff.toml (authoritative).
+            # src/data_processing/ is deliberately absent: it is not excluded
+            # in ruff.toml, and it passes both ruff check and ruff format.
             # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            grep -v -E '^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_format_files.txt || true
             if [ -s ruff_format_files.txt ]; then
               xargs -r -d '\n' python -m ruff format --check < ruff_format_files.txt
@@ -440,7 +451,7 @@ jobs:
   tests:
     # The required 3.11 lane must survive a first-use Python download plus
     # dependency installation, Rust-wheel build, and the actual test suite.
-    timeout-minutes: 120
+    timeout-minutes: 150
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -448,22 +459,53 @@ jobs:
     # ``fix-brick-toolcache`` removed from ``needs:`` — see ``quality-gate``
     # job comment for rationale (soft dependency, symlink persists).
     needs: [pick-runner]
-    runs-on: d-sorg-fleet
+    # Consume the dispatcher's decision instead of hardcoding the fleet. This
+    # job already declared `needs: [pick-runner]` while ignoring its `runner`
+    # output, so `tests` was the one lane that did not honour CI_RUNNER_MODE.
+    # That mattered because `tests (3.11)` is a required check: pinning it to
+    # `d-sorg-fleet` gated every merge on a pool that routinely sits at zero
+    # idle runners, so PRs stayed BLOCKED on queue depth rather than on any
+    # test result. `pick-runner` resolves to `ubuntu-latest` for public repos
+    # (free and unmetered), to `d-sorg-fleet` when CI_RUNNER_MODE=local, and
+    # fails closed for private repos with no idle fleet capacity.
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     strategy:
       # Do NOT cancel sibling Python lanes when one fails. Only ``tests (3.11)``
-      # is a required check; an infra crash in the non-required 3.10/3.12 lanes
+      # is a required check; an infra crash in the non-required 3.12 lane
       # (e.g. SIGABRT/exit-134 from the Qt multi-widget headless segfault or an
       # OOM kill on a saturated self-hosted runner) must not cancel the required
-      # 3.11 lane before it runs. With the default ``fail-fast: true`` a 3.10
+      # 3.11 lane before it runs. With the default ``fail-fast: true`` a sibling
       # crash skipped 3.11 entirely and left the PR permanently BLOCKED.
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        # Starts at the root ``requires-python`` floor. This job runs the
+        # root-package suite (core_tests is entirely ``tests/**`` and
+        # ``src/shared/python/**`), none of which can execute below 3.11, so a
+        # 3.10 lane here collects nothing and only ever reported configuration
+        # noise. The ten sub-packages and crates that do declare >=3.10 are
+        # gated on 3.10 by their own maturin build + parity workflows, which is
+        # where that compatibility is actually proven.
+        # Enforced by tests/test_python_version_contract.py.
+        python-version: ["3.11", "3.12"]
     env:
       # Persistent per-host download cache.  Do not also enable setup-python's
       # Actions cache on this self-hosted lane: its post-job upload can occupy a
       # runner for tens of minutes on the constrained WAN.
-      PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
+      # The shared path only exists on the fleet hosts; a hosted runner cannot
+      # create it (different user, no write access above $HOME) and pip would
+      # abort before installing anything. Fall back to a workspace-local cache
+      # there — it buys no cross-job reuse, but the job is ephemeral anyway.
+      PIP_CACHE_DIR: ${{ needs.pick-runner.outputs.runner == 'd-sorg-fleet' &&
+        '/home/dieterolson/actions-runners/.shared-tool-cache/pip' ||
+        format('{0}/.pip-cache', github.workspace) }}
+      # xdist fan-out, chosen per runner class rather than globally.
+      # `-n 0` exists because the memory-constrained fleet hosts crashed xdist
+      # workers even at low fan-out. That constraint does not apply to a hosted
+      # runner (4 vCPU / 16 GB), and forcing serial there is what pushed this job
+      # into its timeout: the test step alone took 147.5 of 150 minutes on a
+      # hosted runner, while the same suite finished in 77.7 minutes serially on
+      # fleet hardware, which has faster cores.
+      PYTEST_FANOUT: ${{ needs.pick-runner.outputs.runner == 'd-sorg-fleet' && '0' || 'auto' }}
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
       # Keep matrix jobs isolated from stale runner-user packages. Python 3.12
@@ -529,12 +571,94 @@ jobs:
             echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           fi
 
-      - name: Install Rust toolchain for tools_core wheel
+      # Cache the BUILT WHEEL, not merely the build inputs.
+      #
+      # This lane is the required check, and its most frequent failure is not a test
+      # but a download: the Rust toolchain, the crates.io registry, and maturin are
+      # re-fetched on every run. On a constrained-WAN runner that is the single
+      # largest source of red required checks, and it fails for reasons that have
+      # nothing to do with the change under test.
+      #
+      # Most pull requests do not touch `rust_core/`, so the wheel they need is
+      # byte-identical to the last one built. Keying a cache on everything that can
+      # change the wheel's contents or its ABI lets those runs skip the toolchain
+      # install, the crate downloads and the compile entirely.
+      #
+      # `tools_core` is a workspace member, so the root `Cargo.toml`/`Cargo.lock`
+      # participate; `rust-toolchain.toml` pins the compiler, so a channel change
+      # must invalidate too; and the wheel is ABI-specific, hence `runner.os` and the
+      # Python version in the key.
+      # `restore` + an explicit `save` immediately after the build, rather than
+      # `actions/cache`, which only saves in a post-job step.
+      #
+      # This is not a stylistic choice — it was measured. On the first run of this
+      # change the wheel built successfully and the job then failed downstream at
+      # `Collect Changed Coverage Inputs` (a `git fetch`). Because `actions/cache`
+      # saves at job end, the post step was skipped and the freshly built wheel was
+      # discarded, so the next run would rebuild it. In a fleet where downstream
+      # network steps fail routinely, a save-at-job-end cache would almost never
+      # populate, which defeats the entire purpose. Saving the moment the wheel
+      # exists means one successful build benefits every later run even if that run
+      # goes on to fail.
+      #
+      # KEEP THIS KEY BYTE-IDENTICAL TO THE ONE ON "Save tools_core wheel to cache".
+      # An earlier revision computed it once into a step output to stop the two from
+      # drifting, which is the better shape but is not expressible here: `hashFiles`
+      # is not valid inside a `run:` block, and using it there made the whole
+      # workflow fail to load with zero jobs created (run 31894981880). GitHub
+      # Actions has no YAML anchors, so duplication is the only option and this
+      # comment is the guard.
+      - name: Restore cached tools_core wheel
+        id: toolscore_wheel
         if: ${{ matrix.python-version == '3.11' }}
+        uses: actions/cache/restore@v6
+        with:
+          path: dist/tools-core-wheels
+          key: >-
+            toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
+            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+                      'rust_core/tools-core/Cargo.toml',
+                      'rust_core/tools-core/pyproject.toml',
+                      'rust_core/tools-core/src/**/*.rs') }}
+
+      # A cache hit is not proof of a usable wheel. If a previous run's build failed
+      # after creating the output directory, the entry can exist but be empty, and
+      # `actions/cache` will not overwrite a key that already matched. So decide from
+      # the filesystem rather than from `cache-hit`: a hit with no wheel simply falls
+      # back to building, which is today's behaviour and never worse than it.
+      - name: Decide whether the tools_core wheel must be built
+        id: toolscore_wheel_state
+        if: ${{ matrix.python-version == '3.11' }}
+        shell: bash
+        run: |
+          if compgen -G "dist/tools-core-wheels/*.whl" > /dev/null; then
+            echo "need_build=false" >> "$GITHUB_OUTPUT"
+            echo "Reusing cached wheel: $(ls dist/tools-core-wheels/*.whl)"
+          else
+            echo "need_build=true" >> "$GITHUB_OUTPUT"
+            echo "No cached wheel present; building from source."
+          fi
+
+      - name: Install Rust toolchain for tools_core wheel
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         env:
           CARGO_NET_RETRY: "10"
           CARGO_NET_TIMEOUT: "120"
+
+      # Only reached on a wheel-cache miss. Mirrors the block in
+      # maturin-ai-backend.yml so the two Rust builds cache the same way.
+      - name: Cache Cargo registry and tools_core target
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
+        uses: actions/cache@v6
+        with:
+          path: |
+            .cargo-home/registry
+            .cargo-home/git
+            rust_core/tools-core/target
+          key: toolscore-cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'rust_core/tools-core/Cargo.toml') }}
+          restore-keys: |
+            toolscore-cargo-${{ runner.os }}-
 
       - name: Reject Raw Merge Conflict Markers
         run: |
@@ -582,7 +706,7 @@ jobs:
           python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
-          python -m pip install fastapi python-multipart
+          python -m pip install fastapi python-multipart uvicorn
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
           # skipped by pytest.importorskip. tools_core is optional — main.py
@@ -593,8 +717,8 @@ jobs:
           python -m pip check
           python -c "import cv2, numpy, scipy; from scipy.signal import butter; assert cv2.__version__; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
 
-      - name: Build and install tools_core Rust wheel
-        if: ${{ matrix.python-version == '3.11' }}
+      - name: Build tools_core Rust wheel
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
         env:
           CARGO_HOME: ${{ github.workspace }}/.cargo-home
           CARGO_BUILD_JOBS: "1"
@@ -602,8 +726,46 @@ jobs:
           CARGO_TERM_COLOR: always
           RUST_MIN_STACK: "268435456"
         run: |
-          python -m pip install --force-reinstall --no-cache-dir maturin
+          # Installed from pip's cache, matching every other maturin call site in
+          # this repo (`maturin-ai-backend.yml`, `publish-artifacts.yml`, and the
+          # rust-quality-gate job below all use a plain `pip install maturin`).
+          # The previous `--force-reinstall --no-cache-dir` guaranteed a fresh PyPI
+          # download on every run of the *required* lane, which is one of the network
+          # steps that made this job fail for reasons unrelated to the change under
+          # test. Deliberately not pinned here: no call site in the repo pins maturin,
+          # and choosing a version is a separate reviewed decision rather than a
+          # drive-by change inside a caching fix.
+          python -m pip install maturin
           python -m maturin build --release --manifest-path rust_core/tools-core/Cargo.toml --features python,extension-module --out dist/tools-core-wheels
+
+      # Saved here, not at job end. See the note on the restore step: the wheel is
+      # the expensive artifact, so it is banked the instant it exists and survives
+      # any later failure in this job.
+      #
+      # `continue-on-error` because the save is an optimisation and must never be
+      # able to fail the one required lane in this repo. Two jobs that both miss the
+      # cache will both try to reserve the same key, and the loser errors; that is a
+      # cache miss next run, not a broken build.
+      # KEEP THIS KEY BYTE-IDENTICAL TO THE ONE ON "Restore cached tools_core wheel".
+      - name: Save tools_core wheel to cache
+        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: dist/tools-core-wheels
+          key: >-
+            toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
+            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+                      'rust_core/tools-core/Cargo.toml',
+                      'rust_core/tools-core/pyproject.toml',
+                      'rust_core/tools-core/src/**/*.rs') }}
+
+      # Runs on both paths — cached wheel or freshly built — so the import check
+      # still gates every run. A poisoned cache entry therefore fails loudly here
+      # rather than silently shipping an unusable extension module.
+      - name: Install and verify tools_core wheel
+        if: ${{ matrix.python-version == '3.11' }}
+        run: |
           python -m pip install dist/tools-core-wheels/*.whl --force-reinstall
           python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified in tests job')"
 
@@ -708,7 +870,9 @@ jobs:
           if [ "$BRANCH_NAME" = "codex/consolidate-open-prs-20260611-tools" ] || [ "$BRANCH_NAME" = "consolidate/open-prs-20260620" ]; then
             large_consolidation_branch=true
           fi
-          if [ "${{ matrix.python-version }}" != "3.10" ] && [ "$large_consolidation_branch" != "true" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
+          # The former `!= "3.10"` guard here is gone with the 3.10 lane; every
+          # remaining lane is at or above the root floor and can run sidekick.
+          if [ "$large_consolidation_branch" != "true" ] && grep -q -E '^src/shared/python/sidekick/' changed_python_files.txt; then
             sidekick_runtime_tests_required=false
             if grep -q -E '^src/shared/python/sidekick/(api|calculators|data_processing|lab|notes_|selected_tab_panel|symbolic_engine|tab_context_menu|ui|utils|workspace)' changed_python_files.txt; then
               sidekick_runtime_tests_required=true
@@ -768,9 +932,11 @@ jobs:
           fi
           # Large consolidation PRs can collect hundreds of changed tests. The
           # memory-constrained local runner fleet has repeatedly crashed xdist
-          # workers even at low fan-out, so override the repo-level `-n auto`
-          # addopt and report failures deterministically.
-          pytest_args+=(-n 0)
+          # workers even at low fan-out, so serial is still correct THERE. On a
+          # hosted runner it is not: see PYTEST_FANOUT above. `--dist loadscope`
+          # from the repo addopts keeps a module's tests on one worker, which
+          # matters for the load-sensitive Qt tests.
+          pytest_args+=(-n "${PYTEST_FANOUT:-0}")
 
           # Guard: every entry in the always-on core_tests smoke set must
           # actually collect at least one test. Six of these files were
@@ -914,11 +1080,11 @@ jobs:
             if [ -z "$BASE_SHA" ]; then
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
-            RUST_FILES=$(git diff --name-only "$BASE_SHA" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
+            RUST_FILES=$(git diff --name-only "$BASE_SHA" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || true)
           elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            RUST_FILES=$(git diff --name-only "${{ github.event.before }}" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
+            RUST_FILES=$(git diff --name-only "${{ github.event.before }}" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || true)
           else
-            RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || echo "")
+            RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || echo "")
           fi
 
           if [ -n "$RUST_FILES" ]; then
@@ -951,7 +1117,7 @@ jobs:
 
       - name: Cache cargo registry, git, and target
         if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        uses: Swatinem/rust-cache@258712b0b7b1ddf8bddc9fc3b0faca682b2736c3 # v2
         with:
           # Per-OS key implied by Swatinem/rust-cache (it includes runner.os).
           # Job-scope shared-key keeps this cache independent from
@@ -1029,13 +1195,24 @@ jobs:
           echo "wasm-pack build completed"
           ls pkg/
 
+      - name: Build WASM Module — swing-core (wasm-pack)
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        run: |
+          cd rust_core/swing-core
+          wasm-pack build --target web --features wasm --no-default-features
+          echo "wasm-pack build (swing-core) completed"
+          ls pkg/
+
       - name: Verify WASM Module
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          # Verify the WASM package was produced with expected files
+          # Verify the WASM packages were produced with expected files
           test -f rust_core/tools-core/pkg/tools_core_bg.wasm && echo "✅ WASM binary exists"
           test -f rust_core/tools-core/pkg/package.json && echo "✅ package.json exists"
           test -f rust_core/tools-core/pkg/tools_core.js && echo "✅ JS glue exists"
+          test -f rust_core/swing-core/pkg/swing_core_bg.wasm && echo "✅ swing-core WASM binary exists"
+          test -f rust_core/swing-core/pkg/package.json && echo "✅ swing-core package.json exists"
+          test -f rust_core/swing-core/pkg/swing_core.js && echo "✅ swing-core JS glue exists"
 
       - name: Run Benchmarks (Criterion)
         if: steps.rust-changes.outputs.has_changes == 'true'

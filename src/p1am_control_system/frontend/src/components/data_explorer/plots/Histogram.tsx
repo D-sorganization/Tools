@@ -93,20 +93,20 @@ export const Histogram = React.forwardRef<SVGSVGElement, HistogramProps>(
         snapshotName="histogram"
       >
         {(() => {
-          // ⚡ Bolt Optimization: Replace Array.from with an IIFE and a standard for loop to avoid iterator overhead and reduce garbage collection pressure.
-          const rects = new Array(nBins);
+          // ⚡ Bolt Optimization: Avoid Array.from({ length }) overhead by using new Array + for-loop
+          const bars = new Array(nBins);
           for (let i = 0; i < nBins; i++) {
             const left = x(binEdges[i]);
             const right = x(binEdges[i + 1]);
             const count = counts[i];
             if (!Number.isFinite(count)) {
-              rects[i] = null;
+              bars[i] = null;
               continue;
             }
             const top = y(Math.max(0, count));
             const barWidth = Math.max(0, right - left);
             const barHeight = Math.max(0, baseline - top);
-            rects[i] = (
+            bars[i] = (
               <rect
                 key={`bin-${i}`}
                 className="plot-bar"
@@ -124,7 +124,7 @@ export const Histogram = React.forwardRef<SVGSVGElement, HistogramProps>(
               />
             );
           }
-          return rects;
+          return bars;
         })()}
 
         {binTooltip}

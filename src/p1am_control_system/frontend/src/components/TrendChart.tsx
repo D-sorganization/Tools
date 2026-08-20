@@ -322,19 +322,23 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
       let pathD = "";
       let areaD = `M ${paddingLeft} ${paddingTop + chartHeight} `;
 
+      // ⚡ Bolt Optimization: Replace .forEach iterations with a standard for loop to eliminate closure allocation overhead in hot paths.
       if (useSmoothed) {
-        smoothedData[tagId].forEach((val, sampleIdx) => {
+        const data = smoothedData[tagId];
+        for (let sampleIdx = 0; sampleIdx < data.length; sampleIdx++) {
+          const val = data[sampleIdx];
           const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
           pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
           areaD += `L ${x} ${y} `;
-        });
+        }
       } else {
-        renderHistory.forEach((sample, sampleIdx) => {
+        for (let sampleIdx = 0; sampleIdx < renderHistory.length; sampleIdx++) {
+          const sample = renderHistory[sampleIdx];
           const val = sample[tagId] ?? 0;
           const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
           pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
           areaD += `L ${x} ${y} `;
-        });
+        }
       }
 
       areaD += `L ${lastX} ${paddingTop + chartHeight} Z`;

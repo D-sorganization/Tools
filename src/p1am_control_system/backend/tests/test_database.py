@@ -9,6 +9,7 @@ composite-index migration that turns the trend-read hot path from an index-scan
 from __future__ import annotations
 
 import sqlite3
+from pathlib import Path
 
 import pytest
 
@@ -16,11 +17,45 @@ pytest.importorskip("sqlmodel")
 
 import database  # noqa: E402
 from models import TagLog  # noqa: E402,F401  (registers the table in metadata)
-from sqlalchemy import text  # noqa: E402
+from sqlalchemy import (
+    Engine,  # noqa: E402
+    text,  # noqa: E402
+)
 from sqlmodel import Session, SQLModel, create_engine  # noqa: E402
 
 
-def test_configure_sqlite_sets_wal_and_size_limit(tmp_path) -> None:
+def test_db_file_is_anchored_to_the_backend_package(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # The historian path must NOT depend on the process CWD: a relative
+    # "dcs_scada.db" forks the DB into one file per launch directory (and drops
+    # a stray untracked copy at the repo root during a test run).
+    monkeypatch.delenv("P1AM_DB_PATH", raising=False)
+    resolved = Path(database._resolve_db_file())
+    assert resolved.is_absolute()
+    assert resolved.name == database.DB_FILENAME
+    assert resolved.parent == Path(database.__file__).resolve().parent
+
+
+def test_db_path_env_override_is_honoured(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Deployments that keep the historian on separate storage override the path.
+    target = tmp_path / "historian" / "bench.db"
+    target.parent.mkdir()
+    monkeypatch.setenv("P1AM_DB_PATH", str(target))
+    assert Path(database._resolve_db_file()) == target.resolve()
+
+
+def test_database_url_is_a_wellformed_absolute_sqlite_url() -> None:
+    # Windows drive paths must use posix separators inside the URL, otherwise
+    # SQLAlchemy sees escapes instead of a drive-absolute path.
+    assert "\\" not in database.DATABASE_URL
+    assert database.DATABASE_URL == f"sqlite:///{Path(database.DB_FILE).as_posix()}"
+    assert Path(database.DB_FILE).is_absolute()
+
+
+def test_configure_sqlite_sets_wal_and_size_limit(tmp_path: Path) -> None:
     db_file = tmp_path / "pragma.db"
     conn = sqlite3.connect(db_file)
     try:
@@ -32,7 +67,7 @@ def test_configure_sqlite_sets_wal_and_size_limit(tmp_path) -> None:
         conn.close()
 
 
-def test_configure_sqlite_sets_read_perf_pragmas(tmp_path) -> None:
+def test_configure_sqlite_sets_read_perf_pragmas(tmp_path: Path) -> None:
     # The read-performance pragmas must be applied on every fresh connection.
     db_file = tmp_path / "readperf.db"
     conn = sqlite3.connect(db_file)
@@ -48,7 +83,9 @@ def test_configure_sqlite_sets_read_perf_pragmas(tmp_path) -> None:
         conn.close()
 
 
-def test_optimize_planner_statistics_is_best_effort(tmp_path, monkeypatch) -> None:
+def test_optimize_planner_statistics_is_best_effort(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     # PRAGMA optimize must run without raising and must never block startup even
     # when the driver call fails (best-effort contract).
     engine = create_engine(f"sqlite:///{tmp_path / 'optimize.db'}")
@@ -65,32 +102,14 @@ def test_optimize_planner_statistics_is_best_effort(tmp_path, monkeypatch) -> No
         def __enter__(self) -> _BoomConn:
             return self
 
-        def __exit__(self, *_exc: object) -> bool:
-            return False
+        def __exit__(self, *_exc: object) -> None:
+            return None
 
     monkeypatch.setattr(database.engine, "connect", lambda: _BoomConn())
     database._optimize_planner_statistics()  # must not raise
 
 
-def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
-    # Seed a DB with the OLD schema: a standalone single-column tag_name index.
-    engine = create_engine(f"sqlite:///{tmp_path / 'hist.db'}")
-    SQLModel.metadata.create_all(engine)
-    with engine.begin() as conn:
-        conn.execute(
-            text("CREATE INDEX IF NOT EXISTS ix_taglog_tag_name ON taglog (tag_name)")
-        )
-
-    # Apply the migration SQL (mirrors database._migrate_historian_indexes body).
-    with engine.begin() as conn:
-        conn.execute(
-            text(
-                "CREATE INDEX IF NOT EXISTS ix_taglog_tag_name_timestamp "
-                "ON taglog (tag_name, timestamp)"
-            )
-        )
-        conn.execute(text("DROP INDEX IF EXISTS ix_taglog_tag_name"))
-
+def _taglog_index_names(engine: Engine) -> set[str]:
     with Session(engine) as session:
         rows = session.exec(
             text(
@@ -98,12 +117,75 @@ def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
                 "AND tbl_name='taglog'"
             )
         ).all()
-    names = {r[0] for r in rows}
+    return {r[0] for r in rows}
+
+
+def test_migration_creates_composite_and_drops_single(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # #4033: exercise the REAL migration function, not a hand-copied duplicate of
+    # its SQL — a copy passes even if _migrate_historian_indexes is deleted.
+    # Seed a DB with the OLD schema: a standalone single-column tag_name index.
+    engine = create_engine(f"sqlite:///{tmp_path / 'hist.db'}")
+    SQLModel.metadata.create_all(engine)
+    with engine.begin() as conn:
+        conn.execute(
+            text("CREATE INDEX IF NOT EXISTS ix_taglog_tag_name ON taglog (tag_name)")
+        )
+    assert "ix_taglog_tag_name" in _taglog_index_names(engine)
+
+    monkeypatch.setattr(database, "engine", engine)
+    database._migrate_historian_indexes()
+
+    names = _taglog_index_names(engine)
     assert "ix_taglog_tag_name_timestamp" in names
     assert "ix_taglog_tag_name" not in names
 
 
-def test_trend_query_uses_composite_index(tmp_path) -> None:
+def test_migration_is_idempotent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Runs on every boot against an already-migrated, populated DB.
+    engine = create_engine(f"sqlite:///{tmp_path / 'idem.db'}")
+    SQLModel.metadata.create_all(engine)
+    monkeypatch.setattr(database, "engine", engine)
+    database._migrate_historian_indexes()
+    database._migrate_historian_indexes()
+    assert "ix_taglog_tag_name_timestamp" in _taglog_index_names(engine)
+
+
+def test_enable_incremental_autovacuum_converts_legacy_db(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # #4006: bounded incremental_vacuum chunks replace the unbounded VACUUM in
+    # the periodic sweep, which only works if the file is in INCREMENTAL mode.
+    engine = create_engine(f"sqlite:///{tmp_path / 'autovac.db'}")
+    SQLModel.metadata.create_all(engine)  # legacy file: auto_vacuum = NONE
+    with engine.connect() as conn:
+        assert int(conn.exec_driver_sql("PRAGMA auto_vacuum").scalar()) == 0
+
+    monkeypatch.setattr(database, "engine", engine)
+    database._enable_incremental_autovacuum()
+
+    with engine.connect() as conn:
+        assert int(conn.exec_driver_sql("PRAGMA auto_vacuum").scalar()) == 2
+
+
+def test_enable_incremental_autovacuum_is_best_effort(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'autovac2.db'}")
+    SQLModel.metadata.create_all(engine)
+    monkeypatch.setattr(database, "engine", engine)
+
+    def _boom() -> None:
+        raise RuntimeError("locked")
+
+    monkeypatch.setattr(database.engine, "connect", _boom)
+    database._enable_incremental_autovacuum()  # must not raise
+
+
+def test_trend_query_uses_composite_index(tmp_path: Path) -> None:
     # The composite index must actually serve the trend query plan (no temp sort).
     engine = create_engine(f"sqlite:///{tmp_path / 'plan.db'}")
     SQLModel.metadata.create_all(engine)  # model now declares the composite index
@@ -116,3 +198,28 @@ def test_trend_query_uses_composite_index(tmp_path) -> None:
     plan_text = " ".join(str(row) for row in plan).lower()
     assert "ix_taglog_tag_name_timestamp" in plan_text
     assert "temp b-tree" not in plan_text  # index provides the order — no sort
+
+
+def test_quality_column_migration_backfills_a_legacy_historian(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """#4004: an existing bench DB must accept the new provenance column."""
+    engine = create_engine(f"sqlite:///{tmp_path / 'legacy.db'}")
+    with engine.begin() as conn:
+        conn.exec_driver_sql(
+            "CREATE TABLE taglog ("
+            "id INTEGER PRIMARY KEY, tag_name VARCHAR, value FLOAT, timestamp DATETIME)"
+        )
+        conn.exec_driver_sql(
+            "INSERT INTO taglog (tag_name, value, timestamp) "
+            "VALUES ('TAG_0', 1.0, '2026-07-31T00:00:00')"
+        )
+    monkeypatch.setattr(database, "engine", engine)
+
+    database._migrate_taglog_quality_column()
+    database._migrate_taglog_quality_column()  # idempotent
+
+    with engine.connect() as conn:
+        columns = {row[1] for row in conn.exec_driver_sql("PRAGMA table_info(taglog)")}
+        assert "quality" in columns
+        assert conn.exec_driver_sql("SELECT quality FROM taglog").scalar() == "live"

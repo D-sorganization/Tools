@@ -142,3 +142,22 @@ def test_open_browser_later_opens_browser_when_ready(
     launcher_web._open_browser_later(5173)
 
     assert opened == ["http://localhost:5173"]
+
+
+def test_gui_info_launcher_forwards_keyword_only_environment(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    captured: dict[str, object] = {}
+    monkeypatch.setattr(
+        launcher_web,
+        "launch_web_app",
+        lambda **kwargs: captured.update(kwargs) or 0,
+    )
+    caller = tmp_path / "launch_web.py"
+    result = launcher_web.launch_web_from_gui_info(
+        {"name": "Demo", "web": {"path": "web"}},
+        str(caller),
+        env_vars={"SERVER_ONLY": "secret"},
+    )
+    assert result == 0
+    assert captured["env_vars"] == {"SERVER_ONLY": "secret"}

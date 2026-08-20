@@ -1,0 +1,148 @@
+"""Transactional source, camera, and playback lifecycle for Club3DView."""
+
+from __future__ import annotations
+
+import logging
+from collections.abc import Callable
+from typing import TYPE_CHECKING
+
+import numpy as np
+
+from rate_of_closure.club_camera import (
+    ClubCamera,
+    ClubCameraAction,
+    apply_club_camera_action,
+)
+from rate_of_closure.club_mesh_source import ClubMeshSource
+
+if TYPE_CHECKING:
+    from PyQt6.QtCore import QTimer
+    from PyQt6.QtWidgets import QLabel, QPushButton
+
+    from rate_of_closure.mesh import HeadMesh
+    from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
+
+logger = logging.getLogger(__name__)
+TIMER_INTERVAL_MS = 200
+ANIMATION_CYCLE_MS = 1920
+
+
+class ClubViewLifecycleMixin:
+    """State adoption methods; mixed into the concrete QWidget view."""
+
+    if TYPE_CHECKING:
+        _source: ClubMeshSource
+        _mesh: HeadMesh | None
+        _hosel: np.ndarray | None
+        _cog: np.ndarray | None
+        _reset_mesh_button: QPushButton
+        _error: QLabel
+        _error_kind: str | None
+        _camera: ClubCamera
+        _zoom: float
+        _canvas: LifecycleSafeFigureCanvas
+        _phase: float
+        _speed: float
+        _timer: QTimer
+        _play_button: QPushButton
+        _draw: Callable[[], None]
+        _update_status: Callable[[], None]
+        _camera_was_adopted: Callable[[ClubCamera], None]
+
+    def _apply_source(self, candidate: ClubMeshSource) -> None:
+        prior = (self._source, self._mesh, self._hosel, self._cog)
+        self._source = candidate
+        self._mesh = candidate.mesh
+        self._hosel = None if candidate.hosel is None else np.asarray(candidate.hosel)
+        self._cog = (
+            None
+            if candidate.geometric_centroid is None
+            else np.asarray(candidate.geometric_centroid)
+        )
+        try:
+            self._draw()
+        except Exception:
+            self._source, self._mesh, self._hosel, self._cog = prior
+            try:
+                self._draw()
+            except Exception as rollback_error:
+                logger.error("club view rollback redraw failed: %s", rollback_error)
+            raise
+        self._reset_mesh_button.setEnabled(candidate.kind != "procedural")
+        self._error.hide()
+        self._error_kind = None
+        self._update_status()
+
+    def _set_error(self, text: str, kind: str = "render") -> None:
+        self._error_kind = kind
+        suffix = (
+            "; prior head and camera remain displayed."
+            if kind == "import"
+            else "; prior source and camera remain selected; the image may be stale."
+        )
+        self._error.setText(text + suffix)
+        self._error.show()
+
+    def _apply_camera_action(
+        self,
+        action: ClubCameraAction,
+    ) -> None:
+        self._adopt_camera(apply_club_camera_action(self._camera, action))
+
+    def _try_camera_action(self, action: ClubCameraAction) -> None:
+        try:
+            self._apply_camera_action(action)
+        except Exception as error:
+            self._set_error(f"Clubhead render failed: {str(error)[:512]}", "render")
+
+    def _try_redraw(self) -> None:
+        try:
+            self._draw()
+        except Exception as error:
+            self._set_error(f"Clubhead render failed: {str(error)[:512]}", "render")
+        else:
+            if self._error_kind == "render":
+                self._error.hide()
+                self._error_kind = None
+
+    def _adopt_camera(self, candidate: ClubCamera) -> None:
+        prior = self._camera
+        canvas_had_focus = self._canvas.hasFocus()
+        self._camera, self._zoom = candidate, candidate.zoom
+        try:
+            self._draw()
+        except Exception as error:
+            self._camera, self._zoom = prior, prior.zoom
+            try:
+                self._draw()
+            except Exception as rollback_error:
+                logger.error("club camera rollback redraw failed: %s", rollback_error)
+            raise error
+        if canvas_had_focus:
+            self._canvas.setFocus()
+        if self._error_kind == "render":
+            self._error.hide()
+            self._error_kind = None
+        self._update_status()
+        self._camera_was_adopted(candidate)
+
+    def _advance(self) -> None:
+        prior_phase = self._phase
+        self._phase = (
+            prior_phase + self._speed * TIMER_INTERVAL_MS / ANIMATION_CYCLE_MS
+        ) % 1.0
+        try:
+            self._draw()
+        except Exception as error:
+            self._phase = prior_phase
+            try:
+                self._draw()
+            except Exception as rollback_error:
+                logger.error("club animation rollback failed: %s", rollback_error)
+            self._timer.stop()
+            self._play_button.setChecked(False)
+            self._set_error(f"Clubhead render failed: {str(error)[:512]}", "render")
+        else:
+            if self._error_kind == "render":
+                self._error.hide()
+                self._error_kind = None

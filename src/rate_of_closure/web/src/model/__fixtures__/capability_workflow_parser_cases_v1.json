@@ -1,0 +1,86 @@
+{
+  "schema_version": "capability-workflow-parser-cases/v1",
+  "hostile_numbers": [
+    {
+      "id": "reject-4000-digit-json-integer",
+      "path": ["request", "candidate_budget"],
+      "digit": "9",
+      "digits": 4000,
+      "accepted": false
+    }
+  ],
+  "cases": [
+    {
+      "id": "valid-text-profile-id",
+      "path": ["profile", "profile_id"],
+      "value": "fixture-driver-profile",
+      "accepted": true
+    },
+    {
+      "id": "accept-integral-json-number",
+      "path": ["request", "candidate_budget"],
+      "value": 3.0,
+      "accepted": true
+    },
+    {
+      "id": "reject-fractional-integer-field",
+      "path": ["request", "candidate_budget"],
+      "value": 3.5,
+      "accepted": false
+    },
+    {
+      "id": "reject-string-config-number",
+      "path": ["evaluator_config", "max_time_s"],
+      "value": "7.5",
+      "accepted": false
+    },
+    {
+      "id": "reject-boolean-config-number",
+      "path": ["evaluator_config", "max_time_s"],
+      "value": true,
+      "accepted": false
+    },
+    {
+      "id": "reject-string-spin-number",
+      "path": ["evaluator_config", "spin_defaults", 0, "total_spin_rpm"],
+      "value": "2600",
+      "accepted": false
+    },
+    {
+      "id": "reject-numeric-spin-club-id",
+      "path": ["evaluator_config", "spin_defaults", 0, "club_id"],
+      "value": 17,
+      "accepted": false
+    },
+    {
+      "id": "reject-numeric-spin-provenance",
+      "path": ["evaluator_config", "spin_defaults", 0, "provenance"],
+      "value": 17,
+      "accepted": false
+    },
+    {
+      "id": "reject-string-target-number",
+      "path": ["request", "target", "distance_m"],
+      "value": "230",
+      "accepted": false
+    },
+    {
+      "id": "reject-string-profile-number",
+      "path": ["profile", "clubs", 0, "parameters", 0, "baseline"],
+      "value": "67",
+      "accepted": false
+    },
+    {
+      "id": "reject-numeric-profile-id",
+      "path": ["profile", "profile_id"],
+      "value": 17,
+      "accepted": false
+    },
+    {
+      "id": "reject-numeric-request-id",
+      "path": ["request", "problem_id"],
+      "value": 17,
+      "accepted": false
+    }
+  ]
+}

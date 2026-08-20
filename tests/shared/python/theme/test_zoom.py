@@ -101,6 +101,24 @@ def test_coerce_percent_accepts_int_and_string_defaults_other_values() -> None:
     assert _coerce_percent(None, 100) == 100
 
 
+@pytest.mark.parametrize("stored", ["", "  ", "abc", "1.5", "120%", "0x7b"])
+def test_coerce_percent_falls_back_when_stored_string_is_malformed(
+    stored: str,
+) -> None:
+    """A corrupt persisted setting must not crash application start-up."""
+    assert _coerce_percent(stored, 100) == 100
+
+
+def test_controller_recovers_from_malformed_persisted_zoom(
+    qapp: QApplication,
+) -> None:
+    settings = MemorySettings("not-a-number")
+
+    controller = ApplicationZoomController(qapp, settings=settings)
+
+    assert controller.zoom_percent == ZoomConfig().default_percent
+
+
 def test_point_size_uses_float_size_when_available() -> None:
     font = QFont()
     font.setPointSizeF(11.5)

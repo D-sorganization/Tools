@@ -1,0 +1,77 @@
+{
+  "schema_version": "wind-uncertainty/v1",
+  "trials": [
+    {
+      "trial_index": 0,
+      "true_speed_mps": 5.813766235,
+      "true_from_bearing_deg": 21.573626455,
+      "estimated_speed_mps": 3.05184763,
+      "estimated_from_bearing_deg": 24.536470939,
+      "speed_error_mps": -2.761918605,
+      "bearing_error_deg": 2.962844484
+    },
+    {
+      "trial_index": 1,
+      "true_speed_mps": 3.97310878,
+      "true_from_bearing_deg": 16.426810632,
+      "estimated_speed_mps": 2.347064722,
+      "estimated_from_bearing_deg": 13.432281377,
+      "speed_error_mps": -1.626044058,
+      "bearing_error_deg": -2.994529255
+    },
+    {
+      "trial_index": 2,
+      "true_speed_mps": 5.574623057,
+      "true_from_bearing_deg": -1.948344773,
+      "estimated_speed_mps": 4.880100579,
+      "estimated_from_bearing_deg": 1.804004153,
+      "speed_error_mps": -0.694522478,
+      "bearing_error_deg": 3.752348926
+    },
+    {
+      "trial_index": 3,
+      "true_speed_mps": 4.91868715,
+      "true_from_bearing_deg": 22.532928754,
+      "estimated_speed_mps": 5.045477559,
+      "estimated_from_bearing_deg": 32.149231198,
+      "speed_error_mps": 0.126790409,
+      "bearing_error_deg": 9.616302444
+    },
+    {
+      "trial_index": 4,
+      "true_speed_mps": 4.708005778,
+      "true_from_bearing_deg": 6.112636831,
+      "estimated_speed_mps": 5.043953368,
+      "estimated_from_bearing_deg": 7.423944682,
+      "speed_error_mps": 0.33594759,
+      "bearing_error_deg": 1.311307851
+    },
+    {
+      "trial_index": 5,
+      "true_speed_mps": 4.38647092,
+      "true_from_bearing_deg": 20.129435267,
+      "estimated_speed_mps": 3.362603515,
+      "estimated_from_bearing_deg": 19.777639094,
+      "speed_error_mps": -1.023867405,
+      "bearing_error_deg": -0.351796173
+    },
+    {
+      "trial_index": 6,
+      "true_speed_mps": 5.82317983,
+      "true_from_bearing_deg": 32.533154348,
+      "estimated_speed_mps": 5.942958048,
+      "estimated_from_bearing_deg": 37.524833818,
+      "speed_error_mps": 0.119778218,
+      "bearing_error_deg": 4.99167947
+    },
+    {
+      "trial_index": 7,
+      "true_speed_mps": 5.383770622,
+      "true_from_bearing_deg": 10.983580407,
+      "estimated_speed_mps": 3.673234793,
+      "estimated_from_bearing_deg": 8.121833717,
+      "speed_error_mps": -1.710535829,
+      "bearing_error_deg": -2.86174669
+    }
+  ]
+}

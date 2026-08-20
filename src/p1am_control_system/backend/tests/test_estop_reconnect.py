@@ -127,14 +127,15 @@ class _AlarmEngine:
         return []
 
 
-def _null_session_factory() -> Any:
-    def _gen() -> Any:
-        if False:  # pragma: no cover - never yields; poll skips DB when tags None
-            yield None
-        return
-        yield
+class _NullHistorian:
+    """Historian sink double: the scan queues rows, it never writes them here."""
 
-    return _gen()
+    def __init__(self) -> None:
+        self.records: list[Any] = []
+
+    def submit(self, record: Any) -> bool:
+        self.records.append(record)
+        return True
 
 
 # --------------------------------------------------------------------------
@@ -197,7 +198,6 @@ class TestReconnectReengagesLatches:
                 temperature=temp,
                 alarm_engine=_AlarmEngine(),
                 active_alarm_map={},
-                session_factory=_null_session_factory,
                 estop_active=True,
             )
             # Latches re-engaged, write-seam interlocks armed, and the polls ran.
@@ -226,7 +226,6 @@ class TestReconnectReengagesLatches:
                 temperature=temp,
                 alarm_engine=_AlarmEngine(),
                 active_alarm_map={},
-                session_factory=_null_session_factory,
                 estop_active=False,
             )
             # Controller latch is NOT auto-engaged, but the low-level interlock
@@ -313,10 +312,10 @@ class TestServiceWriteSeamInterlock:
     def test_set_estop_active_rejects_non_bool(self) -> None:
         svc = TemperatureService(MagicMock(), logging.getLogger("test"))
         with pytest.raises(TypeError):
-            svc.set_estop_active(1)  # type: ignore[arg-type]
+            svc.set_estop_active(1)
         mgr = _modbus_manager()
         with pytest.raises(TypeError):
-            mgr.set_estop_active("yes")  # type: ignore[arg-type]
+            mgr.set_estop_active("yes")
 
 
 # --------------------------------------------------------------------------

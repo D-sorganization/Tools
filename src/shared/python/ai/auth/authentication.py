@@ -12,7 +12,7 @@ Features:
 Note:
     OAuth and email/password authentication methods are NOT implemented.
     ``login_with_oauth`` and ``login_with_email_password`` raise
-    ``NotImplementedError`` unconditionally (Phase 1 of issue #2757).
+    ``NotImplementedError`` unconditionally (UpstreamDrift#8770).
     Real OAuth (PKCE + token exchange + refresh tokens) is tracked in the
     Phase 2 follow-up issue.  Until then, ``is_authenticated`` will always
     return False unless a valid API key is supplied via ``login_with_api_key``.
@@ -236,13 +236,10 @@ class AuthManager:
                     scope=token_data.get("scope", []),
                 )
 
-            logger.info(
-                "Loaded credentials for user: %s",
-                self._current_user.user_id if self._current_user else "none",
-            )
+            logger.info("Loaded stored credentials")
 
-        except (json.JSONDecodeError, KeyError, ValueError) as e:
-            logger.warning("Failed to load credentials: %s", e)
+        except (json.JSONDecodeError, KeyError, ValueError):
+            logger.warning("Failed to load credentials")
 
     def _save_credentials(self) -> None:
         """Save credentials to disk securely."""
@@ -313,7 +310,7 @@ class AuthManager:
         )
 
         self._save_credentials()
-        logger.info("Logged in with API key for user: %s", user_id)
+        logger.info("Logged in successfully with API key")
         return True
 
     def login_with_oauth(self, provider: str, auth_code: str) -> bool:
@@ -328,18 +325,19 @@ class AuthManager:
 
         Raises:
             NotImplementedError: Always. Real OAuth (PKCE + token exchange +
-                refresh-token handling) is deferred to Phase 2 (issue #5227).
+                refresh-token handling) is deferred to UpstreamDrift#8770.
                 To use authenticated features, configure provider credentials
                 directly via the keyring (chat/credentials.py) and supply an
                 API key via ``login_with_api_key`` instead.
 
         Note:
-            Phase 1 of issue #2757 removes the previously fabricated
+            UpstreamDrift#8770 removes the previously fabricated
             ``UserProfile`` that this method used to return so that callers
             can no longer be misled into trusting a fake identity.
         """
         raise NotImplementedError(
-            f"OAuth login for provider {provider!r} is not implemented (TODO #5227). "
+            f"OAuth login for provider {provider!r} is not implemented "
+            "(UpstreamDrift#8770). "
             "To use authenticated features, configure provider credentials directly "
             "via the keyring (chat/credentials.py) and skip the OAuth flow."
         )
@@ -357,19 +355,20 @@ class AuthManager:
         Raises:
             NotImplementedError: Always. Email/password authentication requires
                 a backend service (e.g. Supabase, Auth0) that has not yet been
-                selected or configured (Phase 2, issue #5227).
+                selected or configured (UpstreamDrift#8770).
                 To use authenticated features, supply an API key via
                 ``login_with_api_key`` instead.
 
         Note:
-            Phase 1 of issue #2757 removes the previously fabricated
+            UpstreamDrift#8770 removes the previously fabricated
             ``UserProfile`` that this method used to return so that callers
             can no longer be misled into trusting a fake identity.
         """
         raise NotImplementedError(
-            f"Email/password login for {email!r} is not implemented (TODO #5227). "
+            f"Email/password login for {email!r} is not implemented "
+            "(UpstreamDrift#8770). "
             "To use authenticated features, supply an API key via login_with_api_key. "
-            "Email/password auth requires a backend service — see Phase 2 of #2757."
+            "Email/password auth requires a backend service — see UpstreamDrift#8770."
         )
 
     def logout(self) -> None:
@@ -464,14 +463,15 @@ class AuthManager:
         Returns:
             True when the existing access token is valid, False when no valid
             access token is available. Refresh-token exchange is tracked in
-            #5227 and is deliberately fail-closed until implemented.
+            UpstreamDrift#8770 and is deliberately fail-closed until implemented.
         """
         if not self._access_token or not self._access_token.is_valid():
             if self._refresh_token and self._refresh_token.is_valid():
-                # TODO(#5227): Exchange refresh token for new access token
+                # TODO(UpstreamDrift#8770): Exchange refresh token for new access token
                 logger.warning(
                     "Access token expired and refresh-token exchange is not "
-                    "implemented yet (#5227); re-authentication is required"
+                    "implemented yet (UpstreamDrift#8770); "
+                    "re-authentication is required"
                 )
             return False
         return True
