@@ -135,7 +135,10 @@ class TestDataProcessorEngineColumns:
         self, eng: DataProcessorEngine
     ) -> None:
         """Formula validation rejects calls before pandas eval."""
-        with pytest.raises(TransformationError, match="Unsupported formula syntax"):
+        with pytest.raises(
+            TransformationError,
+            match="Unsupported formula syntax|contains forbidden pattern",
+        ):
             eng.add_calculated_column("bad", "__import__('os')")
 
     def test_add_calculated_column_rolls_back_after_rejected_formula(

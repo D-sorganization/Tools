@@ -159,7 +159,9 @@ class TestDataProcessorTransformations:
             dp.apply_formula("bad", "signal + missing")
 
     def test_apply_formula_rejects_function_calls(self, dp: DataProcessor) -> None:
-        with pytest.raises(ValueError, match="Unsupported formula syntax"):
+        with pytest.raises(
+            ValueError, match="Unsupported formula syntax|contains forbidden pattern"
+        ):
             dp.apply_formula("bad", "__import__('os')")
 
     def test_dropna(self) -> None:

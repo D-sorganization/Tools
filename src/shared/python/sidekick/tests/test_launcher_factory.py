@@ -157,7 +157,7 @@ class TestLaunchApp:
         mock_app = MagicMock()
         mock_qmainwindow = MagicMock()
         with patch(
-            "upstream_drift_tools.launcher_factory._import_pyqt6",
+            "sidekick.launcher_factory._import_pyqt6",
             return_value=(mock_app, mock_qmainwindow),
         ):
             result = launch_app(
@@ -176,7 +176,7 @@ class TestLaunchApp:
         mock_app.exec.return_value = 0
 
         with patch(
-            "upstream_drift_tools.launcher_factory._import_pyqt6",
+            "sidekick.launcher_factory._import_pyqt6",
             return_value=(mock_app, MagicMock()),
         ):
             result = launch_app(cfg, window_factory=lambda: mock_window)
@@ -194,18 +194,13 @@ class TestLaunchApp:
 
         with (
             patch(
-                "upstream_drift_tools.launcher_factory._import_pyqt6",
+                "sidekick.launcher_factory._import_pyqt6",
                 return_value=(mock_app, MagicMock()),
             ),
-            (
-                patch("upstream_drift_tools.launcher_factory.PyQt6.QtGui.QIcon")
-                if False
-                else patch("builtins.__import__", side_effect=ImportError)
-            ) as _,
+            patch("PyQt6.QtGui.QIcon", create=True),
         ):
-            # Icon path set; QIcon import may fail in test env — that's handled
             result = launch_app(cfg, window_factory=lambda: mock_window)
-        assert result in {0, 1}  # May be 0 or 1 depending on env
+        assert result == 0
 
     def test_icon_path_import_error_is_logged_not_raised(self):
         """Lines 192-193: icon import error is caught and logged, app continues."""
@@ -216,18 +211,12 @@ class TestLaunchApp:
         mock_app = MagicMock()
         mock_app.exec.return_value = 42
 
-        def bad_qicon(*args, **kwargs):
-            raise ImportError("QIcon unavailable")
-
         with (
             patch(
-                "upstream_drift_tools.launcher_factory._import_pyqt6",
+                "sidekick.launcher_factory._import_pyqt6",
                 return_value=(mock_app, MagicMock()),
             ),
-            patch(
-                "upstream_drift_tools.launcher_factory._import_pyqt6",
-                return_value=(mock_app, MagicMock()),
-            ),
+            patch.dict("sys.modules", {"PyQt6.QtGui": None}),
         ):
             # The inner PyQt6.QtGui import inside launch_app will fail gracefully
             result = launch_app(cfg, window_factory=lambda: mock_window)

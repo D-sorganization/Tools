@@ -10,7 +10,7 @@ from __future__ import annotations
 import contextlib
 import io
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -574,4 +574,4 @@ class MatplotlibRenderer:
         if spec.legend.labels:
             labels = [spec.legend.labels.get(lbl, lbl) for lbl in labels]
 
-        ax.legend(handles, labels, loc=loc, fontsize=8)
+        cast(Any, ax).legend(handles, labels, loc=loc, fontsize=8)
