@@ -98,3 +98,6 @@
 ## 2026-05-20 - Eliminate .forEach closure overhead in SVG hot paths
 **Learning:** In high-frequency React UI rendering paths (e.g., highly dynamic animation frames building SVG paths), using `.forEach` inside hot render loops causes unnecessary closure allocation overhead and function call overhead for every point.
 **Action:** Replace `.forEach` iterations with a standard `for` loop to eliminate closure allocation overhead and avoid function invocation penalties per data point in hot paths.
+## 2025-02-12 - CSV Export Overhead
+**Learning:** Chained array methods (.map().join()) in data-intensive hot paths (like exporting thousands of LaunchMonitor rows) create massive numbers of intermediate arrays, increasing GC pressure and memory consumption.
+**Action:** Always replace chained declarative array operations with single-pass `for`-loops and string concatenation when generating large text payloads to bypass unnecessary memory allocations.
