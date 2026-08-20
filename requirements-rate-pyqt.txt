@@ -1,0 +1,16 @@
+# Trusted Rate PyQt ABI/runtime constraints.
+# Top-level binary-stack pins mirror requirements-lock.txt. The Qt runtime and
+# SIP wheels are locked explicitly; pandas remains below 3 per the declared GUI
+# extra, and pytest-qt is pinned for rendered-test stability.
+numpy==2.3.5
+scipy==1.17.1
+PyQt6==6.11.0
+PyQt6-Qt6==6.11.0
+PyQt6-sip==13.11.1
+matplotlib==3.11.1
+pandas==2.3.3
+sympy==1.14.0
+pyqtgraph==0.14.0
+pytest==9.1.1
+pytest-benchmark==5.2.3
+pytest-qt==4.5.0

@@ -27,12 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.71                                    |
+| **Spec Version**        | 1.17.72                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.72 isolates the trusted rendered PyQt suite from mutable
+self-hosted Python package state. Every run attempt creates a private virtual
+environment and pytest temporary root, installs the declared GUI/development
+extras against the dedicated Rate PyQt binary-stack constraints without writing
+pip's shared cache, and fails closed on dependency, exact-version, or
+NumPy/SciPy/PyQt import drift before test collection. The rendered tests and
+protected baseline comparison both execute through that same verified
+interpreter.
 
 Version 1.17.71 makes the trusted Rate Playwright lane deterministic under
 runner contention without relaxing any accessibility, open-latency,
@@ -5051,6 +5060,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.72 | fix(rate-of-closure, ci): create run-attempt-scoped trusted PyQt venv and pytest-temporary roots, install the exact compatible NumPy/SciPy/PyQt stack without mutating shared pip caches, fail closed on pin/import drift before collection, and run both rendered tests and visual-baseline enforcement through the verified interpreter. | #4608 |
 | 2026-08-20 | 1.17.71 | fix(rate-of-closure, ci): isolate trusted functional, Axe, and protected performance phases in fresh Playwright processes; build once; warm the bundle/cache before unchanged interaction budgets; split Axe and timing evidence by tab/viewport; and retain phase-specific reports without weakening WCAG, latency, resize, or CLS standards. | #4602 |
 | 2026-08-20 | 1.17.70 | test(rate-of-closure): approve the post-merge hosted Linux PyQt launch-monitor reference from #4599, pinning its exact PNG hash and protected merge authority while leaving every other baseline unchanged. | #4600 |
 | 2026-08-20 | 1.17.69 | feat(rate-of-closure): consume the canonical source-backed strokes-gained v2 endpoint with PyQt6/React parity, exact state strata, uncertainty, structured exclusions, explicit grouping attestations, and a labelled local compatibility fallback. | #4584, UpstreamDrift#8803 |
