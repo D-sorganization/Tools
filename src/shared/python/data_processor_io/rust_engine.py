@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import logging
 import os
-from collections.abc import Generator, Iterator, Sequence
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
@@ -227,17 +227,15 @@ def inspect(path: str | os.PathLike[str]) -> SchemaInfo:
     file_size_bytes = Path(p).stat().st_size
 
     if fmt == "csv":
-        df_header = pd.read_csv(p, nrows=0)
-        columns_list = list(df_header.columns)
-        # Full scan for row count (cheap for CI test fixtures)
         df_full = pd.read_csv(p)
+        columns_list = [str(c) for c in df_full.columns]
         row_count = len(df_full)
-        column_types = {col: str(dtype) for col, dtype in df_full.dtypes.items()}
+        column_types = {str(col): str(dtype) for col, dtype in df_full.dtypes.items()}
     else:  # parquet
         df_full = pd.read_parquet(p)
-        columns_list = list(df_full.columns)
+        columns_list = [str(c) for c in df_full.columns]
         row_count = len(df_full)
-        column_types = {col: str(dtype) for col, dtype in df_full.dtypes.items()}
+        column_types = {str(col): str(dtype) for col, dtype in df_full.dtypes.items()}
 
     return SchemaInfo(
         columns=columns_list,
@@ -401,9 +399,7 @@ def scan_batch(
 
     # ── pandas fallback ──────────────────────────────────────────────────────
     if fmt == "csv":
-        reader: Generator[pd.DataFrame, None, None] = pd.read_csv(
-            p, chunksize=batch_size
-        )
+        reader: Any = pd.read_csv(p, chunksize=batch_size)
         for chunk in reader:
             if active_token.is_cancelled():
                 logger.info("scan_batch cancelled after %d rows", len(chunk))

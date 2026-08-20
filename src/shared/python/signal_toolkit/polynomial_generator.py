@@ -17,6 +17,7 @@ import logging
 import sys
 from collections.abc import Callable
 from functools import partial
+from typing import Any, cast
 
 import matplotlib
 import numpy as np
@@ -347,9 +348,13 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.btn_drag.toggled.connect(partial(self._set_mode, "drag"))
 
         # Matplotlib events
-        self.canvas.mpl_connect("button_press_event", self._on_canvas_click)
-        self.canvas.mpl_connect("button_release_event", self._on_canvas_release)
-        self.canvas.mpl_connect("motion_notify_event", self._on_canvas_motion)
+        self.canvas.mpl_connect("button_press_event", cast(Any, self._on_canvas_click))
+        self.canvas.mpl_connect(
+            "button_release_event", cast(Any, self._on_canvas_release)
+        )
+        self.canvas.mpl_connect(
+            "motion_notify_event", cast(Any, self._on_canvas_motion)
+        )
 
     def _set_mode(self, mode: str, checked: bool) -> None:
         """Set the current interaction mode."""
