@@ -26,7 +26,10 @@ class HealthyConnector:
         assert value == 10
 
     def diagnostics(self) -> dict[str, object]:
-        return {"endpoint": "synthetic://healthy", "api_token": "do-not-expose"}  # pragma: allowlist secret
+        return {
+            "endpoint": "synthetic://healthy",
+            "api_token": "do-not-expose",  # pragma: allowlist secret
+        }
 
 
 class FailedConnector:
@@ -44,7 +47,10 @@ class FailedConnector:
         raise ConnectionError("token=field-token")  # pragma: allowlist secret
 
     def diagnostics(self) -> dict[str, object]:
-        return {"password": "field-password", "state": "offline"}  # pragma: allowlist secret
+        return {
+            "password": "field-password",  # pragma: allowlist secret
+            "state": "offline",
+        }
 
 
 def test_failed_connector_degrades_only_its_tags_without_crashing_poll() -> None:

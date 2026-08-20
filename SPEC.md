@@ -28,9 +28,15 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
 | **Spec Version**        | 1.17.10                                    |
-| **Last Spec Update**    | 2026-08-15                                 |
+| **Last Spec Update**    | 2026-08-19                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-19 P1AM Platform SCADA & Historian Foundation Consolidation (#4449)
+
+Consolidates P1AM plant historian and SCADA foundation across backend and frontend,
+including telemetry stream reconnect/staleness resilience, authenticated control endpoints,
+and connector diagnostic management.
 
 ### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 

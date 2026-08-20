@@ -171,7 +171,7 @@ export function useTelemetryStream(
   const [commsHealth, setCommsHealth] = useState<CommsHealth | undefined>(
     undefined,
   );
-  const [_isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const wsRef = useRef<WebSocket | null>(null);
   const onConnectRef = useRef(options.onConnect);
@@ -408,7 +408,7 @@ export function useTelemetryStream(
     temperatureStatus,
     dataAgeMs,
     freshness,
-    isConnected: freshness === "live",
+    isConnected,
     droppedAlarmCount,
     commsHealth,
     setAlicats,
