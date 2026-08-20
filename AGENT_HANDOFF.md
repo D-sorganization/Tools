@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-18
+> Last updated: 2026-08-19
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -34,12 +34,13 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
 
 ## Open PR Situation — Read Before Filing Anything
 
-**No PR is a draft, and the golf queue is empty** — everything from the #4549
-and #4562 epics has merged. Check `gh pr list` for the live count rather than
-trusting a number here; what matters is the shape below, which changes slowly.
+No PR is a draft. The #4549 and #4562 implementation epics have merged, while
+the live golf queue now includes the Sidekick integration and remaining #4142
+work. Check `gh pr list` for the live count rather than trusting a number here.
 
 | PR    | Scope                                                                      |
 | ----- | -------------------------------------------------------------------------- |
+| #4585 | Sidekick Phase S1/S2 integration; active protected delivery               |
 | #4466 | Rate of Closure remainder — **content-complete except the camera cluster** |
 | #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)          |
 | #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)              |
@@ -65,7 +66,8 @@ Other live non-golf work: `src/shared/python` hygiene (#4507 lint
 normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469
 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Known-red on `main`, already filed — do not re-diagnose:** #4561 (browser
+**Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
+branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
 the workflow is scoped to Chromium meanwhile), #4569 (two `1.17.40` SPEC rows
 glued onto one table line by a union merge), #4558/#4559/#4560 (cross-runtime
@@ -139,9 +141,10 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`
    (Phases S1–S5: dock widget in Rate of Closure, workspace seeding, standalone &
    UpstreamDrift launcher parity).
-2. **Land the camera-cluster epic #4571** so #4466 can finally close.
-3. Clear the `src/shared/python` hygiene pair (#4507, #4509) — these unblock
-   downstream consumers.
-4. Land the CI repairs (#4454, #4469) and fix the filed reds (#4561, #4569).
-5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
-6. #4125 H5: stand up the public release-management repo (cross-repo).
+2. Restore the isolated advisory benchmark lane through #4582.
+3. **Land the camera-cluster epic #4571** so #4466 can finally close.
+4. Complete #4142 and companion #4430 after their registered model/UI gates.
+5. Clear the `src/shared/python` hygiene pair (#4507, #4509).
+6. Land the CI repairs (#4454, #4469) and fix the filed reds (#4561, #4569).
+7. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+8. #4125 H5: stand up the public release-management repo (cross-repo).
