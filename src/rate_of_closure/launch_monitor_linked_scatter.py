@@ -11,7 +11,7 @@ from typing import Any, Literal
 from rate_of_closure.launch_monitor_numeric import finite_launch_monitor_scalar
 
 MAX_DISPLAY_POINTS = 2_000
-MAX_RETAINED_ROWS = 250_000
+MAX_RETAINED_ROWS = 300_000
 _IDENTITY_FIELDS = ("shot_id", "session_id", "monitor_vendor")
 
 

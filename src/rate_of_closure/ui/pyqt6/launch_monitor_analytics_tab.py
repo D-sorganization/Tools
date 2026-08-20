@@ -3,22 +3,26 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import cast
 
 import pandas as pd
-from PyQt6.QtCore import Qt
+from pandas.api.types import is_object_dtype, is_scalar
+from PyQt6.QtCore import QSignalBlocker, Qt
 from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
+    QFrame,
     QHBoxLayout,
     QLabel,
     QListWidget,
     QMessageBox,
     QPlainTextEdit,
     QPushButton,
+    QScrollArea,
     QSpinBox,
     QSplitter,
     QTableWidget,
@@ -37,11 +41,21 @@ from rate_of_closure.launch_monitor_analysis import (
 )
 from rate_of_closure.launch_monitor_import import read_launch_monitor_frame
 from rate_of_closure.launch_monitor_linked_scatter import MAX_RETAINED_ROWS
+from rate_of_closure.launch_monitor_private_corpus import (
+    PRIVATE_DATA_ENV,
+    load_private_corpus,
+)
 from rate_of_closure.ui.pyqt6.launch_monitor_analysis_results import (
     render_analysis_result,
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_linked_scatter_panel import (
     LaunchMonitorLinkedScatterPanel,
+)
+from rate_of_closure.ui.pyqt6.launch_monitor_performance_workspace import (
+    LaunchMonitorPerformanceWorkspace,
+)
+from rate_of_closure.ui.pyqt6.launch_monitor_player_workspace import (
+    LaunchMonitorPlayerWorkspace,
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_preview import demo_frame
 from shared.python.swing_sim.conventions import (
@@ -51,12 +65,22 @@ from shared.python.swing_sim.conventions import (
 )
 
 
+def _has_only_flat_scalars(frame: pd.DataFrame) -> bool:
+    """Reject nested object cells without hashing every retained value."""
+    for column in frame.columns:
+        series = frame[column]
+        if is_object_dtype(series.dtype) and not series.dropna().map(is_scalar).all():
+            return False
+    return True
+
+
 class LaunchMonitorAnalyticsTab(QWidget):
     """Import retained records and run arbitrary traceable analyses."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.frame = demo_frame()
+        self._numeric_fields: list[str] = []
         self.source_name = "Built-In Demonstration Data"
         self.last_result: AnalysisResult | None = None
         self._build_ui()
@@ -77,6 +101,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.source_label.setWordWrap(True)
 
         self.import_button = QPushButton("Import Data...")
+        self.private_corpus_button = QPushButton("Load Private Corpus...")
         self.demo_button = QPushButton("Load Demo")
         self.export_data_button = QPushButton("Export Retained Data...")
         self.export_result_button = QPushButton("Export Analysis...")
@@ -84,6 +109,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         buttons = QHBoxLayout()
         for button in (
             self.import_button,
+            self.private_corpus_button,
             self.demo_button,
             self.export_data_button,
             self.export_result_button,
@@ -125,6 +151,11 @@ class LaunchMonitorAnalyticsTab(QWidget):
 
         controls = (
             (self.import_button, "Import a CSV or JSON launch-monitor export"),
+            (
+                self.private_corpus_button,
+                "Load every normalized private-corpus partition after "
+                "manifest validation",
+            ),
             (self.demo_button, "Restore the built-in demonstration data"),
             (self.export_data_button, "Export every retained input record"),
             (self.export_result_button, "Export request, results, and lineage"),
@@ -165,19 +196,35 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.details = QPlainTextEdit()
         self.details.setReadOnly(True)
         self.details.setAccessibleName("Launch Monitor Analysis Traceability")
-        output = QSplitter(Qt.Orientation.Vertical)
-        output.addWidget(self.preview_panel)
-        output.addWidget(self.result_table)
-        output.addWidget(self.details)
-        output.setSizes([320, 240, 160])
+        self.player_workspace = LaunchMonitorPlayerWorkspace()
+        self.performance_workspace = LaunchMonitorPerformanceWorkspace()
+        output_widget = QWidget()
+        output_layout = QVBoxLayout(output_widget)
+        output_layout.setContentsMargins(0, 0, 0, 0)
+        output_layout.addWidget(self.preview_panel)
+        output_layout.addWidget(self.result_table)
+        output_layout.addWidget(self.details)
+        output_layout.addWidget(self.player_workspace)
+        output_layout.addWidget(self.performance_workspace)
+        right_scroll = QScrollArea()
+        right_scroll.setWidgetResizable(True)
+        right_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        right_scroll.setWidget(output_widget)
 
-        body = QSplitter(Qt.Orientation.Horizontal)
         controls_widget = QWidget()
         controls_layout = QVBoxLayout(controls_widget)
+        controls_layout.setContentsMargins(0, 0, 0, 0)
         controls_layout.addLayout(form)
         controls_layout.addStretch(1)
-        body.addWidget(controls_widget)
-        body.addWidget(output)
+        left_scroll = QScrollArea()
+        left_scroll.setWidgetResizable(True)
+        left_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        left_scroll.setWidget(controls_widget)
+        left_scroll.setMinimumWidth(340)
+
+        body = QSplitter(Qt.Orientation.Horizontal)
+        body.addWidget(left_scroll)
+        body.addWidget(right_scroll)
         body.setSizes([360, 900])
 
         layout = QVBoxLayout(self)
@@ -188,6 +235,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         layout.addWidget(body, 1)
 
         self.import_button.clicked.connect(self.import_dialog)
+        self.private_corpus_button.clicked.connect(self.load_private_corpus_dialog)
         self.demo_button.clicked.connect(self.load_demo)
         self.export_data_button.clicked.connect(self.export_data_dialog)
         self.export_result_button.clicked.connect(self.export_result_dialog)
@@ -222,8 +270,16 @@ class LaunchMonitorAnalyticsTab(QWidget):
             "Analysis contract changed. Run Analysis to refresh results."
         )
 
-    def _refresh_columns(self) -> None:
-        numeric = numeric_columns(self.frame)
+    def _refresh_columns(self, numeric_fields: list[str] | None = None) -> None:
+        numeric = (
+            numeric_columns(self.frame) if numeric_fields is None else numeric_fields
+        )
+        self._numeric_fields = numeric
+        blockers = (
+            QSignalBlocker(self.outcome_combo),
+            QSignalBlocker(self.predictor_list),
+            QSignalBlocker(self.group_combo),
+        )
         self.outcome_combo.clear()
         self.outcome_combo.addItems(numeric)
         outcome = "ball_speed" if "ball_speed" in numeric else numeric[0]
@@ -237,17 +293,14 @@ class LaunchMonitorAnalyticsTab(QWidget):
             item = self.predictor_list.item(index)
             if item is not None:
                 item.setSelected(item.text() in defaults)
-        groups = sorted(
-            str(column)
-            for column in self.frame.columns
-            if self.frame[column].notna().any()
-            and self.frame[column].nunique(dropna=True) <= 100
-        )
+        groups = sorted(self._eligible_group_columns())
         self.group_combo.clear()
         self.group_combo.addItem("(none)")
         self.group_combo.addItems(groups)
         if "monitor_vendor" in groups:
             self.group_combo.setCurrentText("monitor_vendor")
+        for blocker in blockers:
+            blocker.unblock()
         self.source_label.setText(
             f"Source: {self.source_name} · {len(self.frame)} retained rows · "
             f"{len(self.frame.columns)} source columns"
@@ -257,6 +310,8 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.result_table.clearContents()
         self.result_table.setRowCount(0)
         self.details.clear()
+        self.player_workspace.set_dataset(self.frame, self.source_name, numeric)
+        self.performance_workspace.set_dataset(self.frame, self.source_name, numeric)
         self._refresh_preview()
         self._refresh_convention_evidence()
 
@@ -266,7 +321,22 @@ class LaunchMonitorAnalyticsTab(QWidget):
             self.frame,
             self.outcome_combo.currentText(),
             selected,
+            tuple(self._numeric_fields),
         )
+
+    def _eligible_group_columns(self) -> list[str]:
+        """Find low-cardinality populated fields without hashing obvious IDs."""
+        groups: list[str] = []
+        for column in self.frame.columns:
+            populated = self.frame[column].dropna()
+            if populated.empty:
+                continue
+            sample = populated.iloc[: min(len(populated), 2_000)]
+            if sample.nunique(dropna=True) > 100:
+                continue
+            if populated.nunique(dropna=True) <= 100:
+                groups.append(str(column))
+        return groups
 
     def _refresh_convention_evidence(self) -> None:
         convention = self.convention_combo.currentData()
@@ -290,31 +360,23 @@ class LaunchMonitorAnalyticsTab(QWidget):
         if len(frame) > MAX_RETAINED_ROWS:
             raise ValueError(f"The retained-data limit is {MAX_RETAINED_ROWS} rows")
         candidate = frame.copy()
-        if len(candidate) < 3 or len(numeric_columns(candidate)) < 2:
+        numeric = numeric_columns(candidate)
+        if len(candidate) < 3 or len(numeric) < 2:
             raise ValueError(
                 "The dataset needs at least three rows and two numeric columns"
             )
-        try:
-            for column in candidate.columns:
-                candidate[column].nunique(dropna=True)
-        except TypeError as error:
-            raise ValueError(
-                "Launch-monitor records must contain flat scalar values"
-            ) from error
+        if not _has_only_flat_scalars(candidate):
+            raise ValueError("Launch-monitor records must contain flat scalar values")
         self.frame = candidate
         self.source_name = source_name
         self.preview_panel.reset_dataset()
-        self._refresh_columns()
+        self._refresh_columns(numeric)
 
     def load_demo(self) -> None:
         self.set_frame(demo_frame(), "Built-In Demonstration Data")
 
     def import_path(self, path: Path) -> None:
         frame = read_launch_monitor_frame(path)
-        if len(frame) < 3 or len(numeric_columns(frame)) < 2:
-            raise ValueError(
-                "The file needs at least three rows and two numeric columns"
-            )
         self.set_frame(frame, path.name)
 
     def import_dialog(self) -> None:
@@ -327,6 +389,22 @@ class LaunchMonitorAnalyticsTab(QWidget):
             self.import_path(Path(selected))
         except (OSError, ValueError) as error:
             QMessageBox.critical(self, "Import Failed", str(error))
+
+    def load_private_corpus_dialog(self) -> None:
+        """Load the complete authorized Parquet authority into the desktop app."""
+        configured = os.environ.get(PRIVATE_DATA_ENV, "").strip()
+        selected = configured or QFileDialog.getExistingDirectory(
+            self,
+            "Select Private Launch-Monitor Authority or Parquet Corpus",
+            "",
+        )
+        if not selected:
+            return
+        try:
+            loaded = load_private_corpus(Path(selected))
+            self.set_frame(loaded.frame, loaded.source_name)
+        except (OSError, ValueError) as error:
+            QMessageBox.critical(self, "Private Corpus Load Failed", str(error))
 
     def _selected_predictors(self) -> tuple[str, ...]:
         return tuple(item.text() for item in self.predictor_list.selectedItems())

@@ -11,13 +11,13 @@ from typing import cast
 
 import pandas as pd
 
-from rate_of_closure.launch_monitor_linked_scatter import MAX_RETAINED_ROWS
 from rate_of_closure.launch_monitor_numeric import finite_launch_monitor_scalar
 
 _SCALAR_TYPES = (str, int, float, bool, type(None))
 _MAX_SAFE_INTEGER = 9_007_199_254_740_991
 MAX_IMPORT_BYTES = 8 * 1024 * 1024
 MAX_IMPORT_FIELD_UTF8_BYTES = 64 * 1024
+MAX_IMPORT_ROWS = 250_000
 MAX_IMPORT_COLUMNS = 256
 MAX_IMPORT_CELLS = 2_000_000
 
@@ -91,8 +91,8 @@ def _validate_import_shape(row_count: int, column_count: int) -> None:
         or column_count < 0
     ):
         raise TypeError("launch-monitor import shape must use nonnegative integers")
-    if row_count > MAX_RETAINED_ROWS:
-        raise ValueError(f"Launch-monitor import exceeds {MAX_RETAINED_ROWS} rows")
+    if row_count > MAX_IMPORT_ROWS:
+        raise ValueError(f"Launch-monitor import exceeds {MAX_IMPORT_ROWS} rows")
     if column_count > MAX_IMPORT_COLUMNS:
         raise ValueError(f"Launch-monitor import exceeds {MAX_IMPORT_COLUMNS} columns")
     if row_count * column_count > MAX_IMPORT_CELLS:
@@ -169,9 +169,9 @@ def read_launch_monitor_frame(path: Path) -> pd.DataFrame:
                         f"Launch-monitor import exceeds {MAX_IMPORT_COLUMNS} columns"
                     )
                 rows.append(row)
-                if len(rows) > MAX_RETAINED_ROWS + 1:
+                if len(rows) > MAX_IMPORT_ROWS + 1:
                     raise ValueError(
-                        f"Launch-monitor import exceeds {MAX_RETAINED_ROWS} rows"
+                        f"Launch-monitor import exceeds {MAX_IMPORT_ROWS} rows"
                     )
         except csv.Error as error:
             raise ValueError("Launch-monitor CSV is malformed") from error
@@ -240,5 +240,6 @@ def read_launch_monitor_frame(path: Path) -> pd.DataFrame:
 __all__ = [
     "MAX_IMPORT_BYTES",
     "MAX_IMPORT_FIELD_UTF8_BYTES",
+    "MAX_IMPORT_ROWS",
     "read_launch_monitor_frame",
 ]

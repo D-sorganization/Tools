@@ -20,7 +20,7 @@ export default function exactReleaseBuild(): void {
   if (npmEntrypoint === undefined || path.basename(npmEntrypoint) !== "npm-cli.js") {
     throw new Error("browser qualification must be launched through npm");
   }
-  execFileSync(process.execPath, [npmEntrypoint, "run", "build"], {
+  execFileSync(process.execPath, [npmEntrypoint, "run", "build:release"], {
     env: { ...process.env, ROC_RELEASE_REVISION: revision },
     stdio: "inherit",
   });

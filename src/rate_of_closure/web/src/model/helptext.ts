@@ -134,6 +134,13 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
       "Results include pair-specific sample counts, multiplicity-adjusted p-values, confidence intervals, OLS coefficient uncertainty, residual diagnostics, grouped estimates, and a deterministic dataset fingerprint. TrackMan-Comparable and Foresight-Comparable labels describe documented interpretation frames only; they do not claim device emulation or certification. Export both retained records and the complete analysis evidence as JSON.",
     ],
   },
+  "Neural Model Lab": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Review vendor eligibility from a versioned capability manifest. All current vendor models fail closed with quantified blockers. To configure custom training, select a local dataset, provide its immutable private repository commit, choose explicit features and targets, and attest a policy-approved repeating split group. The browser submits or exports only the reference-only request; training belongs to the private authority.",
+      "Load only portable non-executable JSON models. Schema, dataset hash, training-manifest hash, dimensions, and finite weights are validated before inference. Query fields show units and training ranges; out-of-domain values produce warnings. Model cards, held-out metrics, and residual plots are available only when exported by the private trainer. Vendor-comparable surrogates are descriptive, not device emulation or certification.",
+    ],
+  },
   "Shot Optimizer": {
     title: "How to Use This Page",
     paragraphs: [

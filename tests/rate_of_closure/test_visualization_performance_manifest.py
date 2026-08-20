@@ -156,6 +156,9 @@ def test_all_visualization_authorities_are_declared_as_package_data() -> None:
     # to one feature's entries makes any other feature's packaging a failure.
     # Anything outside both sets is still rejected, so drift is still caught.
     assert authorities <= packaged
+    allowed_non_visualization_data = {"data/*.json"}
     assert not {
-        entry for entry in packaged - authorities if not entry.startswith("web/dist/")
+        entry
+        for entry in packaged - authorities - allowed_non_visualization_data
+        if not entry.startswith("web/dist/")
     }
