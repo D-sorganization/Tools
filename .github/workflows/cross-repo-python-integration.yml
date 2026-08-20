@@ -155,11 +155,6 @@ jobs:
               done
             fi
           done
-
-      - name: Restore local Python toolcache
-        shell: bash
-        run: .github/scripts/restore-python-toolcache.sh
-
       - name: Set up Python
         if: steps.checkout_downstream.outcome == 'success'
         uses: actions/setup-python@v6
