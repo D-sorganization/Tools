@@ -191,6 +191,7 @@ jobs:
         if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
         working-directory: ${{ matrix.downstream.path }}
         run: |
+          mkdir -p src/shared/python vendor/ud-tools/src/shared/python
           tools_repo_root="${{ github.workspace }}"
           tools_link="$(dirname "$PWD")/Tools"
           ln -sfn "$tools_repo_root" "$tools_link"
