@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from typing import cast
 
 import pandas as pd
 from matplotlib.figure import Figure
@@ -338,11 +337,8 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
             "lateral_unit": self.lateral_unit.currentText(),
             "target_yards": self.target_distance.value(),
         }
-        return cast(
-            dict[str, object],
-            performance_document(
-                reference, settings, self._dispersion, self._proxy, self._trend
-            ),
+        return performance_document(
+            reference, settings, self._dispersion, self._proxy, self._trend
         )
 
     def save_dialog(self) -> None:
@@ -368,11 +364,23 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
         try:
             reference = dataset_reference_for_frame(self._frame, self._source_name)
             settings = load_performance_settings(selected, reference.sha256)
-            self.carry_combo.setCurrentText(settings["carry"])
-            self.lateral_combo.setCurrentText(settings["lateral"])
-            self.carry_unit.setCurrentText(settings["carry_unit"])
-            self.lateral_unit.setCurrentText(settings["lateral_unit"])
-            self.target_distance.setValue(float(settings["target_yards"]))
+            text_values = tuple(
+                settings[key]
+                for key in ("carry", "lateral", "carry_unit", "lateral_unit")
+            )
+            if not all(isinstance(value, str) for value in text_values):
+                raise TypeError("saved analysis column and unit settings need text")
+            carry, lateral, carry_unit, lateral_unit = (
+                str(value) for value in text_values
+            )
+            target = settings["target_yards"]
+            if isinstance(target, bool) or not isinstance(target, (int, float, str)):
+                raise TypeError("saved target distance must be numeric")
+            self.carry_combo.setCurrentText(carry)
+            self.lateral_combo.setCurrentText(lateral)
+            self.carry_unit.setCurrentText(carry_unit)
+            self.lateral_unit.setCurrentText(lateral_unit)
+            self.target_distance.setValue(float(target))
             self.dispersion_status.setText(
                 "Saved settings restored; rerun to regenerate results."
             )

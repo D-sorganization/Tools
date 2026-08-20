@@ -6,10 +6,19 @@ import json
 import tempfile
 from hashlib import sha256
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
+import pandas as pd
 from PyQt6.QtCore import QProcess
-from PyQt6.QtWidgets import QFileDialog, QMessageBox
+from PyQt6.QtWidgets import (
+    QCheckBox,
+    QFileDialog,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPlainTextEdit,
+    QWidget,
+)
 
 from rate_of_closure.launch_monitor_import import read_launch_monitor_frame
 from rate_of_closure.neural_lab_contract import (
@@ -18,10 +27,32 @@ from rate_of_closure.neural_lab_contract import (
     build_training_manifest,
     load_capability_manifest,
 )
+from rate_of_closure.ui.pyqt6.neural_model_lab_widgets import CapabilityCanvas
 
 
 class NeuralTrainingActionsMixin:
     """Reference-only training actions supplied to the lab widget."""
+
+    capability: QPlainTextEdit
+    capability_plot: CapabilityCanvas
+    job_status: QPlainTextEdit
+    dataset_status: QLabel
+    repository: QLineEdit
+    commit: QLineEdit
+    vendor: QLineEdit
+    features: QLineEdit
+    targets: QLineEdit
+    split_group: QLineEdit
+    approved: QCheckBox
+    cli: QLineEdit
+    process: QProcess
+    frame: pd.DataFrame
+    dataset_path: Path | None
+    dataset_sha: str
+    _request_path: Path | None
+
+    def _dialog_parent(self) -> QWidget:
+        return cast(QWidget, self)
 
     def _show_capabilities(self, manifest: Any) -> None:
         self.capability.setPlainText(
@@ -38,7 +69,10 @@ class NeuralTrainingActionsMixin:
 
     def _load_capabilities(self) -> None:
         name, _ = QFileDialog.getOpenFileName(
-            self, "Load private capability manifest", "", "JSON (*.json)"
+            self._dialog_parent(),
+            "Load private capability manifest",
+            "",
+            "JSON (*.json)",
         )
         if not name:
             return
@@ -49,11 +83,16 @@ class NeuralTrainingActionsMixin:
                 "and private rows were not persisted."
             )
         except (OSError, ValueError, json.JSONDecodeError) as error:
-            QMessageBox.warning(self, "Capabilities unavailable", str(error))
+            QMessageBox.warning(
+                self._dialog_parent(), "Capabilities unavailable", str(error)
+            )
 
     def _load_dataset(self) -> None:
         name, _ = QFileDialog.getOpenFileName(
-            self, "Select custom training data", "", "Data (*.csv *.json)"
+            self._dialog_parent(),
+            "Select custom training data",
+            "",
+            "Data (*.csv *.json)",
         )
         if not name:
             return
@@ -70,7 +109,9 @@ class NeuralTrainingActionsMixin:
                 f"Columns: {', '.join(map(str, frame.columns))}"
             )
         except (OSError, ValueError) as error:
-            QMessageBox.warning(self, "Dataset unavailable", str(error))
+            QMessageBox.warning(
+                self._dialog_parent(), "Dataset unavailable", str(error)
+            )
 
     def _manifest(self) -> dict[str, object]:
         if self.dataset_path is None:
@@ -108,7 +149,7 @@ class NeuralTrainingActionsMixin:
 
     def _export_training(self) -> None:
         name, _ = QFileDialog.getSaveFileName(
-            self,
+            self._dialog_parent(),
             "Export training request",
             "neural-training-request.v2.json",
             "JSON (*.json)",
@@ -122,7 +163,9 @@ class NeuralTrainingActionsMixin:
                 "occurred."
             )
         except (OSError, ValueError) as error:
-            QMessageBox.warning(self, "Request unavailable", str(error))
+            QMessageBox.warning(
+                self._dialog_parent(), "Request unavailable", str(error)
+            )
 
     def _submit_training(self) -> None:
         try:
@@ -140,7 +183,9 @@ class NeuralTrainingActionsMixin:
                 "Submitting reference-only request to private CLI…"
             )
         except (OSError, ValueError) as error:
-            QMessageBox.warning(self, "Training unavailable", str(error))
+            QMessageBox.warning(
+                self._dialog_parent(), "Training unavailable", str(error)
+            )
 
     def _process_output(self) -> None:
         value = bytes(self.process.readAllStandardOutput()).decode(

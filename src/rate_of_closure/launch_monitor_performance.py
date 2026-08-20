@@ -73,8 +73,14 @@ def analyze_dispersion(
         raise ValueError("dispersion requires finite lateral and carry values")
     values = complete["lateral"].to_numpy(float)
     points = tuple(
-        DispersionPoint(int(index), float(row.lateral), float(row.carry))
-        for index, row in complete.iterrows()
+        DispersionPoint(index, float(lateral_value), float(carry_value))
+        for index, (lateral_value, carry_value) in enumerate(
+            zip(
+                complete["lateral"].to_numpy(float),
+                complete["carry"].to_numpy(float),
+                strict=True,
+            )
+        )
     )
     standard_deviation = float(np.std(values, ddof=1)) if len(values) > 1 else 0.0
     return DispersionResult(
@@ -159,8 +165,12 @@ def calculate_target_error(
     if complete.empty:
         raise ValueError("target error requires finite carry and lateral values")
     values = tuple(
-        hypot(request.target_distance_yards - float(row.carry), float(row.lateral))
-        for row in complete.itertuples()
+        hypot(request.target_distance_yards - carry_value, lateral_value)
+        for carry_value, lateral_value in zip(
+            complete["carry"].to_numpy(float),
+            complete["lateral"].to_numpy(float),
+            strict=True,
+        )
     )
     return ScoreResult(
         "radial_target_error",
@@ -219,7 +229,9 @@ def analyze_session_trend(frame: pd.DataFrame, request: TrendRequest) -> TrendRe
             request.metric_column,
         ]
     ].copy()
-    selected.columns = ["player", "session", "order", "metric"]
+    selected = selected.set_axis(
+        ["player", "session", "order", "metric"], axis="columns"
+    )
     selected["order"] = pd.to_numeric(selected["order"], errors="coerce")
     selected["metric"] = pd.to_numeric(selected["metric"], errors="coerce")
     selected = selected.replace([np.inf, -np.inf], np.nan).dropna()
@@ -244,15 +256,16 @@ def analyze_session_trend(frame: pd.DataFrame, request: TrendRequest) -> TrendRe
         summaries.groupby("player")["mean"].expanding().mean().droplevel(0)
     )
     points = tuple(
-        TrendPoint(
-            str(row.player),
-            str(row.session),
-            float(row.order),
-            int(row.count),
-            float(row.mean),
-            float(row.cumulative),
+        TrendPoint(player, session, order, count, mean, cumulative)
+        for player, session, order, count, mean, cumulative in zip(
+            summaries["player"].astype(str).tolist(),
+            summaries["session"].astype(str).tolist(),
+            summaries["order"].to_numpy(float).tolist(),
+            summaries["count"].to_numpy(int).tolist(),
+            summaries["mean"].to_numpy(float).tolist(),
+            summaries["cumulative"].to_numpy(float).tolist(),
+            strict=True,
         )
-        for row in summaries.itertuples()
     )
     return TrendResult(
         request.metric_column,

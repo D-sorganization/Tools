@@ -332,6 +332,12 @@ def load_portable_model(source: Path | Mapping[str, object]) -> PortableModel:
         or manifest_dataset.get("sha256") != declared_dataset_digest
     ):
         raise ValueError("training manifest dataset SHA-256 does not match model")
+    raw_model_card = payload.get("model_card")
+    model_card: Mapping[str, object] = (
+        {str(key): value for key, value in raw_model_card.items()}
+        if isinstance(raw_model_card, dict)
+        else {}
+    )
     return PortableModel(
         _text(payload.get("model_id"), "model id"),
         _text(payload.get("vendor"), "vendor"),
@@ -341,9 +347,7 @@ def load_portable_model(source: Path | Mapping[str, object]) -> PortableModel:
         features,
         targets,
         tuple(layers),
-        payload.get("model_card")
-        if isinstance(payload.get("model_card"), dict)
-        else {},
+        model_card,
         tuple(item for item in payload.get("metrics", []) if isinstance(item, dict)),
         residuals,
     )
