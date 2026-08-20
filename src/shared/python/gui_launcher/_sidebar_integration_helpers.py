@@ -7,7 +7,7 @@ import inspect
 import logging
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ def get_sidekick_tokens() -> dict[str, str]:
     try:
         from src.shared.python.theme.sidekick_tokens import get_current_sidekick_tokens
 
-        return get_current_sidekick_tokens()
+        return cast(dict[str, str], get_current_sidekick_tokens())
     except Exception:  # noqa: BLE001 - sidebar startup must stay optional
         return {}
 
@@ -250,7 +250,7 @@ def find_file_open_handler(main_window: Any) -> Callable[[Any], Any] | None:
         for method_name in _FILE_OPEN_METHOD_CANDIDATES:
             method = getattr(target, method_name, None)
             if callable(method) and callable_accepts_path(method):
-                return method
+                return cast(Callable[[Any], Any], method)
     return None
 
 
