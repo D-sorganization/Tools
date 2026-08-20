@@ -35,7 +35,6 @@ jobs:
       bump: ${{ steps.bump.outputs.bump }}
       new_version: ${{ steps.bump.outputs.new_version }}
       current_version: ${{ steps.bump.outputs.current_version }}
-      changelog_entry: ${{ steps.bump.outputs.changelog_entry }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -94,14 +93,8 @@ jobs:
                   fh.write("bump=none\n")
                   fh.write(f"new_version={current}\n")
                   fh.write(f"current_version={current}\n")
-                  delimiter = "EOF_CHANGELOG"
-                  fh.write(
-                      "changelog_entry<<"
-                      + delimiter
-                      + "\n- Release bump commit detected; skipping recursive release automation.\n"
-                      + delimiter
-                      + "\n"
-                  )
+              with open("release-changelog-entry.md", "w", encoding="utf-8") as fh:
+                  fh.write("- Release bump commit detected; skipping recursive release automation.\n")
               print("Release bump commit detected; skipping recursive release automation.")
               raise SystemExit(0)
 
@@ -142,19 +135,27 @@ jobs:
           new_version = f"{major}.{minor}.{patch}"
           changelog_entry = "\n".join(changelog_lines) if changelog_lines else "- No conventional commits found"
 
-          # Write to GITHUB_OUTPUT (multiline-safe)
+          # Keep scalar control values in GITHUB_OUTPUT. Release notes travel as
+          # a file artifact so large histories never become process environment.
           with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
               fh.write(f"bump={bump}\n")
               fh.write(f"new_version={new_version}\n")
               fh.write(f"current_version={current}\n")
-              # Multiline: use delimiter
-              delimiter = "EOF_CHANGELOG"
-              fh.write(f"changelog_entry<<{delimiter}\n{changelog_entry}\n{delimiter}\n")
+          with open("release-changelog-entry.md", "w", encoding="utf-8") as fh:
+              fh.write(changelog_entry + "\n")
 
           print(f"Bump type : {bump}")
           print(f"Current   : {current}")
           print(f"New       : {new_version}")
           PY
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: release-changelog-entry
+          path: release-changelog-entry.md
+          if-no-files-found: error
+          retention-days: 7
 
   # ── 2. Validate: tests + quality gates ──────────────────────────────
   validate:
@@ -259,6 +260,10 @@ jobs:
 
       - name: Purge pip cache
         run: python -m pip cache purge || true
+      - name: Download release notes
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: release-changelog-entry
       - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
@@ -296,14 +301,13 @@ jobs:
         env:
           NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
           BUMP: ${{ needs.analyse-commits.outputs.bump }}
-          CHANGELOG_ENTRY: ${{ needs.analyse-commits.outputs.changelog_entry }}
         run: |
           python3 - <<'PY'
           import os, datetime, pathlib
 
           new_version = os.environ["NEW_VERSION"]
           bump        = os.environ["BUMP"]
-          entry       = os.environ["CHANGELOG_ENTRY"]
+          entry       = pathlib.Path("release-changelog-entry.md").read_text(encoding="utf-8").rstrip()
           today       = datetime.date.today().isoformat()
 
           section = (
@@ -337,7 +341,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
           BUMP: ${{ needs.analyse-commits.outputs.bump }}
-          CHANGELOG_ENTRY: ${{ needs.analyse-commits.outputs.changelog_entry }}
         run: |
           BRANCH="release/v${NEW_VERSION}-${GITHUB_RUN_ID}"
           git switch -c "$BRANCH"
@@ -357,7 +360,7 @@ jobs:
           max_entry_chars = 20000
           new_version = os.environ["NEW_VERSION"]
           bump = os.environ["BUMP"]
-          entry = os.environ["CHANGELOG_ENTRY"]
+          entry = Path("release-changelog-entry.md").read_text(encoding="utf-8").rstrip()
           if len(entry) > max_entry_chars:
               entry = (
                   entry[:max_entry_chars].rstrip()
@@ -409,24 +412,42 @@ jobs:
           python3 -m pip install --upgrade pip build
           python3 -m build --sdist --outdir dist/
 
+      - name: Download release notes
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: release-changelog-entry
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_VERSION: ${{ needs.analyse-commits.outputs.new_version }}
           BUMP: ${{ needs.analyse-commits.outputs.bump }}
-          CHANGELOG_ENTRY: ${{ needs.analyse-commits.outputs.changelog_entry }}
         run: |
-          NOTES="## What's Changed
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
 
-          **Bump type:** ${BUMP}
-
-          ${CHANGELOG_ENTRY}
-
-          ---
-          *Generated automatically by the release workflow.*"
+          entry = Path("release-changelog-entry.md").read_text(encoding="utf-8").rstrip()
+          Path("release-notes.md").write_text(
+              "\n".join(
+                  [
+                      "## What's Changed",
+                      "",
+                      f"**Bump type:** {os.environ['BUMP']}",
+                      "",
+                      entry,
+                      "",
+                      "---",
+                      "*Generated automatically by the release workflow.*",
+                      "",
+                  ]
+              ),
+              encoding="utf-8",
+          )
+          PY
 
           gh release create "v${NEW_VERSION}" \
             dist/*.tar.gz \
             --title "v${NEW_VERSION}" \
-            --notes "${NOTES}" \
+            --notes-file release-notes.md \
             --repo "$GITHUB_REPOSITORY"

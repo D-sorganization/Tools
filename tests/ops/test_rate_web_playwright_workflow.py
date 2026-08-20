@@ -166,6 +166,13 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     pr_commands = _run_steps(pr_job)
     trusted_commands = _run_steps(trusted_job)
 
+    trusted_step_names = [step.get("name") for step in trusted_job["steps"]]
+    setup_python_index = trusted_step_names.index("Set up Python")
+    install_pyqt_index = trusted_step_names.index(
+        "Install declared PyQt render dependencies"
+    )
+    assert setup_python_index < install_pyqt_index
+
     assert pr_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
         "${{ github.workspace }}/visual-baseline-candidates"
     )
