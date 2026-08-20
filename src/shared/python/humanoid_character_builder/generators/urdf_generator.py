@@ -205,8 +205,8 @@ class HumanoidURDFGenerator:
         "Mass must be positive",
     )
     @postcondition(
-        lambda result: len(result) > 0,
-        "URDF output must not be empty",
+        lambda result: len(result) > 0 and bool(result and "<robot" in result and "</robot>" in result and not result.startswith("invalid")),
+        "Generated URDF must be valid XML",
     )
     def generate(
         self,
@@ -299,6 +299,7 @@ class HumanoidURDFGenerator:
         # Default material
         self._materials["default"] = (0.7, 0.7, 0.7, 1.0)
 
+    @precondition(lambda mass: mass > 0, "Mass must be positive")
     def _generate_link(
         self,
         segment_name: str,
@@ -475,6 +476,10 @@ class HumanoidURDFGenerator:
         else:
             self._generate_single_joint(joint_name, joint_def)
 
+    @precondition(
+        lambda joint_def: joint_def.limits is None or joint_def.limits.lower <= joint_def.limits.upper,
+        "Joint limits invalid",
+    )
     def _generate_single_joint(
         self,
         joint_name: str,
