@@ -6161,3 +6161,11 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-19 - Optimized SVG path generation in TrendChart
 
 - **2026-08-19**: perf(p1am) — Replaced `.forEach` array iterations with a single-pass `for` loop in the `seriesPaths` useMemo block within `src/p1am_control_system/frontend/src/components/TrendChart.tsx`. This eliminates closure allocation overhead per data point in SVG path string generation, reducing garbage collection pressure during high-frequency renders.
+
+## 2026-08-18: Club Fitting Tester C6/C7, Heavy Hit H4, & Interval Dynamics F1–F4 (#4549, #4562, #4130, #4577)
+
+- **2026-08-18**: feat(rate_of_closure, golf_club, swing_sim, #4549, #4562, #4130, #4577) — Complete delivery of Club Tester and Heavy Hit surfaces with impact-interval dynamics: (1) PyQt6 `ClubTesterTab` workbench with counterfactual parameter controls, swing delivery kinematics, MJCF/URDF/.osim golfer model import, side-by-side outcome delta tables, and deterministic JSON export; (2) React `ClubTesterPanel.tsx` parity panel, TypeScript model layer `clubFitting.ts`, and golden parity fixtures under `web/src/model/__fixtures__/`; (3) 6-DOF Newton-Euler impact-interval simulation package `src/shared/python/swing_sim/impact_interval/` with Kelvin-Voigt contact laws and energy conservation gates.
+
+## 2026-08-19: Sidekick Unified Integration Epic
+
+- **2026-08-19**: docs(development) — Establish and publish specification for the unified Sidekick integration epic (`docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`) covering phases S1–S5 for bidirectional state seeding and standalone/host-embedded launcher parity across Rate of Closure and all UpstreamDrift launcher tiles.
