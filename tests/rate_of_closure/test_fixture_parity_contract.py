@@ -19,13 +19,7 @@ _REPO_ROOT = Path(__file__).parents[2].resolve()
 _THIS_FILE = Path(__file__).resolve()
 
 FIXTURES_DIR = (
-    _REPO_ROOT
-    / "src"
-    / "rate_of_closure"
-    / "web"
-    / "src"
-    / "model"
-    / "__fixtures__"
+    _REPO_ROOT / "src" / "rate_of_closure" / "web" / "src" / "model" / "__fixtures__"
 ).resolve()
 
 _SEARCH_ROOTS_PY = (
@@ -36,13 +30,9 @@ _SEARCH_ROOTS_PY = (
     _REPO_ROOT / "rust_core",
 )
 
-_SEARCH_ROOTS_TS = (
-    _REPO_ROOT / "src" / "rate_of_closure" / "web" / "src",
-)
+_SEARCH_ROOTS_TS = (_REPO_ROOT / "src" / "rate_of_closure" / "web" / "src",)
 
-_SEARCH_ROOTS_RS = (
-    _REPO_ROOT / "rust_core",
-)
+_SEARCH_ROOTS_RS = (_REPO_ROOT / "rust_core",)
 
 _EXCLUDED_DIRS = {
     ".git",
@@ -172,9 +162,9 @@ def test_allowlist_is_not_vacuous() -> None:
             f"Allowlisted fixture {fixture_name!r} does not exist in {FIXTURES_DIR}. "
             "Remove stale entries from SINGLE_RUNTIME_ALLOWLIST."
         )
-        assert (
-            reason.strip()
-        ), f"Allowlist entry {fixture_name!r} must have a non-empty rationale"
+        assert reason.strip(), (
+            f"Allowlist entry {fixture_name!r} must have a non-empty rationale"
+        )
         assert "#" in reason, (
             f"Allowlist entry {fixture_name!r} must reference a tracking issue or "
             "PR (e.g. #4560)"
