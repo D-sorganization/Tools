@@ -1,0 +1,490 @@
+{
+  "$defs": {
+    "CampaignReference": {
+      "additionalProperties": false,
+      "description": "Link to the canonical release authority without implying release.",
+      "properties": {
+        "path": {
+          "const": "docs/release/rate_of_closure_campaign.v1.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "program_issue": {
+          "const": 4260,
+          "title": "Program Issue",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "rate-of-closure-campaign/v1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "schema_version",
+        "program_issue"
+      ],
+      "title": "CampaignReference",
+      "type": "object"
+    },
+    "CapabilityCategory": {
+      "description": "Required inventory categories from issue 4264.",
+      "enum": [
+        "model",
+        "control",
+        "output",
+        "view",
+        "persistence",
+        "export",
+        "campaign_program",
+        "active_specification"
+      ],
+      "title": "CapabilityCategory",
+      "type": "string"
+    },
+    "CapabilityRecord": {
+      "additionalProperties": false,
+      "description": "One durable capability key classified across every product surface.",
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/CapabilityCategory"
+        },
+        "declaration": {
+          "$ref": "#/$defs/DeclarationReference"
+        },
+        "id": {
+          "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "surfaces": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SurfaceCapability"
+          },
+          "title": "Surfaces",
+          "type": "object"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "title",
+        "declaration",
+        "surfaces"
+      ],
+      "title": "CapabilityRecord",
+      "type": "object"
+    },
+    "CapabilityState": {
+      "description": "Mutually exclusive capability classifications.",
+      "enum": [
+        "supported",
+        "unsupported",
+        "deprecated"
+      ],
+      "title": "CapabilityState",
+      "type": "string"
+    },
+    "DeclarationReference": {
+      "additionalProperties": false,
+      "description": "Deterministic source location for one capability record.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "curated_evidence",
+            "campaign_program",
+            "active_release_spec"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_key": {
+          "minLength": 1,
+          "title": "Source Key",
+          "type": "string"
+        },
+        "source_path": {
+          "minLength": 1,
+          "title": "Source Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "source_path",
+        "source_key"
+      ],
+      "title": "DeclarationReference",
+      "type": "object"
+    },
+    "EvidenceRecord": {
+      "additionalProperties": false,
+      "description": "Repository- and commit-bound evidence for a supported surface claim.",
+      "properties": {
+        "assertion": {
+          "minLength": 1,
+          "title": "Assertion",
+          "type": "string"
+        },
+        "commit_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit Sha",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "repository": {
+          "enum": [
+            "D-sorganization/Tools",
+            "D-sorganization/UpstreamDrift"
+          ],
+          "title": "Repository",
+          "type": "string"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        },
+        "test_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Test Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "repository",
+        "commit_sha",
+        "source_paths",
+        "test_paths",
+        "assertion"
+      ],
+      "title": "EvidenceRecord",
+      "type": "object"
+    },
+    "FreshnessWindow": {
+      "additionalProperties": false,
+      "description": "Bounded observation window used by CI staleness gates.",
+      "properties": {
+        "expires_on": {
+          "format": "date",
+          "title": "Expires On",
+          "type": "string"
+        },
+        "max_age_days": {
+          "exclusiveMinimum": 0,
+          "maximum": 90,
+          "title": "Max Age Days",
+          "type": "integer"
+        },
+        "observed_on": {
+          "format": "date",
+          "title": "Observed On",
+          "type": "string"
+        }
+      },
+      "required": [
+        "observed_on",
+        "max_age_days",
+        "expires_on"
+      ],
+      "title": "FreshnessWindow",
+      "type": "object"
+    },
+    "InventoryScope": {
+      "additionalProperties": false,
+      "description": "Explicit boundary for the currently audited capability inventory.",
+      "properties": {
+        "active_specification_count": {
+          "minimum": 1,
+          "title": "Active Specification Count",
+          "type": "integer"
+        },
+        "campaign_program_count": {
+          "minimum": 1,
+          "title": "Campaign Program Count",
+          "type": "integer"
+        },
+        "curated_capability_count": {
+          "minimum": 1,
+          "title": "Curated Capability Count",
+          "type": "integer"
+        },
+        "enumeration_rules": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Enumeration Rules",
+          "type": "array"
+        },
+        "excluded_scope_reason": {
+          "minLength": 1,
+          "title": "Excluded Scope Reason",
+          "type": "string"
+        },
+        "included_categories": {
+          "items": {
+            "$ref": "#/$defs/CapabilityCategory"
+          },
+          "title": "Included Categories",
+          "type": "array"
+        },
+        "status": {
+          "const": "declared_scope_complete",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "included_categories",
+        "enumeration_rules",
+        "curated_capability_count",
+        "campaign_program_count",
+        "active_specification_count",
+        "excluded_scope_reason"
+      ],
+      "title": "InventoryScope",
+      "type": "object"
+    },
+    "SchemaReference": {
+      "additionalProperties": false,
+      "description": "Identity and digest for the generated consumer schema.",
+      "properties": {
+        "id": {
+          "const": "four-surface-capability/v1",
+          "title": "Id",
+          "type": "string"
+        },
+        "path": {
+          "const": "docs/release/four_surface_capability.v1.schema.json",
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "path",
+        "sha256"
+      ],
+      "title": "SchemaReference",
+      "type": "object"
+    },
+    "SurfaceCapability": {
+      "additionalProperties": false,
+      "description": "Truthful state of one capability on one surface.",
+      "properties": {
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "state": {
+          "$ref": "#/$defs/CapabilityState"
+        }
+      },
+      "required": [
+        "state",
+        "reason",
+        "evidence_ids"
+      ],
+      "title": "SurfaceCapability",
+      "type": "object"
+    },
+    "SurfaceDefinition": {
+      "additionalProperties": false,
+      "description": "Repository and runtime identity for one stable surface.",
+      "properties": {
+        "consumer_commit_sha": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{40}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consumer Commit Sha"
+        },
+        "id": {
+          "$ref": "#/$defs/SurfaceId"
+        },
+        "repository": {
+          "enum": [
+            "D-sorganization/Tools",
+            "D-sorganization/UpstreamDrift"
+          ],
+          "title": "Repository",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "authority",
+            "consumer"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "runtime": {
+          "enum": [
+            "pyqt6",
+            "react"
+          ],
+          "title": "Runtime",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "repository",
+        "runtime",
+        "role"
+      ],
+      "title": "SurfaceDefinition",
+      "type": "object"
+    },
+    "SurfaceId": {
+      "description": "Stable public identifiers for the four product surfaces.",
+      "enum": [
+        "tools.pyqt6",
+        "tools.react",
+        "upstreamdrift.pyqt6",
+        "upstreamdrift.react"
+      ],
+      "title": "SurfaceId",
+      "type": "string"
+    },
+    "ToolsPin": {
+      "additionalProperties": false,
+      "description": "Exact Tools source snapshot audited by this inventory.",
+      "properties": {
+        "branch": {
+          "minLength": 1,
+          "title": "Branch",
+          "type": "string"
+        },
+        "commit_sha": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit Sha",
+          "type": "string"
+        },
+        "repository": {
+          "const": "D-sorganization/Tools",
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository",
+        "branch",
+        "commit_sha"
+      ],
+      "title": "ToolsPin",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Canonical version-1 four-surface capability inventory.",
+  "properties": {
+    "campaign": {
+      "$ref": "#/$defs/CampaignReference"
+    },
+    "capabilities": {
+      "items": {
+        "$ref": "#/$defs/CapabilityRecord"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRecord"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "freshness": {
+      "$ref": "#/$defs/FreshnessWindow"
+    },
+    "inventory": {
+      "$ref": "#/$defs/InventoryScope"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "schema": {
+      "$ref": "#/$defs/SchemaReference"
+    },
+    "schema_version": {
+      "const": "four-surface-capability/v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "surfaces": {
+      "items": {
+        "$ref": "#/$defs/SurfaceDefinition"
+      },
+      "title": "Surfaces",
+      "type": "array"
+    },
+    "tools_pin": {
+      "$ref": "#/$defs/ToolsPin"
+    }
+  },
+  "required": [
+    "schema_version",
+    "tools_pin",
+    "schema",
+    "freshness",
+    "campaign",
+    "inventory",
+    "surfaces",
+    "evidence",
+    "capabilities",
+    "limitations"
+  ],
+  "title": "FourSurfaceCapabilityManifest",
+  "type": "object"
+}

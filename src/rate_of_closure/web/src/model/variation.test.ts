@@ -300,7 +300,12 @@ describe("analysis + export", () => {
   });
 
   it("registry keys per mode mirror the Python categories", () => {
-    expect(keysForMode("launch")).toHaveLength(5);
+    // 7, not 5: the two regional-ground keys are part of the launch
+    // category. Python reaches the same count -- its registry holds 5
+    // launch keys until register_ground_variation_variables() adds exactly
+    // ground_normal_restitution and ground_rolling_resistance, which
+    // regional_ground_variation_request does from inside its parse path.
+    expect(keysForMode("launch")).toHaveLength(7);
     expect(keysForMode("delivery")).toHaveLength(7); // club category is desktop-only
   });
 });

@@ -554,3 +554,92 @@ class TestListAvailableModels:
             adapter.list_available_models()
 
         assert exc_info.value.provider == "ollama"
+
+
+class TestEmptyCurrentMessage:
+    """An empty `current_message` must not become a trailing user turn.
+
+    `chat_service` passes `current_message=""` when the turn the user just
+    sent is already the tail of `context.messages`. Appending a blank user
+    message there corrupts the request: providers either reject it or answer
+    the empty turn instead of the real one.
+    """
+
+    @pytest.mark.unit
+    def test_blank_current_message_is_not_appended(
+        self, adapter: OllamaAdapter
+    ) -> None:
+        from src.shared.python.ai.types import Message
+
+        ctx = ConversationContext()
+        ctx.messages = [Message(role="user", content="hello")]
+
+        messages = adapter._format_messages(ctx, "", [])
+
+        assert [m["role"] for m in messages] == ["system", "user"]
+        assert messages[-1]["content"] == "hello"
+
+    @pytest.mark.unit
+    def test_whitespace_only_current_message_is_not_appended(
+        self, adapter: OllamaAdapter
+    ) -> None:
+        from src.shared.python.ai.types import Message
+
+        ctx = ConversationContext()
+        ctx.messages = [Message(role="user", content="hello")]
+
+        messages = adapter._format_messages(ctx, "   \n\t ", [])
+
+        assert [m["role"] for m in messages] == ["system", "user"]
+
+    @pytest.mark.unit
+    def test_real_current_message_is_still_appended(
+        self, adapter: OllamaAdapter
+    ) -> None:
+        from src.shared.python.ai.types import Message
+
+        ctx = ConversationContext()
+        ctx.messages = [Message(role="user", content="hello")]
+
+        messages = adapter._format_messages(ctx, "and then?", [])
+
+        assert [m["role"] for m in messages] == ["system", "user", "user"]
+        assert messages[-1]["content"] == "and then?"
+
+
+class TestTypedTransportErrors:
+    """httpx exposes typed transport errors; classification must not need text.
+
+    `BaseAgentAdapter._classify_error` scans the exception message, so
+    `ConnectError("broken")` -- which contains none of its keywords -- was
+    reported as a generic provider error, and Ollama's own
+    "Is Ollama running?" hint never fired.
+    """
+
+    @pytest.mark.unit
+    def test_connect_error_without_keywords_is_a_connection_error(
+        self, adapter: OllamaAdapter
+    ) -> None:
+        import httpx
+
+        with (
+            patch.object(adapter, "_get_client") as mock_get_client,
+            pytest.raises(AIConnectionError) as excinfo,
+        ):
+            mock_get_client.return_value.post.side_effect = httpx.ConnectError("broken")
+            adapter.send_message("hi", ConversationContext(), [])
+
+        assert "ollama serve" in str(excinfo.value)
+
+    @pytest.mark.unit
+    def test_timeout_without_keywords_is_a_timeout_error(
+        self, adapter: OllamaAdapter
+    ) -> None:
+        import httpx
+
+        with (
+            patch.object(adapter, "_get_client") as mock_get_client,
+            pytest.raises(AITimeoutError),
+        ):
+            mock_get_client.return_value.post.side_effect = httpx.TimeoutException("x")
+            adapter.send_message("hi", ConversationContext(), [])

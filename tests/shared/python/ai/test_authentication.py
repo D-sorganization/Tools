@@ -50,7 +50,7 @@ def _make_auth(tmp_path: Path) -> AuthManager:
     with patch.object(AuthManager, "CREDENTIALS_FILE", new=creds_file):
         auth = AuthManager()
     # Patch at the instance level so subsequent calls use the same path.
-    auth.__class__.CREDENTIALS_FILE = creds_file  # type: ignore[assignment]
+    auth.__class__.CREDENTIALS_FILE = creds_file
     return auth
 
 
@@ -79,7 +79,7 @@ class TestLoginWithOauth:
 
     def test_error_message_mentions_issue_number(self, tmp_path: Path) -> None:
         auth = _make_auth(tmp_path)
-        with pytest.raises(NotImplementedError, match="#5227"):
+        with pytest.raises(NotImplementedError, match="UpstreamDrift#8770"):
             auth.login_with_oauth("google", "any_code")
 
     def test_credentials_file_not_created(self, tmp_path: Path) -> None:
@@ -123,7 +123,7 @@ class TestLoginWithEmailPassword:
 
     def test_error_message_mentions_issue_number(self, tmp_path: Path) -> None:
         auth = _make_auth(tmp_path)
-        with pytest.raises(NotImplementedError, match="#5227"):
+        with pytest.raises(NotImplementedError, match="UpstreamDrift#8770"):
             auth.login_with_email_password("user@example.com", "password123")
 
     def test_credentials_file_not_created(self, tmp_path: Path) -> None:

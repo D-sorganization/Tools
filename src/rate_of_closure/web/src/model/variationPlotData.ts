@@ -231,18 +231,23 @@ export function distributionMatrixToCsv(
   if (outcomes !== undefined && outcomes.length !== dataset.success.length) {
     throw new Error("matrix outcomes must align with dataset trials");
   }
-  const rows = dataset.success.map((success, trialIndex) => [
-    String(trialIndex),
-    outcomes?.[trialIndex] ?? (success ? "evaluated" : "failure"),
-    ...columns.map((column) => {
-      const value = column[trialIndex];
-      return value === null || !Number.isFinite(value) ? "" : String(value);
-    }),
-  ]);
-  return [
-    ["trial_index", "outcome", ...variableKeys],
-    ...rows,
-  ].map((row) => row.map(csvCell).join(",")).join("\n");
+  // ⚡ Bolt Optimization: Replacing intermediate array allocations and chained map/join calls
+  // with a single-pass for loop using string concatenation to reduce garbage collection pressure.
+  let csv = csvCell("trial_index") + "," + csvCell("outcome");
+  for (let i = 0; i < variableKeys.length; i++) {
+    csv += "," + csvCell(variableKeys[i]);
+  }
+
+  const successArray = dataset.success;
+  for (let i = 0; i < successArray.length; i++) {
+    csv += "\n" + csvCell(String(i)) + "," + csvCell(outcomes?.[i] ?? (successArray[i] ? "evaluated" : "failure"));
+    for (let j = 0; j < columns.length; j++) {
+      const value = columns[j][i];
+      csv += "," + csvCell(value === null || !Number.isFinite(value) ? "" : String(value));
+    }
+  }
+
+  return csv;
 }
 
 export function distributionMatrixToSvg(
