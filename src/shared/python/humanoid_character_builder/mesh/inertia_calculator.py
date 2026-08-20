@@ -551,9 +551,10 @@ class MeshInertiaCalculator:
         )
 
     @staticmethod
-    @precondition(lambda ixx: ixx > 0, "ixx must be positive")
-    @precondition(lambda iyy: iyy > 0, "iyy must be positive")
-    @precondition(lambda izz: izz > 0, "izz must be positive")
+    @precondition(
+        lambda ixx, iyy, izz: ixx > 0 and iyy > 0 and izz > 0,
+        "Inertia must be positive definite",
+    )
     @precondition(lambda mass: mass > 0, "Mass must be positive")
     def create_manual_inertia(
         ixx: float,
