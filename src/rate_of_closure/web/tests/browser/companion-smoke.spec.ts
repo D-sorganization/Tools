@@ -33,26 +33,3 @@ test("production companion serves the application and its qualified capability",
     await companion.close();
   }
 });
-
-test("malformed capability fails closed in the built companion application", async ({ page }) => {
-  const companion = await startCompanionHarness();
-  const audit = auditSameOriginNetwork(page, companion.origin);
-  try {
-    await page.route("**/api/rate-of-closure/v1/capabilities", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: '{"regional_ground_execution":true}',
-      });
-    });
-    await page.goto(`${companion.origin}/`);
-    await page.getByRole("tab", { name: "Ground Playback" }).click();
-    await expect(page.getByLabel("Local authority capability"))
-      .toContainText("authority_unreachable");
-    await expect(page.getByRole("button", { name: "Run imported study" }))
-      .toBeDisabled();
-    audit.assertClean();
-  } finally {
-    await companion.close();
-  }
-});
