@@ -16,6 +16,24 @@ The React and PyQt clients expose the same workflow:
 5. Run per-player correlation through the existing analysis adapter.
 6. Save a reference-only project or explicitly export a full evidence bundle.
 
+Both clients also expose a Performance Analytics workspace with:
+
+- carry/lateral dispersion converted from an explicitly selected metre or yard
+  source unit into yards left/right of target;
+- a unit-labeled plot and PNG/SVG/PDF (PyQt) or SVG (React) export;
+- radial target error in yards, distinctly labeled as not strokes gained;
+- true strokes gained only when expected-strokes-before, expected-strokes-after,
+  and an HTTP(S) baseline citation are supplied;
+- session and cumulative means only after player identity, session identity,
+  and an explicit numeric session-order column are attested; and
+- fingerprint-bound performance-analysis save/load plus backing CSV export.
+
+The directional convention is negative lateral = left and positive lateral =
+right. Radial target error is
+`hypot(target_yards - carry_yards, lateral_yards)`. True strokes gained is
+`expected_before - 1 - expected_after`. Cumulative session means give each
+session equal weight; they are not a fitted improvement slope.
+
 ## Identity boundary
 
 Player identity is never inferred from session, club, monitor, filename, source
@@ -64,6 +82,10 @@ UpstreamDrift v2 endpoint is implemented and qualified:
 - longitudinal improvement models;
 - out-of-core private-corpus querying from the Tools clients; and
 - neural-vendor training or inference.
+
+Basic attested session/cumulative summaries are now available. Inferential
+longitudinal improvement models, uncertainty bands, and causal improvement
+claims remain unavailable pending the UpstreamDrift v2 backend.
 
 The private corpus may be referenced by exact repository revision, relative
 path, row count, and hash, but it is not copied into a saved Tools project.

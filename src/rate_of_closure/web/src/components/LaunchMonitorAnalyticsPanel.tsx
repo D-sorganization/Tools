@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { MAX_LINKED_SCATTER_ROWS } from "../model/launchMonitorLinkedScatter";
 import { LaunchMonitorLinkedScatter } from "./LaunchMonitorLinkedScatter";
 import { LaunchMonitorPlayerWorkspace } from "./LaunchMonitorPlayerWorkspace";
+import { LaunchMonitorPerformanceWorkspace } from "./LaunchMonitorPerformanceWorkspace";
 import {
   analyzeLaunchMonitorData,
   numericLaunchMonitorColumns,
@@ -275,6 +276,7 @@ export function LaunchMonitorAnalyticsPanel() {
         </div>
       </div>
       <LaunchMonitorPlayerWorkspace rows={rows} sourceName={sourceName} />
+      <LaunchMonitorPerformanceWorkspace rows={rows} sourceName={sourceName} />
     </section>
   );
 }
