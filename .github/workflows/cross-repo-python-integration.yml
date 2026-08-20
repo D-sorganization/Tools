@@ -15,6 +15,7 @@ on:
       - "src/python/**"
       - "manifests/**"
       - ".github/workflows/cross-repo-python-integration.yml"
+  workflow_dispatch:
 
 concurrency:
   group: cross-repo-python-${{ github.ref }}
