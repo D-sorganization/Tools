@@ -394,7 +394,7 @@ class ModelGenerationAPI:
         if not result.success:
             return APIResponse.error(result.error_message or "Build failed")
 
-        urdf_string = result.urdf_xml
+        urdf_string = result.urdf_xml or ""
 
         # Return as file or JSON based on query param
         if request.query_params.get("download") == "true":
