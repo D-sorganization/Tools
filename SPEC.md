@@ -27,12 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.69                                    |
+| **Spec Version**        | 1.17.70                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.70 approves the hosted Linux PyQt launch-monitor visual captured
+from the exact #4599 feature tree after its protected merge. The approved PNG,
+manifest SHA-256, and merge authority commit are updated together; every other
+React and PyQt reference remains byte-identical.
 
 Version 1.17.69 makes UpstreamDrift's source-backed strokes-gained endpoint the
 canonical online authority for both Rate clients. PyQt6 and React now build and
@@ -5036,6 +5041,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.70 | test(rate-of-closure): approve the post-merge hosted Linux PyQt launch-monitor reference from #4599, pinning its exact PNG hash and protected merge authority while leaving every other baseline unchanged. | #4600 |
 | 2026-08-20 | 1.17.69 | feat(rate-of-closure): consume the canonical source-backed strokes-gained v2 endpoint with PyQt6/React parity, exact state strata, uncertainty, structured exclusions, explicit grouping attestations, and a labelled local compatibility fallback. | #4584, UpstreamDrift#8803 |
 | 2026-08-20 | 1.17.64 | fix(ci): treat an empty merge-hold timeline as a successful no-hold result under pipefail and errexit. | #4583 |
 | 2026-08-20 | 1.17.63 | feat(rate_of_closure, sidekick): deliver Phase S1/S2 unified sidekick integration (dock widget, context provider, toggle visibility, and fallback support in RateOfClosureMainWindow). | #4585 |

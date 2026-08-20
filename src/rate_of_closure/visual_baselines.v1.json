@@ -2,7 +2,7 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "c0ff9b86c36590cf5834734b04bb0023b1d608df",
+  "source_artifact_commit": "a7b6dc437b45857e27cd07cccb56ff665826e342",
   "baselines": [
     {
       "surface": "react",
@@ -189,7 +189,7 @@
       "tab_id": "launch_monitor_analytics",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-launch_monitor_analytics-dpi-1.0.png",
-      "sha256": "8a33c463592551c6e690ce86e304e2f81ec9f385c819ccc6711720a02468da1e",
+      "sha256": "6699129037d0adf8152e73bdae3fc2b75a2e15bfb16e25a4b3cfcec2448ac00e",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
