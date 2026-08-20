@@ -34,7 +34,12 @@
 
 ### Governed Launch-Monitor Analytics Release
 
-Version 1.17.64 repairs the merge-hold guard's no-hold path under the runner's
+Version 1.17.64 makes an empty auto-merge timeline a successful no-hold result.
+The guard now selects human disarm timestamps with `awk`, which exits zero when
+no rows match, rather than a no-match `grep` pipeline that the runner's implicit
+`pipefail` and `bash -e` treated as a workflow failure.
+
+Version 1.17.60 repairs the merge-hold guard's no-hold path under the runner's
 implicit `bash -e`. Absent labels and a non-draft state are now evaluated in
 explicit conditional blocks, so an ordinary clean PR succeeds while actual
 labels, drafts, reviewer disarms, and unacknowledged deletions retain the same
@@ -5018,6 +5023,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.64 | fix(ci): treat an empty merge-hold timeline as a successful no-hold result under pipefail and errexit. | #4583 |
 | 2026-08-20 | 1.17.63 | feat(rate_of_closure, sidekick): deliver Phase S1/S2 unified sidekick integration (dock widget, context provider, toggle visibility, and fallback support in RateOfClosureMainWindow). | #4585 |
 | 2026-08-20 | 1.17.62 | chore(shared): normalise src/shared/python against the consumers' lint baseline across shared python modules. | #4507 |
 | 2026-08-20 | 1.17.61 | fix(shared): clear the 18 pre-existing mypy errors in src/shared/python across mdl_parser, matplotlib_renderer, trendline, optimization, and pressure drop/PSA calculators. | #4509 |
