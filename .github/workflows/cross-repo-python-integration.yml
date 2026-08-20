@@ -100,7 +100,8 @@ jobs:
               pyproject.toml
               build_hooks.py
               README.md
-              src/shared
+              launch_golf_suite.py
+              src
               tests/shared_contracts
               tests/support
 
