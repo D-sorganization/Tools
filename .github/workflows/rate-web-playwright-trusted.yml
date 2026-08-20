@@ -103,8 +103,6 @@ jobs:
     env:
       RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
       RATE_E2E_PREBUILT: "1"
-      RATE_PYQT_VENV: ${{ runner.temp }}/rate-pyqt-${{ github.run_id }}-${{ github.run_attempt }}
-      PYTEST_DEBUG_TEMPROOT: ${{ runner.temp }}/rate-pyqt-pytest-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -153,6 +151,12 @@ jobs:
           npm run test:e2e --
           e2e/visualization-performance.spec.ts
           --project=chromium-desktop
+
+      - name: Declare isolated PyQt paths
+        working-directory: .
+        run: |-
+          echo "RATE_PYQT_VENV=${RUNNER_TEMP}/rate-pyqt-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
+          echo "PYTEST_DEBUG_TEMPROOT=${RUNNER_TEMP}/rate-pyqt-pytest-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
 
       - name: Create isolated PyQt environment
         working-directory: .

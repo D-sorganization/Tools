@@ -171,6 +171,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
 
     trusted_step_names = [step.get("name") for step in trusted_job["steps"]]
     setup_python_index = trusted_step_names.index("Set up Python")
+    declare_pyqt_index = trusted_step_names.index("Declare isolated PyQt paths")
     create_pyqt_index = trusted_step_names.index("Create isolated PyQt environment")
     install_pyqt_index = trusted_step_names.index(
         "Install constrained PyQt render dependencies"
@@ -182,6 +183,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     baseline_index = trusted_step_names.index("Enforce protected visual baseline drift")
     assert (
         setup_python_index
+        < declare_pyqt_index
         < create_pyqt_index
         < install_pyqt_index
         < smoke_pyqt_index
@@ -242,13 +244,8 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "--project=chromium-desktop"
     )
     assert trusted_job["env"]["RATE_E2E_PREBUILT"] == "1"
-    assert trusted_job["env"]["RATE_PYQT_VENV"] == (
-        "${{ runner.temp }}/rate-pyqt-${{ github.run_id }}-${{ github.run_attempt }}"
-    )
-    assert trusted_job["env"]["PYTEST_DEBUG_TEMPROOT"] == (
-        "${{ runner.temp }}/rate-pyqt-pytest-${{ github.run_id }}-"
-        "${{ github.run_attempt }}"
-    )
+    assert "RATE_PYQT_VENV" not in trusted_job["env"]
+    assert "PYTEST_DEBUG_TEMPROOT" not in trusted_job["env"]
     assert trusted_job["timeout-minutes"] == 30
     trusted_steps = {
         str(step.get("name")): step for step in trusted_job["steps"] if "name" in step
@@ -263,6 +260,12 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "Measure protected visualization budgets in isolation"
     ]
     assert performance_step["env"] == {"RATE_E2E_EVIDENCE_PHASE": "performance"}
+    assert trusted_commands["Declare isolated PyQt paths"] == (
+        'echo "RATE_PYQT_VENV=${RUNNER_TEMP}/rate-pyqt-'
+        '${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"\n'
+        'echo "PYTEST_DEBUG_TEMPROOT=${RUNNER_TEMP}/rate-pyqt-pytest-'
+        '${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"'
+    )
     assert trusted_commands["Create isolated PyQt environment"] == (
         'python -m venv "$RATE_PYQT_VENV" && mkdir -p "$PYTEST_DEBUG_TEMPROOT"'
     )
