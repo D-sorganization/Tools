@@ -22,8 +22,12 @@ Both clients also expose a Performance Analytics workspace with:
   source unit into yards left/right of target;
 - a unit-labeled plot and PNG/SVG/PDF (PyQt) or SVG (React) export;
 - radial target error in yards, distinctly labeled as not strokes gained;
-- true strokes gained only when expected-strokes-before, expected-strokes-after,
-  and an HTTP(S) baseline citation are supplied;
+- source-backed strokes gained only when a versioned expected-strokes artifact
+  passes schema, provenance, uniqueness, and SHA-256 validation and the shot
+  supplies exact before/after lie and distance state;
+- separately labelled user-supplied expected-strokes bookkeeping only when
+  expected-strokes-before, expected-strokes-after, and an HTTP(S) citation are
+  supplied;
 - session and cumulative means only after player identity, session identity,
   and an explicit numeric session-order column are attested; and
 - fingerprint-bound performance-analysis save/load plus backing CSV export.
@@ -66,26 +70,34 @@ where that bundle may be stored.
 
 ## Calculation authority and current limitations
 
-The workspace does not introduce a second statistical engine. Its current
-compatibility adapter delegates Pearson estimates and confidence intervals to
-the existing Rate analysis boundary. The reference-only request contract is
-prepared for the UpstreamDrift contract-v2 backend, which is the intended
-cross-client authority.
+UpstreamDrift contract v2 is the canonical cross-service envelope for generic
+launch-monitor analytics, evidence lineage, backing records, and typed
+unavailable states. Tools currently owns the specialized grouped estimators
+described in [WITHIN_PLAYER_COVARIATION.md](WITHIN_PLAYER_COVARIATION.md) and
+[LONGITUDINAL_PLAYER_ANALYSIS.md](LONGITUDINAL_PLAYER_ANALYSIS.md). Python is the
+desktop calculation authority; the React implementation is a tested browser
+twin with the same eligibility, formula, unit, warning, and export contracts.
+This is an explicit local release boundary, not a claim that the grouped
+operations are already part of the UpstreamDrift v2 API.
 
-Current grouped results are per-player correlations, not a complete hierarchical
-within-player meta-analysis. The following remain unavailable until the
-UpstreamDrift v2 endpoint is implemented and qualified:
+The released grouped surface includes player-mean-centered pooled effects,
+between-player decomposition, per-player correlations and regressions,
+fixed/random Fisher-z synthesis, session uncertainty, per-player longitudinal
+slopes, fixed/random population trends, and complete backing exports. The
+source-backed strokes-gained contract is documented in
+[SOURCE_BACKED_STROKES_GAINED.md](SOURCE_BACKED_STROKES_GAINED.md); no baseline
+table is bundled, so that mode remains unavailable until the user supplies a
+valid artifact and complete course-state inputs.
 
-- player-mean-centered pooled effects;
-- fixed- and random-effects Fisher-z synthesis;
-- between-player versus within-player decomposition;
-- longitudinal improvement models;
-- out-of-core private-corpus querying from the browser client; and
-- vendor-model training when the capability manifest denies eligibility.
+The remaining unavailable or deliberately bounded capabilities are:
 
-Basic attested session/cumulative summaries are now available. Inferential
-longitudinal improvement models, uncertainty bands, and causal improvement
-claims remain unavailable pending the UpstreamDrift v2 backend.
+- mixed-effects longitudinal models with session/player dependence beyond the
+  released summary and DerSimonian--Laird synthesis;
+- clustered or repeated-measures confidence limits for the centered pooled
+  correlation;
+- out-of-core private-corpus querying from the browser client;
+- vendor-model training when the capability manifest denies eligibility; and
+- causal improvement, swing-mechanism, or device-certification claims.
 
 The PyQt client can load the complete authorized source-partitioned Parquet
 authority from the directory selected by the user or

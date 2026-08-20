@@ -134,9 +134,11 @@ jobs:
           else
             # Sweep mode: only armed PRs have anything to revoke, so the
             # scheduled pass stays cheap on the fleet.
-            PRS=$(gh pr list --repo "$REPO" --state open --limit 200 \
-                    --json number,autoMergeRequest \
-                    --jq '.[] | select(.autoMergeRequest != null) | .number')
+            # Scheduled GITHUB_TOKENs can use the repository REST API even on
+            # runners where the gh GraphQL client rejects that token.
+            PRS=$(gh api --paginate \
+                    "repos/$REPO/pulls?state=open&per_page=100" \
+                    --jq '.[] | select(.auto_merge != null) | .number')
           fi
           COUNT=$(printf '%s\n' "$PRS" | grep -c '[0-9]' || true)
           echo "Evaluating ${COUNT:-0} pull request(s)."
