@@ -327,8 +327,8 @@ class ModelLibrary:
 
     def list_models(
         self,
-        category: ModelCategory | None = None,
-        source: RepositorySource | None = None,
+        category: ModelCategory | str | None = None,
+        source: RepositorySource | str | None = None,
         tags: list[str] | None = None,
         search: str | None = None,
     ) -> list[ModelEntry]:
@@ -344,15 +344,33 @@ class ModelLibrary:
         Returns:
             List of matching ModelEntry objects
         """
+        cat_filter = None
+        if isinstance(category, str):
+            try:
+                cat_filter = ModelCategory(category)
+            except ValueError:
+                cat_filter = None
+        elif isinstance(category, ModelCategory):
+            cat_filter = category
+
+        src_filter = None
+        if isinstance(source, str):
+            try:
+                src_filter = RepositorySource(source)
+            except ValueError:
+                src_filter = None
+        elif isinstance(source, RepositorySource):
+            src_filter = source
+
         results = []
 
         for entry in self._entries.values():
             # Category filter
-            if category and entry.category != category:
+            if cat_filter and entry.category != cat_filter:
                 continue
 
             # Source filter
-            if source and entry.source != source:
+            if src_filter and entry.source != src_filter:
                 continue
 
             # Tags filter
