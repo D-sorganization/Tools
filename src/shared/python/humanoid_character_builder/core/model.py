@@ -16,7 +16,6 @@ import numpy as np
 from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation as R
 
-from shared.python.humanoid_character_builder.contracts import precondition
 from shared.python.humanoid_character_builder.mesh.inertia_calculator import (
     InertiaResult,
 )
