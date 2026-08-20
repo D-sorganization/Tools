@@ -1,0 +1,339 @@
+name: Merge Hold Guard
+
+# Makes a reviewer's hold on a pull request authoritative.
+#
+# Background: fleet automation arms GitHub auto-merge using the repository
+# owner's credentials — the `fleet-pr-queue` automation in
+# Repository_Management/config/codex_fleet_automations.json instructs its agent
+# sessions to "enable auto-merge for the highest-confidence item", and those
+# sessions authenticate as `dieterolson`, not as a bot. A reviewer who runs
+# `gh pr merge <n> --disable-auto` therefore has no way to make the decision
+# stick. Measured on 2026-08-14 in this repo:
+#
+#   PR #4692  disarmed 04:15:08Z -> re-armed 04:15:16Z   (8s)
+#   PR #4710  disarmed 04:15:39Z -> re-armed 04:15:45Z   (6s)
+#   PR #4711  disarmed 04:15:50Z -> re-armed 04:15:56Z   (6s)
+#   PR #4709  disarmed 03:38:35Z -> re-armed 04:02:09Z   (24m; closed to stop it)
+#
+# This workflow is the deterministic backstop: whenever a held PR is seen with
+# auto-merge armed, the arm is revoked, no matter who armed it.
+#
+# HOLD SIGNALS — any one is sufficient:
+#   1. a `do-not-merge`, `blocked` or `do-not-automate` label is present
+#   2. the PR is a draft
+#   3. auto-merge was disabled by a non-bot account more recently than the head
+#      commit — i.e. a reviewer said no and nobody has pushed since
+#   4. the diff deletes tracked files and nobody has acknowledged that
+#
+# Signal 4 is what turns this from a nuisance into an incident: PR #4709 had
+# auto-merge armed on a diff that DELETED 13 files present on `main`. To release
+# such a PR, add the `deletions-acknowledged` label (or a
+# `Deletions-Acknowledged: yes` line to the PR body) and remove `do-not-merge`.
+#
+# ESCALATION — a plain revoke cannot win a 6-second re-arm race on its own, so
+# after ESCALATE_AFTER_REVOCATIONS revocations against the same head commit the
+# guard converts the PR to a draft. GitHub refuses to enable auto-merge on a
+# draft PR, which makes the hold enforceable at the API level rather than
+# advisory. `gh pr ready <n>` reverses it deliberately.
+#
+# The guard only ever REMOVES auto-merge. It never merges, never arms, and never
+# pushes.
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  PIP_RETRIES: "10"
+  PIP_TIMEOUT: "120"
+  CARGO_NET_RETRY: "10"
+  npm_config_fetch_retries: "10"
+  npm_config_fetch_retry_maxtimeout: "120000"
+  NODE_OPTIONS: "--dns-result-order=ipv4first"
+  # The label the guard applies itself, and the one to remove to release.
+  HOLD_LABEL: do-not-merge
+  # Also honoured. `do-not-automate` is the pre-existing fleet-wide
+  # convention (shared_scripts/agent_identity.DO_NOT_AUTOMATE_LABEL).
+  EXTRA_HOLD_LABELS: "blocked do-not-automate"
+  ACK_LABEL: deletions-acknowledged
+  COMMENT_MARKER: "<!-- merge-hold-guard -->"
+  # Revocations against the current head commit before the guard converts the
+  # PR to a draft (a state in which GitHub will not let auto-merge be armed).
+  ESCALATE_AFTER_REVOCATIONS: "2"
+
+on:
+  # `auto_merge_enabled` is the event that matters: it fires the moment the
+  # fleet automation arms a PR, so a held PR is disarmed again within seconds.
+  # `pull_request_target` (not `pull_request`) so the guard always runs the copy
+  # of this file on the default branch with a write-scoped token, and never
+  # checks out or executes PR-authored code.
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+      - converted_to_draft
+      - ready_for_review
+      - auto_merge_enabled
+  # Backstop sweep for arms that arrive without a usable event (for example a
+  # re-arm while the guard itself was being updated). Offset off the hour so it
+  # does not collide with the hourly fleet pass.
+  schedule:
+    - cron: "20,50 * * * *"
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Single PR to evaluate. Leave blank to sweep every open PR."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: merge-hold-guard-${{ github.event.pull_request.number || github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  enforce-holds:
+    name: Revoke auto-merge on held PRs
+    runs-on: d-sorg-fleet
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Ensure guard labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Self-healing, so the guard is drop-in for every repo on the fleet.
+          gh label create "$HOLD_LABEL" --repo "$REPO" --color B60205 \
+            --description "Reviewer hold: automation must not arm auto-merge or merge this PR" \
+            2>/dev/null || echo "label $HOLD_LABEL already present"
+          gh label create "$ACK_LABEL" --repo "$REPO" --color 0E8A16 \
+            --description "Deletion of tracked files on this PR has been reviewed and accepted" \
+            2>/dev/null || echo "label $ACK_LABEL already present"
+
+      - name: Select pull requests to evaluate
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          INPUT_PR: ${{ github.event.inputs.pr_number }}
+          EVENT_PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          if [ -n "${INPUT_PR:-}" ]; then
+            PRS="$INPUT_PR"
+          elif [ -n "${EVENT_PR:-}" ]; then
+            PRS="$EVENT_PR"
+          else
+            # Sweep mode: only armed PRs have anything to revoke, so the
+            # scheduled pass stays cheap on the fleet.
+            PRS=$(gh pr list --repo "$REPO" --state open --limit 200 \
+                    --json number,autoMergeRequest \
+                    --jq '.[] | select(.autoMergeRequest != null) | .number')
+          fi
+          COUNT=$(printf '%s\n' "$PRS" | grep -c '[0-9]' || true)
+          echo "Evaluating ${COUNT:-0} pull request(s)."
+          {
+            echo "prs<<PRLIST_EOF"
+            printf '%s\n' "$PRS"
+            echo "PRLIST_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Evaluate holds and revoke auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PRS: ${{ steps.select.outputs.prs }}
+        run: |
+          set -uo pipefail
+
+          held_total=0
+          revoked_total=0
+          escalated_total=0
+          failures=0
+
+          while IFS= read -r RAW_PR; do
+            PR="$(printf '%s' "$RAW_PR" | tr -cd '0-9')"
+            [ -z "$PR" ] && continue
+
+            PR_JSON="$(gh api "repos/$REPO/pulls/$PR" 2>/dev/null)" || {
+              echo "::warning::Could not read PR #$PR — skipping."
+              continue
+            }
+
+            STATE="$(printf '%s' "$PR_JSON" | jq -r '.state')"
+            if [ "$STATE" != "open" ]; then
+              echo "PR #$PR is $STATE — skipping."
+              continue
+            fi
+
+            DRAFT="$(printf '%s' "$PR_JSON" | jq -r '.draft')"
+            HEAD_SHA="$(printf '%s' "$PR_JSON" | jq -r '.head.sha')"
+            BODY="$(printf '%s' "$PR_JSON" | jq -r '.body // ""')"
+            LABELS="$(printf '%s' "$PR_JSON" | jq -r '[.labels[].name] | join(",")')"
+            if printf '%s' "$PR_JSON" | jq -e '.auto_merge != null' >/dev/null; then
+              ARMED=yes
+            else
+              ARMED=no
+            fi
+
+            # A draft with nothing armed has nothing to enforce: GitHub already
+            # refuses to arm it. Bail out before the timeline/files calls so
+            # repos with large draft backlogs cost nothing and stay quiet.
+            if [ "$DRAFT" = "true" ] && [ "$ARMED" = "no" ]; then
+              echo "PR #$PR is a draft with no auto-merge armed — nothing to enforce."
+              continue
+            fi
+
+            has_label() { printf '%s' ",$LABELS," | grep -qiF ",$1,"; }
+
+            REASONS=""
+            add_reason() { REASONS="${REASONS}${REASONS:+; }$1"; }
+
+            # ---- signal 1: explicit hold labels -----------------------------
+            for hold in $HOLD_LABEL $EXTRA_HOLD_LABELS; do
+              has_label "$hold" && add_reason "\`$hold\` label"
+            done
+
+            # ---- signal 2: draft --------------------------------------------
+            [ "$DRAFT" = "true" ] && add_reason "PR is a draft"
+
+            # ---- signal 3: disarmed by a human since the last push -----------
+            # One timeline fetch serves both the hold signal and the escalation
+            # counter. Only non-bot actors count toward the hold, so the guard's
+            # own revocations (github-actions[bot]) can never manufacture one.
+            TIMELINE=/tmp/mhg-timeline-$PR.json
+            gh api "repos/$REPO/issues/$PR/timeline?per_page=100" --paginate \
+              --jq '.[] | select(.event == "auto_merge_disabled")
+                        | "\((.actor.type // "User"))\t\(.created_at)"' \
+              > "$TIMELINE" 2>/dev/null || : > "$TIMELINE"
+
+            LAST_DISARM="$(grep -v '^Bot	' "$TIMELINE" | cut -f2 | sort | tail -1)"
+            HEAD_DATE="$(gh api "repos/$REPO/commits/$HEAD_SHA" \
+              --jq '.commit.committer.date' 2>/dev/null)" || HEAD_DATE=""
+            if [ -n "$LAST_DISARM" ] && [ -n "$HEAD_DATE" ] && [[ "$LAST_DISARM" > "$HEAD_DATE" ]]; then
+              add_reason "a reviewer disabled auto-merge at $LAST_DISARM, after the head commit ($HEAD_DATE) — no push has superseded that decision"
+            fi
+
+            # How many times has the guard itself already revoked this same head
+            # commit? A rising count means something is re-arming in a loop.
+            PRIOR_REVOCATIONS=0
+            if [ -n "$HEAD_DATE" ]; then
+              PRIOR_REVOCATIONS="$(awk -F'\t' -v cutoff="$HEAD_DATE" \
+                '$1 == "Bot" && $2 > cutoff { n++ } END { print n + 0 }' "$TIMELINE")"
+            fi
+
+            # ---- signal 4: unacknowledged deletion of tracked files ----------
+            # One paginated fetch, reused for both the count and the sample.
+            REMOVED_FILE=/tmp/mhg-removed-$PR.txt
+            gh api "repos/$REPO/pulls/$PR/files?per_page=100" --paginate \
+              --jq '.[] | select(.status == "removed") | .filename' \
+              > "$REMOVED_FILE" 2>/dev/null || : > "$REMOVED_FILE"
+            REMOVED_COUNT="$(grep -c . "$REMOVED_FILE" || true)"
+            REMOVED_COUNT="${REMOVED_COUNT:-0}"
+            REMOVED_SAMPLE="$(head -10 "$REMOVED_FILE")"
+
+            DELETIONS_UNACKED=no
+            if [ "$REMOVED_COUNT" -gt 0 ]; then
+              if has_label "$ACK_LABEL"; then
+                echo "PR #$PR deletes $REMOVED_COUNT file(s) — acknowledged via the $ACK_LABEL label."
+              elif printf '%s' "$BODY" | grep -qiE '^[[:space:]]*Deletions-Acknowledged:[[:space:]]*(yes|true)'; then
+                echo "PR #$PR deletes $REMOVED_COUNT file(s) — acknowledged in the PR body."
+              else
+                DELETIONS_UNACKED=yes
+                add_reason "diff deletes $REMOVED_COUNT tracked file(s) with no acknowledgement"
+              fi
+            fi
+
+            if [ -z "$REASONS" ]; then
+              echo "PR #$PR: no hold in effect (auto-merge armed: $ARMED)."
+              continue
+            fi
+
+            held_total=$((held_total + 1))
+            echo "::warning title=Merge hold in effect::PR #$PR — $REASONS"
+
+            # ---- enforcement -------------------------------------------------
+            ESCALATED=no
+            if [ "$ARMED" = "yes" ]; then
+              if gh pr merge "$PR" --repo "$REPO" --disable-auto; then
+                revoked_total=$((revoked_total + 1))
+                PRIOR_REVOCATIONS=$((PRIOR_REVOCATIONS + 1))
+                echo "::error title=Auto-merge revoked::PR #$PR had auto-merge armed while held — revoked (revocation $PRIOR_REVOCATIONS at this head commit)."
+              else
+                failures=$((failures + 1))
+                echo "::error title=Revoke failed::Could not disable auto-merge on PR #$PR."
+              fi
+            fi
+
+            # Escalation: revoking alone loses a race against a re-armer that
+            # reacts in seconds. A draft PR cannot have auto-merge enabled at
+            # all, so converting is the enforceable end of the ladder.
+            if [ "$DRAFT" != "true" ] && [ "$PRIOR_REVOCATIONS" -ge "$ESCALATE_AFTER_REVOCATIONS" ]; then
+              if gh pr ready "$PR" --repo "$REPO" --undo; then
+                ESCALATED=yes
+                escalated_total=$((escalated_total + 1))
+                echo "::error title=Converted to draft::PR #$PR was re-armed $PRIOR_REVOCATIONS time(s) while held — converted to draft so auto-merge cannot be armed again."
+              else
+                echo "::warning::Could not convert PR #$PR to draft."
+              fi
+            fi
+
+            # A deletion hold gets a durable, human-visible marker so that
+            # automation which only reads labels also refuses to arm it.
+            if [ "$DELETIONS_UNACKED" = "yes" ] && ! has_label "$HOLD_LABEL"; then
+              gh pr edit "$PR" --repo "$REPO" --add-label "$HOLD_LABEL" \
+                && echo "Applied the $HOLD_LABEL label to PR #$PR (unacknowledged deletions)." \
+                || echo "::warning::Could not label PR #$PR."
+            fi
+
+            # Only explain when the guard actually acted. A hold that required
+            # no intervention needs no comment.
+            if [ "$ARMED" != "yes" ] && [ "$DELETIONS_UNACKED" != "yes" ] && [ "$ESCALATED" != "yes" ]; then
+              echo "PR #$PR: held, but nothing to enforce this run."
+              continue
+            fi
+
+            # Comment once per PR, not once per run.
+            ALREADY="$(gh api "repos/$REPO/issues/$PR/comments?per_page=100" --paginate \
+              --jq ".[] | select(.body | contains(\"$COMMENT_MARKER\")) | .id" 2>/dev/null | head -1)" || ALREADY=""
+            if [ -z "$ALREADY" ]; then
+              {
+                printf '%s\n\n' "$COMMENT_MARKER"
+                printf '## Auto-merge held\n\n'
+                printf 'The **Merge Hold Guard** is holding this PR back. Reason(s):\n\n'
+                printf -- '- %s\n\n' "$REASONS"
+                if [ "$DELETIONS_UNACKED" = "yes" ]; then
+                  printf 'This diff removes **%s** file(s) that exist on the base branch:\n\n' "$REMOVED_COUNT"
+                  printf '```\n%s\n```\n\n' "$REMOVED_SAMPLE"
+                  printf 'If the deletions are intentional, add the `%s` label (or a `Deletions-Acknowledged: yes` line to this description), then remove `%s`.\n\n' "$ACK_LABEL" "$HOLD_LABEL"
+                fi
+                if [ "$ESCALATED" = "yes" ]; then
+                  printf 'This PR has now been **converted to a draft**, because auto-merge was re-armed %s time(s) against the same head commit. GitHub will not let auto-merge be enabled on a draft, so the hold is enforceable rather than advisory. Run `gh pr ready %s` when the PR is genuinely ready.\n\n' "$PRIOR_REVOCATIONS" "$PR"
+                fi
+                printf 'Auto-merge will be revoked again on every re-arm until the hold is cleared. The guard never merges and never pushes.\n'
+              } > /tmp/mhg-comment-$PR.md
+              gh pr comment "$PR" --repo "$REPO" --body-file /tmp/mhg-comment-$PR.md >/dev/null \
+                || echo "::warning::Could not comment on PR #$PR."
+            fi
+          done <<< "$PRS"
+
+          {
+            echo "### Merge Hold Guard"
+            echo ""
+            echo "- PRs held: $held_total"
+            echo "- Auto-merge arms revoked: $revoked_total"
+            echo "- Converted to draft (re-arm loop): $escalated_total"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$failures" -gt 0 ]; then
+            echo "::error::$failures hold(s) could not be enforced."
+            exit 1
+          fi

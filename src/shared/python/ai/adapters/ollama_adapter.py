@@ -34,6 +34,7 @@ from shared.python.ai.config import (
 from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
+    AITimeoutError,
 )
 from shared.python.ai.types import (
     AgentChunk,
@@ -519,13 +520,19 @@ class OllamaAdapter(BaseAgentAdapter):
             ]
         )
 
-        # Add current message
-        messages.append(
-            {
-                "role": "user",
-                "content": current_message,
-            }
-        )
+        # Add current message.
+        #
+        # `chat_service` calls with `current_message=""` when the message the
+        # user just sent is already the tail of `context.messages`. Appending
+        # an empty trailing user turn there corrupts the request: providers
+        # either reject it or answer the blank turn instead of the real one.
+        if current_message.strip():
+            messages.append(
+                {
+                    "role": "user",
+                    "content": current_message,
+                }
+            )
 
         return messages
 
@@ -642,7 +649,38 @@ class OllamaAdapter(BaseAgentAdapter):
             return False
 
     def _handle_error(self, error: Exception) -> AgentResponse:
-        """Handle Ollama-specific errors before falling back to generic classifier."""
+        """Handle Ollama-specific errors before falling back to generic classifier.
+
+        `BaseAgentAdapter._classify_error` scans the exception *message*, so it
+        cannot tell that `httpx.ConnectError("broken")` is a connection
+        failure. httpx exposes typed transport exceptions, so those are
+        pre-checked here exactly as the base helper's own docstring prescribes
+        ("Pre-check typed provider exceptions before calling this helper when
+        the provider SDK exposes them"). The message scan remains as the
+        fallback for untyped errors.
+
+        httpx is a lazy import, so its exception types cannot be named in an
+        `except` clause and are resolved here instead.
+        """
+        try:
+            import httpx
+        except ImportError:  # pragma: no cover - httpx is a hard dependency
+            httpx = None  # type: ignore[assignment]
+
+        if httpx is not None:
+            if isinstance(error, httpx.ConnectError):
+                raise AIConnectionError(
+                    f"Cannot connect to Ollama at {self._host}. "
+                    "Is Ollama running? Start with: ollama serve",
+                    provider="ollama",
+                ) from error
+            if isinstance(error, httpx.TimeoutException):
+                raise AITimeoutError(
+                    f"Ollama request timed out after {self._timeout}s",
+                    provider="ollama",
+                    timeout=self._timeout,
+                ) from error
+
         err_str = str(error).lower()
         if "connection" in err_str or "unreachable" in err_str:
             raise AIConnectionError(
