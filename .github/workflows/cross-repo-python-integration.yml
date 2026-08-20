@@ -201,13 +201,14 @@ jobs:
         working-directory: ${{ matrix.downstream.path }}
         run: |
           mkdir -p src/shared/python vendor/ud-tools/src/shared/python
+          touch src/shared/python/__init__.py vendor/ud-tools/src/shared/python/__init__.py
           tools_repo_root="${{ github.workspace }}"
           tools_link="$(dirname "$PWD")/Tools"
           ln -sfn "$tools_repo_root" "$tools_link"
 
           echo "TOOLS_REPO_ROOT=$tools_repo_root" >> "$GITHUB_ENV"
 
-          tools_pythonpath="$tools_repo_root/src/shared/python:$tools_repo_root/src:$tools_repo_root/src/python/src"
+          tools_pythonpath="$tools_repo_root:$tools_repo_root/src/shared/python:$tools_repo_root/src:$tools_repo_root/src/python/src"
           if [ -n "${PYTHONPATH:-}" ]; then
             echo "PYTHONPATH=$tools_pythonpath:$PYTHONPATH" >> "$GITHUB_ENV"
           else
