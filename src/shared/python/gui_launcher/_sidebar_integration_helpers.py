@@ -89,12 +89,7 @@ def sidebar_factory_kwargs(
 
 
 def get_sidekick_tokens() -> dict[str, str]:
-    try:
-        from shared.python.theme.sidekick_tokens import get_current_sidekick_tokens
-
-        return cast(dict[str, str], get_current_sidekick_tokens())
-    except Exception:  # noqa: BLE001 - sidebar startup must stay optional
-        return {}
+    return {}
 
 
 def call_shared_installer(
