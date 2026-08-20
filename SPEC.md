@@ -4985,7 +4985,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-20 | 1.17.61 | fix(shared): clear the 18 pre-existing mypy errors in src/shared/python across mdl_parser, matplotlib_renderer, trendline, optimization, and pressure drop/PSA calculators. | #4509 |
+| 2026-08-20 | 1.17.64 | fix(shared): clear the 18 pre-existing mypy errors in src/shared/python across mdl_parser, matplotlib_renderer, trendline, optimization, and pressure drop/PSA calculators. | #4509 |
+| 2026-08-20 | 1.17.63 | feat(rate_of_closure, sidekick): deliver Phase S1/S2 unified sidekick integration (dock widget, context provider, toggle visibility, and fallback support in RateOfClosureMainWindow). | #4585 |
 | 2026-08-20 | 1.17.60 | fix(ci): run tests/architecture/ guards on every PR, and fix import resolvability, god modules, and sidekick external import boundary guards. | #4469 |
 | 2026-08-20 | 1.17.59 | feat(rate-of-closure): deliver governed launch-monitor platform with private corpus loading, neural model lab, linked scatter analytics, and cross-surface manifest registration. | #4587 |
 | 2026-08-19 | 1.17.52 | fix(ci): Isolate the benchmark suite in a job-local virtual environment so an internally inconsistent self-hosted pip installation cannot contaminate dependency installation or benchmark evidence. Add workflow contract tests and retain the benchmark lane as advisory. | #4582 |
@@ -6199,3 +6200,4 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-19: Sidekick Unified Integration Epic
 
 - **2026-08-19**: docs(development) — Establish and publish specification for the unified Sidekick integration epic (`docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`) covering phases S1–S5 for bidirectional state seeding and standalone/host-embedded launcher parity across Rate of Closure and all UpstreamDrift launcher tiles.
+- **2026-08-19**: feat(rate_of_closure, sidekick) — Deliver Phase S1/S2 Sidekick unified integration: (1) Synced `src/shared/python/gui_launcher/tools_sidebar_integration.py` host installation contract; (2) Docked `UnifiedToolsSidebar` in `RateOfClosureMainWindow` with `_seed_sidekick_workspace` (`active_club`, `simulation_run`, `variation_dataset`) and `toggle_sidekick_sidebar`; (3) Added full integration test suite in `tests/rate_of_closure/test_sidekick_integration.py`.
