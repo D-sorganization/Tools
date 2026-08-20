@@ -54,13 +54,12 @@ artifacts and attested longitudinal player/population inference in both clients;
 no baseline data is bundled. Do not claim vendor emulation or paired-device
 validation: Release B remains open and has no real paired observations.
 
-The active #4584 slice replaces the specialized local-only scoring boundary
-with UpstreamDrift's canonical source-backed strokes-gained v2 endpoint in both
-clients. It adds exact lie/context/target strata, optional benchmark
-uncertainty, structured exclusions, and explicitly attested
-player/session/club/longitudinal summaries. A blank authority URL retains a
-clearly labelled local compatibility calculation. No baseline is bundled and
-no player identity or session order is inferred.
+#4584/#4599 merged UpstreamDrift's canonical source-backed strokes-gained v2
+endpoint into both clients with exact lie/context/target strata, optional
+benchmark uncertainty, structured exclusions, and explicitly attested grouped
+summaries. A blank authority URL retains a labelled local compatibility path;
+no baseline or inferred identity is bundled. #4600 owns the inspected
+post-merge PyQt visual-reference approval.
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
