@@ -65,7 +65,7 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4430 work.** PR #4618 publishes the provider/PyQt/React slices and digest-pinned 710,400-byte trace catalog. The same branch makes qualified scalar matching portable across Linux/Windows while keeping strict residual gates. Retain UpstreamDrift `967c40f5`, all 18 rows, and the scientific boundaries; use `-n 0` locally while the 20-worker Upstream campaign is active.
+**Active #4430 work.** PR #4618 publishes the provider/PyQt/React slices and digest-pinned 710,400-byte trace catalog. The same branch makes qualified scalar matching portable across Linux/Windows while keeping strict residual gates and clears the Rust 1.98 Clippy gate. Retain UpstreamDrift `967c40f5`, all 18 rows, and the scientific boundaries; use `-n 0` locally while the 20-worker Upstream campaign is active.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
