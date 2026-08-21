@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Protocol, TypeVar, cast
+from typing import Protocol, TypeVar, cast, runtime_checkable
 
 import numpy as np
 
@@ -54,6 +54,7 @@ class EnsembleStreamHeader:
     sample_times_s: np.ndarray = field(repr=False)
     point_ids: tuple[str, ...]
     coordinate_frame: str
+    configuration_sha256: str = ""
 
     def __post_init__(self) -> None:
         require(isinstance(self.plan, VariationPlan), "plan must be a VariationPlan")
@@ -80,6 +81,12 @@ class EnsembleStreamHeader:
         require(
             self.coordinate_frame == APP_FRAME_ID,
             "coordinate_frame is unsupported",
+        )
+        digest = self.configuration_sha256
+        require(
+            digest == ""
+            or (len(digest) == 64 and set(digest) <= set("0123456789abcdef")),
+            "configuration_sha256 must be an empty or lowercase SHA-256 digest",
         )
         require_ensemble_shape_limits(self.plan.n_runs, raw_times.size, len(points))
         inputs = _owned_array(raw_inputs, float)
@@ -211,6 +218,35 @@ class EnsembleChunkSink(Protocol[TCommit_co]):
     def commit(self, elapsed_s: float) -> TCommit_co: ...
 
     def abort(self) -> None: ...
+
+
+@dataclass(frozen=True, slots=True)
+class EnsembleResumeState:
+    """Verified durable prefix advertised after a sink begins."""
+
+    next_index: int
+    failed_count: int
+
+    def __post_init__(self) -> None:
+        require(
+            type(self.next_index) is int and self.next_index >= 0,
+            "resume next_index must be a non-negative integer",
+        )
+        require(
+            type(self.failed_count) is int and self.failed_count >= 0,
+            "resume failed_count must be a non-negative integer",
+        )
+        require(
+            self.failed_count <= self.next_index,
+            "resume failures cannot exceed the durable prefix",
+        )
+
+
+@runtime_checkable
+class ResumableEnsembleChunkSink(Protocol):
+    """Optional sink capability for a checksum-verified durable prefix."""
+
+    def resume_state(self) -> EnsembleResumeState: ...
 
 
 def require_chunk_matches_header(
@@ -353,8 +389,10 @@ class CollectingEnsembleSink:
 __all__ = [
     "CollectingEnsembleSink",
     "EnsembleChunkSink",
+    "EnsembleResumeState",
     "EnsembleStreamHeader",
     "MAX_CHUNK_POSITION_CELLS",
+    "ResumableEnsembleChunkSink",
     "SimulationResultChunk",
     "require_chunk_matches_header",
 ]

@@ -44,11 +44,14 @@ from shared.python.swing_sim.solver.solve import (
 from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
 
+from ._simulation_config_identity import simulation_configurations_sha256
 from .ensemble_chunks import (
     MAX_CHUNK_POSITION_CELLS,
     CollectingEnsembleSink,
     EnsembleChunkSink,
+    EnsembleResumeState,
     EnsembleStreamHeader,
+    ResumableEnsembleChunkSink,
     SimulationResultChunk,
 )
 from .request_builder import (
@@ -148,6 +151,25 @@ def run_simulation_ensemble(
 TChunkResult = TypeVar("TChunkResult")
 
 
+def build_ensemble_stream_header(
+    request: SimulationEnsembleRequest,
+) -> EnsembleStreamHeader:
+    """Build the immutable scientific identity announced to chunk sinks."""
+    require(
+        isinstance(request, SimulationEnsembleRequest),
+        "request must be a SimulationEnsembleRequest",
+    )
+    times, point_ids = _trace_layout(request.configs[0], None)
+    return EnsembleStreamHeader(
+        request.plan,
+        request.sampled_inputs,
+        times,
+        point_ids,
+        APP_FRAME_ID,
+        simulation_configurations_sha256(request.configs),
+    )
+
+
 def run_simulation_ensemble_chunks(
     request: SimulationEnsembleRequest,
     sink: EnsembleChunkSink[TChunkResult],
@@ -169,10 +191,9 @@ def run_simulation_ensemble_chunks(
     require(callable(executor), "executor must be callable")
     started = time.monotonic()
     cancellation = cancel_event or threading.Event()
-    times, point_ids = _trace_layout(request.configs[0], None)
-    header = EnsembleStreamHeader(
-        request.plan, request.sampled_inputs, times, point_ids, APP_FRAME_ID
-    )
+    header = build_ensemble_stream_header(request)
+    times = header.sample_times_s
+    point_ids = header.point_ids
     cells_per_trial = times.size * len(point_ids) * 3
     maximum_rows = MAX_CHUNK_POSITION_CELLS // cells_per_trial
     require(maximum_rows > 0, "one trace row exceeds the chunk cell limit")
@@ -184,10 +205,21 @@ def run_simulation_ensemble_chunks(
         "chunk_size exceeds the bounded trace capacity",
         rows_per_chunk,
     )
-    failed = 0
     try:
         sink.begin(header)
-        for start in range(0, request.plan.n_runs, rows_per_chunk):
+        resume = _resume_state(sink, request.plan.n_runs)
+        failed = resume.failed_count
+        if progress_cb is not None and resume.next_index > 0:
+            progress_cb(
+                ProgressReport(
+                    iteration=resume.next_index,
+                    cost=float(failed),
+                    best_cost=0.0,
+                    improvement_pct=0.0,
+                    elapsed_s=time.monotonic() - started,
+                )
+            )
+        for start in range(resume.next_index, request.plan.n_runs, rows_per_chunk):
             stop = min(start + rows_per_chunk, request.plan.n_runs)
             captures: list[TrialCapture] = []
             for config in request.configs[start:stop]:
@@ -221,6 +253,20 @@ def run_simulation_ensemble_chunks(
         except BaseException as abort_error:
             primary.add_note(f"sink abort also failed: {abort_error!r}")
         raise
+
+
+def _resume_state(sink: object, trial_count: int) -> EnsembleResumeState:
+    """Return and bound an optional verified prefix after ``begin``."""
+    state = (
+        sink.resume_state()
+        if isinstance(sink, ResumableEnsembleChunkSink)
+        else EnsembleResumeState(0, 0)
+    )
+    require(
+        state.next_index <= trial_count,
+        "resume prefix exceeds the declared trial count",
+    )
+    return state
 
 
 def _result_chunk(
@@ -316,6 +362,7 @@ __all__ = [
     "TEE_HEIGHT_VARIABLE_KEY",
     "apply_ball_setup_sample",
     "build_simulation_ensemble_request",
+    "build_ensemble_stream_header",
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",
     "spatial_point_ids",
