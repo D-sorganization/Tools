@@ -59,6 +59,11 @@ Contract `2.0.0` project documents contain only:
 - explicit identity binding; and
 - selected variables and uncertainty settings.
 
+They may additionally pin a canonical authorized-corpus reference containing
+only an opaque server root alias, repository, 40-character commit, manifest
+and content SHA-256 values, and expected row count. Filesystem paths and rows
+are rejected from this reference.
+
 Rows are intentionally absent. Loading a project against a different dataset
 fingerprint fails closed.
 
@@ -70,15 +75,28 @@ where that bundle may be stored.
 
 ## Calculation authority and current limitations
 
-UpstreamDrift contract v2 is the canonical cross-service envelope for generic
-launch-monitor analytics, evidence lineage, backing records, and typed
-unavailable states. Tools currently owns the specialized grouped estimators
-described in [WITHIN_PLAYER_COVARIATION.md](WITHIN_PLAYER_COVARIATION.md) and
-[LONGITUDINAL_PLAYER_ANALYSIS.md](LONGITUDINAL_PLAYER_ANALYSIS.md). Python is the
-desktop calculation authority; the React implementation is a tested browser
-twin with the same eligibility, formula, unit, warning, and export contracts.
-This is an explicit local release boundary, not a claim that the grouped
-operations are already part of the UpstreamDrift v2 API.
+UpstreamDrift commit `453346806a2950354f5b72cc46c2646e66459c8c` is the
+canonical cross-service authority for immutable dataset jobs and evidence-
+bearing selected-pair/player-population covariation. Both clients validate the
+same pinned golden, identity evidence, backing lineage, safe claims, page
+bounds, and contract versions before displaying results. Dataset jobs accept
+only server-authorized references and return aggregates; they never return shot
+rows. Inline canonical covariation accepts at most 20,000 rows. The 261,666-row
+authority therefore remains eligible for reference-only aggregate jobs but not
+for an inline browser covariation request.
+
+The shared qualification golden pins the private dataset repository at
+`d469b8a427418fa00e99b0ad488e4310b067697d`, its Parquet manifest at SHA-256
+`b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299`, and
+the sorted path-plus-content corpus digest at SHA-256
+`7bedf88ba473c947db2d4d078a73ee0ccd3512ffa182b751ea0a23298d1ab10c`.
+
+The embedded Python and React estimators described in
+[WITHIN_PLAYER_COVARIATION.md](WITHIN_PLAYER_COVARIATION.md) and
+[LONGITUDINAL_PLAYER_ANALYSIS.md](LONGITUDINAL_PLAYER_ANALYSIS.md) remain
+explicitly labelled `offline compatibility`. They do not replace or silently
+impersonate the canonical service when its URL, identity evidence, or row
+eligibility is unavailable.
 
 The released grouped surface includes player-mean-centered pooled effects,
 between-player decomposition, per-player correlations and regressions,
@@ -95,7 +113,8 @@ The remaining unavailable or deliberately bounded capabilities are:
   released summary and DerSimonian--Laird synthesis;
 - clustered or repeated-measures confidence limits for the centered pooled
   correlation;
-- out-of-core private-corpus querying from the browser client;
+- out-of-core shot-row querying from the browser client (bounded canonical
+  aggregate jobs are available);
 - vendor-model training when the capability manifest denies eligibility; and
 - causal improvement, swing-mechanism, or device-certification claims.
 

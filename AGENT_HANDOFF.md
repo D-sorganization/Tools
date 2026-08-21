@@ -27,7 +27,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                         |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs). |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout). |
-| #4583 | Professional launch-monitor program. Release A and canonical source-backed SG #4584/#4599 are merged. #4600 is the post-merge PyQt visual-baseline approval. Release B physical collection remains external and open. |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open. |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md` (current, refreshed by
 #4473/#4577), `src/pendulum_simulator/AGENT_HANDOFF.md`,

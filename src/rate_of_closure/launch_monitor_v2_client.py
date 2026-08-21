@@ -1,12 +1,28 @@
-"""Validated HTTP client seam for the canonical UpstreamDrift v2 contract."""
+"""Validated HTTP client seam for canonical UpstreamDrift analytics contracts."""
 
 from __future__ import annotations
 
 import json
 from dataclasses import dataclass
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
+
+from rate_of_closure.launch_monitor_canonical_v2 import (
+    CANONICAL_DATASET_METRICS,
+    DATASET_JOB_CONTRACT_VERSION,
+    MAX_CANONICAL_INLINE_RECORDS,
+    MAX_DATASET_JOB_PAGE_SIZE,
+    PLAYER_COVARIATION_CONTRACT_VERSION,
+    CanonicalDatasetReference,
+    build_dataset_job_request,
+    build_player_covariation_payload,
+    load_canonical_dataset_reference,
+    validate_dataset_job_page,
+    validate_dataset_job_status,
+    validate_job_id,
+    validate_player_covariation_response,
+)
 
 
 @dataclass(frozen=True)
@@ -34,6 +50,8 @@ class StrokesGainedResponseV1:
 
 
 def validate_v2_response(value: object) -> AnalysisResponseV2:
+    """Validate the general evidence-bearing analysis envelope."""
+
     if not isinstance(value, dict) or value.get("contract_version") != "2.0.0":
         raise ValueError(
             "Upstream analysis response has an unsupported contract version"
@@ -171,6 +189,50 @@ class UpstreamV2Client:
         value = self._post("/tools/launch-monitor-analytics/v2/strokes-gained", payload)
         return validate_strokes_gained_response(value)
 
+    def submit_dataset_job(self, payload: dict[str, object]) -> dict[str, Any]:
+        """Submit a verified-reference aggregate job without inline observations."""
+
+        value = self._post("/tools/launch-monitor-analytics/v2/dataset-jobs", payload)
+        validated: dict[str, Any] = validate_dataset_job_status(value)
+        return validated
+
+    def dataset_job_status(self, job_id: str) -> dict[str, Any]:
+        """Fetch one data-free canonical dataset-job status."""
+
+        validate_job_id(job_id)
+        validated: dict[str, Any] = validate_dataset_job_status(
+            self._get(f"/tools/launch-monitor-analytics/v2/dataset-jobs/{job_id}")
+        )
+        return validated
+
+    def dataset_job_results(
+        self, job_id: str, *, offset: int = 0, limit: int = 100
+    ) -> dict[str, Any]:
+        """Fetch one bounded aggregate page; private observation rows are rejected."""
+
+        validate_job_id(job_id)
+        query = urlencode({"offset": offset, "limit": limit})
+        value = self._get(
+            f"/tools/launch-monitor-analytics/v2/dataset-jobs/{job_id}/results?{query}"
+        )
+        validated: dict[str, Any] = validate_dataset_job_page(value)
+        return validated
+
+    def player_covariation(self, payload: dict[str, object]) -> dict[str, Any]:
+        """Run canonical selected-pair covariation through UpstreamDrift."""
+
+        value = self._post(
+            "/tools/launch-monitor-analytics/v2/player-covariation", payload
+        )
+        validated: dict[str, Any] = validate_player_covariation_response(value)
+        return validated
+
+    def _get(self, path: str) -> object:
+        request = Request(f"{self.base_url}{path}", method="GET")
+        with urlopen(request, timeout=self.timeout_seconds) as response:  # nosec B310
+            value: Any = json.loads(response.read().decode("utf-8"))
+        return value
+
     def _post(self, path: str, payload: dict[str, object]) -> object:
         request = Request(
             f"{self.base_url}{path}",
@@ -178,7 +240,6 @@ class UpstreamV2Client:
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        # The constructor admits only HTTP(S) authorities; file/custom schemes fail.
         with urlopen(request, timeout=self.timeout_seconds) as response:  # nosec B310
             value: Any = json.loads(response.read().decode("utf-8"))
         return value
@@ -186,9 +247,21 @@ class UpstreamV2Client:
 
 __all__ = [
     "AnalysisResponseV2",
+    "CanonicalDatasetReference",
+    "CANONICAL_DATASET_METRICS",
+    "DATASET_JOB_CONTRACT_VERSION",
+    "MAX_CANONICAL_INLINE_RECORDS",
+    "MAX_DATASET_JOB_PAGE_SIZE",
+    "PLAYER_COVARIATION_CONTRACT_VERSION",
     "ResidualAvailability",
     "StrokesGainedResponseV1",
     "UpstreamV2Client",
+    "build_dataset_job_request",
+    "build_player_covariation_payload",
+    "load_canonical_dataset_reference",
+    "validate_dataset_job_page",
+    "validate_dataset_job_status",
+    "validate_player_covariation_response",
     "validate_strokes_gained_response",
     "validate_v2_response",
 ]

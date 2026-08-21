@@ -27,12 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.74                                    |
+| **Spec Version**        | 1.17.76                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.76 migrates the player/population workspace to the canonical
+UpstreamDrift authorities pinned at `453346806a2950354f5b72cc46c2646e66459c8c`.
+PyQt6 and React now share strict dataset-job and player-covariation contracts,
+an immutable authorized-corpus selector, reference-only persistence, bounded
+submit/status/result clients, and evidence/claim validation. Canonical inline
+covariation fails closed above 20,000 rows; larger private corpora use only
+server-authorized aggregate jobs. The embedded estimators remain available as
+explicitly versioned offline compatibility, never as silent canonical results.
 
 Version 1.17.74 keeps the trusted React dependency install locked through
 `npm ci` while disabling `setup-node`'s package-manager cache in that
@@ -5075,6 +5084,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.76 | feat(rate-of-closure): consume canonical Upstream immutable dataset jobs and evidence-bearing player covariation through strict Python/TypeScript clients; add parity authorized-corpus selection, reference-only persistence, bounded aggregate refresh, and explicit 20,000-row inline limits while retaining local estimators only as labelled offline compatibility. | #4603 |
 | 2026-08-20 | 1.17.75 | fix(rate-of-closure, tests): make the isolated PyQt Variation rendered probe stop its worker, close and deferred-delete its window, drain posted Qt ownership, and quit the application after writing evidence; preserve the 60-second suite timeout and every approved baseline, accessibility, and performance budget. | #4613 |
 | 2026-08-20 | 1.17.74 | fix(rate-of-closure, ci): disable only the trusted self-hosted setup-node npm cache hook after its 2.0 GB post-job upload exhausted the unchanged job timeout and prevented independent PyQt evidence; retain npm ci, all budgets, artifacts, and failure semantics. | #4607 |
 | 2026-08-20 | 1.17.73 | fix(rate-of-closure, ci): transfer React visual-baseline candidates to an independent non-cancelled PyQt evidence job so protected render and baseline authorities still execute after React performance failure, without weakening either job's budgets or overall workflow failure semantics. | #4610 |
