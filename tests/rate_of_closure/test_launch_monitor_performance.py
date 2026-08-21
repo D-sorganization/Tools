@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
@@ -14,6 +17,12 @@ from rate_of_closure.launch_monitor_performance import (
     analyze_session_trend,
     calculate_strokes_gained,
     calculate_target_error,
+)
+from rate_of_closure.launch_monitor_workspace import DatasetReference
+from rate_of_closure.ui.pyqt6.launch_monitor_performance_files import (
+    load_performance_settings,
+    load_performance_settings_versioned,
+    performance_document,
 )
 
 
@@ -126,3 +135,54 @@ def test_pyqt_performance_workspace_exposes_fail_closed_parity(qtbot) -> None:  
     assert "yd" in panel.dispersion_status.text()
     assert not panel.trend_button.isEnabled()
     assert "Unavailable" in panel.strokes_status.text()
+
+
+def test_performance_document_v3_persists_aggregate_results_without_points(
+    tmp_path: Path,
+) -> None:
+    reference = DatasetReference(
+        "test.csv", "local-user-data", "unversioned", "test.csv", "a" * 64, 3
+    )
+    dispersion = analyze_dispersion(
+        pd.DataFrame({"lateral": [-1, 0, 1], "carry": [149, 150, 151]}),
+        DispersionRequest("lateral", "carry", "yd", "yd"),
+    )
+    document = performance_document(
+        reference,
+        {
+            "carry": "carry",
+            "lateral": "lateral",
+            "carry_unit": "yd",
+            "lateral_unit": "yd",
+            "target_yards": 150,
+        },
+        dispersion,
+        None,
+        None,
+    )
+    encoded = json.dumps(document)
+    assert document["schema_id"] == "launch-monitor-workspace/v3"
+    assert '"points"' not in encoded
+    assert '"rows"' not in encoded
+    path = tmp_path / "performance.json"
+    path.write_text(encoded, encoding="utf-8")
+    assert load_performance_settings(str(path), "a" * 64)["carry"] == "carry"
+
+
+def test_performance_loader_keeps_labelled_v1_compatibility(tmp_path: Path) -> None:
+    path = tmp_path / "legacy.json"
+    path.write_text(
+        json.dumps(
+            {
+                "contract_version": "launch-monitor-performance/1.0",
+                "dataset_sha256": "b" * 64,
+                "settings": {"carry": "carry"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    settings = load_performance_settings(str(path), "b" * 64)
+    assert settings["carry"] == "carry"
+    assert load_performance_settings_versioned(str(path), "b" * 64)[1] == (
+        "v1-compatibility"
+    )

@@ -4,6 +4,7 @@ import {
   buildPlayerCovariationRequest,
   createAnalysisExportBundle,
   parseLaunchMonitorProject,
+  parseLaunchMonitorProjectVersioned,
   runPlayerCovariation,
   serializeLaunchMonitorProject,
   type LaunchMonitorProject,
@@ -47,9 +48,10 @@ describe("launch monitor workspace v2", () => {
     expect(request).not.toHaveProperty("records");
   });
 
-  it("round trips a project without embedding private rows", () => {
+  it("writes v3 and imports it without embedding private rows", () => {
     const serialized = serializeLaunchMonitorProject(project);
     expect(serialized).not.toContain('"rows"');
+    expect(JSON.parse(serialized).schema_id).toBe("launch-monitor-workspace/v3");
     expect(parseLaunchMonitorProject(serialized)).toEqual(project);
   });
 
@@ -73,14 +75,19 @@ describe("launch monitor workspace v2", () => {
     expect(backend).toHaveBeenCalledWith(buildPlayerCovariationRequest(project));
   });
 
-  it("creates a complete explicit export while the saved project stays reference-only", async () => {
+  it("fails closed for restricted backing rows in browser exports", async () => {
     const bundle = await createAnalysisExportBundle(project, { ok: true }, [
       { shot_id: "s1", player_id: "p1", face_angle: 1, club_path: 0.5 },
     ]);
-    expect(Object.keys(bundle.files).sort()).toEqual([
-      "backing_rows.csv", "project.json", "result.json",
-    ]);
-    expect(bundle.manifest.files["backing_rows.csv"].sha256).toMatch(/^[a-f0-9]{64}$/);
-    expect(bundle.files["backing_rows.csv"]).toContain("shot_id,player_id,face_angle,club_path");
+    expect(bundle.files["backing_rows.csv"]).toBeUndefined();
+    expect(bundle.files["backing_join.csv"]).toBeUndefined();
+    expect(bundle.manifest.backing_data.status).toBe("unavailable");
+    expect(bundle.manifest.backing_data.reason).toMatch(/browser.*restricted/i);
+  });
+
+  it("keeps labelled v2 import compatibility", () => {
+    const imported = parseLaunchMonitorProjectVersioned(`${JSON.stringify(project)}\n`);
+    expect(imported.project).toEqual(project);
+    expect(imported.importedFrom).toBe("v2-compatibility");
   });
 });

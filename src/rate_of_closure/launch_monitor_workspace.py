@@ -7,7 +7,6 @@ corpus rows out of persistent project documents.
 
 from __future__ import annotations
 
-import csv
 import json
 from dataclasses import asdict, dataclass
 from hashlib import sha256
@@ -20,6 +19,12 @@ from rate_of_closure.application.atomic_text_files import write_utf8_text_atomic
 from rate_of_closure.launch_monitor_v2_client import (
     CanonicalDatasetReference,
     load_canonical_dataset_reference,
+)
+from rate_of_closure.launch_monitor_workspace_v3 import (
+    WorkspaceExportAuthorization,
+    create_workspace_bundle,
+    parse_workspace_project,
+    serialize_workspace_project,
 )
 
 CONTRACT_VERSION = "2.0.0"
@@ -155,7 +160,125 @@ def dataset_reference_for_frame(
 
 
 def _project_json(project: LaunchMonitorProject) -> str:
-    return json.dumps(project.to_wire(), indent=2, sort_keys=True) + "\n"
+    return str(serialize_workspace_project(_workspace_v3(project))) + "\n"
+
+
+def _row_free_result(value: Any) -> Any:
+    """Retain scalar/aggregate evidence while excluding row-shaped collections."""
+
+    if isinstance(value, dict):
+        forbidden = {"rows", "records", "backing_data", "backing_rows", "per_player"}
+        return {
+            key: _row_free_result(item)
+            for key, item in value.items()
+            if key not in forbidden
+            and not (isinstance(item, list) and item and isinstance(item[0], dict))
+        }
+    if isinstance(value, list):
+        return [_row_free_result(item) for item in value]
+    return value
+
+
+def _dataset_v3(project: LaunchMonitorProject) -> dict[str, Any]:
+    canonical = project.canonical_dataset
+    dataset: dict[str, Any] = {
+        "source_name": project.dataset.source_name,
+        "repository": project.dataset.repository,
+        "revision": project.dataset.revision,
+        "relative_path": project.dataset.relative_path,
+        "content_sha256": project.dataset.sha256,
+        "row_count": project.dataset.row_count,
+        "classification": "restricted",
+        "authority_commit": None,
+        "manifest_sha256": None,
+    }
+    if canonical is not None:
+        dataset.update(
+            authority_root_id=canonical.root_id,
+            authority_repository=canonical.repository,
+            authority_commit=canonical.commit,
+            manifest_sha256=canonical.manifest_sha256,
+            authority_content_sha256=canonical.content_sha256,
+            authority_row_count=canonical.expected_row_count,
+        )
+    return dataset
+
+
+def _result_v3(
+    project: LaunchMonitorProject, result: dict[str, Any] | None
+) -> dict[str, Any]:
+    canonical = project.canonical_dataset
+    payload = None if result is None else _row_free_result(result)
+    response_hash = (
+        None
+        if payload is None
+        else sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+    )
+    return {
+        "status": "available" if payload is not None else "unavailable",
+        "authority": "upstream-v2" if canonical else "offline-compatibility-v1",
+        "authority_commit": canonical.commit if canonical else None,
+        "response_sha256": response_hash,
+        "payload": payload,
+        "units": {
+            project.selection.x: "source-unit-unavailable",
+            project.selection.y: "source-unit-unavailable",
+        },
+        "formulas": ["pairwise-complete player covariation"],
+        "exclusions": ["Row-aligned records are retained outside the saved project."],
+    }
+
+
+def _analysis_v3(
+    project: LaunchMonitorProject, result: dict[str, Any] | None
+) -> dict[str, Any]:
+    return {
+        "analysis_id": "player-covariation",
+        "operation": "player_covariation",
+        "settings": {
+            "x_column": project.selection.x,
+            "y_column": project.selection.y,
+            "method": "pearson",
+            "minimum_samples": project.selection.min_samples,
+            "confidence_level": project.selection.confidence_level,
+        },
+        "result": _result_v3(project, result),
+        "backing_join": {
+            "algorithm": "sha256-canonical-json-v1",
+            "row_count": project.dataset.row_count,
+            "sha256": None,
+            "status": "available-on-authorized-export",
+            "reason": None,
+        },
+    }
+
+
+def _workspace_v3(
+    project: LaunchMonitorProject, result: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    return {
+        "schema_id": "launch-monitor-workspace/v3",
+        "schema_version": 3,
+        "name": project.name,
+        "dataset": _dataset_v3(project),
+        "identity_evidence": {
+            "player": {
+                "column": project.identity.column,
+                "user_attested": project.identity.user_attested,
+                "evidence": "Dataset owner explicitly attested this player identifier.",
+            }
+        },
+        "analyses": [_analysis_v3(project, result)],
+        "export_policy": {
+            "persist_rows": False,
+            "backing_rows": "explicit-restricted-approval",
+            "reason": (
+                "Restricted rows remain outside saved projects and browser persistence."
+            ),
+        },
+    }
 
 
 def save_project(destination: str | Path, project: LaunchMonitorProject) -> Path:
@@ -169,11 +292,13 @@ def save_project(destination: str | Path, project: LaunchMonitorProject) -> Path
 
 
 def load_project(source: str | Path) -> LaunchMonitorProject:
-    """Load and fully validate a version-2 project document."""
+    """Load v3 or a labelled compatibility v2 project document."""
 
     payload = json.loads(Path(source).read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("launch-monitor project must be a JSON object")
+    if payload.get("schema_id") == "launch-monitor-workspace/v3":
+        return _project_from_v3(payload)
     required = {"name", "dataset", "identity", "selection", "contract_version"}
     allowed = required | {"canonical_dataset"}
     if not required.issubset(payload) or not set(payload).issubset(allowed):
@@ -191,11 +316,59 @@ def load_project(source: str | Path) -> LaunchMonitorProject:
     )
 
 
-def _write_bundle_file(directory: Path, name: str, content: str) -> dict[str, Any]:
-    path = directory / name
-    write_utf8_text_atomic(content, path, document_name="analysis export")
-    encoded = content.encode("utf-8")
-    return {"sha256": sha256(encoded).hexdigest(), "bytes": len(encoded)}
+def load_project_versioned(
+    source: str | Path,
+) -> tuple[LaunchMonitorProject, str]:
+    """Load a project and expose whether a compatibility adapter was used."""
+
+    payload = json.loads(Path(source).read_text(encoding="utf-8"))
+    imported_from = (
+        "v3"
+        if isinstance(payload, dict)
+        and payload.get("schema_id") == "launch-monitor-workspace/v3"
+        else "v2-compatibility"
+    )
+    return load_project(source), imported_from
+
+
+def _project_from_v3(payload: dict[str, Any]) -> LaunchMonitorProject:
+    workspace = parse_workspace_project(payload)
+    analysis = next(
+        item for item in workspace.analyses if item.operation == "player_covariation"
+    )
+    dataset = workspace.dataset
+    canonical = None
+    if dataset.get("authority_root_id"):
+        canonical = CanonicalDatasetReference(
+            root_id=dataset.authority_root_id,
+            repository=dataset.authority_repository,
+            commit=dataset.authority_commit,
+            manifest_sha256=dataset.manifest_sha256,
+            content_sha256=dataset.authority_content_sha256,
+            expected_row_count=dataset.authority_row_count,
+        )
+    return LaunchMonitorProject(
+        name=workspace.name,
+        dataset=DatasetReference(
+            dataset.source_name,
+            dataset.repository,
+            dataset.revision,
+            dataset.relative_path,
+            dataset.content_sha256,
+            dataset.row_count,
+        ),
+        identity=PlayerIdentityBinding(
+            workspace.identity_evidence.player.column,
+            workspace.identity_evidence.player.user_attested,
+        ),
+        selection=AnalysisSelection(
+            analysis.settings.x_column,
+            analysis.settings.y_column,
+            analysis.settings.minimum_samples,
+            analysis.settings.confidence_level,
+        ),
+        canonical_dataset=canonical,
+    )
 
 
 def export_analysis_bundle(
@@ -203,35 +376,16 @@ def export_analysis_bundle(
     project: LaunchMonitorProject,
     result: dict[str, Any],
     backing_rows: pd.DataFrame,
+    authorization: WorkspaceExportAuthorization | None = None,
 ) -> Path:
-    """Export project, result, and explicit backing rows with file hashes."""
+    """Export v3 evidence, failing closed for unapproved restricted rows."""
 
-    directory = Path(destination)
-    directory.mkdir(parents=True, exist_ok=False)
-    project_text = _project_json(project)
-    result_text = json.dumps(result, indent=2, sort_keys=True) + "\n"
-    csv_text = backing_rows.to_csv(
-        None, index=False, quoting=csv.QUOTE_MINIMAL, lineterminator="\n"
+    approved = authorization or WorkspaceExportAuthorization(include_backing_rows=True)
+    return Path(
+        create_workspace_bundle(
+            destination, _workspace_v3(project, result), backing_rows, approved
+        )
     )
-    if not isinstance(csv_text, str):
-        raise TypeError("pandas did not return a CSV string")
-    backing_metadata = _write_bundle_file(directory, "backing_rows.csv", csv_text)
-    files = {
-        "project.json": _write_bundle_file(directory, "project.json", project_text),
-        "result.json": _write_bundle_file(directory, "result.json", result_text),
-        "backing_rows.csv": backing_metadata,
-    }
-    manifest = {
-        "contract_version": CONTRACT_VERSION,
-        "purpose": "explicit full analysis export including backing rows",
-        "files": files,
-    }
-    _write_bundle_file(
-        directory,
-        "manifest.json",
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-    )
-    return directory
 
 
 __all__ = [
@@ -244,5 +398,6 @@ __all__ = [
     "dataset_reference_for_frame",
     "export_analysis_bundle",
     "load_project",
+    "load_project_versioned",
     "save_project",
 ]

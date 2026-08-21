@@ -39,6 +39,9 @@ describe("LaunchMonitorPerformanceWorkspace", () => {
     expect(screen.getByRole("button", { name: /save performance analysis/i })).toBeInTheDocument();
     expect(screen.getByLabelText("Load saved performance analysis")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /export plot svg/i })).toHaveAttribute("title", expect.stringMatching(/units/i));
-    expect(screen.getByRole("button", { name: /export backing data/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /export plot png/i })).toHaveAttribute("title", expect.stringMatching(/units/i));
+    expect(screen.getByRole("button", { name: /export plot pdf/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /export backing data/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /export backing data/i })).toHaveAttribute("title", expect.stringMatching(/restricted.*desktop/i));
   });
 });
