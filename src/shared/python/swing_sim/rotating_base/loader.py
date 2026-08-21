@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from importlib.resources import as_file, files
 from pathlib import Path
 
 from .contract import (
@@ -15,6 +16,7 @@ from .contract import (
 EXPECTED_STUDY_SHA256 = (
     "e6a55e6cf91e51f21fe3eb8bcb07b990a7798f18abcaf5ca73f5214cb6c5f9ec"
 )
+QUALIFIED_STUDY_RESOURCE_NAME = "rotating_base_torso_velocity_study_v1.json"
 
 
 def load_qualified_study(path: str | Path) -> RotatingBaseProviderResult:
@@ -47,4 +49,16 @@ def load_qualified_study(path: str | Path) -> RotatingBaseProviderResult:
     return result
 
 
-__all__ = ["EXPECTED_STUDY_SHA256", "load_qualified_study"]
+def load_embedded_qualified_study() -> RotatingBaseProviderResult:
+    """Load the packaged immutable authority for desktop and web consumers."""
+    resource = files(__package__).joinpath("resources", QUALIFIED_STUDY_RESOURCE_NAME)
+    with as_file(resource) as path:
+        return load_qualified_study(path)
+
+
+__all__ = [
+    "EXPECTED_STUDY_SHA256",
+    "QUALIFIED_STUDY_RESOURCE_NAME",
+    "load_embedded_qualified_study",
+    "load_qualified_study",
+]

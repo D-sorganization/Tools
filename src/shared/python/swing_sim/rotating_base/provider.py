@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 import numpy as np
 
+from ..canonical_numeric_json import canonical_numeric_json
 from ._numeric import FloatArray
 from .contract import (
     EXPECTED_UPSTREAM_SOURCE_REVISION,
@@ -35,6 +36,8 @@ REGISTERED_PEAK_GRIP_FORCE_CEILING_N = 100.0
 REGISTERED_DURATION_S = 0.12
 REGISTERED_STEP_S = 0.0005
 REGISTERED_WRIST_RELEASE_S = 0.025
+RUN_SCHEMA_ID = "swing-sim/rotating-base-run-result"
+RUN_SCHEMA_VERSION = 1
 
 
 def _finite_array(name: str, value: object, shape: tuple[int, ...]) -> FloatArray:
@@ -125,6 +128,32 @@ class RotatingBaseRunResult:
     trace: RotatingBaseRunTrace
     model_tier: str = MODEL_TIER
     source_revision: str = EXPECTED_UPSTREAM_SOURCE_REVISION
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.request, RotatingBaseRunRequest):
+            raise TypeError("request must be a RotatingBaseRunRequest")
+        if not isinstance(self.case, RotatingBaseCase):
+            raise TypeError("case must be a RotatingBaseCase")
+        if not isinstance(self.trace, RotatingBaseRunTrace):
+            raise TypeError("trace must be a RotatingBaseRunTrace")
+        if self.model_tier != MODEL_TIER:
+            raise ValueError("model_tier must retain the qualified tier")
+        if self.source_revision != EXPECTED_UPSTREAM_SOURCE_REVISION:
+            raise ValueError("source_revision must retain the qualified authority")
+        request_identity = (
+            self.request.case_index,
+            self.request.torso_profile,
+            self.request.matching_rule,
+            self.request.initial_torso_rate_rad_s,
+        )
+        case_identity = (
+            self.case.case_index,
+            self.case.torso_profile,
+            self.case.matching_rule,
+            self.case.initial_torso_rate_rad_s,
+        )
+        if request_identity != case_identity:
+            raise ValueError("request and case identities must match")
 
 
 def _control_law(
@@ -260,10 +289,65 @@ def run_registered_case(request: RotatingBaseRunRequest) -> RotatingBaseRunResul
     return RotatingBaseRunResult(request=request, case=case, trace=_ui_trace(trace))
 
 
+def registered_run_mapping(result: RotatingBaseRunResult) -> dict[str, object]:
+    """Return one run with immutable scientific-promotion boundaries."""
+    if not isinstance(result, RotatingBaseRunResult):
+        raise TypeError("result must be a RotatingBaseRunResult")
+    case = result.case
+    trace = result.trace
+    return {
+        "schema_id": RUN_SCHEMA_ID,
+        "schema_version": RUN_SCHEMA_VERSION,
+        "source_revision": result.source_revision,
+        "model_tier": result.model_tier,
+        "boundaries": {
+            "coordinate_semantics": "nonanatomical_model_coordinate",
+            "human_validation": "unavailable",
+            "coaching_recommendation": "unsupported",
+        },
+        "request": {
+            "case_index": result.request.case_index,
+            "torso_profile": result.request.torso_profile,
+            "matching_rule": result.request.matching_rule,
+            "initial_torso_rate_rad_s": result.request.initial_torso_rate_rad_s,
+        },
+        "case": {
+            "case_index": case.case_index,
+            "torso_profile": case.torso_profile,
+            "matching_rule": case.matching_rule,
+            "initial_torso_rate_rad_s": case.initial_torso_rate_rad_s,
+            "valid": case.valid,
+            "exclusion_reasons": list(case.exclusion_reasons),
+            "metrics": asdict(case.metrics),
+        },
+        "trace": {
+            "time_s": trace.time_s.tolist(),
+            "torso_rate_rad_s": trace.torso_rate_rad_s.tolist(),
+            "club_rate_rad_s": trace.club_rate_rad_s.tolist(),
+            "clubhead_speed_m_s": trace.clubhead_speed_m_s.tolist(),
+            "contact_power_on_club_w": trace.contact_power_on_club_w.tolist(),
+            "force_generated_couple_nm": trace.force_generated_couple_nm.tolist(),
+            "force_on_club_n": trace.force_on_club_n.tolist(),
+            "distal_segment_kinetic_energy_j": (
+                trace.distal_segment_kinetic_energy_j.tolist()
+            ),
+        },
+    }
+
+
+def registered_run_json(result: RotatingBaseRunResult) -> str:
+    """Serialize one governed run for desktop and cross-runtime consumers."""
+    return canonical_numeric_json(registered_run_mapping(result))
+
+
 __all__ = [
     "REGISTERED_TORSO_RATES_RAD_S",
+    "RUN_SCHEMA_ID",
+    "RUN_SCHEMA_VERSION",
     "RotatingBaseRunRequest",
     "RotatingBaseRunResult",
     "RotatingBaseRunTrace",
+    "registered_run_json",
+    "registered_run_mapping",
     "run_registered_case",
 ]

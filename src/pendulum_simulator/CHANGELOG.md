@@ -9,6 +9,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- Qualified rotating-base two-hand compliant-club study with a single packaged
+  18-case authority, asynchronous PyQt execution, React/Tauri evidence parity,
+  a digest-pinned full-resolution 18-run trace catalog, five reviewer chart
+  groups, retained adverse rows, exact same-state killswitches, closure
+  diagnostics, and source-pinned governed JSON exports (#4430)
 - Centralized theme module (`gui/theme.py`) for DRY stylesheet management (#1197)
 - Advanced diagnostics tracker with JSONL persistence and viewer dialog
 - Golfer topology validation tests — 18 tests covering mass distribution, FK, and DbC contracts (#1204)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
+from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
@@ -12,13 +13,18 @@ import pytest
 from shared.python.swing_sim.rotating_base import (
     EXPECTED_STUDY_SHA256,
     EXPECTED_UPSTREAM_SOURCE_REVISION,
+    QUALIFIED_STUDY_RESOURCE_NAME,
     RotatingBaseProviderResult,
+    load_embedded_qualified_study,
     load_qualified_study,
 )
 
-FIXTURE = (
-    Path(__file__).parent / "fixtures" / "rotating_base_torso_velocity_study_v1.json"
-)
+
+def _qualified_study_text() -> str:
+    resource = files("shared.python.swing_sim.rotating_base").joinpath(
+        "resources", QUALIFIED_STUDY_RESOURCE_NAME
+    )
+    return resource.read_text(encoding="utf-8")
 
 
 def _case(*, index: int, valid: bool) -> dict[str, object]:
@@ -107,7 +113,7 @@ def test_provider_result_retains_design_adverse_rows_and_boundaries() -> None:
 
 
 def test_qualified_loader_accepts_exact_governed_study() -> None:
-    result = load_qualified_study(FIXTURE)
+    result = load_embedded_qualified_study()
 
     assert result.study_sha256 == EXPECTED_STUDY_SHA256
     assert result.study.attempted_case_count == 18
@@ -121,8 +127,23 @@ def test_qualified_loader_accepts_exact_governed_study() -> None:
     )
 
 
+def test_typescript_consumer_pins_same_source_and_semantic_digest() -> None:
+    repo_root = Path(__file__).parents[3]
+    source = (
+        repo_root
+        / "src"
+        / "pendulum_simulator"
+        / "pendulum-web"
+        / "src"
+        / "rotatingBaseStudy.ts"
+    ).read_text(encoding="utf-8")
+
+    assert EXPECTED_UPSTREAM_SOURCE_REVISION in source
+    assert EXPECTED_STUDY_SHA256 in source
+
+
 def test_qualified_loader_rejects_semantically_tampered_study(tmp_path: Path) -> None:
-    tampered = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    tampered = json.loads(_qualified_study_text())
     tampered["cases"][0]["impact_speed_m_s"] += 1.0
     path = tmp_path / "tampered.json"
     path.write_text(json.dumps(tampered), encoding="utf-8")

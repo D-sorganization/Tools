@@ -1,0 +1,139 @@
+.rotating-base-study {
+  margin: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #4a668f;
+  border-radius: 0.65rem;
+  background: #121d30;
+  color: #eef4ff;
+}
+
+.rotating-base-study header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.rotating-base-study h2,
+.rotating-base-study h3,
+.rotating-base-study p {
+  margin: 0 0 0.55rem;
+}
+
+.rotating-base-study header span {
+  white-space: nowrap;
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  font-weight: 700;
+}
+
+.rotating-base-study header .valid {
+  background: #174f3b;
+}
+
+.rotating-base-study header .adverse {
+  background: #763f22;
+}
+
+.rotating-base-study__scope,
+.rotating-base-study__exclusion {
+  margin: 0.75rem 0;
+  border-left: 4px solid #f5c451;
+  background: #182842;
+  padding: 0.65rem 0.8rem;
+}
+
+.rotating-base-study__controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.rotating-base-study label {
+  display: grid;
+  gap: 0.3rem;
+  font-weight: 700;
+}
+
+.rotating-base-study select {
+  min-width: 0;
+  border: 1px solid #7186aa;
+  border-radius: 0.3rem;
+  background: #0f1726;
+  color: #fff;
+  padding: 0.55rem;
+}
+
+.rotating-base-study select:focus-visible,
+.rotating-base-study button:focus-visible {
+  outline: 3px solid #f5c451;
+  outline-offset: 2px;
+}
+
+.rotating-base-study__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.rotating-base-study__metrics div {
+  border: 1px solid #314766;
+  border-radius: 0.35rem;
+  padding: 0.55rem;
+}
+
+.rotating-base-study__metrics dt {
+  color: #b8c9e2;
+  font-size: 0.85rem;
+}
+
+.rotating-base-study__metrics dd {
+  margin: 0.2rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.rotating-base-study__killswitches {
+  margin-top: 0.8rem;
+  border-top: 1px solid #405779;
+  padding-top: 0.75rem;
+}
+
+.rotating-base-study__traces {
+  margin-top: 1rem;
+  border-top: 1px solid #405779;
+  padding-top: 0.85rem;
+}
+
+.rotating-base-study__trace-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.rotating-base-study__trace-grid figure {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid #314766;
+  border-radius: 0.35rem;
+  background: #0f1726;
+  padding: 0.55rem;
+}
+
+.rotating-base-study__trace-grid figcaption {
+  margin-bottom: 0.25rem;
+  color: #eef4ff;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .rotating-base-study__controls,
+  .rotating-base-study__metrics,
+  .rotating-base-study__trace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rotating-base-study header {
+    flex-direction: column;
+  }
+}

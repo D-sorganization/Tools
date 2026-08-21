@@ -1,6 +1,15 @@
 """Shared rotating-base provider contracts."""
 
 from ._numeric import UPSTREAM_PHYSICS_SOURCE_SHA256
+from .catalog import (
+    EXPECTED_RUN_CATALOG_SHA256,
+    RUN_CATALOG_SCHEMA_ID,
+    RUN_CATALOG_SCHEMA_VERSION,
+    generate_registered_run_catalog,
+    registered_requests,
+    registered_run_catalog_json,
+    registered_run_catalog_mapping,
+)
 from .contract import (
     EXPECTED_UPSTREAM_SOURCE_REVISION,
     KILLSWITCH_CHANNELS,
@@ -8,6 +17,7 @@ from .contract import (
     MODEL_TIER,
     SCHEMA_ID,
     SCHEMA_VERSION,
+    TORSO_PROFILES,
     RotatingBaseCase,
     RotatingBaseCaseMetrics,
     RotatingBaseProviderResult,
@@ -24,12 +34,21 @@ from .dynamics import (
 )
 from .integration import initial_state, rollout
 from .kinematics import constraint_jacobian, constraint_vector, kinematics
-from .loader import EXPECTED_STUDY_SHA256, load_qualified_study
+from .loader import (
+    EXPECTED_STUDY_SHA256,
+    QUALIFIED_STUDY_RESOURCE_NAME,
+    load_embedded_qualified_study,
+    load_qualified_study,
+)
 from .provider import (
     REGISTERED_TORSO_RATES_RAD_S,
+    RUN_SCHEMA_ID,
+    RUN_SCHEMA_VERSION,
     RotatingBaseRunRequest,
     RotatingBaseRunResult,
     RotatingBaseRunTrace,
+    registered_run_json,
+    registered_run_mapping,
     run_registered_case,
 )
 from .types import (
@@ -41,11 +60,15 @@ from .types import (
 )
 
 __all__ = [
+    "EXPECTED_RUN_CATALOG_SHA256",
     "EXPECTED_UPSTREAM_SOURCE_REVISION",
     "EXPECTED_STUDY_SHA256",
     "KILLSWITCH_CHANNELS",
     "MATCHING_RULES",
     "MODEL_TIER",
+    "QUALIFIED_STUDY_RESOURCE_NAME",
+    "RUN_CATALOG_SCHEMA_ID",
+    "RUN_CATALOG_SCHEMA_VERSION",
     "RotatingBaseCase",
     "RotatingBaseCaseMetrics",
     "RotatingBaseProviderResult",
@@ -55,7 +78,10 @@ __all__ = [
     "RotatingBaseStudy",
     "SCHEMA_ID",
     "SCHEMA_VERSION",
+    "TORSO_PROFILES",
     "REGISTERED_TORSO_RATES_RAD_S",
+    "RUN_SCHEMA_ID",
+    "RUN_SCHEMA_VERSION",
     "SameStateKillswitch",
     "TorsoTwoHandControl",
     "UPSTREAM_PHYSICS_SOURCE_SHA256",
@@ -67,12 +93,19 @@ __all__ = [
     "constraint_vector",
     "control_generalized_force",
     "distal_segment_kinetic_energy",
+    "generate_registered_run_catalog",
     "initial_state",
     "kinematics",
+    "load_embedded_qualified_study",
     "load_qualified_study",
     "mass_matrix",
     "mechanical_energy",
     "potential_energy",
+    "registered_requests",
+    "registered_run_catalog_json",
+    "registered_run_catalog_mapping",
+    "registered_run_json",
+    "registered_run_mapping",
     "rollout",
     "run_registered_case",
     "solve_constrained_dynamics",

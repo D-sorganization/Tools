@@ -257,6 +257,7 @@ exclude = [
 [tool.setuptools.package-data]
 # Include py.typed marker for PEP 561 type hint support
 "*" = ["py.typed"]
+"shared.python.swing_sim.rotating_base" = ["resources/*.json"]
 "rate_of_closure" = [
     "data/*.json",
     "visualization_tabs.v1.json",

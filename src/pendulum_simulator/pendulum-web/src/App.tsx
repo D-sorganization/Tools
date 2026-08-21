@@ -52,6 +52,12 @@ import {
 } from "./modelGuards";
 import "./App.css";
 
+const RotatingBaseStudy = React.lazy(() =>
+  import("./components/RotatingBaseStudy").then((module) => ({
+    default: module.RotatingBaseStudy,
+  })),
+);
+
 // ── Animation hook ────────────────────────────────────────────────────────────
 
 function useAnimationLoop(
@@ -620,6 +626,15 @@ export default function App() {
         <span className="app-status">{status}</span>
       </header>
       <CompanionGuide onSelectModel={setModelType} />
+      <React.Suspense
+        fallback={
+          <section className="rotating-base-study" aria-busy="true">
+            Loading Qualified Rotating-Base Evidence…
+          </section>
+        }
+      >
+        <RotatingBaseStudy />
+      </React.Suspense>
 
       <div
         className="app-body"

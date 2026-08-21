@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import fields
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -11,13 +11,11 @@ import pytest
 from shared.python.swing_sim.rotating_base import (
     MODEL_TIER,
     RotatingBaseRunRequest,
-    load_qualified_study,
+    load_embedded_qualified_study,
+    registered_run_json,
     run_registered_case,
 )
 
-FIXTURE = (
-    Path(__file__).parent / "fixtures" / "rotating_base_torso_velocity_study_v1.json"
-)
 pytestmark = [pytest.mark.contract, pytest.mark.scientific]
 
 
@@ -37,7 +35,7 @@ def test_registered_request_rejects_out_of_design_values() -> None:
 
 
 def test_registered_full_run_reproduces_pinned_case_and_traces() -> None:
-    authority = load_qualified_study(FIXTURE)
+    authority = load_embedded_qualified_study()
     expected = authority.study.cases[0]
     request = RotatingBaseRunRequest(
         torso_profile=expected.torso_profile,
@@ -64,3 +62,23 @@ def test_registered_full_run_reproduces_pinned_case_and_traces() -> None:
     assert np.all(np.isfinite(result.trace.force_generated_couple_nm))
     with pytest.raises(ValueError, match="read-only"):
         result.trace.clubhead_speed_m_s[0] = 0.0
+    with pytest.raises(ValueError, match="request and case identities"):
+        type(result)(
+            request=RotatingBaseRunRequest(
+                torso_profile="accelerate",
+                matching_rule="relative_club_rate",
+                initial_torso_rate_rad_s=3.5,
+            ),
+            case=result.case,
+            trace=result.trace,
+        )
+    payload = json.loads(registered_run_json(result))
+    assert payload["schema_id"] == "swing-sim/rotating-base-run-result"
+    assert payload["source_revision"] == result.source_revision
+    assert payload["request"]["case_index"] == expected.case_index
+    assert payload["case"]["exclusion_reasons"] == list(expected.exclusion_reasons)
+    assert payload["boundaries"] == {
+        "coaching_recommendation": "unsupported",
+        "coordinate_semantics": "nonanatomical_model_coordinate",
+        "human_validation": "unavailable",
+    }
