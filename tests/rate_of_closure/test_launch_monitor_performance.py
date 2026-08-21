@@ -115,6 +115,7 @@ def test_pyqt_performance_workspace_exposes_fail_closed_parity(qtbot) -> None:  
         ),
         "test.csv",
     )
+    assert panel.minimumSizeHint().width() <= 700
     panel.carry_combo.setCurrentText("carry")
     panel.lateral_combo.setCurrentText("lateral")
     dispersion, proxy = panel.run_dispersion()

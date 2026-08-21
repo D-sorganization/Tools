@@ -48,6 +48,18 @@ def test_demo_analysis_populates_results_and_traceability(qtbot) -> None:  # typ
     assert tab.export_result_button.isEnabled()
 
 
+def test_responsive_output_has_no_horizontal_overflow_at_reference_viewport(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab()
+    qtbot.addWidget(tab)
+    tab.resize(1048, 760)
+    tab.show()
+
+    assert tab.output_scroll.horizontalScrollBar().maximum() == 0
+    assert tab.output_scroll.viewport().width() >= 640
+
+
 def test_every_interactive_control_has_accessible_help(qtbot) -> None:  # type: ignore[no-untyped-def]
     tab = LaunchMonitorAnalyticsTab()
     qtbot.addWidget(tab)

@@ -82,10 +82,7 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         self.confidence_spin.setRange(0.51, 0.999)
         self.confidence_spin.setDecimals(3)
         self.confidence_spin.setValue(0.95)
-        self.attestation = QCheckBox(
-            "I attest this column identifies a player; it was not inferred "
-            "from session, club, or row order."
-        )
+        self.attestation = QCheckBox("Explicit trusted player identity (not inferred)")
         self._build_canonical_controls()
         self.run_button = QPushButton("Run Offline Compatibility Covariation")
         self.scan_button = QPushButton("Rank Variable Pairs")
@@ -101,7 +98,11 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
             (self.method_combo, "Displayed covariation coefficient"),
             (self.min_samples_spin, "Minimum pairwise-complete shots per player"),
             (self.confidence_spin, "Pearson confidence level"),
-            (self.attestation, "Explicit player identity attestation"),
+            (
+                self.attestation,
+                "I attest this column identifies a player; it was not inferred "
+                "from session, club, or row order.",
+            ),
             (self.authority_url, "Canonical Upstream authority URL"),
             (self.corpus_reference_button, "Load authorized corpus reference"),
             (self.inspect_corpus_button, "Inspect authorized corpus aggregates"),
@@ -140,19 +141,14 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         form.addRow(self.corpus_reference_button)
         form.addRow(self.canonical_limit)
         buttons = QGridLayout()
-        for index, button in enumerate(
-            (
-                self.inspect_corpus_button,
-                self.refresh_corpus_button,
-                self.canonical_covariation_button,
-                self.run_button,
-                self.scan_button,
-                self.save_button,
-                self.load_button,
-                self.export_button,
-            )
-        ):
-            buttons.addWidget(button, index // 2, index % 2)
+        buttons.addWidget(self.inspect_corpus_button, 0, 0)
+        buttons.addWidget(self.refresh_corpus_button, 0, 1)
+        buttons.addWidget(self.canonical_covariation_button, 1, 0, 1, 2)
+        buttons.addWidget(self.run_button, 2, 0, 1, 2)
+        buttons.addWidget(self.scan_button, 3, 0)
+        buttons.addWidget(self.save_button, 3, 1)
+        buttons.addWidget(self.load_button, 4, 0)
+        buttons.addWidget(self.export_button, 4, 1)
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("Player Covariation Workspace"))
         boundary = QLabel(
