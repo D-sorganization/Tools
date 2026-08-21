@@ -17,8 +17,10 @@ from rate_of_closure.launch_monitor_workspace import (
     build_player_covariation_request,
     export_analysis_bundle,
     load_project,
+    load_project_versioned,
     save_project,
 )
+from rate_of_closure.launch_monitor_workspace_v3 import WorkspaceExportAuthorization
 
 
 def _reference() -> DatasetReference:
@@ -68,10 +70,12 @@ def test_project_round_trip_keeps_reference_but_never_embeds_rows(
     save_project(destination, _project())
     payload = json.loads(destination.read_text(encoding="utf-8"))
 
-    assert payload["contract_version"] == "2.0.0"
+    assert payload["schema_id"] == "launch-monitor-workspace/v3"
+    assert payload["dataset"]["content_sha256"] == "a" * 64
     assert payload["dataset"]["revision"] == "97f3ecf"
     assert "rows" not in payload
     assert load_project(destination) == _project()
+    assert load_project_versioned(destination)[1] == "v3"
 
 
 def test_project_round_trip_can_pin_authorized_corpus_without_private_path(
@@ -92,12 +96,12 @@ def test_project_round_trip_can_pin_authorized_corpus_without_private_path(
     save_project(destination, project)
     payload = json.loads(destination.read_text(encoding="utf-8"))
 
-    assert payload["canonical_dataset"]["root_id"] == "launch-monitor-authority"
-    assert "path" not in payload["canonical_dataset"]
+    assert payload["dataset"]["authority_root_id"] == "launch-monitor-authority"
+    assert "path" not in payload["dataset"]
     assert load_project(destination) == project
 
 
-def test_full_export_contains_project_result_backing_rows_and_hashes(
+def test_full_export_fails_closed_until_restricted_rows_are_approved(
     tmp_path: Path,
 ) -> None:
     rows = pd.DataFrame(
@@ -113,15 +117,32 @@ def test_full_export_contains_project_result_backing_rows_and_hashes(
     )
 
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
-    assert set(manifest["files"]) == {
-        "project.json",
-        "result.json",
-        "backing_rows.csv",
-    }
+    assert "backing_rows.csv" not in manifest["files"]
+    assert manifest["backing_data"]["status"] == "unavailable"
+    assert "restricted approval" in manifest["backing_data"]["reason"]
+
+
+def test_full_export_contains_rows_and_hash_join_after_explicit_approval(
+    tmp_path: Path,
+) -> None:
+    rows = pd.DataFrame({"shot_id": ["s1"], "player_id": ["p1"], "face_angle": [1.0]})
+    output = export_analysis_bundle(
+        tmp_path / "bundle",
+        _project(),
+        {"contract_version": "2.0.0"},
+        rows,
+        WorkspaceExportAuthorization(
+            include_backing_rows=True, restricted_data_approved=True
+        ),
+    )
+    manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+    assert {"backing_rows.csv", "backing_join.csv"} <= set(manifest["files"])
     assert all(len(item["sha256"]) == 64 for item in manifest["files"].values())
-    assert (output / "backing_rows.csv").read_text(encoding="utf-8").splitlines()[
-        0
-    ] == ("shot_id,player_id,face_angle,club_path")
+    assert (
+        (output / "backing_join.csv")
+        .read_text(encoding="utf-8")
+        .startswith("result_row_index,row_sha256")
+    )
 
 
 def test_project_rejects_malformed_or_unpinned_dataset() -> None:
@@ -134,6 +155,14 @@ def test_project_rejects_malformed_or_unpinned_dataset() -> None:
             identity=PlayerIdentityBinding("face_angle", user_attested=True),
             selection=AnalysisSelection("face_angle", "club_path", 3, 0.95),
         )
+
+
+def test_legacy_player_project_import_is_explicitly_labelled(tmp_path: Path) -> None:
+    path = tmp_path / "legacy.json"
+    path.write_text(json.dumps(_project().to_wire()), encoding="utf-8")
+    restored, imported_from = load_project_versioned(path)
+    assert restored == _project()
+    assert imported_from == "v2-compatibility"
 
 
 def test_pyqt_player_workspace_runs_grouped_analysis_only_after_attestation(

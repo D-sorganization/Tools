@@ -58,7 +58,15 @@ export function LaunchMonitorLinkedScatter({
   );
   const plotted = useMemo(() => coordinates(plan), [plan]);
   const selected = plotted.find(({ point }) => point.rawIndex === selectedRawIndex) ?? null;
-  const path = plotted.map(({ cx, cy }) => `M${cx.toFixed(2)} ${cy.toFixed(2)}l0.01 0`).join("");
+  // ⚡ Bolt Optimization: Wrap path generation in useMemo and use a single-pass loop
+  // to eliminate intermediate array allocations during large SVG path string generation.
+  const path = useMemo(() => {
+    let d = "";
+    for (let i = 0; i < plotted.length; i++) {
+      d += `M${plotted[i].cx.toFixed(2)} ${plotted[i].cy.toFixed(2)}l0.01 0`;
+    }
+    return d;
+  }, [plotted]);
   const chooseNearest = (event: PointerEvent<SVGSVGElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = (event.clientX - bounds.left) * WIDTH / bounds.width;

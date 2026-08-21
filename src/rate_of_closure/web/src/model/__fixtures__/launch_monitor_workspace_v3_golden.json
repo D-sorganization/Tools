@@ -1,0 +1,75 @@
+{
+  "schema_id": "launch-monitor-workspace/v3",
+  "schema_version": 3,
+  "name": "Player progression",
+  "dataset": {
+    "source_name": "authorized-corpus",
+    "repository": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
+    "revision": "78f0a42540e523ac883d843394b30a636311bf9d",
+    "relative_path": "authority/shot-corpus",
+    "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "row_count": 12,
+    "classification": "restricted",
+    "authority_commit": "78f0a42540e523ac883d843394b30a636311bf9d",
+    "manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "identity_evidence": {
+    "player": {
+      "column": "player_id",
+      "user_attested": true,
+      "evidence": "Dataset owner supplied stable player identifiers."
+    },
+    "session": {
+      "column": "session_id",
+      "user_attested": true,
+      "evidence": "Dataset owner supplied session identifiers."
+    },
+    "order": {
+      "column": "session_order",
+      "user_attested": true,
+      "evidence": "Dataset owner supplied chronological session order."
+    }
+  },
+  "analyses": [
+    {
+      "analysis_id": "face-path",
+      "operation": "player_covariation",
+      "settings": {
+        "x_column": "face_angle",
+        "y_column": "club_path",
+        "method": "pearson",
+        "minimum_samples": 4,
+        "confidence_level": 0.95
+      },
+      "result": {
+        "status": "unavailable",
+        "authority": "upstream-v2",
+        "authority_commit": "78f0a42540e523ac883d843394b30a636311bf9d",
+        "response_sha256": null,
+        "payload": null,
+        "units": {
+          "face_angle": "deg",
+          "club_path": "deg"
+        },
+        "formulas": [
+          "within-player Pearson correlation with pairwise-complete rows"
+        ],
+        "exclusions": [
+          "Canonical response not yet requested."
+        ]
+      },
+      "backing_join": {
+        "algorithm": "sha256-canonical-json-v1",
+        "row_count": 12,
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "status": "available-on-authorized-export",
+        "reason": null
+      }
+    }
+  ],
+  "export_policy": {
+    "persist_rows": false,
+    "backing_rows": "explicit-restricted-approval",
+    "reason": "Restricted rows remain outside saved projects and browser persistence."
+  }
+}

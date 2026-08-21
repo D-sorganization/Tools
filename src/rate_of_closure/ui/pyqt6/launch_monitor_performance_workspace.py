@@ -2,27 +2,22 @@
 
 from __future__ import annotations
 
-import json
-
 import pandas as pd
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QDoubleSpinBox,
-    QFileDialog,
     QFormLayout,
     QGridLayout,
     QLabel,
     QLineEdit,
-    QMessageBox,
     QPushButton,
     QTabWidget,
     QVBoxLayout,
     QWidget,
 )
 
-from rate_of_closure.application.atomic_text_files import write_utf8_text_atomic
 from rate_of_closure.launch_monitor_analysis import numeric_columns
 from rate_of_closure.launch_monitor_performance import (
     DispersionRequest,
@@ -35,14 +30,12 @@ from rate_of_closure.launch_monitor_performance import (
     analyze_session_trend,
     calculate_target_error,
 )
-from rate_of_closure.launch_monitor_workspace import dataset_reference_for_frame
 from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
 from rate_of_closure.ui.pyqt6.launch_monitor_longitudinal_widget import (
     LaunchMonitorLongitudinalWidget,
 )
-from rate_of_closure.ui.pyqt6.launch_monitor_performance_files import (
-    load_performance_settings,
-    performance_document,
+from rate_of_closure.ui.pyqt6.launch_monitor_performance_persistence import (
+    PerformancePersistenceMixin,
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_performance_presenter import (
     present_value_error,
@@ -153,7 +146,11 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
                 "Reload settings only against the matching dataset fingerprint",
             ),
             (self.export_plot_button, "Export the unit-labeled dispersion plot"),
-            (self.export_data_button, "Export every backing input row as CSV"),
+            (
+                self.export_data_button,
+                "Export restricted backing rows as CSV or JSON only after "
+                "explicit approval",
+            ),
         )
         for control, description in described:
             control.setAccessibleName(description)
@@ -343,83 +340,19 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
         present_value_error(self, "Trend Unavailable", self.run_trend)
 
     def _document(self) -> dict[str, object]:
-        reference = dataset_reference_for_frame(self._frame, self._source_name)
-        settings = {
-            "carry": self.carry_combo.currentText(),
-            "lateral": self.lateral_combo.currentText(),
-            "carry_unit": self.carry_unit.currentText(),
-            "lateral_unit": self.lateral_unit.currentText(),
-            "target_yards": self.target_distance.value(),
-        }
-        document: dict[str, object] = performance_document(
-            reference, settings, self._dispersion, self._proxy, self._trend
-        )
-        document["source_backed_strokes_gained"] = self.source_backed_sg.document()
-        document["longitudinal_inference"] = self.longitudinal.document()
-        return document
+        return PerformancePersistenceMixin._document(self)
 
     def save_dialog(self) -> None:
-        selected, _ = QFileDialog.getSaveFileName(
-            self,
-            "Save Performance Analysis",
-            "performance.lmanalysis.json",
-            "JSON (*.json)",
-        )
-        if selected:
-            write_utf8_text_atomic(
-                json.dumps(self._document(), indent=2),
-                selected,
-                document_name="performance analysis",
-            )
+        PerformancePersistenceMixin.save_dialog(self)
 
     def load_dialog(self) -> None:
-        selected, _ = QFileDialog.getOpenFileName(
-            self, "Load Performance Analysis", "", "JSON (*.json)"
-        )
-        if not selected:
-            return
-        try:
-            reference = dataset_reference_for_frame(self._frame, self._source_name)
-            settings = load_performance_settings(selected, reference.sha256)
-            text_values = tuple(
-                settings[key]
-                for key in ("carry", "lateral", "carry_unit", "lateral_unit")
-            )
-            if not all(isinstance(value, str) for value in text_values):
-                raise TypeError("saved analysis column and unit settings need text")
-            carry, lateral, carry_unit, lateral_unit = (
-                str(value) for value in text_values
-            )
-            target = settings["target_yards"]
-            if isinstance(target, bool) or not isinstance(target, (int, float, str)):
-                raise TypeError("saved target distance must be numeric")
-            self.carry_combo.setCurrentText(carry)
-            self.lateral_combo.setCurrentText(lateral)
-            self.carry_unit.setCurrentText(carry_unit)
-            self.lateral_unit.setCurrentText(lateral_unit)
-            self.target_distance.setValue(float(target))
-            self.dispersion_status.setText(
-                "Saved settings restored; rerun to regenerate results."
-            )
-        except (OSError, ValueError, KeyError, TypeError) as error:
-            QMessageBox.warning(self, "Analysis Not Loaded", str(error))
+        PerformancePersistenceMixin.load_dialog(self)
 
     def export_plot_dialog(self) -> None:
-        selected, _ = QFileDialog.getSaveFileName(
-            self,
-            "Export Unit-Labeled Plot",
-            "dispersion.png",
-            "PNG (*.png);;SVG (*.svg);;PDF (*.pdf)",
-        )
-        if selected:
-            self.canvas.figure.savefig(selected)
+        PerformancePersistenceMixin.export_plot_dialog(self)
 
     def export_data_dialog(self) -> None:
-        selected, _ = QFileDialog.getSaveFileName(
-            self, "Export Backing Data", "performance-backing.csv", "CSV (*.csv)"
-        )
-        if selected:
-            self._frame.to_csv(selected, index=False)
+        PerformancePersistenceMixin.export_data_dialog(self)
 
 
 __all__ = ["LaunchMonitorPerformanceWorkspace"]
