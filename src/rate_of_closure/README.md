@@ -180,10 +180,18 @@ Cancellation and exceptions preserve the last manifest-committed prefix. An
 unreferenced chunk left by a failed manifest replacement is ignored and safely
 replaced on the next attempt. `DurableEnsembleArchive` is intentionally a
 lightweight inspection record, not a fabricated in-memory ensemble result.
+`analyze_durable_ensemble` scans the verified prefix one chunk at a time and
+returns typed hit/no-impact/failure counts, named failure counts, and
+availability-aware mean and sample standard deviation for every canonical
+scalar output. Units come from the same output registry used by the plots. The
+analysis retains only fixed-size online accumulators and never constructs the
+trial-by-sample trace tensor; incomplete archives are reported explicitly as an
+in-progress prefix rather than promoted to complete evidence.
+
 The request's configurations and sampled-input matrix remain eager, and the
-legacy collecting sink still materializes the final tensor; bounded work-source
-construction, measured peak-memory budgets, and UI transport remain open R11.5
-work under #4142.
+legacy collecting sink still materializes the final tensor. Lazy work-source
+construction, measured peak-memory budgets, sensitivity/geometry consumers,
+and durable client transport remain open R11.5 work under #4626 / #4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are

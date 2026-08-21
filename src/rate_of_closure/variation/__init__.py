@@ -44,6 +44,11 @@ from .simulation_adapter import (
     run_simulation_ensemble_chunks,
     spatial_point_ids,
 )
+from .streaming_ensemble_analysis import (
+    DurableEnsembleSummary,
+    StreamingOutputMoments,
+    analyze_durable_ensemble,
+)
 from .trial_projection import (
     SimulationExecutor,
     TrialCapture,
@@ -60,6 +65,7 @@ __all__ = [
     "CollectingEnsembleSink",
     "DurableEnsembleArchive",
     "DurableEnsembleChunkSink",
+    "DurableEnsembleSummary",
     "EVALUATED_HIT",
     "EVALUATED_NO_IMPACT",
     "EnsembleChunkSink",
@@ -77,11 +83,13 @@ __all__ = [
     "SimulationExecutor",
     "SimulationResultChunk",
     "SimulationTrialOutcome",
+    "StreamingOutputMoments",
     "TEE_HEIGHT_VARIABLE_KEY",
     "TrialCapture",
     "TrialEvaluationStatus",
     "apply_ball_setup_sample",
     "apply_global_simulation_values",
+    "analyze_durable_ensemble",
     "build_simulation_ensemble_request",
     "build_ensemble_stream_header",
     "capture_simulation",
