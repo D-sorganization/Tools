@@ -197,16 +197,17 @@ def assess_freshness(canonical: CanonicalState, mirror: MirrorState) -> Freshnes
     listings) > recorded canonical SHA in the sync commit > timestamp
     comparison (canonical last-change vs mirror last-sync date).
     """
-    base = {
-        "canonical_commit": canonical.commit,
-        "canonical_last_change": canonical.last_change.isoformat(),
-        "mirror_last_sync": mirror.last_sync_commit,
-        "mirror_last_sync_date": mirror.last_sync_date.isoformat(),
-    }
+    canonical_last_change = canonical.last_change.isoformat()
+    mirror_last_sync_date = mirror.last_sync_date.isoformat()
+
     if canonical.files is not None and mirror.files is not None:
         drifted = compare_trees(canonical.files, mirror.files)
         return FreshnessReport(
             fresh=not drifted,
+            canonical_commit=canonical.commit,
+            canonical_last_change=canonical_last_change,
+            mirror_last_sync=mirror.last_sync_commit,
+            mirror_last_sync_date=mirror_last_sync_date,
             signal="tree",
             reason=(
                 "all canonical web/ files present in mirror with identical blobs"
@@ -215,29 +216,34 @@ def assess_freshness(canonical: CanonicalState, mirror: MirrorState) -> Freshnes
             ),
             deep=True,
             drifted_files=drifted,
-            **base,
         )
     if mirror.recorded_canonical_commit is not None:
         fresh = _shas_match(mirror.recorded_canonical_commit, canonical.commit)
         return FreshnessReport(
             fresh=fresh,
+            canonical_commit=canonical.commit,
+            canonical_last_change=canonical_last_change,
+            mirror_last_sync=mirror.last_sync_commit,
+            mirror_last_sync_date=mirror_last_sync_date,
             signal="recorded-sha",
             reason=(
                 f"mirror sync records canonical {mirror.recorded_canonical_commit}"
                 + ("" if fresh else f", canonical HEAD is {canonical.commit}")
             ),
-            **base,
         )
     fresh = mirror.last_sync_date >= canonical.last_change
     return FreshnessReport(
         fresh=fresh,
+        canonical_commit=canonical.commit,
+        canonical_last_change=canonical_last_change,
+        mirror_last_sync=mirror.last_sync_commit,
+        mirror_last_sync_date=mirror_last_sync_date,
         signal="timestamp",
         reason=(
             "mirror synced at or after last canonical web/ change"
             if fresh
             else "canonical web/ changed after the last mirror sync"
         ),
-        **base,
     )
 
 
