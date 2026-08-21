@@ -5075,6 +5075,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.75 | fix(rate-of-closure, tests): make the isolated PyQt Variation rendered probe stop its worker, close and deferred-delete its window, drain posted Qt ownership, and quit the application after writing evidence; preserve the 60-second suite timeout and every approved baseline, accessibility, and performance budget. | #4613 |
 | 2026-08-20 | 1.17.74 | fix(rate-of-closure, ci): disable only the trusted self-hosted setup-node npm cache hook after its 2.0 GB post-job upload exhausted the unchanged job timeout and prevented independent PyQt evidence; retain npm ci, all budgets, artifacts, and failure semantics. | #4607 |
 | 2026-08-20 | 1.17.73 | fix(rate-of-closure, ci): transfer React visual-baseline candidates to an independent non-cancelled PyQt evidence job so protected render and baseline authorities still execute after React performance failure, without weakening either job's budgets or overall workflow failure semantics. | #4610 |
 | 2026-08-20 | 1.17.72 | fix(rate-of-closure, ci): create run-attempt-scoped trusted PyQt venv and pytest-temporary roots, install the exact compatible NumPy/SciPy/PyQt stack without mutating shared pip caches, fail closed on pin/import drift before collection, and run both rendered tests and visual-baseline enforcement through the verified interpreter. | #4608 |
