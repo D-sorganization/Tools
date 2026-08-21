@@ -13,6 +13,7 @@ models:
     working_dir: "src/pendulum_simulator"
     python_paths:
       - "src/pendulum_simulator/src"
+      - "src"
     capabilities:
       - "pendulum"
       - "simulation"

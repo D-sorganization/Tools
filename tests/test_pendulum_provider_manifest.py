@@ -55,6 +55,7 @@ def test_pendulum_provider_manifest_points_at_console_entry_module() -> None:
     assert entry["embed_adapter"] == (
         "src/double_pendulum_golf/_embed_adapter.py::get_dockable_ui"
     )
+    assert entry["python_paths"] == ["src/pendulum_simulator/src", "src"]
 
 
 def test_pendulum_provider_manifest_stays_in_expected_location() -> None:

@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — pendulum_simulator
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-16
+> Last updated: 2026-08-21
 
 ## Where This Tool Is Headed
 
@@ -20,6 +20,14 @@ do not resume work on it.
 What shipped: a model-neutral transfer contract, exact double-pendulum
 drift/control grip-force attribution, integrated braking/work/impulse metrics,
 Pareto ranking, and a PyQt **Drift Transfer** analysis tab.
+
+Companion issue **#4430** is active on
+PR **#4618** (`feat/4430-rotating-base-companion`). The branch has the source-pinned
+18-case authority, exact qualified rotating-base physics, a registered
+full-resolution provider, asynchronous PyQt surface, and React/Tauri evidence
+browser. The web surface consumes the digest-pinned complete 18-run catalog
+and renders five reviewer trace groups. Protected squash auto-merge is enabled;
+the active CI fix allows platform roundoff but retains strict residual gates.
 
 **The scientific boundary shipped with it and still binds.** The widget fails
 closed for the triple and golfer tiers. Do not relabel the double model's
@@ -50,7 +58,8 @@ maintenance rather than feature growth: Bolt perf passes on the web
 Nelder-Mead simplex sort, a #3745 GUI/error-handling cleanup, a 20-PR
 fleet-CI-relief consolidation, physics hot-loop allocation removal, and earlier
 `pendulum-core` maturin/pyo3 packaging + import-canonicalization work. No open
-PR currently targets this tool directly.
+PR #4618 owns #4430 delivery; do not duplicate its active branch. Its catalog
+digest is `66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678`.
 
 ## Must-Read Architecture Pointers
 
@@ -102,9 +111,9 @@ double-collect by also passing the embedded path.
 
 ## Roadmap (ordered)
 
-1. No dedicated feature epic open now that #4406 has closed; treat this tool as
-   a stable physics provider. Prioritize keeping `pendulum-core` API stable for
-   #4103's `SwingSource` consumers.
+1. Finish #4430's full repository gates, protected PR, and UpstreamDrift
+   consumer pin for the completed PyQt/React surfaces; preserve every
+   scientific-promotion boundary and adverse row.
 2. If/when epic #4103 Phase 1 lands the double/triple pendulum
    `SwingSource` integration, expect a coordinated PR here exposing any
    additional bindings rate_of_closure needs.

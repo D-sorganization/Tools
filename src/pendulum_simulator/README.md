@@ -128,6 +128,18 @@ link rate, not an anatomical shoulder or torso measurement. Triple- and
 two-hand golfer-model attribution remain unavailable until their force
 allocation and reaction-force contracts are independently qualified.
 
+The separate **Rotating-Base Study** surface exposes the qualified
+`planar_rotating_base_two_hand_compliant_club` tier without changing that
+fixed-hub boundary. The PyQt6 surface executes a selected registered case on a
+background thread through the shared Python provider. The React/Tauri surface
+browses the same packaged 18-case authority rather than carrying a second set
+of equations. Both retain invalid rows and exclusions, matching-rule and torso-
+program selectors, transfer and closure diagnostics, exact same-state torso/
+arm/wrist killswitch results, the pinned source revision, and the explicit
+nonanatomical, no-human-validation, and noncoaching limitations. Both surfaces
+show full-resolution contact power, force-generated couple, torso/club rates,
+distal energy, and independent lead/trail grip-force magnitudes.
+
 ## Installation
 
 ```bash
@@ -155,6 +167,14 @@ It supplements the simulator; it does not turn model output into a measured
 biomechanical fact. Exported studies should retain the experiment ID, parameter
 values, units, model version, and `exploratory_model_output` status through
 `build_run_manifest()`.
+
+The rotating-base authority is independently content-pinned at
+`shared/python/swing_sim/rotating_base/resources/rotating_base_torso_velocity_study_v1.json`.
+Desktop and web exports include the selected request, full-resolution traces, retained
+validity/exclusion state, source revision, model tier, and scientific-promotion
+boundaries as deterministic JSON. The complete web trace catalog is separately
+pinned by SHA-256 and must retain all 18 rows, including five adverse rows; these
+are evidence exports, not human biomechanics or coaching prescriptions.
 
 ### PyQt6 Desktop App
 

@@ -236,6 +236,11 @@ class AnalysisTab:
         self._transfer_panel = TransferStrategyPanel(self._plot_tabs)
         self._plot_tabs.addTab(self._transfer_panel.widget(), "Drift Transfer")
 
+        from .rotating_base_panel import RotatingBasePanel
+
+        self._rotating_base_panel = RotatingBasePanel(self._plot_tabs)
+        self._plot_tabs.addTab(self._rotating_base_panel, "Rotating-Base Study")
+
     def widget(self) -> Any:
         """Return the top-level QWidget for embedding."""
         return self._widget
