@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
-    QHBoxLayout,
+    QGridLayout,
     QLabel,
     QMessageBox,
     QPushButton,
@@ -139,18 +139,20 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         form.addRow("Canonical authority:", self.authority_url)
         form.addRow(self.corpus_reference_button)
         form.addRow(self.canonical_limit)
-        buttons = QHBoxLayout()
-        for button in (
-            self.inspect_corpus_button,
-            self.refresh_corpus_button,
-            self.canonical_covariation_button,
-            self.run_button,
-            self.scan_button,
-            self.save_button,
-            self.load_button,
-            self.export_button,
+        buttons = QGridLayout()
+        for index, button in enumerate(
+            (
+                self.inspect_corpus_button,
+                self.refresh_corpus_button,
+                self.canonical_covariation_button,
+                self.run_button,
+                self.scan_button,
+                self.save_button,
+                self.load_button,
+                self.export_button,
+            )
         ):
-            buttons.addWidget(button)
+            buttons.addWidget(button, index // 2, index % 2)
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("Player Covariation Workspace"))
         boundary = QLabel(
@@ -192,7 +194,6 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         numeric_fields: list[str] | None = None,
     ) -> None:
         """Replace the referenced rows and reset identity attestation."""
-
         self._frame = frame
         self._source_name = source_name
         string_columns = sorted(str(column) for column in frame.columns)
@@ -237,7 +238,6 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
 
     def project(self) -> LaunchMonitorProject:
         """Return validated reference-only state for the current controls."""
-
         return LaunchMonitorProject(
             name=f"{self._source_name} player covariation",
             dataset=dataset_reference_for_frame(self._frame, self._source_name),
