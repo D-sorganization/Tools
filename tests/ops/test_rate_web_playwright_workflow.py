@@ -19,10 +19,13 @@ PLAYWRIGHT_EVIDENCE_PATHS = (
     "src/rate_of_closure/web/playwright-report/\n"
     "src/rate_of_closure/web/test-results/\n"
 )
-TRUSTED_EVIDENCE_PATHS = (
+PR_EVIDENCE_PATHS = (
     PLAYWRIGHT_EVIDENCE_PATHS + "rate-pyqt-screenshots/\nvisual-baseline-candidates/\n"
 )
-PR_EVIDENCE_PATHS = TRUSTED_EVIDENCE_PATHS
+TRUSTED_PYQT_EVIDENCE_PATHS = "rate-pyqt-screenshots/\nvisual-baseline-candidates/\n"
+TRUSTED_CANDIDATE_ARTIFACT = (
+    "rate-web-baseline-candidates-${{ github.run_id }}-${{ github.run_attempt }}"
+)
 PYQT_AUTHORITY_PATHS = {
     "requirements-rate-pyqt.txt",
     "scripts/check_rate_pyqt_environment.py",
@@ -131,6 +134,10 @@ def _checkout(job: dict[str, Any]) -> dict[str, Any]:
     )
 
 
+def _named_step(job: dict[str, Any], name: str) -> dict[str, Any]:
+    return next(step for step in job["steps"] if step.get("name") == name)
+
+
 def test_pull_request_workflow_is_hosted_only_without_fleet_vocabulary() -> None:
     text = PR_WORKFLOW_PATH.read_text(encoding="utf-8")
     workflow = _workflow(PR_WORKFLOW_PATH)
@@ -156,20 +163,27 @@ def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None
     assert "${{ github.sha" not in text
     assert "\n  push:" in text
     assert "workflow_dispatch" not in text
-    assert set(jobs) == {"push-production-worker-e2e"}
+    assert set(jobs) == {
+        "push-production-worker-e2e",
+        "push-pyqt-rendered-evidence",
+    }
     assert all(job["runs-on"] == "d-sorg-fleet" for job in jobs.values())
 
-    push_checkout = _checkout(jobs["push-production-worker-e2e"])
-    assert "with" not in push_checkout or "ref" not in push_checkout["with"]
+    for job in jobs.values():
+        push_checkout = _checkout(job)
+        assert "with" not in push_checkout or "ref" not in push_checkout["with"]
 
 
 def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> None:
     pr_job = _workflow(PR_WORKFLOW_PATH)["jobs"]["production-worker-e2e"]
-    trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]["push-production-worker-e2e"]
+    trusted_jobs = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]
+    trusted_web_job = trusted_jobs["push-production-worker-e2e"]
+    trusted_pyqt_job = trusted_jobs["push-pyqt-rendered-evidence"]
     pr_commands = _run_steps(pr_job)
-    trusted_commands = _run_steps(trusted_job)
+    trusted_web_commands = _run_steps(trusted_web_job)
+    trusted_pyqt_commands = _run_steps(trusted_pyqt_job)
 
-    trusted_step_names = [step.get("name") for step in trusted_job["steps"]]
+    trusted_step_names = [step.get("name") for step in trusted_pyqt_job["steps"]]
     setup_python_index = trusted_step_names.index("Set up Python")
     declare_pyqt_index = trusted_step_names.index("Declare isolated PyQt paths")
     create_pyqt_index = trusted_step_names.index("Create isolated PyQt environment")
@@ -197,15 +211,15 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     assert pr_job["env"]["RATE_VISUAL_BASELINE_SOURCE_COMMIT"] == (
         "${{ github.event.pull_request.head.sha }}"
     )
-    assert trusted_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
+    assert trusted_pyqt_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
         "${{ github.workspace }}/visual-baseline-candidates"
     )
     assert pr_commands["Install locked web dependencies"] == "npm ci"
-    assert trusted_commands["Install locked web dependencies"] == "npm ci"
+    assert trusted_web_commands["Install locked web dependencies"] == "npm ci"
     assert pr_commands["Install Playwright-pinned browser runtimes"] == (
         "npx --no-install playwright install --with-deps chromium firefox webkit"
     )
-    assert trusted_commands["Install Playwright-pinned Chromium runtime"] == (
+    assert trusted_web_commands["Install Playwright-pinned Chromium runtime"] == (
         "npx --no-install playwright install --with-deps chromium"
     )
     assert (
@@ -230,25 +244,30 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0"
     )
     assert (
-        trusted_commands["Exercise production Worker lifecycle and layouts"]
+        trusted_web_commands["Exercise production Worker lifecycle and layouts"]
         == "npm run test:e2e -- --project=chromium-desktop --project=chromium-narrow "
         "--grep-invert=@trusted-isolated"
     )
-    assert trusted_commands["Build production web bundle once"] == "npm run build"
-    assert trusted_commands["Audit primary-tab accessibility in isolation"] == (
+    assert trusted_web_commands["Build production web bundle once"] == "npm run build"
+    assert trusted_web_commands["Audit primary-tab accessibility in isolation"] == (
         "npm run test:e2e -- e2e/visualization-accessibility.spec.ts "
         "--project=chromium-desktop"
     )
-    assert trusted_commands["Measure protected visualization budgets in isolation"] == (
+    assert trusted_web_commands[
+        "Measure protected visualization budgets in isolation"
+    ] == (
         "npm run test:e2e -- e2e/visualization-performance.spec.ts "
         "--project=chromium-desktop"
     )
-    assert trusted_job["env"]["RATE_E2E_PREBUILT"] == "1"
-    assert "RATE_PYQT_VENV" not in trusted_job["env"]
-    assert "PYTEST_DEBUG_TEMPROOT" not in trusted_job["env"]
-    assert trusted_job["timeout-minutes"] == 30
+    assert trusted_web_job["env"]["RATE_E2E_PREBUILT"] == "1"
+    assert "RATE_PYQT_VENV" not in trusted_pyqt_job["env"]
+    assert "PYTEST_DEBUG_TEMPROOT" not in trusted_pyqt_job["env"]
+    assert trusted_web_job["timeout-minutes"] == 30
+    assert trusted_pyqt_job["timeout-minutes"] == 30
     trusted_steps = {
-        str(step.get("name")): step for step in trusted_job["steps"] if "name" in step
+        str(step.get("name")): step
+        for step in trusted_web_job["steps"]
+        if "name" in step
     }
     assert trusted_steps["Exercise production Worker lifecycle and layouts"]["env"] == {
         "RATE_E2E_EVIDENCE_PHASE": "functional"
@@ -260,25 +279,25 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         "Measure protected visualization budgets in isolation"
     ]
     assert performance_step["env"] == {"RATE_E2E_EVIDENCE_PHASE": "performance"}
-    assert trusted_commands["Declare isolated PyQt paths"] == (
+    assert trusted_pyqt_commands["Declare isolated PyQt paths"] == (
         'echo "RATE_PYQT_VENV=${RUNNER_TEMP}/rate-pyqt-'
         '${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"\n'
         'echo "PYTEST_DEBUG_TEMPROOT=${RUNNER_TEMP}/rate-pyqt-pytest-'
         '${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"'
     )
-    assert trusted_commands["Create isolated PyQt environment"] == (
+    assert trusted_pyqt_commands["Create isolated PyQt environment"] == (
         'python -m venv "$RATE_PYQT_VENV" && mkdir -p "$PYTEST_DEBUG_TEMPROOT"'
     )
-    assert trusted_commands["Install constrained PyQt render dependencies"] == (
+    assert trusted_pyqt_commands["Install constrained PyQt render dependencies"] == (
         '"$RATE_PYQT_VENV/bin/python" -m pip install --no-cache-dir '
         '--constraint requirements-rate-pyqt.txt -e ".[gui,dev]"'
     )
-    assert trusted_commands["Verify isolated PyQt runtime"] == (
+    assert trusted_pyqt_commands["Verify isolated PyQt runtime"] == (
         '"$RATE_PYQT_VENV/bin/python" -m pip check && '
         '"$RATE_PYQT_VENV/bin/python" scripts/check_rate_pyqt_environment.py '
         "--constraints requirements-rate-pyqt.txt"
     )
-    assert trusted_commands["Exercise protected PyQt tab visibility"] == (
+    assert trusted_pyqt_commands["Exercise protected PyQt tab visibility"] == (
         '"$RATE_PYQT_VENV/bin/python" -m pytest '
         "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py "
         "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py "
@@ -295,7 +314,7 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         '--candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR" '
         '--candidate-commit "$RATE_VISUAL_BASELINE_SOURCE_COMMIT"'
     )
-    assert trusted_commands["Enforce protected visual baseline drift"] == (
+    assert trusted_pyqt_commands["Enforce protected visual baseline drift"] == (
         '"$RATE_PYQT_VENV/bin/python" -m rate_of_closure.visual_baseline_compare '
         '--candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR" '
         '--candidate-commit "$GITHUB_SHA"'
@@ -312,7 +331,7 @@ def test_full_pyqt_window_dependency_is_declared_by_shared_gui_extra() -> None:
         job_name = (
             "production-worker-e2e"
             if path == PR_WORKFLOW_PATH
-            else "push-production-worker-e2e"
+            else "push-pyqt-rendered-evidence"
         )
         install_commands = "\n".join(
             _run_steps(_workflow(path)["jobs"][job_name]).values()
@@ -338,20 +357,59 @@ def test_external_actions_are_immutable_and_artifacts_identify_attempts() -> Non
             for step in job["steps"]:
                 if "uses" in step:
                     assert FULL_ACTION_SHA.fullmatch(str(step["uses"]))
-            artifact = next(
-                step
-                for step in job["steps"]
-                if step.get("name") == "Retain Playwright evidence"
-            )
-            name = artifact["with"]["name"]
-            assert "${{ github.run_id }}" in name
-            assert "${{ github.run_attempt }}" in name
-            expected_paths = (
-                PR_EVIDENCE_PATHS
-                if path == PR_WORKFLOW_PATH
-                else TRUSTED_EVIDENCE_PATHS
-            )
-            assert artifact["with"]["path"] == expected_paths
+
+    pr_job = _workflow(PR_WORKFLOW_PATH)["jobs"]["production-worker-e2e"]
+    trusted_jobs = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]
+    evidence_steps = (
+        (_named_step(pr_job, "Retain Playwright evidence"), PR_EVIDENCE_PATHS),
+        (
+            _named_step(
+                trusted_jobs["push-production-worker-e2e"],
+                "Retain Playwright evidence",
+            ),
+            PLAYWRIGHT_EVIDENCE_PATHS,
+        ),
+        (
+            _named_step(
+                trusted_jobs["push-pyqt-rendered-evidence"],
+                "Retain PyQt and baseline evidence",
+            ),
+            TRUSTED_PYQT_EVIDENCE_PATHS,
+        ),
+    )
+    for artifact, expected_paths in evidence_steps:
+        name = artifact["with"]["name"]
+        assert "${{ github.run_id }}" in name
+        assert "${{ github.run_attempt }}" in name
+        assert artifact["with"]["path"] == expected_paths
+
+
+def test_trusted_pyqt_job_runs_after_web_failure_and_transfers_candidates() -> None:
+    jobs = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]
+    web_job = jobs["push-production-worker-e2e"]
+    pyqt_job = jobs["push-pyqt-rendered-evidence"]
+
+    assert pyqt_job["needs"] == "push-production-worker-e2e"
+    assert pyqt_job["if"] == (
+        "${{ always() && needs.push-production-worker-e2e.result != 'cancelled' }}"
+    )
+    assert "continue-on-error" not in web_job
+    assert "continue-on-error" not in pyqt_job
+
+    upload = _named_step(web_job, "Retain React baseline candidates")
+    assert upload["if"] == "${{ !cancelled() }}"
+    assert upload["with"] == {
+        "name": TRUSTED_CANDIDATE_ARTIFACT,
+        "path": "visual-baseline-candidates/",
+        "if-no-files-found": "error",
+        "retention-days": 1,
+    }
+
+    download = _named_step(pyqt_job, "Restore React baseline candidates")
+    assert download["with"] == {
+        "name": TRUSTED_CANDIDATE_ARTIFACT,
+        "path": "visual-baseline-candidates",
+    }
 
 
 def test_touched_hosted_runner_guard_uses_only_immutable_actions() -> None:

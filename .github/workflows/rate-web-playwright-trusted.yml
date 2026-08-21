@@ -152,33 +152,70 @@ jobs:
           e2e/visualization-performance.spec.ts
           --project=chromium-desktop
 
+      - name: Retain React baseline candidates
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rate-web-baseline-candidates-${{ github.run_id }}-${{ github.run_attempt }}
+          path: visual-baseline-candidates/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Retain Playwright evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rate-web-playwright-trusted-push-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            src/rate_of_closure/web/playwright-report/
+            src/rate_of_closure/web/test-results/
+          if-no-files-found: error
+          retention-days: 14
+
+  push-pyqt-rendered-evidence:
+    name: Rate PyQt rendered and baseline evidence (trusted push)
+    needs: push-production-worker-e2e
+    if: ${{ always() && needs.push-production-worker-e2e.result != 'cancelled' }}
+    runs-on: d-sorg-fleet
+    timeout-minutes: 30
+    env:
+      RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Restore React baseline candidates
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: rate-web-baseline-candidates-${{ github.run_id }}-${{ github.run_attempt }}
+          path: visual-baseline-candidates
+
       - name: Declare isolated PyQt paths
-        working-directory: .
         run: |-
           echo "RATE_PYQT_VENV=${RUNNER_TEMP}/rate-pyqt-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
           echo "PYTEST_DEBUG_TEMPROOT=${RUNNER_TEMP}/rate-pyqt-pytest-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
 
       - name: Create isolated PyQt environment
-        working-directory: .
         run: >-
           python -m venv "$RATE_PYQT_VENV" &&
           mkdir -p "$PYTEST_DEBUG_TEMPROOT"
 
       - name: Install constrained PyQt render dependencies
-        working-directory: .
         run: >-
           "$RATE_PYQT_VENV/bin/python" -m pip install --no-cache-dir
           --constraint requirements-rate-pyqt.txt -e ".[gui,dev]"
 
       - name: Verify isolated PyQt runtime
-        working-directory: .
         run: >-
           "$RATE_PYQT_VENV/bin/python" -m pip check &&
           "$RATE_PYQT_VENV/bin/python" scripts/check_rate_pyqt_environment.py
           --constraints requirements-rate-pyqt.txt
 
       - name: Exercise protected PyQt tab visibility
-        working-directory: .
         env:
           QT_QPA_PLATFORM: offscreen
           RATE_PYQT_EVIDENCE_DIR: rate-pyqt-screenshots
@@ -195,20 +232,17 @@ jobs:
           tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py -q -n 0
 
       - name: Enforce protected visual baseline drift
-        working-directory: .
         run: >-
           "$RATE_PYQT_VENV/bin/python" -m rate_of_closure.visual_baseline_compare
           --candidate-root "$RATE_VISUAL_BASELINE_CANDIDATE_DIR"
           --candidate-commit "$GITHUB_SHA"
 
-      - name: Retain Playwright evidence
+      - name: Retain PyQt and baseline evidence
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: rate-web-playwright-trusted-push-${{ github.run_id }}-${{ github.run_attempt }}
+          name: rate-pyqt-trusted-push-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            src/rate_of_closure/web/playwright-report/
-            src/rate_of_closure/web/test-results/
             rate-pyqt-screenshots/
             visual-baseline-candidates/
           if-no-files-found: error

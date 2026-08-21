@@ -27,12 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.72                                    |
+| **Spec Version**        | 1.17.73                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.73 separates trusted PyQt rendered and baseline evidence from the
+React performance job result. The React job always retains its baseline
+candidate inputs when it is not cancelled; a dependent PyQt job restores those
+inputs and runs after either React success or failure. React performance, WCAG,
+PyQt render, and visual-baseline authorities keep their existing budgets, and
+the workflow remains failed when either independent job fails.
 
 Version 1.17.72 isolates the trusted rendered PyQt suite from mutable
 self-hosted Python package state. Every run attempt creates a private virtual
@@ -5060,6 +5067,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.73 | fix(rate-of-closure, ci): transfer React visual-baseline candidates to an independent non-cancelled PyQt evidence job so protected render and baseline authorities still execute after React performance failure, without weakening either job's budgets or overall workflow failure semantics. | #4610 |
 | 2026-08-20 | 1.17.72 | fix(rate-of-closure, ci): create run-attempt-scoped trusted PyQt venv and pytest-temporary roots, install the exact compatible NumPy/SciPy/PyQt stack without mutating shared pip caches, fail closed on pin/import drift before collection, and run both rendered tests and visual-baseline enforcement through the verified interpreter. | #4608 |
 | 2026-08-20 | 1.17.71 | fix(rate-of-closure, ci): isolate trusted functional, Axe, and protected performance phases in fresh Playwright processes; build once; warm the bundle/cache before unchanged interaction budgets; split Axe and timing evidence by tab/viewport; and retain phase-specific reports without weakening WCAG, latency, resize, or CLS standards. | #4602 |
 | 2026-08-20 | 1.17.70 | test(rate-of-closure): approve the post-merge hosted Linux PyQt launch-monitor reference from #4599, pinning its exact PNG hash and protected merge authority while leaving every other baseline unchanged. | #4600 |
