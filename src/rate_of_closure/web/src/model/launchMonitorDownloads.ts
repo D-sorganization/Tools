@@ -16,12 +16,20 @@ export function downloadJson(name: string, payload: unknown) {
 export function downloadCsv<T extends object>(name: string, rows: T[]) {
   const headers = [...new Set(rows.flatMap((row) => Object.keys(row)))];
   const quote = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
-  const lines = [headers, ...rows.map((row) => headers.map(
-    (key) => (row as Record<string, unknown>)[key],
-  ))];
-  downloadBlob(name, new Blob([
-    lines.map((line) => line.map(quote).join(",")).join("\n"),
-  ], { type: "text/csv;charset=utf-8" }));
+
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  let csv = headers.map(quote).join(",");
+  for (let i = 0; i < rows.length; i++) {
+    csv += "\n";
+    const row = rows[i] as Record<string, unknown>;
+    for (let j = 0; j < headers.length; j++) {
+      if (j > 0) csv += ",";
+      csv += quote(row[headers[j]]);
+    }
+  }
+
+  downloadBlob(name, new Blob([csv], { type: "text/csv;charset=utf-8" }));
 }
 
 export function downloadSvg(name: string, id: string) {
