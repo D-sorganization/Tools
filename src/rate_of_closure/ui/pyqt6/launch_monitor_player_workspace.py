@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
-    QHBoxLayout,
+    QGridLayout,
     QLabel,
     QMessageBox,
     QPushButton,
@@ -82,10 +82,7 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         self.confidence_spin.setRange(0.51, 0.999)
         self.confidence_spin.setDecimals(3)
         self.confidence_spin.setValue(0.95)
-        self.attestation = QCheckBox(
-            "I attest this column identifies a player; it was not inferred "
-            "from session, club, or row order."
-        )
+        self.attestation = QCheckBox("Explicit trusted player identity (not inferred)")
         self._build_canonical_controls()
         self.run_button = QPushButton("Run Offline Compatibility Covariation")
         self.scan_button = QPushButton("Rank Variable Pairs")
@@ -101,7 +98,11 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
             (self.method_combo, "Displayed covariation coefficient"),
             (self.min_samples_spin, "Minimum pairwise-complete shots per player"),
             (self.confidence_spin, "Pearson confidence level"),
-            (self.attestation, "Explicit player identity attestation"),
+            (
+                self.attestation,
+                "I attest this column identifies a player; it was not inferred "
+                "from session, club, or row order.",
+            ),
             (self.authority_url, "Canonical Upstream authority URL"),
             (self.corpus_reference_button, "Load authorized corpus reference"),
             (self.inspect_corpus_button, "Inspect authorized corpus aggregates"),
@@ -139,18 +140,15 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         form.addRow("Canonical authority:", self.authority_url)
         form.addRow(self.corpus_reference_button)
         form.addRow(self.canonical_limit)
-        buttons = QHBoxLayout()
-        for button in (
-            self.inspect_corpus_button,
-            self.refresh_corpus_button,
-            self.canonical_covariation_button,
-            self.run_button,
-            self.scan_button,
-            self.save_button,
-            self.load_button,
-            self.export_button,
-        ):
-            buttons.addWidget(button)
+        buttons = QGridLayout()
+        buttons.addWidget(self.inspect_corpus_button, 0, 0)
+        buttons.addWidget(self.refresh_corpus_button, 0, 1)
+        buttons.addWidget(self.canonical_covariation_button, 1, 0, 1, 2)
+        buttons.addWidget(self.run_button, 2, 0, 1, 2)
+        buttons.addWidget(self.scan_button, 3, 0)
+        buttons.addWidget(self.save_button, 3, 1)
+        buttons.addWidget(self.load_button, 4, 0)
+        buttons.addWidget(self.export_button, 4, 1)
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("Player Covariation Workspace"))
         boundary = QLabel(
@@ -192,7 +190,6 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         numeric_fields: list[str] | None = None,
     ) -> None:
         """Replace the referenced rows and reset identity attestation."""
-
         self._frame = frame
         self._source_name = source_name
         string_columns = sorted(str(column) for column in frame.columns)
@@ -237,7 +234,6 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
 
     def project(self) -> LaunchMonitorProject:
         """Return validated reference-only state for the current controls."""
-
         return LaunchMonitorProject(
             name=f"{self._source_name} player covariation",
             dataset=dataset_reference_for_frame(self._frame, self._source_name),

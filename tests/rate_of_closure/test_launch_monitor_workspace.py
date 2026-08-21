@@ -188,6 +188,7 @@ def test_pyqt_player_workspace_exposes_fail_closed_canonical_controls(qtbot) -> 
     assert not panel.canonical_covariation_button.isEnabled()
     assert not panel.inspect_corpus_button.isEnabled()
     assert "20,000" in panel.canonical_limit.text()
+    assert panel.minimumSizeHint().width() <= 700
 
     panel.set_dataset(
         pd.DataFrame(
@@ -199,6 +200,7 @@ def test_pyqt_player_workspace_exposes_fail_closed_canonical_controls(qtbot) -> 
         ),
         "canonical-test.csv",
     )
+    assert panel.minimumSizeHint().width() <= 700
     panel.identity_combo.setCurrentText("player_id")
     panel.attestation.setChecked(True)
     panel._export_payload = {"contract_version": "canonical-test"}

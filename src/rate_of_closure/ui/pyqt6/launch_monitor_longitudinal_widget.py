@@ -78,7 +78,7 @@ class LaunchMonitorLongitudinalWidget(QWidget):
         self.metric_combo = self._combo("Longitudinal performance metric")
         self.player_attest = QCheckBox("Player identity is supplied and trusted")
         self.session_attest = QCheckBox(
-            "Session identity and order are supplied and trusted"
+            "Session identity/order are explicit and trusted"
         )
         self.higher_better = QCheckBox("Higher metric values represent improvement")
         self.higher_better.setChecked(True)
