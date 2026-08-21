@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import asdict
-from pathlib import Path
 
 import pandas as pd
 from PyQt6.QtWidgets import (
@@ -36,8 +35,7 @@ from rate_of_closure.launch_monitor_workspace import (
     LaunchMonitorProject,
     PlayerIdentityBinding,
     dataset_reference_for_frame,
-    export_analysis_bundle,
-    load_project,
+    load_project_versioned,
     save_project,
 )
 from rate_of_closure.player_covariation import (
@@ -52,6 +50,9 @@ from rate_of_closure.ui.pyqt6.launch_monitor_canonical_workspace_mixin import (
 )
 from rate_of_closure.ui.pyqt6.launch_monitor_covariation_view import (
     LaunchMonitorCovariationView,
+)
+from rate_of_closure.ui.pyqt6.launch_monitor_player_exports import (
+    PlayerWorkspaceExportMixin,
 )
 
 
@@ -365,7 +366,7 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
         if not selected:
             return
         try:
-            project = load_project(selected)
+            project, imported_from = load_project_versioned(selected)
             current = dataset_reference_for_frame(self._frame, self._source_name)
             if project.dataset.sha256 != current.sha256:
                 raise ValueError("saved project references a different dataset")
@@ -376,21 +377,16 @@ class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
             self.confidence_spin.setValue(project.selection.confidence_level)
             self.attestation.setChecked(project.identity.user_attested)
             self._canonical_reference = project.canonical_dataset
+            self.status.setText(
+                f"{imported_from} project settings restored against the "
+                "matching dataset."
+            )
             self._refresh_enabled()
         except (OSError, ValueError) as error:
             QMessageBox.warning(self, "Project Not Loaded", str(error))
 
     def export_dialog(self) -> None:
-        if not self._export_payload:
-            return
-        selected = QFileDialog.getExistingDirectory(self, "Choose Full Export Parent")
-        if selected:
-            export_analysis_bundle(
-                Path(selected) / "launch-monitor-analysis-bundle",
-                self.project(),
-                self._export_payload,
-                self._frame,
-            )
+        PlayerWorkspaceExportMixin.export_dialog(self)
 
 
 __all__ = ["LaunchMonitorPlayerWorkspace"]

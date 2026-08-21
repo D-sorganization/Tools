@@ -7,6 +7,11 @@ import {
   type DistanceUnit,
 } from "../model/launchMonitorPerformance";
 import { fingerprintLaunchMonitorRows } from "../model/launchMonitorWorkspace";
+import {
+  createPerformanceWorkspaceV3,
+  loadPerformanceWorkspace,
+} from "../model/launchMonitorPerformanceWorkspace";
+import { serializeWorkspaceV3 } from "../model/launchMonitorWorkspaceV3";
 import { LaunchMonitorSourceBackedStrokesGained } from "./LaunchMonitorSourceBackedStrokesGained";
 import { LaunchMonitorLongitudinalAnalysis } from "./LaunchMonitorLongitudinalAnalysis";
 
@@ -14,16 +19,19 @@ interface Props { rows: LaunchMonitorRow[]; sourceName: string }
 const field = "rounded border border-slate-700 bg-slate-950 px-2 py-1 text-sm";
 const button = "rounded border border-slate-700 px-3 py-2 text-sm disabled:opacity-40";
 
-const download = (name: string, content: string, type: string) => {
+const download = (name: string, content: BlobPart, type: string) => {
   const url = URL.createObjectURL(new Blob([content], { type }));
   const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click();
   URL.revokeObjectURL(url);
 };
-const csv = (rows: LaunchMonitorRow[]) => {
-  const columns = [...new Set(rows.flatMap(Object.keys))];
-  const cell = (value: unknown) => `"${String(value ?? "").replace(/"/g, '""')}"`;
-  return [columns, ...rows.map((row) => columns.map((column) => row[column]))]
-    .map((row) => row.map(cell).join(",")).join("\n");
+const downloadPng = (element: SVGSVGElement) => {
+  const image = new Image();
+  image.onload = () => {
+    const canvas = document.createElement("canvas"); canvas.width = 1280; canvas.height = 480;
+    canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => { if (blob) download("dispersion.png", blob, "image/png"); });
+  };
+  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(element.outerHTML)}`;
 };
 
 export function LaunchMonitorPerformanceWorkspace({ rows, sourceName }: Props) {
@@ -39,6 +47,7 @@ export function LaunchMonitorPerformanceWorkspace({ rows, sourceName }: Props) {
   const [player, setPlayer] = useState(""); const [session, setSession] = useState(""); const [order, setOrder] = useState(""); const [metric, setMetric] = useState("");
   const [playerAttested, setPlayerAttested] = useState(false); const [sessionAttested, setSessionAttested] = useState(false);
   const [trend, setTrend] = useState<ReturnType<typeof analyzeSessionTrend> | null>(null); const [error, setError] = useState("");
+  const [loadedSummary, setLoadedSummary] = useState<Record<string, unknown> | null>(null);
   const svg = useRef<SVGSVGElement>(null); const loadInput = useRef<HTMLInputElement>(null);
 
   const runDispersion = () => { try {
@@ -49,11 +58,19 @@ export function LaunchMonitorPerformanceWorkspace({ rows, sourceName }: Props) {
     catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)); } };
   const runTrend = () => { try { setTrend(analyzeSessionTrend(rows, { metricColumn: metric, sessionColumn: session, sessionOrderColumn: order, playerColumn: player, playerIdentityAttested: playerAttested, sessionIdentityAttested: sessionAttested })); setError(""); }
     catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)); } };
-  const save = () => download("performance.lmanalysis.json", JSON.stringify({ contractVersion: "launch-monitor-performance/1.0", datasetSha256: fingerprint, sourceName,
-    settings: { carry, lateral, carryUnit, lateralUnit, target }, dispersion, proxy, strokes, trend }, null, 2), "application/json");
-  const load = async (file: File) => { try { const payload = JSON.parse(await file.text()); if (payload.datasetSha256 !== fingerprint) throw new RangeError("Saved analysis references a different dataset");
-    setCarry(payload.settings.carry); setLateral(payload.settings.lateral); setCarryUnit(payload.settings.carryUnit); setLateralUnit(payload.settings.lateralUnit); setTarget(payload.settings.target);
-    setDispersion(payload.dispersion); setProxy(payload.proxy); setStrokes(payload.strokes); setTrend(payload.trend); setError("");
+  const settings = () => ({ carry, lateral, carryUnit, lateralUnit, target, before, after, baseline,
+    player, session, order, metric, playerAttested, sessionAttested });
+  const save = () => download("performance.lmanalysis.json", `${serializeWorkspaceV3(createPerformanceWorkspaceV3({
+    sourceName, datasetSha256: fingerprint, rowCount: rows.length, settings: settings(),
+    results: { dispersion, proxy, strokes, trend },
+  }))}\n`, "application/json");
+  const load = async (file: File) => { try { const payload = loadPerformanceWorkspace(await file.text(), fingerprint); const saved = payload.settings;
+    setCarry(String(saved.carry ?? "")); setLateral(String(saved.lateral ?? "")); setCarryUnit(String(saved.carryUnit ?? "yd") as DistanceUnit); setLateralUnit(String(saved.lateralUnit ?? "yd") as DistanceUnit); setTarget(Number(saved.target ?? 150));
+    setBefore(String(saved.before ?? "")); setAfter(String(saved.after ?? "")); setBaseline(String(saved.baseline ?? ""));
+    setPlayer(String(saved.player ?? "")); setSession(String(saved.session ?? "")); setOrder(String(saved.order ?? "")); setMetric(String(saved.metric ?? ""));
+    setPlayerAttested(saved.playerAttested === true); setSessionAttested(saved.sessionAttested === true);
+    setDispersion(null); setProxy(null); setStrokes(null); setTrend(null); setLoadedSummary(payload.results);
+    setError(`${payload.importedFrom} settings and aggregate results loaded; rerun to regenerate row-aligned plots.`);
   } catch (caught) { setError(caught instanceof Error ? caught.message : String(caught)); } };
 
   const select = (label: string, value: string, update: (value: string) => void, choices = numeric) => <label className="text-sm">{label}<select aria-label={label} title={`Select ${label.toLowerCase()} with an explicit unit or identity role.`} value={value} onChange={(event) => update(event.target.value)} className={`${field} ml-2`}><option value="">Select</option>{choices.map((choice) => <option key={choice}>{choice}</option>)}</select></label>;
@@ -77,8 +94,9 @@ export function LaunchMonitorPerformanceWorkspace({ rows, sourceName }: Props) {
     <div className="flex flex-wrap gap-3">{select("Trusted player identity column", player, (value) => { setPlayer(value); setPlayerAttested(false); }, columns)}{select("Trusted session identity column", session, (value) => { setSession(value); setSessionAttested(false); }, columns)}{select("Explicit session order column", order, setOrder)}{select("Session trend metric", metric, setMetric)}
       <label><input type="checkbox" aria-label="Attest trusted player identity" title="Identity must be supplied, never inferred." checked={playerAttested} onChange={(event) => setPlayerAttested(event.target.checked)} /> Player trusted</label><label><input type="checkbox" aria-label="Attest trusted session identity and order" title="Session identity and order must be supplied, never inferred." checked={sessionAttested} onChange={(event) => setSessionAttested(event.target.checked)} /> Session/order trusted</label><button type="button" disabled={!playerAttested || !sessionAttested || !player || !session || !order || !metric} onClick={runTrend} title="Calculate session and cumulative means using explicit identities and order." className={button}>Run Session Trend</button></div>
     {trend && <p>{trend.points.length} player-session points · {trend.formula}</p>}
+    {loadedSummary && <details title="Loaded aggregate results remain row-free"><summary>Loaded saved aggregate results</summary><pre aria-label="Loaded saved aggregate results" className="max-h-48 overflow-auto text-xs">{JSON.stringify(loadedSummary, null, 2)}</pre></details>}
     <LaunchMonitorLongitudinalAnalysis rows={rows} columns={columns} numeric={numeric} />
-    <div className="flex flex-wrap gap-2"><button type="button" title="Save fingerprint-bound settings, results, formulas, and provenance." onClick={save} className={button}>Save Performance Analysis</button><input ref={loadInput} type="file" className="hidden" aria-label="Load saved performance analysis" onChange={(event) => { const file = event.target.files?.[0]; if (file) void load(file); }}/><button type="button" title="Reload only when the current dataset fingerprint matches." onClick={() => loadInput.current?.click()} className={button}>Load Performance Analysis</button><button type="button" disabled={!svg.current} title="Export the current SVG with its visible units and direction convention." onClick={() => svg.current && download("dispersion.svg", svg.current.outerHTML, "image/svg+xml")} className={button}>Export Plot SVG</button><button type="button" title="Export every retained backing row as CSV." onClick={() => download("performance-backing.csv", csv(rows), "text/csv")} className={button}>Export Backing Data</button></div>
+    <div className="flex flex-wrap gap-2"><button type="button" title="Save row-free v3 settings, aggregate results, formulas, exclusions, and provenance." onClick={save} className={button}>Save Performance Analysis</button><input ref={loadInput} type="file" className="hidden" aria-label="Load saved performance analysis" onChange={(event) => { const file = event.target.files?.[0]; if (file) void load(file); }}/><button type="button" title="Reload only when the current dataset fingerprint matches; v1 imports are labelled compatibility." onClick={() => loadInput.current?.click()} className={button}>Load Performance Analysis</button><button type="button" disabled={!dispersion} title="Export the current SVG with its visible units and direction convention." onClick={() => svg.current && download("dispersion.svg", svg.current.outerHTML, "image/svg+xml")} className={button}>Export Plot SVG</button><button type="button" disabled={!dispersion} title="Export the current plot as PNG with the same visible units." onClick={() => svg.current && downloadPng(svg.current)} className={button}>Export Plot PNG</button><button type="button" disabled title="Unavailable in browser: PDF plot export requires the desktop renderer." className={button}>Export Plot PDF</button><button type="button" disabled title="Unavailable in browser: restricted backing rows require explicit desktop approval." className={button}>Export Backing Data</button></div>
     {error && <p role="alert" className="text-red-300">{error}</p>}
   </section>;
 }

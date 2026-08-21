@@ -3,6 +3,12 @@
 import type { LaunchMonitorRow } from "./launchMonitorAnalysisTypes";
 import { sha256Text } from "./launchMonitorFingerprint";
 import { parseCanonicalDatasetReference, type CanonicalDatasetReference } from "./launchMonitorV2Client";
+import {
+  createWorkspaceV3Bundle,
+  parseWorkspaceV3,
+  serializeWorkspaceV3,
+  type WorkspaceV3,
+} from "./launchMonitorWorkspaceV3";
 
 export const LAUNCH_MONITOR_WORKSPACE_CONTRACT_VERSION = "2.0.0" as const;
 
@@ -95,9 +101,78 @@ export function buildPlayerCovariationRequest(project: LaunchMonitorProject): Pl
   };
 }
 
-export function serializeLaunchMonitorProject(project: LaunchMonitorProject): string {
+function rowFreeResult(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(rowFreeResult);
+  if (!value || typeof value !== "object") return value;
+  const forbidden = new Set(["rows", "records", "backing_data", "backing_rows", "per_player"]);
+  return Object.fromEntries(Object.entries(value).filter(([key, item]) =>
+    !forbidden.has(key) && !(Array.isArray(item) && item.length > 0 && typeof item[0] === "object"),
+  ).map(([key, item]) => [key, rowFreeResult(item)]));
+}
+
+function workspaceV3(project: LaunchMonitorProject, result?: Record<string, unknown>): WorkspaceV3 {
   validateProject(project);
-  return `${JSON.stringify(project, null, 2)}\n`;
+  const canonical = project.canonicalDataset;
+  const payload = result === undefined ? null : rowFreeResult(result);
+  return parseWorkspaceV3({
+    schema_id: "launch-monitor-workspace/v3",
+    schema_version: 3,
+    name: project.name,
+    dataset: {
+      source_name: project.dataset.sourceName,
+      repository: project.dataset.repository,
+      revision: project.dataset.revision,
+      relative_path: project.dataset.relativePath,
+      content_sha256: project.dataset.sha256,
+      row_count: project.dataset.rowCount,
+      classification: "restricted",
+      authority_root_id: canonical?.root_id ?? null,
+      authority_repository: canonical?.repository ?? null,
+      authority_commit: canonical?.commit ?? null,
+      manifest_sha256: canonical?.manifest_sha256 ?? null,
+      authority_content_sha256: canonical?.content_sha256 ?? null,
+      authority_row_count: canonical?.expected_row_count ?? null,
+    },
+    identity_evidence: { player: {
+      column: project.playerIdentity.column,
+      user_attested: project.playerIdentity.userAttested,
+      evidence: "Dataset owner explicitly attested this player identifier.",
+    } },
+    analyses: [{
+      analysis_id: "player-covariation",
+      operation: "player_covariation",
+      settings: {
+        x_column: project.selection.x,
+        y_column: project.selection.y,
+        method: "pearson",
+        minimum_samples: project.selection.minSamples,
+        confidence_level: project.selection.confidenceLevel,
+      },
+      result: {
+        status: payload === null ? "unavailable" : "available",
+        authority: canonical ? "upstream-v2" : "offline-compatibility-v1",
+        authority_commit: canonical?.commit ?? null,
+        response_sha256: payload === null ? null : sha256Text(JSON.stringify(payload)),
+        payload,
+        units: { [project.selection.x]: "source-unit-unavailable", [project.selection.y]: "source-unit-unavailable" },
+        formulas: ["pairwise-complete player covariation"],
+        exclusions: ["Row-aligned records are retained outside the saved project."],
+      },
+      backing_join: {
+        algorithm: "sha256-canonical-json-v1", row_count: project.dataset.rowCount,
+        sha256: null, status: "available-on-authorized-export", reason: null,
+      },
+    }],
+    export_policy: {
+      persist_rows: false,
+      backing_rows: "explicit-restricted-approval",
+      reason: "Restricted rows remain outside saved projects and browser persistence.",
+    },
+  });
+}
+
+export function serializeLaunchMonitorProject(project: LaunchMonitorProject): string {
+  return `${serializeWorkspaceV3(workspaceV3(project))}\n`;
 }
 
 export function parseLaunchMonitorProject(text: string): LaunchMonitorProject {
@@ -105,10 +180,52 @@ export function parseLaunchMonitorProject(text: string): LaunchMonitorProject {
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
     throw new RangeError("Project must be a JSON object");
   }
+  const wire = candidate as Record<string, unknown>;
+  if (wire.schema_id === "launch-monitor-workspace/v3") {
+    const saved = parseWorkspaceV3(wire);
+    const dataset = saved.dataset as Record<string, unknown>;
+    const identity = (saved.identity_evidence as Record<string, Record<string, unknown>>).player;
+    const analysis = saved.analyses.find((item) => item.operation === "player_covariation");
+    if (!analysis) throw new RangeError("Saved v3 project has no player covariation analysis");
+    const settings = analysis.settings as Record<string, unknown>;
+    const canonical = dataset.authority_root_id ? {
+      root_id: String(dataset.authority_root_id), repository: String(dataset.authority_repository),
+      commit: String(dataset.authority_commit), manifest_sha256: String(dataset.manifest_sha256),
+      content_sha256: String(dataset.authority_content_sha256), expected_row_count: Number(dataset.authority_row_count),
+    } : undefined;
+    const project: LaunchMonitorProject = {
+      contractVersion: LAUNCH_MONITOR_WORKSPACE_CONTRACT_VERSION,
+      name: String(saved.name),
+      dataset: {
+        sourceName: String(dataset.source_name), repository: String(dataset.repository),
+        revision: String(dataset.revision), relativePath: String(dataset.relative_path),
+        sha256: String(dataset.content_sha256), rowCount: Number(dataset.row_count),
+      },
+      playerIdentity: { column: String(identity.column), userAttested: identity.user_attested === true },
+      selection: {
+        x: String(settings.x_column), y: String(settings.y_column),
+        minSamples: Number(settings.minimum_samples), confidenceLevel: Number(settings.confidence_level),
+      },
+      ...(canonical ? { canonicalDataset: parseCanonicalDatasetReference(canonical) } : {}),
+    };
+    validateProject(project);
+    return project;
+  }
   const project = candidate as LaunchMonitorProject & { rows?: unknown };
   if ("rows" in project) throw new RangeError("Saved projects cannot embed dataset rows");
   validateProject(project);
   return project;
+}
+
+export function parseLaunchMonitorProjectVersioned(text: string): {
+  project: LaunchMonitorProject;
+  importedFrom: "v3" | "v2-compatibility";
+} {
+  const wire: unknown = JSON.parse(text);
+  const importedFrom = wire && typeof wire === "object" && !Array.isArray(wire)
+    && (wire as Record<string, unknown>).schema_id === "launch-monitor-workspace/v3"
+    ? "v3" : "v2-compatibility";
+  return { project: parseLaunchMonitorProject(text), importedFrom };
 }
 
 export async function runPlayerCovariation(
@@ -122,47 +239,12 @@ export function fingerprintLaunchMonitorRows(rows: LaunchMonitorRow[]): string {
   return sha256Text(JSON.stringify(rows));
 }
 
-const csvCell = (value: unknown): string => {
-  const text = value === null || value === undefined ? "" : String(value);
-  return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
-};
-
-const rowsToCsv = (rows: LaunchMonitorRow[]): string => {
-  const columns = [...new Set(rows.flatMap((row) => Object.keys(row)))];
-  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
-  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports
-  let csv = columns.map(csvCell).join(",") + "\n";
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    let rowString = "";
-    for (let j = 0; j < columns.length; j++) {
-      if (j > 0) rowString += ",";
-      rowString += csvCell(row[columns[j]]);
-    }
-    csv += rowString + "\n";
-  }
-  return csv;
-};
-
 export async function createAnalysisExportBundle(
   project: LaunchMonitorProject,
   result: Record<string, unknown>,
   backingRows: LaunchMonitorRow[],
 ) {
-  const files = {
-    "project.json": serializeLaunchMonitorProject(project),
-    "result.json": `${JSON.stringify(result, null, 2)}\n`,
-    "backing_rows.csv": rowsToCsv(backingRows),
-  };
-  const entries = Object.entries(files).map(([name, content]) => [
-    name, { sha256: sha256Text(content), bytes: new TextEncoder().encode(content).byteLength },
-  ] as const);
-  return {
-    files,
-    manifest: {
-      contractVersion: LAUNCH_MONITOR_WORKSPACE_CONTRACT_VERSION,
-      purpose: "explicit full analysis export including backing rows",
-      files: Object.fromEntries(entries),
-    },
-  };
+  return createWorkspaceV3Bundle(workspaceV3(project, result), backingRows, {
+    platform: "browser", includeBackingRows: true, restrictedDataApproved: false,
+  });
 }

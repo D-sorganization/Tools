@@ -5,7 +5,7 @@ import type { LaunchMonitorAnalysisResult, LaunchMonitorRow } from "../model/lau
 import {
   createAnalysisExportBundle,
   fingerprintLaunchMonitorRows,
-  parseLaunchMonitorProject,
+  parseLaunchMonitorProjectVersioned,
   serializeLaunchMonitorProject,
   type LaunchMonitorProject,
 } from "../model/launchMonitorWorkspace";
@@ -133,14 +133,15 @@ export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
 
   const load = async (file: File) => {
     try {
-      const saved = parseLaunchMonitorProject(await file.text());
+      const imported = parseLaunchMonitorProjectVersioned(await file.text());
+      const saved = imported.project;
       if (saved.dataset.sha256 !== datasetSha) throw new RangeError("Saved project references a different dataset");
       setIdentity(saved.playerIdentity.column);
       setAttested(saved.playerIdentity.userAttested);
       setX(saved.selection.x);
       setY(saved.selection.y);
       setCanonicalReference(saved.canonicalDataset ?? null);
-      setMessage("Saved project settings restored against the matching dataset fingerprint.");
+      setMessage(`${imported.importedFrom} project settings restored against the matching dataset fingerprint.`);
     } catch (caught) {
       setMessage(caught instanceof Error ? caught.message : String(caught));
     }
@@ -151,6 +152,7 @@ export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
     if (!analysis) return;
     const bundle = await createAnalysisExportBundle(project(), analysis, rows);
     download("launch-monitor-analysis-bundle.json", JSON.stringify(bundle, null, 2));
+    setMessage("Row-free v3 bundle exported. Restricted backing rows are unavailable in browser exports; use the explicitly approved desktop export when authorized.");
   };
 
   return <section aria-label="Player analytics workspace" className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
@@ -211,7 +213,7 @@ export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
         onChange={(event) => { const file = event.target.files?.[0]; if (file) void load(file); }} />
       <button type="button" title="Load settings from a saved project after fingerprint verification" onClick={() => loadInput.current?.click()}
         className="rounded border border-slate-700 px-3 py-2 text-sm">Load Project</button>
-      <button type="button" disabled={!result && !canonicalResult} title="Export the project, result, manifest, hashes, and explicit backing rows"
+      <button type="button" disabled={!result && !canonicalResult} title="Export a row-free v3 project, aggregate result, manifest, and hashes; restricted backing rows are unavailable in browsers"
         onClick={() => void exportBundle()} className="rounded border border-slate-700 px-3 py-2 text-sm disabled:opacity-40">Export Full Bundle</button>
     </div>
     <p role="status" className="mt-3 text-sm text-slate-400">{message}</p>
