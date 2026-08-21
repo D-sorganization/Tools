@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Protocol, TypeVar, cast, runtime_checkable
+from typing import Any, Protocol, TypeVar, cast, runtime_checkable
 
 import numpy as np
 
@@ -30,7 +30,7 @@ from .simulation_types import (
 MAX_CHUNK_POSITION_CELLS = 500_000
 
 
-def _owned_array(value: object, dtype: object) -> np.ndarray:
+def _owned_array(value: Any, dtype: Any) -> np.ndarray:
     result: np.ndarray = np.array(value, dtype=dtype, copy=True)
     result.setflags(write=False)
     return result
@@ -160,7 +160,7 @@ class SimulationResultChunk:
             and raw_impacts.dtype != np.dtype(bool),
             "impact indices must contain genuine integer values",
         )
-        impact_bounds = np.iinfo(np.dtype(int))
+        impact_bounds = np.iinfo(np.intp)
         require(
             bool(np.all(raw_impacts <= impact_bounds.max))
             and bool(np.all(raw_impacts >= impact_bounds.min)),
@@ -182,16 +182,19 @@ class SimulationResultChunk:
         for row, outcome in enumerate(outcomes):
             if outcome.status is NUMERICAL_FAILURE:
                 require(
-                    not np.any(valid[row])
-                    and np.all(np.isnan(positions[row]))
-                    and impacts[row] == -1,
+                    bool(not np.any(valid[row]))
+                    and bool(np.all(np.isnan(positions[row])))
+                    and bool(impacts[row] == -1),
                     "numerical failure chunk trace must be unavailable",
                 )
                 continue
-            require(np.any(valid[row]), "evaluated chunk trace must be available")
             require(
-                np.all(np.isfinite(positions[row][valid[row]]))
-                and np.all(np.isnan(positions[row][~valid[row]])),
+                bool(np.any(valid[row])),
+                "evaluated chunk trace must be available",
+            )
+            require(
+                bool(np.all(np.isfinite(positions[row][valid[row]])))
+                and bool(np.all(np.isnan(positions[row][~valid[row]]))),
                 "chunk positions must agree with sample validity",
             )
             require(
