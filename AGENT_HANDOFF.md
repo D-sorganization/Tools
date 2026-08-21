@@ -63,7 +63,7 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4142 work.** `feat/4142-ensemble-next` from main `9b24fc6d2` adds
+**Active #4142 work.** PR #4623 from main `9b24fc6d2` adds
 atomic/checksummed bounded NPZ resume with exact header/config drift rejection.
 Eager requests, final materialization, memory budgets, and UI transport remain.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0

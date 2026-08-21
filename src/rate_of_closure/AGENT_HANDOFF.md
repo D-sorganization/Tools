@@ -62,7 +62,7 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 is active on `feat/4142-ensemble-next` from main `9b24fc6d2`.
+#4142 R11.5 is active in PR #4623 from main `9b24fc6d2`.
 The new durable sink atomically checkpoints bounded pickle-free chunks, verifies
 checksums and exact configuration/header identity before resume, retains valid
 prefixes on abort, and restores progress/failure counts. Remaining R11.5 work:
