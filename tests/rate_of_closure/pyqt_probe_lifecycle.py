@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
+from PyQt6 import sip
 from PyQt6.QtCore import QCoreApplication, QEvent
 from PyQt6.QtWidgets import QApplication, QMainWindow
 
@@ -27,4 +28,5 @@ def shutdown_probe(
     window.deleteLater()
     QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     application.processEvents()
+    assert sip.isdeleted(window), "probe window survived deferred deletion"
     application.quit()
