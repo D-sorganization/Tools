@@ -22,12 +22,12 @@ drift/control grip-force attribution, integrated braking/work/impulse metrics,
 Pareto ranking, and a PyQt **Drift Transfer** analysis tab.
 
 Companion issue **#4430** is active on
-PR **#4618** (`feat/4430-rotating-base-companion`). The branch has the source-pinned
+merged PR **#4618** (`87ff0ea8c`). Tools `main` now has the source-pinned
 18-case authority, exact qualified rotating-base physics, a registered
 full-resolution provider, asynchronous PyQt surface, and React/Tauri evidence
 browser. The web surface consumes the digest-pinned complete 18-run catalog
-and renders five reviewer trace groups. Protected squash auto-merge is enabled;
-the active CI fix allows platform roundoff but retains strict residual gates.
+and renders five reviewer trace groups. Cross-platform scalar matching allows
+solver roundoff while retaining stricter constraint and power-identity gates.
 
 **The scientific boundary shipped with it and still binds.** The widget fails
 closed for the triple and golfer tiers. Do not relabel the double model's
@@ -58,7 +58,7 @@ maintenance rather than feature growth: Bolt perf passes on the web
 Nelder-Mead simplex sort, a #3745 GUI/error-handling cleanup, a 20-PR
 fleet-CI-relief consolidation, physics hot-loop allocation removal, and earlier
 `pendulum-core` maturin/pyo3 packaging + import-canonicalization work. No open
-PR #4618 owns #4430 delivery; do not duplicate its active branch. Its catalog
+PR #4618 owns the merged Tools delivery; do not duplicate it. Its catalog
 digest is `66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678`.
 
 ## Must-Read Architecture Pointers
@@ -111,8 +111,8 @@ double-collect by also passing the embedded path.
 
 ## Roadmap (ordered)
 
-1. Finish #4430's full repository gates, protected PR, and UpstreamDrift
-   consumer pin for the completed PyQt/React surfaces; preserve every
+1. Finish #4430's UpstreamDrift consumer pin for the merged PyQt/React
+   surfaces and close its remaining gates; preserve every
    scientific-promotion boundary and adverse row.
 2. If/when epic #4103 Phase 1 lands the double/triple pendulum
    `SwingSource` integration, expect a coordinated PR here exposing any
