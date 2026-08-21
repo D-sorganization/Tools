@@ -6,6 +6,7 @@ import json
 import os
 from dataclasses import asdict
 from pathlib import Path
+from typing import TypeAlias
 
 import pandas as pd
 from PyQt6.QtWidgets import (
@@ -34,7 +35,7 @@ from rate_of_closure.launch_monitor_v2_client import (
     UpstreamV2Client,
 )
 
-ScoringResult = SourceBackedStrokesGainedResult | StrokesGainedResponseV1
+ScoringResult: TypeAlias = SourceBackedStrokesGainedResult | StrokesGainedResponseV1
 
 
 class LaunchMonitorSourceBackedStrokesGainedWidget(QWidget):
@@ -78,7 +79,7 @@ class LaunchMonitorSourceBackedStrokesGainedWidget(QWidget):
         self.club_group = self._combo("Trusted club identity column for SG")
         self.order_column = self._combo("Explicit longitudinal order column for SG")
         self.summary_attest = QCheckBox(
-            "I attest the selected identities and order are explicit and trustworthy"
+            "Explicit trusted grouping identities and order"
         )
         self.summary_attest.setAccessibleName(
             "Attest strokes-gained grouping identities and longitudinal order"

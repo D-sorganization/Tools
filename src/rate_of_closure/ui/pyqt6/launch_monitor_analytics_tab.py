@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QFormLayout,
     QFrame,
-    QHBoxLayout,
+    QGridLayout,
     QLabel,
     QListWidget,
     QMessageBox,
@@ -106,16 +106,13 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.export_data_button = QPushButton("Export Retained Data...")
         self.export_result_button = QPushButton("Export Analysis...")
         self.export_result_button.setEnabled(False)
-        buttons = QHBoxLayout()
-        for button in (
-            self.import_button,
-            self.private_corpus_button,
-            self.demo_button,
-            self.export_data_button,
-            self.export_result_button,
-        ):
-            buttons.addWidget(button)
-        buttons.addStretch(1)
+        buttons = QGridLayout()
+        buttons.addWidget(self.import_button, 0, 0)
+        buttons.addWidget(self.private_corpus_button, 0, 1)
+        buttons.addWidget(self.demo_button, 0, 2)
+        buttons.addWidget(self.export_data_button, 1, 0)
+        buttons.addWidget(self.export_result_button, 1, 1)
+        buttons.setColumnStretch(2, 1)
 
         self.convention_combo = QComboBox()
         self.convention_combo.addItem("App-Native", ConventionId.APP_NATIVE)
@@ -206,10 +203,10 @@ class LaunchMonitorAnalyticsTab(QWidget):
         output_layout.addWidget(self.details)
         output_layout.addWidget(self.player_workspace)
         output_layout.addWidget(self.performance_workspace)
-        right_scroll = QScrollArea()
-        right_scroll.setWidgetResizable(True)
-        right_scroll.setFrameShape(QFrame.Shape.NoFrame)
-        right_scroll.setWidget(output_widget)
+        self.output_scroll = QScrollArea()
+        self.output_scroll.setWidgetResizable(True)
+        self.output_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        self.output_scroll.setWidget(output_widget)
 
         controls_widget = QWidget()
         controls_layout = QVBoxLayout(controls_widget)
@@ -220,12 +217,12 @@ class LaunchMonitorAnalyticsTab(QWidget):
         left_scroll.setWidgetResizable(True)
         left_scroll.setFrameShape(QFrame.Shape.NoFrame)
         left_scroll.setWidget(controls_widget)
-        left_scroll.setMinimumWidth(340)
+        left_scroll.setMinimumWidth(300)
 
         body = QSplitter(Qt.Orientation.Horizontal)
         body.addWidget(left_scroll)
-        body.addWidget(right_scroll)
-        body.setSizes([360, 900])
+        body.addWidget(self.output_scroll)
+        body.setSizes([320, 900])
 
         layout = QVBoxLayout(self)
         layout.addWidget(heading)

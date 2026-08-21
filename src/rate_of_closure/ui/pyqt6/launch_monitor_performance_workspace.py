@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QFileDialog,
     QFormLayout,
-    QHBoxLayout,
+    QGridLayout,
     QLabel,
     QLineEdit,
     QMessageBox,
@@ -110,7 +110,7 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
         self.metric_combo = self._combo("Session trend metric")
         self.player_attest = QCheckBox("Player identity is supplied and trusted")
         self.session_attest = QCheckBox(
-            "Session identity and order are supplied and trusted"
+            "Session identity/order are explicit and trusted"
         )
         self.trend_button = QPushButton("Run Session Trend")
         self.trend_status = QLabel(
@@ -165,21 +165,23 @@ class LaunchMonitorPerformanceWorkspace(PerformanceStrokesMixin, QWidget):
         tabs.addTab(self.source_backed_sg, "Source-Backed SG")
         tabs.addTab(self._trend_page(), "Session Trends")
         tabs.addTab(self.longitudinal, "Longitudinal Inference")
-        buttons = QHBoxLayout()
-        for button in (
-            self.save_button,
-            self.load_button,
-            self.export_plot_button,
-            self.export_data_button,
-        ):
-            buttons.addWidget(button)
-        layout = QVBoxLayout(self)
-        layout.addWidget(
-            QLabel(
-                "Performance Analytics — explicit local v1 compatibility/offline "
-                "bookkeeping; canonical v2 is the inferential authority"
+        buttons = QGridLayout()
+        for row, button in enumerate(
+            (
+                self.save_button,
+                self.load_button,
+                self.export_plot_button,
+                self.export_data_button,
             )
+        ):
+            buttons.addWidget(button, row, 0)
+        layout = QVBoxLayout(self)
+        authority = QLabel(
+            "Performance Analytics — explicit local v1 compatibility/offline "
+            "bookkeeping; canonical v2 is the inferential authority"
         )
+        authority.setWordWrap(True)
+        layout.addWidget(authority)
         layout.addWidget(tabs)
         layout.addLayout(buttons)
         self.dispersion_button.clicked.connect(self.run_dispersion_safely)
