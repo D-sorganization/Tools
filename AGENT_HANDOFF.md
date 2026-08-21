@@ -63,13 +63,10 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4142 work.** PR #4623 merged at `b886d4373`; issue #4626 continues
-R11.5 on branch `feat/4626-streaming-ensemble` from current `main`. Local commit
-`9520ea046` adds a checksum-verified incremental scalar consumer with typed
-availability and materialized-reference parity. Eager requests/configs,
-measured end-to-end memory budgets, geometry/sensitivity consumers, and durable
-PyQt/React transport remain. Do not claim #4142 or #4626 complete from the
-scalar consumer alone.
+**Active #4142 work.** After #4623 merged at `b886d4373`, #4626 continues R11.5
+on `feat/4626-streaming-ensemble`. Commit `9520ea046` adds verified incremental
+scalar analysis; eager sources, budgets, geometry/sensitivity, and client
+transport remain, so neither #4142 nor #4626 is complete.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -142,10 +139,8 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (ordered)
 
-1. **Sidekick Unified Integration across Impact Model & Fleet**: Implement
-   `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`
-   (Phases S1–S5: dock widget in Rate of Closure, workspace seeding, standalone &
-   UpstreamDrift launcher parity).
+1. **Sidekick Unified Integration**: implement the S1–S5 plan in
+   `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
 4. Complete #4142's bounded-source, memory-budget, and durable UI transport; #4430 is complete.
