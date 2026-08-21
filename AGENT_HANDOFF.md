@@ -72,7 +72,7 @@ qualification: companion readiness metadata + missing Firefox/WebKit binaries;
 the workflow is scoped to Chromium meanwhile), #4569 (two `1.17.40` SPEC rows
 glued onto one table line by a union merge), #4558/#4559/#4560 (cross-runtime
 fixture parity gaps). #4602/#4608/#4610 isolate trusted React/PyQt evidence;
-#4607 removes the self-hosted npm-cache post-hook that blocked PyQt release.
+#4607 removes the blocking npm-cache post-hook, and #4613 owns deterministic Qt probe teardown after complete rendered evidence generation.
 
 ## Must-Read Architecture Pointers
 

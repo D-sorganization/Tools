@@ -20,6 +20,7 @@ from shared.python.swing_sim.variation import (
     NoiseSpec,
     VariationPlan,
 )
+from tests.rate_of_closure.pyqt_probe_lifecycle import shutdown_probe
 
 
 def _plan(runs: int) -> VariationPlan:
@@ -197,7 +198,7 @@ def main() -> int:
     (args.output / "manifest.json").write_text(
         json.dumps(document, indent=2) + "\n", encoding="utf-8"
     )
-    window.close()
+    shutdown_probe(application, window, tab)
     return 0
 
 
