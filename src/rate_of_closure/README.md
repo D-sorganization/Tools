@@ -27,32 +27,32 @@ guide for equations, display semantics, degeneracy rules, and limitations.
 
 ## Conventions and Sources
 
-* **Frame** (AffineDrift house convention, `sections/02-parameters.tex`,
+- **Frame** (AffineDrift house convention, `sections/02-parameters.tex`,
   following standard launch-monitor definitions): x along the target line, y up, z right of target.
   Angles positive right and up; club path + = in-to-out. Negative path
   deviation = the impact point travels left of the reported GC path.
   Delivery is referenced at the instant of maximum compression.
-* **Rates** (closure-rate literature dossier, verified against the
+- **Rates** (closure-rate literature dossier, verified against the
   Cheetham 2014 paper text): tour-driver horizontal turning velocity
   (HTV, about the shaft) 1,307 ± 304 °/s, range 652–2,432 (n = 94);
   global club closure velocity CCV ≈ 2,100 °/s, reconciling as
-  `CCV = HTV·sin(lie) + SPV·cos(lie)`. The model's closure rate *is*
+  `CCV = HTV·sin(lie) + SPV·cos(lie)`. The model's closure rate _is_
   this CCV by construction.
-* **Geometry**: openly published head data cites a 25–50 mm GC-to-face offset for drivers;
+- **Geometry**: openly published head data cites a 25–50 mm GC-to-face offset for drivers;
   the default 40 mm is the AffineDrift worked-example value.
-* **Calibration cross-check**: openly published launch-monitor material puts the GC-path
+- **Calibration cross-check**: openly published launch-monitor material puts the GC-path
   vs face-center-path gap at roughly 3° for a driver; the "Published ~3°
   worked example" preset back-solves it (the implied closure exceeds the
   Cheetham range — the R_ISA ≈ 0.77 m tension the derivation documents).
 
 ## The Numbers It Answers
 
-| Question | Cheetham tour-median preset (120 mph) |
-| --- | --- |
-| How fast is the rotation-induced velocity at the face? | ~2–3 mph |
-| How far left of the reported path is the impact point moving? | ~1.6° |
-| What is the speed-invariant closure? | ~12 °/ft |
-| How much does the face close *during* the 450 µs of contact? | ~0.9° |
+| Question                                                      | Cheetham tour-median preset (120 mph) |
+| ------------------------------------------------------------- | ------------------------------------- |
+| How fast is the rotation-induced velocity at the face?        | ~2–3 mph                              |
+| How far left of the reported path is the impact point moving? | ~1.6°                                 |
+| What is the speed-invariant closure?                          | ~12 °/ft                              |
+| How much does the face close _during_ the 450 µs of contact?  | ~0.9°                                 |
 
 A "1 percent" lateral velocity is not a 1 percent effect: it is over a
 degree of path, which at driver speeds is several yards of curvature —
@@ -145,12 +145,12 @@ change the data coordinates.
 
 Exports are intentionally split by purpose:
 
-* **Dataset CSV/JSON** contains sampled inputs, scalar outputs, success flags,
+- **Dataset CSV/JSON** contains sampled inputs, scalar outputs, success flags,
   and the reproducible plan.
-* **Swing Traces CSV** is long-form data with one row per trial, sample, and
+- **Swing Traces CSV** is long-form data with one row per trial, sample, and
   modeled point, including typed status, impact marker, units in column names,
   and coordinate-frame ID.
-* **Swing Ensemble JSON** is the lossless document containing the plan, scalar
+- **Swing Ensemble JSON** is the lossless document containing the plan, scalar
   dataset, typed outcomes, complete position traces, validity mask, and impact
   sample indices.
 
@@ -158,6 +158,32 @@ One-at-a-time sensitivity reruns each selected input through the same execution
 path as the joint study. For swing mode this means the complete simulator, not
 the scalar approximation. Misses remain part of contact-level statistics while
 impact and shot columns use only their finite hit values.
+
+### Durable Large-Campaign Checkpoints
+
+`DurableEnsembleChunkSink` is the non-materializing sink for restartable
+campaign execution. Give each scientific campaign its own directory and pass
+the sink to `run_simulation_ensemble_chunks`. Every accepted contiguous chunk
+is a bounded, pickle-free NPZ file. An atomically replaced strict manifest
+records its SHA-256 digest, exact trial interval, and retained failure count.
+
+On restart, the runner verifies the complete variation plan, sampled inputs,
+ordered simulation configurations, common trace grid, stable point IDs,
+coordinate frame, registry snapshot, and declared implementation versions
+before it skips any work. Every declared chunk is then size-bounded,
+checksum-verified, decoded, and rebound to that header. A changed chunk size is
+allowed because it is an execution control rather than scientific identity.
+Changed scientific identity, missing/tampered chunks, gaps, overlaps, duplicate
+manifest fields, or invalid numerical domains fail before another trial runs.
+
+Cancellation and exceptions preserve the last manifest-committed prefix. An
+unreferenced chunk left by a failed manifest replacement is ignored and safely
+replaced on the next attempt. `DurableEnsembleArchive` is intentionally a
+lightweight inspection record, not a fabricated in-memory ensemble result.
+The request's configurations and sampled-input matrix remain eager, and the
+legacy collecting sink still materializes the final tensor; bounded work-source
+construction, measured peak-memory budgets, and UI transport remain open R11.5
+work under #4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are
