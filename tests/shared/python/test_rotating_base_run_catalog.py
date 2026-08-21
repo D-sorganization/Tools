@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from hashlib import sha256
 from importlib import resources
 
@@ -18,6 +19,7 @@ from shared.python.swing_sim.rotating_base import (
     RotatingBaseRunResult,
     RotatingBaseRunTrace,
     load_embedded_qualified_study,
+    registered_metric_matches_authority,
     registered_requests,
     registered_run_catalog_json,
     registered_run_catalog_mapping,
@@ -113,3 +115,27 @@ def test_catalog_fails_closed_on_missing_or_reordered_run() -> None:
         registered_run_catalog_mapping(results[:-1])
     with pytest.raises(ValueError, match="complete 18-case order"):
         registered_run_catalog_mapping(tuple(reversed(results)))
+
+
+def test_catalog_accepts_platform_roundoff_but_rejects_constraint_drift() -> None:
+    results = list(_results())
+    case = results[0].case
+    portable_metrics = replace(
+        case.metrics,
+        peak_grip_force_n=case.metrics.peak_grip_force_n + 2.7e-8,
+    )
+    results[0] = replace(results[0], case=replace(case, metrics=portable_metrics))
+
+    registered_run_catalog_mapping(results)
+
+    drifted_metrics = replace(
+        case.metrics,
+        maximum_constraint_residual_m=(
+            case.metrics.maximum_constraint_residual_m + 5e-9
+        ),
+    )
+    results[0] = replace(results[0], case=replace(case, metrics=drifted_metrics))
+    with pytest.raises(ValueError, match="metrics do not match"):
+        registered_run_catalog_mapping(results)
+    with pytest.raises(ValueError, match="unknown registered metric"):
+        registered_metric_matches_authority("invented_metric", 0.0, 0.0)

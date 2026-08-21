@@ -14,6 +14,7 @@ from .contract import (
     MODEL_TIER,
     TORSO_PROFILES,
     RotatingBaseCase,
+    RotatingBaseCaseMetrics,
 )
 from .loader import EXPECTED_STUDY_SHA256, load_embedded_qualified_study
 from .provider import (
@@ -30,7 +31,39 @@ EXPECTED_RUN_CATALOG_SHA256 = (
     "66493b833955c6492a00eae4a600df79"  # pragma: allowlist secret
     "5df60a6f473f9a11c403084b58e51678"  # pragma: allowlist secret
 )
-_METRIC_ATOL = 1e-10
+_OUTCOME_ATOL = 1e-9
+_OUTCOME_RTOL = 1e-9
+_RESIDUAL_ATOL = 1e-10
+_RESIDUAL_METRICS = frozenset(
+    {
+        "maximum_constraint_residual_m",
+        "maximum_velocity_constraint_residual_m_s",
+        "maximum_contact_power_identity_residual_w",
+    }
+)
+
+
+def registered_metric_matches_authority(
+    name: str, actual: float, expected: float
+) -> bool:
+    """Return whether a recomputed scalar matches its qualified authority.
+
+    Dynamic outcomes allow one-part-per-billion relative and absolute
+    cross-platform solver roundoff. Direct constraint and power-identity
+    residuals retain the stricter absolute gate used by the qualified study.
+    """
+    if name not in RotatingBaseCaseMetrics.__dataclass_fields__:
+        raise ValueError(f"unknown registered metric: {name}")
+    if name in _RESIDUAL_METRICS:
+        return bool(np.isclose(actual, expected, atol=_RESIDUAL_ATOL, rtol=0.0))
+    return bool(
+        np.isclose(
+            actual,
+            expected,
+            atol=_OUTCOME_ATOL,
+            rtol=_OUTCOME_RTOL,
+        )
+    )
 
 
 def registered_requests() -> tuple[RotatingBaseRunRequest, ...]:
@@ -56,11 +89,10 @@ def _case_matches_authority(
     ):
         return False
     return all(
-        np.isclose(
+        registered_metric_matches_authority(
+            field.name,
             getattr(actual.metrics, field.name),
             getattr(expected.metrics, field.name),
-            atol=_METRIC_ATOL,
-            rtol=0.0,
         )
         for field in fields(expected.metrics)
     )
@@ -118,6 +150,7 @@ __all__ = [
     "RUN_CATALOG_SCHEMA_ID",
     "RUN_CATALOG_SCHEMA_VERSION",
     "generate_registered_run_catalog",
+    "registered_metric_matches_authority",
     "registered_requests",
     "registered_run_catalog_json",
     "registered_run_catalog_mapping",

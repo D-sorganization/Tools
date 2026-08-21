@@ -12,6 +12,7 @@ from shared.python.swing_sim.rotating_base import (
     MODEL_TIER,
     RotatingBaseRunRequest,
     load_embedded_qualified_study,
+    registered_metric_matches_authority,
     registered_run_json,
     run_registered_case,
 )
@@ -52,11 +53,15 @@ def test_registered_full_run_reproduces_pinned_case_and_traces() -> None:
     for field in fields(expected.metrics):
         actual_value = getattr(result.case.metrics, field.name)
         expected_value = getattr(expected.metrics, field.name)
-        assert actual_value == pytest.approx(expected_value, abs=1e-10)
+        assert registered_metric_matches_authority(
+            field.name, actual_value, expected_value
+        )
     assert result.trace.time_s.shape == (241,)
     assert result.trace.force_on_club_n.shape == (241, 2, 2)
-    assert result.trace.clubhead_speed_m_s[-1] == pytest.approx(
-        expected.metrics.impact_speed_m_s, abs=1e-10
+    assert registered_metric_matches_authority(
+        "impact_speed_m_s",
+        result.trace.clubhead_speed_m_s[-1],
+        expected.metrics.impact_speed_m_s,
     )
     assert np.all(np.isfinite(result.trace.contact_power_on_club_w))
     assert np.all(np.isfinite(result.trace.force_generated_couple_nm))

@@ -25,7 +25,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Visualization/authority slice landed via **#4473**.                                                                                                                       |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                      |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                         |
-| #4430 | Qualified rotating-base companion. Open. Local branch `feat/4430-rotating-base-companion` has canonical physics, 18 full-resolution runs, PyQt/React reviewer surfaces, and governed exports; protected publication remains. |
+| #4430 | Qualified rotating-base companion. Open. PR #4618 has canonical physics, 18 full-resolution runs, PyQt/React reviewer surfaces, governed exports, and protected squash auto-merge enabled. |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs). |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout). |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open. |
@@ -65,7 +65,7 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4430 work.** `feat/4430-rotating-base-companion` is based on exact `main` `2a768aada`; provider/PyQt/React slices and the digest-pinned 710,400-byte trace catalog are local and unpushed. Focused gates: 23 Python + 41 web tests, TypeScript/Vite build, MyPy/Ruff, and desktop/mobile render QA pass. Retain UpstreamDrift `967c40f5`, all 18 rows, and nonanatomical/no-human-validation/noncoaching boundaries; use `-n 0` locally while the 20-worker Upstream campaign is active.
+**Active #4430 work.** PR #4618 publishes the provider/PyQt/React slices and digest-pinned 710,400-byte trace catalog. The same branch makes qualified scalar matching portable across Linux/Windows while keeping strict residual gates. Retain UpstreamDrift `967c40f5`, all 18 rows, and the scientific boundaries; use `-n 0` locally while the 20-worker Upstream campaign is active.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
