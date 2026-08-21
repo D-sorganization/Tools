@@ -2,14 +2,22 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import pytest
 
 from shared.python.swing_sim.rotating_base import (
+    EXPECTED_STUDY_SHA256,
     EXPECTED_UPSTREAM_SOURCE_REVISION,
     RotatingBaseProviderResult,
+    load_qualified_study,
+)
+
+FIXTURE = (
+    Path(__file__).parent / "fixtures" / "rotating_base_torso_velocity_study_v1.json"
 )
 
 
@@ -96,6 +104,31 @@ def test_provider_result_retains_design_adverse_rows_and_boundaries() -> None:
         "bilateral_wrist",
     )
     assert result.study.human_coaching_supported is False
+
+
+def test_qualified_loader_accepts_exact_governed_study() -> None:
+    result = load_qualified_study(FIXTURE)
+
+    assert result.study_sha256 == EXPECTED_STUDY_SHA256
+    assert result.study.attempted_case_count == 18
+    assert result.study.valid_case_count == 13
+    assert tuple(case.case_index for case in result.study.cases if not case.valid) == (
+        6,
+        7,
+        8,
+        15,
+        16,
+    )
+
+
+def test_qualified_loader_rejects_semantically_tampered_study(tmp_path: Path) -> None:
+    tampered = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    tampered["cases"][0]["impact_speed_m_s"] += 1.0
+    path = tmp_path / "tampered.json"
+    path.write_text(json.dumps(tampered), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="study digest"):
+        load_qualified_study(path)
 
 
 @pytest.mark.parametrize(

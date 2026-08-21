@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from hashlib import sha256
 from typing import Any
 
 import numpy as np
+
+from ..canonical_numeric_json import canonical_numeric_json
 
 SCHEMA_ID = "swing-sim/rotating-base-provider-result"
 SCHEMA_VERSION = 1
@@ -267,6 +270,7 @@ class RotatingBaseProviderResult:
     """Source-pinned rotating-base study result for Python and web consumers."""
 
     source_revision: str
+    study_sha256: str
     study: RotatingBaseStudy
 
     @classmethod
@@ -280,9 +284,12 @@ class RotatingBaseProviderResult:
             payload.get("source_revision"),
             EXPECTED_UPSTREAM_SOURCE_REVISION,
         )
+        study = payload.get("study")
+        study_sha256 = sha256(canonical_numeric_json(study).encode()).hexdigest()
         return cls(
             source_revision=EXPECTED_UPSTREAM_SOURCE_REVISION,
-            study=RotatingBaseStudy.from_mapping(payload.get("study")),
+            study_sha256=study_sha256,
+            study=RotatingBaseStudy.from_mapping(study),
         )
 
 
