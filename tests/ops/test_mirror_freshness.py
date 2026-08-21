@@ -42,8 +42,8 @@ from check_mirror_freshness import (  # noqa: E402
     parse_recorded_canonical_commit,
 )
 
-CANONICAL_SHA = "9b24fc6d22df8104a515e93706d0068c2b440f06"
-MIRROR_SHA = "84a589a964aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+CANONICAL_SHA = "9b24fc6d22df8104a515e93706d0068c2b440f06"  # pragma: allowlist secret
+MIRROR_SHA = "84a589a964aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"  # pragma: allowlist secret
 
 AUG_04 = datetime(2026, 8, 4, 4, 18, 53, tzinfo=UTC)
 AUG_21 = datetime(2026, 8, 21, 21, 44, 54, tzinfo=UTC)
