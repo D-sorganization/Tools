@@ -62,7 +62,8 @@ no baseline or inferred identity is bundled. #4600 owns the inspected
 post-merge PyQt visual-reference approval. #4602 isolates the trusted React
 functional, Axe, and protected timing phases while retaining unchanged budgets;
 #4608 isolates its PyQt binary stack before rendered tests and baseline checks;
-#4610 preserves that evidence when the independent React performance job fails.
+#4610 preserves that evidence when the independent React performance job fails;
+#4607 removes a non-authoritative npm-cache post-hook that blocked its release.
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;

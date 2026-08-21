@@ -71,8 +71,8 @@ branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
 the workflow is scoped to Chromium meanwhile), #4569 (two `1.17.40` SPEC rows
 glued onto one table line by a union merge), #4558/#4559/#4560 (cross-runtime
-fixture parity gaps). #4602/#4608 isolate trusted Playwright/PyQt; #4610
-decouples their evidence jobs without weakening either authority.
+fixture parity gaps). #4602/#4608/#4610 isolate trusted React/PyQt evidence;
+#4607 removes the self-hosted npm-cache post-hook that blocked PyQt release.
 
 ## Must-Read Architecture Pointers
 

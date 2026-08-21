@@ -27,12 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.73                                    |
+| **Spec Version**        | 1.17.74                                    |
 | **Last Spec Update**    | 2026-08-20                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.74 keeps the trusted React dependency install locked through
+`npm ci` while disabling `setup-node`'s package-manager cache in that
+self-hosted job. This removes a non-authoritative post-job upload that attempted
+to transfer a 2,005,724,218-byte cache and exhausted the protected 30-minute
+job timeout after every substantive React and artifact step passed, preventing
+the independent PyQt evidence job from starting. Test, accessibility,
+performance, artifact, timeout, and overall failure contracts are unchanged.
 
 Version 1.17.73 separates trusted PyQt rendered and baseline evidence from the
 React performance job result. The React job always retains its baseline
@@ -5067,6 +5075,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-20 | 1.17.74 | fix(rate-of-closure, ci): disable only the trusted self-hosted setup-node npm cache hook after its 2.0 GB post-job upload exhausted the unchanged job timeout and prevented independent PyQt evidence; retain npm ci, all budgets, artifacts, and failure semantics. | #4607 |
 | 2026-08-20 | 1.17.73 | fix(rate-of-closure, ci): transfer React visual-baseline candidates to an independent non-cancelled PyQt evidence job so protected render and baseline authorities still execute after React performance failure, without weakening either job's budgets or overall workflow failure semantics. | #4610 |
 | 2026-08-20 | 1.17.72 | fix(rate-of-closure, ci): create run-attempt-scoped trusted PyQt venv and pytest-temporary roots, install the exact compatible NumPy/SciPy/PyQt stack without mutating shared pip caches, fail closed on pin/import drift before collection, and run both rendered tests and visual-baseline enforcement through the verified interpreter. | #4608 |
 | 2026-08-20 | 1.17.71 | fix(rate-of-closure, ci): isolate trusted functional, Axe, and protected performance phases in fresh Playwright processes; build once; warm the bundle/cache before unchanged interaction budgets; split Axe and timing evidence by tab/viewport; and retain phase-specific reports without weakening WCAG, latency, resize, or CLS standards. | #4602 |

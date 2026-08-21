@@ -321,6 +321,17 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
 
 
+def test_trusted_self_hosted_web_job_does_not_register_npm_cache_cleanup() -> None:
+    trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]["push-production-worker-e2e"]
+    setup_node = _named_step(trusted_job, "Set up Node.js")
+
+    assert setup_node["with"] == {
+        "node-version": "22",
+        "package-manager-cache": False,
+    }
+    assert _run_steps(trusted_job)["Install locked web dependencies"] == "npm ci"
+
+
 def test_full_pyqt_window_dependency_is_declared_by_shared_gui_extra() -> None:
     """Both rendered lanes install the extra needed by every registered tab."""
     project = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
