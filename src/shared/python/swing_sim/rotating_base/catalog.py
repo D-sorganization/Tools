@@ -27,7 +27,8 @@ from .provider import (
 RUN_CATALOG_SCHEMA_ID = "swing-sim/rotating-base-run-catalog"
 RUN_CATALOG_SCHEMA_VERSION = 1
 EXPECTED_RUN_CATALOG_SHA256 = (
-    "66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678"
+    "66493b833955c6492a00eae4a600df79"  # pragma: allowlist secret
+    "5df60a6f473f9a11c403084b58e51678"  # pragma: allowlist secret
 )
 _METRIC_ATOL = 1e-10
 

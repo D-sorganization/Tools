@@ -13,7 +13,7 @@ import {
 } from "./rotatingBaseStudy";
 
 export const ROTATING_BASE_RUN_CATALOG_SHA256 =
-  "66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678";
+  "66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678"; // pragma: allowlist secret
 
 export interface RotatingBaseRunTrace {
   time_s: number[];

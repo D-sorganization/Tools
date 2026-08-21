@@ -1,9 +1,9 @@
 import rawStudy from "../../../shared/python/swing_sim/rotating_base/resources/rotating_base_torso_velocity_study_v1.json";
 
 export const ROTATING_BASE_SOURCE_REVISION =
-  "967c40f54cc03f8cae89cde09268d62771d220fe";
+  "967c40f54cc03f8cae89cde09268d62771d220fe"; // pragma: allowlist secret
 export const ROTATING_BASE_STUDY_SHA256 =
-  "e6a55e6cf91e51f21fe3eb8bcb07b990a7798f18abcaf5ca73f5214cb6c5f9ec";
+  "e6a55e6cf91e51f21fe3eb8bcb07b990a7798f18abcaf5ca73f5214cb6c5f9ec"; // pragma: allowlist secret
 export const ROTATING_BASE_MODEL_TIER =
   "planar_rotating_base_two_hand_compliant_club";
 

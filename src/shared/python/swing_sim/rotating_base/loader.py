@@ -14,7 +14,8 @@ from .contract import (
 )
 
 EXPECTED_STUDY_SHA256 = (
-    "e6a55e6cf91e51f21fe3eb8bcb07b990a7798f18abcaf5ca73f5214cb6c5f9ec"
+    "e6a55e6cf91e51f21fe3eb8bcb07b990"  # pragma: allowlist secret
+    "a7798f18abcaf5ca73f5214cb6c5f9ec"  # pragma: allowlist secret
 )
 QUALIFIED_STUDY_RESOURCE_NAME = "rotating_base_torso_velocity_study_v1.json"
 

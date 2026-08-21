@@ -16,7 +16,10 @@ SCHEMA_VERSION = 1
 STUDY_SCHEMA_VERSION = "rotating-base-torso-velocity-study-v1"
 STUDY_ID = "registered-rotating-base-two-hand-torso-velocity-grid"
 MODEL_TIER = "planar_rotating_base_two_hand_compliant_club"
-EXPECTED_UPSTREAM_SOURCE_REVISION = "967c40f54cc03f8cae89cde09268d62771d220fe"
+EXPECTED_UPSTREAM_SOURCE_REVISION = (
+    "967c40f54cc03f8cae89"  # pragma: allowlist secret
+    "cde09268d62771d220fe"  # pragma: allowlist secret
+)
 MATCHING_RULES = ("relative_club_rate", "absolute_club_rate")
 TORSO_PROFILES = ("accelerate", "constant_rate", "decelerate")
 KILLSWITCH_CHANNELS = ("torso", "bilateral_arm", "bilateral_wrist")

@@ -15,7 +15,8 @@ from shared.python.swing_sim.rotating_base import (
 )
 
 EXPECTED_SOURCE_SHA256 = (
-    "a08641054a5ec58eaa9023ff123464c960b10833826f7ac9ba8dea68c26ab0d0"
+    "a08641054a5ec58eaa9023ff123464c9"  # pragma: allowlist secret
+    "60b10833826f7ac9ba8dea68c26ab0d0"  # pragma: allowlist secret
 )
 
 
