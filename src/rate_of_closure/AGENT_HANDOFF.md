@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-20
+> Last updated: 2026-08-21
 
 > **Current state only**, capped at 150 lines; history lives in git and in
 > [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
@@ -62,12 +62,16 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 is active in PR #4623 from main `9b24fc6d2`.
-The new durable sink atomically checkpoints bounded pickle-free chunks, verifies
-checksums and exact configuration/header identity before resume, retains valid
-prefixes on abort, and restores progress/failure counts. Remaining R11.5 work:
-lazy request/config production, a non-materializing downstream consumer,
-measured peak-memory budgets, and durable PyQt/React worker transport.
+#4142 R11.5 continues in issue #4626 after PR #4623 merged at `b886d4373`.
+Branch `feat/4626-streaming-ensemble` is based on current `main`; local commit
+`9520ea046` adds the first production non-materializing consumer. It scans the
+strict archive prefix one verified chunk at a time and reports canonical-unit
+online moments plus typed hit/no-impact/failure availability, with exact/tight
+parity to the materialized reference and explicit in-progress semantics.
+Remaining R11.5 work: lazy sampled-input/config production, measured
+end-to-end peak-memory and throughput budgets, streaming geometry/sensitivity,
+and durable PyQt/React worker transport. The scalar consumer alone does not
+complete #4626.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

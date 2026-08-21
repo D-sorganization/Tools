@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4473 landed visualization/authority; `feat/4142-ensemble-next` adds durable R11.5 restart/checksum transport.                                                   |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4623 merged durable R11.5 restart/checksum transport; #4626 is implementing non-materializing production, analysis, budgets, and clients.                    |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
@@ -63,9 +63,13 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4142 work.** PR #4623 from main `9b24fc6d2` adds
-atomic/checksummed bounded NPZ resume with exact header/config drift rejection.
-Eager requests, final materialization, memory budgets, and UI transport remain.
+**Active #4142 work.** PR #4623 merged at `b886d4373`; issue #4626 continues
+R11.5 on branch `feat/4626-streaming-ensemble` from current `main`. Local commit
+`9520ea046` adds a checksum-verified incremental scalar consumer with typed
+availability and materialized-reference parity. Eager requests/configs,
+measured end-to-end memory budgets, geometry/sensitivity consumers, and durable
+PyQt/React transport remain. Do not claim #4142 or #4626 complete from the
+scalar consumer alone.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
