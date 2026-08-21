@@ -54,20 +54,20 @@ artifacts and attested longitudinal player/population inference in both clients;
 no baseline data is bundled. Do not claim vendor emulation or paired-device
 validation: Release B remains open and has no real paired observations.
 
-#4584/#4599 merged UpstreamDrift's canonical source-backed strokes-gained v2
-endpoint into both clients with exact lie/context/target strata, optional
-benchmark uncertainty, structured exclusions, and explicitly attested grouped
-summaries. A blank authority URL retains a labelled local compatibility path;
-no baseline or inferred identity is bundled. #4600 owns the inspected
-post-merge PyQt visual-reference approval. #4602 isolates the trusted React
-functional, Axe, and protected timing phases while retaining unchanged budgets;
-#4608 isolates its PyQt binary stack before rendered tests and baseline checks;
-#4610 preserves that evidence when the independent React performance job fails;
-#4607 removes the blocking npm-cache post-hook; #4613 owns deterministic Qt probe teardown after complete rendered evidence generation.
+#4584/#4599 merged source-backed strokes-gained v2 into both clients with exact
+strata, uncertainty, exclusions, and grouping attestations. #4600 owns the
+post-merge PyQt reference; #4602/#4608/#4610/#4613 own isolated rendered gates.
 
 Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
+
+#4142 R11.5 is active in PR #4623 from main `9b24fc6d2`.
+The new durable sink atomically checkpoints bounded pickle-free chunks, verifies
+checksums and exact configuration/header identity before resume, retains valid
+prefixes on abort, and restores progress/failure counts. Remaining R11.5 work:
+lazy request/config production, a non-materializing downstream consumer,
+measured peak-memory budgets, and durable PyQt/React worker transport.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

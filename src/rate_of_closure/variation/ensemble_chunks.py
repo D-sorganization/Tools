@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Protocol, TypeVar, cast
+from typing import Any, Protocol, TypeVar, cast, runtime_checkable
 
 import numpy as np
 
@@ -30,7 +30,7 @@ from .simulation_types import (
 MAX_CHUNK_POSITION_CELLS = 500_000
 
 
-def _owned_array(value: object, dtype: object) -> np.ndarray:
+def _owned_array(value: Any, dtype: Any) -> np.ndarray:
     result: np.ndarray = np.array(value, dtype=dtype, copy=True)
     result.setflags(write=False)
     return result
@@ -54,6 +54,7 @@ class EnsembleStreamHeader:
     sample_times_s: np.ndarray = field(repr=False)
     point_ids: tuple[str, ...]
     coordinate_frame: str
+    configuration_sha256: str = ""
 
     def __post_init__(self) -> None:
         require(isinstance(self.plan, VariationPlan), "plan must be a VariationPlan")
@@ -80,6 +81,12 @@ class EnsembleStreamHeader:
         require(
             self.coordinate_frame == APP_FRAME_ID,
             "coordinate_frame is unsupported",
+        )
+        digest = self.configuration_sha256
+        require(
+            digest == ""
+            or (len(digest) == 64 and set(digest) <= set("0123456789abcdef")),
+            "configuration_sha256 must be an empty or lowercase SHA-256 digest",
         )
         require_ensemble_shape_limits(self.plan.n_runs, raw_times.size, len(points))
         inputs = _owned_array(raw_inputs, float)
@@ -153,7 +160,7 @@ class SimulationResultChunk:
             and raw_impacts.dtype != np.dtype(bool),
             "impact indices must contain genuine integer values",
         )
-        impact_bounds = np.iinfo(np.dtype(int))
+        impact_bounds = np.iinfo(np.intp)
         require(
             bool(np.all(raw_impacts <= impact_bounds.max))
             and bool(np.all(raw_impacts >= impact_bounds.min)),
@@ -175,16 +182,19 @@ class SimulationResultChunk:
         for row, outcome in enumerate(outcomes):
             if outcome.status is NUMERICAL_FAILURE:
                 require(
-                    not np.any(valid[row])
-                    and np.all(np.isnan(positions[row]))
-                    and impacts[row] == -1,
+                    bool(not np.any(valid[row]))
+                    and bool(np.all(np.isnan(positions[row])))
+                    and bool(impacts[row] == -1),
                     "numerical failure chunk trace must be unavailable",
                 )
                 continue
-            require(np.any(valid[row]), "evaluated chunk trace must be available")
             require(
-                np.all(np.isfinite(positions[row][valid[row]]))
-                and np.all(np.isnan(positions[row][~valid[row]])),
+                bool(np.any(valid[row])),
+                "evaluated chunk trace must be available",
+            )
+            require(
+                bool(np.all(np.isfinite(positions[row][valid[row]])))
+                and bool(np.all(np.isnan(positions[row][~valid[row]]))),
                 "chunk positions must agree with sample validity",
             )
             require(
@@ -211,6 +221,35 @@ class EnsembleChunkSink(Protocol[TCommit_co]):
     def commit(self, elapsed_s: float) -> TCommit_co: ...
 
     def abort(self) -> None: ...
+
+
+@dataclass(frozen=True, slots=True)
+class EnsembleResumeState:
+    """Verified durable prefix advertised after a sink begins."""
+
+    next_index: int
+    failed_count: int
+
+    def __post_init__(self) -> None:
+        require(
+            type(self.next_index) is int and self.next_index >= 0,
+            "resume next_index must be a non-negative integer",
+        )
+        require(
+            type(self.failed_count) is int and self.failed_count >= 0,
+            "resume failed_count must be a non-negative integer",
+        )
+        require(
+            self.failed_count <= self.next_index,
+            "resume failures cannot exceed the durable prefix",
+        )
+
+
+@runtime_checkable
+class ResumableEnsembleChunkSink(Protocol):
+    """Optional sink capability for a checksum-verified durable prefix."""
+
+    def resume_state(self) -> EnsembleResumeState: ...
 
 
 def require_chunk_matches_header(
@@ -353,8 +392,10 @@ class CollectingEnsembleSink:
 __all__ = [
     "CollectingEnsembleSink",
     "EnsembleChunkSink",
+    "EnsembleResumeState",
     "EnsembleStreamHeader",
     "MAX_CHUNK_POSITION_CELLS",
+    "ResumableEnsembleChunkSink",
     "SimulationResultChunk",
     "require_chunk_matches_header",
 ]

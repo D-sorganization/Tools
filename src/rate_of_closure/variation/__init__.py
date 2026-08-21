@@ -3,10 +3,16 @@
 from __future__ import annotations
 
 from .chip_forgiveness import ChipStudySummary, ChipTrialCohort
+from .durable_ensemble_chunks import (
+    DurableEnsembleArchive,
+    DurableEnsembleChunkSink,
+)
 from .ensemble_chunks import (
     CollectingEnsembleSink,
     EnsembleChunkSink,
+    EnsembleResumeState,
     EnsembleStreamHeader,
+    ResumableEnsembleChunkSink,
     SimulationResultChunk,
 )
 from .forgiveness_projection import forgiveness_variation_dataset
@@ -32,6 +38,7 @@ from .simulation_adapter import (
     SimulationTrialOutcome,
     TrialEvaluationStatus,
     apply_ball_setup_sample,
+    build_ensemble_stream_header,
     build_simulation_ensemble_request,
     run_simulation_ensemble,
     run_simulation_ensemble_chunks,
@@ -51,14 +58,18 @@ __all__ = [
     "ChipStudySummary",
     "ChipTrialCohort",
     "CollectingEnsembleSink",
+    "DurableEnsembleArchive",
+    "DurableEnsembleChunkSink",
     "EVALUATED_HIT",
     "EVALUATED_NO_IMPACT",
     "EnsembleChunkSink",
+    "EnsembleResumeState",
     "EnsembleStreamHeader",
     "IMPACT_OUTPUT_NAMES",
     "NUMERICAL_FAILURE",
     "RATE_MORRIS_OUTPUTS",
     "RATE_MORRIS_VARIABLE_KEYS",
+    "ResumableEnsembleChunkSink",
     "RateMorrisEvaluator",
     "SHOT_OUTPUT_NAMES",
     "SimulationEnsembleRequest",
@@ -72,6 +83,7 @@ __all__ = [
     "apply_ball_setup_sample",
     "apply_global_simulation_values",
     "build_simulation_ensemble_request",
+    "build_ensemble_stream_header",
     "capture_simulation",
     "evaluate_rate_morris_design",
     "forgiveness_variation_dataset",
