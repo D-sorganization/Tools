@@ -53,6 +53,18 @@ describe("launch monitor workspace v2", () => {
     expect(parseLaunchMonitorProject(serialized)).toEqual(project);
   });
 
+  it("persists an authorized corpus reference without a private path", () => {
+    const canonical = { ...project, canonicalDataset: {
+      root_id: "launch-monitor-authority",
+      repository: "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
+      commit: "7".repeat(40), manifest_sha256: "8".repeat(64),
+      content_sha256: "9".repeat(64), expected_row_count: 261666,
+    } };
+    const serialized = serializeLaunchMonitorProject(canonical);
+    expect(parseLaunchMonitorProject(serialized)).toEqual(canonical);
+    expect(serialized).not.toContain("privatePath");
+  });
+
   it("delegates computation to the injected authoritative backend", async () => {
     const backend = vi.fn().mockResolvedValue({ contract_version: "2.0.0", result: { ok: true } });
     await expect(runPlayerCovariation(backend, project)).resolves.toEqual({

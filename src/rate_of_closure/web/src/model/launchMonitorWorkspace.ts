@@ -2,6 +2,7 @@
 
 import type { LaunchMonitorRow } from "./launchMonitorAnalysisTypes";
 import { sha256Text } from "./launchMonitorFingerprint";
+import { parseCanonicalDatasetReference, type CanonicalDatasetReference } from "./launchMonitorV2Client";
 
 export const LAUNCH_MONITOR_WORKSPACE_CONTRACT_VERSION = "2.0.0" as const;
 
@@ -20,6 +21,7 @@ export interface LaunchMonitorProject {
   dataset: DatasetReference;
   playerIdentity: { column: string; userAttested: boolean };
   selection: { x: string; y: string; minSamples: number; confidenceLevel: number };
+  canonicalDataset?: CanonicalDatasetReference;
 }
 
 export interface PlayerCovariationRequest {
@@ -70,6 +72,7 @@ function validateProject(project: LaunchMonitorProject): void {
   if (!(project.selection.confidenceLevel > 0.5 && project.selection.confidenceLevel < 1)) {
     throw new RangeError("Confidence level must be between 0.5 and 1");
   }
+  if (project.canonicalDataset) parseCanonicalDatasetReference(project.canonicalDataset);
 }
 
 export function buildPlayerCovariationRequest(project: LaunchMonitorProject): PlayerCovariationRequest {

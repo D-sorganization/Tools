@@ -27,6 +27,10 @@ from rate_of_closure.launch_monitor_analysis import (
     analyze_launch_monitor_data,
     numeric_columns,
 )
+from rate_of_closure.launch_monitor_v2_client import (
+    MAX_CANONICAL_INLINE_RECORDS,
+    CanonicalDatasetReference,
+)
 from rate_of_closure.launch_monitor_workspace import (
     AnalysisSelection,
     LaunchMonitorProject,
@@ -43,12 +47,15 @@ from rate_of_closure.player_covariation import (
     analyze_player_covariation,
     scan_covariation_pairs,
 )
+from rate_of_closure.ui.pyqt6.launch_monitor_canonical_workspace_mixin import (
+    CanonicalWorkspaceMixin,
+)
 from rate_of_closure.ui.pyqt6.launch_monitor_covariation_view import (
     LaunchMonitorCovariationView,
 )
 
 
-class LaunchMonitorPlayerWorkspace(QWidget):
+class LaunchMonitorPlayerWorkspace(CanonicalWorkspaceMixin, QWidget):
     """Run delegated per-player covariation with explicit identity consent."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -58,6 +65,8 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         self._result: AnalysisResult | None = None
         self.covariation_result: PlayerCovariationAnalysis | None = None
         self._export_payload: dict[str, object] = {}
+        self._canonical_reference: CanonicalDatasetReference | None = None
+        self._canonical_job_id: str | None = None
         self._build_ui()
 
     def _build_ui(self) -> None:
@@ -77,6 +86,7 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             "I attest this column identifies a player; it was not inferred "
             "from session, club, or row order."
         )
+        self._build_canonical_controls()
         self.run_button = QPushButton("Run Offline Compatibility Covariation")
         self.scan_button = QPushButton("Rank Variable Pairs")
         self.save_button = QPushButton("Save Project...")
@@ -92,6 +102,14 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             (self.min_samples_spin, "Minimum pairwise-complete shots per player"),
             (self.confidence_spin, "Pearson confidence level"),
             (self.attestation, "Explicit player identity attestation"),
+            (self.authority_url, "Canonical Upstream authority URL"),
+            (self.corpus_reference_button, "Load authorized corpus reference"),
+            (self.inspect_corpus_button, "Inspect authorized corpus aggregates"),
+            (self.refresh_corpus_button, "Refresh canonical corpus job"),
+            (
+                self.canonical_covariation_button,
+                "Run canonical Upstream player covariation for at most 20,000 rows",
+            ),
             (
                 self.run_button,
                 "Run local v1 compatibility calculation; canonical v2 is preferred",
@@ -118,8 +136,14 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         form.addRow("Minimum N/player:", self.min_samples_spin)
         form.addRow("Confidence:", self.confidence_spin)
         form.addRow(self.attestation)
+        form.addRow("Canonical authority:", self.authority_url)
+        form.addRow(self.corpus_reference_button)
+        form.addRow(self.canonical_limit)
         buttons = QHBoxLayout()
         for button in (
+            self.inspect_corpus_button,
+            self.refresh_corpus_button,
+            self.canonical_covariation_button,
             self.run_button,
             self.scan_button,
             self.save_button,
@@ -152,6 +176,13 @@ class LaunchMonitorPlayerWorkspace(QWidget):
         self.save_button.clicked.connect(self.save_dialog)
         self.load_button.clicked.connect(self.load_dialog)
         self.export_button.clicked.connect(self.export_dialog)
+        self.corpus_reference_button.clicked.connect(self.load_corpus_reference_dialog)
+        self.inspect_corpus_button.clicked.connect(self.submit_corpus_job_safely)
+        self.refresh_corpus_button.clicked.connect(self.refresh_corpus_job_safely)
+        self.canonical_covariation_button.clicked.connect(
+            self.run_canonical_covariation_safely
+        )
+        self.authority_url.textChanged.connect(self._refresh_enabled)
         self._refresh_enabled()
 
     def set_dataset(
@@ -187,10 +218,22 @@ class LaunchMonitorPlayerWorkspace(QWidget):
 
     def _refresh_enabled(self) -> None:
         ready = bool(self.identity_combo.currentText()) and self.attestation.isChecked()
+        authority_ready = bool(self.authority_url.text().strip())
         self.run_button.setEnabled(ready)
         self.scan_button.setEnabled(ready)
         self.save_button.setEnabled(ready)
-        self.export_button.setEnabled(ready and self._result is not None)
+        self.export_button.setEnabled(ready and bool(self._export_payload))
+        self.inspect_corpus_button.setEnabled(
+            authority_ready and self._canonical_reference is not None
+        )
+        self.refresh_corpus_button.setEnabled(
+            authority_ready and self._canonical_job_id is not None
+        )
+        self.canonical_covariation_button.setEnabled(
+            ready
+            and authority_ready
+            and 0 < len(self._frame) <= MAX_CANONICAL_INLINE_RECORDS
+        )
 
     def project(self) -> LaunchMonitorProject:
         """Return validated reference-only state for the current controls."""
@@ -207,6 +250,7 @@ class LaunchMonitorPlayerWorkspace(QWidget):
                 self.min_samples_spin.value(),
                 self.confidence_spin.value(),
             ),
+            canonical_dataset=self._canonical_reference,
         )
 
     def run_player_analysis(self) -> AnalysisResult:
@@ -335,11 +379,13 @@ class LaunchMonitorPlayerWorkspace(QWidget):
             self.min_samples_spin.setValue(project.selection.min_samples)
             self.confidence_spin.setValue(project.selection.confidence_level)
             self.attestation.setChecked(project.identity.user_attested)
+            self._canonical_reference = project.canonical_dataset
+            self._refresh_enabled()
         except (OSError, ValueError) as error:
             QMessageBox.warning(self, "Project Not Loaded", str(error))
 
     def export_dialog(self) -> None:
-        if self._result is None:
+        if not self._export_payload:
             return
         selected = QFileDialog.getExistingDirectory(self, "Choose Full Export Parent")
         if selected:

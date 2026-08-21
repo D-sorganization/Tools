@@ -17,6 +17,10 @@ from typing import Any
 import pandas as pd
 
 from rate_of_closure.application.atomic_text_files import write_utf8_text_atomic
+from rate_of_closure.launch_monitor_v2_client import (
+    CanonicalDatasetReference,
+    load_canonical_dataset_reference,
+)
 
 CONTRACT_VERSION = "2.0.0"
 
@@ -96,6 +100,7 @@ class LaunchMonitorProject:
     dataset: DatasetReference
     identity: PlayerIdentityBinding
     selection: AnalysisSelection
+    canonical_dataset: CanonicalDatasetReference | None = None
     contract_version: str = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -108,7 +113,10 @@ class LaunchMonitorProject:
     def to_wire(self) -> dict[str, Any]:
         """Return the snake-case backend and persistence representation."""
 
-        return asdict(self)
+        payload = asdict(self)
+        if self.canonical_dataset is None:
+            payload.pop("canonical_dataset")
+        return payload
 
 
 def build_player_covariation_request(project: LaunchMonitorProject) -> dict[str, Any]:
@@ -166,14 +174,19 @@ def load_project(source: str | Path) -> LaunchMonitorProject:
     payload = json.loads(Path(source).read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("launch-monitor project must be a JSON object")
-    allowed = {"name", "dataset", "identity", "selection", "contract_version"}
-    if set(payload) != allowed:
+    required = {"name", "dataset", "identity", "selection", "contract_version"}
+    allowed = required | {"canonical_dataset"}
+    if not required.issubset(payload) or not set(payload).issubset(allowed):
         raise ValueError("launch-monitor project has missing or unknown fields")
+    canonical = payload.get("canonical_dataset")
     return LaunchMonitorProject(
         name=str(payload["name"]),
         dataset=DatasetReference(**payload["dataset"]),
         identity=PlayerIdentityBinding(**payload["identity"]),
         selection=AnalysisSelection(**payload["selection"]),
+        canonical_dataset=(
+            None if canonical is None else load_canonical_dataset_reference(canonical)
+        ),
         contract_version=str(payload["contract_version"]),
     )
 

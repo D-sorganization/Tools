@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from rate_of_closure.launch_monitor_v2_client import CanonicalDatasetReference
 from rate_of_closure.launch_monitor_workspace import (
     AnalysisSelection,
     DatasetReference,
@@ -71,6 +72,29 @@ def test_project_round_trip_keeps_reference_but_never_embeds_rows(
     assert payload["dataset"]["revision"] == "97f3ecf"
     assert "rows" not in payload
     assert load_project(destination) == _project()
+
+
+def test_project_round_trip_can_pin_authorized_corpus_without_private_path(
+    tmp_path: Path,
+) -> None:
+    canonical = CanonicalDatasetReference(
+        root_id="launch-monitor-authority",
+        repository="D-sorganization/Launch-Monitor-Flight-Model-Campaign",
+        commit="7" * 40,
+        manifest_sha256="8" * 64,
+        content_sha256="9" * 64,
+        expected_row_count=261_666,
+    )
+    project = LaunchMonitorProject(
+        **{**_project().__dict__, "canonical_dataset": canonical}
+    )
+    destination = tmp_path / "canonical.lmproject.json"
+    save_project(destination, project)
+    payload = json.loads(destination.read_text(encoding="utf-8"))
+
+    assert payload["canonical_dataset"]["root_id"] == "launch-monitor-authority"
+    assert "path" not in payload["canonical_dataset"]
+    assert load_project(destination) == project
 
 
 def test_full_export_contains_project_result_backing_rows_and_hashes(
@@ -147,6 +171,39 @@ def test_pyqt_player_workspace_runs_grouped_analysis_only_after_attestation(
     panel.run_pair_scan()
     assert panel._export_payload["mode"] == "exploratory_pair_scan"
     assert panel.covariation_view.table.rowCount() > 0
+
+
+def test_pyqt_player_workspace_exposes_fail_closed_canonical_controls(qtbot) -> None:  # type: ignore[no-untyped-def]
+    from rate_of_closure.ui.pyqt6.launch_monitor_player_workspace import (
+        LaunchMonitorPlayerWorkspace,
+    )
+
+    panel = LaunchMonitorPlayerWorkspace()
+    qtbot.addWidget(panel)
+
+    assert panel.authority_url.accessibleName() == "Canonical Upstream authority URL"
+    assert panel.corpus_reference_button.accessibleName() == (
+        "Load authorized corpus reference"
+    )
+    assert not panel.canonical_covariation_button.isEnabled()
+    assert not panel.inspect_corpus_button.isEnabled()
+    assert "20,000" in panel.canonical_limit.text()
+
+    panel.set_dataset(
+        pd.DataFrame(
+            {
+                "player_id": ["p1"] * 4,
+                "face_angle": [0.0, 1.0, 2.0, 3.0],
+                "club_path": [0.0, 0.5, 1.0, 1.5],
+            }
+        ),
+        "canonical-test.csv",
+    )
+    panel.identity_combo.setCurrentText("player_id")
+    panel.attestation.setChecked(True)
+    panel._export_payload = {"contract_version": "canonical-test"}
+    panel._refresh_enabled()
+    assert panel.export_button.isEnabled()
 
 
 def test_workspace_documentation_matches_released_grouped_analytics() -> None:
