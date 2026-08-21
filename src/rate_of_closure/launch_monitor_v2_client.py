@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from typing import Any, cast
+from typing import Any
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
@@ -193,18 +193,17 @@ class UpstreamV2Client:
         """Submit a verified-reference aggregate job without inline observations."""
 
         value = self._post("/tools/launch-monitor-analytics/v2/dataset-jobs", payload)
-        return cast(dict[str, Any], validate_dataset_job_status(value))
+        validated: dict[str, Any] = validate_dataset_job_status(value)
+        return validated
 
     def dataset_job_status(self, job_id: str) -> dict[str, Any]:
         """Fetch one data-free canonical dataset-job status."""
 
         validate_job_id(job_id)
-        return cast(
-            dict[str, Any],
-            validate_dataset_job_status(
-                self._get(f"/tools/launch-monitor-analytics/v2/dataset-jobs/{job_id}")
-            ),
+        validated: dict[str, Any] = validate_dataset_job_status(
+            self._get(f"/tools/launch-monitor-analytics/v2/dataset-jobs/{job_id}")
         )
+        return validated
 
     def dataset_job_results(
         self, job_id: str, *, offset: int = 0, limit: int = 100
@@ -216,7 +215,8 @@ class UpstreamV2Client:
         value = self._get(
             f"/tools/launch-monitor-analytics/v2/dataset-jobs/{job_id}/results?{query}"
         )
-        return cast(dict[str, Any], validate_dataset_job_page(value))
+        validated: dict[str, Any] = validate_dataset_job_page(value)
+        return validated
 
     def player_covariation(self, payload: dict[str, object]) -> dict[str, Any]:
         """Run canonical selected-pair covariation through UpstreamDrift."""
@@ -224,7 +224,8 @@ class UpstreamV2Client:
         value = self._post(
             "/tools/launch-monitor-analytics/v2/player-covariation", payload
         )
-        return cast(dict[str, Any], validate_player_covariation_response(value))
+        validated: dict[str, Any] = validate_player_covariation_response(value)
+        return validated
 
     def _get(self, path: str) -> object:
         request = Request(f"{self.base_url}{path}", method="GET")
