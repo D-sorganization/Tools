@@ -27,12 +27,23 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.76                                    |
-| **Last Spec Update**    | 2026-08-20                                 |
+| **Spec Version**        | 1.17.77                                    |
+| **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.77 adds the shared row-free launch-monitor workspace/export v3
+contract to PyQt6 and React. Saved projects preserve immutable source and
+canonical-authority references, explicit player/session/order attestations,
+analysis settings, units, formulas, exclusions, aggregate-safe results, and
+deterministic row-hash join metadata without persisting restricted rows.
+Restricted backing CSV/JSON export remains desktop-only and requires explicit
+approval; browser backing-row export fails closed. Both clients import labelled
+legacy v1/v2 projects, while plot export parity is SVG/PNG and desktop alone
+adds PDF through its platform renderer. Canonical Upstream v2 remains the
+statistical authority and local results remain labelled offline compatibility.
 
 Version 1.17.76 migrates the player/population workspace to the canonical
 UpstreamDrift authorities pinned at `453346806a2950354f5b72cc46c2646e66459c8c`.

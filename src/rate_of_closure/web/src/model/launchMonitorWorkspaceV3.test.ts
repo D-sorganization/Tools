@@ -44,8 +44,14 @@ describe("launch monitor workspace v3", () => {
     };
     const first = createWorkspaceV3Bundle(parseWorkspaceV3(golden), rows, authorization);
     const second = createWorkspaceV3Bundle(parseWorkspaceV3(golden), rows, authorization);
+    const expectedRowHash = [
+      "44bcce6d01c15405", // pragma: allowlist secret
+      "60681daf1db90869", // pragma: allowlist secret
+      "e9d4b15cd59d43bc", // pragma: allowlist secret
+      "f99ab4ea694ccf1d", // pragma: allowlist secret
+    ].join("");
     expect(first.files["backing_join.csv"]).toBe(second.files["backing_join.csv"]);
-    expect(first.files["backing_join.csv"]).toContain("44bcce6d01c1540560681daf1db90869e9d4b15cd59d43bcf99ab4ea694ccf1d");
+    expect(first.files["backing_join.csv"]).toContain(expectedRowHash);
     expect(first.files["backing_rows.csv"]).toContain("player_id,face_angle");
   });
 });

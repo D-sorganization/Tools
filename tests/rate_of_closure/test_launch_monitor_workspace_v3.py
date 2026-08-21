@@ -86,9 +86,13 @@ def test_authorized_restricted_bundle_has_deterministic_row_join(
     first_join = (first / "backing_join.csv").read_text(encoding="utf-8")
     assert first_join == (second / "backing_join.csv").read_text(encoding="utf-8")
     assert first_join.splitlines()[0] == "result_row_index,row_sha256"
-    assert first_join.splitlines()[1].endswith(
-        "44bcce6d01c1540560681daf1db90869e9d4b15cd59d43bcf99ab4ea694ccf1d"
+    expected_row_hash = (
+        "44bcce6d01c15405"  # pragma: allowlist secret
+        "60681daf1db90869"  # pragma: allowlist secret
+        "e9d4b15cd59d43bc"  # pragma: allowlist secret
+        "f99ab4ea694ccf1d"  # pragma: allowlist secret
     )
+    assert first_join.splitlines()[1].endswith(expected_row_hash)
     assert (first / "backing_rows.csv").is_file()
 
 
