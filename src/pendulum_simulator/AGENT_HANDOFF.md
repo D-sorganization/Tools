@@ -21,6 +21,11 @@ What shipped: a model-neutral transfer contract, exact double-pendulum
 drift/control grip-force attribution, integrated braking/work/impulse metrics,
 Pareto ranking, and a PyQt **Drift Transfer** analysis tab.
 
+Companion issue **#4430** is active on
+`feat/4430-rotating-base-companion`. The branch now has the source-pinned
+18-case authority, exact qualified rotating-base physics, and a registered
+full-resolution provider. Desktop/web consumers and exports remain to land.
+
 **The scientific boundary shipped with it and still binds.** The widget fails
 closed for the triple and golfer tiers. Do not relabel the double model's
 proximal link rate as anatomical shoulder or thorax velocity, and do not
@@ -50,7 +55,7 @@ maintenance rather than feature growth: Bolt perf passes on the web
 Nelder-Mead simplex sort, a #3745 GUI/error-handling cleanup, a 20-PR
 fleet-CI-relief consolidation, physics hot-loop allocation removal, and earlier
 `pendulum-core` maturin/pyo3 packaging + import-canonicalization work. No open
-PR currently targets this tool directly.
+PR exists yet for #4430; do not duplicate its active local branch.
 
 ## Must-Read Architecture Pointers
 
@@ -102,9 +107,9 @@ double-collect by also passing the embedded path.
 
 ## Roadmap (ordered)
 
-1. No dedicated feature epic open now that #4406 has closed; treat this tool as
-   a stable physics provider. Prioritize keeping `pendulum-core` API stable for
-   #4103's `SwingSource` consumers.
+1. Complete #4430's PyQt and React/Tauri rotating-base companion surfaces from
+   the single registered provider; preserve exact fixture parity and the
+   nonanatomical, noncoaching, no-human-validation boundaries.
 2. If/when epic #4103 Phase 1 lands the double/triple pendulum
    `SwingSource` integration, expect a coordinated PR here exposing any
    additional bindings rate_of_closure needs.

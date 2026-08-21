@@ -25,6 +25,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Visualization/authority slice landed via **#4473**.                                                                                                                       |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                      |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                         |
+| #4430 | Qualified rotating-base companion. Open. Local branch `feat/4430-rotating-base-companion` now owns the source-pinned provider contract, exact fixture, qualified physics, and registered-case execution; PyQt/React surfaces remain. |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs). |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout). |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open. |
@@ -64,8 +65,7 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Inbound from UpstreamDrift#8770.** UD's child-copy contract forbids fixing `src/shared/python/ai/auth/authentication.py` there (pending us). Lines 342/370 cite `TODO #5227` (retarget to UpstreamDrift#8770); lines 240/245/316 trip semgrep `python-logger-credential-disclosure` by logging user ids on credential paths.
-
+**Active #4430 work.** `feat/4430-rotating-base-companion` is based on exact `main` `2a768aada`; retain the UpstreamDrift `967c40f5` evidence pin, exact 18-case parity, invalid rows, and all nonanatomical/noncoaching boundaries.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

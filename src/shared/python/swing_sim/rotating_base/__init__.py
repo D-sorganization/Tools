@@ -25,6 +25,13 @@ from .dynamics import (
 from .integration import initial_state, rollout
 from .kinematics import constraint_jacobian, constraint_vector, kinematics
 from .loader import EXPECTED_STUDY_SHA256, load_qualified_study
+from .provider import (
+    REGISTERED_TORSO_RATES_RAD_S,
+    RotatingBaseRunRequest,
+    RotatingBaseRunResult,
+    RotatingBaseRunTrace,
+    run_registered_case,
+)
 from .types import (
     RotatingBaseConfig,
     RotatingBaseParams,
@@ -42,9 +49,13 @@ __all__ = [
     "RotatingBaseCase",
     "RotatingBaseCaseMetrics",
     "RotatingBaseProviderResult",
+    "RotatingBaseRunRequest",
+    "RotatingBaseRunResult",
+    "RotatingBaseRunTrace",
     "RotatingBaseStudy",
     "SCHEMA_ID",
     "SCHEMA_VERSION",
+    "REGISTERED_TORSO_RATES_RAD_S",
     "SameStateKillswitch",
     "TorsoTwoHandControl",
     "UPSTREAM_PHYSICS_SOURCE_SHA256",
@@ -63,5 +74,6 @@ __all__ = [
     "mechanical_energy",
     "potential_energy",
     "rollout",
+    "run_registered_case",
     "solve_constrained_dynamics",
 ]
