@@ -158,9 +158,9 @@ def compute_position_dispersion_view(
     )
     require(indices.ndim == 1, "trial_indices must be one-dimensional")
     require(indices.size >= 1, "trial_indices must select at least one trial")
-    require(np.all(indices >= 0), "trial_indices cannot be negative")
+    require(bool(np.all(indices >= 0)), "trial_indices cannot be negative")
     require(
-        np.all(indices < ensemble.positions_m.shape[0]),
+        bool(np.all(indices < ensemble.positions_m.shape[0])),
         "trial_indices exceed the ensemble",
     )
     require(np.unique(indices).size == indices.size, "trial_indices must be unique")

@@ -137,7 +137,7 @@ class SensitivityResult:
         column = self.matrix[:, self.output_names.index(output_name)]
         finite = np.isfinite(column)
         require(
-            np.any(finite),
+            bool(np.any(finite)),
             "output has no available sensitivity values",
             output_name,
         )
@@ -199,7 +199,7 @@ def sensitivity_from_standard_deviations(
     inputs = tuple(input_keys)
     outputs = tuple(output_names)
     values = np.array(matrix, dtype=float, copy=True)
-    require(inputs and outputs, "sensitivity axes must be nonempty")
+    require(bool(inputs) and bool(outputs), "sensitivity axes must be nonempty")
     require(len(set(inputs)) == len(inputs), "sensitivity inputs must be unique")
     require(len(set(outputs)) == len(outputs), "sensitivity outputs must be unique")
     require(

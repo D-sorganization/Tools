@@ -339,7 +339,7 @@ def _require_trace_status_binding(
         index = outcome.trial_index
         if outcome.status is NUMERICAL_FAILURE:
             require(
-                not np.any(traces.sample_valid[index]),
+                not bool(np.any(traces.sample_valid[index])),
                 "numerical failure trace must be unavailable",
             )
             require(
@@ -348,7 +348,7 @@ def _require_trace_status_binding(
             )
             continue
         require(
-            np.any(traces.sample_valid[index]),
+            bool(np.any(traces.sample_valid[index])),
             "evaluated trial trace must retain an available sample",
         )
         expected_impact = outcome.status is EVALUATED_HIT

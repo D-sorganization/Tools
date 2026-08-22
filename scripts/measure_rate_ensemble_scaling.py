@@ -68,8 +68,9 @@ def _peak_resident_bytes() -> int:
     if platform.system() == "Windows":
         counters = _ProcessMemoryCounters()
         counters.cb = ctypes.sizeof(counters)
-        kernel32 = ctypes.windll.kernel32
-        psapi = ctypes.windll.psapi
+        windll = getattr(ctypes, "windll")  # noqa: B009 - absent on non-Windows
+        kernel32 = windll.kernel32
+        psapi = windll.psapi
         kernel32.GetCurrentProcess.restype = wintypes.HANDLE
         psapi.GetProcessMemoryInfo.argtypes = (
             wintypes.HANDLE,
@@ -86,7 +87,8 @@ def _peak_resident_bytes() -> int:
         return int(counters.PeakWorkingSetSize)
     import resource
 
-    usage = resource.getrusage(resource.RUSAGE_SELF)  # type: ignore[attr-defined]
+    getrusage = getattr(resource, "getrusage")  # noqa: B009 - platform stub differs
+    usage = getrusage(getattr(resource, "RUSAGE_SELF"))  # noqa: B009
     peak = int(usage.ru_maxrss)
     return peak if sys.platform == "darwin" else peak * 1024
 
