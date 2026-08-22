@@ -20,6 +20,29 @@ interface VisualEvidence {
   horizontalOverflowPx: number;
 }
 
+const PAINT_SAMPLE_INTERVAL_MS = 100;
+const REQUIRED_STABLE_PAINT_SAMPLES = 3;
+const MAX_PAINT_SAMPLES = 20;
+
+const captureStablePage = async (page: Page): Promise<Buffer> => {
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    await new Promise<void>((resolvePaint) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolvePaint()));
+    });
+  });
+  let previous: Buffer | null = null;
+  let stableSamples = 0;
+  for (let sample = 0; sample < MAX_PAINT_SAMPLES; sample += 1) {
+    await page.waitForTimeout(PAINT_SAMPLE_INTERVAL_MS);
+    const image = await page.screenshot({ animations: "disabled", caret: "hide" });
+    stableSamples = previous?.equals(image) ? stableSamples + 1 : 1;
+    if (stableSamples >= REQUIRED_STABLE_PAINT_SAMPLES) return image;
+    previous = image;
+  }
+  throw new Error(`page paint did not stabilize within ${MAX_PAINT_SAMPLES} samples`);
+};
+
 const intersection = async (locator: Locator): Promise<VisualEvidence["visibleIntersection"]> =>
   locator.evaluate((element) => {
     let rect = element.getBoundingClientRect();
@@ -123,7 +146,7 @@ test("every registered React tab exposes its primary visual in the initial viewp
           await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
         }
         const file = `initial-${entry.tabId}-1440x900.png`;
-        const image = await page.screenshot({ animations: "disabled", caret: "hide" });
+        const image = await captureStablePage(page);
         await writeFile(resolve(reactCandidateRoot, file), image);
         candidates.push({
           tabId: entry.tabId,
@@ -168,5 +191,25 @@ test("visible intersection clips a landmark through an overflow ancestor", async
   expect(height).toBe(1);
   expect(height).toBeLessThan(
     visualizationReferenceEnvironments.react.responsiveMinimumVisibleHeightPx,
+  );
+});
+
+test("candidate capture waits through a scheduled browser paint", async ({ page }) => {
+  await page.setContent('<main data-paint-state="pending">Pending paint</main>');
+  await page.evaluate(() => {
+    window.setTimeout(() => {
+      const landmark = document.querySelector("[data-paint-state]");
+      if (!(landmark instanceof HTMLElement)) return;
+      landmark.dataset.paintState = "complete";
+      landmark.style.backgroundColor = "rgb(0, 128, 0)";
+    }, 150);
+  });
+
+  const image = await captureStablePage(page);
+
+  expect(image.byteLength).toBeGreaterThan(0);
+  await expect(page.locator('[data-paint-state="complete"]')).toHaveCSS(
+    "background-color",
+    "rgb(0, 128, 0)",
   );
 });
