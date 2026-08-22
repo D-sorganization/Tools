@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.84                                    |
+| **Spec Version**        | 1.17.85                                    |
 | **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
@@ -5117,6 +5117,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-21 | 1.17.85 | test(rate-of-closure): normalize each React tab to the canonical top-of-page viewport before measuring its primary landmark. Geometry evidence and the later protected capture now share one viewport, while the intervening visibility and intersection observations allow the browser compositor to paint the complete page. Runtime analysis, scientific authority, and drift limits remain unchanged. |
 | 2026-08-21 | 1.17.84 | fix(rate-of-closure, #4630): retain the public Morris parser compatibility alias required by hosted consumers and make protected initial-page React references reset and verify scroll origin before capture. This prevents landmark-audit scrolling from cropping the application shell; visual drift thresholds, baseline approval, scientific authority, and runtime analysis remain unchanged. |
 | 2026-08-21 | 1.17.83 | feat(rate-of-closure, #4626 / #4142 R11.5): add an authenticated authority-owned durable-ensemble lifecycle with strict path-free request/job records, server-owned archives, one active writer per archive, verified-prefix progress, exact resume, zero-solver replay, inspection, cancellation, and bounded retention. PyQt6 and a transport-only React Worker expose the same incremental moments without reimplementing physics. Model-scenario, verified-prefix, and no-row/no-quantile/no-correlation limitations remain explicit. |
 | 2026-08-21 | 1.17.82 | feat(rate-of-closure, #4626 / #4142 R11.5): add one strict path-free durable-ensemble evidence contract shared by Python and TypeScript. Exact parsers bind digest, lifecycle/counts, canonical output moments and units, frame/point layout, registered incremental method, and scientific limitations; incompatible or inconsistent evidence fails closed. |
