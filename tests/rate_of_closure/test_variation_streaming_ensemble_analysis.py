@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from collections import Counter
 from pathlib import Path
 
@@ -14,7 +15,12 @@ from rate_of_closure.variation.simulation_adapter import (
     run_simulation_ensemble_chunks,
 )
 from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
+from rate_of_closure.variation.streaming_ensemble_analysis import (
+    AnalyzingDurableEnsembleSink,
+    DurableEnsembleSummary,
+)
 from shared.python.contracts import ContractViolationError
+from shared.python.swing_sim.solver.solve import CancelledError
 from shared.python.swing_sim.variation.analysis import summary_stats
 
 from .test_variation_durable_ensemble_chunks import (
@@ -93,3 +99,45 @@ def test_analysis_rejects_corrupted_archive_before_promotion(tmp_path: Path) -> 
 
     with pytest.raises(ContractViolationError, match="checksum"):
         analyze_durable_ensemble(request, directory)
+
+
+def test_live_sink_reports_prefix_and_resumes_without_materializing(
+    tmp_path: Path,
+) -> None:
+    request = _three_trial_request()
+    directory = tmp_path / "campaign"
+    cancelled = threading.Event()
+    first_sink = AnalyzingDurableEnsembleSink(directory)
+    prefixes: list[int] = []
+
+    def stop_after_first(_report: object) -> None:
+        prefixes.append(first_sink.snapshot().analyzed_trial_count)
+        cancelled.set()
+
+    with pytest.raises(CancelledError):
+        run_simulation_ensemble_chunks(
+            request,
+            first_sink,
+            chunk_size=1,
+            progress_cb=stop_after_first,
+            cancel_event=cancelled,
+        )
+
+    assert prefixes == [1]
+    assert analyze_durable_ensemble(request, directory).analyzed_trial_count == 1
+
+    resumed_sink = AnalyzingDurableEnsembleSink(directory)
+    resumed_prefixes: list[int] = []
+    result = run_simulation_ensemble_chunks(
+        request,
+        resumed_sink,
+        chunk_size=2,
+        progress_cb=lambda _report: resumed_prefixes.append(
+            resumed_sink.snapshot().analyzed_trial_count
+        ),
+    )
+
+    assert isinstance(result, DurableEnsembleSummary)
+    assert result.archive.status == "complete"
+    assert resumed_prefixes == [1, 3]
+    assert sum(result.status_counts.values()) == 3

@@ -201,7 +201,8 @@ def test_workspace_keeps_monte_carlo_as_a_distinct_sibling(qtbot) -> None:  # ty
     qtbot.addWidget(workspace)
 
     assert workspace.tabs().tabText(0) == "Monte Carlo & Dispersion"
-    assert workspace.tabs().tabText(1) == "Morris Screening"
+    assert workspace.tabs().tabText(1) == "Durable Ensemble Analysis"
+    assert workspace.tabs().tabText(2) == "Morris Screening"
     assert workspace.tabs().widget(0) is monte_carlo
     assert not morris._run_button.isEnabled()
     assert "unavailable" in morris._status.text().lower()

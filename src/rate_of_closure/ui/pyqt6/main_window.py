@@ -27,6 +27,10 @@ from rate_of_closure.ui.pyqt6.app_toolstrip import (
 from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+from rate_of_closure.ui.pyqt6.durable_ensemble_tab import DurableEnsembleTab
+from rate_of_closure.ui.pyqt6.durable_ensemble_worker import (
+    DurableEnsembleAuthorityPort,
+)
 from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
 from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (
@@ -113,17 +117,22 @@ class RateOfClosureMainWindow(
         *,
         navigation_settings: NavigationSettings | None = None,
         morris_client: MorrisAuthorityPort | None = None,
+        durable_ensemble_client: DurableEnsembleAuthorityPort | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
         self.setMinimumSize(1024, 700)
 
-        self._create_views(morris_client)
+        self._create_views(morris_client, durable_ensemble_client)
         self._build_application_shell(navigation_settings)
         self._connect_view_signals()
         self._initialize_view_content()
 
-    def _create_views(self, morris_client: MorrisAuthorityPort | None) -> None:
+    def _create_views(
+        self,
+        morris_client: MorrisAuthorityPort | None,
+        durable_client: DurableEnsembleAuthorityPort | None,
+    ) -> None:
         """Create the application views without coupling their signal graph."""
 
         self._controls = ControlsPanel()
@@ -137,11 +146,15 @@ class RateOfClosureMainWindow(
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
         self._neural_model_lab_tab = NeuralModelLabTab()
         self._variation_tab = VariationTab()
+        self._durable_ensemble_tab = DurableEnsembleTab(
+            durable_client, self._variation_tab.build_plan
+        )
         self._morris_tab = MorrisScreeningTab(morris_client)
         self._morris_tab.shutdownReady.connect(self._resume_pending_close)
+        self._durable_ensemble_tab.shutdownReady.connect(self._resume_pending_close)
         self._close_pending = False
         self._variation_workspace = VariationWorkspace(
-            self._variation_tab, self._morris_tab
+            self._variation_tab, self._morris_tab, self._durable_ensemble_tab
         )
         self._variation_tab.studyCompleted.connect(self._on_variation_study)
         self._putting_tab = PuttingTab()
@@ -308,9 +321,11 @@ class RateOfClosureMainWindow(
                 "before running variation analysis."
             )
             self._variation_tab.set_simulation_unavailable(message)
+            self._durable_ensemble_tab.set_simulation_unavailable(message)
             self._morris_tab.set_simulation_unavailable(message)
             return
         self._variation_tab.set_simulation_config(config)
+        self._durable_ensemble_tab.set_simulation_config(config)
         self._morris_tab.set_simulation_config(config)
 
     def _on_variation_study(self, dataset: VariationDataset) -> None:
@@ -376,7 +391,8 @@ class RateOfClosureMainWindow(
         self._club_view.stop()
         self._simulation_tab.stop()
         self._variation_tab.stop()
-        if not self._morris_tab.stop():
+        durable_ready = self._durable_ensemble_tab.stop()
+        if not self._morris_tab.stop() or not durable_ready:
             self._close_pending = True
             event.ignore()
             return

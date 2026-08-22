@@ -5,17 +5,14 @@
 > **Current state only**, capped at 150 lines; history lives in git and in
 > [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
-
 ## What This Tool Is Now
 
-A swing → impact → ball-flight simulator with **PyQt6 and React surfaces held
-at parity**, plus a Rust fast path. It began as a single closure-rate calculator
-(twist model: GC-path vs impact-point-path gap, °/ft).
+A swing → impact → ball-flight simulator with parity **PyQt6 and React
+surfaces**, plus a Rust fast path; it began as a closure-rate calculator.
 
 PyQt6 entry: `rate_of_closure.ui.pyqt6.main_window:RateOfClosureMainWindow`,
-titled "Rate of Closure Impact Explorer" — that exact string is what
-UpstreamDrift's launcher manifest advertises. React mirror: `web/` (Vite/TS,
-~1,570 tests across 193 files).
+titled "Rate of Closure Impact Explorer" as UpstreamDrift's manifest advertises.
+React mirror: `web/` (Vite/TS, ~1,570 tests across 193 files).
 
 Physics lives in `src/shared/python/swing_sim/` — outside this tool, so
 UpstreamDrift reaches it through `vendor/ud-tools`: `impact/` (contact law,
@@ -62,12 +59,15 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` through `3329794ef` adds scalar moments, safe
-limits, v2 sampling, bounded work, measured scaling, and incremental geometry/
-sensitivity plus the strict path-free Python/TypeScript durable evidence wire
-and golden parity. The wire binds digest, prefix counts, units,
-frame, method, and limitations. Durable client state machines remain; #4626 is
-not done.
+`feat/4626-streaming-ensemble` through `3329794ef` plus the current uncommitted
+slice adds scalar moments, safe limits, v2 sampling, bounded work, scaling,
+incremental geometry/sensitivity, and a strict path-free durable wire. The
+Python authority owns paths and run/resume/inspect/cancel; PyQt6 and a
+transport-only React Worker expose prefix evidence with no browser physics.
+Focused backend/UI/type/lint gates pass. Runtime startup is not green under the
+20-worker UpstreamDrift campaign: child import takes ~58 s versus the unchanged
+15 s test ceiling (10 other runtime tests pass). Do not weaken it; rerun when
+CPU is released. #4626 is not done.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

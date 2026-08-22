@@ -15,7 +15,9 @@ from .durable_ensemble_evidence import (
     DurableArchiveEvidence,
     DurableEnsembleEvidence,
     durable_ensemble_evidence,
+    durable_ensemble_evidence_from_document,
     durable_ensemble_evidence_from_json,
+    durable_ensemble_evidence_to_document,
     durable_ensemble_evidence_to_json,
 )
 from .ensemble_chunks import (
@@ -61,6 +63,7 @@ from .simulation_adapter import (
     spatial_point_ids,
 )
 from .streaming_ensemble_analysis import (
+    AnalyzingDurableEnsembleSink,
     DurableEnsembleLayout,
     DurableEnsembleSummary,
     StreamingOutputMoments,
@@ -75,6 +78,7 @@ from .trial_projection import (
 
 __all__ = [
     "APP_FRAME_ID",
+    "AnalyzingDurableEnsembleSink",
     "CONTACT_OUTPUT_NAMES",
     "ChipForgivenessStudy",
     "ChipStudySummary",
@@ -121,7 +125,9 @@ __all__ = [
     "build_ensemble_stream_header",
     "capture_simulation",
     "durable_ensemble_evidence",
+    "durable_ensemble_evidence_from_document",
     "durable_ensemble_evidence_from_json",
+    "durable_ensemble_evidence_to_document",
     "durable_ensemble_evidence_to_json",
     "evaluate_rate_morris_design",
     "forgiveness_variation_dataset",

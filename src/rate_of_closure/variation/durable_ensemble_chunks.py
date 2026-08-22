@@ -146,6 +146,20 @@ class DurableEnsembleChunkSink:
             cast(int, manifest["next_index"]), cast(int, manifest["failed_count"])
         )
 
+    def visit_active_prefix(
+        self, visitor: Callable[[SimulationResultChunk], None]
+    ) -> None:
+        """Visit the verified active prefix once for a live analysis consumer."""
+        require(callable(visitor), "archive visitor must be callable")
+        manifest = self._require_active()
+        for chunk in self._verified_prefix(manifest):
+            visitor(chunk)
+
+    def active_archive(self) -> DurableEnsembleArchive:
+        """Return the lightweight state of the currently verified lifecycle."""
+        self._require_active()
+        return self._archive()
+
     def accept(self, chunk: SimulationResultChunk) -> None:
         """Atomically add one verified contiguous chunk to the durable prefix."""
         manifest = self._require_active()

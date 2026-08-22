@@ -183,7 +183,15 @@ def durable_ensemble_evidence(
 def durable_ensemble_evidence_to_json(evidence: DurableEnsembleEvidence) -> str:
     """Serialize one validated evidence value with stable field ordering."""
     require(isinstance(evidence, DurableEnsembleEvidence), "evidence type is invalid")
-    return json.dumps(_evidence_document(evidence), indent=2) + "\n"
+    return json.dumps(durable_ensemble_evidence_to_document(evidence), indent=2) + "\n"
+
+
+def durable_ensemble_evidence_to_document(
+    evidence: DurableEnsembleEvidence,
+) -> dict[str, object]:
+    """Return one detached JSON-compatible client document."""
+    require(isinstance(evidence, DurableEnsembleEvidence), "evidence type is invalid")
+    return _evidence_document(evidence)
 
 
 def durable_ensemble_evidence_from_json(text: str) -> DurableEnsembleEvidence:
@@ -194,6 +202,13 @@ def durable_ensemble_evidence_from_json(text: str) -> DurableEnsembleEvidence:
         value = json.loads(text)
     except (TypeError, ValueError) as exc:
         require(False, "evidence JSON is invalid", str(exc))
+    return durable_ensemble_evidence_from_document(value)
+
+
+def durable_ensemble_evidence_from_document(
+    value: object,
+) -> DurableEnsembleEvidence:
+    """Parse one already-decoded exact evidence document."""
     root = _exact_mapping(value, _ROOT_FIELDS, "evidence")
     return DurableEnsembleEvidence(
         _text(root["schema_version"], "schema_version"),
@@ -392,6 +407,8 @@ __all__ = [
     "DurableArchiveEvidence",
     "DurableEnsembleEvidence",
     "durable_ensemble_evidence",
+    "durable_ensemble_evidence_from_document",
     "durable_ensemble_evidence_from_json",
+    "durable_ensemble_evidence_to_document",
     "durable_ensemble_evidence_to_json",
 ]
