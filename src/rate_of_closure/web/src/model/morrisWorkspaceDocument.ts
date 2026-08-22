@@ -331,5 +331,17 @@ export function morrisWorkspaceReportToCsv(workspace: MorrisWorkspaceDocument): 
   if (evidence === null || evidence.job.report === null) throw new RangeError("completed archived evidence is required for report CSV");
   const header = ["request_id", "job_id", "evidence_state", "export_scope", "trajectories", "levels", "seed", "total_samples", "normalized_step", "source_spec_id", "source_variable_key", "source_unit", "source_lower", "source_upper", "source_time_start_s", "source_time_end_s", "source_point_ids_json", "target_name", "target_unit", "target_kind", "target_time_s", "target_point_id", "coordinate_frame", "mu", "mu_star", "mu_star_standard_error", "sigma", "availability", "sample_adequacy", "total_pairs", "valid_pairs", "typed_no_impact_pairs", "no_impact_unavailable_pairs", "failed_pairs", "nonfinite_pairs"];
   const report = evidence.job.report; const rows = report.estimates.map((estimate) => [evidence.request.request_id, evidence.job.jobId, "archived-completed-unverified-live", workspace.setup.exportScope, report.design.trajectories, report.design.levels, report.design.seed, report.design.totalSamples, report.design.normalizedStep, estimate.source.specId, estimate.source.variableKey, estimate.source.unit, ...estimate.source.bounds, estimate.source.timeWindowS?.[0] ?? null, estimate.source.timeWindowS?.[1] ?? null, JSON.stringify(estimate.source.pointIds), estimate.target.name, estimate.target.unit, estimate.target.kind, estimate.target.timeS, estimate.target.pointId, estimate.target.coordinateFrame, estimate.effects.mu, estimate.effects.muStar, estimate.effects.muStarStandardError, estimate.effects.sigma, estimate.availability, estimate.sampleAdequacy, estimate.denominator.totalPairs, estimate.denominator.validPairs, estimate.denominator.typedNoImpactPairs, estimate.denominator.noImpactUnavailablePairs, estimate.denominator.failedPairs, estimate.denominator.nonfinitePairs]);
-  return `${[header, ...rows].map((row) => row.map(morrisCsvCell).join(",")).join("\n")}\n`;
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large report exports.
+  const allRows = [header, ...rows];
+  let csv = "";
+  for (let i = 0; i < allRows.length; i++) {
+    if (i > 0) csv += "\n";
+    const row = allRows[i];
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) csv += ",";
+      csv += morrisCsvCell(row[j]);
+    }
+  }
+  return csv + "\n";
 }
