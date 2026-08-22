@@ -17,6 +17,7 @@ REQUIRED_SPARSE_PATHS = {
         # UpstreamDrift moved its consumed packages under src/shared/python, so
         # this is the narrow root that carries them. Deliberately NOT bare `src`
         # -- see the assertions in the test below.
+        "build_hooks.py",
         "pyproject.toml",
         "src/shared",
         "tests/shared_contracts",
@@ -124,6 +125,7 @@ def test_sparse_mode_preserves_each_downstream_packaging_contract() -> None:
     assert by_repo["D-sorganization/Gasification_Model"]["sparse_cone"] is True
     upstream = by_repo["D-sorganization/UpstreamDrift"]
     assert upstream["sparse_cone"] is False
+    assert "build_hooks.py" in upstream["sparse_checkout"].splitlines()
     assert "pyproject.toml" in upstream["sparse_checkout"].splitlines()
 
 

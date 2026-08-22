@@ -62,7 +62,7 @@ def validated_sample_times(sample_times_s: np.ndarray) -> np.ndarray:
         "sample times must be strictly increasing",
         times,
     )
-    return cast(np.ndarray, times)
+    return times
 
 
 @dataclass(frozen=True)

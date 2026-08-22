@@ -96,20 +96,32 @@ class DurableEnsembleTab(QWidget):
         form = QFormLayout()
         self._archive_id = QLineEdit("pyqt-durable-ensemble")
         self._archive_id.setAccessibleName("Durable ensemble archive identifier")
+        self._archive_id.setToolTip(
+            "Stable identifier for the resumable authority-owned archive."
+        )
         form.addRow("Archive ID", self._archive_id)
         self._chunk_size = QSpinBox()
         self._chunk_size.setRange(1, 256)
         self._chunk_size.setValue(8)
         self._chunk_size.setAccessibleName("Durable ensemble chunk size")
+        self._chunk_size.setToolTip(
+            "Number of trials committed atomically in each archive chunk."
+        )
         form.addRow("Trials per chunk", self._chunk_size)
         layout.addLayout(form)
         buttons = QHBoxLayout()
         self._run_button = QPushButton("Run or Resume Durable Analysis")
         self._run_button.setEnabled(False)
+        self._run_button.setToolTip(
+            "Start a new analysis or resume the verified committed prefix."
+        )
         self._run_button.clicked.connect(self._start)
         buttons.addWidget(self._run_button, stretch=1)
         self._cancel_button = QPushButton("Cancel")
         self._cancel_button.setEnabled(False)
+        self._cancel_button.setToolTip(
+            "Request cooperative cancellation without deleting committed chunks."
+        )
         self._cancel_button.clicked.connect(self._cancel)
         buttons.addWidget(self._cancel_button)
         layout.addLayout(buttons)

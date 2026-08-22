@@ -184,9 +184,9 @@ def request_from_setup(
 
 def base_config_from_setup(setup: MorrisWorkspaceSetup):  # type: ignore[no-untyped-def]
     """Validate and reconstruct the base without requiring a runnable factor."""
-    from .contracts import _parse_base
+    from .contracts import parse_morris_base_request
 
-    return _parse_base(thaw_json(setup.base)).simulation_config()
+    return parse_morris_base_request(thaw_json(setup.base)).simulation_config()
 
 
 def _source_identity(source: MorrisSource) -> tuple[object, ...]:

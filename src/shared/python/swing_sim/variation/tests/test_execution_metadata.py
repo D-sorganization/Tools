@@ -101,7 +101,7 @@ def test_metadata_snapshots_exact_resolved_values_units_and_dimensions() -> None
     assert snapshots[_LAUNCH_ANGLE].unit == "deg"
     assert snapshots[_LAUNCH_ANGLE].dimension == "angle"
     with pytest.raises(AttributeError):
-        metadata.resolved_variables = ()  # type: ignore[misc]
+        metadata.resolved_variables = ()
 
 
 def test_execution_document_round_trips_exact_canonical_plan_and_metadata() -> None:

@@ -35,6 +35,7 @@ def __getattr__(name: str) -> Any:
     globals()[name] = value
     return value
 
+
 __all__ = [
     "DURABLE_ENSEMBLE_JOB_SCHEMA_ID",
     "DURABLE_ENSEMBLE_REQUEST_SCHEMA_ID",

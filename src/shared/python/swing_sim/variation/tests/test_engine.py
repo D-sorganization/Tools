@@ -146,16 +146,12 @@ class TestSampling:
     @pytest.mark.parametrize("chunk_size", [False, 0, -1, 1.5])
     def test_lazy_chunks_reject_invalid_chunk_size(self, chunk_size: object) -> None:
         with pytest.raises(ContractViolationError, match="positive integer"):
-            sample_input_chunks(  # type: ignore[arg-type]
-                _delivery_plan(), chunk_size=chunk_size
-            )
+            sample_input_chunks(_delivery_plan(), chunk_size=chunk_size)
 
     @pytest.mark.parametrize("start_index", [False, -1, 9, 1.5])
     def test_lazy_chunks_reject_invalid_start_index(self, start_index: object) -> None:
         with pytest.raises(ContractViolationError, match="within the plan"):
-            sample_input_chunks(  # type: ignore[arg-type]
-                _delivery_plan(), chunk_size=2, start_index=start_index
-            )
+            sample_input_chunks(_delivery_plan(), chunk_size=2, start_index=start_index)
 
 
 class TestRunVariation:
