@@ -59,7 +59,7 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` through `a99f36c53` (PR #4628) adds scalar
+`feat/4626-streaming-ensemble` through `b4e192d5a` (PR #4628) adds scalar
 moments, safe limits, v2 sampling, bounded work, scaling,
 incremental geometry/sensitivity, and a strict path-free durable wire. The
 Python authority owns paths and run/resume/inspect/cancel; PyQt6 and a
