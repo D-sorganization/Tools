@@ -62,10 +62,10 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` through `8ce732edd` adds scalar moments, safe
+`feat/4626-streaming-ensemble` through `3329794ef` adds scalar moments, safe
 limits, v2 sampling, bounded work, measured scaling, and incremental geometry/
-sensitivity. Current unpushed work adds the strict path-free Python/TypeScript
-durable evidence wire and golden parity. It binds digest, prefix counts, units,
+sensitivity plus the strict path-free Python/TypeScript durable evidence wire
+and golden parity. The wire binds digest, prefix counts, units,
 frame, method, and limitations. Durable client state machines remain; #4626 is
 not done.
 
