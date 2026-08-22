@@ -2,9 +2,9 @@
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-21
-> **Current state only**, capped at 150 lines; history lives in git and in
-> [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
+> **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
+
 ## What This Tool Is Now
 
 A swing → impact → ball-flight simulator with parity **PyQt6 and React
@@ -59,15 +59,15 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` through `b4e192d5a` (PR #4628) adds scalar
-moments, safe limits, v2 sampling, bounded work, scaling,
-incremental geometry/sensitivity, and a strict path-free durable wire. The
-Python authority owns paths and run/resume/inspect/cancel; PyQt6 and a
-transport-only React Worker expose prefix evidence with no browser physics.
-Focused backend/UI/type/lint gates pass. Runtime startup is not green under the
-20-worker UpstreamDrift campaign: child import takes ~58 s versus the unchanged
-15 s test ceiling (10 other runtime tests pass). Do not weaken it; rerun when
-CPU is released. #4626 is not done.
+`feat/4626-streaming-ensemble` through `f363031ad` (PR #4628) adds scalar moments,
+safe limits, v2 sampling, bounded work, scaling, incremental geometry/sensitivity,
+and a strict path-free durable wire. The Python authority owns paths and lifecycle;
+PyQt6 and a transport-only React Worker expose prefix evidence without browser physics.
+The latest fix closes lazy Morris imports, PyQt hover/accessibility bounds, Ruff/Mypy,
+and Upstream's sparse build-hook boundary. Focused gates pass: 57 shared/import tests,
+13 hosted-failure regressions, the final accessibility audit, and edited-source lint/type.
+The fresh protected run must still prove these fixes. Under the 20-worker UpstreamDrift campaign, child import takes ~58 s versus the unchanged 15 s ceiling; do not weaken it.
+The other 10 runtime tests pass; rerun after CPU is released. #4626 is not done.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
