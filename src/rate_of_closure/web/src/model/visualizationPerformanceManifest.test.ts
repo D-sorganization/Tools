@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import performanceDocument from "../../../visualization_performance.v1.json" with { type: "json" };
+import performanceDocument from "../vendored/visualization_performance.v1.json" with { type: "json" };
 
 import { PRIMARY_VIEW_IDS } from "./viewPreferences";
 import {

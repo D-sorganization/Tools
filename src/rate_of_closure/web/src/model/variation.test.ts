@@ -9,7 +9,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import spearmanPairwiseFixture from "../../../../shared/fixtures/variation_spearman_pairwise_finite.json";
+import spearmanPairwiseFixture from "../vendored/variation_spearman_pairwise_finite.json";
 import parityFixture from "./__fixtures__/variation_parity.json";
 import {
   CATEGORY_DELIVERY,

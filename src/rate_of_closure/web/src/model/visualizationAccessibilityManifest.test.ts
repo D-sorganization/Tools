@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import accessibilityDocument from "../../../visualization_accessibility.v1.json" with { type: "json" };
+import accessibilityDocument from "../vendored/visualization_accessibility.v1.json" with { type: "json" };
 
 import { PRIMARY_VIEW_IDS } from "./viewPreferences";
 import {

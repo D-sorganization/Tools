@@ -1,4 +1,4 @@
-import accessibilityDocument from "../../../visualization_accessibility.v1.json" with { type: "json" };
+import accessibilityDocument from "../vendored/visualization_accessibility.v1.json" with { type: "json" };
 
 import { visualizationTabs, type VisualizationSurface } from "./visualizationTabManifest";
 

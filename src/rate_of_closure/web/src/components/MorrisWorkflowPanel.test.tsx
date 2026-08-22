@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import fixture from "../model/__fixtures__/morris_ui_parity_v1.json";
-import workspaceFixture from "../../../../../tests/rate_of_closure/fixtures/morris_workspace_v1.json";
+import workspaceFixture from "../vendored/fixtures/morris_workspace_v1.json";
 import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import type { MorrisAuthorityClient } from "../model/morrisAuthorityClient";
