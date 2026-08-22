@@ -63,8 +63,9 @@ incremental geometry/sensitivity, and a strict path-free durable wire. The Pytho
 transport-only React Worker expose prefix evidence without browser physics. Follow-up PR #4630 merged at `428f832f9`, retaining the
 hosted Morris alias and initial-page scroll normalization. PR #4631 on `fix/4630-visual-paint-qualification` moves that normalization before
 landmark geometry collection so the compositor paints the complete page. Local lint, type check, build, and the exact 2-test Chromium
-gate pass; inspect the next Linux candidate before baseline promotion. Earlier focused
-gates passed 57 shared/import, 13 hosted-failure, 18 geometry, accessibility, and 43-source Mypy tests. Under the 20-worker
+gate pass. Hosted candidate `7e3d8fcef` is inspected and its exact four changed PNGs/digests are proposed in SPEC 1.17.86; they remain
+unapproved until protected merge. Earlier focused gates passed 57 shared/import, 13 hosted-failure, 18 geometry, accessibility, and
+43-source Mypy tests. Under the 20-worker
 UpstreamDrift campaign, child import takes ~58 s versus the unchanged 15 s ceiling; do not weaken it. The other 10 runtime tests pass.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
