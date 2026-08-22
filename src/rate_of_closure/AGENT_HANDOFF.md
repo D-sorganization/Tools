@@ -58,16 +58,13 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` through `0e1781c90` (PR #4628) adds scalar moments,
-safe limits, v2 sampling, bounded work, scaling, incremental geometry/sensitivity,
-and a strict path-free durable wire. The Python authority owns paths and lifecycle;
-PyQt6 and a transport-only React Worker expose prefix evidence without browser physics.
-The latest fix closes lazy imports, PyQt accessibility, Ruff/Mypy, Upstream packaging,
-and shared-cache parity isolation. Focused gates pass: 57 shared/import tests,
-13 hosted-failure regressions, 18 geometry tests, accessibility, and 43-source Mypy.
-The fresh protected run must still prove these fixes. Under the 20-worker UpstreamDrift campaign, child import takes ~58 s versus the unchanged 15 s ceiling; do not weaken it.
-The other 10 runtime tests pass; rerun after CPU is released. #4626 is not done.
+#4142 R11.5/#4626 merged in PR #4628 at `95101264b`. It adds scalar moments, safe limits, v2 sampling, bounded work, scaling,
+incremental geometry/sensitivity, and a strict path-free durable wire. The Python authority owns paths and lifecycle; PyQt6 and a
+transport-only React Worker expose prefix evidence without browser physics. Follow-up PR #4630 on `fix/4628-post-merge-qualification`
+carries the hosted Morris alias and verifies scroll origin before each protected initial-state PNG. Local lint,
+type check, build, and the exact 2-test Chromium gate pass; inspect the next Linux candidate before baseline promotion. Earlier focused
+gates passed 57 shared/import, 13 hosted-failure, 18 geometry, accessibility, and 43-source Mypy tests. Under the 20-worker
+UpstreamDrift campaign, child import takes ~58 s versus the unchanged 15 s ceiling; do not weaken it. The other 10 runtime tests pass.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

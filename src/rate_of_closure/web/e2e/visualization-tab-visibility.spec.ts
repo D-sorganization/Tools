@@ -117,6 +117,12 @@ test("every registered React tab exposes its primary visual in the initial viewp
         if (entry.tabId === "explorer") {
           await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
         }
+        // Earlier landmark audits may scroll a long tab just far enough to keep
+        // its primary visual visible.  A protected *initial-page* reference must
+        // not inherit that incidental audit position, otherwise a legitimate
+        // layout addition can make the capture omit the application shell.
+        await page.evaluate(() => window.scrollTo(0, 0));
+        expect(await page.evaluate(() => window.scrollY)).toBe(0);
         const file = `initial-${entry.tabId}-1440x900.png`;
         const image = await page.screenshot({ animations: "disabled", caret: "hide" });
         await writeFile(resolve(reactCandidateRoot, file), image);
