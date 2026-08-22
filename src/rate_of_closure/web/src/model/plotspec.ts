@@ -361,13 +361,20 @@ export const BUILTIN_PLOTS: Array<{ name: string; label: string; make: (swingDur
 
 /** CSV of the plotted numbers (header + rows), matching the desktop export. */
 export function plotDataCsv(data: PlotData): string {
-  const header = [data.xLabel, ...data.series.map((s) => s.label)];
-  const lines = [header.join(",")];
-  for (let i = 0; i < data.x.length; i += 1)
-    lines.push(
-      [data.x[i], ...data.series.map((s) => s.values[i])].join(","),
-    );
-  return lines.join("\n") + "\n";
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  let csv = data.xLabel;
+  for (let i = 0; i < data.series.length; i++) {
+    csv += "," + data.series[i].label;
+  }
+  csv += "\n";
+  for (let i = 0; i < data.x.length; i += 1) {
+    csv += data.x[i];
+    for (let j = 0; j < data.series.length; j++) {
+      csv += "," + data.series[j].values[i];
+    }
+    csv += "\n";
+  }
+  return csv;
 }
 
 /** JSON payload of the plotted numbers + definition, matching the desktop. */
