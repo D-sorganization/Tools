@@ -27,10 +27,29 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.78                                    |
+| **Spec Version**        | 1.17.80                                    |
 | **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
+
+### Governed Durable-Ensemble Scaling Evidence
+
+Version 1.17.80 adds a strict, source-pinned scaling-evidence contract and a
+fresh-process measurement harness for the non-materializing durable ensemble
+path. Independent trial-count and trace-length cases record operating-system
+peak resident bytes, cumulative physical archive bytes, logical trace bytes,
+and transport throughput. The parser recomputes throughput, axis coverage,
+absolute and incremental resident-memory budgets, archive growth, and every
+pass declaration; malformed, nonfinite, contradictory, or failed reports are
+not accepted as evidence.
+
+The registered workload retains an expected numerical failure for every trial,
+isolating identity preflight, typed failure projection, bounded allocation,
+atomic persistence, and manifest growth from solver cost. Therefore its passing
+result supports the streaming transport implementation only. It does not
+qualify model throughput, successful-trajectory compression, user hardware, or
+scientific validity. Geometry/sensitivity streaming and durable PyQt6/React
+transport remain open under #4626.
 
 ### Governed Launch-Monitor Analytics Release
 
@@ -5095,6 +5114,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-21 | 1.17.80 | test(rate-of-closure, #4626 / #4142 R11.5): add strict source-pinned durable-ensemble scaling evidence and a fresh-process cross-platform measurement harness. Independent 128/512-trial and 51/501-sample cases separate peak resident set, logical trace volume, physical archive growth, and failure-only transport throughput. The parser recomputes throughput, axis coverage, archive growth, and absolute/incremental budgets and rejects failed or contradictory claims. The exact `fd7e2998e` Windows evidence passes its declared ceilings; it is explicitly a synthetic retained-failure transport diagnostic, not solver, successful-compression, user-hardware, or scientific qualification. Geometry/sensitivity consumers and durable clients remain open. | #4626 |
 | 2026-08-21 | 1.17.79 | feat(rate-of-closure, #4626 / #4142 R11.5): add a production non-materializing consumer for strict durable ensemble prefixes. The archive now scans checksum-, identity-, order-, and bound-verified chunks through a coordinator-owned visitor; bounded online accumulators report canonical-unit scalar availability, means, sample standard deviations, typed hit/no-impact/failure denominators, and named numerical-failure counts for complete or explicitly in-progress prefixes. Separate stream-axis and compatibility-materialization contracts allow safe campaigns beyond the final trace-tensor product cap while the collecting sink still rejects before allocating that tensor. Add a bounded deterministic sampled-input source that reproduces and discards resume prefixes without solver work, is byte-invariant to chunk size, and shares one authority with eager compatibility sampling. Grouped normal draws now use a canonical rowwise PSD transform rather than batch-size-dependent BLAS arithmetic; execution metadata identifies that scientific method as `numpy-pcg64-canonical-rowwise-psd` version 2. The production request builder now retains neither the full sampled-input matrix nor the ordered configuration roster: a bounded preflight scan hashes canonical input and complete-configuration streams, the durable header retains only those identities, execution regenerates bounded work blocks from the verified resume index, and completed-prefix replay performs no solver work. Focused tests cover streamed-moment parity, corrupted-archive rejection, eager/lazy sample parity, grouped chunk-size invariance, suffix/block resume, exact streamed/materialized identities, lazy durable cancellation/resume, and invalid bounds. Measured memory/throughput budgets, geometry/sensitivity streaming, and durable PyQt/React transport remain open under #4626. | #4626 |
 | 2026-08-21 | 1.17.78 | feat(rate-of-closure, #4142 R11.5): add bounded restartable ensemble transport with atomic strict manifests, pickle-free NPZ chunks, compressed/uncompressed byte caps, per-chunk SHA-256 and exact contiguous-prefix validation; bind resumes to the plan, sampled inputs, every ordered simulation configuration, trace layout, registry snapshot, and declared implementation identity; retain valid work on cancellation/failure, restore progress/failure counts, and fail before evaluation on drift or tampering. This advances but does not close R11.5: request/config construction remains eager, the compatibility collector still materializes the final tensor, and measured peak-memory/UI transport gates remain open. |
 | 2026-08-20 | 1.17.76 | feat(rate-of-closure): consume canonical Upstream immutable dataset jobs and evidence-bearing player covariation through strict Python/TypeScript clients; add parity authorized-corpus selection, reference-only persistence, bounded aggregate refresh, and explicit 20,000-row inline limits while retaining local estimators only as labelled offline compatibility. | #4603 |

@@ -211,8 +211,32 @@ config blocks from the verified resume index, and completed-prefix replay does
 no solver work. The explicit materialized compatibility request and collecting
 sink remain available for small legacy callers.
 
-Measured peak-memory/throughput budgets, sensitivity/geometry consumers, and
-durable client transport remain open R11.5 work under #4626 / #4142.
+### Measured Durable-Stream Scaling
+
+`scripts/measure_rate_ensemble_scaling.py` runs each registered scale point in
+a fresh Python process and records the operating system's peak resident set,
+the cumulative physical archive size, the uncompressed logical trace volume,
+and measured transport throughput. The checked-in strict evidence is
+`docs/rate_of_closure/ensemble_stream_scaling.v1.json`; rerun it with
+`py -3.12 scripts/measure_rate_ensemble_scaling.py`.
+
+The source-pinned Windows diagnostic at `fd7e2998e` used 16-trial chunks. Raising
+trials from 128 to 512 at 51 samples increased the archive from 23,679 to 83,891
+bytes while peak RSS changed from 103,751,680 to 105,021,440 bytes. Raising the
+trace length from 51 to 501 samples at 128 trials increased logical trace volume
+from 478,592 to 4,683,392 bytes while peak RSS was 105,684,992 bytes. All cases
+met the declared 512 MiB absolute ceiling, 64/96 MiB independent-axis growth
+ceilings, and one-trial-per-second transport floor.
+
+This is deliberately an all-retained-failure transport diagnostic. It exercises
+lazy identity preflight, typed failure projection, bounded trace allocation,
+atomic NPZ persistence, and manifest growth. It does **not** measure solver
+throughput, successful-trajectory compression, user-hardware performance, or
+scientific model accuracy. Fresh-process imports are included in peak RSS and
+excluded from the timed transport interval.
+
+Sensitivity/geometry consumers and durable client transport remain open R11.5
+work under #4626 / #4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are
