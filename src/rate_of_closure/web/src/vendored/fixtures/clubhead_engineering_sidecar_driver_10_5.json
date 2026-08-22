@@ -25,7 +25,9 @@
       "status": "available"
     },
     "world_from_head_attitude": {
-      "missing": ["complete world-from-head rotation"],
+      "missing": [
+        "complete world-from-head rotation"
+      ],
       "status": "unavailable"
     }
   },
@@ -45,12 +47,28 @@
     "stl_from_head": {
       "coordinate_scale_mm_per_m": 1000.0,
       "rotation": [
-        [1.0, 0.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [0.0, 0.0, 1.0]
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
       ],
       "status": "available",
-      "translation_m": [0.0, 0.0, 0.0]
+      "translation_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
     },
     "world_from_head": {
       "reason": "The selected static ClubSpec and STL do not carry a complete world-from-head attitude.",

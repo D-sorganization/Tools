@@ -3,34 +3,22 @@
   "policy_sha256": "05d67d4eb103dc27034a94d11e1c6c9fd24199a0a0b60e6f2d4413bc1dd6c051",
   "vendors": [
     {
-      "vendor_key": "trackman",
-      "rows": 11699,
-      "strict_model_input_rows": 9298,
-      "allowed_operations": { "vendor_training": false },
-      "approved_split_groups": [],
+      "vendor_key": "trackman", "rows": 11699, "strict_model_input_rows": 9298,
+      "allowed_operations": {"vendor_training": false}, "approved_split_groups": [],
       "current_surrogate_artifact_status": "retired_non_group_safe",
-      "training_blockers": {
-        "no_approved_repeating_split_group": 5,
-        "source_not_approved_for_vendor_training": 15
-      }
+      "training_blockers": {"no_approved_repeating_split_group": 5, "source_not_approved_for_vendor_training": 15}
     },
     {
-      "vendor_key": "foresight",
-      "rows": 4,
-      "strict_model_input_rows": 2,
-      "allowed_operations": { "vendor_training": false },
-      "approved_split_groups": [],
+      "vendor_key": "foresight", "rows": 4, "strict_model_input_rows": 2,
+      "allowed_operations": {"vendor_training": false}, "approved_split_groups": [],
       "current_surrogate_artifact_status": "unavailable",
-      "training_blockers": { "source_not_approved_for_vendor_training": 10 }
+      "training_blockers": {"source_not_approved_for_vendor_training": 10}
     },
     {
-      "vendor_key": "flightscope",
-      "rows": 2794,
-      "strict_model_input_rows": 0,
-      "allowed_operations": { "vendor_training": false },
-      "approved_split_groups": [],
+      "vendor_key": "flightscope", "rows": 2794, "strict_model_input_rows": 0,
+      "allowed_operations": {"vendor_training": false}, "approved_split_groups": [],
       "current_surrogate_artifact_status": "unavailable",
-      "training_blockers": { "source_not_approved_for_vendor_training": 20 }
+      "training_blockers": {"source_not_approved_for_vendor_training": 20}
     }
   ]
 }
