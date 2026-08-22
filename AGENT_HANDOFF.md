@@ -64,7 +64,7 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
 **Active #4142 evidence repair.** R11.5 merged through #4628; current `main` is
-`8d251ba0e`. Its trusted PyQt evidence job caught a React Explorer candidate
+`0104e3f52`. The preceding trusted PyQt evidence job caught a React Explorer candidate
 captured mid-paint, so #4626 remains open. `fix/4626-react-paint-readiness`
 requires three identical raster samples after fonts and two animation frames;
 local regression, production capture, build, and inspection pass; protected Linux evidence, human review, and merge remain.

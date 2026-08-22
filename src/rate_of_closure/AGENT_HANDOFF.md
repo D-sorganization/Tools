@@ -60,7 +60,7 @@ see the two contracts under `docs/specs/`.
 
 #4142 R11.5/#4626 merged through PR #4628. Its scalar moments, bounded work, incremental geometry/sensitivity, and strict durable wire
 remain Python-authoritative; PyQt6 and the transport-only React Worker do not reimplement physics. #4630 and #4631 merged scroll and
-candidate-reference repairs. On current `main` `8d251ba0e`, trusted job `97007375581` still caught React Explorer mid-paint: blank card
+candidate-reference repairs. Current `main` is `0104e3f52`; trusted job `97007375581` caught its preceding visual head mid-paint: blank card
 surfaces and the missing clubhead canvas prove that candidate is not approvable. #4626 is therefore reopened, and
 `fix/4626-react-paint-readiness` waits for fonts, two animation frames, then three identical 100-ms raster samples (20-sample fail-closed
 ceiling) before publishing a candidate. The delayed-paint RED/GREEN test, production-browser 18-tab capture, build, and local visual
