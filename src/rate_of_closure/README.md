@@ -193,10 +193,20 @@ its own position-cell limit. `CollectingEnsembleSink` separately reapplies the
 full tensor cap before allocating compatibility arrays, so a safe stream cannot
 accidentally become an oversized materialized result.
 
-The request's configurations and sampled-input matrix remain eager, and the
-legacy collecting sink still materializes the final tensor. Lazy work-source
-construction, measured peak-memory budgets, sensitivity/geometry consumers,
-and durable client transport remain open R11.5 work under #4626 / #4142.
+`sample_input_chunks` now provides a bounded deterministic sampled-input source.
+It owns one subset-stable PCG64 stream per stable specification ID, regenerates
+and discards a requested resume prefix without solver work, and produces the
+same read-only rows for every chunk size. Grouped normal draws use the declared
+positive-semidefinite covariance factor through a canonical rowwise transform;
+the execution sidecar identifies this scientific method as
+`numpy-pcg64-canonical-rowwise-psd` version 2. The eager compatibility sampler
+uses this same authority.
+
+The simulation request still retains the sampled-input matrix and ordered
+configuration roster eagerly, and the legacy collecting sink still materializes
+the final tensor. Connecting the bounded sampler to a lazy request/work source,
+measured peak-memory budgets, sensitivity/geometry consumers, and durable client
+transport remain open R11.5 work under #4626 / #4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are

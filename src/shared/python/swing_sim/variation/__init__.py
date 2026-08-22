@@ -52,7 +52,6 @@ from .engine import (
     evaluate_run,
     outputs_for_mode,
     run_variation,
-    sample_inputs,
 )
 from .ensemble_geometry import (
     EnsemblePositionTraces,
@@ -104,6 +103,7 @@ from .propagation import (
     PropagationResult,
     analyze_paired_intervention,
 )
+from .sampling import sample_input_chunks, sample_inputs
 from .spec import (
     CATEGORY_BALL_SETUP,
     CATEGORY_CLUB,
@@ -213,6 +213,7 @@ __all__ = [
     "register_variable",
     "run_variation",
     "sample_inputs",
+    "sample_input_chunks",
     "spearman_matrix",
     "summary_stats",
     "variable_registry",

@@ -24,7 +24,6 @@ import logging
 import math
 import threading
 import time
-import zlib
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 
@@ -34,7 +33,6 @@ from shared.python.contracts import ContractViolationError, require
 
 from ..solver.objective import EvaluationConfig
 from ..solver.solve import CancelledError, ProgressCallback, ProgressReport
-from .group_spec import PerturbationGroup
 from .pipeline import (
     DELIVERY_OUTPUTS,
     FLIGHT_OUTPUTS,
@@ -43,7 +41,8 @@ from .pipeline import (
     outputs_for_mode,
 )
 from .registry import variable_registry
-from .spec import NoiseSpec, VariationPlan
+from .sampling import sample_inputs
+from .spec import VariationPlan
 
 logger = logging.getLogger(__name__)
 
@@ -145,103 +144,6 @@ class VariationDataset:
         available = np.all(np.isfinite(evaluated), axis=1)
         rows: np.ndarray = np.asarray(evaluated[available], dtype=float)
         return rows
-
-
-def _stream_for(seed: int, spec: NoiseSpec) -> np.random.Generator:
-    """Independent, subset-stable RNG stream for one noise spec.
-
-    Keyed by ``[seed, crc32(variable_key)]`` so removing *other* specs
-    from a plan (one-at-a-time sensitivity) leaves this spec's draws
-    unchanged — unlike the ``base_seed + i`` idiom in the surveyed
-    UpstreamDrift Monte-Carlo code, which correlates streams.
-    """
-    assert spec.spec_id is not None
-    return np.random.default_rng([seed, zlib.crc32(spec.spec_id.encode())])
-
-
-def _clip_samples(values: np.ndarray, spec: NoiseSpec) -> np.ndarray:
-    """Apply one specification's deterministic absolute truncation bounds."""
-    lower = -np.inf if spec.lower is None else spec.lower
-    upper = np.inf if spec.upper is None else spec.upper
-    clipped: np.ndarray = np.clip(values, lower, upper)
-    return clipped
-
-
-def _sample_independent(
-    plan: VariationPlan, spec: NoiseSpec, center: float
-) -> np.ndarray:
-    """Sample one ungrouped marginal while preserving the v1 stream exactly."""
-    rng = _stream_for(plan.seed, spec)
-    if spec.distribution == "normal":
-        values = rng.normal(center, spec.scale, plan.n_runs)
-    elif spec.distribution == "uniform":
-        values = rng.uniform(center - spec.scale, center + spec.scale, plan.n_runs)
-    else:
-        values = rng.triangular(
-            center - spec.scale, center, center + spec.scale, plan.n_runs
-        )
-    return _clip_samples(values, spec)
-
-
-def _covariance_factor(covariance: np.ndarray) -> np.ndarray:
-    """Return a deterministic PSD square root for joint-normal sampling."""
-    eigenvalues, eigenvectors = np.linalg.eigh(covariance)
-    clipped = np.maximum(eigenvalues, 0.0)
-    factor: np.ndarray = eigenvectors @ np.diag(np.sqrt(clipped)) @ eigenvectors.T
-    return factor
-
-
-def _specs_by_id(plan: VariationPlan) -> dict[str, NoiseSpec]:
-    """Return the plan's already-validated stable ID mapping."""
-    result: dict[str, NoiseSpec] = {}
-    for spec in plan.noise:
-        assert spec.spec_id is not None
-        result[spec.spec_id] = spec
-    return result
-
-
-def _sample_group(
-    plan: VariationPlan,
-    group: PerturbationGroup,
-    specs_by_id: dict[str, NoiseSpec],
-) -> dict[str, np.ndarray]:
-    """Sample one validated jointly normal group, keyed by stable spec ID."""
-    specs = tuple(specs_by_id[spec_id] for spec_id in group.spec_ids)
-    covariance = group.covariance_matrix([spec.scale for spec in specs])
-    independent = np.column_stack(
-        [_stream_for(plan.seed, spec).standard_normal(plan.n_runs) for spec in specs]
-    )
-    deviations = independent @ _covariance_factor(covariance).T
-    base = plan.resolved_base()
-    return {
-        spec_id: _clip_samples(base[spec.variable_key] + deviations[:, index], spec)
-        for index, (spec_id, spec) in enumerate(zip(group.spec_ids, specs, strict=True))
-    }
-
-
-def sample_inputs(plan: VariationPlan) -> np.ndarray:
-    """Sample the ``(n_runs, n_specs)`` inputs matrix for a plan.
-
-    Vectorized per spec; truncation clips into ``[lower, upper]`` (see
-    :class:`NoiseSpec`). Deterministic for a given ``(plan, seed)``.
-    """
-    base = plan.resolved_base()
-    specs_by_id = _specs_by_id(plan)
-    sampled: dict[str, np.ndarray] = {}
-    for group in plan.groups:
-        sampled.update(_sample_group(plan, group, specs_by_id))
-    for spec in plan.noise:
-        assert spec.spec_id is not None
-        if spec.spec_id not in sampled:
-            sampled[spec.spec_id] = _sample_independent(
-                plan, spec, base[spec.variable_key]
-            )
-    ordered: list[np.ndarray] = []
-    for spec in plan.noise:
-        assert spec.spec_id is not None
-        ordered.append(sampled[spec.spec_id])
-    matrix: np.ndarray = np.column_stack(ordered)
-    return matrix
 
 
 class _Progress:
