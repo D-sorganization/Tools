@@ -63,11 +63,11 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4142 evidence repair.** R11.5 merged through #4628; current `main` is
-`0104e3f52`. The preceding trusted PyQt evidence job caught a React Explorer candidate
-captured mid-paint, so #4626 remains open. `fix/4626-react-paint-readiness`
-requires three identical raster samples after fonts and two animation frames;
-local regression, production capture, build, and inspection pass; protected Linux evidence, human review, and merge remain.
+**Active #4142 evidence repair.** R11.5 and stable-paint capture merged through
+#4628/#4635; the branch includes `main` through `d93db6c16`. Trusted job `97030072285` completes
+all ten 1440x900 tabs in ~43 s, then the 45-s suite default expires at viewport
+two; #4626 is reopened. `fix/4626-postmerge-visual-contract` gives only that
+three-viewport evidence pass 180 s; protected evidence, review, and merge remain.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

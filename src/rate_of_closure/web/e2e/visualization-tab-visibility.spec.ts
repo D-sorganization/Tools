@@ -23,6 +23,12 @@ interface VisualEvidence {
 const PAINT_SAMPLE_INTERVAL_MS = 100;
 const REQUIRED_STABLE_PAINT_SAMPLES = 3;
 const MAX_PAINT_SAMPLES = 20;
+// This registered evidence pass visits every tab at three reference viewports
+// and captures stable images for the 1440x900 authority.  The trusted runner
+// needs more than the suite's 45-second interactive-test default even when all
+// rendering contracts pass, so give this publication gate its own bounded
+// budget without relaxing any visual assertion.
+const VISUAL_EVIDENCE_TIMEOUT_MS = 180_000;
 
 const captureStablePage = async (page: Page): Promise<Buffer> => {
   await page.evaluate(async () => {
@@ -92,6 +98,7 @@ const auditTab = async (page: Page, tabId: string, locatorText: string,
 test("every registered React tab exposes its primary visual in the initial viewport", async (
   { page }, testInfo,
 ) => {
+  test.setTimeout(VISUAL_EVIDENCE_TIMEOUT_MS);
   test.skip(testInfo.project.name !== "chromium-desktop", "manifest viewport authority");
   const pageErrors = capturePageErrors(page);
   const evidence: Array<{ viewport: { width: number; height: number }; tabs: VisualEvidence[] }> = [];
