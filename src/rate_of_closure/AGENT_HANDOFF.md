@@ -58,14 +58,14 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5/#4626 merged through PR #4628. Its scalar moments, bounded work, incremental geometry/sensitivity, and strict durable wire
-remain Python-authoritative; PyQt6 and the transport-only React Worker do not reimplement physics. #4630 and #4631 merged scroll and
-candidate-reference repairs. Current `main` is `0104e3f52`; trusted job `97007375581` caught its preceding visual head mid-paint: blank card
-surfaces and the missing clubhead canvas prove that candidate is not approvable. #4626 is therefore reopened, and
-`fix/4626-react-paint-readiness` waits for fonts, two animation frames, then three identical 100-ms raster samples (20-sample fail-closed
-ceiling) before publishing a candidate. The delayed-paint RED/GREEN test, production-browser 18-tab capture, build, and local visual
-inspection pass; no baseline is promoted. Protected Linux evidence, human review, and merge remain. Under the 20-worker UpstreamDrift
-campaign, child import takes ~58 s versus the unchanged 15 s ceiling; do not weaken it. The other 10 runtime tests pass.
+#4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React Worker do not reimplement physics. #4628/#4635 merged durable
+analysis and stable-paint capture; current `main` is `24d223354`. Trusted React job `97030072285` completes all ten 1440x900 tabs in about
+43 s, then the 45-s suite default expires while starting Simulation at the second of three viewports. The tab is present: the trace proves
+this is the evidence-pass budget, not UI absence. #4626 is reopened; `fix/4626-postmerge-visual-contract` gives only this registered pass a
+bounded 180-s timeout while retaining every viewport, stable-paint, geometry, overflow, artifact, and fail-closed comparator assertion.
+Focused ESLint and Playwright discovery pass. Full production evidence is deferred while the 20-worker UpstreamDrift campaign owns the
+workstation; do not weaken its unchanged 15-s child-import ceiling. Protected Linux evidence, human review, and merge remain; no baseline
+is promoted. PyQt job `97031112519` failed only because the missing React manifest correctly made the comparator fail closed.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
