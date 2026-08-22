@@ -187,6 +187,11 @@ scalar output. Units come from the same output registry used by the plots. The
 analysis retains only fixed-size online accumulators and never constructs the
 trial-by-sample trace tensor; incomplete archives are reported explicitly as an
 in-progress prefix rather than promoted to complete evidence.
+The stream header enforces trial, sample, point, and sampled-input axis caps but
+does not apply the legacy final-tensor product cap. Each accepted chunk retains
+its own position-cell limit. `CollectingEnsembleSink` separately reapplies the
+full tensor cap before allocating compatibility arrays, so a safe stream cannot
+accidentally become an oversized materialized result.
 
 The request's configurations and sampled-input matrix remain eager, and the
 legacy collecting sink still materializes the final tensor. Lazy work-source

@@ -17,7 +17,11 @@ from shared.python.swing_sim.variation.ensemble_types import (
 )
 from shared.python.swing_sim.variation.spec import VariationPlan
 
-from ._ensemble_limits import MAX_INPUT_CELLS, require_ensemble_shape_limits
+from ._ensemble_limits import (
+    MAX_INPUT_CELLS,
+    require_ensemble_shape_limits,
+    require_ensemble_stream_shape_limits,
+)
 from .simulation_types import (
     ALL_OUTPUT_NAMES,
     APP_FRAME_ID,
@@ -88,7 +92,9 @@ class EnsembleStreamHeader:
             or (len(digest) == 64 and set(digest) <= set("0123456789abcdef")),
             "configuration_sha256 must be an empty or lowercase SHA-256 digest",
         )
-        require_ensemble_shape_limits(self.plan.n_runs, raw_times.size, len(points))
+        require_ensemble_stream_shape_limits(
+            self.plan.n_runs, raw_times.size, len(points)
+        )
         inputs = _owned_array(raw_inputs, float)
         times = _owned_array(raw_times, float)
         require(bool(np.all(np.isfinite(inputs))), "sampled_inputs must be finite")
@@ -315,6 +321,7 @@ class CollectingEnsembleSink:
         rows = header.plan.n_runs
         samples = header.sample_times_s.size
         points = len(header.point_ids)
+        require_ensemble_shape_limits(rows, samples, points)
         self._inputs = np.empty((rows, len(header.plan.noise)), dtype=float)
         self._positions = np.full((rows, samples, points, 3), np.nan)
         self._valid = np.zeros((rows, samples), dtype=bool)

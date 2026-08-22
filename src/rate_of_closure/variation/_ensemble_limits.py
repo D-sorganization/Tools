@@ -15,16 +15,23 @@ MAX_INPUT_CELLS = 1_000_000
 def require_ensemble_shape_limits(
     trial_count: int, sample_count: int, point_count: int
 ) -> None:
-    """Require one ensemble shape to fit every scientific allocation limit."""
-    require(trial_count <= MAX_TRIALS, "trial limit exceeded", trial_count)
-    require(sample_count <= MAX_SAMPLES, "sample limit exceeded", sample_count)
-    require(point_count <= MAX_POINTS, "point limit exceeded", point_count)
+    """Require one materialized ensemble to fit every allocation limit."""
+    require_ensemble_stream_shape_limits(trial_count, sample_count, point_count)
     position_cells = trial_count * sample_count * point_count * 3
     require(
         position_cells <= MAX_POSITION_CELLS,
         "position cell limit exceeded",
         position_cells,
     )
+
+
+def require_ensemble_stream_shape_limits(
+    trial_count: int, sample_count: int, point_count: int
+) -> None:
+    """Require declared stream axes without imposing a final-tensor allocation."""
+    require(trial_count <= MAX_TRIALS, "trial limit exceeded", trial_count)
+    require(sample_count <= MAX_SAMPLES, "sample limit exceeded", sample_count)
+    require(point_count <= MAX_POINTS, "point limit exceeded", point_count)
 
 
 __all__ = [
@@ -35,4 +42,5 @@ __all__ = [
     "MAX_SAMPLES",
     "MAX_TRIALS",
     "require_ensemble_shape_limits",
+    "require_ensemble_stream_shape_limits",
 ]
