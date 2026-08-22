@@ -41,6 +41,13 @@ def test_streamed_summary_matches_materialized_scalar_moments(tmp_path: Path) ->
     expected_stats = summary_stats(reference.variation)
 
     assert actual.archive == archive
+    assert actual.layout.coordinate_frame == "app_frame:x_target,y_up,z_right"
+    assert actual.layout.sample_count > 0
+    assert actual.layout.point_ids == (
+        "swing.pivot",
+        "swing.wrist",
+        "swing.clubhead.reference",
+    )
     assert actual.status_counts == expected_counts
     assert actual.analyzed_trial_count == request.plan.n_runs
     assert tuple(item.name for item in actual.output_moments) == tuple(
@@ -70,6 +77,7 @@ def test_in_progress_archive_reports_only_verified_prefix(tmp_path: Path) -> Non
     assert summary.analyzed_trial_count == 1
     assert sum(summary.status_counts.values()) == 1
     assert all(item.available_count <= 1 for item in summary.output_moments)
+    assert summary.layout.coordinate_frame == "app_frame:x_target,y_up,z_right"
 
 
 def test_analysis_rejects_corrupted_archive_before_promotion(tmp_path: Path) -> None:

@@ -7,6 +7,17 @@ from .durable_ensemble_chunks import (
     DurableEnsembleArchive,
     DurableEnsembleChunkSink,
 )
+from .durable_ensemble_evidence import (
+    DURABLE_ENSEMBLE_ANALYSIS_METHOD,
+    DURABLE_ENSEMBLE_EVIDENCE_SCHEMA,
+    DURABLE_ENSEMBLE_LIMITATIONS,
+    DurableAnalysisEvidence,
+    DurableArchiveEvidence,
+    DurableEnsembleEvidence,
+    durable_ensemble_evidence,
+    durable_ensemble_evidence_from_json,
+    durable_ensemble_evidence_to_json,
+)
 from .ensemble_chunks import (
     CollectingEnsembleSink,
     EnsembleChunkSink,
@@ -50,6 +61,7 @@ from .simulation_adapter import (
     spatial_point_ids,
 )
 from .streaming_ensemble_analysis import (
+    DurableEnsembleLayout,
     DurableEnsembleSummary,
     StreamingOutputMoments,
     analyze_durable_ensemble,
@@ -69,8 +81,15 @@ __all__ = [
     "ChipTrialCohort",
     "CollectingEnsembleSink",
     "DurableEnsembleArchive",
+    "DurableAnalysisEvidence",
+    "DurableArchiveEvidence",
+    "DurableEnsembleEvidence",
+    "DurableEnsembleLayout",
     "DurableEnsembleChunkSink",
     "DurableEnsembleSummary",
+    "DURABLE_ENSEMBLE_ANALYSIS_METHOD",
+    "DURABLE_ENSEMBLE_EVIDENCE_SCHEMA",
+    "DURABLE_ENSEMBLE_LIMITATIONS",
     "EVALUATED_HIT",
     "EVALUATED_NO_IMPACT",
     "EnsembleChunkSink",
@@ -101,6 +120,9 @@ __all__ = [
     "build_simulation_ensemble_request",
     "build_ensemble_stream_header",
     "capture_simulation",
+    "durable_ensemble_evidence",
+    "durable_ensemble_evidence_from_json",
+    "durable_ensemble_evidence_to_json",
     "evaluate_rate_morris_design",
     "forgiveness_variation_dataset",
     "project_simulation_outcome",

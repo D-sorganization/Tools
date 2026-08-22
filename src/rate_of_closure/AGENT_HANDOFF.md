@@ -2,7 +2,6 @@
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-21
-
 > **Current state only**, capped at 150 lines; history lives in git and in
 > [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
@@ -63,11 +62,12 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` commits `9520ea046..6a97a6275` add scalar moments,
-safe limits, v2 sampling, bounded work, measured scaling, and incremental geometry/
-sensitivity. Preflight retains digests; resume skips the solver prefix. Geometry
-uses bounded online covariance with a 256 MB ceiling. OAT sensitivity requires
-complete exact single-factor archives and stable moments. Durable clients remain; #4626 is not done.
+`feat/4626-streaming-ensemble` through `8ce732edd` adds scalar moments, safe
+limits, v2 sampling, bounded work, measured scaling, and incremental geometry/
+sensitivity. Current unpushed work adds the strict path-free Python/TypeScript
+durable evidence wire and golden parity. It binds digest, prefix counts, units,
+frame, method, and limitations. Durable client state machines remain; #4626 is
+not done.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

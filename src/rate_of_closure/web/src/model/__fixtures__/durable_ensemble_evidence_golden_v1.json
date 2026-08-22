@@ -1,0 +1,48 @@
+{
+  "schema_version": "rate/durable-ensemble-evidence/v1",
+  "archive": {
+    "header_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "status": "in_progress",
+    "trial_count": 5,
+    "analyzed_trial_count": 3,
+    "failed_count": 1,
+    "chunk_count": 2,
+    "elapsed_s": null
+  },
+  "analysis": {
+    "method_id": "incremental-welford-sample-moments/v1",
+    "sample_count": 101,
+    "point_ids": ["swing.pivot", "swing.clubhead.reference"],
+    "coordinate_frame": "app_frame:x_target,y_up,z_right"
+  },
+  "status_counts": {
+    "evaluated_hit": 2,
+    "evaluated_no_impact": 0,
+    "numerical_failure": 1
+  },
+  "failure_type_counts": {"RuntimeError": 1},
+  "output_moments": [
+    {"name": "candidate_time_s", "unit": "s", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "closest_approach_m", "unit": "m", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "contact_margin_m", "unit": "m", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "impact_time_s", "unit": "s", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "clubhead_speed_mps", "unit": "m/s", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "spin_loft_deg", "unit": "deg", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "face_to_path_deg", "unit": "deg", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "spin_axis_tilt_deg", "unit": "deg", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "ball_speed_mph", "unit": "mph", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "launch_angle_deg", "unit": "deg", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "launch_azimuth_deg", "unit": "deg", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "spin_rpm", "unit": "rpm", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "carry_m", "unit": "m", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "lateral_m", "unit": "m", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "max_height_m", "unit": "m", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "flight_time_s", "unit": "s", "available_count": 2, "mean": 1.25, "sample_std": 0.5},
+    {"name": "landing_angle_deg", "unit": "deg", "available_count": 2, "mean": 1.25, "sample_std": 0.5}
+  ],
+  "limitations": [
+    "Model-scenario output is not human evidence or a coaching recommendation.",
+    "Incremental moments do not retain quantiles, correlations, or trial rows.",
+    "An in-progress archive describes only its verified contiguous prefix."
+  ]
+}

@@ -27,10 +27,28 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.81                                    |
+| **Spec Version**        | 1.17.82                                    |
 | **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
+
+### Portable Durable-Ensemble Evidence
+
+Version 1.17.82 defines the path-free client evidence boundary for one verified
+durable ensemble prefix. The exact Python and TypeScript v1 parsers bind archive
+status, header digest, contiguous analyzed count, typed outcome/failure counts,
+canonical output units, trace point identifiers, coordinate frame, incremental
+Welford method, and registered scientific limitations. The Python producer and
+React parser consume one shared golden document; unknown fields, incompatible
+frames, noncanonical units, inconsistent availability, unsafe numbers, and
+partial completion claims fail closed. Filesystem directories never cross the
+wire.
+
+This contract is a transport prerequisite rather than client completion. The
+PyQt6 and React run/progress/cancel/resume/inspect state machines and rendered
+surfaces remain open under #4626. The evidence reports scalar prefix moments;
+it does not fabricate unavailable quantiles, correlations, trial rows, human
+observations, causal attribution, or coaching guidance.
 
 ### Governed Durable-Ensemble Scaling Evidence
 
@@ -5132,6 +5150,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-21 | 1.17.82 | feat(rate-of-closure, #4626 / #4142 R11.5): add one strict path-free durable-ensemble evidence contract shared by Python and TypeScript. Exact parsers bind the verified-prefix header digest, lifecycle/counts, canonical output moments and units, trace frame/point layout, registered incremental method, and scientific limitations; reject unknown fields, incompatible frames/units, inconsistent counts/availability, and unsafe values; and prove Python-producer/React-reader parity through one golden document. Client state machines and rendered surfaces remain open. | #4626 |
 | 2026-08-21 | 1.17.81 | feat(rate-of-closure, swing-sim, #4626 / #4142 R11.5): add one bounded online position-covariance authority for materialized and durable geometry, with explicit-validity inclusion, a 256 MB pre-allocation ceiling, and parity for means, unbiased covariance, RMS radius, eigenvalues, and sign-canonical axes. Add complete exact-plan durable one-at-a-time sensitivity over ordered single-factor archives, reusing stable sample moments so constant outputs remain zero instead of normalized floating-point residue. Partial or mismatched sensitivity evidence fails closed. Durable PyQt6/React transport remains open. | #4626 |
 | 2026-08-21 | 1.17.80 | test(rate-of-closure, #4626 / #4142 R11.5): add strict source-pinned durable-ensemble scaling evidence and a fresh-process cross-platform measurement harness. Independent 128/512-trial and 51/501-sample cases separate peak resident set, logical trace volume, physical archive growth, and failure-only transport throughput. The parser recomputes throughput, axis coverage, archive growth, and absolute/incremental budgets and rejects failed or contradictory claims. The exact `fd7e2998e` Windows evidence passes its declared ceilings; it is explicitly a synthetic retained-failure transport diagnostic, not solver, successful-compression, user-hardware, or scientific qualification. Geometry/sensitivity consumers and durable clients remain open. | #4626 |
 | 2026-08-21 | 1.17.79 | feat(rate-of-closure, #4626 / #4142 R11.5): add a production non-materializing consumer for strict durable ensemble prefixes. The archive now scans checksum-, identity-, order-, and bound-verified chunks through a coordinator-owned visitor; bounded online accumulators report canonical-unit scalar availability, means, sample standard deviations, typed hit/no-impact/failure denominators, and named numerical-failure counts for complete or explicitly in-progress prefixes. Separate stream-axis and compatibility-materialization contracts allow safe campaigns beyond the final trace-tensor product cap while the collecting sink still rejects before allocating that tensor. Add a bounded deterministic sampled-input source that reproduces and discards resume prefixes without solver work, is byte-invariant to chunk size, and shares one authority with eager compatibility sampling. Grouped normal draws now use a canonical rowwise PSD transform rather than batch-size-dependent BLAS arithmetic; execution metadata identifies that scientific method as `numpy-pcg64-canonical-rowwise-psd` version 2. The production request builder now retains neither the full sampled-input matrix nor the ordered configuration roster: a bounded preflight scan hashes canonical input and complete-configuration streams, the durable header retains only those identities, execution regenerates bounded work blocks from the verified resume index, and completed-prefix replay performs no solver work. Focused tests cover streamed-moment parity, corrupted-archive rejection, eager/lazy sample parity, grouped chunk-size invariance, suffix/block resume, exact streamed/materialized identities, lazy durable cancellation/resume, and invalid bounds. Measured memory/throughput budgets, geometry/sensitivity streaming, and durable PyQt/React transport remain open under #4626. | #4626 |

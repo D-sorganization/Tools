@@ -20,10 +20,32 @@ from .ensemble_source import SimulationEnsembleSource
 from .plot_labels import OUTPUT_UNITS
 from .simulation_types import (
     ALL_OUTPUT_NAMES,
+    APP_FRAME_ID,
     TrialEvaluationStatus,
 )
 
 _STATUS_NAMES = frozenset(item.value for item in TrialEvaluationStatus)
+
+
+@dataclass(frozen=True, slots=True)
+class DurableEnsembleLayout:
+    """Public trace layout retained without any archive filesystem identity."""
+
+    sample_count: int
+    point_ids: tuple[str, ...]
+    coordinate_frame: str
+
+    def __post_init__(self) -> None:
+        require(self.sample_count >= 1, "sample_count must be positive")
+        require(bool(self.point_ids), "point_ids must be nonempty")
+        require(
+            len(set(self.point_ids)) == len(self.point_ids),
+            "point_ids must be unique",
+        )
+        require(
+            self.coordinate_frame == APP_FRAME_ID,
+            "coordinate frame is not supported",
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +86,7 @@ class DurableEnsembleSummary:
     """Incremental scalar evidence for one verified durable archive prefix."""
 
     archive: DurableEnsembleArchive
+    layout: DurableEnsembleLayout
     analyzed_trial_count: int
     status_counts: Mapping[str, int]
     failure_type_counts: Mapping[str, int]
@@ -162,10 +185,17 @@ def analyze_durable_ensemble(
         "request must be a SimulationEnsembleSource",
     )
     accumulator = _SummaryAccumulator()
-    archive = DurableEnsembleChunkSink(directory).scan(request, accumulator.accept)
+    archive, header = DurableEnsembleChunkSink(directory).scan_with_header(
+        request, accumulator.accept
+    )
     moments = tuple(accumulator.moments[name].freeze(name) for name in ALL_OUTPUT_NAMES)
     return DurableEnsembleSummary(
         archive=archive,
+        layout=DurableEnsembleLayout(
+            sample_count=header.sample_times_s.size,
+            point_ids=header.point_ids,
+            coordinate_frame=header.coordinate_frame,
+        ),
         analyzed_trial_count=archive.next_index,
         status_counts=accumulator.status_counts,
         failure_type_counts=accumulator.failure_counts,
@@ -174,6 +204,7 @@ def analyze_durable_ensemble(
 
 
 __all__ = [
+    "DurableEnsembleLayout",
     "DurableEnsembleSummary",
     "StreamingOutputMoments",
     "analyze_durable_ensemble",

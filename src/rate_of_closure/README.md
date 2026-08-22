@@ -256,8 +256,19 @@ scientifically mismatched substudies cannot be promoted. Both paths use stable
 online sample moments, so a mathematically constant output remains zero rather
 than turning floating-point residue into a false normalized sensitivity.
 
-Durable PyQt6 and React client transport remains open R11.5 work under #4626 /
-#4142.
+### Portable Durable Evidence
+
+`durable_ensemble_evidence` projects a checksum-verified scalar prefix summary
+onto `rate/durable-ensemble-evidence/v1`. The wire deliberately excludes local
+archive paths while retaining the header digest, lifecycle/counts, typed
+failure denominators, canonical units, trace point/frame layout, incremental
+method, and limitations. Python and TypeScript parse the same golden document
+and reject field, count, unit, frame, method, or availability drift before a UI
+can promote it. The evidence is descriptive model-scenario output and never
+claims human validation or a coaching recommendation.
+
+Durable PyQt6 and React run/progress/cancel/resume/inspect state machines and
+rendered surfaces remain open R11.5 work under #4626 / #4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are
