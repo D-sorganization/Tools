@@ -30,6 +30,12 @@ from ._execution_metadata_schema import (
     VARIABLE_REGISTRY_SCHEMA_VERSION,
 )
 from .registry import keys_for_mode, variable_registry
+from .sampling import (
+    SAMPLING_ALGORITHM_ID,
+    SAMPLING_ALGORITHM_VERSION,
+    SAMPLING_STREAM_DERIVATION_ID,
+    SAMPLING_STREAM_DERIVATION_VERSION,
+)
 from .spec import MAX_SAFE_INTEGER, SCHEMA_VERSION, VariationPlan
 
 
@@ -246,10 +252,10 @@ def make_execution_metadata(plan: VariationPlan) -> VariationExecutionMetadata:
         registry_sha256=_registry_sha256(plan),
         resolved_variables=_resolved_variables(plan),
         rng_identity=RngExecutionIdentity(
-            algorithm_id="numpy-generator-pcg64",
-            algorithm_version=1,
-            stream_derivation_id="numpy-seedsequence-safe-seed-crc32-utf8-spec-id",
-            stream_derivation_version=1,
+            algorithm_id=SAMPLING_ALGORITHM_ID,
+            algorithm_version=SAMPLING_ALGORITHM_VERSION,
+            stream_derivation_id=SAMPLING_STREAM_DERIVATION_ID,
+            stream_derivation_version=SAMPLING_STREAM_DERIVATION_VERSION,
         ),
         implementation_identity=PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
     )

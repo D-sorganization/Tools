@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import threading
+from dataclasses import replace
 
 import numpy as np
 import pytest
 
 from rate_of_closure.simulation import ContactMode, SimulationConfig, SimulationRun
+from rate_of_closure.variation._ensemble_limits import MAX_POSITION_CELLS
 from rate_of_closure.variation.ensemble_chunks import (
     MAX_CHUNK_POSITION_CELLS,
     CollectingEnsembleSink,
@@ -366,6 +368,30 @@ def test_oversized_position_tensor_is_rejected_before_owned_copy(
             np.ones((1, oversized.shape[1]), dtype=bool),
             np.array([0]),
         )
+
+
+def test_stream_header_allows_total_size_that_materializing_sink_rejects() -> None:
+    source = run_simulation_ensemble(
+        _request((_config(ContactMode.DELIVERY_INSPECTION),))
+    )
+    samples = source.traces.sample_times_s.size
+    points = len(source.traces.point_ids)
+    trial_count = MAX_POSITION_CELLS // (samples * points * 3) + 1
+    plan = replace(source.variation.plan, n_runs=trial_count)
+    sampled_inputs = np.broadcast_to(
+        source.variation.inputs[0], (trial_count, len(plan.noise))
+    )
+
+    header = EnsembleStreamHeader(
+        plan,
+        sampled_inputs,
+        source.traces.sample_times_s,
+        source.traces.point_ids,
+        source.traces.coordinate_frame,
+    )
+
+    with pytest.raises(ContractViolationError, match="position cell limit"):
+        CollectingEnsembleSink().begin(header)
 
 
 def test_header_binding_rejects_wrong_impact_time_provenance() -> None:

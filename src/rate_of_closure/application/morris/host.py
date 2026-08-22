@@ -10,11 +10,24 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.responses import Response
 
+from rate_of_closure.application.durable_ensemble.contracts import (
+    DURABLE_ENSEMBLE_JOB_SCHEMA_ID,
+    DURABLE_ENSEMBLE_REQUEST_SCHEMA_ID,
+    DURABLE_ENSEMBLE_SCOPE,
+)
+from rate_of_closure.application.durable_ensemble.registry import (
+    DurableEnsembleJobRegistry,
+)
+from rate_of_closure.application.durable_ensemble.router import (
+    create_durable_ensemble_router,
+)
+
 from .contracts import MORRIS_JOB_SCHEMA_ID, MORRIS_REQUEST_SCHEMA_ID
 from .router import MorrisJobRegistry, create_morris_router
 
 API_PREFIX = "/api/rate-of-closure/v1"
 CAPABILITY_PATH = f"{API_PREFIX}/morris/capabilities"
+DURABLE_ENSEMBLE_CAPABILITY_PATH = f"{API_PREFIX}/durable-ensembles/capabilities"
 _CAPABILITY = {
     "schema_id": "rate-of-closure/morris-authority-capability",
     "schema_version": 1,
@@ -22,6 +35,15 @@ _CAPABILITY = {
     "api_prefix": API_PREFIX,
     "request_schema_id": MORRIS_REQUEST_SCHEMA_ID,
     "job_schema_id": MORRIS_JOB_SCHEMA_ID,
+}
+_DURABLE_CAPABILITY = {
+    "schema_id": "rate-of-closure/durable-ensemble-authority-capability",
+    "schema_version": 1,
+    "available": True,
+    "api_prefix": API_PREFIX,
+    "scope": DURABLE_ENSEMBLE_SCOPE,
+    "request_schema_id": DURABLE_ENSEMBLE_REQUEST_SCHEMA_ID,
+    "job_schema_id": DURABLE_ENSEMBLE_JOB_SCHEMA_ID,
 }
 
 
@@ -39,6 +61,7 @@ def create_morris_authority_app(
     shutdown: Callable[[], None] | None = None,
     *,
     lifespan_started: Callable[[], None] | None = None,
+    durable_ensemble_registry: DurableEnsembleJobRegistry | None = None,
 ) -> FastAPI:
     """Build a no-CORS, bearer-authenticated mountable authority app."""
     secret = _token(token)
@@ -52,7 +75,11 @@ def create_morris_authority_app(
         try:
             yield
         finally:
-            registry.close()
+            try:
+                registry.close()
+            finally:
+                if durable_ensemble_registry is not None:
+                    durable_ensemble_registry.close()
 
     app = FastAPI(
         title="Rate Morris Authority",
@@ -94,6 +121,13 @@ def create_morris_authority_app(
     async def capability() -> dict[str, object]:
         return dict(_CAPABILITY)
 
+    @app.get(DURABLE_ENSEMBLE_CAPABILITY_PATH)
+    async def durable_capability() -> dict[str, object]:
+        return {
+            **_DURABLE_CAPABILITY,
+            "available": durable_ensemble_registry is not None,
+        }
+
     @app.post("/_control/shutdown")
     async def stop_child() -> dict[str, str]:
         if shutdown is None:
@@ -102,7 +136,17 @@ def create_morris_authority_app(
         return {"status": "stopping"}
 
     app.include_router(create_morris_router(registry), prefix=API_PREFIX)
+    if durable_ensemble_registry is not None:
+        app.include_router(
+            create_durable_ensemble_router(durable_ensemble_registry),
+            prefix=API_PREFIX,
+        )
     return app
 
 
-__all__ = ["API_PREFIX", "CAPABILITY_PATH", "create_morris_authority_app"]
+__all__ = [
+    "API_PREFIX",
+    "CAPABILITY_PATH",
+    "DURABLE_ENSEMBLE_CAPABILITY_PATH",
+    "create_morris_authority_app",
+]

@@ -36,9 +36,13 @@ _EXPECTED_REGISTERED_CONTROL_RANGES = {
     "calculation_description": (0, 0),
     "simulation": (182, 182),
     "flight_explorer": (59, 59),
-    "launch_monitor_analytics": (59, 110),
+    # A reachable configured AI provider contributes one additional named
+    # control beyond the static-provider catalogue used by hosted CI.
+    "launch_monitor_analytics": (59, 111),
     "neural_model_lab": (14, 14),
-    "variation": (160, 161),
+    # The durable authority contributes one additional focusable control when
+    # its asynchronous availability probe succeeds during the audit.
+    "variation": (162, 164),
     "putting": (11, 11),
     "glossary": (2, 2),
 }

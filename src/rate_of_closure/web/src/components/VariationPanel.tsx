@@ -25,6 +25,7 @@ import {
   type MorrisAuthorityBase,
 } from "../model/morrisAuthorityRequest";
 import { MorrisWorkflowPanel } from "./MorrisWorkflowPanel";
+import { DurableEnsembleWorkflowPanel } from "./DurableEnsembleWorkflowPanel";
 import { VariationSetup } from "./VariationSetup";
 import { BUTTON_CLASS, defaultVariationPlan } from "./variationUi";
 import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
@@ -64,7 +65,7 @@ export function VariationPanel({
   morrisUnavailableReason,
   executionService,
 }: VariationPanelProps = {}): JSX.Element {
-  const [workflow, setWorkflow] = useState<"variation" | "morris">("variation");
+  const [workflow, setWorkflow] = useState<"variation" | "durable" | "morris">("variation");
   const targetUse = spatialTarget
     ? spatialTargetForGroundWorkflow(spatialTarget, "variation")
     : { targetRegion: null, diagnostic: null };
@@ -105,7 +106,7 @@ export function VariationPanel({
     invalidateResults: clearResults,
   } = execution;
 
-  const selectWorkflow = (value: "variation" | "morris") => {
+  const selectWorkflow = (value: "variation" | "durable" | "morris") => {
     if (value !== workflow) clearResults();
     setWorkflow(value);
   };
@@ -184,6 +185,12 @@ export function VariationPanel({
       <VariationWorkflowPicker value={workflow} onChange={selectWorkflow} />
       <MorrisWorkflowPanel key={morrisAuthorityBaseIdentity(morrisBase)}
         client={morrisClient} base={morrisBase} />
+    </div>;
+  }
+  if (workflow === "durable" && morrisBase !== undefined) {
+    return <div className="space-y-4">
+      <VariationWorkflowPicker value={workflow} onChange={selectWorkflow} />
+      <DurableEnsembleWorkflowPanel plan={plan} base={morrisBase} />
     </div>;
   }
   return (
@@ -266,8 +273,8 @@ export function VariationPanel({
 }
 
 function VariationWorkflowPicker(props: {
-  readonly value: "variation" | "morris";
-  readonly onChange: (value: "variation" | "morris") => void;
+  readonly value: "variation" | "durable" | "morris";
+  readonly onChange: (value: "variation" | "durable" | "morris") => void;
   readonly morrisDisabled?: boolean;
   readonly morrisUnavailableReason?: string;
 }) {
@@ -278,6 +285,9 @@ function VariationWorkflowPicker(props: {
     <button type="button" aria-pressed={props.value === "morris"} className={BUTTON_CLASS}
       title={props.morrisUnavailableReason ?? "Run global Morris elementary-effects screening in the local Python authority"}
       disabled={props.morrisDisabled} onClick={() => props.onChange("morris")}>Morris Screening</button>
+    <button type="button" aria-pressed={props.value === "durable"} className={BUTTON_CLASS}
+      title={props.morrisUnavailableReason ?? "Run a checkpointed ensemble in the local Python authority"}
+      disabled={props.morrisDisabled} onClick={() => props.onChange("durable")}>Durable Ensemble Analysis</button>
     {props.morrisDisabled && props.morrisUnavailableReason && <span role="status" aria-label="Morris availability"
       className="self-center text-xs text-amber-300">
       Morris unavailable: {props.morrisUnavailableReason}

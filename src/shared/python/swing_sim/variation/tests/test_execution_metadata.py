@@ -82,7 +82,8 @@ def test_metadata_snapshots_exact_resolved_values_units_and_dimensions() -> None
 
     assert metadata.schema_id == "rate-of-closure/variation-execution-metadata"
     assert metadata.schema_version == 2
-    assert metadata.rng_identity.algorithm_id == "numpy-generator-pcg64"
+    assert metadata.rng_identity.algorithm_id == "numpy-pcg64-canonical-rowwise-psd"
+    assert metadata.rng_identity.algorithm_version == 2
     assert metadata.rng_identity.stream_derivation_id == (
         "numpy-seedsequence-safe-seed-crc32-utf8-spec-id"
     )
@@ -100,7 +101,7 @@ def test_metadata_snapshots_exact_resolved_values_units_and_dimensions() -> None
     assert snapshots[_LAUNCH_ANGLE].unit == "deg"
     assert snapshots[_LAUNCH_ANGLE].dimension == "angle"
     with pytest.raises(AttributeError):
-        metadata.resolved_variables = ()  # type: ignore[misc]
+        metadata.resolved_variables = ()
 
 
 def test_execution_document_round_trips_exact_canonical_plan_and_metadata() -> None:

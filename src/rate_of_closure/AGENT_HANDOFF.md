@@ -1,22 +1,18 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-20
-
-> **Current state only**, capped at 150 lines; history lives in git and in
-> [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
+> Last updated: 2026-08-21
+> **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
 ## What This Tool Is Now
 
-A swing → impact → ball-flight simulator with **PyQt6 and React surfaces held
-at parity**, plus a Rust fast path. It began as a single closure-rate calculator
-(twist model: GC-path vs impact-point-path gap, °/ft).
+A swing → impact → ball-flight simulator with parity **PyQt6 and React
+surfaces**, plus a Rust fast path; it began as a closure-rate calculator.
 
 PyQt6 entry: `rate_of_closure.ui.pyqt6.main_window:RateOfClosureMainWindow`,
-titled "Rate of Closure Impact Explorer" — that exact string is what
-UpstreamDrift's launcher manifest advertises. React mirror: `web/` (Vite/TS,
-~1,570 tests across 193 files).
+titled "Rate of Closure Impact Explorer" as UpstreamDrift's manifest advertises.
+React mirror: `web/` (Vite/TS, ~1,570 tests across 193 files).
 
 Physics lives in `src/shared/python/swing_sim/` — outside this tool, so
 UpstreamDrift reaches it through `vendor/ud-tools`: `impact/` (contact law,
@@ -62,12 +58,16 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 is active in PR #4623 from main `9b24fc6d2`.
-The new durable sink atomically checkpoints bounded pickle-free chunks, verifies
-checksums and exact configuration/header identity before resume, retains valid
-prefixes on abort, and restores progress/failure counts. Remaining R11.5 work:
-lazy request/config production, a non-materializing downstream consumer,
-measured peak-memory budgets, and durable PyQt/React worker transport.
+#4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
+`feat/4626-streaming-ensemble` through `0e1781c90` (PR #4628) adds scalar moments,
+safe limits, v2 sampling, bounded work, scaling, incremental geometry/sensitivity,
+and a strict path-free durable wire. The Python authority owns paths and lifecycle;
+PyQt6 and a transport-only React Worker expose prefix evidence without browser physics.
+The latest fix closes lazy imports, PyQt accessibility, Ruff/Mypy, Upstream packaging,
+and shared-cache parity isolation. Focused gates pass: 57 shared/import tests,
+13 hosted-failure regressions, 18 geometry tests, accessibility, and 43-source Mypy.
+The fresh protected run must still prove these fixes. Under the 20-worker UpstreamDrift campaign, child import takes ~58 s versus the unchanged 15 s ceiling; do not weaken it.
+The other 10 runtime tests pass; rerun after CPU is released. #4626 is not done.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

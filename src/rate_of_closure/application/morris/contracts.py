@@ -258,7 +258,7 @@ class MorrisJobEnvelope:
         }
 
 
-def _parse_base(value: object) -> MorrisBaseRequest:
+def parse_morris_base_request(value: object) -> MorrisBaseRequest:
     from rate_of_closure.club.library import CLUB_LIBRARY
     from shared.python.swing_sim.flight.registry import FlightModelType
 
@@ -377,7 +377,7 @@ def parse_morris_request(value: object) -> MorrisAuthorityRequest:
         raise ValueError("unsupported Morris request schema ID")
     if item["schema_version"] != MORRIS_AUTHORITY_SCHEMA_VERSION:
         raise ValueError("unsupported Morris request schema version")
-    base = _parse_base(item["base"])
+    base = parse_morris_base_request(item["base"])
     factors = _parse_factors(item["factors"], base.simulation_config())
     trajectories = _integer(item["trajectories"], "trajectories", 1, 2**31 - 1)
     levels = _integer(item["levels"], "levels", 4, 10_000)
@@ -404,5 +404,7 @@ __all__ = [
     "MORRIS_REQUEST_SCHEMA_ID",
     "MorrisAuthorityRequest",
     "MorrisJobEnvelope",
+    "MorrisBaseRequest",
+    "parse_morris_base_request",
     "parse_morris_request",
 ]

@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from rate_of_closure.ui.pyqt6.club_view import Club3DView
     from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
     from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+    from rate_of_closure.ui.pyqt6.durable_ensemble_tab import DurableEnsembleTab
     from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
     from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
     from rate_of_closure.ui.pyqt6.result_row import ResultRow
@@ -41,6 +42,7 @@ class MainWindowClubMixin:
         _simulation_tab: SimulationTab
         _variation_tab: VariationTab
         _morris_tab: MorrisScreeningTab
+        _durable_ensemble_tab: DurableEnsembleTab
         statusBar: Callable[[], QStatusBar | None]
 
     def _format_row(self, field: str, value: float) -> str:
@@ -96,6 +98,7 @@ class MainWindowClubMixin:
         self._variation_tab.set_scenario(scenario)
         config = self._simulation_tab.config()
         self._variation_tab.set_simulation_config(config)
+        self._durable_ensemble_tab.set_simulation_config(config)
         self._morris_tab.set_simulation_config(config)
         status_bar = self.statusBar()
         if status_bar is not None:

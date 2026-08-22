@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -48,7 +49,8 @@ from .ensemble_chunks import (
     SimulationResultChunk,
     require_chunk_matches_header,
 )
-from .simulation_types import NUMERICAL_FAILURE, SimulationEnsembleRequest
+from .ensemble_source import SimulationEnsembleSource
+from .simulation_types import NUMERICAL_FAILURE
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,6 +92,39 @@ class DurableEnsembleChunkSink:
 
     def begin(self, header: EnsembleStreamHeader) -> None:
         """Create or verify an archive before any evaluation may resume."""
+        self._open(header)
+        self._verify_prefix(cast(dict[str, Any], self._manifest))
+
+    def scan(
+        self,
+        request: SimulationEnsembleSource,
+        visitor: Callable[[SimulationResultChunk], None],
+    ) -> DurableEnsembleArchive:
+        """Visit each verified prefix chunk without retaining prior chunks."""
+        archive, _header = self.scan_with_header(request, visitor)
+        return archive
+
+    def scan_with_header(
+        self,
+        request: SimulationEnsembleSource,
+        visitor: Callable[[SimulationResultChunk], None],
+    ) -> tuple[DurableEnsembleArchive, EnsembleStreamHeader]:
+        """Scan once and return the exact verified layout used by the visitor."""
+        from .simulation_adapter import build_ensemble_stream_header
+
+        require(callable(visitor), "archive visitor must be callable")
+        header = build_ensemble_stream_header(request)
+        self._open(header)
+        try:
+            manifest = self._require_active()
+            for chunk in self._verified_prefix(manifest):
+                visitor(chunk)
+            return self._archive(), header
+        finally:
+            self.abort()
+
+    def _open(self, header: EnsembleStreamHeader) -> None:
+        """Open one exact archive lifecycle without scanning its prefix twice."""
         require(not self._active, "sink lifecycle has already begun")
         self._directory.mkdir(parents=True, exist_ok=True)
         header_document = _header_document(header)
@@ -101,7 +136,6 @@ class DurableEnsembleChunkSink:
             _write_json_atomic(self._manifest_path, manifest)
         _verify_header(manifest, header_document, header_sha256)
         self._header = header
-        self._verify_prefix(manifest)
         self._manifest = manifest
         self._active = True
 
@@ -111,6 +145,20 @@ class DurableEnsembleChunkSink:
         return EnsembleResumeState(
             cast(int, manifest["next_index"]), cast(int, manifest["failed_count"])
         )
+
+    def visit_active_prefix(
+        self, visitor: Callable[[SimulationResultChunk], None]
+    ) -> None:
+        """Visit the verified active prefix once for a live analysis consumer."""
+        require(callable(visitor), "archive visitor must be callable")
+        manifest = self._require_active()
+        for chunk in self._verified_prefix(manifest):
+            visitor(chunk)
+
+    def active_archive(self) -> DurableEnsembleArchive:
+        """Return the lightweight state of the currently verified lifecycle."""
+        self._require_active()
+        return self._archive()
 
     def accept(self, chunk: SimulationResultChunk) -> None:
         """Atomically add one verified contiguous chunk to the durable prefix."""
@@ -151,7 +199,7 @@ class DurableEnsembleChunkSink:
         """End this lifecycle without deleting the last valid prefix."""
         self._active = False
 
-    def inspect(self, request: SimulationEnsembleRequest) -> DurableEnsembleArchive:
+    def inspect(self, request: SimulationEnsembleSource) -> DurableEnsembleArchive:
         """Verify and summarize an existing archive against one exact request."""
         from .simulation_adapter import build_ensemble_stream_header
 
@@ -177,6 +225,13 @@ class DurableEnsembleChunkSink:
         }
 
     def _verify_prefix(self, manifest: dict[str, Any]) -> None:
+        for _ in self._verified_prefix(manifest):
+            pass
+
+    def _verified_prefix(
+        self, manifest: dict[str, Any]
+    ) -> Iterator[SimulationResultChunk]:
+        """Yield a bounded prefix and validate its aggregate manifest identity."""
         header = cast(EnsembleStreamHeader, self._header)
         next_index = 0
         failed_count = 0
@@ -193,6 +248,7 @@ class DurableEnsembleChunkSink:
             )
             failed_count += actual_failed
             next_index = cast(int, record["stop_index"])
+            yield chunk
         require(next_index == manifest["next_index"], "manifest prefix is inconsistent")
         require(
             failed_count == manifest["failed_count"],

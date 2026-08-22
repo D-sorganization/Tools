@@ -310,6 +310,13 @@ const serializeBase = (base: MorrisAuthorityBase): Readonly<Record<string, strin
   return Object.freeze(document);
 };
 
+/** Serialize the exact passive base shared by local Python authority workflows. */
+export function serializeMorrisAuthorityBase(
+  base: MorrisAuthorityBase,
+): Readonly<Record<string, string | number>> {
+  return serializeBase(base);
+}
+
 /** Stable validated identity for remounting stateful workflows when their authority base changes. */
 export function morrisAuthorityBaseIdentity(base: MorrisAuthorityBase): string {
   return JSON.stringify(serializeBase(base));

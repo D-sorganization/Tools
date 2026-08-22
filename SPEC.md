@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.79                                    |
+| **Spec Version**        | 1.17.83                                    |
 | **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
@@ -5117,6 +5117,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-21 | 1.17.83 | feat(rate-of-closure, #4626 / #4142 R11.5): add an authenticated authority-owned durable-ensemble lifecycle with strict path-free request/job records, server-owned archives, one active writer per archive, verified-prefix progress, exact resume, zero-solver replay, inspection, cancellation, and bounded retention. PyQt6 and a transport-only React Worker expose the same incremental moments without reimplementing physics. Model-scenario, verified-prefix, and no-row/no-quantile/no-correlation limitations remain explicit. |
+| 2026-08-21 | 1.17.82 | feat(rate-of-closure, #4626 / #4142 R11.5): add one strict path-free durable-ensemble evidence contract shared by Python and TypeScript. Exact parsers bind digest, lifecycle/counts, canonical output moments and units, frame/point layout, registered incremental method, and scientific limitations; incompatible or inconsistent evidence fails closed. |
+| 2026-08-21 | 1.17.81 | feat(rate-of-closure, #4626 / #4142 R11.5): add bounded online position covariance for materialized and durable geometry plus complete exact-plan one-at-a-time sensitivity over ordered single-factor archives. Partial, mismatched, or invalid evidence fails closed. |
+| 2026-08-21 | 1.17.80 | test(rate-of-closure, #4626 / #4142 R11.5): add source-pinned durable-ensemble scaling evidence and a fresh-process cross-platform harness separating peak RSS, logical trace volume, physical archive growth, and failure-only transport throughput. The evidence is a bounded transport diagnostic, not solver, hardware, or scientific qualification. |
 | 2026-08-21 | 1.17.79 | fix(rate-of-closure): make web/ self-contained for the public mirror channel — vendor the ten monorepo JSON files the web app and its tests imported from outside web/ into web/src/vendored/ (map in vendored_map.json, refresh via web/scripts/refresh-vendored.mjs), rewrite the 14 escaping imports, and block drift with a monorepo byte-equality pytest, a mirror-skipping deep-equality Vitest gate, and a static import-boundary ratchet. Unblocks public-web-management#3; relates to #4624. |
 | 2026-08-21 | 1.17.78 | feat(rate-of-closure, #4142 R11.5): add bounded restartable ensemble transport with atomic strict manifests, pickle-free NPZ chunks, compressed/uncompressed byte caps, per-chunk SHA-256 and exact contiguous-prefix validation; bind resumes to the plan, sampled inputs, every ordered simulation configuration, trace layout, registry snapshot, and declared implementation identity; retain valid work on cancellation/failure, restore progress/failure counts, and fail before evaluation on drift or tampering. This advances but does not close R11.5: request/config construction remains eager, the compatibility collector still materializes the final tensor, and measured peak-memory/UI transport gates remain open. |
 | 2026-08-20 | 1.17.76 | feat(rate-of-closure): consume canonical Upstream immutable dataset jobs and evidence-bearing player covariation through strict Python/TypeScript clients; add parity authorized-corpus selection, reference-only persistence, bounded aggregate refresh, and explicit 20,000-row inline limits while retaining local estimators only as labelled offline compatibility. | #4603 |

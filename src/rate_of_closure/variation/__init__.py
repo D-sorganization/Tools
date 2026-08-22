@@ -7,6 +7,19 @@ from .durable_ensemble_chunks import (
     DurableEnsembleArchive,
     DurableEnsembleChunkSink,
 )
+from .durable_ensemble_evidence import (
+    DURABLE_ENSEMBLE_ANALYSIS_METHOD,
+    DURABLE_ENSEMBLE_EVIDENCE_SCHEMA,
+    DURABLE_ENSEMBLE_LIMITATIONS,
+    DurableAnalysisEvidence,
+    DurableArchiveEvidence,
+    DurableEnsembleEvidence,
+    durable_ensemble_evidence,
+    durable_ensemble_evidence_from_document,
+    durable_ensemble_evidence_from_json,
+    durable_ensemble_evidence_to_document,
+    durable_ensemble_evidence_to_json,
+)
 from .ensemble_chunks import (
     CollectingEnsembleSink,
     EnsembleChunkSink,
@@ -14,6 +27,11 @@ from .ensemble_chunks import (
     EnsembleStreamHeader,
     ResumableEnsembleChunkSink,
     SimulationResultChunk,
+)
+from .ensemble_source import (
+    EnsembleWorkChunk,
+    LazySimulationEnsembleSource,
+    SimulationEnsembleSource,
 )
 from .forgiveness_projection import forgiveness_variation_dataset
 from .forgiveness_runner import ChipForgivenessStudy
@@ -44,6 +62,13 @@ from .simulation_adapter import (
     run_simulation_ensemble_chunks,
     spatial_point_ids,
 )
+from .streaming_ensemble_analysis import (
+    AnalyzingDurableEnsembleSink,
+    DurableEnsembleLayout,
+    DurableEnsembleSummary,
+    StreamingOutputMoments,
+    analyze_durable_ensemble,
+)
 from .trial_projection import (
     SimulationExecutor,
     TrialCapture,
@@ -53,18 +78,28 @@ from .trial_projection import (
 
 __all__ = [
     "APP_FRAME_ID",
+    "AnalyzingDurableEnsembleSink",
     "CONTACT_OUTPUT_NAMES",
     "ChipForgivenessStudy",
     "ChipStudySummary",
     "ChipTrialCohort",
     "CollectingEnsembleSink",
     "DurableEnsembleArchive",
+    "DurableAnalysisEvidence",
+    "DurableArchiveEvidence",
+    "DurableEnsembleEvidence",
+    "DurableEnsembleLayout",
     "DurableEnsembleChunkSink",
+    "DurableEnsembleSummary",
+    "DURABLE_ENSEMBLE_ANALYSIS_METHOD",
+    "DURABLE_ENSEMBLE_EVIDENCE_SCHEMA",
+    "DURABLE_ENSEMBLE_LIMITATIONS",
     "EVALUATED_HIT",
     "EVALUATED_NO_IMPACT",
     "EnsembleChunkSink",
     "EnsembleResumeState",
     "EnsembleStreamHeader",
+    "EnsembleWorkChunk",
     "IMPACT_OUTPUT_NAMES",
     "NUMERICAL_FAILURE",
     "RATE_MORRIS_OUTPUTS",
@@ -73,18 +108,27 @@ __all__ = [
     "RateMorrisEvaluator",
     "SHOT_OUTPUT_NAMES",
     "SimulationEnsembleRequest",
+    "SimulationEnsembleSource",
     "SimulationEnsembleResult",
     "SimulationExecutor",
     "SimulationResultChunk",
     "SimulationTrialOutcome",
+    "StreamingOutputMoments",
+    "LazySimulationEnsembleSource",
     "TEE_HEIGHT_VARIABLE_KEY",
     "TrialCapture",
     "TrialEvaluationStatus",
     "apply_ball_setup_sample",
     "apply_global_simulation_values",
+    "analyze_durable_ensemble",
     "build_simulation_ensemble_request",
     "build_ensemble_stream_header",
     "capture_simulation",
+    "durable_ensemble_evidence",
+    "durable_ensemble_evidence_from_document",
+    "durable_ensemble_evidence_from_json",
+    "durable_ensemble_evidence_to_document",
+    "durable_ensemble_evidence_to_json",
     "evaluate_rate_morris_design",
     "forgiveness_variation_dataset",
     "project_simulation_outcome",

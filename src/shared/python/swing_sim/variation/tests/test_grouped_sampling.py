@@ -11,6 +11,7 @@ from shared.python.swing_sim.variation import (
     NoiseSpec,
     VariationPlan,
     run_variation,
+    sample_input_chunks,
     sample_inputs,
 )
 from shared.python.swing_sim.variation.spec import PerturbationGroup
@@ -53,6 +54,19 @@ def test_same_seed_is_exact_and_different_seed_changes_grouped_samples() -> None
 
     np.testing.assert_array_equal(first, repeated)
     assert not np.array_equal(first, different)
+
+
+@pytest.mark.parametrize("chunk_size", [1, 17, 513, 20_000])
+def test_grouped_lazy_chunks_are_byte_exact_with_eager_sampling(
+    chunk_size: int,
+) -> None:
+    plan = _grouped_plan()
+
+    actual = np.vstack(
+        [values for _, values in sample_input_chunks(plan, chunk_size=chunk_size)]
+    )
+
+    np.testing.assert_array_equal(actual, sample_inputs(plan))
 
 
 @pytest.mark.parametrize("matrix_kind", ["correlation", "covariance"])

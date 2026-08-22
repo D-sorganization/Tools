@@ -29,8 +29,10 @@ from shared.python.swing_sim.variation import (
     CancelledError,
     SensitivityResult,
     VariationPlan,
+    finite_sample_standard_deviation,
     one_at_a_time_sensitivity,
     run_variation,
+    sensitivity_from_standard_deviations,
 )
 
 logger = logging.getLogger(__name__)
@@ -171,17 +173,11 @@ class VariationWorker(QThread):
                 values = dataset.outputs[:, column]
                 finite = values[np.isfinite(values)]
                 if finite.size >= 2:
-                    row[column] = float(np.std(finite, ddof=1))
+                    row[column] = finite_sample_standard_deviation(finite)
             rows.append(row)
         assert output_names is not None
-        matrix = np.vstack(rows)
-        with np.errstate(invalid="ignore"):
-            column_max = np.nanmax(np.abs(matrix), axis=0)
-            denominator = np.where(column_max > 0.0, column_max, 1.0)
-            normalized = np.abs(matrix) / denominator
-        return SensitivityResult(
-            input_keys=tuple(spec.variable_key for spec in self._plan.noise),
-            output_names=output_names,
-            matrix=matrix,
-            normalized=normalized,
+        return sensitivity_from_standard_deviations(
+            tuple(spec.variable_key for spec in self._plan.noise),
+            output_names,
+            np.vstack(rows),
         )

@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4473 landed visualization/authority; `feat/4142-ensemble-next` adds durable R11.5 restart/checksum transport.                                                   |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4623 merged durable R11.5 restart/checksum transport; #4626 is implementing non-materializing production, analysis, budgets, and clients.                    |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
@@ -63,9 +63,11 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4142 work.** PR #4623 from main `9b24fc6d2` adds
-atomic/checksummed bounded NPZ resume with exact header/config drift rejection.
-Eager requests, final materialization, memory budgets, and UI transport remain.
+**Active #4142 work.** After #4623 merged at `b886d4373`, #4626 continues R11.5
+on `feat/4626-streaming-ensemble`. Commits `9520ea046..12c2eb8ed` add verified
+analysis, safe stream/tensor limits, v2 sampling, and a bounded source retaining
+no full input/config roster. Resume skips the solver prefix; 81 tests, MyPy/Ruff,
+and changed-file size pass. Budgets, geometry/sensitivity, and clients remain.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -138,10 +140,8 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (ordered)
 
-1. **Sidekick Unified Integration across Impact Model & Fleet**: Implement
-   `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`
-   (Phases S1–S5: dock widget in Rate of Closure, workspace seeding, standalone &
-   UpstreamDrift launcher parity).
+1. **Sidekick Unified Integration**: implement the S1–S5 plan in
+   `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
 4. Complete #4142's bounded-source, memory-budget, and durable UI transport; #4430 is complete.

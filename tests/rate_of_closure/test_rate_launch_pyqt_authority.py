@@ -41,7 +41,9 @@ def test_launcher_injects_client_and_closes_runtime_after_event_loop(
     assert launcher_module.launch_rate_pyqt6() == 23
     assert runtime.closed
     client = captured[0].window_kwargs["morris_client"]
+    durable = captured[0].window_kwargs["durable_ensemble_client"]
     assert client.base_url == runtime.base_url
+    assert durable.base_url == runtime.base_url
     assert "private-test-token" not in repr(captured[0])
 
 
@@ -64,7 +66,10 @@ def test_launcher_degrades_honestly_when_optional_authority_is_unavailable(
     )
 
     assert launcher_module.launch_rate_pyqt6() == 0
-    assert captured[0].window_kwargs == {"morris_client": None}
+    assert captured[0].window_kwargs == {
+        "morris_client": None,
+        "durable_ensemble_client": None,
+    }
     assert "Morris Screening unavailable" in caplog.text
 
 

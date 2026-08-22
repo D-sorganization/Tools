@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 
+import numpy as np
 import pytest
 
 from rate_of_closure.club import get_club
@@ -13,10 +15,15 @@ from rate_of_closure.simulation import (
     BallSupportMode,
     SimulationConfig,
 )
+from rate_of_closure.variation._simulation_config_identity import (
+    simulation_configurations_sha256,
+)
+from rate_of_closure.variation.ensemble_source import SimulationEnsembleSource
 from rate_of_closure.variation.request_builder import (
     apply_global_simulation_values,
 )
 from rate_of_closure.variation.simulation_adapter import (
+    build_ensemble_stream_header,
     build_simulation_ensemble_request,
 )
 from shared.python.contracts import ContractViolationError
@@ -114,8 +121,22 @@ def test_builder_maps_supported_samples_into_complete_configs() -> None:
 
     request = build_simulation_ensemble_request(plan, _base_config())
 
-    assert request.sampled_inputs.shape == (3, len(plan.noise))
-    for row, config in zip(request.sampled_inputs, request.configs, strict=True):
+    assert isinstance(request, SimulationEnsembleSource)
+    assert not hasattr(request, "sampled_inputs")
+    assert not hasattr(request, "configs")
+    header = build_ensemble_stream_header(request)
+    assert header.sampled_inputs is None
+    assert len(header.sampled_input_sha256) == 64
+    chunks = tuple(request.work_chunks(chunk_size=2, start_index=0))
+    assert tuple(chunk.start_index for chunk in chunks) == (0, 2)
+    sampled_inputs = np.vstack([chunk.sampled_inputs for chunk in chunks])
+    configs = tuple(config for chunk in chunks for config in chunk.configs)
+    assert (
+        header.sampled_input_sha256
+        == hashlib.sha256(sampled_inputs.tobytes(order="C")).hexdigest()
+    )
+    assert header.configuration_sha256 == simulation_configurations_sha256(configs)
+    for row, config in zip(sampled_inputs, configs, strict=True):
         values = dict(zip((spec.variable_key for spec in plan.noise), row, strict=True))
         assert config.plane.yaw_deg == pytest.approx(values[_YAW])
         assert config.pendulum_parameters is not None
@@ -140,7 +161,27 @@ def test_builder_uses_default_pendulum_parameters_when_not_explicit() -> None:
     request = build_simulation_ensemble_request(plan, _base_config())
 
     expected = PendulumParameters.golf_default()
-    assert all(config.pendulum_parameters == expected for config in request.configs)
+    configs = tuple(
+        config
+        for chunk in request.work_chunks(chunk_size=1, start_index=0)
+        for config in chunk.configs
+    )
+    assert all(config.pendulum_parameters == expected for config in configs)
+
+
+def test_lazy_request_resume_generates_only_the_requested_suffix() -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(_spec(_YAW, 0.1),),
+        n_runs=7,
+        seed=3,
+    )
+    request = build_simulation_ensemble_request(plan, _base_config())
+
+    chunks = tuple(request.work_chunks(chunk_size=2, start_index=5))
+
+    assert tuple(chunk.start_index for chunk in chunks) == (5, 6)
+    assert sum(len(chunk.configs) for chunk in chunks) == 2
 
 
 def test_global_value_seam_applies_every_fixed_contact_morris_variable() -> None:

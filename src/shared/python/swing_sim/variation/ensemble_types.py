@@ -56,13 +56,13 @@ def validated_sample_times(sample_times_s: np.ndarray) -> np.ndarray:
         "sample times must be 1-D and non-empty",
         times.shape,
     )
-    require(np.all(np.isfinite(times)), "sample times must be finite", times)
+    require(bool(np.all(np.isfinite(times))), "sample times must be finite", times)
     require(
-        np.all(np.diff(times) > 0.0),
+        bool(np.all(np.diff(times) > 0.0)),
         "sample times must be strictly increasing",
         times,
     )
-    return cast(np.ndarray, times)
+    return times
 
 
 @dataclass(frozen=True)
@@ -127,12 +127,12 @@ def _validate_trace_shapes(arrays: _TraceArrays, n_trials: int) -> None:
 def _validate_trace_values(arrays: _TraceArrays) -> None:
     """Validate missing-data and impact-marker invariants."""
     require(
-        np.all(np.isfinite(arrays.positions[arrays.valid])),
+        bool(np.all(np.isfinite(arrays.positions[arrays.valid]))),
         "valid samples must contain finite positions",
         None,
     )
     require(
-        np.all(np.isnan(arrays.positions[~arrays.valid])),
+        bool(np.all(np.isnan(arrays.positions[~arrays.valid]))),
         "invalid samples must contain only NaN positions",
         None,
     )
@@ -141,13 +141,13 @@ def _validate_trace_values(arrays: _TraceArrays) -> None:
         impact_present & (arrays.impacts < arrays.times.size)
     )
     require(
-        np.all(legal),
+        bool(np.all(legal)),
         "impact sample must be -1 or a valid sample index",
         arrays.impacts,
     )
     rows = np.flatnonzero(impact_present)
     require(
-        np.all(arrays.valid[rows, arrays.impacts[rows]]),
+        bool(np.all(arrays.valid[rows, arrays.impacts[rows]])),
         "impact sample must refer to a valid trace sample",
         arrays.impacts,
     )
@@ -260,7 +260,7 @@ class PositionDispersion:
                 np.asarray(value).shape,
             )
         require(
-            np.all(np.asarray(self.count) >= 0),
+            bool(np.all(np.asarray(self.count) >= 0)),
             "count must be non-negative",
             self.count,
         )

@@ -113,6 +113,16 @@ class MorrisAuthorityClient:
         )
         return _validated_success(parse_morris_job, document)
 
+    def request_document(
+        self,
+        method: str,
+        path: str,
+        document: object | None,
+        expected: int | tuple[int, ...],
+    ) -> object:
+        """Send a bounded request for another contract on the same authority."""
+        return self._request(method, path, document, expected)
+
     def _job_path(self, job_id: str) -> str:
         valid = (
             isinstance(job_id, str)

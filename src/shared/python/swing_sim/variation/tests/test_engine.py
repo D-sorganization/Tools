@@ -18,6 +18,8 @@ from shared.python.swing_sim.variation import (
     VariationPlan,
     outputs_for_mode,
     run_variation,
+    sample_input_block,
+    sample_input_chunks,
     sample_inputs,
 )
 
@@ -90,6 +92,66 @@ class TestSampling:
         np.testing.assert_array_equal(
             sample_inputs(both)[:, 0], sample_inputs(only_face)[:, 0]
         )
+
+    @pytest.mark.parametrize("chunk_size", [1, 3, 11, 64])
+    def test_lazy_chunks_are_exactly_eager_and_canonically_ordered(
+        self, chunk_size: int
+    ) -> None:
+        plan = _delivery_plan(n_runs=32, seed=3)
+
+        chunks = tuple(sample_input_chunks(plan, chunk_size=chunk_size))
+
+        assert tuple(start for start, _ in chunks) == tuple(
+            range(0, plan.n_runs, chunk_size)
+        )
+        np.testing.assert_array_equal(
+            np.vstack([values for _, values in chunks]), sample_inputs(plan)
+        )
+
+    def test_lazy_resume_regenerates_only_the_requested_suffix(self) -> None:
+        plan = _delivery_plan(n_runs=32, seed=3)
+
+        chunks = tuple(sample_input_chunks(plan, chunk_size=7, start_index=13))
+
+        assert chunks[0][0] == 13
+        np.testing.assert_array_equal(
+            np.vstack([values for _, values in chunks]), sample_inputs(plan)[13:]
+        )
+
+    def test_exact_lazy_block_handles_a_non_aligned_resume_boundary(self) -> None:
+        plan = _delivery_plan(n_runs=32, seed=3)
+
+        block = sample_input_block(plan, start_index=13, row_count=8)
+
+        np.testing.assert_array_equal(block, sample_inputs(plan)[13:21])
+        assert not block.flags.writeable
+
+    @pytest.mark.parametrize("distribution", ["normal", "uniform", "triangular"])
+    def test_lazy_chunks_preserve_every_marginal_distribution(
+        self, distribution: str
+    ) -> None:
+        plan = VariationPlan(
+            mode="delivery",
+            noise=(NoiseSpec(_FACE, distribution=distribution, scale=2.0),),
+            n_runs=23,
+            seed=7,
+        )
+
+        actual = np.vstack(
+            [values for _, values in sample_input_chunks(plan, chunk_size=4)]
+        )
+
+        np.testing.assert_array_equal(actual, sample_inputs(plan))
+
+    @pytest.mark.parametrize("chunk_size", [False, 0, -1, 1.5])
+    def test_lazy_chunks_reject_invalid_chunk_size(self, chunk_size: object) -> None:
+        with pytest.raises(ContractViolationError, match="positive integer"):
+            sample_input_chunks(_delivery_plan(), chunk_size=chunk_size)
+
+    @pytest.mark.parametrize("start_index", [False, -1, 9, 1.5])
+    def test_lazy_chunks_reject_invalid_start_index(self, start_index: object) -> None:
+        with pytest.raises(ContractViolationError, match="within the plan"):
+            sample_input_chunks(_delivery_plan(), chunk_size=2, start_index=start_index)
 
 
 class TestRunVariation:

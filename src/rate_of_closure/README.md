@@ -180,10 +180,95 @@ Cancellation and exceptions preserve the last manifest-committed prefix. An
 unreferenced chunk left by a failed manifest replacement is ignored and safely
 replaced on the next attempt. `DurableEnsembleArchive` is intentionally a
 lightweight inspection record, not a fabricated in-memory ensemble result.
-The request's configurations and sampled-input matrix remain eager, and the
-legacy collecting sink still materializes the final tensor; bounded work-source
-construction, measured peak-memory budgets, and UI transport remain open R11.5
-work under #4142.
+`analyze_durable_ensemble` scans the verified prefix one chunk at a time and
+returns typed hit/no-impact/failure counts, named failure counts, and
+availability-aware mean and sample standard deviation for every canonical
+scalar output. Units come from the same output registry used by the plots. The
+analysis retains only fixed-size online accumulators and never constructs the
+trial-by-sample trace tensor; incomplete archives are reported explicitly as an
+in-progress prefix rather than promoted to complete evidence.
+The stream header enforces trial, sample, point, and sampled-input axis caps but
+does not apply the legacy final-tensor product cap. Each accepted chunk retains
+its own position-cell limit. `CollectingEnsembleSink` separately reapplies the
+full tensor cap before allocating compatibility arrays, so a safe stream cannot
+accidentally become an oversized materialized result.
+
+`sample_input_chunks` now provides a bounded deterministic sampled-input source.
+It owns one subset-stable PCG64 stream per stable specification ID, regenerates
+and discards a requested resume prefix without solver work, and produces the
+same read-only rows for every chunk size. Grouped normal draws use the declared
+positive-semidefinite covariance factor through a canonical rowwise transform;
+the execution sidecar identifies this scientific method as
+`numpy-pcg64-canonical-rowwise-psd` version 2. The eager compatibility sampler
+uses this same authority.
+
+`build_simulation_ensemble_request` now returns a bounded work source rather than
+retaining the sampled-input matrix or ordered configuration roster. A preflight
+scan hashes every canonical input row and complete configuration through the
+same chunk source, retaining only one bounded block; the durable header stores
+those identities, not the full matrix. Execution regenerates only bounded
+config blocks from the verified resume index, and completed-prefix replay does
+no solver work. The explicit materialized compatibility request and collecting
+sink remain available for small legacy callers.
+
+### Measured Durable-Stream Scaling
+
+`scripts/measure_rate_ensemble_scaling.py` runs each registered scale point in
+a fresh Python process and records the operating system's peak resident set,
+the cumulative physical archive size, the uncompressed logical trace volume,
+and measured transport throughput. The checked-in strict evidence is
+`docs/rate_of_closure/ensemble_stream_scaling.v1.json`; rerun it with
+`py -3.12 scripts/measure_rate_ensemble_scaling.py`.
+
+The source-pinned Windows diagnostic at `fd7e2998e` used 16-trial chunks. Raising
+trials from 128 to 512 at 51 samples increased the archive from 23,679 to 83,891
+bytes while peak RSS changed from 103,751,680 to 105,021,440 bytes. Raising the
+trace length from 51 to 501 samples at 128 trials increased logical trace volume
+from 478,592 to 4,683,392 bytes while peak RSS was 105,684,992 bytes. All cases
+met the declared 512 MiB absolute ceiling, 64/96 MiB independent-axis growth
+ceilings, and one-trial-per-second transport floor.
+
+This is deliberately an all-retained-failure transport diagnostic. It exercises
+lazy identity preflight, typed failure projection, bounded trace allocation,
+atomic NPZ persistence, and manifest growth. It does **not** measure solver
+throughput, successful-trajectory compression, user-hardware performance, or
+scientific model accuracy. Fresh-process imports are included in peak RSS and
+excluded from the timed transport interval.
+
+### Incremental Geometry and Sensitivity
+
+`PositionDispersionAccumulator` is now the shared authority for materialized and
+durable geometry. It applies stable online covariance updates only to explicitly
+valid trace rows, retains counts/means/centered cross-products per sample and
+point, and reproduces the existing covariance, RMS-radius, eigenvalue, and
+sign-canonical principal-axis results. A 256 MB pre-allocation contract bounds
+the accumulator independently of trial count.
+
+`analyze_durable_ensemble_geometry` scans a checksum-verified complete or
+explicitly in-progress prefix and binds its immutable `PositionDispersion` to
+the returned archive state. It never constructs a trial-by-sample tensor.
+
+`analyze_durable_oat_sensitivity` accepts exactly one complete, identity-matched
+single-factor archive for every factor in the parent plan. It builds the same
+availability-aware sample-standard-deviation matrix and column normalization as
+the materialized one-at-a-time workflow. Partial, missing, extra, reordered, or
+scientifically mismatched substudies cannot be promoted. Both paths use stable
+online sample moments, so a mathematically constant output remains zero rather
+than turning floating-point residue into a false normalized sensitivity.
+
+### Portable Durable Evidence
+
+`durable_ensemble_evidence` projects a checksum-verified scalar prefix summary
+onto `rate/durable-ensemble-evidence/v1`. The wire deliberately excludes local
+archive paths while retaining the header digest, lifecycle/counts, typed
+failure denominators, canonical units, trace point/frame layout, incremental
+method, and limitations. Python and TypeScript parse the same golden document
+and reject field, count, unit, frame, method, or availability drift before a UI
+can promote it. The evidence is descriptive model-scenario output and never
+claims human validation or a coaching recommendation.
+
+Durable PyQt6 and React run/progress/cancel/resume/inspect state machines and
+rendered surfaces remain open R11.5 work under #4626 / #4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are

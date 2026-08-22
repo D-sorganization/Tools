@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import threading
 import time
@@ -15,7 +14,10 @@ from typing import Any
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-from rate_of_closure.application._workspace_validation import unique_json_object
+from rate_of_closure.application._strict_http_json import (
+    StrictHttpFailure,
+    strict_json_document,
+)
 from shared.python.swing_sim.variation import (
     CancelledError,
     MorrisObservationArchive,
@@ -330,42 +332,6 @@ class MorrisJobRegistry:
         )
 
 
-async def _strict_document(request: Request, limit: int) -> object:
-    content_type = (
-        request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
-    )
-    if content_type != "application/json":
-        raise _HttpFailure(415, "application/json is required")
-    length = request.headers.get("content-length")
-    if length is not None:
-        try:
-            if int(length) > limit:
-                raise _HttpFailure(413, "request body is too large")
-        except ValueError as exc:
-            raise _HttpFailure(400, "invalid content length") from exc
-    body = bytearray()
-    async for chunk in request.stream():
-        body.extend(chunk)
-        if len(body) > limit:
-            raise _HttpFailure(413, "request body is too large")
-    try:
-        text = bytes(body).decode("utf-8", errors="strict")
-        return json.loads(
-            text,
-            object_pairs_hook=unique_json_object,
-            parse_constant=lambda value: (_ for _ in ()).throw(ValueError(value)),
-        )
-    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
-        raise _HttpFailure(400, "invalid JSON request") from exc
-
-
-class _HttpFailure(Exception):
-    def __init__(self, status: int, message: str) -> None:
-        super().__init__(message)
-        self.status = status
-        self.message = message
-
-
 def _response(envelope: MorrisJobEnvelope, status: int = 200) -> JSONResponse:
     return JSONResponse(envelope.to_json_dict(), status_code=status)
 
@@ -379,10 +345,10 @@ def create_morris_router(registry: MorrisJobRegistry) -> APIRouter:
     @router.post("/morris/jobs")
     async def create_job(request: Request) -> JSONResponse:
         try:
-            document = await _strict_document(request, registry.max_body_bytes)
+            document = await strict_json_document(request, registry.max_body_bytes)
             parsed = parse_morris_request(document)
             return _response(registry.create(parsed), 202)
-        except _HttpFailure as exc:
+        except StrictHttpFailure as exc:
             return JSONResponse({"error": exc.message}, status_code=exc.status)
         except (TypeError, ValueError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=422)
