@@ -5,6 +5,8 @@ It measures transport, validation, bounded trace allocation, atomic persistence,
 and manifest growth without claiming solver throughput or scientific evidence.
 """
 
+# ruff: noqa: E402 -- repository source path is bootstrapped before local imports.
+
 from __future__ import annotations
 
 import argparse
@@ -20,6 +22,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE_ROOT = ROOT / "src"
+if str(SOURCE_ROOT) not in sys.path:
+    sys.path.insert(0, str(SOURCE_ROOT))
+
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import SimulationConfig
@@ -29,7 +36,6 @@ from rate_of_closure.variation.request_builder import build_simulation_ensemble_
 from rate_of_closure.variation.simulation_adapter import run_simulation_ensemble_chunks
 from shared.python.swing_sim.variation import CATEGORY_SWING, NoiseSpec, VariationPlan
 
-ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "docs/rate_of_closure/ensemble_stream_scaling.v1.json"
 POINT_COUNT = 3
 CHUNK_SIZE = 16
@@ -62,8 +68,17 @@ def _peak_resident_bytes() -> int:
     if platform.system() == "Windows":
         counters = _ProcessMemoryCounters()
         counters.cb = ctypes.sizeof(counters)
-        process = ctypes.windll.kernel32.GetCurrentProcess()
-        success = ctypes.windll.psapi.GetProcessMemoryInfo(
+        kernel32 = ctypes.windll.kernel32
+        psapi = ctypes.windll.psapi
+        kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+        psapi.GetProcessMemoryInfo.argtypes = (
+            wintypes.HANDLE,
+            ctypes.POINTER(_ProcessMemoryCounters),
+            wintypes.DWORD,
+        )
+        psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
+        process = kernel32.GetCurrentProcess()
+        success = psapi.GetProcessMemoryInfo(
             process, ctypes.byref(counters), counters.cb
         )
         if not success:
