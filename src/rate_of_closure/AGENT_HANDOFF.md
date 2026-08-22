@@ -60,8 +60,8 @@ see the two contracts under `docs/specs/`.
 
 #4142 R11.5/#4626 merged in PR #4628 at `95101264b`. It adds scalar moments, safe limits, v2 sampling, bounded work, scaling,
 incremental geometry/sensitivity, and a strict path-free durable wire. The Python authority owns paths and lifecycle; PyQt6 and a
-transport-only React Worker expose prefix evidence without browser physics. Follow-up branch `fix/4628-post-merge-qualification`
-through `898c8a088` carries the hosted Morris alias and verifies scroll origin before each protected initial-state PNG. Local lint,
+transport-only React Worker expose prefix evidence without browser physics. Follow-up PR #4630 on `fix/4628-post-merge-qualification`
+through `bdfe8c9d7` carries the hosted Morris alias and verifies scroll origin before each protected initial-state PNG. Local lint,
 type check, build, and the exact 2-test Chromium gate pass; inspect the next Linux candidate before baseline promotion. Earlier focused
 gates passed 57 shared/import, 13 hosted-failure, 18 geometry, accessibility, and 43-source Mypy tests. Under the 20-worker
 UpstreamDrift campaign, child import takes ~58 s versus the unchanged 15 s ceiling; do not weaken it. The other 10 runtime tests pass.
