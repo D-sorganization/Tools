@@ -64,10 +64,10 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
 **Active #4142 work.** After #4623 merged at `b886d4373`, #4626 continues R11.5
-on `feat/4626-streaming-ensemble`. Commits `9520ea046..1b79bb399` add verified
-incremental scalar analysis, safe stream/final-tensor limits, and deterministic
-bounded samples with explicit v2 identity. Eager request/config, budgets,
-geometry/sensitivity, and clients remain; 65 tests and MyPy/Ruff pass. #4626 is open.
+on `feat/4626-streaming-ensemble`. Commits `9520ea046..12c2eb8ed` add verified
+analysis, safe stream/tensor limits, v2 sampling, and a bounded source retaining
+no full input/config roster. Resume skips the solver prefix; 81 tests, MyPy/Ruff,
+and changed-file size pass. Budgets, geometry/sensitivity, and clients remain.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

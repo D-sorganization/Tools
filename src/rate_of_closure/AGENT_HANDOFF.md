@@ -63,11 +63,11 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` commits `9520ea046..1b79bb399` add verified scalar
-moments, safe stream limits, and chunk-size-invariant sampled-input generation
-with explicit v2 identity. The request/config roster remains eager; budgets,
-geometry/sensitivity, and durable clients remain. Focused sampling/metadata:
-65 passed plus exact MyPy/Ruff; #4626 is not done.
+`feat/4626-streaming-ensemble` commits `9520ea046..12c2eb8ed` add scalar moments,
+safe stream limits, v2 sampling, and a bounded request/config source. Preflight
+retains only digests; resume regenerates bounded work and skips the solver prefix.
+81 tests, exact MyPy/Ruff, and changed-file size pass. Budgets,
+geometry/sensitivity, and durable clients remain; #4626 is not done.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
