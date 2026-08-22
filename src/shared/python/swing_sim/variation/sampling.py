@@ -154,11 +154,41 @@ def sample_inputs(plan: VariationPlan) -> np.ndarray:
     return result
 
 
+def sample_input_block(
+    plan: VariationPlan, *, start_index: int, row_count: int
+) -> np.ndarray:
+    """Regenerate one exact bounded canonical block for validation or replay."""
+    require(
+        type(row_count) is int and row_count > 0,
+        "row_count must be a positive integer",
+    )
+    require(
+        type(start_index) is int
+        and 0 <= start_index < plan.n_runs
+        and start_index + row_count <= plan.n_runs,
+        "requested block must lie within the plan",
+    )
+    result: np.ndarray = np.empty((row_count, len(plan.noise)), dtype=float)
+    written = 0
+    for _, values in sample_input_chunks(
+        plan, chunk_size=row_count, start_index=start_index
+    ):
+        copied = min(row_count - written, len(values))
+        result[written : written + copied] = values[:copied]
+        written += copied
+        if written == row_count:
+            break
+    require(written == row_count, "sampled-input block is incomplete")
+    result.setflags(write=False)
+    return result
+
+
 __all__ = [
     "SAMPLING_ALGORITHM_ID",
     "SAMPLING_ALGORITHM_VERSION",
     "SAMPLING_STREAM_DERIVATION_ID",
     "SAMPLING_STREAM_DERIVATION_VERSION",
+    "sample_input_block",
     "sample_input_chunks",
     "sample_inputs",
 ]

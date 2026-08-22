@@ -202,11 +202,17 @@ the execution sidecar identifies this scientific method as
 `numpy-pcg64-canonical-rowwise-psd` version 2. The eager compatibility sampler
 uses this same authority.
 
-The simulation request still retains the sampled-input matrix and ordered
-configuration roster eagerly, and the legacy collecting sink still materializes
-the final tensor. Connecting the bounded sampler to a lazy request/work source,
-measured peak-memory budgets, sensitivity/geometry consumers, and durable client
-transport remain open R11.5 work under #4626 / #4142.
+`build_simulation_ensemble_request` now returns a bounded work source rather than
+retaining the sampled-input matrix or ordered configuration roster. A preflight
+scan hashes every canonical input row and complete configuration through the
+same chunk source, retaining only one bounded block; the durable header stores
+those identities, not the full matrix. Execution regenerates only bounded
+config blocks from the verified resume index, and completed-prefix replay does
+no solver work. The explicit materialized compatibility request and collecting
+sink remain available for small legacy callers.
+
+Measured peak-memory/throughput budgets, sensitivity/geometry consumers, and
+durable client transport remain open R11.5 work under #4626 / #4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are

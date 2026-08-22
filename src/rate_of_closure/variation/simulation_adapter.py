@@ -8,9 +8,11 @@ variation and ensemble-geometry contracts.
 
 from __future__ import annotations
 
+import hashlib
 import threading
 import time
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
+from dataclasses import dataclass
 from types import MappingProxyType
 from typing import TypeVar
 
@@ -44,7 +46,7 @@ from shared.python.swing_sim.solver.solve import (
 from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
 
-from ._simulation_config_identity import simulation_configurations_sha256
+from ._simulation_config_identity import simulation_configuration_stream_sha256
 from .ensemble_chunks import (
     MAX_CHUNK_POSITION_CELLS,
     CollectingEnsembleSink,
@@ -53,6 +55,10 @@ from .ensemble_chunks import (
     EnsembleStreamHeader,
     ResumableEnsembleChunkSink,
     SimulationResultChunk,
+)
+from .ensemble_source import (
+    EnsembleWorkChunk,
+    SimulationEnsembleSource,
 )
 from .request_builder import (
     apply_global_simulation_values,
@@ -132,7 +138,7 @@ def spatial_point_ids(run: SimulationRun) -> tuple[str, ...]:
 
 
 def run_simulation_ensemble(
-    request: SimulationEnsembleRequest,
+    request: SimulationEnsembleSource,
     executor: SimulationExecutor = run_simulation,
     progress_cb: ProgressCallback | None = None,
     cancel_event: threading.Event | None = None,
@@ -151,27 +157,45 @@ def run_simulation_ensemble(
 TChunkResult = TypeVar("TChunkResult")
 
 
+@dataclass(frozen=True, slots=True)
+class _ExecutionContext:
+    source: SimulationEnsembleSource
+    header: EnsembleStreamHeader
+    rows_per_chunk: int
+    executor: SimulationExecutor
+    progress_cb: ProgressCallback | None
+    cancellation: threading.Event
+    started: float
+
+
 def build_ensemble_stream_header(
-    request: SimulationEnsembleRequest,
+    request: SimulationEnsembleSource,
 ) -> EnsembleStreamHeader:
     """Build the immutable scientific identity announced to chunk sinks."""
     require(
-        isinstance(request, SimulationEnsembleRequest),
-        "request must be a SimulationEnsembleRequest",
+        isinstance(request, SimulationEnsembleSource),
+        "request must be a SimulationEnsembleSource",
     )
-    times, point_ids = _trace_layout(request.configs[0], None)
+    times, point_ids = _trace_layout(request.reference_config(), None)
+    input_sha256, configuration_sha256 = _source_identity(request)
+    materialized_inputs = (
+        request.sampled_inputs
+        if isinstance(request, SimulationEnsembleRequest)
+        else None
+    )
     return EnsembleStreamHeader(
         request.plan,
-        request.sampled_inputs,
+        materialized_inputs,
         times,
         point_ids,
         APP_FRAME_ID,
-        simulation_configurations_sha256(request.configs),
+        configuration_sha256,
+        input_sha256,
     )
 
 
 def run_simulation_ensemble_chunks(
-    request: SimulationEnsembleRequest,
+    request: SimulationEnsembleSource,
     sink: EnsembleChunkSink[TChunkResult],
     *,
     chunk_size: int | None = None,
@@ -185,74 +209,105 @@ def run_simulation_ensemble_chunks(
     cancellation or exception aborts the sink exactly once before propagating.
     """
     require(
-        isinstance(request, SimulationEnsembleRequest),
-        "request must be a SimulationEnsembleRequest",
+        isinstance(request, SimulationEnsembleSource),
+        "request must be a SimulationEnsembleSource",
     )
     require(callable(executor), "executor must be callable")
     started = time.monotonic()
     cancellation = cancel_event or threading.Event()
     header = build_ensemble_stream_header(request)
-    times = header.sample_times_s
-    point_ids = header.point_ids
-    cells_per_trial = times.size * len(point_ids) * 3
+    rows_per_chunk = _bounded_rows_per_chunk(header, chunk_size)
+    context = _ExecutionContext(
+        request, header, rows_per_chunk, executor, progress_cb, cancellation, started
+    )
+    return _execute_stream(context, sink)
+
+
+def _bounded_rows_per_chunk(header: EnsembleStreamHeader, requested: int | None) -> int:
+    cells_per_trial = header.sample_times_s.size * len(header.point_ids) * 3
     maximum_rows = MAX_CHUNK_POSITION_CELLS // cells_per_trial
     require(maximum_rows > 0, "one trace row exceeds the chunk cell limit")
-    rows_per_chunk = maximum_rows if chunk_size is None else chunk_size
+    rows = maximum_rows if requested is None else requested
     require(
-        isinstance(rows_per_chunk, int)
-        and not isinstance(rows_per_chunk, bool)
-        and 0 < rows_per_chunk <= maximum_rows,
+        isinstance(rows, int)
+        and not isinstance(rows, bool)
+        and 0 < rows <= maximum_rows,
         "chunk_size exceeds the bounded trace capacity",
-        rows_per_chunk,
+        rows,
     )
+    return rows
+
+
+def _execute_stream(
+    context: _ExecutionContext, sink: EnsembleChunkSink[TChunkResult]
+) -> TChunkResult:
+    """Own one sink lifecycle around bounded production."""
     try:
-        sink.begin(header)
-        resume = _resume_state(sink, request.plan.n_runs)
-        failed = resume.failed_count
-        if progress_cb is not None and resume.next_index > 0:
-            progress_cb(
-                ProgressReport(
-                    iteration=resume.next_index,
-                    cost=float(failed),
-                    best_cost=0.0,
-                    improvement_pct=0.0,
-                    elapsed_s=time.monotonic() - started,
-                )
+        sink.begin(context.header)
+        resume = _resume_state(sink, context.source.plan.n_runs)
+        if context.progress_cb is not None and resume.next_index > 0:
+            _report_progress(
+                context.progress_cb,
+                resume.next_index,
+                resume.failed_count,
+                context.started,
             )
-        for start in range(resume.next_index, request.plan.n_runs, rows_per_chunk):
-            stop = min(start + rows_per_chunk, request.plan.n_runs)
-            captures: list[TrialCapture] = []
-            for config in request.configs[start:stop]:
-                if cancellation.is_set():
-                    raise CancelledError
-                capture = capture_simulation(config, executor)
-                if cancellation.is_set():
-                    raise CancelledError
-                captures.append(capture)
-                failed += int(capture.run is None)
-            chunk = _result_chunk(request, header, start, tuple(captures))
-            if cancellation.is_set():
-                raise CancelledError
-            sink.accept(chunk)
-            if progress_cb is not None:
-                progress_cb(
-                    ProgressReport(
-                        iteration=stop,
-                        cost=float(failed),
-                        best_cost=0.0,
-                        improvement_pct=0.0,
-                        elapsed_s=time.monotonic() - started,
-                    )
-                )
-        if cancellation.is_set():
+        _produce_chunks(context, sink, resume)
+        if context.cancellation.is_set():
             raise CancelledError
-        return sink.commit(time.monotonic() - started)
+        return sink.commit(time.monotonic() - context.started)
     except BaseException as primary:
         try:
             sink.abort()
         except BaseException as abort_error:
             primary.add_note(f"sink abort also failed: {abort_error!r}")
         raise
+
+
+def _produce_chunks(
+    context: _ExecutionContext,
+    sink: EnsembleChunkSink[object],
+    resume: EnsembleResumeState,
+) -> None:
+    """Evaluate and commit each bounded work block after the durable prefix."""
+    failed = resume.failed_count
+    for work in context.source.work_chunks(
+        chunk_size=context.rows_per_chunk, start_index=resume.next_index
+    ):
+        captures: list[TrialCapture] = []
+        for config in work.configs:
+            if context.cancellation.is_set():
+                raise CancelledError
+            capture = capture_simulation(config, context.executor)
+            if context.cancellation.is_set():
+                raise CancelledError
+            captures.append(capture)
+            failed += int(capture.run is None)
+        chunk = _result_chunk(work, context.header, tuple(captures))
+        if context.cancellation.is_set():
+            raise CancelledError
+        sink.accept(chunk)
+        if context.progress_cb is not None:
+            _report_progress(
+                context.progress_cb,
+                work.start_index + len(work.configs),
+                failed,
+                context.started,
+            )
+
+
+def _report_progress(
+    callback: ProgressCallback, iteration: int, failed: int, started: float
+) -> None:
+    callback(
+        ProgressReport(
+            iteration=iteration,
+            cost=float(failed),
+            best_cost=0.0,
+            improvement_pct=0.0,
+            elapsed_s=time.monotonic() - started,
+        )
+    )
 
 
 def _resume_state(sink: object, trial_count: int) -> EnsembleResumeState:
@@ -270,9 +325,8 @@ def _resume_state(sink: object, trial_count: int) -> EnsembleResumeState:
 
 
 def _result_chunk(
-    request: SimulationEnsembleRequest,
+    work: EnsembleWorkChunk,
     header: EnsembleStreamHeader,
-    start_index: int,
     captures: tuple[TrialCapture, ...],
 ) -> SimulationResultChunk:
     """Project and release one bounded set of complete simulation captures."""
@@ -282,7 +336,7 @@ def _result_chunk(
     valid: np.ndarray = np.zeros((len(captures), len(times)), dtype=bool)
     impacts: np.ndarray = np.full(len(captures), -1, dtype=int)
     outcomes = tuple(
-        project_simulation_outcome(start_index + offset, capture)
+        project_simulation_outcome(work.start_index + offset, capture)
         for offset, capture in enumerate(captures)
     )
     for offset, capture in enumerate(captures):
@@ -294,15 +348,38 @@ def _result_chunk(
         valid[offset] = True
         if run.impact_time_s is not None:
             impacts[offset] = int(np.argmin(np.abs(times - run.impact_time_s)))
-    stop = start_index + len(captures)
     return SimulationResultChunk(
-        start_index=start_index,
-        sampled_inputs=request.sampled_inputs[start_index:stop],
+        start_index=work.start_index,
+        sampled_inputs=work.sampled_inputs,
         outcomes=outcomes,
         positions_m=positions,
         sample_valid=valid,
         impact_sample_indices=impacts,
     )
+
+
+def _source_identity(source: SimulationEnsembleSource) -> tuple[str, str]:
+    """Hash inputs and configurations through one bounded deterministic scan."""
+    input_digest = hashlib.sha256()
+    next_index = 0
+
+    def configurations() -> Iterator[object]:
+        nonlocal next_index
+        chunk_size = min(256, source.plan.n_runs)
+        for work in source.work_chunks(chunk_size=chunk_size, start_index=0):
+            require(
+                work.start_index == next_index,
+                "source identity stream is not contiguous",
+            )
+            input_digest.update(work.sampled_inputs.tobytes(order="C"))
+            next_index += len(work.configs)
+            yield from work.configs
+
+    configuration_sha256 = simulation_configuration_stream_sha256(
+        configurations(), count=source.plan.n_runs
+    )
+    require(next_index == source.plan.n_runs, "source identity stream is incomplete")
+    return input_digest.hexdigest(), configuration_sha256
 
 
 def _spatial_positions(run: SimulationRun) -> np.ndarray:

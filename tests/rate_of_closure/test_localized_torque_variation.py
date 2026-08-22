@@ -3,11 +3,21 @@
 from __future__ import annotations
 
 import dataclasses
+import threading
+from pathlib import Path
 
 import numpy as np
 import pytest
 
-from rate_of_closure.simulation import ContactMode, run_simulation
+from rate_of_closure.simulation import (
+    ContactMode,
+    SimulationConfig,
+    SimulationRun,
+    run_simulation,
+)
+from rate_of_closure.variation.durable_ensemble_chunks import (
+    DurableEnsembleChunkSink,
+)
 from rate_of_closure.variation.ensemble_chunks import CollectingEnsembleSink
 from rate_of_closure.variation.request_builder import (
     LOCALIZED_TORQUE_VARIABLE_JOINTS,
@@ -25,6 +35,7 @@ from shared.python.swing_sim.run_config import (
     DoublePendulumRunConfig,
     LocalizedTorqueOffset,
 )
+from shared.python.swing_sim.solver.solve import CancelledError, ProgressReport
 from shared.python.swing_sim.variation import (
     NoiseSpec,
     VariationPlan,
@@ -60,9 +71,13 @@ def test_builder_maps_deterministic_localized_joint_torque_offsets() -> None:
 
     first = build_simulation_ensemble_request(plan, _base_config())
     second = build_simulation_ensemble_request(plan, _base_config())
+    first_chunk = next(first.work_chunks(chunk_size=plan.n_runs))
+    second_chunk = next(second.work_chunks(chunk_size=plan.n_runs))
 
-    assert first.sampled_inputs == pytest.approx(second.sampled_inputs)
-    for row, config in zip(first.sampled_inputs, first.configs, strict=True):
+    assert first_chunk.sampled_inputs == pytest.approx(second_chunk.sampled_inputs)
+    for row, config in zip(
+        first_chunk.sampled_inputs, first_chunk.configs, strict=True
+    ):
         assert config.swing_run_config.commanded_torque_offsets == (
             LocalizedTorqueOffset(SHOULDER_JOINT_ID, (0.02, 0.04), row[0]),
             LocalizedTorqueOffset(WRIST_JOINT_ID, (0.02, 0.04), row[1]),
@@ -100,7 +115,8 @@ def test_torque_history_pins_half_open_boundary_and_stable_ids() -> None:
         seed=31,
     )
     request = build_simulation_ensemble_request(plan, _base_config())
-    run = run_simulation(request.configs[0])
+    work = next(request.work_chunks(chunk_size=1))
+    run = run_simulation(work.configs[0])
     start_index = int(round(0.02 / 0.001))
     end_index = int(round(0.04 / 0.001))
 
@@ -108,7 +124,7 @@ def test_torque_history_pins_half_open_boundary_and_stable_ids() -> None:
     np.testing.assert_allclose(run.swing_applied_torques_nm[:start_index], 0.0)
     np.testing.assert_allclose(
         run.swing_applied_torques_nm[start_index:end_index],
-        np.broadcast_to(request.sampled_inputs[0], (end_index - start_index, 2)),
+        np.broadcast_to(work.sampled_inputs[0], (end_index - start_index, 2)),
     )
     np.testing.assert_allclose(run.swing_applied_torques_nm[end_index:], 0.0)
 
@@ -143,6 +159,46 @@ def test_replay_is_chunk_size_independent_and_retains_typed_misses() -> None:
     np.testing.assert_allclose(first.variation.outputs, second.variation.outputs)
     np.testing.assert_array_equal(first.traces.sample_valid, second.traces.sample_valid)
     np.testing.assert_allclose(first.traces.positions_m, second.traces.positions_m)
+
+
+def test_lazy_source_durable_resume_skips_the_solver_prefix(tmp_path: Path) -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(_spec("swing_sim.swing.yaw_deg", 0.1),),
+        n_runs=3,
+        seed=47,
+    )
+    request = build_simulation_ensemble_request(plan, _base_config())
+    directory = tmp_path / "lazy-campaign"
+    cancelled = threading.Event()
+
+    def stop_after_first(report: ProgressReport) -> None:
+        assert report.iteration == 1
+        cancelled.set()
+
+    with pytest.raises(CancelledError):
+        run_simulation_ensemble_chunks(
+            request,
+            DurableEnsembleChunkSink(directory),
+            chunk_size=1,
+            progress_cb=stop_after_first,
+            cancel_event=cancelled,
+        )
+    executed: list[SimulationConfig] = []
+
+    def counting_executor(config: SimulationConfig) -> SimulationRun:
+        executed.append(config)
+        return run_simulation(config)
+
+    archive = run_simulation_ensemble_chunks(
+        request,
+        DurableEnsembleChunkSink(directory),
+        chunk_size=2,
+        executor=counting_executor,
+    )
+
+    assert archive.next_index == plan.n_runs
+    assert len(executed) == 2
 
 
 def test_capability_registry_is_explicit_and_topological() -> None:

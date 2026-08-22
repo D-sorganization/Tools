@@ -15,6 +15,11 @@ from .ensemble_chunks import (
     ResumableEnsembleChunkSink,
     SimulationResultChunk,
 )
+from .ensemble_source import (
+    EnsembleWorkChunk,
+    LazySimulationEnsembleSource,
+    SimulationEnsembleSource,
+)
 from .forgiveness_projection import forgiveness_variation_dataset
 from .forgiveness_runner import ChipForgivenessStudy
 from .morris_rate_adapter import (
@@ -71,6 +76,7 @@ __all__ = [
     "EnsembleChunkSink",
     "EnsembleResumeState",
     "EnsembleStreamHeader",
+    "EnsembleWorkChunk",
     "IMPACT_OUTPUT_NAMES",
     "NUMERICAL_FAILURE",
     "RATE_MORRIS_OUTPUTS",
@@ -79,11 +85,13 @@ __all__ = [
     "RateMorrisEvaluator",
     "SHOT_OUTPUT_NAMES",
     "SimulationEnsembleRequest",
+    "SimulationEnsembleSource",
     "SimulationEnsembleResult",
     "SimulationExecutor",
     "SimulationResultChunk",
     "SimulationTrialOutcome",
     "StreamingOutputMoments",
+    "LazySimulationEnsembleSource",
     "TEE_HEIGHT_VARIABLE_KEY",
     "TrialCapture",
     "TrialEvaluationStatus",

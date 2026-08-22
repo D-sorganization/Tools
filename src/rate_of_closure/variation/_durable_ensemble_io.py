@@ -66,7 +66,11 @@ def header_document(header: EnsembleStreamHeader) -> dict[str, object]:
     )
     return {
         "plan": header.plan.to_json_dict(),
-        "sampled_inputs": _array_identity(header.sampled_inputs),
+        "sampled_inputs": {
+            "shape": [header.plan.n_runs, len(header.plan.noise)],
+            "dtype": np.dtype(float).str,
+            "sha256": header.sampled_input_sha256,
+        },
         "sample_times_s": _array_identity(header.sample_times_s),
         "point_ids": list(header.point_ids),
         "coordinate_frame": header.coordinate_frame,

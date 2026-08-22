@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass, field
 from enum import Enum
 from numbers import Real
@@ -19,6 +19,7 @@ from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTra
 from shared.python.swing_sim.variation.spec import VariationPlan
 
 from ._ensemble_limits import require_ensemble_shape_limits
+from .ensemble_source import EnsembleWorkChunk
 
 APP_FRAME_ID = "app_frame:x_target,y_up,z_right"
 
@@ -130,6 +131,33 @@ class SimulationEnsembleRequest:
         samples.setflags(write=False)
         object.__setattr__(self, "configs", configs)
         object.__setattr__(self, "sampled_inputs", samples)
+
+    def reference_config(self) -> SimulationConfig:
+        """Return the first complete configuration."""
+        return self.configs[0]
+
+    def work_chunks(
+        self, *, chunk_size: int, start_index: int = 0
+    ) -> Iterator[EnsembleWorkChunk]:
+        """Expose the materialized compatibility request as bounded chunks."""
+        require(
+            type(chunk_size) is int and chunk_size > 0,
+            "chunk_size must be a positive integer",
+        )
+        require(
+            type(start_index) is int and 0 <= start_index <= self.plan.n_runs,
+            "start_index must lie within the plan",
+        )
+        return self._iter_work_chunks(chunk_size, start_index)
+
+    def _iter_work_chunks(
+        self, chunk_size: int, start_index: int
+    ) -> Iterator[EnsembleWorkChunk]:
+        for start in range(start_index, self.plan.n_runs, chunk_size):
+            stop = min(start + chunk_size, self.plan.n_runs)
+            yield EnsembleWorkChunk(
+                start, self.sampled_inputs[start:stop], self.configs[start:stop]
+            )
 
 
 @dataclass(frozen=True)

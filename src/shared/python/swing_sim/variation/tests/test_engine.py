@@ -18,6 +18,7 @@ from shared.python.swing_sim.variation import (
     VariationPlan,
     outputs_for_mode,
     run_variation,
+    sample_input_block,
     sample_input_chunks,
     sample_inputs,
 )
@@ -116,6 +117,14 @@ class TestSampling:
         np.testing.assert_array_equal(
             np.vstack([values for _, values in chunks]), sample_inputs(plan)[13:]
         )
+
+    def test_exact_lazy_block_handles_a_non_aligned_resume_boundary(self) -> None:
+        plan = _delivery_plan(n_runs=32, seed=3)
+
+        block = sample_input_block(plan, start_index=13, row_count=8)
+
+        np.testing.assert_array_equal(block, sample_inputs(plan)[13:21])
+        assert not block.flags.writeable
 
     @pytest.mark.parametrize("distribution", ["normal", "uniform", "triangular"])
     def test_lazy_chunks_preserve_every_marginal_distribution(

@@ -11,7 +11,10 @@ from types import MappingProxyType
 import numpy as np
 
 from rate_of_closure.simulation import BallSetup, BallSupportMode, SimulationConfig
-from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
+from rate_of_closure.variation.ensemble_source import (
+    LazySimulationEnsembleSource,
+    SimulationEnsembleSource,
+)
 from shared.python.contracts import require
 from shared.python.swing_sim.integration_grid import effective_rk4_duration
 from shared.python.swing_sim.run_config import (
@@ -25,7 +28,6 @@ from shared.python.swing_sim.variation import (
     CATEGORY_SWING,
     LOCALIZED_TORQUE_VARIABLE_JOINTS,
     VariationPlan,
-    sample_inputs,
 )
 
 
@@ -73,8 +75,8 @@ def _is_real_scalar(value: object) -> bool:
 def build_simulation_ensemble_request(
     plan: VariationPlan,
     base_config: SimulationConfig,
-) -> SimulationEnsembleRequest:
-    """Sample ``plan`` and map every row to a complete simulation config.
+) -> SimulationEnsembleSource:
+    """Build a bounded source that maps sampled rows to complete configs.
 
     The adapter deliberately rejects variables whose full simulation effect
     is not modeled. This prevents an arc plot from implying that a scalar-only
@@ -95,11 +97,10 @@ def build_simulation_ensemble_request(
     unsupported = sorted(requested - TRACE_CAPABLE_VARIABLE_KEYS)
     require(not unsupported, "variables are not trace-capable", unsupported)
     _validate_noise_loci(plan, base_config)
-    samples = sample_inputs(plan)
-    configs = tuple(
-        _apply_row(base_config, plan, row) for row in np.asarray(samples, dtype=float)
+    return LazySimulationEnsembleSource(
+        plan,
+        lambda row: _apply_row(base_config, plan, row),
     )
-    return SimulationEnsembleRequest(plan, samples, configs)
 
 
 def _apply_row(

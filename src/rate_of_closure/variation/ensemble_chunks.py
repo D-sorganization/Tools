@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 from dataclasses import dataclass, field
 from typing import Any, Protocol, TypeVar, cast, runtime_checkable
@@ -15,6 +16,7 @@ from shared.python.swing_sim.variation.ensemble_types import (
     require_coordinate_frame_id,
     require_point_ids,
 )
+from shared.python.swing_sim.variation.sampling import sample_input_block
 from shared.python.swing_sim.variation.spec import VariationPlan
 
 from ._ensemble_limits import (
@@ -49,31 +51,59 @@ def _require_real_numeric_array(value: np.ndarray, name: str) -> None:
     )
 
 
+def _sampled_input_authority(
+    plan: VariationPlan,
+    value: np.ndarray | None,
+    declared_digest: str,
+) -> tuple[np.ndarray | None, str]:
+    """Own a materialized authority or validate one lazy stream digest."""
+    input_cells = plan.n_runs * len(plan.noise)
+    require(
+        input_cells <= MAX_INPUT_CELLS,
+        "sampled input cell limit exceeded",
+        input_cells,
+    )
+    if value is None:
+        require(
+            len(declared_digest) == 64
+            and set(declared_digest) <= set("0123456789abcdef"),
+            "lazy headers require sampled_input_sha256",
+        )
+        return None, declared_digest
+    raw = np.asarray(value)
+    require(
+        raw.shape == (plan.n_runs, len(plan.noise)),
+        "sampled_inputs must match the declared plan",
+    )
+    _require_real_numeric_array(raw, "sampled_inputs")
+    owned = _owned_array(raw, float)
+    require(bool(np.all(np.isfinite(owned))), "sampled_inputs must be finite")
+    observed = hashlib.sha256(owned.tobytes(order="C")).hexdigest()
+    require(
+        declared_digest in {"", observed},
+        "sampled_input_sha256 does not match sampled_inputs",
+    )
+    return owned, observed
+
+
 @dataclass(frozen=True)
 class EnsembleStreamHeader:
     """Immutable layout announced before the first result chunk."""
 
     plan: VariationPlan
-    sampled_inputs: np.ndarray = field(repr=False)
+    sampled_inputs: np.ndarray | None = field(repr=False)
     sample_times_s: np.ndarray = field(repr=False)
     point_ids: tuple[str, ...]
     coordinate_frame: str
     configuration_sha256: str = ""
+    sampled_input_sha256: str = ""
 
     def __post_init__(self) -> None:
         require(isinstance(self.plan, VariationPlan), "plan must be a VariationPlan")
-        raw_inputs = np.asarray(self.sampled_inputs)
         raw_times = np.asarray(self.sample_times_s)
-        require(
-            raw_inputs.shape == (self.plan.n_runs, len(self.plan.noise)),
-            "sampled_inputs must match the declared plan",
+        owned_inputs, input_digest = _sampled_input_authority(
+            self.plan, self.sampled_inputs, self.sampled_input_sha256
         )
-        require(
-            raw_inputs.size <= MAX_INPUT_CELLS,
-            "sampled input cell limit exceeded",
-            raw_inputs.size,
-        )
-        _require_real_numeric_array(raw_inputs, "sampled_inputs")
         require(
             raw_times.ndim == 1 and raw_times.size > 0,
             "sample_times_s must be 1-D",
@@ -95,12 +125,11 @@ class EnsembleStreamHeader:
         require_ensemble_stream_shape_limits(
             self.plan.n_runs, raw_times.size, len(points)
         )
-        inputs = _owned_array(raw_inputs, float)
         times = _owned_array(raw_times, float)
-        require(bool(np.all(np.isfinite(inputs))), "sampled_inputs must be finite")
         require(bool(np.all(np.isfinite(times))), "sample_times_s must be finite")
         require(bool(np.all(np.diff(times) > 0)), "sample_times_s must increase")
-        object.__setattr__(self, "sampled_inputs", inputs)
+        object.__setattr__(self, "sampled_inputs", owned_inputs)
+        object.__setattr__(self, "sampled_input_sha256", input_digest)
         object.__setattr__(self, "sample_times_s", times)
         object.__setattr__(self, "point_ids", points)
 
@@ -272,12 +301,17 @@ def require_chunk_matches_header(
         "chunk input columns do not match plan",
     )
     stop = chunk.start_index + len(chunk.outcomes)
+    expected_inputs = (
+        header.sampled_inputs[chunk.start_index : stop]
+        if header.sampled_inputs is not None
+        else sample_input_block(
+            header.plan,
+            start_index=chunk.start_index,
+            row_count=len(chunk.outcomes),
+        )
+    )
     require(
-        np.array_equal(
-            chunk.sampled_inputs,
-            header.sampled_inputs[chunk.start_index : stop],
-            equal_nan=False,
-        ),
+        np.array_equal(chunk.sampled_inputs, expected_inputs, equal_nan=False),
         "chunk sampled inputs do not match header authority",
     )
     require(

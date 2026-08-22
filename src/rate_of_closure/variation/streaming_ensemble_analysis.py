@@ -16,10 +16,10 @@ from .durable_ensemble_chunks import (
     DurableEnsembleChunkSink,
 )
 from .ensemble_chunks import SimulationResultChunk
+from .ensemble_source import SimulationEnsembleSource
 from .plot_labels import OUTPUT_UNITS
 from .simulation_types import (
     ALL_OUTPUT_NAMES,
-    SimulationEnsembleRequest,
     TrialEvaluationStatus,
 )
 
@@ -154,12 +154,12 @@ class _SummaryAccumulator:
 
 
 def analyze_durable_ensemble(
-    request: SimulationEnsembleRequest, directory: str | Path
+    request: SimulationEnsembleSource, directory: str | Path
 ) -> DurableEnsembleSummary:
     """Scan one strict archive into bounded typed counts and scalar moments."""
     require(
-        isinstance(request, SimulationEnsembleRequest),
-        "request must be a SimulationEnsembleRequest",
+        isinstance(request, SimulationEnsembleSource),
+        "request must be a SimulationEnsembleSource",
     )
     accumulator = _SummaryAccumulator()
     archive = DurableEnsembleChunkSink(directory).scan(request, accumulator.accept)

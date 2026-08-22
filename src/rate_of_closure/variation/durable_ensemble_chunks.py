@@ -49,7 +49,8 @@ from .ensemble_chunks import (
     SimulationResultChunk,
     require_chunk_matches_header,
 )
-from .simulation_types import NUMERICAL_FAILURE, SimulationEnsembleRequest
+from .ensemble_source import SimulationEnsembleSource
+from .simulation_types import NUMERICAL_FAILURE
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,7 +97,7 @@ class DurableEnsembleChunkSink:
 
     def scan(
         self,
-        request: SimulationEnsembleRequest,
+        request: SimulationEnsembleSource,
         visitor: Callable[[SimulationResultChunk], None],
     ) -> DurableEnsembleArchive:
         """Visit each verified prefix chunk without retaining prior chunks."""
@@ -174,7 +175,7 @@ class DurableEnsembleChunkSink:
         """End this lifecycle without deleting the last valid prefix."""
         self._active = False
 
-    def inspect(self, request: SimulationEnsembleRequest) -> DurableEnsembleArchive:
+    def inspect(self, request: SimulationEnsembleSource) -> DurableEnsembleArchive:
         """Verify and summarize an existing archive against one exact request."""
         from .simulation_adapter import build_ensemble_stream_header
 

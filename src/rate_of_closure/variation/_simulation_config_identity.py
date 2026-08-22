@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import fields, is_dataclass
 from enum import Enum
 from pathlib import Path
@@ -21,9 +21,18 @@ _IDENTITY_DOMAIN = b"rate-simulation-configurations/v1\0"
 def simulation_configurations_sha256(configs: Sequence[object]) -> str:
     """Hash every configuration field in canonical trial order."""
     require(len(configs) > 0, "simulation configurations must be non-empty")
+    return simulation_configuration_stream_sha256(configs, count=len(configs))
+
+
+def simulation_configuration_stream_sha256(
+    configs: Iterable[object], *, count: int
+) -> str:
+    """Hash an exact bounded configuration stream without retaining its roster."""
+    require(type(count) is int and count > 0, "configuration count must be positive")
     digest = hashlib.sha256()
     digest.update(_IDENTITY_DOMAIN)
-    digest.update(len(configs).to_bytes(8, "big"))
+    digest.update(count.to_bytes(8, "big"))
+    observed = 0
     for config in configs:
         payload = json.dumps(
             _canonical(config),
@@ -33,6 +42,8 @@ def simulation_configurations_sha256(configs: Sequence[object]) -> str:
         ).encode("utf-8")
         digest.update(len(payload).to_bytes(8, "big"))
         digest.update(payload)
+        observed += 1
+    require(observed == count, "configuration stream count does not match", observed)
     return digest.hexdigest()
 
 
@@ -79,4 +90,7 @@ def _sort_key(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
-__all__ = ["simulation_configurations_sha256"]
+__all__ = [
+    "simulation_configuration_stream_sha256",
+    "simulation_configurations_sha256",
+]
