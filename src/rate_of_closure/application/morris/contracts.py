@@ -279,6 +279,9 @@ def parse_morris_base_request(value: object) -> MorrisBaseRequest:
     return result
 
 
+_parse_base = parse_morris_base_request
+
+
 def _validate_base_physics(item: dict[str, Any]) -> None:
     if item["tee_height_m"] < 0.0:
         raise ValueError("base tee_height_m must be nonnegative")
