@@ -63,10 +63,10 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` commit `9520ea046` adds verified, bounded scalar
-moments and typed availability with materialized-reference parity. Lazy sources,
-end-to-end memory/throughput budgets, geometry/sensitivity, and durable clients
-remain; the scalar consumer alone does not complete #4626.
+`feat/4626-streaming-ensemble` commits `9520ea046..071b0d35c` add verified scalar
+moments, typed availability, materialized-reference parity, and safe stream
+limits independent of the compatibility tensor cap. Lazy sources, end-to-end
+budgets, geometry/sensitivity, and durable clients remain; #4626 is not done.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
