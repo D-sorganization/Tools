@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ud-tools"
-version = "1.6.0"
+version = "1.7.0"
 description = "Shared engineering tools: URDF generation, signal processing, and process calculators."
 readme = "src/shared/python/README.md"
 requires-python = ">=3.11"
@@ -173,13 +173,13 @@ video-analyzer = [
 # makes the app raise ModuleNotFoundError at import, which under
 # `restart: always` is an invisible crash loop.
 p1am = [
-    "fastapi>=0.115.0,<0.140.0",
+    "fastapi>=0.115.0,<0.142.0",
     "uvicorn[standard]>=0.30.0,<0.53.0",
     "pydantic>=2.7.0,<3.0.0",
     "pydantic-settings>=2.2.0,<3.0.0",
     "sqlmodel>=0.0.22,<0.1.0",
     "pymodbus>=3.6.0,<4.0.0",
-    "websockets>=12.0,<17.0",
+    "websockets>=12.0,<18.0",
     "python-multipart>=0.0.9,<0.1.0",
     "numpy>=2.0.1,<2.4.0",
 ]
