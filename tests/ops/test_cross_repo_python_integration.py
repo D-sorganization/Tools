@@ -17,6 +17,7 @@ REQUIRED_SPARSE_PATHS = {
         # UpstreamDrift moved its consumed packages under src/shared/python, so
         # this is the narrow root that carries them. Deliberately NOT bare `src`
         # -- see the assertions in the test below.
+        "pyproject.toml",
         "src/shared",
         "tests/shared_contracts",
         "tests/support",
@@ -107,8 +108,23 @@ def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
         if step.get("name") == "Checkout ${{ matrix.downstream.repo }}"
     )
 
-    assert checkout["with"]["sparse-checkout-cone-mode"] is True
+    assert checkout["with"]["sparse-checkout-cone-mode"] == (
+        "${{ matrix.downstream.sparse_cone }}"
+    )
     assert not checkout["with"].get("filter")
+
+
+def test_sparse_mode_preserves_each_downstream_packaging_contract() -> None:
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    by_repo = {item["repo"]: item for item in downstreams}
+
+    assert by_repo["D-sorganization/Gasification_Model"]["sparse_cone"] is True
+    upstream = by_repo["D-sorganization/UpstreamDrift"]
+    assert upstream["sparse_cone"] is False
+    assert "pyproject.toml" in upstream["sparse_checkout"].splitlines()
 
 
 def test_cross_repo_job_uses_persistent_python_toolcache_and_cold_cache_budget() -> (

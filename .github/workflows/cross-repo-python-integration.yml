@@ -87,6 +87,7 @@ jobs:
             sparse_checkout: |
               src
               tests/shared_contracts
+            sparse_cone: true
           - repo: D-sorganization/UpstreamDrift
             path: _downstream
             # The shared-contract lane injects this PR's Tools source through
@@ -97,9 +98,11 @@ jobs:
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
             sparse_checkout: |
+              pyproject.toml
               src/shared
               tests/shared_contracts
               tests/support
+            sparse_cone: false
 
     steps:
       - name: Checkout Tools
@@ -115,7 +118,7 @@ jobs:
           token: ${{ secrets.RUNNER_CHECK_TOKEN || github.token }}
           fetch-depth: 1
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
-          sparse-checkout-cone-mode: true
+          sparse-checkout-cone-mode: ${{ matrix.downstream.sparse_cone }}
 
       - name: Select persistent Python tool cache
         run: |

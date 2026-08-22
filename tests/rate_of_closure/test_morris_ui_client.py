@@ -71,6 +71,35 @@ def test_ui_contract_submodules_import_without_optional_servers_or_scipy() -> No
     assert completed.returncode == 0, completed.stderr
 
 
+def test_durable_ui_contract_imports_without_optional_server() -> None:
+    source = textwrap.dedent(
+        """
+        import builtins
+        real_import = builtins.__import__
+        def blocked(name, *args, **kwargs):
+            if name.split('.')[0] in {'fastapi', 'uvicorn'}:
+                raise ImportError(f'blocked optional dependency: {name}')
+            return real_import(name, *args, **kwargs)
+        builtins.__import__ = blocked
+        __import__('rate_of_closure.application.durable_ensemble.contracts')
+        """
+    )
+    environment = os.environ.copy()
+    source_root = str(Path(__file__).parents[2] / "src")
+    environment["PYTHONPATH"] = os.pathsep.join(
+        filter(None, (source_root, environment.get("PYTHONPATH")))
+    )
+    completed = subprocess.run(
+        [sys.executable, "-c", source],
+        check=False,
+        capture_output=True,
+        env=environment,
+        text=True,
+        timeout=90,
+    )
+    assert completed.returncode == 0, completed.stderr
+
+
 class _Handler(BaseHTTPRequestHandler):
     received_authorization = ""
 
