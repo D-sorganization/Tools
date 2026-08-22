@@ -63,11 +63,11 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 continues in #4626 after #4623 merged at `b886d4373`. Branch
-`feat/4626-streaming-ensemble` commits `9520ea046..fd7e2998e` add scalar moments,
-safe stream limits, v2 sampling, bounded work, and a fresh-process scaling harness.
-Preflight retains only digests and resume skips the solver prefix. The source-pinned
-diagnostic passes RSS, axis-growth, archive-growth, and throughput budgets while
-qualifying failure transport, not model performance. Geometry/sensitivity and durable clients remain; #4626 is not done.
+`feat/4626-streaming-ensemble` commits `9520ea046..6a97a6275` add scalar moments,
+safe limits, v2 sampling, bounded work, measured scaling, and incremental geometry/
+sensitivity. Preflight retains digests; resume skips the solver prefix. Geometry
+uses bounded online covariance with a 256 MB ceiling. OAT sensitivity requires
+complete exact single-factor archives and stable moments. Durable clients remain; #4626 is not done.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

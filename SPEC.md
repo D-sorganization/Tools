@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.80                                    |
+| **Spec Version**        | 1.17.81                                    |
 | **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
@@ -50,6 +50,24 @@ result supports the streaming transport implementation only. It does not
 qualify model throughput, successful-trajectory compression, user hardware, or
 scientific validity. Geometry/sensitivity streaming and durable PyQt6/React
 transport remain open under #4626.
+
+### Incremental Ensemble Geometry and Sensitivity
+
+Version 1.17.81 makes materialized and durable position dispersion consume one
+stable online covariance authority. Counts, means, centered cross-products,
+population RMS radius, unbiased covariance, descending eigenpairs, and
+sign-canonical principal axes retain the existing frame/unit semantics while
+the working set depends on samples and points rather than trials. A 256 MB
+pre-allocation contract rejects unbounded sample/point layouts before memory is
+reserved. Explicit trace validity—not hit success—continues to govern inclusion.
+
+Durable one-at-a-time sensitivity now consumes one complete exact single-factor
+archive per registered parent-plan factor. Missing, extra, partial, or plan-
+mismatched substudies fail closed. Availability-aware sample standard deviations
+and normalized dominance use the same stable rule as the materialized workflow;
+bit-identical outputs produce exact zero rather than normalized roundoff noise.
+The returned result retains each ordered archive authority. No causal or human
+interpretation is introduced by these descriptive dispersion calculations.
 
 ### Governed Launch-Monitor Analytics Release
 
@@ -5114,6 +5132,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-21 | 1.17.81 | feat(rate-of-closure, swing-sim, #4626 / #4142 R11.5): add one bounded online position-covariance authority for materialized and durable geometry, with explicit-validity inclusion, a 256 MB pre-allocation ceiling, and parity for means, unbiased covariance, RMS radius, eigenvalues, and sign-canonical axes. Add complete exact-plan durable one-at-a-time sensitivity over ordered single-factor archives, reusing stable sample moments so constant outputs remain zero instead of normalized floating-point residue. Partial or mismatched sensitivity evidence fails closed. Durable PyQt6/React transport remains open. | #4626 |
 | 2026-08-21 | 1.17.80 | test(rate-of-closure, #4626 / #4142 R11.5): add strict source-pinned durable-ensemble scaling evidence and a fresh-process cross-platform measurement harness. Independent 128/512-trial and 51/501-sample cases separate peak resident set, logical trace volume, physical archive growth, and failure-only transport throughput. The parser recomputes throughput, axis coverage, archive growth, and absolute/incremental budgets and rejects failed or contradictory claims. The exact `fd7e2998e` Windows evidence passes its declared ceilings; it is explicitly a synthetic retained-failure transport diagnostic, not solver, successful-compression, user-hardware, or scientific qualification. Geometry/sensitivity consumers and durable clients remain open. | #4626 |
 | 2026-08-21 | 1.17.79 | feat(rate-of-closure, #4626 / #4142 R11.5): add a production non-materializing consumer for strict durable ensemble prefixes. The archive now scans checksum-, identity-, order-, and bound-verified chunks through a coordinator-owned visitor; bounded online accumulators report canonical-unit scalar availability, means, sample standard deviations, typed hit/no-impact/failure denominators, and named numerical-failure counts for complete or explicitly in-progress prefixes. Separate stream-axis and compatibility-materialization contracts allow safe campaigns beyond the final trace-tensor product cap while the collecting sink still rejects before allocating that tensor. Add a bounded deterministic sampled-input source that reproduces and discards resume prefixes without solver work, is byte-invariant to chunk size, and shares one authority with eager compatibility sampling. Grouped normal draws now use a canonical rowwise PSD transform rather than batch-size-dependent BLAS arithmetic; execution metadata identifies that scientific method as `numpy-pcg64-canonical-rowwise-psd` version 2. The production request builder now retains neither the full sampled-input matrix nor the ordered configuration roster: a bounded preflight scan hashes canonical input and complete-configuration streams, the durable header retains only those identities, execution regenerates bounded work blocks from the verified resume index, and completed-prefix replay performs no solver work. Focused tests cover streamed-moment parity, corrupted-archive rejection, eager/lazy sample parity, grouped chunk-size invariance, suffix/block resume, exact streamed/materialized identities, lazy durable cancellation/resume, and invalid bounds. Measured memory/throughput budgets, geometry/sensitivity streaming, and durable PyQt/React transport remain open under #4626. | #4626 |
 | 2026-08-21 | 1.17.78 | feat(rate-of-closure, #4142 R11.5): add bounded restartable ensemble transport with atomic strict manifests, pickle-free NPZ chunks, compressed/uncompressed byte caps, per-chunk SHA-256 and exact contiguous-prefix validation; bind resumes to the plan, sampled inputs, every ordered simulation configuration, trace layout, registry snapshot, and declared implementation identity; retain valid work on cancellation/failure, restore progress/failure counts, and fail before evaluation on drift or tampering. This advances but does not close R11.5: request/config construction remains eager, the compatibility collector still materializes the final tensor, and measured peak-memory/UI transport gates remain open. |

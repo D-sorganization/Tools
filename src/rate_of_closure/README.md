@@ -235,8 +235,29 @@ throughput, successful-trajectory compression, user-hardware performance, or
 scientific model accuracy. Fresh-process imports are included in peak RSS and
 excluded from the timed transport interval.
 
-Sensitivity/geometry consumers and durable client transport remain open R11.5
-work under #4626 / #4142.
+### Incremental Geometry and Sensitivity
+
+`PositionDispersionAccumulator` is now the shared authority for materialized and
+durable geometry. It applies stable online covariance updates only to explicitly
+valid trace rows, retains counts/means/centered cross-products per sample and
+point, and reproduces the existing covariance, RMS-radius, eigenvalue, and
+sign-canonical principal-axis results. A 256 MB pre-allocation contract bounds
+the accumulator independently of trial count.
+
+`analyze_durable_ensemble_geometry` scans a checksum-verified complete or
+explicitly in-progress prefix and binds its immutable `PositionDispersion` to
+the returned archive state. It never constructs a trial-by-sample tensor.
+
+`analyze_durable_oat_sensitivity` accepts exactly one complete, identity-matched
+single-factor archive for every factor in the parent plan. It builds the same
+availability-aware sample-standard-deviation matrix and column normalization as
+the materialized one-at-a-time workflow. Partial, missing, extra, reordered, or
+scientifically mismatched substudies cannot be promoted. Both paths use stable
+online sample moments, so a mathematically constant output remains zero rather
+than turning floating-point residue into a false normalized sensitivity.
+
+Durable PyQt6 and React client transport remains open R11.5 work under #4626 /
+#4142.
 
 Current scope: complete trace ensembles require the double-pendulum source and
 global perturbations. Local time-window or point-targeted perturbations are
