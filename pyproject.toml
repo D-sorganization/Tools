@@ -173,7 +173,7 @@ video-analyzer = [
 # makes the app raise ModuleNotFoundError at import, which under
 # `restart: always` is an invisible crash loop.
 p1am = [
-    "fastapi>=0.115.0,<0.140.0",
+    "fastapi>=0.115.0,<0.142.0",
     "uvicorn[standard]>=0.30.0,<0.53.0",
     "pydantic>=2.7.0,<3.0.0",
     "pydantic-settings>=2.2.0,<3.0.0",
