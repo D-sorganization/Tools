@@ -64,7 +64,7 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
 **Active #4142 evidence repair.** R11.5 and stable-paint capture merged through
-#4628/#4635; current `main` is `24d223354`. Trusted job `97030072285` completes
+#4628/#4635; the branch includes `main` through `d93db6c16`. Trusted job `97030072285` completes
 all ten 1440x900 tabs in ~43 s, then the 45-s suite default expires at viewport
 two; #4626 is reopened. `fix/4626-postmerge-visual-contract` gives only that
 three-viewport evidence pass 180 s; protected evidence, review, and merge remain.

@@ -59,7 +59,7 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React Worker do not reimplement physics. #4628/#4635 merged durable
-analysis and stable-paint capture; current `main` is `24d223354`. Trusted React job `97030072285` completes all ten 1440x900 tabs in about
+analysis and stable-paint capture; this branch includes `main` through `d93db6c16`. Trusted React job `97030072285` completes all ten 1440x900 tabs in about
 43 s, then the 45-s suite default expires while starting Simulation at the second of three viewports. The tab is present: the trace proves
 this is the evidence-pass budget, not UI absence. #4626 is reopened; `fix/4626-postmerge-visual-contract` gives only this registered pass a
 bounded 180-s timeout while retaining every viewport, stable-paint, geometry, overflow, artifact, and fail-closed comparator assertion.
