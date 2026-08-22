@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import manifestDocument from "../../../visualization_tabs.v1.json" with { type: "json" };
+import manifestDocument from "../vendored/visualization_tabs.v1.json" with { type: "json" };
 
 import { PRIMARY_VIEW_IDS } from "./viewPreferences";
 import {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import parityWorkspace from "../../../../../tests/rate_of_closure/fixtures/morris_workspace_v1.json";
+import parityWorkspace from "../vendored/fixtures/morris_workspace_v1.json";
 
 import { getClub } from "./club";
 import { DEFAULT_SCENARIO } from "./impact";

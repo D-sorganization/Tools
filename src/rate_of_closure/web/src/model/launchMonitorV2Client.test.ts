@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import golden from "../../../launch_monitor_canonical_v2_golden.json";
+import golden from "../vendored/launch_monitor_canonical_v2_golden.json";
 import {
   buildDatasetJobRequest,
   buildPlayerCovariationPayload,

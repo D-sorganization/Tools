@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 
-import capabilityData from "../../../data/neural_vendor_capabilities.v2.json";
+import capabilityData from "../vendored/neural_vendor_capabilities.v2.json";
 import { readLaunchMonitorFile, type LaunchMonitorRow } from "../model/launchMonitorAnalysis";
 import { buildTrainingManifest, inferPortableModel, parseCapabilityManifest,
   parsePortableModel, type PortableModel } from "../model/neuralLabContract";

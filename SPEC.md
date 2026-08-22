@@ -27,65 +27,10 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.82                                    |
+| **Spec Version**        | 1.17.83                                    |
 | **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
-
-### Portable Durable-Ensemble Evidence
-
-Version 1.17.82 defines the path-free client evidence boundary for one verified
-durable ensemble prefix. The exact Python and TypeScript v1 parsers bind archive
-status, header digest, contiguous analyzed count, typed outcome/failure counts,
-canonical output units, trace point identifiers, coordinate frame, incremental
-Welford method, and registered scientific limitations. The Python producer and
-React parser consume one shared golden document; unknown fields, incompatible
-frames, noncanonical units, inconsistent availability, unsafe numbers, and
-partial completion claims fail closed. Filesystem directories never cross the
-wire.
-
-This contract is a transport prerequisite rather than client completion. The
-PyQt6 and React run/progress/cancel/resume/inspect state machines and rendered
-surfaces remain open under #4626. The evidence reports scalar prefix moments;
-it does not fabricate unavailable quantiles, correlations, trial rows, human
-observations, causal attribution, or coaching guidance.
-
-### Governed Durable-Ensemble Scaling Evidence
-
-Version 1.17.80 adds a strict, source-pinned scaling-evidence contract and a
-fresh-process measurement harness for the non-materializing durable ensemble
-path. Independent trial-count and trace-length cases record operating-system
-peak resident bytes, cumulative physical archive bytes, logical trace bytes,
-and transport throughput. The parser recomputes throughput, axis coverage,
-absolute and incremental resident-memory budgets, archive growth, and every
-pass declaration; malformed, nonfinite, contradictory, or failed reports are
-not accepted as evidence.
-
-The registered workload retains an expected numerical failure for every trial,
-isolating identity preflight, typed failure projection, bounded allocation,
-atomic persistence, and manifest growth from solver cost. Therefore its passing
-result supports the streaming transport implementation only. It does not
-qualify model throughput, successful-trajectory compression, user hardware, or
-scientific validity. Geometry/sensitivity streaming and durable PyQt6/React
-transport remain open under #4626.
-
-### Incremental Ensemble Geometry and Sensitivity
-
-Version 1.17.81 makes materialized and durable position dispersion consume one
-stable online covariance authority. Counts, means, centered cross-products,
-population RMS radius, unbiased covariance, descending eigenpairs, and
-sign-canonical principal axes retain the existing frame/unit semantics while
-the working set depends on samples and points rather than trials. A 256 MB
-pre-allocation contract rejects unbounded sample/point layouts before memory is
-reserved. Explicit trace validity—not hit success—continues to govern inclusion.
-
-Durable one-at-a-time sensitivity now consumes one complete exact single-factor
-archive per registered parent-plan factor. Missing, extra, partial, or plan-
-mismatched substudies fail closed. Availability-aware sample standard deviations
-and normalized dominance use the same stable rule as the materialized workflow;
-bit-identical outputs produce exact zero rather than normalized roundoff noise.
-The returned result retains each ordered archive authority. No causal or human
-interpretation is introduced by these descriptive dispersion calculations.
 
 ### Governed Launch-Monitor Analytics Release
 
@@ -222,6 +167,23 @@ bundle, unsafe executable model formats are rejected, and all current vendor
 training remains fail-closed because no approved repeating split group exists.
 Release B remains `protocol_ready`: its paired-device protocol is complete but
 no paired observations have been collected.
+
+### 2026-08-21 Self-contained web/ for the public mirror channel
+
+Version 1.17.79 makes `src/rate_of_closure/web` self-contained so the public
+mirror (rate-of-closure-explorer), a verbatim copy of `web/`, builds and tests
+standalone. The ten monorepo JSON files the web app and its Vitest suites
+imported across the `web/` boundary (the three visualization manifests,
+`neural_vendor_capabilities.v2.json`, `launch_monitor_canonical_v2_golden.json`,
+the shared Spearman fixture, and four `tests/rate_of_closure/fixtures/`
+goldens) are now vendored into `web/src/vendored/` per
+`web/src/vendored/vendored_map.json`, refreshed by
+`web/scripts/refresh-vendored.mjs`. Canonical ownership is unchanged: drift is
+blocked in monorepo CI by byte-equality in
+`tests/rate_of_closure/test_web_vendored_sync.py` and deep-equality in
+`web/src/vendored/vendoredSync.test.ts` (which skips in the standalone mirror
+where canonical paths are absent), and `web/src/vendored/importBoundary.test.ts`
+ratchets against any future import that resolves above the `web/` root.
 
 ### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 
@@ -939,6 +901,7 @@ the hashed Worker lifecycle; TypeScript, ESLint, and Vite build also pass.
 Rust parity, full raw RK4-substep torque persistence, WebKit/Firefox,
 assistive-technology automation, approved visual baselines, protected
 publication, and complete #4142 remain open.
+
 ### 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
 
 Version 1.16.68 normally merges approved confidence-mesh head
@@ -1018,6 +981,7 @@ surface toggle and strictly migrates exact v1/v2 documents with surfaces off.
 This slice does not claim confidence regions for the mean, WebKit/Firefox or
 assistive-technology E2E, approved screenshot baselines, plot-definition
 import UI, protected publication, or completion of #4142.
+
 ### 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
 
 Version 1.16.65 adds one exact-path Changed Test Assertion Check exemption for
@@ -1173,6 +1137,7 @@ The 3-D view continues to draw sparse two-sigma principal-axis glyphs and labels
 them accordingly. This slice does not claim a full confidence-ellipsoid mesh,
 cross-browser end-to-end validation, protected publication, or completion of
 the wider variation epic.
+
 ### 2026-08-12 PR #4414 hosted MyPy hardening (#4142)
 
 Version 1.16.63 closes the two actionable hosted MyPy 1.13 findings without
@@ -1792,7 +1757,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   request/job identity pinning, nonblocking deferred close with retained worker
   ownership, and generation-based stale-result suppression. Any base, design,
   or factor edit invalidates completed output immediately.
-- Results are ranked only within one selected target and preserve μ*, its
+- Results are ranked only within one selected target and preserve μ\*, its
   standard error, μ, σ, units/frame provenance, availability and adequacy, and
   the exact valid/typed-no-impact/no-impact-unavailable/failed/nonfinite
   denominators. Constant output remains a rankable zero; unavailable values are
@@ -1847,6 +1812,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
 - Python and TypeScript share strict `impact-solution-request/v1` and
@@ -2903,6 +2869,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   desktop app with PyInstaller; the web app packages via Tauri.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
+
 ### 2026-08-05 Wedge impact-point kinematics and AoA attribution
 
 - `shared.python.golf_club` defines an immutable, frame-explicit rigid-body
@@ -3406,6 +3373,7 @@ through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
   left a stray untracked DB there. `P1AM_DB_PATH` overrides the location for
   deployments keeping the historian on separate storage; the container default is
   unchanged because the image's package directory is `/app`.
+
 ### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
 
 - `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
@@ -3454,7 +3422,6 @@ through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
   100 ms, bounded to [1 ms, 1 s]. The scan does ~300 register reads, SPI
   thermocouple reads and sometimes a blocking flash write, so assuming 100 ms
   understated Ki and overstated Kd whenever it overran (issue #4009).
-
 
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
@@ -5150,10 +5117,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-21 | 1.17.82 | feat(rate-of-closure, #4626 / #4142 R11.5): add one strict path-free durable-ensemble evidence contract shared by Python and TypeScript. Exact parsers bind the verified-prefix header digest, lifecycle/counts, canonical output moments and units, trace frame/point layout, registered incremental method, and scientific limitations; reject unknown fields, incompatible frames/units, inconsistent counts/availability, and unsafe values; and prove Python-producer/React-reader parity through one golden document. Client state machines and rendered surfaces remain open. | #4626 |
-| 2026-08-21 | 1.17.81 | feat(rate-of-closure, swing-sim, #4626 / #4142 R11.5): add one bounded online position-covariance authority for materialized and durable geometry, with explicit-validity inclusion, a 256 MB pre-allocation ceiling, and parity for means, unbiased covariance, RMS radius, eigenvalues, and sign-canonical axes. Add complete exact-plan durable one-at-a-time sensitivity over ordered single-factor archives, reusing stable sample moments so constant outputs remain zero instead of normalized floating-point residue. Partial or mismatched sensitivity evidence fails closed. Durable PyQt6/React transport remains open. | #4626 |
-| 2026-08-21 | 1.17.80 | test(rate-of-closure, #4626 / #4142 R11.5): add strict source-pinned durable-ensemble scaling evidence and a fresh-process cross-platform measurement harness. Independent 128/512-trial and 51/501-sample cases separate peak resident set, logical trace volume, physical archive growth, and failure-only transport throughput. The parser recomputes throughput, axis coverage, archive growth, and absolute/incremental budgets and rejects failed or contradictory claims. The exact `fd7e2998e` Windows evidence passes its declared ceilings; it is explicitly a synthetic retained-failure transport diagnostic, not solver, successful-compression, user-hardware, or scientific qualification. Geometry/sensitivity consumers and durable clients remain open. | #4626 |
-| 2026-08-21 | 1.17.79 | feat(rate-of-closure, #4626 / #4142 R11.5): add a production non-materializing consumer for strict durable ensemble prefixes. The archive now scans checksum-, identity-, order-, and bound-verified chunks through a coordinator-owned visitor; bounded online accumulators report canonical-unit scalar availability, means, sample standard deviations, typed hit/no-impact/failure denominators, and named numerical-failure counts for complete or explicitly in-progress prefixes. Separate stream-axis and compatibility-materialization contracts allow safe campaigns beyond the final trace-tensor product cap while the collecting sink still rejects before allocating that tensor. Add a bounded deterministic sampled-input source that reproduces and discards resume prefixes without solver work, is byte-invariant to chunk size, and shares one authority with eager compatibility sampling. Grouped normal draws now use a canonical rowwise PSD transform rather than batch-size-dependent BLAS arithmetic; execution metadata identifies that scientific method as `numpy-pcg64-canonical-rowwise-psd` version 2. The production request builder now retains neither the full sampled-input matrix nor the ordered configuration roster: a bounded preflight scan hashes canonical input and complete-configuration streams, the durable header retains only those identities, execution regenerates bounded work blocks from the verified resume index, and completed-prefix replay performs no solver work. Focused tests cover streamed-moment parity, corrupted-archive rejection, eager/lazy sample parity, grouped chunk-size invariance, suffix/block resume, exact streamed/materialized identities, lazy durable cancellation/resume, and invalid bounds. Measured memory/throughput budgets, geometry/sensitivity streaming, and durable PyQt/React transport remain open under #4626. | #4626 |
+| 2026-08-21 | 1.17.83 | feat(rate-of-closure, #4626 / #4142 R11.5): add an authenticated authority-owned durable-ensemble lifecycle with strict path-free request/job records, server-owned archives, one active writer per archive, verified-prefix progress, exact resume, zero-solver replay, inspection, cancellation, and bounded retention. PyQt6 and a transport-only React Worker expose the same incremental moments without reimplementing physics. Model-scenario, verified-prefix, and no-row/no-quantile/no-correlation limitations remain explicit. |
+| 2026-08-21 | 1.17.82 | feat(rate-of-closure, #4626 / #4142 R11.5): add one strict path-free durable-ensemble evidence contract shared by Python and TypeScript. Exact parsers bind digest, lifecycle/counts, canonical output moments and units, frame/point layout, registered incremental method, and scientific limitations; incompatible or inconsistent evidence fails closed. |
+| 2026-08-21 | 1.17.81 | feat(rate-of-closure, #4626 / #4142 R11.5): add bounded online position covariance for materialized and durable geometry plus complete exact-plan one-at-a-time sensitivity over ordered single-factor archives. Partial, mismatched, or invalid evidence fails closed. |
+| 2026-08-21 | 1.17.80 | test(rate-of-closure, #4626 / #4142 R11.5): add source-pinned durable-ensemble scaling evidence and a fresh-process cross-platform harness separating peak RSS, logical trace volume, physical archive growth, and failure-only transport throughput. The evidence is a bounded transport diagnostic, not solver, hardware, or scientific qualification. |
+| 2026-08-21 | 1.17.79 | fix(rate-of-closure): make web/ self-contained for the public mirror channel — vendor the ten monorepo JSON files the web app and its tests imported from outside web/ into web/src/vendored/ (map in vendored_map.json, refresh via web/scripts/refresh-vendored.mjs), rewrite the 14 escaping imports, and block drift with a monorepo byte-equality pytest, a mirror-skipping deep-equality Vitest gate, and a static import-boundary ratchet. Unblocks public-web-management#3; relates to #4624. |
 | 2026-08-21 | 1.17.78 | feat(rate-of-closure, #4142 R11.5): add bounded restartable ensemble transport with atomic strict manifests, pickle-free NPZ chunks, compressed/uncompressed byte caps, per-chunk SHA-256 and exact contiguous-prefix validation; bind resumes to the plan, sampled inputs, every ordered simulation configuration, trace layout, registry snapshot, and declared implementation identity; retain valid work on cancellation/failure, restore progress/failure counts, and fail before evaluation on drift or tampering. This advances but does not close R11.5: request/config construction remains eager, the compatibility collector still materializes the final tensor, and measured peak-memory/UI transport gates remain open. |
 | 2026-08-20 | 1.17.76 | feat(rate-of-closure): consume canonical Upstream immutable dataset jobs and evidence-bearing player covariation through strict Python/TypeScript clients; add parity authorized-corpus selection, reference-only persistence, bounded aggregate refresh, and explicit 20,000-row inline limits while retaining local estimators only as labelled offline compatibility. | #4603 |
 | 2026-08-20 | 1.17.77 | feat(swing-sim, pendulum-simulator, #4430): add the source-pinned qualified rotating-base provider, single packaged 18-case UpstreamDrift authority, independently owned constrained physics, registered full-resolution execution, immutable reviewer traces and governed JSON export, asynchronous PyQt study surface, and React/Tauri evidence browser without a second physics implementation; retain all five adverse rows, exact torso/arm/wrist killswitches, closures, and nonanatomical/no-human-validation/noncoaching boundaries. Generate and pin the canonical 710,400-byte 18-run trace catalog at SHA-256 `66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678`; validate order, identity, scalar parity, time monotonicity, bilateral grip shape, trace finiteness, source/study pins, canonical serialization, semantic tamper, and full-run export. PyQt and React expose the same five time-resolved reviewer groups (contact power, force-generated couple, torso/club rates, distal energy, independent lead/trail grip force). Focused evidence: 23 Python and 41 web tests, MyPy/Ruff, TypeScript/Vite production build, and inspected 1440×1000 plus 390×844 render states including adverse case 16. | #4430 |

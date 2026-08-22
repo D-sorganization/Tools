@@ -1,4 +1,4 @@
-import performanceDocument from "../../../visualization_performance.v1.json" with { type: "json" };
+import performanceDocument from "../vendored/visualization_performance.v1.json" with { type: "json" };
 
 import { visualizationTabs, type VisualizationSurface } from "./visualizationTabManifest";
 
