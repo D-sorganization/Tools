@@ -20,6 +20,8 @@ from .ensemble_types import (
     immutable_array,
 )
 
+MAX_DISPERSION_ACCUMULATOR_BYTES = 256_000_000
+
 
 def _principal_components(
     covariance: np.ndarray, counts: np.ndarray
@@ -52,6 +54,97 @@ def compute_position_dispersion(ensemble: EnsemblePositionTraces) -> PositionDis
     return compute_position_dispersion_view(ensemble)
 
 
+class PositionDispersionAccumulator:
+    """Bounded online position moments over arbitrary contiguous trial chunks."""
+
+    def __init__(self, sample_count: int, point_count: int) -> None:
+        require(
+            type(sample_count) is int and sample_count >= 1,
+            "sample_count must be a positive integer",
+        )
+        require(
+            type(point_count) is int and point_count >= 1,
+            "point_count must be a positive integer",
+        )
+        estimated_bytes = sample_count * 8 + sample_count * point_count * 12 * 8
+        require(
+            estimated_bytes <= MAX_DISPERSION_ACCUMULATOR_BYTES,
+            "dispersion accumulator memory budget exceeded",
+            estimated_bytes,
+        )
+        self._shape = (sample_count, point_count)
+        self._count: np.ndarray = np.zeros(sample_count, dtype=np.int64)
+        self._mean = np.zeros(self._shape + (CARTESIAN_DIMENSIONS,), dtype=float)
+        self._centered_sum = np.zeros(
+            self._shape + (CARTESIAN_DIMENSIONS, CARTESIAN_DIMENSIONS), dtype=float
+        )
+
+    def accept(self, positions_m: np.ndarray, sample_valid: np.ndarray) -> None:
+        """Merge one nonempty trial chunk without retaining any trial rows."""
+        positions = np.asarray(positions_m, dtype=float)
+        valid = np.asarray(sample_valid)
+        require(positions.ndim == 4, "positions_m must be four-dimensional")
+        trials, samples, points, dimensions = positions.shape
+        require(trials >= 1, "positions_m must contain at least one trial")
+        require(
+            (samples, points) == self._shape and dimensions == CARTESIAN_DIMENSIONS,
+            "positions_m does not match accumulator shape",
+        )
+        require(valid.dtype == np.bool_, "sample_valid must be Boolean")
+        require(valid.shape == (trials, samples), "sample_valid shape is invalid")
+        require(
+            bool(np.all(np.isfinite(positions[valid]))),
+            "valid positions must be finite",
+        )
+        for trial_positions, trial_valid in zip(positions, valid, strict=True):
+            self._accept_trial(trial_positions, trial_valid)
+
+    def _accept_trial(self, positions: np.ndarray, valid: np.ndarray) -> None:
+        safe = np.where(valid[:, np.newaxis, np.newaxis], positions, self._mean)
+        delta = safe - self._mean
+        new_count = self._count + valid
+        scale: np.ndarray = np.zeros(self._count.shape, dtype=float)
+        np.divide(valid, new_count, out=scale, where=new_count > 0)
+        self._mean += delta * scale[:, np.newaxis, np.newaxis]
+        delta_after = safe - self._mean
+        self._centered_sum += np.einsum("spc,spd->spcd", delta, delta_after)
+        self._count = new_count
+
+    def freeze(
+        self,
+        sample_times_s: np.ndarray,
+        coordinate_frame: str,
+        point_ids: tuple[str, ...],
+    ) -> PositionDispersion:
+        """Return immutable covariance geometry for the accumulated prefix."""
+        times = np.asarray(sample_times_s, dtype=float)
+        require(times.shape == (self._shape[0],), "sample_times_s shape is invalid")
+        require(len(point_ids) == self._shape[1], "point_ids shape is invalid")
+        counts = np.broadcast_to(self._count[:, np.newaxis], self._shape).copy()
+        mean = self._mean.copy()
+        mean[counts == 0] = np.nan
+        centered_sum = 0.5 * (self._centered_sum + self._centered_sum.swapaxes(-1, -2))
+        divisor = counts[:, :, np.newaxis, np.newaxis] - 1
+        covariance = np.full(centered_sum.shape, np.nan)
+        np.divide(centered_sum, divisor, out=covariance, where=divisor > 0)
+        radius_sum = np.trace(centered_sum, axis1=-2, axis2=-1)
+        rms_radius = np.full(self._shape, np.nan)
+        np.divide(radius_sum, counts, out=rms_radius, where=counts > 0)
+        np.sqrt(np.maximum(rms_radius, 0.0), out=rms_radius)
+        eigenvalues, principal_axes = _principal_components(covariance, counts)
+        return PositionDispersion(
+            immutable_array(times, float),
+            coordinate_frame,
+            tuple(point_ids),
+            immutable_array(counts, int),
+            immutable_array(mean, float),
+            immutable_array(covariance, float),
+            immutable_array(eigenvalues, float),
+            immutable_array(principal_axes, float),
+            immutable_array(rms_radius, float),
+        )
+
+
 def compute_position_dispersion_view(
     ensemble: EnsemblePositionTraces,
     trial_indices: np.ndarray | None = None,
@@ -75,41 +168,10 @@ def compute_position_dispersion_view(
     require(1 <= count <= ensemble.sample_times_s.size, "invalid sample_count")
     positions = ensemble.positions_m[indices, :count]
     sample_valid = ensemble.sample_valid[indices, :count]
-    valid = sample_valid[:, :, np.newaxis, np.newaxis]
-    counts_by_sample = np.count_nonzero(sample_valid, axis=0)
-    counts = np.broadcast_to(
-        counts_by_sample[:, np.newaxis], (positions.shape[1], positions.shape[2])
-    ).copy()
-    position_sum = np.sum(np.where(valid, positions, 0.0), axis=0)
-    divisor = counts_by_sample[:, np.newaxis, np.newaxis]
-    mean = np.full(position_sum.shape, np.nan)
-    np.divide(position_sum, divisor, out=mean, where=divisor > 0)
-
-    centered = np.where(valid, positions - mean[np.newaxis, ...], 0.0)
-    covariance_sum = np.einsum("tspc,tspd->spcd", centered, centered)
-    covariance_divisor = counts[:, :, np.newaxis, np.newaxis] - 1
-    covariance = np.full(covariance_sum.shape, np.nan)
-    np.divide(
-        covariance_sum, covariance_divisor, out=covariance, where=covariance_divisor > 0
-    )
-
-    squared_radius = np.einsum("tspc,tspc->tsp", centered, centered)
-    radius_sum = np.sum(squared_radius, axis=0)
-    rms_radius = np.full(counts.shape, np.nan)
-    np.divide(radius_sum, counts, out=rms_radius, where=counts > 0)
-    np.sqrt(rms_radius, out=rms_radius)
-    eigenvalues, principal_axes = _principal_components(covariance, counts)
-
-    return PositionDispersion(
-        sample_times_s=immutable_array(ensemble.sample_times_s[:count], float),
-        coordinate_frame=ensemble.coordinate_frame,
-        point_ids=ensemble.point_ids,
-        count=immutable_array(counts, int),
-        mean_positions_m=immutable_array(mean, float),
-        covariance_m2=immutable_array(covariance, float),
-        eigenvalues_m2=immutable_array(eigenvalues, float),
-        principal_axes=immutable_array(principal_axes, float),
-        rms_radius_m=immutable_array(rms_radius, float),
+    accumulator = PositionDispersionAccumulator(count, positions.shape[2])
+    accumulator.accept(positions, sample_valid)
+    return accumulator.freeze(
+        ensemble.sample_times_s[:count], ensemble.coordinate_frame, ensemble.point_ids
     )
 
 
@@ -166,7 +228,9 @@ __all__ = [
     "EnsemblePositionTraces",
     "LowVariabilityCriteria",
     "LowVariabilityInterval",
+    "MAX_DISPERSION_ACCUMULATOR_BYTES",
     "PositionDispersion",
+    "PositionDispersionAccumulator",
     "compute_position_dispersion",
     "compute_position_dispersion_view",
     "find_low_variability_intervals",

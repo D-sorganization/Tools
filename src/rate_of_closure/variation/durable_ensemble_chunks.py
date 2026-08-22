@@ -101,15 +101,25 @@ class DurableEnsembleChunkSink:
         visitor: Callable[[SimulationResultChunk], None],
     ) -> DurableEnsembleArchive:
         """Visit each verified prefix chunk without retaining prior chunks."""
+        archive, _header = self.scan_with_header(request, visitor)
+        return archive
+
+    def scan_with_header(
+        self,
+        request: SimulationEnsembleSource,
+        visitor: Callable[[SimulationResultChunk], None],
+    ) -> tuple[DurableEnsembleArchive, EnsembleStreamHeader]:
+        """Scan once and return the exact verified layout used by the visitor."""
         from .simulation_adapter import build_ensemble_stream_header
 
         require(callable(visitor), "archive visitor must be callable")
-        self._open(build_ensemble_stream_header(request))
+        header = build_ensemble_stream_header(request)
+        self._open(header)
         try:
             manifest = self._require_active()
             for chunk in self._verified_prefix(manifest):
                 visitor(chunk)
-            return self._archive()
+            return self._archive(), header
         finally:
             self.abort()
 

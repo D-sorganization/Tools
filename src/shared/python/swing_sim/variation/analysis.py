@@ -95,6 +95,26 @@ def summary_stats(dataset: VariationDataset) -> tuple[OutputStats, ...]:
     return tuple(stats)
 
 
+def finite_sample_standard_deviation(values: np.ndarray) -> float:
+    """Return a stable sample spread for a one-dimensional finite cohort."""
+    cohort = np.asarray(values, dtype=float)
+    require(cohort.ndim == 1, "standard-deviation cohort must be one-dimensional")
+    require(
+        bool(np.all(np.isfinite(cohort))), "standard-deviation cohort must be finite"
+    )
+    if cohort.size < _MIN_RUNS_FOR_STATS:
+        return math.nan
+    count = 0
+    mean = 0.0
+    centered_sum = 0.0
+    for value in cohort:
+        count += 1
+        delta = float(value) - mean
+        mean += delta / count
+        centered_sum += delta * (float(value) - mean)
+    return math.sqrt(max(0.0, centered_sum / (count - 1)))
+
+
 @dataclass(frozen=True)
 class SensitivityResult:
     """One-at-a-time sensitivity matrix (inputs x outputs).
@@ -154,7 +174,7 @@ def one_at_a_time_sensitivity(
             np.asarray(
                 [
                     (
-                        np.std(values, ddof=1)
+                        finite_sample_standard_deviation(values)
                         if (values := dataset.output_column(name)).size
                         >= _MIN_RUNS_FOR_STATS
                         else math.nan
@@ -165,14 +185,33 @@ def one_at_a_time_sensitivity(
             )
         )
     assert outputs is not None  # plan.noise is non-empty (DbC)
-    matrix = np.vstack(rows)
-    normalized = _normalize_sensitivity_matrix(matrix)
-    return SensitivityResult(
-        input_keys=tuple(spec.variable_key for spec in plan.noise),
-        output_names=outputs,
-        matrix=matrix,
-        normalized=normalized,
+    return sensitivity_from_standard_deviations(
+        tuple(spec.variable_key for spec in plan.noise), outputs, np.vstack(rows)
     )
+
+
+def sensitivity_from_standard_deviations(
+    input_keys: tuple[str, ...],
+    output_names: tuple[str, ...],
+    matrix: np.ndarray,
+) -> SensitivityResult:
+    """Build one canonical OAT result from availability-aware sample spreads."""
+    inputs = tuple(input_keys)
+    outputs = tuple(output_names)
+    values = np.array(matrix, dtype=float, copy=True)
+    require(inputs and outputs, "sensitivity axes must be nonempty")
+    require(len(set(inputs)) == len(inputs), "sensitivity inputs must be unique")
+    require(len(set(outputs)) == len(outputs), "sensitivity outputs must be unique")
+    require(
+        values.shape == (len(inputs), len(outputs)),
+        "sensitivity matrix shape does not match its axes",
+        values.shape,
+    )
+    require(not np.any(np.isinf(values)), "sensitivity matrix cannot contain infinity")
+    values.setflags(write=False)
+    normalized = _normalize_sensitivity_matrix(values)
+    normalized.setflags(write=False)
+    return SensitivityResult(inputs, outputs, values, normalized)
 
 
 def _normalize_sensitivity_matrix(matrix: np.ndarray) -> np.ndarray:
@@ -314,7 +353,9 @@ __all__ = [
     "OutputStats",
     "SensitivityResult",
     "dispersion_ellipse",
+    "finite_sample_standard_deviation",
     "one_at_a_time_sensitivity",
+    "sensitivity_from_standard_deviations",
     "spearman_matrix",
     "summary_stats",
 ]

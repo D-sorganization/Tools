@@ -10,10 +10,12 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
+from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_SWING,
     EnsemblePositionTraces,
     NoiseSpec,
+    PositionDispersionAccumulator,
     VariationDataset,
     VariationPlan,
     compute_position_dispersion,
@@ -105,3 +107,45 @@ def test_geometry_preparation_meets_500_trial_interactive_budget() -> None:
     assert peak_bytes < 100_000_000
     assert dispersion.rms_radius_m.shape == (samples, 1)
     assert np.all(np.isfinite(dispersion.rms_radius_m))
+
+
+def test_incremental_geometry_is_chunk_invariant_and_matches_materialized() -> None:
+    rng = np.random.default_rng(41)
+    positions = rng.normal(size=(7, 9, 2, 3))
+    valid = np.ones((7, 9), dtype=bool)
+    valid[1, 3:] = False
+    valid[5, :2] = False
+    positions[~valid] = np.nan
+    ensemble = _traces(np.nan_to_num(positions[:, :, :1]))
+    ensemble = type(ensemble)(
+        variation=ensemble.variation,
+        sample_times_s=ensemble.sample_times_s,
+        coordinate_frame=ensemble.coordinate_frame,
+        point_ids=("swing.wrist", _POINT),
+        positions_m=positions,
+        sample_valid=valid,
+        impact_sample_indices=ensemble.impact_sample_indices,
+    )
+    expected = compute_position_dispersion(ensemble)
+
+    accumulator = PositionDispersionAccumulator(9, 2)
+    accumulator.accept(positions[:2], valid[:2])
+    accumulator.accept(positions[2:6], valid[2:6])
+    accumulator.accept(positions[6:], valid[6:])
+    actual = accumulator.freeze(
+        ensemble.sample_times_s, ensemble.coordinate_frame, ensemble.point_ids
+    )
+
+    np.testing.assert_array_equal(actual.count, expected.count)
+    np.testing.assert_allclose(actual.mean_positions_m, expected.mean_positions_m)
+    np.testing.assert_allclose(actual.covariance_m2, expected.covariance_m2)
+    np.testing.assert_allclose(actual.rms_radius_m, expected.rms_radius_m)
+    np.testing.assert_allclose(actual.eigenvalues_m2, expected.eigenvalues_m2)
+    np.testing.assert_allclose(actual.principal_axes, expected.principal_axes)
+
+
+def test_incremental_geometry_rejects_an_unbounded_accumulator_before_allocation() -> (
+    None
+):
+    with pytest.raises(ContractViolationError, match="memory budget"):
+        PositionDispersionAccumulator(100_000, 256)
