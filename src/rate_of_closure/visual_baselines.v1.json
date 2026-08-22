@@ -2,7 +2,7 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "4252018374596307bebadc7e7f5d5cfeb716c238",
+  "source_artifact_commit": "7e3d8fcefe25147044f2979fe6301db27d92ddb3",
   "baselines": [
     {
       "surface": "react",
@@ -45,7 +45,7 @@
       "tab_id": "plots",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-plots-1440x900.png",
-      "sha256": "508d4c4cb454ae0bf42753a62a86bce736f73b90d0fa84617a0a3ef51d380f20",
+      "sha256": "b872ebd74cf101d41ad6cad1a96a07a51f5a6e21c10c0858bcd02e8a43d3af4f",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -81,7 +81,7 @@
       "tab_id": "neural-model-lab",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-neural-model-lab-1440x900.png",
-      "sha256": "2577b11c4d7a7e2b80310a604735c0d67d7f425316b87ee00e0d60dcd76215f4",
+      "sha256": "8eca7787b7139f1c1ee78f4909cfa831c80609b328eeb0f08e4fba31a59cbea9",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -93,7 +93,7 @@
       "tab_id": "variation",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
       "file": "initial-variation-1440x900.png",
-      "sha256": "712142b2d5987d2e3c3532444b71160c8682fed2f76fba39b4041c0e8b95129d",
+      "sha256": "e40ac8a993afc48271bf13ec1aeb71ffbc751893ea09e746c6c448d7e3f0996e",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
@@ -213,7 +213,7 @@
       "tab_id": "variation",
       "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
       "file": "initial-variation-dpi-1.0.png",
-      "sha256": "b4ddc595a044ea0856f2bb77464d7812174a41b0b4beccb45101950a3c053c6c",
+      "sha256": "9326f017697a91e1c232246c898e4dce54ac17de4de8e62ec9ce3c177ef04b54",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 100,
