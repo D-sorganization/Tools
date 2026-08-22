@@ -1,4 +1,4 @@
-import manifestDocument from "../../../visualization_tabs.v1.json" with { type: "json" };
+import manifestDocument from "../vendored/visualization_tabs.v1.json" with { type: "json" };
 
 export type VisualizationSurface = "react" | "pyqt";
 export type VisualizationClassification = "visual-first" | "form-led-live-preview" |

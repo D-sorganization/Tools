@@ -1,0 +1,111 @@
+{
+  "schema_id": "rate-of-closure/visualization-accessibility-evidence",
+  "schema_version": 1,
+  "automated_claim": "protected-automated-semantics-not-manual-at-qualification",
+  "manual_at": {
+    "status": "protocol-ready-human-execution-required",
+    "protocol_path": "docs/development/rate-visualization-at-protocol.md"
+  },
+  "tabs": [
+    {
+      "surface": "react",
+      "tab_id": "explorer",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "calculation",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "simulation",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "plots",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "flight",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "launch-monitor-analytics",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "neural-model-lab",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "variation",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "putting",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "react",
+      "tab_id": "glossary",
+      "evidence": "axe-core-wcag-a-aa-through-2.2"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "clubhead",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "plots",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "calculation_description",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "simulation",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "flight_explorer",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "launch_monitor_analytics",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "neural_model_lab",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "variation",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "putting",
+      "evidence": "named-visible-focusable-semantic-controls"
+    },
+    {
+      "surface": "pyqt",
+      "tab_id": "glossary",
+      "evidence": "named-visible-focusable-semantic-controls"
+    }
+  ]
+}

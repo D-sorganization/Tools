@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import driverGolden from "../../../../../tests/rate_of_closure/fixtures/clubhead_engineering_sidecar_driver_10_5.json";
+import driverGolden from "../vendored/fixtures/clubhead_engineering_sidecar_driver_10_5.json";
 
 import { getClub } from "./club";
 import {

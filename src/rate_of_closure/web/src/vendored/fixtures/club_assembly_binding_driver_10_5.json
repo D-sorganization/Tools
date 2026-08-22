@@ -1,0 +1,137 @@
+{
+  "assembly": {
+    "assembly_id": "driver-qualified-2026-08",
+    "club_length": {
+      "convention": "declared_datums",
+      "length_m": 1.1557,
+      "lower_reference_id": "qualified sole-plane datum",
+      "measurement_frame_id": "driver.assembly",
+      "upper_reference_id": "qualified grip-cap datum"
+    },
+    "components": [
+      {
+        "mass_properties": {
+          "center_of_mass_m": [0.021, 0.026, -0.002],
+          "component_id": "head-qualified",
+          "frame_id": "head-qualified.frame",
+          "inertia_at_com_kg_m2": [
+            [0.00014, 3e-6, -2e-6],
+            [3e-6, 0.00017, 4e-6],
+            [-2e-6, 4e-6, 0.00019]
+          ],
+          "mass_kg": 0.2,
+          "role": "head"
+        },
+        "transform_to_club": {
+          "from_frame_id": "head-qualified.frame",
+          "rotation": [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0]
+          ],
+          "to_frame_id": "driver.assembly",
+          "translation_m": [1.13, 0.0, 0.0]
+        }
+      },
+      {
+        "mass_properties": {
+          "center_of_mass_m": [-0.45, 0.0, 0.0],
+          "component_id": "shaft-qualified",
+          "frame_id": "shaft-qualified.frame",
+          "inertia_at_com_kg_m2": [
+            [1e-6, 0.0, 0.0],
+            [0.0, 0.006, 0.0],
+            [0.0, 0.0, 0.006]
+          ],
+          "mass_kg": 0.075,
+          "role": "shaft"
+        },
+        "transform_to_club": {
+          "from_frame_id": "shaft-qualified.frame",
+          "rotation": [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0]
+          ],
+          "to_frame_id": "driver.assembly",
+          "translation_m": [1.13, 0.0, 0.0]
+        }
+      },
+      {
+        "mass_properties": {
+          "center_of_mass_m": [-1.06, 0.0, 0.0],
+          "component_id": "grip-qualified",
+          "frame_id": "grip-qualified.frame",
+          "inertia_at_com_kg_m2": [
+            [2e-6, 0.0, 0.0],
+            [0.0, 0.0002, 0.0],
+            [0.0, 0.0, 0.0002]
+          ],
+          "mass_kg": 0.05,
+          "role": "grip"
+        },
+        "transform_to_club": {
+          "from_frame_id": "grip-qualified.frame",
+          "rotation": [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0]
+          ],
+          "to_frame_id": "driver.assembly",
+          "translation_m": [1.13, 0.0, 0.0]
+        }
+      }
+    ],
+    "format": "golf_club.assembly/1",
+    "frame_id": "driver.assembly"
+  },
+  "assembly_identity": {
+    "assembly_id": "driver-qualified-2026-08",
+    "format": "golf_club.assembly/1",
+    "sha256": "fe2fe7ff5f1950c9d3a50653fdf29dbd97e394327b5af03d7c437e7e6bc521a3"
+  },
+  "format": "rate_of_closure.club_assembly_binding/1",
+  "head_binding": {
+    "head_component_from_selected_head": {
+      "from_frame_id": "rate_of_closure.head",
+      "rotation": [
+        [1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0]
+      ],
+      "to_frame_id": "head-qualified.frame",
+      "translation_m": [0.001, -0.002, 0.003]
+    },
+    "head_component_id": "head-qualified"
+  },
+  "selected_spec_identity": {
+    "format": "rate_of_closure.club_spec_identity/1",
+    "sha256": "87e2e961f33113260f4e38ef3c1eafed7f9b3558205931177158d7be32cb0381",
+    "snapshot": {
+      "cg_depth_m": 0.025,
+      "cg_height_m": 0.028,
+      "club_type": "Driver",
+      "face_bulge_radius_m": 0.3,
+      "face_roll_radius_m": 0.28,
+      "head_mass_kg": 0.2,
+      "head_style": "Auto",
+      "length_m": 1.1557,
+      "lie_deg": 56.0,
+      "loft_deg": 10.5,
+      "moi_about_shaft_kg_m2": 0.00052,
+      "name": "Driver 10.5\u00b0"
+    }
+  },
+  "source_authority": {
+    "authority_id": "local-engineering-review",
+    "document_id": "driver-mass-properties-contract-fixture",
+    "kind": "qualified_analysis",
+    "revision": "1"
+  },
+  "units": {
+    "angle": "degree",
+    "inertia": "kg_m2",
+    "length": "m",
+    "mass": "kg"
+  }
+}

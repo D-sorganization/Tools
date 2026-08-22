@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.78                                    |
+| **Spec Version**        | 1.17.79                                    |
 | **Last Spec Update**    | 2026-08-21                                 |
 
 ## 2. Purpose & Mission
@@ -167,6 +167,23 @@ bundle, unsafe executable model formats are rejected, and all current vendor
 training remains fail-closed because no approved repeating split group exists.
 Release B remains `protocol_ready`: its paired-device protocol is complete but
 no paired observations have been collected.
+
+### 2026-08-21 Self-contained web/ for the public mirror channel
+
+Version 1.17.79 makes `src/rate_of_closure/web` self-contained so the public
+mirror (rate-of-closure-explorer), a verbatim copy of `web/`, builds and tests
+standalone. The ten monorepo JSON files the web app and its Vitest suites
+imported across the `web/` boundary (the three visualization manifests,
+`neural_vendor_capabilities.v2.json`, `launch_monitor_canonical_v2_golden.json`,
+the shared Spearman fixture, and four `tests/rate_of_closure/fixtures/`
+goldens) are now vendored into `web/src/vendored/` per
+`web/src/vendored/vendored_map.json`, refreshed by
+`web/scripts/refresh-vendored.mjs`. Canonical ownership is unchanged: drift is
+blocked in monorepo CI by byte-equality in
+`tests/rate_of_closure/test_web_vendored_sync.py` and deep-equality in
+`web/src/vendored/vendoredSync.test.ts` (which skips in the standalone mirror
+where canonical paths are absent), and `web/src/vendored/importBoundary.test.ts`
+ratchets against any future import that resolves above the `web/` root.
 
 ### 2026-08-15 Protected consolidation rebase and CI closure (#4142/#4433)
 
@@ -884,6 +901,7 @@ the hashed Worker lifecycle; TypeScript, ESLint, and Vite build also pass.
 Rust parity, full raw RK4-substep torque persistence, WebKit/Firefox,
 assistive-technology automation, approved visual baselines, protected
 publication, and complete #4142 remain open.
+
 ### 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
 
 Version 1.16.68 normally merges approved confidence-mesh head
@@ -963,6 +981,7 @@ surface toggle and strictly migrates exact v1/v2 documents with surfaces off.
 This slice does not claim confidence regions for the mean, WebKit/Firefox or
 assistive-technology E2E, approved screenshot baselines, plot-definition
 import UI, protected publication, or completion of #4142.
+
 ### 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
 
 Version 1.16.65 adds one exact-path Changed Test Assertion Check exemption for
@@ -1118,6 +1137,7 @@ The 3-D view continues to draw sparse two-sigma principal-axis glyphs and labels
 them accordingly. This slice does not claim a full confidence-ellipsoid mesh,
 cross-browser end-to-end validation, protected publication, or completion of
 the wider variation epic.
+
 ### 2026-08-12 PR #4414 hosted MyPy hardening (#4142)
 
 Version 1.16.63 closes the two actionable hosted MyPy 1.13 findings without
@@ -1737,7 +1757,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   request/job identity pinning, nonblocking deferred close with retained worker
   ownership, and generation-based stale-result suppression. Any base, design,
   or factor edit invalidates completed output immediately.
-- Results are ranked only within one selected target and preserve μ*, its
+- Results are ranked only within one selected target and preserve μ\*, its
   standard error, μ, σ, units/frame provenance, availability and adequacy, and
   the exact valid/typed-no-impact/no-impact-unavailable/failed/nonfinite
   denominators. Constant output remains a rankable zero; unavailable values are
@@ -1792,6 +1812,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
 - Python and TypeScript share strict `impact-solution-request/v1` and
@@ -2848,6 +2869,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   desktop app with PyInstaller; the web app packages via Tauri.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
+
 ### 2026-08-05 Wedge impact-point kinematics and AoA attribution
 
 - `shared.python.golf_club` defines an immutable, frame-explicit rigid-body
@@ -3351,6 +3373,7 @@ through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
   left a stray untracked DB there. `P1AM_DB_PATH` overrides the location for
   deployments keeping the historian on separate storage; the container default is
   unchanged because the image's package directory is `/app`.
+
 ### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
 
 - `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
@@ -3399,7 +3422,6 @@ through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
   100 ms, bounded to [1 ms, 1 s]. The scan does ~300 register reads, SPI
   thermocouple reads and sometimes a blocking flash write, so assuming 100 ms
   understated Ki and overstated Kd whenever it overran (issue #4009).
-
 
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
@@ -5095,6 +5117,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-21 | 1.17.79 | fix(rate-of-closure): make web/ self-contained for the public mirror channel — vendor the ten monorepo JSON files the web app and its tests imported from outside web/ into web/src/vendored/ (map in vendored_map.json, refresh via web/scripts/refresh-vendored.mjs), rewrite the 14 escaping imports, and block drift with a monorepo byte-equality pytest, a mirror-skipping deep-equality Vitest gate, and a static import-boundary ratchet. Unblocks public-web-management#3; relates to #4624. |
 | 2026-08-21 | 1.17.78 | feat(rate-of-closure, #4142 R11.5): add bounded restartable ensemble transport with atomic strict manifests, pickle-free NPZ chunks, compressed/uncompressed byte caps, per-chunk SHA-256 and exact contiguous-prefix validation; bind resumes to the plan, sampled inputs, every ordered simulation configuration, trace layout, registry snapshot, and declared implementation identity; retain valid work on cancellation/failure, restore progress/failure counts, and fail before evaluation on drift or tampering. This advances but does not close R11.5: request/config construction remains eager, the compatibility collector still materializes the final tensor, and measured peak-memory/UI transport gates remain open. |
 | 2026-08-20 | 1.17.76 | feat(rate-of-closure): consume canonical Upstream immutable dataset jobs and evidence-bearing player covariation through strict Python/TypeScript clients; add parity authorized-corpus selection, reference-only persistence, bounded aggregate refresh, and explicit 20,000-row inline limits while retaining local estimators only as labelled offline compatibility. | #4603 |
 | 2026-08-20 | 1.17.77 | feat(swing-sim, pendulum-simulator, #4430): add the source-pinned qualified rotating-base provider, single packaged 18-case UpstreamDrift authority, independently owned constrained physics, registered full-resolution execution, immutable reviewer traces and governed JSON export, asynchronous PyQt study surface, and React/Tauri evidence browser without a second physics implementation; retain all five adverse rows, exact torso/arm/wrist killswitches, closures, and nonanatomical/no-human-validation/noncoaching boundaries. Generate and pin the canonical 710,400-byte 18-run trace catalog at SHA-256 `66493b833955c6492a00eae4a600df795df60a6f473f9a11c403084b58e51678`; validate order, identity, scalar parity, time monotonicity, bilateral grip shape, trace finiteness, source/study pins, canonical serialization, semantic tamper, and full-run export. PyQt and React expose the same five time-resolved reviewer groups (contact power, force-generated couple, torso/club rates, distal energy, independent lead/trail grip force). Focused evidence: 23 Python and 41 web tests, MyPy/Ruff, TypeScript/Vite production build, and inspected 1440×1000 plus 390×844 render states including adverse case 16. | #4430 |
@@ -6331,4 +6354,3 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-21: Rate of Closure Mirror Freshness Check (#4624)
 
 - **2026-08-21**: feat(rate_of_closure, ops, #4624) — Added `scripts/check_mirror_freshness.py` and test suite `tests/ops/test_mirror_freshness.py` to detect and surface drift between canonical `src/rate_of_closure/web` and the public Pages mirror `D-sorganization/rate-of-closure-explorer`. Supports timestamp comparison, recorded canonical commit SHA matching, and deep tree blob comparison.
-

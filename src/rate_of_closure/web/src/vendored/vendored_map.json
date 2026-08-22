@@ -1,0 +1,15 @@
+{
+  "description": "Canonical monorepo JSON files vendored into web/ so the public mirror (rate-of-closure-explorer) builds standalone. Keys are Tools-repo-root-relative canonical paths; values are web/-relative vendored copies. Refresh with `node scripts/refresh-vendored.mjs`. Drift is blocked by src/vendored/vendoredSync.test.ts (monorepo-only) and tests/rate_of_closure/test_web_vendored_sync.py.",
+  "mappings": {
+    "src/rate_of_closure/visualization_tabs.v1.json": "src/vendored/visualization_tabs.v1.json",
+    "src/rate_of_closure/visualization_accessibility.v1.json": "src/vendored/visualization_accessibility.v1.json",
+    "src/rate_of_closure/visualization_performance.v1.json": "src/vendored/visualization_performance.v1.json",
+    "src/rate_of_closure/data/neural_vendor_capabilities.v2.json": "src/vendored/neural_vendor_capabilities.v2.json",
+    "src/rate_of_closure/launch_monitor_canonical_v2_golden.json": "src/vendored/launch_monitor_canonical_v2_golden.json",
+    "src/shared/fixtures/variation_spearman_pairwise_finite.json": "src/vendored/variation_spearman_pairwise_finite.json",
+    "tests/rate_of_closure/fixtures/morris_workspace_v1.json": "src/vendored/fixtures/morris_workspace_v1.json",
+    "tests/rate_of_closure/fixtures/club_assembly_binding_driver_10_5.json": "src/vendored/fixtures/club_assembly_binding_driver_10_5.json",
+    "tests/rate_of_closure/fixtures/club_assembly_binding_identity_vectors.json": "src/vendored/fixtures/club_assembly_binding_identity_vectors.json",
+    "tests/rate_of_closure/fixtures/clubhead_engineering_sidecar_driver_10_5.json": "src/vendored/fixtures/clubhead_engineering_sidecar_driver_10_5.json"
+  }
+}

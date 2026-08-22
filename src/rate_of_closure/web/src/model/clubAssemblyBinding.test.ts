@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import bindingFixture from "../../../../../tests/rate_of_closure/fixtures/club_assembly_binding_driver_10_5.json";
-import identityVectors from "../../../../../tests/rate_of_closure/fixtures/club_assembly_binding_identity_vectors.json";
+import bindingFixture from "../vendored/fixtures/club_assembly_binding_driver_10_5.json";
+import identityVectors from "../vendored/fixtures/club_assembly_binding_identity_vectors.json";
 
 import { getClub } from "./club";
 import {
