@@ -248,7 +248,7 @@ def imports_of(
     repo = _resolve(repo_root)
     conn = db_mod.open_db(repo)
     try:
-        rel = path.replace(os.sep, "/")
+        rel = path.replace("\\", "/")
         row = conn.execute(
             "SELECT imports FROM files WHERE path = ?", (rel,)
         ).fetchone()
