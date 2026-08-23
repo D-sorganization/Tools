@@ -42,7 +42,7 @@ def test_filter_data_rejects_unsafe_expression(
     )
 
     with pytest.raises(FilterError):
-        engine_with_data.filter_data("__import__", "==", "os")
+        engine_with_data.filter_data("A", "__import__", "os")
 
 
 def test_query_valid_expression(engine_with_data: DataProcessorEngine) -> None:
