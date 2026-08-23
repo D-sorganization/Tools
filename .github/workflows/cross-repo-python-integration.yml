@@ -173,7 +173,9 @@ jobs:
           cache: pip
 
       - name: Purge pip cache
-        run: python -m pip cache purge || true
+        run: |
+          python -m pip cache purge || true
+          python -c "import pathlib, site, shutil; [shutil.rmtree(p, ignore_errors=True) if p.is_dir() else p.unlink(missing_ok=True) for sp in site.getsitepackages() for p in pathlib.Path(sp).glob('~*')]" || true
       - name: Install system dependencies
         if: steps.checkout_downstream.outcome == 'success'
         run: |
