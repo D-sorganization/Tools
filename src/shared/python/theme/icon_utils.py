@@ -4,6 +4,7 @@
 # templating contract used downstream. Lint suppressed at module level.
 
 import re
+from collections.abc import Mapping
 from pathlib import Path
 
 from PyQt6.QtCore import QByteArray
@@ -54,6 +55,29 @@ SVG_REGISTRY = {
 }
 
 
+def validate_icon_name(name: object) -> str:
+    """Validate that the icon name is a string, raising TypeError if not."""
+    if not isinstance(name, str):
+        raise TypeError("name must be a string")
+    return name
+
+
+def validate_icon_color(color: object) -> str:
+    """Validate that the icon color is a string, raising TypeError if not."""
+    if not isinstance(color, str):
+        raise TypeError("color must be a string")
+    return color
+
+
+def get_registered_svg(registry: Mapping[str, str], name: object) -> str:
+    """Retrieve an SVG template by name from the registry, validating input contract."""
+    icon_name = validate_icon_name(name)
+    svg_content = registry.get(icon_name)
+    if not svg_content:
+        raise ValueError(f"Icon '{icon_name}' is not registered in SVG_REGISTRY.")
+    return svg_content
+
+
 class IconColorizer:
     @staticmethod
     def get_icon(name: str, color: str) -> QIcon:
@@ -64,14 +88,10 @@ class IconColorizer:
             - name must be a registered icon string.
             - color must be a valid hex string or color name.
         """
-        assert isinstance(name, str), "name must be a string"
-        assert isinstance(color, str), "color must be a string"
+        svg_content = get_registered_svg(SVG_REGISTRY, name)
+        valid_color = validate_icon_color(color)
 
-        svg_content = SVG_REGISTRY.get(name)
-        if not svg_content:
-            raise ValueError(f"Icon '{name}' is not registered in SVG_REGISTRY.")
-
-        colored_svg = svg_content.replace("{color}", color)
+        colored_svg = svg_content.replace("{color}", valid_color)
         pixmap = QPixmap()
         pixmap.loadFromData(QByteArray(colored_svg.encode("utf-8")))
         return QIcon(pixmap)
@@ -85,7 +105,7 @@ class IconColorizer:
             - path must be a valid, existing file path.
             - color must be a valid hex string or color name.
         """
-        assert isinstance(color, str), "color must be a string"
+        valid_color = validate_icon_color(color)
 
         path = Path(path)
         if not path.exists():
@@ -94,8 +114,8 @@ class IconColorizer:
         with open(path, encoding="utf-8") as f:
             svg_content = f.read()
 
-        svg_content = re.sub(r'fill="[^"]+"', f'fill="{color}"', svg_content)
-        svg_content = re.sub(r'stroke="[^"]+"', f'stroke="{color}"', svg_content)
+        svg_content = re.sub(r'fill="[^"]+"', f'fill="{valid_color}"', svg_content)
+        svg_content = re.sub(r'stroke="[^"]+"', f'stroke="{valid_color}"', svg_content)
 
         pixmap = QPixmap()
         pixmap.loadFromData(QByteArray(svg_content.encode("utf-8")))
