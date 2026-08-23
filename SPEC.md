@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.88                                    |
+| **Spec Version**        | 1.17.89                                    |
 | **Last Spec Update**    | 2026-08-22                                 |
 
 ## 2. Purpose & Mission
@@ -5125,6 +5125,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-22 | 1.17.89 | fix(ci/rate-of-closure, #4142/#4433): reconcile both bounded handoffs after protected PR #4646 merged and serialize the trusted Playwright dependency installer behind the fleet apt mutex. The installer waits for all dpkg/apt locks, retains the runner identity and Node environment, and fails closed without passwordless sudo; a workflow contract test prevents regression. This addresses the transient setup collision that stopped React before browser execution and left dependent PyQt without its required artifact. Visual/scientific assertions, baselines, and the 15-second child-import ceiling remain unchanged. Require passing trusted evidence after protected merge before requirement adjudication or immutable UpstreamDrift pinning. |
 | 2026-08-22 | 1.17.88 | fix(rate-of-closure, #4626): give only the complete registered React visual-evidence pass a bounded 180-second Playwright budget after trusted trace evidence showed its valid ten-tab 1440-by-900 pass consumed about 43 seconds and the unchanged 45-second suite default expired at the second of three viewports. All visual assertions, stable-paint sampling, artifact requirements, comparator behavior, and unrelated test budgets remain unchanged. |
 | 2026-08-22 | 1.17.87 | fix(rate-of-closure, #4626): require trusted React baseline candidates to reach raster stability after font readiness and two animation frames. Candidate capture now requires three byte-identical screenshots sampled 100 ms apart and fails closed after 20 samples; a scheduled late-paint regression proves that capture does not accept an earlier incomplete frame. Existing baseline bytes, scientific authority, and drift thresholds are unchanged. |
 | 2026-08-21 | 1.17.86 | test(rate-of-closure, #4631): propose the complete hosted Linux visual set from source head `7e3d8fcefe25147044f2979fe6301db27d92ddb3`. React Variation and PyQt Variation visibly add the durable-analysis control; React Plot and Neural Model Lab refresh only drift already inside the protected tolerance. Exact hosted bytes and SHA-256 values are retained. The references remain proposed until protected merge; scientific authority and drift limits are unchanged. |

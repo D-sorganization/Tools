@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-21
+> Last updated: 2026-08-22
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -58,14 +58,20 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React Worker do not reimplement physics. #4628/#4635 merged durable
-analysis and stable-paint capture; this branch includes `main` through `d93db6c16`. Trusted React job `97030072285` completes all ten 1440x900 tabs in about
-43 s, then the 45-s suite default expires while starting Simulation at the second of three viewports. The tab is present: the trace proves
-this is the evidence-pass budget, not UI absence. #4626 is reopened; `fix/4626-postmerge-visual-contract` gives only this registered pass a
-bounded 180-s timeout while retaining every viewport, stable-paint, geometry, overflow, artifact, and fail-closed comparator assertion.
-Focused ESLint and Playwright discovery pass. Full production evidence is deferred while the 20-worker UpstreamDrift campaign owns the
-workstation; do not weaken its unchanged 15-s child-import ceiling. Protected Linux evidence, human review, and merge remain; no baseline
-is promoted. PyQt job `97031112519` failed only because the missing React manifest correctly made the comparator fail closed.
+#4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React
+Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
+execution, bounded analysis, stable-paint capture, and the registered
+three-viewport runtime correction. #4646 merge commit
+`6e6e575904a6b0d52684f3994343076d07509144` is an ancestor of current `main`
+`55e7f012551438426e18bcd1d49e1281a0bcf02f`. Its PR head passed required CI,
+but trusted main-push React job `97098245144` stopped before browser execution
+because another apt process held `/var/lib/apt/lists/lock`; dependent PyQt job
+`97098605332` then failed closed on the absent React artifact. No registered
+scientific or visual assertion ran or failed, so these jobs are not completion
+evidence. PR #4649 serializes the Playwright installer behind the fleet apt
+mutex while retaining all assertions and the 15-second import ceiling. Require
+its protected merge's trusted main-push evidence before auditing R10-R15/#4433
+and adding the immutable UpstreamDrift consumer pin/parity.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
@@ -75,7 +81,7 @@ cross-checked by **order-strict tuple equality** on `(surface, tab_id)` against
 different order — fails with a message that does not name the offending file.
 
 All four live in `src/rate_of_closure/`: `visualization_tabs.v1.json` is the
-authority (18 entries = 9 `pyqt` + 9 `react`); `visualization_accessibility.v1.json`,
+authority (20 entries = 10 `pyqt` + 10 `react`); `visualization_accessibility.v1.json`,
 `visualization_performance.v1.json` and `visual_baselines.v1.json` must match it
 entry-for-entry, in order.
 
@@ -99,8 +105,7 @@ entry-for-entry, in order.
 3. `web/src/model/__fixtures__/` — golden fixtures pinning Python↔TS parity.
    Changing one is a contract change on **both** sides; land together.
 4. `rust_core/swing-core/` — pendulum EOM + plane projection, pyo3 + wasm.
-5. `src/shared/python/golf_club/AGENT_HANDOFF.md` — the fitting/heavy-hit
-   physics surface the GUI children bind to.
+5. `src/shared/python/golf_club/AGENT_HANDOFF.md` — fitting/heavy-hit physics.
 
 ## Gate Commands (this tool)
 
@@ -126,20 +131,15 @@ flight`, breaking the Morris UI import contract. Use the lazy-export map.
 
 ## Known Local-Environment Traps
 
-- **Reproduce CI's mypy exactly or it disagrees in both directions.** CI passes
-  _every_ changed file to **one** invocation with `MYPYPATH=src:src/python/src`.
-  Per-file runs degrade those imports to `Any`, inventing `no-any-return`
-  findings CI lacks and hiding the `redundant-cast` ones it has — #4531 failed
-  `quality-gate` on exactly that. Use **3.12**; mypy 1.13 errors internally on
-  3.13 for multi-file sets. `tests/` is excluded from mypy entirely.
+- **Reproduce CI's mypy exactly.** Pass every changed file to one Python 3.12
+  invocation with `MYPYPATH=src:src/python/src`; tests are excluded.
   `MYPYPATH='src;src/python/src' py -3.12 -m mypy --ignore-missing-imports --follow-imports=skip <changed non-test files>`
 - **`tools_core` capability is two-tier** — a wheel can expose
   `simulate_trajectory` yet lack the tee-aware full-state API; guard on the
   specific capability. `test_club_view_camera.py`'s cadence test asserts
   wall-clock time and is flaky under load.
-- PowerShell `Set-Content` and Python `pathlib.write_text` rewrite LF files as
-  CRLF (an 834-line phantom diff from a 4-line edit); use
-  `io.open(..., newline="")`.
+- PowerShell `Set-Content` and `pathlib.write_text` can rewrite LF as CRLF;
+  preserve newlines explicitly.
 - **`detect_secrets scan` writes native separators** — on Windows run it
   _before_ normalising the baseline to forward slashes, never after
   (`tests/ops/test_detect_secrets_baseline.py` rejects backslash keys).
