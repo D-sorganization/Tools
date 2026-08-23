@@ -71,7 +71,17 @@ export function swingTracesToCsv(result: SwingVariationResultTs): string {
       });
     });
   });
-  return rows.map((row) => row.map(spreadsheetSafeCsvCell).join(",")).join("\n") + "\n";
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  let csv = "";
+  for (let r = 0; r < rows.length; r++) {
+    const row = rows[r];
+    for (let c = 0; c < row.length; c++) {
+      if (c > 0) csv += ",";
+      csv += spreadsheetSafeCsvCell(row[c]);
+    }
+    csv += "\n";
+  }
+  return csv;
 }
 
 export function localizedTorqueSourcesToCsv(result: SwingVariationResultTs): string {
@@ -87,7 +97,17 @@ export function localizedTorqueSourcesToCsv(result: SwingVariationResultTs): str
       String(command.torqueNm), command.unit, command.provenance,
     ]);
   }));
-  return rows.map((row) => row.map(spreadsheetSafeCsvCell).join(",")).join("\n") + "\n";
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  let csv = "";
+  for (let r = 0; r < rows.length; r++) {
+    const row = rows[r];
+    for (let c = 0; c < row.length; c++) {
+      if (c > 0) csv += ",";
+      csv += spreadsheetSafeCsvCell(row[c]);
+    }
+    csv += "\n";
+  }
+  return csv;
 }
 
 export const SWING_VARIATION_OUTPUT_NAMES = [
