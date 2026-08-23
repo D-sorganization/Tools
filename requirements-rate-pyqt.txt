@@ -5,8 +5,8 @@
 numpy==2.3.5
 scipy==1.17.1
 PyQt6==6.11.0
-PyQt6-Qt6==6.11.0
-PyQt6-sip==13.11.1
+PyQt6-Qt6==6.11.1
+PyQt6-sip==13.12.0
 matplotlib==3.11.1
 pandas==2.3.3
 sympy==1.14.0

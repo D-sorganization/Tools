@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-21
+> Last updated: 2026-08-22
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4623 merged durable R11.5 restart/checksum transport; #4626 is implementing non-materializing production, analysis, budgets, and clients.                    |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4628 merged R11.5 durable non-materializing production, analysis, budgets, and clients; #4626 is reopened for trusted visual qualification.            |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Landed via **#4473**.                                                                                                                                                |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
@@ -63,11 +63,11 @@ inspectors under `ui/pyqt6/`). Reopen rather than rebase.
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
-**Active #4142 work.** After #4623 merged at `b886d4373`, #4626 continues R11.5
-on `feat/4626-streaming-ensemble`. Commits `9520ea046..12c2eb8ed` add verified
-analysis, safe stream/tensor limits, v2 sampling, and a bounded source retaining
-no full input/config roster. Resume skips the solver prefix; 81 tests, MyPy/Ruff,
-and changed-file size pass. Budgets, geometry/sensitivity, and clients remain.
+**Active #4142 evidence repair.** R11.5 and stable-paint capture merged through
+#4628/#4635; the branch includes `main` through `d93db6c16`. Trusted job `97030072285` completes
+all ten 1440x900 tabs in ~43 s, then the 45-s suite default expires at viewport
+two; #4626 is reopened. `fix/4626-postmerge-visual-contract` gives only that
+three-viewport evidence pass 180 s; protected evidence, review, and merge remain.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

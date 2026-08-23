@@ -14,10 +14,10 @@ sympy>=1.12  # Symbolic mathematics and algebra
 pytest>=9.0.3  # Testing framework
 pytest-qt>=4.4.0  # Pytest plugin for PyQt applications
 pytest-cov>=4.0.0  # Coverage plugin for pytest (code coverage metrics)
-jsonschema>=4.0.0  # Draft 2020-12 validator for the swing_sim ground profile schema tests
+jsonschema>=4.26.0  # Draft 2020-12 validator for the swing_sim ground profile schema tests
 ruff>=0.1.0  # Fast Python linter and formatter (replaces flake8/black)
-mypy==2.3.0  # Static type checker for Python (pinned to match CI workflow)
-types-PyYAML>=6.0.12.20260518  # Type stubs for PyYAML (static typing)
+mypy==2.3.1  # Static type checker for Python (pinned to match CI workflow)
+types-PyYAML>=6.0.12.20260815  # Type stubs for PyYAML (static typing)
 types-requests>=2.33.0.20260518  # Type stubs for requests library (static typing)
 types-python-dateutil>=2.9.0.20260807  # Type stubs for python-dateutil (avoids mypy --install-types cache issue)
 types-decorator>=5.2.0.20260712  # Type stubs for decorator (avoids mypy --install-types cache issue)
@@ -41,7 +41,7 @@ filelock>=3.12.0  # File locking mechanism for concurrent state security and aut
 # Security & Encryption
 cryptography>=49.0.0  # Cryptographic recipes and primitives
 defusedxml>=0.7.0  # Safe XML parsing (mitigates XML bomb / XXE attacks)
-pygments>=2.20.0,<2.21.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
+pygments>=2.21.0,<2.22.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
 
 # Data Formats & Configuration
 pyyaml>=6.0.1  # YAML parser and emitter
