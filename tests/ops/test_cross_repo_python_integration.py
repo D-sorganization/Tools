@@ -24,6 +24,7 @@ REQUIRED_SPARSE_PATHS = {
         "pyproject.toml",
         "scripts",
         "src/shared",
+        "tests/conftest.py",
         "tests/shared_contracts",
         "tests/support",
     },

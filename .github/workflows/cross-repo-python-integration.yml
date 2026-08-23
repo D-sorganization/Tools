@@ -105,6 +105,7 @@ jobs:
               pyproject.toml
               scripts
               src/shared
+              tests/conftest.py
               tests/shared_contracts
               tests/support
             sparse_cone: false
