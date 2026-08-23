@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-21
+> Last updated: 2026-08-22
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -58,14 +58,18 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React Worker do not reimplement physics. #4628/#4635 merged durable
-analysis and stable-paint capture; this branch includes `main` through `d93db6c16`. Trusted React job `97030072285` completes all ten 1440x900 tabs in about
-43 s, then the 45-s suite default expires while starting Simulation at the second of three viewports. The tab is present: the trace proves
-this is the evidence-pass budget, not UI absence. #4626 is reopened; `fix/4626-postmerge-visual-contract` gives only this registered pass a
-bounded 180-s timeout while retaining every viewport, stable-paint, geometry, overflow, artifact, and fail-closed comparator assertion.
-Focused ESLint and Playwright discovery pass. Full production evidence is deferred while the 20-worker UpstreamDrift campaign owns the
-workstation; do not weaken its unchanged 15-s child-import ceiling. Protected Linux evidence, human review, and merge remain; no baseline
-is promoted. PyQt job `97031112519` failed only because the missing React manifest correctly made the comparator fail closed.
+#4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React
+Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
+execution, bounded analysis, stable-paint capture, and the registered
+three-viewport runtime correction. #4646 merge commit
+`6e6e575904a6b0d52684f3994343076d07509144` is an ancestor of current `main`
+`55e7f012551438426e18bcd1d49e1281a0bcf02f`. It retains every viewport,
+stable-paint, geometry, overflow, artifact, and fail-closed comparator assertion
+while changing only the complete visual pass to a bounded 180-second budget;
+the 15-second child-import ceiling is unchanged. No baseline or scientific
+claim was promoted. Next, audit every R10-R15 and #4433 acceptance item against
+merged evidence, then add the immutable UpstreamDrift consumer pin/parity slice
+for qualified ensemble outputs.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
