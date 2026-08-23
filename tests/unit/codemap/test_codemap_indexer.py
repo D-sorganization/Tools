@@ -12,11 +12,7 @@ from codemap._ts_common import ParsedSymbol, ParseResult
 
 from codemap import db as codemap_db
 from codemap import indexer
-from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
-
-# Scoped to this module only; a session-wide skip hook silenced the whole
-# suite here once already (issue #4497).
-pytestmark = CODEMAP_DEPS_SKIP
+# test_codemap_indexer uses mock parsers and does not require the tree-sitter stack.
 
 
 def _python_result(path: str | Path, _source: bytes | str) -> ParseResult:
@@ -304,9 +300,9 @@ def test_git_helpers_parse_successful_command_output(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     def fake_check_output(args: list[str], **_kwargs: object) -> str:
-        if args[:3] == ["git", "diff", "--name-only"]:
+        if len(args) >= 3 and args[1:3] == ["diff", "--name-only"]:
             return "\n src/tool.py \n\nREADME.md\n"
-        if args == ["git", "rev-parse", "HEAD"]:
+        if len(args) >= 3 and args[1:3] == ["rev-parse", "HEAD"]:
             return " abc123 \n"
         raise AssertionError(args)
 
