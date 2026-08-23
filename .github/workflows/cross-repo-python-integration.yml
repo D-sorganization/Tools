@@ -101,6 +101,7 @@ jobs:
               README.md
               build_hooks.py
               pyproject.toml
+              scripts
               src/shared
               tests/shared_contracts
               tests/support
