@@ -71,7 +71,18 @@ export function swingTracesToCsv(result: SwingVariationResultTs): string {
       });
     });
   });
-  return rows.map((row) => row.map(spreadsheetSafeCsvCell).join(",")).join("\n") + "\n";
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  let csvText = "";
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) csvText += ",";
+      csvText += spreadsheetSafeCsvCell(row[j]);
+    }
+    csvText += "\n";
+  }
+  return csvText;
 }
 
 export function localizedTorqueSourcesToCsv(result: SwingVariationResultTs): string {
@@ -87,7 +98,18 @@ export function localizedTorqueSourcesToCsv(result: SwingVariationResultTs): str
       String(command.torqueNm), command.unit, command.provenance,
     ]);
   }));
-  return rows.map((row) => row.map(spreadsheetSafeCsvCell).join(",")).join("\n") + "\n";
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  let csvText = "";
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) csvText += ",";
+      csvText += spreadsheetSafeCsvCell(row[j]);
+    }
+    csvText += "\n";
+  }
+  return csvText;
 }
 
 export const SWING_VARIATION_OUTPUT_NAMES = [
