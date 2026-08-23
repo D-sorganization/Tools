@@ -219,8 +219,9 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     assert pr_commands["Install Playwright-pinned browser runtimes"] == (
         "npx --no-install playwright install --with-deps chromium firefox webkit"
     )
-    assert trusted_web_commands["Install Playwright-pinned Chromium runtime"] == (
+    assert (
         "npx --no-install playwright install --with-deps chromium"
+        in trusted_web_commands["Install Playwright-pinned Chromium runtime"]
     )
     assert (
         pr_commands["Exercise production Worker lifecycle, layouts, and browser parity"]
@@ -330,6 +331,20 @@ def test_trusted_self_hosted_web_job_does_not_register_npm_cache_cleanup() -> No
         "package-manager-cache": False,
     }
     assert _run_steps(trusted_job)["Install locked web dependencies"] == "npm ci"
+
+
+def test_trusted_playwright_install_serializes_shared_runner_apt_access() -> None:
+    trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]["push-production-worker-e2e"]
+    command = _run_steps(trusted_job)["Install Playwright-pinned Chromium runtime"]
+
+    assert "sudo -n true" in command
+    assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in command
+    assert 'sudo -u "$(id -un)"' in command
+    assert "while sudo -n fuser /var/lib/dpkg/lock" in command
+    assert "sudo -n fuser /var/lib/apt/lists/lock" in command
+    assert "sudo -n fuser /var/cache/apt/archives/lock" in command
+    assert "Passwordless sudo is required for Playwright system dependencies" in command
+    assert "npx --no-install playwright install --with-deps chromium" in command
 
 
 def test_full_pyqt_window_dependency_is_declared_by_shared_gui_extra() -> None:

@@ -30,36 +30,31 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open. |
 
-Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`,
-`src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
+Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
 ## Open PR Situation — Read Before Filing Anything
 
-No PR is a draft. The live golf queue includes Sidekick and remaining #4142
-work; query `gh pr list` rather than trusting a count here.
+No PR is a draft. The live golf queue includes Sidekick and remaining #4142 work; query `gh pr list` rather than trusting a count here.
 
 | PR    | Scope                                                                      |
 | ----- | -------------------------------------------------------------------------- |
 | #4585 | Sidekick Phase S1/S2 integration; active protected delivery                |
 | #4600 | Post-merge PyQt launch-monitor visual-baseline approval                    |
+| #4649 | Serialize trusted Playwright apt access; reconcile #4142/#4433 handoffs     |
 | #4466 | Rate of Closure remainder — **content-complete except the camera cluster** |
 | #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)          |
 | #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)              |
 | #4446 | Ground study + rate-of-closure suites (supersedes #4409/#4410)             |
 
-**#4466 still cannot be merged by any strategy** — after #4473 squash-merged,
-its merge-base collapses to a commit predating `src/rate_of_closure/`, making
-all 281 overlapping files both-added conflicts with no common ancestor. It was
-landed as 22 slices instead (#4517–#4547). **Only the camera-controls cluster
-is left, and it is a reimplementation, not a migration**: wiring
-`CameraViewportMixin` in passes 20/20 camera GUI tests but regresses three
-`main`-owned ones, and matching the branch's Face-On behaviour needs ~20 more
-`ui/pyqt6` files that _delete_ shipped work. **#4571 is that epic; do not slice it, and
-do not close #4466 until #4571 lands.**
+**#4466 still cannot be merged by any strategy** — its merge-base predates
+`src/rate_of_closure/`, making 281 overlapping files both-added conflicts. Its
+content landed as 22 slices (#4517–#4547). **Only the camera-controls cluster
+remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
+tests but regresses three main-owned tests and needs ~20 UI files that delete
+shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 
-The 39 `codex/4142-*` / `codex/4433-*` drafts were closed on 2026-08-16 as
-superseded by merged #4473 (Morris chain under `application/morris/`, #4433
-inspectors under `ui/pyqt6/`). Reopen rather than rebase.
+The 39 `codex/4142-*` / `codex/4433-*` drafts were superseded by merged #4473
+(Morris under `application/morris/`, #4433 inspectors under `ui/pyqt6/`).
 
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
@@ -71,10 +66,11 @@ protected-merged through #4628/#4635/#4646. Merge commit
 but trusted main-push React job `97098245144` stopped before browser execution
 because another apt process held `/var/lib/apt/lists/lock`; dependent PyQt job
 `97098605332` then failed closed on the absent React artifact. No scientific or
-visual assertion failed, but neither job is completion evidence. Do not weaken
-the unchanged 15-second child-import ceiling or rerun while the UpstreamDrift
-campaign owns the workstation. After it releases CPU, run this failed workflow
-once, audit every R10-R15/#4433 item, and add the immutable UpstreamDrift pin.
+visual assertion failed, but neither job is completion evidence. PR #4649 now
+serializes the trusted installer behind the fleet apt mutex without changing
+assertions or the 15-second import ceiling. Its eventual protected merge must
+produce a passing trusted main-push run; then audit R10-R15/#4433 and pin the
+immutable Tools commit in UpstreamDrift.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -85,12 +81,9 @@ fixture parity gaps). #4602/#4608/#4610 isolate trusted React/PyQt evidence;
 
 ## Must-Read Architecture Pointers
 
-1. `CLAUDE.md` — repo-wide conventions, CI gate list, cross-repo dependency
-   rules (Tools is a leaf dependency; UpstreamDrift and Gasification_Model
-   consume it).
+1. `CLAUDE.md` — conventions, CI gates, and cross-repo dependency rules; Tools is a leaf consumed by UpstreamDrift and Gasification_Model.
 2. `docs/architecture/CANONICAL_TOPOLOGY.md` — canonical repo topology policy.
-3. `SPEC.md` — living specification; §12 Change Log requires a dated row for
-   every PR touching `src/` (enforced by `spec-check.yml`, see gates below).
+3. `SPEC.md` — §12 requires a dated row for every PR touching `src/`.
 4. `docs/AGENT_HANDOFF_TEMPLATE.md` — template for a new tool's handoff doc.
 
 ## Gate Commands (repo-wide)
