@@ -188,7 +188,7 @@ jobs:
       # Cache cargo registry/git only. Restored target/ fingerprints can point
       # at missing dep-info files on self-hosted runners after interrupted jobs.
       - name: Cache Rust dependencies (check)
-        uses: Swatinem/rust-cache@258712b0b7b1ddf8bddc9fc3b0faca682b2736c3 # v2
+        uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
         with:
           workspaces: ${{ matrix.path }}/src-tauri -> target
           key: ${{ matrix.app }}-check
@@ -360,7 +360,7 @@ jobs:
       # Cache cargo registry/git only. Build target/ caches are large and can
       # become inconsistent across interrupted self-hosted runner jobs.
       - name: Cache Rust dependencies (build)
-        uses: Swatinem/rust-cache@258712b0b7b1ddf8bddc9fc3b0faca682b2736c3 # v2
+        uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
         with:
           workspaces: ${{ matrix.app.path }}/src-tauri -> target
           key: ${{ matrix.app.name }}-${{ matrix.platform.target }}-release
