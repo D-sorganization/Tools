@@ -209,7 +209,7 @@ export function FlightPlayback3D({
         aria-label="Interactive 3D ball-flight playback"
         aria-description={spatialTarget ? `Includes ${spatialTargetSummary(spatialTarget)}` : undefined}
         title="Drag to rotate; use the mouse wheel to zoom. App frame: x target, y up, z right; SI metres and seconds."
-        className="w-full touch-none rounded-lg border border-slate-800 bg-slate-950/60 outline-none focus:ring-2 focus:ring-sky-500"
+        className="w-full touch-none rounded-lg border border-slate-800 bg-slate-950/60 focus-visible:outline-none focus:ring-2 focus:ring-sky-500"
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture?.(event.pointerId);
           dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };

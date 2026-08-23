@@ -41,7 +41,7 @@ class TargetDraftError extends Error {
 
 const INPUT_CLASS =
   "w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 " +
-  "focus:border-sky-400 focus:outline-none aria-[invalid=true]:border-rose-400";
+  "focus:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 aria-[invalid=true]:border-rose-400";
 const ERROR_ID = "spatial-target-validation-error";
 
 function finite(raw: string, field: DraftField, label: string): number {

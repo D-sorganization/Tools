@@ -125,7 +125,7 @@ export function FlightCanvases({
         width={SIDE_CANVAS_SIZE.width}
         height={SIDE_CANVAS_SIZE.height}
         style={responsiveFlightCanvasStyle(SIDE_CANVAS_SIZE)}
-        className="min-h-[180px] w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60 outline-none focus-visible:ring-2 focus-visible:ring-sky-400 sm:min-h-0"
+        className="min-h-[180px] w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 sm:min-h-0"
         aria-label="Flight side profile (height vs carry)"
         aria-keyshortcuts="ArrowLeft ArrowRight Home End Escape"
         aria-description={targetDescription}
@@ -137,7 +137,7 @@ export function FlightCanvases({
         width={TOP_CANVAS_SIZE.width}
         height={TOP_CANVAS_SIZE.height}
         style={responsiveFlightCanvasStyle(TOP_CANVAS_SIZE)}
-        className="min-h-[180px] w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60 outline-none focus-visible:ring-2 focus-visible:ring-sky-400 sm:min-h-0"
+        className="min-h-[180px] w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 sm:min-h-0"
         aria-label="Flight top-down view (lateral vs carry)"
         aria-keyshortcuts="ArrowLeft ArrowRight Home End Escape"
         aria-description={targetDescription}

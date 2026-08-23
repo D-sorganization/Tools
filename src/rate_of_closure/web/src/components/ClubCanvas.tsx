@@ -192,7 +192,7 @@ export function ClubCanvas({
             value={mode}
             title="Display mode: head fixed in place or moving through space"
             onChange={(e) => setMode(e.target.value as ViewMode)}
-            className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
+            className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
             {VIEW_MODES.map((m) => (
               <option key={m} value={m}>

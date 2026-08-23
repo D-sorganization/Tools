@@ -40,7 +40,7 @@ export function GlossaryPanel({ initialTerm }: { initialTerm?: string }) {
             placeholder="Search terms and definitions…"
             title="Filter the glossary: matches term names and definition text, case-insensitive"
             aria-label="Search glossary"
-            className="mb-3 w-full rounded border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus:outline-none"
+            className="mb-3 w-full rounded border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           />
           <ul
             aria-label="Glossary terms"

@@ -104,7 +104,7 @@ export function LaunchMonitorLinkedScatter({
       aria-label={`${yField} versus ${xField} linked scatter plot`}
       aria-describedby="linked-scatter-instructions linked-scatter-status"
       onPointerDown={chooseNearest} onKeyDown={navigate}
-      className="h-64 min-h-[180px] w-full rounded-lg border border-slate-800 bg-slate-950 outline-none focus-visible:ring-2 focus-visible:ring-sky-300">
+      className="h-64 min-h-[180px] w-full rounded-lg border border-slate-800 bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300">
       <line x1={LEFT} y1={215} x2={620} y2={215} stroke="#475569" />
       <line x1={LEFT} y1={TOP} x2={LEFT} y2={215} stroke="#475569" />
       <path d={path} fill="none" stroke="#38bdf8" strokeWidth="6" strokeLinecap="round" opacity="0.72" />

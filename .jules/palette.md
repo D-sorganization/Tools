@@ -61,3 +61,6 @@
 ## 2026-08-22 - Focus Rings on Flow Rate Converter Inputs
 **Learning:** Found an accessibility issue pattern where inputs and selects in Flow Rate Converter have `focus:outline-none` but lack focus indicators, making keyboard navigation difficult.
 **Action:** Replace `focus:outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.
+## 2026-08-23 - Focus Rings on Rate of Closure Inputs
+**Learning:** Found an accessibility issue pattern where inputs and buttons in Rate of Closure have `focus:outline-none` or `outline-none` but lack focus indicators, making keyboard navigation difficult.
+**Action:** Replace `outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.

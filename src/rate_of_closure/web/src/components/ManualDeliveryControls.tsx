@@ -14,7 +14,7 @@ interface Props {
 
 const INPUT_CLASS =
   "no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 " +
-  "text-slate-100 focus:border-blue-500 focus:outline-none disabled:cursor-not-allowed " +
+  "text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed " +
   "disabled:opacity-45";
 
 const GUIDANCE = {

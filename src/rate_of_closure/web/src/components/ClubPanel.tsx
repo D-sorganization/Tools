@@ -23,7 +23,7 @@ import { FIELD_GUIDANCE } from "../model/units";
 
 const INPUT_CLASS =
   "no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 " +
-  "py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none " +
+  "py-1.5 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 " +
   "disabled:opacity-40";
 
 export function ClubPanel({
@@ -86,7 +86,7 @@ export function ClubPanel({
           value={clubName}
           onChange={(e) => onClubChange(e.target.value)}
           title={FIELD_GUIDANCE.clubSelection}
-          className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+          className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           {CLUB_LIBRARY.map((club) => (
             <option key={club.name} value={club.name}>

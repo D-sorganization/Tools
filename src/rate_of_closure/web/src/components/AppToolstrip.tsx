@@ -26,11 +26,11 @@ interface AppToolstripProps {
 const MENU_CLASS =
   "relative shrink-0 rounded-lg border border-slate-700/80 bg-slate-900/90 text-sm text-slate-200";
 const SUMMARY_CLASS =
-  "cursor-pointer list-none rounded-lg px-2 py-2 font-semibold hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 sm:px-3";
+  "cursor-pointer list-none rounded-lg px-2 py-2 font-semibold hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-sky-400 sm:px-3";
 const POPOVER_CLASS =
   "absolute left-0 z-40 mt-1 min-w-64 rounded-xl border border-slate-700 bg-slate-950 p-3 shadow-2xl shadow-black/50";
 const COMMAND_CLASS =
-  "w-full rounded-md px-3 py-2 text-left text-sm hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 disabled:cursor-not-allowed disabled:opacity-45";
+  "w-full rounded-md px-3 py-2 text-left text-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-sky-400 disabled:cursor-not-allowed disabled:opacity-45";
 
 const commandShortcut = (id: AppCommandId): string | undefined =>
   commandsInGroup("global").find((command) => command.id === id)?.shortcut;
@@ -65,7 +65,7 @@ function ShortcutDialog({ onClose }: { readonly onClose: () => void }) {
             type="button"
             aria-label="Close Keyboard Shortcuts"
             onClick={onClose}
-            className="rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+            className="rounded-md px-3 py-2 text-slate-300 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-sky-400"
           >
             Close
           </button>
@@ -251,7 +251,7 @@ export function AppToolstrip({
                 data-command-id={id}
                 title={`Show the ${label.toLowerCase()} view in the main workspace.`}
                 onClick={() => run(id)}
-                className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-sky-400"
               >
                 {label}
               </button>

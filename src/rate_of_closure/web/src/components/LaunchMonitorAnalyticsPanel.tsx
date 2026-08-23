@@ -43,7 +43,7 @@ const DEMO_ROWS: LaunchMonitorRow[] = Array.from({ length: 120 }, (_, index) => 
 });
 
 const card = "rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20";
-const field = "w-full rounded border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none";
+const field = "w-full rounded border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-slate-100 focus:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
 
 const finiteText = (value: number | null | undefined, digits = 4) =>
   value === null || value === undefined || !Number.isFinite(value) ? "—" : value.toFixed(digits);

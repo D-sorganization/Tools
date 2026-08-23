@@ -48,7 +48,7 @@ function NumericInput(props: {
         aria-describedby={props.invalid ? "regional-surface-plan-error" : undefined}
         onChange={(event) => props.onChange(event.target.value === ""
           ? Number.NaN : Number(event.target.value))}
-        className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-100 outline-none focus:border-sky-500 aria-[invalid=true]:border-rose-500" />
+        className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-100 focus-visible:outline-none focus:border-sky-500 aria-[invalid=true]:border-rose-500" />
     </label>
   );
 }
@@ -69,7 +69,7 @@ function MaterialEditor(props: {
           onChange={(event) => props.onChange({
             ...props.value, surface_id: event.target.value,
           })}
-          className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-100 outline-none focus:border-sky-500" />
+          className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-100 focus-visible:outline-none focus:border-sky-500" />
       </label>
       {MATERIAL_FIELDS.map(([field, label, step]) => (
         <NumericInput key={field} label={`${props.prefix} ${label}`}
