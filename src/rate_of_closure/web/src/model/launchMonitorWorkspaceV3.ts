@@ -171,7 +171,18 @@ function csv(rows: Array<Record<string, unknown>>, fields: string[]): string {
     const text = value === null || value === undefined ? "" : String(value);
     return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
   };
-  return `${fields.join(",")}\n${rows.map((row) => fields.map((field) => escape(row[field])).join(",")).join("\n")}\n`;
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  let csvText = fields.join(",") + "\n";
+  for (let i = 0; i < rows.length; i++) {
+    if (i > 0) csvText += "\n";
+    const row = rows[i];
+    for (let j = 0; j < fields.length; j++) {
+      if (j > 0) csvText += ",";
+      csvText += escape(row[fields[j]]);
+    }
+  }
+  return csvText + "\n";
 }
 
 function permission(project: WorkspaceV3, authorization: WorkspaceExportAuthorization): [boolean, string | null] {

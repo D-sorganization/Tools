@@ -233,7 +233,19 @@ export function createSimulationRunCsv(
         sample.time,
         ...sample.position,
       ]);
-  return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  const allRows = [header, ...rows];
+  let csvText = "";
+  for (let i = 0; i < allRows.length; i++) {
+    if (i > 0) csvText += "\n";
+    const row = allRows[i];
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) csvText += ",";
+      csvText += csvCell(row[j]);
+    }
+  }
+  return csvText;
 }
 
 /** Older run documents had a fixed ground-level ball and therefore migrate to Ground. */
