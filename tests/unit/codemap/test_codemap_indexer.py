@@ -12,6 +12,7 @@ from codemap._ts_common import ParsedSymbol, ParseResult
 
 from codemap import db as codemap_db
 from codemap import indexer
+
 # test_codemap_indexer uses mock parsers and does not require the tree-sitter stack.
 
 

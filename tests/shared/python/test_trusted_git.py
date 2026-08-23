@@ -72,7 +72,7 @@ def test_git_changed_files_uses_trusted_absolute_git(
 def test_current_commit_uses_trusted_absolute_git(tmp_path: Path, monkeypatch) -> None:
     repo_root = tmp_path / "repo"
     repo_root.mkdir()
-    check_output = MagicMock(return_value="abcdef1234567890\n")
+    check_output = MagicMock(return_value="commit-hash-123\n")
 
     monkeypatch.setattr(
         codemap_indexer,
@@ -81,7 +81,7 @@ def test_current_commit_uses_trusted_absolute_git(tmp_path: Path, monkeypatch) -
     )
     monkeypatch.setattr(codemap_indexer.subprocess, "check_output", check_output)
 
-    assert codemap_indexer._current_commit(repo_root) == "abcdef1234567890"
+    assert codemap_indexer._current_commit(repo_root) == "commit-hash-123"
     check_output.assert_called_once_with(
         ["/trusted/bin/git", "rev-parse", "HEAD"],
         cwd=str(repo_root),
