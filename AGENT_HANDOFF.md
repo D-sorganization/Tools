@@ -22,9 +22,9 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4628/#4635/#4646 merged durable R11.5 execution and trusted visual qualification; requirement-level closure and the immutable UpstreamDrift consumer pin remain. |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4628/#4635/#4646 merged durable R11.5 execution and the visual-runtime correction; trusted post-merge evidence, requirement closure, and the UpstreamDrift pin remain. |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and protected visual qualification via #4646; acceptance audit and issue adjudication remain.                                   |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473**; #4646's post-merge evidence stopped at a transient apt lock, so qualification and acceptance adjudication remain.       |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                  |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
@@ -67,11 +67,14 @@ Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation,
 stable-paint capture, and the registered three-viewport runtime correction are
 protected-merged through #4628/#4635/#4646. Merge commit
 `6e6e575904a6b0d52684f3994343076d07509144` is an ancestor of current `main`
-`55e7f012551438426e18bcd1d49e1281a0bcf02f`; the protected head completed its
-required checks without weakening the unchanged 15-second child-import ceiling.
-No visual baseline or scientific claim was promoted. Audit every R10-R15 and
-#4433 acceptance item against merged evidence before issue closure, then create
-the immutable UpstreamDrift consumer pin/parity slice for qualified outputs.
+`55e7f012551438426e18bcd1d49e1281a0bcf02f`. Its PR head passed required CI,
+but trusted main-push React job `97098245144` stopped before browser execution
+because another apt process held `/var/lib/apt/lists/lock`; dependent PyQt job
+`97098605332` then failed closed on the absent React artifact. No scientific or
+visual assertion failed, but neither job is completion evidence. Do not weaken
+the unchanged 15-second child-import ceiling or rerun while the UpstreamDrift
+campaign owns the workstation. After it releases CPU, run this failed workflow
+once, audit every R10-R15/#4433 item, and add the immutable UpstreamDrift pin.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -148,7 +151,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Complete the #4142/#4433 requirement audit and immutable UpstreamDrift consumer pin; #4430 is complete.
+4. Complete #4646's trusted post-merge evidence, the #4142/#4433 requirement audit, and the immutable UpstreamDrift consumer pin; #4430 is complete.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.

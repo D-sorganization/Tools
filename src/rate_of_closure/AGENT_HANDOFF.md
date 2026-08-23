@@ -63,13 +63,14 @@ Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
 execution, bounded analysis, stable-paint capture, and the registered
 three-viewport runtime correction. #4646 merge commit
 `6e6e575904a6b0d52684f3994343076d07509144` is an ancestor of current `main`
-`55e7f012551438426e18bcd1d49e1281a0bcf02f`. It retains every viewport,
-stable-paint, geometry, overflow, artifact, and fail-closed comparator assertion
-while changing only the complete visual pass to a bounded 180-second budget;
-the 15-second child-import ceiling is unchanged. No baseline or scientific
-claim was promoted. Next, audit every R10-R15 and #4433 acceptance item against
-merged evidence, then add the immutable UpstreamDrift consumer pin/parity slice
-for qualified ensemble outputs.
+`55e7f012551438426e18bcd1d49e1281a0bcf02f`. Its PR head passed required CI,
+but trusted main-push React job `97098245144` stopped before browser execution
+because another apt process held `/var/lib/apt/lists/lock`; dependent PyQt job
+`97098605332` then failed closed on the absent React artifact. No registered
+scientific or visual assertion ran or failed, so these jobs are not completion
+evidence. Do not weaken the 15-second child-import ceiling or rerun while the
+UpstreamDrift campaign owns the workstation. Then rerun this workflow once,
+audit R10-R15/#4433, and add the immutable UpstreamDrift consumer pin/parity.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
