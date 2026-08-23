@@ -9,11 +9,6 @@ from types import SimpleNamespace
 import pytest
 
 from codemap import watcher
-from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
-
-# Scoped to this module only; a session-wide skip hook silenced the whole
-# suite here once already (issue #4497).
-pytestmark = CODEMAP_DEPS_SKIP
 
 
 class _BaseEventHandler:

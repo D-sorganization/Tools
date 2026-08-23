@@ -187,6 +187,10 @@ def _candidate_targets(src_path: str) -> list[Path]:
             targets.append(REPO_ROOT / test_path)
         return targets
 
+    if parts[:4] == ("src", "shared", "python", "codemap"):
+        targets.append(REPO_ROOT / "tests" / "unit" / "codemap")
+        return targets
+
     if parts[:4] == ("src", "shared", "python", "sidekick"):
         rel_sidekick_path = Path(*parts[4:]).as_posix()
         if rel_sidekick_path in _SIDEKICK_SOURCE_TESTS:
