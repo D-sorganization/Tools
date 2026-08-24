@@ -65,8 +65,8 @@ found `h5py` absent from the root CI manifest; the branch now declares and
 locks it, with a regression test. The next protected run exposed an incomplete
 sparse UpstreamDrift provider fixture; the branch now creates all fail-closed
 provider roots and regression-locks the workflow without skipping consumers;
-the Rust lane now has a tested 45-minute cold-cache budget after two healthy
-attempts exhausted 15 minutes while compiling `cargo-audit`. Current-main
+the Rust lane has a tested 45-minute budget after two healthy attempts exhausted
+15 minutes, and clears checkout auth before RustSec's public fetch. Current-main
 vendoring tests and all ten workflow tests pass
 locally, alongside the prior 310 variation tests. This is
 reproducibility and integrity evidence, not human validation or cross-runtime

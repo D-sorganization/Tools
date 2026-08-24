@@ -41,6 +41,16 @@ def test_rust_quality_gate_allows_cold_cache_completion() -> None:
     # healthy cold-cache run while cargo-audit was still compiling.
     assert int(rust_job["timeout-minutes"]) >= 45
 
+    audit_step = next(
+        step
+        for step in rust_job["steps"]
+        if step.get("name") == "Security Audit (cargo-audit)"
+    )
+    assert (
+        "git config --local --unset-all http.https://github.com/.extraheader || true"
+        in audit_step["run"]
+    )
+
 
 def _write_fake_python(arch_dir: Path, *, with_link_library: bool) -> None:
     python = arch_dir / "bin" / "python"

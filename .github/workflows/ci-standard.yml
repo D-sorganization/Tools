@@ -1178,6 +1178,10 @@ jobs:
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
           cargo install cargo-audit --locked
+          # actions/checkout persists its authenticated extraheader in the
+          # repository config. RustSec's public advisory-db fetch is anonymous;
+          # forwarding that repository token produces a fail-closed HTTP 401.
+          git config --local --unset-all http.https://github.com/.extraheader || true
           cargo audit
 
       - name: Build Python Wheel (Maturin)
