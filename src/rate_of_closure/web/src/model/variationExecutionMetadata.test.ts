@@ -103,7 +103,7 @@ describe("variation execution metadata", () => {
     expect(parseVariationExecutionDocument(
       JSON.stringify(variationExecutionDocument(edgePlan())),
     ).metadata.planSha256).toBe(
-      "6d7c23bb72a53359faa36d1d57d95835c9808bcdb67e0919859893e1a0cd711a",
+      "6d7c23bb72a53359faa36d1d57d95835c9808bcdb67e0919859893e1a0cd711a", // pragma: allowlist secret
     );
   });
 
@@ -150,7 +150,7 @@ describe("variation execution metadata", () => {
       producerId: "rate-of-closure/react",
       producerVersion: 1,
       sourceRepository: "D-sorganization/Tools",
-      sourceRevision: "6e7f464d04bd7727ba4b985a399114ece8f0f723",
+      sourceRevision: "6e7f464d04bd7727ba4b985a399114ece8f0f723", // pragma: allowlist secret
       sourceRevisionStatus: "exact",
       sourceRevisionReason: null,
     });

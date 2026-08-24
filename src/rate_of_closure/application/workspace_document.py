@@ -11,7 +11,7 @@ import json
 from collections.abc import Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import Any, cast
+from typing import Any
 
 from shared.python.swing_sim.torque_profiles import PrescribedTorqueProfile
 from shared.python.swing_sim.variation import VariationPlan
@@ -341,7 +341,7 @@ def _migrate_workspace(value: object) -> Mapping[str, Any]:
     if type(version) is not int or version not in _SUPPORTED_WORKSPACE_VERSIONS:
         raise ValueError(f"unsupported workspace schema_version {version!r}")
     if version == WORKSPACE_SCHEMA_VERSION:
-        return cast(Mapping[str, Any], exact_mapping(value, _ROOT_FIELDS, "workspace"))
+        return exact_mapping(value, _ROOT_FIELDS, "workspace")
     if version == 1:
         legacy = exact_mapping(value, _ROOT_V1_FIELDS, "workspace v1")
         legacy_layout = exact_mapping(legacy["layout"], _LAYOUT_V1_FIELDS, "layout v1")

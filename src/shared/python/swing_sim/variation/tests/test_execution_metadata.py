@@ -151,7 +151,9 @@ def test_source_provenance_requires_exact_revision_or_explicit_unavailability() 
         producer_id="rate-of-closure/python",
         producer_version=1,
         source_repository="D-sorganization/Tools",
-        source_revision="6e7f464d04bd7727ba4b985a399114ece8f0f723",
+        source_revision=(
+            "6e7f464d04bd7727ba4b985a399114ece8f0f723"  # pragma: allowlist secret
+        ),
         source_revision_status="exact",
         source_revision_reason=None,
     )
