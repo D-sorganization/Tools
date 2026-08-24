@@ -45,6 +45,7 @@ pygments>=2.21.0,<2.22.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via
 
 # Data Formats & Configuration
 pyyaml>=6.0.1  # YAML parser and emitter
+h5py>=3.10.0  # Canonical variation-dataset HDF5 persistence and full-suite collection
 
 # Web Automation & Testing
 playwright>=1.61.0  # Browser automation and testing framework

@@ -59,11 +59,13 @@ see the two contracts under `docs/specs/`.
 PR #4669 merged the version-3 execution documents, explicit legacy bindings,
 plan-digest-bound cross-runtime requests, and substitution failures across plan
 files, libraries, workspaces, datasets, geometry/durable ensembles, forgiveness
-exports, and regional results. `feat/4142-variation-hdf5` starts from its exact
-merge commit and adds public JSON/CSV/HDF5 scalar-dataset persistence, atomic
+exports, and regional results. PR #4674 starts from its exact merge commit and
+adds public JSON/CSV/HDF5 scalar-dataset persistence, atomic
 no-replace HDF5 publication, logical-content SHA-256 verification, and strict
-CSV row identity/shape checks; 23 focused tests and all 310 variation-package
-tests pass locally. The contract is
+CSV row identity/shape checks. Its initial protected Python jobs exposed a
+missing root-CI `h5py` declaration; the branch now declares and locks it with a
+regression test. Sixteen focused CI/HDF5 tests and all 310 variation tests pass
+locally. The contract is
 `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. The R10--R15 ledger stays partial:
 these controls prove provenance and integrity, not human validity or
 cross-runtime numerical equivalence.

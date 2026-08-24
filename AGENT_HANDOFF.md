@@ -57,11 +57,13 @@ shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 `f9730033fd279ba8b4abe03bab2aadd950400b47`; version-3 execution documents and
 explicit legacy bindings cover PyQt6/React plan files, named libraries,
 workspaces, scalar/geometry ensembles, durable archives, forgiveness exports,
-and regional results. `feat/4142-variation-hdf5` starts from that exact main and
-adds public JSON/CSV/HDF5 dataset persistence, a self-contained archive with
+and regional results. PR #4674 starts from that exact main and adds public
+JSON/CSV/HDF5 dataset persistence, a self-contained archive with
 unconditional logical-content integrity verification, atomic no-replace
-publication, and malformed-CSV rejection. The focused dataset suite passes 23
-tests locally; the complete variation package passes 310. This is
+publication, and malformed-CSV rejection. Its initial protected Python jobs
+found `h5py` absent from the root CI manifest; the branch now declares and
+locks it, with a regression test. Sixteen focused CI/HDF5 tests and all 310
+variation tests pass locally. This is
 reproducibility and integrity evidence, not human validation or cross-runtime
 numerical equivalence.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
