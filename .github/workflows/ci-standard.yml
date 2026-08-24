@@ -374,6 +374,9 @@ jobs:
       - name: Minimum Test Contract Check
         run: python3 scripts/check_minimum_test_contract.py
 
+      - name: Tracked LF Blob Normalization
+        run: python scripts/check_tracked_text_normalization.py
+
       - name: Changed Test Assertion Check
         run: python3 scripts/check_test_assertions.py --changed-files changed_python_files.txt
 

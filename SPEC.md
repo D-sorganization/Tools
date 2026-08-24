@@ -6038,10 +6038,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
-
 ### Version 1.17.10
 
 - 2026-08-22: fix(flow-rate-converter) — replaced focus:outline-none with focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 on input and select elements to restore keyboard focus indicators.
+
 ### Version 1.5.5
 
 - 2026-08-05: fix(rotation-converter) — update application navigation tabs
@@ -6380,3 +6380,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-23: Rate of Closure Current-Main Gate Repair (#4626)
 
 - **2026-08-23**: fix(rate_of_closure, packaging, #4626) — Isolate the PyQt visual-layout persistence probe from the optional Tools sidebar service, explicitly close both rendered windows, and give the test a 150-second budget consistent with its declared 120-second subprocess contract. Preserve the fail-closed clean-checkout wheel gate while adding bounded porcelain-path diagnostics so any runner-local mutation is directly actionable.
+
+## 2026-08-23: Tracked LF Blob Normalization (#4626)
+
+- **2026-08-23**: fix(packaging, governance, #4626) — Normalize the two CRLF/mixed tracked JSON blobs exposed by the post-merge exact-wheel gate and add a Git-index EOL verifier to pre-commit, standard CI, and both distribution lanes. The verifier admits LF and newline-free blobs governed by `eol=lf`, rejects CRLF/mixed committed content, and preserves the existing fail-closed clean-checkout release contract. Reconcile the May-era workflow-inventory hook with the protected August runner-routing policy by admitting policy-selected hosted fallbacks while retaining the deprecated fixed-hardware-label prohibition.
