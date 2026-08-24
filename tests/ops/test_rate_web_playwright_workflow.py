@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import tomllib
 from pathlib import Path
@@ -110,6 +111,22 @@ FULL_WINDOW_IMPORT_DEPENDENCIES = {
     "scipy": "scipy>=1.10.0,<1.18",
     "sympy": "sympy>=1.12",
 }
+
+
+def test_react_visual_authority_bundles_an_exact_font_environment() -> None:
+    web_root = REPO_ROOT / "src/rate_of_closure/web"
+    package = json.loads((web_root / "package.json").read_text(encoding="utf-8"))
+    css = (web_root / "src/index.css").read_text(encoding="utf-8")
+    capture = (web_root / "e2e/visualization-tab-visibility.spec.ts").read_text(
+        encoding="utf-8"
+    )
+
+    assert package["dependencies"]["@fontsource/inter"] == "5.3.0"
+    for weight in (400, 500, 600, 700):
+        assert f'@import "@fontsource/inter/latin-{weight}.css";' in css
+    assert 'font-family: "Inter", sans-serif;' in css
+    assert 'animations: "disabled"' in capture
+    assert "chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0" in capture
 
 
 def _workflow(path: Path) -> dict[Any, Any]:
