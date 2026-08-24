@@ -175,7 +175,22 @@ jobs:
       - name: Purge pip cache
         run: |
           python -m pip cache purge || true
-          python -c "import pathlib, site, shutil; [shutil.rmtree(p, ignore_errors=True) if p.is_dir() else p.unlink(missing_ok=True) for sp in site.getsitepackages() for p in pathlib.Path(sp).glob('~*')]" || true
+          python -c "
+          import pathlib, site, shutil
+          for sp in site.getsitepackages():
+              sp_path = pathlib.Path(sp)
+              if not sp_path.exists(): continue
+              for p in sp_path.glob('~*'):
+                  if p.is_dir(): shutil.rmtree(p, ignore_errors=True)
+                  else: p.unlink(missing_ok=True)
+              for d in sp_path.glob('*.dist-info'):
+                  if not (d / 'RECORD').exists():
+                      pkg = d.stem.split('-')[0].lower().replace('_', '-')
+                      shutil.rmtree(d, ignore_errors=True)
+                      for p in sp_path.glob(pkg + '*'):
+                          if p.is_dir(): shutil.rmtree(p, ignore_errors=True)
+                          else: p.unlink(missing_ok=True)
+          " || true
       - name: Install system dependencies
         if: steps.checkout_downstream.outcome == 'success'
         run: |
