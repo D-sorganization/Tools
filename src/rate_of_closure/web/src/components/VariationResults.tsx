@@ -274,8 +274,9 @@ export function VariationResults({
           </div>
 
           <div className="mt-auto border-t border-slate-800/80 pt-5 text-xs leading-5 text-slate-500">
-            Plan files and the named library retain the complete v2 physical plan. Every trial
-            keeps its typed outcome; misses and numerical failures are never converted into
+            Canonical plan files and the named library retain the complete physical plan plus
+            versioned execution evidence; legacy plans carry an explicit warning. Every trial
+            keeps its typed outcome, and misses or numerical failures are never converted into
             fabricated landing coordinates.
           </div>
         </div>
