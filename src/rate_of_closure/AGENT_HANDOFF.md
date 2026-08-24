@@ -62,13 +62,14 @@ React E2E and all 18 PyQt renders, with both manifests pinned to that source;
 all 20 images were inspected and byte-verified. Run `32685823741` supplies a
 repeatability control: unchanged UI/runtime paths nevertheless varied across
 Linux hosts by at most React 3,478/45,593 and PyQt 135/208 mean/changed-pixel
-microunits. Branch `fix/4626-source-pinned-visual-baselines` packages the
-reviewed references, calibration evidence, and bounded limits
-1/4,000/50,000 (React) and 1/200/250 (PyQt). Material stale controls remain
-outside at React minima 13,606/50,659 and PyQt simulation 2,530/7,170. Require
-protected CI and a passing post-main trusted comparison before R10-R15/#4433
-adjudication or immutable UpstreamDrift pinning. This proves bounded visual
-regression stability, not pixel-exact portability or scientific validity.
+microunits. PR #4662 approved the reviewed references and calibration, merged
+as `9604773d7576a330602821f88dd964503b698ae0`, and trusted run `32689177846`
+passed React, all PyQt renders, and comparison. Post-main Release Automation
+then exposed an older-host system Python lacking `tomllib`; branch
+`fix/release-runtime-portability` selects immutable-pinned Python 3.12 before
+analysis. Require its protected merge before R10-R15/#4433 adjudication or
+immutable UpstreamDrift pinning. This proves bounded visual regression
+stability, not pixel-exact portability or scientific validity.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

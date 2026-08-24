@@ -15,10 +15,13 @@
   and a two-run calibration authority. Limits are 1/4,000/50,000 for React and
   1/200/250 for PyQt. Material stale controls remain rejected at React minima
   13,606/50,659 and PyQt simulation 2,530/7,170.
-- Require protected CI, merge, and a passing trusted post-main comparison before
-  R10-R15/#4433 adjudication or immutable UpstreamDrift pinning. These references
-  govern bounded visual regression only; they do not establish pixel-exact
-  cross-host rendering or scientific model validity.
+- PR #4662 merged as `9604773d7576a330602821f88dd964503b698ae0`; trusted run
+  `32689177846` passed React, all PyQt renders, and the comparator. Its post-main
+  Release Automation run exposed an older-host Python lacking `tomllib` before
+  runtime setup. Branch `fix/release-runtime-portability` selects pinned Python
+  3.12 first. Require that protected merge before R10-R15/#4433 adjudication or
+  UpstreamDrift pinning. These references govern visual regression only, not
+  pixel-exact portability or scientific model validity.
 
 ## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
 
