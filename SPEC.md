@@ -6434,3 +6434,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-23: Tracked LF Blob Normalization (#4626)
 
 - **2026-08-23**: fix(packaging, governance, #4626) — Normalize the two CRLF/mixed tracked JSON blobs exposed by the post-merge exact-wheel gate and add a Git-index EOL verifier to pre-commit, standard CI, and both distribution lanes. The verifier admits LF and newline-free blobs governed by `eol=lf`, rejects CRLF/mixed committed content, and preserves the existing fail-closed clean-checkout release contract. Reconcile the May-era workflow-inventory hook with the protected August runner-routing policy by admitting policy-selected hosted fallbacks while retaining the deprecated fixed-hardware-label prohibition.
+
+## 2026-08-23: Palette Micro-UX Improvement in Rate of Closure
+
+- **2026-08-23**: fix(ux) — Add accessible focus indicators (`focus-visible:ring-2`, `focus-visible:ring-blue-500` or equivalent) in place of `outline-none` across inputs, selects, and buttons in the `rate_of_closure` app to ensure keyboard-only and screen-reader users can visually track their current element focus.

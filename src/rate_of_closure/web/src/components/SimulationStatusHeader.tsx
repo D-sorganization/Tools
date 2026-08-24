@@ -73,7 +73,7 @@ export function SimulationStatusHeader({
           onChange={(event) =>
             onSourceKindChange(event.target.value as WebSourceKind)
           }
-          className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 font-medium text-slate-100 shadow-inner focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/30"
+          className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 font-medium text-slate-100 shadow-inner focus:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus:ring-2 focus:ring-sky-400/30"
         >
           {(Object.keys(MODEL_DETAILS) as WebSourceKind[]).map((source) => (
             <option key={source} value={source}>

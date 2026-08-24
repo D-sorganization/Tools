@@ -1,7 +1,7 @@
 import type { CovariationUiSettings } from "../model/launchMonitorCovariation";
 import type { CovariationController } from "./useCovariationController";
 
-const field = "w-full rounded border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none";
+const field = "w-full rounded border border-slate-700 bg-slate-950 px-2 py-2 text-sm text-slate-100 focus:border-sky-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
 
 function IdentityControls({ controller, identityLocked = false }: {
   controller: CovariationController; identityLocked?: boolean;

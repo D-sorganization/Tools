@@ -229,7 +229,7 @@ export function PuttingPanel({
           aria-label={`${label} ${suffix}`.trim()}
           title={title}
           onCommit={set}
-          className="w-24 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-right text-slate-100 focus:border-blue-500 focus:outline-none"
+          className="w-24 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-right text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         />
         <span className="text-slate-400">{suffix}</span>
       </span>
@@ -249,7 +249,7 @@ export function PuttingPanel({
               value={putterName}
               title="Putter head used for the impact model (library putters when available); head mass and loft drive ball speed and launch spin"
               onChange={(e) => setPutterName(e.target.value)}
-              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
+              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               {putters.map((p) => (
                 <option key={p.name} value={p.name}>
@@ -266,7 +266,7 @@ export function PuttingPanel({
               onChange={(e) =>
                 setPaceMode(e.target.value as "speed" | "backstroke")
               }
-              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
+              className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <option value="speed">Clubhead speed</option>
               <option value="backstroke">Backstroke length</option>

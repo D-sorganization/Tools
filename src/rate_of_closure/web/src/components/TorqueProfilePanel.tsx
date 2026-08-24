@@ -46,7 +46,7 @@ interface EditorState {
 }
 
 const INPUT =
-  "w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-slate-100 focus:border-sky-500 focus:outline-none";
+  "w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-slate-100 focus:border-sky-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
 const SAMPLE_ROWS = "0, 18, -4\n0.75, 9, 0.5\n1.5, 0, 5";
 const MAX_EDITABLE_SAMPLE_ROWS = 101;
 const MAX_TABLE_ROWS = 25;
