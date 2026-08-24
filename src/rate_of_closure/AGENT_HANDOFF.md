@@ -61,17 +61,16 @@ see the two contracts under `docs/specs/`.
 #4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React
 Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
 execution, bounded analysis, stable-paint capture, and the registered
-three-viewport correction; #4649 merged the apt mutex. Current `main`
-`193822fb808047e6f87d06b45a78bad6f5cc0360` passed the full trusted React job
-in run `32668872021`. Its PyQt job timed out the second layout-persistence
-parameter at the global 60-second limit even though the subprocess contract is
-120 seconds. Distribution run `32668872024` passed the exact wheel job, while
-the browser job found an unexplained dirty checkout during isolated wheel build.
-#4626's current-main repair isolates optional sidebar startup, closes Qt windows
-deterministically, assigns the rendered test a 150-second budget, and reports a
-bounded porcelain-path inventory on any future dirty-checkout failure. Require
-its protected merge and passing current-main evidence before auditing
-R10-R15/#4433 and adding the immutable UpstreamDrift pin/parity.
+three-viewport correction; #4649 merged the apt mutex. #4657 merged the #4626
+PyQt isolation and bounded dirty-tree diagnostic as current `main`
+`e92a945e9b023520123363888188493b1e310452`; every PR-head gate passed.
+Post-main distribution run `32678209398` then proved two committed JSON blobs
+have CRLF/mixed index endings despite `eol=lf`, so Linux checkout rewrites them
+before wheel qualification. Branch `fix/4626-post-main-determinism` normalizes
+the blobs and adds a Git-index EOL gate to local, standard, and distribution
+checks. Require its protected merge and passing current-main React/PyQt and
+distribution evidence before auditing R10-R15/#4433 and adding the immutable
+UpstreamDrift pin/parity.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
