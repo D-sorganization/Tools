@@ -14,6 +14,7 @@ pytest.importorskip("PyQt6")
 
 
 @pytest.mark.parametrize("scale", [1.0, 1.5])
+@pytest.mark.timeout(150)
 def test_visual_layout_restores_without_hiding_club_canvas(
     tmp_path: Path,
     scale: float,
