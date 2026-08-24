@@ -1,12 +1,20 @@
 import { planFromJson, planToJson, type VariationPlanTs } from "./variationSchema";
+import { parseUniqueJson } from "./strictJson";
+import {
+  parsePersistedVariationPlan,
+  persistedVariationPlanJson,
+  type PersistedVariationPlanResolutionTs,
+} from "./variationPersistedPlan";
+import { variationExecutionDocument } from "./variationExecutionMetadata";
 
 export const VARIATION_PLAN_LIBRARY_KEY = "rate_of_closure.variation_plan_library";
-export const VARIATION_PLAN_LIBRARY_VERSION = 1;
+export const VARIATION_PLAN_LIBRARY_VERSION = 2;
 
 export interface NamedVariationPlan {
   id: string;
   name: string;
   plan: VariationPlanTs;
+  evidence?: PersistedVariationPlanResolutionTs;
 }
 
 export interface VariationPlanLibraryLoad {
@@ -37,15 +45,42 @@ const requiredText = (value: unknown, label: string): string => {
 const canonicalPlan = (plan: VariationPlanTs): VariationPlanTs =>
   planFromJson(planToJson(plan));
 
-const parseEntry = (value: unknown): NamedVariationPlan => {
+const exactFields = (data: Record<string, unknown>, expected: readonly string[]): void => {
+  if (JSON.stringify(Object.keys(data).sort()) !== JSON.stringify([...expected].sort())) {
+    throw new Error("entry fields do not match the library schema");
+  }
+};
+
+const parseEntry = (value: unknown, version: number): NamedVariationPlan => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("entry must be an object");
   }
   const data = value as Record<string, unknown>;
+  if (version === 1) {
+    exactFields(data, ["id", "name", "plan"]);
+    const evidence = parsePersistedVariationPlan(JSON.stringify(data.plan));
+    return {
+      id: requiredText(data.id, "plan ID"),
+      name: requiredText(data.name, "plan name"),
+      plan: evidence.plan,
+      evidence,
+    };
+  }
+  const canonical = "plan_document" in data;
+  exactFields(data, canonical
+    ? ["id", "name", "plan_document"]
+    : ["id", "name", "legacy_plan", "legacy_warning"]);
+  const evidence = parsePersistedVariationPlan(JSON.stringify(
+    canonical ? data.plan_document : data.legacy_plan,
+  ));
+  if (!canonical && requiredText(data.legacy_warning, "legacy warning") !== evidence.warning) {
+    throw new Error("legacy warning does not match the plan evidence");
+  }
   return {
     id: requiredText(data.id, "plan ID"),
     name: requiredText(data.name, "plan name"),
-    plan: planFromJson(JSON.stringify(data.plan)),
+    plan: evidence.plan,
+    evidence,
   };
 };
 
@@ -66,7 +101,7 @@ export function loadVariationPlanLibrary(storage?: Storage): VariationPlanLibrar
 
   let data: Record<string, unknown>;
   try {
-    const parsed = JSON.parse(text) as unknown;
+    const parsed = parseUniqueJson(text, "variation plan library");
     if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
       throw new Error("library root must be an object");
     }
@@ -78,7 +113,7 @@ export function loadVariationPlanLibrary(storage?: Storage): VariationPlanLibrar
     };
   }
 
-  if (data.schema_version !== VARIATION_PLAN_LIBRARY_VERSION) {
+  if (data.schema_version !== 1 && data.schema_version !== VARIATION_PLAN_LIBRARY_VERSION) {
     return {
       plans: [],
       warnings: [`Unsupported plan library version ${String(data.schema_version)}; stored plans were ignored.`],
@@ -93,10 +128,13 @@ export function loadVariationPlanLibrary(storage?: Storage): VariationPlanLibrar
   const ids = new Set<string>();
   data.plans.forEach((value, index) => {
     try {
-      const entry = parseEntry(value);
+      const entry = parseEntry(value, data.schema_version as number);
       if (ids.has(entry.id)) throw new Error(`duplicate plan ID ${entry.id}`);
       ids.add(entry.id);
       plans.push(entry);
+      if (entry.evidence?.warning !== null && entry.evidence?.warning !== undefined) {
+        warnings.push(`Stored plan ${index + 1} is legacy: ${entry.evidence.warning}`);
+      }
     } catch (error) {
       warnings.push(`Stored plan ${index + 1} was ignored: ${(error as Error).message}`);
     }
@@ -104,7 +142,7 @@ export function loadVariationPlanLibrary(storage?: Storage): VariationPlanLibrar
   return { plans, warnings };
 }
 
-/** Persist a validated canonical v2 snapshot of every named plan. */
+/** Persist each named plan with its canonical binding or explicit legacy state. */
 export function saveVariationPlanLibrary(
   plans: readonly NamedVariationPlan[],
   storage?: Storage,
@@ -116,10 +154,27 @@ export function saveVariationPlanLibrary(
     const id = requiredText(entry.id, "plan ID");
     if (ids.has(id)) throw new Error(`duplicate plan ID ${id}`);
     ids.add(id);
+    const name = requiredText(entry.name, "plan name");
+    const evidence = entry.evidence ?? parsePersistedVariationPlan(
+      persistedVariationPlanJson(entry.plan),
+    );
+    if (planToJson(evidence.plan) !== planToJson(entry.plan)) {
+      throw new Error(`plan evidence mismatch for ${id}`);
+    }
+    if (evidence.metadata !== null && evidence.provenance !== null) {
+      return {
+        id,
+        name,
+        plan_document: variationExecutionDocument(
+          entry.plan, evidence.metadata, evidence.provenance,
+        ),
+      };
+    }
     return {
       id,
-      name: requiredText(entry.name, "plan name"),
-      plan: JSON.parse(planToJson(entry.plan)) as unknown,
+      name,
+      legacy_plan: JSON.parse(planToJson(entry.plan)) as unknown,
+      legacy_warning: requiredText(evidence.warning, "legacy warning"),
     };
   });
   target.setItem(
@@ -132,7 +187,12 @@ export function upsertVariationPlan(
   plans: readonly NamedVariationPlan[],
   entry: NamedVariationPlan,
 ): NamedVariationPlan[] {
-  const normalized = { ...entry, plan: canonicalPlan(entry.plan) };
+  const plan = canonicalPlan(entry.plan);
+  const normalized = {
+    ...entry,
+    plan,
+    evidence: parsePersistedVariationPlan(persistedVariationPlanJson(plan)),
+  };
   const existing = plans.findIndex((plan) => plan.id === entry.id);
   if (existing < 0) return [...plans, normalized];
   return plans.map((plan, index) => (index === existing ? normalized : plan));
@@ -154,6 +214,7 @@ export function duplicateVariationPlan(
       id: requiredText(duplicateId, "plan ID"),
       name: `${source.name} Copy`,
       plan: canonicalPlan(source.plan),
+      evidence: source.evidence,
     },
   ];
 }

@@ -24,6 +24,13 @@ from shared.python.swing_sim.torque_profiles import (
     TorqueProfileSource,
 )
 from shared.python.swing_sim.variation import NoiseSpec, VariationPlan
+from shared.python.swing_sim.variation.execution_metadata import (
+    LEGACY_CURRENT_REGISTRY_WARNING,
+)
+from shared.python.swing_sim.variation.persisted_plan_io import (
+    persisted_plan_dumps,
+    persisted_plan_loads,
+)
 
 
 def _torque_profile() -> PrescribedTorqueProfile:
@@ -55,6 +62,7 @@ def _variation_plan() -> VariationPlan:
 
 
 def _document() -> WorkspaceDocument:
+    plan = _variation_plan()
     return WorkspaceDocument(
         metadata=WorkspaceMetadata(
             document_id="workspace.demo.1",
@@ -75,7 +83,7 @@ def _document() -> WorkspaceDocument:
             schema_version=1,
             data={"club_id": "driver.10_5", "head_mass_kg": 0.2},
         ),
-        variation_plan=_variation_plan(),
+        variation_plan=plan,
         layout=WorkspaceLayout(
             module_order=("simulation", "flight", "variation"),
             visible_module_ids=("simulation", "flight"),
@@ -86,6 +94,7 @@ def _document() -> WorkspaceDocument:
                 data={"mode": "single", "selected_view": "swing"},
             ),
         ),
+        variation_plan_evidence=persisted_plan_loads(persisted_plan_dumps(plan)),
     )
 
 
@@ -99,6 +108,9 @@ def test_current_document_round_trip_is_deterministic_and_lossless() -> None:
     assert workspace_to_json(decoded) == encoded
     assert json.loads(encoded)["schema"] == WORKSPACE_SCHEMA
     assert json.loads(encoded)["schema_version"] == WORKSPACE_SCHEMA_VERSION
+    binding = json.loads(encoded)["variation_plan"]
+    assert binding["state"] == "canonical"
+    assert binding["document"]["plan"] == _variation_plan().to_json_dict()
 
 
 def test_v1_document_migrates_torque_name_and_versioned_layout() -> None:
@@ -107,12 +119,30 @@ def test_v1_document_migrates_torque_name_and_versioned_layout() -> None:
     legacy["schema_version"] = 1
     legacy["torque_profiles"] = legacy.pop("prescribed_torque_profiles")
     legacy["layout"].pop("view_workspace")
+    legacy["variation_plan"] = legacy["variation_plan"]["document"]["plan"]
 
     migrated = WorkspaceDocument.from_json_dict(legacy)
 
     assert migrated.prescribed_torque_profiles == (_torque_profile(),)
     assert migrated.layout.view_workspace is None
     assert migrated.to_json_dict()["schema_version"] == WORKSPACE_SCHEMA_VERSION
+    assert migrated.variation_plan_evidence is not None
+    assert migrated.variation_plan_evidence.warning == LEGACY_CURRENT_REGISTRY_WARNING
+
+
+def test_v2_workspace_migrates_raw_plan_as_explicit_legacy_evidence() -> None:
+    legacy = deepcopy(_document().to_json_dict())
+    legacy["schema_version"] = 2
+    legacy["variation_plan"] = legacy["variation_plan"]["document"]["plan"]
+
+    migrated = WorkspaceDocument.from_json_dict(legacy)
+
+    assert migrated.variation_plan == _variation_plan()
+    assert migrated.variation_plan_evidence is not None
+    assert migrated.variation_plan_evidence.metadata is None
+    assert migrated.variation_plan_evidence.provenance is None
+    assert migrated.variation_plan_evidence.warning == LEGACY_CURRENT_REGISTRY_WARNING
+    assert migrated.to_json_dict()["variation_plan"]["state"] == "legacy"
 
 
 @pytest.mark.parametrize(

@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
 import { auditSameOriginNetwork, summarizeRuntimeError } from "./support/networkAudit";
 import { startStaticReleaseServer } from "./support/staticReleaseServer";
@@ -79,6 +80,53 @@ test("corrupt persisted workspace state restores safe defaults", async ({ page }
     await expect(page.getByRole("tab", { name: "Explorer", exact: true })).toHaveAttribute(
       "aria-selected", "true",
     );
+    audit.assertClean();
+  } finally {
+    await server.close();
+  }
+});
+
+test("variation plan evidence remains visibly distinct from a legacy raw plan", async ({
+  page,
+}) => {
+  const server = await startStaticReleaseServer();
+  const audit = auditSameOriginNetwork(page, server.origin, { forbidApi: true });
+  try {
+    await page.goto(server.mountUrl);
+    await page.getByRole("tab", { name: "Variation" }).click();
+
+    const download = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Export Plan JSON" }).click();
+    const canonicalDownload = await download;
+    const canonicalPath = await canonicalDownload.path();
+    if (canonicalPath === null) throw new Error("canonical plan download has no path");
+    const canonicalText = readFileSync(canonicalPath, "utf8");
+    const canonical = JSON.parse(canonicalText) as {
+      schema_id: string;
+      schema_version: number;
+      plan: unknown;
+    };
+    expect(canonical).toMatchObject({
+      schema_id: "rate-of-closure/variation-execution-document",
+      schema_version: 3,
+    });
+
+    const input = page.getByLabel("Import variation plan JSON");
+    await input.setInputFiles({
+      name: "legacy-plan.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(canonical.plan)),
+    });
+    await expect(page.getByRole("status", { name: "Variation status" }))
+      .toContainText("not evidence of historical reproducibility");
+
+    await input.setInputFiles({
+      name: "canonical-plan.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(canonicalText),
+    });
+    await expect(page.getByRole("status", { name: "Variation status" }))
+      .not.toContainText("historical reproducibility");
     audit.assertClean();
   } finally {
     await server.close();

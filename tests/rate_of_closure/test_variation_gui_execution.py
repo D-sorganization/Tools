@@ -315,7 +315,9 @@ class TestRunAndResults:
         tab._on_export_json()
         loaded = read_json(target)
         assert loaded.plan == tab.dataset().plan
-        assert json.loads(target.read_text(encoding="utf-8"))["schema_version"] == 1
+        document = json.loads(target.read_text(encoding="utf-8"))
+        assert document["schema_version"] == 2
+        assert document["plan_document"]["schema_version"] == 3
 
 
 class _wait_done:

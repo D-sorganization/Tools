@@ -25,15 +25,17 @@ import {
   parseWorkspaceDocument,
   type WorkspaceSessionSnapshot,
 } from "./workspaceSession";
+import { validatedVariationWorkspace } from "./workspaceVariationSession";
 
 const snapshot = (): WorkspaceSessionSnapshot => {
   const profile = starterTorqueProfile();
+  const ballSetup = { supportMode: "tee" as const, teeHeightM: DRIVER_TEE_HEIGHT_M };
   return {
     scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -900 },
     club: getClub("Driver 10.5°"),
     units: { speed: "mph", rotation: "deg/s", length: "mm", distance: "yd" },
     simulation: {
-      ballSetup: { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M },
+      ballSetup,
       ballSetupUserOverridden: false,
       spatialTarget: createSpatialTarget({
         label: "Apex gate",
@@ -48,11 +50,11 @@ const snapshot = (): WorkspaceSessionSnapshot => {
       activeProfileId: profile.profileId,
       runConfig: passiveDoublePendulumRun(),
     },
-    variation: {
+    variation: validatedVariationWorkspace({
       plan: planFromJson(JSON.stringify(variationFixture.plan)),
       analysisExecution: "both" as const,
       selectedOutputMetrics: ["carry_m", "lateral_m", "apex_m"],
-    },
+    }, ballSetup),
     capability: customCapabilityWorkflow(),
     modules: DEFAULT_PRIMARY_VIEW_STATE,
     viewWorkspace: defaultViewWorkspace,
@@ -95,7 +97,7 @@ describe("whole workspace session contract", () => {
   it("round trips the supported live explorer state", () => {
     const encoded = createWorkspaceDocument(snapshot(), metadata);
     expect(parseWorkspaceDocument(encoded)).toEqual(snapshot());
-    expect(JSON.parse(encoded).schema_version).toBe(2);
+    expect(JSON.parse(encoded).schema_version).toBe(3);
     const session = JSON.parse(encoded).model_session;
     expect(session.schema_version).toBe(5);
     expect(session.data.simulation_setup.data.ball_setup.provenance).toEqual({
@@ -117,8 +119,10 @@ describe("whole workspace session contract", () => {
       },
     });
     expect(session.data.variation_study).toEqual(variationFixture.selection);
-    expect(JSON.parse(encoded).variation_plan).toEqual(variationFixture.plan);
-    expect(JSON.parse(encoded).variation_plan).not.toHaveProperty("ball_setup");
+    const binding = JSON.parse(encoded).variation_plan;
+    expect(binding.state).toBe("canonical");
+    expect(binding.document.plan).toEqual(variationFixture.plan);
+    expect(binding.document.plan).not.toHaveProperty("ball_setup");
     expect(session.data.capability_request).toMatchObject({
       schema_version: "capability-optimization-workflow/v1",
       request: {
@@ -155,13 +159,36 @@ describe("whole workspace session contract", () => {
 
   it("rejects a variation plan that duplicates the simulation ball setup", () => {
     const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
-    value.variation_plan.ball_setup = {
+    value.variation_plan.document.plan.ball_setup = {
       support_mode: "tee",
       tee_height_m: DRIVER_TEE_HEIGHT_M,
     };
     expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(
       /must not duplicate simulation ball_setup/i,
     );
+  });
+
+  it("migrates a v2 raw plan as explicit legacy evidence", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.schema_version = 2;
+    value.variation_plan = value.variation_plan.document.plan;
+
+    const migrated = parseWorkspaceDocument(JSON.stringify(value));
+
+    expect(migrated.variation.planEvidence?.metadata).toBeNull();
+    expect(migrated.variation.planEvidence?.provenance).toBeNull();
+    expect(migrated.variation.planEvidence?.warning).toMatch(
+      /not evidence of historical reproducibility/i,
+    );
+    expect(JSON.parse(createWorkspaceDocument(migrated, metadata)).variation_plan.state)
+      .toBe("legacy");
+  });
+
+  it("rejects a workspace plan-metadata substitution", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.variation_plan.document.plan.seed += 1;
+
+    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(/digest/i);
   });
 
   it("rejects club-default provenance that disagrees with saved geometry", () => {

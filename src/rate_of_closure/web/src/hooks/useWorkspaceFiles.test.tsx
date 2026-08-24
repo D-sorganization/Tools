@@ -398,6 +398,7 @@ describe("browser workspace file controller", () => {
       variation: {
         ...initial.variation,
         plan: { ...initial.variation.plan, seed: 99 },
+        planEvidence: undefined,
       },
     };
     const legacy = JSON.parse(
@@ -440,7 +441,13 @@ describe("browser workspace file controller", () => {
     act(() => reads[0].resolve(encoded));
 
     await waitFor(() => expect(applySnapshot).toHaveBeenCalledTimes(1));
-    expect(applySnapshot.mock.calls[0][0].variation).toEqual(latest.variation);
+    const appliedVariation = applySnapshot.mock.calls[0][0].variation;
+    expect(appliedVariation.plan).toEqual(latest.variation.plan);
+    expect(appliedVariation.analysisExecution).toBe(latest.variation.analysisExecution);
+    expect(appliedVariation.selectedOutputMetrics).toEqual(
+      latest.variation.selectedOutputMetrics,
+    );
+    expect(appliedVariation.planEvidence?.warning).toBeNull();
   });
 
   it("ignores an older file read that completes after a newer open", async () => {

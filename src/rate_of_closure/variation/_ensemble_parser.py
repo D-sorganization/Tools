@@ -20,7 +20,9 @@ from shared.python.swing_sim.variation.ensemble_types import (
     require_point_ids,
     validated_sample_times,
 )
-from shared.python.swing_sim.variation.spec import VariationPlan
+from shared.python.swing_sim.variation.execution_metadata import (
+    execution_document_from_json_dict,
+)
 
 from ._ensemble_json_contract import (
     MAX_DECODED_NODES,
@@ -71,7 +73,7 @@ _OUTCOME_FIELDS = {
 }
 _VARIATION_FIELDS = {
     "schema_version",
-    "plan",
+    "plan_document",
     "input_names",
     "output_names",
     "inputs",
@@ -79,27 +81,6 @@ _VARIATION_FIELDS = {
     "success",
     "elapsed_s",
 }
-_PLAN_FIELDS = {
-    "schema_version",
-    "mode",
-    "base_variables",
-    "noise",
-    "n_runs",
-    "seed",
-    "flight_model",
-    "groups",
-}
-_NOISE_FIELDS = {
-    "variable_key",
-    "distribution",
-    "scale",
-    "lower",
-    "upper",
-    "spec_id",
-    "time_window_s",
-    "point_ids",
-}
-_GROUP_FIELDS = {"group_id", "spec_ids", "matrix_kind", "matrix"}
 
 
 def parse_ensemble_document(
@@ -124,8 +105,9 @@ def _parse_variation(value: object) -> VariationDataset:
     """Parse complete scalar authority and its reproducible plan provenance."""
     data = mapping(value, "variation")
     require_fields(data, _VARIATION_FIELDS, "variation fields")
-    exact_integer(data["schema_version"], "variation schema_version", 1)
-    plan = _parse_plan(data["plan"])
+    exact_integer(data["schema_version"], "variation schema_version", 2)
+    plan_document = mapping(data["plan_document"], "variation plan document")
+    plan = execution_document_from_json_dict(dict(plan_document)).plan
     require(plan.n_runs <= MAX_TRIALS, "trial limit exceeded", plan.n_runs)
 
     input_names = string_tuple(data["input_names"], "input_names")
@@ -148,72 +130,6 @@ def _parse_variation(value: object) -> VariationDataset:
         success=success,
         elapsed_s=elapsed_s,
     )
-
-
-def _parse_plan(value: object) -> VariationPlan:
-    """Parse only the current lossless plan-v2 representation."""
-    data = mapping(value, "variation plan")
-    require_fields(data, _PLAN_FIELDS, "variation plan fields")
-    exact_integer(data["schema_version"], "plan schema_version", 2)
-    integer(data["n_runs"], "n_runs")
-    integer(data["seed"], "seed")
-    _validate_plan_scalar_types(data)
-    noise = json_list(data["noise"], "noise")
-    groups = json_list(data["groups"], "groups")
-    for entry in noise:
-        noise_data = mapping(entry, "noise entry")
-        require_fields(noise_data, _NOISE_FIELDS, "noise fields")
-        _validate_noise_scalar_types(noise_data)
-    for entry in groups:
-        group_data = mapping(entry, "group entry")
-        require_fields(group_data, _GROUP_FIELDS, "group fields")
-        _validate_group_scalar_types(group_data)
-    try:
-        return VariationPlan.from_json_dict(data)
-    except (KeyError, TypeError, ValueError) as exc:
-        require(False, "variation plan is invalid", str(exc))
-        raise AssertionError from exc
-
-
-def _validate_plan_scalar_types(data: Mapping[str, object]) -> None:
-    """Reject coercible strings and booleans in plan scalar authority."""
-    require(isinstance(data["mode"], str), "plan mode must be a string")
-    require(isinstance(data["flight_model"], str), "flight_model must be a string")
-    base = mapping(data["base_variables"], "base_variables")
-    for key, value in base.items():
-        require(isinstance(key, str), "base variable keys must be strings")
-        number(value, "base variable")
-
-
-def _validate_noise_scalar_types(data: Mapping[str, object]) -> None:
-    """Validate the exact plan-v2 noise scalar representation."""
-    for name in ("variable_key", "distribution", "spec_id"):
-        require(isinstance(data[name], str), f"{name} must be a string")
-    number(data["scale"], "noise scale")
-    for name in ("lower", "upper"):
-        if data[name] is not None:
-            number(data[name], name)
-    window = data["time_window_s"]
-    if window is not None:
-        values = json_list(window, "time_window_s")
-        require(len(values) == 2, "time_window_s must contain two values")
-        for value in values:
-            number(value, "time_window_s")
-    string_tuple(data["point_ids"], "noise point_ids")
-
-
-def _validate_group_scalar_types(data: Mapping[str, object]) -> None:
-    """Validate stable IDs and a finite numeric group matrix."""
-    require(isinstance(data["group_id"], str), "group_id must be a string")
-    require(isinstance(data["matrix_kind"], str), "matrix_kind must be a string")
-    spec_ids = string_tuple(data["spec_ids"], "group spec_ids")
-    rows = json_list(data["matrix"], "group matrix")
-    require(len(rows) == len(spec_ids), "group matrix row count is invalid")
-    for row in rows:
-        values = json_list(row, "group matrix row")
-        require(len(values) == len(spec_ids), "group matrix column count is invalid")
-        for value in values:
-            number(value, "group matrix value")
 
 
 def _parse_outcomes(

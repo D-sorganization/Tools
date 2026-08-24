@@ -8,6 +8,13 @@ import {
   type VariationPlanTs,
 } from "./variation";
 import { ballSetupToJson, type BallSetup } from "./ballSetup";
+import {
+  parsePersistedVariationPlan,
+  parsePersistedVariationPlanBinding,
+  persistedVariationPlanBinding,
+  persistedVariationPlanJson,
+  type PersistedVariationPlanResolutionTs,
+} from "./variationPersistedPlan";
 
 export const VARIATION_WORKSPACE_SCHEMA =
   "rate_of_closure.variation_workspace_selection";
@@ -19,6 +26,7 @@ export interface VariationWorkspaceSnapshot {
   readonly plan: VariationPlanTs;
   readonly analysisExecution: VariationAnalysisExecution;
   readonly selectedOutputMetrics: readonly string[];
+  readonly planEvidence?: PersistedVariationPlanResolutionTs;
 }
 
 function canonicalPlan(
@@ -92,6 +100,12 @@ export function validatedVariationWorkspace(
       `selected output metric is not available: ${unknown.join(", ")}`,
     );
   }
+  const evidence = snapshot.planEvidence ?? parsePersistedVariationPlan(
+    persistedVariationPlanJson(plan),
+  );
+  if (planToJson(evidence.plan) !== planToJson(plan)) {
+    throw new RangeError("plan evidence does not match the authored plan");
+  }
   return Object.freeze({
     plan,
     analysisExecution: snapshot.analysisExecution,
@@ -100,6 +114,7 @@ export function validatedVariationWorkspace(
         snapshot.selectedOutputMetrics.includes(metric),
       ),
     ),
+    planEvidence: evidence,
   });
 }
 
@@ -123,6 +138,7 @@ export function variationWorkspaceDocument(
 export function variationWorkspaceFromDocument(
   value: unknown,
   plan: VariationPlanTs,
+  planEvidence: PersistedVariationPlanResolutionTs,
   ballSetup?: BallSetup,
 ): VariationWorkspaceSnapshot {
   const envelope = exactRecord(
@@ -149,6 +165,7 @@ export function variationWorkspaceFromDocument(
       plan,
       analysisExecution: data.analysis_execution as VariationAnalysisExecution,
       selectedOutputMetrics: data.selected_output_metrics as unknown[],
+      planEvidence,
     } as VariationWorkspaceSnapshot,
     ballSetup,
   );
@@ -157,20 +174,23 @@ export function variationWorkspaceFromDocument(
 /** Preserve explicit live policy unless a legacy root plan conflicts. */
 export function migratedLegacyVariationFallback(
   fallback: VariationWorkspaceSnapshot,
-  documentPlan: VariationPlanTs | null,
+  documentPlan: PersistedVariationPlanResolutionTs | null,
   ballSetup?: BallSetup,
 ): VariationWorkspaceSnapshot {
-  const state = validatedVariationWorkspace(fallback, ballSetup);
   if (
     documentPlan !== null &&
-    planToJson(canonicalPlan(documentPlan, ballSetup)) !==
-      planToJson(state.plan)
+    planToJson(canonicalPlan(documentPlan.plan, ballSetup)) !==
+      planToJson(canonicalPlan(fallback.plan, ballSetup))
   ) {
     throw new RangeError(
       "legacy workspace variation plan conflicts with the explicit fallback",
     );
   }
-  return state;
+  const state = validatedVariationWorkspace(fallback, ballSetup);
+  return documentPlan === null ? state : validatedVariationWorkspace({
+    ...state,
+    planEvidence: documentPlan,
+  }, ballSetup);
 }
 
 /** Return a Python-compatible root plan while validating Tee context separately. */
@@ -179,18 +199,33 @@ export function variationPlanWorkspaceDocument(
   ballSetup: BallSetup,
 ): Record<string, unknown> {
   const state = validatedVariationWorkspace(snapshot, ballSetup);
-  const contextual = JSON.parse(
-    planToJson({ ...state.plan, ballSetup }),
-  ) as Record<string, unknown>;
-  delete contextual.ball_setup;
-  return contextual;
+  return persistedVariationPlanBinding(state.planEvidence ?? state.plan);
 }
 
 /** Parse a Python-compatible root plan using the separately persisted setup. */
 export function variationPlanFromWorkspaceDocument(
   value: unknown,
   ballSetup: BallSetup,
-): VariationPlanTs {
+  legacyRaw = false,
+): PersistedVariationPlanResolutionTs {
+  if (!legacyRaw) {
+    const binding = record(value, "variation_plan binding");
+    const document = binding.document === null
+      ? null
+      : record(binding.document, "variation_plan document");
+    const boundPlan = document === null
+      ? null
+      : record(document.plan, "variation_plan document plan");
+    if (boundPlan !== null && "ball_setup" in boundPlan) {
+      throw new TypeError("variation_plan must not duplicate simulation ball_setup");
+    }
+    const resolution = parsePersistedVariationPlanBinding(value);
+    const plan = canonicalPlan(resolution.plan, ballSetup);
+    if (planToJson(plan) !== planToJson(resolution.plan)) {
+      throw new TypeError("variation plan binding conflicts with simulation ball_setup");
+    }
+    return resolution;
+  }
   const data = record(value, "variation_plan");
   if ("ball_setup" in data) {
     throw new TypeError(
@@ -201,5 +236,6 @@ export function variationPlanFromWorkspaceDocument(
     ...data,
     ball_setup: ballSetupToJson(ballSetup),
   };
-  return canonicalPlan(planFromJson(JSON.stringify(contextual)), ballSetup);
+  const plan = canonicalPlan(planFromJson(JSON.stringify(contextual)), ballSetup);
+  return parsePersistedVariationPlan(planToJson(plan));
 }

@@ -274,6 +274,7 @@ def document_from_state(
                 ),
             ),
         ),
+        variation_plan_evidence=state.variation.plan_evidence,
     )
 
 
@@ -366,6 +367,7 @@ def state_from_document(
         variation = migrate_legacy_variation_fallback(
             legacy_variation_fallback,
             document.variation_plan,
+            document.variation_plan_evidence,
         )
     else:
         if document.variation_plan is None:
@@ -373,6 +375,7 @@ def state_from_document(
         variation = variation_workspace_from_payload(
             session_data["variation_study"],
             document.variation_plan,
+            document.variation_plan_evidence,
         )
     if session.schema_version < SESSION_SCHEMA_VERSION:
         if legacy_capability_fallback is None:

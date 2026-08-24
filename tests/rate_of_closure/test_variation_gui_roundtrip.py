@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -263,7 +264,14 @@ class TestPlanRoundTrip:
             staticmethod(lambda *a, **k: (str(target), "JSON (*.json)")),
         )
         tab._on_save_plan()
-        assert VariationPlan.loads(target.read_text(encoding="utf-8")) == plan
+        from shared.python.swing_sim.variation.persisted_plan_io import (
+            persisted_plan_loads,
+        )
+
+        saved = persisted_plan_loads(target.read_text(encoding="utf-8"))
+        assert saved.plan == plan
+        assert saved.warning is None
+        assert json.loads(target.read_text(encoding="utf-8"))["schema_version"] == 3
 
         tab._rows[0].scale.setValue(2.5)
         edited = tab.build_plan()
@@ -272,6 +280,22 @@ class TestPlanRoundTrip:
         assert edited.noise[0].time_window_s == (0.01, 0.025)
         assert edited.noise[0].point_ids == ("ball.center",)
         assert edited.groups == plan.groups
+
+    def test_legacy_raw_plan_load_is_visible_and_not_historical_evidence(
+        self, tab: VariationTab, tmp_path: Path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        plan = _fast_launch_plan(13)
+        target = tmp_path / "legacy-plan-v2.json"
+        target.write_text(plan.dumps(), encoding="utf-8")
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.variation_tab.QFileDialog.getOpenFileName",
+            staticmethod(lambda *a, **k: (str(target), "JSON (*.json)")),
+        )
+
+        tab._on_load_plan()
+
+        assert tab.build_plan() == plan
+        assert "not evidence of historical reproducibility" in tab._status.text()
 
     def test_unrelated_edit_preserves_each_unedited_numeric_authority(
         self, tab: VariationTab

@@ -19,14 +19,15 @@ import {
   planToJson,
   type VariationPlanTs,
 } from "./variation";
+import { variationPlanSha256 } from "./variationExecutionMetadata";
 
 export const REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA =
-  "rate-of-closure/regional-ground-variation-request/v1" as const;
-export const REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA_VERSION = 1 as const;
+  "rate-of-closure/regional-ground-variation-request/v2" as const;
+export const REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA_VERSION = 2 as const;
 export const MAX_REGIONAL_GROUND_VARIATION_REQUEST_BYTES = 1_048_576;
 
 const ROOT_FIELDS = [
-  "schema", "schema_version", "variation_plan", "regional_plan",
+  "schema", "schema_version", "variation_plan", "variation_plan_sha256", "regional_plan",
   "result_id", "source_provenance", "max_rows", "series_id",
 ] as const;
 const VARIATION_FIELDS = [
@@ -123,6 +124,7 @@ const requestPayload = (request: RegionalGroundVariationRequestTs): unknown => (
   schema: REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA,
   schema_version: REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA_VERSION,
   variation_plan: JSON.parse(planToJson(request.plan)) as unknown,
+  variation_plan_sha256: variationPlanSha256(request.plan),
   regional_plan: request.regionalPlan,
   result_id: request.resultId,
   source_provenance: request.sourceProvenance,
@@ -130,7 +132,7 @@ const requestPayload = (request: RegionalGroundVariationRequestTs): unknown => (
   series_id: request.seriesId,
 });
 
-/** Parse one exact v1 document without applying it or executing physics. */
+/** Parse one exact v2 document without applying it or executing physics. */
 export const regionalGroundVariationRequestFromJson = (
   text: string,
 ): RegionalGroundVariationRequestTs => {
@@ -152,8 +154,12 @@ export const regionalGroundVariationRequestFromJson = (
   const seriesId = item.series_id === null
     ? null
     : nonblankText(item.series_id, "series_id");
+  const variationPlan = parseVariationPlan(item.variation_plan);
+  if (item.variation_plan_sha256 !== variationPlanSha256(variationPlan)) {
+    throw new RangeError("regional-ground variation plan digest mismatch");
+  }
   const request: RegionalGroundVariationRequestTs = {
-    plan: parseVariationPlan(item.variation_plan),
+    plan: variationPlan,
     regionalPlan: parseGroundRegionalMaterialPlanRequest(item.regional_plan),
     resultId: nonblankText(item.result_id, "result_id"),
     sourceProvenance: nonblankText(item.source_provenance, "source_provenance"),

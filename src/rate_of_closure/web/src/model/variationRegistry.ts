@@ -257,6 +257,31 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
 
 const REGISTRY_BY_KEY = new Map(VARIABLE_REGISTRY.map((d) => [d.key, d]));
 
+const UNIT_DIMENSIONS: Readonly<Record<string, string>> = Object.freeze({
+  "": "dimensionless",
+  "1": "dimensionless",
+  deg: "angle",
+  kg: "mass",
+  "kg·m²": "moment_of_inertia",
+  m: "length",
+  "m/s": "speed",
+  mm: "length",
+  mph: "speed",
+  "N·m": "torque",
+  "N·m·s": "torque_time",
+  rpm: "angular_frequency",
+  s: "time",
+});
+
+/** Return the stable physical dimension for one registered browser unit. */
+export const variableDimension = (unit: string): string => {
+  const dimension = UNIT_DIMENSIONS[unit];
+  if (dimension === undefined) {
+    throw new Error(`registered variable unit has no dimension: ${unit}`);
+  }
+  return dimension;
+};
+
 export function keysForMode(mode: VariationMode, ballSetup?: BallSetup): string[] {
   const categories = mode === "launch"
     ? [CATEGORY_LAUNCH]

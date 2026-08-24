@@ -15,6 +15,12 @@ from typing import Any
 
 from shared.python.swing_sim.torque_profiles import PrescribedTorqueProfile
 from shared.python.swing_sim.variation import VariationPlan
+from shared.python.swing_sim.variation.persisted_plan_io import (
+    PersistedPlanResolution,
+    persisted_plan_binding_from_json_dict,
+    persisted_plan_binding_to_json_dict,
+    persisted_plan_loads,
+)
 
 from ._workspace_validation import (
     FrozenJsonValue,
@@ -29,8 +35,8 @@ from ._workspace_validation import (
 )
 
 WORKSPACE_SCHEMA = "rate_of_closure.workspace"
-WORKSPACE_SCHEMA_VERSION = 2
-_SUPPORTED_WORKSPACE_VERSIONS = frozenset({1, WORKSPACE_SCHEMA_VERSION})
+WORKSPACE_SCHEMA_VERSION = 3
+_SUPPORTED_WORKSPACE_VERSIONS = frozenset({1, 2, WORKSPACE_SCHEMA_VERSION})
 
 _PAYLOAD_FIELDS = frozenset({"schema", "schema_version", "data"})
 _METADATA_FIELDS = frozenset(
@@ -235,6 +241,7 @@ class WorkspaceDocument:
     club_configuration: VersionedPayload
     variation_plan: VariationPlan | None
     layout: WorkspaceLayout
+    variation_plan_evidence: PersistedPlanResolution | None = None
 
     def __post_init__(self) -> None:
         """Validate all composed domain values and unique profile identity."""
@@ -250,6 +257,13 @@ class WorkspaceDocument:
             self.variation_plan, VariationPlan
         ):
             raise TypeError("variation_plan must be VariationPlan")
+        evidence = self.variation_plan_evidence
+        if evidence is not None and not isinstance(evidence, PersistedPlanResolution):
+            raise TypeError("variation_plan_evidence must be PersistedPlanResolution")
+        if (self.variation_plan is None) != (evidence is None) and evidence is not None:
+            raise ValueError("variation plan evidence requires a plan")
+        if evidence is not None and evidence.plan != self.variation_plan:
+            raise ValueError("variation plan evidence does not match the plan")
         profiles = tuple(self.prescribed_torque_profiles)
         if any(not isinstance(item, PrescribedTorqueProfile) for item in profiles):
             raise TypeError("prescribed_torque_profiles contains an invalid profile")
@@ -270,7 +284,13 @@ class WorkspaceDocument:
                 profile.to_json_dict() for profile in self.prescribed_torque_profiles
             ],
             "club_configuration": self.club_configuration.to_json_dict(),
-            "variation_plan": None if plan is None else plan.to_json_dict(),
+            "variation_plan": (
+                None
+                if plan is None
+                else persisted_plan_binding_to_json_dict(
+                    self.variation_plan_evidence or plan
+                )
+            ),
             "layout": self.layout.to_json_dict(),
         }
 
@@ -283,6 +303,11 @@ class WorkspaceDocument:
         if not isinstance(raw_profiles, list):
             raise TypeError("prescribed_torque_profiles must be a JSON array")
         raw_plan = data["variation_plan"]
+        evidence = (
+            None
+            if raw_plan is None
+            else persisted_plan_binding_from_json_dict(raw_plan)
+        )
         return cls(
             metadata=WorkspaceMetadata.from_json_dict(data["metadata"]),
             model_session=VersionedPayload.from_json_dict(data["model_session"]),
@@ -292,10 +317,9 @@ class WorkspaceDocument:
             club_configuration=VersionedPayload.from_json_dict(
                 data["club_configuration"]
             ),
-            variation_plan=(
-                None if raw_plan is None else _variation_from_json(raw_plan)
-            ),
+            variation_plan=None if evidence is None else evidence.plan,
             layout=WorkspaceLayout.from_json_dict(data["layout"]),
+            variation_plan_evidence=evidence,
         )
 
 
@@ -318,12 +342,23 @@ def _migrate_workspace(value: object) -> Mapping[str, Any]:
         raise ValueError(f"unsupported workspace schema_version {version!r}")
     if version == WORKSPACE_SCHEMA_VERSION:
         return exact_mapping(value, _ROOT_FIELDS, "workspace")
-    legacy = exact_mapping(value, _ROOT_V1_FIELDS, "workspace v1")
-    legacy_layout = exact_mapping(legacy["layout"], _LAYOUT_V1_FIELDS, "layout v1")
-    migrated = dict(legacy)
+    if version == 1:
+        legacy = exact_mapping(value, _ROOT_V1_FIELDS, "workspace v1")
+        legacy_layout = exact_mapping(legacy["layout"], _LAYOUT_V1_FIELDS, "layout v1")
+        migrated = dict(legacy)
+        migrated["prescribed_torque_profiles"] = migrated.pop("torque_profiles")
+        migrated["layout"] = {**legacy_layout, "view_workspace": None}
+    else:
+        migrated = dict(exact_mapping(value, _ROOT_FIELDS, "workspace v2"))
+    raw_plan = migrated["variation_plan"]
+    if raw_plan is not None:
+        legacy_resolution = persisted_plan_loads(
+            json.dumps(raw_plan, sort_keys=True, separators=(",", ":"))
+        )
+        migrated["variation_plan"] = persisted_plan_binding_to_json_dict(
+            legacy_resolution
+        )
     migrated["schema_version"] = WORKSPACE_SCHEMA_VERSION
-    migrated["prescribed_torque_profiles"] = migrated.pop("torque_profiles")
-    migrated["layout"] = {**legacy_layout, "view_workspace": None}
     return migrated
 
 

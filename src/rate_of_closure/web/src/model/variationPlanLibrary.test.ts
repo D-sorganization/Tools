@@ -72,7 +72,7 @@ const entry = (id = "plan-1", name = "Impact Window"): NamedVariationPlan => ({
 });
 
 describe("variation plan library", () => {
-  it("round-trips a named plan with complete v2 fidelity", () => {
+  it("round-trips a named plan with its canonical v3 evidence binding", () => {
     const storage = new MemoryStorage();
     saveVariationPlanLibrary([entry()], storage);
 
@@ -80,14 +80,22 @@ describe("variation plan library", () => {
 
     expect(loaded.warnings).toEqual([]);
     expect(loaded.plans).toHaveLength(1);
-    expect(loaded.plans[0]).toEqual({
-      ...entry(),
-      plan: planFromJson(planToJson(fullPlan())),
-    });
+    expect(loaded.plans[0].plan).toEqual(planFromJson(planToJson(fullPlan())));
+    expect(loaded.plans[0].evidence?.warning).toBeNull();
+    expect(loaded.plans[0].evidence?.metadata).not.toBeNull();
     const raw = JSON.parse(storage.getItem(VARIATION_PLAN_LIBRARY_KEY)!) as {
       schema_version: number;
+      plans: Array<{ plan_document: { schema_version: number } }>;
     };
     expect(raw.schema_version).toBe(VARIATION_PLAN_LIBRARY_VERSION);
+    expect(raw.plans[0].plan_document.schema_version).toBe(3);
+
+    const before = raw.plans[0].plan_document;
+    saveVariationPlanLibrary(loaded.plans, storage);
+    const after = JSON.parse(storage.getItem(VARIATION_PLAN_LIBRARY_KEY)!) as {
+      plans: Array<{ plan_document: unknown }>;
+    };
+    expect(after.plans[0].plan_document).toEqual(before);
   });
 
   it("recovers safely from corrupt JSON and unsupported library versions", () => {
@@ -110,7 +118,7 @@ describe("variation plan library", () => {
     storage.setItem(
       VARIATION_PLAN_LIBRARY_KEY,
       JSON.stringify({
-        schema_version: VARIATION_PLAN_LIBRARY_VERSION,
+        schema_version: 1,
         plans: [
           { id: "valid", name: "Valid Plan", plan: validPlanObject },
           { id: "partial", name: "Missing Plan" },
@@ -121,7 +129,9 @@ describe("variation plan library", () => {
 
     const loaded = loadVariationPlanLibrary(storage);
     expect(loaded.plans.map((plan) => plan.id)).toEqual(["valid"]);
-    expect(loaded.warnings).toHaveLength(2);
+    expect(loaded.plans[0].evidence?.metadata).toBeNull();
+    expect(loaded.plans[0].evidence?.warning).toMatch(/historical reproducibility/i);
+    expect(loaded.warnings).toHaveLength(3);
   });
 
   it("reports unreadable storage without crashing the workbench", () => {

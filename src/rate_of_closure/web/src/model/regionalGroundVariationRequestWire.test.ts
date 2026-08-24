@@ -10,7 +10,7 @@ import {
 const goldenText = JSON.stringify(goldenRequest);
 
 describe("regional-ground variation request wire", () => {
-  it("round-trips the exact Python-canonical v1 fixture", () => {
+  it("round-trips the exact Python-canonical v2 fixture", () => {
     const request = regionalGroundVariationRequestFromJson(goldenText);
 
     expect(stableRegionalGroundVariationRequestJson(request)).toBe(goldenText);
@@ -21,7 +21,7 @@ describe("regional-ground variation request wire", () => {
   it.each([
     ["unknown root field", { ...goldenRequest, extra: true }, /fields/i],
     ["boolean max_rows", { ...goldenRequest, max_rows: true }, /max_rows.*integer/i],
-    ["unsupported schema", { ...goldenRequest, schema_version: 2 }, /schema_version/i],
+    ["unsupported schema", { ...goldenRequest, schema_version: 1 }, /schema_version/i],
     ["coercive plan number", {
       ...goldenRequest,
       variation_plan: { ...goldenRequest.variation_plan, seed: "1729" },
@@ -30,6 +30,10 @@ describe("regional-ground variation request wire", () => {
       ...goldenRequest,
       variation_plan: { ...goldenRequest.variation_plan, ball_setup: null },
     }, /variation_plan.*fields/i],
+    ["substituted plan", {
+      ...goldenRequest,
+      variation_plan: { ...goldenRequest.variation_plan, seed: 1730 },
+    }, /plan digest mismatch/i],
   ])("rejects %s", (_label, payload, message) => {
     expect(() => regionalGroundVariationRequestFromJson(JSON.stringify(payload)))
       .toThrow(message);

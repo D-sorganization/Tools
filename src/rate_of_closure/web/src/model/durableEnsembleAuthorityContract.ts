@@ -17,11 +17,13 @@ import {
 } from "./morrisAuthorityRequest";
 import { morrisStableId } from "./morrisStableId";
 import { planToJson, type VariationPlanTs } from "./variation";
+import { variationPlanSha256 } from "./variationExecutionMetadata";
 
 export const DURABLE_REQUEST_SCHEMA_ID = "rate-of-closure/durable-ensemble-request";
 export const DURABLE_JOB_SCHEMA_ID = "rate-of-closure/durable-ensemble-job";
 export const DURABLE_SCOPE = "passive-double-pendulum-global-perturbations/v1";
 export const DURABLE_AUTHORITY_VERSION = 1;
+export const DURABLE_REQUEST_VERSION = 2;
 
 export type DurableJobStatus = "queued" | "running" | "completed" | "cancelled" | "failed";
 
@@ -55,12 +57,13 @@ export interface DurableEnsembleRequestInput {
 
 export interface DurableEnsembleRequestDocument {
   readonly schema_id: typeof DURABLE_REQUEST_SCHEMA_ID;
-  readonly schema_version: typeof DURABLE_AUTHORITY_VERSION;
+  readonly schema_version: typeof DURABLE_REQUEST_VERSION;
   readonly scope: typeof DURABLE_SCOPE;
   readonly request_id: string;
   readonly archive_id: string;
   readonly base: Readonly<Record<string, string | number>>;
   readonly plan: Readonly<Record<string, unknown>>;
+  readonly plan_sha256: string;
   readonly chunk_size: number;
 }
 
@@ -154,12 +157,13 @@ export function serializeDurableEnsembleRequest(
   });
   return Object.freeze({
     schema_id: DURABLE_REQUEST_SCHEMA_ID,
-    schema_version: DURABLE_AUTHORITY_VERSION,
+    schema_version: DURABLE_REQUEST_VERSION,
     scope: DURABLE_SCOPE,
     request_id: morrisStableId(input.requestId, "requestId"),
     archive_id: morrisStableId(input.archiveId, "archiveId"),
     base,
     plan: Object.freeze(plan),
+    plan_sha256: variationPlanSha256({ ...input.plan, ballSetup: undefined }),
     chunk_size: chunkSize,
   });
 }

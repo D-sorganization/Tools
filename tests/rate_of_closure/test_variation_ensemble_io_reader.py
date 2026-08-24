@@ -258,9 +258,21 @@ def test_version_one_is_the_only_supported_outer_schema() -> None:
 @pytest.mark.parametrize(
     ("path", "replacement", "message"),
     [
-        (("variation", "plan", "n_runs"), True, "n_runs must be an integer"),
-        (("variation", "plan", "seed"), 1.0, "seed must be an integer"),
-        (("variation", "plan", "noise", 0, "scale"), "1.0", "noise scale"),
+        (
+            ("variation", "plan_document", "plan", "n_runs"),
+            True,
+            "n_runs must be an integer",
+        ),
+        (
+            ("variation", "plan_document", "plan", "seed"),
+            1.0,
+            "seed must be an integer",
+        ),
+        (
+            ("variation", "plan_document", "plan", "noise", 0, "scale"),
+            "1.0",
+            "scale must",
+        ),
         (("variation", "success", 0), 1, "success must contain booleans"),
         (("impact_sample_indices", 0), True, "must be an integer"),
     ],

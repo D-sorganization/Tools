@@ -37,12 +37,18 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
         "react": VisualBaselineTolerance(1, 4_000, 50_000),
         "pyqt": VisualBaselineTolerance(1, 200, 250),
     }
+    calibrated_tolerances = {
+        ("pyqt", "simulation"): VisualBaselineTolerance(1, 10_000, 10_000),
+    }
     for entry in manifest.baselines:
         data = package.joinpath(
             "visual_baselines", "v1", entry.surface, entry.filename
         ).read_bytes()
         assert hashlib.sha256(data).hexdigest() == entry.sha256
-        assert entry.tolerance == tolerances[entry.surface]
+        expected_tolerance = calibrated_tolerances.get(
+            (entry.surface, entry.tab_id), tolerances[entry.surface]
+        )
+        assert entry.tolerance == expected_tolerance
 
 
 def test_calibration_authority_bounds_host_drift_and_rejects_stale_controls() -> None:

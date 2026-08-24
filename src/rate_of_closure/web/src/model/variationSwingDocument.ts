@@ -1,7 +1,11 @@
 /** Strict finite JSON persistence for browser swing ensembles. */
 
-import { planToJson, validatePlan, type VariationDatasetTs } from "./variation";
+import { planToJson, type VariationDatasetTs } from "./variation";
 import type { VariationPlanTs } from "./variationSchema";
+import {
+  parseVariationExecutionDocument,
+  variationExecutionDocument,
+} from "./variationExecutionMetadata";
 import { sampleInputs } from "./variationSampling";
 import { parseUniqueJson } from "./strictJson";
 import type { SwingVariationResultTs } from "./variationSwingEnsemble";
@@ -10,7 +14,7 @@ import {
   validateLocalizedTrialCommands, validateSwingTrialPayload,
 } from "./variationSwingResultValidation";
 
-export const SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION = 2;
+export const SWING_ENSEMBLE_EXPORT_SCHEMA_VERSION = 3;
 const FRAME = "app_frame:x_target,y_up,z_right" as const;
 const ROOT_FIELDS = [
   "schemaVersion", "coordinateFrame", "positionUnit", "timeUnit", "dataset", "trials",
@@ -33,11 +37,12 @@ function validateDataset(datasetValue: unknown, expectedPlan?: VariationPlanTs):
   const dataset = record(datasetValue, "swing ensemble dataset");
   exactFields(
     dataset,
-    ["plan", "inputNames", "inputs", "outputNames", "outputs", "success"],
+    ["planDocument", "inputNames", "inputs", "outputNames", "outputs", "success"],
     "swing ensemble dataset",
   );
-  const plan = record(dataset.plan, "swing ensemble plan") as unknown as VariationPlanTs;
-  validatePlan(plan);
+  const plan = parseVariationExecutionDocument(
+    JSON.stringify(record(dataset.planDocument, "swing ensemble plan document")),
+  ).plan;
   if (expectedPlan && planToJson(plan) !== planToJson(expectedPlan)) {
     throw new Error("swing ensemble plan does not match the expected plan");
   }
@@ -58,7 +63,14 @@ function validateDataset(datasetValue: unknown, expectedPlan?: VariationPlanTs):
       !success.every((item) => typeof item === "boolean")) {
     throw new Error("swing ensemble dataset does not match its plan");
   }
-  return dataset as unknown as VariationDatasetTs;
+  return {
+    plan,
+    inputNames,
+    inputs,
+    outputNames,
+    outputs,
+    success,
+  } as VariationDatasetTs;
 }
 
 export function validateSwingEnsembleDocument(
@@ -124,7 +136,14 @@ const swingEnsembleDocumentValue = (result: SwingVariationResultTs) =>
     coordinateFrame: result.coordinateFrame,
     positionUnit: "m",
     timeUnit: "s",
-    dataset: result.dataset,
+    dataset: {
+      planDocument: variationExecutionDocument(result.dataset.plan),
+      inputNames: result.dataset.inputNames,
+      inputs: result.dataset.inputs,
+      outputNames: result.dataset.outputNames,
+      outputs: result.dataset.outputs,
+      success: result.dataset.success,
+    },
     trials: result.runs,
   });
 

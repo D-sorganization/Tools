@@ -1,14 +1,9 @@
 /** Strict whole-workspace adapter for the browser's supported live state. */
 
 import type { UnitSelections } from "../components/ImpactExplorerPanel";
-import type { ClubSpec, ClubType } from "./club";
-import { validateScenario, type ImpactScenario } from "./impact";
-import {
-  PRIMARY_VIEW_IDS,
-  REQUIRED_PRIMARY_VIEW_IDS,
-  type PrimaryViewId,
-  type PrimaryViewState,
-} from "./viewPreferences";
+import type { ClubSpec } from "./club";
+import type { ImpactScenario } from "./impact";
+import type { PrimaryViewState } from "./viewPreferences";
 import {
   viewWorkspaceDocument,
   viewWorkspaceFromDocument,
@@ -42,37 +37,21 @@ import {
   capabilityWorkflowInputs,
   type CapabilityWorkflowDocument,
 } from "./capabilityWorkflow";
+import {
+  validatedWorkspaceModules,
+  validatedWorkspaceUnits,
+  workspaceClubDocument,
+  workspaceClubFromDocument,
+  workspaceScenarioDocument,
+  workspaceScenarioFromDocument,
+} from "./workspaceSessionFields";
 
 const WORKSPACE_SCHEMA = "rate_of_closure.workspace";
-const WORKSPACE_VERSION = 2;
+const WORKSPACE_VERSION = 3;
 const SESSION_SCHEMA = "rate_of_closure.explorer_session";
 const CLUB_SCHEMA = "rate_of_closure.club_configuration";
 const SESSION_PAYLOAD_VERSION = 5;
 const CLUB_PAYLOAD_VERSION = 1;
-const CLUB_TYPES: readonly ClubType[] = [
-  "Driver",
-  "Wood",
-  "Hybrid",
-  "Iron",
-  "Wedge",
-  "Putter",
-];
-const HEAD_STYLES = ["Auto", "Mallet", "Blade"] as const;
-const CLUB_BOUNDS = {
-  lengthM: [0.6, 1.3],
-  headMassKg: [0.1, 0.5],
-  loftDeg: [0, 70],
-  lieDeg: [45, 80],
-  moiAboutShaftKgM2: [5e-5, 2e-3],
-  cgDepthM: [0, 0.08],
-  cgHeightM: [0, 0.06],
-} as const;
-const UNIT_OPTIONS = {
-  speed: ["mph", "m/s", "km/h"],
-  rotation: ["deg/s", "rad/s", "rpm"],
-  length: ["mm", "cm", "in"],
-  distance: ["yd", "m", "ft"],
-} as const;
 
 export interface WorkspaceSessionSnapshot {
   readonly scenario: ImpactScenario;
@@ -110,191 +89,6 @@ function exactRecord(
   return value;
 }
 
-function finite(value: unknown, context: string): number {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    throw new TypeError(`${context} must be finite`);
-  }
-  return value;
-}
-
-function scenarioDocument(scenario: ImpactScenario): Record<string, number> {
-  validateScenario(scenario);
-  return {
-    clubhead_speed_mph: scenario.clubheadSpeedMph,
-    omega_plane_dps: scenario.omegaPlaneDps,
-    omega_shaft_dps: scenario.omegaShaftDps,
-    lie_angle_deg: scenario.lieAngleDeg,
-    com_to_face_mm: scenario.comToFaceMm,
-    impact_offset_toe_mm: scenario.impactOffsetToeMm,
-    impact_offset_high_mm: scenario.impactOffsetHighMm,
-    contact_duration_us: scenario.contactDurationUs,
-  };
-}
-
-function scenarioFromDocument(value: unknown): ImpactScenario {
-  const data = exactRecord(
-    value,
-    [
-      "clubhead_speed_mph",
-      "omega_plane_dps",
-      "omega_shaft_dps",
-      "lie_angle_deg",
-      "com_to_face_mm",
-      "impact_offset_toe_mm",
-      "impact_offset_high_mm",
-      "contact_duration_us",
-    ],
-    "model_session.scenario",
-  );
-  const scenario: ImpactScenario = {
-    clubheadSpeedMph: finite(data.clubhead_speed_mph, "clubhead_speed_mph"),
-    omegaPlaneDps: finite(data.omega_plane_dps, "omega_plane_dps"),
-    omegaShaftDps: finite(data.omega_shaft_dps, "omega_shaft_dps"),
-    lieAngleDeg: finite(data.lie_angle_deg, "lie_angle_deg"),
-    comToFaceMm: finite(data.com_to_face_mm, "com_to_face_mm"),
-    impactOffsetToeMm: finite(
-      data.impact_offset_toe_mm,
-      "impact_offset_toe_mm",
-    ),
-    impactOffsetHighMm: finite(
-      data.impact_offset_high_mm,
-      "impact_offset_high_mm",
-    ),
-    contactDurationUs: finite(data.contact_duration_us, "contact_duration_us"),
-  };
-  validateScenario(scenario);
-  return scenario;
-}
-
-function clubDocument(club: ClubSpec): Record<string, unknown> {
-  return {
-    name: club.name,
-    club_type: club.clubType,
-    length_m: club.lengthM,
-    head_mass_kg: club.headMassKg,
-    loft_deg: club.loftDeg,
-    lie_deg: club.lieDeg,
-    moi_about_shaft_kg_m2: club.moiAboutShaftKgM2,
-    cg_depth_m: club.cgDepthM,
-    cg_height_m: club.cgHeightM,
-    face_bulge_radius_m: club.faceBulgeRadiusM,
-    face_roll_radius_m: club.faceRollRadiusM,
-    head_style: club.headStyle ?? "Auto",
-  };
-}
-
-function optionalFinite(value: unknown, context: string): number | null {
-  return value === null ? null : finite(value, context);
-}
-
-function clubFromDocument(value: unknown): ClubSpec {
-  const data = exactRecord(
-    value,
-    [
-      "name",
-      "club_type",
-      "length_m",
-      "head_mass_kg",
-      "loft_deg",
-      "lie_deg",
-      "moi_about_shaft_kg_m2",
-      "cg_depth_m",
-      "cg_height_m",
-      "face_bulge_radius_m",
-      "face_roll_radius_m",
-      "head_style",
-    ],
-    "club_configuration.data",
-  );
-  if (
-    typeof data.name !== "string" ||
-    data.name.trim().length === 0 ||
-    !CLUB_TYPES.includes(data.club_type as ClubType) ||
-    !HEAD_STYLES.includes(data.head_style as (typeof HEAD_STYLES)[number])
-  ) {
-    throw new TypeError("club configuration identity is invalid");
-  }
-  const club: ClubSpec = {
-    name: data.name,
-    clubType: data.club_type as ClubType,
-    lengthM: finite(data.length_m, "length_m"),
-    headMassKg: finite(data.head_mass_kg, "head_mass_kg"),
-    loftDeg: finite(data.loft_deg, "loft_deg"),
-    lieDeg: finite(data.lie_deg, "lie_deg"),
-    moiAboutShaftKgM2: finite(
-      data.moi_about_shaft_kg_m2,
-      "moi_about_shaft_kg_m2",
-    ),
-    cgDepthM: finite(data.cg_depth_m, "cg_depth_m"),
-    cgHeightM: finite(data.cg_height_m, "cg_height_m"),
-    faceBulgeRadiusM: optionalFinite(
-      data.face_bulge_radius_m,
-      "face_bulge_radius_m",
-    ),
-    faceRollRadiusM: optionalFinite(
-      data.face_roll_radius_m,
-      "face_roll_radius_m",
-    ),
-    headStyle: data.head_style as (typeof HEAD_STYLES)[number],
-  };
-  for (const key of Object.keys(CLUB_BOUNDS) as (keyof typeof CLUB_BOUNDS)[]) {
-    const [low, high] = CLUB_BOUNDS[key];
-    if (club[key] < low || club[key] > high)
-      throw new RangeError(`${key} is out of range`);
-  }
-  for (const [key, value] of [
-    ["faceBulgeRadiusM", club.faceBulgeRadiusM],
-    ["faceRollRadiusM", club.faceRollRadiusM],
-  ] as const) {
-    if (value !== null && (value < 0.1 || value > 2))
-      throw new RangeError(`${key} is out of range`);
-  }
-  return club;
-}
-
-function validatedUnits(value: unknown): UnitSelections {
-  const units = exactRecord(
-    value,
-    Object.keys(UNIT_OPTIONS),
-    "model_session.units",
-  );
-  for (const key of Object.keys(UNIT_OPTIONS) as (keyof UnitSelections)[]) {
-    if (!(UNIT_OPTIONS[key] as readonly unknown[]).includes(units[key])) {
-      throw new TypeError(`unsupported ${key} unit`);
-    }
-  }
-  return units as unknown as UnitSelections;
-}
-
-function validatedModules(layout: Record<string, unknown>): PrimaryViewState {
-  const order = layout.module_order;
-  const visible = layout.visible_module_ids;
-  if (
-    !Array.isArray(order) ||
-    order.length !== PRIMARY_VIEW_IDS.length ||
-    new Set(order).size !== order.length ||
-    PRIMARY_VIEW_IDS.some((id) => !order.includes(id))
-  ) {
-    throw new TypeError("module_order must contain every module exactly once");
-  }
-  if (
-    !Array.isArray(visible) ||
-    visible.length === 0 ||
-    new Set(visible).size !== visible.length ||
-    visible.some((id) => !PRIMARY_VIEW_IDS.includes(id as PrimaryViewId)) ||
-    REQUIRED_PRIMARY_VIEW_IDS.some((id) => !visible.includes(id)) ||
-    !visible.includes(layout.active_module_id)
-  ) {
-    throw new TypeError("module visibility and active module are invalid");
-  }
-  return {
-    version: 2,
-    order: [...order] as PrimaryViewId[],
-    visible: [...visible] as PrimaryViewId[],
-    active: layout.active_module_id as PrimaryViewId,
-  };
-}
-
 /** Serialize the browser-supported whole workspace without hidden file authority. */
 export function createWorkspaceDocument(
   snapshot: WorkspaceSessionSnapshot,
@@ -315,7 +109,7 @@ export function createWorkspaceDocument(
       schema: SESSION_SCHEMA,
       schema_version: SESSION_PAYLOAD_VERSION,
       data: {
-        scenario: scenarioDocument(snapshot.scenario),
+        scenario: workspaceScenarioDocument(snapshot.scenario),
         units: snapshot.units,
         simulation_setup: simulationWorkspaceDocument(
           snapshot.simulation,
@@ -335,7 +129,7 @@ export function createWorkspaceDocument(
     club_configuration: {
       schema: CLUB_SCHEMA,
       schema_version: CLUB_PAYLOAD_VERSION,
-      data: clubDocument(snapshot.club),
+      data: workspaceClubDocument(snapshot.club),
     },
     variation_plan: variationPlanWorkspaceDocument(
       snapshot.variation,
@@ -388,7 +182,7 @@ export function parseWorkspaceDocument(
   );
   if (
     root.schema !== WORKSPACE_SCHEMA ||
-    root.schema_version !== WORKSPACE_VERSION
+    (root.schema_version !== 2 && root.schema_version !== WORKSPACE_VERSION)
   ) {
     throw new TypeError("unsupported workspace schema");
   }
@@ -434,7 +228,7 @@ export function parseWorkspaceDocument(
   const club = exactRecord(
     clubEnvelope.data,
     Object.keys(
-      clubDocument({
+      workspaceClubDocument({
         name: "x",
         clubType: "Driver",
         lengthM: 1,
@@ -493,7 +287,7 @@ export function parseWorkspaceDocument(
   ) {
     throw new TypeError("view workspace envelope version does not match its format");
   }
-  const parsedClub = clubFromDocument(club);
+  const parsedClub = workspaceClubFromDocument(club);
   const simulation: SimulationWorkspaceSnapshot =
     simulationWorkspaceFromSession({
       isLegacy: sessionEnvelope.version === 1,
@@ -513,6 +307,7 @@ export function parseWorkspaceDocument(
       : variationPlanFromWorkspaceDocument(
           root.variation_plan,
           simulation.ballSetup,
+          root.schema_version === 2,
         );
   let variation: VariationWorkspaceSnapshot;
   if (sessionEnvelope.version < 4) {
@@ -523,7 +318,7 @@ export function parseWorkspaceDocument(
     }
     variation = migratedLegacyVariationFallback(
       options.legacyVariationFallback,
-      documentPlan,
+          documentPlan,
       simulation.ballSetup,
     );
   } else {
@@ -534,6 +329,7 @@ export function parseWorkspaceDocument(
     }
     variation = variationWorkspaceFromDocument(
       session.variation_study,
+      documentPlan.plan,
       documentPlan,
       simulation.ballSetup,
     );
@@ -552,14 +348,14 @@ export function parseWorkspaceDocument(
     capabilityWorkflowInputs(capability);
   }
   return {
-    scenario: scenarioFromDocument(session.scenario),
+    scenario: workspaceScenarioFromDocument(session.scenario),
     club: parsedClub,
-    units: validatedUnits(session.units),
+    units: validatedWorkspaceUnits(session.units),
     simulation,
     torque,
     variation,
     capability,
-    modules: validatedModules(layout),
+    modules: validatedWorkspaceModules(layout),
     viewWorkspace: viewWorkspaceFromDocument(viewData),
   };
 }

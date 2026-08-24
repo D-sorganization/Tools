@@ -1,7 +1,8 @@
 import { useRef, type Ref } from "react";
 
 import { datasetToCsv, datasetToJson } from "../model/variationAnalysis";
-import { planToJson, type VariationDatasetTs, type VariationPlanTs } from "../model/variation";
+import { type VariationDatasetTs, type VariationPlanTs } from "../model/variation";
+import { persistedVariationPlanJson } from "../model/variationPersistedPlan";
 import { BUTTON_CLASS, PANEL_CLASS, downloadText, readFileText } from "./variationUi";
 import {
   swingEnsembleToJson,
@@ -46,7 +47,7 @@ export function VariationActions({
   const pointerRevealEligible = useRef(false);
   let validPlanJson: string | null = null;
   try {
-    validPlanJson = planToJson(plan);
+    validPlanJson = persistedVariationPlanJson(plan);
   } catch {
     validPlanJson = null;
   }
@@ -153,12 +154,12 @@ export function VariationActions({
           onClick={() => validPlanJson !== null && downloadText(
             "variation_plan.json", validPlanJson, "application/json",
           )}
-          title="Export the complete v2 physical plan as JSON."
+          title="Export the canonical self-contained plan document as JSON."
           className={BUTTON_CLASS}
         >
           Export Plan JSON
         </button>
-        <label className={`${BUTTON_CLASS} cursor-pointer`} title="Import a v1 or v2 plan JSON file.">
+        <label className={`${BUTTON_CLASS} cursor-pointer`} title="Import a canonical or legacy plan JSON file.">
           Import Plan JSON
           <input
             aria-label="Import variation plan JSON"

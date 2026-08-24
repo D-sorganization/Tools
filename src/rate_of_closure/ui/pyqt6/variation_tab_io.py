@@ -33,6 +33,10 @@ from shared.python.swing_sim.variation import (
     keys_for_mode,
 )
 from shared.python.swing_sim.variation.dataset_io import write_csv, write_json
+from shared.python.swing_sim.variation.persisted_plan_io import (
+    persisted_plan_loads,
+    write_persisted_plan,
+)
 
 
 class VariationTabIoMixin:
@@ -187,9 +191,12 @@ class VariationTabIoMixin:
             "JSON (*.json)",
         )
         if path:
-            with open(path, "w", encoding="utf-8") as handle:
-                handle.write(plan.dumps())
-            self._status.setText(f"Plan saved to {path}.")
+            try:
+                write_persisted_plan(path, plan)
+            except OSError as exc:
+                self._status.setText(f"Cannot save plan: {exc}")
+                return
+            self._status.setText(f"Canonical plan document saved to {path}.")
 
     def _on_load_plan(self) -> None:
         path, _filter = QFileDialog.getOpenFileName(
@@ -199,8 +206,8 @@ class VariationTabIoMixin:
             return
         try:
             with open(path, encoding="utf-8") as handle:
-                plan = VariationPlan.loads(handle.read())
-            self.load_plan(plan)
+                resolution = persisted_plan_loads(handle.read())
+            self.load_plan(resolution.plan)
         except (
             ContractViolationError,
             OSError,
@@ -210,7 +217,10 @@ class VariationTabIoMixin:
         ) as exc:
             self._status.setText(f"Cannot load plan: {exc}")
             return
-        self._status.setText(f"Plan loaded from {path}.")
+        message = f"Plan loaded from {path}."
+        if resolution.warning is not None:
+            message = f"{message} Warning: {resolution.warning}"
+        self._status.setText(message)
 
     def load_plan(self, plan: VariationPlan) -> None:
         """Atomically drive editors from a losslessly representable plan."""
