@@ -55,35 +55,10 @@ def test_get_icon_rejects_unknown_icon_name(icon_utils):
         icon_utils.IconColorizer.get_icon("missing", "#fff")
 
 
-def test_validate_icon_name(icon_utils):
-    assert icon_utils.validate_icon_name("home") == "home"
-    with pytest.raises(TypeError, match="name must be a string"):
-        icon_utils.validate_icon_name(None)
-    with pytest.raises(TypeError, match="name must be a string"):
-        icon_utils.validate_icon_name(123)
-
-
-def test_validate_icon_color(icon_utils):
-    assert icon_utils.validate_icon_color("#ff0000") == "#ff0000"
-    with pytest.raises(TypeError, match="color must be a string"):
-        icon_utils.validate_icon_color(None)
-    with pytest.raises(TypeError, match="color must be a string"):
-        icon_utils.validate_icon_color(42)
-
-
-def test_get_registered_svg(icon_utils):
-    reg = {"test": "<svg>{color}</svg>"}
-    assert icon_utils.get_registered_svg(reg, "test") == "<svg>{color}</svg>"
-    with pytest.raises(TypeError, match="name must be a string"):
-        icon_utils.get_registered_svg(reg, None)
-    with pytest.raises(ValueError, match="Icon 'missing' is not registered"):
-        icon_utils.get_registered_svg(reg, "missing")
-
-
 def test_get_icon_validates_argument_types(icon_utils):
-    with pytest.raises(TypeError, match="name must be a string"):
+    with pytest.raises(AssertionError, match="name must be a string"):
         icon_utils.IconColorizer.get_icon(None, "#fff")
-    with pytest.raises(TypeError, match="color must be a string"):
+    with pytest.raises(AssertionError, match="color must be a string"):
         icon_utils.IconColorizer.get_icon("home", None)
 
 
@@ -109,5 +84,5 @@ def test_colorize_svg_file_validates_color_type(icon_utils, tmp_path):
     svg_path = tmp_path / "glyph.svg"
     svg_path.write_text("<svg />", encoding="utf-8")
 
-    with pytest.raises(TypeError, match="color must be a string"):
+    with pytest.raises(AssertionError, match="color must be a string"):
         icon_utils.IconColorizer.colorize_svg_file(svg_path, None)

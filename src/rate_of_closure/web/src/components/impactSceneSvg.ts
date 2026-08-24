@@ -17,31 +17,22 @@ export function impactSceneSvg(
   width = 1600,
   height = 920,
 ): string {
-  let fills = "";
-  for (let i = 0; i < geometry.fills.length; i++) {
-    const fill = geometry.fills[i];
-    let points = "";
-    for (let j = 0; j < fill.points.length; j++) {
-      const proj = project(fill.points[j], width, height, camera.zoom, camera.yaw, camera.pitch);
-      points += `${proj[0].toFixed(2)},${proj[1].toFixed(2)}`;
-      if (j < fill.points.length - 1) points += " ";
-    }
-    fills += `<polygon points="${points}" fill="${fill.color}" fill-opacity="${fill.alpha}"><title>${escapeXml(fill.label)}</title></polygon>`;
-  }
-
-  let lines = "";
-  for (let i = 0; i < geometry.lines.length; i++) {
-    const line = geometry.lines[i];
-    let points = "";
-    for (let j = 0; j < line.points.length; j++) {
-      const proj = project(line.points[j], width, height, camera.zoom, camera.yaw, camera.pitch);
-      points += `${proj[0].toFixed(2)},${proj[1].toFixed(2)}`;
-      if (j < line.points.length - 1) points += " ";
-    }
+  const fills = geometry.fills.map((fill) => {
+    const points = fill.points.map((point) =>
+      project(point, width, height, camera.zoom, camera.yaw, camera.pitch)
+        .map((value) => value.toFixed(2)).join(","),
+    ).join(" ");
+    return `<polygon points="${points}" fill="${fill.color}" fill-opacity="${fill.alpha}"><title>${escapeXml(fill.label)}</title></polygon>`;
+  }).join("");
+  const lines = geometry.lines.map((line) => {
+    const points = line.points.map((point) =>
+      project(point, width, height, camera.zoom, camera.yaw, camera.pitch)
+        .map((value) => value.toFixed(2)).join(","),
+    ).join(" ");
     const dash = line.dash ? ` stroke-dasharray="${line.dash.join(" ")}"` : "";
     const marker = line.arrow ? ' marker-end="url(#arrow)"' : "";
-    lines += `<polyline points="${points}" fill="none" stroke="${line.color}" stroke-width="${line.width * 2}"${dash}${marker}><title>${escapeXml(line.label)}</title></polyline>`;
-  }
+    return `<polyline points="${points}" fill="none" stroke="${line.color}" stroke-width="${line.width * 2}"${dash}${marker}><title>${escapeXml(line.label)}</title></polyline>`;
+  }).join("");
   const [contactX, contactY] = project(
     geometry.contactPoint, width, height, camera.zoom, camera.yaw, camera.pitch,
   );

@@ -56,24 +56,19 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-PR #4669 merged the version-3 execution documents, explicit legacy bindings,
-plan-digest-bound cross-runtime requests, and substitution failures across plan
-files, libraries, workspaces, datasets, geometry/durable ensembles, forgiveness
-exports, and regional results. PR #4674 starts from its exact merge commit and
-adds public JSON/CSV/HDF5 scalar-dataset persistence, atomic
-no-replace HDF5 publication, logical-content SHA-256 verification, and strict
-CSV row identity/shape checks. Its initial protected Python jobs exposed a
-missing root-CI `h5py` declaration; the branch now declares and locks it with a
-regression test. The downstream lane then exposed an incomplete sparse
-UpstreamDrift provider fixture; all required provider roots are now constructed
-and workflow-tested without weakening the consumer suite. Current-main
-vendoring tests, 27 focused workflow tests, and all 310 variation tests pass locally.
-The file-watcher matrix retains its Python 3.10 wheel/import gate but runs the root-
-declared Python 3.11+ wrapper tests only on 3.11/3.12, avoiding below-floor exit 5.
-The contract is
-`docs/specs/VARIATION_PLAN_PERSISTENCE.md`. The R10--R15 ledger stays partial:
-these controls prove provenance and integrity, not human validity or
-cross-runtime numerical equivalence.
+The 31-item R10--R15 ledger still records 18 verified, 11 partial, and two
+unverified requirements. PR #4669 now carries the #4668 plan-evidence work from
+`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
+query its exact head and protected checks before acting. It adds version-3
+execution documents, explicit
+legacy bindings, plan-digest-bound cross-runtime requests, and substitution
+failures across plan files, libraries, workspaces, datasets, geometry/durable
+ensembles, forgiveness exports, and regional results. The contract and exact
+inventory are in `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. Exact Python,
+single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
+two-DPI PyQt gates pass locally. Keep the ledger partial until protected CI,
+merge, and remote-main verification. These controls prove provenance and
+integrity, not human validity or cross-runtime equivalence.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 

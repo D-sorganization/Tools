@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Search, Cpu, Eye } from "lucide-react";
 import { getLadderExplorer } from "../api/endpoints";
 import type { LadderTagInfo } from "../api/schemas";
@@ -20,7 +20,7 @@ export const LadderExplorer: React.FC<LadderExplorerProps> = ({
   const [selectedRegType, setSelectedRegType] = useState<string>("All");
   const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchTags = async () => {
+  const fetchTags = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getLadderExplorer();
@@ -30,11 +30,11 @@ export const LadderExplorer: React.FC<LadderExplorerProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [triggerNotification]);
 
   useEffect(() => {
     fetchTags();
-  }, []);
+  }, [fetchTags]);
 
   // ⚡ Bolt Optimization: Memoize and pre-compute dropdown options using a single-pass loop instead of chained .map().filter()
   const { areas, regTypes } = useMemo(() => {

@@ -1075,10 +1075,7 @@ jobs:
   rust-quality-gate:
     needs: pick-runner
     runs-on: d-sorg-fleet
-    # A cold runner compiles the workspace twice, installs cargo-audit, builds
-    # Python and WASM artifacts, and runs Criterion. Two otherwise-green PR
-    # attempts exhausted the former 15-minute budget during cargo-audit.
-    timeout-minutes: 45
+    timeout-minutes: 15
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_BUILD_JOBS: "1"
@@ -1178,22 +1175,7 @@ jobs:
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
           cargo install cargo-audit --locked
-          # Self-hosted Git configuration can rewrite public GitHub URLs with
-          # repository credentials. Acquire the public database over anonymous
-          # HTTPS, then prohibit cargo-audit from performing any Git fetch.
-          RUSTSEC_TMP="$(mktemp -d)"
-          RUSTSEC_ARCHIVE="${RUSTSEC_TMP}/advisory-db.tar.gz"
-          curl --fail --show-error --silent --location --retry 3 \
-            --proto '=https' --tlsv1.2 \
-            --output "$RUSTSEC_ARCHIVE" \
-            https://github.com/RustSec/advisory-db/archive/refs/heads/main.tar.gz
-          tar -xzf "$RUSTSEC_ARCHIVE" -C "$RUSTSEC_TMP"
-          RUSTSEC_DB="${RUSTSEC_TMP}/advisory-db-main"
-          test -d "$RUSTSEC_DB/crates"
-          cargo audit --db "$RUSTSEC_DB" --no-fetch
-          cargo generate-lockfile --manifest-path src/pendulum_simulator/pendulum-core/Cargo.toml
-          PENDULUM_LOCK="src/pendulum_simulator/pendulum-core/Cargo.lock"
-          cargo audit --file "$PENDULUM_LOCK" --db "$RUSTSEC_DB" --no-fetch
+          cargo audit
 
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'

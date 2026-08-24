@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Network, HardDrive, Tag, ChevronDown, ChevronRight, Cpu } from "lucide-react";
 import { getPlant } from "../api/endpoints";
 import type {
@@ -28,7 +28,7 @@ export const PlantHierarchy: React.FC<PlantHierarchyProps> = ({
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchHierarchy = async () => {
+  const fetchHierarchy = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getPlant();
@@ -47,11 +47,11 @@ export const PlantHierarchy: React.FC<PlantHierarchyProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [triggerNotification]);
 
   useEffect(() => {
     fetchHierarchy();
-  }, []);
+  }, [fetchHierarchy]);
 
   const toggleNode = (nodeId: string) => {
     setExpandedNodes((prev) => ({

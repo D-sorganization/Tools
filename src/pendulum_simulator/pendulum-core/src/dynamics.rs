@@ -56,10 +56,8 @@ pub fn linear_power_series(forces: &[f64], velocities: &[f64]) -> Vec<f64> {
     );
 
     forces
-        .as_chunks::<2>()
-        .0
-        .iter()
-        .zip(velocities.as_chunks::<2>().0.iter())
+        .chunks_exact(2)
+        .zip(velocities.chunks_exact(2))
         .map(|(f, v)| f[0] * v[0] + f[1] * v[1])
         .collect()
 }
