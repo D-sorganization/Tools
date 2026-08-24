@@ -22,7 +22,7 @@ pub const DEFAULT_EMBED_PATH: &str = "/embeddings";
 pub const DEFAULT_EMBED_MODEL: &str = "text-embedding-3-small";
 
 /// Configuration for the AI client and RAG system.
-#[cfg_attr(feature = "python", pyclass(get_all, set_all, from_py_object))]
+#[cfg_attr(feature = "python", pyclass(get_all, set_all))]
 #[derive(Clone, Debug)]
 pub struct AIConfig {
     pub api_key: String,

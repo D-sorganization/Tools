@@ -11,7 +11,7 @@ use super::{
 use math_primitives::types::Vector3;
 
 /// Validated planar-ground definition for Python callers.
-#[pyclass(name = "FlightGroundPlane", from_py_object)]
+#[pyclass(name = "FlightGroundPlane")]
 #[derive(Clone)]
 pub struct PyFlightGroundPlane {
     ground: PlanarGround,
@@ -38,7 +38,7 @@ impl PyFlightGroundPlane {
 }
 
 /// Flight-ground request with launch center as the request-frame origin.
-#[pyclass(name = "FlightGroundRequest", from_py_object)]
+#[pyclass(name = "FlightGroundRequest")]
 #[derive(Clone)]
 pub struct PyFlightGroundRequest {
     max_time: f64,

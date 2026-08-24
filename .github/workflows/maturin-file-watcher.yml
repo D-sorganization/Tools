@@ -101,10 +101,6 @@ jobs:
           PY
 
       - name: Run file_watcher test suite (gate)
-        # The root test package declares Python >=3.11 and is intentionally
-        # ignored by conftest on 3.10. The 3.10 lane remains a hard wheel/import
-        # compatibility gate above; wrapper behavior runs on supported roots.
-        if: ${{ matrix.python-version != '3.10' }}
         shell: bash
         env:
           PYTHONPATH: src

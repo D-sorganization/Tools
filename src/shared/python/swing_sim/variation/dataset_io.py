@@ -45,7 +45,7 @@ from .execution_metadata import (
 )
 from .spec import VariationPlan
 
-DATASET_JSON_SCHEMA_VERSION = 2
+_SCHEMA_VERSION = 2
 _JSON_FIELDS = frozenset(
     {
         "schema_version",
@@ -67,7 +67,7 @@ def to_json_dict(dataset: VariationDataset) -> dict[str, Any]:
         for row in dataset.outputs.tolist()
     ]
     return {
-        "schema_version": DATASET_JSON_SCHEMA_VERSION,
+        "schema_version": _SCHEMA_VERSION,
         "plan_document": execution_document_to_json_dict(dataset.plan),
         "input_names": list(dataset.input_names),
         "output_names": list(dataset.output_names),
@@ -91,9 +91,7 @@ def from_json_dict(data: dict[str, Any]) -> VariationDataset:
         "legacy dataset plan is not self-contained; re-run or explicitly migrate it",
         version,
     )
-    require(
-        version == DATASET_JSON_SCHEMA_VERSION, "unsupported schema_version", version
-    )
+    require(version == _SCHEMA_VERSION, "unsupported schema_version", version)
     require(set(data) == _JSON_FIELDS, "dataset fields mismatch", sorted(data))
     plan_document = execution_document_from_json_dict(data["plan_document"])
     outputs = np.array(
@@ -159,8 +157,6 @@ def read_csv(path: str | Path, plan: VariationPlan) -> VariationDataset:
     )
     input_names = tuple(header[2 : 2 + n_inputs])
     output_names = tuple(header[2 + n_inputs :])
-    require(len(header) == len(set(header)), "CSV column names must be unique", header)
-    require(all(output_names), "CSV output column names must be non-empty")
     expected = tuple(spec.variable_key for spec in plan.noise)
     require(input_names == expected, "CSV input columns must match plan", input_names)
     body = rows[1:]
@@ -168,16 +164,10 @@ def read_csv(path: str | Path, plan: VariationPlan) -> VariationDataset:
     inputs: np.ndarray = np.empty((plan.n_runs, n_inputs), dtype=float)
     outputs = np.full((plan.n_runs, len(output_names)), np.nan)
     success: np.ndarray = np.zeros(plan.n_runs, dtype=bool)
-    seen_indices: set[int] = set()
     for row in body:
-        require(len(row) == len(header), "CSV row column count mismatch", len(row))
         i = int(row[0])
         require(0 <= i < plan.n_runs, "run index out of range", i)
-        require(i not in seen_indices, "CSV run indices must be unique", i)
-        seen_indices.add(i)
-        success_value = int(row[1])
-        require(success_value in (0, 1), "CSV success must be zero or one", row[1])
-        success[i] = bool(success_value)
+        success[i] = bool(int(row[1]))
         inputs[i] = [float(v) for v in row[2 : 2 + n_inputs]]
         outputs[i] = [math.nan if v == "" else float(v) for v in row[2 + n_inputs :]]
     return VariationDataset(
@@ -191,7 +181,6 @@ def read_csv(path: str | Path, plan: VariationPlan) -> VariationDataset:
 
 
 __all__ = [
-    "DATASET_JSON_SCHEMA_VERSION",
     "from_json_dict",
     "read_csv",
     "read_json",

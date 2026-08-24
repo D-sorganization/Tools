@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import csv
 from copy import deepcopy
 from pathlib import Path
 
@@ -12,13 +11,14 @@ import pytest
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_LAUNCH,
-    DATASET_JSON_SCHEMA_VERSION,
     NoiseSpec,
     VariationPlan,
+    run_variation,
+)
+from shared.python.swing_sim.variation.dataset_io import (
     from_json_dict,
     read_csv,
     read_json,
-    run_variation,
     to_json_dict,
     write_csv,
     write_json,
@@ -46,7 +46,7 @@ class TestJsonRoundTrip:
     def test_embeds_a_cohesive_canonical_plan_document(self, dataset) -> None:  # type: ignore[no-untyped-def]
         document = to_json_dict(dataset)
 
-        assert document["schema_version"] == DATASET_JSON_SCHEMA_VERSION
+        assert document["schema_version"] == 2
         assert "plan" not in document
         assert document["plan_document"]["schema_version"] == 3
         assert document["plan_document"]["plan"] == dataset.plan.to_json_dict()
@@ -140,27 +140,3 @@ class TestCsvRoundTrip:
         )
         with pytest.raises(Exception, match="match plan"):
             read_csv(path, other)
-
-    def test_rejects_duplicate_run_indices(self, dataset, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
-        path = tmp_path / "study.csv"
-        write_csv(dataset, path)
-        with path.open("r", encoding="utf-8", newline="") as handle:
-            rows = list(csv.reader(handle))
-        rows[2][0] = rows[1][0]
-        with path.open("w", encoding="utf-8", newline="") as handle:
-            csv.writer(handle).writerows(rows)
-
-        with pytest.raises(ContractViolationError, match="run indices must be unique"):
-            read_csv(path, dataset.plan)
-
-    def test_rejects_inconsistent_row_width(self, dataset, tmp_path: Path) -> None:  # type: ignore[no-untyped-def]
-        path = tmp_path / "study.csv"
-        write_csv(dataset, path)
-        with path.open("r", encoding="utf-8", newline="") as handle:
-            rows = list(csv.reader(handle))
-        rows[1].pop()
-        with path.open("w", encoding="utf-8", newline="") as handle:
-            csv.writer(handle).writerows(rows)
-
-        with pytest.raises(ContractViolationError, match="column count"):
-            read_csv(path, dataset.plan)

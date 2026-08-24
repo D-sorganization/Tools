@@ -3,11 +3,10 @@
 
 use numpy::{PyArray1, PyReadonlyArray1};
 use pyo3::prelude::*;
-use pyo3::types::PyAny;
 use std::collections::HashMap;
 
 /// Alarm state enumeration matching SCADA severity classifications.
-#[pyclass(module = "tools_core.scada", from_py_object)]
+#[pyclass(module = "tools_core.scada")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum AlarmState {
     Normal,
@@ -18,7 +17,7 @@ pub enum AlarmState {
 }
 
 /// Limits definition for a single tag.
-#[pyclass(module = "tools_core.scada", from_py_object)]
+#[pyclass(module = "tools_core.scada")]
 #[derive(Debug, Clone, Copy)]
 pub struct TagLimits {
     #[pyo3(get, set)]
@@ -46,7 +45,7 @@ impl TagLimits {
 
 /// SCADA Alarm Engine tracking active state, severity, and acknowledgments
 /// for up to 32 tags.
-#[pyclass(module = "tools_core.scada", from_py_object)]
+#[pyclass(module = "tools_core.scada")]
 #[derive(Debug, Clone)]
 pub struct AlarmEngine {
     #[pyo3(get)]
@@ -140,7 +139,7 @@ impl AlarmEngine {
         py: Python<'_>,
         tag_id: String,
         value: f64,
-    ) -> PyResult<Vec<Py<PyAny>>> {
+    ) -> PyResult<Vec<PyObject>> {
         let limits = self.tag_limits.get(&tag_id).ok_or_else(|| {
             pyo3::exceptions::PyKeyError::new_err(format!("Tag '{}' not registered", tag_id))
         })?;
@@ -174,7 +173,7 @@ impl AlarmEngine {
             event_dict.set_item("previous_state", old_state)?;
             event_dict.set_item("current_state", new_state)?;
             event_dict.set_item("value", value)?;
-            events.push(event_dict.into_any().unbind());
+            events.push(event_dict.into());
         }
 
         Ok(events)
@@ -200,7 +199,7 @@ impl AlarmEngine {
     }
 
     /// Returns list of active alarms and their properties.
-    pub fn get_active_alarms(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
+    pub fn get_active_alarms(&self, py: Python<'_>) -> PyResult<Vec<PyObject>> {
         use pyo3::types::PyDict;
         let mut active = Vec::new();
 
@@ -223,14 +222,14 @@ impl AlarmEngine {
                 dict.set_item("acknowledged", ack)?;
                 dict.set_item("acknowledged_by", ack_by)?;
                 dict.set_item("value", val)?;
-                active.push(dict.into_any().unbind());
+                active.push(dict.into());
             }
         }
         Ok(active)
     }
 
     /// Returns the current alarm state and details of a tag.
-    pub fn get_alarm_state(&self, py: Python<'_>, tag_id: String) -> PyResult<Py<PyAny>> {
+    pub fn get_alarm_state(&self, py: Python<'_>, tag_id: String) -> PyResult<PyObject> {
         use pyo3::types::PyDict;
         if !self.tag_limits.contains_key(&tag_id) {
             return Err(pyo3::exceptions::PyKeyError::new_err(format!(
@@ -251,7 +250,7 @@ impl AlarmEngine {
         dict.set_item("acknowledged_by", ack_by)?;
         dict.set_item("value", val)?;
 
-        Ok(dict.into_any().unbind())
+        Ok(dict.into())
     }
 }
 
@@ -265,7 +264,7 @@ pub struct Interlock {
 }
 
 /// Configurable Safety Interlock Matrix.
-#[pyclass(module = "tools_core.scada", from_py_object)]
+#[pyclass(module = "tools_core.scada")]
 #[derive(Clone, Debug, Default)]
 pub struct InterlockMatrix {
     pub interlocks: Vec<Interlock>,
@@ -334,7 +333,7 @@ impl InterlockMatrix {
 
 /// Dynamic Gasification Process Simulator.
 /// Computes temperature in 4 zones, syngas flow rate, and pressure drop.
-#[pyclass(module = "tools_core.scada", from_py_object)]
+#[pyclass(module = "tools_core.scada")]
 #[derive(Clone, Debug)]
 pub struct GasificationSimulator {
     // Measured variables
@@ -669,7 +668,7 @@ pub fn py_moving_average<'py>(
         ));
     }
     let v = values.as_slice().unwrap().to_vec();
-    let result = py.detach(move || moving_average(&v, window_size));
+    let result = py.allow_threads(move || moving_average(&v, window_size));
     Ok(PyArray1::from_vec(py, result))
 }
 
@@ -686,7 +685,7 @@ pub fn py_exponential_smoothing<'py>(
         ));
     }
     let v = values.as_slice().unwrap().to_vec();
-    let result = py.detach(move || exponential_smoothing(&v, alpha));
+    let result = py.allow_threads(move || exponential_smoothing(&v, alpha));
     Ok(PyArray1::from_vec(py, result))
 }
 
@@ -710,7 +709,7 @@ pub fn py_savitzky_golay<'py>(
     }
     let v = values.as_slice().unwrap().to_vec();
     let result = py
-        .detach(move || savitzky_golay(&v, window_size, poly_order))
+        .allow_threads(move || savitzky_golay(&v, window_size, poly_order))
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))?;
     Ok(PyArray1::from_vec(py, result))
 }
@@ -735,8 +734,8 @@ mod tests {
         let mut engine = AlarmEngine::new(limits).unwrap();
 
         // Initial normal value
-        Python::initialize();
-        Python::attach(|py| {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
             let events = engine.update_tag(py, "T1".to_string(), 50.0).unwrap();
             assert!(events.is_empty());
             assert_eq!(engine.tag_states["T1"], AlarmState::Normal);

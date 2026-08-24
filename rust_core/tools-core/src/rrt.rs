@@ -7,7 +7,7 @@ use rand::{Rng, SeedableRng};
 use std::f64;
 
 #[derive(Clone, Debug)]
-#[cfg_attr(feature = "python", pyclass(from_py_object))]
+#[cfg_attr(feature = "python", pyclass)]
 pub struct Obstacle {
     pub obs_type: i32, // 0=sphere, 1=cube
     pub position: [f64; 3],

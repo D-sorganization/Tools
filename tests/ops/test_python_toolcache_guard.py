@@ -11,7 +11,6 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GUARD = REPO_ROOT / ".github" / "scripts" / "clean-python-toolcache.sh"
 CI_STANDARD = REPO_ROOT / ".github" / "workflows" / "ci-standard.yml"
-FILE_WATCHER_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-file-watcher.yml"
 
 
 def test_pyo3_guard_precedes_setup_python_in_rust_job() -> None:
@@ -31,45 +30,6 @@ def test_pyo3_guard_precedes_setup_python_in_rust_job() -> None:
     assert str(rust_steps[clean_index + 1].get("uses", "")).startswith(
         "actions/setup-python@"
     )
-
-
-def test_rust_quality_gate_allows_cold_cache_completion() -> None:
-    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
-    rust_job = workflow["jobs"]["rust-quality-gate"]
-
-    # This lane compiles two test configurations, cargo-audit, a Python wheel,
-    # two WASM packages, and benchmarks. Fifteen minutes has twice canceled a
-    # healthy cold-cache run while cargo-audit was still compiling.
-    assert int(rust_job["timeout-minutes"]) >= 45
-
-    audit_step = next(
-        step
-        for step in rust_job["steps"]
-        if step.get("name") == "Security Audit (cargo-audit)"
-    )
-    audit_run = audit_step["run"]
-    assert "curl --fail --show-error --silent --location" in audit_run
-    assert "advisory-db/archive/refs/heads/main.tar.gz" in audit_run
-    assert 'cargo audit --db "$RUSTSEC_DB" --no-fetch' in audit_run
-    assert (
-        "cargo generate-lockfile --manifest-path "
-        "src/pendulum_simulator/pendulum-core/Cargo.toml" in audit_run
-    )
-    assert (
-        'cargo audit --file "$PENDULUM_LOCK" --db "$RUSTSEC_DB" --no-fetch' in audit_run
-    )
-
-
-def test_file_watcher_runs_root_tests_only_on_supported_python() -> None:
-    workflow = yaml.safe_load(FILE_WATCHER_WORKFLOW.read_text(encoding="utf-8"))
-    steps = workflow["jobs"]["rust-backend-gate"]["steps"]
-    test_step = next(
-        step
-        for step in steps
-        if step.get("name") == "Run file_watcher test suite (gate)"
-    )
-
-    assert test_step["if"] == "${{ matrix.python-version != '3.10' }}"
 
 
 def _write_fake_python(arch_dir: Path, *, with_link_library: bool) -> None:

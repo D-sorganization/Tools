@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.101                                   |
+| **Spec Version**        | 1.17.97                                    |
 | **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
@@ -37,12 +37,6 @@
 Version 1.17.97 optimizes SVG path generation in `impactSceneSvg.ts` and `PuttingVisuals.tsx` by replacing chained array methods (`.map().join()`) with single-pass `for`-loops to reduce intermediate string allocations and garbage collection pressure during high-frequency visualization renders.
 
 ### Governed Launch-Monitor Analytics Release
-
-Version 1.17.101 retains Python 3.10 as a hard file-watcher wheel and compiled-
-backend import gate while running the repository-root wrapper tests only on
-their declared Python 3.11+ support floor. This prevents the correct
-below-floor collection guard from becoming pytest exit 5 without weakening
-the 3.10 compatibility claim or the 3.11/3.12 behavior tests.
 
 Version 1.17.96 preserves the exact #4142 audit-base revision assertion while
 marking that reviewed Git SHA with `detect-secrets`' supported inline
@@ -5177,10 +5171,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-24 | 1.17.101 | fix(ci, #4142): retain the file-watcher Python 3.10 wheel and compiled-backend import gates while running the repository-root wrapper tests only on their declared Python 3.11+ floor. Add a workflow contract so the intentional below-floor collection guard cannot regress into pytest exit 5 without weakening supported-runtime behavior coverage. |
-| 2026-08-24 | 1.17.98 | feat(rate-of-closure, #4142): add a public, versioned HDF5 contract for canonical scalar variation datasets. Retain the complete execution document, named input/output arrays, failure mask, and elapsed time; bind the logical content with SHA-256; publish atomically without replacing reviewed evidence; fail closed on missing dependencies, incompatible schemas, malformed structure, or content substitution; and harden CSV import against duplicate run indices and inconsistent rows. This improves reproducibility and artifact integrity without creating human validation or cross-runtime numerical equivalence. |
-| 2026-08-24 | 1.17.99 | fix(rate-of-closure, #4142): declare h5py in the root development/CI manifest and reproducible lock so protected standard CI executes the canonical HDF5 contract tests instead of failing during collection. Retain h5py as an optional packaged feature for consumers that do not use HDF5 persistence. |
-| 2026-08-24 | 1.17.100 | fix(ci, #4142): make the sparse UpstreamDrift consumer fixture structurally complete for every fail-closed Tools provider root, including `src/python/src`, so current-main path-precedence and module-identity contracts execute rather than returning before validation. Add a workflow regression test and retain the complete downstream suite; no consumer check is skipped or weakened. |
 | 2026-08-24 | 1.17.97 | feat(rate-of-closure, #4668 / #4142): define and implement the canonical variation execution-document and persisted-plan binding contracts across PyQt6, React, named libraries, workspaces, scalar and geometry ensembles, durable archives, forgiveness exports, and regional results. Bind browser-to-Python durable and regional requests with a cross-runtime plan digest without inventing executor provenance; retain legacy plans with a visible non-reproducibility warning; reject substituted or crossed evidence; and document CSV, paired-analysis, cross-runtime replay, and human-validation limits. |
 | 2026-08-23 | 1.17.96 | fix(rate-of-closure, #4142): preserve the exact audited base-revision assertion while applying the supported `detect-secrets` inline false-positive pragma to that reviewed Git SHA; retain the fail-closed baseline and unchanged requirement-ledger semantics. |
 | 2026-08-23 | 1.17.95 | docs(rate-of-closure, #4142): add a fail-closed 31-item R10--R15 evidence ledger with exact source, test, command, remote-run, and remaining-gap traceability; classify 18 items verified, 11 partial, and two unverified without treating visual or synthetic evidence as human validation. Reconcile the stale GAAI `staging` rule with the protected feature-branch-to-`main` repository contract and update both active handoffs after #4663 and post-main Release Automation passed. |
@@ -6104,8 +6094,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.17.10
 
-- 2026-08-24: security(rate-of-closure) — Sanitize KaTeX output with DOMPurify in `Derivation.tsx` to prevent XSS vulnerabilities when rendering math formulas.
-
 - 2026-08-22: fix(flow-rate-converter) — replaced focus:outline-none with focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 on input and select elements to restore keyboard focus indicators.
 
 ### Version 1.5.5
@@ -6454,11 +6442,3 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-23: Palette Micro-UX Improvement in Rate of Closure
 
 - **2026-08-23**: fix(ux) — Add accessible focus indicators (`focus-visible:ring-2`, `focus-visible:ring-blue-500` or equivalent) in place of `outline-none` across inputs, selects, and buttons in the `rate_of_closure` app to ensure keyboard-only and screen-reader users can visually track their current element focus.
-
-## 2026-11-20 - Bolt Performance Optimization
-
-- **Performance**: Replaced chained array methods (`.map().join()`) with manually formatted JSX string structures for small fixed-size math arrays in `RotationConverter.tsx`.
-
-## 2026-08-24: Rust Quality-Gate Cold-Cache Budget
-
-- **2026-08-24**: fix(ci, rust) — Raise the standard Rust quality-gate job budget from 15 to 45 minutes and regression-lock that minimum. The lane compiles default and Python-feature tests, installs and runs `cargo-audit`, builds Python and two WASM artifacts, and executes benchmarks; two otherwise-green PR attempts reached the former job limit while `cargo-audit` was compiling, before the artifact gates could run. Acquire the public RustSec advisory database as an anonymous HTTPS archive and run `cargo audit --no-fetch` against that explicit database, preventing inherited self-hosted Git credentials from causing HTTP 401 while retaining download, database, and advisory failures as blocking. Audit both the root workspace and the separately locked pendulum core. Upgrade Reqwest to 0.12 and the PyO3/NumPy bindings to 0.29, with explicit preservation of the previous Python value-conversion contract, to remediate RUSTSEC-2026-0258, RUSTSEC-2026-0176, and RUSTSEC-2026-0177 rather than suppressing them.

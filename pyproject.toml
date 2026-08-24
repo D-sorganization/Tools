@@ -40,7 +40,6 @@ rate-morris-authority = [
 ]
 # Full installation with all features
 all = [
-    "h5py>=3.10.0",
     "scipy>=1.10.0,<1.18",
     "pandas>=2.0.0",
     "matplotlib>=3.7.0",
@@ -51,10 +50,6 @@ all = [
     "fastapi>=0.100.0",
     "filelock>=3.12.0",
     "uvicorn>=0.30.0",
-]
-# Canonical variation-dataset HDF5 persistence.
-variation-hdf5 = [
-    "h5py>=3.10.0",
 ]
 # AI and simulation models
 ai = [
@@ -194,7 +189,6 @@ test = [
     "fastapi>=0.100.0",
     "filelock>=3.12.0",
     "httpx>=0.25.0",
-    "h5py>=3.10.0",
     "opencv-python-headless>=4.8.0",
     "pydantic-settings>=2.0.0",
     "pymodbus>=3.0.0",
