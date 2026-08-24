@@ -63,6 +63,10 @@ plan SHA-256 while Python retains its own executor identity. Exact Python,
 single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
 two-DPI PyQt gates pass locally. The ledger remains partial until protected CI,
 merge, and remote-main verification; this is not human or scientific validation.
+The latest protected suite exposed one stale exact-manifest assertion and an
+UpstreamDrift provider-mode test that leaked `TOOLS_REPO_PATH`; focused local
+corrections pass 8/8 and 3/3 tests. The downstream correction must merge before
+rerunning that consumer gate; do not weaken the provider contract.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
