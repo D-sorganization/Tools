@@ -50,6 +50,15 @@ def test_rust_quality_gate_allows_cold_cache_completion() -> None:
     assert "curl --fail --show-error --silent --location" in audit_run
     assert "advisory-db/archive/refs/heads/main.tar.gz" in audit_run
     assert 'cargo audit --db "$RUSTSEC_DB" --no-fetch' in audit_run
+    assert (
+        "cargo generate-lockfile --manifest-path "
+        "src/pendulum_simulator/pendulum-core/Cargo.toml"
+        in audit_run
+    )
+    assert (
+        'cargo audit --file "$PENDULUM_LOCK" --db "$RUSTSEC_DB" --no-fetch'
+        in audit_run
+    )
 
 
 def _write_fake_python(arch_dir: Path, *, with_link_library: bool) -> None:

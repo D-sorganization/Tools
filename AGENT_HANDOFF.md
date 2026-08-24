@@ -66,8 +66,8 @@ locks it, with a regression test. The next protected run exposed an incomplete
 sparse UpstreamDrift provider fixture; the branch now creates all fail-closed
 provider roots and regression-locks the workflow without skipping consumers;
 the Rust lane has a tested 45-minute budget and an anonymous, fail-closed
-RustSec audit. Reqwest 0.12 and PyO3/NumPy 0.29 remove all three discovered
-advisories while preserving Python value conversion. Default/Python Rust tests
+root plus standalone-pendulum RustSec audit. Reqwest 0.12 and PyO3/NumPy 0.29
+remove all discovered advisories while preserving Python value conversion. Default/Python Rust tests
 (348/360), Clippy, audit, vendoring, workflow, and 310 variation tests pass. This is
 reproducibility and integrity evidence, not human validation or cross-runtime
 numerical equivalence.

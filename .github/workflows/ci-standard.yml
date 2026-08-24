@@ -1191,6 +1191,9 @@ jobs:
           RUSTSEC_DB="${RUSTSEC_TMP}/advisory-db-main"
           test -d "$RUSTSEC_DB/crates"
           cargo audit --db "$RUSTSEC_DB" --no-fetch
+          cargo generate-lockfile --manifest-path src/pendulum_simulator/pendulum-core/Cargo.toml
+          PENDULUM_LOCK="src/pendulum_simulator/pendulum-core/Cargo.lock"
+          cargo audit --file "$PENDULUM_LOCK" --db "$RUSTSEC_DB" --no-fetch
 
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'
