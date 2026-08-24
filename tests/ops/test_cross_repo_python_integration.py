@@ -19,8 +19,12 @@ REQUIRED_SPARSE_PATHS = {
         # -- see the assertions in the test below.
         "README.md",
         "build_hooks.py",
+        "launch_golf_suite.py",
+        "launch_upstream_drift.py",
         "pyproject.toml",
+        "scripts",
         "src/shared",
+        "tests/conftest.py",
         "tests/shared_contracts",
         "tests/support",
     },
