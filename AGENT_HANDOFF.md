@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. The 31-item audit at `docs/audits/rate_of_closure_epic_4142_evidence.v1.json` records 18 verified, 11 partial, and two unverified requirements; R15 remains open. |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. PR #4666 merged the 31-item audit: 18 verified, 11 partial, and two unverified requirements; R15 remains open.                                                |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
@@ -66,8 +66,10 @@ Post-main Release Automation then exposed an older-host system Python lacking
 `tomllib`; #4663 fixed it and merged at `eebdddf8c6e366722be40c25278cf34a0392f256`.
 Post-main run `32690255930` passed analysis, validation, and version bump and
 opened release PR #4664. Its exact-head CI was dispatched once without
-auto-merge. The R10--R15 audit remains fail closed: 18 verified, 11 partial,
-and two unverified. Visual stability is not scientific validity.
+auto-merge. PR #4666 merged the fail-closed R10--R15 audit as `9a3339b74`:
+18 verified, 11 partial, and two unverified. Its post-merge secret scan alone
+flagged the audited base SHA literal; the current repair adds the supported
+inline false-positive annotation. Visual stability is not scientific validity.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -141,7 +143,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Land the #4142 evidence ledger, close its 11 partial and two unverified requirements, adjudicate #4433, and pin the qualified immutable Tools commit in UpstreamDrift; #4430 is complete.
+4. Land the #4666 scanner repair, close #4142's 11 partial and two unverified requirements, adjudicate #4433, and pin qualified Tools in UpstreamDrift.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.

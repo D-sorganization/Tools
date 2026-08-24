@@ -35,7 +35,7 @@ def test_epic_4142_evidence_covers_every_requirement_exactly_once() -> None:
     assert evidence["repository"] == "D-sorganization/Tools"
     assert evidence["epic"] == 4142
     assert evidence["audit_base_revision"] == (
-        "eebdddf8c6e366722be40c25278cf34a0392f256"
+        "eebdddf8c6e366722be40c25278cf34a0392f256"  # pragma: allowlist secret
     )
     assert tuple(item["requirement_id"] for item in evidence["requirements"]) == (
         EXPECTED_REQUIREMENTS
