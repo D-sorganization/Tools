@@ -145,8 +145,13 @@ change the data coordinates.
 
 Exports are intentionally split by purpose:
 
-- **Dataset CSV/JSON** contains sampled inputs, scalar outputs, success flags,
-  and the reproducible plan.
+- **Dataset JSON** contains sampled inputs, scalar outputs, success flags, and
+  the complete canonical execution document.
+- **Dataset HDF5** retains the same logical dataset in a versioned,
+  content-integrity-checked, non-overwriting binary archive; install the optional
+  `variation-hdf5` extra.
+- **Dataset CSV** is a review table only. Replay requires the separately
+  retained and validated canonical JSON or HDF5 artifact.
 - **Swing Traces CSV** is long-form data with one row per trial, sample, and
   modeled point, including typed status, impact marker, units in column names,
   and coordinate-frame ID.

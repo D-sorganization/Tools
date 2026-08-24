@@ -60,6 +60,7 @@ document.
 | React named-plan library | Full document or retained legacy plan | Library version 2 preserves evidence state across browser storage. |
 | Python and React workspace | Version-1 binding | Workspace version 3 preserves canonical or legacy evidence and rejects plan/ball-setup substitution. |
 | Python scalar dataset JSON | Full version-3 document | Dataset version 2 rejects legacy raw-plan documents and digest substitution. |
+| Python scalar dataset HDF5 | Full version-3 document plus logical-content SHA-256 | HDF5 version 1 retains names, arrays, success mask, and elapsed time; import rejects schema, member, shape, plan, or content substitution. Publication is atomic and never replaces an existing artifact. |
 | React scalar dataset JSON | Full version-3 document | Dataset version 2 emits the same evidence shape with React execution identity. |
 | Python complete geometry ensemble | Full version-3 document within dataset | Reader validates the cohesive document before accepting outcomes or traces. |
 | React swing ensemble | Full version-3 document within dataset | Export version 3 validates document, sampled inputs, trial rows, and localized commands. |
@@ -71,6 +72,28 @@ document.
 | CSV table exports | External-plan only | CSV is a review table, not self-contained replay evidence. A consumer must supply and validate the canonical JSON artifact; the table alone cannot authorize replay. |
 | Paired propagation analysis | In-memory only | No paired-study file format is currently public. Pairing requires compatible layouts and row identities; persisted comparisons must retain each source ensemble rather than infer a plan from plots. |
 | Plot and visual state | Derived, non-authoritative | Selectors and chart state do not authorize simulation or historical replay. |
+
+## Scalar HDF5 Layout
+
+`rate-of-closure/variation-dataset-hdf5` version 1 is a root-level HDF5
+archive with exactly three attributes and seven datasets:
+
+- attributes `schema_id`, `schema_version`, and `content_sha256`;
+- UTF-8 scalar `plan_document_json` containing the canonical version-3
+  execution document;
+- UTF-8 vectors `input_names` and `output_names`;
+- binary64 matrices `inputs` and `outputs`, with output `NaN` retained for
+  unavailable values;
+- unsigned-byte vector `success`, restricted to zero or one; and
+- binary64 scalar `elapsed_s`, finite and nonnegative.
+
+`content_sha256` is computed over the same normalized logical document as the
+canonical JSON dataset, so physical HDF5 layout details do not change evidence
+identity. The reader checks attributes, members, shapes, names, success values,
+elapsed time, execution-document integrity, and the logical digest before
+constructing a dataset. These checks remain active even when runtime DbC checks
+are disabled. The writer publishes a closed sibling file through an atomic
+no-replace hard link, preventing silent replacement of existing evidence.
 
 ## Replay and Cross-Runtime Rules
 
@@ -89,11 +112,16 @@ document.
 5. Synthetic variation traces remain model-scenario evidence. These contracts
    improve reproducibility and falsifiability; they do not create human
    validation or justify universal coaching advice.
+6. The HDF5 content digest detects corruption or content changes made without a
+   corresponding digest update. Because the digest is stored inside the same
+   archive, it is not a publisher signature. Authenticated distribution still
+   requires an external signed release or governed manifest.
 
 ## Verification
 
-The focused Python and TypeScript suites cover canonical round trips, shared
-fixtures, legacy retention, duplicate keys, altered plan/metadata/provenance,
+The focused Python and TypeScript suites cover canonical JSON and HDF5 round
+trips, shared fixtures, legacy retention, duplicate keys and CSV run indices,
+altered plan/metadata/provenance, HDF5 structure and content substitution,
 request substitution, workspace ball-setup substitution, crossed result-row
 digests, and unsupported replay identities. Repository lint, type-check, and
 document-governance gates remain required before protected merge.

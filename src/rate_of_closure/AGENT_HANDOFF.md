@@ -56,19 +56,17 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-The 31-item R10--R15 ledger still records 18 verified, 11 partial, and two
-unverified requirements. PR #4669 now carries the #4668 plan-evidence work from
-`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
-query its exact head and protected checks before acting. It adds version-3
-execution documents, explicit
-legacy bindings, plan-digest-bound cross-runtime requests, and substitution
-failures across plan files, libraries, workspaces, datasets, geometry/durable
-ensembles, forgiveness exports, and regional results. The contract and exact
-inventory are in `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. Exact Python,
-single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
-two-DPI PyQt gates pass locally. Keep the ledger partial until protected CI,
-merge, and remote-main verification. These controls prove provenance and
-integrity, not human validity or cross-runtime equivalence.
+PR #4669 merged the version-3 execution documents, explicit legacy bindings,
+plan-digest-bound cross-runtime requests, and substitution failures across plan
+files, libraries, workspaces, datasets, geometry/durable ensembles, forgiveness
+exports, and regional results. `feat/4142-variation-hdf5` starts from its exact
+merge commit and adds public JSON/CSV/HDF5 scalar-dataset persistence, atomic
+no-replace HDF5 publication, logical-content SHA-256 verification, and strict
+CSV row identity/shape checks; 23 focused tests and all 310 variation-package
+tests pass locally. The contract is
+`docs/specs/VARIATION_PLAN_PERSISTENCE.md`. The R10--R15 ledger stays partial:
+these controls prove provenance and integrity, not human validity or
+cross-runtime numerical equivalence.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 

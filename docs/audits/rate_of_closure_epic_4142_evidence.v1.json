@@ -173,14 +173,16 @@
       "requirement_id": "R11.4",
       "requirement": "Round-trip exports losslessly with migration, error handling, and reproduction provenance.",
       "status": "verified",
-      "rationale": "Strict schema readers and writers preserve typed rows and provenance, migrate the declared legacy shape, and reject malformed or lossy input.",
+      "rationale": "Strict schema readers and writers preserve typed rows and provenance, migrate the declared legacy shape, and reject malformed or lossy input. The scalar HDF5 archive retains the canonical execution document and logical-content digest while publishing atomically without replacement.",
       "evidence_files": [
         "src/rate_of_closure/variation/ensemble_io.py",
+        "src/shared/python/swing_sim/variation/dataset_hdf5.py",
         "src/shared/python/swing_sim/variation/dataset_io.py",
+        "src/shared/python/swing_sim/variation/tests/test_dataset_hdf5.py",
         "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_dataset_io.py tests/rate_of_closure/test_variation_ensemble_io_reader.py tests/rate_of_closure/test_variation_gui_roundtrip.py -q"
+        "python -m pytest src/shared/python/swing_sim/variation/tests/test_dataset_io.py src/shared/python/swing_sim/variation/tests/test_dataset_hdf5.py tests/rate_of_closure/test_variation_ensemble_io_reader.py tests/rate_of_closure/test_variation_gui_roundtrip.py -q"
       ],
       "remote_evidence": [],
       "gaps": []
