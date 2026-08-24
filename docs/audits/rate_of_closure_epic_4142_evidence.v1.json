@@ -66,18 +66,23 @@
       "requirement_id": "R10.4",
       "requirement": "Record schema, units, base state, distributions, groups, seed, compatibility, and provenance in every plan.",
       "status": "partial",
-      "rationale": "The v2 plan wire records schema, overrides, distributions, groups, seed, mode, and flight model, while execution metadata records additional provenance separately.",
+      "rationale": "Issue #4668 now composes the v2 plan with resolved units and bases, registry, RNG, implementation compatibility, and source provenance in one digest-cohesive version-3 execution document. Persistence surfaces either retain that document or bind the canonical cross-runtime plan digest without inventing a foreign executor identity.",
       "evidence_files": [
         "src/shared/python/swing_sim/variation/spec.py",
         "src/shared/python/swing_sim/variation/execution_metadata.py",
+        "src/shared/python/swing_sim/variation/persisted_plan_io.py",
+        "src/rate_of_closure/web/src/model/variationExecutionMetadata.ts",
+        "src/rate_of_closure/web/src/model/variationPersistedPlan.ts",
+        "docs/specs/VARIATION_PLAN_PERSISTENCE.md",
         "tests/rate_of_closure/test_variation_gui_roundtrip.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_spec.py tests/rate_of_closure/test_variation_gui_roundtrip.py -q"
+        "python -m pytest src/shared/python/swing_sim/variation/tests/test_execution_metadata.py src/shared/python/swing_sim/variation/tests/test_spec.py tests/rate_of_closure/test_variation_gui_roundtrip.py tests/rate_of_closure/test_workspace_variation_session.py -q",
+        "cd src/rate_of_closure/web && npm test -- --run variation"
       ],
       "remote_evidence": [],
       "gaps": [
-        "The plan document itself does not bind resolved units, the complete resolved base state, implementation compatibility, and provenance; those facts are split across registry and execution documents."
+        "The implementation has focused local evidence but remains partial until the complete #4668 gates pass through protected CI and the exact merged revision is recorded here."
       ]
     },
     {
@@ -542,10 +547,11 @@
       "requirement_id": "R15.4",
       "requirement": "Publish theory, assumptions, limitations, quick start, schema, performance, and reproducibility documentation.",
       "status": "partial",
-      "rationale": "The README, schema docstrings, evidence manifests, and handoffs document much of the implementation and boundaries, but they are not yet one reviewer-facing public guide covering every named topic.",
+      "rationale": "The README, evidence manifests, handoffs, and the new reviewer-facing variation persistence contract document schemas, compatibility, provenance, limitations, artifact inventory, and reproducibility boundaries. One consolidated public guide still needs the complete theory, performance, and quick-start treatment.",
       "evidence_files": [
         "src/rate_of_closure/README.md",
         "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/VARIATION_PLAN_PERSISTENCE.md",
         "docs/rate_of_closure/variation_visualization_performance.md"
       ],
       "validation_commands": [

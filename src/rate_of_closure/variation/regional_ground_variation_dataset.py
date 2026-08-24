@@ -19,6 +19,7 @@ from shared.python.swing_sim.flight import (
 from shared.python.swing_sim.ground.regional_plan_records import (
     regional_plan_request_sha256,
 )
+from shared.python.swing_sim.variation.execution_metadata import plan_sha256
 from shared.python.swing_sim.variation.registry import CATEGORY_LAUNCH, VariableDef
 from shared.python.swing_sim.variation.spec import SCHEMA_VERSION, VariationPlan
 
@@ -93,6 +94,7 @@ def _augmented_rows(
                 "variation_seed": str(plan.seed),
                 "variation_trial_index": str(trial.trial_index),
                 "variation_input_sha256": trial.input_sha256,
+                "variation_plan_sha256": plan_sha256(plan),
                 "variation_regional_plan_sha256": regional_plan_request_sha256(
                     trial.regional_plan
                 ),

@@ -8,6 +8,11 @@ from enum import Enum
 
 from rate_of_closure.variation.simulation_types import ALL_OUTPUT_NAMES
 from shared.python.swing_sim.variation import VariationPlan, outputs_for_mode
+from shared.python.swing_sim.variation.persisted_plan_io import (
+    PersistedPlanResolution,
+    persisted_plan_dumps,
+    persisted_plan_loads,
+)
 
 VARIATION_WORKSPACE_SCHEMA = "rate_of_closure.variation_workspace_selection"
 VARIATION_WORKSPACE_SCHEMA_VERSION = 1
@@ -40,6 +45,7 @@ class VariationWorkspaceState:
     plan: VariationPlan
     analysis_execution: VariationAnalysisExecution
     selected_output_metrics: tuple[str, ...]
+    plan_evidence: PersistedPlanResolution | None = None
 
     def __post_init__(self) -> None:
         """Validate membership and normalize metric order deterministically."""
@@ -58,6 +64,15 @@ class VariationWorkspaceState:
             raise ValueError(
                 f"selected output metric is not available: {sorted(unknown)}"
             )
+        evidence = self.plan_evidence
+        if evidence is None:
+            evidence = persisted_plan_loads(persisted_plan_dumps(self.plan))
+            object.__setattr__(self, "plan_evidence", evidence)
+        if (
+            not isinstance(evidence, PersistedPlanResolution)
+            or evidence.plan != self.plan
+        ):
+            raise ValueError("plan evidence must match the authored plan")
         object.__setattr__(
             self,
             "selected_output_metrics",
@@ -94,6 +109,7 @@ def variation_workspace_to_payload(
 def variation_workspace_from_payload(
     value: object,
     plan: VariationPlan,
+    plan_evidence: PersistedPlanResolution | None = None,
 ) -> VariationWorkspaceState:
     """Parse a strict selection against its canonical root plan."""
     envelope = _exact_mapping(value, _ENVELOPE_FIELDS, "variation workspace")
@@ -110,12 +126,13 @@ def variation_workspace_from_payload(
         execution = VariationAnalysisExecution(data["analysis_execution"])
     except (TypeError, ValueError) as exc:
         raise ValueError("unsupported variation analysis execution") from exc
-    return VariationWorkspaceState(plan, execution, tuple(raw_metrics))
+    return VariationWorkspaceState(plan, execution, tuple(raw_metrics), plan_evidence)
 
 
 def migrate_legacy_variation_fallback(
     fallback: VariationWorkspaceState,
     document_plan: VariationPlan | None,
+    document_evidence: PersistedPlanResolution | None = None,
 ) -> VariationWorkspaceState:
     """Preserve explicit live policy unless a legacy root plan conflicts."""
     if not isinstance(fallback, VariationWorkspaceState):
@@ -127,7 +144,14 @@ def migrate_legacy_variation_fallback(
         raise LegacyVariationMigrationRequired(
             "legacy workspace variation plan conflicts with the explicit fallback"
         )
-    return fallback
+    if document_plan is None:
+        return fallback
+    return VariationWorkspaceState(
+        fallback.plan,
+        fallback.analysis_execution,
+        fallback.selected_output_metrics,
+        document_evidence,
+    )
 
 
 __all__ = [

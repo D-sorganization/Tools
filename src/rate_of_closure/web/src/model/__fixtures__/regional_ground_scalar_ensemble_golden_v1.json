@@ -35,6 +35,7 @@
         "transfer_field_id": null,
         "transfer_reason": null,
         "variation_input_sha256": "d4c20035b37b6576c38e8f41b49287a34bea5e34a59f653283dfec31c53952d1",
+        "variation_plan_sha256": "7812fe8cf691f67bbbd63a137769f39899c5a9f8a83a2811d13e66a87687a1e9",
         "variation_regional_plan_sha256": "a4e215d12b00a9855a67fccb5e4ec090e15498a101dd0cd077240ea046afb208",
         "variation_seed": "1729",
         "variation_trial_index": "0"
@@ -74,6 +75,7 @@
         "transfer_field_id": null,
         "transfer_reason": null,
         "variation_input_sha256": "2bde61037db7c86aef171f1fc4474154bc7ebb182789261052db071dad42555b",
+        "variation_plan_sha256": "7812fe8cf691f67bbbd63a137769f39899c5a9f8a83a2811d13e66a87687a1e9",
         "variation_regional_plan_sha256": "c72cd520d50d25fd91ec8de2a98569b98013fceb469d9e3b8af80eac9b111767",
         "variation_seed": "1729",
         "variation_trial_index": "1"
@@ -113,6 +115,7 @@
         "transfer_field_id": null,
         "transfer_reason": null,
         "variation_input_sha256": "1cf54abc60dc11cfc30caae3432d3f6a64c5effb53290c8796bc34d064cf2f07",
+        "variation_plan_sha256": "7812fe8cf691f67bbbd63a137769f39899c5a9f8a83a2811d13e66a87687a1e9",
         "variation_regional_plan_sha256": "74f53b778c721abd510d414b4e490310bbd9a5c52ff89dddd922e602c9cb2038",
         "variation_seed": "1729",
         "variation_trial_index": "2"
@@ -152,6 +155,7 @@
         "transfer_field_id": "physical_contact_bracket",
         "transfer_reason": "no_physical_contact",
         "variation_input_sha256": "20a5277ee74966601b63e6a5fc4166a23ef61940bb2a4e245853d2c7b031d1ed",
+        "variation_plan_sha256": "7812fe8cf691f67bbbd63a137769f39899c5a9f8a83a2811d13e66a87687a1e9",
         "variation_regional_plan_sha256": "6215d739d4a1350e674ada9dcb4509b423e8c3c931eb5fbd3fbc04b0a09a65d6",
         "variation_seed": "1729",
         "variation_trial_index": "3"

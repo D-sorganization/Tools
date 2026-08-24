@@ -13,6 +13,10 @@ from typing import Any
 
 import numpy as np
 
+from shared.python.swing_sim.variation.execution_metadata import (
+    execution_document_to_json_dict,
+)
+
 from .chip_forgiveness import ChipStudySummary
 from .forgiveness_runner import ChipForgivenessStudy
 
@@ -95,7 +99,7 @@ def chip_forgiveness_study_to_dict(study: ChipForgivenessStudy) -> dict[str, Any
         raise TypeError("study must be ChipForgivenessStudy")
     metadata = study.summary.metadata
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "metadata": {
             "candidate_id": metadata.candidate_id,
             "plan_schema": metadata.plan_schema,
@@ -111,7 +115,7 @@ def chip_forgiveness_study_to_dict(study: ChipForgivenessStudy) -> dict[str, Any
             "limitations": metadata.limitations,
         },
         "input_names": list(study.input_names),
-        "plan": study.plan.to_json_dict(),
+        "plan_document": execution_document_to_json_dict(study.plan),
         "sampled_inputs": study.sampled_inputs.tolist(),
         "physics_inputs": {
             "simulation_configs": _wire_value(study.request.ensemble.configs),

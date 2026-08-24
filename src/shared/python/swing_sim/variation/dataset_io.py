@@ -5,8 +5,8 @@ Schemas (mirrored by ``rate_of_closure/web/src/model/variation.ts``):
 JSON (full round-trip, one document)::
 
     {
-      "schema_version": 1,
-      "plan": { ... VariationPlan.to_json_dict() ... },
+      "schema_version": 2,
+      "plan_document": { ... canonical execution document v3 ... },
       "input_names": ["swing_sim.impact.delivery.face_angle_deg", ...],
       "output_names": ["club_path_deg", ...],
       "inputs":  [[...], ...],   # n_runs x n_inputs
@@ -39,9 +39,25 @@ from shared.python.contracts import require
 from shared.python.swing_sim._numeric_contracts import integer
 
 from .engine import VariationDataset
+from .execution_metadata import (
+    execution_document_from_json_dict,
+    execution_document_to_json_dict,
+)
 from .spec import VariationPlan
 
-_SCHEMA_VERSION = 1
+_SCHEMA_VERSION = 2
+_JSON_FIELDS = frozenset(
+    {
+        "schema_version",
+        "plan_document",
+        "input_names",
+        "output_names",
+        "inputs",
+        "outputs",
+        "success",
+        "elapsed_s",
+    }
+)
 
 
 def to_json_dict(dataset: VariationDataset) -> dict[str, Any]:
@@ -52,7 +68,7 @@ def to_json_dict(dataset: VariationDataset) -> dict[str, Any]:
     ]
     return {
         "schema_version": _SCHEMA_VERSION,
-        "plan": dataset.plan.to_json_dict(),
+        "plan_document": execution_document_to_json_dict(dataset.plan),
         "input_names": list(dataset.input_names),
         "output_names": list(dataset.output_names),
         "inputs": dataset.inputs.tolist(),
@@ -64,18 +80,26 @@ def to_json_dict(dataset: VariationDataset) -> dict[str, Any]:
 
 def from_json_dict(data: dict[str, Any]) -> VariationDataset:
     """Inverse of :func:`to_json_dict` (DbC-validated on construction)."""
+    require(isinstance(data, dict), "dataset must be a JSON object", data)
     version = integer(
-        data.get("schema_version", _SCHEMA_VERSION),
+        data.get("schema_version"),
         "schema_version",
         minimum=1,
     )
+    require(
+        version != 1,
+        "legacy dataset plan is not self-contained; re-run or explicitly migrate it",
+        version,
+    )
     require(version == _SCHEMA_VERSION, "unsupported schema_version", version)
+    require(set(data) == _JSON_FIELDS, "dataset fields mismatch", sorted(data))
+    plan_document = execution_document_from_json_dict(data["plan_document"])
     outputs = np.array(
         [[math.nan if v is None else float(v) for v in row] for row in data["outputs"]],
         dtype=float,
     )
     return VariationDataset(
-        plan=VariationPlan.from_json_dict(data["plan"]),
+        plan=plan_document.plan,
         input_names=tuple(str(name) for name in data["input_names"]),
         inputs=np.asarray(data["inputs"], dtype=float),
         output_names=tuple(str(name) for name in data["output_names"]),

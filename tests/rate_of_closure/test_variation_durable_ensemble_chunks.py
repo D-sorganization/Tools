@@ -86,6 +86,11 @@ def test_interrupted_archive_resumes_without_reexecuting_durable_prefix(
     assert manifest["status"] == "complete"
     assert manifest["next_index"] == 3
     assert [item["start_index"] for item in manifest["chunks"]] == [0, 1]
+    assert manifest["schema_version"] == 2
+    assert "plan" not in manifest["header"]
+    assert "execution_metadata" not in manifest["header"]
+    assert manifest["header"]["plan_document"]["schema_version"] == 3
+    assert manifest["header"]["plan_document"]["plan"] == request.plan.to_json_dict()
 
 
 def test_tampered_chunk_fails_before_any_resumed_evaluation(tmp_path: Path) -> None:

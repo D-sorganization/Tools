@@ -8,6 +8,7 @@ import {
   type VariationPlanTs,
 } from "../model/variation";
 import type { VariationAnalysisExecution } from "../model/variationAnalysisPolicy";
+import { parsePersistedVariationPlan } from "../model/variationPersistedPlan";
 import {
   deleteVariationPlan,
   duplicateVariationPlan,
@@ -78,6 +79,7 @@ export function VariationPanel({
     ...defaultVariationPlan(),
     ballSetup: initialBallSetup,
   }));
+  const [planEvidenceWarning, setPlanEvidenceWarning] = useState<string | null>(null);
   const [analysisExecution, setAnalysisExecution] =
     useState<VariationAnalysisExecution>("both");
   const [library, setLibrary] = useState<NamedVariationPlan[]>(initialLibrary.plans);
@@ -105,6 +107,9 @@ export function VariationPanel({
     cancel,
     invalidateResults: clearResults,
   } = execution;
+  const visibleStatus = planEvidenceWarning === null
+    ? status
+    : `${status} Evidence warning: ${planEvidenceWarning}`;
 
   const selectWorkflow = (value: "variation" | "durable" | "morris") => {
     if (value !== workflow) clearResults();
@@ -123,10 +128,13 @@ export function VariationPanel({
 
   const importPlan = (text: string) => {
     try {
-      const loaded = planFromJson(text);
+      const resolution = parsePersistedVariationPlan(text);
+      const loaded = resolution.plan;
       setPlan(loaded);
+      setPlanEvidenceWarning(resolution.warning);
       clearResults();
-      setStatus(`Plan loaded with ${loaded.noise.length} noise rows and ${loaded.groups?.length ?? 0} groups.`);
+      const summary = `Plan loaded with ${loaded.noise.length} noise rows and ${loaded.groups?.length ?? 0} groups.`;
+      setStatus(summary);
     } catch (error) {
       setStatus(`Cannot load plan: ${(error as Error).message}`);
     }
@@ -149,6 +157,7 @@ export function VariationPanel({
     const selected = library.find((entry) => entry.id === selectedId);
     if (!selected) return;
     setPlan(planFromJson(planToJson(selected.plan)));
+    setPlanEvidenceWarning(selected.evidence?.warning ?? null);
     setPlanName(selected.name);
     clearResults();
     setStatus(`Loaded named plan “${selected.name}”.`);
@@ -222,7 +231,7 @@ export function VariationPanel({
           plan={plan}
           dataset={dataset}
           ensemble={ensemble}
-          status={status}
+          status={visibleStatus}
           busy={busy}
           progress={progress}
           visualState={visualState}

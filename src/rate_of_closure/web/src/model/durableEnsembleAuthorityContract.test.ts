@@ -35,6 +35,7 @@ describe("durable ensemble authority contract", () => {
       base: { clubhead_speed_mph: 113, contact_mode: "fixed_ball_contact" },
     });
     expect(document.plan).not.toHaveProperty("ball_setup");
+    expect(document.plan_sha256).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it("parses incremental path-free jobs and rejects inconsistent progress", () => {

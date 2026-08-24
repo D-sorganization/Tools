@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import math
-import struct
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import cast
 
 from shared.python.contracts import require
 
+from ._execution_digest import canonical_sha256, normalized_float
 from ._execution_metadata_schema import (
     _DOCUMENT_FIELDS,
     _IMPLEMENTATION_FIELDS,
@@ -29,6 +28,11 @@ from ._execution_metadata_schema import (
     VARIABLE_REGISTRY_SCHEMA_ID,
     VARIABLE_REGISTRY_SCHEMA_VERSION,
 )
+from .execution_provenance import (
+    PYTHON_DEFAULT_PROVENANCE,
+    PlanProducerProvenance,
+    provenance_from_json_dict,
+)
 from .registry import keys_for_mode, variable_registry
 from .sampling import (
     SAMPLING_ALGORITHM_ID,
@@ -36,7 +40,7 @@ from .sampling import (
     SAMPLING_STREAM_DERIVATION_ID,
     SAMPLING_STREAM_DERIVATION_VERSION,
 )
-from .spec import MAX_SAFE_INTEGER, SCHEMA_VERSION, VariationPlan
+from .spec import SCHEMA_VERSION, VariationPlan
 
 
 @dataclass(frozen=True)
@@ -123,6 +127,7 @@ class VariationExecutionMetadata:
     resolved_variables: tuple[ResolvedVariableSnapshot, ...]
     rng_identity: RngExecutionIdentity
     implementation_identity: ExecutionImplementationIdentity
+    provenance_sha256: str
     schema_id: str = EXECUTION_METADATA_SCHEMA_ID
     schema_version: int = EXECUTION_METADATA_SCHEMA_VERSION
     registry_schema_id: str = VARIABLE_REGISTRY_SCHEMA_ID
@@ -144,6 +149,7 @@ class VariationExecutionMetadata:
             ],
             "rng_identity": self.rng_identity.to_json_dict(),
             "implementation_identity": self.implementation_identity.to_json_dict(),
+            "provenance_sha256": self.provenance_sha256,
         }
 
 
@@ -161,51 +167,13 @@ class VariationExecutionDocument:
 
     plan: VariationPlan
     metadata: VariationExecutionMetadata
+    provenance: PlanProducerProvenance
     warning: str | None = None
 
 
-def _f64_hex(value: float) -> str:
-    return struct.pack(">d", value).hex()
-
-
-def _normalized_float(value: float) -> float:
-    return 0.0 if value == 0.0 else value
-
-
-def _digest_value(value: object) -> object:
-    if value is None or isinstance(value, (bool, str)):
-        return value
-    if isinstance(value, int):
-        require(abs(value) <= MAX_SAFE_INTEGER, "digest integer must be safe", value)
-        numeric = float(value)
-        return {"$f64": _f64_hex(numeric)}
-    if isinstance(value, float):
-        numeric = _normalized_float(value)
-        require(math.isfinite(numeric), "digest numbers must be finite", value)
-        return {"$f64": _f64_hex(numeric)}
-    if isinstance(value, Mapping):
-        require(
-            all(isinstance(key, str) for key in value),
-            "digest mapping keys must be strings",
-        )
-        return {
-            key: _digest_value(value[key])
-            for key in sorted(cast(Mapping[str, object], value))
-        }
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        return [_digest_value(item) for item in value]
-    raise TypeError(f"unsupported canonical digest value: {type(value).__name__}")
-
-
-def _sha256(value: object) -> str:
-    canonical = json.dumps(
-        _digest_value(value), ensure_ascii=False, sort_keys=True, separators=(",", ":")
-    )
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
-
-def _plan_sha256(plan: VariationPlan) -> str:
-    return _sha256(plan.to_json_dict())
+def plan_sha256(plan: VariationPlan) -> str:
+    """Return the cross-runtime digest of one canonical variation plan."""
+    return canonical_sha256(plan.to_json_dict())
 
 
 def _resolved_variables(plan: VariationPlan) -> tuple[ResolvedVariableSnapshot, ...]:
@@ -214,7 +182,7 @@ def _resolved_variables(plan: VariationPlan) -> tuple[ResolvedVariableSnapshot, 
     return tuple(
         ResolvedVariableSnapshot(
             variable_key=key,
-            value=_normalized_float(float(resolved[key])),
+            value=normalized_float(float(resolved[key])),
             unit=registry[key].unit,
             dimension=registry[key].dimension,
         )
@@ -233,7 +201,7 @@ def _registry_sha256(plan: VariationPlan) -> str:
         }
         for key in sorted(keys_for_mode(plan.mode))
     ]
-    return _sha256(
+    return canonical_sha256(
         {
             "schema_id": VARIABLE_REGISTRY_SCHEMA_ID,
             "schema_version": VARIABLE_REGISTRY_SCHEMA_VERSION,
@@ -242,11 +210,14 @@ def _registry_sha256(plan: VariationPlan) -> str:
     )
 
 
-def make_execution_metadata(plan: VariationPlan) -> VariationExecutionMetadata:
+def make_execution_metadata(
+    plan: VariationPlan,
+    provenance: PlanProducerProvenance = PYTHON_DEFAULT_PROVENANCE,
+) -> VariationExecutionMetadata:
     """Snapshot the plan's complete resolved base and registry semantics."""
     require(isinstance(plan, VariationPlan), "plan must be a VariationPlan", plan)
     return VariationExecutionMetadata(
-        plan_sha256=_plan_sha256(plan),
+        plan_sha256=plan_sha256(plan),
         mode=plan.mode,
         flight_model=plan.flight_model,
         registry_sha256=_registry_sha256(plan),
@@ -258,6 +229,7 @@ def make_execution_metadata(plan: VariationPlan) -> VariationExecutionMetadata:
             stream_derivation_version=SAMPLING_STREAM_DERIVATION_VERSION,
         ),
         implementation_identity=PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY,
+        provenance_sha256=provenance.sha256,
     )
 
 
@@ -265,10 +237,11 @@ def validate_execution_metadata(
     plan: VariationPlan,
     metadata: VariationExecutionMetadata,
     *,
+    provenance: PlanProducerProvenance = PYTHON_DEFAULT_PROVENANCE,
     expected_implementation_identity: ExecutionImplementationIdentity | None = None,
 ) -> VariationExecutionMetadata:
     """Reject any plan, resolved-value, unit, dimension, or registry drift."""
-    expected = make_execution_metadata(plan)
+    expected = make_execution_metadata(plan, provenance)
     require(metadata.schema_id == expected.schema_id, "metadata schema_id mismatch")
     require(
         metadata.schema_version == expected.schema_version,
@@ -295,6 +268,10 @@ def validate_execution_metadata(
         metadata.registry_sha256 == expected.registry_sha256, "registry digest mismatch"
     )
     require(metadata.rng_identity == expected.rng_identity, "RNG identity mismatch")
+    require(
+        metadata.provenance_sha256 == expected.provenance_sha256,
+        "provenance digest mismatch",
+    )
     required_implementation = (
         expected.implementation_identity
         if expected_implementation_identity is None
@@ -308,29 +285,51 @@ def validate_execution_metadata(
 
 
 def resolve_execution_metadata(
-    plan: VariationPlan, metadata: VariationExecutionMetadata | None
+    plan: VariationPlan,
+    metadata: VariationExecutionMetadata | None,
+    *,
+    provenance: PlanProducerProvenance = PYTHON_DEFAULT_PROVENANCE,
 ) -> ExecutionMetadataResolution:
     """Validate supplied metadata or explicitly resolve a legacy raw plan."""
     if metadata is None:
         return ExecutionMetadataResolution(
-            make_execution_metadata(plan), LEGACY_CURRENT_REGISTRY_WARNING
+            make_execution_metadata(plan, provenance), LEGACY_CURRENT_REGISTRY_WARNING
         )
     return ExecutionMetadataResolution(
-        validate_execution_metadata(plan, metadata), None
+        validate_execution_metadata(plan, metadata, provenance=provenance), None
     )
 
 
 def execution_document_to_json_dict(
-    plan: VariationPlan, metadata: VariationExecutionMetadata | None = None
+    plan: VariationPlan,
+    metadata: VariationExecutionMetadata | None = None,
+    *,
+    provenance: PlanProducerProvenance = PYTHON_DEFAULT_PROVENANCE,
 ) -> dict[str, object]:
     """Write canonical plan v2 plus a fresh or validated strict sidecar."""
-    resolved = resolve_execution_metadata(plan, metadata)
+    resolved = resolve_execution_metadata(plan, metadata, provenance=provenance)
     return {
         "schema_id": EXECUTION_DOCUMENT_SCHEMA_ID,
         "schema_version": EXECUTION_DOCUMENT_SCHEMA_VERSION,
         "plan": plan.to_json_dict(),
         "metadata": resolved.metadata.to_json_dict(),
+        "provenance": provenance.to_json_dict(),
     }
+
+
+def execution_document_dumps(
+    value: VariationPlan | VariationExecutionDocument,
+    *,
+    provenance: PlanProducerProvenance = PYTHON_DEFAULT_PROVENANCE,
+) -> str:
+    """Return deterministic compact JSON for one canonical document."""
+    if isinstance(value, VariationExecutionDocument):
+        record = execution_document_to_json_dict(
+            value.plan, value.metadata, provenance=value.provenance
+        )
+    else:
+        record = execution_document_to_json_dict(value, provenance=provenance)
+    return json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
 def _mapping(value: object, name: str, fields: frozenset[str]) -> Mapping[str, object]:
@@ -379,6 +378,7 @@ def _metadata_from_json_dict(value: object) -> VariationExecutionMetadata:
         )
     plan_digest = _text(item["plan_sha256"], "plan_sha256")
     registry_digest = _text(item["registry_sha256"], "registry_sha256")
+    provenance_digest = _text(item["provenance_sha256"], "provenance_sha256")
     require(
         bool(_SHA256.fullmatch(plan_digest)), "plan_sha256 must be lowercase SHA-256"
     )
@@ -391,6 +391,10 @@ def _metadata_from_json_dict(value: object) -> VariationExecutionMetadata:
     require(
         bool(_SHA256.fullmatch(registry_digest)),
         "registry_sha256 must be lowercase SHA-256",
+    )
+    require(
+        bool(_SHA256.fullmatch(provenance_digest)),
+        "provenance_sha256 must be lowercase SHA-256",
     )
     return VariationExecutionMetadata(
         schema_id=_text(item["schema_id"], "metadata schema_id"),
@@ -428,18 +432,23 @@ def _metadata_from_json_dict(value: object) -> VariationExecutionMetadata:
             solver_id=_text(implementation["solver_id"], "solver_id"),
             solver_version=_integer(implementation["solver_version"], "solver_version"),
         ),
+        provenance_sha256=provenance_digest,
     )
 
 
 def execution_document_from_json_dict(value: object) -> VariationExecutionDocument:
     """Strictly parse and validate one execution document against this registry."""
+    require(isinstance(value, Mapping), "execution document must be an object", value)
+    candidate = cast(Mapping[str, object], value)
+    if candidate.get("schema_id") == EXECUTION_DOCUMENT_SCHEMA_ID and candidate.get(
+        "schema_version"
+    ) in (1, 2):
+        raise ValueError(LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR)
     item = _mapping(value, "execution document", _DOCUMENT_FIELDS)
     require(
         item["schema_id"] == EXECUTION_DOCUMENT_SCHEMA_ID, "document schema_id mismatch"
     )
     document_version = _integer(item["schema_version"], "document schema_version")
-    if document_version == 1:
-        raise ValueError(LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR)
     require(
         document_version == EXECUTION_DOCUMENT_SCHEMA_VERSION,
         "document schema_version mismatch",
@@ -454,8 +463,13 @@ def execution_document_from_json_dict(value: object) -> VariationExecutionDocume
         plan.to_json_dict() == dict(plan_item),
         "execution document plan is not canonical v2",
     )
+    provenance = provenance_from_json_dict(item["provenance"])
     metadata = _metadata_from_json_dict(item["metadata"])
-    return VariationExecutionDocument(plan, validate_execution_metadata(plan, metadata))
+    return VariationExecutionDocument(
+        plan,
+        validate_execution_metadata(plan, metadata, provenance=provenance),
+        provenance,
+    )
 
 
 __all__ = [
@@ -475,6 +489,9 @@ __all__ = [
     "ResolvedVariableSnapshot",
     "VariationExecutionDocument",
     "VariationExecutionMetadata",
+    "PlanProducerProvenance",
+    "PYTHON_DEFAULT_PROVENANCE",
+    "execution_document_dumps",
     "execution_document_from_json_dict",
     "execution_document_to_json_dict",
     "make_execution_metadata",

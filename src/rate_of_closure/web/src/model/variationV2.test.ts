@@ -251,8 +251,8 @@ describe("variation plan schema v2", () => {
         outputs: [[]],
         success: [true],
       }),
-    ) as { plan: Record<string, unknown> };
-    expect(datasetJson.plan).toMatchObject({
+    ) as { plan_document: { plan: Record<string, unknown> } };
+    expect(datasetJson.plan_document.plan).toMatchObject({
       base_variables: plan.baseVariables,
       flight_model: plan.flightModel,
     });

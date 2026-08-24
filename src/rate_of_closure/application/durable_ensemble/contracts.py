@@ -18,6 +18,7 @@ from rate_of_closure.variation import (
     durable_ensemble_evidence_to_document,
 )
 from shared.python.swing_sim.variation import VariationPlan
+from shared.python.swing_sim.variation.execution_metadata import plan_sha256
 
 if TYPE_CHECKING:
     from rate_of_closure.simulation.records import SimulationConfig
@@ -27,6 +28,7 @@ DURABLE_ENSEMBLE_REQUEST_SCHEMA_ID = "rate-of-closure/durable-ensemble-request"
 DURABLE_ENSEMBLE_JOB_SCHEMA_ID = "rate-of-closure/durable-ensemble-job"
 DURABLE_ENSEMBLE_SCOPE = "passive-double-pendulum-global-perturbations/v1"
 DURABLE_ENSEMBLE_AUTHORITY_SCHEMA_VERSION = 1
+DURABLE_ENSEMBLE_REQUEST_SCHEMA_VERSION = 2
 
 JobStatus = Literal["queued", "running", "completed", "cancelled", "failed"]
 _REQUEST_FIELDS = frozenset(
@@ -38,6 +40,7 @@ _REQUEST_FIELDS = frozenset(
         "archive_id",
         "base",
         "plan",
+        "plan_sha256",
         "chunk_size",
     }
 )
@@ -152,12 +155,13 @@ class DurableEnsembleAuthorityRequest:
         """Serialize the exact path-free authority request."""
         return {
             "schema_id": DURABLE_ENSEMBLE_REQUEST_SCHEMA_ID,
-            "schema_version": DURABLE_ENSEMBLE_AUTHORITY_SCHEMA_VERSION,
+            "schema_version": DURABLE_ENSEMBLE_REQUEST_SCHEMA_VERSION,
             "scope": DURABLE_ENSEMBLE_SCOPE,
             "request_id": self.request_id,
             "archive_id": self.archive_id,
             "base": self.base.to_json_dict(),
             "plan": self.plan.to_json_dict(),
+            "plan_sha256": plan_sha256(self.plan),
             "chunk_size": self.chunk_size,
         }
 
@@ -169,7 +173,7 @@ def parse_durable_ensemble_request(
     item = exact_mapping(value, _REQUEST_FIELDS, "durable ensemble request")
     if item["schema_id"] != DURABLE_ENSEMBLE_REQUEST_SCHEMA_ID:
         raise ValueError("durable ensemble request schema_id is unsupported")
-    if item["schema_version"] != DURABLE_ENSEMBLE_AUTHORITY_SCHEMA_VERSION:
+    if item["schema_version"] != DURABLE_ENSEMBLE_REQUEST_SCHEMA_VERSION:
         raise ValueError("durable ensemble request schema_version is unsupported")
     if item["scope"] != DURABLE_ENSEMBLE_SCOPE:
         raise ValueError("durable ensemble request scope is unsupported")
@@ -180,6 +184,8 @@ def parse_durable_ensemble_request(
         _plan(item["plan"]),
         _bounded_integer(item["chunk_size"], "chunk_size", _MAX_CHUNK_SIZE),
     )
+    if item["plan_sha256"] != plan_sha256(request.plan):
+        raise ValueError("durable ensemble request plan digest mismatch")
     request.source()
     return request
 
@@ -309,6 +315,7 @@ __all__ = [
     "DURABLE_ENSEMBLE_AUTHORITY_SCHEMA_VERSION",
     "DURABLE_ENSEMBLE_JOB_SCHEMA_ID",
     "DURABLE_ENSEMBLE_REQUEST_SCHEMA_ID",
+    "DURABLE_ENSEMBLE_REQUEST_SCHEMA_VERSION",
     "DURABLE_ENSEMBLE_SCOPE",
     "DurableEnsembleAuthorityRequest",
     "DurableEnsembleJobEnvelope",

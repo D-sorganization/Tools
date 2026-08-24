@@ -166,7 +166,7 @@ def test_replace_failure_preserves_last_known_good(
     "mutator, message",
     [
         (lambda value: value.update(schema="unsupported/v2"), "schema"),
-        (lambda value: value.update(schema_version=2), "schema_version"),
+        (lambda value: value.update(schema_version=1), "schema_version"),
         (lambda value: value.update(unknown=True), "fields mismatch"),
         (
             lambda value: value["variation_plan"].update(schema_version=1),
@@ -180,6 +180,10 @@ def test_replace_failure_preserves_last_known_good(
             lambda value: value["regional_plan"].update(unknown=True),
             "regional material plan request fields",
         ),
+        (
+            lambda value: value["variation_plan"].update(seed=1730),
+            "plan digest mismatch",
+        ),
     ],
     ids=(
         "schema",
@@ -188,6 +192,7 @@ def test_replace_failure_preserves_last_known_good(
         "variation-version",
         "variation-extra",
         "regional-extra",
+        "plan-substitution",
     ),
 )
 def test_schema_versions_and_fields_fail_closed(mutator, message: str) -> None:

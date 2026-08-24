@@ -280,7 +280,10 @@ describe("analysis + export", () => {
     expect(rows).toHaveLength(4);
     const json = JSON.parse(datasetToJson(dataset)) as Record<string, unknown>;
     expect(json.schema_version).toBe(2);
-    expect((json.plan as Record<string, unknown>).n_runs).toBe(4);
+    expect(json).not.toHaveProperty("plan");
+    const planDocument = json.plan_document as Record<string, unknown>;
+    expect(planDocument.schema_version).toBe(3);
+    expect((planDocument.plan as Record<string, unknown>).n_runs).toBe(4);
   });
 
   it("failed runs export as empty CSV cells and null JSON entries", () => {

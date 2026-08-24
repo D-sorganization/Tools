@@ -9,12 +9,11 @@
  */
 
 import {
-  planToJson,
   runVariation,
-  SCHEMA_VERSION,
   type VariationDatasetTs,
   type VariationPlanTs,
 } from "./variation";
+import { variationExecutionDocument } from "./variationExecutionMetadata";
 
 export interface OutputStatsTs {
   name: string;
@@ -299,9 +298,8 @@ export function datasetToCsv(dataset: VariationDatasetTs): string {
 export function datasetToJson(dataset: VariationDatasetTs): string {
   return JSON.stringify(
     {
-      schema_version: SCHEMA_VERSION,
-      // Reuse the plan serializer for the snake_case schema.
-      plan: JSON.parse(planToJson(dataset.plan)) as unknown,
+      schema_version: 2,
+      plan_document: variationExecutionDocument(dataset.plan),
       input_names: dataset.inputNames,
       output_names: dataset.outputNames,
       inputs: dataset.inputs,

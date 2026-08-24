@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
@@ -42,6 +43,30 @@ def dataset():  # type: ignore[no-untyped-def]
 
 
 class TestJsonRoundTrip:
+    def test_embeds_a_cohesive_canonical_plan_document(self, dataset) -> None:  # type: ignore[no-untyped-def]
+        document = to_json_dict(dataset)
+
+        assert document["schema_version"] == 2
+        assert "plan" not in document
+        assert document["plan_document"]["schema_version"] == 3
+        assert document["plan_document"]["plan"] == dataset.plan.to_json_dict()
+
+    def test_rejects_plan_metadata_substitution(self, dataset) -> None:  # type: ignore[no-untyped-def]
+        document = to_json_dict(dataset)
+        substituted = deepcopy(document)
+        substituted["plan_document"]["plan"]["seed"] += 1
+
+        with pytest.raises(ContractViolationError, match="digest"):
+            from_json_dict(substituted)
+
+    def test_rejects_legacy_unbound_dataset_documents(self, dataset) -> None:  # type: ignore[no-untyped-def]
+        document = to_json_dict(dataset)
+        document["schema_version"] = 1
+        document["plan"] = document.pop("plan_document")["plan"]
+
+        with pytest.raises(ContractViolationError, match="legacy.*not self-contained"):
+            from_json_dict(document)
+
     def test_lossless_including_plan_and_failures(  # type: ignore[no-untyped-def]
         self, dataset, tmp_path: Path
     ) -> None:

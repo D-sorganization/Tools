@@ -11,9 +11,9 @@ from __future__ import annotations
 import re
 
 EXECUTION_DOCUMENT_SCHEMA_ID = "rate-of-closure/variation-execution-document"
-EXECUTION_DOCUMENT_SCHEMA_VERSION = 2
+EXECUTION_DOCUMENT_SCHEMA_VERSION = 3
 EXECUTION_METADATA_SCHEMA_ID = "rate-of-closure/variation-execution-metadata"
-EXECUTION_METADATA_SCHEMA_VERSION = 2
+EXECUTION_METADATA_SCHEMA_VERSION = 3
 VARIABLE_REGISTRY_SCHEMA_ID = "swing-sim/variation-variable-registry"
 VARIABLE_REGISTRY_SCHEMA_VERSION = 1
 LEGACY_CURRENT_REGISTRY_WARNING = (
@@ -21,11 +21,14 @@ LEGACY_CURRENT_REGISTRY_WARNING = (
     "current variable registry. This is not evidence of historical reproducibility."
 )
 LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR = (
-    "Execution document schema @1 lacks RNG and solver identity; load its raw "
-    "plan and resolve a fresh @2 sidecar. Historical replay remains unproven."
+    "Execution document schema @1 or @2 lacks the complete current identity "
+    "contract; load its raw plan and resolve a fresh @3 document. Historical "
+    "replay remains unproven because source provenance was not recorded."
 )
 
-_DOCUMENT_FIELDS = frozenset({"schema_id", "schema_version", "plan", "metadata"})
+_DOCUMENT_FIELDS = frozenset(
+    {"schema_id", "schema_version", "plan", "metadata", "provenance"}
+)
 _METADATA_FIELDS = frozenset(
     {
         "schema_id",
@@ -39,6 +42,7 @@ _METADATA_FIELDS = frozenset(
         "resolved_variables",
         "rng_identity",
         "implementation_identity",
+        "provenance_sha256",
     }
 )
 _VARIABLE_FIELDS = frozenset({"variable_key", "value", "unit", "dimension"})

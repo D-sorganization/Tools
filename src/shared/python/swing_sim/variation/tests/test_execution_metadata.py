@@ -12,10 +12,20 @@ from shared.python.swing_sim.variation import NoiseSpec, VariationPlan
 from shared.python.swing_sim.variation.execution_metadata import (
     LEGACY_CURRENT_REGISTRY_WARNING,
     LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR,
+    PYTHON_DEFAULT_PROVENANCE,
+    PlanProducerProvenance,
+    execution_document_dumps,
     execution_document_from_json_dict,
     execution_document_to_json_dict,
     make_execution_metadata,
     resolve_execution_metadata,
+)
+from shared.python.swing_sim.variation.persisted_plan_io import (
+    persisted_plan_binding_from_json_dict,
+    persisted_plan_binding_to_json_dict,
+    persisted_plan_dumps,
+    persisted_plan_loads,
+    write_persisted_plan,
 )
 
 _BALL_SPEED = "swing_sim.flight.launch.ball_speed_mph"
@@ -35,6 +45,10 @@ _PYTHON_V2_FIXTURE = _V1_FIXTURE.with_name(
     "variation_execution_document_python_v2.json"
 )
 _REACT_V2_FIXTURE = _V1_FIXTURE.with_name("variation_execution_document_react_v2.json")
+_PYTHON_V3_FIXTURE = _V1_FIXTURE.with_name(
+    "variation_execution_document_python_v3.json"
+)
+_REACT_V3_FIXTURE = _V1_FIXTURE.with_name("variation_execution_document_react_v3.json")
 
 
 def _plan(seed: int = 17) -> VariationPlan:
@@ -81,7 +95,7 @@ def test_metadata_snapshots_exact_resolved_values_units_and_dimensions() -> None
     metadata = make_execution_metadata(_plan())
 
     assert metadata.schema_id == "rate-of-closure/variation-execution-metadata"
-    assert metadata.schema_version == 2
+    assert metadata.schema_version == 3
     assert metadata.rng_identity.algorithm_id == "numpy-pcg64-canonical-rowwise-psd"
     assert metadata.rng_identity.algorithm_version == 2
     assert metadata.rng_identity.stream_derivation_id == (
@@ -111,8 +125,115 @@ def test_execution_document_round_trips_exact_canonical_plan_and_metadata() -> N
 
     assert decoded.plan == _plan()
     assert decoded.metadata == make_execution_metadata(_plan())
+    assert decoded.provenance == PYTHON_DEFAULT_PROVENANCE
     assert decoded.warning is None
     assert "execution_metadata" not in document["plan"]
+    assert document["schema_version"] == 3
+    assert document["provenance"] == PYTHON_DEFAULT_PROVENANCE.to_json_dict()
+    assert document["metadata"]["provenance_sha256"] == (
+        PYTHON_DEFAULT_PROVENANCE.sha256
+    )
+
+
+def test_execution_document_has_stable_canonical_serialization() -> None:
+    first = execution_document_dumps(_plan())
+    reordered = dict(reversed(list(execution_document_to_json_dict(_plan()).items())))
+
+    assert first == execution_document_dumps(
+        execution_document_from_json_dict(reordered)
+    )
+    assert "\n" not in first
+    assert first.startswith('{"metadata":')
+
+
+def test_source_provenance_requires_exact_revision_or_explicit_unavailability() -> None:
+    exact = PlanProducerProvenance(
+        producer_id="rate-of-closure/python",
+        producer_version=1,
+        source_repository="D-sorganization/Tools",
+        source_revision="6e7f464d04bd7727ba4b985a399114ece8f0f723",
+        source_revision_status="exact",
+        source_revision_reason=None,
+    )
+    document = execution_document_to_json_dict(_plan(), provenance=exact)
+
+    assert execution_document_from_json_dict(document).provenance == exact
+    with pytest.raises(ContractViolationError, match="exact source revision"):
+        PlanProducerProvenance(
+            producer_id="rate-of-closure/python",
+            producer_version=1,
+            source_repository="D-sorganization/Tools",
+            source_revision="development",
+            source_revision_status="exact",
+            source_revision_reason=None,
+        )
+    with pytest.raises(ContractViolationError, match="unavailability reason"):
+        PlanProducerProvenance(
+            producer_id="rate-of-closure/python",
+            producer_version=1,
+            source_repository="D-sorganization/Tools",
+            source_revision=None,
+            source_revision_status="unavailable",
+            source_revision_reason=None,
+        )
+
+
+def test_execution_document_rejects_provenance_substitution() -> None:
+    document = copy.deepcopy(execution_document_to_json_dict(_plan()))
+    document["provenance"]["producer_id"] = "rate-of-closure/other"
+
+    with pytest.raises(ContractViolationError, match="provenance digest"):
+        execution_document_from_json_dict(document)
+
+
+def test_persisted_plan_loader_distinguishes_canonical_and_legacy_evidence() -> None:
+    canonical = persisted_plan_loads(persisted_plan_dumps(_plan()))
+    legacy = persisted_plan_loads(_plan().dumps())
+
+    assert canonical.plan == legacy.plan == _plan()
+    assert canonical.metadata == make_execution_metadata(_plan())
+    assert canonical.provenance == PYTHON_DEFAULT_PROVENANCE
+    assert canonical.warning is None
+    assert legacy.metadata is None
+    assert legacy.provenance is None
+    assert legacy.warning == LEGACY_CURRENT_REGISTRY_WARNING
+
+
+def test_persisted_plan_writer_atomically_replaces_target(tmp_path: Path) -> None:
+    target = tmp_path / "variation-plan.json"
+    target.write_text("obsolete", encoding="utf-8")
+
+    write_persisted_plan(target, _plan())
+
+    assert persisted_plan_loads(target.read_text(encoding="utf-8")).plan == _plan()
+    assert not target.with_suffix(".json.tmp").exists()
+
+
+def test_plan_binding_retains_canonical_and_legacy_evidence_without_invention() -> None:
+    canonical = persisted_plan_loads(persisted_plan_dumps(_plan()))
+    legacy = persisted_plan_loads(_plan().dumps())
+
+    canonical_round_trip = persisted_plan_binding_from_json_dict(
+        persisted_plan_binding_to_json_dict(canonical)
+    )
+    legacy_round_trip = persisted_plan_binding_from_json_dict(
+        persisted_plan_binding_to_json_dict(legacy)
+    )
+
+    assert canonical_round_trip == canonical
+    assert legacy_round_trip == legacy
+
+
+def test_plan_binding_rejects_substituted_metadata_and_legacy_warning() -> None:
+    canonical = persisted_plan_binding_to_json_dict(_plan())
+    canonical["document"]["plan"]["seed"] += 1
+    with pytest.raises(ContractViolationError, match="digest"):
+        persisted_plan_binding_from_json_dict(canonical)
+
+    legacy = persisted_plan_binding_to_json_dict(persisted_plan_loads(_plan().dumps()))
+    legacy["legacy_warning"] = "invented"
+    with pytest.raises(ContractViolationError, match="warning"):
+        persisted_plan_binding_from_json_dict(legacy)
 
 
 def test_signed_zero_is_normalized_in_document_snapshot_and_digest() -> None:
@@ -283,9 +404,27 @@ def test_same_python_runtime_replay_pins_metadata_and_samples() -> None:
     assert (first == second).all()
 
 
-def test_python_v2_golden_and_cross_runtime_rejection() -> None:
+def test_v2_documents_require_explicit_provenance_migration() -> None:
     python_document = json.loads(_PYTHON_V2_FIXTURE.read_text(encoding="utf-8"))
     react_document = json.loads(_REACT_V2_FIXTURE.read_text(encoding="utf-8"))
+
+    assert (
+        python_document["metadata"]["plan_sha256"]
+        == react_document["metadata"]["plan_sha256"]
+    )
+    assert (
+        python_document["metadata"]["registry_sha256"]
+        == react_document["metadata"]["registry_sha256"]
+    )
+    with pytest.raises(ValueError, match="source provenance"):
+        execution_document_from_json_dict(python_document)
+    with pytest.raises(ValueError, match="source provenance"):
+        execution_document_from_json_dict(react_document)
+
+
+def test_python_v3_golden_and_cross_runtime_rejection() -> None:
+    python_document = json.loads(_PYTHON_V3_FIXTURE.read_text(encoding="utf-8"))
+    react_document = json.loads(_REACT_V3_FIXTURE.read_text(encoding="utf-8"))
 
     assert execution_document_to_json_dict(_plan()) == python_document
     assert (

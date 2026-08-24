@@ -14,7 +14,7 @@ import numpy as np
 
 from shared.python.contracts import require
 from shared.python.swing_sim.variation.execution_metadata import (
-    make_execution_metadata,
+    execution_document_to_json_dict,
 )
 
 from .ensemble_chunks import EnsembleStreamHeader, SimulationResultChunk
@@ -24,7 +24,7 @@ from .simulation_types import (
     TrialEvaluationStatus,
 )
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 MANIFEST_NAME = "manifest.json"
 MAX_CHUNK_FILE_BYTES = 16_000_000
 MAX_CHUNK_UNCOMPRESSED_BYTES = 32_000_000
@@ -65,7 +65,7 @@ def header_document(header: EnsembleStreamHeader) -> dict[str, object]:
         "durable headers require complete simulation configuration identity",
     )
     return {
-        "plan": header.plan.to_json_dict(),
+        "plan_document": execution_document_to_json_dict(header.plan),
         "sampled_inputs": {
             "shape": [header.plan.n_runs, len(header.plan.noise)],
             "dtype": np.dtype(float).str,
@@ -75,7 +75,6 @@ def header_document(header: EnsembleStreamHeader) -> dict[str, object]:
         "point_ids": list(header.point_ids),
         "coordinate_frame": header.coordinate_frame,
         "configuration_sha256": header.configuration_sha256,
-        "execution_metadata": make_execution_metadata(header.plan).to_json_dict(),
     }
 
 

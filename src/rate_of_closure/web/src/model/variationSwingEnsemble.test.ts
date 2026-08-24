@@ -10,6 +10,7 @@ import { validateResult } from "./variationExecutionValidation";
 import {
   CATEGORY_SWING,
   keysForMode,
+  planToJson,
   type VariationPlanTs,
 } from "./variation";
 import {
@@ -172,9 +173,10 @@ describe("web swing variation ensemble", () => {
     expect(csv).toContain("drive.shoulder");
     expect(csv).not.toContain("swing.clubhead.reference");
     const restored = swingEnsembleFromJson(swingEnsembleToJson(first), localizedPlan);
-    expect(JSON.parse(JSON.stringify(restored.dataset))).toEqual(
-      JSON.parse(JSON.stringify(first.dataset)),
-    );
+    expect(planToJson(restored.dataset.plan)).toBe(planToJson(first.dataset.plan));
+    expect(restored.dataset.inputs).toEqual(first.dataset.inputs);
+    expect(restored.dataset.outputs).toEqual(first.dataset.outputs);
+    expect(restored.dataset.success).toEqual(first.dataset.success);
     expect(JSON.parse(JSON.stringify(restored.runs))).toEqual(
       JSON.parse(JSON.stringify(first.runs)),
     );
@@ -196,8 +198,8 @@ describe("web swing variation ensemble", () => {
     expect(() => swingEnsembleFromJson(JSON.stringify(tampered), localizedPlan))
       .toThrow(/trial 0/i);
     expect(() => swingEnsembleFromJson(
-      swingEnsembleToJson(first).replace('{\n  "schemaVersion": 2,',
-        '{\n  "schemaVersion": 2,\n  "schemaVersion": 2,'),
+      swingEnsembleToJson(first).replace('{\n  "schemaVersion": 3,',
+        '{\n  "schemaVersion": 3,\n  "schemaVersion": 3,'),
       localizedPlan,
     )).toThrow(/duplicate JSON field/i);
     const extraField = JSON.parse(swingEnsembleToJson(first));

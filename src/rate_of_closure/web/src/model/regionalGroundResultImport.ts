@@ -32,7 +32,7 @@ const BASE_ATTRIBUTE_FIELDS = [
 ] as const;
 const VARIATION_ATTRIBUTE_FIELDS = [
   ...BASE_ATTRIBUTE_FIELDS, "variation_seed", "variation_trial_index",
-  "variation_input_sha256", "variation_regional_plan_sha256",
+  "variation_input_sha256", "variation_plan_sha256", "variation_regional_plan_sha256",
 ] as const;
 const OUTPUT_KEYS = [
   "metric.carry_distance", "ground.bounce_air_distance", "ground.skid_distance",
@@ -254,6 +254,7 @@ const validateVariationEvidence = (
     throw new RangeError("variation_trial_index must match trial ordering");
   }
   digest(evidence.variation_input_sha256, "variation_input_sha256");
+  digest(evidence.variation_plan_sha256, "variation_plan_sha256");
   const planDigest = digest(
     evidence.variation_regional_plan_sha256,
     "variation_regional_plan_sha256",
@@ -270,6 +271,10 @@ const validateVariationEvidence = (
 const validateRows = (result: ScalarEnsembleResult<string>, variation: boolean): void => {
   if (result.rows.length === 0) throw new RangeError("regional result rows must be nonempty");
   const series = result.rows[0].series_id;
+  const firstEvidence = record(result.rows[0].attributes, "regional row[0] attributes");
+  const expectedPlanDigest = variation
+    ? digest(firstEvidence.variation_plan_sha256, "variation_plan_sha256")
+    : null;
   result.rows.forEach((row, index) => {
     if (row.trial_index !== index || row.series_id !== series) {
       throw new RangeError("regional result must preserve exact trial ordering and series identity");
@@ -284,7 +289,12 @@ const validateRows = (result: ScalarEnsembleResult<string>, variation: boolean):
     const source = oneOf(evidence.source_kind, ["pipeline", "transfer_failure"], "source_kind");
     if (source === "pipeline") validatePipelineEvidence(evidence);
     else validateTransferEvidence(row, evidence);
-    if (variation) validateVariationEvidence(row, evidence);
+    if (variation) {
+      validateVariationEvidence(row, evidence);
+      if (evidence.variation_plan_sha256 !== expectedPlanDigest) {
+        throw new RangeError("variation plan digest must be identical across result rows");
+      }
+    }
   });
 };
 

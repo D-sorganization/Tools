@@ -16,6 +16,7 @@ from shared.python.swing_sim.ground.regional_plan_wire import (
     regional_material_plan_request_from_dict,
 )
 from shared.python.swing_sim.ground.strict_json import strict_json_object
+from shared.python.swing_sim.variation.execution_metadata import plan_sha256
 from shared.python.swing_sim.variation.spec import SCHEMA_VERSION, VariationPlan
 
 from ._workspace_validation import exact_mapping
@@ -23,9 +24,9 @@ from .atomic_text_files import write_utf8_text_atomic
 from .bounded_text_files import read_bounded_utf8
 
 REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA = (
-    "rate-of-closure/regional-ground-variation-request/v1"
+    "rate-of-closure/regional-ground-variation-request/v2"
 )
-REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA_VERSION = 1
+REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA_VERSION = 2
 MAX_REGIONAL_GROUND_VARIATION_REQUEST_BYTES = 1_048_576
 
 _ROOT_FIELDS = frozenset(
@@ -33,6 +34,7 @@ _ROOT_FIELDS = frozenset(
         "schema",
         "schema_version",
         "variation_plan",
+        "variation_plan_sha256",
         "regional_plan",
         "result_id",
         "source_provenance",
@@ -162,6 +164,7 @@ def _request_payload(request: GroundRegionalVariationRequest) -> dict[str, Any]:
         "schema": REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA,
         "schema_version": REGIONAL_GROUND_VARIATION_REQUEST_SCHEMA_VERSION,
         "variation_plan": request.plan.to_json_dict(),
+        "variation_plan_sha256": plan_sha256(request.plan),
         "regional_plan": request.regional_plan.to_dict(),
         "result_id": request.result_id,
         "source_provenance": request.source_provenance,
@@ -208,8 +211,11 @@ def regional_ground_variation_request_from_json(
     provenance = cast(str, _text(data["source_provenance"], "source_provenance"))
     series_id = _text(data["series_id"], "series_id", nullable=True)
     max_rows = _integer(data["max_rows"], "max_rows")
+    variation_plan = _variation_plan(data["variation_plan"])
+    if data["variation_plan_sha256"] != plan_sha256(variation_plan):
+        raise ValueError("regional-ground variation plan digest mismatch")
     return GroundRegionalVariationRequest(
-        _variation_plan(data["variation_plan"]),
+        variation_plan,
         regional_material_plan_request_from_dict(data["regional_plan"]),
         result_id,
         provenance,

@@ -47,9 +47,20 @@ def test_request_round_trip_builds_lazy_exact_source() -> None:
     assert request.request_id == "request-41"
     assert request.archive_id == "campaign-41"
     assert request.chunk_size == 2
+    assert isinstance(document["plan_sha256"], str)
     assert source.plan == _plan()
     assert not hasattr(source, "sampled_inputs")
     assert not hasattr(source, "configs")
+
+
+def test_request_rejects_plan_digest_substitution() -> None:
+    document = durable_ensemble_request_document(
+        "request-41", "campaign-41", _plan(), _base_config(), chunk_size=2
+    )
+    document["plan"]["seed"] += 1
+
+    with pytest.raises(ValueError, match="plan digest mismatch"):
+        parse_durable_ensemble_request(document)
 
 
 @pytest.mark.parametrize(

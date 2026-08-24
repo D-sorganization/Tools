@@ -41,6 +41,7 @@ describe("regional scalar-ensemble result import", () => {
     expect(parsed.rows[0].attributes?.ground_model_id)
       .toBe("tools-ground-impact-bounce+tools-ground-skid-roll");
     expect(parsed.rows[0].attributes?.variation_input_sha256).toMatch(/^[0-9a-f]{64}$/);
+    expect(parsed.rows[0].attributes?.variation_plan_sha256).toMatch(/^[0-9a-f]{64}$/);
     expect(parsed.rows[1].values["metric.total_distance"]).toBeNull();
     expect(parsed.rows[2].values["metric.total_distance"]).toBeNull();
     expect(parsed.rows[3].values["metric.total_distance"]).toBeNull();
@@ -105,6 +106,15 @@ describe("regional scalar-ensemble result import", () => {
     const digest = cloneFixture();
     attributes(rows(digest)[0]).variation_input_sha256 = "not-a-digest";
     expect(() => regionalGroundResultFromJson(JSON.stringify(digest))).toThrow(/sha256/i);
+
+    const planDigest = cloneFixture();
+    attributes(rows(planDigest)[0]).variation_plan_sha256 = "not-a-digest";
+    expect(() => regionalGroundResultFromJson(JSON.stringify(planDigest))).toThrow(/sha256/i);
+
+    const crossedPlan = cloneFixture();
+    attributes(rows(crossedPlan)[1]).variation_plan_sha256 = "0".repeat(64);
+    expect(() => regionalGroundResultFromJson(JSON.stringify(crossedPlan)))
+      .toThrow(/identical across result rows/i);
 
     const transfer = cloneFixture();
     attributes(rows(transfer)[3]).endpoint_qualification = "summary_unavailable";
