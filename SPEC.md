@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.96                                    |
-| **Last Spec Update**    | 2026-08-23                                 |
+| **Spec Version**        | 1.17.98                                    |
+| **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
 
@@ -5167,6 +5167,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-24 | 1.17.98 | fix(wind, #4513): replace GLSL fract(sin(x)) turbulence hash with deterministic 32-bit integer hash mixing across Python and TypeScript, eliminating cross-platform libm drift and restoring exact 1e-12 PyQt6/React parity fixture assertions. |
 | 2026-08-24 | 1.17.97 | feat(rate-of-closure, #4668 / #4142): define and implement the canonical variation execution-document and persisted-plan binding contracts across PyQt6, React, named libraries, workspaces, scalar and geometry ensembles, durable archives, forgiveness exports, and regional results. Bind browser-to-Python durable and regional requests with a cross-runtime plan digest without inventing executor provenance; retain legacy plans with a visible non-reproducibility warning; reject substituted or crossed evidence; and document CSV, paired-analysis, cross-runtime replay, and human-validation limits. |
 | 2026-08-23 | 1.17.96 | fix(rate-of-closure, #4142): preserve the exact audited base-revision assertion while applying the supported `detect-secrets` inline false-positive pragma to that reviewed Git SHA; retain the fail-closed baseline and unchanged requirement-ledger semantics. |
 | 2026-08-23 | 1.17.95 | docs(rate-of-closure, #4142): add a fail-closed 31-item R10--R15 evidence ledger with exact source, test, command, remote-run, and remaining-gap traceability; classify 18 items verified, 11 partial, and two unverified without treating visual or synthetic evidence as human validation. Reconcile the stale GAAI `staging` rule with the protected feature-branch-to-`main` repository contract and update both active handoffs after #4663 and post-main Release Automation passed. |
@@ -6438,3 +6439,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-23: Palette Micro-UX Improvement in Rate of Closure
 
 - **2026-08-23**: fix(ux) — Add accessible focus indicators (`focus-visible:ring-2`, `focus-visible:ring-blue-500` or equivalent) in place of `outline-none` across inputs, selects, and buttons in the `rate_of_closure` app to ensure keyboard-only and screen-reader users can visually track their current element focus.
+
+## 2026-08-24: Wind Turbulence Deterministic Integer Hash Parity (#4513)
+
+- **2026-08-24**: fix(wind, #4513) — Replace the GLSL-derived `fract(sin(x) * 43758.5453)` turbulence noise hash in `swing_sim/flight/wind.py` and `rate_of_closure/web/src/model/wind.ts` with a deterministic 32-bit integer hash mixer (`fmix32` based). This eliminates cross-platform `libm` / V8 trigonometric float divergence and integer boundary discontinuities, restoring bit-for-bit identical turbulence phase and amplitude evaluation and enabling strict `1e-12` precision assertions in the shared PyQt6 / React golden fixture test suites.
