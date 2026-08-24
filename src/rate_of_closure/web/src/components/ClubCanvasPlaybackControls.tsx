@@ -47,7 +47,7 @@ export function ClubCanvasPlaybackControls(props: Props) {
         <select value={props.mode}
           title="Display mode: head fixed in place or moving through space"
           onChange={(event) => props.onModeChange(event.target.value as ViewMode)}
-          className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
+          className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           {props.modes.map((mode) => <option key={mode} value={mode}>{mode}</option>)}
         </select>

@@ -128,7 +128,7 @@ function UnitsCard(props: {
           <span className="text-slate-300">{UNIT_LABELS[quantity]}</span>
           <select value={props.units[quantity]} title={`Display unit for ${UNIT_LABELS[quantity].toLowerCase()} values`}
             onChange={(event) => props.onChange((units) => ({ ...units, [quantity]: event.target.value }))}
-            className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none">
+            className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
             {Object.keys(QUANTITY_UNITS[quantity]).map((unit) => <option key={unit}>{unit}</option>)}
           </select>
         </label>
@@ -159,7 +159,7 @@ function ScenarioCard(props: {
             <DecimalInput step={step} value={Number(displayed.toFixed(4))}
               aria-label={`${label} ${unit}`.trim()} title={FIELD_GUIDANCE[key]}
               onCommit={(value) => props.onUpdate(key, quantity, String(value))}
-              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none" />
+              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
           </label>
         );
       })}

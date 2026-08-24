@@ -153,7 +153,7 @@ interface SolverRunState {
 
 const inputClass =
   "no-spinner w-20 rounded border border-slate-700 bg-slate-800 px-2 " +
-  "py-1 text-slate-100 focus:border-blue-500 focus:outline-none " +
+  "py-1 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 " +
   "disabled:opacity-40";
 
 export function SolverPanel({ onApply, target }: Props) {

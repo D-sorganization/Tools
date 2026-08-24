@@ -148,7 +148,7 @@ export function FlightExplorerPanel({
                 min={1 / SPEED_UNITS[speedUnit]}
                 max={250 / SPEED_UNITS[speedUnit]}
                 onCommit={(value) => setSpeedMph(value * SPEED_UNITS[speedUnit])}
-                className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+                className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               />
               <select
                 value={speedUnit}
@@ -202,7 +202,7 @@ export function FlightExplorerPanel({
                 max={key === "spinRpm" ? 15000 : key === "launchAngleDeg" ? 89 :
                   key === "launchDirectionDeg" ? 45 : 60}
                 onCommit={(value) => setFields((f) => ({ ...f, [key]: value }))}
-                className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+                className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               />
             </label>
           ))}
@@ -263,7 +263,7 @@ export function FlightExplorerPanel({
               aria-label="Wind Speed"
               title="Horizontal wind speed in miles per hour. Source: canonical wind-scenario/v1 meteorological adapter."
               onCommit={setWindSpeedMph}
-              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </label>
           <label className="mb-2 block text-sm" title="Meteorological bearing the wind comes from, clockwise from the target line. Source: canonical wind-scenario/v1 meteorological adapter.">
@@ -275,7 +275,7 @@ export function FlightExplorerPanel({
               aria-label="Wind From Bearing"
               title="0° is a headwind from the target, 90° comes from the player's right, and 180° is a tailwind"
               onCommit={setWindFromDeg}
-              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </label>
           <div
