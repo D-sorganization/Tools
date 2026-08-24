@@ -27,12 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.95                                    |
+| **Spec Version**        | 1.17.96                                    |
 | **Last Spec Update**    | 2026-08-23                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.96 preserves the exact #4142 audit-base revision assertion while
+marking that reviewed Git SHA with `detect-secrets`' supported inline
+false-positive pragma. The scanner remains fail closed for every other finding;
+the focused audit contract and source scan prove the annotation changes no
+scientific or traceability semantics.
 
 Version 1.17.95 adds a fail-closed, machine-readable requirement audit for all
 31 R10--R15 items in epic #4142. At protected base revision
@@ -5161,6 +5167,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-23 | 1.17.96 | fix(rate-of-closure, #4142): preserve the exact audited base-revision assertion while applying the supported `detect-secrets` inline false-positive pragma to that reviewed Git SHA; retain the fail-closed baseline and unchanged requirement-ledger semantics. |
 | 2026-08-23 | 1.17.95 | docs(rate-of-closure, #4142): add a fail-closed 31-item R10--R15 evidence ledger with exact source, test, command, remote-run, and remaining-gap traceability; classify 18 items verified, 11 partial, and two unverified without treating visual or synthetic evidence as human validation. Reconcile the stale GAAI `staging` rule with the protected feature-branch-to-`main` repository contract and update both active handoffs after #4663 and post-main Release Automation passed. |
 | 2026-08-23 | 1.17.94 | fix(release): select immutable-pinned Python 3.12 before release analysis imports `tomllib`, so the same protected-main workflow is portable across older fleet-host system runtimes; add an ordering and version contract test. |
 | 2026-08-23 | 1.17.93 | test(rate-of-closure, #4626): approve the visually inspected 20-reference React/PyQt set from trusted run `32686727162` at protected source `1214008e9dbf06b583ef44a4c821dc0567efdf8b`; package a two-run calibration record; and use explicit cross-host renderer envelopes of 1/4,000/50,000 microunits for React and 1/200/250 for PyQt. Every measured repeatability case remains inside and every materially stale control remains outside; this is visual-regression authority, not pixel-exact portability or scientific validation. |

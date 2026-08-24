@@ -72,7 +72,8 @@ PR #4664. The ledger at
 `docs/audits/rate_of_closure_epic_4142_evidence.v1.json` classifies all 31
 R10--R15 items as 18 verified, 11 partial, and two unverified. This is bounded
 implementation evidence, not scientific or human validity; R15 and #4433
-acceptance remain open.
+acceptance remain open. PR #4666 merged as `9a3339b74`; its sole post-merge
+failure mistook the audited SHA for a credential. The repair is inline-scoped.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
