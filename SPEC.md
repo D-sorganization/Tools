@@ -27,20 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.89                                    |
-| **Last Spec Update**    | 2026-08-22                                 |
+| **Spec Version**        | 1.17.90                                    |
+| **Last Spec Update**    | 2026-08-23                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
 
-Version 1.17.88 gives the registered React visual-evidence pass its own bounded
-180-second Playwright budget. The trusted runner completed all ten tabs at the
-1440-by-900 authority in about 43 seconds, then exhausted the suite's 45-second
-interactive-test default at the second of three registered viewports. All tab,
-viewport, stable-paint, geometry, overflow, artifact, and fail-closed baseline
-assertions remain unchanged; unrelated browser tests retain the 45-second
-default.
+Version 1.17.90 removes host typography from React visual-evidence authority by
+bundling exact Inter 5.3.0 Latin 400, 500, 600, and 700 assets and declaring the
+font version in each candidate manifest. This addresses the protected Linux
+reference drift observed after the functional browser and all 18 PyQt render
+tests completed. Existing geometry, accessibility, stable-paint, image-drift,
+source-commit, and separate human-approval gates remain fail closed.
 
 Version 1.17.77 adds the shared row-free launch-monitor workspace/export v3
 contract to PyQt6 and React. Saved projects preserve immutable source and
@@ -5125,6 +5124,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-23 | 1.17.90 | fix(rate-of-closure, #4626): make React visual evidence independent of the runner host font stack by locking `@fontsource/inter` 5.3.0 and bundling Latin 400/500/600/700 assets. Candidate provenance names the exact font environment, and a workflow governance test binds the dependency, CSS imports, body family, and provenance label. No visual reference is updated here: protected Linux candidates and all PyQt renders must complete, receive human inspection, and travel through a separate source-pinned approval PR. |
 | 2026-08-22 | 1.17.89 | fix(ci/rate-of-closure, #4142/#4433): reconcile both bounded handoffs after protected PR #4646 merged and serialize the trusted Playwright dependency installer behind the fleet apt mutex. The installer waits for all dpkg/apt locks, retains the runner identity and Node environment, and fails closed without passwordless sudo; a workflow contract test prevents regression. This addresses the transient setup collision that stopped React before browser execution and left dependent PyQt without its required artifact. Visual/scientific assertions, baselines, and the 15-second child-import ceiling remain unchanged. Require passing trusted evidence after protected merge before requirement adjudication or immutable UpstreamDrift pinning. |
 | 2026-08-22 | 1.17.88 | fix(rate-of-closure, #4626): give only the complete registered React visual-evidence pass a bounded 180-second Playwright budget after trusted trace evidence showed its valid ten-tab 1440-by-900 pass consumed about 43 seconds and the unchanged 45-second suite default expired at the second of three viewports. All visual assertions, stable-paint sampling, artifact requirements, comparator behavior, and unrelated test budgets remain unchanged. |
 | 2026-08-22 | 1.17.87 | fix(rate-of-closure, #4626): require trusted React baseline candidates to reach raster stability after font readiness and two animation frames. Candidate capture now requires three byte-identical screenshots sampled 100 ms apart and fails closed after 20 samples; a scheduled late-paint regression proves that capture does not accept an earlier incomplete frame. Existing baseline bytes, scientific authority, and drift thresholds are unchanged. |

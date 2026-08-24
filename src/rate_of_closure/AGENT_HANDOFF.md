@@ -61,16 +61,19 @@ see the two contracts under `docs/specs/`.
 #4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React
 Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
 execution, bounded analysis, stable-paint capture, and the registered
-three-viewport correction; #4649 merged the apt mutex. #4657 merged the #4626
-PyQt isolation and bounded dirty-tree diagnostic as current `main`
-`e92a945e9b023520123363888188493b1e310452`; every PR-head gate passed.
-Post-main distribution run `32678209398` then proved two committed JSON blobs
-have CRLF/mixed index endings despite `eol=lf`, so Linux checkout rewrites them
-before wheel qualification. Branch `fix/4626-post-main-determinism` normalizes
-the blobs and adds a Git-index EOL gate to local, standard, and distribution
-checks. Require its protected merge and passing current-main React/PyQt and
-distribution evidence before auditing R10-R15/#4433 and adding the immutable
-UpstreamDrift pin/parity.
+three-viewport correction; #4649 merged the apt mutex. #4657 merged PyQt
+isolation and bounded dirty-tree diagnostics. #4658 then normalized the two
+committed CRLF/mixed JSON blobs and added the tracked-index EOL gate. Its merge
+commit `e4d9711ecbe15016a70acce68ee3496929d08dac` is current remote `main`, with
+post-main distribution `32679726212` and standard CI `32679726188` green.
+Trusted visual run `32678209383` completed React and all 18 PyQt renders but
+failed React comparison because the web application inherited host-dependent
+fonts. Branch `fix/4626-visual-determinism` bundles exact Inter 5.3.0 Latin
+400/500/600/700 assets and records that version in candidate provenance.
+Windows-local Chromium intermittently omits the shell despite valid DOM
+geometry, so those captures are diagnostic-only. Protected Linux candidates
+must be inspected and any reference refresh must be a separate source-pinned
+approval before R10-R15/#4433 adjudication or immutable UpstreamDrift pinning.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
