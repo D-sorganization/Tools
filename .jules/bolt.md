@@ -104,3 +104,7 @@
 ## 2024-11-20 - Avoid .map().join() overhead for fixed-size arrays in JSX
 **Learning:** In React components rendering mathematical data (e.g. `RotationConverter`), using `.map(n => n.toFixed(4)).join(', ')` on tiny fixed-size vectors or matrices allocates multiple intermediate arrays on every render, adding GC pressure.
 **Action:** Unroll the loops and manually format the strings for tiny fixed-size arrays (like 3D vectors or quaternions) directly in the JSX.
+
+## 2026-08-16 - Avoid chained .map().join() in SVG generation
+**Learning:** In high-frequency chart updates, building SVG `d` paths or points using `.map(p => '...').join(' ')` allocates a new array of strings on every frame, causing unnecessary garbage collection pressure and main thread stalls.
+**Action:** Build SVG paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
