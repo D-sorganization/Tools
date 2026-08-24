@@ -32,6 +32,16 @@ def test_pyo3_guard_precedes_setup_python_in_rust_job() -> None:
     )
 
 
+def test_rust_quality_gate_allows_cold_cache_completion() -> None:
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    rust_job = workflow["jobs"]["rust-quality-gate"]
+
+    # This lane compiles two test configurations, cargo-audit, a Python wheel,
+    # two WASM packages, and benchmarks. Fifteen minutes has twice canceled a
+    # healthy cold-cache run while cargo-audit was still compiling.
+    assert int(rust_job["timeout-minutes"]) >= 45
+
+
 def _write_fake_python(arch_dir: Path, *, with_link_library: bool) -> None:
     python = arch_dir / "bin" / "python"
     library_dir = arch_dir / "lib"

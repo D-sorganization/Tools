@@ -6445,3 +6445,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-11-20 - Bolt Performance Optimization
 
 - **Performance**: Replaced chained array methods (`.map().join()`) with manually formatted JSX string structures for small fixed-size math arrays in `RotationConverter.tsx`.
+
+## 2026-08-24: Rust Quality-Gate Cold-Cache Budget
+
+- **2026-08-24**: fix(ci, rust) — Raise the standard Rust quality-gate job budget from 15 to 45 minutes and regression-lock that minimum. The lane compiles default and Python-feature tests, installs and runs `cargo-audit`, builds Python and two WASM artifacts, and executes benchmarks; two otherwise-green PR attempts reached the former job limit while `cargo-audit` was compiling, before the artifact gates could run.

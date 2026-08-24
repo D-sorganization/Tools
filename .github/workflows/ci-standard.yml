@@ -1075,7 +1075,10 @@ jobs:
   rust-quality-gate:
     needs: pick-runner
     runs-on: d-sorg-fleet
-    timeout-minutes: 15
+    # A cold runner compiles the workspace twice, installs cargo-audit, builds
+    # Python and WASM artifacts, and runs Criterion. Two otherwise-green PR
+    # attempts exhausted the former 15-minute budget during cargo-audit.
+    timeout-minutes: 45
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_BUILD_JOBS: "1"
