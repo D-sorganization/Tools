@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 
 import matplotlib
-from PyQt6.QtCore import QRect, Qt
+from PyQt6.QtCore import PYQT_VERSION_STR, QT_VERSION_STR, QRect, QSettings, Qt
 from PyQt6.QtGui import QFont, QFontDatabase, QFontMetrics
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication, QWidget
@@ -47,6 +47,39 @@ def _install_evidence_font(application: QApplication) -> dict[str, object]:
         raise RuntimeError("the all-tab evidence font lacks required ASCII glyphs")
     application.setFont(font)
     return {"font_family": families[0], "font_ascii_supported": True}
+
+
+def _isolate_render_environment(output: Path) -> dict[str, str]:
+    """Route persistent UI state to a fresh campaign-owned INI directory."""
+    resolved_output = output.resolve()
+    settings_root = (resolved_output / "qsettings").resolve()
+    if settings_root.parent != resolved_output:
+        raise RuntimeError("render settings directory escaped the evidence root")
+    if settings_root.exists():
+        shutil.rmtree(settings_root)
+    settings_root.mkdir(parents=True, exist_ok=True)
+    QSettings.setDefaultFormat(QSettings.Format.IniFormat)
+    QSettings.setPath(
+        QSettings.Format.IniFormat,
+        QSettings.Scope.UserScope,
+        str(settings_root),
+    )
+    return {
+        "settings_policy": "isolated-ini-user-scope",
+        "qt_version": QT_VERSION_STR,
+        "pyqt_version": PYQT_VERSION_STR,
+        "matplotlib_version": matplotlib.__version__,
+    }
+
+
+def _environment_identity(render: dict[str, str], font: dict[str, object]) -> str:
+    family = str(font["font_family"]).lower().replace(" ", "-")
+    return (
+        f"{os.name}-{os.environ.get('QT_QPA_PLATFORM', 'default')}"
+        f"-qt-{render['qt_version']}-pyqt-{render['pyqt_version']}"
+        f"-matplotlib-{render['matplotlib_version']}-font-{family}"
+        "-dpi-1.0-1440x900"
+    )
 
 
 class MemorySettings:
@@ -90,7 +123,7 @@ def _stable_visual_rect(
     stable = 0
     max_step = 0
     while (time.perf_counter() - started) * 1000 <= budget_ms:
-        QTest.qWait(10)
+        QTest.qWait(10)  # type: ignore[call-arg, arg-type]
         QApplication.processEvents()
         current = mapped_rect(resolve_visual_widget(tab, locator), tab)
         step = _rect_shift(previous, current)
@@ -143,7 +176,7 @@ def _audit_tab(
     visual = resolve_visual_widget(tab, locator)
     tab_rect = mapped_rect(tab, window)
     visual_rect = mapped_rect(visual, tab)
-    QTest.qWait(100)
+    QTest.qWait(100)  # type: ignore[call-arg, arg-type]
     QApplication.processEvents()
     quiet_rect = mapped_rect(resolve_visual_widget(tab, locator), tab)
     post_settle_shift = _rect_shift(visual_rect, quiet_rect)
@@ -178,13 +211,13 @@ def _audit_tab(
         if not isinstance(tab, LaunchMonitorAnalyticsTab):
             raise TypeError("launch-monitor analytics tab has unexpected type")
         preview = tab.preview
-        QTest.keyClick(preview, Qt.Key.Key_End)
+        QTest.keyClick(preview, Qt.Key.Key_End)  # type: ignore[call-overload]
         QApplication.processEvents()
         selected = output / "tab-launch_monitor_analytics-selected.png"
         if not window.grab().save(str(selected), "PNG"):
             raise RuntimeError("could not save selected linked-scatter diagnostic")
         selected_screenshot = selected.name
-        QTest.keyClick(preview, Qt.Key.Key_Escape)
+        QTest.keyClick(preview, Qt.Key.Key_Escape)  # type: ignore[call-overload]
     return {
         "tab_id": tab_id,
         "workload": workload,
@@ -222,10 +255,12 @@ def main() -> int:
     parser.add_argument("--scale", type=float, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    application = QApplication.instance() or QApplication([])
-    if application is None:
-        raise RuntimeError("could not initialize QApplication")
+    render_environment = _isolate_render_environment(args.output)
+    application = QApplication.instance()
+    if not isinstance(application, QApplication):
+        application = QApplication([])
     font = _install_evidence_font(application)
+    render_environment["font_family"] = str(font["font_family"])
     window = RateOfClosureMainWindow(navigation_settings=MemorySettings())
     window.resize(1440, 900)
     window.show()
@@ -281,10 +316,7 @@ def main() -> int:
                 os.environ.get("GITHUB_SHA", "local-diagnostic"),
             ),
             "surface": "pyqt",
-            "environment": (
-                f"{os.name}-{os.environ.get('QT_QPA_PLATFORM', 'default')}"
-                "-qt-dpi-1.0-1440x900"
-            ),
+            "environment": _environment_identity(render_environment, font),
             "captures": candidates,
         }
         (candidate_root / "manifest.json").write_text(
@@ -298,6 +330,7 @@ def main() -> int:
         "device_pixel_ratio": pixmap.devicePixelRatio(),
         "logical_window_size": [window.width(), window.height()],
         "font": font,
+        "render_environment": render_environment,
         "tabs": evidence,
     }
     (args.output / "manifest.json").write_text(

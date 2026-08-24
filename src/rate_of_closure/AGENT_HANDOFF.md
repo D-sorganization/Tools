@@ -62,18 +62,17 @@ see the two contracts under `docs/specs/`.
 Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
 execution, bounded analysis, stable-paint capture, and the registered
 three-viewport correction; #4649 merged the apt mutex. #4657 merged PyQt
-isolation and bounded dirty-tree diagnostics. #4658 then normalized the two
-committed CRLF/mixed JSON blobs and added the tracked-index EOL gate. Its merge
-commit `e4d9711ecbe15016a70acce68ee3496929d08dac` is current remote `main`, with
-post-main distribution `32679726212` and standard CI `32679726188` green.
-Trusted visual run `32678209383` completed React and all 18 PyQt renders but
-failed React comparison because the web application inherited host-dependent
-fonts. Branch `fix/4626-visual-determinism` bundles exact Inter 5.3.0 Latin
-400/500/600/700 assets and records that version in candidate provenance.
-Windows-local Chromium intermittently omits the shell despite valid DOM
-geometry, so those captures are diagnostic-only. Protected Linux candidates
-must be inspected and any reference refresh must be a separate source-pinned
-approval before R10-R15/#4433 adjudication or immutable UpstreamDrift pinning.
+isolation and bounded dirty-tree diagnostics. #4658 normalized tracked evidence;
+PR #4659 protected-merged exact Inter 5.3.0 fonts as current remote `main`
+`26d144aa745e81c3fb75d5d196d484449059b491`. Trusted run `32682451878` passed
+React and all 18 PyQt renders, then correctly rejected the newly versioned React
+environment. Direct PNG analysis disproved the apparent shell omission; it was
+a multi-image viewer artifact. The same evidence exposed real PyQt global-
+`QSettings` leakage and an environment label missing renderer versions. Branch
+`fix/4626-pyqt-evidence-isolation` uses fresh INI storage and records exact
+Qt/PyQt/Matplotlib/font identity. Protected candidates must be inspected and any
+reference refresh must remain a separate source-pinned approval before
+R10-R15/#4433 adjudication or immutable UpstreamDrift pinning.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

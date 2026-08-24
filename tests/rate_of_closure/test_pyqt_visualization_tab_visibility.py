@@ -20,8 +20,13 @@ pytest.importorskip("PyQt6")
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 
-def _probe(output_root: Path, scale: float) -> dict[str, Any]:
+def _probe(
+    output_root: Path, scale: float, candidate_root: Path | None = None
+) -> dict[str, Any]:
     output = output_root / f"scale-{scale:g}"
+    stale_settings = output / "qsettings" / "stale.ini"
+    stale_settings.parent.mkdir(parents=True, exist_ok=True)
+    stale_settings.write_text("[ImpactScene]\nvisible_layers_v1=[]\n", encoding="utf-8")
     repository = Path(__file__).resolve().parents[2]
     environment = dict(os.environ)
     environment.update(
@@ -32,6 +37,12 @@ def _probe(output_root: Path, scale: float) -> dict[str, Any]:
             "PYTHONPATH": os.pathsep.join((str(repository / "src"), str(repository))),
         }
     )
+    if candidate_root is not None:
+        environment["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] = str(candidate_root)
+        environment.setdefault(
+            "RATE_VISUAL_BASELINE_SOURCE_COMMIT",
+            "a" * 40,
+        )
     subprocess.run(
         [
             sys.executable,
@@ -45,6 +56,7 @@ def _probe(output_root: Path, scale: float) -> dict[str, Any]:
         env=environment,
         timeout=120,
     )
+    assert not stale_settings.exists()
     return cast(
         dict[str, Any],
         json.loads((output / "manifest.json").read_text(encoding="utf-8")),
@@ -56,7 +68,15 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
     tmp_path: Path,
 ) -> None:
     output = Path(os.environ.get("RATE_PYQT_EVIDENCE_DIR", str(tmp_path)))
-    manifests = [_probe(output, scale) for scale in (1.0, 1.5)]
+    candidate_root = Path(
+        os.environ.get(
+            "RATE_VISUAL_BASELINE_CANDIDATE_DIR", str(tmp_path / "candidates")
+        )
+    )
+    manifests = [
+        _probe(output, 1.0, candidate_root),
+        _probe(output, 1.5),
+    ]
     budget = load_visualization_performance_manifest().surfaces["pyqt"]
     for scale, manifest in zip((1.0, 1.5), manifests, strict=True):
         assert manifest["artifact_policy"] == "diagnostic-only-not-approved-golden"
@@ -70,6 +90,12 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
             "font_family": "DejaVu Sans",
             "font_ascii_supported": True,
         }
+        render_environment = manifest["render_environment"]
+        assert render_environment["settings_policy"] == "isolated-ini-user-scope"
+        assert render_environment["qt_version"]
+        assert render_environment["pyqt_version"]
+        assert render_environment["matplotlib_version"]
+        assert render_environment["font_family"] == "DejaVu Sans"
         assert len(manifest["tabs"]) == 10
         for tab in manifest["tabs"]:
             assert tab["workload"] == "initial-production-state", tab["tab_id"]
@@ -98,25 +124,28 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
             assert tab["tab_bar_overlap"][2:] == [0, 0], tab["tab_id"]
             assert tab["interactive_overlaps"] == [], tab["tab_id"]
 
-    candidate_root = os.environ.get("RATE_VISUAL_BASELINE_CANDIDATE_DIR")
-    if candidate_root:
-        candidate_path = Path(candidate_root) / "pyqt" / "manifest.json"
-        candidates = json.loads(candidate_path.read_text(encoding="utf-8"))
-        assert candidates["schema_id"] == ("rate-of-closure/visual-baseline-candidates")
-        assert candidates["schema_version"] == 1
-        assert candidates["artifact_policy"] == (
-            "candidate-diagnostic-not-approved-until-protected-merge"
-        )
-        assert candidates["source_commit"] == os.environ.get(
-            "RATE_VISUAL_BASELINE_SOURCE_COMMIT",
-            os.environ.get("GITHUB_SHA", "local-diagnostic"),
-        )
-        assert candidates["surface"] == "pyqt"
-        captures = candidates["captures"]
-        assert {entry["tab_id"] for entry in captures} == {
-            tab["tab_id"] for tab in manifests[0]["tabs"]
-        }
-        for entry in captures:
-            image = candidate_path.parent / entry["file"]
-            assert image.stat().st_size > 10_000
-            assert hashlib.sha256(image.read_bytes()).hexdigest() == entry["sha256"]
+    candidate_path = candidate_root / "pyqt" / "manifest.json"
+    candidates = json.loads(candidate_path.read_text(encoding="utf-8"))
+    assert candidates["schema_id"] == ("rate-of-closure/visual-baseline-candidates")
+    assert candidates["schema_version"] == 1
+    assert candidates["artifact_policy"] == (
+        "candidate-diagnostic-not-approved-until-protected-merge"
+    )
+    assert candidates["source_commit"] == os.environ.get(
+        "RATE_VISUAL_BASELINE_SOURCE_COMMIT", "a" * 40
+    )
+    assert candidates["surface"] == "pyqt"
+    environment = candidates["environment"]
+    assert environment.startswith("posix-offscreen-qt-") or environment.startswith(
+        "nt-offscreen-qt-"
+    )
+    for token in ("-pyqt-", "-matplotlib-", "-font-dejavu-sans-dpi-1.0-1440x900"):
+        assert token in environment
+    captures = candidates["captures"]
+    assert {entry["tab_id"] for entry in captures} == {
+        tab["tab_id"] for tab in manifests[0]["tabs"]
+    }
+    for entry in captures:
+        image = candidate_path.parent / entry["file"]
+        assert image.stat().st_size > 10_000
+        assert hashlib.sha256(image.read_bytes()).hexdigest() == entry["sha256"]
