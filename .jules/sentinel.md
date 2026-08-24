@@ -35,3 +35,7 @@
 **Vulnerability:** SymPy's `parse_expr` uses `eval()` and requires upstream validation. The `_ast_security_gate` structural validator was fail-open when encountering a `SyntaxError` while using `ast.parse(stripped, mode="eval")`, relying on `parse_expr` as a backstop. This could allow non-standard Python syntax (e.g. `x = y` or sympy specific forms) to bypass the security gate entirely.
 **Learning:** Security validation gates designed to protect `eval`-like functions must be fail-closed. If structural validation fails or raises an error, the input must be explicitly rejected rather than implicitly passed to a dangerous downstream execution context.
 **Prevention:** Catch parsing exceptions (like `SyntaxError` in AST gates) and explicitly raise a rejection error (e.g., `ValueError`) to ensure the security gate strictly enforces an allowlist.
+## 2026-08-24 - [Mitigate XSS in KaTeX Derivation component]
+**Vulnerability:** KaTeX formula output was passed directly into `dangerouslySetInnerHTML` without sanitization.
+**Learning:** Even math/formula rendering libraries can sometimes be tricked into producing malicious HTML output. It should always be sanitized before being injected into the DOM.
+**Prevention:** Use `DOMPurify.sanitize` to wrap the generated HTML strings before injection.
