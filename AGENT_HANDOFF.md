@@ -61,16 +61,16 @@ Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation,
 **Current #4142 evidence state.** R11.5 durable execution, bounded analysis,
 stable-paint capture, and the registered three-viewport correction are merged
 through #4628/#4635/#4646; #4649 merged the apt mutex. #4657 merged PyQt
-isolation and bounded dirty-tree diagnostics. #4658 normalized the committed
-CRLF/mixed JSON blobs, added the tracked-index EOL gate, and reconciled hosted
-fallback policy. Its merge `e4d9711ecbe15016a70acce68ee3496929d08dac` is
-current remote `main`; post-main distribution `32679726212` and standard CI
-`32679726188` are green. Trusted visual run `32678209383` completed React and 18
-PyQt renders but rejected React references because host fonts differed. Branch
-`fix/4626-visual-determinism` bundles exact Inter 5.3.0 Latin 400/500/600/700
-assets and records that version in candidate provenance. Windows-local Chromium
-can omit the shell while retaining valid DOM geometry; this is diagnostic-only.
-Require protected Linux evidence, human inspection, and separate source-pinned baseline approval before R10-R15/#4433 audit or immutable UpstreamDrift pinning.
+isolation and bounded dirty-tree diagnostics. #4658 normalized tracked release
+evidence; #4659 then protected-merged exact Inter 5.3.0 visual fonts as current
+remote `main` `26d144aa745e81c3fb75d5d196d484449059b491`. Trusted run
+`32682451878` passed React and all 18 PyQt renders; comparison correctly stopped
+at the newly versioned React environment. Direct PNG analysis disproved the
+earlier apparent shell omission, which was a multi-image viewer artifact.
+The PyQt candidate exposed real global-QSettings leakage and an under-specified
+environment identity. Branch `fix/4626-pyqt-evidence-isolation` routes state to
+fresh INI storage and records Qt/PyQt/Matplotlib/font versions. Require protected
+evidence and separate source-pinned baseline approval before R10-R15/#4433 audit.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

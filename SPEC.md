@@ -27,12 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.90                                    |
+| **Spec Version**        | 1.17.91                                    |
 | **Last Spec Update**    | 2026-08-23                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.91 makes PyQt visual evidence independent of warm-runner user
+preferences by routing `QSettings` to a fresh campaign-owned INI user scope
+before application construction. Candidate provenance now binds the exact Qt,
+PyQt, Matplotlib, and DejaVu Sans rendering environment. This prevents persisted
+impact-layer selections or dependency drift from being mislabeled as the same
+reference environment; baseline promotion remains separately reviewed.
 
 Version 1.17.90 removes host typography from React visual-evidence authority by
 bundling exact Inter 5.3.0 Latin 400, 500, 600, and 700 assets and declaring the

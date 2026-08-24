@@ -1,26 +1,27 @@
 # Rate of Closure Campaign Handoff
 
-## 2026-08-23 #4626 Exact React Visual Font Authority
+## 2026-08-23 #4626 PyQt Evidence Isolation and Renderer Identity
 
-- PR #4658 protected-merged as `e4d9711ecbe15016a70acce68ee3496929d08dac`,
-  and that commit is current remote `main`. Post-main distribution run
-  `32679726212` and standard CI run `32679726188` passed, closing the tracked
-  line-ending and clean-wheel portability defect.
-- Trusted visual run `32678209383` reached the browser and PyQt authorities:
-  React production E2E completed and all 18 PyQt render tests passed. The
-  baseline comparator then rejected React images whose typography/layout
-  differed because the application inherited the runner host's font stack.
-- Branch `fix/4626-visual-determinism` adds exact `@fontsource/inter` 5.3.0
-  Latin 400/500/600/700 assets, uses Inter explicitly, and adds the font version
-  to the candidate environment string. A governance regression binds the exact
-  dependency, imports, CSS family, and provenance label.
-- Windows-local Chromium can intermittently omit the toolbar/header raster
-  while Playwright still observes correct visibility and geometry. Repaint,
-  reload, layer, backdrop-filter, and software-render experiments did not
-  eliminate it and were removed. No incomplete local candidate is approval
-  evidence. The protected Linux candidate set is the next authority; inspect
-  all React and PyQt images after merge, then update references only in a
-  separate source-pinned approval PR if the complete images justify it.
+- PR #4659 protected-merged exact `@fontsource/inter` 5.3.0 Latin
+  400/500/600/700 assets as current remote `main`
+  `26d144aa745e81c3fb75d5d196d484449059b491`.
+- Trusted run `32682451878` passed React production E2E and all 18 PyQt rendered
+  tests. Comparison then failed closed because the new React candidate identity
+  includes `inter-5.3.0` while approved references intentionally do not.
+- One-at-a-time inspection plus direct decoded-PNG sampling showed every React
+  candidate contains the toolbar and title. The earlier omission diagnosis came
+  from viewing multiple images in one response and is withdrawn.
+- Quantitative comparison found eight PyQt candidates byte-identical to approved
+  references. Simulation differed materially because `ImpactLayerControls`
+  loaded persistent runner-global `QSettings`; launch-monitor analytics showed a
+  small renderer drift after dependency changes while its environment label did
+  not identify Qt, PyQt, Matplotlib, or the evidence font.
+- Branch `fix/4626-pyqt-evidence-isolation` routes default `QSettings` to a fresh
+  campaign-owned INI user-scope directory before constructing the application.
+  Candidate identity now records exact Qt, PyQt, Matplotlib, and DejaVu Sans
+  evidence-font versions. Focused rendered evidence and comparator/workflow
+  contracts pass locally. Protected post-merge evidence remains required before
+  a separate source-pinned baseline approval PR.
 
 ## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
 
