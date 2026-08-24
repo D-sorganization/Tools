@@ -62,8 +62,11 @@ JSON/CSV/HDF5 dataset persistence, a self-contained archive with
 unconditional logical-content integrity verification, atomic no-replace
 publication, and malformed-CSV rejection. Its initial protected Python jobs
 found `h5py` absent from the root CI manifest; the branch now declares and
-locks it, with a regression test. Sixteen focused CI/HDF5 tests and all 310
-variation tests pass locally. This is
+locks it, with a regression test. The next protected run exposed an incomplete
+sparse UpstreamDrift provider fixture; the branch now creates all fail-closed
+provider roots and regression-locks the workflow without skipping any consumer
+contract. Current-main vendoring tests and all eight workflow tests pass
+locally, alongside the prior 310 variation tests. This is
 reproducibility and integrity evidence, not human validation or cross-runtime
 numerical equivalence.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0

@@ -64,8 +64,11 @@ adds public JSON/CSV/HDF5 scalar-dataset persistence, atomic
 no-replace HDF5 publication, logical-content SHA-256 verification, and strict
 CSV row identity/shape checks. Its initial protected Python jobs exposed a
 missing root-CI `h5py` declaration; the branch now declares and locks it with a
-regression test. Sixteen focused CI/HDF5 tests and all 310 variation tests pass
-locally. The contract is
+regression test. The downstream lane then exposed an incomplete sparse
+UpstreamDrift provider fixture; all required provider roots are now constructed
+and workflow-tested without weakening the consumer suite. Current-main
+vendoring tests, eight workflow tests, and all 310 variation tests pass locally.
+The contract is
 `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. The R10--R15 ledger stays partial:
 these controls prove provenance and integrity, not human validity or
 cross-runtime numerical equivalence.

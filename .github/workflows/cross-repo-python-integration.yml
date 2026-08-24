@@ -227,7 +227,16 @@ jobs:
         working-directory: ${{ matrix.downstream.path }}
         run: |
           touch "${{ github.workspace }}/src/__init__.py" "${{ github.workspace }}/src/shared/__init__.py"
-          mkdir -p src/shared/python vendor/ud-tools/src/shared/python tests/support
+          # UpstreamDrift's provider resolver fails closed unless every
+          # supported Tools import root exists, even when this sparse fixture
+          # exercises only shared/python.  Keep the fixture structurally
+          # complete so path-precedence and module-identity contracts run.
+          mkdir -p \
+            src/shared/python \
+            vendor/ud-tools/src/shared/python \
+            vendor/ud-tools/src \
+            vendor/ud-tools/src/python/src \
+            tests/support
           touch src/shared/python/__init__.py vendor/ud-tools/src/shared/python/__init__.py
           touch tests/__init__.py tests/support/__init__.py
           touch src/shared/python/contracts.py vendor/ud-tools/src/shared/python/contracts.py
