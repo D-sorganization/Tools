@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { InterlockConfig } from "../App";
 import { ShieldAlert, Save } from "lucide-react";
 
@@ -16,6 +16,7 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
   deploying,
 }) => {
   const [selectedTag, setSelectedTag] = useState<number>(0);
+  const baseId = useId();
 
   const activeInterlock = interlocks[selectedTag];
 
@@ -42,10 +43,11 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
       <div className="p-4 flex-1 overflow-auto">
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
-            <label className="block text-sm font-semibold text-gray-400 mb-2">
+            <label htmlFor={`${baseId}-select-tag`} className="block text-sm font-semibold text-gray-400 mb-2">
               Select Tag to Configure
             </label>
             <select
+              id={`${baseId}-select-tag`}
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white"
               value={selectedTag}
               onChange={(e) => setSelectedTag(Number(e.target.value))}
@@ -64,8 +66,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
             <h3 className="text-red-400 font-bold mb-3 flex items-center gap-2">
               High-High (HH) Alarm
             </h3>
-            <label className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
+            <label htmlFor={`${baseId}-hihi-limit`} className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
             <input
+              id={`${baseId}-hihi-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
               value={activeInterlock.hihi_limit}
@@ -78,8 +81,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
             <h3 className="text-yellow-400 font-bold mb-3 flex items-center gap-2">
               High (H) Alarm
             </h3>
-            <label className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
+            <label htmlFor={`${baseId}-high-limit`} className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
             <input
+              id={`${baseId}-high-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
               value={activeInterlock.high_limit}
@@ -92,8 +96,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
             <h3 className="text-yellow-400 font-bold mb-3 flex items-center gap-2">
               Low (L) Alarm
             </h3>
-            <label className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
+            <label htmlFor={`${baseId}-low-limit`} className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
             <input
+              id={`${baseId}-low-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
               value={activeInterlock.low_limit}
@@ -106,8 +111,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
             <h3 className="text-red-400 font-bold mb-3 flex items-center gap-2">
               Low-Low (LL) Alarm
             </h3>
-            <label className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
+            <label htmlFor={`${baseId}-lolo-limit`} className="block text-xs text-gray-400 mb-1">Trigger Limit</label>
             <input
+              id={`${baseId}-lolo-limit`}
               type="number"
               className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white mb-2"
               value={activeInterlock.lolo_limit}
