@@ -20,8 +20,16 @@
   campaign-owned INI user-scope directory before constructing the application.
   Candidate identity now records exact Qt, PyQt, Matplotlib, and DejaVu Sans
   evidence-font versions. Focused rendered evidence and comparator/workflow
-  contracts pass locally. Protected post-merge evidence remains required before
-  a separate source-pinned baseline approval PR.
+  contracts pass locally. PR #4660 merged as
+  `49a90a2f6b16d227439d04dd64b33feba6efcc0b`.
+- Trusted post-main run `32685823741` rendered all React and isolated PyQt
+  candidates. It failed closed at comparison as expected, but inspection found
+  the PyQt manifest used the unit-test fallback source commit because the
+  trusted job did not pass `github.sha` into capture. Branch
+  `fix/4626-trusted-candidate-provenance` adds that binding and a workflow
+  contract test. The retained PyQt images from `32685823741` are diagnostic,
+  not approvable. Regenerate after protected merge before a separate
+  source-pinned baseline approval PR.
 
 ## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
 

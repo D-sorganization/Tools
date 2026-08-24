@@ -53,11 +53,6 @@ remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
 tests but regresses three main-owned tests and needs ~20 UI files that delete
 shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 
-The 39 `codex/4142-*` / `codex/4433-*` drafts were superseded by merged #4473
-(Morris under `application/morris/`, #4433 inspectors under `ui/pyqt6/`).
-
-Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
-
 **Current #4142 evidence state.** R11.5 durable execution, bounded analysis,
 stable-paint capture, and the registered three-viewport correction are merged
 through #4628/#4635/#4646; #4649 merged the apt mutex. #4657 merged PyQt
@@ -68,9 +63,14 @@ remote `main` `26d144aa745e81c3fb75d5d196d484449059b491`. Trusted run
 at the newly versioned React environment. Direct PNG analysis disproved the
 earlier apparent shell omission, which was a multi-image viewer artifact.
 The PyQt candidate exposed real global-QSettings leakage and an under-specified
-environment identity. Branch `fix/4626-pyqt-evidence-isolation` routes state to
-fresh INI storage and records Qt/PyQt/Matplotlib/font versions. Require protected
-evidence and separate source-pinned baseline approval before R10-R15/#4433 audit.
+environment identity. PR #4660 protected-merged the fresh INI storage and exact
+Qt/PyQt/Matplotlib/font identity as remote `main` `49a90a2f6b16d227439d04dd64b33feba6efcc0b`.
+Trusted run `32685823741` rendered all React and isolated PyQt candidates but
+exposed a provenance defect: PyQt retained the unit-test fallback source commit
+because the trusted job did not pass `github.sha` into capture. Branch
+`fix/4626-trusted-candidate-provenance` binds capture and comparison to the same
+protected SHA. Regenerate and inspect evidence after merge, then use a separate
+source-pinned baseline approval before R10-R15/#4433 audit.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

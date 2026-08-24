@@ -177,7 +177,6 @@ def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None
     assert "inputs." not in text
     assert "${{ github.ref" not in text
     assert "${{ github.head_ref" not in text
-    assert "${{ github.sha" not in text
     assert "\n  push:" in text
     assert "workflow_dispatch" not in text
     assert set(jobs) == {
@@ -230,6 +229,9 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
     )
     assert trusted_pyqt_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
         "${{ github.workspace }}/visual-baseline-candidates"
+    )
+    assert trusted_pyqt_job["env"]["RATE_VISUAL_BASELINE_SOURCE_COMMIT"] == (
+        "${{ github.sha }}"
     )
     assert pr_commands["Install locked web dependencies"] == "npm ci"
     assert trusted_web_commands["Install locked web dependencies"] == "npm ci"

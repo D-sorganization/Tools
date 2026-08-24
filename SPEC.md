@@ -27,12 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.91                                    |
+| **Spec Version**        | 1.17.92                                    |
 | **Last Spec Update**    | 2026-08-23                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.92 binds trusted PyQt candidate generation to the exact protected
+push SHA. The workflow now passes `github.sha` into both candidate capture and
+comparison, preventing a test-only fallback commit from entering retained
+evidence or a later baseline-approval review.
 
 Version 1.17.91 makes PyQt visual evidence independent of warm-runner user
 preferences by routing `QSettings` to a fresh campaign-owned INI user scope
@@ -5131,6 +5136,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-23 | 1.17.92 | fix(rate-of-closure, #4626): bind the trusted PyQt candidate manifest to the exact protected push SHA used by the comparator. A workflow contract test requires the provenance variable, preventing the unit-test fallback commit from entering retained evidence or a source-pinned baseline approval. The prior run remains diagnostic only; new candidates must be generated after this change reaches protected `main`. |
+| 2026-08-23 | 1.17.91 | fix(rate-of-closure, #4626): isolate PyQt visual evidence from warm-runner `QSettings` by routing the default INI user scope to a fresh campaign-owned directory before application construction. Candidate identity now records exact Qt, PyQt, Matplotlib, and DejaVu Sans versions; focused rendered and comparator tests pass, while reference promotion remains a separate protected review. |
 | 2026-08-23 | 1.17.90 | fix(rate-of-closure, #4626): make React visual evidence independent of the runner host font stack by locking `@fontsource/inter` 5.3.0 and bundling Latin 400/500/600/700 assets. Candidate provenance names the exact font environment, and a workflow governance test binds the dependency, CSS imports, body family, and provenance label. No visual reference is updated here: protected Linux candidates and all PyQt renders must complete, receive human inspection, and travel through a separate source-pinned approval PR. |
 | 2026-08-22 | 1.17.89 | fix(ci/rate-of-closure, #4142/#4433): reconcile both bounded handoffs after protected PR #4646 merged and serialize the trusted Playwright dependency installer behind the fleet apt mutex. The installer waits for all dpkg/apt locks, retains the runner identity and Node environment, and fails closed without passwordless sudo; a workflow contract test prevents regression. This addresses the transient setup collision that stopped React before browser execution and left dependent PyQt without its required artifact. Visual/scientific assertions, baselines, and the 15-second child-import ceiling remain unchanged. Require passing trusted evidence after protected merge before requirement adjudication or immutable UpstreamDrift pinning. |
 | 2026-08-22 | 1.17.88 | fix(rate-of-closure, #4626): give only the complete registered React visual-evidence pass a bounded 180-second Playwright budget after trusted trace evidence showed its valid ten-tab 1440-by-900 pass consumed about 43 seconds and the unchanged 45-second suite default expired at the second of three viewports. All visual assertions, stable-paint sampling, artifact requirements, comparator behavior, and unrelated test budgets remain unchanged. |

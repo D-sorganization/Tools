@@ -20,10 +20,7 @@ gear effect; #4130 extends `SpringDamperImpactModel` rather than duplicating
 it), `flight/`, `ground/`, `variation/`, `solver/`. Club physics for the
 fitting epics is the sibling `shared/python/golf_club/`.
 
-## Delivery Pattern, and the One Thing Left From #4466
-
-Long stacked PRs are dead here: #4119 closed unmerged and took its stack with
-it. Content lands as **slices rebuilt onto current `main`**.
+## Delivery Pattern
 
 PR #4466 cannot be merged: its merge-base predates this package, leaving 281
 both-added conflicts. Twenty-two current-main slices landed as #4517–#4547.
@@ -68,10 +65,14 @@ PR #4659 protected-merged exact Inter 5.3.0 fonts as current remote `main`
 React and all 18 PyQt renders, then correctly rejected the newly versioned React
 environment. Direct PNG analysis disproved the apparent shell omission; it was
 a multi-image viewer artifact. The same evidence exposed real PyQt global-
-`QSettings` leakage and an environment label missing renderer versions. Branch
-`fix/4626-pyqt-evidence-isolation` uses fresh INI storage and records exact
-Qt/PyQt/Matplotlib/font identity. Protected candidates must be inspected and any
-reference refresh must remain a separate source-pinned approval before
+`QSettings` leakage and an environment label missing renderer versions. PR
+#4660 protected-merged fresh INI storage and exact Qt/PyQt/Matplotlib/font
+identity as `main` `49a90a2f6b16d227439d04dd64b33feba6efcc0b`. Trusted run
+`32685823741` rendered the corrected surfaces but revealed that PyQt capture did
+not receive `github.sha` and therefore retained the unit-test fallback source
+commit. Branch `fix/4626-trusted-candidate-provenance` binds capture and
+comparison to the same protected SHA. Regenerate and inspect candidates after
+merge; any reference refresh remains a separate source-pinned approval before
 R10-R15/#4433 adjudication or immutable UpstreamDrift pinning.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
