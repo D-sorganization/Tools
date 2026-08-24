@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-22
+> Last updated: 2026-08-23
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -61,17 +61,17 @@ see the two contracts under `docs/specs/`.
 #4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React
 Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
 execution, bounded analysis, stable-paint capture, and the registered
-three-viewport runtime correction. #4646 merge commit
-`6e6e575904a6b0d52684f3994343076d07509144` is an ancestor of current `main`
-`55e7f012551438426e18bcd1d49e1281a0bcf02f`. Its PR head passed required CI,
-but trusted main-push React job `97098245144` stopped before browser execution
-because another apt process held `/var/lib/apt/lists/lock`; dependent PyQt job
-`97098605332` then failed closed on the absent React artifact. No registered
-scientific or visual assertion ran or failed, so these jobs are not completion
-evidence. PR #4649 serializes the Playwright installer behind the fleet apt
-mutex while retaining all assertions and the 15-second import ceiling. Require
-its protected merge's trusted main-push evidence before auditing R10-R15/#4433
-and adding the immutable UpstreamDrift consumer pin/parity.
+three-viewport correction; #4649 merged the apt mutex. Current `main`
+`193822fb808047e6f87d06b45a78bad6f5cc0360` passed the full trusted React job
+in run `32668872021`. Its PyQt job timed out the second layout-persistence
+parameter at the global 60-second limit even though the subprocess contract is
+120 seconds. Distribution run `32668872024` passed the exact wheel job, while
+the browser job found an unexplained dirty checkout during isolated wheel build.
+#4626's current-main repair isolates optional sidebar startup, closes Qt windows
+deterministically, assigns the rendered test a 150-second budget, and reports a
+bounded porcelain-path inventory on any future dirty-checkout failure. Require
+its protected merge and passing current-main evidence before auditing
+R10-R15/#4433 and adding the immutable UpstreamDrift pin/parity.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

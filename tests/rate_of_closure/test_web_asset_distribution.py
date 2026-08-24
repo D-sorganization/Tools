@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from build_hooks import _summarize_dirty_status
 from rate_of_closure.web_distribution.asset_manifest import (
     WEB_ASSET_MANIFEST_SCHEMA,
     parse_web_asset_manifest,
@@ -22,6 +23,17 @@ from rate_of_closure.web_distribution.runtime_descriptor import (
 from scripts.check_rate_web_wheel import verify_rate_web_wheel
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def test_dirty_release_checkout_evidence_is_bounded_and_actionable() -> None:
+    status = "\n".join(f" M path-{index}.txt" for index in range(23))
+
+    summary = _summarize_dirty_status(status)
+
+    assert " M path-0.txt" in summary
+    assert " M path-19.txt" in summary
+    assert "path-20.txt" not in summary
+    assert summary.endswith("... (3 more)")
 
 
 def _entry(path: str, source: bytes, media_type: str) -> dict[str, object]:

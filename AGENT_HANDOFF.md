@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-22
+> Last updated: 2026-08-23
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -22,9 +22,9 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4628/#4635/#4646 merged durable R11.5 execution and the visual-runtime correction; trusted post-merge evidence, requirement closure, and the UpstreamDrift pin remain. |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4628/#4635/#4646 merged durable R11.5 execution and visual correction; #4626 owns the two remaining current-main qualification failures before closure and the UpstreamDrift pin. |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473**; #4646's post-merge evidence stopped at a transient apt lock, so qualification and acceptance adjudication remain.       |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473**; current-main React evidence passes, while #4626 must restore the PyQt and distribution qualifications before acceptance adjudication. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                  |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
@@ -59,18 +59,18 @@ The 39 `codex/4142-*` / `codex/4433-*` drafts were superseded by merged #4473
 Other live non-golf work: `src/shared/python` hygiene (#4507 lint normalisation, #4509 mypy debt), CI repairs (#4454 merge-hold guard, #4469 architecture guards always-on), and eight Bolt/Palette micro-PRs.
 
 **Current #4142 evidence state.** R11.5 durable execution, bounded analysis,
-stable-paint capture, and the registered three-viewport runtime correction are
-protected-merged through #4628/#4635/#4646. Merge commit
-`6e6e575904a6b0d52684f3994343076d07509144` is an ancestor of current `main`
-`55e7f012551438426e18bcd1d49e1281a0bcf02f`. Its PR head passed required CI,
-but trusted main-push React job `97098245144` stopped before browser execution
-because another apt process held `/var/lib/apt/lists/lock`; dependent PyQt job
-`97098605332` then failed closed on the absent React artifact. No scientific or
-visual assertion failed, but neither job is completion evidence. PR #4649 now
-serializes the trusted installer behind the fleet apt mutex without changing
-assertions or the 15-second import ceiling. Its eventual protected merge must
-produce a passing trusted main-push run; then audit R10-R15/#4433 and pin the
-immutable Tools commit in UpstreamDrift.
+stable-paint capture, and the registered three-viewport correction are merged
+through #4628/#4635/#4646; #4649 merged the apt mutex. Current `main`
+`193822fb808047e6f87d06b45a78bad6f5cc0360` passed the complete trusted React
+job in run `32668872021`. Its PyQt job then timed out one layout-persistence
+parameter at the global 60-second limit despite the test's 120-second subprocess
+contract. Distribution run `32668872024` passed the exact static wheel job, but
+the browser job found a dirty checkout during isolated wheel build without
+reporting the paths. The #4626 current-main repair isolates optional sidebar
+startup, closes Qt resources deterministically, assigns a 150-second test budget,
+and makes dirty-checkout diagnostics bounded and actionable. Require protected
+merge plus passing current-main evidence before auditing R10-R15/#4433 and
+pinning the immutable Tools commit in UpstreamDrift.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -144,7 +144,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Complete #4646's trusted post-merge evidence, the #4142/#4433 requirement audit, and the immutable UpstreamDrift consumer pin; #4430 is complete.
+4. Merge #4626, require passing trusted current-main React/PyQt/distribution evidence, complete the #4142/#4433 audit, and pin the immutable Tools commit in UpstreamDrift; #4430 is complete.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.

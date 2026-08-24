@@ -15,6 +15,19 @@ from setuptools.command.build_py import build_py
 from setuptools.errors import SetupError
 
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
+_STATUS_ENTRY_LIMIT = 20
+
+
+def _summarize_dirty_status(status: str) -> str:
+    """Return bounded porcelain evidence for a rejected release checkout."""
+
+    entries = [line for line in status.splitlines() if line]
+    visible = entries[:_STATUS_ENTRY_LIMIT]
+    summary = "; ".join(visible)
+    hidden = len(entries) - len(visible)
+    if hidden:
+        summary = f"{summary}; ... ({hidden} more)"
+    return summary
 
 
 class RateWebBuildPy(build_py):
@@ -66,7 +79,10 @@ class RateWebBuildPy(build_py):
             text=True,
         )
         if status.stdout:
-            raise SetupError("web distribution source checkout must be clean")
+            details = _summarize_dirty_status(status.stdout)
+            raise SetupError(
+                f"web distribution source checkout must be clean: {details}"
+            )
         environment = os.environ.copy()
         environment["PYTHONPATH"] = str(root / "src")
         # The only variable argument already passed the exact commit regex.

@@ -6376,3 +6376,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-21: Rate of Closure Mirror Freshness Check (#4624)
 
 - **2026-08-21**: feat(rate_of_closure, ops, #4624) — Added `scripts/check_mirror_freshness.py` and test suite `tests/ops/test_mirror_freshness.py` to detect and surface drift between canonical `src/rate_of_closure/web` and the public Pages mirror `D-sorganization/rate-of-closure-explorer`. Supports timestamp comparison, recorded canonical commit SHA matching, and deep tree blob comparison.
+
+## 2026-08-23: Rate of Closure Current-Main Gate Repair (#4626)
+
+- **2026-08-23**: fix(rate_of_closure, packaging, #4626) — Isolate the PyQt visual-layout persistence probe from the optional Tools sidebar service, explicitly close both rendered windows, and give the test a 150-second budget consistent with its declared 120-second subprocess contract. Preserve the fail-closed clean-checkout wheel gate while adding bounded porcelain-path diagnostics so any runner-local mutation is directly actionable.
