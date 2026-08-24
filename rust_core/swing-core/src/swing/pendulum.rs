@@ -46,7 +46,10 @@ const DEFAULT_DAMPING_WRIST: f64 = 0.25;
 /// Inertias are about the **proximal joint** (parallel-axis already applied),
 /// matching the cached quantities in the UpstreamDrift reference.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass(get_all, set_all))]
+#[cfg_attr(
+    feature = "python",
+    pyo3::prelude::pyclass(get_all, set_all, from_py_object)
+)]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct PendulumParameters {
     /// Upper segment mass [kg].
@@ -141,7 +144,10 @@ impl PendulumParameters {
 
 /// Dynamic state of the pendulum (planar).
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass(get_all, set_all))]
+#[cfg_attr(
+    feature = "python",
+    pyo3::prelude::pyclass(get_all, set_all, from_py_object)
+)]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct PendulumState {
     /// Upper segment angle from in-plane downward vertical [rad].

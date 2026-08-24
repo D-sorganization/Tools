@@ -46,10 +46,10 @@ def test_rust_quality_gate_allows_cold_cache_completion() -> None:
         for step in rust_job["steps"]
         if step.get("name") == "Security Audit (cargo-audit)"
     )
-    assert (
-        "git config --local --unset-all http.https://github.com/.extraheader || true"
-        in audit_step["run"]
-    )
+    audit_run = audit_step["run"]
+    assert "curl --fail --show-error --silent --location" in audit_run
+    assert "advisory-db/archive/refs/heads/main.tar.gz" in audit_run
+    assert 'cargo audit --db "$RUSTSEC_DB" --no-fetch' in audit_run
 
 
 def _write_fake_python(arch_dir: Path, *, with_link_library: bool) -> None:

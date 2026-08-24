@@ -18,7 +18,7 @@ use std::sync::{Arc, Mutex, MutexGuard};
 
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
-use pyo3::types::PyList;
+use pyo3::types::{PyAny, PyList};
 
 use crate::watcher::{ChangeEvent, FileWatcher, FileWatcherConfig};
 
@@ -29,7 +29,7 @@ fn lock_poison_tolerant<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
     m.lock().unwrap_or_else(|e| e.into_inner())
 }
 
-#[pyclass(name = "ChangeEvent")]
+#[pyclass(name = "ChangeEvent", skip_from_py_object)]
 #[derive(Clone)]
 pub struct PyChangeEvent {
     #[pyo3(get)]
@@ -57,7 +57,7 @@ impl PyChangeEvent {
 #[pyclass(name = "FileWatcher")]
 pub struct PyFileWatcher {
     inner: Arc<FileWatcher>,
-    callback: Arc<Mutex<Option<PyObject>>>,
+    callback: Arc<Mutex<Option<Py<PyAny>>>>,
 }
 
 #[pymethods]
@@ -84,11 +84,11 @@ impl PyFileWatcher {
 
     /// Register a callback. Pass a callable that accepts `list[ChangeEvent]`.
     /// Replaces any previous callback.
-    fn on_change(&self, callback: PyObject) {
+    fn on_change(&self, callback: Py<PyAny>) {
         *lock_poison_tolerant(&self.callback) = Some(callback);
         let cb_slot = self.callback.clone();
         self.inner.on_change(move |events| {
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let Some(cb) = lock_poison_tolerant(&cb_slot)
                     .as_ref()
                     .map(|c| c.clone_ref(py))
@@ -137,9 +137,9 @@ impl PyFileWatcher {
 
     fn __exit__(
         &self,
-        _exc_type: PyObject,
-        _exc_val: PyObject,
-        _exc_tb: PyObject,
+        _exc_type: Py<PyAny>,
+        _exc_val: Py<PyAny>,
+        _exc_tb: Py<PyAny>,
     ) -> PyResult<bool> {
         // Ignore "not started" errors on exit so `__exit__` is idempotent.
         let _ = self.stop();

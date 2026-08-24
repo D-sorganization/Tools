@@ -648,8 +648,8 @@ pub mod py_bindings {
         // Copy the input so the GIL-free section owns its data — the
         // `PyReadonlyArray1` borrow cannot cross `allow_threads`.
         let v = values.as_slice().unwrap().to_vec();
-        let result = py
-            .allow_threads(move || bilateral_filter(&v, window_size, sigma_space, sigma_intensity));
+        let result =
+            py.detach(move || bilateral_filter(&v, window_size, sigma_space, sigma_intensity));
         Ok(PyArray1::from_vec(py, result))
     }
 
@@ -667,7 +667,7 @@ pub mod py_bindings {
             ));
         }
         let v = values.as_slice().unwrap().to_vec();
-        let result = py.allow_threads(move || moving_average(&v, window_size));
+        let result = py.detach(move || moving_average(&v, window_size));
         Ok(PyArray1::from_vec(py, result))
     }
 
@@ -685,7 +685,7 @@ pub mod py_bindings {
             ));
         }
         let v = values.as_slice().unwrap().to_vec();
-        let result = py.allow_threads(move || exponential_smoothing(&v, alpha));
+        let result = py.detach(move || exponential_smoothing(&v, alpha));
         Ok(PyArray1::from_vec(py, result))
     }
 
@@ -726,7 +726,7 @@ pub mod py_bindings {
                 "signal and reference must have the same length",
             ));
         }
-        let (y, e) = py.allow_threads(move || lms_filter(&x, &d, order, step_size));
+        let (y, e) = py.detach(move || lms_filter(&x, &d, order, step_size));
         Ok((PyArray1::from_vec(py, y), PyArray1::from_vec(py, e)))
     }
 
@@ -774,7 +774,7 @@ pub mod py_bindings {
                 "signal and reference must have the same length",
             ));
         }
-        let (y, e) = py.allow_threads(move || rls_filter(&x, &d, order, forgetting_factor, delta));
+        let (y, e) = py.detach(move || rls_filter(&x, &d, order, forgetting_factor, delta));
         Ok((PyArray1::from_vec(py, y), PyArray1::from_vec(py, e)))
     }
 } // end pub mod py_bindings

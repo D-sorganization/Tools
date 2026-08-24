@@ -1178,11 +1178,19 @@ jobs:
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
           cargo install cargo-audit --locked
-          # actions/checkout persists its authenticated extraheader in the
-          # repository config. RustSec's public advisory-db fetch is anonymous;
-          # forwarding that repository token produces a fail-closed HTTP 401.
-          git config --local --unset-all http.https://github.com/.extraheader || true
-          cargo audit
+          # Self-hosted Git configuration can rewrite public GitHub URLs with
+          # repository credentials. Acquire the public database over anonymous
+          # HTTPS, then prohibit cargo-audit from performing any Git fetch.
+          RUSTSEC_TMP="$(mktemp -d)"
+          RUSTSEC_ARCHIVE="${RUSTSEC_TMP}/advisory-db.tar.gz"
+          curl --fail --show-error --silent --location --retry 3 \
+            --proto '=https' --tlsv1.2 \
+            --output "$RUSTSEC_ARCHIVE" \
+            https://github.com/RustSec/advisory-db/archive/refs/heads/main.tar.gz
+          tar -xzf "$RUSTSEC_ARCHIVE" -C "$RUSTSEC_TMP"
+          RUSTSEC_DB="${RUSTSEC_TMP}/advisory-db-main"
+          test -d "$RUSTSEC_DB/crates"
+          cargo audit --db "$RUSTSEC_DB" --no-fetch
 
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'
