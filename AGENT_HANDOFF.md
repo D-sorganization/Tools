@@ -53,18 +53,16 @@ remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
 tests but regresses three main-owned tests and needs ~20 UI files that delete
 shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 
-**Current #4142/#4668 state.** Worktree `Tools-worktrees/4668-canonical-plan-documents`
-on `feat/4668-canonical-variation-plan-documents` is the only active authority;
-it is based on `6e7f464d0`. This branch is the recoverable implementation
-checkpoint; verify its current HEAD before continuing. Version-3 execution
+**Current #4142/#4668 state.** PR #4669 is open from
+`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
+query its exact head and protected checks before acting. Version-3 execution
 documents and explicit legacy bindings now cover PyQt6/React plan files, named
 libraries, workspaces, scalar/geometry ensembles, durable archives, forgiveness
 exports, and regional results. Cross-runtime durable/regional requests bind the
-plan SHA-256 while Python retains its own executor identity. Focused Python and
-single-worker Vitest suites plus TypeScript type-check are passing. Before any
-handoff, run the issue commands, lint/format, file-size, governance, and full
-Rate suites; then commit, push, open the protected PR, and update the #4142
-ledger. This is reproducibility evidence, not human or scientific validation.
+plan SHA-256 while Python retains its own executor identity. Exact Python,
+single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
+two-DPI PyQt gates pass locally. The ledger remains partial until protected CI,
+merge, and remote-main verification; this is not human or scientific validation.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

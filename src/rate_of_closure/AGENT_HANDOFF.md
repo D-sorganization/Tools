@@ -57,18 +57,18 @@ see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 The 31-item R10--R15 ledger still records 18 verified, 11 partial, and two
-unverified requirements. Issue #4668 now owns the plan-evidence gap. Active
-worktree `Tools-worktrees/4668-canonical-plan-documents`, branch
-`feat/4668-canonical-variation-plan-documents`, is based on `6e7f464d0`. This
-branch is the recoverable implementation checkpoint; verify its current HEAD
-before continuing. It adds version-3 execution documents, explicit
+unverified requirements. PR #4669 now carries the #4668 plan-evidence work from
+`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
+query its exact head and protected checks before acting. It adds version-3
+execution documents, explicit
 legacy bindings, plan-digest-bound cross-runtime requests, and substitution
 failures across plan files, libraries, workspaces, datasets, geometry/durable
 ensembles, forgiveness exports, and regional results. The contract and exact
-inventory are in `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. Focused tests and
-type-check pass; run the complete issue gates, update the ledger, commit, push,
-and use the protected PR flow before calling #4668 complete. These controls
-prove provenance/integrity, not human validity or cross-runtime equivalence.
+inventory are in `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. Exact Python,
+single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
+two-DPI PyQt gates pass locally. Keep the ledger partial until protected CI,
+merge, and remote-main verification. These controls prove provenance and
+integrity, not human validity or cross-runtime equivalence.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
