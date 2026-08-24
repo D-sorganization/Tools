@@ -1,35 +1,24 @@
 # Rate of Closure Campaign Handoff
 
-## 2026-08-23 #4626 PyQt Evidence Isolation and Renderer Identity
+## 2026-08-23 #4626 Source-Pinned Visual-Baseline Approval
 
-- PR #4659 protected-merged exact `@fontsource/inter` 5.3.0 Latin
-  400/500/600/700 assets as current remote `main`
-  `26d144aa745e81c3fb75d5d196d484449059b491`.
-- Trusted run `32682451878` passed React production E2E and all 18 PyQt rendered
-  tests. Comparison then failed closed because the new React candidate identity
-  includes `inter-5.3.0` while approved references intentionally do not.
-- One-at-a-time inspection plus direct decoded-PNG sampling showed every React
-  candidate contains the toolbar and title. The earlier omission diagnosis came
-  from viewing multiple images in one response and is withdrawn.
-- Quantitative comparison found eight PyQt candidates byte-identical to approved
-  references. Simulation differed materially because `ImpactLayerControls`
-  loaded persistent runner-global `QSettings`; launch-monitor analytics showed a
-  small renderer drift after dependency changes while its environment label did
-  not identify Qt, PyQt, Matplotlib, or the evidence font.
-- Branch `fix/4626-pyqt-evidence-isolation` routes default `QSettings` to a fresh
-  campaign-owned INI user-scope directory before constructing the application.
-  Candidate identity now records exact Qt, PyQt, Matplotlib, and DejaVu Sans
-  evidence-font versions. Focused rendered evidence and comparator/workflow
-  contracts pass locally. PR #4660 merged as
-  `49a90a2f6b16d227439d04dd64b33feba6efcc0b`.
-- Trusted post-main run `32685823741` rendered all React and isolated PyQt
-  candidates. It failed closed at comparison as expected, but inspection found
-  the PyQt manifest used the unit-test fallback source commit because the
-  trusted job did not pass `github.sha` into capture. Branch
-  `fix/4626-trusted-candidate-provenance` adds that binding and a workflow
-  contract test. The retained PyQt images from `32685823741` are diagnostic,
-  not approvable. Regenerate after protected merge before a separate
-  source-pinned baseline approval PR.
+- Evidence repairs are protected-merged through #4661 at
+  `1214008e9dbf06b583ef44a4c821dc0567efdf8b`.
+- Trusted run `32686727162` passed React E2E and all 18 PyQt rendered tests;
+  both manifests bind the exact source. All 20 1440x900 candidate images were
+  inspected and their SHA-256 values verified before promotion.
+- Trusted run `32685823741` is repeatability-only because its PyQt provenance
+  used a test fallback. Its unchanged UI/runtime sources still quantify
+  cross-host renderer drift: React maxima 3,478 mean/45,593 changed-pixel
+  microunits; PyQt maxima 135/208.
+- Branch `fix/4626-source-pinned-visual-baselines` packages the reviewed images
+  and a two-run calibration authority. Limits are 1/4,000/50,000 for React and
+  1/200/250 for PyQt. Material stale controls remain rejected at React minima
+  13,606/50,659 and PyQt simulation 2,530/7,170.
+- Require protected CI, merge, and a passing trusted post-main comparison before
+  R10-R15/#4433 adjudication or immutable UpstreamDrift pinning. These references
+  govern bounded visual regression only; they do not establish pixel-exact
+  cross-host rendering or scientific model validity.
 
 ## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
 

@@ -29,16 +29,65 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     manifest = load_visual_baseline_manifest()
 
     assert manifest.source_artifact_commit == (
-        "7e3d8fcefe25147044f2979fe6301db27d92ddb3"  # pragma: allowlist secret
+        "1214008e9dbf06b583ef44a4c821dc0567efdf8b"  # pragma: allowlist secret
     )
     assert len(manifest.baselines) == 20
     package = files("rate_of_closure")
+    tolerances = {
+        "react": VisualBaselineTolerance(1, 4_000, 50_000),
+        "pyqt": VisualBaselineTolerance(1, 200, 250),
+    }
     for entry in manifest.baselines:
         data = package.joinpath(
             "visual_baselines", "v1", entry.surface, entry.filename
         ).read_bytes()
         assert hashlib.sha256(data).hexdigest() == entry.sha256
-        assert entry.tolerance == VisualBaselineTolerance(1, 100, 100)
+        assert entry.tolerance == tolerances[entry.surface]
+
+
+def test_calibration_authority_bounds_host_drift_and_rejects_stale_controls() -> None:
+    package = files("rate_of_closure")
+    document = json.loads(
+        package.joinpath("visual_baseline_calibration.v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert set(document) == {
+        "schema_id",
+        "schema_version",
+        "approval_policy",
+        "reviewed_candidate_commit",
+        "runs",
+        "surface_envelopes",
+    }
+    assert document["schema_id"] == "rate-of-closure/visual-baseline-calibration"
+    assert document["schema_version"] == 1
+    assert document["approval_policy"] == "two-run-bounded-renderer-envelope"
+    assert document["reviewed_candidate_commit"] == (
+        "1214008e9dbf06b583ef44a4c821dc0567efdf8b"  # pragma: allowlist secret
+    )
+    assert [run["run_id"] for run in document["runs"]] == [
+        32685823741,
+        32686727162,
+    ]
+    for envelope in document["surface_envelopes"]:
+        observed = envelope["observed_repeatability_microunits"]
+        tolerance = envelope["selected_tolerance_microunits"]
+        rejection = envelope["stale_control_microunits"]
+        assert observed["max_mean_channel_delta"] < tolerance["max_mean_channel_delta"]
+        assert (
+            observed["max_changed_pixel_fraction"]
+            < tolerance["max_changed_pixel_fraction"]
+        )
+        assert (
+            rejection["min_material_mean_channel_delta"]
+            > tolerance["max_mean_channel_delta"]
+        )
+        assert (
+            rejection["min_material_changed_pixel_fraction"]
+            > tolerance["max_changed_pixel_fraction"]
+        )
 
 
 def _png(path: Path, color: tuple[int, int, int], changed: int = 0) -> str:

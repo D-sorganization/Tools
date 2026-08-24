@@ -55,25 +55,20 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React
-Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
-execution, bounded analysis, stable-paint capture, and the registered
-three-viewport correction; #4649 merged the apt mutex. #4657 merged PyQt
-isolation and bounded dirty-tree diagnostics. #4658 normalized tracked evidence;
-PR #4659 protected-merged exact Inter 5.3.0 fonts as current remote `main`
-`26d144aa745e81c3fb75d5d196d484449059b491`. Trusted run `32682451878` passed
-React and all 18 PyQt renders, then correctly rejected the newly versioned React
-environment. Direct PNG analysis disproved the apparent shell omission; it was
-a multi-image viewer artifact. The same evidence exposed real PyQt global-
-`QSettings` leakage and an environment label missing renderer versions. PR
-#4660 protected-merged fresh INI storage and exact Qt/PyQt/Matplotlib/font
-identity as `main` `49a90a2f6b16d227439d04dd64b33feba6efcc0b`. Trusted run
-`32685823741` rendered the corrected surfaces but revealed that PyQt capture did
-not receive `github.sha` and therefore retained the unit-test fallback source
-commit. Branch `fix/4626-trusted-candidate-provenance` binds capture and
-comparison to the same protected SHA. Regenerate and inspect candidates after
-merge; any reference refresh remains a separate source-pinned approval before
-R10-R15/#4433 adjudication or immutable UpstreamDrift pinning.
+#4142 R11.5 remains Python-authoritative; PyQt6 and React do not reimplement
+physics. Evidence repairs are protected-merged through #4661 at
+`1214008e9dbf06b583ef44a4c821dc0567efdf8b`. Trusted run `32686727162` passed
+React E2E and all 18 PyQt renders, with both manifests pinned to that source;
+all 20 images were inspected and byte-verified. Run `32685823741` supplies a
+repeatability control: unchanged UI/runtime paths nevertheless varied across
+Linux hosts by at most React 3,478/45,593 and PyQt 135/208 mean/changed-pixel
+microunits. Branch `fix/4626-source-pinned-visual-baselines` packages the
+reviewed references, calibration evidence, and bounded limits
+1/4,000/50,000 (React) and 1/200/250 (PyQt). Material stale controls remain
+outside at React minima 13,606/50,659 and PyQt simulation 2,530/7,170. Require
+protected CI and a passing post-main trusted comparison before R10-R15/#4433
+adjudication or immutable UpstreamDrift pinning. This proves bounded visual
+regression stability, not pixel-exact portability or scientific validity.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

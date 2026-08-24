@@ -53,24 +53,20 @@ remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
 tests but regresses three main-owned tests and needs ~20 UI files that delete
 shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 
-**Current #4142 evidence state.** R11.5 durable execution, bounded analysis,
-stable-paint capture, and the registered three-viewport correction are merged
-through #4628/#4635/#4646; #4649 merged the apt mutex. #4657 merged PyQt
-isolation and bounded dirty-tree diagnostics. #4658 normalized tracked release
-evidence; #4659 then protected-merged exact Inter 5.3.0 visual fonts as current
-remote `main` `26d144aa745e81c3fb75d5d196d484449059b491`. Trusted run
-`32682451878` passed React and all 18 PyQt renders; comparison correctly stopped
-at the newly versioned React environment. Direct PNG analysis disproved the
-earlier apparent shell omission, which was a multi-image viewer artifact.
-The PyQt candidate exposed real global-QSettings leakage and an under-specified
-environment identity. PR #4660 protected-merged the fresh INI storage and exact
-Qt/PyQt/Matplotlib/font identity as remote `main` `49a90a2f6b16d227439d04dd64b33feba6efcc0b`.
-Trusted run `32685823741` rendered all React and isolated PyQt candidates but
-exposed a provenance defect: PyQt retained the unit-test fallback source commit
-because the trusted job did not pass `github.sha` into capture. Branch
-`fix/4626-trusted-candidate-provenance` binds capture and comparison to the same
-protected SHA. Regenerate and inspect evidence after merge, then use a separate
-source-pinned baseline approval before R10-R15/#4433 audit.
+**Current #4142 evidence state.** R11.5 execution, analysis, and visual capture
+repairs are protected-merged through #4661 at `1214008e9dbf06b583ef44a4c821dc0567efdf8b`.
+Trusted run `32686727162` passed React E2E and all 18 PyQt renders; both
+candidate manifests bind that exact source. All 20 1440x900 images were
+inspected and their bytes verified. Comparison against old references correctly
+failed. A second trusted run (`32685823741`) showed cross-host text-renderer
+variation despite unchanged UI/runtime sources: React maxima were 3,478 mean
+and 45,593 changed-pixel microunits; PyQt maxima were 135/208. Branch
+`fix/4626-source-pinned-visual-baselines` approves the current candidates with
+bounded envelopes 1/4,000/50,000 (React) and 1/200/250 (PyQt), plus a packaged
+calibration record. Material stale controls remain outside (React minima
+13,606/50,659; PyQt simulation 2,530/7,170). Require protected CI and a passing
+post-main trusted comparison before R10-R15/#4433 adjudication or UpstreamDrift
+pinning; this is visual stability evidence, not scientific validation.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
