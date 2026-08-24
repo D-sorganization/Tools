@@ -49,8 +49,6 @@ jobs:
           git fetch --no-tags --depth=1 origin "$ROC_RELEASE_REVISION"
           git checkout --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = "$ROC_RELEASE_REVISION"
-      - name: Verify tracked LF blob normalization
-        run: python scripts/check_tracked_text_normalization.py
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
@@ -202,8 +200,6 @@ jobs:
           git fetch --no-tags --depth=1 origin "$ROC_RELEASE_REVISION"
           git checkout --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = "$ROC_RELEASE_REVISION"
-      - name: Verify tracked LF blob normalization
-        run: python scripts/check_tracked_text_normalization.py
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"

@@ -178,8 +178,7 @@ test("every registered React tab exposes its primary visual in the initial viewp
     sourceCommit: process.env.RATE_VISUAL_BASELINE_SOURCE_COMMIT ??
       process.env.GITHUB_SHA ?? "local-diagnostic",
     surface: "react",
-    environment:
-      `${process.platform}-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0`,
+    environment: `${process.platform}-chromium-desktop-1440x900-dark-reduced-motion`,
     captures: candidates,
   }, null, 2)}\n`);
   expect(candidates).toHaveLength(visualizationTabs("react").length);

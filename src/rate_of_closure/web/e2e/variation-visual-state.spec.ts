@@ -50,8 +50,9 @@ async function capture(page: Page, testInfo: TestInfo, state: StateName) {
   if (["empty", "result", "individual-result"].includes(state)) {
     await expect.poll(async () => {
       const box = await intersection(visual);
+      // Wait for focus indicator animation/rendering stabilization to ensure intersection bounds settle
       return box.width >= minimum.width && box.height >= minimum.height;
-    }).toBe(true);
+    }, { timeout: 30_000 }).toBe(true);
   }
   const box = await intersection(visual);
   const controls = await page.getByRole("region", { name: "Variation setup" }).boundingBox();

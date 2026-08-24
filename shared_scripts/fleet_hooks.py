@@ -85,8 +85,16 @@ DEPENDENCY_MANIFESTS = (
     "uv.lock",
     "Pipfile.lock",
 )
-BANNED_WORKFLOW_TOKENS = ("d-sorg-fleet-14core",)
+BANNED_WORKFLOW_TOKENS = (
+    "d-sorg-fleet-14core",
+    "runner=ubuntu-latest",
+    "runner=windows-latest",
+    "runner=macos-latest",
+)
 ALLOWED_WORKFLOW_TOKENS = {
+    ("ci-standard-skip.yml", "ubuntu-latest"),
+    ("local-only-runner-guard.yml", "ubuntu-latest"),
+    ("runner-health-alert.yml", "ubuntu-latest"),
     ("Bot-CI-Trigger.yml", "d-sorg-fleet-14core"),
     ("heavy-integration-tests.yml", "d-sorg-fleet-14core"),
     ("heavy-tests-opt-in.yml", "d-sorg-fleet-14core"),

@@ -27,62 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.96                                    |
-| **Last Spec Update**    | 2026-08-23                                 |
+| **Spec Version**        | 1.17.89                                    |
+| **Last Spec Update**    | 2026-08-22                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
 
-Version 1.17.96 preserves the exact #4142 audit-base revision assertion while
-marking that reviewed Git SHA with `detect-secrets`' supported inline
-false-positive pragma. The scanner remains fail closed for every other finding;
-the focused audit contract and source scan prove the annotation changes no
-scientific or traceability semantics.
-
-Version 1.17.95 adds a fail-closed, machine-readable requirement audit for all
-31 R10--R15 items in epic #4142. At protected base revision
-`eebdddf8c6e366722be40c25278cf34a0392f256`, 18 requirements have direct
-source-and-test evidence, 11 remain partial, and two UpstreamDrift consumption
-requirements remain unverified; the epic therefore remains uncloseable. The
-project GAAI override now agrees with the repository's established protected
-feature-branch-to-`main` delivery contract instead of directing agents to a
-conflicting `staging` target.
-
-Version 1.17.94 makes release analysis independent of the fleet host's system
-Python by selecting the repository-supported Python 3.12 toolcache before the
-first `tomllib` import. The action is immutable-SHA pinned and a workflow
-contract prevents version parsing from moving ahead of runtime selection.
-
-Version 1.17.93 approves the 20 visually inspected React and PyQt references
-from trusted run `32686727162`, pinned to protected source commit
-`1214008e9dbf06b583ef44a4c821dc0567efdf8b`. A packaged calibration record
-separates the reviewed approval candidate from the earlier repeatability-only
-run and bounds measured cross-host renderer variation: React uses one channel
-as the changed-channel threshold, 4,000 mean-channel-delta microunits, and
-50,000 changed-pixel-fraction microunits; PyQt uses one, 200, and 250. These
-limits admit the measured same-UI renderer envelope while every materially
-stale control remains outside it. They establish regression evidence, not
-pixel-exact cross-host rendering or scientific model validation.
-
-Version 1.17.92 binds trusted PyQt candidate generation to the exact protected
-push SHA. The workflow now passes `github.sha` into both candidate capture and
-comparison, preventing a test-only fallback commit from entering retained
-evidence or a later baseline-approval review.
-
-Version 1.17.91 makes PyQt visual evidence independent of warm-runner user
-preferences by routing `QSettings` to a fresh campaign-owned INI user scope
-before application construction. Candidate provenance now binds the exact Qt,
-PyQt, Matplotlib, and DejaVu Sans rendering environment. This prevents persisted
-impact-layer selections or dependency drift from being mislabeled as the same
-reference environment; baseline promotion remains separately reviewed.
-
-Version 1.17.90 removes host typography from React visual-evidence authority by
-bundling exact Inter 5.3.0 Latin 400, 500, 600, and 700 assets and declaring the
-font version in each candidate manifest. This addresses the protected Linux
-reference drift observed after the functional browser and all 18 PyQt render
-tests completed. Existing geometry, accessibility, stable-paint, image-drift,
-source-commit, and separate human-approval gates remain fail closed.
+Version 1.17.88 gives the registered React visual-evidence pass its own bounded
+180-second Playwright budget. The trusted runner completed all ten tabs at the
+1440-by-900 authority in about 43 seconds, then exhausted the suite's 45-second
+interactive-test default at the second of three registered viewports. All tab,
+viewport, stable-paint, geometry, overflow, artifact, and fail-closed baseline
+assertions remain unchanged; unrelated browser tests retain the 45-second
+default.
 
 Version 1.17.77 adds the shared row-free launch-monitor workspace/export v3
 contract to PyQt6 and React. Saved projects preserve immutable source and
@@ -5167,13 +5125,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-23 | 1.17.96 | fix(rate-of-closure, #4142): preserve the exact audited base-revision assertion while applying the supported `detect-secrets` inline false-positive pragma to that reviewed Git SHA; retain the fail-closed baseline and unchanged requirement-ledger semantics. |
-| 2026-08-23 | 1.17.95 | docs(rate-of-closure, #4142): add a fail-closed 31-item R10--R15 evidence ledger with exact source, test, command, remote-run, and remaining-gap traceability; classify 18 items verified, 11 partial, and two unverified without treating visual or synthetic evidence as human validation. Reconcile the stale GAAI `staging` rule with the protected feature-branch-to-`main` repository contract and update both active handoffs after #4663 and post-main Release Automation passed. |
-| 2026-08-23 | 1.17.94 | fix(release): select immutable-pinned Python 3.12 before release analysis imports `tomllib`, so the same protected-main workflow is portable across older fleet-host system runtimes; add an ordering and version contract test. |
-| 2026-08-23 | 1.17.93 | test(rate-of-closure, #4626): approve the visually inspected 20-reference React/PyQt set from trusted run `32686727162` at protected source `1214008e9dbf06b583ef44a4c821dc0567efdf8b`; package a two-run calibration record; and use explicit cross-host renderer envelopes of 1/4,000/50,000 microunits for React and 1/200/250 for PyQt. Every measured repeatability case remains inside and every materially stale control remains outside; this is visual-regression authority, not pixel-exact portability or scientific validation. |
-| 2026-08-23 | 1.17.92 | fix(rate-of-closure, #4626): bind the trusted PyQt candidate manifest to the exact protected push SHA used by the comparator. A workflow contract test requires the provenance variable, preventing the unit-test fallback commit from entering retained evidence or a source-pinned baseline approval. The prior run remains diagnostic only; new candidates must be generated after this change reaches protected `main`. |
-| 2026-08-23 | 1.17.91 | fix(rate-of-closure, #4626): isolate PyQt visual evidence from warm-runner `QSettings` by routing the default INI user scope to a fresh campaign-owned directory before application construction. Candidate identity now records exact Qt, PyQt, Matplotlib, and DejaVu Sans versions; focused rendered and comparator tests pass, while reference promotion remains a separate protected review. |
-| 2026-08-23 | 1.17.90 | fix(rate-of-closure, #4626): make React visual evidence independent of the runner host font stack by locking `@fontsource/inter` 5.3.0 and bundling Latin 400/500/600/700 assets. Candidate provenance names the exact font environment, and a workflow governance test binds the dependency, CSS imports, body family, and provenance label. No visual reference is updated here: protected Linux candidates and all PyQt renders must complete, receive human inspection, and travel through a separate source-pinned approval PR. |
 | 2026-08-22 | 1.17.89 | fix(ci/rate-of-closure, #4142/#4433): reconcile both bounded handoffs after protected PR #4646 merged and serialize the trusted Playwright dependency installer behind the fleet apt mutex. The installer waits for all dpkg/apt locks, retains the runner identity and Node environment, and fails closed without passwordless sudo; a workflow contract test prevents regression. This addresses the transient setup collision that stopped React before browser execution and left dependent PyQt without its required artifact. Visual/scientific assertions, baselines, and the 15-second child-import ceiling remain unchanged. Require passing trusted evidence after protected merge before requirement adjudication or immutable UpstreamDrift pinning. |
 | 2026-08-22 | 1.17.88 | fix(rate-of-closure, #4626): give only the complete registered React visual-evidence pass a bounded 180-second Playwright budget after trusted trace evidence showed its valid ten-tab 1440-by-900 pass consumed about 43 seconds and the unchanged 45-second suite default expired at the second of three viewports. All visual assertions, stable-paint sampling, artifact requirements, comparator behavior, and unrelated test budgets remain unchanged. |
 | 2026-08-22 | 1.17.87 | fix(rate-of-closure, #4626): require trusted React baseline candidates to reach raster stability after font readiness and two animation frames. Candidate capture now requires three byte-identical screenshots sampled 100 ms apart and fails closed after 20 samples; a scheduled late-paint regression proves that capture does not accept an earlier incomplete frame. Existing baseline bytes, scientific authority, and drift thresholds are unchanged. |
@@ -6087,10 +6038,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+
 ### Version 1.17.10
 
 - 2026-08-22: fix(flow-rate-converter) — replaced focus:outline-none with focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 on input and select elements to restore keyboard focus indicators.
-
 ### Version 1.5.5
 
 - 2026-08-05: fix(rotation-converter) — update application navigation tabs
@@ -6425,14 +6376,6 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-21: Rate of Closure Mirror Freshness Check (#4624)
 
 - **2026-08-21**: feat(rate_of_closure, ops, #4624) — Added `scripts/check_mirror_freshness.py` and test suite `tests/ops/test_mirror_freshness.py` to detect and surface drift between canonical `src/rate_of_closure/web` and the public Pages mirror `D-sorganization/rate-of-closure-explorer`. Supports timestamp comparison, recorded canonical commit SHA matching, and deep tree blob comparison.
-
-## 2026-08-23: Rate of Closure Current-Main Gate Repair (#4626)
-
-- **2026-08-23**: fix(rate_of_closure, packaging, #4626) — Isolate the PyQt visual-layout persistence probe from the optional Tools sidebar service, explicitly close both rendered windows, and give the test a 150-second budget consistent with its declared 120-second subprocess contract. Preserve the fail-closed clean-checkout wheel gate while adding bounded porcelain-path diagnostics so any runner-local mutation is directly actionable.
-
-## 2026-08-23: Tracked LF Blob Normalization (#4626)
-
-- **2026-08-23**: fix(packaging, governance, #4626) — Normalize the two CRLF/mixed tracked JSON blobs exposed by the post-merge exact-wheel gate and add a Git-index EOL verifier to pre-commit, standard CI, and both distribution lanes. The verifier admits LF and newline-free blobs governed by `eol=lf`, rejects CRLF/mixed committed content, and preserves the existing fail-closed clean-checkout release contract. Reconcile the May-era workflow-inventory hook with the protected August runner-routing policy by admitting policy-selected hosted fallbacks while retaining the deprecated fixed-hardware-label prohibition.
 
 ## 2026-08-23: Palette Micro-UX Improvement in Rate of Closure
 

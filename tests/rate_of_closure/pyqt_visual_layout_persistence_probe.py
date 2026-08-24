@@ -6,7 +6,6 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
 
 import matplotlib
 import numpy as np
@@ -15,23 +14,7 @@ from PyQt6.QtGui import QFont, QFontDatabase, QFontMetrics, QImage
 from PyQt6.QtWidgets import QApplication
 
 from rate_of_closure.club_camera import ClubCamera
-from rate_of_closure.ui.pyqt6 import main_window as main_window_module
-from shared.python.gui_launcher.tools_sidebar_integration import (
-    ToolsSidebarInstallStatus,
-)
-
-RateOfClosureMainWindow = main_window_module.RateOfClosureMainWindow
-
-
-def _disable_optional_tools_sidebar(
-    *_args: Any, **_kwargs: Any
-) -> ToolsSidebarInstallStatus:
-    """Keep layout evidence independent of optional AI/sidebar services."""
-
-    return ToolsSidebarInstallStatus(
-        installed=False,
-        reason="disabled for isolated visual-layout evidence",
-    )
+from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow
 
 
 def _install_evidence_font(application: QApplication) -> dict[str, object]:
@@ -103,7 +86,6 @@ def main() -> None:
         settings_path.unlink()
     app = QApplication.instance() or QApplication([])
     font = _install_evidence_font(app)
-    main_window_module.install_tools_sidebar = _disable_optional_tools_sidebar
     settings = QSettings(str(settings_path), QSettings.Format.IniFormat)
 
     first = RateOfClosureMainWindow(navigation_settings=settings)
@@ -149,9 +131,6 @@ def main() -> None:
         encoding="utf-8",
     )
     second.close()
-    second.deleteLater()
-    app.processEvents()
-    app.quit()
 
 
 if __name__ == "__main__":

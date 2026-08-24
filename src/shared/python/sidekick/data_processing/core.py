@@ -569,18 +569,8 @@ class DataProcessorEngine(BaseCalculationEngine):
                         value if isinstance(value, list) else [value]
                     )
                 ]
-            elif operator == "==":
-                self.data = self.data[self.data[column] == value]
-            elif operator == "!=":
-                self.data = self.data[self.data[column] != value]
-            elif operator == ">":
-                self.data = self.data[self.data[column] > value]
-            elif operator == ">=":
-                self.data = self.data[self.data[column] >= value]
-            elif operator == "<":
-                self.data = self.data[self.data[column] < value]
-            elif operator == "<=":
-                self.data = self.data[self.data[column] <= value]
+            else:
+                self.data = self.data.query(f"{column} {operator} @value")
             return ProcessingResult(success=True, message="Filtered", data=self.data)
         except (KeyError, ValueError, TypeError, SyntaxError) as e:
             self._undo()
@@ -599,19 +589,12 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise FilterError("Query expression must not be empty")
         self._save_undo_state()
         try:
-            try:
-                validate_pandas_formula(expression, allowed_columns=self.data.columns)
-            except ValueError as error:
-                log_formula_rejected(expression, error)
-                raise FilterError(str(error)) from error
             self.data = self.data.query(expression)
             return ProcessingResult(
                 success=True, message="Query applied", data=self.data
             )
-        except (KeyError, ValueError, TypeError, SyntaxError, FilterError) as e:
+        except (KeyError, ValueError, TypeError, SyntaxError) as e:
             self._undo()
-            if isinstance(e, FilterError):
-                raise
             raise FilterError(str(e)) from e
 
     def get_statistics(self) -> dict[str, ColumnStats]:

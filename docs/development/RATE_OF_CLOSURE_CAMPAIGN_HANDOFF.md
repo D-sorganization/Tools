@@ -1,28 +1,5 @@
 # Rate of Closure Campaign Handoff
 
-## 2026-08-23 #4626 Source-Pinned Visual-Baseline Approval
-
-- Evidence repairs are protected-merged through #4661 at
-  `1214008e9dbf06b583ef44a4c821dc0567efdf8b`.
-- Trusted run `32686727162` passed React E2E and all 18 PyQt rendered tests;
-  both manifests bind the exact source. All 20 1440x900 candidate images were
-  inspected and their SHA-256 values verified before promotion.
-- Trusted run `32685823741` is repeatability-only because its PyQt provenance
-  used a test fallback. Its unchanged UI/runtime sources still quantify
-  cross-host renderer drift: React maxima 3,478 mean/45,593 changed-pixel
-  microunits; PyQt maxima 135/208.
-- Branch `fix/4626-source-pinned-visual-baselines` packages the reviewed images
-  and a two-run calibration authority. Limits are 1/4,000/50,000 for React and
-  1/200/250 for PyQt. Material stale controls remain rejected at React minima
-  13,606/50,659 and PyQt simulation 2,530/7,170.
-- PR #4662 merged as `9604773d7576a330602821f88dd964503b698ae0`; trusted run
-  `32689177846` passed React, all PyQt renders, and the comparator. Its post-main
-  Release Automation run exposed an older-host Python lacking `tomllib` before
-  runtime setup. Branch `fix/release-runtime-portability` selects pinned Python
-  3.12 first. Require that protected merge before R10-R15/#4433 adjudication or
-  UpstreamDrift pinning. These references govern visual regression only, not
-  pixel-exact portability or scientific model validity.
-
 ## 2026-08-15 #4142/#4433 protected consolidation rebase and CI closure
 
 - Version 1.17.10 closes six hosted Linux MyPy findings from the torque-panel

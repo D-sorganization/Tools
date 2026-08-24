@@ -100,12 +100,8 @@ jobs:
             sparse_checkout: |
               README.md
               build_hooks.py
-              launch_golf_suite.py
-              launch_upstream_drift.py
               pyproject.toml
-              scripts
               src/shared
-              tests/conftest.py
               tests/shared_contracts
               tests/support
             sparse_cone: false
@@ -173,24 +169,7 @@ jobs:
           cache: pip
 
       - name: Purge pip cache
-        run: |
-          python -m pip cache purge || true
-          python -c "
-          import pathlib, site, shutil
-          for sp in site.getsitepackages():
-              sp_path = pathlib.Path(sp)
-              if not sp_path.exists(): continue
-              for p in sp_path.glob('~*'):
-                  if p.is_dir(): shutil.rmtree(p, ignore_errors=True)
-                  else: p.unlink(missing_ok=True)
-              for d in sp_path.glob('*.dist-info'):
-                  if not (d / 'RECORD').exists():
-                      pkg = d.stem.split('-')[0].lower().replace('_', '-')
-                      shutil.rmtree(d, ignore_errors=True)
-                      for p in sp_path.glob(pkg + '*'):
-                          if p.is_dir(): shutil.rmtree(p, ignore_errors=True)
-                          else: p.unlink(missing_ok=True)
-          " || true
+        run: python -m pip cache purge || true
       - name: Install system dependencies
         if: steps.checkout_downstream.outcome == 'success'
         run: |
@@ -227,25 +206,9 @@ jobs:
         working-directory: ${{ matrix.downstream.path }}
         run: |
           touch "${{ github.workspace }}/src/__init__.py" "${{ github.workspace }}/src/shared/__init__.py"
-          mkdir -p src/shared/python vendor/ud-tools/src/shared/python tests/support
+          mkdir -p src/shared/python vendor/ud-tools/src/shared/python
           touch src/shared/python/__init__.py vendor/ud-tools/src/shared/python/__init__.py
-          touch tests/__init__.py tests/support/__init__.py
           touch src/shared/python/contracts.py vendor/ud-tools/src/shared/python/contracts.py
-          if [ ! -f tests/support/suite_markers.py ]; then
-            python -c "
-          import pathlib
-          content = '''from __future__ import annotations
-          SUITE_MARKERS = frozenset({'unit', 'integration', 'e2e', 'slow', 'live_simulation', 'benchmark', 'perf', 'smoke', 'gate', 'parity', 'scientific', 'motion_pipeline'})
-          ENFORCE_ENV_VAR = 'UD_ENFORCE_SUITE_MARKERS'
-          RATCHET_ENV_VAR = 'UD_RATCHET_SUITE_MARKERS'
-          def suite_markers_enforced() -> bool: return False
-          def suite_markers_ratchet_enforced() -> bool: return False
-          def load_suite_marker_baseline(): return set()
-          def classify_item(item): return True
-          '''
-          pathlib.Path('tests/support/suite_markers.py').write_text(content, encoding='utf-8')
-          "
-          fi
           tools_repo_root="${{ github.workspace }}"
           tools_link="$(dirname "$PWD")/Tools"
           ln -sfn "$tools_repo_root" "$tools_link"

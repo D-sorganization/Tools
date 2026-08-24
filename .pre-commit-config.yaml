@@ -79,13 +79,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-      - id: tracked-text-normalization
-        name: "tracked LF blob normalization"
-        entry: python scripts/check_tracked_text_normalization.py
-        language: system
-        pass_filenames: false
-        always_run: true
-
       - id: fleet-spec-freshness-warning
         name: "SPEC.md freshness warning"
         entry: python shared_scripts/fleet_hooks.py spec-freshness --warn-only

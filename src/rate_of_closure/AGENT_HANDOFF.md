@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-23
+> Last updated: 2026-08-22
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -20,7 +20,10 @@ gear effect; #4130 extends `SpringDamperImpactModel` rather than duplicating
 it), `flight/`, `ground/`, `variation/`, `solver/`. Club physics for the
 fitting epics is the sibling `shared/python/golf_club/`.
 
-## Delivery Pattern
+## Delivery Pattern, and the One Thing Left From #4466
+
+Long stacked PRs are dead here: #4119 closed unmerged and took its stack with
+it. Content lands as **slices rebuilt onto current `main`**.
 
 PR #4466 cannot be merged: its merge-base predates this package, leaving 281
 both-added conflicts. Twenty-two current-main slices landed as #4517–#4547.
@@ -55,25 +58,20 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
-#4142 R11.5 remains Python-authoritative; PyQt6 and React do not reimplement
-physics. Evidence repairs are protected-merged through #4661 at
-`1214008e9dbf06b583ef44a4c821dc0567efdf8b`. Trusted run `32686727162` passed
-React E2E and all 18 PyQt renders, with both manifests pinned to that source;
-all 20 images were inspected and byte-verified. Run `32685823741` supplies a
-repeatability control: unchanged UI/runtime paths nevertheless varied across
-Linux hosts by at most React 3,478/45,593 and PyQt 135/208 mean/changed-pixel
-microunits. PR #4662 approved the reviewed references and calibration, merged
-as `9604773d7576a330602821f88dd964503b698ae0`, and trusted run `32689177846`
-passed React, all PyQt renders, and comparison. Post-main Release Automation
-then exposed an older-host system Python lacking `tomllib`; #4663 fixed it and
-merged at `eebdddf8c6e366722be40c25278cf34a0392f256`. Post-main run
-`32690255930` passed analysis, validation, and version bump and opened release
-PR #4664. The ledger at
-`docs/audits/rate_of_closure_epic_4142_evidence.v1.json` classifies all 31
-R10--R15 items as 18 verified, 11 partial, and two unverified. This is bounded
-implementation evidence, not scientific or human validity; R15 and #4433
-acceptance remain open. PR #4666 merged as `9a3339b74`; its sole post-merge
-failure mistook the audited SHA for a credential. The repair is inline-scoped.
+#4142 R11.5 remains Python-authoritative; PyQt6 and the transport-only React
+Worker do not reimplement physics. #4628/#4635/#4646 protected-merged durable
+execution, bounded analysis, stable-paint capture, and the registered
+three-viewport runtime correction. #4646 merge commit
+`6e6e575904a6b0d52684f3994343076d07509144` is an ancestor of current `main`
+`55e7f012551438426e18bcd1d49e1281a0bcf02f`. Its PR head passed required CI,
+but trusted main-push React job `97098245144` stopped before browser execution
+because another apt process held `/var/lib/apt/lists/lock`; dependent PyQt job
+`97098605332` then failed closed on the absent React artifact. No registered
+scientific or visual assertion ran or failed, so these jobs are not completion
+evidence. PR #4649 serializes the Playwright installer behind the fleet apt
+mutex while retaining all assertions and the 15-second import ceiling. Require
+its protected merge's trusted main-push evidence before auditing R10-R15/#4433
+and adding the immutable UpstreamDrift consumer pin/parity.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 
