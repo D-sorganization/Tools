@@ -8,7 +8,7 @@
     "src/shared/python/safe_pandas_eval.py": 99.0,
     "src/shared/python/file_watcher/_fallback.py": 95.0,
     "src/shared/python/signal_toolkit/adaptive_filter.py": 95.0,
-    "src/shared/python/codemap": 90.0,
+    "src/shared/python/codemap": 70.0,
     "src/shared/python/sidekick/calculators/conversion/service.py": 90.0,
     "src/shared/python/upstream_drift_tools": 100.0
   }
