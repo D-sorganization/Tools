@@ -59,14 +59,13 @@ Trusted run `32686727162` passed React E2E and all 18 PyQt renders; both
 candidate manifests bind that exact source. All 20 1440x900 images were
 inspected and their bytes verified. Comparison against old references correctly
 failed. A second trusted run (`32685823741`) showed cross-host text-renderer
-variation despite unchanged UI/runtime sources: React maxima were 3,478 mean
-and 45,593 changed-pixel microunits; PyQt maxima were 135/208. Branch
-`fix/4626-source-pinned-visual-baselines` approves the current candidates with
-bounded envelopes 1/4,000/50,000 (React) and 1/200/250 (PyQt), plus a packaged
-calibration record. Material stale controls remain outside (React minima
-13,606/50,659; PyQt simulation 2,530/7,170). Require protected CI and a passing
-post-main trusted comparison before R10-R15/#4433 adjudication or UpstreamDrift
-pinning; this is visual stability evidence, not scientific validation.
+variation despite unchanged UI/runtime sources. PR #4662 approved the bounded
+references and calibration, merged as `9604773d7576a330602821f88dd964503b698ae0`,
+and trusted run `32689177846` passed React, all PyQt renders, and comparison.
+Post-main Release Automation then exposed an older-host system Python lacking
+`tomllib`; branch `fix/release-runtime-portability` selects immutable-pinned
+Python 3.12 before analysis. Require its protected merge before R10-R15/#4433
+adjudication or UpstreamDrift pinning. Visual stability is not scientific validity.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

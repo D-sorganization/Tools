@@ -42,3 +42,23 @@ def test_release_steps_read_notes_from_a_file_not_an_environment_variable() -> N
     for step in relevant_steps:
         assert "CHANGELOG_ENTRY" not in step.get("env", {})
         assert "release-changelog-entry.md" in step["run"]
+
+
+def test_release_analysis_selects_supported_python_before_tomllib() -> None:
+    steps = _workflow()["jobs"]["analyse-commits"]["steps"]
+    read_index = next(
+        index
+        for index, step in enumerate(steps)
+        if step.get("name") == "Read current version"
+    )
+    setup_index, setup = next(
+        (index, step)
+        for index, step in enumerate(steps)
+        if str(step.get("uses", "")).startswith("actions/setup-python@")
+    )
+
+    assert setup_index < read_index
+    assert setup["uses"] == (
+        "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1"
+    )
+    assert setup["with"]["python-version"] == "3.12"

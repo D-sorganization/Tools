@@ -27,12 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.93                                    |
+| **Spec Version**        | 1.17.94                                    |
 | **Last Spec Update**    | 2026-08-23                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.94 makes release analysis independent of the fleet host's system
+Python by selecting the repository-supported Python 3.12 toolcache before the
+first `tomllib` import. The action is immutable-SHA pinned and a workflow
+contract prevents version parsing from moving ahead of runtime selection.
 
 Version 1.17.93 approves the 20 visually inspected React and PyQt references
 from trusted run `32686727162`, pinned to protected source commit
@@ -5147,6 +5152,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-23 | 1.17.94 | fix(release): select immutable-pinned Python 3.12 before release analysis imports `tomllib`, so the same protected-main workflow is portable across older fleet-host system runtimes; add an ordering and version contract test. |
 | 2026-08-23 | 1.17.93 | test(rate-of-closure, #4626): approve the visually inspected 20-reference React/PyQt set from trusted run `32686727162` at protected source `1214008e9dbf06b583ef44a4c821dc0567efdf8b`; package a two-run calibration record; and use explicit cross-host renderer envelopes of 1/4,000/50,000 microunits for React and 1/200/250 for PyQt. Every measured repeatability case remains inside and every materially stale control remains outside; this is visual-regression authority, not pixel-exact portability or scientific validation. |
 | 2026-08-23 | 1.17.92 | fix(rate-of-closure, #4626): bind the trusted PyQt candidate manifest to the exact protected push SHA used by the comparator. A workflow contract test requires the provenance variable, preventing the unit-test fallback commit from entering retained evidence or a source-pinned baseline approval. The prior run remains diagnostic only; new candidates must be generated after this change reaches protected `main`. |
 | 2026-08-23 | 1.17.91 | fix(rate-of-closure, #4626): isolate PyQt visual evidence from warm-runner `QSettings` by routing the default INI user scope to a fresh campaign-owned directory before application construction. Candidate identity now records exact Qt, PyQt, Matplotlib, and DejaVu Sans versions; focused rendered and comparator tests pass, while reference promotion remains a separate protected review. |

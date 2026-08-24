@@ -40,6 +40,13 @@ jobs:
         with:
           fetch-depth: 0 # Full history required to walk commits since last tag
 
+      - name: Set up supported Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+        with:
+          python-version: "3.12"
+
       - name: Read current version
         id: current
         run: |
