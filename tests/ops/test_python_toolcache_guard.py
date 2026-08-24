@@ -52,12 +52,10 @@ def test_rust_quality_gate_allows_cold_cache_completion() -> None:
     assert 'cargo audit --db "$RUSTSEC_DB" --no-fetch' in audit_run
     assert (
         "cargo generate-lockfile --manifest-path "
-        "src/pendulum_simulator/pendulum-core/Cargo.toml"
-        in audit_run
+        "src/pendulum_simulator/pendulum-core/Cargo.toml" in audit_run
     )
     assert (
-        'cargo audit --file "$PENDULUM_LOCK" --db "$RUSTSEC_DB" --no-fetch'
-        in audit_run
+        'cargo audit --file "$PENDULUM_LOCK" --db "$RUSTSEC_DB" --no-fetch' in audit_run
     )
 
 
