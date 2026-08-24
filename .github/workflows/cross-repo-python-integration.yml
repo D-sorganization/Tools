@@ -239,6 +239,9 @@ jobs:
             tests/support
           touch src/shared/python/__init__.py vendor/ud-tools/src/shared/python/__init__.py
           touch tests/__init__.py tests/support/__init__.py
+          if [ ! -f tests/conftest.py ]; then
+            touch tests/conftest.py
+          fi
           touch src/shared/python/contracts.py vendor/ud-tools/src/shared/python/contracts.py
           if [ ! -f tests/support/suite_markers.py ]; then
             python -c "
