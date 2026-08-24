@@ -21,6 +21,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from ..trusted_git import resolve_trusted_git_executable
 from . import db as db_mod
 from . import parsers as parsers_mod
 
@@ -133,9 +134,15 @@ def _walk(repo_root: Path) -> Any:
 
 
 def _git_changed_files(repo_root: Path, since: str) -> list[str]:
+    git_path = resolve_trusted_git_executable()
+    if git_path is None:
+        logger.warning(
+            "codemap: no trusted git executable found; falling back to full rebuild",
+        )
+        return []
     try:
         out = subprocess.check_output(
-            ["git", "diff", "--name-only", f"{since}..HEAD"],
+            [git_path, "diff", "--name-only", f"{since}..HEAD"],
             cwd=str(repo_root),
             stderr=subprocess.DEVNULL,
             text=True,
@@ -156,9 +163,12 @@ def _git_changed_files(repo_root: Path, since: str) -> list[str]:
 
 
 def _current_commit(repo_root: Path) -> str | None:
+    git_path = resolve_trusted_git_executable()
+    if git_path is None:
+        return None
     try:
         out = subprocess.check_output(
-            ["git", "rev-parse", "HEAD"],
+            [git_path, "rev-parse", "HEAD"],
             cwd=str(repo_root),
             stderr=subprocess.DEVNULL,
             text=True,

@@ -4,11 +4,6 @@ import sqlite3
 from pathlib import Path
 
 from codemap import db as codemap_db
-from tests.helpers.codemap_optional_deps import CODEMAP_DEPS_SKIP
-
-# Scoped to this module only; a session-wide skip hook silenced the whole
-# suite here once already (issue #4497).
-pytestmark = CODEMAP_DEPS_SKIP
 
 
 def test_path_helpers_use_canonical_codemap_locations(tmp_path: Path) -> None:

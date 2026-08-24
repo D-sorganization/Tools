@@ -16,6 +16,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from ..trusted_git import resolve_trusted_git_executable
 from . import db as db_mod
 
 # ---------------------------------------------------------------------------
@@ -69,9 +70,12 @@ _DEFAULT_ROOT: Path | None = None
 def discover_repo_root(start: str | os.PathLike[str] | None = None) -> Path:
     """Find the enclosing git repo root, or fall back to ``start``/CWD."""
     base = Path(start) if start else Path.cwd()
+    git_path = resolve_trusted_git_executable()
     try:
+        if git_path is None:
+            raise FileNotFoundError("No trusted git executable found")
         out = subprocess.check_output(
-            ["git", "rev-parse", "--show-toplevel"],
+            [git_path, "rev-parse", "--show-toplevel"],
             cwd=str(base),
             stderr=subprocess.DEVNULL,
             text=True,
@@ -244,7 +248,7 @@ def imports_of(
     repo = _resolve(repo_root)
     conn = db_mod.open_db(repo)
     try:
-        rel = path.replace(os.sep, "/")
+        rel = path.replace("\\", "/")
         row = conn.execute(
             "SELECT imports FROM files WHERE path = ?", (rel,)
         ).fetchone()
