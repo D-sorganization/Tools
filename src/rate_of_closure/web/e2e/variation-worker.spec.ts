@@ -216,7 +216,9 @@ test("localized production Worker cancels, reruns, and exports command provenanc
   const jsonPath = await (await jsonDownloadPromise).path();
   if (jsonPath === null) throw new Error("swing ensemble JSON download has no path");
   const document = JSON.parse(await readFile(jsonPath, "utf8"));
-  expect(document.schemaVersion).toBe(2);
+  expect(document.schemaVersion).toBe(3);
+  expect(document.dataset.planDocument.schema_version).toBe(3);
+  expect(document.dataset.planDocument.metadata.plan_sha256).toMatch(/^[0-9a-f]{64}$/);
   expect(document.trials[0].localizedTorqueCommands).toHaveLength(2);
 
   await runButton.click();
