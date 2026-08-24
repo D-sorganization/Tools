@@ -2,8 +2,12 @@
 
 ## Safety
 
-1. All AI work on `staging` branch. Never commit directly to `main`.
-2. PRs target `staging`. No auto-merge. Human approval required.
+1. All AI work uses an isolated feature branch and worktree. Never commit or
+   push directly to `main`.
+2. PRs target the protected default branch, `main`, as required by `CLAUDE.md`
+   and the fleet release contract. Auto-merge may be armed only when the
+   repository policy allows it and must still wait for required checks and
+   review; never bypass a hold, review, or protected check.
 3. No destructive git history operations.
 4. No secret commits (.env, API keys, credentials).
 

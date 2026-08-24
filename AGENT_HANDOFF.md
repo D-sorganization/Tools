@@ -16,19 +16,19 @@ calculator into a swing → impact → ball-flight simulation platform. Since
 early August the delivery pattern has shifted from long stacked PRs to
 **scoped consolidations rebuilt directly onto current `main`**.
 
-| Epic  | Status (one line)                                                                                                                                                                                                                      |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                                   |
-| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                            |
-| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                     |
-| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                             |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4628/#4635/#4646 merged durable R11.5 execution and visual correction; #4626 owns current-main qualification before the evidence audit and UpstreamDrift pin.         |
-| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                 |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473**; current-main React evidence passes, while #4626 must restore the PyQt and distribution qualifications before acceptance adjudication. |
-| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                         |
-| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                        |
-| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                     |
-| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.       |
+| Epic  | Status (one line)                                                                                                                                                                                                                 |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                              |
+| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
+| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
+| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. The 31-item audit at `docs/audits/rate_of_closure_epic_4142_evidence.v1.json` records 18 verified, 11 partial, and two unverified requirements; R15 remains open. |
+| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
+| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
+| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                   |
+| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.  |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -63,9 +63,11 @@ variation despite unchanged UI/runtime sources. PR #4662 approved the bounded
 references and calibration, merged as `9604773d7576a330602821f88dd964503b698ae0`,
 and trusted run `32689177846` passed React, all PyQt renders, and comparison.
 Post-main Release Automation then exposed an older-host system Python lacking
-`tomllib`; branch `fix/release-runtime-portability` selects immutable-pinned
-Python 3.12 before analysis. Require its protected merge before R10-R15/#4433
-adjudication or UpstreamDrift pinning. Visual stability is not scientific validity.
+`tomllib`; #4663 fixed it and merged at `eebdddf8c6e366722be40c25278cf34a0392f256`.
+Post-main run `32690255930` passed analysis, validation, and version bump and
+opened release PR #4664. Its exact-head CI was dispatched once without
+auto-merge. The R10--R15 audit remains fail closed: 18 verified, 11 partial,
+and two unverified. Visual stability is not scientific validity.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;
@@ -139,7 +141,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Merge #4626, require passing trusted current-main React/PyQt/distribution evidence, complete the #4142/#4433 audit, and pin the immutable Tools commit in UpstreamDrift; #4430 is complete.
+4. Land the #4142 evidence ledger, close its 11 partial and two unverified requirements, adjudicate #4433, and pin the qualified immutable Tools commit in UpstreamDrift; #4430 is complete.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.

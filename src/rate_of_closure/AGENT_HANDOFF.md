@@ -65,11 +65,14 @@ Linux hosts by at most React 3,478/45,593 and PyQt 135/208 mean/changed-pixel
 microunits. PR #4662 approved the reviewed references and calibration, merged
 as `9604773d7576a330602821f88dd964503b698ae0`, and trusted run `32689177846`
 passed React, all PyQt renders, and comparison. Post-main Release Automation
-then exposed an older-host system Python lacking `tomllib`; branch
-`fix/release-runtime-portability` selects immutable-pinned Python 3.12 before
-analysis. Require its protected merge before R10-R15/#4433 adjudication or
-immutable UpstreamDrift pinning. This proves bounded visual regression
-stability, not pixel-exact portability or scientific validity.
+then exposed an older-host system Python lacking `tomllib`; #4663 fixed it and
+merged at `eebdddf8c6e366722be40c25278cf34a0392f256`. Post-main run
+`32690255930` passed analysis, validation, and version bump and opened release
+PR #4664. The ledger at
+`docs/audits/rate_of_closure_epic_4142_evidence.v1.json` classifies all 31
+R10--R15 items as 18 verified, 11 partial, and two unverified. This is bounded
+implementation evidence, not scientific or human validity; R15 and #4433
+acceptance remain open.
 
 ### Adding a tab: the four-manifest lockstep (read before starting C6/C7/H4)
 

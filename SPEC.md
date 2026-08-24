@@ -27,12 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.94                                    |
+| **Spec Version**        | 1.17.95                                    |
 | **Last Spec Update**    | 2026-08-23                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.95 adds a fail-closed, machine-readable requirement audit for all
+31 R10--R15 items in epic #4142. At protected base revision
+`eebdddf8c6e366722be40c25278cf34a0392f256`, 18 requirements have direct
+source-and-test evidence, 11 remain partial, and two UpstreamDrift consumption
+requirements remain unverified; the epic therefore remains uncloseable. The
+project GAAI override now agrees with the repository's established protected
+feature-branch-to-`main` delivery contract instead of directing agents to a
+conflicting `staging` target.
 
 Version 1.17.94 makes release analysis independent of the fleet host's system
 Python by selecting the repository-supported Python 3.12 toolcache before the
@@ -5152,6 +5161,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-23 | 1.17.95 | docs(rate-of-closure, #4142): add a fail-closed 31-item R10--R15 evidence ledger with exact source, test, command, remote-run, and remaining-gap traceability; classify 18 items verified, 11 partial, and two unverified without treating visual or synthetic evidence as human validation. Reconcile the stale GAAI `staging` rule with the protected feature-branch-to-`main` repository contract and update both active handoffs after #4663 and post-main Release Automation passed. |
 | 2026-08-23 | 1.17.94 | fix(release): select immutable-pinned Python 3.12 before release analysis imports `tomllib`, so the same protected-main workflow is portable across older fleet-host system runtimes; add an ordering and version contract test. |
 | 2026-08-23 | 1.17.93 | test(rate-of-closure, #4626): approve the visually inspected 20-reference React/PyQt set from trusted run `32686727162` at protected source `1214008e9dbf06b583ef44a4c821dc0567efdf8b`; package a two-run calibration record; and use explicit cross-host renderer envelopes of 1/4,000/50,000 microunits for React and 1/200/250 for PyQt. Every measured repeatability case remains inside and every materially stale control remains outside; this is visual-regression authority, not pixel-exact portability or scientific validation. |
 | 2026-08-23 | 1.17.92 | fix(rate-of-closure, #4626): bind the trusted PyQt candidate manifest to the exact protected push SHA used by the comparator. A workflow contract test requires the provenance variable, preventing the unit-test fallback commit from entering retained evidence or a source-pinned baseline approval. The prior run remains diagnostic only; new candidates must be generated after this change reaches protected `main`. |
