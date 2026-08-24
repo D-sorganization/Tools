@@ -32,6 +32,10 @@
 
 ## 2. Purpose & Mission
 
+### Performance Optimizations
+
+Version 1.17.97 optimizes SVG path generation in `impactSceneSvg.ts` and `PuttingVisuals.tsx` by replacing chained array methods (`.map().join()`) with single-pass `for`-loops to reduce intermediate string allocations and garbage collection pressure during high-frequency visualization renders.
+
 ### Governed Launch-Monitor Analytics Release
 
 Version 1.17.101 retains Python 3.10 as a hard file-watcher wheel and compiled-
