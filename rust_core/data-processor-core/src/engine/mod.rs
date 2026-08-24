@@ -23,8 +23,6 @@ mod python_bindings {
 
     use pyo3::exceptions::{PyIOError, PyNotImplementedError, PyValueError};
     use pyo3::prelude::*;
-    use pyo3::types::PyAny;
-    use pyo3::IntoPyObjectExt;
 
     use super::bulk_io::{
         convert as engine_convert, filter_export as engine_filter_export,
@@ -53,27 +51,27 @@ mod python_bindings {
     /// Returns a dict with keys: `columns`, `column_types`, `row_count_estimate`,
     /// `file_size_bytes`, `format`.
     #[pyfunction]
-    fn py_inspect(path: &str) -> PyResult<HashMap<String, Py<PyAny>>> {
-        Python::attach(|py| {
+    fn py_inspect(path: &str) -> PyResult<HashMap<String, PyObject>> {
+        Python::with_gil(|py| {
             let info: SchemaInfo = engine_inspect(Path::new(path)).map_err(map_engine_error)?;
             let mut d = HashMap::new();
-            d.insert("columns".to_owned(), info.columns.into_py_any(py)?);
+            d.insert("columns".to_owned(), info.columns.into_py(py));
             d.insert(
                 "column_types".to_owned(),
                 info.column_types
                     .into_iter()
                     .collect::<HashMap<_, _>>()
-                    .into_py_any(py)?,
+                    .into_py(py),
             );
             d.insert(
                 "row_count_estimate".to_owned(),
-                info.row_count_estimate.into_py_any(py)?,
+                info.row_count_estimate.into_py(py),
             );
             d.insert(
                 "file_size_bytes".to_owned(),
-                info.file_size_bytes.into_py_any(py)?,
+                info.file_size_bytes.into_py(py),
             );
-            d.insert("format".to_owned(), info.format.into_py_any(py)?);
+            d.insert("format".to_owned(), info.format.into_py(py));
             Ok(d)
         })
     }
@@ -102,30 +100,18 @@ mod python_bindings {
         src: &str,
         dst: &str,
         output_format: &str,
-    ) -> PyResult<HashMap<String, Py<PyAny>>> {
-        Python::attach(|py| {
+    ) -> PyResult<HashMap<String, PyObject>> {
+        Python::with_gil(|py| {
             let report: ConversionReport =
                 engine_convert(Path::new(src), Path::new(dst), output_format)
                     .map_err(map_engine_error)?;
             let mut d = HashMap::new();
-            d.insert("source".to_owned(), report.source.into_py_any(py)?);
-            d.insert(
-                "destination".to_owned(),
-                report.destination.into_py_any(py)?,
-            );
-            d.insert(
-                "output_format".to_owned(),
-                report.output_format.into_py_any(py)?,
-            );
-            d.insert(
-                "rows_written".to_owned(),
-                report.rows_written.into_py_any(py)?,
-            );
-            d.insert("columns".to_owned(), report.columns.into_py_any(py)?);
-            d.insert(
-                "bytes_written".to_owned(),
-                report.bytes_written.into_py_any(py)?,
-            );
+            d.insert("source".to_owned(), report.source.into_py(py));
+            d.insert("destination".to_owned(), report.destination.into_py(py));
+            d.insert("output_format".to_owned(), report.output_format.into_py(py));
+            d.insert("rows_written".to_owned(), report.rows_written.into_py(py));
+            d.insert("columns".to_owned(), report.columns.into_py(py));
+            d.insert("bytes_written".to_owned(), report.bytes_written.into_py(py));
             Ok(d)
         })
     }

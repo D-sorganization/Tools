@@ -222,7 +222,7 @@ export function RotationConverter() {
                         <div className="bg-slate-700/50 p-3 rounded">
                             <p className="text-xs text-slate-400 mb-1">Quaternion (w, x, y, z)</p>
                             <p className="font-mono text-sm">
-                                [{results.quaternion[0].toFixed(4)}, {results.quaternion[1].toFixed(4)}, {results.quaternion[2].toFixed(4)}, {results.quaternion[3].toFixed(4)}]
+                                [{results.quaternion.map(n => n.toFixed(4)).join(', ')}]
                             </p>
                         </div>
 
@@ -230,7 +230,7 @@ export function RotationConverter() {
                         <div className="bg-slate-700/50 p-3 rounded">
                             <p className="text-xs text-slate-400 mb-1">Euler Angles ({results.euler_convention})</p>
                             <p className="font-mono text-sm">
-                                [{results.euler[0].toFixed(4)}, {results.euler[1].toFixed(4)}, {results.euler[2].toFixed(4)}]
+                                [{results.euler.map(n => n.toFixed(4)).join(', ')}]
                             </p>
                         </div>
 
@@ -238,7 +238,7 @@ export function RotationConverter() {
                         <div className="bg-slate-700/50 p-3 rounded">
                             <p className="text-xs text-slate-400 mb-1">Axis-Angle</p>
                             <p className="font-mono text-sm">
-                                Axis: [{results.axis_angle.axis[0].toFixed(4)}, {results.axis_angle.axis[1].toFixed(4)}, {results.axis_angle.axis[2].toFixed(4)}]
+                                Axis: [{results.axis_angle.axis.map(n => n.toFixed(4)).join(', ')}]
                             </p>
                             <p className="font-mono text-sm">
                                 Angle: {results.axis_angle.angle.toFixed(4)} rad
@@ -249,7 +249,7 @@ export function RotationConverter() {
                         <div className="bg-slate-700/50 p-3 rounded">
                             <p className="text-xs text-slate-400 mb-1">Rodrigues Vector</p>
                             <p className="font-mono text-sm">
-                                [{results.rodrigues[0].toFixed(4)}, {results.rodrigues[1].toFixed(4)}, {results.rodrigues[2].toFixed(4)}]
+                                [{results.rodrigues.map(n => n.toFixed(4)).join(', ')}]
                             </p>
                         </div>
 
@@ -257,15 +257,9 @@ export function RotationConverter() {
                         <div className="bg-slate-700/50 p-3 rounded overflow-x-auto">
                             <p className="text-xs text-slate-400 mb-1">Rotation Matrix (3x3)</p>
                             <pre className="font-mono text-sm bg-slate-900/50 p-2 rounded">
-                                {(() => {
-                                    // ⚡ Bolt Optimization: Replace chained array .map().join() with manual string construction
-                                    // for fixed 3x3 matrices to eliminate intermediate array allocations per render.
-                                    const m = results.rotation_matrix;
-                                    const r0 = `[ ${m[0][0].toFixed(4).padStart(7, ' ')}, ${m[0][1].toFixed(4).padStart(7, ' ')}, ${m[0][2].toFixed(4).padStart(7, ' ')} ]`;
-                                    const r1 = `[ ${m[1][0].toFixed(4).padStart(7, ' ')}, ${m[1][1].toFixed(4).padStart(7, ' ')}, ${m[1][2].toFixed(4).padStart(7, ' ')} ]`;
-                                    const r2 = `[ ${m[2][0].toFixed(4).padStart(7, ' ')}, ${m[2][1].toFixed(4).padStart(7, ' ')}, ${m[2][2].toFixed(4).padStart(7, ' ')} ]`;
-                                    return `${r0}\n${r1}\n${r2}`;
-                                })()}
+                                {results.rotation_matrix.map(row =>
+                                    `[ ${row.map(n => n.toFixed(4).padStart(7, ' ')).join(', ')} ]`
+                                ).join('\n')}
                             </pre>
                         </div>
 

@@ -16,7 +16,7 @@ use crate::types::Vector3;
 ///
 /// Used for rotation matrices, inertia tensors, and Jacobians.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 // NOTE: Matrix3 uses [f64; 9], so WASM support is implemented via custom
 // accessors rather than exposing the backing array directly.

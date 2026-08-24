@@ -191,7 +191,7 @@ pub mod py_bindings {
     use super::*;
     use pyo3::prelude::*;
 
-    #[pyclass(from_py_object)]
+    #[pyclass]
     #[derive(Clone)]
     pub struct PyNasa7Species {
         inner: Nasa7Species,

@@ -22,7 +22,7 @@ pub mod python {
     use pyo3::prelude::*;
 
     /// Python wrapper for DoublePendulumParams
-    #[pyclass(from_py_object)]
+    #[pyclass]
     #[derive(Clone)]
     pub struct PyDoublePendulumParams {
         pub inner: DoublePendulumParams,
@@ -64,7 +64,7 @@ pub mod python {
     }
 
     /// Python wrapper for TriplePendulumParams
-    #[pyclass(from_py_object)]
+    #[pyclass]
     #[derive(Clone)]
     pub struct PyTriplePendulumParams {
         pub inner: TriplePendulumParams,
@@ -104,7 +104,7 @@ pub mod python {
     }
 
     /// Python wrapper for GolferParams
-    #[pyclass(from_py_object)]
+    #[pyclass]
     #[derive(Clone)]
     pub struct PyGolferParams {
         pub inner: GolferParams,
@@ -172,7 +172,7 @@ pub mod python {
     }
 
     /// Python wrapper for CMA-ES result
-    #[pyclass(from_py_object)]
+    #[pyclass]
     #[derive(Clone)]
     pub struct PyCmaEsResult {
         pub best_solution: Vec<f64>,
@@ -211,7 +211,7 @@ pub mod python {
     }
 
     /// Python wrapper for CMA-ES configuration
-    #[pyclass(from_py_object)]
+    #[pyclass]
     #[derive(Clone)]
     pub struct PyCmaEsConfig {
         pub population_size: usize,

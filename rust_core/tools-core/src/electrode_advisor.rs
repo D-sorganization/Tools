@@ -1,10 +1,9 @@
 use pyo3::prelude::*;
-use pyo3::types::PyAny;
 use std::f64::consts::PI;
 
 const MM_PER_M: f64 = 1000.0;
 
-#[pyclass(module = "tools_core.electrode_advisor", get_all, from_py_object)]
+#[pyclass(module = "tools_core.electrode_advisor", get_all)]
 #[derive(Clone, Debug)]
 pub struct BathDefaults {
     pub shape: String,
@@ -35,7 +34,7 @@ impl BathDefaults {
     }
 }
 
-#[pyclass(module = "tools_core.electrode_advisor", get_all, from_py_object)]
+#[pyclass(module = "tools_core.electrode_advisor", get_all)]
 #[derive(Clone, Debug)]
 pub struct ElectrodeDefaults {
     pub electrode_type: String,
@@ -75,7 +74,7 @@ impl ElectrodeDefaults {
     }
 }
 
-#[pyclass(module = "tools_core.electrode_advisor", get_all, from_py_object)]
+#[pyclass(module = "tools_core.electrode_advisor", get_all)]
 #[derive(Clone, Debug)]
 pub struct DraftingEnvelope {
     pub bath_shell_thickness_mm: f64,
@@ -106,7 +105,7 @@ impl DraftingEnvelope {
     }
 }
 
-#[pyclass(module = "tools_core.electrode_advisor", get_all, from_py_object)]
+#[pyclass(module = "tools_core.electrode_advisor", get_all)]
 #[derive(Clone, Debug)]
 pub struct ElectrodePlacement {
     pub index: usize,
@@ -124,7 +123,7 @@ pub struct ElectrodePlacement {
     pub effective_length_mm: f64,
 }
 
-#[pyclass(module = "tools_core.electrode_advisor", get_all, from_py_object)]
+#[pyclass(module = "tools_core.electrode_advisor", get_all)]
 #[derive(Clone, Debug)]
 pub struct ElectrodeAdvisorLayout {
     pub bath: BathDefaults,
@@ -155,7 +154,7 @@ impl ElectrodeAdvisorLayout {
         self.bath.glass_level_m * MM_PER_M
     }
 
-    pub fn to_manifest(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+    pub fn to_manifest(&self, py: Python<'_>) -> PyResult<PyObject> {
         use pyo3::types::{PyDict, PyList};
 
         let bath = PyDict::new(py);
@@ -227,7 +226,7 @@ impl ElectrodeAdvisorLayout {
         root.set_item("drafting_assumptions", drafting)?;
         root.set_item("placements", placements)?;
 
-        Ok(root.into_any().unbind())
+        Ok(root.into())
     }
 }
 
@@ -299,7 +298,7 @@ pub fn build_default_electrode_advisor_layout() -> ElectrodeAdvisorLayout {
     }
 }
 
-#[pyclass(module = "tools_core.electrode_advisor", from_py_object)]
+#[pyclass(module = "tools_core.electrode_advisor")]
 #[derive(Clone, Debug)]
 pub struct ElectrodeAdvancementCalculator {
     #[pyo3(get)]

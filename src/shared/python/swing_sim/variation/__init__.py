@@ -3,7 +3,7 @@
 One 'how parameters vary' vocabulary for the whole repo: a namespaced
 variable registry (:mod:`.spec`), a seeded parallel N-run executor
 (:mod:`.engine`), dispersion/sensitivity analysis (:mod:`.analysis`),
-and CSV/JSON/HDF5 dataset IO (:mod:`.dataset_io`, :mod:`.dataset_hdf5`).
+and CSV/JSON dataset IO (:mod:`.dataset_io`).
 
 Deliberately NOT re-exported from ``shared.python.swing_sim`` — import
 from this subpackage directly (same policy as ``swing_sim.solver``).
@@ -21,22 +21,6 @@ from .analysis import (
     sensitivity_from_standard_deviations,
     spearman_matrix,
     summary_stats,
-)
-from .dataset_hdf5 import (
-    DATASET_HDF5_SCHEMA_ID,
-    DATASET_HDF5_SCHEMA_VERSION,
-    Hdf5UnavailableError,
-    read_hdf5,
-    write_hdf5,
-)
-from .dataset_io import (
-    DATASET_JSON_SCHEMA_VERSION,
-    from_json_dict,
-    read_csv,
-    read_json,
-    to_json_dict,
-    write_csv,
-    write_json,
 )
 from .dispersion_metric_types import (
     ELLIPSOID_VOLUME,
@@ -151,9 +135,6 @@ __all__ = [
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",
     "CATEGORY_SWING",
-    "DATASET_HDF5_SCHEMA_ID",
-    "DATASET_HDF5_SCHEMA_VERSION",
-    "DATASET_JSON_SCHEMA_VERSION",
     "DELIVERY_OUTPUTS",
     "DISTRIBUTIONS",
     "FLIGHT_OUTPUTS",
@@ -180,7 +161,6 @@ __all__ = [
     "MIN_CONFIDENCE_LEVEL",
     "INSUFFICIENT_SAMPLES",
     "INVALID_COVARIANCE",
-    "Hdf5UnavailableError",
     "MorrisDesign",
     "MorrisEstimate",
     "MorrisEvaluation",
@@ -234,14 +214,10 @@ __all__ = [
     "find_low_variability_intervals",
     "find_ranked_low_variability_intervals",
     "finite_sample_standard_deviation",
-    "from_json_dict",
     "generate_morris_design",
     "one_at_a_time_sensitivity",
     "outputs_for_mode",
     "register_variable",
-    "read_hdf5",
-    "read_csv",
-    "read_json",
     "run_variation",
     "sensitivity_from_standard_deviations",
     "sample_inputs",
@@ -249,10 +225,6 @@ __all__ = [
     "sample_input_chunks",
     "spearman_matrix",
     "summary_stats",
-    "to_json_dict",
     "variable_registry",
     "variables_in_category",
-    "write_hdf5",
-    "write_csv",
-    "write_json",
 ]

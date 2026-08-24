@@ -67,17 +67,8 @@ function selectionKeys(
 
 function pointString(points: readonly PlotPoint[], rawIndices: readonly number[]): string {
   const included = new Set(rawIndices);
-  let result = "";
-  let first = true;
-  for (let i = 0; i < points.length; i++) {
-    const pt = points[i];
-    if (included.has(pt.rawIndex)) {
-      if (!first) result += " ";
-      result += `${pt.x.toFixed(1)},${pt.y.toFixed(1)}`;
-      first = false;
-    }
-  }
-  return result;
+  return points.filter(({ rawIndex }) => included.has(rawIndex))
+    .map(({ x, y }) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
 }
 
 function selectedPoint(points: readonly PlotPoint[], rawIndex: number | null): PlotPoint | null {

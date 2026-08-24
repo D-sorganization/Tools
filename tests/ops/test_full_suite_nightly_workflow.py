@@ -41,7 +41,6 @@ def test_full_suite_test_extra_declares_collection_runtime_dependencies() -> Non
     assert {
         "ezdxf",
         "fastapi",
-        "h5py",
         "httpx",
         "opencv-python-headless",
         "pymodbus",
@@ -49,12 +48,6 @@ def test_full_suite_test_extra_declares_collection_runtime_dependencies() -> Non
         "requests",
         "sqlmodel",
     }.issubset(dep_names)
-
-
-def test_standard_ci_manifest_declares_hdf5_collection_dependency() -> None:
-    requirements = (REPO_ROOT / "requirements.txt").read_text(encoding="utf-8")
-
-    assert "h5py>=3.10.0" in requirements
 
 
 def test_full_suite_nightly_hard_fails_missing_collection_dependencies() -> None:

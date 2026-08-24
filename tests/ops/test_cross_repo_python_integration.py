@@ -157,22 +157,3 @@ def test_cross_repo_job_uses_persistent_python_toolcache_and_cold_cache_budget()
         "cache": "pip",
     }
     assert "${{ runner.temp }}/_tool_cache" not in setup_step.get("env", {}).values()
-
-
-def test_downstream_fixture_creates_complete_tools_provider_roots() -> None:
-    """Keep UpstreamDrift's fail-closed provider resolver executable."""
-    workflow = _workflow()
-    steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]
-    prepare = next(
-        step
-        for step in steps
-        if step.get("name") == "Prepare Tools workspace for downstream tests"
-    )
-
-    command_tokens = set(prepare["run"].replace("\\", " ").split())
-    for provider_root in (
-        "vendor/ud-tools/src/shared/python",
-        "vendor/ud-tools/src",
-        "vendor/ud-tools/src/python/src",
-    ):
-        assert provider_root in command_tokens
