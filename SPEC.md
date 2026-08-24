@@ -27,12 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.96                                    |
-| **Last Spec Update**    | 2026-08-23                                 |
+| **Spec Version**        | 1.17.101                                   |
+| **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.101 retains Python 3.10 as a hard file-watcher wheel and compiled-
+backend import gate while running the repository-root wrapper tests only on
+their declared Python 3.11+ support floor. This prevents the correct
+below-floor collection guard from becoming pytest exit 5 without weakening
+the 3.10 compatibility claim or the 3.11/3.12 behavior tests.
 
 Version 1.17.96 preserves the exact #4142 audit-base revision assertion while
 marking that reviewed Git SHA with `detect-secrets`' supported inline
@@ -5167,6 +5173,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-24 | 1.17.101 | fix(ci, #4142): retain the file-watcher Python 3.10 wheel and compiled-backend import gates while running the repository-root wrapper tests only on their declared Python 3.11+ floor. Add a workflow contract so the intentional below-floor collection guard cannot regress into pytest exit 5 without weakening supported-runtime behavior coverage. |
 | 2026-08-24 | 1.17.98 | feat(rate-of-closure, #4142): add a public, versioned HDF5 contract for canonical scalar variation datasets. Retain the complete execution document, named input/output arrays, failure mask, and elapsed time; bind the logical content with SHA-256; publish atomically without replacing reviewed evidence; fail closed on missing dependencies, incompatible schemas, malformed structure, or content substitution; and harden CSV import against duplicate run indices and inconsistent rows. This improves reproducibility and artifact integrity without creating human validation or cross-runtime numerical equivalence. |
 | 2026-08-24 | 1.17.99 | fix(rate-of-closure, #4142): declare h5py in the root development/CI manifest and reproducible lock so protected standard CI executes the canonical HDF5 contract tests instead of failing during collection. Retain h5py as an optional packaged feature for consumers that do not use HDF5 persistence. |
 | 2026-08-24 | 1.17.100 | fix(ci, #4142): make the sparse UpstreamDrift consumer fixture structurally complete for every fail-closed Tools provider root, including `src/python/src`, so current-main path-precedence and module-identity contracts execute rather than returning before validation. Add a workflow regression test and retain the complete downstream suite; no consumer check is skipped or weakened. |

@@ -67,7 +67,9 @@ missing root-CI `h5py` declaration; the branch now declares and locks it with a
 regression test. The downstream lane then exposed an incomplete sparse
 UpstreamDrift provider fixture; all required provider roots are now constructed
 and workflow-tested without weakening the consumer suite. Current-main
-vendoring tests, eight workflow tests, and all 310 variation tests pass locally.
+vendoring tests, 27 focused workflow tests, and all 310 variation tests pass locally.
+The file-watcher matrix retains its Python 3.10 wheel/import gate but runs the root-
+declared Python 3.11+ wrapper tests only on 3.11/3.12, avoiding below-floor exit 5.
 The contract is
 `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. The R10--R15 ledger stays partial:
 these controls prove provenance and integrity, not human validity or

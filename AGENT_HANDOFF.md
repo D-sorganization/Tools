@@ -67,10 +67,10 @@ sparse UpstreamDrift provider fixture; the branch now creates all fail-closed
 provider roots and regression-locks the workflow without skipping consumers;
 the Rust lane has a tested 45-minute budget and an anonymous, fail-closed
 root plus standalone-pendulum RustSec audit. Reqwest 0.12 and PyO3/NumPy 0.29
-remove all discovered advisories while preserving Python value conversion. The latest hosted failure was only pinned Ruff `0.14.10` formatting in the workflow
-guard test; the branch now matches it, and 26 focused workflow tests pass with three expected Linux-only skips. Default/Python Rust tests (348/360), Clippy,
-audit, vendoring, and 310 variation tests also pass. This is reproducibility and integrity evidence, not human validation or cross-runtime numerical
-equivalence.
+remove all discovered advisories while preserving Python value conversion. Hosted repair now matches pinned Ruff `0.14.10` and keeps the 3.10 file-watcher
+wheel/import gate while running root-declared Python 3.11+ tests only on 3.11/3.12. Twenty-seven focused workflow tests pass with three expected Linux-only
+skips; default/Python Rust tests (348/360), Clippy, audit, vendoring, and 310 variation tests also pass. This is reproducibility and integrity evidence, not
+human validation or cross-runtime numerical equivalence.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

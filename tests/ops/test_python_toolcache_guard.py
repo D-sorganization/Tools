@@ -11,6 +11,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GUARD = REPO_ROOT / ".github" / "scripts" / "clean-python-toolcache.sh"
 CI_STANDARD = REPO_ROOT / ".github" / "workflows" / "ci-standard.yml"
+FILE_WATCHER_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-file-watcher.yml"
 
 
 def test_pyo3_guard_precedes_setup_python_in_rust_job() -> None:
@@ -57,6 +58,18 @@ def test_rust_quality_gate_allows_cold_cache_completion() -> None:
     assert (
         'cargo audit --file "$PENDULUM_LOCK" --db "$RUSTSEC_DB" --no-fetch' in audit_run
     )
+
+
+def test_file_watcher_runs_root_tests_only_on_supported_python() -> None:
+    workflow = yaml.safe_load(FILE_WATCHER_WORKFLOW.read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["rust-backend-gate"]["steps"]
+    test_step = next(
+        step
+        for step in steps
+        if step.get("name") == "Run file_watcher test suite (gate)"
+    )
+
+    assert test_step["if"] == "${{ matrix.python-version != '3.10' }}"
 
 
 def _write_fake_python(arch_dir: Path, *, with_link_library: bool) -> None:
