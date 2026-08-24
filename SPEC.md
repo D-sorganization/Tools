@@ -27,12 +27,23 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.92                                    |
+| **Spec Version**        | 1.17.93                                    |
 | **Last Spec Update**    | 2026-08-23                                 |
 
 ## 2. Purpose & Mission
 
 ### Governed Launch-Monitor Analytics Release
+
+Version 1.17.93 approves the 20 visually inspected React and PyQt references
+from trusted run `32686727162`, pinned to protected source commit
+`1214008e9dbf06b583ef44a4c821dc0567efdf8b`. A packaged calibration record
+separates the reviewed approval candidate from the earlier repeatability-only
+run and bounds measured cross-host renderer variation: React uses one channel
+as the changed-channel threshold, 4,000 mean-channel-delta microunits, and
+50,000 changed-pixel-fraction microunits; PyQt uses one, 200, and 250. These
+limits admit the measured same-UI renderer envelope while every materially
+stale control remains outside it. They establish regression evidence, not
+pixel-exact cross-host rendering or scientific model validation.
 
 Version 1.17.92 binds trusted PyQt candidate generation to the exact protected
 push SHA. The workflow now passes `github.sha` into both candidate capture and
@@ -5136,6 +5147,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-23 | 1.17.93 | test(rate-of-closure, #4626): approve the visually inspected 20-reference React/PyQt set from trusted run `32686727162` at protected source `1214008e9dbf06b583ef44a4c821dc0567efdf8b`; package a two-run calibration record; and use explicit cross-host renderer envelopes of 1/4,000/50,000 microunits for React and 1/200/250 for PyQt. Every measured repeatability case remains inside and every materially stale control remains outside; this is visual-regression authority, not pixel-exact portability or scientific validation. |
 | 2026-08-23 | 1.17.92 | fix(rate-of-closure, #4626): bind the trusted PyQt candidate manifest to the exact protected push SHA used by the comparator. A workflow contract test requires the provenance variable, preventing the unit-test fallback commit from entering retained evidence or a source-pinned baseline approval. The prior run remains diagnostic only; new candidates must be generated after this change reaches protected `main`. |
 | 2026-08-23 | 1.17.91 | fix(rate-of-closure, #4626): isolate PyQt visual evidence from warm-runner `QSettings` by routing the default INI user scope to a fresh campaign-owned directory before application construction. Candidate identity now records exact Qt, PyQt, Matplotlib, and DejaVu Sans versions; focused rendered and comparator tests pass, while reference promotion remains a separate protected review. |
 | 2026-08-23 | 1.17.90 | fix(rate-of-closure, #4626): make React visual evidence independent of the runner host font stack by locking `@fontsource/inter` 5.3.0 and bundling Latin 400/500/600/700 assets. Candidate provenance names the exact font environment, and a workflow governance test binds the dependency, CSS imports, body family, and provenance label. No visual reference is updated here: protected Linux candidates and all PyQt renders must complete, receive human inspection, and travel through a separate source-pinned approval PR. |

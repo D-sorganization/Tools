@@ -2,246 +2,246 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "7e3d8fcefe25147044f2979fe6301db27d92ddb3",
+  "source_artifact_commit": "1214008e9dbf06b583ef44a4c821dc0567efdf8b",
   "baselines": [
     {
       "surface": "react",
       "tab_id": "explorer",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-explorer-1440x900.png",
-      "sha256": "c59d5f6a59995664de508efe16d5bf8ce4c4b3e8523e6507d0a5681c9bf0e02a",
+      "sha256": "e12a1ba3458bde13c622e78a748af097548b719d2cd228f3542f35088bc5bf87",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "calculation",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-calculation-1440x900.png",
-      "sha256": "51db43e0f8217dbf8a8e7182d6194d677d0b735a7ccdf4492b8a479f830409c5",
+      "sha256": "c5475aceac625543b183679ae93578f5acd7a164f9c55a2b88c4fcdfadc73a7a",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "simulation",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-simulation-1440x900.png",
-      "sha256": "849fce43e1d3f7149b4f4e9b154e15c55926aeb7f4b87d26759a2579d9066ae0",
+      "sha256": "df5873db31253c57eca76da05cc8cf4575947f19739ef0dbdf07d0160a4a8c4d",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "plots",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-plots-1440x900.png",
-      "sha256": "b872ebd74cf101d41ad6cad1a96a07a51f5a6e21c10c0858bcd02e8a43d3af4f",
+      "sha256": "dcbd310c95f9fb0c96ed610771949133550719ea3bf98ff98a29e630aca5f84e",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "flight",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-flight-1440x900.png",
-      "sha256": "47ff2555389ee325118ab0cc2eeb3db330e77277b1645f55366f1a9e2bf845e4",
+      "sha256": "6e9687a8ae37431eb16e82795b0beb3e9c74b305608ea7c19f81d51c0255e202",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "launch-monitor-analytics",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-launch-monitor-analytics-1440x900.png",
-      "sha256": "b24c438bfa91118221f78cdd6ec6614e8e8c68c59d001eb850062c9644941317",
+      "sha256": "c321ab98fdc90e6f0f88dbdfbcbe72b2fff3913fbdaa4259624e6ad7d91ee9a3",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "neural-model-lab",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-neural-model-lab-1440x900.png",
-      "sha256": "8eca7787b7139f1c1ee78f4909cfa831c80609b328eeb0f08e4fba31a59cbea9",
+      "sha256": "dbbd4c1083046c336a8677616e1be0339ddc335f7b69323a0ebf269a9e6771f7",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "variation",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-variation-1440x900.png",
-      "sha256": "e40ac8a993afc48271bf13ec1aeb71ffbc751893ea09e746c6c448d7e3f0996e",
+      "sha256": "178ee82bf5956cf6766a265c33c80021a56b19cb728b08218d6ffd5eafcf7bfd",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "putting",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-putting-1440x900.png",
-      "sha256": "d011bd11f9c7a118d0db18565297b400ad86dcf2dc8123e7fc983fecab55b24c",
+      "sha256": "c4952c5e1d50432a9e6e57259c96934963049212434f83aeb9c2a4ff87007433",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "react",
       "tab_id": "glossary",
-      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion",
+      "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-glossary-1440x900.png",
-      "sha256": "5115f8fae5e0a1b8297a23688ca5d8a316875f9976b350f59e953afa11c34fc7",
+      "sha256": "206c69cb1d34098c2606f06dde72bb2e1b09f40cb561bd95d6969dddba58b27c",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 4000,
+        "max_changed_pixel_fraction_microunits": 50000
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "clubhead",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-clubhead-dpi-1.0.png",
       "sha256": "cccb6e180d856afef8f21b71f9891bc5ea661a019ba4603c619f4f38e530dbac",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "plots",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-plots-dpi-1.0.png",
       "sha256": "823ae0b7c9260853f6889a6d9977bafc852cd3e1792e4892345ea9c5cac59b49",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "calculation_description",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-calculation_description-dpi-1.0.png",
       "sha256": "ec0aca97e903f2650f319a7ddc8e5b6481a5b868656341cabe85b3bb3ea18baa",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "simulation",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-simulation-dpi-1.0.png",
-      "sha256": "111c753131650ade867e2e87014df90b4f7ff73fa5154ffe06ad0b3938402c90",
+      "sha256": "2fb192e634282774220676a8fd31d4d7e1010bcfd51ce62b3302002ac91404ad",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "flight_explorer",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-flight_explorer-dpi-1.0.png",
       "sha256": "c7d4538d81256e5143f6fc8006767f5f2c2c8afd16a3abe1fd758e3311fddd5c",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "launch_monitor_analytics",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-launch_monitor_analytics-dpi-1.0.png",
       "sha256": "06d11bafdd03aff8ffea078c7f7f86d1c1caf7a6e6c08334c1d685862af4e8e4",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "neural_model_lab",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-neural_model_lab-dpi-1.0.png",
       "sha256": "0b06ce2be450dc1c0080bfcc632940841e37910c9abd87072aad120f99fea083",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "variation",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-variation-dpi-1.0.png",
       "sha256": "9326f017697a91e1c232246c898e4dce54ac17de4de8e62ec9ce3c177ef04b54",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "putting",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-putting-dpi-1.0.png",
       "sha256": "45109bd99051ad05eeb1a9e7db7f5f13202e027e46c1540b81bc235a6b400337",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     },
     {
       "surface": "pyqt",
       "tab_id": "glossary",
-      "environment": "posix-offscreen-qt-dpi-1.0-1440x900",
+      "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-glossary-dpi-1.0.png",
       "sha256": "aedf5325b2908cadd1f86ad52faa3ad9bb40312fb8a48a01849df92ebe2d88bd",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 100,
-        "max_changed_pixel_fraction_microunits": 100
+        "max_mean_channel_delta_microunits": 200,
+        "max_changed_pixel_fraction_microunits": 250
       }
     }
   ]
