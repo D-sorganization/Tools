@@ -37,7 +37,7 @@ const MU_EXPONENT: f64 = 0.76;
 
 /// Atmospheric properties at a given altitude.
 #[derive(Debug, Clone, Copy)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct AtmosphereProperties {
     /// Air density [kg/m³].

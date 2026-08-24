@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4668 is implementing self-contained variation-plan evidence across every persistence/export boundary; R15 remains open.                       |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4669 merged self-contained plan evidence; `feat/4142-variation-hdf5` adds the scalar HDF5 persistence slice. R15 remains open. |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
@@ -53,20 +53,24 @@ remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
 tests but regresses three main-owned tests and needs ~20 UI files that delete
 shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 
-**Current #4142/#4668 state.** PR #4669 is open from
-`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
-query its exact head and protected checks before acting. Version-3 execution
-documents and explicit legacy bindings now cover PyQt6/React plan files, named
-libraries, workspaces, scalar/geometry ensembles, durable archives, forgiveness
-exports, and regional results. Cross-runtime durable/regional requests bind the
-plan SHA-256 while Python retains its own executor identity. Exact Python,
-single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
-two-DPI PyQt gates pass locally. The ledger remains partial until protected CI,
-merge, and remote-main verification; this is not human or scientific validation.
-The latest protected suite exposed one stale exact-manifest assertion and an
-UpstreamDrift provider-mode test that leaked `TOOLS_REPO_PATH`; focused local
-corrections pass 8/8 and 3/3 tests. The downstream correction must merge before
-rerunning that consumer gate; do not weaken the provider contract.
+**Current #4142 state.** PR #4669 merged as
+`f9730033fd279ba8b4abe03bab2aadd950400b47`; version-3 execution documents and
+explicit legacy bindings cover PyQt6/React plan files, named libraries,
+workspaces, scalar/geometry ensembles, durable archives, forgiveness exports,
+and regional results. PR #4674 starts from that exact main and adds public
+JSON/CSV/HDF5 dataset persistence, a self-contained archive with
+unconditional logical-content integrity verification, atomic no-replace
+publication, and malformed-CSV rejection. Its initial protected Python jobs
+found `h5py` absent from the root CI manifest; the branch now declares and
+locks it, with a regression test. The next protected run exposed an incomplete
+sparse UpstreamDrift provider fixture; the branch now creates all fail-closed
+provider roots and regression-locks the workflow without skipping consumers;
+the Rust lane has a tested 45-minute budget and an anonymous, fail-closed
+root plus standalone-pendulum RustSec audit. Reqwest 0.12 and PyO3/NumPy 0.29
+remove all discovered advisories while preserving Python value conversion. Hosted repair now matches pinned Ruff `0.14.10` and keeps the 3.10 file-watcher
+wheel/import gate while running root-declared Python 3.11+ tests only on 3.11/3.12. Twenty-seven focused workflow tests pass with three expected Linux-only
+skips; default/Python Rust tests (348/360), Clippy, audit, vendoring, and 310 variation tests also pass. This is reproducibility and integrity evidence, not
+human validation or cross-runtime numerical equivalence.
 **Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
 branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
 qualification: companion readiness metadata + missing Firefox/WebKit binaries;

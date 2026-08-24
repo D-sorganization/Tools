@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 /// - `magnitude()` returns non-negative values.
 /// - `normalized()` returns a unit vector or an error for zero-length vectors.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct Vector3 {
     pub x: f64,

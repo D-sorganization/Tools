@@ -1,5 +1,14 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-24 #4674 Python-Floor Workflow Closure
+
+- Protected Python 3.10 built and imported the file-watcher Rust wheel, then
+  pytest correctly ignored root tests governed by the repository's Python
+  3.11+ floor and returned exit 5 for zero collection.
+- The matrix retains the 3.10 wheel and compiled-backend import gates while
+  running root wrapper behavior only on supported Python 3.11/3.12. A workflow
+  contract locks that boundary; no scientific or persistence behavior changes.
+
 ## 2026-08-23 #4626 Source-Pinned Visual-Baseline Approval
 
 - Evidence repairs are protected-merged through #4661 at
