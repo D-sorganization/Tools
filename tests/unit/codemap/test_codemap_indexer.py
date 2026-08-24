@@ -329,6 +329,28 @@ def test_hash_bytes_uses_blake3_when_available(
     assert indexer._hash_bytes(b"payload") == "fake-blake3"
 
 
+def test_hash_bytes_fallback_when_blake3_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setitem(sys.modules, "blake3", None)
+    import hashlib
+
+    expected = hashlib.blake2b(b"payload", digest_size=16).hexdigest()
+    assert indexer._hash_bytes(b"payload") == expected
+
+
+def test_hash_bytes_raises_when_blake3_fails(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def bad_blake3(data: bytes) -> None:
+        raise RuntimeError("Corrupt memory")
+
+    fake_blake3 = SimpleNamespace(blake3=bad_blake3)
+    monkeypatch.setitem(sys.modules, "blake3", fake_blake3)
+    with pytest.raises(RuntimeError, match="Corrupt memory"):
+        indexer._hash_bytes(b"payload")
+
+
 def test_gitignore_loader_uses_simple_fallback_when_pathspec_is_unavailable(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

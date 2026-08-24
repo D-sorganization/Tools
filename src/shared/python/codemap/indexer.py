@@ -35,11 +35,11 @@ logger = logging.getLogger(__name__)
 
 def _hash_bytes(data: bytes) -> str:
     try:
-        import blake3
-
-        return str(blake3.blake3(data).hexdigest())
-    except Exception:
+        import blake3  # type: ignore[import-not-found]
+    except ImportError:
         return hashlib.blake2b(data, digest_size=16).hexdigest()
+
+    return str(blake3.blake3(data).hexdigest())
 
 
 # ---------------------------------------------------------------------------
@@ -257,8 +257,12 @@ def _process_file(
         ),
     )
 
+    # Split the file once and reuse the lines for every symbol slice.
+    # Splitting inside the loop re-scans the whole file per symbol, which is
+    # quadratic for large, symbol-dense files.
+    source_lines = data.splitlines()
     for sym in parsed.symbols:
-        slice_bytes = b"\n".join(data.splitlines()[sym.start_line - 1 : sym.end_line])
+        slice_bytes = b"\n".join(source_lines[sym.start_line - 1 : sym.end_line])
         sym_hash = _hash_bytes(slice_bytes)
         cur.execute(
             "INSERT INTO symbols(path, kind, name, qualified, sig, docstring, "
