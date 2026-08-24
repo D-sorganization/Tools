@@ -6100,6 +6100,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Version 1.17.10
 
+- 2026-08-24: security(rate-of-closure) — Sanitize KaTeX output with DOMPurify in `Derivation.tsx` to prevent XSS vulnerabilities when rendering math formulas.
+
 - 2026-08-22: fix(flow-rate-converter) — replaced focus:outline-none with focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 on input and select elements to restore keyboard focus indicators.
 
 ### Version 1.5.5
