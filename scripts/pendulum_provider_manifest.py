@@ -14,6 +14,7 @@ PENDULUM_PROVIDER_MANIFEST = (
 
 _REQUIRED_TOP_LEVEL_FIELDS = (
     "manifest_version",
+    "force_attribution_schema",
     "pack_id",
     "pack_name",
     "provider",
