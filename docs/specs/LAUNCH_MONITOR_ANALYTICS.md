@@ -1,7 +1,8 @@
 # Launch Monitor Analytics
 
 Issue: [Tools #4205](https://github.com/D-sorganization/Tools/issues/4205)
-Program epic: [UpstreamDrift #8364](https://github.com/D-sorganization/UpstreamDrift/issues/8364)
+Parent epic: [Tools #4226](https://github.com/D-sorganization/Tools/issues/4226)
+Program epic: [Tools #4583](https://github.com/D-sorganization/Tools/issues/4583) / [UpstreamDrift #8790](https://github.com/D-sorganization/UpstreamDrift/issues/8790)
 
 ## Purpose
 
@@ -11,67 +12,56 @@ flexible statistical analysis across any compatible numeric variables.
 
 The public, source-traceable evidence database remains the separate
 [Launch-Monitor-Data repository](https://github.com/D-sorganization/Launch-Monitor-Data).
-That repository records source URLs, monitor identity, environment, measurement
-status, reported and canonical units, aggregation level, and verification
-checks. Published aggregates must remain aggregates; neither UI expands them
+The restricted 261,666-row shot corpus across 27 sources is governed by
+[Launch-Monitor-Flight-Model-Campaign](https://github.com/D-sorganization/Launch-Monitor-Flight-Model-Campaign).
+Published aggregates must remain aggregates; neither UI expands them
 into fabricated shot rows.
 
-## Shared Contract
+## Shared Contract & Upstream Analytics v2
 
-Both surfaces implement contract version `1.0.0`:
+Both presentation surfaces implement contract version `1.0.0` for local analysis
+and consume UpstreamDrift `2.0.0` canonical statistical services:
 
-| Capability | PyQt6 | React/Vite |
-| --- | --- | --- |
-| CSV/JSON record import with source columns retained | Yes | Yes |
-| Any numeric outcome and multiple predictors | Yes | Yes |
-| Pearson, Spearman, and Kendall correlation | Yes | Yes |
-| Pairwise, listwise, and fail-closed missingness | Yes | Yes |
-| Benjamini-Hochberg multiplicity correction | Yes | Yes |
-| Multivariable OLS with coefficient intervals | Yes | Yes |
-| R², adjusted R², RMSE, MAE, Durbin-Watson, influential count | Yes | Yes |
-| Arbitrary categorical grouping | Yes | Yes |
-| Dataset SHA-256 and complete JSON evidence export | Yes | Yes |
-| Aggregate-regression and pooled `source::` safeguards | Yes | Yes |
+| Capability | PyQt6 | React/Vite | Backend Authority |
+| --- | --- | --- | --- |
+| CSV/JSON record import with source columns retained | Yes | Yes | Tools local |
+| 261,666-row governed private corpus loader | Yes (desktop) | API / reference | Campaign Parquet |
+| Any numeric outcome and multiple predictors | Yes | Yes | Upstream v2 |
+| Pearson, Spearman, and Kendall correlation | Yes | Yes | Upstream v2 |
+| Pairwise, listwise, and fail-closed missingness | Yes | Yes | Upstream v2 |
+| Benjamini-Hochberg multiplicity correction | Yes | Yes | Upstream v2 |
+| Multivariable OLS with coefficient intervals | Yes | Yes | Upstream v2 |
+| R², adjusted R², RMSE, MAE, Durbin-Watson, influential count | Yes | Yes | Upstream v2 |
+| Within-player covariation and meta-analysis | Yes | Yes | Upstream v2 |
+| Source-backed strokes gained with course state | Yes | Yes | Upstream v2 |
+| Longitudinal session analytics and trends | Yes | Yes | Upstream v2 |
+| Dataset SHA-256 and complete JSON evidence export | Yes | Yes | Tools v3 export |
+| Row-free project save / load (Workspace v3) | Yes | Yes | Tools v3 schema |
 
-The UpstreamDrift implementation exposes the same semantics through
-`POST /tools/launch-monitor-analytics/analyze` and publishes its machine-readable
-capability set through `GET /tools/launch-monitor-analytics/capabilities`.
+## Scientific Policies & Forbidden Identity
 
-## Convention and Provenance Boundary
+- **Explicit Player Identity**: Player identity is never inferred from session, club, monitor,
+  source, filename, or row order. Player analytics requires an explicitly user-attested identity column
+  and fails closed otherwise. Changing the identity column revokes attestation.
+- **Row-Free Persistence**: Saved `.lmproject.json` documents are row-free by design. Raw shot rows
+  are never embedded into project JSON.
+- **Controlled Export**: Backing rows can only be exported in desktop bundles with explicit user approval.
+  Browser clients fail closed for restricted backing rows.
+- **Unavailable States**: Incomplete inputs, missing baseline tables, un-attested identity, or constant series
+  report typed unavailable states with structured reasons rather than crashing or guessing.
 
-Both tabs consume the immutable registry in
-`shared/python/swing_sim/conventions` and its TypeScript twin. Labels are
-**TrackMan-Comparable** and **Foresight-Comparable**. They identify sourced
-parameter definitions, reference points, event times, frames, units, and
-availability rules; they do not claim vendor-device emulation, certification,
-or interchangeability.
+## Golden Fixtures & Parity Verification
 
-Vendor-specific source fields are blocked from analysis pooled across multiple
-monitor vendors. Cross-monitor comparison should use canonical fields only
-after the reference point, time, frame, geometry, sign, unit, and availability
-contracts have been reconciled.
-
-## Statistical Interpretation
-
-- Pairwise correlation uses the pair-specific sample count; listwise mode uses
-  one complete-case population; fail-closed mode rejects missing or nonnumeric
-  selections.
-- Pearson intervals use Fisher's z transform. Spearman and Kendall intervals
-  are intentionally omitted rather than represented as Pearson intervals.
-- OLS uses complete cases for the selected outcome and predictors and rejects
-  rank-deficient or undersized designs.
-- Group results are calculated independently and keep their own sample counts,
-  estimates, diagnostics, and warnings.
-- Association and held-sample fit do not establish causality or transport to a
-  different player, club, ball, environment, software release, or monitor.
-- Aggregate correlations are descriptive and subject to ecological bias.
-  Aggregate observations never enter regression.
+Cross-client parity is governed by backend-authoritative golden fixtures in `src/rate_of_closure/web/src/model/__fixtures__/`:
+- `launch_monitor_conformance_bundle_golden_v1.json`: Spans available and unavailable cases across all 5 analysis families.
+- `launch_monitor_player_covariation_golden_v1.json`: Synthetic aggregation-reversal test vector.
+- `launch_monitor_workspace_v3_golden.json`: Row-free workspace v3 round-trip fixture.
 
 ## Verification
 
 ```powershell
-python -m pytest tests/rate_of_closure/test_launch_monitor_analysis.py tests/rate_of_closure/test_launch_monitor_analytics_tab.py tests/rate_of_closure/test_primary_navigation.py
-python -m ruff check src/rate_of_closure/launch_monitor_analysis.py src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py
+python -m pytest tests/rate_of_closure/test_launch_monitor*
+python -m ruff check src/rate_of_closure/
 cd src/rate_of_closure/web
 npm test
 npm run type-check
