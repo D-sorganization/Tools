@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-24
+> Last updated: 2026-08-25
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -34,24 +34,17 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 
 ## Open PR Situation — Read Before Filing Anything
 
-No PR is a draft. The live golf queue includes Sidekick and remaining #4142 work; query `gh pr list` rather than trusting a count here.
+No PR is a draft. Query `gh pr list` before acting; the current queue below is
+an exact 2026-08-25 snapshot and can change independently of this handoff.
 
-| PR    | Scope                                                                      |
-| ----- | -------------------------------------------------------------------------- |
-| #4585 | Sidekick Phase S1/S2 integration; active protected delivery                |
-| #4600 | Post-merge PyQt launch-monitor visual-baseline approval                    |
-| #4649 | Serialize trusted Playwright apt access; reconcile #4142/#4433 handoffs    |
-| #4466 | Rate of Closure remainder — **content-complete except the camera cluster** |
-| #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)          |
-| #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)              |
-| #4446 | Ground study + rate-of-closure suites (supersedes #4409/#4410)             |
-
-**#4466 still cannot be merged by any strategy** — its merge-base predates
-`src/rate_of_closure/`, making 281 overlapping files both-added conflicts. Its
-content landed as 22 slices (#4517–#4547). **Only the camera-controls cluster
-remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
-tests but regresses three main-owned tests and needs ~20 UI files that delete
-shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
+| PR    | Scope                                                                    |
+| ----- | ------------------------------------------------------------------------ |
+| #4687 | RotationConverter fixed-array JSX optimization                           |
+| #4686 | CSV-export allocation optimization                                      |
+| #4685 | Immutable Upstream R15 evidence and #4142 handoff reconciliation         |
+| #4682 | P1AM FastAPI route introspection and dependency pins                     |
+| #4677 | Automated v1.9.0 release bump                                            |
+| #4676 | Automated v1.8.0 release bump                                            |
 
 **Current #4142 state.** PRs #4669 and #4674 are merged. Protected UpstreamDrift
 PR #9039 consumes exact Tools revision
@@ -61,17 +54,9 @@ partial, and zero unverified items. #4142 remains open because R15.4 lacks one
 consolidated public reproduction guide, R14.6 remains gated by #4433, and eight
 other requirements retain explicit gaps. This is model-data and provenance
 evidence, not human or scientific validation.
-The latest protected suite exposed one stale exact-manifest assertion and an
-UpstreamDrift provider-mode test that leaked `TOOLS_REPO_PATH`; focused local
-corrections pass 8/8 and 3/3 tests. The downstream correction must merge before
-rerunning that consumer gate; do not weaken the provider contract.
-**Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
-branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
-qualification: companion readiness metadata + missing Firefox/WebKit binaries;
-the workflow is scoped to Chromium meanwhile), #4569 (two `1.17.40` SPEC rows
-glued onto one table line by a union merge), #4558/#4559/#4560 (cross-runtime
-fixture parity gaps). #4602/#4608/#4610 isolate trusted React/PyQt evidence;
-#4607 removes the blocking npm-cache post-hook, and #4613 owns deterministic Qt probe teardown after complete rendered evidence generation.
+PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
+error-taxonomy regressions exposed by protected execution. Do not weaken the
+provider contract or infer human validity from the corrected model-data gates.
 
 ## Must-Read Architecture Pointers
 
