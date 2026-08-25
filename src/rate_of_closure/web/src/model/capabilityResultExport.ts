@@ -112,8 +112,18 @@ export const capabilityAlternativesCsv = (
 ): string => {
   requireMatchedResult(result, ensemble);
   const units = parameterUnits(ensemble);
-  return [HEADERS, ...result.alternatives.map((item) => alternativeRow(item, units))]
-    .map((row) => row.map(spreadsheetCsvCell).join(",")).join("\n");
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  let csvText = HEADERS.map(spreadsheetCsvCell).join(",");
+  for (let i = 0; i < result.alternatives.length; i++) {
+    csvText += "\n";
+    const row = alternativeRow(result.alternatives[i], units);
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) csvText += ",";
+      csvText += spreadsheetCsvCell(row[j]);
+    }
+  }
+  return csvText;
 };
 
 /** Export the strict result and its external unit declarations. */

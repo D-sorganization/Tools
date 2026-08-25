@@ -29,9 +29,18 @@ export function scalarEnsembleToCsv<Cohort extends string>(
     ...variableKeys.map((key) => row.values[key]),
     ...attributeKeys.map((key) => row.attributes?.[key]),
   ]);
-  return [header, ...rows]
-    .map((row) => row.map(spreadsheetCsvCell).join(","))
-    .join("\n");
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  let csvText = header.map(spreadsheetCsvCell).join(",");
+  for (let i = 0; i < rows.length; i++) {
+    csvText += "\n";
+    const row = rows[i];
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) csvText += ",";
+      csvText += spreadsheetCsvCell(row[j]);
+    }
+  }
+  return csvText;
 }
 
 /**

@@ -372,9 +372,18 @@ export function chipForgivenessStudyToCsv(study: ChipForgivenessStudyTs): string
     ...study.sampledInputs[record.trialIndex],
     ...metricNames.map((name) => record.metrics[name]),
   ]);
-  return [header, ...rows]
-    .map((row) => row.map((value) => csvCell(value)).join(","))
-    .join("\n") + "\n";
+  // ⚡ Bolt Optimization: Replace chained array .map().join() with a single-pass loop
+  // to eliminate intermediate array allocations and reduce GC pressure for large dataset exports.
+  let csvText = header.map((value) => csvCell(value)).join(",") + "\n";
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    for (let j = 0; j < row.length; j++) {
+      if (j > 0) csvText += ",";
+      csvText += csvCell(row[j]);
+    }
+    csvText += "\n";
+  }
+  return csvText;
 }
 
 /** Project decision and physical metrics onto the shared scatter/marginal schema. */
