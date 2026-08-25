@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.2                                     |
+| **Spec Version**        | 1.18.4                                     |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,7 @@
 ### 2026-08-25 Shared Theme Palette & Dynamic Token Metaclass (#4686)
 
 Version 1.18.2 ports canonical `ThemePalette` and dynamic `Colors` token container to `src/shared/python/theme/`:
+
 1. **Canonical Palette & Metaclass**: Introduces `src/shared/python/theme/palette.py` providing `ThemePalette` (dict subclass with attribute and semantic alias lookup), `_ColorsMeta` dynamic token interceptor, `Colors` typed token container, and `get_current_colors()` accessor.
 2. **Package Re-Exports**: Re-exports all palette and typography tokens from `src/shared/python/theme/__init__.py` to provide a complete, drop-in contract across both headless and GUI environments fleet-wide.
 
@@ -5222,8 +5223,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-25 | 1.18.2 | fix(shared, #4493): annotate the `verdict` local in `ai/peer_review/coordinator.py::_gather_verdicts` to satisfy mypy's `no-any-return` check, which the `_audit.py` extraction surfaced by bringing the whole file back into the changed-file mypy pass. No behavior change. |
-| 2026-08-25 | 1.18.1 | fix(shared, #4493): finish syncing the DCR glossary entry to UpstreamDrift's exact corrected wording (withdraw the muscle-identification claim across all expertise levels), and extract `ai/peer_review/_audit_event` into its own `_audit.py` module so it is importable independently of `coordinator.py`. Also close a residual `np.sum(mask)` vs `mask.sum()` gap left over from the earlier #4681 partial fix. The `reporting/__init__.py` public-surface expansion (`REPORT_TEMPLATES`, `GLOBAL_REPORT_REGISTRY`, `AgenticSummaryGenerator`, `JinjaReportTemplate`) is deferred: it requires porting ~34KB across five new UpstreamDrift-only modules with an undeclared `jinja2` dependency, and the issue itself flags it as lower-confidence pending an ownership decision. |
+| 2026-08-25 | 1.18.4 | fix(shared, #4493): annotate the `verdict` local in `ai/peer_review/coordinator.py::_gather_verdicts` to satisfy mypy's `no-any-return` check, which the `_audit.py` extraction surfaced by bringing the whole file back into the changed-file mypy pass. No behavior change. |
+| 2026-08-25 | 1.18.3 | fix(shared, #4493): finish syncing the DCR glossary entry to UpstreamDrift's exact corrected wording (withdraw the muscle-identification claim across all expertise levels), and extract `ai/peer_review/_audit_event` into its own `_audit.py` module so it is importable independently of `coordinator.py`. Also close a residual `np.sum(mask)` vs `mask.sum()` gap left over from the earlier #4681 partial fix. The `reporting/__init__.py` public-surface expansion (`REPORT_TEMPLATES`, `GLOBAL_REPORT_REGISTRY`, `AgenticSummaryGenerator`, `JinjaReportTemplate`) is deferred: it requires porting ~34KB across five new UpstreamDrift-only modules with an undeclared `jinja2` dependency, and the issue itself flags it as lower-confidence pending an ownership decision. |
 | 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |
 | 2026-08-24 | 1.17.100 | fix(morris, #4459, #4458): enforce Morris metric realizability invariants (mu* >= |mu|, sigma >= 0, standard_error >= 0, safe squaring magnitude bounds, exact sample-moment identity and wire clamp consistency matching TypeScript morrisMetricValidation.ts) in _metric_validation.py and response_contract.py; clarify router _validate_extended_result as a transport/pipeline integrity guard and validate reports via parse_morris_report; add mathematical correctness tests for known linear and constant response functions. |
 | 2026-08-24 | 1.17.99 | fix(shared, #4493): sync orphaned DCR glossary definition across expertise levels, test module filtering in import alias finder, np.vdot optimization for R-squared, and multi-directory internal package structure resolution. |
