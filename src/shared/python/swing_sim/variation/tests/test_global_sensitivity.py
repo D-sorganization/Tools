@@ -340,6 +340,38 @@ def test_design_rejects_fractional_changed_factor_indices() -> None:
         )
 
 
+def test_design_rejects_signed_steps_off_the_declared_normalized_lattice() -> None:
+    """`normalized_step` is derived from `levels` alone (see
+    ``analyze_morris``), so nothing previously checked that the design's own
+    ``signed_steps`` actually sit on that k/(levels-1) lattice -- only that
+    they were self-consistent with the reported coordinate differences. A
+    design whose steps are shrunk (but kept internally consistent with its
+    own points) must now be rejected.
+    """
+    design = generate_morris_design(_factors(), trajectories=2, levels=4, seed=5)
+    factor_count = len(design.factors)
+    tampered_steps = design.signed_steps * 0.5
+    tampered_points = design.normalized_points.copy()
+    for trajectory in range(design.trajectories):
+        for step in range(factor_count):
+            factor_index = design.changed_factor_indices[trajectory, step]
+            tampered_points[trajectory, step + 1] = tampered_points[trajectory, step]
+            tampered_points[trajectory, step + 1, factor_index] += tampered_steps[
+                trajectory, step
+            ]
+
+    with pytest.raises(Exception, match="normalized step lattice"):
+        MorrisDesign(
+            factors=design.factors,
+            trajectories=design.trajectories,
+            levels=design.levels,
+            seed=design.seed,
+            normalized_points=tampered_points,
+            changed_factor_indices=design.changed_factor_indices,
+            signed_steps=tampered_steps,
+        )
+
+
 def test_analysis_rejects_boolean_adequacy_threshold() -> None:
     with pytest.raises(Exception, match="minimum_effects must be an integer"):
         analyze_morris(_observations(lambda point: float(np.sum(point))), True)

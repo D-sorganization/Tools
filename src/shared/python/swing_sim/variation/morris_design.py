@@ -181,7 +181,7 @@ class MorrisDesign:
         seed = _require_integer(self.seed, "seed", 0)
         arrays = _design_arrays(self)
         _validate_design_shapes(arrays, trajectories, len(factors))
-        _validate_design_paths(arrays, trajectories, len(factors))
+        _validate_design_paths(arrays, trajectories, len(factors), levels)
         object.__setattr__(self, "factors", factors)
         object.__setattr__(self, "trajectories", trajectories)
         object.__setattr__(self, "levels", levels)
@@ -247,7 +247,7 @@ def _validate_design_shapes(
 
 
 def _validate_design_paths(
-    arrays: _DesignArrays, trajectories: int, factor_count: int
+    arrays: _DesignArrays, trajectories: int, factor_count: int, levels: int
 ) -> None:
     """Require bounded one-factor-at-a-time trajectories and exact steps."""
     require(
@@ -268,6 +268,13 @@ def _validate_design_paths(
     require(
         np.allclose(actual, arrays.steps, rtol=0.0, atol=CONSTANT_TOLERANCE),
         "signed_steps must match the changed normalized coordinates",
+    )
+    expected_step = levels / (2.0 * (levels - 1))
+    require(
+        np.allclose(
+            np.abs(arrays.steps), expected_step, rtol=0.0, atol=CONSTANT_TOLERANCE
+        ),
+        "signed_steps must lie on the declared k/(levels-1) normalized step lattice",
     )
 
 
