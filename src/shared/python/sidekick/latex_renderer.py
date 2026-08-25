@@ -196,7 +196,7 @@ def render_latex_label(
                 from PyQt6.QtGui import QImage, QPixmap
 
                 qimg = QImage(bytes(rgba.data), w, h, QImage.Format.Format_RGBA8888)
-                setattr(qimg, "_rgba_buffer", rgba)  # Keep reference alive
+                qimg._rgba_buffer = rgba  # type: ignore[attr-defined]
                 pm = QPixmap.fromImage(qimg)
                 label.setPixmap(pm)
                 _log.debug("render_latex_label(%r) rendered as QPixmap", latex_str)
