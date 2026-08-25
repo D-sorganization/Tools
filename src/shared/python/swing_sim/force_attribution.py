@@ -264,9 +264,7 @@ def attribute_state(
         start=np.zeros(size, dtype=np.float64),
     )
     try:
-        acceleration = np.asarray(
-            np.linalg.solve(mass, total_drive), dtype=np.float64
-        )
+        acceleration = np.asarray(np.linalg.solve(mass, total_drive), dtype=np.float64)
     except np.linalg.LinAlgError as error:
         raise ValueError("mass_matrix must be nonsingular") from error
     return StateAttribution(
