@@ -207,7 +207,7 @@ def solve_inverse_flight(
     for evaluation_index, parameters in enumerate(points):
         try:
             raw_evaluation: object = evaluator(dict(parameters))
-        except Exception:  # A forward-model fault is a typed failed evaluation.
+        except Exception:  # noqa: BLE001 - A forward-model fault is a typed failed evaluation.
             failed += 1
             continue
         if not isinstance(raw_evaluation, SolverEvaluation):

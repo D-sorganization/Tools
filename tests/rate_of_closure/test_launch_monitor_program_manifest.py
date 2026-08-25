@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import cast
 
 MANIFEST_PATH = (
     Path(__file__).parents[2] / "docs" / "release" / "launch_monitor_program.v1.json"
@@ -26,7 +27,10 @@ SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 
 
 def _manifest() -> dict[str, object]:
-    return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    return cast(
+        dict[str, object],
+        json.loads(MANIFEST_PATH.read_text(encoding="utf-8")),
+    )
 
 
 def test_program_manifest_pins_authorities_and_approved_policies() -> None:
