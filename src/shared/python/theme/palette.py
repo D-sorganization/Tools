@@ -46,7 +46,7 @@ SEMANTIC_ALIASES: dict[str, str] = {
 }
 
 
-class ThemePalette(dict):
+class ThemePalette(dict[str, str]):
     """Color mapping supporting both dict access and semantic attributes.
 
     Invariant: attribute access never invents color values — it resolves
@@ -59,23 +59,23 @@ class ThemePalette(dict):
     def __getattr__(self, name: str) -> str:
         # 1. Direct key match
         try:
-            return self[name]
+            return str(self[name])
         except KeyError:
             pass
         # 2. Exact alias match
         alias = SEMANTIC_ALIASES.get(name)
         if alias is not None and alias in self:
-            return self[alias]
+            return str(self[alias])
         # 3. Lowercase key match
         lower_name = name.lower()
         try:
-            return self[lower_name]
+            return str(self[lower_name])
         except KeyError:
             pass
         # 4. Lowercase alias match
         alias = SEMANTIC_ALIASES.get(lower_name)
         if alias is not None and alias in self:
-            return self[alias]
+            return str(self[alias])
         raise AttributeError(
             f"{type(self).__name__} has no color {name!r} "
             f"(canonical keys: {sorted(self)})"
@@ -89,7 +89,7 @@ class ThemePalette(dict):
 
 def _builtin_dark_palette() -> ThemePalette:
     """Build the fallback palette from the built-in "Dark" theme."""
-    from src.shared.python.theme.colors import BUILTIN_THEMES
+    from .colors import BUILTIN_THEMES
 
     return ThemePalette(BUILTIN_THEMES["Dark"])
 
@@ -107,10 +107,10 @@ def get_current_colors() -> ThemePalette:
     PyQt6 is available, falling back to the built-in Dark palette otherwise
     (e.g. headless environments).
     """
-    from src.shared.python.theme.colors import THEME_COLOR_KEYS
+    from .colors import THEME_COLOR_KEYS
 
     try:
-        from src.shared.python.theme import get_theme_manager
+        from .theme_manager import get_theme_manager
 
         manager = get_theme_manager()
         if manager is not None and hasattr(manager, "get_current_colors"):

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.shared.python.theme import (
+from shared.python.theme import (
     DARK_THEME,
     SEMANTIC_ALIASES,
     Colors,
