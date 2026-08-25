@@ -11,6 +11,19 @@ oracle and one-shot fallback.
 from __future__ import annotations
 
 from ._rust_facade import rust_available
+from .force_attribution import (
+    ATTRIBUTION_SCHEMA_VERSION,
+    AttributionComponent,
+    AttributionProvider,
+    ComponentHistory,
+    ComponentMetrics,
+    DoublePendulumAttributionProvider,
+    StateAttribution,
+    TrajectoryAttribution,
+    attribute_state,
+    attribute_trajectory,
+    component_impulse_objective,
+)
 from .run_config import (
     DOUBLE_PENDULUM_JOINT_IDS,
     DOUBLE_PENDULUM_MODEL_ID,
@@ -45,16 +58,22 @@ from .types import (
     SwingTrajectory,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "DEFAULT_GRAVITY_M_S2",
+    "ATTRIBUTION_SCHEMA_VERSION",
+    "AttributionComponent",
+    "AttributionProvider",
     "COEFFICIENT_ORDER",
     "DOUBLE_PENDULUM_JOINT_IDS",
     "DOUBLE_PENDULUM_MODEL_ID",
     "DoublePendulumSwing",
+    "DoublePendulumAttributionProvider",
     "DoublePendulumRunConfig",
     "FitMetadata",
+    "ComponentHistory",
+    "ComponentMetrics",
     "JointTorqueAssignment",
     "JointLockConfig",
     "LocalizedTorqueOffset",
@@ -65,6 +84,8 @@ __all__ = [
     "SwingSample",
     "SwingSource",
     "SwingTrajectory",
+    "StateAttribution",
+    "TrajectoryAttribution",
     "SwingRunMode",
     "SHOULDER_JOINT_ID",
     "TORQUE_UNIT",
@@ -74,6 +95,9 @@ __all__ = [
     "TorqueProfileSource",
     "WRIST_JOINT_ID",
     "__version__",
+    "attribute_state",
+    "attribute_trajectory",
+    "component_impulse_objective",
     "evaluate_ascending_polynomial",
     "fit_torque_polynomial",
     "fit_torque_history_profile",

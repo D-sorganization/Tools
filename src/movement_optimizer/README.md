@@ -1,5 +1,16 @@
 # Movement Optimizer
 
+## Pendulum Force-Source Objectives
+
+The Tools build exposes coordinate-explicit Coriolis, squared-speed,
+gravity, damping, applied-control, and residual attribution for double-pendulum
+candidate trajectories. `analyze_pendulum_force_sources` returns force,
+impulse, power, work, mapping-rank, and closure diagnostics;
+`coriolis_hand_path_impulse_cost` is a minimizer-compatible example objective.
+See [Pendulum Force Attribution and Impulse Optimization](../../docs/development/pendulum-force-attribution.md)
+for equations and interpretation limits. The named split is coordinate
+dependent and is not a decomposition of measured muscle force.
+
 [![CI](https://github.com/D-sorganization/Movement-Optimizer/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Movement-Optimizer/actions/workflows/ci-standard.yml)
 [![DCO](https://github.com/D-sorganization/Movement-Optimizer/actions/workflows/dco.yml/badge.svg)](https://github.com/D-sorganization/Movement-Optimizer/actions/workflows/dco.yml)
 
