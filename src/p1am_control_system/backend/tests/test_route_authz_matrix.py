@@ -45,8 +45,9 @@ unnoticed.
 from __future__ import annotations
 
 import sys
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -58,7 +59,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from auth_config import CREDENTIAL_HEADER_NAME  # noqa: E402
 from cors_config import CSRF_HEADER_NAME, CSRF_HEADER_VALUE  # noqa: E402
-from fastapi.routing import APIRoute  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from main import app  # noqa: E402
 from starlette.routing import Match  # noqa: E402
@@ -176,17 +176,89 @@ def _concrete(path: str) -> str:
 
 
 def _app_routes() -> set[tuple[str, str]]:
-    """Every (method, path) the real app exposes, minus HEAD/OPTIONS."""
+    """Every (method, path) the real app exposes, minus HEAD/OPTIONS.
+
+    Traverses the route tree recursively, handling standard routes, Starlette Mounts,
+    and modern FastAPI _IncludedRouter markers (extracting from original_router / router
+    and include_context / prefix), and merges with app.openapi()["paths"] so served
+    routes are accurately and comprehensively discovered on any FastAPI version.
+    """
     found: set[tuple[str, str]] = set()
-    for route in app.routes:
-        path = getattr(route, "path", None)
-        methods = getattr(route, "methods", None)
-        if path is None or not methods:
-            continue  # WebSocket routes carry no .methods; covered separately.
-        for method in methods:
-            if method in {"HEAD", "OPTIONS"}:
-                continue
-            found.add((method, path))
+
+    def _walk_routes(routes: Iterable[Any], parent_prefix: str = "") -> None:
+        for route in routes:
+            raw_path = getattr(route, "path", None)
+            if raw_path is None:
+                raw_path = getattr(route, "path_format", None)
+
+            orig_router = getattr(route, "original_router", None) or getattr(
+                route, "router", None
+            )
+            inc_prefix = getattr(route, "prefix", "") or ""
+            if not inc_prefix:
+                ctx = getattr(route, "include_context", None)
+                if isinstance(ctx, dict):
+                    inc_prefix = str(ctx.get("prefix", ""))
+                elif ctx is not None and hasattr(ctx, "prefix"):
+                    inc_prefix = str(getattr(ctx, "prefix", "")) or ""
+
+            comb = parent_prefix
+            if inc_prefix:
+                comb = (
+                    f"{comb.rstrip('/')}/{inc_prefix.lstrip('/')}"
+                    if comb
+                    else inc_prefix
+                )
+
+            if orig_router is not None and hasattr(orig_router, "routes"):
+                _walk_routes(orig_router.routes, comb)
+            elif hasattr(route, "routes") and route.routes:
+                mount_path = raw_path or ""
+                mount_comb = (
+                    f"{comb.rstrip('/')}/{mount_path.lstrip('/')}"
+                    if (comb and mount_path)
+                    else (comb or mount_path)
+                )
+                _walk_routes(route.routes, mount_comb)
+            elif hasattr(route, "app") and hasattr(route.app, "routes"):
+                mount_path = raw_path or ""
+                mount_comb = (
+                    f"{comb.rstrip('/')}/{mount_path.lstrip('/')}"
+                    if (comb and mount_path)
+                    else (comb or mount_path)
+                )
+                _walk_routes(route.app.routes, mount_comb)
+
+            methods = getattr(route, "methods", None)
+            if raw_path is not None and methods:
+                full_path = (
+                    f"{parent_prefix.rstrip('/')}/{raw_path.lstrip('/')}"
+                    if parent_prefix
+                    else raw_path
+                )
+                for method in methods:
+                    m = str(method).upper()
+                    if m not in {"HEAD", "OPTIONS"}:
+                        found.add((m, full_path))
+
+    if hasattr(app, "routes"):
+        _walk_routes(app.routes)
+
+    openapi_fn = getattr(app, "openapi", None)
+    if callable(openapi_fn):
+        try:
+            schema = openapi_fn()
+            paths = schema.get("paths", {})
+            for path, path_item in paths.items():
+                if not isinstance(path_item, dict):
+                    continue
+                for method in path_item:
+                    m = str(method).upper()
+                    if m in {"GET", "POST", "PUT", "DELETE", "PATCH", "TRACE"}:
+                        found.add((m, path))
+        except Exception:
+            pass
+
     return found
 
 
@@ -268,13 +340,58 @@ def test_read_auth_is_secure_by_default(monkeypatch: pytest.MonkeyPatch) -> None
 
 
 # --------------------------------------------------------------------------- #
-# Coverage: an unclassified route is a failing route                           #
+# Coverage & F16 Safety: unclassified or under-reported routes must fail       #
 # --------------------------------------------------------------------------- #
+
+
+def test_route_inventory_is_non_empty_and_complete() -> None:
+    """Ensure route inventory and auth partitions are non-empty and well-formed.
+
+    Protects against vacuous matrix passes and ensures safety-critical F16 advisory
+    optimization / MPC simulation and tuning routes are explicitly registered.
+    """
+    routes = _app_routes()
+    assert len(routes) >= 40, (
+        f"Route inventory is unexpectedly sparse ({len(routes)} routes). "
+        "Route introspection collector may be under-reporting."
+    )
+    assert len(ROUTE_TIERS) >= 40, "ROUTE_TIERS table must not be empty"
+    assert len(_GATED) >= 20, "_GATED partition must not be empty"
+    assert len(_ADMIN_ONLY) >= 10, "_ADMIN_ONLY partition must not be empty"
+    assert len(_PUBLIC_MUTATING) >= 1, "_PUBLIC_MUTATING partition must not be empty"
+
+    # F16 Advanced Control / Advisory Optimization safety assertions:
+    # Advisory MPC simulation must be registered and admin-gated.
+    assert ("POST", "/api/mpc/simulate") in ROUTE_TIERS, (
+        "F16 advisory MPC simulation route /api/mpc/simulate must be classified"
+    )
+    assert ROUTE_TIERS[("POST", "/api/mpc/simulate")] == ADMIN, (
+        "F16 advisory MPC simulation must require ADMIN tier"
+    )
+
+    # PID tuning control routes must be registered and admin-gated.
+    for tuning_action in ("start", "step", "stop"):
+        key = ("POST", f"/api/pid/{{pid_index}}/tuning/{tuning_action}")
+        assert key in ROUTE_TIERS, f"Tuning route {key} must be classified"
+        assert ROUTE_TIERS[key] == ADMIN, f"Tuning route {key} must require ADMIN tier"
+
+    # Direct hardware write route must be admin-gated.
+    assert ("POST", "/api/tags/{tag_id}") in ROUTE_TIERS
+    assert ROUTE_TIERS[("POST", "/api/tags/{tag_id}")] == ADMIN
+
+    # E-stop clear must be admin-gated, panic stop must remain public.
+    assert ROUTE_TIERS[("POST", "/api/estop")] == PUBLIC
+    assert ROUTE_TIERS[("POST", "/api/estop/clear")] == ADMIN
 
 
 def test_every_route_is_classified() -> None:
     """A new endpoint that nobody classified must FAIL, not ship ungated."""
-    unclassified = sorted(_app_routes() - set(ROUTE_TIERS))
+    routes = _app_routes()
+    assert len(routes) >= 40, (
+        f"Route inventory is suspiciously small ({len(routes)} routes). "
+        "Route introspection may be under-reporting."
+    )
+    unclassified = sorted(routes - set(ROUTE_TIERS))
     assert not unclassified, (
         "These routes are not classified in ROUTE_TIERS. Add each one with its "
         "required credential tier (and the matching FastAPI dependency on the "
@@ -285,21 +402,12 @@ def test_every_route_is_classified() -> None:
 def _is_served(method: str, path: str) -> bool:
     """True if the app's router would dispatch ``method path`` to a handler.
 
-    Deliberately asks the router the same question a request asks, instead of
-    string-matching ``route.path`` over ``app.routes``. Those two disagreed in
-    CI: `tests (3.11)` reported all 19 power-supply / temperature / tuning rows
-    as unserved, while in the SAME single-process run the 19
-    ``test_gated_route_rejects_anonymous_caller`` cases hit those exact paths
-    through ``TestClient(app)`` and got 401/403 — a route the app does not serve
-    answers 404, which would have failed. So the routes were registered and
-    reachable, and the enumeration was under-reporting them; the rows were never
-    stale. Deleting them (as a previous slice did) would have made the test green
-    while the authz matrix quietly agreed that the plant's whole control surface —
-    acknowledge_trip, permissive, setpoint, burnout_mode, tc_type — did not exist.
-
-    ``Route.matches`` is what Starlette itself calls during dispatch, so this
-    check cannot disagree with a real request.
+    Checks both the robust route collector inventory and Starlette dispatch matching
+    across app.routes and nested routers.
     """
+    if (method.upper(), path) in _app_routes():
+        return True
+
     scope = {
         "type": "http",
         "method": method,
@@ -309,15 +417,36 @@ def _is_served(method: str, path: str) -> bool:
         "headers": [],
         "query_string": b"",
     }
-    for route in app.routes:
-        match, _ = route.matches(scope)
-        if match is Match.FULL:
-            return True
-    return False
+
+    def _matches_any(routes: Iterable[Any]) -> bool:
+        for route in routes:
+            orig_router = getattr(route, "original_router", None) or getattr(
+                route, "router", None
+            )
+            if orig_router is not None and hasattr(orig_router, "routes"):
+                if _matches_any(orig_router.routes):
+                    return True
+            if hasattr(route, "routes") and route.routes:
+                if _matches_any(route.routes):
+                    return True
+            if hasattr(route, "app") and hasattr(route.app, "routes"):
+                if _matches_any(route.app.routes):
+                    return True
+            if hasattr(route, "matches"):
+                try:
+                    match, _ = route.matches(scope)
+                    if match is Match.FULL:
+                        return True
+                except Exception:
+                    pass
+        return False
+
+    return _matches_any(app.routes) if hasattr(app, "routes") else False
 
 
 def test_table_has_no_stale_rows() -> None:
     """Keep the contract honest in the other direction too."""
+    assert ROUTE_TIERS, "ROUTE_TIERS must not be empty"
     stale = sorted(row for row in ROUTE_TIERS if not _is_served(*row))
     assert not stale, f"ROUTE_TIERS lists routes the app no longer serves: {stale}"
 
@@ -412,10 +541,66 @@ def test_operator_credential_passes_the_operator_gate(client: TestClient) -> Non
 # --------------------------------------------------------------------------- #
 
 
+def _app_websocket_paths() -> set[str]:
+    """Every WebSocket route path mounted on the app."""
+    paths: set[str] = set()
+
+    def _walk(routes: Iterable[Any], parent_prefix: str = "") -> None:
+        for r in routes:
+            raw_path = getattr(r, "path", None) or getattr(r, "path_format", None)
+            orig_router = getattr(r, "original_router", None) or getattr(
+                r, "router", None
+            )
+            inc_prefix = getattr(r, "prefix", "") or ""
+            if not inc_prefix:
+                ctx = getattr(r, "include_context", None)
+                if isinstance(ctx, dict):
+                    inc_prefix = str(ctx.get("prefix", ""))
+                elif ctx is not None and hasattr(ctx, "prefix"):
+                    inc_prefix = str(getattr(ctx, "prefix", "")) or ""
+
+            comb = parent_prefix
+            if inc_prefix:
+                comb = (
+                    f"{comb.rstrip('/')}/{inc_prefix.lstrip('/')}"
+                    if comb
+                    else inc_prefix
+                )
+
+            if orig_router is not None and hasattr(orig_router, "routes"):
+                _walk(orig_router.routes, comb)
+            elif hasattr(r, "routes") and r.routes:
+                mount_p = raw_path or ""
+                mount_comb = (
+                    f"{comb.rstrip('/')}/{mount_p.lstrip('/')}"
+                    if (comb and mount_p)
+                    else (comb or mount_p)
+                )
+                _walk(r.routes, mount_comb)
+            elif hasattr(r, "app") and hasattr(r.app, "routes"):
+                mount_p = raw_path or ""
+                mount_comb = (
+                    f"{comb.rstrip('/')}/{mount_p.lstrip('/')}"
+                    if (comb and mount_p)
+                    else (comb or mount_p)
+                )
+                _walk(r.app.routes, mount_comb)
+
+            if raw_path is not None and getattr(r, "methods", None) is None:
+                full_path = (
+                    f"{parent_prefix.rstrip('/')}/{raw_path.lstrip('/')}"
+                    if parent_prefix
+                    else raw_path
+                )
+                paths.add(full_path)
+
+    if hasattr(app, "routes"):
+        _walk(app.routes)
+    return paths
+
+
 def test_stream_websocket_route_exists() -> None:
-    paths = {
-        getattr(r, "path", None) for r in app.routes if not isinstance(r, APIRoute)
-    }
+    paths = _app_websocket_paths()
     assert "/api/stream" in paths
 
 
