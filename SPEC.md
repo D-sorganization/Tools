@@ -27,10 +27,16 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.1                                     |
+| **Spec Version**        | 1.18.2                                     |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Shared Theme Palette & Dynamic Token Metaclass (#4686)
+
+Version 1.18.2 ports canonical `ThemePalette` and dynamic `Colors` token container to `src/shared/python/theme/`:
+1. **Canonical Palette & Metaclass**: Introduces `src/shared/python/theme/palette.py` providing `ThemePalette` (dict subclass with attribute and semantic alias lookup), `_ColorsMeta` dynamic token interceptor, `Colors` typed token container, and `get_current_colors()` accessor.
+2. **Package Re-Exports**: Re-exports all palette and typography tokens from `src/shared/python/theme/__init__.py` to provide a complete, drop-in contract across both headless and GUI environments fleet-wide.
 
 ### 2026-08-25 FastAPI Route Introspection & Dependency Pinning (#4478, #4477, #4476)
 
