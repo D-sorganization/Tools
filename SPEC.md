@@ -27,10 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.0                                     |
-| **Last Spec Update**    | 2026-08-24                                 |
+| **Spec Version**        | 1.18.1                                     |
+| **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 FastAPI Route Introspection & Dependency Pinning (#4478, #4477, #4476)
+
+Version 1.18.1 hardens FastAPI route introspection and standardizes modern framework pins:
+1. **Dependency Pinning**: Pins `fastapi>=0.141.1` and `starlette>=0.45.0` across `requirements.txt` and `pyproject.toml` extras (`rate-morris-authority`, `all`, `chat`, `rate-of-closure-web`, `p1am`, `test`), ensuring local and CI runtime parity.
+2. **Robust Route Introspection**: Implements hierarchical route collection that traverses `app.routes`, Starlette `Mount`s, and modern FastAPI `_IncludedRouter` instances (recursing into `original_router` / `router` and resolving prefix from `include_context` / `prefix`), merged with `app.openapi()["paths"]`. This ensures all served routes are accurately reported regardless of FastAPI version and prevents under-reporting caused by unflattened router mounting.
+3. **F16 Safety and Authorization Matrix Hardening**: Hardens `test_route_authz_matrix.py` with explicit non-empty route inventory assertions and validates classification of F16 advanced-control advisory optimization (`/api/mpc/simulate`), PID tuning, and hardware mutating endpoints.
+4. **Calculator Route Discovery**: Hardens `calc_backend` route signature inspection and registration to support nested router hierarchies and OpenAPI schema fallbacks.
 
 ### 2026-08-24 Immutable Upstream Variation Consumption (#4142)
 
