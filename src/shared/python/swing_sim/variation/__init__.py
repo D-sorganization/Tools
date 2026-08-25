@@ -101,6 +101,11 @@ from .morris_observation_io import (
     morris_observations_from_json_dict,
     morris_observations_to_json_dict,
 )
+from .noise_response import (
+    POSITION_NOISE_RESPONSE_METHOD,
+    PositionNoiseResponse,
+    compute_position_noise_response,
+)
 from .propagation import (
     CommonReferenceTrace,
     PairedIntervention,
@@ -189,6 +194,8 @@ __all__ = [
     "PropagationResult",
     "PositionDispersion",
     "PositionDispersionAccumulator",
+    "PositionNoiseResponse",
+    "POSITION_NOISE_RESPONSE_METHOD",
     "ConfidenceEllipsoidSeries",
     "DispersionMetricSeries",
     "RankedLowVariabilityInterval",
@@ -207,6 +214,7 @@ __all__ = [
     "analyze_paired_intervention",
     "compute_position_dispersion",
     "compute_position_dispersion_view",
+    "compute_position_noise_response",
     "build_confidence_ellipsoids",
     "build_dispersion_metric_series",
     "evaluate_run",

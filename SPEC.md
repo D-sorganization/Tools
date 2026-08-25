@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.100                                   |
+| **Spec Version**        | 1.18.2                                     |
 | **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-24 Denominator-Matched Position Noise Response (#4142)
+
+Version 1.18.2 introduces an execution-pending R12.3 contract that pairs
+absolute per-point/per-sample RMS position scatter with the empirical RMS of
+the same valid rows' centered inputs, standardized by each declared
+distribution standard deviation. The bounded NumPy formulation reports metres
+per aggregate standardized-input RMS, preserves zero-spread and insufficient-
+sample unavailability, and labels the field as model-conditional amplification
+rather than causal attribution. Static quality gates pass; numerical and
+protected qualification remain mandatory before ledger promotion.
 
 ### 2026-08-24 Morris Metric Invariant Validation and Router Integrity (#4459, #4458)
 
@@ -5186,6 +5197,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-24 | 1.18.2 | feat(rate-of-closure, #4142): add the execution-pending R12.3 denominator-matched position-noise response contract, pairing absolute RMS scatter with same-row empirically realized standardized input RMS while preserving zero-spread and insufficient-sample unavailability and prohibiting causal interpretation. |
 | 2026-08-24 | 1.17.100 | fix(morris, #4459, #4458): enforce Morris metric realizability invariants (mu* >= |mu|, sigma >= 0, standard_error >= 0, safe squaring magnitude bounds, exact sample-moment identity and wire clamp consistency matching TypeScript morrisMetricValidation.ts) in _metric_validation.py and response_contract.py; clarify router _validate_extended_result as a transport/pipeline integrity guard and validate reports via parse_morris_report; add mathematical correctness tests for known linear and constant response functions. |
 | 2026-08-24 | 1.17.99 | fix(shared, #4493): sync orphaned DCR glossary definition across expertise levels, test module filtering in import alias finder, np.vdot optimization for R-squared, and multi-directory internal package structure resolution. |
 | 2026-08-24 | 1.17.98 | fix(wind, #4513): replace GLSL fract(sin(x)) turbulence hash with deterministic 32-bit integer hash mixing across Python and TypeScript, eliminating cross-platform libm drift and restoring exact 1e-12 PyQt6/React parity fixture assertions. |

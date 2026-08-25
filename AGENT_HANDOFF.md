@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4668 is implementing self-contained variation-plan evidence across every persistence/export boundary; R15 remains open.                       |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. PR #4685 carries immutable R15.1--R15.3 evidence; R15.4 is stacked locally; branch `feat/4142-noise-response` starts R12.3 without claiming qualification. |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
@@ -53,16 +53,18 @@ remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
 tests but regresses three main-owned tests and needs ~20 UI files that delete
 shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 
-**Current #4142/#4668 state.** PR #4669 is open from
-`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
-query its exact head and protected checks before acting. Version-3 execution
-documents and explicit legacy bindings now cover PyQt6/React plan files, named
-libraries, workspaces, scalar/geometry ensembles, durable archives, forgiveness
-exports, and regional results. Cross-runtime durable/regional requests bind the
-plan SHA-256 while Python retains its own executor identity. Exact Python,
-single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
-two-DPI PyQt gates pass locally. The ledger remains partial until protected CI,
-merge, and remote-main verification; this is not human or scientific validation.
+**Current #4142 state.** PR #4685 is mergeable at
+`fa17ece0b8d906e15f196ac736a6b5f89ceb2f2d`, retains squash auto-merge, and
+has green substantive Python/browser/wheel gates; generic `d-sorg-fleet`
+auxiliary jobs remain queued with no runner assigned. Do not rerun them. Local
+R15.4 commits `306950c5b`/`4cc027b1c` add the public guide and current handoffs
+but must remain stacked until #4685 merges. Branch
+`feat/4142-noise-response` adds RED-first R12.3 contracts and a pure NumPy
+denominator-matched scatter/input-gain authority. Ruff and format pass; the
+public variation import stalls under current DeskComputer resource pressure and
+ControlTower SSH is not authorized, so no numerical qualification, push, or
+ledger promotion is yet allowed. #4142 remains open; none of this is human or
+causal evidence.
 The latest protected suite exposed one stale exact-manifest assertion and an
 UpstreamDrift provider-mode test that leaked `TOOLS_REPO_PATH`; focused local
 corrections pass 8/8 and 3/3 tests. The downstream correction must merge before
@@ -140,7 +142,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Complete #4668, reconcile the #4142 ledger, adjudicate #4433, and pin the qualified Tools revision in UpstreamDrift.
+4. Merge #4685, deliver R15.4, then execute and adversarially qualify the local R12.3 denominator-matched noise-response contract before any push.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
