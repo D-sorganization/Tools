@@ -15,8 +15,7 @@ from typing import Protocol, runtime_checkable
 import numpy as np
 from numpy.typing import NDArray
 
-from .reference import coriolis_vector, damping_vector, gravity_vector, mass_matrix
-from .types import PendulumParameters
+from .force_attribution_providers import DoublePendulumAttributionProvider
 
 FloatArray = NDArray[np.float64]
 COMPONENT_NAMES = (
@@ -115,6 +114,8 @@ class ComponentMetrics:
     generalized_work_j: float
     endpoint_work_j: float
     tangent_impulse_cancellation: float | None
+    tangent_valid_duration_s: float
+    tangent_total_duration_s: float
 
 
 @dataclass(frozen=True)
@@ -304,6 +305,24 @@ def _validated_history(
     return time, histories[0], histories[1], histories[2]
 
 
+def _integrate_defined_tangent(
+    time: FloatArray, tangent: FloatArray
+) -> tuple[float | None, float | None, float]:
+    """Integrate only intervals whose two endpoint tangents are defined."""
+    valid = np.isfinite(tangent[:-1]) & np.isfinite(tangent[1:])
+    widths = np.diff(time)
+    valid_duration = float(np.sum(widths[valid]))
+    if not np.any(valid):
+        return None, None, valid_duration
+    signed_average = 0.5 * (tangent[:-1] + tangent[1:])
+    absolute_average = 0.5 * (np.abs(tangent[:-1]) + np.abs(tangent[1:]))
+    return (
+        float(np.sum(signed_average[valid] * widths[valid])),
+        float(np.sum(absolute_average[valid] * widths[valid])),
+        valid_duration,
+    )
+
+
 def attribute_trajectory(
     provider: AttributionProvider,
     time_s: FloatArray,
@@ -351,10 +370,8 @@ def attribute_trajectory(
             ),
         )
         histories[name] = history
-        tangent_valid = bool(np.all(np.isfinite(tangent)))
-        signed_tangent = float(np.trapezoid(tangent, time)) if tangent_valid else None
-        absolute_tangent = (
-            float(np.trapezoid(np.abs(tangent), time)) if tangent_valid else None
+        signed_tangent, absolute_tangent, valid_duration = _integrate_defined_tangent(
+            time, tangent
         )
         cancellation = None
         if (
@@ -375,6 +392,8 @@ def attribute_trajectory(
             generalized_work_j=float(np.trapezoid(history.generalized_power_w, time)),
             endpoint_work_j=float(np.trapezoid(history.endpoint_power_w, time)),
             tangent_impulse_cancellation=cancellation,
+            tangent_valid_duration_s=valid_duration,
+            tangent_total_duration_s=float(time[-1] - time[0]),
         )
     return TrajectoryAttribution(
         time_s=time,
@@ -409,75 +428,6 @@ def component_impulse_objective(
             "tangent impulse is unavailable when endpoint speed reaches zero"
         )
     return -value
-
-
-@dataclass(frozen=True)
-class DoublePendulumAttributionProvider:
-    """Exact Tools double-pendulum provider in relative-angle coordinates."""
-
-    parameters: PendulumParameters
-    g_inplane: tuple[float, float]
-    coordinate_names: tuple[str, ...] = ("shoulder_absolute", "wrist_relative")
-    endpoint_name: str = "wrist_hand_path"
-
-    def __post_init__(self) -> None:
-        gravity = _vector("g_inplane", self.g_inplane, 2)
-        object.__setattr__(self, "g_inplane", (float(gravity[0]), float(gravity[1])))
-
-    def mass_matrix(self, q: FloatArray) -> FloatArray:
-        q_array = _vector("q", q, 2)
-        return np.asarray(mass_matrix(self.parameters, float(q_array[1])))
-
-    def mass_matrix_derivatives(self, q: FloatArray) -> FloatArray:
-        q_array = _vector("q", q, 2)
-        coupling = self.parameters.m2 * self.parameters.l1 * self.parameters.lc2
-        derivative = -coupling * np.sin(q_array[1])
-        result = np.zeros((2, 2, 2), dtype=np.float64)
-        result[1] = np.array([[2.0 * derivative, derivative], [derivative, 0.0]])
-        return result
-
-    def velocity_bias(self, q: FloatArray, velocity: FloatArray) -> FloatArray:
-        q_array = _vector("q", q, 2)
-        speed = _vector("velocity", velocity, 2)
-        return np.asarray(
-            coriolis_vector(
-                self.parameters,
-                float(q_array[1]),
-                float(speed[0]),
-                float(speed[1]),
-            ),
-            dtype=np.float64,
-        )
-
-    def gravity(self, q: FloatArray) -> FloatArray:
-        q_array = _vector("q", q, 2)
-        return np.asarray(
-            gravity_vector(
-                self.parameters,
-                float(q_array[0]),
-                float(q_array[1]),
-                self.g_inplane,
-            ),
-            dtype=np.float64,
-        )
-
-    def damping(self, velocity: FloatArray) -> FloatArray:
-        speed = _vector("velocity", velocity, 2)
-        return np.asarray(
-            damping_vector(self.parameters, float(speed[0]), float(speed[1])),
-            dtype=np.float64,
-        )
-
-    def endpoint_jacobian(self, q: FloatArray) -> FloatArray:
-        q_array = _vector("q", q, 2)
-        theta = float(q_array[0])
-        return np.array(
-            [
-                [self.parameters.l1 * np.cos(theta), 0.0],
-                [self.parameters.l1 * np.sin(theta), 0.0],
-            ],
-            dtype=np.float64,
-        )
 
 
 __all__ = [

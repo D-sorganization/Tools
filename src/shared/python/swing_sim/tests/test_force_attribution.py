@@ -118,6 +118,21 @@ def test_trajectory_integrals_keep_impulse_power_and_work_distinct() -> None:
     )
 
 
+def test_trajectory_integrates_only_defined_tangent_intervals() -> None:
+    time = np.array([0.0, 0.1, 0.2, 0.3])
+    q = np.tile(np.array([0.2, -0.7]), (time.size, 1))
+    velocity = np.array([[0.0, 0.0], [2.0, -3.0], [2.0, -3.0], [0.0, 0.0]])
+
+    result = attribute_trajectory(
+        _provider(), time, q, velocity, np.zeros((time.size, 2))
+    )
+    metric = result.metrics["coriolis"]
+
+    assert metric.signed_tangent_impulse_n_s is not None
+    assert metric.tangent_valid_duration_s == pytest.approx(0.1)
+    assert metric.tangent_total_duration_s == pytest.approx(0.3)
+
+
 @pytest.mark.parametrize(
     ("time", "q", "velocity", "applied", "message"),
     [

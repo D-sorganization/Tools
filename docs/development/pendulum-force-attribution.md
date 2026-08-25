@@ -111,7 +111,10 @@ F_\parallel=F\cdot e_t.
 \]
 
 At zero speed the tangent is undefined, so the result is unavailable rather
-than guessed from neighboring samples.
+than guessed from neighboring samples. Trajectory integration includes only
+intervals whose two endpoint tangents are defined and reports both valid and
+total duration. This permits a swing to start from rest without fabricating an
+initial direction or discarding its later moving phase.
 
 ## Impulse, Power, and Work Are Different
 
