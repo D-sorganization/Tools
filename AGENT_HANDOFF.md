@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4668 is implementing self-contained variation-plan evidence across every persistence/export boundary; R15 remains open.                       |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. The ledger has 21 verified and 10 partial requirements; R15.1--R15.3 have immutable Upstream consumption evidence, while R15.4 and R14.6 remain partial. |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
@@ -53,16 +53,14 @@ remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
 tests but regresses three main-owned tests and needs ~20 UI files that delete
 shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
 
-**Current #4142/#4668 state.** PR #4669 is open from
-`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
-query its exact head and protected checks before acting. Version-3 execution
-documents and explicit legacy bindings now cover PyQt6/React plan files, named
-libraries, workspaces, scalar/geometry ensembles, durable archives, forgiveness
-exports, and regional results. Cross-runtime durable/regional requests bind the
-plan SHA-256 while Python retains its own executor identity. Exact Python,
-single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
-two-DPI PyQt gates pass locally. The ledger remains partial until protected CI,
-merge, and remote-main verification; this is not human or scientific validation.
+**Current #4142 state.** PRs #4669 and #4674 are merged. Protected UpstreamDrift
+PR #9039 consumes exact Tools revision
+`17474249b9267d0e73a779c1d72f231e7b8de39c` through a thin gateway with typed
+outcomes and deterministic parity gates. The ledger records 21 verified, 10
+partial, and zero unverified items. #4142 remains open because R15.4 lacks one
+consolidated public reproduction guide, R14.6 remains gated by #4433, and eight
+other requirements retain explicit gaps. This is model-data and provenance
+evidence, not human or scientific validation.
 The latest protected suite exposed one stale exact-manifest assertion and an
 UpstreamDrift provider-mode test that leaked `TOOLS_REPO_PATH`; focused local
 corrections pass 8/8 and 3/3 tests. The downstream correction must merge before
@@ -140,7 +138,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Complete #4668, reconcile the #4142 ledger, adjudicate #4433, and pin the qualified Tools revision in UpstreamDrift.
+4. Close the 10 explicit #4142 partial gaps, beginning with R15.4 and #4433-owned R14.6; do not close the epic from cross-repository parity alone.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
