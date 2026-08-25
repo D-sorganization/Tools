@@ -27,10 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.100                                   |
+| **Spec Version**        | 1.17.101                                   |
 | **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-24 Python 3.12 Variation Tolerances, Morris Readiness, and Error Taxonomy (#4482)
+
+Version 1.17.101 hardens variation simulation and Morris authority service under Python 3.12:
+1. **Python 3.12 Tolerance**: Uses scale-normalized floating point comparison tolerances in variation simulation asserting numerical consistency within 1e-4 relative tolerance across Python 3.11 and 3.12 runtime environments.
+2. **Morris Authority Service Readiness**: Adds deterministic readiness and health probes for the Morris Authority Service to ensure robust background worker initialization.
+3. **Error Taxonomy Standardization**: Standardizes structured error taxonomy and error codes for simulation validation and calculation failures.
 
 ### 2026-08-24 Morris Metric Invariant Validation and Router Integrity (#4459, #4458)
 
