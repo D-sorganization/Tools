@@ -42,12 +42,11 @@ def _session_to_markdown(context: ConversationContext) -> str:
     title = str(context.metadata.get("title", context.session_id or "Chat Session"))
     lines: list[str] = [f"# {title}", ""]
     for msg in context.messages:
-        if not isinstance(msg, Message):
-            continue
-        lines.append(f"## {msg.role}")
-        lines.append("")
-        lines.append(msg.content)
-        lines.append("")
+        if isinstance(msg, Message):
+            lines.append(f"## {msg.role}")
+            lines.append("")
+            lines.append(msg.content)
+            lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
