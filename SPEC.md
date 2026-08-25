@@ -5015,6 +5015,14 @@ passes fail early in CI.
 - **DRY**: Yes — shared_utilities module reduces duplication across tools
 - **Orthogonality**: Yes — tools are independent, composable, minimal coupling
 
+### Line Ending Normalization
+
+Repository text assets and workflows enforce LF normalization via `.gitattributes`:
+- All workflow files (`*.yml`, `*.yaml`) are pinned to `text eol=lf`.
+- Source code, documentation, and configuration files (`*.py`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, `*.rs`) are pinned to `text eol=lf`.
+- Normalization is verified by `scripts/check_tracked_text_normalization.py` in pre-commit and CI to prevent CRLF-induced whole-file merge conflicts.
+
+
 ### CI/CD Pipeline
 
 | Workflow                | Trigger        | Purpose                                | Blocking? |
@@ -6460,3 +6468,8 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
   - Re-exported all extracted classes and constants in `poll_runtime.py` to preserve seamless flat `sys.path` and direct imports.
   - Split `test_data_capture.py` into focused test suites: `test_data_capture_core.py` (246 LOC), `test_data_capture_records.py` (387 LOC), and `test_data_capture_queries.py` (352 LOC).
   - Removed grandfathered entries for `poll_runtime.py` and `test_data_capture.py` from `scripts/monolith_baseline.txt`.
+
+## 2026-08-24: Gitattributes LF Normalization (#4479)
+
+- **2026-08-24**: fix(repo, #4479) — Add standard LF line ending normalization rules (`text eol=lf`) to `.gitattributes` covering `*.yml`, `*.yaml`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, and `*.rs`. Renormalized repository text files (`git add --renormalize .`), eliminating CRLF-stored GitHub workflow and source files that previously caused unalignable whole-file merge conflicts.
+
