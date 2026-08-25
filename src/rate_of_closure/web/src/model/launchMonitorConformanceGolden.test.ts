@@ -90,8 +90,9 @@ describe("launch monitor conformance bundle golden parity", () => {
     const validated = validatePlayerCovariationResponse(covariationFixture.expected_result);
     expect(validated.contract_version).toBe("launch-monitor-player-covariation/1.0.0");
     expect(validated.status).toBe("available");
-    expect(validated.claims.causal_inference).toBe(false);
-    expect(validated.claims.device_emulation).toBe(false);
+    const claims = validated.claims as Record<string, unknown>;
+    expect(claims.causal_inference).toBe(false);
+    expect(claims.device_emulation).toBe(false);
 
     const validatedScan = validatePlayerCovariationResponse(covariationFixture.expected_scan_result);
     expect(validatedScan.analysis_kind).toBe("pair_scan");

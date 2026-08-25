@@ -10,9 +10,6 @@ import {
   buildDatasetJobRequest,
   parseCanonicalDatasetReference,
   validateDatasetJobPage,
-  validateDatasetJobStatus,
-  validateLaunchMonitorStrokesGainedResponse,
-  validatePlayerCovariationResponse,
 } from "./launchMonitorV2Client";
 
 describe("launch monitor provenance and unavailable states", () => {
