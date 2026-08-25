@@ -6517,3 +6517,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-24: Gitattributes LF Normalization (#4479)
 
 - **2026-08-24**: fix(repo, #4479) — Add standard LF line ending normalization rules (`text eol=lf`) to `.gitattributes` covering `*.yml`, `*.yaml`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, and `*.rs`. Renormalized repository text files (`git add --renormalize .`), eliminating CRLF-stored GitHub workflow and source files that previously caused unalignable whole-file merge conflicts.
+
+## 2026-08-25: Morris Elementary-Effects Scale-Sensitive Test (#4455)
+
+- **2026-08-25**: test(variation, #4455) — Add `test_additive_fixture_nonunit_bounds_pins_normalization_convention` in `src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py`. The prior sole arithmetic check used unit `[0, 1]` factor bounds, under which "effect per normalized range" and "effect per physical unit" are numerically identical, so a units/scale bug in the elementary-effect divisor would pass silently. The new fixture uses non-unit, unequal bounds (span 10 and 20) for a linear response with known coefficients; the independently-derived expected `mu_star` values (`coefficient * span`) diverge sharply from the bare coefficients a per-physical-unit convention would produce, closing the gap. Verified against the current implementation (passes) and against a temporarily introduced units bug (fails while the unit-bounds test stays green); bug reverted before commit. Estimator implementation unchanged.
