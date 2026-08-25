@@ -173,11 +173,12 @@ def _map_endpoint(
         )
     if not np.all(np.isfinite(jacobian)):
         raise ValueError("endpoint_jacobian must contain only finite values")
-    endpoint_force, _, rank, _ = np.linalg.lstsq(
+    raw_endpoint_force, _, rank, _ = np.linalg.lstsq(
         jacobian.T, generalized_drive, rcond=None
     )
-    reconstructed = jacobian.T @ endpoint_force
-    residual = generalized_drive - reconstructed
+    endpoint_force = np.asarray(raw_endpoint_force, dtype=np.float64)
+    reconstructed = np.asarray(jacobian.T @ endpoint_force, dtype=np.float64)
+    residual = np.asarray(generalized_drive - reconstructed, dtype=np.float64)
     tolerance = 1e-10 * max(1.0, float(np.linalg.norm(generalized_drive)))
     exact = float(np.linalg.norm(residual)) <= tolerance
     coordinate_count = generalized_drive.size
@@ -263,7 +264,9 @@ def attribute_state(
         start=np.zeros(size, dtype=np.float64),
     )
     try:
-        acceleration = np.linalg.solve(mass, total_drive)
+        acceleration = np.asarray(
+            np.linalg.solve(mass, total_drive), dtype=np.float64
+        )
     except np.linalg.LinAlgError as error:
         raise ValueError("mass_matrix must be nonsingular") from error
     return StateAttribution(
