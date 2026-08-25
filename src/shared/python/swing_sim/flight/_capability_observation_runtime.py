@@ -78,7 +78,7 @@ def _validated_evaluation(value: SolverEvaluation) -> SolverEvaluation | None:
             for item in value.metrics
         )
         return SolverEvaluation(status, metrics, value.reason)
-    except Exception:
+    except Exception:  # noqa: BLE001 - malformed SolverEvaluation metrics or types return None
         return None
 
 
@@ -178,7 +178,7 @@ def _evaluate_sample(
     """Evaluate, normalize, and synchronously emit one attempted sample."""
     try:
         raw: object = evaluator(attempt.club.club_id, dict(attempt.perturbed))
-    except Exception:
+    except Exception:  # noqa: BLE001 - evaluator callback failure is normalized as FAILED sample
         normalized = _normalize(None, evaluator_failed=True)
     else:
         normalized = _normalize(raw, evaluator_failed=False)

@@ -330,7 +330,7 @@ class OllamaAdapter(BaseAgentAdapter):
                     )
                     index += 1
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - stream error boundary delegates to _handle_error
             logger.error("Ollama streaming error: %s", e)
             self._handle_error(e)
 
