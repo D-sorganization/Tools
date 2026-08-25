@@ -97,9 +97,7 @@ def test_epic_4142_remote_evidence_is_immutable_and_reviewable() -> None:
 
 def test_r15_upstream_consumption_evidence_is_verified_and_revision_bound() -> None:
     """The merged consumer must bind R15.1--R15.3 to one immutable authority."""
-    requirements = {
-        item["requirement_id"]: item for item in _load()["requirements"]
-    }
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
 
     for requirement_id in ("R15.1", "R15.2", "R15.3"):
         requirement = requirements[requirement_id]
