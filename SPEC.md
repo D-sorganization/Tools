@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.98                                    |
+| **Spec Version**        | 1.17.99                                    |
 | **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
@@ -6443,3 +6443,12 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-24: Wind Turbulence Deterministic Integer Hash Parity (#4513)
 
 - **2026-08-24**: fix(wind, #4513) — Replace the GLSL-derived `fract(sin(x) * 43758.5453)` turbulence noise hash in `swing_sim/flight/wind.py` and `rate_of_closure/web/src/model/wind.ts` with a deterministic 32-bit integer hash mixer (`fmix32` based). This eliminates cross-platform `libm` / V8 trigonometric float divergence and integer boundary discontinuities, restoring bit-for-bit identical turbulence phase and amplitude evaluation and enabling strict `1e-12` precision assertions in the shared PyQt6 / React golden fixture test suites.
+
+## 2026-08-24: P1AM Runtime Modularization and Monolith Baseline Shrinkage (#4503)
+
+- **2026-08-24**: refactor(p1am, #4503) — Modularized `poll_runtime.py` (805 LOC -> 437 LOC) and `test_data_capture.py` (905 LOC -> 3 split test files) into components strictly under the 500-LOC budget:
+  - Extracted `HistorianRecord`, `_WriterCounters`, `HistorianWriter`, and `ThrottledHistorianSink` into `src/p1am_control_system/backend/historian.py` (451 LOC).
+  - Extracted `DataQualityTracker` into `src/p1am_control_system/backend/data_quality.py` (62 LOC).
+  - Re-exported all extracted classes and constants in `poll_runtime.py` to preserve seamless flat `sys.path` and direct imports.
+  - Split `test_data_capture.py` into focused test suites: `test_data_capture_core.py` (246 LOC), `test_data_capture_records.py` (387 LOC), and `test_data_capture_queries.py` (352 LOC).
+  - Removed grandfathered entries for `poll_runtime.py` and `test_data_capture.py` from `scripts/monolith_baseline.txt`.
