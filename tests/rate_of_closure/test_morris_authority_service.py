@@ -55,6 +55,66 @@ def test_service_returns_unchanged_v1_report_deterministically() -> None:
     assert first.observations.observations.outcomes.shape == (2, 2)
 
 
+def test_service_computes_correct_elementary_effects_and_invariants() -> None:
+    """Assert mathematical correctness of elementary effects and metric invariants."""
+    request = parse_morris_request(request_document())
+
+    # Linear response f(x) = 3.5 * yaw: elementary effect must equal exactly 3.5
+    def linear_evaluator(sample: object) -> MorrisEvaluation:
+        yaw = getattr(sample, "physical_values", {}).get("yaw", 0.0)
+        values = {name: 3.5 * float(yaw) for name in ALL_OUTPUT_NAMES}
+        return MorrisEvaluation("evaluated_hit", values)
+
+    service = RateMorrisService(
+        evaluator_factory=lambda _design, _config: linear_evaluator
+    )
+    result = service.execute_with_observations(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    report = result.report
+    estimates = report["estimates"]
+    assert len(estimates) == len(ALL_OUTPUT_NAMES)
+
+    for estimate in estimates:
+        effects = estimate["effects"]
+        mu = effects["mu"]
+        mu_star = effects["mu_star"]
+        sigma = effects["sigma"]
+        se = effects["mu_star_standard_error"]
+
+        # Exact mathematical expectation for linear slope 3.5 scaled to factor
+        # range [lower, upper] = [-2.0, 2.0]. Range is 4.0, so normalized EE is 14.0.
+        expected_mu = 3.5 * 4.0
+        assert mu == pytest.approx(expected_mu)
+        assert mu_star == pytest.approx(expected_mu)
+        assert sigma == pytest.approx(0.0, abs=1e-12)
+        assert se == pytest.approx(0.0, abs=1e-12)
+
+        # Invariants
+        assert mu_star >= abs(mu)
+        assert sigma >= 0.0
+        assert se >= 0.0
+        assert estimate["availability"] == "available"
+
+    # Constant response f(x) = 42.0: effects must be 0 and availability constant-output
+    def constant_evaluator(_sample: object) -> MorrisEvaluation:
+        values = {name: 42.0 for name in ALL_OUTPUT_NAMES}
+        return MorrisEvaluation("evaluated_hit", values)
+
+    const_service = RateMorrisService(
+        evaluator_factory=lambda _design, _config: constant_evaluator
+    )
+    const_result = const_service.execute_with_observations(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    for estimate in const_result.report["estimates"]:
+        assert estimate["availability"] == "constant-output"
+        assert estimate["effects"]["mu"] == 0.0
+        assert estimate["effects"]["mu_star"] == 0.0
+        assert estimate["effects"]["sigma"] == 0.0
+        assert estimate["effects"]["mu_star_standard_error"] == 0.0
+
+
 def test_programming_failure_aborts_whole_service_call() -> None:
     request = parse_morris_request(request_document())
 

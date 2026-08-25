@@ -43,6 +43,17 @@ geometry, and attribution; it does not establish participant validity or a
 coaching strategy. R15.4 and nine other requirements remain partial, so epic
 #4142 remains fail closed and uncloseable.
 
+### 2026-08-24 Morris Metric Invariant Validation and Router Integrity (#4459, #4458)
+
+Version 1.17.100 hardens Morris screening validation across Python and TypeScript and clarifies integrity verification in the router:
+1. **Metric Invariant Validation**: Enforces numerical and mathematical realizability invariants on Morris screening metrics in `_metric_validation.py` and `response_contract.py`:
+   - Non-negative magnitude invariants: $\mu^* \ge 0$, $\sigma \ge 0$, and $\text{SE}(\mu^*) \ge 0$.
+   - Mean absolute effect bound: $\mu^* \ge |\mu|$ (derived from the triangle inequality over elementary effects).
+   - Safe squared magnitude ceiling: metrics bounded within $\sqrt{\text{max\_float}}$.
+   - Exact sample-moment identity and wire zero-clamp consistency: $\sigma^2 - n \cdot \text{SE}^2 - \frac{n}{n-1}(\mu^*)^2 + \frac{n}{n-1}\mu^2 = 0$ within scale-normalized rounding and clamp tolerances, mirroring TypeScript `morrisMetricValidation.ts`.
+2. **Clarified Router Integrity Verification**: Clarifies docstrings and implementation of `_validate_extended_result` in `router.py` to distinguish transport and provenance integrity checking (guarding against observation/report corruption and cross-job misattribution across asynchronous thread boundaries) from independent mathematical verification of the Morris elementary-effects algorithm, and executes full report contract and metric invariant verification via `parse_morris_report`.
+3. **Mathematical Correctness and Invariant Tests**: Adds comprehensive test suites in `tests/rate_of_closure/test_morris_metric_validation.py`, `tests/rate_of_closure/test_morris_authority_service.py`, and `tests/rate_of_closure/test_morris_ui_contract.py` asserting exact mathematical elementary effect recovery for known linear and constant response functions, failure modes on invariant violations, and report parser realizability enforcement.
+
 ### 2026-08-24 Orphaned Improvements Sync (#4493)
 
 Version 1.17.99 synchronizes four orphaned improvements:
@@ -5026,14 +5037,6 @@ passes fail early in CI.
 - **DRY**: Yes — shared_utilities module reduces duplication across tools
 - **Orthogonality**: Yes — tools are independent, composable, minimal coupling
 
-### Line Ending Normalization
-
-Repository text assets and workflows enforce LF normalization via `.gitattributes`:
-- All workflow files (`*.yml`, `*.yaml`) are pinned to `text eol=lf`.
-- Source code, documentation, and configuration files (`*.py`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, `*.rs`) are pinned to `text eol=lf`.
-- Normalization is verified by `scripts/check_tracked_text_normalization.py` in pre-commit and CI to prevent CRLF-induced whole-file merge conflicts.
-
-
 ### CI/CD Pipeline
 
 | Workflow                | Trigger        | Purpose                                | Blocking? |
@@ -5195,6 +5198,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |
+| 2026-08-24 | 1.17.100 | fix(morris, #4459, #4458): enforce Morris metric realizability invariants (mu* >= |mu|, sigma >= 0, standard_error >= 0, safe squaring magnitude bounds, exact sample-moment identity and wire clamp consistency matching TypeScript morrisMetricValidation.ts) in _metric_validation.py and response_contract.py; clarify router _validate_extended_result as a transport/pipeline integrity guard and validate reports via parse_morris_report; add mathematical correctness tests for known linear and constant response functions. |
+| 2026-08-24 | 1.17.99 | fix(shared, #4493): sync orphaned DCR glossary definition across expertise levels, test module filtering in import alias finder, np.vdot optimization for R-squared, and multi-directory internal package structure resolution. |
 | 2026-08-24 | 1.17.98 | fix(wind, #4513): replace GLSL fract(sin(x)) turbulence hash with deterministic 32-bit integer hash mixing across Python and TypeScript, eliminating cross-platform libm drift and restoring exact 1e-12 PyQt6/React parity fixture assertions. |
 | 2026-08-24 | 1.17.97 | feat(rate-of-closure, #4668 / #4142): define and implement the canonical variation execution-document and persisted-plan binding contracts across PyQt6, React, named libraries, workspaces, scalar and geometry ensembles, durable archives, forgiveness exports, and regional results. Bind browser-to-Python durable and regional requests with a cross-runtime plan digest without inventing executor provenance; retain legacy plans with a visible non-reproducibility warning; reject substituted or crossed evidence; and document CSV, paired-analysis, cross-runtime replay, and human-validation limits. |
 | 2026-08-23 | 1.17.96 | fix(rate-of-closure, #4142): preserve the exact audited base-revision assertion while applying the supported `detect-secrets` inline false-positive pragma to that reviewed Git SHA; retain the fail-closed baseline and unchanged requirement-ledger semantics. |
