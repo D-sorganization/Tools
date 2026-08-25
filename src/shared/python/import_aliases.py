@@ -144,6 +144,8 @@ class SharedImportAliasFinder(MetaPathFinder):
     """Map deprecated shared import spellings to canonical module objects."""
 
     def _parse(self, fullname: str) -> tuple[str | None, str]:
+        if ".tests." in fullname or fullname.endswith(".tests"):
+            return None, ""
         parts = fullname.split(".")
         if len(parts) >= 3 and parts[:2] == ["shared", "python"]:
             return (
@@ -277,11 +279,12 @@ def _src_search_locations() -> tuple[str, ...]:
 
 
 def _external_src_package_is_available() -> bool:
+    repo_root = _TOOLS_SRC_ROOT.parent
     for location in _src_search_locations():
         try:
-            if Path(location).resolve() != _TOOLS_SRC_ROOT:
+            if not Path(location).resolve().is_relative_to(repo_root):
                 return True
-        except OSError:
+        except (OSError, ValueError):
             return True
     return False
 

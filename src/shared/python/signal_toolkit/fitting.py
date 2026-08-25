@@ -66,7 +66,9 @@ class SinusoidFitter:
         offset: float,
     ) -> np.ndarray:
         """Sinusoidal model function."""
-        return amplitude * np.sin(2 * np.pi * frequency * t + phase) + offset
+        return np.asarray(
+            amplitude * np.sin(2 * np.pi * frequency * t + phase) + offset
+        )
 
     @staticmethod
     def estimate_initial_params(
@@ -161,9 +163,10 @@ class SinusoidFitter:
         residuals = y - fitted_values
 
         # R-squared
-        ss_res = np.sum(residuals**2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
-        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
+        y_dev = y - np.mean(y)
+        ss_res = float(np.vdot(residuals, residuals))
+        ss_tot = float(np.vdot(y_dev, y_dev))
+        r_squared = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
         # RMSE
         rmse = np.sqrt(np.mean(residuals**2))
@@ -214,7 +217,9 @@ class CosineFitter(SinusoidFitter):
         offset: float,
     ) -> np.ndarray:
         """Cosine model function."""
-        return amplitude * np.cos(2 * np.pi * frequency * t + phase) + offset
+        return np.asarray(
+            amplitude * np.cos(2 * np.pi * frequency * t + phase) + offset
+        )
 
     def get_function_string(self, params: dict[str, float]) -> str:
         """Get string representation of the fitted function."""
@@ -241,7 +246,7 @@ class ExponentialFitter:
         offset: float,
     ) -> np.ndarray:
         """Exponential decay model."""
-        return amplitude * np.exp(-decay_rate * t) + offset
+        return np.asarray(amplitude * np.exp(-decay_rate * t) + offset)
 
     @staticmethod
     def _growth_model(
@@ -251,7 +256,7 @@ class ExponentialFitter:
         offset: float,
     ) -> np.ndarray:
         """Exponential growth (1 - exp) model."""
-        return amplitude * (1 - np.exp(-growth_rate * t)) + offset
+        return np.asarray(amplitude * (1 - np.exp(-growth_rate * t)) + offset)
 
     @staticmethod
     def _general_model(
@@ -261,7 +266,7 @@ class ExponentialFitter:
         c: float,
     ) -> np.ndarray:
         """General exponential model: a * exp(b * t) + c."""
-        return a * np.exp(b * t) + c
+        return np.asarray(a * np.exp(b * t) + c)
 
     def fit_decay(
         self,
@@ -316,9 +321,10 @@ class ExponentialFitter:
 
         fitted_values = self._decay_model(t, *popt)
         residuals = y - fitted_values
-        ss_res = np.sum(residuals**2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
-        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
+        y_dev = y - np.mean(y)
+        ss_res = float(np.vdot(residuals, residuals))
+        ss_tot = float(np.vdot(y_dev, y_dev))
+        r_squared = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
         return FitResult(
             parameters={
@@ -388,9 +394,10 @@ class ExponentialFitter:
 
         fitted_values = self._growth_model(t, *popt)
         residuals = y - fitted_values
-        ss_res = np.sum(residuals**2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
-        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
+        y_dev = y - np.mean(y)
+        ss_res = float(np.vdot(residuals, residuals))
+        ss_tot = float(np.vdot(y_dev, y_dev))
+        r_squared = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
         return FitResult(
             parameters={
@@ -441,9 +448,10 @@ class LinearFitter:
         fitted_values = slope * t + intercept
         residuals = y - fitted_values
 
-        ss_res = np.sum(residuals**2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
-        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
+        y_dev = y - np.mean(y)
+        ss_res = float(np.vdot(residuals, residuals))
+        ss_tot = float(np.vdot(y_dev, y_dev))
+        r_squared = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
         return FitResult(
             parameters={
@@ -520,9 +528,10 @@ class PolynomialFitter:
         fitted_values = poly(t)
         residuals = y - fitted_values
 
-        ss_res = np.sum(residuals**2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
-        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
+        y_dev = y - np.mean(y)
+        ss_res = float(np.vdot(residuals, residuals))
+        ss_tot = float(np.vdot(y_dev, y_dev))
+        r_squared = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
         # Create parameters dict
         params = {f"c{i}": c for i, c in enumerate(coeffs)}
@@ -632,9 +641,10 @@ class CustomFunctionFitter:
         fitted_values = self.func(t, *popt)
         residuals = y - fitted_values
 
-        ss_res = np.sum(residuals**2)
-        ss_tot = np.sum((y - np.mean(y)) ** 2)
-        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
+        y_dev = y - np.mean(y)
+        ss_res = float(np.vdot(residuals, residuals))
+        ss_tot = float(np.vdot(y_dev, y_dev))
+        r_squared = 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
         params = dict(zip(self.param_names, popt, strict=False))
 
@@ -700,7 +710,7 @@ class CustomFunctionFitter:
             local_dict["t"] = t
             for name, val in zip(param_names, args, strict=False):
                 local_dict[name] = val
-            return safe_eval(expression, local_dict)
+            return np.asarray(safe_eval(expression, local_dict))
 
         return cls(custom_func, param_names, expression)
 

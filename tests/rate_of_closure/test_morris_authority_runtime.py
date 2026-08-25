@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import http.client
 import io
+import time
 from pathlib import Path
 
 import pytest
@@ -185,3 +186,48 @@ def test_start_preserves_original_interrupt_when_cleanup_itself_fails(
     assert caught.value is interruption
     assert process.terminate_count == 1
     assert process.stdout.close_count == 1
+
+
+def test_ready_port_timeout_diagnoses_stdout_and_stderr() -> None:
+    class _BlockingPipe:
+        def readline(self) -> str:
+            time.sleep(0.5)
+            return ""
+
+    process = _FakeProcess()
+    process.stdout = _BlockingPipe()  # type: ignore[assignment]
+    diagnostics = io.StringIO("sample stderr line\n")
+    with pytest.raises(
+        RuntimeError, match="Morris authority child readiness timed out"
+    ) as caught:
+        authority_runtime._ready_port(process, diagnostics, timeout_s=0.01)  # type: ignore[arg-type]
+    message = str(caught.value)
+    assert "stderr: sample stderr line" in message
+    assert "stdout: <empty>" in message
+
+
+def test_ready_port_invalid_readiness_diagnoses_stdout_and_stderr() -> None:
+    process = _FakeProcess()
+    process.stdout.write("bad_port\n")
+    process.stdout.seek(0)
+    diagnostics = io.StringIO("error in startup\n")
+    with pytest.raises(
+        RuntimeError, match="invalid Morris authority child readiness"
+    ) as caught:
+        authority_runtime._ready_port(process, diagnostics, timeout_s=1.0)  # type: ignore[arg-type]
+    message = str(caught.value)
+    assert "stdout: bad_port" in message
+    assert "stderr: error in startup" in message
+
+
+def test_ready_port_eof_diagnoses_stdout_and_stderr() -> None:
+    process = _FakeProcess()
+    process.returncode = 1
+    diagnostics = io.StringIO("fatal import error\n")
+    with pytest.raises(
+        RuntimeError, match="closed stdout before announcing a port"
+    ) as caught:
+        authority_runtime._ready_port(process, diagnostics, timeout_s=1.0)  # type: ignore[arg-type]
+    message = str(caught.value)
+    assert "child exited with 1" in message
+    assert "stderr: fatal import error" in message
