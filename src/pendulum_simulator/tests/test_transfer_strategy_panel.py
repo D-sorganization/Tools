@@ -92,6 +92,26 @@ def test_panel_updates_declared_window(qapp, monkeypatch) -> None:
     assert panel._last_summary.end_s == pytest.approx(0.2)
 
 
+def test_panel_preserves_fail_closed_source_warning(qapp, monkeypatch) -> None:
+    monkeypatch.setattr(panel_module, "double_pendulum_transfer_signals", lambda _: _signals())
+
+    def reject_unsupported_terms(_):
+        raise ValueError("Coulomb friction is unsupported")
+
+    monkeypatch.setattr(
+        panel_module, "double_pendulum_force_attribution", reject_unsupported_terms
+    )
+    panel = TransferStrategyPanel()
+
+    panel.set_result(MagicMock(), "double")
+    panel.refresh()
+
+    assert panel._attribution is None
+    assert "coordinate sources unavailable" in panel._status.text().lower()
+    assert "coulomb friction is unsupported" in panel._status.text().lower()
+    assert panel._source_labels["coriolis"][0].text() == "-- N s"
+
+
 def test_panel_rejects_inverted_window(qapp, monkeypatch) -> None:
     monkeypatch.setattr(panel_module, "double_pendulum_transfer_signals", lambda _: _signals())
     panel = TransferStrategyPanel()

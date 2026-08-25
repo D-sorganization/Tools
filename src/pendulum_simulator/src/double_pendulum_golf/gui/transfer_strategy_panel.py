@@ -55,6 +55,7 @@ class TransferStrategyPanel:
 
         self._signals: TransferSignals | None = None
         self._attribution: Any = None
+        self._source_warning: str | None = None
         self._last_summary: TransferSummary | None = None
         self._widget = QWidget(parent)
         layout = QVBoxLayout(self._widget)
@@ -160,6 +161,7 @@ class TransferStrategyPanel:
         """Load one qualified result or fail closed for unsupported tiers."""
         self._last_summary = None
         self._attribution = None
+        self._source_warning = None
         if model_type != "double":
             self._signals = None
             self._status.setText(
@@ -181,7 +183,7 @@ class TransferStrategyPanel:
         except (AttributeError, KeyError, TypeError, ValueError) as exc:
             self._attribution = None
             self._clear_sources()
-            self._status.setText(f"Transfer ready; coordinate sources unavailable: {exc}")
+            self._source_warning = str(exc)
         else:
             self._render_sources()
         start = float(self._signals.time_s[0])
@@ -191,7 +193,6 @@ class TransferStrategyPanel:
             spin.setSingleStep(max((end - start) / 100.0, 1e-4))
         self._start_spin.setValue(start)
         self._end_spin.setValue(end)
-        self._status.setText("Exact Planar Double Pendulum")
         self.refresh()
 
     def refresh(self) -> None:
@@ -207,7 +208,13 @@ class TransferStrategyPanel:
             return
         summary = summarize_transfer(self._signals, start_s=start, end_s=end)
         self._last_summary = summary
-        self._status.setText("Exact Planar Double Pendulum")
+        if self._source_warning is None:
+            self._status.setText("Exact Planar Double Pendulum")
+        else:
+            self._status.setText(
+                "Exact Planar Double Pendulum; coordinate sources unavailable: "
+                f"{self._source_warning}"
+            )
         for key, _, unit in _METRICS:
             value = getattr(summary, key)
             self._metric_labels[key].setText(f"{value:.3f} {unit}")
