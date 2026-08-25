@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -33,8 +34,30 @@ def _signals() -> TransferSignals:
     )
 
 
+def _attribution():
+    def metric(signed: float, absolute: float, work: float):
+        return SimpleNamespace(
+            signed_tangent_impulse_n_s=signed,
+            absolute_tangent_impulse_n_s=absolute,
+            generalized_work_j=work,
+        )
+
+    return SimpleNamespace(
+        metrics={
+            "coriolis": metric(-2.0, 5.0, -12.0),
+            "squared_speed": metric(-3.0, 4.0, -8.0),
+            "gravity": metric(1.0, 2.0, 3.0),
+            "damping": metric(-0.5, 0.5, -1.0),
+            "applied": metric(8.0, 8.0, 22.0),
+        }
+    )
+
+
 def test_panel_reports_phase_summary_and_model_boundary(qapp, monkeypatch) -> None:
     monkeypatch.setattr(panel_module, "double_pendulum_transfer_signals", lambda _: _signals())
+    monkeypatch.setattr(
+        panel_module, "double_pendulum_force_attribution", lambda _: _attribution()
+    )
     panel = TransferStrategyPanel()
 
     panel.set_result(MagicMock(), "double")
@@ -43,6 +66,9 @@ def test_panel_reports_phase_summary_and_model_boundary(qapp, monkeypatch) -> No
     assert "12.000 J" in panel._metric_labels["distal_energy_gain_j"].text()
     assert "-0.700 J" in panel._metric_labels["wrist_control_work_j"].text()
     assert panel._end_spin.value() == pytest.approx(0.3)
+    assert panel._source_labels["coriolis"][0].text() == "-2.000 N s"
+    assert panel._source_labels["coriolis"][1].text() == "5.000 N s"
+    assert panel._source_labels["coriolis"][2].text() == "-12.000 J"
 
     panel.set_result(MagicMock(), "golfer")
     assert "not yet qualified" in panel._status.text().lower()
@@ -50,6 +76,9 @@ def test_panel_reports_phase_summary_and_model_boundary(qapp, monkeypatch) -> No
 
 def test_panel_updates_declared_window(qapp, monkeypatch) -> None:
     monkeypatch.setattr(panel_module, "double_pendulum_transfer_signals", lambda _: _signals())
+    monkeypatch.setattr(
+        panel_module, "double_pendulum_force_attribution", lambda _: _attribution()
+    )
     panel = TransferStrategyPanel()
     panel.set_result(MagicMock(), "double")
 
