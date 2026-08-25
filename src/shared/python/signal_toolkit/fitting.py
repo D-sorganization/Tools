@@ -66,7 +66,9 @@ class SinusoidFitter:
         offset: float,
     ) -> np.ndarray:
         """Sinusoidal model function."""
-        return np.asarray(amplitude * np.sin(2 * np.pi * frequency * t + phase) + offset)
+        return np.asarray(
+            amplitude * np.sin(2 * np.pi * frequency * t + phase) + offset
+        )
 
     @staticmethod
     def estimate_initial_params(
@@ -215,7 +217,9 @@ class CosineFitter(SinusoidFitter):
         offset: float,
     ) -> np.ndarray:
         """Cosine model function."""
-        return np.asarray(amplitude * np.cos(2 * np.pi * frequency * t + phase) + offset)
+        return np.asarray(
+            amplitude * np.cos(2 * np.pi * frequency * t + phase) + offset
+        )
 
     def get_function_string(self, params: dict[str, float]) -> str:
         """Get string representation of the fitted function."""
