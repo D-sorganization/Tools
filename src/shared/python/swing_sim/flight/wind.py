@@ -55,10 +55,31 @@ class WindGust:
         )
 
 
+_UINT32_MASK = 0xFFFFFFFF
+_UINT32_SCALE = 4294967296.0
+
+
+def _fmix32(h: int) -> int:
+    h &= _UINT32_MASK
+    h ^= h >> 16
+    h = (h * 0x85EBCA6B) & _UINT32_MASK
+    h ^= h >> 13
+    h = (h * 0xC2B2AE35) & _UINT32_MASK
+    h ^= h >> 16
+    return h
+
+
+def _noise_hash(seed: int, axis: int, harmonic: int, stream: int) -> int:
+    h = ((seed & _UINT32_MASK) + 0x9E3779B9) & _UINT32_MASK
+    h = (h ^ ((axis + 1) * 0x1E35A7BD)) & _UINT32_MASK
+    h = (h ^ ((harmonic + 1) * 0x85EBCA6B)) & _UINT32_MASK
+    h = (h ^ ((stream + 1) * 0xC2B2AE35)) & _UINT32_MASK
+    return _fmix32(h)
+
+
 def _unit_noise(seed: int, axis: int, harmonic: int, time_s: float) -> float:
-    phase_source = math.sin((seed + 1) * (axis + 1) * 12.9898 + (harmonic + 1) * 78.233)
-    phase = (phase_source * 43758.5453 % 1.0) * 2.0 * math.pi
-    coefficient = math.sin((seed + 11) * (axis + 3) * (harmonic + 1) * 0.731)
+    phase = (_noise_hash(seed, axis, harmonic, 0) / _UINT32_SCALE) * 2.0 * math.pi
+    coefficient = (_noise_hash(seed, axis, harmonic, 1) / _UINT32_SCALE) * 2.0 - 1.0
     frequency_hz = 0.2 + 0.27 * harmonic
     return coefficient * math.sin(2.0 * math.pi * frequency_hz * time_s + phase)
 

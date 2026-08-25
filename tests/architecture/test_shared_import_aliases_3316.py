@@ -93,9 +93,12 @@ def test_finder_does_not_redirect_internal_test_modules() -> None:
         "sidekick.tests.calculators.conversion.test_conversion",
         "upstream_drift_tools.tests.test_data_io",
         "src.shared.python.sidekick.tests.test_data_io",
+        "ai.tests.test_access_policy",
+        "shared.python.ai.tests.test_access_policy",
     )
     for fullname in declined:
         assert finder.find_spec(fullname) is None, fullname
+        assert finder._parse(fullname) == (None, ""), fullname
 
 
 def test_finder_still_redirects_non_test_submodules() -> None:

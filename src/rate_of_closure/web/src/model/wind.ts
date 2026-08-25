@@ -59,13 +59,28 @@ export function meteorologicalWind(
   });
 }
 
+const UINT32_SCALE = 4294967296.0;
+
+function fmix32(h: number): number {
+  h = (h ^ (h >>> 16)) >>> 0;
+  h = Math.imul(h, 0x85ebca6b) >>> 0;
+  h = (h ^ (h >>> 13)) >>> 0;
+  h = Math.imul(h, 0xc2b2ae35) >>> 0;
+  h = (h ^ (h >>> 16)) >>> 0;
+  return h;
+}
+
+function noiseHash(seed: number, axis: number, harmonic: number, stream: number): number {
+  let h = ((seed & 0xffffffff) + 0x9e3779b9) >>> 0;
+  h = (h ^ Math.imul(axis + 1, 0x1e35a7bd)) >>> 0;
+  h = (h ^ Math.imul(harmonic + 1, 0x85ebca6b)) >>> 0;
+  h = (h ^ Math.imul(stream + 1, 0xc2b2ae35)) >>> 0;
+  return fmix32(h);
+}
+
 const unitNoise = (seed: number, axis: number, harmonic: number, timeS: number): number => {
-  const phaseSource = Math.sin(
-    (seed + 1) * (axis + 1) * 12.9898 + (harmonic + 1) * 78.233,
-  );
-  const fractional = ((phaseSource * 43758.5453) % 1 + 1) % 1;
-  const phase = fractional * 2 * Math.PI;
-  const coefficient = Math.sin((seed + 11) * (axis + 3) * (harmonic + 1) * 0.731);
+  const phase = (noiseHash(seed, axis, harmonic, 0) / UINT32_SCALE) * 2 * Math.PI;
+  const coefficient = (noiseHash(seed, axis, harmonic, 1) / UINT32_SCALE) * 2.0 - 1.0;
   const frequencyHz = 0.2 + 0.27 * harmonic;
   return coefficient * Math.sin(2 * Math.PI * frequencyHz * timeS + phase);
 };

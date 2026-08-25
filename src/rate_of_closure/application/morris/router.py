@@ -31,6 +31,7 @@ from .contracts import (
     MorrisJobEnvelope,
     parse_morris_request,
 )
+from .response_contract import parse_morris_report
 from .service import (
     MorrisExecutionService,
     MorrisServiceResult,
@@ -226,7 +227,16 @@ class MorrisJobRegistry:
 
     @staticmethod
     def _validate_extended_result(job: _Job, result: MorrisServiceResult) -> None:
-        """Bind an extended result to its exact asynchronous job request."""
+        """Verify result transport integrity, provenance, and metric invariants.
+
+        This integrity check confirms that the extended service result matches
+        the original asynchronous job request, that observations and design
+        provenance are uncorrupted across the execution/thread transport
+        boundary, and that all reported Morris metric invariants hold. This is
+        a transport/pipeline integrity guard against state corruption and
+        cross-job misattribution, not an independent mathematical verification
+        of the underlying elementary-effects estimation algorithm.
+        """
         request = job.request
         archive = result.observations
         design = request.design()
@@ -253,6 +263,7 @@ class MorrisJobRegistry:
             or result.report != recomputed_report
         ):
             raise ValueError("Morris service result does not match its job request")
+        parse_morris_report(result.report)
 
     def _enforce_observation_budget_locked(self, current: _Job) -> None:
         """Evict oldest raw authorities until the weighted cell budget fits."""

@@ -27,10 +27,66 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.96                                    |
-| **Last Spec Update**    | 2026-08-23                                 |
+| **Spec Version**        | 1.18.4                                     |
+| **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Shared Theme Palette & Dynamic Token Metaclass (#4686)
+
+Version 1.18.2 ports canonical `ThemePalette` and dynamic `Colors` token container to `src/shared/python/theme/`:
+
+1. **Canonical Palette & Metaclass**: Introduces `src/shared/python/theme/palette.py` providing `ThemePalette` (dict subclass with attribute and semantic alias lookup), `_ColorsMeta` dynamic token interceptor, `Colors` typed token container, and `get_current_colors()` accessor.
+2. **Package Re-Exports**: Re-exports all palette and typography tokens from `src/shared/python/theme/__init__.py` to provide a complete, drop-in contract across both headless and GUI environments fleet-wide.
+
+### 2026-08-25 FastAPI Route Introspection & Dependency Pinning (#4478, #4477, #4476)
+
+Version 1.18.1 hardens FastAPI route introspection and standardizes modern framework pins:
+
+1. **Dependency Pinning**: Pins `fastapi>=0.141.1` and `starlette>=0.45.0` across `requirements.txt` and `pyproject.toml` extras (`rate-morris-authority`, `all`, `chat`, `rate-of-closure-web`, `p1am`, `test`), ensuring local and CI runtime parity.
+2. **Robust Route Introspection**: Implements hierarchical route collection that traverses `app.routes`, Starlette `Mount`s, and modern FastAPI `_IncludedRouter` instances (recursing into `original_router` / `router` and resolving prefix from `include_context` / `prefix`), merged with `app.openapi()["paths"]`. This ensures all served routes are accurately reported regardless of FastAPI version and prevents under-reporting caused by unflattened router mounting.
+3. **F16 Safety and Authorization Matrix Hardening**: Hardens `test_route_authz_matrix.py` with explicit non-empty route inventory assertions and validates classification of F16 advanced-control advisory optimization (`/api/mpc/simulate`), PID tuning, and hardware mutating endpoints.
+4. **Calculator Route Discovery**: Hardens `calc_backend` route signature inspection and registration to support nested router hierarchies and OpenAPI schema fallbacks.
+
+### 2026-08-24 Immutable Upstream Variation Consumption (#4142)
+
+Version 1.18.0 promotes only R15.1--R15.3 after protected UpstreamDrift PR
+#9039 merged at `eb7076466152cbacd40a7f4d3fb9d92255d4ae43` against exact Tools
+revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. The ledger now records 21
+verified, 10 partial, and zero unverified requirements. It verifies the thin
+consumer boundary and deterministic model-data parity for typed outcomes,
+geometry, and attribution; it does not establish participant validity or a
+coaching strategy. R15.4 and nine other requirements remain partial, so epic
+#4142 remains fail closed and uncloseable.
+
+### 2026-08-24 Python 3.12 Variation Tolerances, Morris Readiness, and Error Taxonomy (#4482)
+
+Version 1.17.101 hardens variation simulation and Morris authority service under Python 3.12:
+
+1. **Python 3.12 Tolerance**: Uses scale-normalized floating point comparison tolerances in variation simulation asserting numerical consistency within 1e-4 relative tolerance across Python 3.11 and 3.12 runtime environments.
+2. **Morris Authority Service Readiness**: Adds deterministic readiness and health probes for the Morris Authority Service to ensure robust background worker initialization.
+3. **Error Taxonomy Standardization**: Standardizes structured error taxonomy and error codes for simulation validation and calculation failures.
+
+### 2026-08-24 Morris Metric Invariant Validation and Router Integrity (#4459, #4458)
+
+Version 1.17.100 hardens Morris screening validation across Python and TypeScript and clarifies integrity verification in the router:
+
+1. **Metric Invariant Validation**: Enforces numerical and mathematical realizability invariants on Morris screening metrics in `_metric_validation.py` and `response_contract.py`:
+   - Non-negative magnitude invariants: $\mu^* \ge 0$, $\sigma \ge 0$, and $\text{SE}(\mu^*) \ge 0$.
+   - Mean absolute effect bound: $\mu^* \ge |\mu|$ (derived from the triangle inequality over elementary effects).
+   - Safe squared magnitude ceiling: metrics bounded within $\sqrt{\text{max\_float}}$.
+   - Exact sample-moment identity and wire zero-clamp consistency: $\sigma^2 - n \cdot \text{SE}^2 - \frac{n}{n-1}(\mu^*)^2 + \frac{n}{n-1}\mu^2 = 0$ within scale-normalized rounding and clamp tolerances, mirroring TypeScript `morrisMetricValidation.ts`.
+2. **Clarified Router Integrity Verification**: Clarifies docstrings and implementation of `_validate_extended_result` in `router.py` to distinguish transport and provenance integrity checking (guarding against observation/report corruption and cross-job misattribution across asynchronous thread boundaries) from independent mathematical verification of the Morris elementary-effects algorithm, and executes full report contract and metric invariant verification via `parse_morris_report`.
+3. **Mathematical Correctness and Invariant Tests**: Adds comprehensive test suites in `tests/rate_of_closure/test_morris_metric_validation.py`, `tests/rate_of_closure/test_morris_authority_service.py`, and `tests/rate_of_closure/test_morris_ui_contract.py` asserting exact mathematical elementary effect recovery for known linear and constant response functions, failure modes on invariant violations, and report parser realizability enforcement.
+
+### 2026-08-24 Orphaned Improvements Sync (#4493)
+
+Version 1.17.99 synchronizes four orphaned improvements:
+
+1. **DCR Glossary Definition**: Updates the Drift-Control Ratio glossary definition in `src/shared/python/ai/education.py` across Beginner, Intermediate, and Advanced expertise levels to the model-based mathematical state-space formulation ($\dot{x} = f(x) + G(x)u$, with supremum denominator over admissible control $\text{DCR}_{W,\mathcal{U}} = \|Wf\| / (\sup_{u \in \mathcal{U}(x)} \|WGu\| + \epsilon)$).
+2. **Test Module Filtering in Alias Finder**: Updates `SharedImportAliasFinder` in `src/shared/python/import_aliases.py` to decline `.tests.` or `.endswith(".tests")` module paths across both `find_spec` and `_parse`, preventing the alias finder from hijacking test module resolution.
+3. **R-squared Vectorized Optimization**: Optimizes R-squared coefficient of determination calculations in `src/shared/python/plot_engine/trendline.py` and `src/shared/python/signal_toolkit/fitting.py` using `np.vdot` to eliminate intermediate squared array allocations.
+4. **Internal Package Structure Resolution**: Updates `_external_src_package_is_available` in `src/shared/python/import_aliases.py` to check candidate search locations against the repository root using `is_relative_to`, properly handling multi-directory `src/` layouts without misidentifying internal modules as external packages.
 
 ### Governed Launch-Monitor Analytics Release
 
@@ -5167,6 +5223,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.4 | fix(shared, #4493): annotate the `verdict` local in `ai/peer_review/coordinator.py::_gather_verdicts` to satisfy mypy's `no-any-return` check, which the `_audit.py` extraction surfaced by bringing the whole file back into the changed-file mypy pass. No behavior change. |
+| 2026-08-25 | 1.18.3 | fix(shared, #4493): finish syncing the DCR glossary entry to UpstreamDrift's exact corrected wording (withdraw the muscle-identification claim across all expertise levels), and extract `ai/peer_review/_audit_event` into its own `_audit.py` module so it is importable independently of `coordinator.py`. Also close a residual `np.sum(mask)` vs `mask.sum()` gap left over from the earlier #4681 partial fix. The `reporting/__init__.py` public-surface expansion (`REPORT_TEMPLATES`, `GLOBAL_REPORT_REGISTRY`, `AgenticSummaryGenerator`, `JinjaReportTemplate`) is deferred: it requires porting ~34KB across five new UpstreamDrift-only modules with an undeclared `jinja2` dependency, and the issue itself flags it as lower-confidence pending an ownership decision. |
+| 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |
+| 2026-08-24 | 1.17.100 | fix(morris, #4459, #4458): enforce Morris metric realizability invariants (mu* >= |mu|, sigma >= 0, standard_error >= 0, safe squaring magnitude bounds, exact sample-moment identity and wire clamp consistency matching TypeScript morrisMetricValidation.ts) in _metric_validation.py and response_contract.py; clarify router _validate_extended_result as a transport/pipeline integrity guard and validate reports via parse_morris_report; add mathematical correctness tests for known linear and constant response functions. |
+| 2026-08-24 | 1.17.99 | fix(shared, #4493): sync orphaned DCR glossary definition across expertise levels, test module filtering in import alias finder, np.vdot optimization for R-squared, and multi-directory internal package structure resolution. |
+| 2026-08-24 | 1.17.98 | fix(wind, #4513): replace GLSL fract(sin(x)) turbulence hash with deterministic 32-bit integer hash mixing across Python and TypeScript, eliminating cross-platform libm drift and restoring exact 1e-12 PyQt6/React parity fixture assertions. |
 | 2026-08-24 | 1.17.97 | feat(rate-of-closure, #4668 / #4142): define and implement the canonical variation execution-document and persisted-plan binding contracts across PyQt6, React, named libraries, workspaces, scalar and geometry ensembles, durable archives, forgiveness exports, and regional results. Bind browser-to-Python durable and regional requests with a cross-runtime plan digest without inventing executor provenance; retain legacy plans with a visible non-reproducibility warning; reject substituted or crossed evidence; and document CSV, paired-analysis, cross-runtime replay, and human-validation limits. |
 | 2026-08-23 | 1.17.96 | fix(rate-of-closure, #4142): preserve the exact audited base-revision assertion while applying the supported `detect-secrets` inline false-positive pragma to that reviewed Git SHA; retain the fail-closed baseline and unchanged requirement-ledger semantics. |
 | 2026-08-23 | 1.17.95 | docs(rate-of-closure, #4142): add a fail-closed 31-item R10--R15 evidence ledger with exact source, test, command, remote-run, and remaining-gap traceability; classify 18 items verified, 11 partial, and two unverified without treating visual or synthetic evidence as human validation. Reconcile the stale GAAI `staging` rule with the protected feature-branch-to-`main` repository contract and update both active handoffs after #4663 and post-main Release Automation passed. |
@@ -6438,3 +6500,20 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-23: Palette Micro-UX Improvement in Rate of Closure
 
 - **2026-08-23**: fix(ux) — Add accessible focus indicators (`focus-visible:ring-2`, `focus-visible:ring-blue-500` or equivalent) in place of `outline-none` across inputs, selects, and buttons in the `rate_of_closure` app to ensure keyboard-only and screen-reader users can visually track their current element focus.
+
+## 2026-08-24: Wind Turbulence Deterministic Integer Hash Parity (#4513)
+
+- **2026-08-24**: fix(wind, #4513) — Replace the GLSL-derived `fract(sin(x) * 43758.5453)` turbulence noise hash in `swing_sim/flight/wind.py` and `rate_of_closure/web/src/model/wind.ts` with a deterministic 32-bit integer hash mixer (`fmix32` based). This eliminates cross-platform `libm` / V8 trigonometric float divergence and integer boundary discontinuities, restoring bit-for-bit identical turbulence phase and amplitude evaluation and enabling strict `1e-12` precision assertions in the shared PyQt6 / React golden fixture test suites.
+
+## 2026-08-24: P1AM Runtime Modularization and Monolith Baseline Shrinkage (#4503)
+
+- **2026-08-24**: refactor(p1am, #4503) — Modularized `poll_runtime.py` (805 LOC -> 437 LOC) and `test_data_capture.py` (905 LOC -> 3 split test files) into components strictly under the 500-LOC budget:
+  - Extracted `HistorianRecord`, `_WriterCounters`, `HistorianWriter`, and `ThrottledHistorianSink` into `src/p1am_control_system/backend/historian.py` (451 LOC).
+  - Extracted `DataQualityTracker` into `src/p1am_control_system/backend/data_quality.py` (62 LOC).
+  - Re-exported all extracted classes and constants in `poll_runtime.py` to preserve seamless flat `sys.path` and direct imports.
+  - Split `test_data_capture.py` into focused test suites: `test_data_capture_core.py` (246 LOC), `test_data_capture_records.py` (387 LOC), and `test_data_capture_queries.py` (352 LOC).
+  - Removed grandfathered entries for `poll_runtime.py` and `test_data_capture.py` from `scripts/monolith_baseline.txt`.
+
+## 2026-08-24: Gitattributes LF Normalization (#4479)
+
+- **2026-08-24**: fix(repo, #4479) — Add standard LF line ending normalization rules (`text eol=lf`) to `.gitattributes` covering `*.yml`, `*.yaml`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, and `*.rs`. Renormalized repository text files (`git add --renormalize .`), eliminating CRLF-stored GitHub workflow and source files that previously caused unalignable whole-file merge conflicts.

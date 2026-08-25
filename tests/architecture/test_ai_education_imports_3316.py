@@ -47,3 +47,35 @@ def test_ai_education_canonical_import_explains_known_term() -> None:
     )
 
     assert "forces caused a movement" in explanation
+
+
+def test_ai_education_dcr_glossary_definition() -> None:
+    """DCR definition must use model-based mathematical state-space formulation."""
+    from shared.python.ai.education import EducationSystem
+    from shared.python.ai.types import ExpertiseLevel
+
+    edu = EducationSystem()
+
+    beginner = edu.explain("drift_control_decomposition", ExpertiseLevel.BEGINNER)
+    assert "declared plant" in beginner or "autonomous motion" in beginner
+    # Substantive fix (Tools #4493): the glossary must not claim DCR
+    # identifies muscle activity by itself.
+    assert "does not identify muscle activity" in beginner
+
+    intermediate = edu.explain(
+        "drift_control_decomposition",
+        ExpertiseLevel.INTERMEDIATE,
+    )
+    assert "G(x)u" in intermediate
+    assert "admissible" in intermediate
+
+    advanced = edu.explain(
+        "drift_control_decomposition",
+        ExpertiseLevel.ADVANCED,
+    )
+    assert "DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon)" in advanced
+    assert "f(x) + G(x)u" in advanced
+
+    entry = edu.get_entry("drift_control_decomposition")
+    assert entry is not None
+    assert entry.formula == "DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon)"
