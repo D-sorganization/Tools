@@ -73,9 +73,12 @@ _DEFAULT_SKIP_DIRS = {
 
 def _load_gitignore(repo_root: Path) -> Any:
     """Return a callable ``is_ignored(rel_path) -> bool``."""
+    pathspec: Any = None
     try:
-        import pathspec
-    except Exception:
+        import pathspec as _pathspec
+
+        pathspec = _pathspec
+    except ImportError:
         pathspec = None
 
     patterns: list[str] = []
@@ -334,7 +337,7 @@ def rebuild(
         for abs_p, rel in iterator:
             try:
                 _process_file(abs_p, rel, repo, conn, stats)
-            except Exception as exc:  # pragma: no cover - defensive
+            except Exception as exc:  # noqa: BLE001 - pragma: no cover - defensive per-file error isolation
                 logger.warning("codemap: failed to index %s: %s", rel, exc)
                 stats.errors.append(f"{rel}: {exc}")
 
