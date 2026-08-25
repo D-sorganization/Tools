@@ -63,8 +63,11 @@ class MorrisAuthorityRuntime:
             base_url = f"http://127.0.0.1:{port}"
             remaining = deadline - time.monotonic()
             if remaining <= 0:
-                raise TimeoutError("Morris authority startup timed out")
-            _wait_authenticated(process, port, token, remaining)
+                raise RuntimeError(
+                    f"Morris authority startup timed out: "
+                    f"{_startup_diagnosis(process, diagnostics)}"
+                )
+            _wait_authenticated(process, port, token, remaining, diagnostics)
             return cls(process, base_url, token)
         except BaseException:
             try:
@@ -133,6 +136,7 @@ def _spawn_child(root: Path, token: str) -> tuple[subprocess.Popen[str], IO[str]
         raise RuntimeError("current Python interpreter path is unavailable")
     environment = os.environ.copy()
     environment[AUTHORITY_TOKEN_ENV] = token
+    environment["PYTHONUNBUFFERED"] = "1"
     prior_path = environment.get("PYTHONPATH")
     environment["PYTHONPATH"] = (
         str(root) if not prior_path else os.pathsep.join((str(root), prior_path))
@@ -145,28 +149,45 @@ def _spawn_child(root: Path, token: str) -> tuple[subprocess.Popen[str], IO[str]
     diagnostics = tempfile.TemporaryFile(mode="w+", encoding="utf-8", errors="replace")
     return (
         subprocess.Popen(
-            [str(interpreter), "-m", "rate_of_closure.application.morris.child"],
+            [str(interpreter), "-u", "-m", "rate_of_closure.application.morris.child"],
             env=environment,
             stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
             stderr=diagnostics,
             text=True,
+            bufsize=1,
             shell=False,
         ),
         diagnostics,
     )
 
 
-def _startup_diagnosis(process: subprocess.Popen[str], diagnostics: IO[str]) -> str:
+def _startup_diagnosis(
+    process: subprocess.Popen[str],
+    diagnostics: IO[str] | None,
+    stdout_preview: str = "",
+) -> str:
     """Summarise why a child never reached readiness, for the raised error."""
     exit_code = process.poll()
-    try:
-        diagnostics.seek(0)
-        captured = diagnostics.read(_DIAGNOSTIC_TAIL_CHARS).strip()
-    except OSError:  # pragma: no cover - diagnosis must never mask the failure
-        captured = ""
+    stderr_captured = ""
+    if diagnostics is not None:
+        try:
+            diagnostics.seek(0)
+            stderr_captured = diagnostics.read(_DIAGNOSTIC_TAIL_CHARS).strip()
+        except OSError:  # pragma: no cover - diagnosis must never mask the failure
+            stderr_captured = ""
+    stdout_captured = stdout_preview.strip()
+    if not stdout_captured and exit_code is not None and process.stdout is not None:
+        try:
+            stdout_captured = process.stdout.read(_DIAGNOSTIC_TAIL_CHARS).strip()
+        except OSError:
+            stdout_captured = ""
     state = "still running" if exit_code is None else f"exited with {exit_code}"
-    return f"child {state}; stderr: {captured or '<empty>'}"
+    return (
+        f"child {state}; "
+        f"stdout: {stdout_captured or '<empty>'}; "
+        f"stderr: {stderr_captured or '<empty>'}"
+    )
 
 
 def _ready_port(
@@ -175,11 +196,11 @@ def _ready_port(
     if process.stdout is None:
         raise RuntimeError("authority readiness channel is unavailable")
     pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="morris-ready")
-    future = pool.submit(process.stdout.readline, 16)
+    future = pool.submit(process.stdout.readline)
     try:
         line = future.result(timeout=timeout_s)
     except TimeoutError as exc:
-        raise TimeoutError(
+        raise RuntimeError(
             f"Morris authority child readiness timed out: "
             f"{_startup_diagnosis(process, diagnostics)}"
         ) from exc
@@ -194,21 +215,34 @@ def _ready_port(
             f"{_startup_diagnosis(process, diagnostics)}"
         )
     if not line.endswith("\n") or not line[:-1].isdigit() or len(line) > 6:
-        raise RuntimeError("invalid Morris authority child readiness")
+        raise RuntimeError(
+            f"invalid Morris authority child readiness: "
+            f"{_startup_diagnosis(process, diagnostics, stdout_preview=line)}"
+        )
     port = int(line[:-1])
     if not 1 <= port <= 65535 or line != f"{port}\n":
-        raise RuntimeError("invalid Morris authority child readiness")
+        raise RuntimeError(
+            f"invalid Morris authority child readiness: "
+            f"{_startup_diagnosis(process, diagnostics, stdout_preview=line)}"
+        )
     return port
 
 
 def _wait_authenticated(
-    process: subprocess.Popen[str], port: int, token: str, timeout_s: float
+    process: subprocess.Popen[str],
+    port: int,
+    token: str,
+    timeout_s: float,
+    diagnostics: IO[str] | None = None,
 ) -> None:
     deadline = time.monotonic() + timeout_s
     headers = {"Authorization": f"Bearer {token}"}
     while time.monotonic() < deadline:
         if process.poll() is not None:
-            raise RuntimeError("Morris authority child exited before readiness")
+            diag = _startup_diagnosis(process, diagnostics)
+            raise RuntimeError(
+                f"Morris authority child exited before readiness: {diag}"
+            )
         try:
             status, media_type, document = _direct_request(
                 port, "GET", CAPABILITY_PATH, headers
@@ -222,7 +256,8 @@ def _wait_authenticated(
         except (OSError, http.client.HTTPException, ValueError):
             pass
         time.sleep(_POLL_INTERVAL_S)
-    raise TimeoutError("Morris authority authenticated readiness timed out")
+    diag = _startup_diagnosis(process, diagnostics)
+    raise RuntimeError(f"Morris authority authenticated readiness timed out: {diag}")
 
 
 def _direct_request(
