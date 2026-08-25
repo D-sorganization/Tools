@@ -381,11 +381,13 @@ def attribute_trajectory(
         ):
             cancellation = 1.0 - abs(signed_tangent) / absolute_tangent
         metrics[name] = ComponentMetrics(
-            signed_generalized_impulse_nm_s=np.trapezoid(
-                history.generalized_drive_nm, time, axis=0
+            signed_generalized_impulse_nm_s=np.asarray(
+                np.trapezoid(history.generalized_drive_nm, time, axis=0),
+                dtype=np.float64,
             ),
-            absolute_generalized_impulse_nm_s=np.trapezoid(
-                np.abs(history.generalized_drive_nm), time, axis=0
+            absolute_generalized_impulse_nm_s=np.asarray(
+                np.trapezoid(np.abs(history.generalized_drive_nm), time, axis=0),
+                dtype=np.float64,
             ),
             signed_tangent_impulse_n_s=signed_tangent,
             absolute_tangent_impulse_n_s=absolute_tangent,
