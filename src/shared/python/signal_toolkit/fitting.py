@@ -66,7 +66,7 @@ class SinusoidFitter:
         offset: float,
     ) -> np.ndarray:
         """Sinusoidal model function."""
-        return amplitude * np.sin(2 * np.pi * frequency * t + phase) + offset
+        return np.asarray(amplitude * np.sin(2 * np.pi * frequency * t + phase) + offset)
 
     @staticmethod
     def estimate_initial_params(
@@ -215,7 +215,7 @@ class CosineFitter(SinusoidFitter):
         offset: float,
     ) -> np.ndarray:
         """Cosine model function."""
-        return amplitude * np.cos(2 * np.pi * frequency * t + phase) + offset
+        return np.asarray(amplitude * np.cos(2 * np.pi * frequency * t + phase) + offset)
 
     def get_function_string(self, params: dict[str, float]) -> str:
         """Get string representation of the fitted function."""
@@ -242,7 +242,7 @@ class ExponentialFitter:
         offset: float,
     ) -> np.ndarray:
         """Exponential decay model."""
-        return amplitude * np.exp(-decay_rate * t) + offset
+        return np.asarray(amplitude * np.exp(-decay_rate * t) + offset)
 
     @staticmethod
     def _growth_model(
@@ -252,7 +252,7 @@ class ExponentialFitter:
         offset: float,
     ) -> np.ndarray:
         """Exponential growth (1 - exp) model."""
-        return amplitude * (1 - np.exp(-growth_rate * t)) + offset
+        return np.asarray(amplitude * (1 - np.exp(-growth_rate * t)) + offset)
 
     @staticmethod
     def _general_model(
@@ -262,7 +262,7 @@ class ExponentialFitter:
         c: float,
     ) -> np.ndarray:
         """General exponential model: a * exp(b * t) + c."""
-        return a * np.exp(b * t) + c
+        return np.asarray(a * np.exp(b * t) + c)
 
     def fit_decay(
         self,
@@ -706,7 +706,7 @@ class CustomFunctionFitter:
             local_dict["t"] = t
             for name, val in zip(param_names, args, strict=False):
                 local_dict[name] = val
-            return safe_eval(expression, local_dict)
+            return np.asarray(safe_eval(expression, local_dict))
 
         return cls(custom_func, param_names, expression)
 
