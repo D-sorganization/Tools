@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.101                                   |
+| **Spec Version**        | 1.18.0                                     |
 | **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-24 Immutable Upstream Variation Consumption (#4142)
+
+Version 1.18.0 promotes only R15.1--R15.3 after protected UpstreamDrift PR
+#9039 merged at `eb7076466152cbacd40a7f4d3fb9d92255d4ae43` against exact Tools
+revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. The ledger now records 21
+verified, 10 partial, and zero unverified requirements. It verifies the thin
+consumer boundary and deterministic model-data parity for typed outcomes,
+geometry, and attribution; it does not establish participant validity or a
+coaching strategy. R15.4 and nine other requirements remain partial, so epic
+#4142 remains fail closed and uncloseable.
 
 ### 2026-08-24 Python 3.12 Variation Tolerances, Morris Readiness, and Error Taxonomy (#4482)
 
@@ -38,7 +49,6 @@ Version 1.17.101 hardens variation simulation and Morris authority service under
 1. **Python 3.12 Tolerance**: Uses scale-normalized floating point comparison tolerances in variation simulation asserting numerical consistency within 1e-4 relative tolerance across Python 3.11 and 3.12 runtime environments.
 2. **Morris Authority Service Readiness**: Adds deterministic readiness and health probes for the Morris Authority Service to ensure robust background worker initialization.
 3. **Error Taxonomy Standardization**: Standardizes structured error taxonomy and error codes for simulation validation and calculation failures.
-
 ### 2026-08-24 Morris Metric Invariant Validation and Router Integrity (#4459, #4458)
 
 Version 1.17.100 hardens Morris screening validation across Python and TypeScript and clarifies integrity verification in the router:
@@ -5193,6 +5203,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |
 | 2026-08-24 | 1.17.100 | fix(morris, #4459, #4458): enforce Morris metric realizability invariants (mu* >= |mu|, sigma >= 0, standard_error >= 0, safe squaring magnitude bounds, exact sample-moment identity and wire clamp consistency matching TypeScript morrisMetricValidation.ts) in _metric_validation.py and response_contract.py; clarify router _validate_extended_result as a transport/pipeline integrity guard and validate reports via parse_morris_report; add mathematical correctness tests for known linear and constant response functions. |
 | 2026-08-24 | 1.17.99 | fix(shared, #4493): sync orphaned DCR glossary definition across expertise levels, test module filtering in import alias finder, np.vdot optimization for R-squared, and multi-directory internal package structure resolution. |
 | 2026-08-24 | 1.17.98 | fix(wind, #4513): replace GLSL fract(sin(x)) turbulence hash with deterministic 32-bit integer hash mixing across Python and TypeScript, eliminating cross-platform libm drift and restoring exact 1e-12 PyQt6/React parity fixture assertions. |
@@ -6480,3 +6491,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
   - Re-exported all extracted classes and constants in `poll_runtime.py` to preserve seamless flat `sys.path` and direct imports.
   - Split `test_data_capture.py` into focused test suites: `test_data_capture_core.py` (246 LOC), `test_data_capture_records.py` (387 LOC), and `test_data_capture_queries.py` (352 LOC).
   - Removed grandfathered entries for `poll_runtime.py` and `test_data_capture.py` from `scripts/monolith_baseline.txt`.
+
+## 2026-08-24: Gitattributes LF Normalization (#4479)
+
+- **2026-08-24**: fix(repo, #4479) — Add standard LF line ending normalization rules (`text eol=lf`) to `.gitattributes` covering `*.yml`, `*.yaml`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, and `*.rs`. Renormalized repository text files (`git add --renormalize .`), eliminating CRLF-stored GitHub workflow and source files that previously caused unalignable whole-file merge conflicts.
