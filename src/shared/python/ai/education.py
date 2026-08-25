@@ -426,19 +426,22 @@ def _build_validation_analysis_entries() -> dict[str, GlossaryEntry]:
             category="analysis",
             definitions={
                 ExpertiseLevel.BEGINNER: (
-                    "A model-based split between the autonomous motion of a "
-                    "declared plant and the contribution of its declared applied "
-                    "control. It does not identify muscle activity by itself."
+                    "A ratio comparing the natural, passive motion of the body "
+                    "(drift from gravity and momentum) to the maximum control power "
+                    "available from muscles. High DCR means natural dynamics carry "
+                    "the movement, while low DCR means active muscle effort dominates."
                 ),
                 ExpertiseLevel.INTERMEDIATE: (
-                    "Drift contains every retained autonomous plant term; control "
-                    "is G(x)u. DCR compares drift with bounded admissible control "
-                    "capacity in one declared metric."
+                    "Model-based decomposition of control-affine state-space dynamics "
+                    "ẋ = f(x) + G(x)u into passive drift f(x) (gravity, Coriolis, inertia) "
+                    "and control input G(x)u. DCR evaluates the ratio of drift magnitude "
+                    "to the supremum of available control authority over admissible controls U(x)."
                 ),
                 ExpertiseLevel.ADVANCED: (
-                    "Affine decomposition: xdot = f(x) + G(x)u. "
-                    "DCR_W,U = ||Wf||/(sup_{u in U(x)}||WGu|| + epsilon). "
-                    "A realized-input denominator defines DIR, not DCR."
+                    "Model-based state-space formulation ẋ = f(x) + G(x)u with state-dependent "
+                    "admissible control set U(x) and weighting matrix W. "
+                    "DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon). "
+                    "Quantifies drift dominance versus maximum actuator authority."
                 ),
             },
             formula="DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon)",

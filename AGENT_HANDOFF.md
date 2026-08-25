@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-25
+> Last updated: 2026-08-24
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. The ledger has 21 verified and 10 partial requirements; R15.1--R15.3 have immutable Upstream consumption evidence, while R15.4 and R14.6 remain partial. |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4668 is implementing self-contained variation-plan evidence across every persistence/export boundary; R15 remains open.                       |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
@@ -34,29 +34,46 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 
 ## Open PR Situation — Read Before Filing Anything
 
-No PR is a draft. Query `gh pr list` before acting; the current queue below is
-an exact 2026-08-25 snapshot and can change independently of this handoff.
+No PR is a draft. The live golf queue includes Sidekick and remaining #4142 work; query `gh pr list` rather than trusting a count here.
 
-| PR    | Scope                                                                    |
-| ----- | ------------------------------------------------------------------------ |
-| #4687 | RotationConverter fixed-array JSX optimization                           |
-| #4686 | CSV-export allocation optimization                                      |
-| #4685 | Immutable Upstream R15 evidence and #4142 handoff reconciliation         |
-| #4682 | P1AM FastAPI route introspection and dependency pins                     |
-| #4677 | Automated v1.9.0 release bump                                            |
-| #4676 | Automated v1.8.0 release bump                                            |
+| PR    | Scope                                                                      |
+| ----- | -------------------------------------------------------------------------- |
+| #4585 | Sidekick Phase S1/S2 integration; active protected delivery                |
+| #4600 | Post-merge PyQt launch-monitor visual-baseline approval                    |
+| #4649 | Serialize trusted Playwright apt access; reconcile #4142/#4433 handoffs    |
+| #4466 | Rate of Closure remainder — **content-complete except the camera cluster** |
+| #4449 | P1AM plant historian + SCADA foundation (supersedes #4065, #4091)          |
+| #4447 | Variation / Morris sensitivity suite (consolidates 34 drafts)              |
+| #4446 | Ground study + rate-of-closure suites (supersedes #4409/#4410)             |
 
-**Current #4142 state.** PRs #4669 and #4674 are merged. Protected UpstreamDrift
-PR #9039 consumes exact Tools revision
-`17474249b9267d0e73a779c1d72f231e7b8de39c` through a thin gateway with typed
-outcomes and deterministic parity gates. The ledger records 21 verified, 10
-partial, and zero unverified items. #4142 remains open because R15.4 lacks one
-consolidated public reproduction guide, R14.6 remains gated by #4433, and eight
-other requirements retain explicit gaps. This is model-data and provenance
-evidence, not human or scientific validation.
-PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
-error-taxonomy regressions exposed by protected execution. Do not weaken the
-provider contract or infer human validity from the corrected model-data gates.
+**#4466 still cannot be merged by any strategy** — its merge-base predates
+`src/rate_of_closure/`, making 281 overlapping files both-added conflicts. Its
+content landed as 22 slices (#4517–#4547). **Only the camera-controls cluster
+remains, as a reimplementation**: wiring `CameraViewportMixin` passes 20 camera
+tests but regresses three main-owned tests and needs ~20 UI files that delete
+shipped work. #4571 owns this; do not slice it or close #4466 before it lands.
+
+**Current #4142/#4668 state.** PR #4669 is open from
+`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
+query its exact head and protected checks before acting. Version-3 execution
+documents and explicit legacy bindings now cover PyQt6/React plan files, named
+libraries, workspaces, scalar/geometry ensembles, durable archives, forgiveness
+exports, and regional results. Cross-runtime durable/regional requests bind the
+plan SHA-256 while Python retains its own executor identity. Exact Python,
+single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
+two-DPI PyQt gates pass locally. The ledger remains partial until protected CI,
+merge, and remote-main verification; this is not human or scientific validation.
+The latest protected suite exposed one stale exact-manifest assertion and an
+UpstreamDrift provider-mode test that leaked `TOOLS_REPO_PATH`; focused local
+corrections pass 8/8 and 3/3 tests. The downstream correction must merge before
+rerunning that consumer gate; do not weaken the provider contract.
+**Known-red on `main`, already filed — do not re-diagnose:** #4582 (the Phase 0
+branch isolates the benchmark from inconsistent self-hosted pip), #4561 (browser
+qualification: companion readiness metadata + missing Firefox/WebKit binaries;
+the workflow is scoped to Chromium meanwhile), #4569 (two `1.17.40` SPEC rows
+glued onto one table line by a union merge), #4558/#4559/#4560 (cross-runtime
+fixture parity gaps). #4602/#4608/#4610 isolate trusted React/PyQt evidence;
+#4607 removes the blocking npm-cache post-hook, and #4613 owns deterministic Qt probe teardown after complete rendered evidence generation.
 
 ## Must-Read Architecture Pointers
 
@@ -123,7 +140,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Close the 10 explicit #4142 partial gaps, beginning with R15.4 and #4433-owned R14.6; do not close the epic from cross-repository parity alone.
+4. Complete #4668, reconcile the #4142 ledger, adjudicate #4433, and pin the qualified Tools revision in UpstreamDrift.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
