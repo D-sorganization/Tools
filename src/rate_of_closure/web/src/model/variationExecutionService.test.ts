@@ -60,10 +60,7 @@ describe("variation execution authority", () => {
 
   it("fails before execution when a plan names an unsupported flight model", () => {
     expect(() => executeVariationWork(
-      {
-        ...jointRequest(),
-        plan: { ...plan, flightModel: "custom-flight-model" },
-      },
+      prepareVariationExecutionRequest({ ...plan, flightModel: "custom-flight-model" }, "all_together"),
       vi.fn(),
     )).toThrow(/flight model.*custom-flight-model.*waterloo_penner/i);
   });
@@ -112,10 +109,7 @@ describe("production worker transport", () => {
     const worker = new FakeWorker();
 
     expect(() => workerService(worker).execute(
-      {
-        ...jointRequest(),
-        plan: { ...plan, flightModel: "custom-flight-model" },
-      },
+      prepareVariationExecutionRequest({ ...plan, flightModel: "custom-flight-model" }, "all_together"),
       { signal: new AbortController().signal, onProgress: vi.fn() },
     )).toThrow(/flight model.*custom-flight-model.*waterloo_penner/i);
     expect(worker.posted).toEqual([]);
