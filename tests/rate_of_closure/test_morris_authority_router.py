@@ -302,9 +302,53 @@ def test_registry_rejects_report_crossed_with_same_request_observations() -> Non
     registry.close()
 
 
-def test_report_recomputation_does_not_hold_registry_lifecycle_lock(
+def test_registry_rejects_extended_result_violating_metric_invariants() -> None:
+    request = parse_morris_request(request_document())
+    base_service = RateMorrisService(
+        evaluator_factory=lambda _design, _config: (
+            lambda sample: MorrisEvaluation(
+                "evaluated_hit",
+                {name: float(sample.ordinal) for name in ALL_OUTPUT_NAMES},
+            )
+        )
+    )
+    valid_result = base_service.execute_with_observations(
+        request, threading.Event(), lambda _done, _total: None
+    )
+    corrupted_report = json.loads(json.dumps(valid_result.report))
+    # Violate metric invariant: mu_star < abs(mu)
+    corrupted_report["estimates"][0]["effects"]["mu_star"] = -1.0
+    corrupted_result = MorrisServiceResult(corrupted_report, valid_result.observations)
+
+    class InvariantViolatingService:
+        def execute(
+            self, _request: object, _cancel: object, _progress: object
+        ) -> dict[str, object]:
+            return corrupted_result.report
+
+        def execute_with_observations(
+            self, _request: object, _cancel: object, _progress: object
+        ) -> MorrisServiceResult:
+            return corrupted_result
+
+    registry = MorrisJobRegistry(InvariantViolatingService())
+    job_id = registry.create(request).job_id
+    for _index in range(100):
+        envelope = registry.status(job_id)
+        if envelope.status == "failed":
+            break
+        threading.Event().wait(0.001)
+    assert envelope.status == "failed"
+    assert envelope.report is None
+    with pytest.raises(RuntimeError, match="not available"):
+        registry.observations(job_id)
+    registry.close()
+
+
+def test_report_integrity_verification_does_not_hold_registry_lifecycle_lock(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """Verify transport integrity guard runs outside the lifecycle lock."""
     request = parse_morris_request(request_document())
     service = RateMorrisService(
         evaluator_factory=lambda _design, _config: (

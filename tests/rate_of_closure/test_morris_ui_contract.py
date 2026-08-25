@@ -24,6 +24,7 @@ from rate_of_closure.application.morris.request_document import (
 from rate_of_closure.application.morris.response_contract import (
     parse_morris_capability,
     parse_morris_job,
+    parse_morris_report,
 )
 from rate_of_closure.club import CLUB_LIBRARY
 from rate_of_closure.model import ImpactScenario
@@ -296,6 +297,38 @@ def test_strict_response_parsers_and_target_scoped_ranking() -> None:
             "magnitudes",
         ),
         (
+            lambda job: job["report"]["estimates"][0]["effects"].update(
+                mu=5.0, mu_star=2.0
+            ),
+            "magnitudes",
+        ),
+        (
+            lambda job: job["report"]["estimates"][0]["effects"].update(sigma=-1.0),
+            "magnitudes",
+        ),
+        (
+            lambda job: job["report"]["estimates"][0]["effects"].update(
+                mu_star_standard_error=-0.5
+            ),
+            "magnitudes",
+        ),
+        (
+            lambda job: job["report"]["estimates"][0]["effects"].update(sigma=1e-14),
+            "producer zero clamp",
+        ),
+        (
+            lambda job: job["report"]["estimates"][0]["effects"].update(
+                mu=1.5, mu_star=1.5, mu_star_standard_error=0.0, sigma=1e-8
+            ),
+            "clamp-scale degeneracy",
+        ),
+        (
+            lambda job: job["report"]["estimates"][0]["effects"].update(
+                mu=1e308, mu_star=1e308, mu_star_standard_error=0.0, sigma=0.0
+            ),
+            "safely squared",
+        ),
+        (
             lambda job: job["report"]["estimates"][3]["denominator"].update(
                 typed_no_impact_pairs=0
             ),
@@ -318,3 +351,23 @@ def test_response_parser_rejects_adversarial_scientific_documents(
     mutate(document)  # type: ignore[operator]
     with pytest.raises((TypeError, ValueError), match=message):
         parse_morris_job(document)
+
+
+def test_parse_morris_report_accepts_valid_and_rejects_malformed_report() -> None:
+    valid_report = _report()
+    parsed = parse_morris_report(valid_report)
+    assert parsed.trajectories == 4
+    assert parsed.levels == 4
+    assert len(parsed.estimates) == 4
+
+    # Rejection of invalid schema
+    invalid_schema = deepcopy(valid_report)
+    invalid_schema["schema_id"] = "invalid-schema"
+    with pytest.raises(ValueError, match="schema"):
+        parse_morris_report(invalid_schema)
+
+    # Rejection of invalid metric invariant
+    invalid_effects = deepcopy(valid_report)
+    invalid_effects["estimates"][0]["effects"]["mu_star"] = -2.0  # type: ignore[index]
+    with pytest.raises(ValueError, match="magnitudes"):
+        parse_morris_report(invalid_effects)

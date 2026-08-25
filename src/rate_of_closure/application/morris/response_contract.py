@@ -199,6 +199,7 @@ def _parse_effects(value: object) -> MorrisEffects:
     assert effects.mu_star_standard_error is not None and effects.sigma is not None
     if (
         effects.mu_star < abs(effects.mu)
+        or effects.mu_star < 0.0
         or effects.mu_star_standard_error < 0.0
         or effects.sigma < 0.0
     ):
@@ -279,7 +280,8 @@ def _parse_estimate(value: object, trajectories: int) -> MorrisResponseEstimate:
     )
 
 
-def _parse_report(value: object) -> MorrisResponseReport:
+def parse_morris_report(value: object) -> MorrisResponseReport:
+    """Parse a strict, immutable Morris global-sensitivity screening report."""
     item = exact_mapping(value, _REPORT_FIELDS, "Morris report")
     if (
         item["schema_id"] != _REPORT_SCHEMA_ID
@@ -339,6 +341,9 @@ def _parse_report(value: object) -> MorrisResponseReport:
     )
 
 
+_parse_report = parse_morris_report
+
+
 def parse_morris_job(value: object) -> MorrisResponseJob:
     """Parse an exact job envelope and its optional canonical report."""
     item = exact_mapping(value, _JOB_FIELDS, "Morris job")
@@ -391,4 +396,5 @@ __all__ = [
     "MorrisTarget",
     "parse_morris_capability",
     "parse_morris_job",
+    "parse_morris_report",
 ]
