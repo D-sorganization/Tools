@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.17.99                                    |
+| **Spec Version**        | 1.18.0                                     |
 | **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-24 Immutable Upstream Variation Consumption (#4142)
+
+Version 1.18.0 promotes only R15.1--R15.3 after protected UpstreamDrift PR
+#9039 merged at `eb7076466152cbacd40a7f4d3fb9d92255d4ae43` against exact Tools
+revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. The ledger now records 21
+verified, 10 partial, and zero unverified requirements. It verifies the thin
+consumer boundary and deterministic model-data parity for typed outcomes,
+geometry, and attribution; it does not establish participant validity or a
+coaching strategy. R15.4 and nine other requirements remain partial, so epic
+#4142 remains fail closed and uncloseable.
 
 ### 2026-08-24 Orphaned Improvements Sync (#4493)
 
@@ -5183,6 +5194,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |
 | 2026-08-24 | 1.17.98 | fix(wind, #4513): replace GLSL fract(sin(x)) turbulence hash with deterministic 32-bit integer hash mixing across Python and TypeScript, eliminating cross-platform libm drift and restoring exact 1e-12 PyQt6/React parity fixture assertions. |
 | 2026-08-24 | 1.17.97 | feat(rate-of-closure, #4668 / #4142): define and implement the canonical variation execution-document and persisted-plan binding contracts across PyQt6, React, named libraries, workspaces, scalar and geometry ensembles, durable archives, forgiveness exports, and regional results. Bind browser-to-Python durable and regional requests with a cross-runtime plan digest without inventing executor provenance; retain legacy plans with a visible non-reproducibility warning; reject substituted or crossed evidence; and document CSV, paired-analysis, cross-runtime replay, and human-validation limits. |
 | 2026-08-23 | 1.17.96 | fix(rate-of-closure, #4142): preserve the exact audited base-revision assertion while applying the supported `detect-secrets` inline false-positive pragma to that reviewed Git SHA; retain the fail-closed baseline and unchanged requirement-ledger semantics. |
@@ -6472,4 +6484,3 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-08-24: Gitattributes LF Normalization (#4479)
 
 - **2026-08-24**: fix(repo, #4479) — Add standard LF line ending normalization rules (`text eol=lf`) to `.gitattributes` covering `*.yml`, `*.yaml`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, and `*.rs`. Renormalized repository text files (`git add --renormalize .`), eliminating CRLF-stored GitHub workflow and source files that previously caused unalignable whole-file merge conflicts.
-
