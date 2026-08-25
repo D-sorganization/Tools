@@ -47,3 +47,33 @@ def test_ai_education_canonical_import_explains_known_term() -> None:
     )
 
     assert "forces caused a movement" in explanation
+
+
+def test_ai_education_dcr_glossary_definition() -> None:
+    """DCR definition must use model-based mathematical state-space formulation."""
+    from shared.python.ai.education import EducationSystem
+    from shared.python.ai.types import ExpertiseLevel
+
+    edu = EducationSystem()
+
+    beginner = edu.explain("drift_control_decomposition", ExpertiseLevel.BEGINNER)
+    assert "passive motion" in beginner or "drift from gravity" in beginner
+    assert "maximum control power" in beginner or "control authority" in beginner
+
+    intermediate = edu.explain(
+        "drift_control_decomposition",
+        ExpertiseLevel.INTERMEDIATE,
+    )
+    assert "ẋ = f(x) + G(x)u" in intermediate or "f(x)" in intermediate
+    assert "U(x)" in intermediate or "admissible" in intermediate
+
+    advanced = edu.explain(
+        "drift_control_decomposition",
+        ExpertiseLevel.ADVANCED,
+    )
+    assert "DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon)" in advanced
+    assert "f(x) + G(x)u" in advanced
+
+    entry = edu.get_entry("drift_control_decomposition")
+    assert entry is not None
+    assert entry.formula == "DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon)"

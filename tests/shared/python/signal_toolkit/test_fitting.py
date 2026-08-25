@@ -16,8 +16,12 @@ import numpy as np
 from numpy.testing import assert_allclose
 from signal_toolkit.core import Signal
 from signal_toolkit.fitting import (
+    CustomFunctionFitter,
     ExponentialFitter,
     FitResult,
+    FunctionFitter,
+    LinearFitter,
+    PolynomialFitter,
     SinusoidFitter,
 )
 
@@ -182,3 +186,85 @@ class TestExponentialFitter:
 
         max_residual = np.max(np.abs(result.residuals))
         assert max_residual < 0.1
+
+
+# ── LinearFitter ─────────────────────────────────────────────────────────
+
+
+class TestLinearFitter:
+    """Test linear function fitting."""
+
+    def test_linear_fit(self) -> None:
+        t = np.linspace(0, 10, 100)
+        y = 2.5 * t + 1.0
+        sig = _make_signal(t, y)
+
+        fitter = LinearFitter()
+        result = fitter.fit(sig)
+
+        assert result.success
+        assert result.r_squared == pytest.approx(1.0)
+        assert result.parameters["slope"] == pytest.approx(2.5)
+        assert result.parameters["intercept"] == pytest.approx(1.0)
+
+
+# ── PolynomialFitter ─────────────────────────────────────────────────────
+
+
+class TestPolynomialFitter:
+    """Test polynomial function fitting."""
+
+    def test_quadratic_fit(self) -> None:
+        t = np.linspace(0, 4, 50)
+        y = 3.0 * t**2 - 2.0 * t + 1.5
+        sig = _make_signal(t, y)
+
+        fitter = PolynomialFitter(order=2)
+        result = fitter.fit(sig)
+
+        assert result.success
+        assert result.r_squared == pytest.approx(1.0)
+        assert result.parameters["c2"] == pytest.approx(3.0)
+        assert result.parameters["c1"] == pytest.approx(-2.0)
+        assert result.parameters["c0"] == pytest.approx(1.5)
+
+
+# ── CustomFunctionFitter ─────────────────────────────────────────────────
+
+
+class TestCustomFunctionFitter:
+    """Test custom function fitting."""
+
+    def test_custom_fit(self) -> None:
+        def model(t: np.ndarray, a: float, b: float) -> np.ndarray:
+            return a * np.sin(b * t)
+
+        t = np.linspace(0, np.pi, 100)
+        y = 2.0 * np.sin(3.0 * t)
+        sig = _make_signal(t, y)
+
+        fitter = CustomFunctionFitter(model, ["a", "b"])
+        result = fitter.fit(sig, initial_guess=[1.8, 2.8])
+
+        assert result.success
+        assert result.r_squared == pytest.approx(1.0)
+        assert result.parameters["a"] == pytest.approx(2.0, rel=1e-3)
+        assert result.parameters["b"] == pytest.approx(3.0, rel=1e-3)
+
+
+# ── FunctionFitter ───────────────────────────────────────────────────────
+
+
+class TestFunctionFitter:
+    """Test unified FunctionFitter interface."""
+
+    def test_auto_fit_linear(self) -> None:
+        t = np.linspace(0, 5, 50)
+        y = 4.0 * t + 2.0
+        sig = _make_signal(t, y)
+
+        fitter = FunctionFitter()
+        best_type, result = fitter.auto_fit(sig, candidates=["linear", "polynomial"])
+
+        assert best_type in ("linear", "polynomial")
+        assert result.r_squared == pytest.approx(1.0)

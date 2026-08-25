@@ -78,8 +78,10 @@ def _r_squared(y: np.ndarray, y_pred: np.ndarray) -> float:
     """Compute R-squared (coefficient of determination)."""
     if y is None:
         raise ValueError("y must be provided")
-    ss_res = float(np.sum((y - y_pred) ** 2))
-    ss_tot = float(np.sum((y - np.mean(y)) ** 2))
+    diff = y - y_pred
+    y_dev = y - np.mean(y)
+    ss_res = float(np.vdot(diff, diff))
+    ss_tot = float(np.vdot(y_dev, y_dev))
     return 1.0 - (ss_res / ss_tot) if ss_tot > 0 else 0.0
 
 

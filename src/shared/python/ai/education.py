@@ -426,25 +426,30 @@ def _build_validation_analysis_entries() -> dict[str, GlossaryEntry]:
             category="analysis",
             definitions={
                 ExpertiseLevel.BEGINNER: (
-                    "A way to understand which part of motion is 'passive' "
-                    "(would happen without muscles) versus 'controlled' "
-                    "(actively driven by muscles). Helps identify when "
-                    "muscles are really working versus just going along for the ride."
+                    "A ratio comparing the natural, passive motion of the body "
+                    "(drift from gravity and momentum) to the maximum control power "
+                    "available from muscles. High DCR means natural dynamics carry "
+                    "the movement, while low DCR means active muscle effort dominates."
                 ),
                 ExpertiseLevel.INTERMEDIATE: (
-                    "Separating motion into: drift (gravity, inertia, "
-                    "passive dynamics) and control (active muscle contribution). "
-                    "The DCR indicates how much active control a movement requires."
+                    "Model-based decomposition of control-affine state-space dynamics "
+                    "ẋ = f(x) + G(x)u into passive drift f(x) (gravity, Coriolis, inertia) "
+                    "and control input G(x)u. DCR evaluates the ratio of drift magnitude "
+                    "to the supremum of available control authority over admissible controls U(x)."
                 ),
                 ExpertiseLevel.ADVANCED: (
-                    "Affine decomposition: q̈ = drift(q, q̇) + B(q)u. "
-                    "Control contribution from null-space of drift solutions. "
-                    "DCR = ||control|| / (||drift|| + ||control||). "
-                    "Low DCR → gravity-assisted; High DCR → muscle-dominated."
+                    "Model-based state-space formulation ẋ = f(x) + G(x)u with state-dependent "
+                    "admissible control set U(x) and weighting matrix W. "
+                    "DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon). "
+                    "Quantifies drift dominance versus maximum actuator authority."
                 ),
             },
-            formula="DCR = ||control|| / (||drift|| + ||control||)",
-            related_terms=["inverse_dynamics", "muscle_contribution", "energy"],
+            formula="DCR_W,U = ||Wf|| / (sup_{u in U(x)} ||WGu|| + epsilon)",
+            related_terms=[
+                "inverse_dynamics",
+                "forward_dynamics",
+                "equations_of_motion",
+            ],
         ),
     }
 
