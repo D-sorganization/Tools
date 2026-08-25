@@ -32,6 +32,14 @@
 
 ## 2. Purpose & Mission
 
+### 2026-08-24 Orphaned Improvements Sync (#4493)
+
+Version 1.17.99 synchronizes four orphaned improvements:
+1. **DCR Glossary Definition**: Updates the Drift-Control Ratio glossary definition in `src/shared/python/ai/education.py` across Beginner, Intermediate, and Advanced expertise levels to the model-based mathematical state-space formulation ($\dot{x} = f(x) + G(x)u$, with supremum denominator over admissible control $\text{DCR}_{W,\mathcal{U}} = \|Wf\| / (\sup_{u \in \mathcal{U}(x)} \|WGu\| + \epsilon)$).
+2. **Test Module Filtering in Alias Finder**: Updates `SharedImportAliasFinder` in `src/shared/python/import_aliases.py` to decline `.tests.` or `.endswith(".tests")` module paths across both `find_spec` and `_parse`, preventing the alias finder from hijacking test module resolution.
+3. **R-squared Vectorized Optimization**: Optimizes R-squared coefficient of determination calculations in `src/shared/python/plot_engine/trendline.py` and `src/shared/python/signal_toolkit/fitting.py` using `np.vdot` to eliminate intermediate squared array allocations.
+4. **Internal Package Structure Resolution**: Updates `_external_src_package_is_available` in `src/shared/python/import_aliases.py` to check candidate search locations against the repository root using `is_relative_to`, properly handling multi-directory `src/` layouts without misidentifying internal modules as external packages.
+
 ### Governed Launch-Monitor Analytics Release
 
 Version 1.17.96 preserves the exact #4142 audit-base revision assertion while
