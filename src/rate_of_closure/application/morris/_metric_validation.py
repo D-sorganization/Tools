@@ -44,6 +44,10 @@ def validate_finite_metrics(
     mu, mu_star, standard_error, sigma = finite
     if any(abs(value) > MAX_SAFELY_SQUARED_METRIC for value in finite):
         raise ValueError("Morris metrics must be safely squared finite values")
+    if mu_star < 0.0 or standard_error < 0.0 or sigma < 0.0:
+        raise ValueError("Morris metric magnitudes must be non-negative")
+    if mu_star < abs(mu):
+        raise ValueError("Morris effect mu_star must be at least absolute mean effect")
     if mu_star == 0.0:
         if (mu, standard_error, sigma) != (
             0.0,
