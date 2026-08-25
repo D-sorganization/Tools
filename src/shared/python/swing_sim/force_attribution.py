@@ -42,8 +42,11 @@ def _vector(name: str, value: object, size: int) -> FloatArray:
 class AttributionProvider(Protocol):
     """LoD boundary for one coordinate-frozen mechanical model."""
 
-    coordinate_names: tuple[str, ...]
-    endpoint_name: str
+    @property
+    def coordinate_names(self) -> tuple[str, ...]: ...
+
+    @property
+    def endpoint_name(self) -> str: ...
 
     def mass_matrix(self, q: FloatArray) -> FloatArray: ...
 
