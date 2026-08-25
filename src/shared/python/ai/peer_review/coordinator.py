@@ -151,7 +151,7 @@ class ReviewCoordinator:
         audit: list[dict[str, Any]],
     ) -> list[ReviewVerdict]:
         async def _run_one(reviewer: Any) -> ReviewVerdict:
-            verdict = await reviewer.review(request, subject)
+            verdict: ReviewVerdict = await reviewer.review(request, subject)
             audit.append(
                 _audit_event(
                     "verdict_received",
