@@ -35,6 +35,7 @@
 ### 2026-08-25 FastAPI Route Introspection & Dependency Pinning (#4478, #4477, #4476)
 
 Version 1.18.1 hardens FastAPI route introspection and standardizes modern framework pins:
+
 1. **Dependency Pinning**: Pins `fastapi>=0.141.1` and `starlette>=0.45.0` across `requirements.txt` and `pyproject.toml` extras (`rate-morris-authority`, `all`, `chat`, `rate-of-closure-web`, `p1am`, `test`), ensuring local and CI runtime parity.
 2. **Robust Route Introspection**: Implements hierarchical route collection that traverses `app.routes`, Starlette `Mount`s, and modern FastAPI `_IncludedRouter` instances (recursing into `original_router` / `router` and resolving prefix from `include_context` / `prefix`), merged with `app.openapi()["paths"]`. This ensures all served routes are accurately reported regardless of FastAPI version and prevents under-reporting caused by unflattened router mounting.
 3. **F16 Safety and Authorization Matrix Hardening**: Hardens `test_route_authz_matrix.py` with explicit non-empty route inventory assertions and validates classification of F16 advanced-control advisory optimization (`/api/mpc/simulate`), PID tuning, and hardware mutating endpoints.
@@ -54,12 +55,15 @@ coaching strategy. R15.4 and nine other requirements remain partial, so epic
 ### 2026-08-24 Python 3.12 Variation Tolerances, Morris Readiness, and Error Taxonomy (#4482)
 
 Version 1.17.101 hardens variation simulation and Morris authority service under Python 3.12:
+
 1. **Python 3.12 Tolerance**: Uses scale-normalized floating point comparison tolerances in variation simulation asserting numerical consistency within 1e-4 relative tolerance across Python 3.11 and 3.12 runtime environments.
 2. **Morris Authority Service Readiness**: Adds deterministic readiness and health probes for the Morris Authority Service to ensure robust background worker initialization.
 3. **Error Taxonomy Standardization**: Standardizes structured error taxonomy and error codes for simulation validation and calculation failures.
+
 ### 2026-08-24 Morris Metric Invariant Validation and Router Integrity (#4459, #4458)
 
 Version 1.17.100 hardens Morris screening validation across Python and TypeScript and clarifies integrity verification in the router:
+
 1. **Metric Invariant Validation**: Enforces numerical and mathematical realizability invariants on Morris screening metrics in `_metric_validation.py` and `response_contract.py`:
    - Non-negative magnitude invariants: $\mu^* \ge 0$, $\sigma \ge 0$, and $\text{SE}(\mu^*) \ge 0$.
    - Mean absolute effect bound: $\mu^* \ge |\mu|$ (derived from the triangle inequality over elementary effects).
@@ -71,6 +75,7 @@ Version 1.17.100 hardens Morris screening validation across Python and TypeScrip
 ### 2026-08-24 Orphaned Improvements Sync (#4493)
 
 Version 1.17.99 synchronizes four orphaned improvements:
+
 1. **DCR Glossary Definition**: Updates the Drift-Control Ratio glossary definition in `src/shared/python/ai/education.py` across Beginner, Intermediate, and Advanced expertise levels to the model-based mathematical state-space formulation ($\dot{x} = f(x) + G(x)u$, with supremum denominator over admissible control $\text{DCR}_{W,\mathcal{U}} = \|Wf\| / (\sup_{u \in \mathcal{U}(x)} \|WGu\| + \epsilon)$).
 2. **Test Module Filtering in Alias Finder**: Updates `SharedImportAliasFinder` in `src/shared/python/import_aliases.py` to decline `.tests.` or `.endswith(".tests")` module paths across both `find_spec` and `_parse`, preventing the alias finder from hijacking test module resolution.
 3. **R-squared Vectorized Optimization**: Optimizes R-squared coefficient of determination calculations in `src/shared/python/plot_engine/trendline.py` and `src/shared/python/signal_toolkit/fitting.py` using `np.vdot` to eliminate intermediate squared array allocations.
@@ -5211,6 +5216,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.1 | fix(shared, #4493): finish syncing the DCR glossary entry to UpstreamDrift's exact corrected wording (withdraw the muscle-identification claim across all expertise levels), and extract `ai/peer_review/_audit_event` into its own `_audit.py` module so it is importable independently of `coordinator.py`. Also close a residual `np.sum(mask)` vs `mask.sum()` gap left over from the earlier #4681 partial fix. The `reporting/__init__.py` public-surface expansion (`REPORT_TEMPLATES`, `GLOBAL_REPORT_REGISTRY`, `AgenticSummaryGenerator`, `JinjaReportTemplate`) is deferred: it requires porting ~34KB across five new UpstreamDrift-only modules with an undeclared `jinja2` dependency, and the issue itself flags it as lower-confidence pending an ownership decision. |
 | 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |
 | 2026-08-24 | 1.17.100 | fix(morris, #4459, #4458): enforce Morris metric realizability invariants (mu* >= |mu|, sigma >= 0, standard_error >= 0, safe squaring magnitude bounds, exact sample-moment identity and wire clamp consistency matching TypeScript morrisMetricValidation.ts) in _metric_validation.py and response_contract.py; clarify router _validate_extended_result as a transport/pipeline integrity guard and validate reports via parse_morris_report; add mathematical correctness tests for known linear and constant response functions. |
 | 2026-08-24 | 1.17.99 | fix(shared, #4493): sync orphaned DCR glossary definition across expertise levels, test module filtering in import alias finder, np.vdot optimization for R-squared, and multi-directory internal package structure resolution. |
