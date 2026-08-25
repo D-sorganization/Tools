@@ -274,6 +274,62 @@ def double_pendulum_transfer_signals(result: object) -> TransferSignals:
     )
 
 
+def double_pendulum_force_attribution(result: object) -> object:
+    """Adapt a simulator result to the canonical coordinate-source contract.
+
+    The adapter fails closed when Coulomb friction, torque clamps, or joint
+    limits are active because `force-attribution/v1` does not yet expose those
+    equation terms separately. It never folds them into control or residual.
+    """
+    from shared.python.swing_sim import (
+        DoublePendulumAttributionProvider,
+        PendulumParameters,
+        attribute_trajectory,
+    )
+
+    required = ("t", "states", "params", "n_steps", "torques_at")
+    if any(not hasattr(result, name) for name in required):
+        raise TypeError("result must provide the double-pendulum result contract")
+    params = result.params
+    if params.mu1 != 0.0 or params.mu2 != 0.0:
+        raise ValueError("Coulomb friction attribution is unavailable")
+    if getattr(result, "clamp", None) is not None:
+        raise ValueError("torque clamp attribution is unavailable")
+    if getattr(result, "limits", None) is not None:
+        raise ValueError("joint-limit attribution is unavailable")
+    states = np.asarray(result.states, dtype=float)
+    if states.shape != (result.n_steps, 4) or not np.all(np.isfinite(states)):
+        raise ValueError("double-pendulum result states must be finite with width four")
+    effective_distal_mass = params.m2 + params.mClub
+    canonical = PendulumParameters(
+        m1=params.m1,
+        l1=params.L1,
+        lc1=params.L1,
+        i1=params.m1 * params.L1**2,
+        m2=effective_distal_mass,
+        l2=params.L2,
+        lc2=params.L2,
+        i2=effective_distal_mass * params.L2**2,
+        d1=params.b1,
+        d2=params.b2,
+    )
+    provider = DoublePendulumAttributionProvider(
+        canonical,
+        g_inplane=(0.0, -params.g),
+    )
+    applied = np.asarray(
+        [result.torques_at(index) for index in range(result.n_steps)],
+        dtype=float,
+    )
+    return attribute_trajectory(
+        provider,
+        np.asarray(result.t, dtype=float),
+        states[:, :2],
+        states[:, 2:],
+        applied,
+    )
+
+
 def pareto_front(values: object, *, maximize: tuple[bool, ...]) -> npt.NDArray[np.int64]:
     """Return nondominated row indices for mixed max/min objectives."""
     objectives = np.asarray(values, dtype=float)
@@ -296,6 +352,7 @@ def pareto_front(values: object, *, maximize: tuple[bool, ...]) -> npt.NDArray[n
 __all__ = [
     "TransferSignals",
     "TransferSummary",
+    "double_pendulum_force_attribution",
     "double_pendulum_transfer_signals",
     "pareto_front",
     "summarize_transfer",
