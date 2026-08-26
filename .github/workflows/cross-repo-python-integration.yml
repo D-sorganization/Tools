@@ -104,6 +104,7 @@ jobs:
               launch_upstream_drift.py
               pyproject.toml
               scripts
+              src/bunkershot3d/postproc/wrench_trace.py
               src/shared
               tests/conftest.py
               tests/shared_contracts

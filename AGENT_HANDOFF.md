@@ -36,7 +36,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
-| #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
+| #4706 | Markerless mocap. M0/M1 PR #4734 is stale; this fresh main-rooted slice repairs its exact Upstream sparse-consumer blocker. M2-M7/M9 remain local and unapproved.                                                              |
 | #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                            |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
@@ -44,8 +44,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 ## Active Delivery Boundaries
 
 - Query exact PR state before acting; this handoff is not a live queue.
-- Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
-  integration through M7/M9 is evidence, not merged authority.
+- Markerless M0/M1 PR #4734 remains stale. The fresh #4706 topology slice
+  includes only canonical Upstream `wrench_trace.py` in the narrow consumer
+  checkout; M0/M1 and local M2-M7/M9 still require protected delivery.
 - TOOLS-D1 (#4711), TOOLS-D2 (#4712), and TOOLS-D3 (#4717) protected-squash-
   merged normally as `395e11adce9081c38a9b436c3e76978e30d71fc9`,
   `25c10cd6ca580d29185ead03808c313afac4ffb3`, and
