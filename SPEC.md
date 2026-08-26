@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.4                                     |
+| **Spec Version**        | 1.18.5                                     |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Public Ensemble Reproducibility Guide (#4142 R15.4)
+
+Version 1.18.5 adds one reviewer-facing guide that consolidates the shared
+variation authority's mechanical and statistical interpretation, typed data
+and persistence contracts, method assumptions, deterministic quick start,
+verification commands, bounded performance evidence, falsification workflow,
+and unsupported human/coaching inferences. A fail-closed contract test prevents
+the guide or R15.4 ledger evidence from losing those required surfaces. The
+ledger candidate advances to 22 verified and 9 partial requirements; #4142
+remains open for R14.6 and eight other explicit gaps.
 
 ### 2026-08-25 Shared Theme Palette & Dynamic Token Metaclass (#4686)
 
@@ -5223,6 +5234,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.5 | docs(rate-of-closure, #4142 R15.4): add the consolidated public ensemble variation and sensitivity guide with mechanics/statistics distinctions, typed schema and persistence boundaries, method assumptions, deterministic quick start, verification commands, bounded performance evidence, falsification workflow, and explicit human/coaching limitations; add a fail-closed guide/ledger contract and retain nine remaining partial requirements. |
 | 2026-08-25 | 1.18.4 | fix(shared, #4493): annotate the `verdict` local in `ai/peer_review/coordinator.py::_gather_verdicts` to satisfy mypy's `no-any-return` check, which the `_audit.py` extraction surfaced by bringing the whole file back into the changed-file mypy pass. No behavior change. |
 | 2026-08-25 | 1.18.3 | fix(shared, #4493): finish syncing the DCR glossary entry to UpstreamDrift's exact corrected wording (withdraw the muscle-identification claim across all expertise levels), and extract `ai/peer_review/_audit_event` into its own `_audit.py` module so it is importable independently of `coordinator.py`. Also close a residual `np.sum(mask)` vs `mask.sum()` gap left over from the earlier #4681 partial fix. The `reporting/__init__.py` public-surface expansion (`REPORT_TEMPLATES`, `GLOBAL_REPORT_REGISTRY`, `AgenticSummaryGenerator`, `JinjaReportTemplate`) is deferred: it requires porting ~34KB across five new UpstreamDrift-only modules with an undeclared `jinja2` dependency, and the issue itself flags it as lower-confidence pending an ownership decision. |
 | 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |

@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 21,
-    "partial": 10,
+    "verified": 22,
+    "partial": 9,
     "unverified": 0,
     "external_blocked": 0
   },
@@ -543,21 +543,21 @@
     {
       "requirement_id": "R15.4",
       "requirement": "Publish theory, assumptions, limitations, quick start, schema, performance, and reproducibility documentation.",
-      "status": "partial",
-      "rationale": "The README, evidence manifests, handoffs, and the new reviewer-facing variation persistence contract document schemas, compatibility, provenance, limitations, artifact inventory, and reproducibility boundaries. One consolidated public guide still needs the complete theory, performance, and quick-start treatment.",
+      "status": "verified",
+      "rationale": "The consolidated public guide now unifies the mechanics and statistical interpretation, typed schema and persistence contracts, method assumptions, deterministic quick start, protected verification commands, bounded performance evidence, falsification workflow, and explicit human and coaching limitations.",
       "evidence_files": [
-        "src/rate_of_closure/README.md",
-        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md",
         "docs/specs/VARIATION_PLAN_PERSISTENCE.md",
-        "docs/rate_of_closure/variation_visualization_performance.md"
+        "docs/rate_of_closure/variation_visualization_performance.md",
+        "docs/rate_of_closure/ensemble_stream_scaling.v1.json",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_variation_ensemble_scaling_evidence.py -q"
+        "python -m pytest tests/rate_of_closure/test_epic_4142_requirement_evidence.py tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_variation_ensemble_scaling_evidence.py -q",
+        "python scripts/check_document_title_case.py docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
       ],
       "remote_evidence": [],
-      "gaps": [
-        "Consolidate the theory, schema, method assumptions, performance evidence, quick start, and reproduction commands into a stable public technical guide."
-      ]
+      "gaps": []
     }
   ]
 }
