@@ -1,0 +1,78 @@
+# Module and Calculation-Candidate Inventory
+
+## Purpose and Denominator
+
+`manifests/module-inventory.json` is the deterministic TOOLS-D1 index for
+every tracked implementation source file and governed configuration module in
+the repository. It scans recognized Python, Python stub, JavaScript,
+TypeScript, Rust, MATLAB, C/C++, Arduino, shell, PowerShell, HTML, CSS, Prisma,
+JSON, YAML, TOML, INI, XML, URDF, and web-manifest files. Tests are evidence
+inputs rather than implementation rows. Generated, vendored, archived,
+experimental, example, documentation, resource, and manual trees are excluded
+explicitly in the manifest, so a consumer can reproduce the exact denominator.
+The index binds bounded entry shards by normalized SHA-256, contiguous index,
+entry count, and first/last path. Both the index and every shard remain below
+the repository's one-megabyte file budget; consumers reassemble one logical
+view only after verifying every shard and the exact declared shard set.
+
+At this baseline, 3,429 modules are classified: 808 conservative calculation
+candidates and 2,621 non-calculation modules. One legacy JavaScript file has a
+non-UTF-8 encoding and remains explicitly blocked rather than being decoded by
+an implicit platform default. These counts describe inventory coverage only;
+they are not test coverage, calculation approval, or publication readiness.
+
+## Deterministic Identity and Integrity
+
+Each file receives a provisional path-derived identifier and a SHA-256 digest
+of normalized text bytes. The normalization maps CRLF and bare CR to LF before
+hashing. For module path (p_i) and normalized content digest (h_i), the tree
+authority is
+
+\[
+H_{\mathrm{tree}} = \operatorname{SHA256}\!\left(
+  \big\Vert_{i=1}^{n} p_i \mathbin{:} h_i \mathbin{\texttt{\\n}}
+\right),
+\]
+
+where rows are ordered by normalized repository-relative path. This contract
+makes the result independent of Windows checkout line endings while retaining
+content changes. The path-derived identifier is not a stable calculation ID;
+TOOLS-D3 owns stable equation-to-code identities that survive file movement.
+
+## Classification Contract
+
+A module is a `calculation` candidate only when its normalized path contains a
+governed calculation marker, such as dynamics, kinematics, pressure drop,
+signal processing, geometry, solver, energy, force, or trajectory, or when the
+source imports a recognized scientific mathematics library. All other modules
+are `non-calculation`. This intentionally conservative static screen can have
+false positives and false negatives, so every calculation candidate has
+`authority_status=provisional` and `review_status=review-required`.
+
+The inventory also records language, purpose where statically available,
+maintainer family, public surfaces and routes, mapped tests and validation,
+ADRs, equation references, literal units, citations, artifact digests, risk
+tags, normalized byte count, and content digest. Missing tests, sources, units,
+chapters, equation pathways, validation, routes, or artifact digests remain
+`unavailable`, `not-applicable`, or explicitly pending their owning subepic;
+they are never synthesized. Non-calculation status
+means only that the conservative detector found no calculation signal. It does
+not waive public-API, security, licensing, accessibility, or downstream
+compatibility review.
+
+## Consumer and Failure Contract
+
+The repository-owned schema is
+`schemas/module-inventory.schema.json`, version
+`tools-module-inventory/1.0.0`. It extends the program-owned calculation
+registry without copying or competing with that shared schema. Both JSON Schema
+validation and the Python consumer reject unknown fields, unsupported versions,
+unsafe paths, invalid hashes, duplicate identifiers, unsorted duplicate
+traceability arrays, denominator mismatches, and unsupported state values.
+
+Any tracked in-scope module addition, removal, rename, or normalized content
+change makes `--check` fail until the manifest is regenerated and reviewed. A
+green inventory check proves only deterministic classification and freshness of
+this file-level baseline. Public projection remains blocked until the remaining
+manual, renderer, semantic, page, accessibility, licensing, digest, and human
+approval gates are complete.

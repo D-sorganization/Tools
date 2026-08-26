@@ -8,7 +8,12 @@ format: html
 
 This is the canonical editable QMD source for the Tools engineering design
 manual. It is a governance scaffold, not a released engineering manual. The
-calculation inventory is empty and release remains blocked by TOOLS-D1 through
-TOOLS-D8. No generated HTML, LaTeX, PDF, or DOCX artifact is approved.
+file-level module inventory is complete for its declared tracked-source
+denominator, but all detected calculation candidates remain provisional and
+the stable calculation-pathway registry remains empty. Release remains blocked
+by TOOLS-D2 through TOOLS-D9. No generated HTML, LaTeX, PDF, or DOCX artifact
+is approved.
 
 {{< include chapters/00-governance.qmd >}}
+
+{{< include chapters/01-module-inventory.qmd >}}

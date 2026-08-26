@@ -53,6 +53,9 @@ IMPACTED_PATHS = [
 REQUIRED_UPDATE_FILES = [
     "config/design_manual_governance.json",
     "manuals/tools/calculation-registry.json",
+    "manuals/tools/manifests/module-inventory.json",
+    "manuals/tools/schemas/module-inventory.schema.json",
+    "manuals/tools/schemas/module-inventory-shard.schema.json",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]

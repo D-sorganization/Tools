@@ -10,7 +10,10 @@
 Generated LaTeX, PDF, DOCX, and HTML are non-editable artifacts. Read
 `config/design_manual_governance.json`, update the calculation registry, SPEC,
 and handoff when their governed pathways change, and run
-`python -m scripts.check_design_manual_governance`. A successful render is not
+`python -m scripts.check_design_manual_governance` plus
+`python -m scripts.build_tools_module_inventory --check`. The module inventory
+is a strict, LF-normalized, tracked-file baseline; `calculation` means a
+provisional candidate and never scientific or operating approval. A successful render is not
 scientific, semantic, visual, accessibility, license, or publication approval.
 Private source material is not permitted in the public Tools manual.
 

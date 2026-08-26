@@ -27,10 +27,24 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.14                                    |
+| **Spec Version**        | 1.18.15                                    |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Deterministic Module Inventory (#4707 / TOOLS-D1 (#4711))
+
+Version 1.18.15 inventories every tracked implementation and governed
+configuration module under the declared repository-wide denominator. The
+strict `tools-module-inventory/1.0.0` schema records LF-normalized SHA-256
+digests, path-derived provisional identities, calculation/non-calculation
+classification, authority and review status, maintainers, public surfaces,
+tests, ADRs, citations, units, chapters, and risk states. The current manifest
+contains 3,429 modules: 808 provisional calculation candidates, 2,621
+non-calculation modules, and one explicit encoding blocker. Freshness is
+enforced in pre-commit and Docs Governance. Stable calculation IDs,
+equation-to-code-to-test-to-claim pathways, generated formats, publication, and
+approval remain blocked under TOOLS-D2 through TOOLS-D9.
 
 ### 2026-08-25 Engineering Design Manual Authority (#4707 / TOOLS-D0 (#4709))
 
@@ -5298,6 +5312,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.15 | docs(manual, #4707/#4711 TOOLS-D1): add the strict repository-owned module inventory schema, deterministic tracked-file generator, LF-normalized per-module and source-tree SHA-256 integrity, conservative calculation/non-calculation classifications, maintainers, public surfaces, tests, ADRs, citations, units, chapters, and risk states for all 3,429 in-scope modules. Add fail-closed consumer/freshness tests and CI/pre-commit enforcement; retain 808 calculation candidates as provisional, one encoding blocker, an empty stable calculation registry, and all TOOLS-D2--D9 format/pathway/publication/approval boundaries. |
 | 2026-08-25 | 1.18.14 | docs(manual, #4707/#4709 TOOLS-D0): establish `manuals/tools` QMD as the sole editable engineering design-manual authority. Add a versioned fail-closed policy and empty inventory, ADR-007, agent rules, offline contract tests, and CI/pre-commit enforcement. Generated HTML, LaTeX, PDF, and DOCX remain non-editable and unapproved; calculation coverage, freshness, semantic/page/accessibility review, licenses, immutable digests, public projection, and human approval remain blocked through TOOLS-D1--D8. |
 | 2026-08-25 | 1.18.13 | docs(rate-of-closure, #4433/#4737/#4738): record protected V5.2 merge `4b4aec421f349d00cf9dc93289fda97af3845baa` and retain all partial scientific and human-review boundaries. |
 | 2026-08-25 | 1.18.12 | feat(rate-of-closure, #4433 V5.2): add fail-closed PR changed-path governance requiring material React, PyQt, and shared visual-authority changes to co-update the shared manifest, acceptance audit, and surface-specific first-viewport evidence before expensive E2E; advance the audit to 8 verified / 23 partial obligations without changing the seven R14.6 blockers or two human actions. |

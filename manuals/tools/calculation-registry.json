@@ -2,13 +2,13 @@
   "schema_version": "1.0.0",
   "manual_id": "tools",
   "repository": "D-sorganization/Tools",
-  "release_status": "blocked-inventory-required",
+  "release_status": "provisional",
   "inventory_commit": null,
   "blockers": [
     {
-      "id": "TOOLS-D1-inventory-required",
-      "owner": "Tools issue #4711",
-      "resolution": "Inventory and classify every in-scope calculation and module before any coverage or release claim."
+      "id": "TOOLS-D3-pathway-contract-required",
+      "owner": "Tools documentation epic #4707",
+      "resolution": "Assign stable calculation IDs and map equations, symbols, tests, sources, units, limits, chapters, and approval evidence under TOOLS-D3 through TOOLS-D9."
     }
   ],
   "calculations": []

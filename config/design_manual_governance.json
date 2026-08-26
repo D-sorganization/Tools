@@ -1,9 +1,9 @@
 {
-  "schema_version": "tools/design-manual-governance/1.0.0",
+  "schema_version": "tools/design-manual-governance/1.1.0",
   "program": {
     "epic": 4707,
-    "current_subepic": 4709,
-    "next_subepic": 4711
+    "current_subepic": 4711,
+    "next_subepic": 4712
   },
   "canonical_source": {
     "manual_id": "tools",
@@ -19,7 +19,11 @@
   },
   "calculation_inventory": {
     "path": "manuals/tools/calculation-registry.json",
-    "owner_subepic": 4711
+    "owner_subepic": 4711,
+    "module_manifest": "manuals/tools/manifests/module-inventory.json",
+    "module_schema": "manuals/tools/schemas/module-inventory.schema.json",
+    "module_shard_schema": "manuals/tools/schemas/module-inventory-shard.schema.json",
+    "current_status": "provisional-module-baseline-pending-TOOLS-D3"
   },
   "generated_outputs": {
     "editable": false,
@@ -78,9 +82,12 @@
     "required_update_files": [
       "config/design_manual_governance.json",
       "manuals/tools/calculation-registry.json",
+      "manuals/tools/manifests/module-inventory.json",
+      "manuals/tools/schemas/module-inventory.schema.json",
+      "manuals/tools/schemas/module-inventory-shard.schema.json",
       "SPEC.md",
       "AGENT_HANDOFF.md"
     ],
-    "required_gate": "python -m scripts.check_design_manual_governance"
+    "required_gate": "python -m scripts.check_design_manual_governance && python -m scripts.build_tools_module_inventory --check"
   }
 }
