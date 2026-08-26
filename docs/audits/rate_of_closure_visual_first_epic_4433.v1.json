@@ -5,7 +5,7 @@
   "audited_main_commit": "57b443201b402fc110ec5623885c7e310d6ad6d3",
   "protected_run": "https://github.com/D-sorganization/Tools/actions/runs/32689177846",
   "overall_status": "partial",
-  "status_counts": { "verified": 7, "partial": 24 },
+  "status_counts": { "verified": 8, "partial": 23 },
   "r14_6_blocking_gaps": [
     "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
     "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
@@ -334,14 +334,15 @@
     {
       "requirement_id": "V5.2",
       "requirement": "Require changed tabs to update manifest, matched evidence, and first-viewport tests.",
-      "status": "partial",
-      "rationale": "Manifest/test parity rejects unregistered tabs, but changed-tab path governance does not prove matched evidence updates for every material change.",
+      "status": "verified",
+      "rationale": "A fail-closed pull-request job detects material React, PyQt, and shared visual-authority changes and requires the shared manifest, acceptance audit, and surface-specific first-viewport test to change together before expensive E2E execution.",
       "evidence_files": [
-        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+        "scripts/check_rate_visual_evidence_changes.py",
+        ".github/workflows/rate-web-playwright.yml",
+        "tests/scripts/test_check_rate_visual_evidence_changes.py",
+        "tests/ops/test_rate_web_playwright_workflow.py"
       ],
-      "gaps": [
-        "Add changed-path governance that requires matched manifest and evidence updates."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "V5.3",

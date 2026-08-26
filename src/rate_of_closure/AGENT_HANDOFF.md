@@ -71,9 +71,9 @@ validity or coaching strategy.
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
 tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
-counterparts for all 20 workspaces. Follow-up #4735 binds the strict TypeScript
-reader to the exact vendored Python authority. The audit remains 7 verified / 24
-partial, with seven blockers and two human actions.
+counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
+Child #4737 tracks V5.2's fail-closed changed-path governance; the candidate is
+8 verified / 23 partial, with seven blockers and two human actions remaining.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 

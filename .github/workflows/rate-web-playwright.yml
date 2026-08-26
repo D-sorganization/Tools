@@ -3,6 +3,8 @@ name: Rate Web Playwright PR
 on:
   pull_request:
     paths:
+      - "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json"
+      - "scripts/check_rate_visual_evidence_changes.py"
       - "src/rate_of_closure/web/**"
       - "src/rate_of_closure/club/**"
       - "src/rate_of_closure/club_camera.py"
@@ -77,6 +79,7 @@ on:
       - "tests/rate_of_closure/test_visual_layout_gui.py"
       - "tests/rate_of_closure/test_visual_layout_preferences.py"
       - "tests/ops/test_rate_web_playwright_workflow.py"
+      - "tests/scripts/test_check_rate_visual_evidence_changes.py"
       - "tests/scripts/test_check_rate_pyqt_environment.py"
       - "scripts/check_rate_pyqt_environment.py"
       - "requirements-rate-pyqt.txt"
@@ -92,8 +95,22 @@ permissions:
   contents: read
 
 jobs:
+  visual-evidence-change-governance:
+    name: Visual Evidence Co-Change Governance
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - name: Enforce matched visual evidence co-changes
+        run: >-
+          python scripts/check_rate_visual_evidence_changes.py
+          --base-ref "${{ github.event.pull_request.base.sha || 'origin/main' }}"
+
   production-worker-e2e:
     name: Rate web production Worker E2E (ephemeral PR)
+    needs: visual-evidence-change-governance
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
