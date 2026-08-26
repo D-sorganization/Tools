@@ -166,11 +166,11 @@ def _states(classification: str, trace: dict[str, object]) -> dict[str, str]:
     return {
         "artifacts": "unmapped-pending-TOOLS-D7" if calculation else "not-applicable",
         "adrs": "mapped" if trace["adr_paths"] else "unavailable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped"
         if trace["citation_refs"]
         else ("unavailable" if calculation else "not-applicable"),
-        "equation_pathway": "unmapped-pending-TOOLS-D3"
+        "equation_pathway": "unmapped-pending-TOOLS-D4"
         if calculation
         else "not-applicable",
         "publication": "blocked",
@@ -287,9 +287,9 @@ def build_inventory(root: Path = ROOT) -> dict[str, object]:
         "authority": AUTHORITY,
         "blockers": [
             {
-                "id": "TOOLS-D3-pathway-contract-required",
+                "id": "TOOLS-D4-exemplar-pathways-required",
                 "owner": "Tools documentation epic #4707",
-                "resolution": "Map stable calculation IDs, equations, chapters, tests, sources, units, limits, and approval evidence under TOOLS-D3 through TOOLS-D9.",
+                "resolution": "Register exemplar calculation IDs and map equations, chapters, tests, sources, units, limits, and approval evidence under TOOLS-D4 through TOOLS-D9.",
             }
         ],
         "entries": entries,

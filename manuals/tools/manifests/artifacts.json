@@ -3,15 +3,15 @@
   "manual_id": "tools",
   "release_status": "generated-unapproved",
   "source_commit": null,
-  "source_sha256_lf": "6bbf74ab473179094f97667f762494224428977682f67264a2d05255591affcb",
-  "toolchain_lock_sha256_lf": "eac5f8fd74188270403a08c7182bc91341e75c63949e519fd8b23b24dd8b91cf",
-  "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661",
+  "source_sha256_lf": "53d735063bc3e6bbc2069674d6aba104d7893227d1e99debbfef04d30775ce11",
+  "toolchain_lock_sha256_lf": "e981a15b444fae147dfee57a9973864f7c4e7a5845d8623036642dc974b7c7a7",
+  "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b",
   "semantic_parity": "verified",
   "owner": "Tools documentation epic #4707",
   "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
   "publication_approval": "blocked-pending-TOOLS-D7-D8",
   "blockers": [
-    "Stable calculation pathways remain pending TOOLS-D3.",
+    "Exemplar textbook chapters and stable pathways remain pending TOOLS-D4.",
     "Accessibility and page-review approval remain pending TOOLS-D7.",
     "Public projection and human approval remain pending TOOLS-D8."
   ],
@@ -20,33 +20,33 @@
       "format": "docx",
       "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
       "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "bytes": 61032,
-      "sha256": "eaa9fdd55d10ce8cafb4ba9ee01d22bfba2526e1c16fb573f45d9ca233dcd747",
-      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+      "bytes": 63078,
+      "sha256": "736a11303f48e566337dde84c176917a0a8323d6c26af776d146d45a0d65ac62",
+      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
     },
     {
       "format": "html",
       "path": "manuals/tools/dist/tools-engineering-design-manual.html",
       "media_type": "text/html",
-      "bytes": 64534,
-      "sha256": "0306fe8c2c303a5f362f17a282859ac1102cb6c1455d790ebf5877de108a3485",
-      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+      "bytes": 70701,
+      "sha256": "ebf766e9ee712cfd1b8e9442702ad94f9c3b2b41d4fbae75b4622310edf61e25",
+      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
     },
     {
       "format": "pdf",
       "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
       "media_type": "application/pdf",
-      "bytes": 179251,
-      "sha256": "55a094789bf45c5ef3f1bab957bb13aa285206e4f31fa491532e9398d18e0466",
-      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+      "bytes": 190094,
+      "sha256": "cbf4233f7380c86876f5893e384515fbdb5ff7a1b54e3b91d4a994b8ab411d69",
+      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
     },
     {
       "format": "tex",
       "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
       "media_type": "application/x-tex",
-      "bytes": 16608,
-      "sha256": "49c2893338a206302c9a4f439093372afda4b2ce7536efbaa018d9ec31da313b",
-      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+      "bytes": 23897,
+      "sha256": "f37990f786dc0a3fe2c5ca4ad715a8dca858b427d17043ab0f09c552bc118f91",
+      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
     }
   ]
 }

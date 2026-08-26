@@ -57,4 +57,4 @@ semantic preservation across HTML, LaTeX, PDF, and DOCX. Its generated
 artifacts remain non-editable and unapproved. The conservative inventory does
 not establish stable calculation identity, equation correctness, validity
 ranges, uncertainty, page/accessibility approval, or publication authority.
-Those pathways remain empty and blocked pending TOOLS-D3 through TOOLS-D9.
+Those pathways remain empty and blocked pending TOOLS-D4 through TOOLS-D9.

@@ -302,7 +302,7 @@ def artifact_payload(
         "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
         "publication_approval": "blocked-pending-TOOLS-D7-D8",
         "blockers": [
-            "Stable calculation pathways remain pending TOOLS-D3.",
+            "Exemplar textbook chapters and stable pathways remain pending TOOLS-D4.",
             "Accessibility and page-review approval remain pending TOOLS-D7.",
             "Public projection and human approval remain pending TOOLS-D8.",
         ],

@@ -15,8 +15,8 @@ entry count, and first/last path. Both the index and every shard remain below
 the repository's one-megabyte file budget; consumers reassemble one logical
 view only after verifying every shard and the exact declared shard set.
 
-At this baseline, 3,434 modules are classified: 808 conservative calculation
-candidates and 2,626 non-calculation modules. One legacy JavaScript file has a
+At this baseline, 3,437 modules are classified: 808 conservative calculation
+candidates and 2,629 non-calculation modules. One legacy JavaScript file has a
 non-UTF-8 encoding and remains explicitly blocked rather than being decoded by
 an implicit platform default. These counts describe inventory coverage only;
 they are not test coverage, calculation approval, or publication readiness.
@@ -37,7 +37,8 @@ H_{\mathrm{tree}} = \mathrm{SHA256}\left(
 where rows are ordered by normalized repository-relative path. This contract
 makes the result independent of Windows checkout line endings while retaining
 content changes. The path-derived identifier is not a stable calculation ID;
-TOOLS-D3 owns stable equation-to-code identities that survive file movement.
+TOOLS-D3 owns the structural chapter contract; TOOLS-D4 owns exemplar
+registration and stable equation-to-code identities that survive file movement.
 
 ## Classification Contract
 
@@ -71,7 +72,8 @@ unsafe paths, invalid hashes, duplicate identifiers, unsorted duplicate
 traceability arrays, denominator mismatches, and unsupported state values.
 
 Any tracked in-scope module addition, removal, rename, or normalized content
-change makes `--check` fail until the manifest is regenerated and reviewed. A
+change makes inventory check mode fail until the manifest is regenerated and
+reviewed. A
 green inventory check proves only deterministic classification and freshness of
 this file-level baseline. Public projection remains blocked until the remaining
 stable-pathway, page, accessibility, licensing, publication, and human-approval

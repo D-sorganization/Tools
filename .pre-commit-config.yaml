@@ -84,7 +84,14 @@ repos:
         entry: python -m scripts.check_design_manual_governance
         language: system
         pass_filenames: false
-        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_design_manual_governance|design_manual_contract|tools_module_inventory_contract)\.py$|AGENTS\.md$|CLAUDE\.md$|SPEC\.md$|AGENT_HANDOFF\.md$)
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_design_manual_governance|design_manual_contract|tools_module_inventory_contract|tools_textbook_chapter_contract|tools_textbook_chapter_lint)\.py$|AGENTS\.md$|CLAUDE\.md$|SPEC\.md$|AGENT_HANDOFF\.md$)
+
+      - id: tools-textbook-chapter-contract
+        name: "Tools textbook chapter contract"
+        entry: python -m scripts.lint_tools_textbook_chapters
+        language: system
+        pass_filenames: false
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(lint_tools_textbook_chapters|tools_textbook_chapter_contract|tools_textbook_chapter_lint)\.py$|tests/architecture/test_tools_textbook_chapter_contract\.py$)
 
       - id: tools-module-inventory-freshness
         name: "Tools module inventory freshness"
