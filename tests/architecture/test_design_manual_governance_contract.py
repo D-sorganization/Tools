@@ -60,7 +60,10 @@ def test_registry_is_fail_closed_with_one_unapproved_calculation_pathway() -> No
 
     assert verify_calculation_registry(registry) == 1
     assert registry["release_status"] == "provisional"
-    assert registry["inventory_commit"] == "916fb9f27f486486f0c071dcc6f15f81f68ecb18"
+    expected_inventory_commit = (
+        "916fb9f27f486486f0c071dcc6f15f81f68ecb18"  # pragma: allowlist secret
+    )
+    assert registry["inventory_commit"] == expected_inventory_commit
     assert registry["blockers"][0]["id"] == "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
 
 

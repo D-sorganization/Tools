@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.22                                    |
+| **Spec Version**        | 1.18.23                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
@@ -5356,6 +5356,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.23 | fix(manual, #4707/#4720 TOOLS-D4): classify the deterministic source-commit assertion as public integrity evidence for detect-secrets while retaining repository-wide fail-closed scanning. |
 | 2026-08-26 | 1.18.22 | docs(manual, #4707/#4720 TOOLS-D4): add strict exemplar coverage schema and typed consumer, register the model-conditioned `TOOLS-DPLANE-GEOMETRY` pathway with source/symbol/equation/unit/test/golden-fixture/chapter traceability, project evidence onto both owning module rows, and add the first fourteen-section textbook exemplar. Retain markerless mocap as explicitly blocked on unmerged #4708/#4734 and all artifacts as generated-unapproved pending later review and publication gates. |
 | 2026-08-26 | 1.18.21 | fix(manual, #4707/#4717 TOOLS-D3): classify the public required-section SHA-256 as deterministic integrity evidence with a single-line detect-secrets allowlist, while retaining repository-wide fail-closed secret scanning. |
 | 2026-08-26 | 1.18.20 | docs(manual, #4707/#4717 TOOLS-D3): reconcile the strict textbook chapter and registry contracts on protected D2, enforce fourteen ordered calculation-level sections, traceability and status invariants, LF-normalized evidence hashes, CI/pre-commit checks, and generated-but-unapproved manual content. Retain an empty provisional registry pending TOOLS-D4 exemplars and later freshness, review, and publication authority. |
