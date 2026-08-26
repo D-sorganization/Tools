@@ -67,5 +67,5 @@ jobs:
         env:
           PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: >-
-          python -m pytest -q -n 0 -p xdist.plugin
+          python -m pytest -q -o addopts= -n 0 -p xdist.plugin
           tests/architecture/test_mocap_intrinsic_delivery_admission.py
