@@ -101,8 +101,10 @@ def test_current_contract_and_registry_are_versioned_and_fail_closed() -> None:
     assert len(contract.required_sections) == 14
     assert registry.schema_version == "tools-textbook-chapter-registry/1.0.0"
     assert registry.release_status == "provisional"
-    assert registry.chapters == ()
-    assert registry.blockers[0].startswith("TOOLS-D4")
+    assert tuple(chapter.chapter_id for chapter in registry.chapters) == (
+        "tools.textbook.swing-rate-of-closure-dplane",
+    )
+    assert registry.blockers[0].startswith("Markerless mocap")
 
 
 @pytest.mark.parametrize(
@@ -254,7 +256,7 @@ def test_registry_rejects_nonchronological_revision_history() -> None:
         load_chapter_registry(registry_payload, contract)
 
 
-def test_valid_chapter_and_empty_repository_registry_are_deterministic(
+def test_valid_chapter_and_repository_registry_are_deterministic(
     tmp_path: Path,
 ) -> None:
     contract = load_chapter_contract(_json(CONTRACT_PATH))
@@ -270,5 +272,5 @@ def test_valid_chapter_and_empty_repository_registry_are_deterministic(
 
     assert evidence.chapter_id == "tools.textbook.fixture"
     assert len(evidence.section_sha256_lf) == 14
-    assert summary.chapter_count == 0
+    assert summary.chapter_count == 1
     assert summary.release_status == "provisional"

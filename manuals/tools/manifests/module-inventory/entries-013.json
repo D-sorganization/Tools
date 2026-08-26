@@ -3,6 +3,192 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4955,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0504c4b7130f016886e3a64fad99745c4cff6f29c9d3f6a44db23895a8831246",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSOR-IO-BULK-FACADE-PY-D6B9D20D6CC8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/data_processor_io/bulk_facade.py",
+      "purpose": "Compatibility facade for the shared data-processor fallback package.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BulkConversionReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataProcessorRustError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetMetadata",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreviewTable",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RustBulkDataEngine",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17849,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bd8e47ca17b6430fd0d756187ac67bd2f66c994a36389236cadc18af561ebcc0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSOR-IO-RUST-ENGINE-PY-A7E8EE6F3026",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/data_processor_io/rust_engine.py",
+      "purpose": "Python wrapper for the Rust/Polars bulk-I/O engine (issue #2989, Phase 2).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CancellationToken",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConversionReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OperationCancelled",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SchemaInfo",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DISABLE_NATIVE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RUST_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "cancel",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "convert",
+            "signature": "src: str | os.PathLike[str], dst: str | os.PathLike[str], format: str, token: CancellationToken | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "filter_export",
+            "signature": "path: str | os.PathLike[str], dst: str | os.PathLike[str], predicate: str, columns: Sequence[str] | None=None, token: CancellationToken | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "inspect",
+            "signature": "path: str | os.PathLike[str]"
+          },
+          {
+            "kind": "function",
+            "name": "preview",
+            "signature": "path: str | os.PathLike[str], nrows: int=100, columns: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "scan_batch",
+            "signature": "path: str | os.PathLike[str], batch_size: int, columns: Sequence[str] | None=None, token: CancellationToken | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/data_processor_io/test_rust_engine_contract.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/data_processor_io/test_rust_engine_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2359,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16578,167 +16764,6 @@
         "unit_mentions": [
           "g"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8810,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bf0c4e061d4702d333fdfe11ca38dad579bd2173f7481064f2a6c6a45587436b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-WORKFLOW-BRIDGE-PY-932CF8E4CE96",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/agent/workflow_bridge.py",
-      "purpose": "Multi-step workflow runner for Sidekick (epic #5967 / S7 / #5976).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PendingUserDecision",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SidekickWorkflow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowOutcome",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowStep",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowStepResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowStepStatus",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "action_step",
-            "signature": "action_id: str, params: Mapping[str, Any], *, on_failure: RecoveryStrategy='abort', rationale: str=''"
-          },
-          {
-            "kind": "function",
-            "name": "run_sidekick_workflow",
-            "signature": "workflow: SidekickWorkflow, *, service: SidekickActionService"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 698,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bde0c316a0c3504206051de59ce592345ce8b644eb49511cf7393098853620cb",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-API-INIT-PY-2503D24A41E4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/api/__init__.py",
-      "purpose": "API standardization module for upstream_drift_tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ErrorCode",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ErrorDetail",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ResponseMetadata",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StandardResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "StandardResponseBuilder",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

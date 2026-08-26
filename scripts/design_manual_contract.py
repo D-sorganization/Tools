@@ -12,6 +12,7 @@ EXPECTED_POLICY_FIELDS = {
     "calculation_inventory",
     "renderer",
     "chapter_contract",
+    "exemplar_contract",
     "generated_outputs",
     "freshness",
     "publication",
@@ -66,6 +67,8 @@ REQUIRED_UPDATE_FILES = [
     "manuals/tools/textbook-chapters.json",
     "manuals/tools/schemas/textbook-chapter-contract.schema.json",
     "manuals/tools/schemas/textbook-chapter-registry.schema.json",
+    "manuals/tools/exemplar-coverage.json",
+    "manuals/tools/schemas/exemplar-coverage.schema.json",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]

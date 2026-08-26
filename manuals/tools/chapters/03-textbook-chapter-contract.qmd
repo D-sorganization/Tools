@@ -5,8 +5,9 @@
 TOOLS-D3 defines the public structure that every calculation-level textbook
 chapter must satisfy before registration. The contract is structural and
 traceability-focused: passing it does not approve an equation, implementation,
-dataset, artifact, license, or engineering use. The registry is intentionally
-empty until TOOLS-D4 supplies reviewed exemplar chapters.
+dataset, artifact, license, or engineering use. TOOLS-D4 now registers one
+verified-unapproved swing and Rate-of-Closure exemplar; missing markerless
+authority remains an explicit blocker rather than an inferred calculation.
 
 Two version identifiers are fixed:
 
@@ -76,7 +77,8 @@ content, placeholders, private-source references, unsupported status promotion,
 and stale generated artifacts all fail closed. The linter does not synthesize
 equations, units, sources, examples, tests, or limitations.
 
-TOOLS-D4 owns exemplar chapter registration. TOOLS-D5 expands phased module
+TOOLS-D4 owns exemplar chapter registration and its fail-closed dependency
+coverage. TOOLS-D5 expands phased module
 coverage, TOOLS-D6 owns executable freshness, TOOLS-D7 owns rendered and
 accessibility review, and TOOLS-D8 owns immutable public projection and human
 approval.
@@ -86,10 +88,6 @@ approval.
 Authors edit only canonical QMD and the machine-readable chapter registry. Run
 these commands in order:
 
-```text
-python -m scripts.lint_tools_textbook_chapters
-python -m scripts.render_tools_design_manual --render
-```
-
-They regenerate and check all four representations. The combined governance,
-inventory, chapter, and artifact freshness gates must pass before review.
+1. `python -m` `scripts.lint_tools_textbook_chapters`
+2. `python -m` `scripts.check_tools_exemplars`
+3. `python -m` `scripts.render_tools_design_manual` `--render`

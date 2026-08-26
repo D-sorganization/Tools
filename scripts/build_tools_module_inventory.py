@@ -5,11 +5,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import re
 import sys
 from collections import Counter
 from collections.abc import Sequence
 from pathlib import Path
+from typing import cast
 
 from scripts.tools_module_inventory_contract import (
     AUTHORITY,
@@ -83,6 +85,75 @@ ROUTE_PATTERN = re.compile(
 UNIT_PATTERN = re.compile(
     r"(?<![A-Za-z0-9_])(?:kg|g|mm|cm|m/s(?:\^2)?|rad/s|rad|deg|N(?:[ ·*\-/]?m)?|Pa|kPa|MPa|bar|J|W|Hz|rpm|ms|µs|s)(?![A-Za-z0-9_])"
 )
+
+
+def _exemplar_overlays(root: Path) -> dict[str, dict[str, list[str]]]:
+    """Return D4 traceability overlays keyed by provisional module ID."""
+    manual_root = root / "manuals" / "tools"
+    coverage = json.loads((manual_root / "exemplar-coverage.json").read_text())
+    calculations = json.loads((manual_root / "calculation-registry.json").read_text())[
+        "calculations"
+    ]
+    chapters = json.loads((manual_root / "textbook-chapters.json").read_text())[
+        "chapters"
+    ]
+    calculations_by_id = {item["calculation_id"]: item for item in calculations}
+    chapter_paths = {item["chapter_id"]: item["path"] for item in chapters}
+    overlays: dict[str, dict[str, list[str]]] = {}
+    for exemplar in coverage["entries"]:
+        if exemplar["status"] != "verified-unapproved":
+            continue
+        selected = [
+            calculations_by_id[calculation_id]
+            for calculation_id in exemplar["calculation_ids"]
+        ]
+        equations = sorted(
+            {
+                equation["equation_id"]
+                for calculation in selected
+                for equation in calculation["equations"]
+            }
+        )
+        citations = sorted(
+            {
+                source["locator"]
+                for calculation in selected
+                for source in calculation["sources"]
+            }
+        )
+        units = sorted(
+            {
+                quantity["unit"]
+                for calculation in selected
+                for field in ("inputs", "outputs")
+                for quantity in calculation[field]
+            }
+        )
+        for module_id in exemplar["module_ids"]:
+            overlays[module_id] = {
+                "chapter_paths": [chapter_paths[exemplar["chapter_id"]]],
+                "citation_refs": citations,
+                "equation_refs": equations,
+                "unit_mentions": units,
+            }
+    return overlays
+
+
+def _apply_exemplar_overlay(
+    entry: dict[str, object], overlay: dict[str, list[str]]
+) -> None:
+    """Apply reviewed D4 links without promoting calculation authority."""
+    trace = cast(dict[str, object], entry["traceability"])
+    for field, values in overlay.items():
+        existing = cast(list[str], trace[field])
+        trace[field] = sorted(set(existing) | set(values))
+    states = cast(dict[str, str], entry["states"])
+    states["chapters"] = "mapped"
+    states["citations"] = "mapped"
+    states["equation_pathway"] = "mapped"
+    states["units"] = "mapped"
+    risks = cast(list[str], entry["risk_tags"])
+    entry["risk_tags"] = sorted(set(risks) - {"source-provenance-unmapped"})
 
 
 def _domain(path: Path) -> tuple[str, str]:
@@ -269,6 +340,11 @@ def build_inventory(root: Path = ROOT) -> dict[str, object]:
     paths = discover_governed_paths(root)
     test_index = build_test_index(root)
     entries = [_entry(root, path, test_index) for path in paths]
+    overlays = _exemplar_overlays(root)
+    for entry in entries:
+        overlay = overlays.get(str(entry["id"]))
+        if overlay is not None:
+            _apply_exemplar_overlay(entry, overlay)
     tree_authority = "".join(
         f"{entry['path']}:{entry['content_sha256_lf']}\n" for entry in entries
     )
@@ -287,9 +363,9 @@ def build_inventory(root: Path = ROOT) -> dict[str, object]:
         "authority": AUTHORITY,
         "blockers": [
             {
-                "id": "TOOLS-D4-exemplar-pathways-required",
+                "id": "TOOLS-D5-expanded-pathways-required",
                 "owner": "Tools documentation epic #4707",
-                "resolution": "Register exemplar calculation IDs and map equations, chapters, tests, sources, units, limits, and approval evidence under TOOLS-D4 through TOOLS-D9.",
+                "resolution": "Expand registered calculation pathways beyond the qualified D4 exemplar under TOOLS-D5, then complete freshness and approval evidence through TOOLS-D9.",
             }
         ],
         "entries": entries,

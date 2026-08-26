@@ -3,6 +3,171 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 12064,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "e9b9c63062e54da89a0cd6363a4c2323a471a0ca614d02959e53794b188c2e3f",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONGEOMETRY-TS-034BDB0AD0E5",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationGeometry.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DISPERSION_METRICS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DispersionAdequacyTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DispersionCriteriaTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DispersionMetricTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GeometricVariabilityTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RankedQuietIntervalTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SwingPointKindTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SwingTraceRowTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "geometricVariability",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "swingTraceRows",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "mm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4228,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7b79e491090149e9862a9dbe28f1145d4926196cc656b99473e3d14d107f8781",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONGROUPS-TS-CA3522EE087D",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationGroups.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "covarianceFactor",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "covarianceMatrix",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "validateGroupMatrix",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3297,
       "classification": "calculation",
       "classification_basis": "path-marker:torque",
@@ -15070,185 +15235,6 @@
           "s"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 28347,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c910bafffd640c263be4df68be9748250230cd551e1b9ee727a31f71e8cacfa0",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-EDUCATION-PY-B13370CC78CD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/education.py",
-      "purpose": "Educational content system for the AI Assistant.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://drake.mit.edu",
-          "https://github.com/stack-of-tasks/pinocchio",
-          "https://mujoco.org"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "EducationSystem",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GlossaryEntry",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/architecture/test_ai_education_imports_3316.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "N·m",
-          "g",
-          "rad/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8867,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6eacb878037c3dec19684bf5dd8701f43ed7558f5720dcf14a22834797bda8b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-EXCEPTIONS-PY-5353301F531C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/ai/exceptions.py",
-      "purpose": "Exception hierarchy for the AI Assistant integration layer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AIConnectionError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AIError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AIProviderError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AIRateLimitError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "AITimeoutError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ScientificValidationError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ToolExecutionError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkflowError",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat_ws_error_handling.py",
-          "src/shared/python/sidekick/tests/test_exceptions.py",
-          "tests/shared/python/ai/integrations/_bootstrap.py",
-          "tests/shared/python/ai/test_adapter_contract.py",
-          "tests/shared/python/ai/test_ai_hardening_3179.py",
-          "tests/shared/python/ai/test_bitnet_adapter.py",
-          "tests/shared/python/ai/test_classify_error.py",
-          "tests/shared/python/ai/test_claude_code_adapter.py",
-          "tests/shared/python/ai/test_codex_cli_adapter.py",
-          "tests/shared/python/ai/test_gemini_cli_adapter.py",
-          "tests/shared/python/ai/test_ollama_adapter.py",
-          "tests/shared/python/ai/test_ollama_adapter_extended.py",
-          "tests/shared/python/sidekick/data_processing/test_exceptions.py",
-          "tests/unit/ai/adapters/test_claude_code_adapter.py",
-          "tests/unit/ai/adapters/test_cline_adapter.py",
-          "tests/unit/ai/adapters/test_codex_cli_adapter.py",
-          "tests/unit/ai/adapters/test_gemini_cli_adapter.py",
-          "tests/unit/ai/mcp/test_tool_registry_refresh.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": [
-          "tests/shared/python/ai/test_adapter_contract.py"
-        ]
       }
     }
   ],

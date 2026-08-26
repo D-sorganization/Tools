@@ -3,6 +3,248 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9178,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "912e2a9314b31b35119a3e93f2ffc9888711e36cc55b132a2d17253eb5faa6c6",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-EXPRESSION-PY-8D2A6C639F3C",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/data_explorer_expression.py",
+      "purpose": "Safe arithmetic expression evaluator over named numpy columns.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExpressionError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_expression",
+            "signature": "expr: str, variables: Mapping[str, np.ndarray]"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_data_explorer_expression.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10830,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9c1e7d6b823357c568e685eb1de133a3cd4dea5c8c2d995e1bc41c5e677e59f9",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-MODELS-PY-CAD098B00454",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/data_explorer_models.py",
+      "purpose": "Pydantic request/response models for the Data Explorer API.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Column",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ColumnStatistics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ColumnsRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CorrelationRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CorrelationResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DatasetResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DerivedColumn",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExportRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistogramRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistogramResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HistorianSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InlineData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PcaRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PcaResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResampleSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalInfo",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalListResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpectrumRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpectrumResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StatisticsResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrendlineRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrendlineResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrimSpec",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "require_aligned_columns",
+            "signature": "index: Sequence[float] | None, columns: Sequence[Column]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "g",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7485,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12917,132 +13159,6 @@
         "unit_mentions": [
           "Hz",
           "bar",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2497,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "aff5f2ba6da66193e104a7533d142f484cc15ac0d350a3346c412a51e25882a7",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAEXPORT-TEST-TS-E9FDC46D69D3",
-      "language": "typescript",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/frontend/src/lib/dataExport.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3156,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "65596394908239f2eced5c72d1ddcfc1f9ba543fb651e4b510e285d764bfe7a8",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAEXPORT-TS-B8DFC99CD23F",
-      "language": "typescript",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/frontend/src/lib/dataExport.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "ExportRange",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RANGE_PRESETS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RangePreset",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "RangePresetId",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "buildExportUrl",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "formatTagIds",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "resolveRange",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "ms",
           "s"
         ],
         "validation_paths": []

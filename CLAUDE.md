@@ -13,6 +13,7 @@ and handoff when their governed pathways change, and run
 `python -m scripts.check_design_manual_governance` plus
 `python -m scripts.build_tools_module_inventory --check` and
 `python -m scripts.lint_tools_textbook_chapters` and
+`python -m scripts.check_tools_exemplars` and
 `python -m scripts.render_tools_design_manual --check`. Render only through the
 pinned toolchain lock and never edit `manuals/tools/dist` directly. The module inventory
 is a strict, LF-normalized, tracked-file baseline; `calculation` means a
@@ -20,6 +21,9 @@ provisional candidate and never scientific or operating approval. A successful r
 scientific, semantic, visual, accessibility, license, or publication approval.
 Registered textbook chapters must satisfy the versioned fourteen-section D3
 contract; passing its linter is structural evidence, not calculation approval.
+The D4 exemplar contract resolves calculation, chapter, module, source,
+consumer, test, and fixture links. Missing or unmerged implementations must be
+registered as blocked and must not be synthesized into manual content.
 Private source material is not permitted in the public Tools manual.
 
 ## What This Is

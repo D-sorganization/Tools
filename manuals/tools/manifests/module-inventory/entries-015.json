@@ -3,6 +3,201 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 14777,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "6719470629e07f5a88a5ae92d4d3e8831d51d6b496c70ae8d2914e222cb82452",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-LIMITS-PY-5C3BD859D321",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/limits.py",
+      "purpose": "Signal limiting and saturation with smoothing.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SaturationMode",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_backlash",
+            "signature": "signal: Signal, backlash_width: float, smooth: bool=True, smoothness: float=5.0"
+          },
+          {
+            "kind": "function",
+            "name": "apply_deadband",
+            "signature": "signal: Signal, threshold: float, center: float=0.0, smooth: bool=True, smoothness: float=10.0"
+          },
+          {
+            "kind": "function",
+            "name": "apply_hysteresis",
+            "signature": "signal: Signal, threshold_up: float, threshold_down: float, output_high: float=1.0, output_low: float=0.0, initial_state: bool=False, smooth: bool=False, smoothness: float=10.0"
+          },
+          {
+            "kind": "function",
+            "name": "apply_rate_limiter",
+            "signature": "signal: Signal, max_rate: float, smooth_transition: bool=True, transition_time: float=0.01"
+          },
+          {
+            "kind": "function",
+            "name": "apply_saturation",
+            "signature": "signal: Signal, lower: float=-1.0, upper: float=1.0, mode: SaturationMode=SaturationMode.HARD, smoothness: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "create_saturation_function",
+            "signature": "lower: float=-1.0, upper: float=1.0, mode: SaturationMode=SaturationMode.TANH, smoothness: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "visualize_saturation_curves",
+            "signature": "lower: float=-1.0, upper: float=1.0, smoothness: float=1.0, num_points: int=1000"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_limits.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_limits.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 18644,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "3b1170b15670d75d85f1d418f174c8151904a2eaf0feaee694d6168ee2e8d498",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-NOISE-PY-F7A92EC95F67",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/noise.py",
+      "purpose": "Noise generation and disturbance simulation.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DisturbanceSimulator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NoiseGenerator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NoiseType",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LINE_FREQUENCY_HZ",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PERIODIC_NOISE_2ND_HARMONIC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PERIODIC_NOISE_3RD_HARMONIC",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_noise_to_signal",
+            "signature": "signal: Signal, noise_type: NoiseType=NoiseType.WHITE, snr_db: float | None=None, amplitude: float | None=None, seed: int | None=None, **kwargs: Any"
+          },
+          {
+            "kind": "function",
+            "name": "generate_disturbance_profile",
+            "signature": "t: np.ndarray, disturbance_type: str='step', **kwargs: Any"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/signal_toolkit/tests/test_noise.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
+          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_noise.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 26486,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
@@ -11535,20 +11730,19 @@
         "downstream-consumer-risk",
         "public-api",
         "scientific-review-required",
-        "source-provenance-unmapped",
         "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
         "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "chapters": "mapped",
+        "citations": "mapped",
+        "equation_pathway": "mapped",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -11557,9 +11751,18 @@
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
+        "chapter_paths": [
+          "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd"
+        ],
+        "citation_refs": [
+          "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+          "src/shared/python/swing_sim/impact/dplane.py"
+        ],
+        "equation_refs": [
+          "TOOLS-DPLANE-FRAME",
+          "TOOLS-DPLANE-NORMAL",
+          "TOOLS-DPLANE-SPIN-LOFT"
+        ],
         "public_routes": [],
         "public_surfaces": [
           {
@@ -11591,7 +11794,11 @@
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_dplane.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "1",
+          "degree",
+          "m/s"
+        ],
         "validation_paths": []
       }
     },
@@ -18389,248 +18596,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7102,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4a9dac9eb4cd6cd5e736c0cb4e8b405c02f23bde8d99bd7b5163bfb937adb37e",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SAMPLING-PY-694CFAC35229",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/sampling.py",
-      "purpose": "Deterministic eager and bounded-chunk sampling for variation plans.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "SAMPLING_ALGORITHM_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SAMPLING_ALGORITHM_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SAMPLING_STREAM_DERIVATION_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SAMPLING_STREAM_DERIVATION_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "sample_input_block",
-            "signature": "plan: VariationPlan, *, start_index: int, row_count: int"
-          },
-          {
-            "kind": "function",
-            "name": "sample_input_chunks",
-            "signature": "plan: VariationPlan, *, chunk_size: int, start_index: int=0"
-          },
-          {
-            "kind": "function",
-            "name": "sample_inputs",
-            "signature": "plan: VariationPlan"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 15988,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "0e9da3b8752f44fa4c480d1168e4aff5c955ec2580040ed5c9bda5876e07e0ac",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SPEC-PY-5960C4B11C84",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/spec.py",
-      "purpose": "Shared, namespaced perturbation vocabulary for variation studies.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "NoiseSpec",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VariationPlan",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DISTRIBUTIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_SAFE_INTEGER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATEGORY_BALL_SETUP",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATEGORY_CLUB",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATEGORY_DELIVERY",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATEGORY_LAUNCH",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATEGORY_SWING",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MODES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MODE_CATEGORIES",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PerturbationGroup",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SWING_DERIVED_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VariableDef",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "keys_for_mode",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "register_variable",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "variable_registry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "variables_in_category",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
-          "src/shared/python/swing_sim/variation/tests/test_grouped_sampling.py",
-          "src/shared/python/swing_sim/variation/tests/test_spec.py",
-          "tests/rate_of_closure/test_variation_plot_data.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "s"
-        ],
         "validation_paths": []
       }
     }

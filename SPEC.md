@@ -27,10 +27,25 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.21                                    |
+| **Spec Version**        | 1.18.23                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Exemplar Engineering Manuals (#4707 / TOOLS-D4 (#4720))
+
+Version 1.18.22 adds the strict `tools-exemplar-coverage/1.0.0` contract and
+registers the first calculation-level exemplar, `TOOLS-DPLANE-GEOMETRY`. The
+swing-simulation and Rate-of-Closure pathway now binds a stable calculation ID,
+source commit and digest, public symbols, frames, units, equations, consumer,
+tests, golden fixture, limitations, textbook chapter, and review boundaries.
+The deterministic module inventory projects that evidence onto both owning
+modules without promoting their provisional authority. Markerless mocap remains
+an explicit blocked coverage row because issue #4708 and PR #4734 are unmerged
+and no markerless module exists on this exact source base. Generated HTML,
+LaTeX, PDF, and DOCX remain `generated-unapproved`; scientific review,
+accessibility/page approval, public projection, and human approval remain
+fail-closed under TOOLS-D5 through TOOLS-D9.
 
 ### 2026-08-26 Required Textbook Chapter Contract (#4707 / TOOLS-D3 (#4717))
 
@@ -69,7 +84,7 @@ strict `tools-module-inventory/1.0.0` schema records LF-normalized SHA-256
 digests, path-derived provisional identities, calculation/non-calculation
 classification, authority and review status, maintainers, public surfaces,
 tests, ADRs, citations, units, chapters, and risk states. The current manifest
-contains 3,437 modules: 808 provisional calculation candidates, 2,629
+contains 3,439 modules: 808 provisional calculation candidates, 2,631
 non-calculation modules, and one explicit encoding blocker. Freshness is
 enforced in pre-commit and Docs Governance. Stable calculation IDs,
 equation-to-code-to-test-to-claim pathways, generated formats, publication, and
@@ -5341,6 +5356,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.23 | fix(manual, #4707/#4720 TOOLS-D4): classify the deterministic source-commit assertion as public integrity evidence for detect-secrets while retaining repository-wide fail-closed scanning. |
+| 2026-08-26 | 1.18.22 | docs(manual, #4707/#4720 TOOLS-D4): add strict exemplar coverage schema and typed consumer, register the model-conditioned `TOOLS-DPLANE-GEOMETRY` pathway with source/symbol/equation/unit/test/golden-fixture/chapter traceability, project evidence onto both owning module rows, and add the first fourteen-section textbook exemplar. Retain markerless mocap as explicitly blocked on unmerged #4708/#4734 and all artifacts as generated-unapproved pending later review and publication gates. |
 | 2026-08-26 | 1.18.21 | fix(manual, #4707/#4717 TOOLS-D3): classify the public required-section SHA-256 as deterministic integrity evidence with a single-line detect-secrets allowlist, while retaining repository-wide fail-closed secret scanning. |
 | 2026-08-26 | 1.18.20 | docs(manual, #4707/#4717 TOOLS-D3): reconcile the strict textbook chapter and registry contracts on protected D2, enforce fourteen ordered calculation-level sections, traceability and status invariants, LF-normalized evidence hashes, CI/pre-commit checks, and generated-but-unapproved manual content. Retain an empty provisional registry pending TOOLS-D4 exemplars and later freshness, review, and publication authority. |
 | 2026-08-26 | 1.18.19 | fix(manual, #4707/#4712 TOOLS-D2): separate external render-tool assertions from generic Python CI. Tests report an explicit unavailable skip without Pandoc/Quarto/TeX, execute under the locked local toolchain, and remain protected by the dedicated Docs Governance lane, which installs Pandoc and invokes artifact freshness and semantic verification directly and fail closed. |

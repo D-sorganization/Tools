@@ -5,6 +5,46 @@
   "release_status": "provisional",
   "owner": "Tools documentation epic #4707",
   "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
-  "blockers": ["TOOLS-D4 exemplar chapters are not yet registered."],
-  "chapters": []
+  "blockers": [
+    "Markerless mocap exemplar remains blocked until TOOLS-M0 issue #4708 and PR #4734 merge through protected review.",
+    "Scientific, artifact, accessibility, publication, and human approval remain pending TOOLS-D7 and TOOLS-D8."
+  ],
+  "chapters": [
+    {
+      "chapter_id": "tools.textbook.swing-rate-of-closure-dplane",
+      "path": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+      "title": "Swing and Rate-of-Closure D-Plane Geometry",
+      "chapter_version": "1.0.0",
+      "authority_status": "verified-unapproved",
+      "owner": "Swing simulation and Rate of Closure maintainers",
+      "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
+      "calculation_ids": ["TOOLS-DPLANE-GEOMETRY"],
+      "module_ids": [
+        "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-IMPACT-KINEMATICS-PY-7B1E029F3793",
+        "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-DPLANE-PY-2B75D87AF828"
+      ],
+      "verification_tests": [
+        "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneAnalyticCases::test_matches_cross_client_golden_contract",
+        "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneSingularStates::test_invalid_frame_is_rejected",
+        "tests/rate_of_closure/test_impact_kinematics.py::test_face_center_dplane_uses_rigid_body_point_velocity"
+      ],
+      "source_citations": [
+        "dplane-golden-v1",
+        "src/rate_of_closure/simulation/impact_kinematics.py@916fb9f27f486486f0c071dcc6f15f81f68ecb18",
+        "src/shared/python/swing_sim/impact/dplane.py@916fb9f27f486486f0c071dcc6f15f81f68ecb18"
+      ],
+      "limitations": [
+        "Artifact, accessibility, publication, and human approval remain outstanding.",
+        "D-plane geometry does not predict launch, spin magnitude, aerodynamics, or equipment performance.",
+        "External scientific-source review remains outstanding."
+      ],
+      "revision_history": [
+        {
+          "version": "1.0.0",
+          "date": "2026-08-26",
+          "summary": "Registered the first governed swing and Rate-of-Closure calculation exemplar."
+        }
+      ]
+    }
+  ]
 }

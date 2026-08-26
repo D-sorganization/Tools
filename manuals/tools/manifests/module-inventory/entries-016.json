@@ -3,6 +3,248 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7102,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4a9dac9eb4cd6cd5e736c0cb4e8b405c02f23bde8d99bd7b5163bfb937adb37e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SAMPLING-PY-694CFAC35229",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/sampling.py",
+      "purpose": "Deterministic eager and bounded-chunk sampling for variation plans.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SAMPLING_ALGORITHM_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLING_ALGORITHM_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLING_STREAM_DERIVATION_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLING_STREAM_DERIVATION_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "sample_input_block",
+            "signature": "plan: VariationPlan, *, start_index: int, row_count: int"
+          },
+          {
+            "kind": "function",
+            "name": "sample_input_chunks",
+            "signature": "plan: VariationPlan, *, chunk_size: int, start_index: int=0"
+          },
+          {
+            "kind": "function",
+            "name": "sample_inputs",
+            "signature": "plan: VariationPlan"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 15988,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "0e9da3b8752f44fa4c480d1168e4aff5c955ec2580040ed5c9bda5876e07e0ac",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SPEC-PY-5960C4B11C84",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/spec.py",
+      "purpose": "Shared, namespaced perturbation vocabulary for variation studies.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NoiseSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DISTRIBUTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_SAFE_INTEGER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_BALL_SETUP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_DELIVERY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_LAUNCH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_SWING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODE_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PerturbationGroup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SWING_DERIVED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariableDef",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "keys_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_variable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variable_registry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variables_in_category",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
+          "src/shared/python/swing_sim/variation/tests/test_grouped_sampling.py",
+          "src/shared/python/swing_sim/variation/tests/test_spec.py",
+          "tests/rate_of_closure/test_variation_plot_data.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6179,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13292,117 +13534,6 @@
         "test_paths": [
           "tests/folder_tool/test_launch_pyqt6.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1971,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8c005beb18a9191c247e517cbcf327102733fbc7a17b65d77357a1c9cbd757ce",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-LAUNCH-VIDEO-ANALYZER-PY-047CEA18D492",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/video_analyzer/launch_video_analyzer.py",
-      "purpose": "Video Analyzer Launcher — entry point for the video analysis tool.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/media_processing/test_video_analyzer_launcher.py",
-          "tests/video_analyzer/test_video_analyzer_import_contract.py",
-          "tests/video_analyzer/test_video_analyzer_packaging.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/video_analyzer/test_video_analyzer_import_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10046,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6a4a4b63934d59de8aa1c3010d17c01d80c926d170fd267089f79bec67b0237",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-POSE-ESTIMATOR-PY-E784C9B45BB0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/video_analyzer/pose_estimator.py",
-      "purpose": "Pose Estimator using MediaPipe.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PoseEstimator",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

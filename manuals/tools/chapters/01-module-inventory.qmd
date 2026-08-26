@@ -15,8 +15,8 @@ entry count, and first/last path. Both the index and every shard remain below
 the repository's one-megabyte file budget; consumers reassemble one logical
 view only after verifying every shard and the exact declared shard set.
 
-At this baseline, 3,437 modules are classified: 808 conservative calculation
-candidates and 2,629 non-calculation modules. One legacy JavaScript file has a
+At this baseline, 3,439 modules are classified: 808 conservative calculation
+candidates and 2,631 non-calculation modules. One legacy JavaScript file has a
 non-UTF-8 encoding and remains explicitly blocked rather than being decoded by
 an implicit platform default. These counts describe inventory coverage only;
 they are not test coverage, calculation approval, or publication readiness.
