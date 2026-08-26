@@ -1,5 +1,4 @@
 # AGENT_HANDOFF — Rate_of_Closure
-
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-25
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
@@ -71,10 +70,10 @@ validity or coaching strategy.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
-tier. PR #4733 makes V0.1 verified by requiring purpose, prerequisites, and
-reciprocal counterparts for all 20 workspaces, with the standalone React mirror
-refreshed from that exact authority. The candidate is 7 verified / 24 partial;
-seven blockers and two human actions remain.
+tier. PR #4733 makes V0.1 verified with purpose, prerequisites, and reciprocal
+counterparts for all 20 workspaces; strict Python and TypeScript readers consume
+the exact vendored authority. The candidate is 7 verified / 24 partial; seven
+blockers and two human actions remain.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
