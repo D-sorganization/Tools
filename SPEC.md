@@ -27,10 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.5                                     |
+| **Spec Version**        | 1.18.6                                     |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Fail-Closed Visual-First Acceptance Audit (#4433 / #4142 R14.6)
+
+Version 1.18.6 maps all 29 V0--V5 checklist items plus the per-tab acceptance
+matrix and completion condition into a source-resolving evidence contract. Six
+requirements are verified and 25 remain partial. Trusted main run
+`32689177846` proves the registered initial React and PyQt visibility,
+automated-accessibility, performance, and baseline tiers executed successfully;
+it does not prove all state, narrow/high-DPI, representative-dataset, manual-AT,
+or user-review obligations. R14.6 remains partial with seven exact blocking
+gaps and two explicit human actions. The audit prevents a green initial-state
+test from being promoted to whole-epic completion.
 
 ### 2026-08-25 Public Ensemble Reproducibility Guide (#4142 R15.4)
 
@@ -5234,6 +5246,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.6 | docs(rate-of-closure, #4433 / #4142 R14.6): add a fail-closed 31-item visual-first acceptance audit, bind every item to local evidence and exact gaps, verify the trusted initial-state run separately from incomplete all-state/manual evidence, and retain R14.6 as partial with seven blockers and two human actions. |
 | 2026-08-25 | 1.18.5 | docs(rate-of-closure, #4142 R15.4): add the consolidated public ensemble variation and sensitivity guide with mechanics/statistics distinctions, typed schema and persistence boundaries, method assumptions, deterministic quick start, verification commands, bounded performance evidence, falsification workflow, and explicit human/coaching limitations; add a fail-closed guide/ledger contract and retain nine remaining partial requirements. |
 | 2026-08-25 | 1.18.4 | fix(shared, #4493): annotate the `verdict` local in `ai/peer_review/coordinator.py::_gather_verdicts` to satisfy mypy's `no-any-return` check, which the `_audit.py` extraction surfaced by bringing the whole file back into the changed-file mypy pass. No behavior change. |
 | 2026-08-25 | 1.18.3 | fix(shared, #4493): finish syncing the DCR glossary entry to UpstreamDrift's exact corrected wording (withdraw the muscle-identification claim across all expertise levels), and extract `ai/peer_review/_audit_event` into its own `_audit.py` module so it is importable independently of `coordinator.py`. Also close a residual `np.sum(mask)` vs `mask.sum()` gap left over from the earlier #4681 partial fix. The `reporting/__init__.py` public-surface expansion (`REPORT_TEMPLATES`, `GLOBAL_REPORT_REGISTRY`, `AgenticSummaryGenerator`, `JinjaReportTemplate`) is deferred: it requires porting ~34KB across five new UpstreamDrift-only modules with an undeclared `jinja2` dependency, and the issue itself flags it as lower-confidence pending an ownership decision. |
