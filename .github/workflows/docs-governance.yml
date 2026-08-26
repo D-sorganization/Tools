@@ -92,6 +92,8 @@ jobs:
           cache: pip
       - name: Purge pip cache
         run: python -m pip cache purge || true
+      - name: Install focused governance test dependency
+        run: python -m pip install --disable-pip-version-check pytest==9.0.3
       - name: Validate docs governance
         run: python3 scripts/check_docs_governance.py
       - name: Validate engineering design-manual governance
@@ -99,4 +101,5 @@ jobs:
       - name: Test engineering design-manual governance
         run: >-
           python3 -m pytest
+          -o addopts=''
           tests/architecture/test_design_manual_governance_contract.py -q
