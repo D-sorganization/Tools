@@ -3,6 +3,258 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 604,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "283ebf6751a278cd7d98779d6d545b7c6f26e3a4adc94c70d2a7523c3e1476ca",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-APP-TSX-6A19FA46C2DF",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/App.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 21530,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "9be255b1e8ef0faca404197e11894ec412cea95dee8d632c6a44a1d34132209d",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-COMPONENTS-PRESSUREDROPCALCULATOR-TSX-E0693191E68C",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/components/PressureDropCalculator.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:8010"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PressureDropCalculator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "Nm",
+          "bar",
+          "kPa",
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 346,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "1cb6127ee9fecae9fb122516822cbd4a8b5745d36fcbc19a21305a6aecbf30b2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-INDEX-CSS-E7422A0974AD",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/index.css",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 236,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "abe0edc1f91f5d414bbfb8f335f8871b4bf4edf07a861ab225e368a8319cdb6b",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-SRC-MAIN-TSX-A753DF4163CB",
+      "language": "typescript-react",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/src/main.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 163,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "5f53e1e26756d565c50daa4f6b2895980907536041553b4bfcf813860652f6eb",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-WEB-TAILWIND-CONFIG-JS-B5339179617A",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pressure_drop_calculator/web/tailwind.config.js",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 218,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
@@ -15318,426 +15570,6 @@
           "N",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3992,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "d4e7fb7e5358f8f275f7c2fabc22b405620f913aac93ddcb9ce3183b9c2fa783",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-CLEARANCE-PY-ADC3493C0BE5",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/ground_clearance.py",
-      "purpose": "Adapt retained Rate runs to shared swept-wedge ground clearance.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RunGroundClearanceSnapshot",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ground_clearance_for_run",
-            "signature": "run: SimulationRun, parameters: WedgeHeadParameters, ground: GroundPlane"
-          },
-          {
-            "kind": "function",
-            "name": "representative_wedge_parameters_for_club",
-            "signature": "club: ClubSpec"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_wedge_ground_clearance.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11575,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "85a5a6ccb84cc4fe1155d33298048ddf7880f5803550e0658cb65a36b8f1d566",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-PY-BFA7877654BE",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/ground_playback.py",
-      "purpose": "Phase-aware playback adapter for strict ground simulation results.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundPlaybackFrame",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundPlaybackTimeline",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_IMPORT_MAX_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_IMPORT_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_RENDERED_PATH_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "load_ground_result_json",
-            "signature": "text: str, *, max_bytes: int=DEFAULT_IMPORT_MAX_BYTES, max_points: int=DEFAULT_IMPORT_MAX_POINTS"
-          },
-          {
-            "kind": "function",
-            "name": "select_ground_playback_indices",
-            "signature": "phases: Sequence[str], times: Sequence[float], event_times: Sequence[float], *, max_points: int=MAX_RENDERED_PATH_POINTS"
-          },
-          {
-            "kind": "function",
-            "name": "timeline_from_regional_execution",
-            "signature": "execution: RegionalGroundExecutionResult"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_ground_playback.py",
-          "tests/rate_of_closure/test_ground_playback_workspace_v2.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 11532,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "521b03472dd9ceb7bbaa72628f4616469e0d9a3053bb7cc4e5bde99e43d2cc11",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-COMPARISON-PY-CA9E9C61177C",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/ground_playback_comparison.py",
-      "purpose": "Synchronized, observation-bounded comparison of two ground results.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundComparisonFrame",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundComparisonMetric",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundComparisonProvenance",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundPlaybackComparison",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_PLAYBACK_COMPARISON_SCHEMA",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ground_comparison_csv",
-            "signature": "comparison: GroundPlaybackComparison"
-          },
-          {
-            "kind": "function",
-            "name": "ground_comparison_json",
-            "signature": "comparison: GroundPlaybackComparison"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 10670,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "ed4b956f4d5394e222c35e27a29c09b153035b229ba6ebc3374ecde80b2931de",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-WORKSPACE-PY-CA0623D289A1",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/ground_playback_workspace.py",
-      "purpose": "Strict persistence and evidence exports for ground-result playback.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GroundPlaybackState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundPlaybackViewState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GroundPlaybackWorkspace",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GROUND_PLAYBACK_WORKSPACE_SCHEMA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_CAMERA_ZOOM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIN_CAMERA_ZOOM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUPPORTED_PLAYBACK_SPEEDS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ground_event_csv",
-            "signature": "result: GroundSimulationResult"
-          },
-          {
-            "kind": "function",
-            "name": "ground_result_json",
-            "signature": "result: GroundSimulationResult"
-          },
-          {
-            "kind": "function",
-            "name": "ground_trajectory_csv",
-            "signature": "result: GroundSimulationResult"
-          },
-          {
-            "kind": "function",
-            "name": "ground_workspace_from_json",
-            "signature": "text: str, *, max_bytes: int=DEFAULT_IMPORT_MAX_BYTES, max_points: int=DEFAULT_IMPORT_MAX_POINTS"
-          },
-          {
-            "kind": "function",
-            "name": "ground_workspace_to_json",
-            "signature": "workspace: GroundPlaybackWorkspace"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_ground_playback_workspace_v2.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 842,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "c7ed9aceb5cf82130c45ce56fe72bf9aa900fcaac0224d36375904c0f3e34325",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-WORKSPACE-COMMON-PY-48A435D91C6A",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/simulation/ground_playback_workspace_common.py",
-      "purpose": "Shared structural validation for versioned ground playback workspaces.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "exact_workspace_fields",
-            "signature": "payload: dict[str, Any], expected: set[str], name: str, schema_label: str"
-          },
-          {
-            "kind": "function",
-            "name": "workspace_object",
-            "signature": "value: object, name: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

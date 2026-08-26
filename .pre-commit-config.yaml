@@ -93,6 +93,13 @@ repos:
         pass_filenames: false
         files: ^(src/|rust_core/|scripts/|shared_scripts/|schemas/|config/|manuals/tools/(manifests/module-inventory\.json|schemas/module-inventory\.schema\.json)$|tests/architecture/test_tools_module_inventory_contract\.py$)
 
+      - id: tools-manual-artifact-freshness
+        name: "Tools manual artifact freshness and semantics"
+        entry: python -m scripts.render_tools_design_manual --check
+        language: system
+        pass_filenames: false
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(render_tools_design_manual|tools_manual_artifacts|tools_manual_renderer_contract)\.py$|tests/architecture/test_tools_manual_renderer_contract\.py$)
+
       - id: tracked-text-normalization
         name: "tracked LF blob normalization"
         entry: python scripts/check_tracked_text_normalization.py

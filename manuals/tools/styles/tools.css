@@ -1,0 +1,45 @@
+:root {
+  --tools-blue: #2e74b5;
+  --tools-blue-dark: #1f4d78;
+  --tools-body: #20252b;
+  --tools-muted: #5b6573;
+  --tools-warning: #8a4b08;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  color: var(--tools-body);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.55;
+  margin: 0 auto;
+  max-width: 52rem;
+  padding: 2rem;
+}
+
+h1,
+h2 {
+  color: var(--tools-blue);
+}
+
+h3 {
+  color: var(--tools-blue-dark);
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+.warning {
+  border-left: 0.3rem solid var(--tools-warning);
+  padding: 0.5rem 0.9rem;
+}
+
+@media (max-width: 42rem) {
+  body {
+    padding: 1rem;
+  }
+}

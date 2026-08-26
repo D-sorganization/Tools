@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,10 @@ from scripts.check_design_manual_governance import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 POLICY_PATH = REPO_ROOT / "config" / "design_manual_governance.json"
 REGISTRY_PATH = REPO_ROOT / "manuals" / "tools" / "calculation-registry.json"
+REQUIRES_PANDOC = pytest.mark.skipif(
+    shutil.which("pandoc") is None,
+    reason="Pandoc is unavailable; protected Docs Governance owns this gate",
+)
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -27,11 +32,12 @@ def _json(path: Path) -> dict[str, Any]:
     return payload
 
 
+@REQUIRES_PANDOC
 def test_repository_adopts_one_qmd_authority_and_blocks_release() -> None:
     summary = verify_repository(REPO_ROOT)
 
     assert summary.manual_id == "tools"
-    assert summary.canonical_qmd_count == 3
+    assert summary.canonical_qmd_count == 4
     assert summary.calculation_count == 0
     assert summary.release_status == "provisional"
     assert summary.public_projection_allowed is False
@@ -124,7 +130,7 @@ def test_agent_context_exposes_update_and_artifact_rules() -> None:
     assert "module-inventory.json" in handoff
 
 
-def test_manual_tree_contains_no_editable_release_artifacts() -> None:
+def test_manual_tree_contains_only_governed_generated_and_style_artifacts() -> None:
     manual_root = REPO_ROOT / "manuals" / "tools"
     forbidden_suffixes = {".docx", ".html", ".pdf", ".tex"}
     found = sorted(
@@ -133,4 +139,11 @@ def test_manual_tree_contains_no_editable_release_artifacts() -> None:
         if path.is_file() and path.suffix.lower() in forbidden_suffixes
     )
 
-    assert found == []
+    assert found == [
+        "manuals/tools/dist/tools-engineering-design-manual.docx",
+        "manuals/tools/dist/tools-engineering-design-manual.html",
+        "manuals/tools/dist/tools-engineering-design-manual.pdf",
+        "manuals/tools/dist/tools-engineering-design-manual.tex",
+        "manuals/tools/styles/tools-header.tex",
+        "manuals/tools/styles/tools-reference.docx",
+    ]

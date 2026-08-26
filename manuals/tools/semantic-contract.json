@@ -1,0 +1,11 @@
+{
+  "schema_version": "tools-manual-semantics/1.0.0",
+  "required_phrases": [
+    "Tools Engineering Design Manual",
+    "Generated outputs are engineering records, not approval.",
+    "Example unit string: 10 m/s.",
+    "WARNING: Provisional calculations remain blocked.",
+    "Deterministic rendering pathway.",
+    "Pandoc contributors"
+  ]
+}

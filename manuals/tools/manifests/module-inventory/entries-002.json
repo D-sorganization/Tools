@@ -3,6 +3,282 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7174,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0881f47a6f4269ff5703bd5fedf1a3e488e7a390bbdb97bd5affb9cff7a41b4a",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-HELPPANEL-TSX-9A9A8E067A9A",
+      "language": "typescript-react",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/src/components/HelpPanel.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "HelpPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7700,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9a8560194bbb9796056671106f695602f0f9ec91ba2dea0def3d93e5d3f9f380",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-PLOTVIEW-TSX-F7E7BCA2D91A",
+      "language": "typescript-react",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/src/components/PlotView.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PlotView",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3969,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b5ba4bf45dc76109ca0f7919d41ab96549aa987449551624094341d3533ae728",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-RESAMPLEPANEL-TSX-23BFFF217173",
+      "language": "typescript-react",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/src/components/ResamplePanel.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ResamplePanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8616,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "b986d831ae3b8abf1be5f01749fd663f6aaaac8100b1c317ffb11e0e5d333f59",
+      "family": "data-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-SIGNALLIST-TSX-A42E9322838B",
+      "language": "typescript-react",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/src/components/SignalList.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SignalList",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3653,
+      "classification": "calculation",
+      "classification_basis": "path-marker:statistics",
+      "content_sha256_lf": "ebcb8550f54a219d29333da40d5063309213769ec7e39cace2800e694786fcb2",
+      "family": "data-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-STATISTICSPANEL-TSX-7CC5527CE7D3",
+      "language": "typescript-react",
+      "maintainer": "Data processing maintainers",
+      "path": "src/data_processing/data_processor/web/src/components/StatisticsPanel.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "StatisticsPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5226,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13490,262 +13766,6 @@
           "ms",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 658,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9773ca04fe2ba600ef59893e5ca6b38adb242ac4717cb6afa666e4af585a9a61",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-INDEX-TS-20B727A7D0EC",
-      "language": "typescript",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/golf/index.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5904,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6d5c048ab4777a0259f784eacf4ec821a9462d90e126acceefa8911b172be7c4",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-TOOLS-TOOLSPANEL-TSX-E0740CEDA4BF",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/tools/ToolsPanel.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9218,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e568a6673c907cb2214bd33e38e401c582226df437daa627b25fd36e3b7ea835",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-VIDEO-EDITORCANVAS-TSX-6F6CA588A9D9",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/video/EditorCanvas.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "DrawingColor",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DrawingStrokeWidth",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DrawingTool",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "EditorCanvasHandle",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3109,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "65dcfb357119b7d27d8bfda2084293a1a103e788bc195aea92902272913bd8c2",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-VIDEO-FRAMENAVIGATOR-TSX-01B88D46EDB0",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/video/FrameNavigator.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "FrameNavigator",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8242,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "354fb646cf5ce6bcdce09eaea0c32fde649f75a66035d016e7e5f69ea7aacc39",
-      "family": "media-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-VIDEO-VIDEOEDITOR-TSX-E2BC8126025F",
-      "language": "typescript-react",
-      "maintainer": "Media processing maintainers",
-      "path": "src/media_processing/video_processor/apps/web/components/video/VideoEditor.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://www.w3.org/2000/svg"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "VideoEditor",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

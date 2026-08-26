@@ -27,10 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.15                                    |
-| **Last Spec Update**    | 2026-08-25                                 |
+| **Spec Version**        | 1.18.19                                    |
+| **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Reproducible Multi-Format Renderer (#4707 / TOOLS-D2 (#4712))
+
+Version 1.18.19 adds the strict `tools-manual-toolchain/1.0.0` and
+`tools-manual-artifacts/1.0.0` consumer contracts, pinned Pandoc, Quarto, TeX,
+bibliography, reference DOCX, visual tokens, semantic warnings/units, and
+figure inputs. The canonical QMD now renders byte-reproducible HTML, LaTeX,
+PDF, and DOCX artifacts whose hashes and shared semantic digest are verified
+fail closed in pre-commit and Docs Governance. Generated representations remain
+non-editable and `generated-unapproved`; stable calculation pathways,
+accessibility/page approval, public projection, and human approval remain
+blocked under TOOLS-D3 and TOOLS-D7 through TOOLS-D9.
 
 ### 2026-08-25 Deterministic Module Inventory (#4707 / TOOLS-D1 (#4711))
 
@@ -40,7 +52,7 @@ strict `tools-module-inventory/1.0.0` schema records LF-normalized SHA-256
 digests, path-derived provisional identities, calculation/non-calculation
 classification, authority and review status, maintainers, public surfaces,
 tests, ADRs, citations, units, chapters, and risk states. The current manifest
-contains 3,429 modules: 808 provisional calculation candidates, 2,621
+contains 3,434 modules: 808 provisional calculation candidates, 2,626
 non-calculation modules, and one explicit encoding blocker. Freshness is
 enforced in pre-commit and Docs Governance. Stable calculation IDs,
 equation-to-code-to-test-to-claim pathways, generated formats, publication, and
@@ -5312,6 +5324,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.19 | fix(manual, #4707/#4712 TOOLS-D2): separate external render-tool assertions from generic Python CI. Tests report an explicit unavailable skip without Pandoc/Quarto/TeX, execute under the locked local toolchain, and remain protected by the dedicated Docs Governance lane, which installs Pandoc and invokes artifact freshness and semantic verification directly and fail closed. |
+| 2026-08-26 | 1.18.18 | fix(manual, #4707/#4712 TOOLS-D2): repair protected CI integration by declaring and locking the PDF semantic dependency, keeping PDF imports lazy for non-PDF consumers, proving import isolation without the optional stack, and returning the verified XML serialization as typed bytes. Refresh the governed inventory and retain generated-unapproved authority. |
+| 2026-08-26 | 1.18.17 | fix(manual, #4707/#4712 TOOLS-D2): canonicalize the Pandoc DOCX bibliography custom property to the repository-relative `manuals/tools/references.bib` path before deterministic ZIP normalization. Add a cross-workspace regression contract, refresh the governed module inventory and artifact manifest, and remove workstation identity from generated Word artifacts while retaining generated-unapproved release status. |
+| 2026-08-26 | 1.18.16 | docs(manual, #4707/#4712 TOOLS-D2): qualify the pinned deterministic HTML/LaTeX/PDF/DOCX renderer, strict schemas and consumer loaders, input/artifact hashes, shared semantic parity, reference DOCX, style/figure sources, CI/pre-commit freshness, and generated-but-unapproved artifacts. |
 | 2026-08-25 | 1.18.15 | docs(manual, #4707/#4711 TOOLS-D1): add the strict repository-owned module inventory schema, deterministic tracked-file generator, LF-normalized per-module and source-tree SHA-256 integrity, conservative calculation/non-calculation classifications, maintainers, public surfaces, tests, ADRs, citations, units, chapters, and risk states for all 3,429 in-scope modules. Add fail-closed consumer/freshness tests and CI/pre-commit enforcement; retain 808 calculation candidates as provisional, one encoding blocker, an empty stable calculation registry, and all TOOLS-D2--D9 format/pathway/publication/approval boundaries. |
 | 2026-08-25 | 1.18.14 | docs(manual, #4707/#4709 TOOLS-D0): establish `manuals/tools` QMD as the sole editable engineering design-manual authority. Add a versioned fail-closed policy and empty inventory, ADR-007, agent rules, offline contract tests, and CI/pre-commit enforcement. Generated HTML, LaTeX, PDF, and DOCX remain non-editable and unapproved; calculation coverage, freshness, semantic/page/accessibility review, licenses, immutable digests, public projection, and human approval remain blocked through TOOLS-D1--D8. |
 | 2026-08-25 | 1.18.13 | docs(rate-of-closure, #4433/#4737/#4738): record protected V5.2 merge `4b4aec421f349d00cf9dc93289fda97af3845baa` and retain all partial scientific and human-review boundaries. |

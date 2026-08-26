@@ -3,6 +3,906 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7922,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6c463c2f8018797d886a8a380653bcd157c4788bc53a0a6a9e90edc32e20b455",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-INIT-PY-7496BE48C45A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/__init__.py",
+      "purpose": "Canonical UI-independent domain contracts for modular golf clubs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AssembledMassProperties",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_TURF",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CURRENT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubAssembly",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubComponent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubFittingDocument",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubLengthConvention",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubLengthMeasurement",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubOutcome",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ComponentMassProperties",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ComponentRole",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ContactSequence",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CounterfactualSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoupledImpactConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoupledImpactResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrapolationPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FITTING_DOCUMENT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FITTING_REPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FaceGeometry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FittingProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FittingReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GripBoundary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GripKinematics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundPlane",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Handedness",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IMPACT_COUPLING_REPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InstantaneousScrewAxis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LEGACY_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshInertiaReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MeshReference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReducedTurfContactResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RigidTransform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SHAFT_PROFILE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftDeliveryDeltas",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftModalResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftModalSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftProfileProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftProfileScaling",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftStation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftTipLoad",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftTipMass",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftTipResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TURF_DAMPING_KEY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TURF_FRICTION_KEY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TURF_PENETRATION_LIMIT_KEY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TURF_PROFILE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TURF_STIFFNESS_KEY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TURF_VARIABLE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfCalibrationStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfContactKinematics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfContactProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfContactResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfContactStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfConvergenceStudy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfPreset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfProfileProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TurfVariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WEDGE_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WEDGE_GROUND_CLEARANCE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WEDGE_PARAMETERS_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeClearanceSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeContactCandidate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeContactFeature",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeExportArtifact",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeExportFormat",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeExportRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeExportResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeGeometryProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeGroundClearanceAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeGroundContactEvent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeHeadParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeKinematicAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeKinematicState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeMeasuredMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgePreset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeSolidResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeTurfPatchResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WedgeTurfWrench",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_wedge_ground_clearance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_wedge_kinematics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "angle_of_attack_deg",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "assemble_mass_properties",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "assembly_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "assembly_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "assembly_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "assembly_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_wedge_solid",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compare_counterfactuals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_club",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_turf_contact",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_wedge_turf_wrench",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "export_wedge_artifacts",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fitting_document_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fitting_document_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fitting_report_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_coupling_report",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_watertight",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mesh_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mesh_volume_centroid",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_turf_convergence_study",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "scale_shaft_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_component_mass_properties",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_profile_from_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_profile_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_profile_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_profile_to_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_profile_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_profile_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_coupled_impact",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_reduced_turf_contact",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_cantilever_tip_response",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_shaft_bending_modes",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_shaft_delivery",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_profile_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_profile_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_profile_preset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_profile_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_profile_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "turf_profiles_for_variation_plan",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wedge_body_profile_m",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wedge_contact_candidates",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wedge_face_contact_point_m",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wedge_ground_clearance_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wedge_parameters_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wedge_parameters_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wedge_preset",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4729,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "daf4f22b0f7f1b81ddb0513c152f56454c096d4cca9c31672df7fcaa5420ed3b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-VALIDATION-PY-B307FFADCF47",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_validation.py",
+      "purpose": "Private validation and immutable-normalization helpers.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2211,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c08317073352f2f1677fea42188770a1f4584f00ae0de5b9b6a700cd8e5f006f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-DELIVERY-METRICS-PY-B9C91BFAFC12",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_wedge_delivery_metrics.py",
+      "purpose": "Private ground-relative wedge metrics evaluated at ball contact.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6746,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5cb116f30f80b74277385b9c05c7430c557a1fa39ee0f1d6d4a6c83cc2cfc0c5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-SWEEP-PY-B8691086300D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_wedge_sweep.py",
+      "purpose": "Private validation and interpolation support for retained wedge sweeps.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "interpolated_pose",
+            "signature": "times: np.ndarray, poses: np.ndarray, time_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "interpolated_twist",
+            "signature": "times: np.ndarray, twists: np.ndarray, time_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "swept_times",
+            "signature": "times: np.ndarray, subdivisions: int"
+          },
+          {
+            "kind": "function",
+            "name": "validated_sweep_arrays",
+            "signature": "times_s: object, poses: object, twists: object"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_wedge_sweep.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6822,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "35aefee3114b49c32e251c16317f902056370d913c1a1d6eb7a6ee253a4f30fc",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-ASSEMBLY-PY-39D1968392E1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/assembly.py",
+      "purpose": "Rigid assembly of component mass properties in a declared club frame.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClubAssembly",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assemble_mass_properties",
+            "signature": "components: Sequence[ClubComponent], assembly_frame_id: str"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_assembly.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6961,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15844,460 +16744,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 789,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "9f4cbbb021239000985019740bf87b0d58b92c4329d042a6f6b855fe37205908",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-BASE-PY-68C714F771EF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/calculators/base.py",
-      "purpose": "Base class for all calculation engines in the fleet.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BaseCalculationEngine",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/calculators/test_base_calculator.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1013,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "abe8ae78a91d883d6d1cfdaead118b3f6e4d6c7001304a3fc019beffa4a32c90",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-CONVERSION-INIT-PY-32E810840748",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/calculators/conversion/__init__.py",
-      "purpose": "Unit Conversion Calculators - Flow rates, temperatures, and standard conditions.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "acfm_to_scfm",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert_flow_rate_to_mass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert_temperature",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert_via_table",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mass_to_mass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mass_to_molar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "molar_to_mass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "molar_to_molar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "scfm_to_acfm",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "scfm_to_standard_m3_per_hour",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "standard_m3_per_hour_to_scfm",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "standard_to_actual_flow",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 5117,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "1ced990fe4be3b51ca9a7f8097928e210885b7e56137597256e1ec8f35b770e9",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-CONVERSION-CORE-PY-9151CC8DA4DE",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/calculators/conversion/core.py",
-      "purpose": "Functional helpers for unit conversion routines.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "actual_to_standard_flow",
-            "signature": "acfm_value: float, temperature_k: float, pressure_pa: float, standard: StandardCondition"
-          },
-          {
-            "kind": "function",
-            "name": "convert_temperature",
-            "signature": "value: float, from_unit: str, to_unit: str"
-          },
-          {
-            "kind": "function",
-            "name": "convert_via_table",
-            "signature": "value: float, from_unit: str, to_unit: str, table: Mapping[str, float]"
-          },
-          {
-            "kind": "function",
-            "name": "scfm_to_standard_m3_per_hour",
-            "signature": "scfm_value: float, standard: StandardCondition, reference_std: StandardCondition"
-          },
-          {
-            "kind": "function",
-            "name": "standard_m3_per_hour_to_scfm",
-            "signature": "m3_hr_at_ref: float, reference_std: StandardCondition, standard: StandardCondition"
-          },
-          {
-            "kind": "function",
-            "name": "standard_to_actual_flow",
-            "signature": "scfm_value: float, temperature_k: float, pressure_pa: float, standard: StandardCondition"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_pure_calc_modules.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 24923,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "3c850bef1674ce21be866061f5953aeed495e11e7577e28a38dd4b56d92f22a0",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-CONVERSION-FLOW-RATE-CONVERTER-PY-AC16561489F3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/calculators/conversion/flow_rate_converter.py",
-      "purpose": "Flow rate unit conversions for pressure drop calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "MASS_FLOW_CONVERSIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MOLAR_FLOW_CONVERSIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "R_UNIVERSAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STANDARD_CONDITIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "acfm_to_scfm",
-            "signature": "acfm: float, temperature: float, pressure: float, standard: str='SCFM'"
-          },
-          {
-            "kind": "function",
-            "name": "convert_flow_rate_to_mass",
-            "signature": "value: float, from_unit: str, molecular_weight: float, temperature: float | None=None, pressure: float | None=None, density: float | None=None, standard: str='STP'"
-          },
-          {
-            "kind": "function",
-            "name": "mass_to_mass",
-            "signature": "value: float, from_unit: str, to_unit: str"
-          },
-          {
-            "kind": "function",
-            "name": "mass_to_molar",
-            "signature": "mass_flow: float, mass_unit: str, molecular_weight: float, molar_unit: str='mol/s'"
-          },
-          {
-            "kind": "function",
-            "name": "mass_to_standard_volumetric",
-            "signature": "mass_flow: float, mass_unit: str, molecular_weight: float, standard: str='STP', vol_unit: str='Nm3/h'"
-          },
-          {
-            "kind": "function",
-            "name": "mass_to_volumetric_actual",
-            "signature": "mass_flow: float, mass_unit: str, density: float, vol_unit: str='m3/s'"
-          },
-          {
-            "kind": "function",
-            "name": "molar_to_mass",
-            "signature": "molar_flow: float, molar_unit: str, molecular_weight: float, mass_unit: str='kg/s'"
-          },
-          {
-            "kind": "function",
-            "name": "molar_to_molar",
-            "signature": "value: float, from_unit: str, to_unit: str"
-          },
-          {
-            "kind": "function",
-            "name": "scfm_to_acfm",
-            "signature": "scfm: float, temperature: float, pressure: float, standard: str='SCFM'"
-          },
-          {
-            "kind": "function",
-            "name": "standard_volumetric_to_mass",
-            "signature": "vol_flow_std: float, vol_unit: str, molecular_weight: float, standard: str='STP', mass_unit: str='kg/s'"
-          },
-          {
-            "kind": "function",
-            "name": "volumetric_actual_to_mass",
-            "signature": "vol_flow: float, vol_unit: str, density: float, mass_unit: str='kg/s'"
-          }
-        ],
-        "test_paths": [
-          "src/flow_rate_converter/tests/test_flow_rate_converter_gui.py",
-          "src/shared/python/calc_backend/tests/test_calc_backend_properties.py",
-          "src/shared/python/sidekick/tests/calculators/conversion/test_flow_rate_converter.py",
-          "tests/shared/python/calculators/conversion/test_flow_rate_converter.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "N",
-          "Nm",
-          "Pa",
-          "bar",
-          "g",
-          "kPa",
-          "kg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 10940,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "ed3ed871b1a7da621a62d6872282f47e008b622e7f8ac78752aa3e34278bfb51",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-CONVERSION-GAS-FLOW-MIXIN-PY-F3FE44422EA2",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/calculators/conversion/gas_flow_mixin.py",
-      "purpose": "Gas flow conversion mixin for UnitConversionService.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "GasFlowConversionMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Nm",
-          "kPa"
-        ],
         "validation_paths": []
       }
     }

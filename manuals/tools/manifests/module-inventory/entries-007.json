@@ -3,6 +3,426 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 3992,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "d4e7fb7e5358f8f275f7c2fabc22b405620f913aac93ddcb9ce3183b9c2fa783",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-CLEARANCE-PY-ADC3493C0BE5",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_clearance.py",
+      "purpose": "Adapt retained Rate runs to shared swept-wedge ground clearance.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RunGroundClearanceSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ground_clearance_for_run",
+            "signature": "run: SimulationRun, parameters: WedgeHeadParameters, ground: GroundPlane"
+          },
+          {
+            "kind": "function",
+            "name": "representative_wedge_parameters_for_club",
+            "signature": "club: ClubSpec"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_wedge_ground_clearance.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11575,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "85a5a6ccb84cc4fe1155d33298048ddf7880f5803550e0658cb65a36b8f1d566",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-PY-BFA7877654BE",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback.py",
+      "purpose": "Phase-aware playback adapter for strict ground simulation results.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundPlaybackFrame",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackTimeline",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_IMPORT_MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_IMPORT_MAX_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RENDERED_PATH_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_ground_result_json",
+            "signature": "text: str, *, max_bytes: int=DEFAULT_IMPORT_MAX_BYTES, max_points: int=DEFAULT_IMPORT_MAX_POINTS"
+          },
+          {
+            "kind": "function",
+            "name": "select_ground_playback_indices",
+            "signature": "phases: Sequence[str], times: Sequence[float], event_times: Sequence[float], *, max_points: int=MAX_RENDERED_PATH_POINTS"
+          },
+          {
+            "kind": "function",
+            "name": "timeline_from_regional_execution",
+            "signature": "execution: RegionalGroundExecutionResult"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_ground_playback.py",
+          "tests/rate_of_closure/test_ground_playback_workspace_v2.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11532,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "521b03472dd9ceb7bbaa72628f4616469e0d9a3053bb7cc4e5bde99e43d2cc11",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-COMPARISON-PY-CA9E9C61177C",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback_comparison.py",
+      "purpose": "Synchronized, observation-bounded comparison of two ground results.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundComparisonFrame",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundComparisonMetric",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundComparisonProvenance",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackComparison",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_COMPARISON_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ground_comparison_csv",
+            "signature": "comparison: GroundPlaybackComparison"
+          },
+          {
+            "kind": "function",
+            "name": "ground_comparison_json",
+            "signature": "comparison: GroundPlaybackComparison"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10670,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "ed4b956f4d5394e222c35e27a29c09b153035b229ba6ebc3374ecde80b2931de",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-WORKSPACE-PY-CA0623D289A1",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback_workspace.py",
+      "purpose": "Strict persistence and evidence exports for ground-result playback.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundPlaybackState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackViewState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundPlaybackWorkspace",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GROUND_PLAYBACK_WORKSPACE_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_CAMERA_ZOOM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_CAMERA_ZOOM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ground_event_csv",
+            "signature": "result: GroundSimulationResult"
+          },
+          {
+            "kind": "function",
+            "name": "ground_result_json",
+            "signature": "result: GroundSimulationResult"
+          },
+          {
+            "kind": "function",
+            "name": "ground_trajectory_csv",
+            "signature": "result: GroundSimulationResult"
+          },
+          {
+            "kind": "function",
+            "name": "ground_workspace_from_json",
+            "signature": "text: str, *, max_bytes: int=DEFAULT_IMPORT_MAX_BYTES, max_points: int=DEFAULT_IMPORT_MAX_POINTS"
+          },
+          {
+            "kind": "function",
+            "name": "ground_workspace_to_json",
+            "signature": "workspace: GroundPlaybackWorkspace"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_ground_playback_workspace_v2.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 842,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "c7ed9aceb5cf82130c45ce56fe72bf9aa900fcaac0224d36375904c0f3e34325",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-GROUND-PLAYBACK-WORKSPACE-COMMON-PY-48A435D91C6A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/ground_playback_workspace_common.py",
+      "purpose": "Shared structural validation for versioned ground playback workspaces.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "exact_workspace_fields",
+            "signature": "payload: dict[str, Any], expected: set[str], name: str, schema_label: str"
+          },
+          {
+            "kind": "function",
+            "name": "workspace_object",
+            "signature": "value: object, name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 15164,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -11962,300 +12382,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15869,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "73616c5dd8cdf1ef8cef8b710e0511268bdf1bd04ff49b3b15db29df45212b3c",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-WIND-STRATEGY-PANEL-PY-21414D6293BC",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/wind_strategy_panel.py",
-      "purpose": "PyQt wind-strategy ensemble controls, summary, scatter, and export.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WindStrategyPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1818,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a4844ac7e47248261d7e4eefc495b10a7b30f6d655eee57e7f9613c75db4168b",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-WIND-STRATEGY-PLOT-PY-DE67FDC22841",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/wind_strategy_plot.py",
-      "purpose": "Managed wind-strategy scatter rendering and availability text.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "draw_wind_strategy_scatter",
-            "signature": "figure: Figure, scatter: ScalarScatterData"
-          },
-          {
-            "kind": "function",
-            "name": "scatter_availability_text",
-            "signature": "scatter: ScalarScatterData"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2221,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bfb47d843afadefbeb6c8a3e4eef0fb580e51d4d51d2a7e55ae9622f1ae69566",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-WIND-STRATEGY-WORKER-PY-ED11246C80B2",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/wind_strategy_worker.py",
-      "purpose": "Responsive QThread wrapper for shared wind-strategy analysis.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WindStrategyWorker",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_wind_strategy_worker.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3211,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eda8baba2f85865db301191fa8d626b292e3c369594bd10e000af1e17e3f71cb",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-WORKSPACE-LAYOUT-PY-834D98627CBE",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/workspace_layout.py",
-      "purpose": "Bounded persisted visual layout for the standalone PyQt shell.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WorkspaceLayoutMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8890,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2bff8a102605ce06bd5261d7de59b5a6a27b66ada2dea66ff9154c0b3b1c9dab",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-WORKSPACE-NAVIGATION-PY-13F9EC8D4A55",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/workspace_navigation.py",
-      "purpose": "Persistent primary-module navigation for the standalone PyQt shell.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PrimaryModuleEntry",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkspaceNavigationMixin",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_NAVIGATION_STATE_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_REQUIRED_TAB_IDS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "NavigationSettings",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "bar",
-          "s"
-        ],
         "validation_paths": []
       }
     }

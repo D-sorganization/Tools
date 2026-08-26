@@ -3,6 +3,291 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4957,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e7dd5ca4436b6f60397ae0a3ffa2bd5f63573317c3de697fb1d6228f9dbb35a7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-ADAPTER-LIFECYCLE-PY-C5283228E9A4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/gui/_adapter_lifecycle.py",
+      "purpose": "Adapter lifecycle manager for the AI assistant.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/v1/chat/completions",
+          "/v1/embeddings"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AdapterLifecycleManager",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_adapter_lifecycle.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3412,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8f94e16bff04cd94c4de7043d054cbd9459e54c714c865e3015f565afbae2660",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-API-KEYS-PY-EDAEBFA63968",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/gui/_api_keys.py",
+      "purpose": "API key helpers for the AI settings dialog.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "delete_api_key",
+            "signature": "provider: AIProvider"
+          },
+          {
+            "kind": "function",
+            "name": "get_api_key",
+            "signature": "provider: AIProvider"
+          },
+          {
+            "kind": "function",
+            "name": "set_api_key",
+            "signature": "provider: AIProvider, key: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2567,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "75e527f0e8fdd9a54dda806cc32f5ce1ebb5daa95080a1b270f50b8b4c458e7c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-GENERAL-TAB-PY-05D0D790C660",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/gui/_general_tab.py",
+      "purpose": "General preferences tab for the AI settings dialog (Tools #2762).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GeneralPreferencesTab",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2915,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f4d58b580e78d49f985c70c6a3654b154519760620bc9f4f3c45bb795ac3ea6c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-INDEXING-PY-8BF0A17B004C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/gui/_indexing.py",
+      "purpose": "RAG indexing controller for the AI assistant.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "IndexingController",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_indexing_controller.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4709,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0016bf3a226ed30079a9116727e62a1f5c8fcf6c60dacbcc74c6bf5da31ec28b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-INPUT-AREA-PY-595B1558BD46",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/gui/_input_area.py",
+      "purpose": "Input area widget for the AI assistant panel.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InputArea",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5485,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13956,6 +14241,7 @@
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_layer_boundaries.py",
           "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/calc_backend/test_wgs_reactor_headless_import_3317.py",
           "tests/contract/test_calc_backend_contract_surface.py",
@@ -14069,6 +14355,7 @@
           "tests/_import_contract_bootstrap.py",
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/contract/test_calc_backend_contract_surface.py",
           "tests/heavy_integration/test_tools_contracts.py",
@@ -14775,906 +15062,6 @@
         ],
         "test_paths": [
           "tests/shared/python/file_watcher/test_file_watcher.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7922,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6c463c2f8018797d886a8a380653bcd157c4788bc53a0a6a9e90edc32e20b455",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-INIT-PY-7496BE48C45A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/golf_club/__init__.py",
-      "purpose": "Canonical UI-independent domain contracts for modular golf clubs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "AssembledMassProperties",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CATEGORY_TURF",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CURRENT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClubAssembly",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClubComponent",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClubFittingDocument",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClubLengthConvention",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClubLengthMeasurement",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ClubOutcome",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ComponentMassProperties",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ComponentRole",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ContactSequence",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CounterfactualSpec",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CoupledImpactConfig",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CoupledImpactResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ExtrapolationPolicy",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FITTING_DOCUMENT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FITTING_REPORT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FaceGeometry",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FittingProvenance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FittingReport",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GripBoundary",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GripKinematics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "GroundPlane",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "Handedness",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "IMPACT_COUPLING_REPORT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "InstantaneousScrewAxis",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LEGACY_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MeshInertiaReport",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MeshReference",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ReducedTurfContactResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RigidTransform",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SHAFT_PROFILE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftDeliveryDeltas",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftModalResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftModalSettings",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftProfile",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftProfileProvenance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftProfileScaling",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftStation",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftTipLoad",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftTipMass",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ShaftTipResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TURF_DAMPING_KEY",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TURF_FRICTION_KEY",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TURF_PENETRATION_LIMIT_KEY",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TURF_PROFILE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TURF_STIFFNESS_KEY",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TURF_VARIABLE_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfCalibrationStatus",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfContactKinematics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfContactProfile",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfContactResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfContactStatus",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfConvergenceStudy",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfPreset",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfProfileProvenance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TurfVariationPlan",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WEDGE_EXPORT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WEDGE_GROUND_CLEARANCE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WEDGE_PARAMETERS_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeClearanceSample",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeContactCandidate",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeContactFeature",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeExportArtifact",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeExportFormat",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeExportRequest",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeExportResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeGeometryProvenance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeGroundClearanceAnalysis",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeGroundContactEvent",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeHeadParameters",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeKinematicAnalysis",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeKinematicState",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeMeasuredMetrics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgePreset",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeSolidResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeTurfPatchResponse",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "WedgeTurfWrench",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "analyze_wedge_ground_clearance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "analyze_wedge_kinematics",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "angle_of_attack_deg",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "assemble_mass_properties",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "assembly_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "assembly_from_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "assembly_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "assembly_to_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_wedge_solid",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "compare_counterfactuals",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "evaluate_club",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "evaluate_turf_contact",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "evaluate_wedge_turf_wrench",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "export_wedge_artifacts",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "fitting_document_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "fitting_document_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "fitting_report_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "impact_coupling_report",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "is_watertight",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mesh_inertia",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "mesh_volume_centroid",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "run_turf_convergence_study",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "scale_shaft_profile",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "shaft_component_mass_properties",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "shaft_profile_from_csv",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "shaft_profile_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "shaft_profile_from_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "shaft_profile_to_csv",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "shaft_profile_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "shaft_profile_to_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "simulate_coupled_impact",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "simulate_reduced_turf_contact",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "solve_cantilever_tip_response",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "solve_shaft_bending_modes",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "solve_shaft_delivery",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "turf_profile_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "turf_profile_from_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "turf_profile_preset",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "turf_profile_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "turf_profile_to_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "turf_profiles_for_variation_plan",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "wedge_body_profile_m",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "wedge_contact_candidates",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "wedge_face_contact_point_m",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "wedge_ground_clearance_to_json_dict",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "wedge_parameters_from_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "wedge_parameters_to_json",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "wedge_preset",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4729,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "daf4f22b0f7f1b81ddb0513c152f56454c096d4cca9c31672df7fcaa5420ed3b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-VALIDATION-PY-B307FFADCF47",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/golf_club/_validation.py",
-      "purpose": "Private validation and immutable-normalization helpers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2211,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c08317073352f2f1677fea42188770a1f4584f00ae0de5b9b6a700cd8e5f006f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-DELIVERY-METRICS-PY-B9C91BFAFC12",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/golf_club/_wedge_delivery_metrics.py",
-      "purpose": "Private ground-relative wedge metrics evaluated at ball contact.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6746,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5cb116f30f80b74277385b9c05c7430c557a1fa39ee0f1d6d4a6c83cc2cfc0c5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-SWEEP-PY-B8691086300D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/golf_club/_wedge_sweep.py",
-      "purpose": "Private validation and interpolation support for retained wedge sweeps.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "interpolated_pose",
-            "signature": "times: np.ndarray, poses: np.ndarray, time_s: float"
-          },
-          {
-            "kind": "function",
-            "name": "interpolated_twist",
-            "signature": "times: np.ndarray, twists: np.ndarray, time_s: float"
-          },
-          {
-            "kind": "function",
-            "name": "swept_times",
-            "signature": "times: np.ndarray, subdivisions: int"
-          },
-          {
-            "kind": "function",
-            "name": "validated_sweep_arrays",
-            "signature": "times_s: object, poses: object, twists: object"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/golf_club/test_wedge_sweep.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6822,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "35aefee3114b49c32e251c16317f902056370d913c1a1d6eb7a6ee253a4f30fc",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-ASSEMBLY-PY-39D1968392E1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/golf_club/assembly.py",
-      "purpose": "Rigid assembly of component mass properties in a declared club frame.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ClubAssembly",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "assemble_mass_properties",
-            "signature": "components: Sequence[ClubComponent], assembly_frame_id: str"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/golf_club/test_assembly.py"
         ],
         "unit_mentions": [
           "s"

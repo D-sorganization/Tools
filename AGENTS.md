@@ -18,7 +18,10 @@ artifacts; correct QMD and regenerate them through the qualified toolchain.
 Before changing calculations, public interchange pathways, or manual
 governance, read `config/design_manual_governance.json` and run
 `python -m scripts.check_design_manual_governance` and
-`python -m scripts.build_tools_module_inventory --check`. The strict Tools
+`python -m scripts.build_tools_module_inventory --check`, then run
+`python -m scripts.render_tools_design_manual --check`. Render only through the
+pinned `manuals/tools/toolchain-lock.json`; never edit files in
+`manuals/tools/dist`. The strict Tools
 module-inventory extension classifies every tracked implementation module and
 uses LF-normalized content hashes; conservative calculation detection remains
 provisional until stable pathways and review are supplied. Missing inventory,

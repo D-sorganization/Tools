@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/manual-artifacts/1.0.0.json",
+  "title": "Tools manual artifact manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "release_status",
+    "source_commit",
+    "source_sha256_lf",
+    "toolchain_lock_sha256_lf",
+    "semantic_sha256",
+    "semantic_parity",
+    "owner",
+    "review_owner",
+    "publication_approval",
+    "blockers",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": { "const": "tools-manual-artifacts/1.0.0" },
+    "manual_id": { "const": "tools" },
+    "release_status": { "const": "generated-unapproved" },
+    "source_commit": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      ]
+    },
+    "source_sha256_lf": { "$ref": "#/$defs/hash" },
+    "toolchain_lock_sha256_lf": { "$ref": "#/$defs/hash" },
+    "semantic_sha256": { "$ref": "#/$defs/hash" },
+    "semantic_parity": { "const": "verified" },
+    "owner": { "type": "string", "minLength": 1 },
+    "review_owner": { "type": "string", "minLength": 1 },
+    "publication_approval": { "const": "blocked-pending-TOOLS-D7-D8" },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/artifact" }
+    }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "path",
+        "media_type",
+        "bytes",
+        "sha256",
+        "semantic_sha256"
+      ],
+      "properties": {
+        "format": { "enum": ["docx", "html", "pdf", "tex"] },
+        "path": {
+          "type": "string",
+          "pattern": "^manuals/tools/dist/tools-engineering-design-manual\\.(docx|html|pdf|tex)$"
+        },
+        "media_type": { "type": "string", "minLength": 1 },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/hash" },
+        "semantic_sha256": { "$ref": "#/$defs/hash" }
+      }
+    }
+  }
+}
