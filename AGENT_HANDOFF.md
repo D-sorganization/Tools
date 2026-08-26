@@ -24,7 +24,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
 | #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Merged PR #4703 advances R15.4 and the ledger to 22 verified / 9 partial; R14.6 and eight other explicit gaps remain.                                            |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated. |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. A 31-item fail-closed audit now records 6 verified / 25 partial obligations; R14.6 remains partial with seven exact gaps and two human actions.                      |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                  |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
@@ -40,6 +40,7 @@ an exact 2026-08-25 snapshot and can change independently of this handoff.
 
 | PR    | Scope                                                            |
 | ----- | ---------------------------------------------------------------- |
+| #4705 | Fail-closed #4433 acceptance audit and R14.6 gap correction      |
 | #4687 | RotationConverter fixed-array JSX optimization                   |
 | #4686 | CSV-export allocation optimization                               |
 | #4685 | Immutable Upstream R15 evidence and #4142 handoff reconciliation |
@@ -60,6 +61,11 @@ reproduction commands, falsifiers, and scientific limits. #4142 remains open
 because R14.6 is gated by #4433 and eight other requirements retain explicit
 gaps. This is model-data and provenance evidence, not human or scientific
 validation.
+Protected PR #4705 carries the `docs/4433-acceptance-audit` candidate at exact
+audit commit
+`eade2d2c25c0b87648aee5fe4b2cda8982e23d9f` maps all 29 V0--V5 items plus the
+per-tab acceptance matrix and completion condition. Trusted run `32689177846`
+proves the initial React/PyQt tier, not all states or human approval.
 PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
 error-taxonomy regressions exposed by protected execution. Do not weaken the
 provider contract or infer human validity from the corrected model-data gates.
@@ -129,7 +135,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Close the 9 remaining #4142 partial gaps, beginning with #4433-owned R14.6; do not close the epic from cross-repository parity alone.
+4. Advance #4433's 25 partial audit items without promoting initial-state evidence; manual AT and rendered-review approval remain human actions.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.

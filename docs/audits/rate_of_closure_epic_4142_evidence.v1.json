@@ -471,6 +471,7 @@
       "status": "partial",
       "rationale": "Current-main trusted React and PyQt visual evidence passes the registered initial-viewport manifests and states.",
       "evidence_files": [
+        "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json",
         "src/rate_of_closure/visualization_tabs.v1.json",
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
         "tests/rate_of_closure/test_visual_baseline_compare.py"
@@ -483,7 +484,13 @@
         "https://github.com/D-sorganization/Tools/actions/runs/32689177846"
       ],
       "gaps": [
-        "Issue #4433 remains open and its exact acceptance checklist has not been adjudicated against the now-passing protected evidence."
+        "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
+        "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
+        "The manual assistive-technology protocol is ready but has not been executed and signed for React and PyQt.",
+        "A user-oriented rendered review has not been approved with exact build and image identities.",
+        "The per-tab acceptance matrix does not yet bind every state to frame, units, provenance, limitation placement, keyboard path, and nonvisual alternative evidence.",
+        "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete.",
+        "The new-tab extension checklist and downstream cross-repository validation are not yet consolidated into protected completion evidence."
       ]
     },
     {
