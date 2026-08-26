@@ -36,8 +36,9 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open. |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                |
+| #4706 | Vendor-neutral markerless mocap. #4708/#4710 authority and canonical session contracts are active on `feat/4708-mocap-authority-schemas`; no camera, solver, C3D, or physical-lab qualification claim yet. |
 
-Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
+Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, `src/rotation_converter/AGENT_HANDOFF.md`, and `src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md`.
 
 ## Open PR Situation — Read Before Filing Anything
 
@@ -141,9 +142,9 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 1. **Sidekick Unified Integration**: implement the S1–S5 plan in
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
-2. Restore the isolated advisory benchmark lane through #4582.
-3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Advance #4433's 25 partial audit items without promoting initial-state evidence; manual AT and rendered-review approval remain human actions.
-5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
-6. #4125 H5: stand up the public release-management repo (cross-repo).
-7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
+2. Merge #4708/#4710 authority and canonical mocap session contracts, then start #4713 acquisition and #4714 intrinsic calibration in parallel.
+3. Restore the isolated advisory benchmark lane through #4582.
+4. **Land the simulation viewport camera-cluster epic #4571** so #4466 can finally close; it is unrelated to physical mocap cameras.
+5. Advance #4433's 25 partial audit items without promoting initial-state evidence; manual AT and rendered-review approval remain human actions.
+6. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+7. #4125 H5: stand up the public release-management repo (cross-repo).
