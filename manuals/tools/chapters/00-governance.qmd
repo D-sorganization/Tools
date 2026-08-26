@@ -57,4 +57,8 @@ semantic preservation across HTML, LaTeX, PDF, and DOCX. Its generated
 artifacts remain non-editable and unapproved. The conservative inventory does
 not establish stable calculation identity, equation correctness, validity
 ranges, uncertainty, page/accessibility approval, or publication authority.
-Those pathways remain empty and blocked pending TOOLS-D4 through TOOLS-D9.
+TOOLS-D4 registers one model-conditioned D-plane exemplar with explicit
+equation-to-code-to-test evidence while retaining review-required inventory
+authority. The markerless-mocap exemplar remains fail-closed because its source
+dependency is unmerged. Expansion, executable freshness, review, publication,
+and human approval remain blocked under TOOLS-D5 through TOOLS-D9.

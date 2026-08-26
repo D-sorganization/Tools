@@ -3,15 +3,16 @@
   "manual_id": "tools",
   "release_status": "generated-unapproved",
   "source_commit": null,
-  "source_sha256_lf": "53d735063bc3e6bbc2069674d6aba104d7893227d1e99debbfef04d30775ce11",
-  "toolchain_lock_sha256_lf": "e981a15b444fae147dfee57a9973864f7c4e7a5845d8623036642dc974b7c7a7",
-  "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b",
+  "source_sha256_lf": "75f1f30348d13dd972ccbed17b09577a657785a8860327a345f6d925fbb3fd18",
+  "toolchain_lock_sha256_lf": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
+  "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8",
   "semantic_parity": "verified",
   "owner": "Tools documentation epic #4707",
   "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
   "publication_approval": "blocked-pending-TOOLS-D7-D8",
   "blockers": [
-    "Exemplar textbook chapters and stable pathways remain pending TOOLS-D4.",
+    "Markerless exemplar authority remains blocked on TOOLS-M0 issue #4708 and PR #4734.",
+    "D4 scientific and human calculation approval remains outstanding.",
     "Accessibility and page-review approval remain pending TOOLS-D7.",
     "Public projection and human approval remain pending TOOLS-D8."
   ],
@@ -20,33 +21,33 @@
       "format": "docx",
       "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
       "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "bytes": 63078,
-      "sha256": "736a11303f48e566337dde84c176917a0a8323d6c26af776d146d45a0d65ac62",
-      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
+      "bytes": 71156,
+      "sha256": "2b13ec732a8dc38044f606a521bb961541b2f39f434aca6d94b1d4c910719559",
+      "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     },
     {
       "format": "html",
       "path": "manuals/tools/dist/tools-engineering-design-manual.html",
       "media_type": "text/html",
-      "bytes": 70701,
-      "sha256": "ebf766e9ee712cfd1b8e9442702ad94f9c3b2b41d4fbae75b4622310edf61e25",
-      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
+      "bytes": 100607,
+      "sha256": "2cd8a1e0dc5f17bd95257e452af642cb49edd897e842250c7a0d2097d0d3c5f4",
+      "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     },
     {
       "format": "pdf",
       "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
       "media_type": "application/pdf",
-      "bytes": 190094,
-      "sha256": "cbf4233f7380c86876f5893e384515fbdb5ff7a1b54e3b91d4a994b8ab411d69",
-      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
+      "bytes": 275840,
+      "sha256": "a2c25deea16a0b4cd03573d20b29bf68e20aa9ce723107081368a70836ffd557",
+      "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     },
     {
       "format": "tex",
       "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
       "media_type": "application/x-tex",
-      "bytes": 23897,
-      "sha256": "f37990f786dc0a3fe2c5ca4ad715a8dca858b427d17043ab0f09c552bc118f91",
-      "semantic_sha256": "cb86bb861999fc6f73f9e9d4acd262bc7cf99c2efa307f817035498450df377b"
+      "bytes": 39156,
+      "sha256": "188a68d12db2c292669b414d09dafcd9204b29b2c8ddd5af7fb10d893b63789c",
+      "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     }
   ]
 }

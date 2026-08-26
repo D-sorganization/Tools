@@ -99,7 +99,9 @@ def _normalize_core_properties(value: bytes) -> bytes:
 def _normalize_custom_properties(value: bytes) -> bytes:
     """Remove workspace identity from Pandoc's custom bibliography property."""
     try:
-        root = ElementTree.fromstring(value)
+        # The caller supplies this bounded member from the DOCX generated in-process
+        # by the pinned Pandoc renderer; it is never an external XML input.
+        root = ElementTree.fromstring(value)  # nosec B314
     except ElementTree.ParseError as exc:
         raise ManualRendererError("DOCX custom properties are malformed") from exc
 
@@ -220,7 +222,9 @@ def extract_visible_text(path: Path, lock: ToolchainLock, workspace: Path) -> st
             )
             values: list[str] = []
             for name in parts:
-                root = ElementTree.fromstring(package.read(name))
+                # The strict manifest binds this locally generated DOCX before its
+                # bounded header members reach the standard-library XML parser.
+                root = ElementTree.fromstring(package.read(name))  # nosec B314
                 values.extend(
                     node.text or ""
                     for node in root.iter(
@@ -302,7 +306,8 @@ def artifact_payload(
         "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
         "publication_approval": "blocked-pending-TOOLS-D7-D8",
         "blockers": [
-            "Exemplar textbook chapters and stable pathways remain pending TOOLS-D4.",
+            "Markerless exemplar authority remains blocked on TOOLS-M0 issue #4708 and PR #4734.",
+            "D4 scientific and human calculation approval remains outstanding.",
             "Accessibility and page-review approval remain pending TOOLS-D7.",
             "Public projection and human approval remain pending TOOLS-D8.",
         ],

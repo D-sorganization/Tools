@@ -3,6 +3,185 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 28347,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c910bafffd640c263be4df68be9748250230cd551e1b9ee727a31f71e8cacfa0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-EDUCATION-PY-B13370CC78CD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/education.py",
+      "purpose": "Educational content system for the AI Assistant.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://drake.mit.edu",
+          "https://github.com/stack-of-tasks/pinocchio",
+          "https://mujoco.org"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EducationSystem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GlossaryEntry",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_ai_education_imports_3316.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "N·m",
+          "g",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8867,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6eacb878037c3dec19684bf5dd8701f43ed7558f5720dcf14a22834797bda8b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-EXCEPTIONS-PY-5353301F531C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/exceptions.py",
+      "purpose": "Exception hierarchy for the AI Assistant integration layer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AIConnectionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AIError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AIProviderError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AIRateLimitError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AITimeoutError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScientificValidationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ToolExecutionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkflowError",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_chat_ws_error_handling.py",
+          "src/shared/python/sidekick/tests/test_exceptions.py",
+          "tests/shared/python/ai/integrations/_bootstrap.py",
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_ai_hardening_3179.py",
+          "tests/shared/python/ai/test_bitnet_adapter.py",
+          "tests/shared/python/ai/test_classify_error.py",
+          "tests/shared/python/ai/test_claude_code_adapter.py",
+          "tests/shared/python/ai/test_codex_cli_adapter.py",
+          "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/shared/python/ai/test_ollama_adapter.py",
+          "tests/shared/python/ai/test_ollama_adapter_extended.py",
+          "tests/shared/python/sidekick/data_processing/test_exceptions.py",
+          "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cline_adapter.py",
+          "tests/unit/ai/adapters/test_codex_cli_adapter.py",
+          "tests/unit/ai/adapters/test_gemini_cli_adapter.py",
+          "tests/unit/ai/mcp/test_tool_registry_refresh.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 809,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14399,6 +14578,7 @@
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_layer_boundaries.py",
           "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
           "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/architecture/test_tools_textbook_chapter_contract.py",
@@ -14514,6 +14694,7 @@
           "tests/_import_contract_bootstrap.py",
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
           "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/architecture/test_tools_textbook_chapter_contract.py",
@@ -14856,192 +15037,6 @@
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4955,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0504c4b7130f016886e3a64fad99745c4cff6f29c9d3f6a44db23895a8831246",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSOR-IO-BULK-FACADE-PY-D6B9D20D6CC8",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/data_processor_io/bulk_facade.py",
-      "purpose": "Compatibility facade for the shared data-processor fallback package.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "BulkConversionReport",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DataProcessorRustError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DatasetMetadata",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PreviewTable",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RustBulkDataEngine",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17849,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bd8e47ca17b6430fd0d756187ac67bd2f66c994a36389236cadc18af561ebcc0",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSOR-IO-RUST-ENGINE-PY-A7E8EE6F3026",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/data_processor_io/rust_engine.py",
-      "purpose": "Python wrapper for the Rust/Polars bulk-I/O engine (issue #2989, Phase 2).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CancellationToken",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ConversionReport",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "OperationCancelled",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SchemaInfo",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DISABLE_NATIVE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_RUST_AVAILABLE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "cancel",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "convert",
-            "signature": "src: str | os.PathLike[str], dst: str | os.PathLike[str], format: str, token: CancellationToken | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "filter_export",
-            "signature": "path: str | os.PathLike[str], dst: str | os.PathLike[str], predicate: str, columns: Sequence[str] | None=None, token: CancellationToken | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "inspect",
-            "signature": "path: str | os.PathLike[str]"
-          },
-          {
-            "kind": "function",
-            "name": "preview",
-            "signature": "path: str | os.PathLike[str], nrows: int=100, columns: Sequence[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "scan_batch",
-            "signature": "path: str | os.PathLike[str], batch_size: int, columns: Sequence[str] | None=None, token: CancellationToken | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/data_processor_io/test_rust_engine_contract.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/data_processor_io/test_rust_engine_contract.py"
-        ]
       }
     }
   ],

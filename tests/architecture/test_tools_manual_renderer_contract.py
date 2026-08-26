@@ -121,6 +121,7 @@ def test_canonical_source_materialization_is_ordered_and_bounded(
         "manuals/tools/chapters/01-module-inventory.qmd",
         "manuals/tools/chapters/02-reproducible-rendering.qmd",
         "manuals/tools/chapters/03-textbook-chapter-contract.qmd",
+        "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
     )
     text = output.read_text(encoding="utf-8")
     assert "{{< include" not in text
@@ -128,6 +129,9 @@ def test_canonical_source_materialization_is_ordered_and_bounded(
     assert text.index("# Module and") < text.index("# Reproducible Rendering")
     assert text.index("# Reproducible Rendering") < text.index(
         "# Required Textbook Chapter Contract"
+    )
+    assert text.index("# Required Textbook Chapter Contract") < text.index(
+        "# Swing and Rate-of-Closure D-Plane Geometry"
     )
 
 

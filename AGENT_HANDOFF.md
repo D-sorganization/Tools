@@ -37,7 +37,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
 | #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
-| #4707 | Engineering design manuals. D0--D2 are protected-merged. D3 is qualified on the fresh main-rooted branch `docs/4717-textbook-chapter-main`; protected D3 delivery and D4--D9 remain.                                                  |
+| #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                            |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -46,31 +46,20 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 - Query exact PR state before acting; this handoff is not a live queue.
 - Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
   integration through M7/M9 is evidence, not merged authority.
-- TOOLS-D1 (#4711) PR #4743 protected-squash-merged normally as
-  `395e11adce9081c38a9b436c3e76978e30d71fc9`; its tree exactly matches the
-  reviewed PR head. Twenty-seven post-merge focused contracts, governance,
-  inventory freshness, Ruff, remote-main equality, and clean-tree checks pass.
-  Its `manuals/tools/manifests/module-inventory.json` covers 3,434 modules: 808
-  provisional calculation candidates, 2,626 non-calculation modules, and one
-  explicit encoding blocker. The stable calculation registry remains empty.
-- TOOLS-D2 (#4712) protected PR #4744 squash-merged normally as
-  `25c10cd6ca580d29185ead03808c313afac4ffb3`; its merge tree exactly matches
-  reviewed head `71915553ee952557940c99d142f3c5344b2022b8`. The pinned renderer produces
-  repository-relative, byte-reproducible, semantically equivalent HTML, LaTeX,
-  PDF, and DOCX with strict manifests and digests. The dedicated Docs Governance
-  lane remains fail closed when external render tools are unavailable. Artifacts
-  remain generated-unapproved; TOOLS-D3 owns stable pathways and TOOLS-D7/D8 own
-  page, accessibility, publication, and human approval.
-- TOOLS-D3 (#4717) replacement branch `docs/4717-textbook-chapter-main` is
-  rooted directly at protected D2 main and preserves the RED/GREEN contract
-  history. Its tree exactly matches the separately reviewed reconciliation tree
-  `1cb18f77ca02e4cbaa122e34884f754685933c09`. Its typed linter enforces fourteen ordered
-  textbook sections plus ownership, traceability, status, and LF-normalized
-  evidence contracts. The registry remains empty pending D4. On the reconciled
-  exact tree, 66 focused architecture tests and all governance, inventory,
-  linter, renderer, formatter, and fleet hooks pass; all 5 PDF and 7
-  Word-rendered DOCX pages passed visual review. Artifacts remain
-  generated-unapproved pending D4 and D7--D8.
+- TOOLS-D1 (#4711), TOOLS-D2 (#4712), and TOOLS-D3 (#4717) protected-squash-
+  merged normally as `395e11adce9081c38a9b436c3e76978e30d71fc9`,
+  `25c10cd6ca580d29185ead03808c313afac4ffb3`, and
+  `09d191fb8f6cf6e3ba76ee11375dcdcd65fd8d94`. Each merge tree exactly matches
+  its reviewed PR-head tree. The detached D3 post-merge run passed all 66
+  focused contracts; one xdist worker crashed during the deterministic inventory
+  test, and the exact test passed on an immediate serial rerun.
+- TOOLS-D4 (#4720) is reconciled on the fresh main-rooted branch
+  `docs/4720-exemplar-manuals-main`. It registers one verified-unapproved D-plane
+  exemplar and one fail-closed markerless row in
+  `manuals/tools/manifests/module-inventory.json` and preserves all later approval
+  gates. The prior local artifacts had all 10 native PDF and 14 Word-rendered
+  DOCX pages visually reviewed; this reconciled exact head still requires fresh
+  protected review and artifact-identity or complete rendered-page evidence.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers
@@ -91,6 +80,7 @@ python3 -m pytest -m integration --timeout=60     # cross-repo integration
 python3 -m scripts.check_design_manual_governance
 python3 -m scripts.build_tools_module_inventory --check
 python3 -m scripts.lint_tools_textbook_chapters
+python3 -m scripts.check_tools_exemplars
 python3 -m scripts.render_tools_design_manual --check
 ```
 
@@ -138,8 +128,8 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Deliver the main-rooted TOOLS-D3 #4717 replacement through the ordinary
-   protected flow before publishing TOOLS-D4 stable pathway registration.
+1. Deliver main-rooted TOOLS-D4 #4720 through the ordinary protected flow, then
+   reconcile D5--D9 without rewriting remote history.
 2. **Sidekick Unified Integration**: implement the S1–S5 plan in
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 3. Restore the isolated advisory benchmark lane through #4582.

@@ -20,6 +20,7 @@ governance, read `config/design_manual_governance.json` and run
 `python -m scripts.check_design_manual_governance` and
 `python -m scripts.build_tools_module_inventory --check`, then run
 `python -m scripts.lint_tools_textbook_chapters` and
+`python -m scripts.check_tools_exemplars` and
 `python -m scripts.render_tools_design_manual --check`. Render only through the
 pinned `manuals/tools/toolchain-lock.json`; never edit files in
 `manuals/tools/dist`. The strict Tools
@@ -29,6 +30,10 @@ provisional until stable pathways and review are supplied. Missing inventory,
 required textbook sections, stable IDs, typed traceability,
 freshness, provenance, licensing, page review, accessibility review, or approval
 keeps release blocked. Never copy private Tools_Private content into this manual.
+An exemplar may claim `verified-unapproved` only when its calculation, chapter,
+module, source, consumer, test, and golden-fixture links all resolve. An absent
+or unmerged implementation is a machine-readable blocked entry, never a
+synthetic chapter or borrowed branch authority.
 
 ---
 

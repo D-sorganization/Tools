@@ -37,44 +37,17 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\newenvironment{Shaded}{}{}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
-\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
-\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \newsavebox\pandoc@box
@@ -161,14 +134,14 @@
   pdfcreator={LaTeX via pandoc}}
 
 \ifXeTeX
-\special{pdf:trailerid [ <da2f2d9607739f8a6de4edbf14a13b98> <da2f2d9607739f8a6de4edbf14a13b98> ]}
+\special{pdf:trailerid [ <0798ca783ee6f823822fd63f03ab5a2a> <0798ca783ee6f823822fd63f03ab5a2a> ]}
 \fi
 \ifPDFTeX
 \pdftrailerid{}
-\pdftrailer{/ID [ <da2f2d9607739f8a6de4edbf14a13b98> <da2f2d9607739f8a6de4edbf14a13b98> ]}
+\pdftrailer{/ID [ <0798ca783ee6f823822fd63f03ab5a2a> <0798ca783ee6f823822fd63f03ab5a2a> ]}
 \fi
 \ifLuaTeX
-\pdfvariable trailerid {[ <da2f2d9607739f8a6de4edbf14a13b98> <da2f2d9607739f8a6de4edbf14a13b98> ]}
+\pdfvariable trailerid {[ <0798ca783ee6f823822fd63f03ab5a2a> <0798ca783ee6f823822fd63f03ab5a2a> ]}
 \fi
 
 \title{Tools Engineering Design Manual}
@@ -190,13 +163,15 @@
 This is the canonical editable QMD source for the Tools engineering
 design manual. It is a governance scaffold, not a released engineering
 manual. The file-level module inventory is complete for its declared
-tracked-source denominator, but all detected calculation candidates
-remain provisional and the stable calculation-pathway registry remains
-empty. The required textbook chapter contract is qualified, but no
-exemplar chapter is registered. Release remains blocked by TOOLS-D4
-through TOOLS-D9. Generated HTML, LaTeX, PDF, and DOCX artifacts are
-reproducible engineering records under TOOLS-D2, but none is approved
-for publication or engineering use.
+tracked-source denominator. TOOLS-D4 registers one model-conditioned
+D-plane calculation and one swing/Rate-of-Closure textbook exemplar with
+exact source, consumer, test, fixture, equation, unit, and limitation
+traceability. The markerless-mocap exemplar remains explicitly blocked
+because its authority PR is unmerged and no markerless module exists on
+this exact source base. Release remains blocked by TOOLS-D5 through
+TOOLS-D9 and outstanding D4 approvals. Generated HTML, LaTeX, PDF, and
+DOCX artifacts are reproducible engineering records under TOOLS-D2, but
+none is approved for publication or engineering use.
 
 \section{Documentation Authority and Release
 Boundary}\label{documentation-authority-and-release-boundary}
@@ -265,8 +240,12 @@ governed semantic preservation across HTML, LaTeX, PDF, and DOCX. Its
 generated artifacts remain non-editable and unapproved. The conservative
 inventory does not establish stable calculation identity, equation
 correctness, validity ranges, uncertainty, page/accessibility approval,
-or publication authority. Those pathways remain empty and blocked
-pending TOOLS-D4 through TOOLS-D9.
+or publication authority. TOOLS-D4 registers one model-conditioned
+D-plane exemplar with explicit equation-to-code-to-test evidence while
+retaining review-required inventory authority. The markerless-mocap
+exemplar remains fail-closed because its source dependency is unmerged.
+Expansion, executable freshness, review, publication, and human approval
+remain blocked under TOOLS-D5 through TOOLS-D9.
 
 \section{Module and Calculation-Candidate
 Inventory}\label{module-and-calculation-candidate-inventory}
@@ -288,8 +267,8 @@ every shard remain below the repository's one-megabyte file budget;
 consumers reassemble one logical view only after verifying every shard
 and the exact declared shard set.
 
-At this baseline, 3,437 modules are classified: 808 conservative
-calculation candidates and 2,629 non-calculation modules. One legacy
+At this baseline, 3,439 modules are classified: 808 conservative
+calculation candidates and 2,631 non-calculation modules. One legacy
 JavaScript file has a non-UTF-8 encoding and remains explicitly blocked
 rather than being decoded by an implicit platform default. These counts
 describe inventory coverage only; they are not test coverage,
@@ -384,7 +363,7 @@ Software, PBC 2026).
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\linewidth,height=\textheight,keepaspectratio,alt={Deterministic rendering pathway.}]{figures/render-pipeline.png}
+\includegraphics[width=0.7\linewidth,height=\textheight,keepaspectratio,alt={Deterministic rendering pathway.}]{figures/render-pipeline.png}
 \caption{Deterministic rendering pathway.}
 \end{figure}
 
@@ -427,6 +406,10 @@ divergence.
 
 \section{References}\label{references}
 
+The cited Pandoc and Quarto records are resolved from the governed
+bibliography declared by the pinned toolchain contract; an unresolved
+citation fails the qualified render.
+
 \section{Required Textbook Chapter
 Contract}\label{required-textbook-chapter-contract}
 
@@ -436,8 +419,9 @@ TOOLS-D3 defines the public structure that every calculation-level
 textbook chapter must satisfy before registration. The contract is
 structural and traceability-focused: passing it does not approve an
 equation, implementation, dataset, artifact, license, or engineering
-use. The registry is intentionally empty until TOOLS-D4 supplies
-reviewed exemplar chapters.
+use. TOOLS-D4 now registers one verified-unapproved swing and
+Rate-of-Closure exemplar; missing markerless authority remains an
+explicit blocker rather than an inferred calculation.
 
 Two version identifiers are fixed:
 
@@ -519,26 +503,414 @@ references, unsupported status promotion, and stale generated artifacts
 all fail closed. The linter does not synthesize equations, units,
 sources, examples, tests, or limitations.
 
-TOOLS-D4 owns exemplar chapter registration. TOOLS-D5 expands phased
-module coverage, TOOLS-D6 owns executable freshness, TOOLS-D7 owns
-rendered and accessibility review, and TOOLS-D8 owns immutable public
-projection and human approval.
+TOOLS-D4 owns exemplar chapter registration and its fail-closed
+dependency coverage. TOOLS-D5 expands phased module coverage, TOOLS-D6
+owns executable freshness, TOOLS-D7 owns rendered and accessibility
+review, and TOOLS-D8 owns immutable public projection and human
+approval.
 
 \subsection{Consumer Workflow}\label{consumer-workflow}
 
 Authors edit only canonical QMD and the machine-readable chapter
 registry. Run these commands in order:
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{python {-}m scripts.lint\_tools\_textbook\_chapters}
-\NormalTok{python {-}m scripts.render\_tools\_design\_manual {-}{-}render}
-\end{Highlighting}
-\end{Shaded}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{python\ -m} \texttt{scripts.lint\_tools\_textbook\_chapters}
+\item
+  \texttt{python\ -m} \texttt{scripts.check\_tools\_exemplars}
+\item
+  \texttt{python\ -m} \texttt{scripts.render\_tools\_design\_manual}
+  \texttt{-\/-render}
+\end{enumerate}
 
-They regenerate and check all four representations. The combined
-governance, inventory, chapter, and artifact freshness gates must pass
-before review.
+\section{Swing and Rate-of-Closure D-Plane
+Geometry}\label{swing-rate-of-closure-d-plane-exemplar}
+
+\subsection{Purpose and Scope}\label{purpose-and-scope}
+
+This governed exemplar explains how \texttt{swing\_sim} computes
+frame-explicit three-dimensional D-plane geometry and how Rate of
+Closure supplies three distinct rigid-body velocity points to that
+calculation. It is for developers, scientific reviewers, and integrators
+who need to reproduce the equations and follow every value into code and
+tests. It covers geometric direction relationships only. It does not
+predict ball launch, spin magnitude, aerodynamic flight, player outcome,
+equipment quality, or an operating decision. The calculation and
+rendered artifacts are verified-unapproved.
+
+\subsection{Design by Contract}\label{design-by-contract}
+
+\subsubsection{Preconditions}\label{preconditions}
+
+\texttt{analyze\_dplane} accepts travel, face-normal, target, and up
+vectors with exactly three finite components. Face normal, target, and
+up must each have Euclidean norm greater than \(10^{-12}\). Target and
+up must be orthogonal to absolute dot product \(10^{-10}\). The
+Rate-of-Closure adapter additionally requires a typed
+\texttt{SimulationRun} with increasing sample times and internally
+consistent pose, twist, club, scenario, and inspection-event records.
+
+\subsubsection{Postconditions}\label{postconditions}
+
+Every available direction is normalized and every angle is in degrees.
+Spin loft is the principal angle on \([0,180]\). A defined D-plane
+supplies a unit normal perpendicular to travel and face. Zero, parallel,
+antiparallel, and unprojectable states return explicit status or null
+fields; they never invent a plane, horizontal heading, or face-to-path
+result.
+
+\subsubsection{Invariants}\label{invariants}
+
+A common proper rotation of travel, face, target, and up preserves spin
+loft, planar spin loft, face-to-path, and intrinsic tilt. Reflecting the
+right axis reverses signed horizontal relationships while preserving
+spin loft. Multiplying a nonzero travel vector by a positive scalar does
+not change the geometry because only direction enters the method.
+
+\subsection{Coordinates, Frames, and
+Time}\label{coordinates-frames-and-time}
+
+\subsubsection{Coordinate Frames}\label{coordinate-frames}
+
+\protect\phantomsection\label{dplane-coordinate-frame}{}
+
+The default application frame is
+\texttt{app\_frame:x\_target,y\_up,z\_right}. Let \(\hat{\mathbf t}\) be
+target and \(\hat{\mathbf u}\) be up. The implementation constructs
+right as
+
+\[
+\hat{\mathbf r} =
+  \frac{\hat{\mathbf t}\times\hat{\mathbf u}}
+       {\lVert\hat{\mathbf t}\times\hat{\mathbf u}\rVert}.
+\]
+
+Rate of Closure interpolates the inspection-event rigid transform and
+twist, then expresses reference, face-center, and contact vectors in
+this same frame.
+
+\subsubsection{Axis and Handedness}\label{axis-and-handedness}
+
+Positive path and face headings rotate from target toward right.
+Elevation is positive toward up. Target-times-up fixes the sign of
+right; reversing the cross-product order would reverse every signed
+horizontal result. The D-plane normal is travel-times-face, so its
+orientation also depends on declared order.
+
+\subsubsection{Time Convention}\label{time-convention}
+
+The geometry is instantaneous and has no integration clock. Rate of
+Closure evaluates it at \texttt{inspection\_time\_s}. Pose and twist are
+interpolated to that event time; the closest sampled index is audit
+metadata and a bounded tangent fallback. A miss remains a
+closest-approach event and is not relabeled impact.
+
+\subsection{Units and Dimensions}\label{units-and-dimensions}
+
+\subsubsection{Symbol and Unit Table}\label{symbol-and-unit-table}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Symbol or field
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Unit
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(\mathbf v\) & reference, face-center, or contact velocity & m/s \\
+\(\hat{\mathbf n}\) & delivered face normal & 1 \\
+\(\hat{\mathbf t},\hat{\mathbf u},\hat{\mathbf r}\) & target, up, right
+axes & 1 \\
+\(\lambda\) & three-dimensional spin loft & degree \\
+\(p,a,f,\ell\) & path, attack, face, and dynamic-loft angles & degree \\
+\(\hat{\mathbf d}\) & D-plane normal & 1 \\
+\texttt{event\_time\_s} & interpolation time & s \\
+\end{longtable}
+}
+
+\subsubsection{Dimensional Checks}\label{dimensional-checks}
+
+Normalizing \(\mathbf v\) divides m/s by m/s, producing a unit
+direction. Dot and cross products operate on dimensionless directions.
+\texttt{acos} and \texttt{atan2} return dimensionless radians, converted
+to degrees. The rigid-body equation
+\(\mathbf v_P=\mathbf v_O+\boldsymbol\omega\times\mathbf r_{OP}\) is
+consistent: rad/s is treated as \(1/s\), and multiplying by metres
+produces m/s.
+
+\subsection{Derivation and
+Assumptions}\label{derivation-and-assumptions}
+
+\subsubsection{Assumptions}\label{assumptions}
+
+The calculation assumes Euclidean three-space, a right-handed
+orthonormal target frame, finite floating-point inputs, and one
+instantaneous delivered face normal. It treats the D-plane as geometry
+spanned by travel and face; collision dynamics and aerodynamic response
+lie outside this method. Rate of Closure assumes its interpolated
+homogeneous pose is rigid and its twist stores angular components
+followed by translational components.
+
+\subsubsection{Derivation}\label{derivation}
+
+Normalize travel and face as
+\(\hat{\mathbf v}=\mathbf v/\lVert\mathbf v\rVert\) and
+\(\hat{\mathbf n}=\mathbf n/\lVert\mathbf n\rVert\). Their dot product
+is the cosine of the included angle. Clipping protects \texttt{acos}
+from roundoff beyond the mathematical interval.
+
+\protect\phantomsection\label{dplane-spin-loft-equation}{}
+
+\[
+\lambda = \frac{180}{\pi}
+  \cos^{-1}\!\left(
+    \operatorname{clip}(\hat{\mathbf v}\cdot\hat{\mathbf n},-1,1)
+  \right).
+\]
+
+When the vectors are not collinear, the oriented plane normal is
+
+\protect\phantomsection\label{dplane-normal-equation}{}
+
+\[
+\hat{\mathbf d} =
+  \frac{\hat{\mathbf v}\times\hat{\mathbf n}}
+       {\lVert\hat{\mathbf v}\times\hat{\mathbf n}\rVert}.
+\]
+
+For any direction \(\mathbf q\), remove its vertical component:
+\(\mathbf q_h=\mathbf q-(\mathbf q\cdot\hat{\mathbf u})\hat{\mathbf u}\).
+Heading and elevation are
+\(\operatorname{atan2}(\mathbf q_h\cdot\hat{\mathbf r},
+\mathbf q_h\cdot\hat{\mathbf t})\) and
+\(\operatorname{atan2}(\mathbf q\cdot\hat{\mathbf u},
+\lVert\mathbf q_h\rVert)\). Face-to-path wraps \(f-p\) to
+\([-180,180)\). Rate of Closure obtains face-center velocity from
+rigid-body kinematics before applying the same geometry.
+
+\subsection{Algorithm}\label{algorithm}
+
+\subsubsection{Inputs}\label{inputs}
+
+The standalone calculation consumes \texttt{travel\_vector},
+\texttt{face\_normal}, optional \texttt{target} and \texttt{up}, and
+descriptive \texttt{frame\_id}. The consumer accepts one immutable
+\texttt{SimulationRun} and derives inspection pose, twist, shaft
+geometry, contact lever, face normal, leading-edge tangent, and arc
+tangent rather than asking callers to assemble those values.
+
+\subsubsection{Procedure}\label{procedure}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Convert each vector to a finite three-component array and validate the
+  frame.
+\item
+  Normalize face, target, and up; derive right from target-times-up.
+\item
+  Compute face heading and dynamic loft even if travel is zero.
+\item
+  Return \texttt{zero\_travel} when travel norm is at most \(10^{-12}\).
+\item
+  Normalize travel; compute path, attack, face-to-path, and spin loft.
+\item
+  Return \texttt{parallel} or \texttt{antiparallel} for a singular cross
+  product.
+\item
+  Otherwise derive plane normal, tilt, inclination, and ground
+  intersection.
+\item
+  Rate of Closure repeats the calculation for reference, face center,
+  and contact so a consumer cannot silently confuse those datums.
+\end{enumerate}
+
+Standalone work is constant time and memory. Sector rendering is linear
+in the caller-bounded segment count and returns \texttt{segments\ +\ 1}
+unit directions.
+
+\subsubsection{Outputs}\label{outputs}
+
+\texttt{DPlaneAnalysis} returns status, frame, normalized basis vectors,
+optional plane and ground-intersection directions, three-dimensional and
+planar spin loft, residual, path, attack, face, dynamic loft,
+face-to-path, azimuth, tilt, and inclination.
+\texttt{ImpactKinematicSnapshot} wraps three analyses with event,
+geometry basis, limitations, pose, and wedge-kinematics evidence.
+
+\subsection{Implementation Symbols}\label{implementation-symbols}
+
+\subsubsection{Public Symbols}\label{public-symbols}
+
+The stable \texttt{shared.python.swing\_sim.impact} facade exports
+\texttt{DPlaneStatus}, \texttt{DPlaneAnalysis},
+\texttt{analyze\_dplane}, and \texttt{spin\_loft\_sector\_directions}.
+Rate of Closure exports \texttt{ImpactKinematicSnapshot} and
+\texttt{impact\_kinematics\_for\_run}. Consumers should not import
+private helpers such as \texttt{\_heading\_deg} or
+\texttt{\_shaft\_geometry}.
+
+\subsubsection{Source Mapping}\label{source-mapping}
+
+Calculation \texttt{TOOLS-DPLANE-GEOMETRY} maps spin loft, normal,
+heading, elevation, singular states, and sectors to
+\texttt{src/shared/python/swing\_sim/impact/dplane.py}. The
+Rate-of-Closure datum and point-velocity mapping lives in
+\texttt{src/rate\_of\_closure/simulation/impact\_kinematics.py}. Both
+are pinned to D3 base \texttt{916fb9f27f486486f0c071dcc6f15f81f68ecb18};
+their provisional module IDs and public symbols remain recorded in the
+module inventory.
+
+\subsection{Error and Failure
+Semantics}\label{error-and-failure-semantics}
+
+\subsubsection{Error Conditions}\label{error-conditions}
+
+Wrong vector shape, non-finite values, zero face/target/up, or a
+nonorthogonal frame raises \texttt{ValueError}. A
+non-\texttt{SimulationRun} input raises \texttt{TypeError}.
+Nonincreasing times, zero shaft geometry, zero path fallback, or
+degenerate projected leading edge also fail preconditions. These
+failures are distinct from valid singular geometry.
+
+\subsubsection{Recovery and
+Cancellation}\label{recovery-and-cancellation}
+
+Callers recover by correcting source data or frame; the method does not
+coerce, interpolate missing vectors, or substitute a default. Valid
+singular statuses may be displayed with null fields intact. The
+synchronous calculation is bounded and has no external I/O, so it has no
+mid-operation cancellation seam. Higher-level cancellation occurs before
+calls or between complete runs.
+
+\subsection{Uncertainty and
+Sensitivity}\label{uncertainty-and-sensitivity}
+
+\subsubsection{Uncertainty Sources}\label{uncertainty-sources}
+
+The implementation does not estimate covariance. Uncertainty can enter
+through travel, face orientation, coordinate transform, event
+interpolation, club geometry, or the choice of reference versus contact
+datum. Floating-point clipping addresses numerical roundoff only; it is
+not a measurement uncertainty model. Angles therefore remain
+model-conditioned rather than observed truth.
+
+\subsubsection{Sensitivity}\label{sensitivity}
+
+Small perturbations are smooth away from singular states. Sensitivity
+rises when horizontal projection approaches zero because heading becomes
+undefined, and when travel and face approach parallel or antiparallel
+because a small cross product cannot define a stable normal. The API
+exposes these limits as null or typed status; downstream code must not
+carry forward a prior frame's plane.
+
+\subsection{Verification and
+Validation}\label{verification-and-validation}
+
+\subsubsection{Test Evidence}\label{test-evidence}
+
+\texttt{test\_matches\_cross\_client\_golden\_contract} executes three
+analytical cases from \texttt{dplane\_golden\_v1.json} at absolute
+tolerance \(10^{-9}\) degree. Singular-state tests cover zero travel,
+parallel, antiparallel, vertical projection, and invalid frames.
+Rotation and reflection tests pin invariants. The Rate-of-Closure
+integration test derives face-center velocity independently as
+\(\mathbf v_O+\boldsymbol\omega\times\mathbf r\), then proves the
+consumer normalizes that value for its face-center D-plane.
+
+\subsubsection{Acceptance Criteria}\label{acceptance-criteria}
+
+The exemplar passes only when strict JSON Schema and typed loader agree;
+calculation, chapter, module, source, consumer, test, and golden-fixture
+links all resolve; the fourteen-section linter and focused tests pass;
+and HTML, LaTeX, PDF, and DOCX share the governed semantic digest. This
+evidence verifies reproduction, not scientific or publication approval.
+
+\subsection{Limits and Applicability}\label{limits-and-applicability}
+
+\subsubsection{Validity Range}\label{validity-range}
+
+Finite vectors may have any representable scale, but face and frame axes
+must exceed norm \(10^{-12}\), and target/up orthogonality must satisfy
+\(10^{-10}\). Spin loft spans \(0\) through \(180\) degrees. Signed
+relationships wrap to \([-180,180)\). The golden fixture qualifies only
+its declared cases and \(10^{-9}\)-degree tolerance.
+
+\subsubsection{Known Limitations}\label{known-limitations}
+
+The method does not compute ball response, impulse, spin rate, lift,
+drag, landing, biomechanics, or camera-derived pose. It does not
+establish that an external device's axes, timestamps, or face normal
+match this contract. Rate of Closure downstream flight currently
+consumes reference-point translation; shaft-induced contact velocity
+remains analysis. The markerless-mocap exemplar is deliberately absent
+because TOOLS-M0 issue \#4708 and PR \#4734 are open and no markerless
+module exists on this D3 base. Unmerged content is not promoted.
+
+\subsection{Worked Examples}\label{worked-examples}
+
+\subsubsection{Example Inputs}\label{example-inputs}
+
+The governed \texttt{square-descending} fixture supplies
+\(\mathbf v=(0.9986295347545738,-0.052335956242943835,0)\), with path
+\(0^\circ\) and attack \(-3^\circ\). Its face normal is
+\(\mathbf n=(0.9781476007338057,0.20791169081775934,0)\), with face
+\(0^\circ\) and dynamic loft \(12^\circ\). Target and up use default
+unit axes. The fixture tolerance is \(10^{-9}\) degree.
+
+\subsubsection{Example Results}\label{example-results}
+
+The dot product is \(\cos 15^\circ\), so spin loft is \(15^\circ\).
+Dynamic loft minus attack is \(12-(-3)=15^\circ\), making planar
+residual zero. Travel-times-face points along right, giving
+\(\hat{\mathbf d}=(0,0,1)\), tilt \(0^\circ\), inclination \(90^\circ\),
+and ground intersection at \(0^\circ\). Status is \texttt{defined}.
+Values come from the cross-client golden fixture and executable Python
+test, not renderer-only text.
+
+\subsection{References and Provenance}\label{references-and-provenance}
+
+\subsubsection{References}\label{references-1}
+
+Primary implementation authority is exact source at
+\texttt{916fb9f27f486486f0c071dcc6f15f81f68ecb18}. Numerical
+expectations come from \texttt{dplane-golden-v1}, with independent
+behavior exercised by the tests in the registry. External scientific
+literature has not completed review, so this chapter makes no
+literature-backed ball-flight or equipment-performance claim.
+
+\subsubsection{Provenance}\label{provenance}
+
+The calculation registry records method version \texttt{1.0.0}, symbols
+and commit, source digest, inputs, units, contracts, equation anchors,
+tests, artifacts, limitations, and approval blockers. D4 coverage
+separately records markerless as blocked. Generated HTML, LaTeX, PDF,
+and DOCX derive from canonical QMD via the pinned D2 toolchain and
+remain \texttt{generated-unapproved}.
+
+\subsection{Revision History}\label{revision-history}
+
+\subsubsection{Revision Record}\label{revision-record}
+
+Version 1.0.0, dated 2026-08-26, registers the first Tools textbook
+exemplar: frame-explicit D-plane geometry shared by swing simulation and
+Rate of Closure, with executable golden values and fail-closed
+markerless dependency status. Later revisions must update the
+descriptor, method version when mathematics or behavior changes, tests,
+provenance, limitations, and every generated artifact.
 
 \protect\phantomsection\label{refs}
 \begin{CSLReferences}{1}{1}

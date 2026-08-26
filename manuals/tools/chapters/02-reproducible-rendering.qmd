@@ -16,7 +16,7 @@ binds every representation into `manifests/artifacts.json`. The command model
 follows the documented Pandoc conversion contract [@pandoc-manual] while QMD
 remains compatible with the pinned Quarto authoring surface [@quarto-guide].
 
-![Deterministic rendering pathway.](figures/render-pipeline.png){width=80%}
+![Deterministic rendering pathway.](figures/render-pipeline.png){width=70%}
 
 ## Semantic, Unit, and Warning Preservation
 
@@ -50,3 +50,7 @@ merged authority. A consumer must reject unknown fields, versions, formats,
 paths, hashes, status promotion, or semantic divergence.
 
 # References
+
+The cited Pandoc and Quarto records are resolved from the governed bibliography
+declared by the pinned toolchain contract; an unresolved citation fails the
+qualified render.

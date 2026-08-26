@@ -3,6 +3,142 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 7851,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "fd4b15e4653f56c07337fe90533bac51a449959613fabfa0454a57f990fbfa59",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-CONTACT-PY-1EDA8C0CF66A",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/contact.py",
+      "purpose": "Typed clubhead-reference-point contact outcomes.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ContactMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactOutcome",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactStatus",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assess_fixed_contact",
+            "signature": "times_s: np.ndarray, reference_positions_m: np.ndarray, ball_position_m: np.ndarray, contact_threshold_m: float"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py"
+        ],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3121,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "530803c05955048fe2102a01b5dab46db2d88ce0d2789ddceeed4f61bfb80058",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-DELIVERY-PY-0784ED60B7A7",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/delivery.py",
+      "purpose": "Delivery extraction at a selected clubhead sample.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_MAX_DELIVERY_ANGLE_DEG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "delivery_at",
+            "signature": "source: SwingSource, tau: float, scenario: ImpactScenario, club: ClubSpec"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_delivery.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 16873,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -834,15 +970,14 @@
       "risk_tags": [
         "public-api",
         "scientific-review-required",
-        "source-provenance-unmapped",
         "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
         "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "chapters": "mapped",
+        "citations": "mapped",
+        "equation_pathway": "mapped",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
@@ -856,9 +991,18 @@
           "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
+        "chapter_paths": [
+          "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd"
+        ],
+        "citation_refs": [
+          "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+          "src/shared/python/swing_sim/impact/dplane.py"
+        ],
+        "equation_refs": [
+          "TOOLS-DPLANE-FRAME",
+          "TOOLS-DPLANE-NORMAL",
+          "TOOLS-DPLANE-SPIN-LOFT"
+        ],
         "public_routes": [],
         "public_surfaces": [
           {
@@ -876,6 +1020,9 @@
           "tests/rate_of_closure/test_impact_kinematics.py"
         ],
         "unit_mentions": [
+          "1",
+          "degree",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -12343,136 +12490,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3224,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ed093e0756db3261acadbccba192d70f6d89924bd92aec6b2f11973cd103cf09",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VISUALIZATION-TAB-AUDIT-PY-08EBD1F62902",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/visualization_tab_audit.py",
-      "purpose": "Geometry utilities for deterministic PyQt visualization-tab audits.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "interactive_overlaps",
-            "signature": "root: QWidget"
-          },
-          {
-            "kind": "function",
-            "name": "mapped_rect",
-            "signature": "widget: QWidget, ancestor: QWidget"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_visual_widget",
-            "signature": "tab: QWidget, locator: str"
-          },
-          {
-            "kind": "function",
-            "name": "visible_intersection",
-            "signature": "widget: QWidget, tab: QWidget"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
-          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
-          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
-          "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
-          "tests/rate_of_closure/test_visualization_tab_audit.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2407,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "51e3d7cb1dc2c8b2a7955695e453d0dfb5afbdebd5e7842e885b009cf7ae3ea3",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-WEDGE-GROUND-SCENE-PY-AD0289884A59",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/wedge_ground_scene.py",
-      "purpose": "Matplotlib 3-D annotations for one swept wedge-clearance snapshot.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "draw_wedge_ground_overlay_3d",
-            "signature": "axes: Any, snapshot: RunGroundClearanceSnapshot, time_s: float, display: Callable[[np.ndarray], np.ndarray], chart_color: Callable[[int], str]"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "mm",
-          "s"
-        ],
         "validation_paths": []
       }
     }

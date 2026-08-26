@@ -3,6 +3,117 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1971,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8c005beb18a9191c247e517cbcf327102733fbc7a17b65d77357a1c9cbd757ce",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-LAUNCH-VIDEO-ANALYZER-PY-047CEA18D492",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/launch_video_analyzer.py",
+      "purpose": "Video Analyzer Launcher — entry point for the video analysis tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/media_processing/test_video_analyzer_launcher.py",
+          "tests/video_analyzer/test_video_analyzer_import_contract.py",
+          "tests/video_analyzer/test_video_analyzer_packaging.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/video_analyzer/test_video_analyzer_import_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10046,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6a4a4b63934d59de8aa1c3010d17c01d80c926d170fd267089f79bec67b0237",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-POSE-ESTIMATOR-PY-E784C9B45BB0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/pose_estimator.py",
+      "purpose": "Pose Estimator using MediaPipe.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PoseEstimator",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6988,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

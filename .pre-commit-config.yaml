@@ -84,7 +84,7 @@ repos:
         entry: python -m scripts.check_design_manual_governance
         language: system
         pass_filenames: false
-        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_design_manual_governance|design_manual_contract|tools_module_inventory_contract|tools_textbook_chapter_contract|tools_textbook_chapter_lint)\.py$|AGENTS\.md$|CLAUDE\.md$|SPEC\.md$|AGENT_HANDOFF\.md$)
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_design_manual_governance|design_manual_contract|tools_exemplar_contract|tools_module_inventory_contract|tools_textbook_chapter_contract|tools_textbook_chapter_lint)\.py$|AGENTS\.md$|CLAUDE\.md$|SPEC\.md$|AGENT_HANDOFF\.md$)
 
       - id: tools-textbook-chapter-contract
         name: "Tools textbook chapter contract"
@@ -99,6 +99,13 @@ repos:
         language: system
         pass_filenames: false
         files: ^(src/|rust_core/|scripts/|shared_scripts/|schemas/|config/|manuals/tools/(manifests/module-inventory\.json|schemas/module-inventory\.schema\.json)$|tests/architecture/test_tools_module_inventory_contract\.py$)
+
+      - id: tools-exemplar-contract
+        name: "Tools governed exemplar traceability"
+        entry: python -m scripts.check_tools_exemplars
+        language: system
+        pass_filenames: false
+        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_tools_exemplars|tools_exemplar_contract)\.py$|tests/architecture/test_tools_exemplar_manuals_contract\.py$|src/shared/python/swing_sim/impact/dplane\.py$|src/rate_of_closure/simulation/impact_kinematics\.py$|tests/rate_of_closure/test_impact_kinematics\.py$)
 
       - id: tools-manual-artifact-freshness
         name: "Tools manual artifact freshness and semantics"

@@ -812,6 +812,56 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 903,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0312786cdf82ee5c6c65fccff72f3277827ce4fe01f6a284dc829c0f1f0704d4",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-TOOLS-EXEMPLARS-PY-87B6869DB1EE",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_tools_exemplars.py",
+      "purpose": "Verify TOOLS-D4 exemplar manuals and all governed traceability targets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2908,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1192,10 +1242,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2794,
+      "bytes_lf": 2922,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f2e9eefc3dbb19170de7d91a7b3e8d7e95d3af615f4dc7f0c2086bc3d2058edc",
+      "content_sha256_lf": "7dacc84efe2845fa95e3cfb3da4f827423ac3f6cab290ae933605cd99358f847",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-DESIGN-MANUAL-CONTRACT-PY-D9B04C2AF62E",
       "language": "python",
@@ -3354,10 +3404,134 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12084,
+      "bytes_lf": 16254,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5620fccab201ffe25f0f266107497163989516a44d55ef84394c0976381a601b",
+      "content_sha256_lf": "4c3c856867b59bda342c8c9ce686ee524d7177ffcc5fd7113f95491a86af1429",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-EXEMPLAR-CONTRACT-PY-BBF8A69E99B9",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_exemplar_contract.py",
+      "purpose": "Strict TOOLS-D4 exemplar coverage and cross-registry consumer contract.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExemplarContractError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExemplarCoverage",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExemplarDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExemplarRepositorySummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkedExample",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATION_REGISTRY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHAPTER_CONTRACT_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHAPTER_REGISTRY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COVERAGE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COVERAGE_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODULE_MANIFEST_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REVISION_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_exemplar_coverage",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "verify_exemplar_repository",
+            "signature": "repository_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "verify_exemplar_traceability",
+            "signature": "repository_root: Path, coverage: ExemplarCoverage"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_tools_exemplar_manuals_contract.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/architecture/test_tools_exemplar_manuals_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12529,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "59a4080e2cadbc1ca9a17b48a73026a36dbfb15e89d7df9cc46a6dcb5e3e6965",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MANUAL-ARTIFACTS-PY-9BC52A6BD306",
       "language": "python",
@@ -6509,6 +6683,7 @@
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_layer_boundaries.py",
           "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
           "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/architecture/test_tools_textbook_chapter_contract.py",
@@ -6592,6 +6767,7 @@
           "tests/_import_contract_bootstrap.py",
           "tests/architecture/test_design_manual_governance_contract.py",
           "tests/architecture/test_no_source_assert_contracts.py",
+          "tests/architecture/test_tools_exemplar_manuals_contract.py",
           "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/architecture/test_tools_textbook_chapter_contract.py",
@@ -14850,113 +15026,6 @@
           "N",
           "g",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 35522,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1d05bebb955a0a3b3e42fcfc6b440ae185525487b95fa0b27cc5035f51966cb",
-      "family": "data-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-ANALYTICSSUITE-TSX-EE82AB81E38C",
-      "language": "typescript-react",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/web/src/components/AnalyticsSuite.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "AnalyticsSuite",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4396,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cc4c286c1054578cd54bb4ad7ec4ac88c03aa63051f2a65fc877c0f992eafcfd",
-      "family": "data-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-DATACHART-TSX-D33C28114FBD",
-      "language": "typescript-react",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/web/src/components/DataChart.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "DataChart",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N"
         ],
         "validation_paths": []
       }

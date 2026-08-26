@@ -3,6 +3,167 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8810,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bf0c4e061d4702d333fdfe11ca38dad579bd2173f7481064f2a6c6a45587436b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-WORKFLOW-BRIDGE-PY-932CF8E4CE96",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/workflow_bridge.py",
+      "purpose": "Multi-step workflow runner for Sidekick (epic #5967 / S7 / #5976).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PendingUserDecision",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidekickWorkflow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkflowOutcome",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkflowStep",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkflowStepResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkflowStepStatus",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "action_step",
+            "signature": "action_id: str, params: Mapping[str, Any], *, on_failure: RecoveryStrategy='abort', rationale: str=''"
+          },
+          {
+            "kind": "function",
+            "name": "run_sidekick_workflow",
+            "signature": "workflow: SidekickWorkflow, *, service: SidekickActionService"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 698,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bde0c316a0c3504206051de59ce592345ce8b644eb49511cf7393098853620cb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-API-INIT-PY-2503D24A41E4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/api/__init__.py",
+      "purpose": "API standardization module for upstream_drift_tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ErrorCode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ErrorDetail",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseMetadata",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StandardResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StandardResponseBuilder",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8091,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17891,201 +18052,6 @@
           "g",
           "ms",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 14777,
-      "classification": "calculation",
-      "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "6719470629e07f5a88a5ae92d4d3e8831d51d6b496c70ae8d2914e222cb82452",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-LIMITS-PY-5C3BD859D321",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/limits.py",
-      "purpose": "Signal limiting and saturation with smoothing.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SaturationMode",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_backlash",
-            "signature": "signal: Signal, backlash_width: float, smooth: bool=True, smoothness: float=5.0"
-          },
-          {
-            "kind": "function",
-            "name": "apply_deadband",
-            "signature": "signal: Signal, threshold: float, center: float=0.0, smooth: bool=True, smoothness: float=10.0"
-          },
-          {
-            "kind": "function",
-            "name": "apply_hysteresis",
-            "signature": "signal: Signal, threshold_up: float, threshold_down: float, output_high: float=1.0, output_low: float=0.0, initial_state: bool=False, smooth: bool=False, smoothness: float=10.0"
-          },
-          {
-            "kind": "function",
-            "name": "apply_rate_limiter",
-            "signature": "signal: Signal, max_rate: float, smooth_transition: bool=True, transition_time: float=0.01"
-          },
-          {
-            "kind": "function",
-            "name": "apply_saturation",
-            "signature": "signal: Signal, lower: float=-1.0, upper: float=1.0, mode: SaturationMode=SaturationMode.HARD, smoothness: float=1.0"
-          },
-          {
-            "kind": "function",
-            "name": "create_saturation_function",
-            "signature": "lower: float=-1.0, upper: float=1.0, mode: SaturationMode=SaturationMode.TANH, smoothness: float=1.0"
-          },
-          {
-            "kind": "function",
-            "name": "visualize_saturation_curves",
-            "signature": "lower: float=-1.0, upper: float=1.0, smoothness: float=1.0, num_points: int=1000"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/signal_toolkit/tests/test_limits.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
-          "tests/shared/python/signal_toolkit/test_limits.py",
-          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 18644,
-      "classification": "calculation",
-      "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "3b1170b15670d75d85f1d418f174c8151904a2eaf0feaee694d6168ee2e8d498",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-NOISE-PY-F7A92EC95F67",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/noise.py",
-      "purpose": "Noise generation and disturbance simulation.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DisturbanceSimulator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "NoiseGenerator",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "NoiseType",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_LINE_FREQUENCY_HZ",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PERIODIC_NOISE_2ND_HARMONIC",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PERIODIC_NOISE_3RD_HARMONIC",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "add_noise_to_signal",
-            "signature": "signal: Signal, noise_type: NoiseType=NoiseType.WHITE, snr_db: float | None=None, amplitude: float | None=None, seed: int | None=None, **kwargs: Any"
-          },
-          {
-            "kind": "function",
-            "name": "generate_disturbance_profile",
-            "signature": "t: np.ndarray, disturbance_type: str='step', **kwargs: Any"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/signal_toolkit/tests/test_noise.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
-          "tests/shared/python/signal_toolkit/test_noise.py",
-          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
-        ],
-        "unit_mentions": [
-          "Hz",
-          "g"
         ],
         "validation_paths": []
       }
