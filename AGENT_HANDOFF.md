@@ -30,7 +30,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
 | #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Merged PR #4703 advances R15.4 and the ledger to 22 verified / 9 partial; R14.6 and eight other explicit gaps remain.                                            |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1 and strict cross-runtime parity are merged through PR #4736; child #4737 tracks V5.2, which advances the audit to 8 verified / 23 partial obligations while retaining seven gaps and two human actions. |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                  |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
@@ -72,8 +72,8 @@ run `32689177846` proves the initial React/PyQt tier, not all states or human
 approval. PR #4731 restores detect-secrets with an unchanged baseline.
 PR #4733 merged V0.1 with bounded purpose, prerequisites, and reciprocal
 counterparts for all 20 workspaces; PR #4736 merged strict TypeScript-reader
-parity as `34a809d9487936cdb365d7691dd94beee5f26cb4`. Child #4737 tracks V5.2's
-fail-closed changed-path governance and 8 verified / 23 partial audit state.
+parity as `34a809d9487936cdb365d7691dd94beee5f26cb4`. PR #4738 merged V5.2's
+fail-closed changed-path governance as `4b4aec421f349d00cf9dc93289fda97af3845baa`.
 PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
 error-taxonomy regressions exposed by protected execution. Do not weaken the
 provider contract or infer human validity from the corrected model-data gates.
