@@ -6,6 +6,7 @@ import builtins
 import hashlib
 import importlib
 import json
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -35,6 +36,14 @@ MANIFEST_SCHEMA = MANUAL_ROOT / "schemas" / "artifact-manifest.schema.json"
 LOCK = MANUAL_ROOT / "toolchain-lock.json"
 LOCK_SCHEMA = MANUAL_ROOT / "schemas" / "toolchain-lock.schema.json"
 REQUIRED_FORMATS = ("docx", "html", "pdf", "tex")
+REQUIRES_PANDOC = pytest.mark.skipif(
+    shutil.which("pandoc") is None,
+    reason="Pandoc is unavailable; protected Docs Governance owns this gate",
+)
+REQUIRES_RENDER_TOOLCHAIN = pytest.mark.skipif(
+    any(shutil.which(command) is None for command in ("pandoc", "pdflatex", "quarto")),
+    reason="locked Pandoc, TeX, and Quarto toolchain is unavailable",
+)
 
 
 def _payload(path: Path) -> dict[str, Any]:
@@ -235,11 +244,13 @@ def test_docx_artifact_helpers_import_without_optional_pdf_stack(
     assert callable(imported.canonicalize_docx)
 
 
+@REQUIRES_PANDOC
 def test_checked_in_artifacts_are_fresh_and_semantically_equivalent() -> None:
     assert main(["--check"]) == 0
 
 
 @pytest.mark.integration
+@REQUIRES_RENDER_TOOLCHAIN
 def test_renderer_is_byte_reproducible(tmp_path: Path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"

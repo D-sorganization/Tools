@@ -74,6 +74,15 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   adds an import-without-PDF-stack regression. The repaired focused
   renderer/governance/inventory slice passes 39/39; obtain fresh protected checks
   at the exact new head before treating D2 or stacked D3 PR #4745 as deliverable.
+- The next exact-head protected run made the quality gate green and then exposed
+  a separate CI-topology defect: generic Python jobs collect the complete
+  architecture directory but intentionally do not install Pandoc, Quarto, or
+  TeX. Three external-tool assertions now report an explicit unavailable skip
+  when their command is absent. They execute with the local locked toolchain,
+  while protected Docs Governance still installs Pandoc and directly runs
+  `scripts.render_tools_design_manual --check` fail closed; absence can never be
+  recorded as artifact freshness or publication approval. Obtain another fresh
+  protected run before delivery.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers

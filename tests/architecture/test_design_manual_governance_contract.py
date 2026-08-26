@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,10 @@ from scripts.check_design_manual_governance import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 POLICY_PATH = REPO_ROOT / "config" / "design_manual_governance.json"
 REGISTRY_PATH = REPO_ROOT / "manuals" / "tools" / "calculation-registry.json"
+REQUIRES_PANDOC = pytest.mark.skipif(
+    shutil.which("pandoc") is None,
+    reason="Pandoc is unavailable; protected Docs Governance owns this gate",
+)
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -27,6 +32,7 @@ def _json(path: Path) -> dict[str, Any]:
     return payload
 
 
+@REQUIRES_PANDOC
 def test_repository_adopts_one_qmd_authority_and_blocks_release() -> None:
     summary = verify_repository(REPO_ROOT)
 
