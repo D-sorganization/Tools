@@ -70,10 +70,10 @@ validation.
 PR #4705 maps all 31 V0--V5 obligations and the completion condition. Trusted
 run `32689177846` proves the initial React/PyQt tier, not all states or human
 approval. PR #4731 restores detect-secrets with an unchanged baseline.
-PR #4733 implements V0.1 with bounded purpose, prerequisites, and reciprocal
-counterparts for all 20 workspaces. Its protected-gate repair refreshes the
-standalone React mirror from the same canonical manifest and retains the audit
-at 7 verified / 24 partial obligations.
+PR #4733 merged V0.1 with bounded purpose, prerequisites, and reciprocal
+counterparts for all 20 workspaces. Follow-up #4735 binds the strict TypeScript
+reader to the exact vendored Python authority while retaining the audit at 7
+verified / 24 partial obligations.
 PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
 error-taxonomy regressions exposed by protected execution. Do not weaken the
 provider contract or infer human validity from the corrected model-data gates.

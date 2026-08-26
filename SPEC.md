@@ -27,10 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.10                                    |
+| **Spec Version**        | 1.18.11                                    |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Cross-Runtime Workspace Authority Parity (#4433 V0.1 / #4735)
+
+Version 1.18.11 extends the strict TypeScript reader to the same purpose,
+nonempty unique prerequisite, and reciprocal-counterpart contract enforced by
+Python. Exact-field validation remains fail closed, and tamper tests reject
+empty authority, duplicate prerequisites, missing counterparts, and
+nonreciprocal pairs before the React application starts.
 
 ### 2026-08-25 Vendored Workspace Authority Parity (#4433 V0.1)
 
@@ -5264,6 +5272,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.11 | fix(rate-of-closure, #4735 / #4433 V0.1): extend the strict TypeScript visualization-manifest reader to the canonical purpose, nonempty unique prerequisite, and reciprocal-counterpart fields; add browser-side tamper falsifiers while preserving exact-field rejection and Python/React authority parity. |
 | 2026-08-25 | 1.18.10 | fix(rate-of-closure, #4433 V0.1): refresh the standalone React mirror's vendored visualization manifest from the canonical monorepo authority so Python 3.11, Python 3.12, and exact-wheel byte-parity gates consume the same purpose, prerequisite, and reciprocal-counterpart contract. |
 | 2026-08-25 | 1.18.9 | feat(rate-of-closure, #4433 V0.1): require bounded purpose, explicit data prerequisites, and an exact reciprocal React-to-PyQt counterpart for all 20 registered workspaces; enforce the immutable fail-closed contract and advance the visual-first audit to 7 verified / 24 partial obligations. |
 | 2026-08-25 | 1.18.8 | docs(governance): reconcile merge guidance with the live zero-approval `main` ruleset so pull requests and exact-head required checks remain mandatory without making `@dieterolson` or another named maintainer a standing release gate; retain optional risk/expertise review and all no-bypass, no-force-push, and stale-head prohibitions. |

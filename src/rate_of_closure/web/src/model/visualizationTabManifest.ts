@@ -8,6 +8,9 @@ export type VisualizationLandmarkKind = "visual" | "semantic-content";
 export interface VisualizationTabEntry {
   surface: VisualizationSurface;
   tabId: string;
+  purpose: string;
+  dataPrerequisites: readonly string[];
+  counterpartTabId: string;
   classification: VisualizationClassification;
   landmarkKind: VisualizationLandmarkKind;
   minimumVisibleHeightPx: number;
@@ -40,6 +43,17 @@ const positiveInteger = (value: unknown, context: string): number => {
   return value;
 };
 
+const nonemptyUniqueTextArray = (value: unknown, context: string): string[] => {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error(`${context} must be a nonempty array`);
+  }
+  const result = value.map((item) => text(item, context));
+  if (new Set(result).size !== result.length) {
+    throw new Error(`${context} must contain unique values`);
+  }
+  return result;
+};
+
 const deepFreeze = <T>(value: T): T => {
   if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
     Object.values(value).forEach((child) => deepFreeze(child));
@@ -62,8 +76,11 @@ const classifications: readonly VisualizationClassification[] = [
 const landmarkKinds: readonly VisualizationLandmarkKind[] = ["visual", "semantic-content"];
 
 const parseEntry = (value: unknown): VisualizationTabEntry => {
-  const entry = exactRecord(value, ["surface", "tab_id", "classification", "landmark_kind",
-    "minimum_visible_height_px", "primary_visual_locator", "states"], "tab");
+  const entry = exactRecord(value, [
+    "surface", "tab_id", "purpose", "data_prerequisites", "counterpart_tab_id",
+    "classification", "landmark_kind", "minimum_visible_height_px",
+    "primary_visual_locator", "states",
+  ], "tab");
   const surfaceText = text(entry.surface, "surface");
   const classificationText = text(entry.classification, "classification");
   const landmarkText = text(entry.landmark_kind, "landmark kind");
@@ -86,6 +103,11 @@ const parseEntry = (value: unknown): VisualizationTabEntry => {
   return {
     surface,
     tabId: text(entry.tab_id, "tab id"),
+    purpose: text(entry.purpose, "purpose"),
+    dataPrerequisites: nonemptyUniqueTextArray(
+      entry.data_prerequisites, "data prerequisite",
+    ),
+    counterpartTabId: text(entry.counterpart_tab_id, "counterpart tab id"),
     classification,
     landmarkKind,
     minimumVisibleHeightPx: minimum,
@@ -155,6 +177,16 @@ export const parseVisualizationTabManifest = (value: unknown) => {
   const entries = document.tabs.map(parseEntry);
   const identities = entries.map((entry) => `${entry.surface}:${entry.tabId}`);
   if (new Set(identities).size !== identities.length) throw new Error("duplicate tab identity");
+  const byIdentity = new Map(entries.map((entry) => [
+    `${entry.surface}:${entry.tabId}`, entry,
+  ]));
+  entries.forEach((entry) => {
+    const counterpartSurface = entry.surface === "react" ? "pyqt" : "react";
+    const counterpart = byIdentity.get(`${counterpartSurface}:${entry.counterpartTabId}`);
+    if (counterpart === undefined || counterpart.counterpartTabId !== entry.tabId) {
+      throw new Error("visualization counterparts must exist and be reciprocal");
+    }
+  });
   const reactVisualIds = entries.filter(
     (entry) => entry.surface === "react" && entry.landmarkKind === "visual",
   ).map((entry) => entry.tabId);
