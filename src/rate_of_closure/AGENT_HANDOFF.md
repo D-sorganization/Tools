@@ -1,7 +1,6 @@
 # AGENT_HANDOFF — Rate_of_Closure
-
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-24
+> Last updated: 2026-08-25
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -56,16 +55,25 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-The 31-item R10--R15 ledger records 21 verified, 10 partial, and zero unverified
+Tools PR #4703 merged as `57b443201b402fc110ec5623885c7e310d6ad6d3`
+from exact contribution head `e1d8d098d038ae2cf6bc5ace7c4864ef1df05ed1`
+and advanced the 31-item R10--R15 ledger to 22 verified, 9 partial, and zero unverified
 requirements after protected UpstreamDrift PR #9039 consumed immutable Tools
 revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. R15.1--R15.3 now bind the
 exact consumer, thin ownership boundary, typed no-impact rows, deterministic
 serial/batched artifacts, geometry/attribution records, and cross-engine
-rejection tests. R15.4 remains partial pending one consolidated public theory,
-schema, performance, quick-start, and reproduction guide; R14.6 remains partial
-with visualization epic #4433 open. #4142 is therefore not closeable. These
-controls prove provenance and model-data parity, not human validity or coaching
-strategy.
+rejection tests. The guide consolidates theory, schema, assumptions,
+performance, quick start, reproduction, falsifiers, and scientific limits;
+R14.6 remains partial with visualization epic #4433 open. #4142 is therefore
+not closeable. These controls prove provenance and model-data parity, not human
+validity or coaching strategy.
+
+PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
+the initial React/PyQt visibility, accessibility, performance, and baseline
+tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
+counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
+PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
+The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 

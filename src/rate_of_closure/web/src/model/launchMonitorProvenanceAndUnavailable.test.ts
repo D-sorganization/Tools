@@ -17,14 +17,14 @@ describe("launch monitor provenance and unavailable states", () => {
     const validRef = {
       root_id: "launch-monitor-authority",
       repository: "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
-      commit: "d469b8a427418fa00e99b0ad488e4310b067697d",
-      manifest_sha256: "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299",
-      content_sha256: "7bedf88ba473c947db2d4d078a73ee0ccd3512ffa182b751ea0a23298d1ab10c",
+      commit: "d469b8a427418fa00e99b0ad488e4310b067697d", // pragma: allowlist secret -- public Git revision
+      manifest_sha256: "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299", // pragma: allowlist secret -- public manifest digest
+      content_sha256: "7bedf88ba473c947db2d4d078a73ee0ccd3512ffa182b751ea0a23298d1ab10c", // pragma: allowlist secret -- public content digest
       expected_row_count: 261666,
     };
     const parsed = parseCanonicalDatasetReference(validRef);
     expect(parsed.expected_row_count).toBe(261666);
-    expect(parsed.commit).toBe("d469b8a427418fa00e99b0ad488e4310b067697d");
+    expect(parsed.commit).toBe("d469b8a427418fa00e99b0ad488e4310b067697d"); // pragma: allowlist secret -- public Git revision
 
     expect(() => parseCanonicalDatasetReference({ ...validRef, commit: "short" })).toThrow(/commit/i);
     expect(() => parseCanonicalDatasetReference({ ...validRef, manifest_sha256: "short" })).toThrow(/manifest_sha256/i);
@@ -34,9 +34,9 @@ describe("launch monitor provenance and unavailable states", () => {
     const validRef = parseCanonicalDatasetReference({
       root_id: "launch-monitor-authority",
       repository: "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
-      commit: "d469b8a427418fa00e99b0ad488e4310b067697d",
-      manifest_sha256: "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299",
-      content_sha256: "7bedf88ba473c947db2d4d078a73ee0ccd3512ffa182b751ea0a23298d1ab10c",
+      commit: "d469b8a427418fa00e99b0ad488e4310b067697d", // pragma: allowlist secret -- public Git revision
+      manifest_sha256: "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299", // pragma: allowlist secret -- public manifest digest
+      content_sha256: "7bedf88ba473c947db2d4d078a73ee0ccd3512ffa182b751ea0a23298d1ab10c", // pragma: allowlist secret -- public content digest
       expected_row_count: 261666,
     });
 

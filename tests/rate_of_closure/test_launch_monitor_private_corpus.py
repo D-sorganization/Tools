@@ -142,7 +142,7 @@ def test_full_governed_261k_corpus_loads_exact_campaign_partitions() -> None:
     assert loaded.source_count == 27
     assert (
         loaded.manifest_sha256
-        == "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299"
+        == "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299"  # noqa: E501  # pragma: allowlist secret
     )
     assert "Private Corpus (27 sources; manifest b45fd9100e67...)" in loaded.source_name
     assert "source_id" in loaded.frame.columns
