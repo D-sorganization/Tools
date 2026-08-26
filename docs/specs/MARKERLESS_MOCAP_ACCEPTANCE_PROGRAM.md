@@ -1,7 +1,7 @@
 # Markerless Mocap Acceptance Program
 
-Version: 1.0.0  
-Issues: #4706, #4708, #4710  
+Version: 1.0.0
+Issues: #4706, #4708, #4710
 Status: Required release gates; passing the current schema slice does not qualify a physical lab
 
 ## Contract levels
@@ -92,4 +92,3 @@ Status: Required release gates; passing the current schema slice does not qualif
 - **Unavailable**: the system cannot produce the quantity without inventing authority.
 
 No phase inherits a pass from another phase. A green software schema suite is not camera, algorithm, biomechanical, or physical qualification.
-

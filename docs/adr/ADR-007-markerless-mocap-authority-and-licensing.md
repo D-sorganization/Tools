@@ -1,7 +1,7 @@
 # ADR-007: Markerless Mocap Authority, Interchange, and Licensing
 
-Date: 2026-08-25  
-Status: Accepted for contract implementation  
+Date: 2026-08-25
+Status: Accepted for contract implementation
 Issues: #4706, #4708, #4710
 
 ## Context
@@ -74,4 +74,3 @@ The system is local-first and no-cloud by default. Recording, biometric storage,
 - DbC unit/property tests for identities, clocks, coordinates, observations, uncertainty, availability, and deterministic serialization.
 - Known-geometry, mixed-camera, timing-fault, reconstruction, C3D, clean-export, protected-CI, and post-merge gates defined in the acceptance program.
 - Coordinated consumer tests in UpstreamDrift and sanitized compatibility publication in AffineDrift.
-
