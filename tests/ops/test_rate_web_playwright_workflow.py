@@ -164,10 +164,7 @@ def test_pull_request_workflow_is_hosted_only_without_fleet_vocabulary() -> None
     assert "\n  pull_request:" in text
     assert "\n  push:" not in text
     assert "workflow_dispatch" not in text
-    expected_jobs = {
-        "visual-evidence-change-governance",
-        "production-worker-e2e",
-    }
+    expected_jobs = {"production-worker-e2e"}
     assert set(workflow["jobs"]) == expected_jobs
     assert all(
         workflow["jobs"][job_name]["runs-on"] == "ubuntu-latest"
@@ -398,18 +395,26 @@ def test_pr_trigger_tracks_every_pyqt_render_authority() -> None:
 
 def test_pr_visual_job_requires_changed_path_governance_before_expensive_e2e() -> None:
     workflow = _workflow(PR_WORKFLOW_PATH)
-    jobs = workflow["jobs"]
-    governance = jobs["visual-evidence-change-governance"]
-    checkout = governance["steps"][0]
-    commands = _run_steps(governance)
+    job = workflow["jobs"]["production-worker-e2e"]
+    checkout = job["steps"][0]
+    commands = _run_steps(job)
+    step_names = [step.get("name") for step in job["steps"]]
 
     assert checkout["with"] == {"fetch-depth": 0}
     assert commands["Enforce matched visual evidence co-changes"] == (
         "python scripts/check_rate_visual_evidence_changes.py "
         "--base-ref \"${{ github.event.pull_request.base.sha || 'origin/main' }}\""
     )
-    assert jobs["production-worker-e2e"]["needs"] == (
-        "visual-evidence-change-governance"
+    assert (
+        _named_step(job, "Enforce matched visual evidence co-changes")[
+            "working-directory"
+        ]
+        == "."
+    )
+    assert step_names.index("Enforce matched visual evidence co-changes") < min(
+        step_names.index("Set up Node.js"),
+        step_names.index("Set up Python"),
+        step_names.index("Install locked web dependencies"),
     )
     trigger_paths = set(workflow[True]["pull_request"]["paths"])
     assert {

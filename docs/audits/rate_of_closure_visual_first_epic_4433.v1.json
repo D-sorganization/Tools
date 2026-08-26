@@ -335,7 +335,7 @@
       "requirement_id": "V5.2",
       "requirement": "Require changed tabs to update manifest, matched evidence, and first-viewport tests.",
       "status": "verified",
-      "rationale": "A fail-closed pull-request job detects material React, PyQt, and shared visual-authority changes and requires the shared manifest, acceptance audit, and surface-specific first-viewport test to change together before expensive E2E execution.",
+      "rationale": "A fail-closed pull-request control detects material React, PyQt, and shared visual-authority changes and requires the shared manifest, acceptance audit, and surface-specific first-viewport test to change together before expensive E2E execution without allocating a second hosted runner.",
       "evidence_files": [
         "scripts/check_rate_visual_evidence_changes.py",
         ".github/workflows/rate-web-playwright.yml",
