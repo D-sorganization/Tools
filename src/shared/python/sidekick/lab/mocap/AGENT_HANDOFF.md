@@ -30,14 +30,19 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 
 ```powershell
 python -m pytest tests/shared/python/sidekick/lab/mocap tests/architecture/test_mocap_authority_program.py -q
-python -m pytest tests/test_sidekick_public_api_stability.py --regenerate-api-baseline
 python -m pytest tests/test_sidekick_public_api_stability.py -q
 python -m ruff format --check <changed-python-files>
 python -m ruff check <changed-python-files>
 python -m mypy <changed-python-files>
 ```
 
-Full repository and exact-HEAD export gates remain mandatory before PR/merge claims.
+Observed at `2c86e9168`: 26 focused tests passed; the nine mocap API modules
+exactly match their hand-edited baseline entries; Ruff format/check and mypy
+passed. The full suite reached 11,012 passed, 73 failed, and 8 errors before an
+xdist worker-replacement internal error. Failures were distributed across
+pre-existing subsystems; the repository-wide API test includes known non-mocap
+drift. Do not regenerate the full baseline. Full exact-HEAD export and protected
+CI remain mandatory before merge claims.
 
 ## Do not
 
