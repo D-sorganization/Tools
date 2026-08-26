@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.13                                    |
+| **Spec Version**        | 1.18.14                                    |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Engineering Design Manual Authority (#4707 / TOOLS-D0 (#4709))
+
+Version 1.18.14 establishes `manuals/tools` QMD as the sole editable
+calculation-level design-manual authority. The executable policy and empty
+inventory fail closed until TOOLS-D1 through TOOLS-D8 provide classification,
+equation-to-code-to-test traceability, reproducible formats, freshness,
+semantic/page/accessibility review, license evidence, immutable digests, and
+human approval. Generated HTML, LaTeX, PDF, and DOCX are non-editable and
+unapproved; private Tools_Private content is prohibited. Program-owned schemas
+remain in Engineering-Design-Manuals and are referenced rather than copied.
 
 ### 2026-08-25 V5.2 Protected Merge Reconciliation (#4433 / #4737 / #4738)
 
@@ -5287,6 +5298,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.14 | docs(manual, #4707/#4709 TOOLS-D0): establish `manuals/tools` QMD as the sole editable engineering design-manual authority. Add a versioned fail-closed policy and empty inventory, ADR-007, agent rules, offline contract tests, and CI/pre-commit enforcement. Generated HTML, LaTeX, PDF, and DOCX remain non-editable and unapproved; calculation coverage, freshness, semantic/page/accessibility review, licenses, immutable digests, public projection, and human approval remain blocked through TOOLS-D1--D8. |
 | 2026-08-25 | 1.18.13 | docs(rate-of-closure, #4433/#4737/#4738): record protected V5.2 merge `4b4aec421f349d00cf9dc93289fda97af3845baa` and retain all partial scientific and human-review boundaries. |
 | 2026-08-25 | 1.18.12 | feat(rate-of-closure, #4433 V5.2): add fail-closed PR changed-path governance requiring material React, PyQt, and shared visual-authority changes to co-update the shared manifest, acceptance audit, and surface-specific first-viewport evidence before expensive E2E; advance the audit to 8 verified / 23 partial obligations without changing the seven R14.6 blockers or two human actions. |
 | 2026-08-25 | 1.18.11 | fix(rate-of-closure, #4735 / #4433 V0.1): extend the strict TypeScript visualization-manifest reader to the canonical purpose, nonempty unique prerequisite, and reciprocal-counterpart fields; add browser-side tamper falsifiers while preserving exact-field rejection and Python/React authority parity. |

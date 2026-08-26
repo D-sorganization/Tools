@@ -22,61 +22,34 @@ calculator into a swing → impact → ball-flight simulation platform. Since
 early August the delivery pattern has shifted from long stacked PRs to
 **scoped consolidations rebuilt directly onto current `main`**.
 
-| Epic  | Status (one line)                                                                                                                                                                                                                |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                             |
-| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
-| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
-| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Merged PR #4703 advances R15.4 and the ledger to 22 verified / 9 partial; R14.6 and eight other explicit gaps remain.                                            |
-| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
+| Epic  | Status (one line)                                                                                                                                                                                                                     |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                                  |
+| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
+| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
+| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Merged PR #4703 advances R15.4 and the ledger to 22 verified / 9 partial; R14.6 and eight other explicit gaps remain.                                                 |
+| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
-| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
-| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                  |
-| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
-| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open. |
-| #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                |
+| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
+| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                       |
+| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
+| #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
+| #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
+| #4707 | Engineering design manuals. TOOLS-D0 (#4709) establishes authority; TOOLS-D1 (#4711) owns the first complete calculation inventory.                                                                                                   |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
-## Open PR Situation — Read Before Filing Anything
+## Active Delivery Boundaries
 
-No PR is a draft. Query `gh pr list` before acting; the current queue below is
-an exact 2026-08-25 snapshot and can change independently of this handoff.
-
-| PR    | Scope                                                            |
-| ----- | ---------------------------------------------------------------- |
-| #4705 | Fail-closed #4433 acceptance audit and R14.6 gap correction      |
-| #4687 | RotationConverter fixed-array JSX optimization                   |
-| #4686 | CSV-export allocation optimization                               |
-| #4685 | Immutable Upstream R15 evidence and #4142 handoff reconciliation |
-| #4682 | P1AM FastAPI route introspection and dependency pins             |
-| #4677 | Automated v1.9.0 release bump                                    |
-| #4676 | Automated v1.8.0 release bump                                    |
-
-**Current #4142 state.** PRs #4669 and #4674 are merged. Tools PR #4703 merged
-as `57b443201b402fc110ec5623885c7e310d6ad6d3` from exact contribution head
-`e1d8d098d038ae2cf6bc5ace7c4864ef1df05ed1`; the merge commit was verified as
-remote `main`. Protected UpstreamDrift
-PR #9039 consumes exact Tools revision
-`17474249b9267d0e73a779c1d72f231e7b8de39c` through a thin gateway with typed
-outcomes and deterministic parity gates. PR #4703 advanced
-the ledger to 22 verified, 9 partial, and zero unverified items by consolidating
-theory, schemas, method assumptions, performance evidence, quick start,
-reproduction commands, falsifiers, and scientific limits. #4142 remains open
-because R14.6 is gated by #4433 and eight other requirements retain explicit
-gaps. This is model-data and provenance evidence, not human or scientific
-validation.
-PR #4705 maps all 31 V0--V5 obligations and the completion condition. Trusted
-run `32689177846` proves the initial React/PyQt tier, not all states or human
-approval. PR #4731 restores detect-secrets with an unchanged baseline.
-PR #4733 merged V0.1 with bounded purpose, prerequisites, and reciprocal
-counterparts for all 20 workspaces; PR #4736 merged strict TypeScript-reader
-parity as `34a809d9487936cdb365d7691dd94beee5f26cb4`. PR #4738 merged V5.2's
-fail-closed changed-path governance as `4b4aec421f349d00cf9dc93289fda97af3845baa`.
-PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
-error-taxonomy regressions exposed by protected execution. Do not weaken the
-provider contract or infer human validity from the corrected model-data gates.
+- Query exact PR state before acting; this handoff is not a live queue.
+- Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
+  integration through M7/M9 is evidence, not merged authority.
+- TOOLS-D0 (#4709) makes QMD the sole editable manual source. Generated LaTeX,
+  PDF, DOCX, and HTML remain unapproved. TOOLS-D1 (#4711) must inventory every
+  qualifying calculation before coverage can advance.
+- #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers
 

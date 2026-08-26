@@ -65,9 +65,7 @@ def test_registry_is_fail_closed_until_tools_d1_inventory() -> None:
             "generated outputs must not be editable",
         ),
         (
-            lambda policy: policy["publication"].update(
-                public_projection_allowed=True
-            ),
+            lambda policy: policy["publication"].update(public_projection_allowed=True),
             "public projection must remain blocked",
         ),
         (
