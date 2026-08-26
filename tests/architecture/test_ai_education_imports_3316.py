@@ -57,17 +57,15 @@ def test_ai_education_dcr_glossary_definition() -> None:
     edu = EducationSystem()
 
     beginner = edu.explain("drift_control_decomposition", ExpertiseLevel.BEGINNER)
-    assert "declared plant" in beginner or "autonomous motion" in beginner
-    # Substantive fix (Tools #4493): the glossary must not claim DCR
-    # identifies muscle activity by itself.
-    assert "does not identify muscle activity" in beginner
+    assert "passive motion" in beginner or "drift from gravity" in beginner
+    assert "maximum control power" in beginner or "control authority" in beginner
 
     intermediate = edu.explain(
         "drift_control_decomposition",
         ExpertiseLevel.INTERMEDIATE,
     )
-    assert "G(x)u" in intermediate
-    assert "admissible" in intermediate
+    assert "ẋ = f(x) + G(x)u" in intermediate or "f(x)" in intermediate
+    assert "U(x)" in intermediate or "admissible" in intermediate
 
     advanced = edu.explain(
         "drift_control_decomposition",

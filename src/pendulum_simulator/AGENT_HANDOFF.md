@@ -12,13 +12,6 @@ pendulum, triple pendulum, and an 8-DOF closed-loop golfer upper-body model.
 See `src/pendulum_simulator/README.md` for the model topology writeup and
 `src/pendulum_simulator/FEATURES.md` for the feature inventory.
 
-Epic **#4698** is the active source-attribution extension. It introduces the
-shared `force-attribution/v1` contract in `shared.python.swing_sim`, separating
-cross-speed Coriolis, squared-speed, gravity, damping, control, and residual
-terms with exact closure and rank-aware force-only hand-path mapping. The
-triple and golfer tiers remain unavailable until they supply compatible mass-
-matrix derivatives and endpoint semantics; do not synthesize those providers.
-
 Transfer-diagnostics issue **#4406**, under UpstreamDrift epic **#8551**, is
 **closed**. It landed on main via consolidation **#4450** (`8f654b3a1`,
 2026-08-14). The branch `research/shoulder-velocity-drift-transfer` is spent —

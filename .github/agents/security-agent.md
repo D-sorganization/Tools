@@ -169,8 +169,8 @@ rm -rf production_data/
   "protected_branches": [
     {
       "pattern": "claude/*Replicants",
-      "required_reviews": 0,
-      "dismiss_stale_reviews": false,
+      "required_reviews": 1,
+      "dismiss_stale_reviews": true,
       "require_code_owner_reviews": false,
       "required_status_checks": ["ci"],
       "enforce_admins": false,
@@ -178,9 +178,9 @@ rm -rf production_data/
     },
     {
       "pattern": "main",
-      "required_reviews": 0,
-      "dismiss_stale_reviews": false,
-      "require_code_owner_reviews": false,
+      "required_reviews": 1,
+      "dismiss_stale_reviews": true,
+      "require_code_owner_reviews": true,
       "required_status_checks": ["ci", "security-scan"],
       "enforce_admins": true,
       "restrictions": {
@@ -235,7 +235,7 @@ When reviewing scripts or configurations:
 - [ ] No force-push to protected branches
 - [ ] Branch names are validated
 - [ ] Replicant branches cannot be merged to main
-- [ ] Protected branches require pull requests; approval count matches the live ruleset (zero on `main`)
+- [ ] Protected branches require reviews
 - [ ] CI checks must pass before merge
 - [ ] No deletion of main/master branches
 

@@ -88,9 +88,6 @@ class VisualizationTabEntry:
 
     surface: str
     tab_id: str
-    purpose: str
-    data_prerequisites: tuple[str, ...]
-    counterpart_tab_id: str
     classification: str
     landmark_kind: str
     minimum_visible_height_px: int
@@ -117,7 +114,6 @@ class VisualizationTabManifest:
         identities = [(entry.surface, entry.tab_id) for entry in self.tabs]
         if len(identities) != len(set(identities)):
             raise ManifestContractError("duplicate visualization tab identity")
-        by_identity = {(entry.surface, entry.tab_id): entry for entry in self.tabs}
         if any(set(entry.states) != _STATE_KEYS for entry in self.tabs):
             raise ManifestContractError("every tab must declare all four states")
         if set(self.reference_environments) != _SURFACES:
@@ -173,10 +169,6 @@ class VisualizationTabManifest:
                 raise ManifestContractError("unknown visualization classification")
             if entry.landmark_kind not in _LANDMARK_KINDS:
                 raise ManifestContractError("unknown landmark kind")
-            if not entry.data_prerequisites:
-                raise ManifestContractError("data prerequisites cannot be empty")
-            if len(entry.data_prerequisites) != len(set(entry.data_prerequisites)):
-                raise ManifestContractError("data prerequisites must be unique")
             if (
                 entry.classification == "reference-utility"
                 and entry.landmark_kind != "semantic-content"
@@ -204,15 +196,6 @@ class VisualizationTabManifest:
                 ("_scroll", "_tabs", "_view")
             ):
                 raise ManifestContractError("PyQt locator must identify a content leaf")
-        for entry in self.tabs:
-            counterpart_surface = "pyqt" if entry.surface == "react" else "react"
-            counterpart = by_identity.get(
-                (counterpart_surface, entry.counterpart_tab_id)
-            )
-            if counterpart is None or counterpart.counterpart_tab_id != entry.tab_id:
-                raise ManifestContractError(
-                    "visualization counterparts must exist and be reciprocal"
-                )
         expected_react_controls = {
             entry.tab_id
             for entry in self.tabs
@@ -336,9 +319,6 @@ def load_visualization_tab_manifest() -> VisualizationTabManifest:
             {
                 "surface",
                 "tab_id",
-                "purpose",
-                "data_prerequisites",
-                "counterpart_tab_id",
                 "classification",
                 "landmark_kind",
                 "minimum_visible_height_px",
@@ -349,8 +329,6 @@ def load_visualization_tab_manifest() -> VisualizationTabManifest:
         )
         if not isinstance(entry["states"], dict):
             raise ManifestContractError("states must be an object")
-        if not isinstance(entry["data_prerequisites"], list):
-            raise ManifestContractError("data prerequisites must be an array")
         _exact_keys(entry["states"], _STATE_KEYS, "states")
     manifest = VisualizationTabManifest(
         schema_id=_text(raw["schema_id"], "schema id"),
@@ -363,14 +341,6 @@ def load_visualization_tab_manifest() -> VisualizationTabManifest:
             VisualizationTabEntry(
                 surface=_text(entry["surface"], "surface"),
                 tab_id=_text(entry["tab_id"], "tab id"),
-                purpose=_text(entry["purpose"], "purpose"),
-                data_prerequisites=tuple(
-                    _text(value, "data prerequisite")
-                    for value in entry["data_prerequisites"]
-                ),
-                counterpart_tab_id=_text(
-                    entry["counterpart_tab_id"], "counterpart tab id"
-                ),
                 classification=_text(entry["classification"], "classification"),
                 landmark_kind=_text(entry["landmark_kind"], "landmark kind"),
                 minimum_visible_height_px=_positive_int(

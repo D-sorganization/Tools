@@ -1,5 +1,4 @@
 manifest_version: "1.0.0"
-force_attribution_schema: "force-attribution/v1"
 pack_id: "tools-pendulum-simulator"
 pack_name: "Tools Pendulum Simulator"
 provider: "tools"
@@ -21,8 +20,6 @@ models:
       - "optimization"
       - "biomechanics"
       - "proximal-distal-companion"
-      - "coordinate_force_attribution"
-      - "component_impulse_optimization"
     tags:
       - "golf"
       - "double-pendulum"

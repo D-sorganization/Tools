@@ -1,6 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
+
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-25
+> Last updated: 2026-08-24
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -55,25 +56,19 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-Tools PR #4703 merged as `57b443201b402fc110ec5623885c7e310d6ad6d3`
-from exact contribution head `e1d8d098d038ae2cf6bc5ace7c4864ef1df05ed1`
-and advanced the 31-item R10--R15 ledger to 22 verified, 9 partial, and zero unverified
-requirements after protected UpstreamDrift PR #9039 consumed immutable Tools
-revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. R15.1--R15.3 now bind the
-exact consumer, thin ownership boundary, typed no-impact rows, deterministic
-serial/batched artifacts, geometry/attribution records, and cross-engine
-rejection tests. The guide consolidates theory, schema, assumptions,
-performance, quick start, reproduction, falsifiers, and scientific limits;
-R14.6 remains partial with visualization epic #4433 open. #4142 is therefore
-not closeable. These controls prove provenance and model-data parity, not human
-validity or coaching strategy.
-
-PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
-the initial React/PyQt visibility, accessibility, performance, and baseline
-tier. PR #4733 merged V0.1 with purpose, prerequisites, and reciprocal
-counterparts; PR #4736 merged strict TypeScript-reader parity as `34a809d9`.
-PR #4738 merged V5.2's fail-closed changed-path governance as `4b4aec421`.
-The audit is 8 verified / 23 partial; seven blockers and two human actions remain.
+The 31-item R10--R15 ledger still records 18 verified, 11 partial, and two
+unverified requirements. PR #4669 now carries the #4668 plan-evidence work from
+`feat/4668-canonical-variation-plan-documents`, with squash auto-merge requested;
+query its exact head and protected checks before acting. It adds version-3
+execution documents, explicit
+legacy bindings, plan-digest-bound cross-runtime requests, and substitution
+failures across plan files, libraries, workspaces, datasets, geometry/durable
+ensembles, forgiveness exports, and regional results. The contract and exact
+inventory are in `docs/specs/VARIATION_PLAN_PERSISTENCE.md`. Exact Python,
+single-worker Vitest, changed-file MyPy, build, lint, Chromium release, and
+two-DPI PyQt gates pass locally. Keep the ledger partial until protected CI,
+merge, and remote-main verification. These controls prove provenance and
+integrity, not human validity or cross-runtime equivalence.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 

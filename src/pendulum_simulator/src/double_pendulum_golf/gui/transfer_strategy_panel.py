@@ -14,7 +14,6 @@ import numpy as np
 from ..transfer_strategy import (
     TransferSignals,
     TransferSummary,
-    double_pendulum_force_attribution,
     double_pendulum_transfer_signals,
     summarize_transfer,
 )
@@ -38,14 +37,6 @@ _METRICS = (
     ("peak_distal_speed_m_s", "Peak Distal Speed", "m/s"),
 )
 
-_SOURCE_COMPONENTS = (
-    ("coriolis", "Coriolis Cross-Speed"),
-    ("squared_speed", "Squared-Speed / Centripetal"),
-    ("gravity", "Gravity"),
-    ("damping", "Damping"),
-    ("applied", "Applied Drive"),
-)
-
 
 class TransferStrategyPanel:
     """Display transfer metrics over one user-declared trajectory window."""
@@ -54,8 +45,6 @@ class TransferStrategyPanel:
         from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
         self._signals: TransferSignals | None = None
-        self._attribution: Any = None
-        self._source_warning: str | None = None
         self._last_summary: TransferSummary | None = None
         self._widget = QWidget(parent)
         layout = QVBoxLayout(self._widget)
@@ -66,7 +55,6 @@ class TransferStrategyPanel:
 
         layout.addWidget(self._build_window_group())
         layout.addWidget(self._build_metric_group())
-        layout.addWidget(self._build_source_group())
         layout.addWidget(self._build_plot_widget())
 
         claim = QLabel(
@@ -116,31 +104,6 @@ class TransferStrategyPanel:
             self._metric_labels[key] = value
         return group
 
-    def _build_source_group(self) -> Any:
-        from PyQt6.QtWidgets import QGridLayout, QGroupBox, QLabel
-
-        group = QGroupBox("Full-Trajectory Coordinate Force Sources")
-        layout = QGridLayout(group)
-        for column, heading in enumerate(
-            ("Source", "Signed tangent impulse", "Absolute tangent impulse", "Work")
-        ):
-            layout.addWidget(QLabel(heading), 0, column)
-        self._source_labels: dict[str, tuple[QLabel, QLabel, QLabel]] = {}
-        for row, (key, description) in enumerate(_SOURCE_COMPONENTS, start=1):
-            layout.addWidget(QLabel(description), row, 0)
-            values = (QLabel("-- N s"), QLabel("-- N s"), QLabel("-- J"))
-            for column, value in enumerate(values, start=1):
-                layout.addWidget(value, row, column)
-            self._source_labels[key] = values
-        note = QLabel(
-            "Christoffel cross/squared split uses shoulder-absolute and "
-            "wrist-relative coordinates. Values are modeled equation-term "
-            "attributions, not measured muscle forces."
-        )
-        note.setWordWrap(True)
-        layout.addWidget(note, len(_SOURCE_COMPONENTS) + 1, 0, 1, 4)
-        return group
-
     def _build_plot_widget(self) -> Any:
         from PyQt6.QtWidgets import QLabel
 
@@ -160,15 +123,12 @@ class TransferStrategyPanel:
     def set_result(self, result: Any, model_type: str) -> None:
         """Load one qualified result or fail closed for unsupported tiers."""
         self._last_summary = None
-        self._attribution = None
-        self._source_warning = None
         if model_type != "double":
             self._signals = None
             self._status.setText(
                 f"Transfer attribution is not yet qualified for the {model_type} model."
             )
             self._clear_metrics()
-            self._clear_sources()
             return
         try:
             self._signals = double_pendulum_transfer_signals(result)
@@ -176,16 +136,7 @@ class TransferStrategyPanel:
             self._signals = None
             self._status.setText(f"Transfer diagnostics unavailable: {exc}")
             self._clear_metrics()
-            self._clear_sources()
             return
-        try:
-            self._attribution = double_pendulum_force_attribution(result)
-        except (AttributeError, KeyError, TypeError, ValueError) as exc:
-            self._attribution = None
-            self._clear_sources()
-            self._source_warning = str(exc)
-        else:
-            self._render_sources()
         start = float(self._signals.time_s[0])
         end = float(self._signals.time_s[-1])
         for spin in (self._start_spin, self._end_spin):
@@ -193,6 +144,7 @@ class TransferStrategyPanel:
             spin.setSingleStep(max((end - start) / 100.0, 1e-4))
         self._start_spin.setValue(start)
         self._end_spin.setValue(end)
+        self._status.setText("Exact Planar Double Pendulum")
         self.refresh()
 
     def refresh(self) -> None:
@@ -208,13 +160,7 @@ class TransferStrategyPanel:
             return
         summary = summarize_transfer(self._signals, start_s=start, end_s=end)
         self._last_summary = summary
-        if self._source_warning is None:
-            self._status.setText("Exact Planar Double Pendulum")
-        else:
-            self._status.setText(
-                "Exact Planar Double Pendulum; coordinate sources unavailable: "
-                f"{self._source_warning}"
-            )
+        self._status.setText("Exact Planar Double Pendulum")
         for key, _, unit in _METRICS:
             value = getattr(summary, key)
             self._metric_labels[key].setText(f"{value:.3f} {unit}")
@@ -223,24 +169,6 @@ class TransferStrategyPanel:
     def _clear_metrics(self) -> None:
         for key, _, unit in _METRICS:
             self._metric_labels[key].setText(f"-- {unit}")
-
-    def _clear_sources(self) -> None:
-        for values in self._source_labels.values():
-            values[0].setText("-- N s")
-            values[1].setText("-- N s")
-            values[2].setText("-- J")
-
-    def _render_sources(self) -> None:
-        if self._attribution is None:
-            return
-        for key, _ in _SOURCE_COMPONENTS:
-            metric = self._attribution.metrics[key]
-            signed = metric.signed_tangent_impulse_n_s
-            absolute = metric.absolute_tangent_impulse_n_s
-            values = self._source_labels[key]
-            values[0].setText("undefined" if signed is None else f"{signed:.3f} N s")
-            values[1].setText("undefined" if absolute is None else f"{absolute:.3f} N s")
-            values[2].setText(f"{metric.generalized_work_j:.3f} J")
 
     def _draw_window(self, start: float, end: float) -> None:
         if self._figure is None or self._signals is None:

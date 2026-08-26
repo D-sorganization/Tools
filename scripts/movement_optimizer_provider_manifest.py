@@ -22,7 +22,6 @@ MOVEMENT_OPTIMIZER_PROVIDER_MANIFEST = (
 
 _REQUIRED_TOP_LEVEL_FIELDS = (
     "manifest_version",
-    "force_attribution_schema",
     "pack_id",
     "pack_name",
     "provider",
@@ -50,8 +49,6 @@ _REQUIRED_CAPABILITIES = {
     "pyqt6",
     "swingset",
     "chain_dynamics",
-    "coordinate_force_attribution",
-    "component_impulse_optimization",
 }
 
 

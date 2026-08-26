@@ -164,12 +164,8 @@ def test_pull_request_workflow_is_hosted_only_without_fleet_vocabulary() -> None
     assert "\n  pull_request:" in text
     assert "\n  push:" not in text
     assert "workflow_dispatch" not in text
-    expected_jobs = {"production-worker-e2e"}
-    assert set(workflow["jobs"]) == expected_jobs
-    assert all(
-        workflow["jobs"][job_name]["runs-on"] == "ubuntu-latest"
-        for job_name in expected_jobs
-    )
+    assert set(workflow["jobs"]) == {"production-worker-e2e"}
+    assert workflow["jobs"]["production-worker-e2e"]["runs-on"] == "ubuntu-latest"
 
 
 def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None:
@@ -391,37 +387,6 @@ def test_full_pyqt_window_dependency_is_declared_by_shared_gui_extra() -> None:
 def test_pr_trigger_tracks_every_pyqt_render_authority() -> None:
     workflow = _workflow(PR_WORKFLOW_PATH)
     assert PYQT_AUTHORITY_PATHS <= set(workflow[True]["pull_request"]["paths"])
-
-
-def test_pr_visual_job_requires_changed_path_governance_before_expensive_e2e() -> None:
-    workflow = _workflow(PR_WORKFLOW_PATH)
-    job = workflow["jobs"]["production-worker-e2e"]
-    checkout = job["steps"][0]
-    commands = _run_steps(job)
-    step_names = [step.get("name") for step in job["steps"]]
-
-    assert checkout["with"] == {"fetch-depth": 0}
-    assert commands["Enforce matched visual evidence co-changes"] == (
-        "python scripts/check_rate_visual_evidence_changes.py "
-        "--base-ref \"${{ github.event.pull_request.base.sha || 'origin/main' }}\""
-    )
-    assert (
-        _named_step(job, "Enforce matched visual evidence co-changes")[
-            "working-directory"
-        ]
-        == "."
-    )
-    assert step_names.index("Enforce matched visual evidence co-changes") < min(
-        step_names.index("Set up Node.js"),
-        step_names.index("Set up Python"),
-        step_names.index("Install locked web dependencies"),
-    )
-    trigger_paths = set(workflow[True]["pull_request"]["paths"])
-    assert {
-        "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json",
-        "scripts/check_rate_visual_evidence_changes.py",
-        "tests/scripts/test_check_rate_visual_evidence_changes.py",
-    } <= trigger_paths
 
 
 def test_trusted_trigger_tracks_every_pyqt_render_authority() -> None:

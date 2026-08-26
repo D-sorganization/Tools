@@ -9,33 +9,13 @@ as anatomical shoulder or torso velocity by this API.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Protocol, cast
 
 import numpy as np
 import numpy.typing as npt
 
-if TYPE_CHECKING:
-    from .physics import PendulumParams
-
 FloatArray = npt.NDArray[np.float64]
-IntArray = npt.NDArray[np.int64]
 
 _CLOSURE_ATOL = 1e-9
-
-
-class _DoublePendulumResult(Protocol):
-    t: npt.ArrayLike
-    states: npt.ArrayLike
-    params: PendulumParams
-    n_steps: int
-    clamp: object | None
-    limits: object | None
-
-    def joint_forces_at(self, index: int) -> dict[str, FloatArray]: ...
-
-    def joint_velocities_at(self, index: int) -> dict[str, FloatArray | float]: ...
-
-    def torques_at(self, index: int) -> FloatArray: ...
 
 
 def _finite_vector(name: str, value: object, sample_count: int) -> FloatArray:
@@ -149,7 +129,7 @@ def _negative_linear_integral(time: FloatArray, values: FloatArray) -> float:
     return total
 
 
-def _window_indices(signals: TransferSignals, start_s: float, end_s: float) -> IntArray:
+def _window_indices(signals: TransferSignals, start_s: float, end_s: float) -> FloatArray:
     if not np.isfinite(start_s) or not np.isfinite(end_s) or start_s >= end_s:
         raise ValueError("start_s must be less than end_s and both must be finite")
     time = signals.time_s
@@ -158,7 +138,7 @@ def _window_indices(signals: TransferSignals, start_s: float, end_s: float) -> I
     mask = (time >= start_s) & (time <= end_s)
     if np.count_nonzero(mask) < 2:
         raise ValueError("analysis window must contain at least two samples")
-    return np.asarray(np.flatnonzero(mask), dtype=np.int64)
+    return np.flatnonzero(mask)
 
 
 def _force_power_terms(
@@ -227,7 +207,7 @@ def summarize_transfer(
     )
 
 
-def _club_kinetic_energy(states: FloatArray, params: PendulumParams) -> FloatArray:
+def _club_kinetic_energy(states: FloatArray, params: object) -> FloatArray:
     """Return shaft-plus-clubhead kinetic energy for the planar model."""
     theta = states[:, 0]
     phi = states[:, 1]
@@ -262,29 +242,28 @@ def double_pendulum_transfer_signals(result: object) -> TransferSignals:
     required = ("t", "states", "params", "n_steps")
     if any(not hasattr(result, name) for name in required):
         raise TypeError("result must provide the double-pendulum result contract")
-    typed_result = cast(_DoublePendulumResult, result)
-    states = np.asarray(typed_result.states, dtype=np.float64)
-    if states.shape != (typed_result.n_steps, 4) or not np.all(np.isfinite(states)):
+    states = np.asarray(result.states, dtype=float)
+    if states.shape != (result.n_steps, 4) or not np.all(np.isfinite(states)):
         raise ValueError("double-pendulum result states must be finite with width four")
-    total_force = np.empty((typed_result.n_steps, 2))
+    total_force = np.empty((result.n_steps, 2))
     drift_force = np.empty_like(total_force)
     grip_velocity = np.empty_like(total_force)
-    wrist_couple = np.empty(typed_result.n_steps)
-    distal_speed = np.empty(typed_result.n_steps)
-    for index in range(typed_result.n_steps):
-        total_force[index] = typed_result.joint_forces_at(index)["wrist"]
-        drift_force[index] = zero_torque_joint_forces_double(
-            states[index], typed_result.params
-        )["wrist"]
-        velocities = typed_result.joint_velocities_at(index)
+    wrist_couple = np.empty(result.n_steps)
+    distal_speed = np.empty(result.n_steps)
+    for index in range(result.n_steps):
+        total_force[index] = result.joint_forces_at(index)["wrist"]
+        drift_force[index] = zero_torque_joint_forces_double(states[index], result.params)[
+            "wrist"
+        ]
+        velocities = result.joint_velocities_at(index)
         grip_velocity[index] = velocities["wrist_vel"]
         distal_speed[index] = velocities["tip_speed"]
-        wrist_couple[index] = typed_result.torques_at(index)[1]
+        wrist_couple[index] = result.torques_at(index)[1]
     return TransferSignals(
-        time_s=np.asarray(typed_result.t, dtype=np.float64),
+        time_s=np.asarray(result.t, dtype=float),
         proximal_angular_velocity_rad_s=states[:, 2],
         distal_speed_m_s=distal_speed,
-        distal_kinetic_energy_j=_club_kinetic_energy(states, typed_result.params),
+        distal_kinetic_energy_j=_club_kinetic_energy(states, result.params),
         grip_velocity_m_s=grip_velocity,
         grip_force_total_n=total_force,
         grip_force_drift_n=drift_force,
@@ -292,63 +271,6 @@ def double_pendulum_transfer_signals(result: object) -> TransferSignals:
         wrist_control_couple_nm=wrist_couple,
         club_angular_velocity_rad_s=states[:, 2] + states[:, 3],
         model_tier="exact_planar_double_pendulum",
-    )
-
-
-def double_pendulum_force_attribution(result: object) -> object:
-    """Adapt a simulator result to the canonical coordinate-source contract.
-
-    The adapter fails closed when Coulomb friction, torque clamps, or joint
-    limits are active because `force-attribution/v1` does not yet expose those
-    equation terms separately. It never folds them into control or residual.
-    """
-    from shared.python.swing_sim import (
-        DoublePendulumAttributionProvider,
-        PendulumParameters,
-        attribute_trajectory,
-    )
-
-    required = ("t", "states", "params", "n_steps", "torques_at")
-    if any(not hasattr(result, name) for name in required):
-        raise TypeError("result must provide the double-pendulum result contract")
-    typed_result = cast(_DoublePendulumResult, result)
-    params = typed_result.params
-    if params.mu1 != 0.0 or params.mu2 != 0.0:
-        raise ValueError("Coulomb friction attribution is unavailable")
-    if getattr(typed_result, "clamp", None) is not None:
-        raise ValueError("torque clamp attribution is unavailable")
-    if getattr(typed_result, "limits", None) is not None:
-        raise ValueError("joint-limit attribution is unavailable")
-    states = np.asarray(typed_result.states, dtype=np.float64)
-    if states.shape != (typed_result.n_steps, 4) or not np.all(np.isfinite(states)):
-        raise ValueError("double-pendulum result states must be finite with width four")
-    effective_distal_mass = params.m2 + params.mClub
-    canonical = PendulumParameters(
-        m1=params.m1,
-        l1=params.L1,
-        lc1=params.L1,
-        i1=params.m1 * params.L1**2,
-        m2=effective_distal_mass,
-        l2=params.L2,
-        lc2=params.L2,
-        i2=effective_distal_mass * params.L2**2,
-        d1=params.b1,
-        d2=params.b2,
-    )
-    provider = DoublePendulumAttributionProvider(
-        canonical,
-        g_inplane=(0.0, -params.g),
-    )
-    applied = np.asarray(
-        [typed_result.torques_at(index) for index in range(typed_result.n_steps)],
-        dtype=np.float64,
-    )
-    return attribute_trajectory(
-        provider,
-        np.asarray(typed_result.t, dtype=np.float64),
-        states[:, :2],
-        states[:, 2:],
-        applied,
     )
 
 
@@ -374,7 +296,6 @@ def pareto_front(values: object, *, maximize: tuple[bool, ...]) -> npt.NDArray[n
 __all__ = [
     "TransferSignals",
     "TransferSummary",
-    "double_pendulum_force_attribution",
     "double_pendulum_transfer_signals",
     "pareto_front",
     "summarize_transfer",

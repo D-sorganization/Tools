@@ -195,13 +195,13 @@ def render_latex_label(
 
                 from PyQt6.QtGui import QImage, QPixmap
 
-                qimg = QImage(bytes(rgba.data), w, h, QImage.Format.Format_RGBA8888)
-                qimg._rgba_buffer = rgba  # type: ignore[attr-defined]
+                qimg = QImage(rgba.data, w, h, QImage.Format.Format_RGBA8888)
+                qimg._rgba_buffer = rgba  # Keep reference alive
                 pm = QPixmap.fromImage(qimg)
                 label.setPixmap(pm)
                 _log.debug("render_latex_label(%r) rendered as QPixmap", latex_str)
                 return label
-        except Exception as exc:  # noqa: BLE001 - fallback to plain text if LaTeX rendering fails
+        except Exception as exc:
             _log.warning(
                 "Could not render LaTeX %r as QPixmap, falling back: %s",
                 latex_str,

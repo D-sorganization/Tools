@@ -10,21 +10,6 @@
 - Adhere strictly to the project's architectural and stylistic standards.
 - Act as a responsible pair programmer, always verifying assumptions and testing changes.
 
-### Engineering Design Manual Authority
-
-The sole editable source for the calculation-level engineering design manual is
-`manuals/tools` QMD. Generated LaTeX, PDF, DOCX, and HTML are non-editable
-artifacts; correct QMD and regenerate them through the qualified toolchain.
-Before changing calculations, public interchange pathways, or manual
-governance, read `config/design_manual_governance.json` and run
-`python -m scripts.check_design_manual_governance` and
-`python -m scripts.build_tools_module_inventory --check`. The strict Tools
-module-inventory extension classifies every tracked implementation module and
-uses LF-normalized content hashes; conservative calculation detection remains
-provisional until stable pathways and review are supplied. Missing inventory,
-freshness, provenance, licensing, page review, accessibility review, or approval
-keeps release blocked. Never copy private Tools_Private content into this manual.
-
 ---
 
 ## 🛡️ Safety & Security (CRITICAL)

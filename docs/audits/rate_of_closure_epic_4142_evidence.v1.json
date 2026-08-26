@@ -6,9 +6,9 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 22,
-    "partial": 9,
-    "unverified": 0,
+    "verified": 18,
+    "partial": 11,
+    "unverified": 2,
     "external_blocked": 0
   },
   "requirements": [
@@ -471,7 +471,6 @@
       "status": "partial",
       "rationale": "Current-main trusted React and PyQt visual evidence passes the registered initial-viewport manifests and states.",
       "evidence_files": [
-        "docs/audits/rate_of_closure_visual_first_epic_4433.v1.json",
         "src/rate_of_closure/visualization_tabs.v1.json",
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
         "tests/rate_of_closure/test_visual_baseline_compare.py"
@@ -484,56 +483,52 @@
         "https://github.com/D-sorganization/Tools/actions/runs/32689177846"
       ],
       "gaps": [
-        "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
-        "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
-        "The manual assistive-technology protocol is ready but has not been executed and signed for React and PyQt.",
-        "A user-oriented rendered review has not been approved with exact build and image identities.",
-        "The per-tab acceptance matrix does not yet bind every state to frame, units, provenance, limitation placement, keyboard path, and nonvisual alternative evidence.",
-        "All-tab representative-dataset render and update latency, layout-shift, and deterministic-decimation evidence is incomplete.",
-        "The new-tab extension checklist and downstream cross-repository validation are not yet consolidated into protected completion evidence."
+        "Issue #4433 remains open and its exact acceptance checklist has not been adjudicated against the now-passing protected evidence."
       ]
     },
     {
       "requirement_id": "R15.1",
       "requirement": "Cross-link an UpstreamDrift integration issue naming consuming surfaces and the exact Tools pin or adapter.",
-      "status": "verified",
-      "rationale": "UpstreamDrift PR #9039 merged on protected main as eb7076466152cbacd40a7f4d3fb9d92255d4ae43. Its #8358 consumer binds the exact immutable Tools revision 17474249b9267d0e73a779c1d72f231e7b8de39c and names the host-owned trial, engine, evidence-bundle, and cross-engine adapter surfaces while Tools retains the canonical analysis authority.",
+      "status": "partial",
+      "rationale": "UpstreamDrift #8557 names Tools #4142 as a dependency and records the ownership boundary, but does not yet bind the completed ensemble authority to a final immutable Tools revision and consumer adapter.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/__init__.py",
-        "tests/rate_of_closure/test_morris_authority_contracts.py"
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "src/rate_of_closure/README.md"
       ],
       "validation_commands": [
-        "python -m pytest -n 0 -q tests/rate_of_closure/test_epic_4142_requirement_evidence.py tests/rate_of_closure/test_morris_authority_contracts.py"
+        "git grep -n -e \"Tools#4142\" -e \"#4142\" -- src/rate_of_closure/AGENT_HANDOFF.md src/rate_of_closure/README.md"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/UpstreamDrift/pull/9039",
-        "https://github.com/D-sorganization/UpstreamDrift/actions/runs/32803140528"
+        "https://github.com/D-sorganization/UpstreamDrift/issues/8557"
       ],
-      "gaps": []
+      "gaps": [
+        "The consuming UpstreamDrift surfaces and final exact Tools pin for the #4142 ensemble authority remain unregistered."
+      ]
     },
     {
       "requirement_id": "R15.2",
       "requirement": "Consume canonical schemas and results in UpstreamDrift without duplicating algorithms.",
-      "status": "verified",
-      "rationale": "Protected UpstreamDrift PR #9039 adds a thin, capability-checked Tools gateway and host-owned engine mappings. Deterministic sampling, canonical JSON/CSV/HDF5 persistence, scalar summaries, Spearman and OAT outputs, dispersion, and quiet-zone calculations remain delegated to the pinned Tools variation facade rather than copied into UpstreamDrift.",
+      "status": "unverified",
+      "rationale": "Tools owns the canonical implementation, but no merged UpstreamDrift consumer of the complete #4142 ensemble, dispersion, and sensitivity authority is registered.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/__init__.py",
-        "tests/rate_of_closure/test_morris_authority_contracts.py"
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "src/shared/python/swing_sim/variation/__init__.py"
       ],
       "validation_commands": [
-        "python -m pytest -n 0 -q tests/rate_of_closure/test_morris_authority_contracts.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
+        "python -m pytest -m contract tests/rate_of_closure/test_morris_authority_contracts.py -q"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/UpstreamDrift/pull/9039",
-        "https://github.com/D-sorganization/UpstreamDrift/actions/runs/32803140528"
+        "https://github.com/D-sorganization/UpstreamDrift/issues/8557"
       ],
-      "gaps": []
+      "gaps": [
+        "Implement and protect-merge the thin UpstreamDrift consumer at an immutable Tools revision, then prove no copied analysis logic exists."
+      ]
     },
     {
       "requirement_id": "R15.3",
       "requirement": "Pin cross-repository parity for seeded ensembles, no-impact cohorts, geometry, and attribution.",
-      "status": "verified",
-      "rationale": "UpstreamDrift PR #9039 pins the Tools authority and protects deterministic serial/batched canonical artifacts for hit, no-impact, numerical-failure, and partial traces; stable marker, frame, unit, topology, geometry, scalar attribution, and cross-engine mismatch contracts passed the protected provider and full unit gates. This verifies model-data parity, not participant validity.",
+      "status": "unverified",
+      "rationale": "Tools has Python and TypeScript goldens, but no merged UpstreamDrift parity suite covers the complete representative #4142 dataset named by this requirement.",
       "evidence_files": [
         "src/rate_of_closure/web/src/model/__fixtures__/durable_ensemble_evidence_golden_v1.json",
         "tests/rate_of_closure/test_variation_durable_ensemble_evidence.py"
@@ -542,29 +537,30 @@
         "python -m pytest tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_dispersion_metrics_golden.py tests/rate_of_closure/test_morris_authority_contracts.py -q"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/UpstreamDrift/pull/9039",
-        "https://github.com/D-sorganization/UpstreamDrift/actions/runs/32803140528"
+        "https://github.com/D-sorganization/UpstreamDrift/issues/8557"
       ],
-      "gaps": []
+      "gaps": [
+        "Add immutable UpstreamDrift parity fixtures for seeded inputs, typed no-impact rows, geometry metrics, and sensitivity records."
+      ]
     },
     {
       "requirement_id": "R15.4",
       "requirement": "Publish theory, assumptions, limitations, quick start, schema, performance, and reproducibility documentation.",
-      "status": "verified",
-      "rationale": "The consolidated public guide now unifies the mechanics and statistical interpretation, typed schema and persistence contracts, method assumptions, deterministic quick start, protected verification commands, bounded performance evidence, falsification workflow, and explicit human and coaching limitations.",
+      "status": "partial",
+      "rationale": "The README, evidence manifests, handoffs, and the new reviewer-facing variation persistence contract document schemas, compatibility, provenance, limitations, artifact inventory, and reproducibility boundaries. One consolidated public guide still needs the complete theory, performance, and quick-start treatment.",
       "evidence_files": [
-        "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md",
+        "src/rate_of_closure/README.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
         "docs/specs/VARIATION_PLAN_PERSISTENCE.md",
-        "docs/rate_of_closure/variation_visualization_performance.md",
-        "docs/rate_of_closure/ensemble_stream_scaling.v1.json",
-        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
+        "docs/rate_of_closure/variation_visualization_performance.md"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_epic_4142_requirement_evidence.py tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_variation_ensemble_scaling_evidence.py -q",
-        "python scripts/check_document_title_case.py docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
+        "python -m pytest tests/rate_of_closure/test_variation_durable_ensemble_evidence.py tests/rate_of_closure/test_variation_ensemble_scaling_evidence.py -q"
       ],
       "remote_evidence": [],
-      "gaps": []
+      "gaps": [
+        "Consolidate the theory, schema, method assumptions, performance evidence, quick start, and reproduction commands into a stable public technical guide."
+      ]
     }
   ]
 }

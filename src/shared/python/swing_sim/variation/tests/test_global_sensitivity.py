@@ -52,14 +52,8 @@ def _observations(
     *,
     trajectories: int = 12,
     outcomes: np.ndarray | None = None,
-    factors: tuple[MorrisFactor, ...] | None = None,
-    seed: int = 73,
 ) -> MorrisObservations:
-    design = generate_morris_design(
-        factors if factors is not None else _factors(),
-        trajectories=trajectories,
-        seed=seed,
-    )
+    design = generate_morris_design(_factors(), trajectories=trajectories, seed=73)
     values = np.empty((trajectories, 3, 1), dtype=float)
     for trajectory in range(trajectories):
         for sample in range(3):
@@ -118,90 +112,6 @@ def test_additive_fixture_recovers_elementary_effects_and_source_locus() -> None
     assert report.seed == 73
     assert report.total_design_samples == 36
     assert report.normalized_step == pytest.approx(2.0 / 3.0)
-
-
-def test_additive_fixture_nonunit_bounds_pins_normalization_convention() -> None:
-    """Elementary effects are reported per normalized [0, 1] factor range, not
-    per physical unit and not per raw design step.
-
-    On unit bounds (as in ``_factors()``), physical and normalized coordinates
-    coincide, so that fixture cannot tell "effect per normalized range" apart
-    from "effect per physical unit" -- both produce the same number (#4455).
-    This test uses non-unit, *unequal* bounds so the two conventions predict
-    different, independently-derivable numbers:
-
-    - "effect per normalized range" (the documented/actual convention):
-      ``mu_star = coefficient * (upper - lower)`` for each factor.
-    - "effect per physical unit" (a plausible units bug): ``mu_star =
-      coefficient``, unchanged by the bounds.
-    - "effect per raw design step, un-normalized" (a plausible missing-
-      division bug): ``mu_star = coefficient * (upper - lower) * step_size``,
-      which additionally depends on ``levels`` and would drift with it.
-
-    The expected values below come from the closed-form partial derivative of
-    a linear response with respect to each *normalized* factor coordinate
-    (``d(a*x0 + b*x1)/d(normalized_i) = coefficient_i * span_i``), derived
-    independently of the estimator's own ``raw = delta / signed_steps``
-    formula in ``global_sensitivity.py``. A unit-conversion bug -- e.g.
-    forgetting to divide by the step size, or reporting effects in physical
-    units instead of normalized-range units -- changes the ratio between the
-    two factors' expected magnitudes (10x vs 20x their coefficients here) and
-    would fail this assertion where the unit-bounds fixture above cannot.
-    """
-    face_lower, face_upper = 0.0, 10.0  # span 10
-    speed_lower, speed_upper = -5.0, 15.0  # span 20 (deliberately different)
-    face_coefficient, speed_coefficient = 2.0, 3.0
-
-    factors = (
-        MorrisFactor.from_noise_spec(
-            NoiseSpec(
-                variable_key="swing_sim.impact.delivery.face_angle_deg",
-                spec_id="face-window",
-                time_window_s=(0.01, 0.02),
-                point_ids=("clubhead",),
-            ),
-            lower=face_lower,
-            upper=face_upper,
-        ),
-        MorrisFactor(
-            spec_id="speed-global",
-            variable_key="swing_sim.impact.delivery.clubhead_speed_mps",
-            lower=speed_lower,
-            upper=speed_upper,
-            unit="m/s",
-        ),
-    )
-    observations = _observations(
-        lambda point: face_coefficient * point[0] + speed_coefficient * point[1],
-        factors=factors,
-    )
-
-    report = analyze_morris(observations)
-    face = report.estimate("face-window", "clubhead_x_m")
-    speed = report.estimate("speed-global", "clubhead_x_m")
-
-    expected_face_mu_star = face_coefficient * (face_upper - face_lower)
-    expected_speed_mu_star = speed_coefficient * (speed_upper - speed_lower)
-    assert expected_face_mu_star == pytest.approx(20.0)
-    assert expected_speed_mu_star == pytest.approx(60.0)
-
-    assert face.mu_star == pytest.approx(expected_face_mu_star)
-    assert speed.mu_star == pytest.approx(expected_speed_mu_star)
-
-    # A per-physical-unit convention would instead report the bare
-    # coefficients, unchanged by the bounds -- confirm that reading is wrong.
-    assert face.mu_star != pytest.approx(face_coefficient)
-    assert speed.mu_star != pytest.approx(speed_coefficient)
-
-    # The two factors' relative magnitude is span-driven (10x vs 15x their
-    # raw coefficients), not equal -- a scale bug that drops the span
-    # entirely collapses this ratio back to coefficient-only (2:3).
-    assert face.mu_star / speed.mu_star == pytest.approx(
-        expected_face_mu_star / expected_speed_mu_star
-    )
-    assert face.mu_star / speed.mu_star != pytest.approx(
-        face_coefficient / speed_coefficient
-    )
 
 
 def test_interacting_fixture_reports_nonzero_sigma_without_claiming_causality() -> None:

@@ -62,30 +62,6 @@ def test_manifest_v1_covers_every_registered_pyqt_tab() -> None:
     )
 
 
-def test_every_tab_declares_purpose_prerequisites_and_reciprocal_counterpart() -> None:
-    manifest = load_visualization_tab_manifest()
-    by_identity = {(entry.surface, entry.tab_id): entry for entry in manifest.tabs}
-
-    assert len(by_identity) == 20
-    for entry in manifest.tabs:
-        assert entry.purpose.strip()
-        assert entry.data_prerequisites
-        assert all(item.strip() for item in entry.data_prerequisites)
-        counterpart_surface = "pyqt" if entry.surface == "react" else "react"
-        counterpart = by_identity[(counterpart_surface, entry.counterpart_tab_id)]
-        assert counterpart.counterpart_tab_id == entry.tab_id
-
-
-def test_manifest_rejects_missing_or_nonreciprocal_counterpart() -> None:
-    manifest = load_visualization_tab_manifest()
-    first = manifest.tabs[0]
-    entries = list(manifest.tabs)
-    entries[0] = replace(first, counterpart_tab_id="missing")
-
-    with pytest.raises(ManifestContractError, match="counterpart"):
-        replace(manifest, tabs=tuple(entries)).validate()
-
-
 def test_flight_manifest_names_synchronous_atomic_inspector_states() -> None:
     manifest = load_visualization_tab_manifest()
     react = next(

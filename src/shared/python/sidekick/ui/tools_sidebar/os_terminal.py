@@ -513,7 +513,7 @@ class ShellDiscoveryThread(QtCore.QThread):
         try:
             res = list(self.shells_override or discover_shells())
             self.discovered.emit(res)
-        except Exception as e:  # noqa: BLE001 - background discovery thread must not crash UI process
+        except Exception as e:
             _logger.error("Failed to discover shells asynchronously: %s", e)
             self.discovered.emit([])
 

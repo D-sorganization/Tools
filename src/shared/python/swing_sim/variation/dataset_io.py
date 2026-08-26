@@ -46,9 +46,6 @@ from .execution_metadata import (
 from .spec import VariationPlan
 
 _SCHEMA_VERSION = 2
-DATASET_JSON_SCHEMA_VERSION = _SCHEMA_VERSION
-DATASET_HDF5_SCHEMA_ID = "rate-of-closure/variation-dataset-hdf5"
-DATASET_HDF5_SCHEMA_VERSION = 1
 _JSON_FIELDS = frozenset(
     {
         "schema_version",
@@ -183,83 +180,11 @@ def read_csv(path: str | Path, plan: VariationPlan) -> VariationDataset:
     )
 
 
-def write_hdf5(dataset: VariationDataset, path: str | Path) -> None:
-    """Write a self-contained variation dataset to the versioned HDF5 schema."""
-    import h5py
-
-    target = Path(path)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with h5py.File(target, "w") as handle:
-        handle.attrs["schema_id"] = DATASET_HDF5_SCHEMA_ID
-        handle.attrs["schema_version"] = DATASET_HDF5_SCHEMA_VERSION
-        handle.attrs["elapsed_s"] = float(dataset.elapsed_s)
-        handle.attrs["plan_document"] = json.dumps(
-            execution_document_to_json_dict(dataset.plan)
-        )
-        handle.attrs["input_names"] = json.dumps(list(dataset.input_names))
-        handle.attrs["output_names"] = json.dumps(list(dataset.output_names))
-        handle.create_dataset("inputs", data=np.asarray(dataset.inputs, dtype=float))
-        handle.create_dataset("outputs", data=np.asarray(dataset.outputs, dtype=float))
-        handle.create_dataset("success", data=np.asarray(dataset.success, dtype=bool))
-
-
-def read_hdf5(path: str | Path) -> VariationDataset:
-    """Read the exact versioned HDF5 dataset emitted by :func:`write_hdf5`."""
-    import h5py
-
-    with h5py.File(Path(path), "r") as handle:
-        schema_id = handle.attrs.get("schema_id")
-        if isinstance(schema_id, bytes):
-            schema_id = schema_id.decode("utf-8")
-        require(
-            schema_id == DATASET_HDF5_SCHEMA_ID,
-            "unsupported HDF5 schema_id",
-            schema_id,
-        )
-        schema_version = int(handle.attrs.get("schema_version", 0))
-        require(
-            schema_version == DATASET_HDF5_SCHEMA_VERSION,
-            "unsupported HDF5 schema_version",
-            schema_version,
-        )
-
-        def json_attribute(name: str) -> Any:
-            raw = handle.attrs.get(name)
-            if isinstance(raw, bytes):
-                raw = raw.decode("utf-8")
-            require(isinstance(raw, str), f"HDF5 {name} must be JSON text", raw)
-            return json.loads(raw)
-
-        plan_document = execution_document_from_json_dict(
-            json_attribute("plan_document")
-        )
-        input_names = tuple(json_attribute("input_names"))
-        output_names = tuple(json_attribute("output_names"))
-        inputs = np.asarray(handle["inputs"], dtype=float)
-        outputs = np.asarray(handle["outputs"], dtype=float)
-        success = np.asarray(handle["success"], dtype=bool)
-        elapsed_s = float(handle.attrs.get("elapsed_s", 0.0))
-    return VariationDataset(
-        plan=plan_document.plan,
-        input_names=input_names,
-        inputs=inputs,
-        output_names=output_names,
-        outputs=outputs,
-        success=success,
-        elapsed_s=elapsed_s,
-    )
-
-
 __all__ = [
-    "DATASET_HDF5_SCHEMA_ID",
-    "DATASET_HDF5_SCHEMA_VERSION",
-    "DATASET_JSON_SCHEMA_VERSION",
     "from_json_dict",
     "read_csv",
-    "read_hdf5",
     "read_json",
     "to_json_dict",
     "write_csv",
-    "write_hdf5",
     "write_json",
 ]

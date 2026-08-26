@@ -115,10 +115,6 @@ silently.
 
 ## Variation Study Visualizations
 
-For the public mechanics, schema, method, performance, reproduction, and
-scientific-boundary treatment, see the
-[ensemble variation and sensitivity guide](../../docs/rate_of_closure/variation_ensemble_reproducibility_guide.md).
-
 The **Variation** view supports delivery, launch, and complete double-pendulum
 swing ensembles. Every run retains its sampled inputs and scalar outputs. A
 complete swing ensemble additionally retains the common-time-grid positions of

@@ -14,7 +14,7 @@ WORKDIR /app
 # File(...) upload), so the app raised ModuleNotFoundError at import and
 # `restart: always` turned that into a silent crash loop (issue #4014).
 RUN pip install --no-cache-dir \
-    fastapi==0.141.1 \
+    fastapi==0.136.1 \
     uvicorn[standard]==0.47.0 \
     pydantic==2.13.4 \
     pydantic-settings==2.14.2 \

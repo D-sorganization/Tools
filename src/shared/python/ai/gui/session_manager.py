@@ -42,11 +42,12 @@ def _session_to_markdown(context: ConversationContext) -> str:
     title = str(context.metadata.get("title", context.session_id or "Chat Session"))
     lines: list[str] = [f"# {title}", ""]
     for msg in context.messages:
-        if isinstance(msg, Message):
-            lines.append(f"## {msg.role}")
-            lines.append("")
-            lines.append(msg.content)
-            lines.append("")
+        if not isinstance(msg, Message):
+            continue
+        lines.append(f"## {msg.role}")
+        lines.append("")
+        lines.append(msg.content)
+        lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -88,7 +89,7 @@ class ChatSessionManager(QObject):
                         context.metadata["archived"] = False
                         context.save_to_file(new_path)
                         logger.info(f"Migrated legacy chat to {new_path.name}")
-            except Exception as e:  # noqa: BLE001 - defensive migration of legacy file
+            except Exception as e:
                 logger.warning(f"Failed to migrate legacy chat history: {e}")
 
     def list_sessions(self) -> list[dict[str, Any]]:
@@ -139,7 +140,7 @@ class ChatSessionManager(QObject):
                         "file_path": file_path,
                     }
                 )
-            except Exception as e:  # noqa: BLE001 - skip corrupted session files during listing
+            except Exception as e:
                 logger.warning(f"Failed to read session file {file_path}: {e}")
 
         # Sort by timestamp, newest first
@@ -168,7 +169,7 @@ class ChatSessionManager(QObject):
                 if emit:
                     self.session_loaded.emit(context)
                 return context
-            except Exception as e:  # noqa: BLE001 - handle corrupted session file loading
+            except Exception as e:
                 logger.error(f"Failed to load session {session_id}: {e}")
         return None
 
@@ -194,7 +195,7 @@ class ChatSessionManager(QObject):
         try:
             context.save_to_file(file_path)
             self.sessions_updated.emit()
-        except Exception as e:  # noqa: BLE001 - handle disk or serialization failure
+        except Exception as e:
             logger.error(f"Failed to save session {context.session_id}: {e}")
 
     def archive_session(self, session_id: str, archived: bool = True) -> bool:
@@ -396,6 +397,6 @@ class ChatSessionManager(QObject):
                 file_path.unlink()
                 self.sessions_updated.emit()
                 return True
-            except OSError as e:
+            except Exception as e:
                 logger.error(f"Failed to delete session {session_id}: {e}")
         return False

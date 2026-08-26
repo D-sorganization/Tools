@@ -79,20 +79,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-      - id: design-manual-governance
-        name: "engineering design-manual governance"
-        entry: python -m scripts.check_design_manual_governance
-        language: system
-        pass_filenames: false
-        files: ^(manuals/tools/|config/design_manual_governance\.json$|scripts/(check_design_manual_governance|design_manual_contract|tools_module_inventory_contract)\.py$|AGENTS\.md$|CLAUDE\.md$|SPEC\.md$|AGENT_HANDOFF\.md$)
-
-      - id: tools-module-inventory-freshness
-        name: "Tools module inventory freshness"
-        entry: python -m scripts.build_tools_module_inventory --check
-        language: system
-        pass_filenames: false
-        files: ^(src/|rust_core/|scripts/|shared_scripts/|schemas/|config/|manuals/tools/(manifests/module-inventory\.json|schemas/module-inventory\.schema\.json)$|tests/architecture/test_tools_module_inventory_contract\.py$)
-
       - id: tracked-text-normalization
         name: "tracked LF blob normalization"
         entry: python scripts/check_tracked_text_normalization.py
@@ -125,9 +111,7 @@ repos:
       - id: prettier
         name: "prettier (yaml/json/md)"
         types_or: [yaml, markdown, json]
-        # The module manifest has a deterministic Python serializer; another
-        # formatter would make the immediately preceding freshness gate stale.
-        exclude: '(\.py|\.m|\.qmd|package-lock\.json|\.ipynb|manuals/tools/manifests/module-inventory(?:\.json|/.*\.json))$'
+        exclude: '(\.py|\.m|package-lock\.json|\.ipynb)$'
 
   # -------------------------------------------------------------------------
   # Stage 4: Pre-push Hooks (Slower - PYTHON FILES ONLY)

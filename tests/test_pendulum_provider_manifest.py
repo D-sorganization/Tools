@@ -18,7 +18,6 @@ def test_pendulum_provider_manifest_validates_against_repo_layout() -> None:
 
     assert manifest["pack_id"] == "tools-pendulum-simulator"
     assert manifest["provider"] == "tools"
-    assert manifest["force_attribution_schema"] == "force-attribution/v1"
     assert len(manifest["models"]) == 1
 
 
@@ -33,8 +32,6 @@ def test_pendulum_provider_manifest_declares_shared_launcher_metadata() -> None:
         "optimization",
         "biomechanics",
         "proximal-distal-companion",
-        "coordinate_force_attribution",
-        "component_impulse_optimization",
     ]
     assert entry["launcher"] == {
         "category": "tool",

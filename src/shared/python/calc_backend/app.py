@@ -173,42 +173,6 @@ def _calculator_route_signatures(
 ) -> set[tuple[str, str]]:
     signatures: set[tuple[str, str]] = set()
     for route in routes:
-        orig_router = getattr(route, "original_router", None) or getattr(
-            route, "router", None
-        )
-        inc_prefix = getattr(route, "prefix", "") or ""
-        if not inc_prefix:
-            ctx = getattr(route, "include_context", None)
-            if isinstance(ctx, dict):
-                inc_prefix = str(ctx.get("prefix", ""))
-            elif ctx is not None and hasattr(ctx, "prefix"):
-                inc_prefix = str(getattr(ctx, "prefix", "")) or ""
-
-        comb = prefix
-        if inc_prefix:
-            comb = (
-                f"{comb.rstrip('/')}/{inc_prefix.lstrip('/')}" if comb else inc_prefix
-            )
-
-        if orig_router is not None and hasattr(orig_router, "routes"):
-            signatures.update(
-                _calculator_route_signatures(orig_router.routes, prefix=comb)
-            )
-        elif hasattr(route, "routes") and route.routes:
-            raw_path = (
-                getattr(route, "path", None)
-                or getattr(route, "path_format", None)
-                or ""
-            )
-            mount_comb = (
-                f"{comb.rstrip('/')}/{raw_path.lstrip('/')}"
-                if (comb and raw_path)
-                else (comb or raw_path)
-            )
-            signatures.update(
-                _calculator_route_signatures(route.routes, prefix=mount_comb)
-            )
-
         raw_path = getattr(route, "path", None)
         if raw_path is None:
             raw_path = getattr(route, "path_format", None)
@@ -221,7 +185,7 @@ def _calculator_route_signatures(
             continue
 
         for method in methods:
-            method = str(method).upper()
+            method = str(method)
             if method not in {"HEAD", "OPTIONS"}:
                 signatures.add((method, path))
     return signatures
@@ -266,7 +230,7 @@ def _ensure_calculator_routes_registered(
     *,
     expected: set[tuple[str, str]] | None = None,
 ) -> None:
-    registered = _registered_calculator_route_signatures(active_app)
+    registered = _calculator_route_signatures(active_app.routes)
     expected = expected or _expected_calculator_route_signatures()
     if expected.issubset(registered):
         return
@@ -279,7 +243,7 @@ def _ensure_calculator_routes_registered(
         if router_signatures and not router_signatures.issubset(registered):
             active_app.include_router(router)
             active_app.openapi_schema = None
-            registered = _registered_calculator_route_signatures(active_app)
+            registered = _calculator_route_signatures(active_app.routes)
 
 
 def _join_route_prefix(prefix: str, path: str) -> str:

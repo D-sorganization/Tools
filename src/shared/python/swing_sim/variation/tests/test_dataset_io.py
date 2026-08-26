@@ -11,14 +11,9 @@ import pytest
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_LAUNCH,
-    DATASET_HDF5_SCHEMA_ID,
-    DATASET_HDF5_SCHEMA_VERSION,
-    DATASET_JSON_SCHEMA_VERSION,
     NoiseSpec,
     VariationPlan,
-    read_hdf5,
     run_variation,
-    write_hdf5,
 )
 from shared.python.swing_sim.variation.dataset_io import (
     from_json_dict,
@@ -145,25 +140,3 @@ class TestCsvRoundTrip:
         )
         with pytest.raises(Exception, match="match plan"):
             read_csv(path, other)
-
-
-class TestHdf5RoundTrip:
-    def test_public_surface_and_lossless_round_trip(
-        self, dataset, tmp_path: Path
-    ) -> None:  # type: ignore[no-untyped-def]
-        pytest.importorskip("h5py")
-        path = tmp_path / "study.h5"
-
-        write_hdf5(dataset, path)
-        loaded = read_hdf5(path)
-
-        assert DATASET_JSON_SCHEMA_VERSION == 2
-        assert DATASET_HDF5_SCHEMA_ID == "rate-of-closure/variation-dataset-hdf5"
-        assert DATASET_HDF5_SCHEMA_VERSION == 1
-        assert loaded.plan == dataset.plan
-        assert loaded.input_names == dataset.input_names
-        assert loaded.output_names == dataset.output_names
-        assert loaded.elapsed_s == pytest.approx(dataset.elapsed_s)
-        np.testing.assert_array_equal(loaded.inputs, dataset.inputs)
-        np.testing.assert_array_equal(loaded.outputs, dataset.outputs)
-        np.testing.assert_array_equal(loaded.success, dataset.success)

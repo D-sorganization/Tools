@@ -63,12 +63,6 @@ from .exercise_configs import make_full_squat_config as make_full_squat_config
 from .exercise_configs import make_squat_config as make_squat_config
 from .lagrangian_dynamics import LagrangianDynamics as LagrangianDynamics
 from .lagrangian_dynamics import balance_pose as balance_pose
-from .pendulum_force_objectives import (
-    analyze_pendulum_force_sources as analyze_pendulum_force_sources,
-)
-from .pendulum_force_objectives import (
-    coriolis_hand_path_impulse_cost as coriolis_hand_path_impulse_cost,
-)
 from .swingset import CyclicPolicyBounds as CyclicPolicyBounds
 from .swingset import CyclicPolicySearchSpace as CyclicPolicySearchSpace
 from .swingset import CyclicPolicyTraceSample as CyclicPolicyTraceSample
@@ -108,14 +102,12 @@ __all__ = [
     "SwingForceHistory",
     "SwingSetConfig",
     "SwingSetState",
-    "analyze_pendulum_force_sources",
     "balance_pose",
     "chain_force_field",
     "chain_force_history",
     "clamp_joint_angles",
     "compute_max_load",
     "constrain_swing_pose",
-    "coriolis_hand_path_impulse_cost",
     "cyclic_policy_controls",
     "estimate_swingset_joint_torques",
     "initial_tip_kick_velocities",

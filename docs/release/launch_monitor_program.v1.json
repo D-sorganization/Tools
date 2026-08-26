@@ -1,35 +1,35 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-25T00:00:00-07:00",
+  "generated_at": "2026-08-20T00:00:00-07:00",
   "program_issue": "D-sorganization/Tools#4583",
   "repositories": [
     {
       "name": "D-sorganization/Tools",
-      "main_commit": "535b389e12f574e4a761b5d7a7f41039fe942a36",
+      "main_commit": "979608f8df1b220236288da4f7d7a8bf8d6c5567",
       "role": "Rate-of-Closure PyQt6 and React/Vite clients, physics, and convention registry",
       "contains_restricted_shot_rows": false
     },
     {
       "name": "D-sorganization/UpstreamDrift",
-      "main_commit": "99cfe284bc9e80d576e027db7f81b8bb9b2af61e",
+      "main_commit": "5ea0d08821ee8a1cacb93d22239abddee4813fca",
       "role": "Canonical Python analytics engine, API, and standalone desktop workbench",
       "contains_restricted_shot_rows": false
     },
     {
       "name": "D-sorganization/AffineDrift",
-      "main_commit": "c9c5db7470553ef544262c62c7273bcfb8654812",
+      "main_commit": "87a15686565b1fd10feb3cc1d60fef597bf6dd16",
       "role": "Reviewed paper and published evidence narrative",
       "contains_restricted_shot_rows": false
     },
     {
       "name": "D-sorganization/Launch-Monitor-Data",
-      "main_commit": "5bb753f6d1c1a866c226eacb3672a211fedc04d0",
+      "main_commit": "3de743812e3910bf7b69d26319af407c5c9787a1",
       "role": "Public schema, access client, and exact private-authority lock",
       "contains_restricted_shot_rows": false
     },
     {
       "name": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
-      "main_commit": "d469b8a427418fa00e99b0ad488e4310b067697d",
+      "main_commit": "78f0a42540e523ac883d843394b30a636311bf9d",
       "role": "Restricted data authority, campaign execution, and trained artifacts",
       "contains_restricted_shot_rows": true
     }
@@ -116,7 +116,7 @@
       "id": "within-player-covariation",
       "owner": "D-sorganization/Tools",
       "tracking_issue": "D-sorganization/Tools#4277",
-      "status": "complete"
+      "status": "in_progress"
     },
     {
       "id": "neural-model-lab",
@@ -128,7 +128,7 @@
       "id": "strokes-gained-and-proxy",
       "owner": "D-sorganization/Tools",
       "tracking_issue": "D-sorganization/Tools#4584",
-      "status": "complete"
+      "status": "in_progress"
     },
     {
       "id": "professional-evidence-publication",

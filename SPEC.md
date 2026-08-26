@@ -27,131 +27,14 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.15                                    |
-| **Last Spec Update**    | 2026-08-25                                 |
+| **Spec Version**        | 1.17.101                                   |
+| **Last Spec Update**    | 2026-08-24                                 |
 
 ## 2. Purpose & Mission
-
-### 2026-08-25 Deterministic Module Inventory (#4707 / TOOLS-D1 (#4711))
-
-Version 1.18.15 inventories every tracked implementation and governed
-configuration module under the declared repository-wide denominator. The
-strict `tools-module-inventory/1.0.0` schema records LF-normalized SHA-256
-digests, path-derived provisional identities, calculation/non-calculation
-classification, authority and review status, maintainers, public surfaces,
-tests, ADRs, citations, units, chapters, and risk states. The current manifest
-contains 3,429 modules: 808 provisional calculation candidates, 2,621
-non-calculation modules, and one explicit encoding blocker. Freshness is
-enforced in pre-commit and Docs Governance. Stable calculation IDs,
-equation-to-code-to-test-to-claim pathways, generated formats, publication, and
-approval remain blocked under TOOLS-D2 through TOOLS-D9.
-
-### 2026-08-25 Engineering Design Manual Authority (#4707 / TOOLS-D0 (#4709))
-
-Version 1.18.14 establishes `manuals/tools` QMD as the sole editable
-calculation-level design-manual authority. The executable policy and empty
-inventory fail closed until TOOLS-D1 through TOOLS-D8 provide classification,
-equation-to-code-to-test traceability, reproducible formats, freshness,
-semantic/page/accessibility review, license evidence, immutable digests, and
-human approval. Generated HTML, LaTeX, PDF, and DOCX are non-editable and
-unapproved; private Tools_Private content is prohibited. Program-owned schemas
-remain in Engineering-Design-Manuals and are referenced rather than copied.
-
-### 2026-08-25 V5.2 Protected Merge Reconciliation (#4433 / #4737 / #4738)
-
-Version 1.18.13 records protected squash `4b4aec421f349d00cf9dc93289fda97af3845baa`
-as the merged V5.2 visual-evidence co-change authority. The seven R14.6 blockers,
-two human actions, and 8 verified / 23 partial audit state remain unchanged.
-
-### 2026-08-25 Visual Evidence Co-Change Governance (#4433 / #4737 V5.2)
-
-Version 1.18.12 adds a fail-closed pull-request gate for material React, PyQt,
-and shared visual-authority changes. A triggered surface must update the shared
-workspace manifest, the visual-first acceptance audit, and its first-viewport
-test in the same change set before expensive browser execution begins. This
-advances only V5.2, leaving the epic partial at eight verified and 23 partial
-obligations with all seven R14.6 blockers and two human actions unchanged.
-
-### 2026-08-25 Cross-Runtime Workspace Authority Parity (#4433 V0.1 / #4735)
-
-Version 1.18.11 extends the strict TypeScript reader to the same purpose,
-nonempty unique prerequisite, and reciprocal-counterpart contract enforced by
-Python. Exact-field validation remains fail closed, and tamper tests reject
-empty authority, duplicate prerequisites, missing counterparts, and
-nonreciprocal pairs before the React application starts.
-
-### 2026-08-25 Vendored Workspace Authority Parity (#4433 V0.1)
-
-Version 1.18.10 refreshes the standalone React mirror's vendored visualization
-manifest from the canonical monorepo source after V0.1 added purpose,
-prerequisite, and reciprocal-counterpart fields. The repository-owned
-byte-equality gates now prove the installed web artifact and canonical Python
-reader consume the same workspace authority.
-
-### 2026-08-25 Cross-Surface Workspace Authority (#4433 V0.1)
-
-Version 1.18.9 extends the strict visualization-tab manifest so every React and
-PyQt workspace declares a bounded scientific purpose, explicit data
-prerequisites, and one exact counterpart on the other surface. The immutable
-reader rejects empty or duplicate prerequisites, missing counterparts, and
-nonreciprocal pairs. This advances the 31-item fail-closed audit to seven
-verified and 24 partial obligations without changing the seven broader R14.6
-blockers or promoting diagnostic evidence to human approval.
-
-### 2026-08-25 Fail-Closed Visual-First Acceptance Audit (#4433 / #4142 R14.6)
-
-Version 1.18.6 maps all 29 V0--V5 checklist items plus the per-tab acceptance
-matrix and completion condition into a source-resolving evidence contract. Seven
-requirements are verified and 24 remain partial. Trusted main run
-`32689177846` proves the registered initial React and PyQt visibility,
-automated-accessibility, performance, and baseline tiers executed successfully;
-it does not prove all state, narrow/high-DPI, representative-dataset, manual-AT,
-or user-review obligations. R14.6 remains partial with seven exact blocking
-gaps and two explicit human actions. The audit prevents a green initial-state
-test from being promoted to whole-epic completion.
-
-### 2026-08-25 Public Ensemble Reproducibility Guide (#4142 R15.4)
-
-Version 1.18.5 adds one reviewer-facing guide that consolidates the shared
-variation authority's mechanical and statistical interpretation, typed data
-and persistence contracts, method assumptions, deterministic quick start,
-verification commands, bounded performance evidence, falsification workflow,
-and unsupported human/coaching inferences. A fail-closed contract test prevents
-the guide or R15.4 ledger evidence from losing those required surfaces. The
-ledger candidate advances to 22 verified and 9 partial requirements; #4142
-remains open for R14.6 and eight other explicit gaps.
-
-### 2026-08-25 Shared Theme Palette & Dynamic Token Metaclass (#4686)
-
-Version 1.18.2 ports canonical `ThemePalette` and dynamic `Colors` token container to `src/shared/python/theme/`:
-
-1. **Canonical Palette & Metaclass**: Introduces `src/shared/python/theme/palette.py` providing `ThemePalette` (dict subclass with attribute and semantic alias lookup), `_ColorsMeta` dynamic token interceptor, `Colors` typed token container, and `get_current_colors()` accessor.
-2. **Package Re-Exports**: Re-exports all palette and typography tokens from `src/shared/python/theme/__init__.py` to provide a complete, drop-in contract across both headless and GUI environments fleet-wide.
-
-### 2026-08-25 FastAPI Route Introspection & Dependency Pinning (#4478, #4477, #4476)
-
-Version 1.18.1 hardens FastAPI route introspection and standardizes modern framework pins:
-
-1. **Dependency Pinning**: Pins `fastapi>=0.141.1` and `starlette>=0.45.0` across `requirements.txt` and `pyproject.toml` extras (`rate-morris-authority`, `all`, `chat`, `rate-of-closure-web`, `p1am`, `test`), ensuring local and CI runtime parity.
-2. **Robust Route Introspection**: Implements hierarchical route collection that traverses `app.routes`, Starlette `Mount`s, and modern FastAPI `_IncludedRouter` instances (recursing into `original_router` / `router` and resolving prefix from `include_context` / `prefix`), merged with `app.openapi()["paths"]`. This ensures all served routes are accurately reported regardless of FastAPI version and prevents under-reporting caused by unflattened router mounting.
-3. **F16 Safety and Authorization Matrix Hardening**: Hardens `test_route_authz_matrix.py` with explicit non-empty route inventory assertions and validates classification of F16 advanced-control advisory optimization (`/api/mpc/simulate`), PID tuning, and hardware mutating endpoints.
-4. **Calculator Route Discovery**: Hardens `calc_backend` route signature inspection and registration to support nested router hierarchies and OpenAPI schema fallbacks.
-
-### 2026-08-24 Immutable Upstream Variation Consumption (#4142)
-
-Version 1.18.0 promotes only R15.1--R15.3 after protected UpstreamDrift PR
-#9039 merged at `eb7076466152cbacd40a7f4d3fb9d92255d4ae43` against exact Tools
-revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. The ledger now records 21
-verified, 10 partial, and zero unverified requirements. It verifies the thin
-consumer boundary and deterministic model-data parity for typed outcomes,
-geometry, and attribution; it does not establish participant validity or a
-coaching strategy. R15.4 and nine other requirements remain partial, so epic
-#4142 remains fail closed and uncloseable.
 
 ### 2026-08-24 Python 3.12 Variation Tolerances, Morris Readiness, and Error Taxonomy (#4482)
 
 Version 1.17.101 hardens variation simulation and Morris authority service under Python 3.12:
-
 1. **Python 3.12 Tolerance**: Uses scale-normalized floating point comparison tolerances in variation simulation asserting numerical consistency within 1e-4 relative tolerance across Python 3.11 and 3.12 runtime environments.
 2. **Morris Authority Service Readiness**: Adds deterministic readiness and health probes for the Morris Authority Service to ensure robust background worker initialization.
 3. **Error Taxonomy Standardization**: Standardizes structured error taxonomy and error codes for simulation validation and calculation failures.
@@ -159,7 +42,6 @@ Version 1.17.101 hardens variation simulation and Morris authority service under
 ### 2026-08-24 Morris Metric Invariant Validation and Router Integrity (#4459, #4458)
 
 Version 1.17.100 hardens Morris screening validation across Python and TypeScript and clarifies integrity verification in the router:
-
 1. **Metric Invariant Validation**: Enforces numerical and mathematical realizability invariants on Morris screening metrics in `_metric_validation.py` and `response_contract.py`:
    - Non-negative magnitude invariants: $\mu^* \ge 0$, $\sigma \ge 0$, and $\text{SE}(\mu^*) \ge 0$.
    - Mean absolute effect bound: $\mu^* \ge |\mu|$ (derived from the triangle inequality over elementary effects).
@@ -171,7 +53,6 @@ Version 1.17.100 hardens Morris screening validation across Python and TypeScrip
 ### 2026-08-24 Orphaned Improvements Sync (#4493)
 
 Version 1.17.99 synchronizes four orphaned improvements:
-
 1. **DCR Glossary Definition**: Updates the Drift-Control Ratio glossary definition in `src/shared/python/ai/education.py` across Beginner, Intermediate, and Advanced expertise levels to the model-based mathematical state-space formulation ($\dot{x} = f(x) + G(x)u$, with supremum denominator over admissible control $\text{DCR}_{W,\mathcal{U}} = \|Wf\| / (\sup_{u \in \mathcal{U}(x)} \|WGu\| + \epsilon)$).
 2. **Test Module Filtering in Alias Finder**: Updates `SharedImportAliasFinder` in `src/shared/python/import_aliases.py` to decline `.tests.` or `.endswith(".tests")` module paths across both `find_spec` and `_parse`, preventing the alias finder from hijacking test module resolution.
 3. **R-squared Vectorized Optimization**: Optimizes R-squared coefficient of determination calculations in `src/shared/python/plot_engine/trendline.py` and `src/shared/python/signal_toolkit/fitting.py` using `np.vdot` to eliminate intermediate squared array allocations.
@@ -5312,20 +5193,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-25 | 1.18.15 | docs(manual, #4707/#4711 TOOLS-D1): add the strict repository-owned module inventory schema, deterministic tracked-file generator, LF-normalized per-module and source-tree SHA-256 integrity, conservative calculation/non-calculation classifications, maintainers, public surfaces, tests, ADRs, citations, units, chapters, and risk states for all 3,429 in-scope modules. Add fail-closed consumer/freshness tests and CI/pre-commit enforcement; retain 808 calculation candidates as provisional, one encoding blocker, an empty stable calculation registry, and all TOOLS-D2--D9 format/pathway/publication/approval boundaries. |
-| 2026-08-25 | 1.18.14 | docs(manual, #4707/#4709 TOOLS-D0): establish `manuals/tools` QMD as the sole editable engineering design-manual authority. Add a versioned fail-closed policy and empty inventory, ADR-007, agent rules, offline contract tests, and CI/pre-commit enforcement. Generated HTML, LaTeX, PDF, and DOCX remain non-editable and unapproved; calculation coverage, freshness, semantic/page/accessibility review, licenses, immutable digests, public projection, and human approval remain blocked through TOOLS-D1--D8. |
-| 2026-08-25 | 1.18.13 | docs(rate-of-closure, #4433/#4737/#4738): record protected V5.2 merge `4b4aec421f349d00cf9dc93289fda97af3845baa` and retain all partial scientific and human-review boundaries. |
-| 2026-08-25 | 1.18.12 | feat(rate-of-closure, #4433 V5.2): add fail-closed PR changed-path governance requiring material React, PyQt, and shared visual-authority changes to co-update the shared manifest, acceptance audit, and surface-specific first-viewport evidence before expensive E2E; advance the audit to 8 verified / 23 partial obligations without changing the seven R14.6 blockers or two human actions. |
-| 2026-08-25 | 1.18.11 | fix(rate-of-closure, #4735 / #4433 V0.1): extend the strict TypeScript visualization-manifest reader to the canonical purpose, nonempty unique prerequisite, and reciprocal-counterpart fields; add browser-side tamper falsifiers while preserving exact-field rejection and Python/React authority parity. |
-| 2026-08-25 | 1.18.10 | fix(rate-of-closure, #4433 V0.1): refresh the standalone React mirror's vendored visualization manifest from the canonical monorepo authority so Python 3.11, Python 3.12, and exact-wheel byte-parity gates consume the same purpose, prerequisite, and reciprocal-counterpart contract. |
-| 2026-08-25 | 1.18.9 | feat(rate-of-closure, #4433 V0.1): require bounded purpose, explicit data prerequisites, and an exact reciprocal React-to-PyQt counterpart for all 20 registered workspaces; enforce the immutable fail-closed contract and advance the visual-first audit to 7 verified / 24 partial obligations. |
-| 2026-08-25 | 1.18.8 | docs(governance): reconcile merge guidance with the live zero-approval `main` ruleset so pull requests and exact-head required checks remain mandatory without making `@dieterolson` or another named maintainer a standing release gate; retain optional risk/expertise review and all no-bypass, no-force-push, and stale-head prohibitions. |
-| 2026-08-25 | 1.18.7 | fix(ci): annotate exact public launch-monitor Git and SHA-256 identities as reviewed detect-secrets false positives in their test fixtures, preserving the unchanged baseline and restoring fail-closed scanner parity. |
-| 2026-08-25 | 1.18.6 | docs(rate-of-closure, #4433 / #4142 R14.6): add a fail-closed 31-item visual-first acceptance audit, bind every item to local evidence and exact gaps, verify the trusted initial-state run separately from incomplete all-state/manual evidence, and retain R14.6 as partial with seven blockers and two human actions. |
-| 2026-08-25 | 1.18.5 | docs(rate-of-closure, #4142 R15.4): add the consolidated public ensemble variation and sensitivity guide with mechanics/statistics distinctions, typed schema and persistence boundaries, method assumptions, deterministic quick start, verification commands, bounded performance evidence, falsification workflow, and explicit human/coaching limitations; add a fail-closed guide/ledger contract and retain nine remaining partial requirements. |
-| 2026-08-25 | 1.18.4 | fix(shared, #4493): annotate the `verdict` local in `ai/peer_review/coordinator.py::_gather_verdicts` to satisfy mypy's `no-any-return` check, which the `_audit.py` extraction surfaced by bringing the whole file back into the changed-file mypy pass. No behavior change. |
-| 2026-08-25 | 1.18.3 | fix(shared, #4493): finish syncing the DCR glossary entry to UpstreamDrift's exact corrected wording (withdraw the muscle-identification claim across all expertise levels), and extract `ai/peer_review/_audit_event` into its own `_audit.py` module so it is importable independently of `coordinator.py`. Also close a residual `np.sum(mask)` vs `mask.sum()` gap left over from the earlier #4681 partial fix. The `reporting/__init__.py` public-surface expansion (`REPORT_TEMPLATES`, `GLOBAL_REPORT_REGISTRY`, `AgenticSummaryGenerator`, `JinjaReportTemplate`) is deferred: it requires porting ~34KB across five new UpstreamDrift-only modules with an undeclared `jinja2` dependency, and the issue itself flags it as lower-confidence pending an ownership decision. |
-| 2026-08-24 | 1.18.0 | docs(rate-of-closure, #4142): bind R15.1--R15.3 to protected UpstreamDrift PR #9039 and immutable Tools revision `17474249b9267d0e73a779c1d72f231e7b8de39c`; retain 10 partial requirements and fail-closed epic status. |
 | 2026-08-24 | 1.17.100 | fix(morris, #4459, #4458): enforce Morris metric realizability invariants (mu* >= |mu|, sigma >= 0, standard_error >= 0, safe squaring magnitude bounds, exact sample-moment identity and wire clamp consistency matching TypeScript morrisMetricValidation.ts) in _metric_validation.py and response_contract.py; clarify router _validate_extended_result as a transport/pipeline integrity guard and validate reports via parse_morris_report; add mathematical correctness tests for known linear and constant response functions. |
 | 2026-08-24 | 1.17.99 | fix(shared, #4493): sync orphaned DCR glossary definition across expertise levels, test module filtering in import alias finder, np.vdot optimization for R-squared, and multi-directory internal package structure resolution. |
 | 2026-08-24 | 1.17.98 | fix(wind, #4513): replace GLSL fract(sin(x)) turbulence hash with deterministic 32-bit integer hash mixing across Python and TypeScript, eliminating cross-platform libm drift and restoring exact 1e-12 PyQt6/React parity fixture assertions. |
@@ -6614,14 +6481,6 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
   - Split `test_data_capture.py` into focused test suites: `test_data_capture_core.py` (246 LOC), `test_data_capture_records.py` (387 LOC), and `test_data_capture_queries.py` (352 LOC).
   - Removed grandfathered entries for `poll_runtime.py` and `test_data_capture.py` from `scripts/monolith_baseline.txt`.
 
-## 2026-08-24: Gitattributes LF Normalization (#4479)
+## 2026-08-26: Reduce GC pressure during CSV exports
 
-- **2026-08-24**: fix(repo, #4479) — Add standard LF line ending normalization rules (`text eol=lf`) to `.gitattributes` covering `*.yml`, `*.yaml`, `*.json`, `*.md`, `*.toml`, `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.sh`, and `*.rs`. Renormalized repository text files (`git add --renormalize .`), eliminating CRLF-stored GitHub workflow and source files that previously caused unalignable whole-file merge conflicts.
-
-## 2026-08-25: Morris Elementary-Effects Scale-Sensitive Test (#4455)
-
-- **2026-08-25**: test(variation, #4455) — Add `test_additive_fixture_nonunit_bounds_pins_normalization_convention` in `src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py`. The prior sole arithmetic check used unit `[0, 1]` factor bounds, under which "effect per normalized range" and "effect per physical unit" are numerically identical, so a units/scale bug in the elementary-effect divisor would pass silently. The new fixture uses non-unit, unequal bounds (span 10 and 20) for a linear response with known coefficients; the independently-derived expected `mu_star` values (`coefficient * span`) diverge sharply from the bare coefficients a per-physical-unit convention would produce, closing the gap. Verified against the current implementation (passes) and against a temporarily introduced units bug (fails while the unit-bounds test stays green); bug reverted before commit. Estimator implementation unchanged.
-
-## 2026-08-25: Coordinate-Explicit Pendulum Force Attribution (#4698)
-
-- **2026-08-25**: feat(swing_sim, movement_optimizer, pendulum_simulator, #4698) — Add provider schema `force-attribution/v1` and a typed, DbC-validated Christoffel/monomial attribution layer. In frozen relative-angle coordinates it separates cross-speed Coriolis and squared-speed terms, independently checks their sum against the model velocity bias, retains gravity, damping, applied control, and residual, and requires generalized-force and acceleration closure. The trajectory contract reports signed/absolute generalized and hand-path impulse, generalized/endpoint power and work, cancellation, tangent valid/total duration, mapping rank, and unreconstructed generalized residual. Zero-speed endpoints remain undefined; integration uses only intervals with two defined tangents. Force-only virtual-work mapping fails visibly when a joint couple cannot be represented. Movement Optimizer exposes an adapter and minimizer-compatible Coriolis hand-path impulse objective; the provider manifests advertise the schema and capabilities. Analytical, zero-velocity, rank/residual, integral, API, manifest, and invalid-input tests pin the downstream contract. Triple- and golfer-pendulum attribution remains fail-closed until a provider declares mass-matrix derivatives and endpoint semantics.
+- **2026-08-26**: perf(rate_of_closure) — Optimized CSV exports (`scalarEnsembleToCsv`, `capabilityAlternativesCsv`, `chipForgivenessStudyToCsv`) by replacing intermediate array allocations and chained `.map().join()` with single-pass `for`-loops and direct string concatenation. This drastically reduces GC pressure, peak memory consumption, and main-thread stalling during data-intensive hot paths.

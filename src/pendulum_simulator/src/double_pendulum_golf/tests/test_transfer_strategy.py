@@ -7,7 +7,6 @@ import pytest
 
 from double_pendulum_golf.transfer_strategy import (
     TransferSignals,
-    double_pendulum_force_attribution,
     double_pendulum_transfer_signals,
     pareto_front,
     summarize_transfer,
@@ -122,55 +121,3 @@ def test_double_adapter_preserves_coordinate_meaning_and_force_closure() -> None
     )
     assert np.all(signals.distal_kinetic_energy_j > 0.0)
     assert np.array_equal(signals.wrist_control_couple_nm, np.full(3, -4.0))
-
-
-def test_double_force_attribution_uses_canonical_source_split() -> None:
-    from double_pendulum_golf.physics import coriolis_vector
-
-    params = PendulumParams(m1=5.0, m2=0.3, L1=0.65, L2=1.1, mClub=0.2)
-    time = np.linspace(0.0, 0.2, 5)
-    states = np.column_stack(
-        (
-            0.2 + time,
-            -0.8 + 0.3 * time,
-            np.full(time.size, 3.0),
-            np.full(time.size, -4.0),
-        )
-    )
-    result = SimulationResult(
-        t=time,
-        states=states,
-        params=params,
-        torque_func=lambda _: (12.0, -2.0),
-    )
-
-    attribution = double_pendulum_force_attribution(result)
-
-    expected_bias = np.stack(
-        [coriolis_vector(row[1], row[2], row[3], params) for row in states]
-    )
-    actual_bias = -(
-        attribution.components["coriolis"].generalized_drive_nm
-        + attribution.components["squared_speed"].generalized_drive_nm
-        + attribution.components["velocity_residual"].generalized_drive_nm
-    )
-    np.testing.assert_allclose(actual_bias, expected_bias, atol=1e-12)
-    assert attribution.metrics["coriolis"].signed_tangent_impulse_n_s is not None
-
-
-def test_double_force_attribution_fails_closed_on_unmodeled_terms() -> None:
-    from double_pendulum_golf.physics import TorqueClamp
-
-    result = SimulationResult(
-        t=np.array([0.0, 0.1]),
-        states=np.zeros((2, 4)),
-        params=PendulumParams(m1=5.0, m2=0.3, L1=0.65, L2=1.1, mu1=0.1),
-        torque_func=lambda _: (0.0, 0.0),
-    )
-    with pytest.raises(ValueError, match="Coulomb"):
-        double_pendulum_force_attribution(result)
-
-    result.params = PendulumParams(m1=5.0, m2=0.3, L1=0.65, L2=1.1)
-    result.clamp = TorqueClamp(10.0, 10.0)
-    with pytest.raises(ValueError, match="clamp"):
-        double_pendulum_force_attribution(result)

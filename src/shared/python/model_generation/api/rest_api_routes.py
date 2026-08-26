@@ -840,7 +840,7 @@ class ModelGenerationAPI:
             )
         except (PermissionError, OSError, ValueError, TypeError) as e:
             return APIResponse.error(f"Mesh processing failed: {e}")
-        except Exception:  # noqa: BLE001 - fallback for unexpected mesh parse errors
+        except Exception:
             logger.warning("Mesh parser failed", exc_info=True)
             return APIResponse.error("Mesh processing failed")
         finally:

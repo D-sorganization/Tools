@@ -32,8 +32,6 @@ describe("visualization tab manifest governance", () => {
     const entries = visualizationTabs("react");
     expect(entries.map((entry) => entry.tabId)).toEqual(PRIMARY_VIEW_IDS);
     expect(auditRegisteredVisualizationTabs("react", PRIMARY_VIEW_IDS)).toEqual([]);
-    expect(entries.every((entry) => entry.purpose.trim().length > 0)).toBe(true);
-    expect(entries.every((entry) => entry.dataPrerequisites.length > 0)).toBe(true);
     expect(entries.every((entry) => entry.primaryVisualLocator.length > 0)).toBe(true);
     expect(entries.every((entry) =>
       Object.keys(entry.states).sort().join("|") === "empty|error|loading|result",
@@ -68,20 +66,6 @@ describe("visualization tab manifest governance", () => {
       value.tabs.push(structuredClone(value.tabs[0]));
     }],
     ["extra field", (value: MutableManifest) => { value.tabs[0].extra = true; }],
-    ["empty purpose", (value: MutableManifest) => { value.tabs[0].purpose = ""; }],
-    ["empty prerequisites", (value: MutableManifest) => {
-      value.tabs[0].data_prerequisites = [];
-    }],
-    ["duplicate prerequisite", (value: MutableManifest) => {
-      const prerequisites = value.tabs[0].data_prerequisites as string[];
-      prerequisites.push(prerequisites[0]);
-    }],
-    ["missing counterpart", (value: MutableManifest) => {
-      value.tabs[0].counterpart_tab_id = "absent";
-    }],
-    ["nonreciprocal counterpart", (value: MutableManifest) => {
-      value.tabs[10].counterpart_tab_id = "plots";
-    }],
     ["classification-landmark mismatch", (value: MutableManifest) => {
       value.tabs[0].landmark_kind = "semantic-content";
       value.tabs[0].minimum_visible_height_px = 1;
