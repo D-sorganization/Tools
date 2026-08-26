@@ -12,6 +12,7 @@ import pytest
 
 from scripts.tools_formula_traceability_contract import (
     FormulaTraceabilityError,
+    TraceabilityDocuments,
     load_traceability_documents,
     verify_formula_traceability,
 )
@@ -27,7 +28,7 @@ EXPECTED_FORMULA_IDS = (
 def _mutated_documents(
     document_name: str,
     mutation: Callable[[dict[str, Any]], None],
-) -> object:
+) -> TraceabilityDocuments:
     documents = load_traceability_documents(REPO_ROOT)
     payload = copy.deepcopy(getattr(documents, document_name))
     mutation(payload)

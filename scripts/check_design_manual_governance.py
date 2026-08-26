@@ -21,6 +21,10 @@ from scripts.design_manual_contract import (
     is_valid_revision,
 )
 from scripts.render_tools_design_manual import check_manual
+from scripts.tools_formula_traceability_contract import (
+    FormulaTraceabilityError,
+    verify_formula_traceability,
+)
 from scripts.tools_exemplar_contract import (
     ExemplarContractError,
     verify_exemplar_repository,
@@ -202,6 +206,7 @@ def _verify_chapter_contract(policy: dict[str, object]) -> None:
             "contract_schema",
             "registry_schema",
             "linter",
+            "formula_traceability_checker",
             "registered_chapter_count",
             "next_owner",
         },
@@ -209,7 +214,7 @@ def _verify_chapter_contract(policy: dict[str, object]) -> None:
     _equal(chapter_contract["owner_subepic"], 4717, "chapter contract owner")
     _equal(
         chapter_contract["status"],
-        "qualified-one-exemplar-generated-unapproved",
+        "qualified-one-exemplar-full-family-traceability-generated-unapproved",
         "chapter contract status",
     )
     expected_paths = {
@@ -222,6 +227,9 @@ def _verify_chapter_contract(policy: dict[str, object]) -> None:
             "manuals/tools/schemas/textbook-chapter-registry.schema.json"
         ),
         "linter": "scripts/lint_tools_textbook_chapters.py",
+        "formula_traceability_checker": (
+            "scripts/tools_formula_traceability_contract.py"
+        ),
     }
     for field, expected in expected_paths.items():
         _equal(
@@ -338,7 +346,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.4.0",
+        "tools/design-manual-governance/1.5.0",
         "schema version",
     )
     program = _object(
@@ -575,6 +583,7 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
     registry = _load(root.joinpath(*registry_path.parts))
     calculation_count = verify_calculation_registry(registry)
     chapter_summary = verify_textbook_chapters(root)
+    verify_formula_traceability(root)
     verify_exemplar_repository(root)
     qmd_count = _verify_manual_tree(root, source_path)
     _verify_context(root, policy)
@@ -610,6 +619,7 @@ def main() -> int:
     except (
         DesignManualGovernanceError,
         TextbookChapterError,
+        FormulaTraceabilityError,
         ExemplarContractError,
         ToolsModuleInventoryError,
         OSError,

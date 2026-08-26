@@ -27,10 +27,25 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.23                                    |
+| **Spec Version**        | 1.18.24                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Full Derivation-Family Traceability (#4707 / TOOLS-D3 (#4717))
+
+Version 1.18.24 closes the D3 completion-audit gap with
+`tools-textbook-chapter-registry/1.1.0`. Every registered calculation now owns
+at least one complete derivation family with explicit assumptions, dimensions,
+domains, numerical method, uncertainty/limitations, claims, and stable formula
+IDs. The deterministic resolver proves each formula bidirectionally against its
+manual anchor, public symbol and source path, exact test node, source citation,
+executable worked example, bounded claim, and every rendered artifact declared
+by the calculation authority. Missing, renamed, private, placeholder, orphaned,
+or asymmetrical mappings fail closed. The D-plane calculation supplies the
+first qualified family while remaining model-conditioned and
+`verified-unapproved`; scientific, artifact, accessibility, publication, and
+human approvals remain blocked under later subepics.
 
 ### 2026-08-26 Exemplar Engineering Manuals (#4707 / TOOLS-D4 (#4720))
 
@@ -50,7 +65,7 @@ fail-closed under TOOLS-D5 through TOOLS-D9.
 ### 2026-08-26 Required Textbook Chapter Contract (#4707 / TOOLS-D3 (#4717))
 
 Version 1.18.21 adds the strict `tools-textbook-chapter-contract/1.0.0`
-and `tools-textbook-chapter-registry/1.0.0` consumer contracts. Every future
+and initial `tools-textbook-chapter-registry/1.0.0` consumer contracts. Every future
 registered calculation chapter must provide fourteen ordered textbook sections
 covering purpose, DbC, coordinates and time, units, derivation, algorithms,
 implementation symbols, failures, uncertainty, V&V, limits, examples,
@@ -5356,6 +5371,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.24 | fix(manual, #4707/#4717 TOOLS-D3): require full derivation-family assumptions, dimensions, domains, numerical method, uncertainty/limitations, and stable formula IDs that resolve bidirectionally to manual anchors, public symbols/source paths, exact tests, citations, executable examples, bounded claims, and every declared rendered artifact. Reject placeholders plus missing, renamed, orphaned, or asymmetric mappings while retaining generated-unapproved and human-review boundaries. |
 | 2026-08-26 | 1.18.23 | fix(manual, #4707/#4720 TOOLS-D4): classify the deterministic source-commit assertion as public integrity evidence for detect-secrets while retaining repository-wide fail-closed scanning. |
 | 2026-08-26 | 1.18.22 | docs(manual, #4707/#4720 TOOLS-D4): add strict exemplar coverage schema and typed consumer, register the model-conditioned `TOOLS-DPLANE-GEOMETRY` pathway with source/symbol/equation/unit/test/golden-fixture/chapter traceability, project evidence onto both owning module rows, and add the first fourteen-section textbook exemplar. Retain markerless mocap as explicitly blocked on unmerged #4708/#4734 and all artifacts as generated-unapproved pending later review and publication gates. |
 | 2026-08-26 | 1.18.21 | fix(manual, #4707/#4717 TOOLS-D3): classify the public required-section SHA-256 as deterministic integrity evidence with a single-line detect-secrets allowlist, while retaining repository-wide fail-closed secret scanning. |

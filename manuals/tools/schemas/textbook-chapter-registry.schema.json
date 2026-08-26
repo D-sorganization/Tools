@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.d-sorganization.org/tools/textbook-chapter-registry/1.0.0.json",
+  "$id": "https://schemas.d-sorganization.org/tools/textbook-chapter-registry/1.1.0.json",
   "title": "Tools textbook chapter registry",
   "type": "object",
   "additionalProperties": false,
@@ -15,7 +15,7 @@
     "chapters"
   ],
   "properties": {
-    "schema_version": { "const": "tools-textbook-chapter-registry/1.0.0" },
+    "schema_version": { "const": "tools-textbook-chapter-registry/1.1.0" },
     "manual_id": { "const": "tools" },
     "contract_schema_version": {
       "const": "tools-textbook-chapter-contract/1.0.0"
@@ -23,12 +23,7 @@
     "release_status": { "const": "provisional" },
     "owner": { "type": "string", "minLength": 1 },
     "review_owner": { "type": "string", "minLength": 1 },
-    "blockers": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
-    },
+    "blockers": { "$ref": "#/$defs/nonemptyUniqueStrings" },
     "chapters": {
       "type": "array",
       "items": { "$ref": "#/$defs/chapter" }
@@ -54,6 +49,98 @@
         "summary": { "type": "string", "minLength": 1 }
       }
     },
+    "implementationSymbol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "symbol"],
+      "properties": {
+        "path": { "type": "string", "pattern": "^[^\\\\]+\\.py$" },
+        "symbol": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "statement",
+        "evidence_class",
+        "authority_status",
+        "manual_anchor"
+      ],
+      "properties": {
+        "claim_id": { "type": "string", "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$" },
+        "statement": { "type": "string", "minLength": 20 },
+        "evidence_class": { "const": "model-conditioned" },
+        "authority_status": { "const": "verified-unapproved" },
+        "manual_anchor": { "type": "string", "pattern": "^#[a-z0-9]+(?:-[a-z0-9]+)*$" }
+      }
+    },
+    "formula": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "formula_id",
+        "manual_anchor",
+        "implementation_symbols",
+        "verification_tests",
+        "citation_ids",
+        "worked_example_ids",
+        "claim_ids",
+        "rendered_artifact_ids"
+      ],
+      "properties": {
+        "formula_id": { "type": "string", "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$" },
+        "manual_anchor": { "type": "string", "pattern": "^#[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "implementation_symbols": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/implementationSymbol" }
+        },
+        "verification_tests": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "citation_ids": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "worked_example_ids": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "claim_ids": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "rendered_artifact_ids": { "$ref": "#/$defs/nonemptyUniqueStrings" }
+      }
+    },
+    "derivationFamily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family_id",
+        "calculation_id",
+        "assumptions",
+        "dimensions",
+        "domains",
+        "numerical_method",
+        "uncertainty_and_limitations",
+        "claims",
+        "formulas"
+      ],
+      "properties": {
+        "family_id": { "type": "string", "pattern": "^tools\\.derivation\\.[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "calculation_id": { "type": "string", "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$" },
+        "assumptions": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "dimensions": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "domains": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "numerical_method": { "type": "string", "minLength": 20 },
+        "uncertainty_and_limitations": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "claims": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/claim" }
+        },
+        "formulas": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/formula" }
+        }
+      }
+    },
     "chapter": {
       "type": "object",
       "additionalProperties": false,
@@ -70,25 +157,15 @@
         "verification_tests",
         "source_citations",
         "limitations",
+        "derivation_families",
         "revision_history"
       ],
       "properties": {
-        "chapter_id": {
-          "type": "string",
-          "pattern": "^tools\\.textbook\\.[a-z0-9._-]+$"
-        },
-        "path": {
-          "type": "string",
-          "pattern": "^manuals/tools/chapters/[a-z0-9][a-z0-9-]*\\.qmd$"
-        },
+        "chapter_id": { "type": "string", "pattern": "^tools\\.textbook\\.[a-z0-9._-]+$" },
+        "path": { "type": "string", "pattern": "^manuals/tools/chapters/[a-z0-9][a-z0-9-]*\\.qmd$" },
         "title": { "type": "string", "minLength": 1 },
-        "chapter_version": {
-          "type": "string",
-          "pattern": "^(0|[1-9][0-9]*)\\.[0-9]+\\.[0-9]+$"
-        },
-        "authority_status": {
-          "enum": ["provisional", "verified-unapproved", "approved"]
-        },
+        "chapter_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.[0-9]+\\.[0-9]+$" },
+        "authority_status": { "enum": ["provisional", "verified-unapproved", "approved"] },
         "owner": { "type": "string", "minLength": 1 },
         "review_owner": { "type": "string", "minLength": 1 },
         "calculation_ids": { "$ref": "#/$defs/nonemptyUniqueStrings" },
@@ -96,6 +173,12 @@
         "verification_tests": { "$ref": "#/$defs/nonemptyUniqueStrings" },
         "source_citations": { "$ref": "#/$defs/nonemptyUniqueStrings" },
         "limitations": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "derivation_families": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/derivationFamily" }
+        },
         "revision_history": {
           "type": "array",
           "minItems": 1,

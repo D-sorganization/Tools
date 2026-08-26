@@ -67,6 +67,8 @@ REQUIRED_UPDATE_FILES = [
     "manuals/tools/textbook-chapters.json",
     "manuals/tools/schemas/textbook-chapter-contract.schema.json",
     "manuals/tools/schemas/textbook-chapter-registry.schema.json",
+    "scripts/tools_formula_traceability_contract.py",
+    "scripts/tools_formula_traceability_resolvers.py",
     "manuals/tools/exemplar-coverage.json",
     "manuals/tools/schemas/exemplar-coverage.schema.json",
     "SPEC.md",

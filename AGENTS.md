@@ -27,8 +27,10 @@ pinned `manuals/tools/toolchain-lock.json`; never edit files in
 module-inventory extension classifies every tracked implementation module and
 uses LF-normalized content hashes; conservative calculation detection remains
 provisional until stable pathways and review are supplied. Missing inventory,
-required textbook sections, stable IDs, typed traceability,
-freshness, provenance, licensing, page review, accessibility review, or approval
+required textbook sections, complete derivation-family assumptions, dimensions,
+domains, numerical methods, uncertainty/limits, stable formula IDs, or
+bidirectional formula-to-symbol/source/test/citation/example/claim/artifact
+traceability, freshness, provenance, licensing, page review, accessibility review, or approval
 keeps release blocked. Never copy private Tools_Private content into this manual.
 An exemplar may claim `verified-unapproved` only when its calculation, chapter,
 module, source, consumer, test, and golden-fixture links all resolve. An absent

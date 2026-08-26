@@ -59,6 +59,44 @@ def _descriptor() -> dict[str, Any]:
         "verification_tests": ["tests/test_fixture.py::test_fixture"],
         "source_citations": ["fixture-source-2026"],
         "limitations": ["Fixture evidence is not engineering approval."],
+        "derivation_families": [
+            {
+                "family_id": "tools.derivation.fixture",
+                "calculation_id": "TOOLS-FIXTURE",
+                "assumptions": ["Fixture assumption with governed content."],
+                "dimensions": ["Fixture quantities are dimensionless."],
+                "domains": ["Fixture domain is finite input data."],
+                "numerical_method": "Fixture deterministic calculation method.",
+                "uncertainty_and_limitations": [
+                    "Fixture uncertainty is not engineering authority."
+                ],
+                "claims": [
+                    {
+                        "claim_id": "TOOLS-FIXTURE-CLAIM",
+                        "statement": "Fixture claim used only by structural loader tests.",
+                        "evidence_class": "model-conditioned",
+                        "authority_status": "verified-unapproved",
+                        "manual_anchor": "#fixture-formula",
+                    }
+                ],
+                "formulas": [
+                    {
+                        "formula_id": "TOOLS-FIXTURE-FORMULA",
+                        "manual_anchor": "#fixture-formula",
+                        "implementation_symbols": [
+                            {"path": "src/fixture.py", "symbol": "fixture"}
+                        ],
+                        "verification_tests": [
+                            "tests/test_fixture.py::test_fixture"
+                        ],
+                        "citation_ids": ["fixture-source-2026"],
+                        "worked_example_ids": ["fixture-example"],
+                        "claim_ids": ["TOOLS-FIXTURE-CLAIM"],
+                        "rendered_artifact_ids": ["fixture.html"],
+                    }
+                ],
+            }
+        ],
         "revision_history": [
             {
                 "version": "1.0.0",
@@ -99,7 +137,7 @@ def test_current_contract_and_registry_are_versioned_and_fail_closed() -> None:
 
     assert contract.schema_version == "tools-textbook-chapter-contract/1.0.0"
     assert len(contract.required_sections) == 14
-    assert registry.schema_version == "tools-textbook-chapter-registry/1.0.0"
+    assert registry.schema_version == "tools-textbook-chapter-registry/1.1.0"
     assert registry.release_status == "provisional"
     assert tuple(chapter.chapter_id for chapter in registry.chapters) == (
         "tools.textbook.swing-rate-of-closure-dplane",
