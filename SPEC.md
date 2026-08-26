@@ -27,10 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.9                                     |
+| **Spec Version**        | 1.18.10                                    |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 Vendored Workspace Authority Parity (#4433 V0.1)
+
+Version 1.18.10 refreshes the standalone React mirror's vendored visualization
+manifest from the canonical monorepo source after V0.1 added purpose,
+prerequisite, and reciprocal-counterpart fields. The repository-owned
+byte-equality gates now prove the installed web artifact and canonical Python
+reader consume the same workspace authority.
 
 ### 2026-08-25 Cross-Surface Workspace Authority (#4433 V0.1)
 
@@ -5256,6 +5264,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.10 | fix(rate-of-closure, #4433 V0.1): refresh the standalone React mirror's vendored visualization manifest from the canonical monorepo authority so Python 3.11, Python 3.12, and exact-wheel byte-parity gates consume the same purpose, prerequisite, and reciprocal-counterpart contract. |
 | 2026-08-25 | 1.18.9 | feat(rate-of-closure, #4433 V0.1): require bounded purpose, explicit data prerequisites, and an exact reciprocal React-to-PyQt counterpart for all 20 registered workspaces; enforce the immutable fail-closed contract and advance the visual-first audit to 7 verified / 24 partial obligations. |
 | 2026-08-25 | 1.18.8 | docs(governance): reconcile merge guidance with the live zero-approval `main` ruleset so pull requests and exact-head required checks remain mandatory without making `@dieterolson` or another named maintainer a standing release gate; retain optional risk/expertise review and all no-bypass, no-force-push, and stale-head prohibitions. |
 | 2026-08-25 | 1.18.7 | fix(ci): annotate exact public launch-monitor Git and SHA-256 identities as reviewed detect-secrets false positives in their test fixtures, preserving the unchanged baseline and restoring fail-closed scanner parity. |

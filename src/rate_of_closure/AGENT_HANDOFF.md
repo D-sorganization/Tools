@@ -71,9 +71,10 @@ validity or coaching strategy.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
-tier. PR #4733 at `a25de6ac7` makes V0.1 verified by requiring purpose,
-prerequisites, and reciprocal counterparts for all 20 workspaces. The candidate
-is 7 verified / 24 partial; seven blockers and two human actions remain.
+tier. PR #4733 makes V0.1 verified by requiring purpose, prerequisites, and
+reciprocal counterparts for all 20 workspaces, with the standalone React mirror
+refreshed from that exact authority. The candidate is 7 verified / 24 partial;
+seven blockers and two human actions remain.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
