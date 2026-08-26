@@ -73,7 +73,9 @@ def _descriptor() -> dict[str, Any]:
                 "claims": [
                     {
                         "claim_id": "TOOLS-FIXTURE-CLAIM",
-                        "statement": "Fixture claim used only by structural loader tests.",
+                        "statement": (
+                            "Fixture claim used only by structural loader tests."
+                        ),
                         "evidence_class": "model-conditioned",
                         "authority_status": "verified-unapproved",
                         "manual_anchor": "#fixture-formula",

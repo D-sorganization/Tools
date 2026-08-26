@@ -21,13 +21,13 @@ from scripts.design_manual_contract import (
     is_valid_revision,
 )
 from scripts.render_tools_design_manual import check_manual
-from scripts.tools_formula_traceability_contract import (
-    FormulaTraceabilityError,
-    verify_formula_traceability,
-)
 from scripts.tools_exemplar_contract import (
     ExemplarContractError,
     verify_exemplar_repository,
+)
+from scripts.tools_formula_traceability_contract import (
+    FormulaTraceabilityError,
+    verify_formula_traceability,
 )
 from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,

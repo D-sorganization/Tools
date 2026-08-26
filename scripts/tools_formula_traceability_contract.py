@@ -8,8 +8,8 @@ from typing import cast
 
 from scripts.tools_formula_traceability_resolvers import (
     ChapterTraceabilityContext,
-    FormulaTraceabilityError,
     FormulaResolverContext,
+    FormulaTraceabilityError,
     TraceabilityDocuments,
     assert_public_symbol,
     assert_test_target,
