@@ -40,14 +40,20 @@ without an explicit model-scenario contract.
 
 ## Exemptions
 
-Future freshness exemptions must be structured, narrowly scoped, justified,
+Freshness failures are release-blocking. The TOOLS-D1 module baseline is
+recomputed from tracked implementation and governed configuration files by
+`python -m scripts.build_tools_module_inventory --check`; later TOOLS-D6 work
+must extend freshness from the file baseline to stable calculation pathways.
+Future exemptions must be structured, narrowly scoped, justified,
 owned, reviewed, and expiring. An exemption cannot authorize an equation,
 scientific claim, artifact, operating use, license transfer, or public
 projection.
 
 ## Current Boundary
 
-TOOLS-D0 establishes governance only. The empty calculation registry is honest
-evidence that TOOLS-D1 has not completed the inventory. No completeness,
-multi-format reproducibility, page inspection, accessibility, or publication
-claim is made by this scaffold.
+TOOLS-D1 establishes a complete file-level denominator for its declared tracked
+scope. Its conservative detector labels calculation candidates `provisional`;
+it does not establish stable calculation identity, equation correctness,
+validity ranges, uncertainty, or approval. Those pathways remain empty and
+blocked pending TOOLS-D3 through TOOLS-D9. No multi-format reproducibility,
+page inspection, accessibility, or publication claim is made by this source.

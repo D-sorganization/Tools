@@ -20,6 +20,10 @@ from scripts.design_manual_contract import (
     DesignManualGovernanceSummary,
     is_valid_revision,
 )
+from scripts.tools_module_inventory_contract import (
+    ToolsModuleInventoryError,
+)
+from scripts.tools_module_inventory_storage import read_inventory
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = PurePosixPath("config/design_manual_governance.json")
@@ -205,7 +209,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.0.0",
+        "tools/design-manual-governance/1.1.0",
         "schema version",
     )
     program = _object(
@@ -213,13 +217,22 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4709, "next_subepic": 4711},
+        {"epic": 4707, "current_subepic": 4711, "next_subepic": 4712},
         "program",
     )
     manual_id, source_path = _verify_source(document)
     _equal(document["contracts"], EXPECTED_CONTRACTS, "shared contracts")
     inventory = _object(
-        document["calculation_inventory"], "inventory", {"path", "owner_subepic"}
+        document["calculation_inventory"],
+        "inventory",
+        {
+            "path",
+            "owner_subepic",
+            "module_manifest",
+            "module_schema",
+            "module_shard_schema",
+            "current_status",
+        },
     )
     _equal(
         _safe_path(inventory["path"], "inventory path"),
@@ -227,6 +240,26 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
         "inventory path",
     )
     _equal(inventory["owner_subepic"], 4711, "inventory owner")
+    _equal(
+        _safe_path(inventory["module_manifest"], "module manifest"),
+        PurePosixPath("manuals/tools/manifests/module-inventory.json"),
+        "module manifest",
+    )
+    _equal(
+        _safe_path(inventory["module_schema"], "module schema"),
+        PurePosixPath("manuals/tools/schemas/module-inventory.schema.json"),
+        "module schema",
+    )
+    _equal(
+        _safe_path(inventory["module_shard_schema"], "module shard schema"),
+        PurePosixPath("manuals/tools/schemas/module-inventory-shard.schema.json"),
+        "module shard schema",
+    )
+    _equal(
+        inventory["current_status"],
+        "provisional-module-baseline-pending-TOOLS-D3",
+        "inventory status",
+    )
     _verify_outputs(document)
     _verify_freshness(document)
     allowed = _verify_publication(document)
@@ -269,13 +302,13 @@ def verify_calculation_registry(registry: object) -> int:
             raise DesignManualGovernanceError(
                 "approved registry requires calculations, immutable commit, and no blockers"
             )
-    elif status == "blocked-inventory-required":
+    elif status == "provisional":
         if calculations or not blockers or document["inventory_commit"] is not None:
             raise DesignManualGovernanceError(
-                "blocked registry requires no calculations, null commit, and blockers"
+                "unapproved registry requires no calculations, null commit, and blockers"
             )
     else:
-        raise DesignManualGovernanceError("release status is unsupported in TOOLS-D0")
+        raise DesignManualGovernanceError("release status is unsupported")
     for blocker in blockers:
         item = _object(blocker, "registry blocker", {"id", "owner", "resolution"})
         for field, value in item.items():
@@ -326,12 +359,19 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             )
     _equal(
         context["required_gate"],
-        "python -m scripts.check_design_manual_governance",
+        (
+            "python -m scripts.check_design_manual_governance && "
+            "python -m scripts.build_tools_module_inventory --check"
+        ),
         "required gate",
     )
     for name in ("AGENTS.md", "CLAUDE.md"):
         text = (root / name).read_text(encoding="utf-8")
-        for phrase in ("manuals/tools", "scripts.check_design_manual_governance"):
+        for phrase in (
+            "manuals/tools",
+            "scripts.check_design_manual_governance",
+            "scripts.build_tools_module_inventory",
+        ):
             if phrase not in text:
                 raise DesignManualGovernanceError(f"{name} is missing manual context")
 
@@ -345,8 +385,23 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
     )
     manual_id, source_path, allowed = verify_governance_policy(policy)
     inventory = _object(
-        policy["calculation_inventory"], "inventory", {"path", "owner_subepic"}
+        policy["calculation_inventory"],
+        "inventory",
+        {
+            "path",
+            "owner_subepic",
+            "module_manifest",
+            "module_schema",
+            "module_shard_schema",
+            "current_status",
+        },
     )
+    for field in ("module_manifest", "module_schema", "module_shard_schema"):
+        governed_path = _safe_path(inventory[field], field.replace("_", " "))
+        if not root.joinpath(*governed_path.parts).is_file():
+            raise DesignManualGovernanceError(f"{field.replace('_', ' ')} is missing")
+    manifest_path = _safe_path(inventory["module_manifest"], "module manifest")
+    read_inventory(root, root.joinpath(*manifest_path.parts))
     registry_path = _safe_path(inventory["path"], "inventory path")
     registry = _load(root.joinpath(*registry_path.parts))
     calculation_count = verify_calculation_registry(registry)
@@ -380,7 +435,12 @@ def main() -> int:
     """Run the governance gate with deterministic diagnostics."""
     try:
         summary = verify_repository()
-    except (DesignManualGovernanceError, OSError, json.JSONDecodeError) as error:
+    except (
+        DesignManualGovernanceError,
+        ToolsModuleInventoryError,
+        OSError,
+        json.JSONDecodeError,
+    ) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
     print(

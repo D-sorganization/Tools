@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-import copy
 import json
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 import pytest
 from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
 
 from scripts.build_tools_module_inventory import (
     build_inventory,
@@ -20,20 +21,37 @@ from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
     load_inventory,
 )
+from scripts.tools_module_inventory_storage import read_inventory
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "manuals" / "tools" / "manifests" / "module-inventory.json"
 SCHEMA = ROOT / "manuals" / "tools" / "schemas" / "module-inventory.schema.json"
+SHARD_SCHEMA = (
+    ROOT / "manuals" / "tools" / "schemas" / "module-inventory-shard.schema.json"
+)
 
 
-def _payload() -> dict[str, Any]:
+@lru_cache(maxsize=1)
+def _index() -> dict[str, Any]:
     payload = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    assert isinstance(payload, dict)
+    return payload
+
+
+@lru_cache(maxsize=1)
+def _payload() -> dict[str, Any]:
+    payload = read_inventory(ROOT, MANIFEST)
     assert isinstance(payload, dict)
     return payload
 
 
 def _entry(path: str) -> dict[str, Any]:
     return next(item for item in _payload()["entries"] if item["path"] == path)
+
+
+def _with_first_entry(payload: dict[str, Any], **updates: object) -> dict[str, Any]:
+    first = {**payload["entries"][0], **updates}
+    return {**payload, "entries": [first, *payload["entries"][1:]]}
 
 
 def test_inventory_is_deterministic_and_fresh() -> None:
@@ -45,8 +63,28 @@ def test_inventory_is_deterministic_and_fresh() -> None:
 def test_inventory_conforms_to_owned_strict_schema() -> None:
     """Consumers can validate the Tools extension without producer imports."""
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+    shard_schema = json.loads(SHARD_SCHEMA.read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
-    Draft202012Validator(schema).validate(_payload())
+    Draft202012Validator.check_schema(shard_schema)
+    registry = Registry().with_resources(
+        [
+            (schema["$id"], Resource.from_contents(schema)),
+            (shard_schema["$id"], Resource.from_contents(shard_schema)),
+        ]
+    )
+    Draft202012Validator(schema, registry=registry).validate(_index())
+    shard_validator = Draft202012Validator(shard_schema, registry=registry)
+    for descriptor in _index()["shards"]:
+        shard = json.loads((ROOT / descriptor["path"]).read_text(encoding="utf-8"))
+        shard_validator.validate(shard)
+
+
+def test_index_and_shards_stay_below_repository_file_budget() -> None:
+    paths = [MANIFEST, *[ROOT / item["path"] for item in _index()["shards"]]]
+    assert all(path.stat().st_size < 1_000_000 for path in paths)
+    assert sum(item["entry_count"] for item in _index()["shards"]) == len(
+        _payload()["entries"]
+    )
 
 
 def test_inventory_denominator_covers_every_governed_module() -> None:
@@ -129,11 +167,15 @@ def test_every_entry_exposes_required_traceability_and_lf_integrity() -> None:
         assert len(entry["risk_tags"]) == len(set(entry["risk_tags"]))
         assert set(entry["traceability"]) == {
             "adr_paths",
+            "artifact_sha256",
             "chapter_paths",
             "citation_refs",
+            "equation_refs",
             "public_surfaces",
+            "public_routes",
             "test_paths",
             "unit_mentions",
+            "validation_paths",
         }
         for path in entry["traceability"]["test_paths"]:
             assert (ROOT / path).is_file()
@@ -170,31 +212,26 @@ def test_consumer_loader_rejects_unknown_version_fields_and_duplicates() -> None
     assert view.calculation_count > 0
     assert view.non_calculation_count > 0
 
-    wrong_version = copy.deepcopy(payload)
-    wrong_version["schema_version"] = "tools-module-inventory/2.0.0"
+    wrong_version = {**payload, "schema_version": "tools-module-inventory/2.0.0"}
     with pytest.raises(ToolsModuleInventoryError, match="schema version"):
         load_inventory(wrong_version)
 
-    extra_field = copy.deepcopy(payload)
-    extra_field["alternate_authority"] = "private-registry"
+    extra_field = {**payload, "alternate_authority": "private-registry"}
     with pytest.raises(ToolsModuleInventoryError, match="fields differ"):
         load_inventory(extra_field)
 
-    duplicate = copy.deepcopy(payload)
-    duplicate["entries"].append(copy.deepcopy(duplicate["entries"][0]))
+    duplicate = {**payload, "entries": [*payload["entries"], payload["entries"][0]]}
     with pytest.raises(ToolsModuleInventoryError, match="duplicate module"):
         load_inventory(duplicate)
 
 
 def test_consumer_loader_rejects_unsafe_paths_and_invalid_hashes() -> None:
     payload = _payload()
-    unsafe = copy.deepcopy(payload)
-    unsafe["entries"][0]["path"] = "../outside.py"
+    unsafe = _with_first_entry(payload, path="../outside.py")
     with pytest.raises(ToolsModuleInventoryError, match="normalized relative path"):
         load_inventory(unsafe)
 
-    invalid_hash = copy.deepcopy(payload)
-    invalid_hash["entries"][0]["content_sha256_lf"] = "A" * 64
+    invalid_hash = _with_first_entry(payload, content_sha256_lf="A" * 64)
     with pytest.raises(ToolsModuleInventoryError, match="SHA-256"):
         load_inventory(invalid_hash)
 

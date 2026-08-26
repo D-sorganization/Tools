@@ -31,9 +31,9 @@ def test_repository_adopts_one_qmd_authority_and_blocks_release() -> None:
     summary = verify_repository(REPO_ROOT)
 
     assert summary.manual_id == "tools"
-    assert summary.canonical_qmd_count == 2
+    assert summary.canonical_qmd_count == 3
     assert summary.calculation_count == 0
-    assert summary.release_status == "blocked-inventory-required"
+    assert summary.release_status == "provisional"
     assert summary.public_projection_allowed is False
 
 
@@ -48,13 +48,13 @@ def test_policy_reuses_program_contracts_without_copying_schemas() -> None:
     assert not (REPO_ROOT / "schemas" / "publication-projection.schema.json").exists()
 
 
-def test_registry_is_fail_closed_until_tools_d1_inventory() -> None:
+def test_registry_is_fail_closed_until_stable_calculation_pathways() -> None:
     registry = _json(REGISTRY_PATH)
 
     assert verify_calculation_registry(registry) == 0
-    assert registry["release_status"] == "blocked-inventory-required"
+    assert registry["release_status"] == "provisional"
     assert registry["inventory_commit"] is None
-    assert registry["blockers"][0]["id"] == "TOOLS-D1-inventory-required"
+    assert registry["blockers"][0]["id"] == "TOOLS-D3-pathway-contract-required"
 
 
 @pytest.mark.parametrize(
@@ -119,9 +119,9 @@ def test_agent_context_exposes_update_and_artifact_rules() -> None:
         assert "manuals/tools" in text
         assert "scripts.check_design_manual_governance" in text
         assert "generated latex, pdf, docx, and html" in normalized
-    assert "TOOLS-D0 (#4709)" in spec
-    assert "TOOLS-D0 (#4709)" in handoff
+    assert "TOOLS-D1 (#4711)" in spec
     assert "TOOLS-D1 (#4711)" in handoff
+    assert "module-inventory.json" in handoff
 
 
 def test_manual_tree_contains_no_editable_release_artifacts() -> None:
