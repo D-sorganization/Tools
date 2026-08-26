@@ -54,13 +54,17 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   `4f9c2e92287706e1f97af729d12de01ce1f19a5c`) failed exactly as intended on
   OGLaptop-3 run `33010751031`, job `98316067789`, with the missing governed
   formula-traceability module under explicit `python -m pytest -q -n 0`.
-- Active D3 remediation adds registry 1.1.0 and fail-closed family/formula
-  resolution for assumptions, dimensions, domains, numerical method,
-  uncertainty/limits, public symbols, exact tests, citations, worked examples,
-  claims, and all four rendered formats. DeskComputer validation remains
-  intentionally interrupted by the capacity drain; do not run local tests,
-  hooks, renders, or builds. Use only the OGLaptop validation wrapper with
-  explicit `-n 0` until that operational hold is lifted.
+- D3 remediation implementation head `f92ec1eece73268cbd38ab328f9ea91f35870217`
+  (tree `639fc4bd387718799b5b1e50ef43a25bec791692`) adds registry 1.1.0
+  and fail-closed family/formula resolution for assumptions, dimensions,
+  domains, numerical method, uncertainty/limits, public symbols, exact tests,
+  citations, worked examples, claims, and all four rendered formats. OGLaptop-3
+  run `33012383491`, job `98321732957`, passed 38/38 focused tests with explicit
+  `-n 0`; focused Ruff check and format-check passed on all eight changed Python
+  files. DeskComputer validation remains intentionally interrupted by the
+  capacity drain. Module-inventory regeneration, pinned artifact rendering and
+  visual QA, protected PR checks/review/merge, and post-merge evidence remain
+  blockers; do not run those locally until the operational hold is lifted.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers
