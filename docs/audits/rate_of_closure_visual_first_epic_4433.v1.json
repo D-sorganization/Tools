@@ -5,7 +5,7 @@
   "audited_main_commit": "57b443201b402fc110ec5623885c7e310d6ad6d3",
   "protected_run": "https://github.com/D-sorganization/Tools/actions/runs/32689177846",
   "overall_status": "partial",
-  "status_counts": { "verified": 6, "partial": 25 },
+  "status_counts": { "verified": 7, "partial": 24 },
   "r14_6_blocking_gaps": [
     "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
     "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
@@ -23,12 +23,14 @@
     {
       "requirement_id": "V0.1",
       "requirement": "Inventory every React and PyQt workspace, purpose, visual, prerequisites, states, and counterpart.",
-      "status": "partial",
-      "rationale": "All 20 surfaces and state labels are registered, but purpose, data prerequisites, and explicit counterpart identity are not complete fields.",
-      "evidence_files": ["src/rate_of_closure/visualization_tabs.v1.json"],
-      "gaps": [
-        "Add purpose, prerequisite, and matched-counterpart authority for every tab."
-      ]
+      "status": "verified",
+      "rationale": "All 20 surfaces now carry bounded purpose and data-prerequisite fields plus an exact reciprocal React-to-PyQt counterpart enforced by the strict immutable reader.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/visualization_tab_manifest.py",
+        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "V0.2",
