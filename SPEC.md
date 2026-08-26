@@ -27,16 +27,26 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.8                                     |
+| **Spec Version**        | 1.18.9                                     |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
 
+### 2026-08-25 Cross-Surface Workspace Authority (#4433 V0.1)
+
+Version 1.18.9 extends the strict visualization-tab manifest so every React and
+PyQt workspace declares a bounded scientific purpose, explicit data
+prerequisites, and one exact counterpart on the other surface. The immutable
+reader rejects empty or duplicate prerequisites, missing counterparts, and
+nonreciprocal pairs. This advances the 31-item fail-closed audit to seven
+verified and 24 partial obligations without changing the seven broader R14.6
+blockers or promoting diagnostic evidence to human approval.
+
 ### 2026-08-25 Fail-Closed Visual-First Acceptance Audit (#4433 / #4142 R14.6)
 
 Version 1.18.6 maps all 29 V0--V5 checklist items plus the per-tab acceptance
-matrix and completion condition into a source-resolving evidence contract. Six
-requirements are verified and 25 remain partial. Trusted main run
+matrix and completion condition into a source-resolving evidence contract. Seven
+requirements are verified and 24 remain partial. Trusted main run
 `32689177846` proves the registered initial React and PyQt visibility,
 automated-accessibility, performance, and baseline tiers executed successfully;
 it does not prove all state, narrow/high-DPI, representative-dataset, manual-AT,
@@ -5246,6 +5256,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.9 | feat(rate-of-closure, #4433 V0.1): require bounded purpose, explicit data prerequisites, and an exact reciprocal React-to-PyQt counterpart for all 20 registered workspaces; enforce the immutable fail-closed contract and advance the visual-first audit to 7 verified / 24 partial obligations. |
 | 2026-08-25 | 1.18.8 | docs(governance): reconcile merge guidance with the live zero-approval `main` ruleset so pull requests and exact-head required checks remain mandatory without making `@dieterolson` or another named maintainer a standing release gate; retain optional risk/expertise review and all no-bypass, no-force-push, and stale-head prohibitions. |
 | 2026-08-25 | 1.18.7 | fix(ci): annotate exact public launch-monitor Git and SHA-256 identities as reviewed detect-secrets false positives in their test fixtures, preserving the unchanged baseline and restoring fail-closed scanner parity. |
 | 2026-08-25 | 1.18.6 | docs(rate-of-closure, #4433 / #4142 R14.6): add a fail-closed 31-item visual-first acceptance audit, bind every item to local evidence and exact gaps, verify the trusted initial-state run separately from incomplete all-state/manual evidence, and retain R14.6 as partial with seven blockers and two human actions. |

@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-24
+> Last updated: 2026-08-25
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -69,11 +69,11 @@ R14.6 remains partial with visualization epic #4433 open. #4142 is therefore
 not closeable. These controls prove provenance and model-data parity, not human
 validity or coaching strategy.
 
-Protected PR #4705 on branch `docs/4433-acceptance-audit`, exact audit commit
-`eade2d2c25c0b87648aee5fe4b2cda8982e23d9f`, maps all 31 #4433 obligations to
-local evidence: 6 verified, 25 partial. Trusted main run `32689177846` proves
-the initial React/PyQt visibility, automated accessibility, performance, and
-baseline tier. Seven R14.6 blockers and two human actions remain explicit.
+PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
+the initial React/PyQt visibility, accessibility, performance, and baseline
+tier. Stacked branch `feat/4433-tab-authority` makes V0.1 verified by requiring
+purpose, prerequisites, and reciprocal counterparts for all 20 workspaces. The
+candidate is 7 verified / 24 partial; seven blockers and two human actions remain.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 
