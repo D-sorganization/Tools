@@ -17,7 +17,8 @@ CHAPTER_PATH_ROOT = PurePosixPath("manuals/tools/chapters")
 SEMVER_PATTERN = re.compile(r"^[1-9]\d*\.\d+\.\d+$|^0\.\d+\.\d+$")
 DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 REQUIRED_SECTIONS_SHA256 = (
-    "e03dd54ba296e458a0b4a5562358b77ee2073a1d9cc98aa78195d62c198aac80"
+    # Public deterministic contract digest, not a credential.
+    "e03dd54ba296e458a0b4a5562358b77ee2073a1d9cc98aa78195d62c198aac80"  # pragma: allowlist secret
 )
 
 

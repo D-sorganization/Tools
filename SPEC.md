@@ -27,14 +27,14 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.20                                    |
+| **Spec Version**        | 1.18.21                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-26 Required Textbook Chapter Contract (#4707 / TOOLS-D3 (#4717))
 
-Version 1.18.20 adds the strict `tools-textbook-chapter-contract/1.0.0`
+Version 1.18.21 adds the strict `tools-textbook-chapter-contract/1.0.0`
 and `tools-textbook-chapter-registry/1.0.0` consumer contracts. Every future
 registered calculation chapter must provide fourteen ordered textbook sections
 covering purpose, DbC, coordinates and time, units, derivation, algorithms,
@@ -45,6 +45,9 @@ unsorted or absent traceability, placeholders, private-source references, and
 unsupported approval promotion. The registry remains intentionally empty and
 provisional pending TOOLS-D4 exemplars; rendered artifacts remain
 `generated-unapproved` pending TOOLS-D4 through TOOLS-D8.
+The required-section SHA-256 is public deterministic integrity evidence, not a
+credential; its inline detect-secrets allowlist is deliberately narrow and
+leaves the repository-wide scanner fail closed for every other value.
 
 ### 2026-08-26 Reproducible Multi-Format Renderer (#4707 / TOOLS-D2 (#4712))
 
@@ -5338,6 +5341,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.21 | fix(manual, #4707/#4717 TOOLS-D3): classify the public required-section SHA-256 as deterministic integrity evidence with a single-line detect-secrets allowlist, while retaining repository-wide fail-closed secret scanning. |
 | 2026-08-26 | 1.18.20 | docs(manual, #4707/#4717 TOOLS-D3): reconcile the strict textbook chapter and registry contracts on protected D2, enforce fourteen ordered calculation-level sections, traceability and status invariants, LF-normalized evidence hashes, CI/pre-commit checks, and generated-but-unapproved manual content. Retain an empty provisional registry pending TOOLS-D4 exemplars and later freshness, review, and publication authority. |
 | 2026-08-26 | 1.18.19 | fix(manual, #4707/#4712 TOOLS-D2): separate external render-tool assertions from generic Python CI. Tests report an explicit unavailable skip without Pandoc/Quarto/TeX, execute under the locked local toolchain, and remain protected by the dedicated Docs Governance lane, which installs Pandoc and invokes artifact freshness and semantic verification directly and fail closed. |
 | 2026-08-26 | 1.18.18 | fix(manual, #4707/#4712 TOOLS-D2): repair protected CI integration by declaring and locking the PDF semantic dependency, keeping PDF imports lazy for non-PDF consumers, proving import isolation without the optional stack, and returning the verified XML serialization as typed bytes. Refresh the governed inventory and retain generated-unapproved authority. |

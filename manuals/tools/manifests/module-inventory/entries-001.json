@@ -3981,10 +3981,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13176,
+      "bytes_lf": 13266,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db09d7b9e803f0277fa546794bf1980d8f697e05e107295c860a222a108ef3b6",
+      "content_sha256_lf": "ca0bb1c99b2b776e0cae1d7b6011cb2b4baf021db2134f682120474014b25992",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-TEXTBOOK-CHAPTER-CONTRACT-PY-9BCB3E15D610",
       "language": "python",
