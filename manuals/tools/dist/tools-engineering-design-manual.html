@@ -92,10 +92,11 @@ design manual. It is a governance scaffold, not a released engineering
 manual. The file-level module inventory is complete for its declared
 tracked-source denominator, but all detected calculation candidates
 remain provisional and the stable calculation-pathway registry remains
-empty. Release remains blocked by TOOLS-D3 through TOOLS-D9. Generated
-HTML, LaTeX, PDF, and DOCX artifacts are reproducible engineering
-records under TOOLS-D2, but none is approved for publication or
-engineering use.</p>
+empty. The required textbook chapter contract is qualified, but no
+exemplar chapter is registered. Release remains blocked by TOOLS-D4
+through TOOLS-D9. Generated HTML, LaTeX, PDF, and DOCX artifacts are
+reproducible engineering records under TOOLS-D2, but none is approved
+for publication or engineering use.</p>
 <h1 id="documentation-authority-and-release-boundary">Documentation
 Authority and Release Boundary</h1>
 <h2 id="purpose">Purpose</h2>
@@ -150,7 +151,7 @@ and DOCX. Its generated artifacts remain non-editable and unapproved.
 The conservative inventory does not establish stable calculation
 identity, equation correctness, validity ranges, uncertainty,
 page/accessibility approval, or publication authority. Those pathways
-remain empty and blocked pending TOOLS-D3 through TOOLS-D9.</p>
+remain empty and blocked pending TOOLS-D4 through TOOLS-D9.</p>
 <h1 id="module-and-calculation-candidate-inventory">Module and
 Calculation-Candidate Inventory</h1>
 <h2 id="purpose-and-denominator">Purpose and Denominator</h2>
@@ -168,8 +169,8 @@ contiguous index, entry count, and first/last path. Both the index and
 every shard remain below the repository’s one-megabyte file budget;
 consumers reassemble one logical view only after verifying every shard
 and the exact declared shard set.</p>
-<p>At this baseline, 3,434 modules are classified: 808 conservative
-calculation candidates and 2,626 non-calculation modules. One legacy
+<p>At this baseline, 3,437 modules are classified: 808 conservative
+calculation candidates and 2,629 non-calculation modules. One legacy
 JavaScript file has a non-UTF-8 encoding and remains explicitly blocked
 rather than being decoded by an implicit platform default. These counts
 describe inventory coverage only; they are not test coverage,
@@ -188,8 +189,9 @@ H_{\mathrm{tree}} = \mathrm{SHA256}\left(
 <p>where rows are ordered by normalized repository-relative path. This
 contract makes the result independent of Windows checkout line endings
 while retaining content changes. The path-derived identifier is not a
-stable calculation ID; TOOLS-D3 owns stable equation-to-code identities
-that survive file movement.</p>
+stable calculation ID; TOOLS-D3 owns the structural chapter contract;
+TOOLS-D4 owns exemplar registration and stable equation-to-code
+identities that survive file movement.</p>
 <h2 id="classification-contract">Classification Contract</h2>
 <p>A module is a <code>calculation</code> candidate only when its
 normalized path contains a governed calculation marker, such as
@@ -222,7 +224,7 @@ unknown fields, unsupported versions, unsafe paths, invalid hashes,
 duplicate identifiers, unsorted duplicate traceability arrays,
 denominator mismatches, and unsupported state values.</p>
 <p>Any tracked in-scope module addition, removal, rename, or normalized
-content change makes <code>--check</code> fail until the manifest is
+content change makes inventory check mode fail until the manifest is
 regenerated and reviewed. A green inventory check proves only
 deterministic classification and freshness of this file-level baseline.
 Public projection remains blocked until the remaining stable-pathway,
@@ -283,7 +285,94 @@ owner, explicit blockers, and a null immutable source commit while this
 local stack is not a merged authority. A consumer must reject unknown
 fields, versions, formats, paths, hashes, status promotion, or semantic
 divergence.</p>
-<h1 class="unnumbered" id="references">References</h1>
+<h1 id="references">References</h1>
+<h1 id="required-textbook-chapter-contract">Required Textbook Chapter
+Contract</h1>
+<h2 id="outcome-and-authority-1">Outcome and Authority</h2>
+<p>TOOLS-D3 defines the public structure that every calculation-level
+textbook chapter must satisfy before registration. The contract is
+structural and traceability-focused: passing it does not approve an
+equation, implementation, dataset, artifact, license, or engineering
+use. The registry is intentionally empty until TOOLS-D4 supplies
+reviewed exemplar chapters.</p>
+<p>Two version identifiers are fixed:</p>
+<ul>
+<li>Contract: <code>tools-textbook-chapter-contract/1.0.0</code></li>
+<li>Registry: <code>tools-textbook-chapter-registry/1.0.0</code></li>
+</ul>
+<p>Their repository-owned JSON Schemas allow external consumers to
+validate shape without importing producer code. The Python consumer then
+applies stricter invariants for normalized paths, ordering, uniqueness,
+authority state, and QMD content.</p>
+<h2 id="required-chapter-anatomy">Required Chapter Anatomy</h2>
+<p>Fourteen ordered sections are mandatory. A registered chapter must
+present, in order: Purpose and Scope; Design by Contract; Coordinates,
+Frames, and Time; Units and Dimensions; Derivation and Assumptions;
+Algorithm; Implementation Symbols; Error and Failure Semantics;
+Uncertainty and Sensitivity; Verification and Validation; Limits and
+Applicability; Worked Examples; References and Provenance; and Revision
+History.</p>
+<p>The contract also declares mandatory third-level headings. For
+example, Design by Contract requires Preconditions, Postconditions, and
+Invariants. Coordinates requires frame, handedness, and time
+declarations. Verification and Validation requires test evidence and
+acceptance criteria. Exact ordered headings remove format-dependent
+inference and make an omitted obligation a deterministic failure.</p>
+<h2 id="registration-and-traceability">Registration and
+Traceability</h2>
+<p>Each registered chapter has one stable chapter ID and one normalized
+QMD path. Its descriptor binds the chapter version and provisional
+authority to an owner, review owner, stable calculation IDs, module IDs,
+verification tests, source citations, explicit limitations, and revision
+history. All traceability arrays are non-empty, unique, and sorted;
+duplicate chapter IDs or paths are rejected.</p>
+<p>An <code>approved</code> chapter claim is unsupported by this D3
+contract because later subepics own page, accessibility, publication,
+and human-review evidence. D3 accepts only <code>provisional</code> and
+<code>verified-unapproved</code> chapter descriptors. The manual and
+every generated representation therefore remain
+<code>generated-unapproved</code>.</p>
+<h2 id="linter-algorithm-and-evidence">Linter Algorithm and
+Evidence</h2>
+<p>The linter loads the contract and registry through strict typed
+consumers, resolves each registered path beneath
+<code>manuals/tools/chapters</code>, decodes UTF-8, and rejects
+forbidden placeholder or private-source tokens. It extracts level-2 and
+level-3 headings, compares them with the exact ordered contract, and
+checks that every required section has governed body content.</p>
+<p>For normalized chapter text
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+and ordered section blocks
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>i</mi></msub><annotation encoding="application/x-tex">S_i</annotation></semantics></math>,
+the linter records deterministic evidence as</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>T</mi></msub><mo>=</mo><mrow><mi mathvariant="normal">SHA256</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">LF</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>T</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>h</mi><mi>i</mi></msub><mo>=</mo><mrow><mi mathvariant="normal">SHA256</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mrow><mi mathvariant="normal">LF</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>S</mi><mi>i</mi></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">
+h_T = \operatorname{SHA256}(\operatorname{LF}(T)), \qquad
+h_i = \operatorname{SHA256}(\operatorname{LF}(S_i)).
+</annotation></semantics></math></p>
+<p>These hashes detect byte-level content drift while remaining
+independent of Windows or POSIX checkout line endings. They are lint
+evidence, not scientific approval or an immutable publication
+digest.</p>
+<h2 id="failure-and-ownership-boundaries">Failure and Ownership
+Boundaries</h2>
+<p>Missing files, invalid UTF-8, unsafe paths, unknown fields or
+versions, duplicate identities, unsorted traceability, missing or
+reordered headings, empty governed content, placeholders, private-source
+references, unsupported status promotion, and stale generated artifacts
+all fail closed. The linter does not synthesize equations, units,
+sources, examples, tests, or limitations.</p>
+<p>TOOLS-D4 owns exemplar chapter registration. TOOLS-D5 expands phased
+module coverage, TOOLS-D6 owns executable freshness, TOOLS-D7 owns
+rendered and accessibility review, and TOOLS-D8 owns immutable public
+projection and human approval.</p>
+<h2 id="consumer-workflow">Consumer Workflow</h2>
+<p>Authors edit only canonical QMD and the machine-readable chapter
+registry. Run these commands in order:</p>
+<pre class="text"><code>python -m scripts.lint_tools_textbook_chapters
+python -m scripts.render_tools_design_manual --render</code></pre>
+<p>They regenerate and check all four representations. The combined
+governance, inventory, chapter, and artifact freshness gates must pass
+before review.</p>
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-pandoc-manual" class="csl-entry" role="listitem">
 Pandoc contributors. 2026. <em>Pandoc User’s Guide</em>. Pandoc. <a href="https://pandoc.org/MANUAL.html">https://pandoc.org/MANUAL.html</a>.

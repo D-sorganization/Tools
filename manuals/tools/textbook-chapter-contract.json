@@ -1,0 +1,98 @@
+{
+  "schema_version": "tools-textbook-chapter-contract/1.0.0",
+  "manual_id": "tools",
+  "owner_subepic": 4717,
+  "status": "qualified-generated-unapproved",
+  "minimum_section_characters": 20,
+  "forbidden_tokens": ["FIXME", "TBD", "TODO", "Tools_Private"],
+  "required_sections": [
+    {
+      "id": "purpose-and-scope",
+      "heading": "Purpose and Scope",
+      "purpose": "Define the engineering question, intended audience, owned authority, and excluded uses.",
+      "required_subheadings": []
+    },
+    {
+      "id": "design-by-contract",
+      "heading": "Design by Contract",
+      "purpose": "State typed preconditions, postconditions, invariants, and fail-closed authority boundaries.",
+      "required_subheadings": ["Preconditions", "Postconditions", "Invariants"]
+    },
+    {
+      "id": "coordinates-frames-and-time",
+      "heading": "Coordinates, Frames, and Time",
+      "purpose": "Declare frames, axes, handedness, origins, transforms, clocks, and synchronization conventions.",
+      "required_subheadings": [
+        "Coordinate Frames",
+        "Axis and Handedness",
+        "Time Convention"
+      ]
+    },
+    {
+      "id": "units-and-dimensions",
+      "heading": "Units and Dimensions",
+      "purpose": "Bind every symbol and interface quantity to canonical units and dimensional checks.",
+      "required_subheadings": ["Symbol and Unit Table", "Dimensional Checks"]
+    },
+    {
+      "id": "derivation-and-assumptions",
+      "heading": "Derivation and Assumptions",
+      "purpose": "Derive the governing equations from explicit assumptions and cite their authority.",
+      "required_subheadings": ["Assumptions", "Derivation"]
+    },
+    {
+      "id": "algorithm",
+      "heading": "Algorithm",
+      "purpose": "Specify deterministic inputs, ordered procedure, outputs, complexity, and resource limits.",
+      "required_subheadings": ["Inputs", "Procedure", "Outputs"]
+    },
+    {
+      "id": "implementation-symbols",
+      "heading": "Implementation Symbols",
+      "purpose": "Map equations and variables to stable public code symbols and module surfaces.",
+      "required_subheadings": ["Public Symbols", "Source Mapping"]
+    },
+    {
+      "id": "error-and-failure-semantics",
+      "heading": "Error and Failure Semantics",
+      "purpose": "Define invalid, missing, unsupported, cancellation, recovery, and degraded states.",
+      "required_subheadings": ["Error Conditions", "Recovery and Cancellation"]
+    },
+    {
+      "id": "uncertainty-and-sensitivity",
+      "heading": "Uncertainty and Sensitivity",
+      "purpose": "Quantify uncertainty sources, propagation, sensitivity, and model-conditioned claims.",
+      "required_subheadings": ["Uncertainty Sources", "Sensitivity"]
+    },
+    {
+      "id": "verification-and-validation",
+      "heading": "Verification and Validation",
+      "purpose": "Connect code tests, analytical checks, datasets, tolerances, and acceptance criteria.",
+      "required_subheadings": ["Test Evidence", "Acceptance Criteria"]
+    },
+    {
+      "id": "limits-and-applicability",
+      "heading": "Limits and Applicability",
+      "purpose": "Bound validity ranges, known limitations, unsupported conditions, and extrapolation rules.",
+      "required_subheadings": ["Validity Range", "Known Limitations"]
+    },
+    {
+      "id": "worked-examples",
+      "heading": "Worked Examples",
+      "purpose": "Provide reproducible typed inputs, intermediate values, outputs, and interpretation.",
+      "required_subheadings": ["Example Inputs", "Example Results"]
+    },
+    {
+      "id": "references-and-provenance",
+      "heading": "References and Provenance",
+      "purpose": "Record source identities, licenses, provenance, evidence classes, and unresolved approvals.",
+      "required_subheadings": ["References", "Provenance"]
+    },
+    {
+      "id": "revision-history",
+      "heading": "Revision History",
+      "purpose": "Record versioned calculation, contract, evidence, and limitation changes.",
+      "required_subheadings": ["Revision Record"]
+    }
+  ]
+}

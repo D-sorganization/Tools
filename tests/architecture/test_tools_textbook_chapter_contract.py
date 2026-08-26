@@ -9,10 +9,13 @@ from typing import Any
 
 import pytest
 from jsonschema import Draft202012Validator
+
 from scripts.tools_textbook_chapter_contract import (
     TextbookChapterError,
     load_chapter_contract,
     load_chapter_registry,
+)
+from scripts.tools_textbook_chapter_lint import (
     verify_chapter_source,
     verify_textbook_chapters,
 )
@@ -100,6 +103,27 @@ def test_current_contract_and_registry_are_versioned_and_fail_closed() -> None:
     assert registry.release_status == "provisional"
     assert registry.chapters == ()
     assert registry.blockers[0].startswith("TOOLS-D4")
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda payload: payload["required_sections"][0].update(
+            heading="Purpose and Scope Drift"
+        ),
+        lambda payload: payload["required_sections"][1][
+            "required_subheadings"
+        ].reverse(),
+    ],
+)
+def test_contract_loader_rejects_shape_drift_without_a_version_change(
+    mutation: Any,
+) -> None:
+    payload = _json(CONTRACT_PATH)
+    mutation(payload)
+
+    with pytest.raises(TextbookChapterError, match="required section"):
+        load_chapter_contract(payload)
 
 
 @pytest.mark.parametrize(
@@ -203,6 +227,31 @@ def test_linter_rejects_order_placeholders_and_missing_subheadings(
     )
     with pytest.raises(TextbookChapterError, match="required subheadings"):
         verify_chapter_source(tmp_path, descriptor, contract)
+
+
+def test_linter_reports_missing_source_through_typed_contract(tmp_path: Path) -> None:
+    contract = load_chapter_contract(_json(CONTRACT_PATH))
+    registry_payload = _json(REGISTRY_PATH)
+    registry_payload["chapters"] = [_descriptor()]
+    descriptor = load_chapter_registry(registry_payload, contract).chapters[0]
+
+    with pytest.raises(TextbookChapterError, match="chapter source cannot be read"):
+        verify_chapter_source(tmp_path, descriptor, contract)
+
+
+def test_registry_rejects_nonchronological_revision_history() -> None:
+    contract = load_chapter_contract(_json(CONTRACT_PATH))
+    registry_payload = _json(REGISTRY_PATH)
+    descriptor = _descriptor()
+    descriptor["chapter_version"] = "2.0.0"
+    descriptor["revision_history"] = [
+        {"version": "1.0.0", "date": "2026-08-27", "summary": "Later row."},
+        {"version": "2.0.0", "date": "2026-08-26", "summary": "Earlier row."},
+    ]
+    registry_payload["chapters"] = [descriptor]
+
+    with pytest.raises(TextbookChapterError, match="chronological"):
+        load_chapter_registry(registry_payload, contract)
 
 
 def test_valid_chapter_and_empty_repository_registry_are_deterministic(

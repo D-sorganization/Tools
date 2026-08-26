@@ -1,0 +1,10 @@
+{
+  "schema_version": "tools-textbook-chapter-registry/1.0.0",
+  "manual_id": "tools",
+  "contract_schema_version": "tools-textbook-chapter-contract/1.0.0",
+  "release_status": "provisional",
+  "owner": "Tools documentation epic #4707",
+  "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
+  "blockers": ["TOOLS-D4 exemplar chapters are not yet registered."],
+  "chapters": []
+}

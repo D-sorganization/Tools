@@ -13,8 +13,9 @@ This is the canonical editable QMD source for the Tools engineering design
 manual. It is a governance scaffold, not a released engineering manual. The
 file-level module inventory is complete for its declared tracked-source
 denominator, but all detected calculation candidates remain provisional and
-the stable calculation-pathway registry remains empty. Release remains blocked
-by TOOLS-D3 through TOOLS-D9. Generated HTML, LaTeX, PDF, and DOCX artifacts
+the stable calculation-pathway registry remains empty. The required textbook
+chapter contract is qualified, but no exemplar chapter is registered. Release
+remains blocked by TOOLS-D4 through TOOLS-D9. Generated HTML, LaTeX, PDF, and DOCX artifacts
 are reproducible engineering records under TOOLS-D2, but none is approved for
 publication or engineering use.
 
@@ -23,3 +24,5 @@ publication or engineering use.
 {{< include chapters/01-module-inventory.qmd >}}
 
 {{< include chapters/02-reproducible-rendering.qmd >}}
+
+{{< include chapters/03-textbook-chapter-contract.qmd >}}

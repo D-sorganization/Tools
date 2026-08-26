@@ -25,6 +25,8 @@ from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
 )
 from scripts.tools_module_inventory_storage import read_inventory
+from scripts.tools_textbook_chapter_contract import TextbookChapterError
+from scripts.tools_textbook_chapter_lint import verify_textbook_chapters
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = PurePosixPath("config/design_manual_governance.json")
@@ -184,6 +186,53 @@ def _verify_freshness(policy: dict[str, object]) -> None:
     _equal(paths, list(map(PurePosixPath, IMPACTED_PATHS)), "impacted paths")
 
 
+def _verify_chapter_contract(policy: dict[str, object]) -> None:
+    chapter_contract = _object(
+        policy["chapter_contract"],
+        "chapter contract",
+        {
+            "owner_subepic",
+            "status",
+            "contract",
+            "registry",
+            "contract_schema",
+            "registry_schema",
+            "linter",
+            "registered_chapter_count",
+            "next_owner",
+        },
+    )
+    _equal(chapter_contract["owner_subepic"], 4717, "chapter contract owner")
+    _equal(
+        chapter_contract["status"],
+        "qualified-empty-generated-unapproved",
+        "chapter contract status",
+    )
+    expected_paths = {
+        "contract": "manuals/tools/textbook-chapter-contract.json",
+        "registry": "manuals/tools/textbook-chapters.json",
+        "contract_schema": (
+            "manuals/tools/schemas/textbook-chapter-contract.schema.json"
+        ),
+        "registry_schema": (
+            "manuals/tools/schemas/textbook-chapter-registry.schema.json"
+        ),
+        "linter": "scripts/lint_tools_textbook_chapters.py",
+    }
+    for field, expected in expected_paths.items():
+        _equal(
+            _safe_path(chapter_contract[field], field),
+            PurePosixPath(expected),
+            field,
+        )
+    _equal(
+        chapter_contract["registered_chapter_count"],
+        0,
+        "registered chapter count",
+    )
+    _equal(chapter_contract["next_owner"], "TOOLS-D4", "chapter next owner")
+
+
 def _verify_publication(policy: dict[str, object]) -> bool:
     publication = _object(
         policy["publication"],
@@ -213,7 +262,7 @@ def _verify_publication(policy: dict[str, object]) -> bool:
     )
     _equal(
         publication["current_approval"],
-        "blocked-pending-TOOLS-D3-through-D8",
+        "blocked-pending-TOOLS-D4-through-D8",
         "publication approval",
     )
     evidence = [
@@ -257,7 +306,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.2.0",
+        "tools/design-manual-governance/1.3.0",
         "schema version",
     )
     program = _object(
@@ -265,7 +314,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4712, "next_subepic": 4717},
+        {"epic": 4707, "current_subepic": 4717, "next_subepic": 4720},
         "program",
     )
     manual_id, source_path = _verify_source(document)
@@ -305,11 +354,12 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         inventory["current_status"],
-        "provisional-module-baseline-pending-TOOLS-D3",
+        "provisional-module-baseline-chapter-contract-qualified-pending-TOOLS-D4",
         "inventory status",
     )
     _verify_outputs(document)
     _verify_renderer(document)
+    _verify_chapter_contract(document)
     _verify_freshness(document)
     allowed = _verify_publication(document)
     _verify_quality_license_git(document)
@@ -419,6 +469,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
         (
             "python -m scripts.check_design_manual_governance && "
             "python -m scripts.build_tools_module_inventory --check && "
+            "python -m scripts.lint_tools_textbook_chapters && "
             "python -m scripts.render_tools_design_manual --check"
         ),
         "required gate",
@@ -429,6 +480,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "manuals/tools",
             "scripts.check_design_manual_governance",
             "scripts.build_tools_module_inventory",
+            "scripts.lint_tools_textbook_chapters",
             "scripts.render_tools_design_manual",
         ):
             if phrase not in text:
@@ -465,6 +517,7 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
     registry_path = _safe_path(inventory["path"], "inventory path")
     registry = _load(root.joinpath(*registry_path.parts))
     calculation_count = verify_calculation_registry(registry)
+    chapter_summary = verify_textbook_chapters(root)
     qmd_count = _verify_manual_tree(root, source_path)
     _verify_context(root, policy)
     for schema in (
@@ -486,6 +539,7 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
         manual_id=manual_id,
         canonical_qmd_count=qmd_count,
         calculation_count=calculation_count,
+        textbook_chapter_count=chapter_summary.chapter_count,
         release_status=_text(registry_object["release_status"], "release status"),
         public_projection_allowed=allowed,
     )
@@ -497,6 +551,7 @@ def main() -> int:
         summary = verify_repository()
     except (
         DesignManualGovernanceError,
+        TextbookChapterError,
         ToolsModuleInventoryError,
         OSError,
         json.JSONDecodeError,
@@ -507,6 +562,7 @@ def main() -> int:
         "Design-manual governance verified: "
         f"{summary.canonical_qmd_count} QMD sources, "
         f"{summary.calculation_count} registered calculations, "
+        f"{summary.textbook_chapter_count} registered textbook chapters, "
         f"release={summary.release_status}."
     )
     return 0

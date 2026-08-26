@@ -31,8 +31,9 @@ def test_repository_adopts_one_qmd_authority_and_blocks_release() -> None:
     summary = verify_repository(REPO_ROOT)
 
     assert summary.manual_id == "tools"
-    assert summary.canonical_qmd_count == 4
+    assert summary.canonical_qmd_count == 5
     assert summary.calculation_count == 0
+    assert summary.textbook_chapter_count == 0
     assert summary.release_status == "provisional"
     assert summary.public_projection_allowed is False
 
@@ -54,7 +55,7 @@ def test_registry_is_fail_closed_until_stable_calculation_pathways() -> None:
     assert verify_calculation_registry(registry) == 0
     assert registry["release_status"] == "provisional"
     assert registry["inventory_commit"] is None
-    assert registry["blockers"][0]["id"] == "TOOLS-D3-pathway-contract-required"
+    assert registry["blockers"][0]["id"] == "TOOLS-D4-exemplar-pathways-required"
 
 
 @pytest.mark.parametrize(
@@ -121,7 +122,10 @@ def test_agent_context_exposes_update_and_artifact_rules() -> None:
         assert "generated latex, pdf, docx, and html" in normalized
     assert "TOOLS-D1 (#4711)" in spec
     assert "TOOLS-D1 (#4711)" in handoff
+    assert "TOOLS-D3 (#4717)" in spec
+    assert "TOOLS-D3 (#4717)" in handoff
     assert "module-inventory.json" in handoff
+    assert "lint_tools_textbook_chapters" in handoff
 
 
 def test_manual_tree_contains_only_governed_generated_and_style_artifacts() -> None:

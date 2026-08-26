@@ -11,6 +11,7 @@ import subprocess
 import zipfile
 from collections.abc import Mapping, Sequence
 from pathlib import Path
+from typing import cast
 from xml.etree import ElementTree
 
 from pypdf import PdfReader, PdfWriter
@@ -123,7 +124,10 @@ def _normalize_custom_properties(value: bytes) -> bytes:
         return value
     ElementTree.register_namespace("", CUSTOM_PROPERTY_NS)
     ElementTree.register_namespace("vt", CUSTOM_VALUE_NS)
-    return ElementTree.tostring(root, encoding="utf-8", xml_declaration=True)
+    return cast(
+        bytes,
+        ElementTree.tostring(root, encoding="utf-8", xml_declaration=True),
+    )
 
 
 def canonicalize_docx(path: Path) -> None:
@@ -297,7 +301,7 @@ def artifact_payload(
         "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
         "publication_approval": "blocked-pending-TOOLS-D7-D8",
         "blockers": [
-            "Stable calculation pathways remain pending TOOLS-D3.",
+            "Exemplar textbook chapters and stable pathways remain pending TOOLS-D4.",
             "Accessibility and page-review approval remain pending TOOLS-D7.",
             "Public projection and human approval remain pending TOOLS-D8.",
         ],
