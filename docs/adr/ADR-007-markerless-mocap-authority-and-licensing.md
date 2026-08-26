@@ -73,4 +73,4 @@ The system is local-first and no-cloud by default. Recording, biometric storage,
 - AST/API stability and strict JSON Schema tests.
 - DbC unit/property tests for identities, clocks, coordinates, observations, uncertainty, availability, and deterministic serialization.
 - Known-geometry, mixed-camera, timing-fault, reconstruction, C3D, clean-export, protected-CI, and post-merge gates defined in the acceptance program.
-- Coordinated consumer tests in UpstreamDrift and sanitized compatibility publication in AffineDrift.
+- Coordinated consumer tests in UpstreamDrift #9069, Gasification_Model impact qualification in #4751, and sanitized compatibility publication in AffineDrift.

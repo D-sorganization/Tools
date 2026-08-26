@@ -16,7 +16,7 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 ## Current branch
 
 - Branch: `feat/4708-mocap-authority-schemas`
-- Base: `origin/main` at `fb170ddb5`
+- Base: `origin/main` at `e76a7a214`
 - Worktree: `C:\Users\diete\Repositories\Tools-worktrees\4708-mocap-authority-schemas`
 
 ## Delivered in this slice
@@ -36,13 +36,16 @@ python -m ruff check <changed-python-files>
 python -m mypy <changed-python-files>
 ```
 
-Observed at `2c86e9168`: 26 focused tests passed; the nine mocap API modules
+Observed before the documentation-only rebase at `2c86e9168`: 26 focused tests passed; the nine mocap API modules
 exactly match their hand-edited baseline entries; Ruff format/check and mypy
 passed. The full suite reached 11,012 passed, 73 failed, and 8 errors before an
 xdist worker-replacement internal error. Failures were distributed across
 pre-existing subsystems; the repository-wide API test includes known non-mocap
 drift. Do not regenerate the full baseline. Full exact-HEAD export and protected
 CI remain mandatory before merge claims.
+
+Consumer coordination: UpstreamDrift #9069 owns schema adoption;
+Gasification_Model #4751 owns exact-Tools-SHA impact qualification.
 
 ## Do not
 
