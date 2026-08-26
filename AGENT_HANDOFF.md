@@ -22,7 +22,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. The R15.4 guide candidate advances the ledger to 22 verified and 9 partial requirements; R14.6 and eight other explicit gaps remain.                             |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. Merged PR #4703 advances R15.4 and the ledger to 22 verified / 9 partial; R14.6 and eight other explicit gaps remain.                                            |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
@@ -47,10 +47,13 @@ an exact 2026-08-25 snapshot and can change independently of this handoff.
 | #4677 | Automated v1.9.0 release bump                                    |
 | #4676 | Automated v1.8.0 release bump                                    |
 
-**Current #4142 state.** PRs #4669 and #4674 are merged. Protected UpstreamDrift
+**Current #4142 state.** PRs #4669 and #4674 are merged. Tools PR #4703 merged
+as `57b443201b402fc110ec5623885c7e310d6ad6d3` from exact contribution head
+`e1d8d098d038ae2cf6bc5ace7c4864ef1df05ed1`; the merge commit was verified as
+remote `main`. Protected UpstreamDrift
 PR #9039 consumes exact Tools revision
 `17474249b9267d0e73a779c1d72f231e7b8de39c` through a thin gateway with typed
-outcomes and deterministic parity gates. The R15.4 guide candidate advances
+outcomes and deterministic parity gates. PR #4703 advanced
 the ledger to 22 verified, 9 partial, and zero unverified items by consolidating
 theory, schemas, method assumptions, performance evidence, quick start,
 reproduction commands, falsifiers, and scientific limits. #4142 remains open
@@ -126,7 +129,7 @@ Note: `ruff format --check` reports four pre-existing failures under
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 2. Restore the isolated advisory benchmark lane through #4582.
 3. **Land the camera-cluster epic #4571** so #4466 can finally close.
-4. Close the 10 explicit #4142 partial gaps, beginning with R15.4 and #4433-owned R14.6; do not close the epic from cross-repository parity alone.
+4. Close the 9 remaining #4142 partial gaps, beginning with #4433-owned R14.6; do not close the epic from cross-repository parity alone.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
 6. #4125 H5: stand up the public release-management repo (cross-repo).
 7. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
