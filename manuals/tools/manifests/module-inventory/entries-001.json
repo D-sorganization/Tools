@@ -3299,10 +3299,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11873,
+      "bytes_lf": 12065,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "54490c8dfc37f84d10cbb48398a95f3d8861834579ebf8994d95832567dcf3b0",
+      "content_sha256_lf": "bc35f33bc7def13da2e772466adeee56c6d752e6935caf7e0f7953ab80366ce3",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MANUAL-ARTIFACTS-PY-9BC52A6BD306",
       "language": "python",

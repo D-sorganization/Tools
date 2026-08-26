@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import builtins
 import hashlib
+import importlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -206,6 +209,30 @@ def test_docx_canonicalization_removes_workspace_bibliography_path(
         custom = package.read("docProps/custom.xml").decode("utf-8")
     assert "manuals/tools/references.bib" in custom
     assert "worktree-a" not in custom
+
+
+def test_docx_artifact_helpers_import_without_optional_pdf_stack(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Non-PDF consumers must not require the documentation-only PDF stack."""
+    module_name = "scripts.tools_manual_artifacts"
+    original_import = builtins.__import__
+
+    def reject_pypdf(
+        name: str,
+        globals_: dict[str, object] | None = None,
+        locals_: dict[str, object] | None = None,
+        fromlist: tuple[str, ...] = (),
+        level: int = 0,
+    ) -> object:
+        if name == "pypdf" or name.startswith("pypdf."):
+            raise ModuleNotFoundError("pypdf intentionally unavailable")
+        return original_import(name, globals_, locals_, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", reject_pypdf)
+    sys.modules.pop(module_name, None)
+    imported = importlib.import_module(module_name)
+    assert callable(imported.canonicalize_docx)
 
 
 def test_checked_in_artifacts_are_fresh_and_semantically_equivalent() -> None:

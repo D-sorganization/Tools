@@ -66,6 +66,14 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   A detached-worktree replay exposed and then blocked Pandoc's absolute
   bibliography custom property; the canonical DOCX now records only
   `manuals/tools/references.bib`, with a cross-workspace byte-parity regression.
+- Protected PR #4744 exposed two D2 integration defects that were not present in
+  the documentation-only environment: core CI did not install the PDF semantic
+  dependency, and Mypy rejected `ElementTree.tostring` as an `Any` return. The
+  repair declares and locks `pypdf==6.15.0`, keeps PDF imports local so non-PDF
+  consumers retain dependency isolation, casts the verified bytes result, and
+  adds an import-without-PDF-stack regression. The repaired focused
+  renderer/governance/inventory slice passes 39/39; obtain fresh protected checks
+  at the exact new head before treating D2 or stacked D3 PR #4745 as deliverable.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers
