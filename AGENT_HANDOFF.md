@@ -7,6 +7,12 @@
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
 > Do not append dated entries here again.
 
+## Merge Governance
+
+- Use feature-branch pull requests and ordinary protected merges; all configured status checks must pass on the exact head.
+- The live `main` rules require zero approving reviews. Do not require or request a named maintainer's approval; `@dieterolson` is not a standing release gate. Optional review remains available for risk, expertise, or unresolved feedback.
+- Never use admin bypass, force-push, check bypass, or protection changes to merge a failing or stale head.
+
 ## Where This Repo Is Headed
 
 Tools is the D-sorganization fleet's shared engineering-tools monorepo (45+
