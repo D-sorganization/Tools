@@ -40,6 +40,7 @@ an exact 2026-08-25 snapshot and can change independently of this handoff.
 
 | PR    | Scope                                                            |
 | ----- | ---------------------------------------------------------------- |
+| #4705 | Fail-closed #4433 acceptance audit and R14.6 gap correction      |
 | #4687 | RotationConverter fixed-array JSX optimization                   |
 | #4686 | CSV-export allocation optimization                               |
 | #4685 | Immutable Upstream R15 evidence and #4142 handoff reconciliation |
@@ -60,7 +61,8 @@ reproduction commands, falsifiers, and scientific limits. #4142 remains open
 because R14.6 is gated by #4433 and eight other requirements retain explicit
 gaps. This is model-data and provenance evidence, not human or scientific
 validation.
-The `docs/4433-acceptance-audit` candidate at exact audit commit
+Protected PR #4705 carries the `docs/4433-acceptance-audit` candidate at exact
+audit commit
 `eade2d2c25c0b87648aee5fe4b2cda8982e23d9f` maps all 29 V0--V5 items plus the
 per-tab acceptance matrix and completion condition. Trusted run `32689177846`
 proves the initial React/PyQt tier, not all states or human approval.

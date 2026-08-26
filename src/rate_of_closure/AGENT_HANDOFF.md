@@ -69,7 +69,7 @@ R14.6 remains partial with visualization epic #4433 open. #4142 is therefore
 not closeable. These controls prove provenance and model-data parity, not human
 validity or coaching strategy.
 
-Branch `docs/4433-acceptance-audit`, exact audit commit
+Protected PR #4705 on branch `docs/4433-acceptance-audit`, exact audit commit
 `eade2d2c25c0b87648aee5fe4b2cda8982e23d9f`, maps all 31 #4433 obligations to
 local evidence: 6 verified, 25 partial. Trusted main run `32689177846` proves
 the initial React/PyQt visibility, automated accessibility, performance, and
