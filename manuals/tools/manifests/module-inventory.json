@@ -1,0 +1,394 @@
+{
+  "authority": "D-sorganization/Tools",
+  "blockers": [
+    {
+      "id": "TOOLS-D3-pathway-contract-required",
+      "owner": "Tools documentation epic #4707",
+      "resolution": "Map stable calculation IDs, equations, chapters, tests, sources, units, limits, and approval evidence under TOOLS-D3 through TOOLS-D9."
+    }
+  ],
+  "families": [
+    {
+      "classification": "calculation",
+      "id": "control-systems-calculation",
+      "maintainer": "Control systems maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "control-systems-non-calculation",
+      "maintainer": "Control systems maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "data-processing-calculation",
+      "maintainer": "Data processing maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "data-processing-non-calculation",
+      "maintainer": "Data processing maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "media-processing-calculation",
+      "maintainer": "Media processing maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "media-processing-non-calculation",
+      "maintainer": "Media processing maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "native-kernels-calculation",
+      "maintainer": "Native kernel maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "native-kernels-non-calculation",
+      "maintainer": "Native kernel maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "pendulum-calculation",
+      "maintainer": "Pendulum maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "process-calculators-calculation",
+      "maintainer": "Process calculator maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "rate-of-closure-calculation",
+      "maintainer": "Rate of Closure maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "rate-of-closure-non-calculation",
+      "maintainer": "Rate of Closure maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "repository-governance-non-calculation",
+      "maintainer": "Repository governance maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "repository-tooling-non-calculation",
+      "maintainer": "Repository tooling maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "rotation-converter-calculation",
+      "maintainer": "Rotation converter maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "shared-tools-calculation",
+      "maintainer": "Tools module maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "shared-tools-non-calculation",
+      "maintainer": "Tools module maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "signal-processing-calculation",
+      "maintainer": "Signal processing maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "calculation",
+      "id": "swing-simulation-calculation",
+      "maintainer": "Swing simulation maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    },
+    {
+      "classification": "non-calculation",
+      "id": "swing-simulation-non-calculation",
+      "maintainer": "Swing simulation maintainers",
+      "rationale": "Deterministic repository-domain and conservative calculation-signal classification."
+    }
+  ],
+  "hash_contract": {
+    "algorithm": "sha256",
+    "line_endings": "CRLF-and-CR-normalized-to-LF",
+    "tree_encoding": "path-colon-content_sha256_lf-newline"
+  },
+  "producer": {
+    "generator_path": "scripts/build_tools_module_inventory.py",
+    "schema_path": "manuals/tools/schemas/module-inventory.schema.json"
+  },
+  "release_status": "blocked-pathways-required",
+  "schema_version": "tools-module-inventory/1.0.0",
+  "scope": {
+    "discovery": "tracked-implementation-and-governed-configuration-modules",
+    "exclusions": [
+      ".agents",
+      ".gaai",
+      ".github",
+      ".venv",
+      "archive",
+      "build",
+      "dist",
+      "docs",
+      "examples",
+      "experimental",
+      "legacy",
+      "manuals",
+      "node_modules",
+      "replicants",
+      "resources",
+      "test",
+      "tests",
+      "vendor",
+      "venv"
+    ],
+    "roots": [
+      "config",
+      "repository-wide tracked implementation",
+      "schemas"
+    ],
+    "suffixes": [
+      ".c",
+      ".cc",
+      ".cjs",
+      ".cpp",
+      ".css",
+      ".cxx",
+      ".h",
+      ".hpp",
+      ".html",
+      ".hxx",
+      ".ini",
+      ".ino",
+      ".js",
+      ".json",
+      ".m",
+      ".mjs",
+      ".prisma",
+      ".ps1",
+      ".py",
+      ".pyi",
+      ".rs",
+      ".sh",
+      ".toml",
+      ".ts",
+      ".tsx",
+      ".urdf",
+      ".webmanifest",
+      ".xml",
+      ".yaml",
+      ".yml"
+    ]
+  },
+  "shards": [
+    {
+      "content_sha256_lf": "8bfe78682b14e2a8510ed76afe14fa84efce9000fc3921691f3c8e19d4201879",
+      "entry_count": 200,
+      "first_path": ".docker/entrypoint.sh",
+      "last_path": "scripts/check_module_size_budget.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-000.json",
+      "shard_index": 0
+    },
+    {
+      "content_sha256_lf": "4f7dcee5f8dd398a86c0859c1b8e00435c8162e412c8e9d8a27637d26221bd50",
+      "entry_count": 200,
+      "first_path": "scripts/check_rate_pyqt_environment.py",
+      "last_path": "src/data_processing/data_processor/web/src/components/StatisticsPanel.tsx",
+      "path": "manuals/tools/manifests/module-inventory/entries-001.json",
+      "shard_index": 1
+    },
+    {
+      "content_sha256_lf": "68fb8f1130cf9816fc71e521a8077e9692d2066fac07c1c058cba3824212974e",
+      "entry_count": 200,
+      "first_path": "src/data_processing/data_processor/web/src/components/TimeRangePanel.tsx",
+      "last_path": "src/media_processing/video_processor/apps/web/components/video/VideoEditor.tsx",
+      "path": "manuals/tools/manifests/module-inventory/entries-002.json",
+      "shard_index": 2
+    },
+    {
+      "content_sha256_lf": "9b52d1a2c273db8fd043ca1262c488dd8f9c98877a15e846b4db52b342c79caa",
+      "entry_count": 200,
+      "first_path": "src/media_processing/video_processor/apps/web/components/video/VideoPlayer.tsx",
+      "last_path": "src/p1am_control_system/backend/hardware.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-003.json",
+      "shard_index": 3
+    },
+    {
+      "content_sha256_lf": "46339e3345a617aadee15ee38e133f119fbc0cedad5bb93948f849563c8267e8",
+      "entry_count": 200,
+      "first_path": "src/p1am_control_system/backend/historian.py",
+      "last_path": "src/p1am_control_system/frontend/src/lib/explorer/palette.ts",
+      "path": "manuals/tools/manifests/module-inventory/entries-004.json",
+      "shard_index": 4
+    },
+    {
+      "content_sha256_lf": "c4469e9d4e194fab1a6891aafe951c7487542855a7f886f131cbd430b4023bb7",
+      "entry_count": 200,
+      "first_path": "src/p1am_control_system/frontend/src/lib/explorer/scale.test.ts",
+      "last_path": "src/pressure_drop_calculator/web/tailwind.config.js",
+      "path": "manuals/tools/manifests/module-inventory/entries-005.json",
+      "shard_index": 5
+    },
+    {
+      "content_sha256_lf": "ff0bbf684ea5129d493cf3a22cd2c785308a21b238f076b3537ccdcfb3b92e3d",
+      "entry_count": 200,
+      "first_path": "src/pressure_drop_calculator/web/vite.config.ts",
+      "last_path": "src/rate_of_closure/simulation/ground_playback_workspace_common.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-006.json",
+      "shard_index": 6
+    },
+    {
+      "content_sha256_lf": "4caaa4a0b2d3f7b9f3991a9514a4793b3f81cb091052b5739233e9fb56b615ce",
+      "entry_count": 200,
+      "first_path": "src/rate_of_closure/simulation/ground_playback_workspace_v2.py",
+      "last_path": "src/rate_of_closure/ui/pyqt6/workspace_navigation.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-007.json",
+      "shard_index": 7
+    },
+    {
+      "content_sha256_lf": "8c84298bdd055960948630d60cfdea6930c8274ffa0c929a169beff30d495eda",
+      "entry_count": 200,
+      "first_path": "src/rate_of_closure/units.py",
+      "last_path": "src/rate_of_closure/web/src/components/VariationArcDrawing.ts",
+      "path": "manuals/tools/manifests/module-inventory/entries-008.json",
+      "shard_index": 8
+    },
+    {
+      "content_sha256_lf": "779abbafca7d35bc6ae8380d0a7219650dc69ef481751a9ab2a24dabb6f0d281",
+      "entry_count": 200,
+      "first_path": "src/rate_of_closure/web/src/components/VariationArcOverlay.test.tsx",
+      "last_path": "src/rate_of_closure/web/src/model/heads.test.ts",
+      "path": "manuals/tools/manifests/module-inventory/entries-009.json",
+      "shard_index": 9
+    },
+    {
+      "content_sha256_lf": "eec826c6283166abaa453f01b7a9edcea0ac713c174512449de19d223776d49b",
+      "entry_count": 200,
+      "first_path": "src/rate_of_closure/web/src/model/helptext.test.ts",
+      "last_path": "src/rate_of_closure/web/src/model/variationPlotDefinition.test.ts",
+      "path": "manuals/tools/manifests/module-inventory/entries-010.json",
+      "shard_index": 10
+    },
+    {
+      "content_sha256_lf": "2e9c187409319d681ff1e2471ffca5eb0bddcb1d5c2532e19e6ddf535834def9",
+      "entry_count": 200,
+      "first_path": "src/rate_of_closure/web/src/model/variationPlotDefinition.ts",
+      "last_path": "src/shared/python/ai/gui/_input_area.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-011.json",
+      "shard_index": 11
+    },
+    {
+      "content_sha256_lf": "3910d4162319158362c8cae98cc78e05b41e051bdb6217836f7d15af4a52eab6",
+      "entry_count": 200,
+      "first_path": "src/shared/python/ai/gui/_message_display.py",
+      "last_path": "src/shared/python/golf_club/assembly.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-012.json",
+      "shard_index": 12
+    },
+    {
+      "content_sha256_lf": "d21a585673e025bc6626eeea362df0783a42a05c994db8f1456b8d1abd2df4c8",
+      "entry_count": 200,
+      "first_path": "src/shared/python/golf_club/cad_validation.py",
+      "last_path": "src/shared/python/sidekick/calculators/conversion/gas_flow_mixin.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-013.json",
+      "shard_index": 13
+    },
+    {
+      "content_sha256_lf": "a96e47cdbfc5f8abf65b3d66f38b36a708ab4e11cdbf88da6554a124da42fcbe",
+      "entry_count": 200,
+      "first_path": "src/shared/python/sidekick/calculators/conversion/heating_value_mixin.py",
+      "last_path": "src/shared/python/swing_sim/__init__.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-014.json",
+      "shard_index": 14
+    },
+    {
+      "content_sha256_lf": "7b57567c9e0b4a20384b7916b5933b03a2114b8edb206d9c98189a7d812eb88f",
+      "entry_count": 200,
+      "first_path": "src/shared/python/swing_sim/_numeric_contracts.py",
+      "last_path": "src/shared/python/theme/dialogs/theme_manager_dialog.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-015.json",
+      "shard_index": 15
+    },
+    {
+      "content_sha256_lf": "9639d1759f2f65fba5314d409da51831207bbc51976a62e1a31158bf9b9935b2",
+      "entry_count": 200,
+      "first_path": "src/shared/python/theme/fleet_adapter.py",
+      "last_path": "src/web_applications/calculator/static/manifest.webmanifest",
+      "path": "manuals/tools/manifests/module-inventory/entries-016.json",
+      "shard_index": 16
+    },
+    {
+      "content_sha256_lf": "632786bd78068669a62caa688bc3a7b53136a2ace9cd58e7202c7bb7674a7c4c",
+      "entry_count": 29,
+      "first_path": "src/web_applications/calculator/static/service-worker.js",
+      "last_path": "wave_solver.py",
+      "path": "manuals/tools/manifests/module-inventory/entries-017.json",
+      "shard_index": 17
+    }
+  ],
+  "source_tree_sha256": "221422cdb7391723ae14440a7b199b78929ecb6ecbdaa8d0a390ca5c7656db67",
+  "summary": {
+    "authority_status_counts": {
+      "blocked": 1,
+      "not-applicable": 2620,
+      "provisional": 808
+    },
+    "blocked_count": 1,
+    "calculation_count": 808,
+    "classification_counts": {
+      "calculation": 808,
+      "non-calculation": 2621
+    },
+    "family_counts": {
+      "control-systems-calculation": 6,
+      "control-systems-non-calculation": 246,
+      "data-processing-calculation": 12,
+      "data-processing-non-calculation": 132,
+      "media-processing-calculation": 26,
+      "media-processing-non-calculation": 74,
+      "native-kernels-calculation": 10,
+      "native-kernels-non-calculation": 61,
+      "pendulum-calculation": 146,
+      "process-calculators-calculation": 59,
+      "rate-of-closure-calculation": 160,
+      "rate-of-closure-non-calculation": 883,
+      "repository-governance-non-calculation": 4,
+      "repository-tooling-non-calculation": 65,
+      "rotation-converter-calculation": 132,
+      "shared-tools-calculation": 171,
+      "shared-tools-non-calculation": 1021,
+      "signal-processing-calculation": 28,
+      "swing-simulation-calculation": 58,
+      "swing-simulation-non-calculation": 135
+    },
+    "module_count": 3429,
+    "non_calculation_count": 2621,
+    "provisional_count": 808,
+    "review_status_counts": {
+      "blocked": 1,
+      "inventory-baseline": 2620,
+      "review-required": 808
+    }
+  }
+}

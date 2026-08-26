@@ -17,11 +17,12 @@ This directory stores architecture decisions for cross-tool boundaries and share
 
 ## Records
 
-| ADR                                                   | Status   | Summary                                                                                            |
-| ----------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
-| [ADR-001](ADR-001-monorepo-workspaces.md)             | Accepted | Defines monorepo workspace package boundaries and dependency direction.                            |
-| [ADR-002](ADR-002-shared-library-module-structure.md) | Accepted | Why the current layered namespace structure was chosen over flat or multi-package alternatives.    |
-| [ADR-003](ADR-003-api-stability-policy.md)            | Accepted | Policy for backwards-compatible API changes, deprecation protocol, and contract test requirements. |
-| [ADR-004](ADR-004-ruff-formatter.md)                  | Accepted | Why ruff format was chosen over Black as the canonical Python formatter.                           |
-| [ADR-005](ADR-005-plugin-discovery-vs-registry.md)    | Accepted | Dual-mode plugin registration: per-tool manifests merged with centralized tools.json.              |
-| [ADR-006](ADR-006-type-safety-mypy-strict.md)         | Accepted | Type safety enforcement strategy using mypy delta CI and py.typed marker.                          |
+| ADR                                                       | Status   | Summary                                                                                            |
+| --------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| [ADR-001](ADR-001-monorepo-workspaces.md)                 | Accepted | Defines monorepo workspace package boundaries and dependency direction.                            |
+| [ADR-002](ADR-002-shared-library-module-structure.md)     | Accepted | Why the current layered namespace structure was chosen over flat or multi-package alternatives.    |
+| [ADR-003](ADR-003-api-stability-policy.md)                | Accepted | Policy for backwards-compatible API changes, deprecation protocol, and contract test requirements. |
+| [ADR-004](ADR-004-ruff-formatter.md)                      | Accepted | Why ruff format was chosen over Black as the canonical Python formatter.                           |
+| [ADR-005](ADR-005-plugin-discovery-vs-registry.md)        | Accepted | Dual-mode plugin registration: per-tool manifests merged with centralized tools.json.              |
+| [ADR-006](ADR-006-type-safety-mypy-strict.md)             | Accepted | Type safety enforcement strategy using mypy delta CI and py.typed marker.                          |
+| [ADR-007](ADR-007-engineering-design-manual-authority.md) | Accepted | Sole QMD authority and fail-closed multi-format release boundary.                                  |
