@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import builtins
 import hashlib
+import importlib
 import json
+import shutil
+import sys
 from pathlib import Path
 from typing import Any
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -32,6 +36,14 @@ MANIFEST_SCHEMA = MANUAL_ROOT / "schemas" / "artifact-manifest.schema.json"
 LOCK = MANUAL_ROOT / "toolchain-lock.json"
 LOCK_SCHEMA = MANUAL_ROOT / "schemas" / "toolchain-lock.schema.json"
 REQUIRED_FORMATS = ("docx", "html", "pdf", "tex")
+REQUIRES_PANDOC = pytest.mark.skipif(
+    shutil.which("pandoc") is None,
+    reason="Pandoc is unavailable; protected Docs Governance owns this gate",
+)
+REQUIRES_RENDER_TOOLCHAIN = pytest.mark.skipif(
+    any(shutil.which(command) is None for command in ("pandoc", "pdflatex", "quarto")),
+    reason="locked Pandoc, TeX, and Quarto toolchain is unavailable",
+)
 
 
 def _payload(path: Path) -> dict[str, Any]:
@@ -212,11 +224,37 @@ def test_docx_canonicalization_removes_workspace_bibliography_path(
     assert "worktree-a" not in custom
 
 
+def test_docx_artifact_helpers_import_without_optional_pdf_stack(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Non-PDF consumers must not require the documentation-only PDF stack."""
+    module_name = "scripts.tools_manual_artifacts"
+    original_import = builtins.__import__
+
+    def reject_pypdf(
+        name: str,
+        globals_: dict[str, object] | None = None,
+        locals_: dict[str, object] | None = None,
+        fromlist: tuple[str, ...] = (),
+        level: int = 0,
+    ) -> object:
+        if name == "pypdf" or name.startswith("pypdf."):
+            raise ModuleNotFoundError("pypdf intentionally unavailable")
+        return original_import(name, globals_, locals_, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", reject_pypdf)
+    sys.modules.pop(module_name, None)
+    imported = importlib.import_module(module_name)
+    assert callable(imported.canonicalize_docx)
+
+
+@REQUIRES_PANDOC
 def test_checked_in_artifacts_are_fresh_and_semantically_equivalent() -> None:
     assert main(["--check"]) == 0
 
 
 @pytest.mark.integration
+@REQUIRES_RENDER_TOOLCHAIN
 def test_renderer_is_byte_reproducible(tmp_path: Path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"

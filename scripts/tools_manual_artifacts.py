@@ -11,16 +11,11 @@ import subprocess
 import zipfile
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import cast
+from typing import TYPE_CHECKING, cast
 from xml.etree import ElementTree
 
-from pypdf import PdfReader, PdfWriter
-from pypdf.generic import (
-    ArrayObject,
-    ByteStringObject,
-    DictionaryObject,
-    NameObject,
-)
+if TYPE_CHECKING:
+    from pypdf import PdfWriter
 
 from scripts.tools_manual_renderer_contract import (
     ArtifactManifest,
@@ -157,6 +152,9 @@ def canonicalize_docx(path: Path) -> None:
 
 def canonicalize_pdf(path: Path) -> None:
     """Rewrite PDF metadata, object ordering, and trailer ID deterministically."""
+    from pypdf import PdfReader, PdfWriter
+    from pypdf.generic import ArrayObject, ByteStringObject
+
     reader = PdfReader(path)
     writer = PdfWriter()
     writer.clone_document_from_reader(reader)
@@ -182,6 +180,7 @@ def canonicalize_pdf(path: Path) -> None:
 
 def _normalize_pdf_font_names(writer: PdfWriter) -> None:
     """Replace XeTeX's random six-letter font subset tags in dictionaries."""
+    from pypdf.generic import ArrayObject, DictionaryObject, NameObject
 
     def normalize(value: object) -> None:
         if isinstance(value, DictionaryObject):
@@ -205,6 +204,8 @@ def _normalize_pdf_font_names(writer: PdfWriter) -> None:
 def extract_visible_text(path: Path, lock: ToolchainLock, workspace: Path) -> str:
     """Extract format-visible text through Pandoc or pypdf."""
     if path.suffix.lower() == ".pdf":
+        from pypdf import PdfReader
+
         reader = PdfReader(path)
         return "\n".join(page.extract_text() or "" for page in reader.pages)
     header_text = ""

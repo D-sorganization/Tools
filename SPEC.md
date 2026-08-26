@@ -27,14 +27,14 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.18                                    |
+| **Spec Version**        | 1.18.20                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-26 Required Textbook Chapter Contract (#4707 / TOOLS-D3 (#4717))
 
-Version 1.18.18 adds the strict `tools-textbook-chapter-contract/1.0.0`
+Version 1.18.20 adds the strict `tools-textbook-chapter-contract/1.0.0`
 and `tools-textbook-chapter-registry/1.0.0` consumer contracts. Every future
 registered calculation chapter must provide fourteen ordered textbook sections
 covering purpose, DbC, coordinates and time, units, derivation, algorithms,
@@ -48,7 +48,7 @@ provisional pending TOOLS-D4 exemplars; rendered artifacts remain
 
 ### 2026-08-26 Reproducible Multi-Format Renderer (#4707 / TOOLS-D2 (#4712))
 
-Version 1.18.16 adds the strict `tools-manual-toolchain/1.0.0` and
+Version 1.18.19 adds the strict `tools-manual-toolchain/1.0.0` and
 `tools-manual-artifacts/1.0.0` consumer contracts, pinned Pandoc, Quarto, TeX,
 bibliography, reference DOCX, visual tokens, semantic warnings/units, and
 figure inputs. The canonical QMD now renders byte-reproducible HTML, LaTeX,
@@ -5338,7 +5338,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-26 | 1.18.18 | docs(manual, #4707/#4717 TOOLS-D3): add strict textbook chapter and registry schemas, typed consumer/linter contracts, fourteen ordered calculation-level sections, traceability and status invariants, LF-normalized section evidence hashes, CI/pre-commit enforcement, and the generated-but-unapproved manual chapter. Retain an empty provisional registry pending TOOLS-D4 exemplars and later freshness, review, and publication authority. |
+| 2026-08-26 | 1.18.20 | docs(manual, #4707/#4717 TOOLS-D3): reconcile the strict textbook chapter and registry contracts on protected D2, enforce fourteen ordered calculation-level sections, traceability and status invariants, LF-normalized evidence hashes, CI/pre-commit checks, and generated-but-unapproved manual content. Retain an empty provisional registry pending TOOLS-D4 exemplars and later freshness, review, and publication authority. |
+| 2026-08-26 | 1.18.19 | fix(manual, #4707/#4712 TOOLS-D2): separate external render-tool assertions from generic Python CI. Tests report an explicit unavailable skip without Pandoc/Quarto/TeX, execute under the locked local toolchain, and remain protected by the dedicated Docs Governance lane, which installs Pandoc and invokes artifact freshness and semantic verification directly and fail closed. |
+| 2026-08-26 | 1.18.18 | fix(manual, #4707/#4712 TOOLS-D2): repair protected CI integration by declaring and locking the PDF semantic dependency, keeping PDF imports lazy for non-PDF consumers, proving import isolation without the optional stack, and returning the verified XML serialization as typed bytes. Refresh the governed inventory and retain generated-unapproved authority. |
 | 2026-08-26 | 1.18.17 | fix(manual, #4707/#4712 TOOLS-D2): canonicalize the Pandoc DOCX bibliography custom property to the repository-relative `manuals/tools/references.bib` path before deterministic ZIP normalization. Add a cross-workspace regression contract, refresh the governed module inventory and artifact manifest, and remove workstation identity from generated Word artifacts while retaining generated-unapproved release status. |
 | 2026-08-26 | 1.18.16 | docs(manual, #4707/#4712 TOOLS-D2): qualify the pinned deterministic HTML/LaTeX/PDF/DOCX renderer, strict schemas and consumer loaders, input/artifact hashes, shared semantic parity, reference DOCX, style/figure sources, CI/pre-commit freshness, and generated-but-unapproved artifacts. |
 | 2026-08-25 | 1.18.15 | docs(manual, #4707/#4711 TOOLS-D1): add the strict repository-owned module inventory schema, deterministic tracked-file generator, LF-normalized per-module and source-tree SHA-256 integrity, conservative calculation/non-calculation classifications, maintainers, public surfaces, tests, ADRs, citations, units, chapters, and risk states for all 3,429 in-scope modules. Add fail-closed consumer/freshness tests and CI/pre-commit enforcement; retain 808 calculation candidates as provisional, one encoding blocker, an empty stable calculation registry, and all TOOLS-D2--D9 format/pathway/publication/approval boundaries. |

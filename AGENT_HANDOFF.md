@@ -53,22 +53,22 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   Its `manuals/tools/manifests/module-inventory.json` covers 3,434 modules: 808
   provisional calculation candidates, 2,626 non-calculation modules, and one
   explicit encoding blocker. The stable calculation registry remains empty.
-- TOOLS-D2 (#4712) branch `docs/4712-reproducible-renderer` is tree-identically
-  reconciled on protected D1 merge `395e11adce9081c38a9b436c3e76978e30d71fc9`
-  at exact head `f5e2205d967dfb851d90a989c7d9f74ec52f7c5c`. Its pinned renderer produces
-  byte-reproducible, semantically equivalent HTML, LaTeX, PDF, and DOCX with
-  strict manifests and digests. Artifacts remain generated-unapproved;
-  the repository-relative bibliography path and byte-reproducible,
-  semantically equivalent HTML, LaTeX, PDF, and DOCX.
-- TOOLS-D3 (#4717) branch `docs/4717-textbook-chapter-contract` is restacked on
-  exact D2. Its typed linter enforces fourteen ordered textbook sections plus
-  ownership, traceability, status, and LF-normalized evidence contracts. The
-  module inventory covers 3,437 modules: 808 provisional calculations, 2,629
-  non-calculations, and one inherited encoding blocker; its registry is empty
-  pending D4. Restacked evidence: 65/65 focused and 137 qualified architecture
-  tests pass. Two exact-D1 import failures and one exact-D2 external-temp
-  collection race remain inherited; 5 PDF and 7 Word-rendered DOCX pages passed
-  visual review. Artifacts remain generated-unapproved pending D4 and D7--D8.
+- TOOLS-D2 (#4712) protected PR #4744 squash-merged normally as
+  `25c10cd6ca580d29185ead03808c313afac4ffb3`; its merge tree exactly matches
+  reviewed head `71915553ee952557940c99d142f3c5344b2022b8`. The pinned renderer produces
+  repository-relative, byte-reproducible, semantically equivalent HTML, LaTeX,
+  PDF, and DOCX with strict manifests and digests. The dedicated Docs Governance
+  lane remains fail closed when external render tools are unavailable. Artifacts
+  remain generated-unapproved; TOOLS-D3 owns stable pathways and TOOLS-D7/D8 own
+  page, accessibility, publication, and human approval.
+- TOOLS-D3 (#4717) branch `docs/4717-textbook-chapter-contract` is normally
+  reconciled on protected D2. Its typed linter enforces fourteen ordered
+  textbook sections plus ownership, traceability, status, and LF-normalized
+  evidence contracts. The registry remains empty pending D4. Before protected
+  D2 advanced, 65 focused and 137 qualified architecture tests passed and all 5
+  PDF and 7 Word-rendered DOCX pages passed visual review. Re-run those gates on
+  the reconciled exact head before delivery. Artifacts remain
+  generated-unapproved pending D4 and D7--D8.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers
