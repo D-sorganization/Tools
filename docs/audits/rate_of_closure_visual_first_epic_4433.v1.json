@@ -5,7 +5,7 @@
   "audited_main_commit": "57b443201b402fc110ec5623885c7e310d6ad6d3",
   "protected_run": "https://github.com/D-sorganization/Tools/actions/runs/32689177846",
   "overall_status": "partial",
-  "status_counts": { "verified": 6, "partial": 25 },
+  "status_counts": { "verified": 8, "partial": 23 },
   "r14_6_blocking_gaps": [
     "Matched state-by-state geometry evidence is incomplete outside the registered initial state and selected Variation, Putting, Explorer, Flight, and Launch Monitor interactions.",
     "Approved baselines cover the initial React 1440x900 and PyQt 1.0-DPI states, not narrow React, PyQt 1.5 DPI, or representative loading, result, no-impact, failure, and stale states.",
@@ -23,12 +23,14 @@
     {
       "requirement_id": "V0.1",
       "requirement": "Inventory every React and PyQt workspace, purpose, visual, prerequisites, states, and counterpart.",
-      "status": "partial",
-      "rationale": "All 20 surfaces and state labels are registered, but purpose, data prerequisites, and explicit counterpart identity are not complete fields.",
-      "evidence_files": ["src/rate_of_closure/visualization_tabs.v1.json"],
-      "gaps": [
-        "Add purpose, prerequisite, and matched-counterpart authority for every tab."
-      ]
+      "status": "verified",
+      "rationale": "All 20 surfaces now carry bounded purpose and data-prerequisite fields plus an exact reciprocal React-to-PyQt counterpart enforced by the strict immutable reader.",
+      "evidence_files": [
+        "src/rate_of_closure/visualization_tabs.v1.json",
+        "src/rate_of_closure/visualization_tab_manifest.py",
+        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "V0.2",
@@ -332,14 +334,15 @@
     {
       "requirement_id": "V5.2",
       "requirement": "Require changed tabs to update manifest, matched evidence, and first-viewport tests.",
-      "status": "partial",
-      "rationale": "Manifest/test parity rejects unregistered tabs, but changed-tab path governance does not prove matched evidence updates for every material change.",
+      "status": "verified",
+      "rationale": "A fail-closed pull-request control detects material React, PyQt, and shared visual-authority changes and requires the shared manifest, acceptance audit, and surface-specific first-viewport test to change together before expensive E2E execution without allocating a second hosted runner.",
       "evidence_files": [
-        "tests/rate_of_closure/test_visualization_tab_manifest.py"
+        "scripts/check_rate_visual_evidence_changes.py",
+        ".github/workflows/rate-web-playwright.yml",
+        "tests/scripts/test_check_rate_visual_evidence_changes.py",
+        "tests/ops/test_rate_web_playwright_workflow.py"
       ],
-      "gaps": [
-        "Add changed-path governance that requires matched manifest and evidence updates."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "V5.3",

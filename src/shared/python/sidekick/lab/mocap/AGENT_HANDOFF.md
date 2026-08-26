@@ -10,14 +10,16 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 
 - Epic #4706: vendor-neutral acquisition, calibration, reconstruction, and C3D exchange.
 - #4708 / TOOLS-M0: authority ADR and acceptance program.
-- #4710 / TOOLS-M1: canonical mocap schemas.
-- Next: #4713 acquisition protocol and #4714 intrinsic calibration may start after #4710 merges.
+- #4710 / TOOLS-M1: canonical mocap schemas. M0/M1 are under protected review in PR #4734.
+- #4713, #4714, #4715, #4716, #4718, and #4721 have locally verified dependency-stacked slices; none is merged or release authority.
 
 ## Current branch
 
 - Branch: `feat/4708-mocap-authority-schemas`
-- Base: `origin/main` at `e76a7a214`
+- Original base: `origin/main` at `e76a7a214`
+- Latest merged base: `origin/main` at `31d28b0a0a0435cd47d05bedc61a1357d670a8d8`
 - Worktree: `C:\Users\diete\Repositories\Tools-worktrees\4708-mocap-authority-schemas`
+- Pull request: #4734
 
 ## Delivered in this slice
 
@@ -36,13 +38,13 @@ python -m ruff check <changed-python-files>
 python -m mypy <changed-python-files>
 ```
 
-Observed before the documentation-only rebase at `2c86e9168`: 26 focused tests passed; the nine mocap API modules
+Observed before merging current `origin/main`: 26 focused tests passed; the nine mocap API modules
 exactly match their hand-edited baseline entries; Ruff format/check and mypy
-passed. The full suite reached 11,012 passed, 73 failed, and 8 errors before an
-xdist worker-replacement internal error. Failures were distributed across
-pre-existing subsystems; the repository-wide API test includes known non-mocap
-drift. Do not regenerate the full baseline. Full exact-HEAD export and protected
-CI remain mandatory before merge claims.
+passed. After merging `31d28b0a0a0435cd47d05bedc61a1357d670a8d8`,
+78 of 79 focused mocap plus incoming-main tests passed; the single failure is the
+repository-wide API baseline's known non-mocap drift across existing API,
+calculator, units, and shell surfaces. Do not regenerate the full baseline.
+Full exact-HEAD export and protected CI remain mandatory before merge claims.
 
 Consumer coordination: UpstreamDrift #9069 owns schema adoption;
 Gasification_Model #4751 owns exact-Tools-SHA impact qualification.

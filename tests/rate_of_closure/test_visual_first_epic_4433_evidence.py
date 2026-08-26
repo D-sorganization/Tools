@@ -69,6 +69,18 @@ def test_visual_first_epic_acceptance_is_exhaustive_and_fail_closed() -> None:
         "identities.",
     ]
 
+    v0_1 = indexed["V0.1"]
+    assert v0_1["status"] == "verified"
+    assert v0_1["gaps"] == []
+    assert "src/rate_of_closure/visualization_tab_manifest.py" in v0_1["evidence_files"]
+    assert audit["status_counts"] == {"verified": 8, "partial": 23}
+
+    v5_2 = indexed["V5.2"]
+    assert v5_2["status"] == "verified"
+    assert v5_2["gaps"] == []
+    assert "scripts/check_rate_visual_evidence_changes.py" in v5_2["evidence_files"]
+    assert ".github/workflows/rate-web-playwright.yml" in v5_2["evidence_files"]
+
 
 def test_r14_6_retains_the_visual_first_audit_as_partial_evidence() -> None:
     audit = _load(AUDIT)
