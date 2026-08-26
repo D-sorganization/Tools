@@ -56,8 +56,9 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-The R15.4 guide candidate advances the 31-item R10--R15 ledger to 22 verified,
-9 partial, and zero unverified
+Protected Tools PR #4703 (exact head
+`e1d8d098d038ae2cf6bc5ace7c4864ef1df05ed1`) advances the 31-item R10--R15
+ledger to 22 verified, 9 partial, and zero unverified
 requirements after protected UpstreamDrift PR #9039 consumed immutable Tools
 revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. R15.1--R15.3 now bind the
 exact consumer, thin ownership boundary, typed no-impact rows, deterministic
