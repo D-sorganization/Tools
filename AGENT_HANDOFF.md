@@ -37,7 +37,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
 | #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
-| #4707 | Engineering design manuals. D0/D1 are protected-merged. D2 is published at exact head `f5e2205d`; D3 is restacked locally with its textbook-chapter contract; protected D2/D3 delivery and D4--D9 remain.                             |
+| #4707 | Engineering design manuals. D0--D2 are protected-merged. D3 is qualified on the fresh main-rooted branch `docs/4717-textbook-chapter-main`; protected D3 delivery and D4--D9 remain.                                                  |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -61,13 +61,15 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   lane remains fail closed when external render tools are unavailable. Artifacts
   remain generated-unapproved; TOOLS-D3 owns stable pathways and TOOLS-D7/D8 own
   page, accessibility, publication, and human approval.
-- TOOLS-D3 (#4717) branch `docs/4717-textbook-chapter-contract` is normally
-  reconciled on protected D2. Its typed linter enforces fourteen ordered
+- TOOLS-D3 (#4717) replacement branch `docs/4717-textbook-chapter-main` is
+  rooted directly at protected D2 main and preserves the RED/GREEN contract
+  history. Its tree exactly matches the separately reviewed reconciliation tree
+  `1cb18f77ca02e4cbaa122e34884f754685933c09`. Its typed linter enforces fourteen ordered
   textbook sections plus ownership, traceability, status, and LF-normalized
-  evidence contracts. The registry remains empty pending D4. Before protected
-  D2 advanced, 65 focused and 137 qualified architecture tests passed and all 5
-  PDF and 7 Word-rendered DOCX pages passed visual review. Re-run those gates on
-  the reconciled exact head before delivery. Artifacts remain
+  evidence contracts. The registry remains empty pending D4. On the reconciled
+  exact tree, 66 focused architecture tests and all governance, inventory,
+  linter, renderer, formatter, and fleet hooks pass; all 5 PDF and 7
+  Word-rendered DOCX pages passed visual review. Artifacts remain
   generated-unapproved pending D4 and D7--D8.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
@@ -136,8 +138,8 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Restack and deliver TOOLS-D1 #4711, then TOOLS-D2 #4712 through the ordinary
-   protected flow before starting TOOLS-D3 stable pathway registration.
+1. Deliver the main-rooted TOOLS-D3 #4717 replacement through the ordinary
+   protected flow before publishing TOOLS-D4 stable pathway registration.
 2. **Sidekick Unified Integration**: implement the S1–S5 plan in
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 3. Restore the isolated advisory benchmark lane through #4582.
