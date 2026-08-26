@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   focused-contract:
-    name: Exact RED Extrinsic Delivery Admission
+    name: Exact GREEN Extrinsic Delivery Admission
     runs-on: d-sorg-fleet
     timeout-minutes: 10
     steps:
@@ -29,17 +29,17 @@ jobs:
           esac
           echo "Validated approved runner: ${RUNNER_NAME}"
 
-      - name: Checkout Exact RED Source
+      - name: Checkout Exact GREEN Source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: f596358562cfcfc66d4e004651a5538b0510c77a
+          ref: 43d7a2bba5c93f2224fd203545d74d69443072f9
           persist-credentials: false
 
-      - name: Verify Exact RED Source
+      - name: Verify Exact GREEN Source
         shell: bash
         run: |
-          expected_commit="f596358562cfcfc66d4e004651a5538b0510c77a"
-          expected_tree="807633fdbef290871c8899d48a3de5251d551962"
+          expected_commit="43d7a2bba5c93f2224fd203545d74d69443072f9"
+          expected_tree="91e4788f94ea464a8eb5b123303cb1e022468a94"
           test "$(git rev-parse HEAD)" = "${expected_commit}"
           test "$(git rev-parse 'HEAD^{tree}')" = "${expected_tree}"
 
@@ -63,7 +63,7 @@ jobs:
             pygments==2.20.0
           echo "${venv_path}/bin" >> "${GITHUB_PATH}"
 
-      - name: Run Exact Serial RED Contract
+      - name: Run Exact Serial GREEN Contract
         env:
           PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: >-
