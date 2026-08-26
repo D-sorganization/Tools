@@ -37,9 +37,9 @@ def test_repository_adopts_one_qmd_authority_and_blocks_release() -> None:
     summary = verify_repository(REPO_ROOT)
 
     assert summary.manual_id == "tools"
-    assert summary.canonical_qmd_count == 5
-    assert summary.calculation_count == 0
-    assert summary.textbook_chapter_count == 0
+    assert summary.canonical_qmd_count == 6
+    assert summary.calculation_count == 1
+    assert summary.textbook_chapter_count == 1
     assert summary.release_status == "provisional"
     assert summary.public_projection_allowed is False
 
@@ -55,13 +55,13 @@ def test_policy_reuses_program_contracts_without_copying_schemas() -> None:
     assert not (REPO_ROOT / "schemas" / "publication-projection.schema.json").exists()
 
 
-def test_registry_is_fail_closed_until_stable_calculation_pathways() -> None:
+def test_registry_is_fail_closed_with_one_unapproved_calculation_pathway() -> None:
     registry = _json(REGISTRY_PATH)
 
-    assert verify_calculation_registry(registry) == 0
+    assert verify_calculation_registry(registry) == 1
     assert registry["release_status"] == "provisional"
-    assert registry["inventory_commit"] is None
-    assert registry["blockers"][0]["id"] == "TOOLS-D4-exemplar-pathways-required"
+    assert registry["inventory_commit"] == "916fb9f27f486486f0c071dcc6f15f81f68ecb18"
+    assert registry["blockers"][0]["id"] == "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
 
 
 @pytest.mark.parametrize(
