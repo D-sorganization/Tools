@@ -1,0 +1,52 @@
+{
+  "schema_version": "tools-manual-artifacts/1.0.0",
+  "manual_id": "tools",
+  "release_status": "generated-unapproved",
+  "source_commit": null,
+  "source_sha256_lf": "6bbf74ab473179094f97667f762494224428977682f67264a2d05255591affcb",
+  "toolchain_lock_sha256_lf": "eac5f8fd74188270403a08c7182bc91341e75c63949e519fd8b23b24dd8b91cf",
+  "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661",
+  "semantic_parity": "verified",
+  "owner": "Tools documentation epic #4707",
+  "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
+  "publication_approval": "blocked-pending-TOOLS-D7-D8",
+  "blockers": [
+    "Stable calculation pathways remain pending TOOLS-D3.",
+    "Accessibility and page-review approval remain pending TOOLS-D7.",
+    "Public projection and human approval remain pending TOOLS-D8."
+  ],
+  "artifacts": [
+    {
+      "format": "docx",
+      "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
+      "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "bytes": 61075,
+      "sha256": "9ea6ea6e642fdc496ee47bbe23840bf4111bd57c108143c5ca3cea1ce1d34f1f",
+      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+    },
+    {
+      "format": "html",
+      "path": "manuals/tools/dist/tools-engineering-design-manual.html",
+      "media_type": "text/html",
+      "bytes": 64534,
+      "sha256": "0306fe8c2c303a5f362f17a282859ac1102cb6c1455d790ebf5877de108a3485",
+      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+    },
+    {
+      "format": "pdf",
+      "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
+      "media_type": "application/pdf",
+      "bytes": 179251,
+      "sha256": "55a094789bf45c5ef3f1bab957bb13aa285206e4f31fa491532e9398d18e0466",
+      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+    },
+    {
+      "format": "tex",
+      "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
+      "media_type": "application/x-tex",
+      "bytes": 16608,
+      "sha256": "49c2893338a206302c9a4f439093372afda4b2ce7536efbaa018d9ec31da313b",
+      "semantic_sha256": "81df029a09134f8ff5200ef836e3907d92f8dbe4667076022767b2d07e772661"
+    }
+  ]
+}

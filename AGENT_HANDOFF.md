@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-25
+> Last updated: 2026-08-26
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -37,7 +37,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
 | #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
-| #4707 | Engineering design manuals. TOOLS-D0 PR #4741 is the unmerged authority dependency. TOOLS-D1 (#4711) now has a local deterministic 3,429-module baseline; protected delivery and TOOLS-D2--D9 remain.                                 |
+| #4707 | Engineering design manuals. TOOLS-D0 protected-squash-merged as `3523002f`; TOOLS-D1 is PR #4743 at `2e8511b7`. TOOLS-D2 (#4712) now has a local qualified reproducible renderer; protected D1/D2 delivery and TOOLS-D3--D9 remain.   |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -46,13 +46,21 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 - Query exact PR state before acting; this handoff is not a live queue.
 - Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
   integration through M7/M9 is evidence, not merged authority.
-- TOOLS-D1 branch `docs/4711-calculation-inventory` is stacked on corrected
-  TOOLS-D0 head `a8b7956f7f11b5839072c5de74fdd25f3c7eaed2`. Its
-  `manuals/tools/manifests/module-inventory.json` covers 3,429 modules: 808
-  provisional calculation candidates, 2,621 non-calculation modules, and one
+- TOOLS-D1 (#4711) PR #4743 head is
+  `2e8511b76da433508e109566e25bc5cee9d4a125`; its tree exactly matches the old
+  local D1 head used as this D2 stack's base. Its
+  `manuals/tools/manifests/module-inventory.json` covers 3,434 modules: 808
+  provisional calculation candidates, 2,626 non-calculation modules, and one
   explicit encoding blocker. The stable calculation registry remains empty.
-- Generated LaTeX, PDF, DOCX, and HTML remain unapproved. TOOLS-D2 owns the
-  renderer; TOOLS-D3 owns stable equation-to-code-to-test pathways.
+- TOOLS-D2 (#4712) branch `docs/4712-reproducible-renderer` is stacked on local D1 head
+  `6d749657c3c9123d0c7414d4fd1a8f35a1df745c`. Its pinned renderer produces
+  byte-reproducible, semantically equivalent HTML, LaTeX, PDF, and DOCX with
+  strict manifests and digests. Artifacts remain generated-unapproved;
+  TOOLS-D3 owns stable equation-to-code-to-test pathways and TOOLS-D7/D8 own
+  page, accessibility, publication, and human approval.
+- Local D2 evidence: 37/37 focused contracts and 110/110 non-inherited
+  architecture tests pass; both remaining import-alias failures reproduce on
+  exact D1. Visual review passed all 4 PDF and all 5 Word-rendered DOCX pages.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers
@@ -72,6 +80,7 @@ python3 -m pytest -m contract                     # API contract tests (downstre
 python3 -m pytest -m integration --timeout=60     # cross-repo integration
 python3 -m scripts.check_design_manual_governance
 python3 -m scripts.build_tools_module_inventory --check
+python3 -m scripts.render_tools_design_manual --check
 ```
 
 SPEC freshness (CI job `spec-freshness` in `.github/workflows/spec-check.yml`):
@@ -118,8 +127,8 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Deliver TOOLS-D0 PR #4741, then TOOLS-D1 #4711 through the ordinary
-   protected flow before starting the TOOLS-D2 renderer.
+1. Restack and deliver TOOLS-D1 #4711, then TOOLS-D2 #4712 through the ordinary
+   protected flow before starting TOOLS-D3 stable pathway registration.
 2. **Sidekick Unified Integration**: implement the S1–S5 plan in
    `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 3. Restore the isolated advisory benchmark lane through #4582.

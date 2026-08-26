@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/manual-toolchain/1.0.0.json",
+  "title": "Tools manual toolchain lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "canonical_source",
+    "bibliography",
+    "semantic_contract",
+    "reference_docx",
+    "style_files",
+    "figure_files",
+    "input_sha256",
+    "source_date_epoch",
+    "commands"
+  ],
+  "properties": {
+    "schema_version": { "const": "tools-manual-toolchain/1.0.0" },
+    "canonical_source": { "$ref": "#/$defs/path" },
+    "bibliography": { "$ref": "#/$defs/path" },
+    "semantic_contract": { "$ref": "#/$defs/path" },
+    "reference_docx": { "$ref": "#/$defs/path" },
+    "style_files": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/path" }
+    },
+    "figure_files": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/path" }
+    },
+    "input_sha256": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/path" },
+      "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+    },
+    "source_date_epoch": { "type": "integer", "minimum": 1 },
+    "commands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pandoc", "pdflatex", "quarto"],
+      "properties": {
+        "pandoc": { "$ref": "#/$defs/command" },
+        "pdflatex": { "$ref": "#/$defs/command" },
+        "quarto": { "$ref": "#/$defs/command" }
+      }
+    }
+  },
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_. -]+(?:/[A-Za-z0-9_. -]+)*$"
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "executable",
+        "version_args",
+        "exact_version",
+        "version_output"
+      ],
+      "properties": {
+        "executable": { "type": "string", "minLength": 1 },
+        "version_args": { "type": "array", "items": { "type": "string" } },
+        "exact_version": { "type": "string", "minLength": 1 },
+        "version_output": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

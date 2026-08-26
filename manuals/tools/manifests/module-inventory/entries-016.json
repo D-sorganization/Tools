@@ -3,6 +3,391 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 16795,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "87e0492dff6c7e8252981f5469f4f9a1116937751377323a85653dd08f538d03",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-COLORS-PY-DF1E277BD476",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/colors.py",
+      "purpose": "Unified color definitions for the fleet-wide theme system.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BUILTIN_THEMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHART_COLORS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEMANTIC_COLOR_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "THEME_COLOR_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_matplotlib_colors",
+            "signature": "theme: dict[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "get_qcolor",
+            "signature": "hex_color: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_rgba",
+            "signature": "hex_color: str, alpha: float=1.0"
+          },
+          {
+            "kind": "function",
+            "name": "is_dark_theme",
+            "signature": "theme_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "is_valid_hex_color",
+            "signature": "value: str"
+          },
+          {
+            "kind": "function",
+            "name": "normalise_hex_color",
+            "signature": "value: str"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/theme/test_colors.py",
+          "tests/shared/python/theme/test_fallback_drift.py",
+          "tests/shared/python/theme/test_matplotlib_style.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 806,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1ad59cf2d761eeabcac2dea20979c291fcf4004756a30906747cc49324e313ba",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-INIT-PY-6F73FD52CF1B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/__init__.py",
+      "purpose": "Shared custom theme dialogs for PyQt6 applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ColorFieldEditor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ColorPickerButton",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CustomThemeDialog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CustomThemeEditor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeListItem",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemeManagerDialog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ThemePreviewWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13576,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "34e9f66953b698180ce5bd777844e3abfdbc8671032a2037b4a80804b27288a7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-CUSTOM-THEME-DIALOG-PY-6721FC95BF9D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/custom_theme_dialog.py",
+      "purpose": "Dialog for designing and saving custom colour themes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ColorFieldEditor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CustomThemeDialog",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BRIGHTNESS_THRESHOLD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LUMA_BLUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LUMA_GREEN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LUMA_RED",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16567,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ef5aa7fc0d07607757d0371278032936e82dbd4173ffb0b03089b3090dd38550",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-CUSTOM-THEME-EDITOR-PY-87B35D781FC6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/custom_theme_editor.py",
+      "purpose": "Custom Theme Editor Dialog",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ColorPickerButton",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CustomThemeEditor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemePreviewWidget",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18580,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7613d649e058799e46b07f33a72cebf33b720424513d2aaf6c5fdad4eb38c34d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-THEME-MANAGER-DIALOG-PY-57B6C3F4F8B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/dialogs/theme_manager_dialog.py",
+      "purpose": "Theme Manager Dialog",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ThemeListItem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ThemeManagerDialog",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10093,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12881,310 +13266,6 @@
         "tests": "not-applicable",
         "units": "not-applicable",
         "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 598,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "0d04ef924e0dad00e457346d6ea6032bdbfd99b26770b7c00086effe6d6412ae",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-INIT-PY-A14A858D9DC4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/web_applications/calculator/__init__.py",
-      "purpose": "TI-89 inspired symbolic calculator utilities.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "CalculatorResult",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "TI89Calculator",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 42870,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "9c7dd11fef1606f832094616d83e1474bbe7041a6e9608faa5fcdfa5c05d8187",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-CALCULATOR-PY-F59B0CD632F5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/web_applications/calculator/calculator.py",
-      "purpose": "calculator.py module.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CalculatorResult",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TI89Calculator",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CALC_ALLOWED_AST_NODES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CALC_MAX_AST_NODES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CALC_MAX_EXPR_LENGTH",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CALC_MAX_STR_CONSTANT_LENGTH",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/web_applications/calculator/tests/test_calculator.py",
-          "src/web_applications/calculator/tests/test_calculator_extended.py",
-          "src/web_applications/calculator/tests/test_deep_recursion.py",
-          "src/web_applications/calculator/tests/test_security.py",
-          "tests/shared/python/model_generation/inertia/test_calculator.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2413,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "c85e0cda376ea493d1c60fdf6665b85cfd46a63af02c9dea68910c349b02931e",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-LIMITER-PY-97234F551FC1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/web_applications/calculator/limiter.py",
-      "purpose": "limiter.py module.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "RateLimiter",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/web_applications/calculator/tests/test_limiter.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 15414,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "cb3c8732389eb70fa7297011a0de5276a482f3657ec073ba82f4b7b33e5b9062",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-STATIC-APP-JS-1EE887915348",
-      "language": "javascript",
-      "maintainer": "Tools module maintainers",
-      "path": "src/web_applications/calculator/static/app.js",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 273,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "3572edca1198e06bae8a10c90f18ccda84b4062747219a6ea07aa5f950f096d7",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-STATIC-MANIFEST-WEBMANIFEST-82EC4A043D17",
-      "language": "webmanifest",
-      "maintainer": "Tools module maintainers",
-      "path": "src/web_applications/calculator/static/manifest.webmanifest",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [

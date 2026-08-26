@@ -876,10 +876,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3156,
+      "bytes_lf": 4124,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6b8b435f824634af1bbaff6f121a4d4594d651b73fa56806f39ae9492fdfd8b6",
+      "content_sha256_lf": "f59e53b5457b4c7530b5e9246c70fcc5080132aea7e1a0810cb98631d26db7f9",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-DESIGN-MANUAL-GOVERNANCE-JSON-36B84BAED1E6",
       "language": "json",
@@ -7504,6 +7504,7 @@
           "tests/_import_contract_bootstrap.py",
           "tests/architecture/test_gh1696_god_modules.py",
           "tests/architecture/test_no_frameless_windows_3322.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/data_processing/data_processor/test_core_modules_smoke.py",
           "tests/data_processing/data_processor/test_script_generator_hardening.py",
@@ -7561,6 +7562,7 @@
         "validation_paths": [
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
           "tests/_import_contract_bootstrap.py",
+          "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/unit/test_project_metadata_contracts.py",
           "tests/video_analyzer/test_video_analyzer_import_contract.py"
@@ -13575,6 +13577,86 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3377,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d932087d244779b73486a9126ece173c3239716ade92ad791ccdb618ff293b57",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-BUILD-TOOLS-MANUAL-FIGURE-PY-EF553BFC86AF",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/build_tools_manual_figure.py",
+      "purpose": "Build the deterministic renderer-pathway figure for the Tools manual.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BACKGROUND",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BLUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BLUE_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BODY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MUTED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_figure",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13007,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13712,6 +13794,81 @@
         "validation_paths": [
           "tests/architecture/test_tools_module_inventory_contract.py"
         ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3868,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aae1abf78b7ffd52c21969c4429d8f6ea608c6178c5f50cab3dd5916f875fe96",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-BUILD-TOOLS-REFERENCE-DOCX-PY-0B636AEBDB74",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/build_tools_reference_docx.py",
+      "purpose": "Build the deterministic compact-reference DOCX used by the Tools manual.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BLUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BLUE_DARK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BODY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FONT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_reference",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
       }
     },
     {
@@ -14158,10 +14315,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16285,
+      "bytes_lf": 18689,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "57fbc538ecde9aa864ae3ac811bda8f41d3369e8b6177de5302e86ccdf9e2b8c",
+      "content_sha256_lf": "6e1ddc58ba7890c60b849e8af51f7509bd2515096a944046a05556fbeeaaf8e5",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DESIGN-MANUAL-GOVERNANCE-PY-81C2F95C1FD2",
       "language": "python",
@@ -14551,235 +14708,6 @@
         "validation_paths": [
           "tests/test_minimum_test_contract.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13233,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "33748ab93ea64888d3a3305e34c585480106fd21bf95b88039992275890326bd",
-      "family": "repository-tooling-non-calculation",
-      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MIRROR-FRESHNESS-PY-B94393E3A7F7",
-      "language": "python",
-      "maintainer": "Repository tooling maintainers",
-      "path": "scripts/check_mirror_freshness.py",
-      "purpose": "Freshness check for the rate-of-closure-explorer public mirror.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://d-sorganization.github.io/rate-of-closure-explorer/"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CanonicalState",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ContractViolation",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FreshnessReport",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MirrorState",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_MIRROR_REPO",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_WEB_SUBDIR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXIT_DRIFTED",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXIT_ERROR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXIT_FRESH",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_RECORDED_SHA_RE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SHA_RE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "assess_freshness",
-            "signature": "canonical: CanonicalState, mirror: MirrorState"
-          },
-          {
-            "kind": "function",
-            "name": "compare_trees",
-            "signature": "canonical_files: dict[str, str], mirror_files: dict[str, str]"
-          },
-          {
-            "kind": "function",
-            "name": "exit_code_for",
-            "signature": "report: FreshnessReport"
-          },
-          {
-            "kind": "function",
-            "name": "gather_canonical_state",
-            "signature": "repo_root: Path, web_subdir: str, deep: bool"
-          },
-          {
-            "kind": "function",
-            "name": "gather_mirror_state",
-            "signature": "mirror_repo: str, deep: bool"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": "argv: list[str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "parse_recorded_canonical_commit",
-            "signature": "message: str"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3005,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7a1accde8c28537c092ae991d5cbc154054c447480a1ea7782384162b34b1878",
-      "family": "repository-tooling-non-calculation",
-      "id": "TOOLS-MODULE-SCRIPTS-CHECK-MODULE-SIZE-BUDGET-PY-C0C97A7D5BE6",
-      "language": "python",
-      "maintainer": "Repository tooling maintainers",
-      "path": "scripts/check_module_size_budget.py",
-      "purpose": "Fail when Python source files exceed a configured line-count budget.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DEFAULT_BASELINE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_EXCLUDE_PARTS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_INCLUDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_MAX_LINES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "count_lines",
-            "signature": "path: Path"
-          },
-          {
-            "kind": "function",
-            "name": "iter_python_files",
-            "signature": "include_roots: tuple[str, ...], exclude_parts: set[str]"
-          },
-          {
-            "kind": "function",
-            "name": "load_baseline",
-            "signature": "path: Path"
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "should_skip",
-            "signature": "path: Path, exclude_parts: set[str]"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],

@@ -3,6 +3,498 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 4728,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "f9e2a317c0cd40e6a13d17f8bd584e94527613df6b6af9c67632d40abb112cec",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-PLOTTING-PY-32CBC150A8E7",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_plotting.py",
+      "purpose": "Signal Toolkit Widget Plotting Mixin.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlottingMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 29634,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "091c25a049226e18aa6f2a256cb9d3d8dd6ed277f1709b2c22fd442c433b9385",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-PROCESSING-PY-4A82CFD6331B",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_processing.py",
+      "purpose": "Signal Toolkit Widget Processing Mixin.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProcessingMixin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignalGenerationError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_HISTORY",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3930,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "3833fc5d1faf28f99f9d693534ee1519a5a9e1410933a0dc5a8307571e83b026",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-PROTOCOL-PY-BE6C126695D3",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_protocol.py",
+      "purpose": "Protocol defining the interface between widget mixins.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WidgetProtocol",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 32924,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "6ef4c58f7af27ad7897620ae7a66b513715c491d55b743690e9694fe7581c3a6",
+      "family": "signal-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-WIDGET-UI-PY-41D251CD3AD9",
+      "language": "python",
+      "maintainer": "Signal processing maintainers",
+      "path": "src/shared/python/signal_toolkit/widget_ui.py",
+      "purpose": "Signal Toolkit Widget UI Setup Mixin.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UISetupMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz",
+          "rad"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2863,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "71e1268cd6145c66700d6e0cab008d3d9f0217f751a6d02c78d5062d34b0a371",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-INIT-PY-2A70110D108B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/__init__.py",
+      "purpose": "Shared swing simulation package (epic #4103, P0 foundation #4104).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ATTRIBUTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionComponent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "COEFFICIENT_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ComponentHistory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ComponentMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_GRAVITY_M_S2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DOUBLE_PENDULUM_JOINT_IDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DOUBLE_PENDULUM_MODEL_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DoublePendulumAttributionProvider",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DoublePendulumRunConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DoublePendulumSwing",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FitMetadata",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointLockConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointTorqueAssignment",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LocalizedTorqueOffset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PendulumState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlaneOrientation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrescribedTorqueProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SHOULDER_JOINT_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateAttribution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingRunMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TORQUE_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TORQUE_UNIT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TorquePolynomial",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TorqueProfileLibrary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TorqueProfileSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrajectoryAttribution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WRIST_JOINT_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribute_state",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribute_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "component_impulse_objective",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_ascending_polynomial",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fit_torque_history_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "fit_torque_polynomial",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "rust_available",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 1116,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -18242,391 +18734,6 @@
         "test_paths": [
           "src/urdf_builder_gui/tests/test_urdf_builder_gui.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16795,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "87e0492dff6c7e8252981f5469f4f9a1116937751377323a85653dd08f538d03",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-COLORS-PY-DF1E277BD476",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/theme/colors.py",
-      "purpose": "Unified color definitions for the fleet-wide theme system.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "BUILTIN_THEMES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CHART_COLORS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SEMANTIC_COLOR_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "THEME_COLOR_KEYS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_matplotlib_colors",
-            "signature": "theme: dict[str, str]"
-          },
-          {
-            "kind": "function",
-            "name": "get_qcolor",
-            "signature": "hex_color: str"
-          },
-          {
-            "kind": "function",
-            "name": "get_rgba",
-            "signature": "hex_color: str, alpha: float=1.0"
-          },
-          {
-            "kind": "function",
-            "name": "is_dark_theme",
-            "signature": "theme_name: str"
-          },
-          {
-            "kind": "function",
-            "name": "is_valid_hex_color",
-            "signature": "value: str"
-          },
-          {
-            "kind": "function",
-            "name": "normalise_hex_color",
-            "signature": "value: str"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/theme/test_colors.py",
-          "tests/shared/python/theme/test_fallback_drift.py",
-          "tests/shared/python/theme/test_matplotlib_style.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 806,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1ad59cf2d761eeabcac2dea20979c291fcf4004756a30906747cc49324e313ba",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-INIT-PY-6F73FD52CF1B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/theme/dialogs/__init__.py",
-      "purpose": "Shared custom theme dialogs for PyQt6 applications.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ColorFieldEditor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ColorPickerButton",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CustomThemeDialog",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "CustomThemeEditor",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ThemeListItem",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ThemeManagerDialog",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ThemePreviewWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13576,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "34e9f66953b698180ce5bd777844e3abfdbc8671032a2037b4a80804b27288a7",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-CUSTOM-THEME-DIALOG-PY-6721FC95BF9D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/theme/dialogs/custom_theme_dialog.py",
-      "purpose": "Dialog for designing and saving custom colour themes.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ColorFieldEditor",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CustomThemeDialog",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BRIGHTNESS_THRESHOLD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LUMA_BLUE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LUMA_GREEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LUMA_RED",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 16567,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ef5aa7fc0d07607757d0371278032936e82dbd4173ffb0b03089b3090dd38550",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-CUSTOM-THEME-EDITOR-PY-87B35D781FC6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/theme/dialogs/custom_theme_editor.py",
-      "purpose": "Custom Theme Editor Dialog",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ColorPickerButton",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CustomThemeEditor",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ThemePreviewWidget",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18580,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7613d649e058799e46b07f33a72cebf33b720424513d2aaf6c5fdad4eb38c34d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-DIALOGS-THEME-MANAGER-DIALOG-PY-57B6C3F4F8B1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/theme/dialogs/theme_manager_dialog.py",
-      "purpose": "Theme Manager Dialog",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ThemeListItem",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ThemeManagerDialog",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

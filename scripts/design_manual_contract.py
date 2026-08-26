@@ -10,6 +10,7 @@ EXPECTED_POLICY_FIELDS = {
     "canonical_source",
     "contracts",
     "calculation_inventory",
+    "renderer",
     "generated_outputs",
     "freshness",
     "publication",
@@ -56,6 +57,10 @@ REQUIRED_UPDATE_FILES = [
     "manuals/tools/manifests/module-inventory.json",
     "manuals/tools/schemas/module-inventory.schema.json",
     "manuals/tools/schemas/module-inventory-shard.schema.json",
+    "manuals/tools/toolchain-lock.json",
+    "manuals/tools/manifests/artifacts.json",
+    "manuals/tools/schemas/toolchain-lock.schema.json",
+    "manuals/tools/schemas/artifact-manifest.schema.json",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]

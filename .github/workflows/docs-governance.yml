@@ -16,6 +16,7 @@ on:
       - "scripts/**"
       - "tests/architecture/test_design_manual_governance_contract.py"
       - "tests/architecture/test_tools_module_inventory_contract.py"
+      - "tests/architecture/test_tools_manual_renderer_contract.py"
       - ".github/workflows/docs-governance.yml"
   push:
     branches: [main]
@@ -30,6 +31,7 @@ on:
       - "scripts/**"
       - "tests/architecture/test_design_manual_governance_contract.py"
       - "tests/architecture/test_tools_module_inventory_contract.py"
+      - "tests/architecture/test_tools_manual_renderer_contract.py"
       - ".github/workflows/docs-governance.yml"
 
 jobs:
@@ -96,21 +98,28 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+      - uses: pandoc/actions/setup@86321b6dd4675f5014c611e05088e10d4939e09e
+        with:
+          version: "3.8.2.1"
       - name: Purge pip cache
         run: python -m pip cache purge || true
       - name: Install focused governance test dependencies
         run: >-
           python -m pip install --disable-pip-version-check
-          pytest==9.0.3 jsonschema==4.24.0
+          pytest==9.0.3 jsonschema==4.24.0 pypdf==6.15.0
       - name: Validate docs governance
         run: python3 scripts/check_docs_governance.py
       - name: Validate engineering design-manual governance
         run: python3 -m scripts.check_design_manual_governance
       - name: Validate Tools module-inventory freshness
         run: python3 -m scripts.build_tools_module_inventory --check
+      - name: Validate Tools manual artifact freshness and semantics
+        run: python3 -m scripts.render_tools_design_manual --check
       - name: Test engineering design-manual governance
         run: >-
           python3 -m pytest
           -o addopts=''
           tests/architecture/test_design_manual_governance_contract.py
-          tests/architecture/test_tools_module_inventory_contract.py -q
+          tests/architecture/test_tools_module_inventory_contract.py
+          tests/architecture/test_tools_manual_renderer_contract.py
+          -m 'not integration' -q

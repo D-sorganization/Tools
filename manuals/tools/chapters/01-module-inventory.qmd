@@ -15,8 +15,8 @@ entry count, and first/last path. Both the index and every shard remain below
 the repository's one-megabyte file budget; consumers reassemble one logical
 view only after verifying every shard and the exact declared shard set.
 
-At this baseline, 3,429 modules are classified: 808 conservative calculation
-candidates and 2,621 non-calculation modules. One legacy JavaScript file has a
+At this baseline, 3,434 modules are classified: 808 conservative calculation
+candidates and 2,626 non-calculation modules. One legacy JavaScript file has a
 non-UTF-8 encoding and remains explicitly blocked rather than being decoded by
 an implicit platform default. These counts describe inventory coverage only;
 they are not test coverage, calculation approval, or publication readiness.
@@ -29,8 +29,8 @@ hashing. For module path (p_i) and normalized content digest (h_i), the tree
 authority is
 
 \[
-H_{\mathrm{tree}} = \operatorname{SHA256}\!\left(
-  \big\Vert_{i=1}^{n} p_i \mathbin{:} h_i \mathbin{\texttt{\\n}}
+H_{\mathrm{tree}} = \mathrm{SHA256}\left(
+  \Vert_{i=1}^{n} p_i : h_i
 \right),
 \]
 
@@ -74,5 +74,5 @@ Any tracked in-scope module addition, removal, rename, or normalized content
 change makes `--check` fail until the manifest is regenerated and reviewed. A
 green inventory check proves only deterministic classification and freshness of
 this file-level baseline. Public projection remains blocked until the remaining
-manual, renderer, semantic, page, accessibility, licensing, digest, and human
-approval gates are complete.
+stable-pathway, page, accessibility, licensing, publication, and human-approval
+gates are complete.

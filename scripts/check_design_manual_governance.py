@@ -20,6 +20,7 @@ from scripts.design_manual_contract import (
     DesignManualGovernanceSummary,
     is_valid_revision,
 )
+from scripts.render_tools_design_manual import check_manual
 from scripts.tools_module_inventory_contract import (
     ToolsModuleInventoryError,
 )
@@ -115,8 +116,55 @@ def _verify_outputs(policy: dict[str, object]) -> None:
     _equal(outputs["required_release_formats"], REQUIRED_FORMATS, "release formats")
     _equal(
         outputs["current_artifact_status"],
-        "not-generated-not-approved",
+        "generated-unapproved",
         "artifact status",
+    )
+
+
+def _verify_renderer(policy: dict[str, object]) -> None:
+    renderer = _object(
+        policy["renderer"],
+        "renderer",
+        {
+            "owner_subepic",
+            "status",
+            "toolchain_lock",
+            "artifact_manifest",
+            "toolchain_schema",
+            "artifact_schema",
+            "semantic_contract",
+            "reference_docx",
+            "figure_files",
+            "reproducibility",
+            "review_boundary",
+        },
+    )
+    _equal(renderer["owner_subepic"], 4712, "renderer owner")
+    _equal(renderer["status"], "qualified-generated-unapproved", "renderer status")
+    expected_paths = {
+        "toolchain_lock": "manuals/tools/toolchain-lock.json",
+        "artifact_manifest": "manuals/tools/manifests/artifacts.json",
+        "toolchain_schema": "manuals/tools/schemas/toolchain-lock.schema.json",
+        "artifact_schema": "manuals/tools/schemas/artifact-manifest.schema.json",
+        "semantic_contract": "manuals/tools/semantic-contract.json",
+        "reference_docx": "manuals/tools/styles/tools-reference.docx",
+    }
+    for field, expected in expected_paths.items():
+        _equal(_safe_path(renderer[field], field), PurePosixPath(expected), field)
+    figures = [
+        _safe_path(item, "renderer figure")
+        for item in _array(renderer["figure_files"], "renderer figures")
+    ]
+    _equal(
+        figures,
+        [PurePosixPath("manuals/tools/figures/render-pipeline.png")],
+        "renderer figures",
+    )
+    _equal(renderer["reproducibility"], "byte-and-semantic", "reproducibility")
+    _equal(
+        renderer["review_boundary"],
+        "page-accessibility-publication-human-review-pending-TOOLS-D7-D8",
+        "renderer review boundary",
     )
 
 
@@ -165,7 +213,7 @@ def _verify_publication(policy: dict[str, object]) -> bool:
     )
     _equal(
         publication["current_approval"],
-        "blocked-pending-TOOLS-D1-through-D8",
+        "blocked-pending-TOOLS-D3-through-D8",
         "publication approval",
     )
     evidence = [
@@ -209,7 +257,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     document = _object(policy, "governance policy", EXPECTED_POLICY_FIELDS)
     _equal(
         document["schema_version"],
-        "tools/design-manual-governance/1.1.0",
+        "tools/design-manual-governance/1.2.0",
         "schema version",
     )
     program = _object(
@@ -217,7 +265,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
     )
     _equal(
         program,
-        {"epic": 4707, "current_subepic": 4711, "next_subepic": 4712},
+        {"epic": 4707, "current_subepic": 4712, "next_subepic": 4717},
         "program",
     )
     manual_id, source_path = _verify_source(document)
@@ -261,6 +309,7 @@ def verify_governance_policy(policy: object) -> tuple[str, PurePosixPath, bool]:
         "inventory status",
     )
     _verify_outputs(document)
+    _verify_renderer(document)
     _verify_freshness(document)
     allowed = _verify_publication(document)
     _verify_quality_license_git(document)
@@ -324,14 +373,22 @@ def _verify_manual_tree(root: Path, source_path: PurePosixPath) -> int:
     manual_root = root.joinpath(*source_path.parts)
     if not manual_root.is_dir():
         raise DesignManualGovernanceError(f"canonical source is missing: {source_path}")
-    forbidden = sorted(
+    generated = sorted(
         path.relative_to(root).as_posix()
         for path in manual_root.rglob("*")
         if path.is_file() and path.suffix.lower() in GENERATED_SUFFIXES
     )
-    if forbidden:
+    expected_generated = [
+        "manuals/tools/dist/tools-engineering-design-manual.docx",
+        "manuals/tools/dist/tools-engineering-design-manual.html",
+        "manuals/tools/dist/tools-engineering-design-manual.pdf",
+        "manuals/tools/dist/tools-engineering-design-manual.tex",
+        "manuals/tools/styles/tools-header.tex",
+        "manuals/tools/styles/tools-reference.docx",
+    ]
+    if generated != expected_generated:
         raise DesignManualGovernanceError(
-            f"editable generated artifacts are forbidden: {forbidden}"
+            f"generated/manual style artifact set differs: {generated}"
         )
     qmd_paths = sorted(manual_root.rglob("*.qmd"))
     if not qmd_paths:
@@ -361,7 +418,8 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
         context["required_gate"],
         (
             "python -m scripts.check_design_manual_governance && "
-            "python -m scripts.build_tools_module_inventory --check"
+            "python -m scripts.build_tools_module_inventory --check && "
+            "python -m scripts.render_tools_design_manual --check"
         ),
         "required gate",
     )
@@ -371,6 +429,7 @@ def _verify_context(root: Path, policy: dict[str, object]) -> None:
             "manuals/tools",
             "scripts.check_design_manual_governance",
             "scripts.build_tools_module_inventory",
+            "scripts.render_tools_design_manual",
         ):
             if phrase not in text:
                 raise DesignManualGovernanceError(f"{name} is missing manual context")
@@ -402,6 +461,7 @@ def verify_repository(root: Path = REPO_ROOT) -> DesignManualGovernanceSummary:
             raise DesignManualGovernanceError(f"{field.replace('_', ' ')} is missing")
     manifest_path = _safe_path(inventory["module_manifest"], "module manifest")
     read_inventory(root, root.joinpath(*manifest_path.parts))
+    check_manual(root)
     registry_path = _safe_path(inventory["path"], "inventory path")
     registry = _load(root.joinpath(*registry_path.parts))
     calculation_count = verify_calculation_registry(registry)

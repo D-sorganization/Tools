@@ -52,9 +52,16 @@ def test_toolchain_lock_is_strict_versioned_and_complete() -> None:
     assert view.schema_version == TOOLCHAIN_LOCK_SCHEMA_VERSION
     assert view.canonical_source == "manuals/tools/index.qmd"
     assert view.reference_docx == "manuals/tools/styles/tools-reference.docx"
-    assert set(view.commands) == {"pandoc", "quarto", "xelatex"}
+    assert set(view.commands) == {"pandoc", "pdflatex", "quarto"}
     assert all(command.exact_version for command in view.commands.values())
-    assert view.source_date_epoch == 1_788_854_400
+    assert view.source_date_epoch == 1_787_724_102
+    assert set(view.input_sha256) == {
+        view.bibliography,
+        view.semantic_contract,
+        view.reference_docx,
+        *view.style_files,
+        *view.figure_files,
+    }
 
 
 def test_toolchain_lock_rejects_unknown_fields_versions_and_unsafe_paths() -> None:
@@ -69,9 +76,7 @@ def test_toolchain_lock_rejects_unknown_fields_versions_and_unsafe_paths() -> No
 
 def test_toolchain_verification_is_exact_and_fail_closed() -> None:
     lock = load_toolchain_lock(_payload(LOCK))
-    exact = {
-        name: command.version_output for name, command in lock.commands.items()
-    }
+    exact = {name: command.version_output for name, command in lock.commands.items()}
     verify_toolchain(lock, lambda name, _args: exact[name])
 
     drifted = dict(exact)
@@ -81,11 +86,17 @@ def test_toolchain_verification_is_exact_and_fail_closed() -> None:
     with pytest.raises(ManualRendererError, match="quarto unavailable"):
         verify_toolchain(
             lock,
-            lambda name, _args: (_ for _ in ()).throw(FileNotFoundError(name)),
+            lambda name, _args: (
+                exact[name]
+                if name != "quarto"
+                else (_ for _ in ()).throw(FileNotFoundError(name))
+            ),
         )
 
 
-def test_canonical_source_materialization_is_ordered_and_bounded(tmp_path: Path) -> None:
+def test_canonical_source_materialization_is_ordered_and_bounded(
+    tmp_path: Path,
+) -> None:
     lock = load_toolchain_lock(_payload(LOCK))
     output = tmp_path / "manual.qmd"
     sources = materialize_canonical_source(ROOT, lock, output)
@@ -167,6 +178,7 @@ def test_checked_in_artifacts_are_fresh_and_semantically_equivalent() -> None:
     assert main(["--check"]) == 0
 
 
+@pytest.mark.integration
 def test_renderer_is_byte_reproducible(tmp_path: Path) -> None:
     first = tmp_path / "first"
     second = tmp_path / "second"
@@ -178,4 +190,3 @@ def test_renderer_is_byte_reproducible(tmp_path: Path) -> None:
         first_path = first / f"tools-engineering-design-manual.{name}"
         second_path = second / f"tools-engineering-design-manual.{name}"
         assert first_path.read_bytes() == second_path.read_bytes()
-
