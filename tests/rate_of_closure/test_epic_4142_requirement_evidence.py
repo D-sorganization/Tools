@@ -24,7 +24,9 @@ NONAUTHORITATIVE_PREFIXES = (
     "docs/agent_handoff_archive/",
 )
 UPSTREAM_VARIATION_PR = "https://github.com/D-sorganization/UpstreamDrift/pull/9039"
-PINNED_TOOLS_REVISION = "17474249b9267d0e73a779c1d72f231e7b8de39c"
+PINNED_TOOLS_REVISION = (
+    "17474249b9267d0e73a779c1d72f231e7b8de39c"  # pragma: allowlist secret
+)
 
 
 def _load() -> dict[str, Any]:

@@ -66,6 +66,8 @@ audit commit
 `eade2d2c25c0b87648aee5fe4b2cda8982e23d9f` maps all 29 V0--V5 items plus the
 per-tab acceptance matrix and completion condition. Trusted run `32689177846`
 proves the initial React/PyQt tier, not all states or human approval.
+Branch `fix/detect-secrets-launch-identities` restores the scanner by narrowly
+annotating nine public Git/SHA identities; the baseline remains unchanged.
 PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
 error-taxonomy regressions exposed by protected execution. Do not weaken the
 provider contract or infer human validity from the corrected model-data gates.
