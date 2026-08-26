@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.23                                    |
+| **Spec Version**        | 1.18.24                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Markerless Extrinsic Delivery Reconciliation (#4721)
+
+Version 1.18.24 adds a machine-readable, fail-closed admission ledger and
+calculation-level reconstruction plan for TOOLS-M5 extrinsic/flexible-layout
+calibration. Protected main has no M0-M4 runtime authority. Prior candidate
+`f371ce4f06ba9b904d1719a99221cffab44b4020` bypasses M2/M3 and does not yet
+provide a genuinely coupled flexible-target solve or complete frame/gauge,
+robust rejection, uncertainty, motion invalidation, recalibration, provenance,
+schema, and consumer-fixture contracts. This change publishes no calibration
+runtime and claims no physical or AffineDrift parity qualification.
 
 ### 2026-08-26 Exemplar Engineering Manuals (#4707 / TOOLS-D4 (#4720))
 

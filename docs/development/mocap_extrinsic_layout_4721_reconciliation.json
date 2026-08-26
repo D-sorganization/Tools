@@ -1,0 +1,174 @@
+{
+  "schema_version": "mocap-extrinsic-reconciliation/1.0.0",
+  "observed_at": "2026-08-26T22:51:00Z",
+  "authority_repository": "D-sorganization/Tools",
+  "issue": 4721,
+  "protected_main_sha": "cff2909f1585273e10fa49165bfab8521e889da1",
+  "protected_main_tree": "f9f08e57496849c9a1e80e73ff25fd7a5d589f91",
+  "decision": "blocked_dependency_reconciliation",
+  "runtime_delivery_authorized": false,
+  "pull_request_authorized": false,
+  "adoption_claim": "not_implemented",
+  "prior_runtime_candidate": {
+    "head_sha": "f371ce4f06ba9b904d1719a99221cffab44b4020",
+    "tree_sha": "569e6d703f0183b18bfe070a689b63022dbd00fa",
+    "parent_sha": "7af55b44d00cfc3953685d244d0ee5fb03facd62",
+    "merge_base_with_protected_main": "e76a7a21408db9ba55b18959f0fc513bf63ec579",
+    "commits_ahead_of_merge_base": 10,
+    "protected_main_commits_ahead_of_merge_base": 10,
+    "provider_pr": null,
+    "release_authority": false,
+    "safe_to_cherry_pick": false,
+    "global_parameter_coupling": false,
+    "limitations": [
+      "Descends from unreleased M4 candidate 619b23f27548dbd821b511f27a02b084d9d2ac63 but not from the M2 or M3 candidates required by issue 4721.",
+      "Does not descend from the current M0/M1 PR head and none of its runtime dependencies exist on protected main.",
+      "The objective estimates one independent camera pose block from already-known world points; no shared unknown target poses couple cameras into a flexible-layout bundle adjustment.",
+      "The claimed robust PnP initialization evaluates all points and leave-one-out sets only, so multiple outliers have no deterministic consensus/rejection contract.",
+      "The DLT initializer requires rank-eleven non-planar geometry and does not support ordinary planar calibration targets.",
+      "There is no versioned JSON Schema, canonical golden serialization, public export baseline, or immutable consumer fixture.",
+      "Returned soft-loss residuals do not identify accepted and rejected observations with stable reason codes.",
+      "Layout continuity compares caller-supplied poses without measurement uncertainty, timestamps, evidence provenance, relocalization, or an executable recalibration workflow."
+    ]
+  },
+  "dependencies": [
+    {
+      "id": "TOOLS-M0",
+      "issue": 4708,
+      "provider_pr": 4734,
+      "candidate_head": "f536eda05cb1824463a11e0b58cc7b94e6ffea1b",
+      "release_state": "not_merged",
+      "blocking_evidence": "Authority ADRs and acceptance matrix are absent from protected main; PR 4734 is open and conflicting."
+    },
+    {
+      "id": "TOOLS-M1",
+      "issue": 4710,
+      "provider_pr": 4734,
+      "candidate_head": "f536eda05cb1824463a11e0b58cc7b94e6ffea1b",
+      "release_state": "not_merged",
+      "blocking_evidence": "Canonical device, frame, uncertainty, availability, and provenance schemas are absent from protected main."
+    },
+    {
+      "id": "TOOLS-M2",
+      "issue": 4713,
+      "provider_pr": null,
+      "candidate_head": "7f154c607b41d6f8b655cfc60270ce3a24f7ada0",
+      "release_state": "not_merged",
+      "blocking_evidence": "The acquisition/provider candidate is local-only and is not an ancestor of the M5 candidate."
+    },
+    {
+      "id": "TOOLS-M3",
+      "issue": 4718,
+      "provider_pr": null,
+      "candidate_head": "ec78bdce03962d5471aae84a93cbe87c0a393491",
+      "release_state": "not_merged",
+      "blocking_evidence": "The timing/provenance candidate is local-only, has incorrect sibling topology relative to M2, and is not an ancestor of M5."
+    },
+    {
+      "id": "TOOLS-M4",
+      "issue": 4714,
+      "provider_pr": null,
+      "prior_runtime_candidate": "619b23f27548dbd821b511f27a02b084d9d2ac63",
+      "reconciliation_head": "339b5eeae61827f4767da985182b3ad68af30a77",
+      "reconciliation_tree": "3ebe14dc42d6d9f6c021e20713c1ff33df7ad517",
+      "release_state": "not_merged",
+      "runtime_state": "unavailable",
+      "blocking_evidence": "The current-main M4 reconciliation is an audit-only source slice and explicitly publishes no intrinsic runtime."
+    }
+  ],
+  "repair_pr": {
+    "number": 4753,
+    "head_sha": "821b464e436fe9f953bc830e9495efe474312f03",
+    "tree_sha": "6865c8e10712eb55ea2ed3f7c966cb4f98a34adb",
+    "release_state": "not_merged",
+    "observed_pr_state": "open_blocked",
+    "focused_green_run": 33005787997,
+    "protected_run_state": "cancelled_capacity_drain"
+  },
+  "prohibited_runtime_paths": [
+    "src/shared/python/sidekick/lab/mocap/_extrinsic_numerics.py",
+    "src/shared/python/sidekick/lab/mocap/_validation.py",
+    "src/shared/python/sidekick/lab/mocap/calibration.py",
+    "src/shared/python/sidekick/lab/mocap/extrinsic.py",
+    "src/shared/python/sidekick/lab/mocap/extrinsic_solver.py",
+    "src/shared/python/sidekick/lab/mocap/layout_monitor.py"
+  ],
+  "required_sequence": [
+    {
+      "id": "R1",
+      "action": "Protected-qualify and merge PR 4753, or incorporate its sparse downstream contract repair into a newly reviewed M0/M1 replacement."
+    },
+    {
+      "id": "R2",
+      "action": "Rebuild and protected-merge TOOLS-M0 and TOOLS-M1 from then-current main, freezing frames, transforms, units, uncertainty, availability, provenance, and serialization."
+    },
+    {
+      "id": "R3",
+      "action": "Rebuild and protected-merge TOOLS-M2 on the exact M1 release, exposing bounded captured-frame, target-observation, cancellation, and provider contracts."
+    },
+    {
+      "id": "R4",
+      "action": "Rebuild and protected-merge TOOLS-M3 on the exact M2 release, preserving clock, synchronization uncertainty, sequence, drop/duplicate, and recording provenance facts."
+    },
+    {
+      "id": "R5",
+      "action": "Amend and implement TOOLS-M4 on the exact M3 release, then protected-merge intrinsic, detector/provider, observation, rejection, uncertainty, and quality authority."
+    },
+    {
+      "id": "R6",
+      "action": "Rebuild TOOLS-M5 from then-current protected main and the exact M4 release using contract-first flexible-layout tests; do not cherry-pick f371ce4."
+    },
+    {
+      "id": "R7",
+      "action": "After protected M5 release, publish immutable sanitized schemas and fixtures for AffineDrift 3962 parity, then qualify downstream layout consumers."
+    }
+  ],
+  "planned_m5": {
+    "missing_runtime_contracts": [
+      "frames",
+      "gauge",
+      "robust_estimation",
+      "uncertainty",
+      "motion_rejection",
+      "recalibration",
+      "provenance"
+    ],
+    "observation_authority_depends_on": [
+      "TOOLS-M2",
+      "TOOLS-M3",
+      "TOOLS-M4"
+    ],
+    "state_model": "Jointly estimate arbitrary camera poses and per-capture target poses from metric target geometry, with a single explicit gauge policy and deterministic parameter ordering.",
+    "initialization": "Versioned planar homography and non-planar PnP initialization with bounded deterministic consensus, declared seed, inlier mask, chirality checks, and typed failure.",
+    "optimization": "Bounded robust bundle adjustment over shared camera and target-pose variables; returned status includes termination, active bounds, accepted/rejected observations, and residual provenance.",
+    "observability": "Graph-connectivity, gauge-nullspace, Jacobian-rank, baseline/view-diversity, depth, and conditioning checks must fail closed with stable reason codes.",
+    "uncertainty_contract": "Gauge-aware joint covariance and camera marginals/cross-covariances with names, frames, units, effective rank, conditioning, intrinsic-uncertainty policy, and PSD validation.",
+    "movement_contract": "Relocalization observations with timestamps and uncertainty drive SE(3) change evidence; missing, added, moved, ambiguous, or stale cameras invalidate inference authority explicitly.",
+    "recalibration_contract": "A versioned state machine separates suspected movement, invalidation, candidate recalibration, human approval, activation, rollback, and immutable layout segments.",
+    "provenance_contract": "Bind M2/M3/M4 source identities, frame and target-definition digests, solver/config versions, input observation IDs, exclusion reasons, timestamps, approval, and output digest.",
+    "schema_and_fixture": "Strict JSON Schema and canonical golden serialization with unknown-field, unknown-version, non-finite, oversize, and digest rejection plus an immutable sanitized consumer fixture.",
+    "required_tests": [
+      "two-camera and arbitrary-N flexible target-pose recovery",
+      "planar and non-planar deterministic initialization",
+      "gauge-policy and coordinate-transform invariants",
+      "multiple-outlier consensus and typed observation rejection",
+      "disconnected, scale-free, collinear, low-baseline, and rank-deficient rejection",
+      "uncertainty coverage and covariance permutation invariance",
+      "camera addition, removal, translation, rotation, stale evidence, and ambiguity invalidation",
+      "recalibration approval, activation, rollback, and segment immutability",
+      "resource caps, cancellation, deterministic ordering, and canonical serialization",
+      "sanitized AffineDrift consumer fixture parity"
+    ],
+    "physical_qualification": "not_claimed"
+  },
+  "consumer": {
+    "repository": "D-sorganization/AffineDrift",
+    "issue": 3962,
+    "consumer_branch": "docs/3962-camera-geometry-manual",
+    "consumer_head": "b48d7a352ce6075baab686004bd486a76bbe0310",
+    "consumer_tree": "c46792c9d03ebe72643404595c32b3619766b4f1",
+    "issue_evidence": "https://github.com/D-sorganization/AffineDrift/issues/3962#issuecomment-5431845205",
+    "tools_runtime_state": "unavailable",
+    "parity_claim": "not_claimed"
+  }
+}
