@@ -8,6 +8,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_PATH = (
     REPO_ROOT / ".github" / "workflows" / "cross-repo-python-integration.yml"
 )
+UPSTREAM_WRENCH_TRACE_PATH = "src/bunkershot3d/postproc/wrench_trace.py"
 REQUIRED_SPARSE_PATHS = {
     "D-sorganization/Gasification_Model": {
         "src",
@@ -23,6 +24,7 @@ REQUIRED_SPARSE_PATHS = {
         "launch_upstream_drift.py",
         "pyproject.toml",
         "scripts",
+        UPSTREAM_WRENCH_TRACE_PATH,
         "src/shared",
         "tests/conftest.py",
         "tests/shared_contracts",
@@ -64,6 +66,7 @@ def test_each_downstream_declares_its_required_sparse_scope() -> None:
 
     assert actual == REQUIRED_SPARSE_PATHS
     upstream_scope = actual["D-sorganization/UpstreamDrift"]
+    assert UPSTREAM_WRENCH_TRACE_PATH in upstream_scope
     assert "src" not in upstream_scope
     assert "ui" not in upstream_scope
 
@@ -103,6 +106,20 @@ def test_upstream_install_uses_current_tools_without_repackaging_pinned_snapshot
     assert upstream["install"] == (
         'CI= SKIP_UI_BUILD=1 pip install -e ".[dev,gui-test]"'
     )
+
+
+def test_upstream_consumer_contracts_run_serially() -> None:
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    upstream = next(
+        downstream
+        for downstream in downstreams
+        if downstream["repo"] == "D-sorganization/UpstreamDrift"
+    )
+
+    assert " -n 0 " in upstream["test_command"]
 
 
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
