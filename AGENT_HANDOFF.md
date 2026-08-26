@@ -70,8 +70,8 @@ validation.
 PR #4705 maps all 31 V0--V5 obligations and the completion condition. Trusted
 run `32689177846` proves the initial React/PyQt tier, not all states or human
 approval. PR #4731 restores detect-secrets with an unchanged baseline.
-Branch `feat/4433-tab-authority` implements V0.1 with bounded purpose,
-prerequisites, and reciprocal counterparts for all 20 workspaces.
+PR #4733 at `a25de6ac7` implements V0.1 with bounded purpose, prerequisites,
+and reciprocal counterparts for all 20 workspaces.
 PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
 error-taxonomy regressions exposed by protected execution. Do not weaken the
 provider contract or infer human validity from the corrected model-data gates.
