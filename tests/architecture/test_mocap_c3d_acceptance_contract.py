@@ -12,10 +12,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.contract]
 
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 _CONTRACT_PATH = (
-    _REPOSITORY_ROOT
-    / "docs"
-    / "development"
-    / "mocap_c3d_exchange_acceptance.json"
+    _REPOSITORY_ROOT / "docs" / "development" / "mocap_c3d_exchange_acceptance.json"
 )
 
 
