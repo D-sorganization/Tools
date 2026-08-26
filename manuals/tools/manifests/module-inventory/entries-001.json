@@ -3299,10 +3299,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10432,
+      "bytes_lf": 11873,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "813fbf8401187dea55e52d5bb98d35a36f386b898e32af71d50f2b44e0d40684",
+      "content_sha256_lf": "54490c8dfc37f84d10cbb48398a95f3d8861834579ebf8994d95832567dcf3b0",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MANUAL-ARTIFACTS-PY-9BC52A6BD306",
       "language": "python",
@@ -3322,9 +3322,9 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -3333,11 +3333,28 @@
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [
+          "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties",
+          "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes",
           "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
         ],
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CANONICAL_BIBLIOGRAPHY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CUSTOM_PROPERTY_NS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CUSTOM_VALUE_NS",
+            "signature": null
+          },
           {
             "kind": "constant",
             "name": "FIXED_PDF_ID",
@@ -3414,12 +3431,16 @@
             "signature": "payload: Mapping[str, object], path: Path"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/architecture/test_tools_manual_renderer_contract.py"
+        ],
         "unit_mentions": [
           "g",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/architecture/test_tools_manual_renderer_contract.py"
+        ]
       }
     },
     {

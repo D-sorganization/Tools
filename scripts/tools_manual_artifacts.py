@@ -32,6 +32,11 @@ from scripts.tools_manual_renderer_contract import (
 FIXED_ZIP_TIME = (1980, 1, 1, 0, 0, 0)
 FIXED_PDF_ID = bytes.fromhex("00" * 16)
 FONT_SUBSET_PATTERN = re.compile(r"^/[A-Z]{6}\+")
+CUSTOM_PROPERTY_NS = (
+    "http://schemas.openxmlformats.org/officeDocument/2006/custom-properties"
+)
+CUSTOM_VALUE_NS = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"
+CANONICAL_BIBLIOGRAPHY_PATH = "manuals/tools/references.bib"
 MEDIA_TYPES = {
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "html": "text/html",
@@ -95,6 +100,32 @@ def _normalize_core_properties(value: bytes) -> bytes:
     return re.sub(rb"(<cp:revision>)[^<]*(</cp:revision>)", rb"\g<1>1\g<2>", result)
 
 
+def _normalize_custom_properties(value: bytes) -> bytes:
+    """Remove workspace identity from Pandoc's custom bibliography property."""
+    try:
+        root = ElementTree.fromstring(value)
+    except ElementTree.ParseError as exc:
+        raise ManualRendererError("DOCX custom properties are malformed") from exc
+
+    bibliography_found = False
+    for property_node in root.findall(f"{{{CUSTOM_PROPERTY_NS}}}property"):
+        if property_node.attrib.get("name") != "bibliography":
+            continue
+        bibliography = property_node.find(f"{{{CUSTOM_VALUE_NS}}}lpwstr")
+        if bibliography is None:
+            raise ManualRendererError(
+                "DOCX bibliography custom property has no string value"
+            )
+        bibliography.text = CANONICAL_BIBLIOGRAPHY_PATH
+        bibliography_found = True
+
+    if not bibliography_found:
+        return value
+    ElementTree.register_namespace("", CUSTOM_PROPERTY_NS)
+    ElementTree.register_namespace("vt", CUSTOM_VALUE_NS)
+    return ElementTree.tostring(root, encoding="utf-8", xml_declaration=True)
+
+
 def canonicalize_docx(path: Path) -> None:
     """Rewrite OOXML ordering, timestamps, and core properties deterministically."""
     temporary = path.with_suffix(".canonical.docx")
@@ -108,6 +139,8 @@ def canonicalize_docx(path: Path) -> None:
             value = source.read(name)
             if name == "docProps/core.xml":
                 value = _normalize_core_properties(value)
+            elif name == "docProps/custom.xml":
+                value = _normalize_custom_properties(value)
             info = zipfile.ZipInfo(name, FIXED_ZIP_TIME)
             info.compress_type = zipfile.ZIP_DEFLATED
             info.create_system = 0

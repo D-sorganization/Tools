@@ -63,6 +63,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 - Local D2 evidence: 37/37 focused contracts and 110/110 non-inherited
   architecture tests pass; both remaining import-alias failures reproduce on
   exact D1. Visual review passed all 4 PDF and all 5 Word-rendered DOCX pages.
+  A detached-worktree replay exposed and then blocked Pandoc's absolute
+  bibliography custom property; the canonical DOCX now records only
+  `manuals/tools/references.bib`, with a cross-workspace byte-parity regression.
 - #4142 remains open; model-data evidence is not human or scientific approval.
 
 ## Must-Read Architecture Pointers
