@@ -189,7 +189,7 @@ def test_calculation_candidate_stays_provisional_and_unapproved() -> None:
     assert entry["classification"] == "calculation"
     assert entry["authority_status"] == "provisional"
     assert entry["review_status"] == "review-required"
-    assert entry["states"]["equation_pathway"] == "unmapped-pending-TOOLS-D3"
+    assert entry["states"]["equation_pathway"] == "unmapped-pending-TOOLS-D4"
     assert entry["states"]["publication"] == "blocked"
     assert entry["traceability"]["public_surfaces"]
     assert entry["traceability"]["test_paths"]

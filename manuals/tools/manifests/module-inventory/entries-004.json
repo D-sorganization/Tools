@@ -3,6 +3,293 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7485,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "195b74d120c982645bd0bfcb5c9add3f38c4fe1d46165000967d95e806c5acf8",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-ROUTER-PY-49324836C65E",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/data_explorer_router.py",
+      "purpose": "FastAPI router for the Data Explorer analysis suite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/correlation",
+          "/dataset",
+          "/export",
+          "/histogram",
+          "/pca",
+          "/signals",
+          "/spectrum",
+          "/statistics",
+          "/trendline"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "create_data_explorer_router",
+            "signature": "get_session_dep: Callable[..., object], read_auth_dep: Callable[..., object] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_data_explorer_router.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 28512,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b45bdac77af88ffa6f69de81278b8f89eaeb735df24ef601491cd8ec809d9205",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-SERVICE-PY-660C0B5EDC0B",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/data_explorer_service.py",
+      "purpose": "Orchestration service for the Data Explorer analysis suite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_dataset",
+            "signature": "session: object, req: DatasetRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_correlation",
+            "signature": "req: CorrelationRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_histogram",
+            "signature": "req: HistogramRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_pca",
+            "signature": "req: PcaRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_spectrum",
+            "signature": "req: SpectrumRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_statistics",
+            "signature": "req: ColumnsRequest"
+          },
+          {
+            "kind": "function",
+            "name": "compute_trendline",
+            "signature": "req: TrendlineRequest"
+          },
+          {
+            "kind": "function",
+            "name": "dataset_to_csv_rows",
+            "signature": "index: Sequence[float] | None, columns: Sequence[Column]"
+          },
+          {
+            "kind": "function",
+            "name": "dataset_to_json",
+            "signature": "index: Sequence[float] | None, columns: Sequence[Column]"
+          },
+          {
+            "kind": "function",
+            "name": "list_signals",
+            "signature": "session: object"
+          },
+          {
+            "kind": "function",
+            "name": "validate_export",
+            "signature": "index: Sequence[float] | None, columns: Sequence[Column]"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_data_explorer_service.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "g",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 20744,
+      "classification": "calculation",
+      "classification_basis": "path-marker:signal",
+      "content_sha256_lf": "41173521171fba9b9206014682563431c6d8e6013d6c633e82641fcedfb9aa23",
+      "family": "control-systems-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-SIGNALS-PY-191B035C88B0",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/data_explorer_signals.py",
+      "purpose": "Pure-numpy signal filters, transforms, resampling and a dispatcher.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "apply_filter",
+            "signature": "y: _ArrayLike, ftype: str, params: Mapping[str, float], t: _ArrayLike | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "differentiate",
+            "signature": "y: _ArrayLike, x: _ArrayLike | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "exponential_smoothing",
+            "signature": "y: _ArrayLike, alpha: float"
+          },
+          {
+            "kind": "function",
+            "name": "fft_filter",
+            "signature": "y: _ArrayLike, sample_rate_hz: float, low: float | None, high: float | None"
+          },
+          {
+            "kind": "function",
+            "name": "gaussian_filter",
+            "signature": "y: _ArrayLike, sigma: float"
+          },
+          {
+            "kind": "function",
+            "name": "hampel_filter",
+            "signature": "y: _ArrayLike, window: int, n_sigma: float"
+          },
+          {
+            "kind": "function",
+            "name": "integrate",
+            "signature": "y: _ArrayLike, x: _ArrayLike | None=None, *, initial: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "median_filter",
+            "signature": "y: _ArrayLike, window: int"
+          },
+          {
+            "kind": "function",
+            "name": "moving_average",
+            "signature": "y: _ArrayLike, window: int"
+          },
+          {
+            "kind": "function",
+            "name": "resample_series",
+            "signature": "t: _ArrayLike, y: _ArrayLike, interval_s: float, agg: str, interpolate: bool"
+          },
+          {
+            "kind": "function",
+            "name": "savgol_filter",
+            "signature": "y: _ArrayLike, window: int, polyorder: int"
+          },
+          {
+            "kind": "function",
+            "name": "zscore_filter",
+            "signature": "y: _ArrayLike, threshold: float"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_data_explorer_signals.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 26815,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -20,7 +307,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -106,7 +393,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -159,7 +446,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -242,7 +529,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -321,7 +608,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -497,7 +784,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -578,7 +865,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -818,7 +1105,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -874,7 +1161,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1014,7 +1301,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1173,7 +1460,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1272,7 +1559,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1323,7 +1610,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1384,7 +1671,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1455,7 +1742,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1511,7 +1798,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1689,7 +1976,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1764,7 +2051,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1819,7 +2106,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1873,7 +2160,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -1972,7 +2259,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2048,7 +2335,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2123,7 +2410,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2198,7 +2485,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2256,7 +2543,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2314,7 +2601,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2395,7 +2682,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2450,7 +2737,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2521,7 +2808,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2622,7 +2909,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2728,9 +3015,9 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
@@ -2805,7 +3092,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2861,7 +3148,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -2924,7 +3211,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3006,7 +3293,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3094,7 +3381,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3173,9 +3460,9 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
@@ -3240,7 +3527,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3316,7 +3603,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3379,7 +3666,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3586,7 +3873,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -3631,7 +3918,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -3679,7 +3966,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -3729,7 +4016,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -3773,7 +4060,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3880,7 +4167,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -3968,7 +4255,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4038,7 +4325,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4095,7 +4382,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4146,7 +4433,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4222,7 +4509,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4280,7 +4567,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4337,7 +4624,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4435,7 +4722,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4501,7 +4788,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4562,7 +4849,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4613,7 +4900,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4668,7 +4955,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4723,7 +5010,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4781,7 +5068,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4844,7 +5131,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4898,7 +5185,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -4954,7 +5241,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -4996,7 +5283,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5038,7 +5325,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5080,7 +5367,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5126,7 +5413,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5168,7 +5455,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5212,7 +5499,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5254,7 +5541,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5296,7 +5583,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5343,9 +5630,9 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
@@ -5390,9 +5677,9 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
@@ -5434,7 +5721,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5476,7 +5763,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5518,7 +5805,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5564,7 +5851,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5608,7 +5895,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5650,7 +5937,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5698,7 +5985,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -5757,7 +6044,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5801,7 +6088,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -5869,7 +6156,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -5916,7 +6203,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -6008,7 +6295,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -6169,7 +6456,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -6260,7 +6547,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -6549,7 +6836,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -6595,7 +6882,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -6852,7 +7139,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -6896,7 +7183,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -6949,7 +7236,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -6995,7 +7282,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7048,7 +7335,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7102,7 +7389,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7153,7 +7440,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7205,7 +7492,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -7251,7 +7538,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7303,7 +7590,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -7347,7 +7634,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7399,7 +7686,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -7443,7 +7730,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7492,7 +7779,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -7534,7 +7821,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -7578,7 +7865,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7636,7 +7923,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7687,7 +7974,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7741,7 +8028,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7790,7 +8077,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -7836,7 +8123,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7892,7 +8179,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7943,7 +8230,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -7992,7 +8279,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -8036,7 +8323,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8087,7 +8374,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -8133,7 +8420,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8193,7 +8480,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8242,7 +8529,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -8286,7 +8573,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -8332,7 +8619,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8417,7 +8704,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -8466,7 +8753,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8527,7 +8814,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8583,7 +8870,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8638,9 +8925,9 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
@@ -8700,7 +8987,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8757,7 +9044,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -8801,7 +9088,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8854,7 +9141,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -8898,7 +9185,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -8949,7 +9236,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9000,7 +9287,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -9042,7 +9329,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -9088,7 +9375,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9148,7 +9435,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9201,7 +9488,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9256,7 +9543,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9309,7 +9596,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9358,7 +9645,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -9407,7 +9694,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9462,7 +9749,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9511,7 +9798,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -9557,7 +9844,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9630,7 +9917,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -9676,7 +9963,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9729,7 +10016,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9787,7 +10074,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9857,7 +10144,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9916,7 +10203,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -9974,7 +10261,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10034,7 +10321,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10093,7 +10380,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10151,7 +10438,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -10197,7 +10484,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10325,7 +10612,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -10372,7 +10659,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10429,7 +10716,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -10477,7 +10764,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10533,7 +10820,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -10579,7 +10866,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10641,7 +10928,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -10687,7 +10974,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10754,7 +11041,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -10800,7 +11087,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10857,7 +11144,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -10904,7 +11191,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -10971,7 +11258,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11017,7 +11304,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11073,7 +11360,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11134,7 +11421,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11178,7 +11465,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11277,7 +11564,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11366,7 +11653,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11410,7 +11697,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11473,7 +11760,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11517,7 +11804,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11568,7 +11855,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11612,7 +11899,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11669,7 +11956,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11717,7 +12004,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11769,7 +12056,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11815,7 +12102,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11872,7 +12159,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -11918,7 +12205,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -11982,7 +12269,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -12028,7 +12315,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -12095,7 +12382,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -12139,7 +12426,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -12205,7 +12492,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -12250,7 +12537,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -12298,7 +12585,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -12377,7 +12664,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -12425,7 +12712,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -12538,7 +12825,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -12584,7 +12871,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -12652,7 +12939,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "unavailable",
@@ -12696,7 +12983,7 @@
       "states": {
         "adrs": "mapped",
         "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
+        "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
@@ -12757,158 +13044,6 @@
         "unit_mentions": [
           "ms",
           "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2062,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "77ef93b20882bd49c1b2d6637fb56d7a4cdc8656859217fbdac4995baa18d910",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-EDITABLEVALUE-TEST-TS-7E39F97CCB16",
-      "language": "typescript",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/frontend/src/lib/editableValue.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2614,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "89d0f043210b9929686d5ec95e261f6d4896a65eb4b209f91b45264d6e7b4b61",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-EDITABLEVALUE-TS-8F4566673631",
-      "language": "typescript",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/frontend/src/lib/editableValue.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "CommitDecision",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "CommitOptions",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "decideCommit",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "parseNumber",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4754,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db1b58ec2612d4eae7695bc298f03c4aaa12734d4b87ac42a0880eb892a1491f",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-EXPLORER-CSV-TEST-TS-7AF9DE8E1FB6",
-      "language": "typescript",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/frontend/src/lib/explorer/csv.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D3",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "ms"
         ],
         "validation_paths": []
       }

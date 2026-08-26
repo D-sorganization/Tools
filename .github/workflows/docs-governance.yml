@@ -17,6 +17,7 @@ on:
       - "tests/architecture/test_design_manual_governance_contract.py"
       - "tests/architecture/test_tools_module_inventory_contract.py"
       - "tests/architecture/test_tools_manual_renderer_contract.py"
+      - "tests/architecture/test_tools_textbook_chapter_contract.py"
       - ".github/workflows/docs-governance.yml"
   push:
     branches: [main]
@@ -32,6 +33,7 @@ on:
       - "tests/architecture/test_design_manual_governance_contract.py"
       - "tests/architecture/test_tools_module_inventory_contract.py"
       - "tests/architecture/test_tools_manual_renderer_contract.py"
+      - "tests/architecture/test_tools_textbook_chapter_contract.py"
       - ".github/workflows/docs-governance.yml"
 
 jobs:
@@ -113,6 +115,8 @@ jobs:
         run: python3 -m scripts.check_design_manual_governance
       - name: Validate Tools module-inventory freshness
         run: python3 -m scripts.build_tools_module_inventory --check
+      - name: Validate Tools textbook chapter contract
+        run: python3 -m scripts.lint_tools_textbook_chapters
       - name: Validate Tools manual artifact freshness and semantics
         run: python3 -m scripts.render_tools_design_manual --check
       - name: Test engineering design-manual governance
@@ -122,4 +126,5 @@ jobs:
           tests/architecture/test_design_manual_governance_contract.py
           tests/architecture/test_tools_module_inventory_contract.py
           tests/architecture/test_tools_manual_renderer_contract.py
+          tests/architecture/test_tools_textbook_chapter_contract.py
           -m 'not integration' -q

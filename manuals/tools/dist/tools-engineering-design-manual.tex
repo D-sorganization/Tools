@@ -37,6 +37,44 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
 \usepackage{graphicx}
 \makeatletter
 \newsavebox\pandoc@box
@@ -123,14 +161,14 @@
   pdfcreator={LaTeX via pandoc}}
 
 \ifXeTeX
-\special{pdf:trailerid [ <5bf2f1c839680fd26df14ae4b56689c5> <5bf2f1c839680fd26df14ae4b56689c5> ]}
+\special{pdf:trailerid [ <da2f2d9607739f8a6de4edbf14a13b98> <da2f2d9607739f8a6de4edbf14a13b98> ]}
 \fi
 \ifPDFTeX
 \pdftrailerid{}
-\pdftrailer{/ID [ <5bf2f1c839680fd26df14ae4b56689c5> <5bf2f1c839680fd26df14ae4b56689c5> ]}
+\pdftrailer{/ID [ <da2f2d9607739f8a6de4edbf14a13b98> <da2f2d9607739f8a6de4edbf14a13b98> ]}
 \fi
 \ifLuaTeX
-\pdfvariable trailerid {[ <5bf2f1c839680fd26df14ae4b56689c5> <5bf2f1c839680fd26df14ae4b56689c5> ]}
+\pdfvariable trailerid {[ <da2f2d9607739f8a6de4edbf14a13b98> <da2f2d9607739f8a6de4edbf14a13b98> ]}
 \fi
 
 \title{Tools Engineering Design Manual}
@@ -154,10 +192,11 @@ design manual. It is a governance scaffold, not a released engineering
 manual. The file-level module inventory is complete for its declared
 tracked-source denominator, but all detected calculation candidates
 remain provisional and the stable calculation-pathway registry remains
-empty. Release remains blocked by TOOLS-D3 through TOOLS-D9. Generated
-HTML, LaTeX, PDF, and DOCX artifacts are reproducible engineering
-records under TOOLS-D2, but none is approved for publication or
-engineering use.
+empty. The required textbook chapter contract is qualified, but no
+exemplar chapter is registered. Release remains blocked by TOOLS-D4
+through TOOLS-D9. Generated HTML, LaTeX, PDF, and DOCX artifacts are
+reproducible engineering records under TOOLS-D2, but none is approved
+for publication or engineering use.
 
 \section{Documentation Authority and Release
 Boundary}\label{documentation-authority-and-release-boundary}
@@ -227,7 +266,7 @@ generated artifacts remain non-editable and unapproved. The conservative
 inventory does not establish stable calculation identity, equation
 correctness, validity ranges, uncertainty, page/accessibility approval,
 or publication authority. Those pathways remain empty and blocked
-pending TOOLS-D3 through TOOLS-D9.
+pending TOOLS-D4 through TOOLS-D9.
 
 \section{Module and Calculation-Candidate
 Inventory}\label{module-and-calculation-candidate-inventory}
@@ -249,8 +288,8 @@ every shard remain below the repository's one-megabyte file budget;
 consumers reassemble one logical view only after verifying every shard
 and the exact declared shard set.
 
-At this baseline, 3,434 modules are classified: 808 conservative
-calculation candidates and 2,626 non-calculation modules. One legacy
+At this baseline, 3,437 modules are classified: 808 conservative
+calculation candidates and 2,629 non-calculation modules. One legacy
 JavaScript file has a non-UTF-8 encoding and remains explicitly blocked
 rather than being decoded by an implicit platform default. These counts
 describe inventory coverage only; they are not test coverage,
@@ -273,8 +312,9 @@ H_{\mathrm{tree}} = \mathrm{SHA256}\left(
 where rows are ordered by normalized repository-relative path. This
 contract makes the result independent of Windows checkout line endings
 while retaining content changes. The path-derived identifier is not a
-stable calculation ID; TOOLS-D3 owns stable equation-to-code identities
-that survive file movement.
+stable calculation ID; TOOLS-D3 owns the structural chapter contract;
+TOOLS-D4 owns exemplar registration and stable equation-to-code
+identities that survive file movement.
 
 \subsection{Classification Contract}\label{classification-contract}
 
@@ -313,7 +353,7 @@ duplicate identifiers, unsorted duplicate traceability arrays,
 denominator mismatches, and unsupported state values.
 
 Any tracked in-scope module addition, removal, rename, or normalized
-content change makes \texttt{-\/-check} fail until the manifest is
+content change makes inventory check mode fail until the manifest is
 regenerated and reviewed. A green inventory check proves only
 deterministic classification and freshness of this file-level baseline.
 Public projection remains blocked until the remaining stable-pathway,
@@ -385,8 +425,120 @@ local stack is not a merged authority. A consumer must reject unknown
 fields, versions, formats, paths, hashes, status promotion, or semantic
 divergence.
 
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
+\section{References}\label{references}
+
+\section{Required Textbook Chapter
+Contract}\label{required-textbook-chapter-contract}
+
+\subsection{Outcome and Authority}\label{outcome-and-authority-1}
+
+TOOLS-D3 defines the public structure that every calculation-level
+textbook chapter must satisfy before registration. The contract is
+structural and traceability-focused: passing it does not approve an
+equation, implementation, dataset, artifact, license, or engineering
+use. The registry is intentionally empty until TOOLS-D4 supplies
+reviewed exemplar chapters.
+
+Two version identifiers are fixed:
+
+\begin{itemize}
+\tightlist
+\item
+  Contract: \texttt{tools-textbook-chapter-contract/1.0.0}
+\item
+  Registry: \texttt{tools-textbook-chapter-registry/1.0.0}
+\end{itemize}
+
+Their repository-owned JSON Schemas allow external consumers to validate
+shape without importing producer code. The Python consumer then applies
+stricter invariants for normalized paths, ordering, uniqueness,
+authority state, and QMD content.
+
+\subsection{Required Chapter Anatomy}\label{required-chapter-anatomy}
+
+Fourteen ordered sections are mandatory. A registered chapter must
+present, in order: Purpose and Scope; Design by Contract; Coordinates,
+Frames, and Time; Units and Dimensions; Derivation and Assumptions;
+Algorithm; Implementation Symbols; Error and Failure Semantics;
+Uncertainty and Sensitivity; Verification and Validation; Limits and
+Applicability; Worked Examples; References and Provenance; and Revision
+History.
+
+The contract also declares mandatory third-level headings. For example,
+Design by Contract requires Preconditions, Postconditions, and
+Invariants. Coordinates requires frame, handedness, and time
+declarations. Verification and Validation requires test evidence and
+acceptance criteria. Exact ordered headings remove format-dependent
+inference and make an omitted obligation a deterministic failure.
+
+\subsection{Registration and
+Traceability}\label{registration-and-traceability}
+
+Each registered chapter has one stable chapter ID and one normalized QMD
+path. Its descriptor binds the chapter version and provisional authority
+to an owner, review owner, stable calculation IDs, module IDs,
+verification tests, source citations, explicit limitations, and revision
+history. All traceability arrays are non-empty, unique, and sorted;
+duplicate chapter IDs or paths are rejected.
+
+An \texttt{approved} chapter claim is unsupported by this D3 contract
+because later subepics own page, accessibility, publication, and
+human-review evidence. D3 accepts only \texttt{provisional} and
+\texttt{verified-unapproved} chapter descriptors. The manual and every
+generated representation therefore remain \texttt{generated-unapproved}.
+
+\subsection{Linter Algorithm and
+Evidence}\label{linter-algorithm-and-evidence}
+
+The linter loads the contract and registry through strict typed
+consumers, resolves each registered path beneath
+\texttt{manuals/tools/chapters}, decodes UTF-8, and rejects forbidden
+placeholder or private-source tokens. It extracts level-2 and level-3
+headings, compares them with the exact ordered contract, and checks that
+every required section has governed body content.
+
+For normalized chapter text \(T\) and ordered section blocks \(S_i\),
+the linter records deterministic evidence as
+
+\[
+h_T = \operatorname{SHA256}(\operatorname{LF}(T)), \qquad
+h_i = \operatorname{SHA256}(\operatorname{LF}(S_i)).
+\]
+
+These hashes detect byte-level content drift while remaining independent
+of Windows or POSIX checkout line endings. They are lint evidence, not
+scientific approval or an immutable publication digest.
+
+\subsection{Failure and Ownership
+Boundaries}\label{failure-and-ownership-boundaries}
+
+Missing files, invalid UTF-8, unsafe paths, unknown fields or versions,
+duplicate identities, unsorted traceability, missing or reordered
+headings, empty governed content, placeholders, private-source
+references, unsupported status promotion, and stale generated artifacts
+all fail closed. The linter does not synthesize equations, units,
+sources, examples, tests, or limitations.
+
+TOOLS-D4 owns exemplar chapter registration. TOOLS-D5 expands phased
+module coverage, TOOLS-D6 owns executable freshness, TOOLS-D7 owns
+rendered and accessibility review, and TOOLS-D8 owns immutable public
+projection and human approval.
+
+\subsection{Consumer Workflow}\label{consumer-workflow}
+
+Authors edit only canonical QMD and the machine-readable chapter
+registry. Run these commands in order:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{python {-}m scripts.lint\_tools\_textbook\_chapters}
+\NormalTok{python {-}m scripts.render\_tools\_design\_manual {-}{-}render}
+\end{Highlighting}
+\end{Shaded}
+
+They regenerate and check all four representations. The combined
+governance, inventory, chapter, and artifact freshness gates must pass
+before review.
 
 \protect\phantomsection\label{refs}
 \begin{CSLReferences}{1}{1}

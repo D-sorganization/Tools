@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/textbook-chapter-contract/1.0.0.json",
+  "title": "Tools textbook chapter contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "owner_subepic",
+    "status",
+    "minimum_section_characters",
+    "forbidden_tokens",
+    "required_sections"
+  ],
+  "properties": {
+    "schema_version": { "const": "tools-textbook-chapter-contract/1.0.0" },
+    "manual_id": { "const": "tools" },
+    "owner_subepic": { "const": 4717 },
+    "status": { "const": "qualified-generated-unapproved" },
+    "minimum_section_characters": { "type": "integer", "minimum": 20 },
+    "forbidden_tokens": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "required_sections": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": { "$ref": "#/$defs/section" }
+    }
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "heading", "purpose", "required_subheadings"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "heading": { "type": "string", "minLength": 1 },
+        "purpose": { "type": "string", "minLength": 1 },
+        "required_subheadings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

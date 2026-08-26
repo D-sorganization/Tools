@@ -27,10 +27,24 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.19                                    |
+| **Spec Version**        | 1.18.20                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Required Textbook Chapter Contract (#4707 / TOOLS-D3 (#4717))
+
+Version 1.18.20 adds the strict `tools-textbook-chapter-contract/1.0.0`
+and `tools-textbook-chapter-registry/1.0.0` consumer contracts. Every future
+registered calculation chapter must provide fourteen ordered textbook sections
+covering purpose, DbC, coordinates and time, units, derivation, algorithms,
+implementation symbols, failures, uncertainty, V&V, limits, examples,
+references/provenance, and revision history. The typed linter rejects missing
+or reordered content, unknown fields or versions, unsafe paths, duplicate IDs,
+unsorted or absent traceability, placeholders, private-source references, and
+unsupported approval promotion. The registry remains intentionally empty and
+provisional pending TOOLS-D4 exemplars; rendered artifacts remain
+`generated-unapproved` pending TOOLS-D4 through TOOLS-D8.
 
 ### 2026-08-26 Reproducible Multi-Format Renderer (#4707 / TOOLS-D2 (#4712))
 
@@ -42,7 +56,7 @@ PDF, and DOCX artifacts whose hashes and shared semantic digest are verified
 fail closed in pre-commit and Docs Governance. Generated representations remain
 non-editable and `generated-unapproved`; stable calculation pathways,
 accessibility/page approval, public projection, and human approval remain
-blocked under TOOLS-D3 and TOOLS-D7 through TOOLS-D9.
+blocked under TOOLS-D4 and TOOLS-D7 through TOOLS-D9.
 
 ### 2026-08-25 Deterministic Module Inventory (#4707 / TOOLS-D1 (#4711))
 
@@ -52,7 +66,7 @@ strict `tools-module-inventory/1.0.0` schema records LF-normalized SHA-256
 digests, path-derived provisional identities, calculation/non-calculation
 classification, authority and review status, maintainers, public surfaces,
 tests, ADRs, citations, units, chapters, and risk states. The current manifest
-contains 3,434 modules: 808 provisional calculation candidates, 2,626
+contains 3,437 modules: 808 provisional calculation candidates, 2,629
 non-calculation modules, and one explicit encoding blocker. Freshness is
 enforced in pre-commit and Docs Governance. Stable calculation IDs,
 equation-to-code-to-test-to-claim pathways, generated formats, publication, and
@@ -5324,6 +5338,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.20 | docs(manual, #4707/#4717 TOOLS-D3): reconcile the strict textbook chapter and registry contracts on protected D2, enforce fourteen ordered calculation-level sections, traceability and status invariants, LF-normalized evidence hashes, CI/pre-commit checks, and generated-but-unapproved manual content. Retain an empty provisional registry pending TOOLS-D4 exemplars and later freshness, review, and publication authority. |
 | 2026-08-26 | 1.18.19 | fix(manual, #4707/#4712 TOOLS-D2): separate external render-tool assertions from generic Python CI. Tests report an explicit unavailable skip without Pandoc/Quarto/TeX, execute under the locked local toolchain, and remain protected by the dedicated Docs Governance lane, which installs Pandoc and invokes artifact freshness and semantic verification directly and fail closed. |
 | 2026-08-26 | 1.18.18 | fix(manual, #4707/#4712 TOOLS-D2): repair protected CI integration by declaring and locking the PDF semantic dependency, keeping PDF imports lazy for non-PDF consumers, proving import isolation without the optional stack, and returning the verified XML serialization as typed bytes. Refresh the governed inventory and retain generated-unapproved authority. |
 | 2026-08-26 | 1.18.17 | fix(manual, #4707/#4712 TOOLS-D2): canonicalize the Pandoc DOCX bibliography custom property to the repository-relative `manuals/tools/references.bib` path before deterministic ZIP normalization. Add a cross-workspace regression contract, refresh the governed module inventory and artifact manifest, and remove workstation identity from generated Word artifacts while retaining generated-unapproved release status. |

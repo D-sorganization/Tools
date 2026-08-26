@@ -11,6 +11,7 @@ EXPECTED_POLICY_FIELDS = {
     "contracts",
     "calculation_inventory",
     "renderer",
+    "chapter_contract",
     "generated_outputs",
     "freshness",
     "publication",
@@ -61,6 +62,10 @@ REQUIRED_UPDATE_FILES = [
     "manuals/tools/manifests/artifacts.json",
     "manuals/tools/schemas/toolchain-lock.schema.json",
     "manuals/tools/schemas/artifact-manifest.schema.json",
+    "manuals/tools/textbook-chapter-contract.json",
+    "manuals/tools/textbook-chapters.json",
+    "manuals/tools/schemas/textbook-chapter-contract.schema.json",
+    "manuals/tools/schemas/textbook-chapter-registry.schema.json",
     "SPEC.md",
     "AGENT_HANDOFF.md",
 ]
@@ -86,5 +91,6 @@ class DesignManualGovernanceSummary:
     manual_id: str
     canonical_qmd_count: int
     calculation_count: int
+    textbook_chapter_count: int
     release_status: str
     public_projection_allowed: bool

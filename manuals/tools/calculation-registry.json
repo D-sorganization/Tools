@@ -6,9 +6,9 @@
   "inventory_commit": null,
   "blockers": [
     {
-      "id": "TOOLS-D3-pathway-contract-required",
+      "id": "TOOLS-D4-exemplar-pathways-required",
       "owner": "Tools documentation epic #4707",
-      "resolution": "Assign stable calculation IDs and map equations, symbols, tests, sources, units, limits, chapters, and approval evidence under TOOLS-D3 through TOOLS-D9."
+      "resolution": "Register exemplar chapters and assign stable calculation IDs with equation, symbol, test, source, unit, limit, and approval mappings under TOOLS-D4 through TOOLS-D9."
     }
   ],
   "calculations": []
