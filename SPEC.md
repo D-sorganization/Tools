@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.7                                     |
+| **Spec Version**        | 1.18.8                                     |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
@@ -5246,6 +5246,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.8 | docs(governance): reconcile merge guidance with the live zero-approval `main` ruleset so pull requests and exact-head required checks remain mandatory without making `@dieterolson` or another named maintainer a standing release gate; retain optional risk/expertise review and all no-bypass, no-force-push, and stale-head prohibitions. |
 | 2026-08-25 | 1.18.7 | fix(ci): annotate exact public launch-monitor Git and SHA-256 identities as reviewed detect-secrets false positives in their test fixtures, preserving the unchanged baseline and restoring fail-closed scanner parity. |
 | 2026-08-25 | 1.18.6 | docs(rate-of-closure, #4433 / #4142 R14.6): add a fail-closed 31-item visual-first acceptance audit, bind every item to local evidence and exact gaps, verify the trusted initial-state run separately from incomplete all-state/manual evidence, and retain R14.6 as partial with seven blockers and two human actions. |
 | 2026-08-25 | 1.18.5 | docs(rate-of-closure, #4142 R15.4): add the consolidated public ensemble variation and sensitivity guide with mechanics/statistics distinctions, typed schema and persistence boundaries, method assumptions, deterministic quick start, verification commands, bounded performance evidence, falsification workflow, and explicit human/coaching limitations; add a fail-closed guide/ledger contract and retain nine remaining partial requirements. |
