@@ -1,0 +1,138 @@
+{
+  "schema_version": "tools-m9-acceptance/1.0.0",
+  "artifact_role": "acceptance-only",
+  "authority": {
+    "runtime_owner": "D-sorganization/Tools",
+    "canonical_input": "sidekick.lab.mocap.MocapSession",
+    "public_runtime_schema": false,
+    "consumer_boundary": "immutable-versioned-Tools-release"
+  },
+  "readiness": {
+    "implementation_eligible": false,
+    "local_stack_policy": "evidence-only-never-merge",
+    "required_dependencies": [
+      {
+        "issue": 4708,
+        "name": "TOOLS-M0 provider authority",
+        "state": "open",
+        "gate": "merged-to-protected-main"
+      },
+      {
+        "issue": 4710,
+        "name": "TOOLS-M1 canonical session schema",
+        "state": "open",
+        "gate": "merged-to-protected-main"
+      }
+    ],
+    "dependency_ready_when": [
+      "both dependencies are protected-merged and current-main rooted",
+      "MocapSession owns every required semantic family",
+      "oracle and reference-corpus versions and digests are pinned",
+      "overflow and loss-sidecar profiles are versioned",
+      "AffineDrift issue 3959 consumes an immutable Tools boundary"
+    ],
+    "completion_requires": [
+      "runtime implementation rooted on dependency-ready protected main",
+      "all acceptance tests green without skip xfail retry or weakening",
+      "normalized cross-reader and corpus qualification",
+      "ordinary protected review and merge"
+    ]
+  },
+  "semantic_profile": {
+    "required_families": [
+      "frames",
+      "units",
+      "timestamps",
+      "confidence",
+      "skeleton",
+      "events",
+      "residuals",
+      "analog",
+      "force",
+      "provenance",
+      "unknown_metadata"
+    ],
+    "comparison": "normalized-semantics",
+    "byte_equality_required": false,
+    "unknown_metadata": "preserve-or-reject-explicitly",
+    "deterministic_round_trip": "write-read-write-normalized-stable"
+  },
+  "camera_contributor_policy": {
+    "standard_capacity": 7,
+    "overflow_policy": "never-truncate-wrap-remap-or-invent",
+    "cases": [
+      {
+        "contributors": "0",
+        "standard_mask": "exact",
+        "sidecar": "optional"
+      },
+      {
+        "contributors": "1",
+        "standard_mask": "exact",
+        "sidecar": "optional"
+      },
+      {
+        "contributors": "7",
+        "standard_mask": "exact",
+        "sidecar": "optional"
+      },
+      {
+        "contributors": "8",
+        "standard_mask": "unavailable-zero",
+        "sidecar": "required"
+      },
+      {
+        "contributors": "N>8",
+        "standard_mask": "unavailable-zero",
+        "sidecar": "required"
+      }
+    ]
+  },
+  "loss_sidecar": {
+    "format": "canonical-json",
+    "location": "adjacent-external",
+    "missing_or_tampered": "fail-closed",
+    "round_trip": "write-read-write-stable",
+    "required_bindings": [
+      "c3d_sha256",
+      "canonical_session_sha256",
+      "semantic_profile_sha256"
+    ],
+    "required_payloads": [
+      "complete_contributor_ids",
+      "losses",
+      "writer_provenance"
+    ]
+  },
+  "oracles": [
+    {
+      "id": "ezc3d",
+      "role": "primary-interoperability",
+      "required": true
+    },
+    {
+      "id": "python-c3d",
+      "role": "independent-reader",
+      "required": true
+    },
+    {
+      "id": "btk",
+      "role": "legacy-compatibility",
+      "required": true
+    },
+    {
+      "id": "c3d.org-sample-corpus",
+      "role": "normative-corpus",
+      "required": true
+    }
+  ],
+  "forbidden_behaviors": [
+    "competing-c3d-record-schema",
+    "byte-equality-as-conformance",
+    "optional-or-skipped-independent-oracle",
+    "first-seven-overflow-truncation",
+    "embedded-extension-as-only-loss-record",
+    "missing-normalized-semantic-comparison",
+    "missing-reference-corpus"
+  ]
+}

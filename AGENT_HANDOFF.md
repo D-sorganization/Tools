@@ -36,7 +36,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
-| #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
+| #4706 | Markerless mocap. M0/M1 PR #4734 is an unmerged schema candidate; M2-M7/M9 remain local evidence pending protected dependency delivery.                                                                                              |
 | #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                            |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
@@ -46,8 +46,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 - Query exact PR state before acting; this handoff is not a live queue.
 - Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
   integration through M7/M9 is evidence, not merged authority. #4716's
-  main-rooted acceptance-only branch records a RED contract at `SELF`; no
-  C3D runtime/schema work is dependency-ready or claimed complete.
+  main-rooted acceptance-only branch records RED run `33020359698`, job
+  `98348986426`, against `5184b2bb4b3799a57859428f668ec6ea76553786`;
+  no C3D runtime/schema work is dependency-ready or claimed complete.
 - TOOLS-D1 (#4711), TOOLS-D2 (#4712), and TOOLS-D3 (#4717) protected-squash-
   merged normally as `395e11adce9081c38a9b436c3e76978e30d71fc9`,
   `25c10cd6ca580d29185ead03808c313afac4ffb3`, and
