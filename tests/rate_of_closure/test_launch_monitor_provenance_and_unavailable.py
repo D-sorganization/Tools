@@ -69,18 +69,20 @@ def test_provenance_metadata_enforces_exact_sha_and_commit_length() -> None:
     reference_data = {
         "root_id": "launch-monitor-authority",
         "repository": "D-sorganization/Launch-Monitor-Flight-Model-Campaign",
-        "commit": "d469b8a427418fa00e99b0ad488e4310b067697d",
+        "commit": "d469b8a427418fa00e99b0ad488e4310b067697d",  # noqa: E501  # pragma: allowlist secret
         "manifest_sha256": (
-            "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299"
+            "b45fd9100e6786d32dce229224ed901f02c20ef5c44962769faf6cc94700c299"  # noqa: E501  # pragma: allowlist secret
         ),
         "content_sha256": (
-            "7bedf88ba473c947db2d4d078a73ee0ccd3512ffa182b751ea0a23298d1ab10c"
+            "7bedf88ba473c947db2d4d078a73ee0ccd3512ffa182b751ea0a23298d1ab10c"  # noqa: E501  # pragma: allowlist secret
         ),
         "expected_row_count": 261666,
     }
     ref = load_canonical_dataset_reference(reference_data)
     assert ref.expected_row_count == 261666
-    assert ref.commit == "d469b8a427418fa00e99b0ad488e4310b067697d"
+    assert ref.commit == (
+        "d469b8a427418fa00e99b0ad488e4310b067697d"  # pragma: allowlist secret
+    )
 
     # Short commit SHA fails closed
     with pytest.raises(ValueError, match="commit"):
