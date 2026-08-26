@@ -27,10 +27,16 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.12                                    |
+| **Spec Version**        | 1.18.13                                    |
 | **Last Spec Update**    | 2026-08-25                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-25 V5.2 Protected Merge Reconciliation (#4433 / #4737 / #4738)
+
+Version 1.18.13 records protected squash `4b4aec421f349d00cf9dc93289fda97af3845baa`
+as the merged V5.2 visual-evidence co-change authority. The seven R14.6 blockers,
+two human actions, and 8 verified / 23 partial audit state remain unchanged.
 
 ### 2026-08-25 Visual Evidence Co-Change Governance (#4433 / #4737 V5.2)
 
@@ -5281,6 +5287,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-25 | 1.18.13 | docs(rate-of-closure, #4433/#4737/#4738): record protected V5.2 merge `4b4aec421f349d00cf9dc93289fda97af3845baa` and retain all partial scientific and human-review boundaries. |
 | 2026-08-25 | 1.18.12 | feat(rate-of-closure, #4433 V5.2): add fail-closed PR changed-path governance requiring material React, PyQt, and shared visual-authority changes to co-update the shared manifest, acceptance audit, and surface-specific first-viewport evidence before expensive E2E; advance the audit to 8 verified / 23 partial obligations without changing the seven R14.6 blockers or two human actions. |
 | 2026-08-25 | 1.18.11 | fix(rate-of-closure, #4735 / #4433 V0.1): extend the strict TypeScript visualization-manifest reader to the canonical purpose, nonempty unique prerequisite, and reciprocal-counterpart fields; add browser-side tamper falsifiers while preserving exact-field rejection and Python/React authority parity. |
 | 2026-08-25 | 1.18.10 | fix(rate-of-closure, #4433 V0.1): refresh the standalone React mirror's vendored visualization manifest from the canonical monorepo authority so Python 3.11, Python 3.12, and exact-wheel byte-parity gates consume the same purpose, prerequisite, and reciprocal-counterpart contract. |
