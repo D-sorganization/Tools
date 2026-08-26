@@ -56,16 +56,17 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-The 31-item R10--R15 ledger records 21 verified, 10 partial, and zero unverified
+The R15.4 guide candidate advances the 31-item R10--R15 ledger to 22 verified,
+9 partial, and zero unverified
 requirements after protected UpstreamDrift PR #9039 consumed immutable Tools
 revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. R15.1--R15.3 now bind the
 exact consumer, thin ownership boundary, typed no-impact rows, deterministic
 serial/batched artifacts, geometry/attribution records, and cross-engine
-rejection tests. R15.4 remains partial pending one consolidated public theory,
-schema, performance, quick-start, and reproduction guide; R14.6 remains partial
-with visualization epic #4433 open. #4142 is therefore not closeable. These
-controls prove provenance and model-data parity, not human validity or coaching
-strategy.
+rejection tests. The guide consolidates theory, schema, assumptions,
+performance, quick start, reproduction, falsifiers, and scientific limits;
+R14.6 remains partial with visualization epic #4433 open. #4142 is therefore
+not closeable. These controls prove provenance and model-data parity, not human
+validity or coaching strategy.
 
 ### Adding a Tab: The Four-Manifest Lockstep (Read Before Starting C6/C7/H4)
 

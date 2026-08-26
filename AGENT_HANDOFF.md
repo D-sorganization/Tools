@@ -16,20 +16,20 @@ calculator into a swing → impact → ball-flight simulation platform. Since
 early August the delivery pattern has shifted from long stacked PRs to
 **scoped consolidations rebuilt directly onto current `main`**.
 
-| Epic  | Status (one line)                                                                                                                                                                                                                 |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                              |
-| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                       |
-| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                |
-| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                        |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. The ledger has 21 verified and 10 partial requirements; R15.1--R15.3 have immutable Upstream consumption evidence, while R15.4 and R14.6 remain partial. |
-| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                            |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated.  |
-| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                    |
-| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                   |
-| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                |
-| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.  |
-| #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                    |
+| Epic  | Status (one line)                                                                                                                                                                                                                |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                             |
+| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                      |
+| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                               |
+| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                       |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. The R15.4 guide candidate advances the ledger to 22 verified and 9 partial requirements; R14.6 and eight other explicit gaps remain.                             |
+| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                           |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. Core authority landed via **#4473** and trusted current-main React/PyQt evidence passes; requirement R14.6 remains partial until the issue checklist is adjudicated. |
+| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                   |
+| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                  |
+| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                               |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open. |
+| #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -38,23 +38,25 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 No PR is a draft. Query `gh pr list` before acting; the current queue below is
 an exact 2026-08-25 snapshot and can change independently of this handoff.
 
-| PR    | Scope                                                                    |
-| ----- | ------------------------------------------------------------------------ |
-| #4687 | RotationConverter fixed-array JSX optimization                           |
-| #4686 | CSV-export allocation optimization                                      |
-| #4685 | Immutable Upstream R15 evidence and #4142 handoff reconciliation         |
-| #4682 | P1AM FastAPI route introspection and dependency pins                     |
-| #4677 | Automated v1.9.0 release bump                                            |
-| #4676 | Automated v1.8.0 release bump                                            |
+| PR    | Scope                                                            |
+| ----- | ---------------------------------------------------------------- |
+| #4687 | RotationConverter fixed-array JSX optimization                   |
+| #4686 | CSV-export allocation optimization                               |
+| #4685 | Immutable Upstream R15 evidence and #4142 handoff reconciliation |
+| #4682 | P1AM FastAPI route introspection and dependency pins             |
+| #4677 | Automated v1.9.0 release bump                                    |
+| #4676 | Automated v1.8.0 release bump                                    |
 
 **Current #4142 state.** PRs #4669 and #4674 are merged. Protected UpstreamDrift
 PR #9039 consumes exact Tools revision
 `17474249b9267d0e73a779c1d72f231e7b8de39c` through a thin gateway with typed
-outcomes and deterministic parity gates. The ledger records 21 verified, 10
-partial, and zero unverified items. #4142 remains open because R15.4 lacks one
-consolidated public reproduction guide, R14.6 remains gated by #4433, and eight
-other requirements retain explicit gaps. This is model-data and provenance
-evidence, not human or scientific validation.
+outcomes and deterministic parity gates. The R15.4 guide candidate advances
+the ledger to 22 verified, 9 partial, and zero unverified items by consolidating
+theory, schemas, method assumptions, performance evidence, quick start,
+reproduction commands, falsifiers, and scientific limits. #4142 remains open
+because R14.6 is gated by #4433 and eight other requirements retain explicit
+gaps. This is model-data and provenance evidence, not human or scientific
+validation.
 PR #4683 subsequently fixed the Python 3.12 tolerance, Morris readiness, and
 error-taxonomy regressions exposed by protected execution. Do not weaken the
 provider contract or infer human validity from the corrected model-data gates.
