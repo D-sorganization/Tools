@@ -45,7 +45,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 
 - Query exact PR state before acting; this handoff is not a live queue.
 - Markerless M0/M1 PR #4734 is the only remote mocap contribution. Local
-  integration through M7/M9 is evidence, not merged authority.
+  integration through M7/M9 is evidence, not merged authority. #4716's
+  main-rooted acceptance-only branch records a RED contract at `SELF`; no
+  C3D runtime/schema work is dependency-ready or claimed complete.
 - TOOLS-D1 (#4711), TOOLS-D2 (#4712), and TOOLS-D3 (#4717) protected-squash-
   merged normally as `395e11adce9081c38a9b436c3e76978e30d71fc9`,
   `25c10cd6ca580d29185ead03808c313afac4ffb3`, and
