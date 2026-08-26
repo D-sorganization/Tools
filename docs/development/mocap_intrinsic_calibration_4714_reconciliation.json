@@ -1,0 +1,168 @@
+{
+  "schema_version": "mocap-intrinsic-reconciliation/1.0.0",
+  "observed_at": "2026-08-26T22:40:00Z",
+  "authority_repository": "D-sorganization/Tools",
+  "issue": 4714,
+  "protected_main_sha": "cff2909f1585273e10fa49165bfab8521e889da1",
+  "protected_main_tree": "f9f08e57496849c9a1e80e73ff25fd7a5d589f91",
+  "decision": "blocked_dependency_reconciliation",
+  "runtime_delivery_authorized": false,
+  "pull_request_authorized": false,
+  "adoption_claim": "not_implemented",
+  "prior_runtime_candidate": {
+    "head_sha": "619b23f27548dbd821b511f27a02b084d9d2ac63",
+    "tree_sha": "e37f5519fc65a2854820f338b8dbf73f614d7994",
+    "parent_sha": "8cbcf25fe419ee06b36c585d07056dc3b5c25448",
+    "merge_base_with_protected_main": "e76a7a21408db9ba55b18959f0fc513bf63ec579",
+    "release_authority": false,
+    "safe_to_cherry_pick": false,
+    "limitations": [
+      "Imports the unreleased TOOLS-M1 CameraIdentity contract.",
+      "Does not descend from either unreleased TOOLS-M2 or TOOLS-M3 candidate.",
+      "Provides no image-pattern detector or captured-frame provider protocol.",
+      "Treats target coordinates as already expressed in the camera optical frame instead of estimating per-view target pose.",
+      "Provides no versioned JSON Schema, deterministic golden serialization, or public API baseline update.",
+      "Reports high residual as degraded reference quality but has no typed observation-rejection contract."
+    ]
+  },
+  "dependencies": [
+    {
+      "id": "TOOLS-M0",
+      "issue": 4708,
+      "provider_pr": 4734,
+      "candidate_head": "f536eda05cb1824463a11e0b58cc7b94e6ffea1b",
+      "release_state": "not_merged",
+      "observed_pr_state": "open_conflicting_dirty",
+      "blocking_evidence": "PR 4734 has no protected merge and its Upstream consumer check failed."
+    },
+    {
+      "id": "TOOLS-M1",
+      "issue": 4710,
+      "provider_pr": 4734,
+      "candidate_head": "f536eda05cb1824463a11e0b58cc7b94e6ffea1b",
+      "release_state": "not_merged",
+      "observed_pr_state": "open_conflicting_dirty",
+      "blocking_evidence": "CameraIdentity and camera-capability schemas are absent from protected main."
+    },
+    {
+      "id": "TOOLS-M2",
+      "issue": 4713,
+      "provider_pr": null,
+      "candidate_head": "7f154c607b41d6f8b655cfc60270ce3a24f7ada0",
+      "candidate_tree": "50dc8567951a3a97f7827e03cd7e28e84a6aee83",
+      "release_state": "not_merged",
+      "observed_pr_state": "local_candidate_only",
+      "blocking_evidence": "Acquisition/provider contracts are not protected authority and require current-main reconciliation."
+    },
+    {
+      "id": "TOOLS-M3",
+      "issue": 4718,
+      "provider_pr": null,
+      "candidate_head": "ec78bdce03962d5471aae84a93cbe87c0a393491",
+      "candidate_tree": "435e2c0e6b59d7ec26b6b71dba2b390402b846bc",
+      "release_state": "not_merged",
+      "observed_pr_state": "local_candidate_only_wrong_topology",
+      "blocking_evidence": "The candidate is a sibling of, not a descendant of, TOOLS-M2 even though TOOLS-M3 depends on TOOLS-M2."
+    }
+  ],
+  "repair_pr": {
+    "number": 4753,
+    "head_sha": "821b464e436fe9f953bc830e9495efe474312f03",
+    "tree_sha": "6865c8e10712eb55ea2ed3f7c966cb4f98a34adb",
+    "release_state": "not_merged",
+    "observed_pr_state": "open_blocked",
+    "focused_red": {
+      "run_id": 33005437662,
+      "result": "2_failed_8_passed"
+    },
+    "focused_green": {
+      "run_id": 33005787997,
+      "result": "10_passed_serial"
+    },
+    "protected_runs": [
+      {
+        "run_id": 33006126669,
+        "result": "cancelled_capacity_drain"
+      },
+      {
+        "run_id": 33006126609,
+        "result": "cancelled_capacity_drain"
+      }
+    ]
+  },
+  "prohibited_runtime_paths": [
+    "src/shared/python/sidekick/lab/mocap/_intrinsic_quality.py",
+    "src/shared/python/sidekick/lab/mocap/calibration.py",
+    "src/shared/python/sidekick/lab/mocap/calibration_result.py",
+    "src/shared/python/sidekick/lab/mocap/intrinsic_solver.py"
+  ],
+  "required_sequence": [
+    {
+      "id": "R1",
+      "action": "Protected-qualify and merge PR 4753, or incorporate its sparse-contract repair into a freshly reviewed M0/M1 replacement."
+    },
+    {
+      "id": "R2",
+      "action": "Rebuild TOOLS-M0 and TOOLS-M1 from then-current protected main and merge their versioned authority schemas through protected review."
+    },
+    {
+      "id": "R3",
+      "action": "Rebuild TOOLS-M2 on the exact immutable M1 release, split oversized acquisition code, and merge the bounded captured-frame/provider contract."
+    },
+    {
+      "id": "R4",
+      "action": "Rebuild TOOLS-M3 on the exact immutable M2 release and merge timing, synchronization, and provenance contracts."
+    },
+    {
+      "id": "R5",
+      "action": "Amend issue 4714 dependencies to include M2 and M3, then implement M4 from current protected main with contract-first tests and no candidate cherry-pick."
+    },
+    {
+      "id": "R6",
+      "action": "After protected M4 and M5 releases, publish immutable sanitized schemas and fixtures for AffineDrift 3962 parity qualification."
+    }
+  ],
+  "planned_m4": {
+    "public_contracts": [
+      "CameraModel",
+      "DistortionModel",
+      "CalibrationObservation",
+      "CalibrationResult",
+      "CalibrationQuality",
+      "CalibrationRejection"
+    ],
+    "serialization": "Versioned JSON Schema plus canonical golden JSON with finite-value and unknown-field rejection.",
+    "pattern_provider": "Injectable detector protocol consuming bounded TOOLS-M2 CapturedFrame values and preserving TOOLS-M3 timestamps/provenance; OpenCV is an adapter, not the domain contract.",
+    "solver": "Deterministic multi-view planar-target optimization jointly estimating camera intrinsics, distortion, and per-view target poses with bounded iterations and stable ordering.",
+    "uncertainty": "Rank-checked covariance from a documented weighted residual Jacobian, with parameter order, units, conditioning limits, and non-identifiable failure explicit.",
+    "quality_and_rejection": "Typed thresholds and explicit reject/degraded/pass outcomes for geometry, coverage, residuals, bounds, duplicate observations, and non-finite values.",
+    "required_tests": [
+      "pinhole known-geometry recovery",
+      "fisheye known-geometry recovery",
+      "perturbed synthetic uncertainty coverage",
+      "deterministic ordering and serialization",
+      "provider and detector substitution",
+      "degenerate geometry rejection",
+      "outlier and high-residual rejection",
+      "non-finite and parameter-bound rejection",
+      "resource-cap enforcement",
+      "sanitized downstream fixture parity"
+    ],
+    "pattern_provider_depends_on": [
+      "TOOLS-M2",
+      "TOOLS-M3"
+    ],
+    "physical_qualification": "not_claimed"
+  },
+  "consumer": {
+    "repository": "D-sorganization/AffineDrift",
+    "issue": 3962,
+    "consumer_branch": "docs/3962-camera-geometry-manual",
+    "consumer_head": "b48d7a352ce6075baab686004bd486a76bbe0310",
+    "consumer_tree": "c46792c9d03ebe72643404595c32b3619766b4f1",
+    "issue_evidence": "https://github.com/D-sorganization/AffineDrift/issues/3962#issuecomment-5431845205",
+    "tools_runtime_state": "unavailable",
+    "parity_claim": "not_claimed",
+    "note": "The Affine branch is pedagogical only and correctly leaves Tools M4/M5 pins unavailable; it is not a protected release or parity authority."
+  }
+}

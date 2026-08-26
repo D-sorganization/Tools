@@ -27,10 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.23                                    |
+| **Spec Version**        | 1.18.24                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Markerless Intrinsic Delivery Reconciliation (#4714)
+
+Version 1.18.24 adds a machine-readable, fail-closed admission ledger for
+TOOLS-M4 intrinsic calibration. Protected main has no M0/M1 runtime authority;
+M2 and M3 are unreleased sibling candidates, and prior M4 candidate
+`619b23f27548dbd821b511f27a02b084d9d2ac63` lacks the required detector/provider,
+schema, typed rejection, and fully specified uncertainty contracts. Runtime and
+pull-request delivery remain unauthorized until the exact M0/M1 -> M2 -> M3
+dependency sequence is rebuilt and protected-merged. This change publishes no
+calibration runtime and claims no physical or AffineDrift parity qualification.
 
 ### 2026-08-26 Exemplar Engineering Manuals (#4707 / TOOLS-D4 (#4720))
 
