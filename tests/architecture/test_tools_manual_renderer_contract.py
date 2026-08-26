@@ -6,11 +6,13 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
+from zipfile import ZIP_DEFLATED, ZipFile
 
 import pytest
 from jsonschema import Draft202012Validator
 
 from scripts.render_tools_design_manual import build_manual, main
+from scripts.tools_manual_artifacts import canonicalize_docx
 from scripts.tools_manual_renderer_contract import (
     ARTIFACT_MANIFEST_SCHEMA_VERSION,
     TOOLCHAIN_LOCK_SCHEMA_VERSION,
@@ -172,6 +174,38 @@ def test_semantic_normalization_preserves_units_warnings_and_figure_text() -> No
     expected = "Speed: 10 m/s WARNING: provisional Figure 1: Pipeline"
     assert canonical_semantic_text(left) == expected
     assert canonical_semantic_text(right) == expected
+
+
+def test_docx_canonicalization_removes_workspace_bibliography_path(
+    tmp_path: Path,
+) -> None:
+    paths = []
+    for name, bibliography in (
+        ("left", r"C:\worktree-a\manuals\tools\references.bib"),
+        ("right", "/worktree-b/manuals/tools/references.bib"),
+    ):
+        path = tmp_path / f"{name}.docx"
+        custom = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<Properties xmlns="http://schemas.openxmlformats.org/'
+            'officeDocument/2006/custom-properties" '
+            'xmlns:vt="http://schemas.openxmlformats.org/officeDocument/'
+            '2006/docPropsVTypes">'
+            '<property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" '
+            'pid="2" name="bibliography"><vt:lpwstr>'
+            f"{bibliography}"
+            "</vt:lpwstr></property></Properties>"
+        )
+        with ZipFile(path, "w", compression=ZIP_DEFLATED) as package:
+            package.writestr("docProps/custom.xml", custom)
+        canonicalize_docx(path)
+        paths.append(path)
+
+    assert paths[0].read_bytes() == paths[1].read_bytes()
+    with ZipFile(paths[0]) as package:
+        custom = package.read("docProps/custom.xml").decode("utf-8")
+    assert "manuals/tools/references.bib" in custom
+    assert "worktree-a" not in custom
 
 
 def test_checked_in_artifacts_are_fresh_and_semantically_equivalent() -> None:
