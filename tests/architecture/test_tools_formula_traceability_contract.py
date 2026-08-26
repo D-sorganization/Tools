@@ -52,9 +52,9 @@ def test_full_derivation_family_resolves_every_required_edge_bidirectionally() -
 def test_every_formula_requires_all_symbolic_and_evidence_edges() -> None:
     documents = _mutated_documents(
         "chapter_registry",
-        lambda payload: payload["chapters"][0]["derivation_families"][0][
-            "formulas"
-        ][0].update(verification_tests=[]),
+        lambda payload: payload["chapters"][0]["derivation_families"][0]["formulas"][
+            0
+        ].update(verification_tests=[]),
     )
 
     with pytest.raises(FormulaTraceabilityError, match="verification tests"):
@@ -64,9 +64,9 @@ def test_every_formula_requires_all_symbolic_and_evidence_edges() -> None:
 def test_orphaned_or_renamed_formula_mapping_fails_closed() -> None:
     documents = _mutated_documents(
         "chapter_registry",
-        lambda payload: payload["chapters"][0]["derivation_families"][0][
-            "formulas"
-        ][0].update(formula_id="TOOLS-DPLANE-RENAMED"),
+        lambda payload: payload["chapters"][0]["derivation_families"][0]["formulas"][
+            0
+        ].update(formula_id="TOOLS-DPLANE-RENAMED"),
     )
 
     with pytest.raises(FormulaTraceabilityError, match="formula IDs differ"):

@@ -88,9 +88,7 @@ def _descriptor() -> dict[str, Any]:
                         "implementation_symbols": [
                             {"path": "src/fixture.py", "symbol": "fixture"}
                         ],
-                        "verification_tests": [
-                            "tests/test_fixture.py::test_fixture"
-                        ],
+                        "verification_tests": ["tests/test_fixture.py::test_fixture"],
                         "citation_ids": ["fixture-source-2026"],
                         "worked_example_ids": ["fixture-example"],
                         "claim_ids": ["TOOLS-FIXTURE-CLAIM"],

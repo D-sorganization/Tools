@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import cast
 
 from scripts.tools_formula_traceability_resolvers import (
@@ -13,7 +13,7 @@ from scripts.tools_formula_traceability_resolvers import (
     TraceabilityDocuments,
     assert_public_symbol,
     assert_test_target,
-    load_authority_document,
+    load_traceability_documents,
     safe_repository_path,
 )
 from scripts.tools_textbook_chapter_contract import (
@@ -23,11 +23,6 @@ from scripts.tools_textbook_chapter_contract import (
     load_chapter_registry,
 )
 
-CALCULATION_REGISTRY_PATH = PurePosixPath("manuals/tools/calculation-registry.json")
-CHAPTER_CONTRACT_PATH = PurePosixPath("manuals/tools/textbook-chapter-contract.json")
-CHAPTER_REGISTRY_PATH = PurePosixPath("manuals/tools/textbook-chapters.json")
-EXEMPLAR_COVERAGE_PATH = PurePosixPath("manuals/tools/exemplar-coverage.json")
-ARTIFACT_MANIFEST_PATH = PurePosixPath("manuals/tools/manifests/artifacts.json")
 PLACEHOLDER_TOKENS = frozenset({"fixme", "tbd", "todo", "placeholder"})
 
 
@@ -39,22 +34,6 @@ class FormulaTraceabilitySummary:
     family_count: int
     formula_ids: tuple[str, ...]
     claim_ids: tuple[str, ...]
-
-
-def load_traceability_documents(repository_root: Path) -> TraceabilityDocuments:
-    """Load all owning authorities from normalized repository paths."""
-    root = repository_root.resolve()
-
-    def load(relative: PurePosixPath) -> dict[str, object]:
-        return load_authority_document(root.joinpath(*relative.parts))
-
-    return TraceabilityDocuments(
-        chapter_contract=load(CHAPTER_CONTRACT_PATH),
-        chapter_registry=load(CHAPTER_REGISTRY_PATH),
-        calculation_registry=load(CALCULATION_REGISTRY_PATH),
-        exemplar_coverage=load(EXEMPLAR_COVERAGE_PATH),
-        artifact_manifest=load(ARTIFACT_MANIFEST_PATH),
-    )
 
 
 def _object(
@@ -107,7 +86,9 @@ def _formula_symbols(formula: dict[str, object]) -> tuple[tuple[str, str], ...]:
         raise FormulaTraceabilityError("implementation symbols must not be empty")
     result = tuple(symbols)
     if len(set(result)) != len(result) or result != tuple(sorted(result)):
-        raise FormulaTraceabilityError("implementation symbols must be sorted and unique")
+        raise FormulaTraceabilityError(
+            "implementation symbols must be sorted and unique"
+        )
     return result
 
 
@@ -238,7 +219,9 @@ def _verify_formula(
     }
 
 
-def _merge_edges(target: dict[str, set[object]], source: dict[str, set[object]]) -> None:
+def _merge_edges(
+    target: dict[str, set[object]], source: dict[str, set[object]]
+) -> None:
     for name, values in source.items():
         target.setdefault(name, set()).update(values)
 
@@ -276,13 +259,25 @@ def _verify_family(
         claim = _object(
             raw_claim,
             "claim",
-            {"claim_id", "statement", "evidence_class", "authority_status", "manual_anchor"},
+            {
+                "claim_id",
+                "statement",
+                "evidence_class",
+                "authority_status",
+                "manual_anchor",
+            },
         )
         claim_id = _text(claim["claim_id"], "claim ID")
         _text(claim["statement"], "claim statement")
-        if _text(claim["evidence_class"], "claim evidence class") != "model-conditioned":
+        if (
+            _text(claim["evidence_class"], "claim evidence class")
+            != "model-conditioned"
+        ):
             raise FormulaTraceabilityError("claim evidence class is unsupported")
-        if _text(claim["authority_status"], "claim authority status") != "verified-unapproved":
+        if (
+            _text(claim["authority_status"], "claim authority status")
+            != "verified-unapproved"
+        ):
             raise FormulaTraceabilityError("claim authority status is unsupported")
         anchor = _text(claim["manual_anchor"], "claim manual anchor")
         if f"{{{anchor}}}" not in context.chapter_text:
@@ -385,7 +380,9 @@ def verify_formula_traceability(
             _merge_edges(chapter_edges, family_edges)
             family_count += 1
         if chapter_edges.get("calculation_ids", set()) != set(chapter.calculation_ids):
-            raise FormulaTraceabilityError("calculation IDs differ across derivation families")
+            raise FormulaTraceabilityError(
+                "calculation IDs differ across derivation families"
+            )
         _merge_edges(all_edges, chapter_edges)
     return FormulaTraceabilitySummary(
         chapter_count=len(registry.chapters),

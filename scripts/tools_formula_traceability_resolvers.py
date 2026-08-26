@@ -7,6 +7,12 @@ import json
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
+CALCULATION_REGISTRY_PATH = PurePosixPath("manuals/tools/calculation-registry.json")
+CHAPTER_CONTRACT_PATH = PurePosixPath("manuals/tools/textbook-chapter-contract.json")
+CHAPTER_REGISTRY_PATH = PurePosixPath("manuals/tools/textbook-chapters.json")
+EXEMPLAR_COVERAGE_PATH = PurePosixPath("manuals/tools/exemplar-coverage.json")
+ARTIFACT_MANIFEST_PATH = PurePosixPath("manuals/tools/manifests/artifacts.json")
+
 
 class FormulaTraceabilityError(RuntimeError):
     """Raised when a formula family is incomplete, stale, or orphaned."""
@@ -53,6 +59,22 @@ def load_authority_document(path: Path) -> dict[str, object]:
     if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
         raise FormulaTraceabilityError("authority must be an object")
     return value
+
+
+def load_traceability_documents(repository_root: Path) -> TraceabilityDocuments:
+    """Load all owning authorities from normalized repository paths."""
+    root = repository_root.resolve()
+
+    def load(relative: PurePosixPath) -> dict[str, object]:
+        return load_authority_document(root.joinpath(*relative.parts))
+
+    return TraceabilityDocuments(
+        chapter_contract=load(CHAPTER_CONTRACT_PATH),
+        chapter_registry=load(CHAPTER_REGISTRY_PATH),
+        calculation_registry=load(CALCULATION_REGISTRY_PATH),
+        exemplar_coverage=load(EXEMPLAR_COVERAGE_PATH),
+        artifact_manifest=load(ARTIFACT_MANIFEST_PATH),
+    )
 
 
 def safe_repository_path(value: object, label: str) -> PurePosixPath:
