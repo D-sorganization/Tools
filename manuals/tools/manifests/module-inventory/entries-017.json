@@ -1,0 +1,1674 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 824,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "0607ebee928d87fa114297190793c61f0ab49059293a569a59a5d7e4c505e747",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-STATIC-SERVICE-WORKER-JS-3AA605EB9446",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/calculator/static/service-worker.js",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12416,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "e0eb544e757083886a2eaa8c8febcb2f1cb73e4f506cd47d84fb807a860847ab",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-STATIC-STYLE-CSS-BC019E110C67",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/calculator/static/style.css",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 23668,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "08751f250b22da5ba49fbfc28c8ab0a20f6979b9eb8ef4abc9245bf89fe65e21",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-TEMPLATES-INDEX-HTML-4DF88CB4EA91",
+      "language": "html",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/calculator/templates/index.html",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 18152,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "a85703e6981e3d5ad42e2815d9a302b08c0fbbb95f2eaf29760001ceb3eeb882",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-WEBAPP-PY-9D217E93EAB0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/calculator/webapp.py",
+      "purpose": "webapp.py module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/",
+          "/api/calculate",
+          "/manifest.webmanifest",
+          "/service-worker.js"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculationPayload",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALLOWED_SYMBOLS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_INPUT_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_app",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/web_applications/calculator/tests/test_exception_handling.py",
+          "src/web_applications/calculator/tests/test_permissions_policy.py",
+          "src/web_applications/calculator/tests/test_rate_limit_enforcement.py",
+          "src/web_applications/calculator/tests/test_rate_limit_proxies.py",
+          "src/web_applications/calculator/tests/test_security.py",
+          "src/web_applications/calculator/tests/test_security_validation.py",
+          "src/web_applications/calculator/tests/test_webapp.py",
+          "src/web_applications/calculator/tests/test_webapp_extended.py",
+          "src/web_applications/unit_converter/tests/test_webapp.py",
+          "tests/test_health_checks.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "src/web_applications/calculator/tests/test_security_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 132,
+      "classification": "calculation",
+      "classification_basis": "path-marker:calculator",
+      "content_sha256_lf": "85325baf3a41347a95af91089fe8629ddf469a9ccbf4be1917296a5406ee3efc",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-CALCULATOR-WSGI-PY-871F2D1B38B9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/calculator/wsgi.py",
+      "purpose": "wsgi.py module.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5380,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "15d51ec3d6f2e8eb30ba3aa05452281bb0ead1937605ff793c6eb211e6466d96",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-HEALTH-CHECKS-PY-FAE6349766C5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/health_checks.py",
+      "purpose": "health_checks.py — Health and readiness check endpoints for containerization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/api/health",
+          "/api/ready"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "get_health_status",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_readiness_status",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "register_health_endpoints",
+            "signature": "app: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/test_health_checks.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 170,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0316e530b94a1bcb3c7f95a5c3e81e735e15bc01494bb115d7a8f34be421c1eb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-INIT-PY-0FB83FA16E0F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/__init__.py",
+      "purpose": "Unit Converter web application with Python backend.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "UnitConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "create_app",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 38,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c150c796381e19ee8a670cea30c7c8bcba5ed6f57253d69f3c1c306898663db5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-BENCHMARKS-INIT-PY-770710636328",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/benchmarks/__init__.py",
+      "purpose": "Unit converter benchmark suite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2771,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1575e0150badae8578472d21fae35413bc386098bb84cd023a0467a597bbdb57",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-BENCHMARKS-UNIT-CONVERSION-BENCHMARK-PY-AC266EA37FA9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/benchmarks/unit_conversion_benchmark.py",
+      "purpose": "Unit Conversion Benchmark Suite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UnitConversionBenchmark",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "bar",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 21485,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "35cd7d11fff3e0f2ad8c342b34a870a1e52ef2ca4395531c221d46b12c6fb278",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-CONVERTER-PY-A426DE44F718",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/converter.py",
+      "purpose": "Unit Converter - Python backend using NIST-standard conversion factors.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConversionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnitConverter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CELSIUS_OFFSET",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONVERSION_FACTORS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GAS_DATABASE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEATING_VALUE_FACTORS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RANKINE_RATIO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCFM_TO_CU_METER_PER_HOUR_AT_60F",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_CONDITIONS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/web_applications/unit_converter/tests/test_converter.py",
+          "tests/rotation_converter/test_converter.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "MPa",
+          "Pa",
+          "W",
+          "bar",
+          "cm",
+          "deg",
+          "g",
+          "kPa",
+          "kg",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "blocked",
+      "bytes_lf": 13957,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b551a68aaf6d9cb43214909cc296de484c8571b6051786faed846157b4a227f7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-STATIC-APP-JS-60E9D146BB37",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/static/app.js",
+      "purpose": null,
+      "review_status": "blocked",
+      "risk_tags": [
+        "parse-or-encoding-blocker"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10828,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6ea840dbc84e235431344ea9a7e2c010ad2e8e57f69cc472075885b78e7f9bc3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-STATIC-STYLES-CSS-AFF140D62230",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/static/styles.css",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://www.w3.org/2000/svg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/document_processing/pdf_renamer/tests/test_styles.py",
+          "src/document_processing/pdf_renamer/tests_pdf_renamer/test_styles.py"
+        ],
+        "unit_mentions": [
+          "bar"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6906,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7110a7e82c05b5d51c8ae4c897a71ed8d58a4b1fd2673e80db6fd56182f50e55",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-TEMPLATES-INDEX-HTML-DA2A64D0F614",
+      "language": "html",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/templates/index.html",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "Pa",
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 33745,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cfeef64729fb54d7998bea0b895bd65abf0d232e0a8563f8bb278e100a2b44c1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-UNIT-CONVERTER-APP-APP-JS-4870DFB5D0EA",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/unit-converter-app/app.js",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://www.w3.org/2000/svg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 28587,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b35abf18b0fe9f0aae505a7bada9ba8a7cef4bbf756a061b73631841b7981d76",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-UNIT-CONVERTER-APP-CONVERTER-JS-5519FDE853C5",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/unit-converter-app/converter.js",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/web_applications/unit_converter/tests/test_converter.py",
+          "tests/rotation_converter/test_converter.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "MPa",
+          "Nm",
+          "Pa",
+          "W",
+          "bar",
+          "cm",
+          "g",
+          "kPa",
+          "kg",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20200,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "65e2cdd03f5f4e9fc0a21f7feb10fe812dfc3351e2bdb21e02cb5a259ced309a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-UNIT-CONVERTER-APP-INDEX-HTML-23084336E921",
+      "language": "html",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/unit-converter-app/index.html",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://www.w3.org/2000/svg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "Pa",
+          "bar",
+          "g",
+          "kPa",
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2468,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "56c5d4d8b8339a284c4083d6b15678b75bdf0f8ab1ce1187e705f3c74ef39550",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-UNIT-CONVERTER-APP-SERVICE-WORKER-JS-9F6B0FF6970E",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/unit-converter-app/service-worker.js",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23765,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ad272a3ae8a06607d20eba97eebd4d48436ceed323a03f7459fb3340fdb0f145",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-UNIT-CONVERTER-APP-STYLES-CSS-2521BC7241EB",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/unit-converter-app/styles.css",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://www.w3.org/2000/svg"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/document_processing/pdf_renamer/tests/test_styles.py",
+          "src/document_processing/pdf_renamer/tests_pdf_renamer/test_styles.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5107,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ca37ecb42695f584a5c109a78ad60256b7f8f4b91ed6b8e6718768b7eae578b5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-WEB-THEME-PY-8AC7A32D2130",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/web_theme.py",
+      "purpose": "Web theme bridge - loads themes from the shared theme-definitions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_THEMES_JSON_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "all_themes_as_css",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_default_theme_name",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_theme_by_name",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_theme_names",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_themes_for_api",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "load_themes",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "theme_to_css_vars",
+            "signature": "theme: dict"
+          }
+        ],
+        "test_paths": [
+          "src/web_applications/unit_converter/tests/test_web_theme.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7191,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c8e9fff09116cf4b12410cbe31d7d51cf0eb5f074b66371a8ee564199daeb3e2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-WEBAPP-PY-B676010853D0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/webapp.py",
+      "purpose": "Unit Converter Flask web application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/",
+          "/api/categories",
+          "/api/convert",
+          "/api/theme.css",
+          "/api/themes",
+          "/api/units/<category>",
+          "/manifest.json"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "create_app",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/web_applications/calculator/tests/test_webapp.py",
+          "src/web_applications/unit_converter/tests/test_web_theme.py",
+          "src/web_applications/unit_converter/tests/test_webapp.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 558,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7c8296ad85f4837af72b7e01877558c2f73859a646a555058fada6c5156a072b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-WSGI-PY-8F8153FF3F7C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/unit_converter/wsgi.py",
+      "purpose": "WSGI entry point for the Unit Converter web application.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 28,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3bde64d7e10deb727e330f0351a004fe6f16e520471854a83ab146d87f3f3828",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-URDF-VIEWER-INIT-PY-592248B36A61",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/urdf_viewer/__init__.py",
+      "purpose": "Package: urdf_viewer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11346,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3d64c48d13c95069159241fca319f30b9bae6aabf518e671d66c69328ebdf148",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-URDF-VIEWER-APP-PY-88ED0A44B784",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/urdf_viewer/app.py",
+      "purpose": "URDF Viewer web application — FastAPI backend.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/",
+          "/api/generate",
+          "/api/models",
+          "/api/models/{filename}",
+          "/api/preview",
+          "/api/templates",
+          "/api/upload"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "URDFGenerateRequest",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALLOWED_EXTENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BASE_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_UPLOAD_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODELS_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STATIC_DIR",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_urdf",
+            "signature": "request: URDFGenerateRequest"
+          },
+          {
+            "kind": "function",
+            "name": "get_model",
+            "signature": "filename: str"
+          },
+          {
+            "kind": "function",
+            "name": "get_safe_path",
+            "signature": "filename: str"
+          },
+          {
+            "kind": "function",
+            "name": "list_models",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "list_templates",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "preview_model",
+            "signature": "request: URDFGenerateRequest"
+          },
+          {
+            "kind": "function",
+            "name": "read_root",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 876,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "38f05c855ec58176f637e0bb5921d0a1ab40ed3f4e1a7c1fa88ea2a5f15a43ff",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-URDF-VIEWER-STATIC-INDEX-HTML-3B6C7FB4CA32",
+      "language": "html",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/urdf_viewer/static/index.html",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://esm.sh/react-dom@18.2.0/client",
+          "https://esm.sh/react@18.2.0",
+          "https://esm.sh/three@0.160.0",
+          "https://esm.sh/three@0.160.0/examples/jsm/",
+          "https://esm.sh/urdf-loader@0.12.1",
+          "https://unpkg.com/@babel/standalone/babel.min.js"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1726,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "095386419c1f493ddea3a1ea0bfd616922087fde02c4d4877a68b42b21b73bd5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-URDF-VIEWER-STATIC-STYLE-CSS-0045902E28DE",
+      "language": "css",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/urdf_viewer/static/style.css",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9160,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "22e304842fb5109f441bace50ae234b31d02c16cb70a5c75f3f8925a82b5201a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-URDF-VIEWER-STATIC-VIEWER-JS-0889F62E7428",
+      "language": "javascript",
+      "maintainer": "Tools module maintainers",
+      "path": "src/web_applications/urdf_viewer/static/viewer.js",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "rad"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5071,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4c95047ae629557606c912e64860db256332e0034528256edf53a7baf6424499",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-START-GAAI-DAEMON-SH-CD0EC4600C2A",
+      "language": "shell",
+      "maintainer": "Tools module maintainers",
+      "path": "start-gaai-daemon.sh",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/scripts/test_start_gaai_daemon.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5009,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d647e9141b968bdece2c5110f0da8a2d2435727faf74e54686ee3e017d2d858b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-VERIFY-LAUNCHER-PY-770DC9B738CE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "verify_launcher.py",
+      "purpose": "Launcher Verification Script",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8932,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "10eea4dbf2198959c07b3ab34260af5b71f0a3c5391ed2ac176f0e012760a543",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-WAVE-SOLVER-PY-8A1D594A91B7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "wave_solver.py",
+      "purpose": "Autonomous issue-solving wave runner (hardened).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D3",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D3",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WaveConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_claude_argv",
+            "signature": "prompt: str, *, skip_permissions: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "build_pr_create_argv",
+            "signature": "num: int, title: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "config: WaveConfig | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_cmd",
+            "signature": "argv: Sequence[str], cwd: Path | None=None, ignore_err: bool=False, *, mutating: bool=False, config: WaveConfig | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/test_wave_solver.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "schema_version": "tools-module-inventory-shard/1.0.0",
+  "shard_index": 17
+}

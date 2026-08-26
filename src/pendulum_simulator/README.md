@@ -1,5 +1,14 @@
 # Double Pendulum Golf Swing Simulator
 
+## Coordinate-Explicit Force Attribution
+
+Provider schema `force-attribution/v1` adds a shared analytical layer for
+Coriolis cross-speed, squared-speed centripetal/centrifugal interpretation,
+gravity, damping, applied-control, and residual terms. It keeps impulse,
+power, and work distinct and reports when a force-only hand-path mapping cannot
+represent a joint couple. The detailed convention and optimization contract
+are documented in [Pendulum Force Attribution and Impulse Optimization](../../docs/development/pendulum-force-attribution.md).
+
 A multi-platform visualization and optimization tool for exploring the dynamics
 of multi-body kinematic chains, from simple double pendulums to a full golfer
 upper-body model with closed-loop constraints.

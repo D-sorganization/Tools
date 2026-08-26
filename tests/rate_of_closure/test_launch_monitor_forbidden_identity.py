@@ -53,7 +53,9 @@ def _dataset_reference() -> DatasetReference:
     return DatasetReference(
         source_name="authorized-corpus",
         repository="D-sorganization/Launch-Monitor-Flight-Model-Campaign",
-        revision="d469b8a427418fa00e99b0ad488e4310b067697d",
+        revision=(
+            "d469b8a427418fa00e99b0ad488e4310b067697d"  # pragma: allowlist secret
+        ),
         relative_path="data/authority/database/shot_corpus_parquet",
         sha256="a" * 64,
         row_count=261_666,

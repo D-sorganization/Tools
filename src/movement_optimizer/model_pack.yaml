@@ -1,4 +1,5 @@
 manifest_version: "1.0.0"
+force_attribution_schema: "force-attribution/v1"
 pack_id: "tools-movement-optimizer"
 pack_name: "Tools Movement Optimizer"
 provider: "tools"
@@ -20,6 +21,8 @@ models:
       - "pyqt6"
       - "swingset"
       - "chain_dynamics"
+      - "coordinate_force_attribution"
+      - "component_impulse_optimization"
     supported_exercises:
       - "squat"
       - "full_squat"

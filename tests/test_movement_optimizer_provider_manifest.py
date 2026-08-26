@@ -13,6 +13,7 @@ def test_manifest_validates_against_repo_layout() -> None:
 
     assert manifest["pack_id"] == "tools-movement-optimizer"
     assert manifest["provider"] == "tools"
+    assert manifest["force_attribution_schema"] == "force-attribution/v1"
     assert len(manifest["models"]) == 1
 
 
@@ -30,6 +31,8 @@ def test_manifest_declares_shared_launcher_metadata() -> None:
         "pyqt6",
         "swingset",
         "chain_dynamics",
+        "coordinate_force_attribution",
+        "component_impulse_optimization",
     ]
     assert entry["supported_exercises"] == [
         "squat",
