@@ -15,12 +15,14 @@ head dimensions; no brand geometry is reproduced):
   superellipse loft the parametric head has always used (~110 mm deep
   at 200 g).
 * **Hybrids** — intermediate: a wood silhouette at ~70% depth.
-* **Irons** — blade profile: tall thin face, shallow face-to-back depth
-  (~22 mm vs ~110 mm for a wood), rear sections dropping toward the
-  sole so the topline stays thin; an optional cavity-back recess pushes
-  the back cap inward.
-* **Wedges** — iron-like with the rear sections biased further toward
-  the sole (a bounce/muscle hint) and no cavity.
+* **Irons** — blade profile: tall thin face, a flat ~21 mm sole at
+  reference (typical published iron sole widths span ~18-24 mm), rear
+  sections dropping toward the sole so the topline stays thin; the
+  cavity-back recess pushes the back cap inward (#4803).
+* **Wedges** — muscle-back: a ~29 mm sole at reference (typical
+  published wedge sole widths span ~26-32 mm) with a sub-millimeter
+  bounce dip behind the leading edge, rear-sole mass bias, and no
+  cavity (#4803).
 * **Mallet putter** — deep rounded body: half-widths taper along a
   semicircular plan ~100 mm back.
 * **Blade putter** — anser-style form: shallow rectangular head with a
@@ -130,28 +132,39 @@ HYBRID_PROFILE = HeadProfile(
     hosel_anchor=(0.022, 0.025, -0.044),  # heel-crown transition
 )
 
-#: Irons — blade: thin topline, ~22 mm deep, cavity-back recess (250 g).
+#: Irons — blade: thin topline, cavity-back recess, and a real sole
+#: (#4803): every station's bottom sits on the ``y = y_le`` sole line,
+#: so the sole runs flat ~21 mm front-to-back at reference — inside the
+#: typical published iron sole-width span of ~18-24 mm (players through
+#: game-improvement irons; no brand geometry is reproduced) (250 g).
 IRON_PROFILE = HeadProfile(
     reference_mass_kg=0.250,
     sections=(
-        (0.011, 0.025, 0.040, 0.0),
-        (0.005, 0.024, 0.039, 0.0),
-        (-0.005, 0.020, 0.037, -0.002),
-        (-0.011, 0.011, 0.032, -0.007),
+        (0.011, 0.025, 0.040, 0.0),  # face plate (strike-view extents)
+        (0.005, 0.023, 0.039, -0.002),  # bottom -0.025 = y_le
+        (-0.004, 0.018, 0.037, -0.007),  # bottom -0.025 = y_le
+        (-0.010, 0.010, 0.032, -0.015),  # sole tail; bottom -0.025 = y_le
     ),
     hosel_anchor=(0.008, 0.024, -0.038),  # heel side; z only (#4799 G2)
     rear_recess_m=0.006,
     hosel_offset_m=0.005,  # mid-iron offset, typical published range
 )
 
-#: Wedges — iron-like, rear mass biased toward the sole (300 g).
+#: Wedges — muscle-back blade with a deep sole (#4803): the sole runs
+#: ~29 mm front-to-back at reference, inside the typical published
+#: wedge sole-width span of ~26-32 mm (sand/lob soles are the widest in
+#: a set; no brand geometry is reproduced). The station bottoms dip
+#: 0.6-0.8 mm below the ``y = y_le`` leading edge mid-sole and relieve
+#: to 0.3 mm at the trailing edge — a bounce hint (the leading edge
+#: rides above the sole's low point) that also biases the sole-slab
+#: mass toward the rear, like a muscle/bounce sole. No cavity (300 g).
 WEDGE_PROFILE = HeadProfile(
     reference_mass_kg=0.300,
     sections=(
-        (0.012, 0.026, 0.040, 0.0),
-        (0.006, 0.025, 0.039, -0.001),
-        (-0.005, 0.021, 0.037, -0.004),
-        (-0.012, 0.012, 0.032, -0.009),
+        (0.012, 0.026, 0.040, 0.0),  # face plate; bottom -0.026 = y_le
+        (0.004, 0.0242, 0.039, -0.0024),  # bottom -0.0266 (0.6 mm dip)
+        (-0.008, 0.0184, 0.037, -0.0084),  # bottom -0.0268 (bounce apex)
+        (-0.0165, 0.0100, 0.032, -0.0163),  # sole tail; bottom -0.0263
     ),
     hosel_anchor=(0.009, 0.025, -0.038),  # heel side; z only (#4799 G2)
     hosel_offset_m=0.0035,  # wedges carry less offset than irons
