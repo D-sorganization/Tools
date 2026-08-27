@@ -44,9 +44,11 @@ scientific capabilities from declared surface conveniences. These outputs are
 model-scenario evidence, not human validation, anatomical causality, or
 coaching authority. The fail-closed epic ledger is 30 verified requirements
 and one partial R14.6 visual-first requirement. The PyQt policy selector has a
-visible, keyboard-associated ``Analysis Policy`` label in addition to its
-accessible name; baseline approval remains contingent on a corrected hosted
-candidate and protected merge, and does not constitute R14.6 human approval.
+visible, keyboard-associated `Analysis Policy` label in addition to its
+accessible name. Exact hosted Linux candidate `1f3f6ca7` was visually
+inspected and proposed as the new reference without widening the calibrated
+renderer envelope; approval remains contingent on protected merge and does not
+constitute R14.6 human approval.
 
 ### 2026-08-27 Provenance-Complete Attribution Selection (#4791 / #4142 R13.5)
 
