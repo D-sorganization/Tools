@@ -56,14 +56,21 @@ The shared Python API is
 | `PerturbationGroup`                      | Correlation or covariance for disjoint jointly normal streams                                         | Matrices must be finite, symmetric, dimensionally consistent, and positive semidefinite.                             |
 | Version-3 execution document             | Plan, resolved bases and units, registry digest, RNG identity, executor compatibility, and provenance | A matching plan digest does not claim identical solvers or floating-point behavior.                                  |
 | `VariationDataset` and typed trial rows  | Sampled inputs, outputs, statuses, and available traces                                               | Hit, no-impact, and numerical-failure cohorts remain distinct.                                                       |
+| `CompleteTrialRecord`                    | Full swing, contact, impact, delivery, post-impact, launch, and flight state with explicit units      | Misses and failures retain scientifically absent phases as null/empty; the record is model evidence, not human data. |
+| Durable schema-v3 chunks                 | Bounded complete records, exact array shapes/dtypes/digests, atomic prefix resume, and strict reading | Schema-v2 archives remain inspectable but cannot resume or masquerade as complete-retention evidence.                |
 | JSON, CSV, and HDF5 readers/writers      | Review, interchange, and lossless durable data                                                        | CSV is a review table and cannot authorize replay without its canonical JSON/HDF5 evidence.                          |
-| `EnsemblePositionTraces`                 | Point IDs, frame, common grid, positions, and validity masks                                          | Interpolation and missing-data rules are part of the estimand.                                                       |
+| `EnsemblePositionTraces`                 | Point IDs, frame, common grid, positions, and validity masks                                          | Missing samples remain `NaN` plus false validity and never become fabricated positions.                              |
+| `TraceResamplingResult`                  | Versioned time-grid alignment plus per-impact marker alignment error                                  | Linear interpolation occurs only between adjacent valid samples; there is no extrapolation or gap bridging.          |
 | `MorrisDesign`, observations, and report | Global screening for nonlinear or interacting inputs                                                  | Elementary effects are scaled to declared normalized factor ranges; unavailable outputs remain typed.                |
 
 The complete persistence and replay rules are in
 [`docs/specs/VARIATION_PLAN_PERSISTENCE.md`](../specs/VARIATION_PLAN_PERSISTENCE.md).
 The requirement-level evidence ledger is
 [`docs/audits/rate_of_closure_epic_4142_evidence.v1.json`](../audits/rate_of_closure_epic_4142_evidence.v1.json).
+The exhaustive source/adapter retention matrix is
+[`docs/audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json`](../audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json).
+The corresponding trace-alignment policy and capability matrix is
+[`docs/audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json`](../audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json).
 
 ## Methods and Assumptions
 
@@ -88,6 +95,32 @@ do not demonstrate attractive dynamics, self-correction, low biological effort,
 or good impact outcomes. Those require separate state-return, work/load, and
 task-result evidence.
 
+### Canonical Trace-Grid Alignment
+
+`resample_position_traces` implements policy
+`swing-trace-time-linear-contiguous/v1`. The target coordinate is time in
+seconds and must be finite, nonempty, strictly increasing, and contained in the
+closed source-time domain. Exact source coordinates are copied. At an off-grid
+coordinate, each Cartesian position is linearly interpolated only when the two
+immediately adjacent source samples are valid for that trial. The method never
+extrapolates, never bridges an invalid interior sample, and never turns an
+all-invalid numerical-failure row into geometry. A one-sample valid island is
+available only at its exact coordinate.
+
+The operation retains trial order, variation identity, coordinate frame, and
+modeled-point order. Its output owns immutable arrays. A source impact sample
+is mapped to the nearest valid target coordinate; the lower target index wins
+an exact tie. This target index is an approximate display marker, not a newly
+estimated physical impact time, so `impact_alignment_error_s` retains the
+absolute displacement for every impacted trial. Alignment fails closed if an
+impact marker has no valid target sample.
+
+Identity and exact-subset equivalence are qualified for the declared manual,
+double-pendulum, and triple-pendulum spatial layouts. This does not make every
+perturbation adapter executable: the capability matrix preserves the two
+qualified double-pendulum adapter cells and records the other ten cells as
+explicitly unavailable.
+
 ### Local and Rank Attribution
 
 One-at-a-time effects compare complete declared factor streams. Spearman
@@ -109,7 +142,10 @@ outcomes, or numerical trouble; the statistic alone does not distinguish them.
 Large studies use bounded chunks, atomic manifests, per-chunk checksums,
 verified-prefix resume, progress, and cancellation. An interrupted archive
 authorizes analysis only over its verified contiguous prefix. Completion is
-not inferred from a directory or a stale status field.
+not inferred from a directory or a stale status field. Schema-v3 additionally
+stores canonical complete-trial metadata and flattened finite arrays, with each
+array bound by exact shape, dtype, and digest. Serial, chunked, and resumed
+records must have identical canonical fingerprints for the same seeded plan.
 
 ## Quick Start
 
@@ -126,7 +162,12 @@ parallel sampling produce the same inputs:
 ```python
 import numpy as np
 
-from shared.python.swing_sim.variation import NoiseSpec, VariationPlan, run_variation
+from shared.python.swing_sim.variation import (
+    NoiseSpec,
+    VariationPlan,
+    resample_position_traces,
+    run_variation,
+)
 
 plan = VariationPlan(
     mode="delivery",
@@ -156,6 +197,20 @@ output_available = np.isfinite(serial.outputs)
 assert output_available.shape == serial.outputs.shape
 ```
 
+For a complete swing ensemble named `swing_result`, align its retained traces
+to a review grid without changing point or frame identity:
+
+```python
+review_times_s = swing_result.traces.sample_times_s[::2]
+alignment = resample_position_traces(swing_result.traces, review_times_s)
+assert alignment.policy_id == "swing-trace-time-linear-contiguous/v1"
+assert alignment.traces.point_ids == swing_result.traces.point_ids
+assert alignment.traces.coordinate_frame == swing_result.traces.coordinate_frame
+```
+
+Inspect `alignment.traces.sample_valid` before geometric analysis and report
+`alignment.impact_alignment_error_s` whenever the approximate marker is shown.
+
 Inspect the per-trial `serial.success` mask and per-cell `output_available` mask
 before computing a summary. A successful numerical evaluation can still lack a
 downstream quantity, represented by `NaN`. Do not filter the dataset to impacts
@@ -173,6 +228,9 @@ From the Tools repository root, run the shared mechanics and contract suites:
 ```powershell
 python -m pytest src/shared/python/swing_sim/variation/tests -q
 python -m pytest tests/rate_of_closure -k "variation or morris or ensemble" -q
+python -m pytest -n 0 -q tests/rate_of_closure/test_variation_complete_trial_record.py tests/rate_of_closure/test_variation_durable_ensemble_chunks.py tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py
+python -m pytest -n 0 -q src/shared/python/swing_sim/variation/tests/test_trace_resampling.py tests/rate_of_closure/test_variation_trace_resampling.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py
+python -m scripts.measure_complete_trial_retention_scaling
 python -m ruff check src/shared/python/swing_sim/variation src/rate_of_closure tests/rate_of_closure
 python -m ruff format --check src/shared/python/swing_sim/variation src/rate_of_closure tests/rate_of_closure
 ```
@@ -208,6 +266,15 @@ Before extrapolating it, verify source revision, hardware, worker count, chunk
 size, trace layout, compression, and solver participation. A transport-only
 measurement cannot establish simulation throughput.
 
+Complete-trial retention was separately measured at 16 and 64 trials with the
+same four-trial chunk bound. The 64-trial run used 1.188 times the traced peak
+Python allocation of the 16-trial run, while retained bytes per trial were
+0.984 times the smaller run and the largest compressed chunk was 37,593 bytes.
+The revision-bound evidence and environment are in
+[`docs/rate_of_closure/complete_trial_retention_scaling.v1.json`](complete_trial_retention_scaling.v1.json).
+These measurements show bounded software retention for that workload; they do
+not establish solver throughput on other hardware or participant validity.
+
 ## Review and Falsification Workflow
 
 1. State the proposition, observable, model tier, cohort, event, frame, unit,
@@ -237,10 +304,18 @@ measurement cannot establish simulation throughput.
 - Finite ensembles can miss narrow adverse regions and bifurcations.
 - Interpolation, alignment, event detection, and censoring can change geometric
   and sensitivity conclusions.
+- The qualified trace alignment is time-based piecewise linear interpolation;
+  it does not establish that a different phase alignment, event registration,
+  or nonlinear interpolation would preserve a scientific conclusion.
+- Resampled impact indices are approximate display anchors. The retained
+  alignment error must not be presented as an exact event-time estimate.
 - Current localized execution does not cover every registered time-varying
   input or output family.
-- Current adapter coverage does not prove equivalent resampling and complete
-  event/impact/shot retention for every model.
+- Complete-trial adapter execution is qualified only for double-pendulum global
+  values and localized shoulder/wrist torque offsets. Manual and
+  triple-pendulum sources can be serialized directly but are not qualified
+  variation-adapter executions; turf and regional-ground adapters remain in
+  separate authorities. The capability matrix records these cells explicitly.
 - Performance evidence is bounded to its recorded hardware and workload.
 - Synthetic agreement across implementations does not establish anatomy,
   physiology, fatigue, injury risk, participant benefit, or a universal swing

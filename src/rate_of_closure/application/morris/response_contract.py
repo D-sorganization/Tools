@@ -304,9 +304,9 @@ def parse_morris_report(value: object) -> MorrisResponseReport:
     if not isinstance(estimates_value, list) or not estimates_value:
         raise TypeError("Morris estimates must be a nonempty array")
     estimates = tuple(_parse_estimate(value, trajectories) for value in estimates_value)
-    pairs = tuple((value.source.spec_id, value.target.name) for value in estimates)
+    pairs = tuple((value.source.spec_id, value.target) for value in estimates)
     sources = {value.source.spec_id for value in estimates}
-    targets = {value.target.name for value in estimates}
+    targets = {value.target for value in estimates}
     if len(set(pairs)) != len(pairs) or len(pairs) != len(sources) * len(targets):
         raise ValueError("Morris estimates must form a unique complete matrix")
     for source_id in sources:
@@ -315,12 +315,6 @@ def parse_morris_report(value: object) -> MorrisResponseReport:
         }
         if len(source_variants) != 1:
             raise ValueError("source provenance changes within report")
-    for target_name in targets:
-        target_variants = {
-            value.target for value in estimates if value.target.name == target_name
-        }
-        if len(target_variants) != 1:
-            raise ValueError("target provenance changes within report")
     if total_samples != trajectories * (len(sources) + 1):
         raise ValueError("Morris design total_samples is inconsistent")
     assumptions = item["assumptions"]

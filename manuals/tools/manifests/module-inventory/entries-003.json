@@ -3,6 +3,57 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 11013,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "96e9d8d1b624208851f05163d687722ceabe5837c45067d4e4cd46ac09ebea7f",
+      "family": "media-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-APPS-WEB-COMPONENTS-GOLF-POSEOVERLAY-TSX-C28157F22D5D",
+      "language": "typescript-react",
+      "maintainer": "Media processing maintainers",
+      "path": "src/media_processing/video_processor/apps/web/components/golf/PoseOverlay.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "PoseOverlay",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8138,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14082,94 +14133,6 @@
           "N",
           "g",
           "ms",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2503,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "35c506f0b7b3e6d59220fe6ca5139e92c9c6de3c6e72fe57ced0994a938e74f2",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-ENUMS-PY-F993F4929869",
-      "language": "python",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/backend/data_explorer_enums.py",
-      "purpose": "Enumerations for the Data Explorer analysis suite.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AggMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "CorrelationMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ExportFormat",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "FilterType",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SourceKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SpectrumMethod",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TrendlineKind",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WindowKind",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

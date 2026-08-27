@@ -3,6 +3,94 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2503,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "35c506f0b7b3e6d59220fe6ca5139e92c9c6de3c6e72fe57ced0994a938e74f2",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-EXPLORER-ENUMS-PY-F993F4929869",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/data_explorer_enums.py",
+      "purpose": "Enumerations for the Data Explorer analysis suite.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AggMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CorrelationMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExportFormat",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpectrumMethod",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrendlineKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindowKind",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 9178,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13089,76 +13177,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3067,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2a422eee2dc8363646c84b1a90f328161be3e889ead562a59affa3bf6db1568d",
-      "family": "control-systems-non-calculation",
-      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TS-9B9DF5AC92A7",
-      "language": "typescript",
-      "maintainer": "Control systems maintainers",
-      "path": "src/p1am_control_system/frontend/src/lib/dataAge.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "DATA_STALE_MS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "DataFreshness",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "dataFreshness",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "formatDataAge",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "Hz",
-          "bar",
           "s"
         ],
         "validation_paths": []

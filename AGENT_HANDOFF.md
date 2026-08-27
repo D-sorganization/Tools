@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-26
+> Last updated: 2026-08-27
 
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
@@ -28,16 +28,18 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. Open. #4755 protected-merged R10.4; PR #4757 carries exhaustive whole-run/localized execution capabilities for R10.3 and advances the ledger to 24 verified / 7 partial.    |
+| #4142 | Ensemble variation and falsifiable sensitivity. R13.3 protected-merged as `d6c8a0a67`; R13.5 provenance-complete result selection is in protected PR #4794 through implementation commit `f102ce59a`, with a combined 29 verified / 2 partial ledger. |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                       |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
-| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
+| #4775 | Actuation and swing realism. Open. The fixed-hub two-link model cannot reach measured golfer hand speed; distributed club inertia is ruled out as the repair. Next: a moving hub via `physics_triple.py`.                             |
+| #4766 | Swing Objective Comparison. S1–S6 protected-merged through PR #4774; check `is_degenerate` before quoting objective agreement.                                                                                                        |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; Release B physical collection remains external and open.                                                                                              |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
 | #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
-| #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                            |
+| #4707 | Engineering design manuals. D0--D3 are protected-merged; later phases remain unapproved.                                                                                                                                              |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -60,22 +62,15 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   gates. The prior local artifacts had all 10 native PDF and 14 Word-rendered
   DOCX pages visually reviewed; this reconciled exact head still requires fresh
   protected review and artifact-identity or complete rendered-page evidence.
-- #4142 R10.4 protected-merged through PR #4755 as `9fe87f0eec9f341fdfc50fc2a116c601b94781d5`.
-  PR #4757 now carries #4756/R10.3 from implementation commit
-  `d0061bd3e640451de80394453b4ee515acb19218`: one packaged
-  authority classifies all 31 known inputs by whole-run/window/point semantics,
-  exact adapter, or explicit unsupported reason. Python and TypeScript fail
-  closed on registry drift and forbidden loci. The ledger is 24 verified / 7
-  partial. A clean commit-qualified wheel loaded all 31 packaged capabilities
-  and verified 76 immutable web assets; execution semantics are not scientific
-  or coaching approval. The visual co-change guard now excludes test-only TSX
-  modules while retaining fail-closed evidence requirements for shipped React
-  surfaces. The standalone public mirror consumes a byte-identical governed
-  vendored copy rather than importing above `web/`. The first hosted 3.11/3.12
-  matrices exposed one packaging-governance mismatch: the visualization
-  manifest test rejected this legitimate non-visualization authority even
-  though the exact wheel gate passed. The PR now classifies that named file as
-  feature-owned package data while retaining rejection of undeclared entries.
+- #4142 R12.3 protected-squash-merged via PR #4782 as `a1b00db14`. R13.3 PR
+  #4784 protected-squash-merged as `d6c8a0a67`; its required gates passed and
+  optional fleet-only backlog was not redundantly rerun. #4791/R13.5 is active
+  in PR #4794 through implementation commit `f102ce59a` from that protected base; #4793 was
+  superseded without force-push after visual governance required matched
+  evidence. Exact point/time/frame target identity plus all-input or selected-
+  source views are present in PyQt and React. The combined ledger is 29 verified /
+  2 partial; outputs remain model-scenario evidence without human causal,
+  anatomical, or coaching authority.
 
 ## Must-Read Architecture Pointers
 
@@ -143,13 +138,11 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Deliver main-rooted TOOLS-D4 #4720 through the ordinary protected flow, then
-   reconcile D5--D9 without rewriting remote history.
-2. **Sidekick Unified Integration**: implement the S1–S5 plan in
-   `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
-3. Restore the isolated advisory benchmark lane through #4582.
-4. **Land the camera-cluster epic #4571** so #4466 can finally close.
-5. Advance #4433's 23 partial audit items without promoting initial-state evidence; manual AT and rendered-review approval remain human actions.
-6. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
-7. #4125 H5: stand up the public release-management repo (cross-repo).
-8. Approve #4600's inspected post-merge PyQt launch-monitor visual reference.
+1. Protect-merge #4791/R13.5, then publish #4792/R14.3 from the new main.
+2. Deliver main-rooted TOOLS-D4 #4720, then reconcile D5--D9 without rewriting remote history.
+3. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
+4. Restore the isolated advisory benchmark lane through #4582.
+5. **Land the camera-cluster epic #4571** so #4466 can finally close.
+6. Advance #4433 without promoting initial-state evidence; manual actions stay human.
+7. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy.
+8. #4125 H5: stand up the public release-management repo (cross-repo).

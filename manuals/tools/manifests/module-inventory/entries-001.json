@@ -2242,6 +2242,83 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4696,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9248e94b863965dc29db6e7da734f3c7f3f252ff5be0d97d2f43ddf78b401898",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-MEASURE-COMPLETE-TRIAL-RETENTION-SCALING-PY-2162896ED06D",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/measure_complete_trial_retention_scaling.py",
+      "purpose": "Measure bounded complete-trial retention memory and artifact scaling.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Measurement",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHUNK_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OUTPUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_COUNTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6973,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -6676,6 +6753,7 @@
           "src/shared/python/swing_sim/tests/test_localized_torque.py",
           "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py",
           "src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
           "src/shared/python/tests/test_contracts_shared.py",
           "src/shared/python/tests/test_cors.py",
           "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
@@ -6694,6 +6772,7 @@
           "tests/integration/test_cross_repo_contracts.py",
           "tests/ops/test_pre_push_mypy_scope.py",
           "tests/ops/test_rate_web_playwright_workflow.py",
+          "tests/ops/test_rust_security_dependency_floors.py",
           "tests/rate_of_closure/test_ball_setup.py",
           "tests/rate_of_closure/test_ball_setup_gui.py",
           "tests/rate_of_closure/test_camera_preferences.py",
@@ -6715,6 +6794,7 @@
           "tests/rate_of_closure/test_screw_analysis.py",
           "tests/rate_of_closure/test_torque_profile_ui.py",
           "tests/rate_of_closure/test_torque_run_history.py",
+          "tests/rate_of_closure/test_variation_noise_response.py",
           "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py",
           "tests/rate_of_closure/test_web_companion_contracts.py",
           "tests/rate_of_closure/test_workspace_torque_session.py",
@@ -14973,61 +15053,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7397,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "338051b67fd259f5ca31500e2bfe58d3155275612cd66ebe55d5bf1c0516ba96",
-      "family": "data-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-WEB-SRC-COMPONENTS-ADVANCEDPANEL-TSX-62E637418689",
-      "language": "typescript-react",
-      "maintainer": "Data processing maintainers",
-      "path": "src/data_processing/data_processor/web/src/components/AdvancedPanel.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "AdvancedPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "g",
-          "s"
-        ],
         "validation_paths": []
       }
     }

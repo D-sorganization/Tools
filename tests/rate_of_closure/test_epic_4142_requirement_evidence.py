@@ -6,6 +6,11 @@ import json
 from pathlib import Path
 from typing import Any, cast
 
+from rate_of_closure.variation.paired_attribution_adapter import (
+    rate_attribution_target_registry,
+)
+from rate_of_closure.variation.simulation_adapter import spatial_source_layouts
+
 ROOT = Path(__file__).resolve().parents[2]
 EVIDENCE = ROOT / "docs/audits/rate_of_closure_epic_4142_evidence.v1.json"
 R10_4_REQUALIFICATION = (
@@ -13,6 +18,21 @@ R10_4_REQUALIFICATION = (
 )
 R10_3_CAPABILITY_AUDIT = (
     ROOT / "docs/audits/rate_of_closure_r10_3_execution_capabilities.v1.json"
+)
+R11_1_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json"
+)
+R11_3_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json"
+)
+R12_3_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r12_3_noise_response_capabilities.v1.json"
+)
+R13_3_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r13_3_paired_attribution_capabilities.v1.json"
+)
+R13_5_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r13_5_attribution_selector_capabilities.v1.json"
 )
 PUBLIC_GUIDE = ROOT / "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
 EXPECTED_REQUIREMENTS = tuple(
@@ -104,6 +124,30 @@ def test_epic_4142_remote_evidence_is_immutable_and_reviewable() -> None:
             assert "/main/" not in remote
 
 
+def test_r13_5_is_verified_by_provenance_complete_cross_runtime_selection() -> None:
+    """R13.5 must bind every selector dimension without analysis recomputation."""
+    evidence = _load()
+    requirements = {item["requirement_id"]: item for item in evidence["requirements"]}
+    requirement = requirements["R13.5"]
+    audit = cast(
+        dict[str, Any],
+        json.loads(R13_5_CAPABILITY_AUDIT.read_text(encoding="utf-8")),
+    )
+
+    assert requirement["status"] == "verified"
+    assert requirement["gaps"] == []
+    assert audit["selection_schema_id"] == "rate-of-closure/morris-target-selection"
+    assert audit["selection_schema_version"] == 1
+    assert set(audit["qualified_target_classes"]) == {
+        "state-point",
+        "impact",
+        "shot-outcome",
+    }
+    assert "all-inputs-or-selected-source" in audit["qualified_dimensions"]
+    assert "anatomical causality" in audit["scientific_boundary"]
+    assert audit["implementation_issue"] == 4791
+
+
 def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> None:
     """R10.4 requires current behavior and adjudicated historical failures."""
     evidence = _load()
@@ -115,8 +159,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 24,
-        "partial": 7,
+        "verified": 29,
+        "partial": 2,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -174,8 +218,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
     )
 
     assert evidence["status_counts"] == {
-        "verified": 24,
-        "partial": 7,
+        "verified": 29,
+        "partial": 2,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -224,6 +268,195 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
             "swing mechanism, or support universal coaching advice."
         ),
     }
+
+
+def test_r11_1_capability_matrix_is_exhaustive_and_fail_closed() -> None:
+    """Every current source/adapter cell must be verified or unavailable."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    r11_1 = requirements["R11.1"]
+    audit = cast(
+        dict[str, Any], json.loads(R11_1_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    sources = tuple(audit["source_kinds"])
+    adapters = tuple(audit["adapter_ids"])
+    cells = audit["cells"]
+
+    assert audit["schema_version"] == "tools-r11.1-complete-trial-capabilities/v1"
+    assert audit["requirement_id"] == "R11.1"
+    assert audit["qualified_base_revision"] == (
+        "55805fe4de1b0afc3710efce4ed516d59e685717"  # pragma: allowlist secret
+    )
+    assert audit["implementation_issue"] == 4758
+    assert audit["record_schema"] == "rate-complete-trial/v1"
+    assert audit["durable_schema_version"] == 3
+    assert r11_1["status"] == "verified"
+    assert r11_1["gaps"] == []
+    assert (
+        "https://github.com/D-sorganization/Tools/pull/4762" in r11_1["remote_evidence"]
+    )
+    assert (
+        str(R11_1_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+        in r11_1["evidence_files"]
+    )
+    assert len(cells) == len(sources) * len(adapters) == 12
+    assert {(cell["source_kind"], cell["adapter_id"]) for cell in cells} == {
+        (source, adapter) for source in sources for adapter in adapters
+    }
+    assert {cell["status"] for cell in cells} == {
+        "verified",
+        "explicitly_unavailable",
+    }
+    assert sum(cell["status"] == "verified" for cell in cells) == 2
+    assert sum(cell["status"] == "explicitly_unavailable" for cell in cells) == 10
+    assert audit["status_counts"] == {
+        "verified": 2,
+        "explicitly_unavailable": 10,
+    }
+    for cell in cells:
+        assert (ROOT / cell["evidence"]).is_file()
+        assert (cell["reason"] is None) == (cell["status"] == "verified")
+
+
+def test_r11_3_resampling_matrix_and_adverse_cases_are_exhaustive() -> None:
+    """Every source layout, adapter cell, and missing-data class is qualified."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    r11_3 = requirements["R11.3"]
+    audit = cast(
+        dict[str, Any], json.loads(R11_3_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    r11_1 = cast(
+        dict[str, Any], json.loads(R11_1_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+
+    assert audit["schema_version"] == "tools-r11.3-trace-resampling-capabilities/v1"
+    assert audit["requirement_id"] == "R11.3"
+    assert audit["qualified_base_revision"] == (
+        "66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734"  # pragma: allowlist secret
+    )
+    assert audit["implementation_issue"] == 4763
+    assert audit["policy_id"] == "swing-trace-time-linear-contiguous/v1"
+    assert audit["adapter_cell_status_authority"] == str(
+        R11_1_CAPABILITY_AUDIT.relative_to(ROOT)
+    ).replace("\\", "/")
+    assert r11_3["status"] == "verified"
+    assert r11_3["gaps"] == []
+    assert (
+        str(R11_3_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+        in r11_3["evidence_files"]
+    )
+
+    layouts = audit["source_layouts"]
+    declared_layouts = spatial_source_layouts()
+    assert tuple(item["source_kind"] for item in layouts) == tuple(declared_layouts)
+    assert tuple(item["source_kind"] for item in layouts) == tuple(
+        r11_1["source_kinds"]
+    )
+    assert all(item["status"] == "verified" for item in layouts)
+    assert {item["source_kind"]: tuple(item["point_ids"]) for item in layouts} == dict(
+        declared_layouts
+    )
+    assert all(item["point_count"] == len(item["point_ids"]) for item in layouts)
+
+    cells = audit["adapter_cells"]
+    assert len(cells) == len(r11_1["cells"]) == 12
+    assert [
+        (item["source_kind"], item["adapter_id"], item["status"]) for item in cells
+    ] == [
+        (item["source_kind"], item["adapter_id"], item["status"])
+        for item in r11_1["cells"]
+    ]
+    assert audit["adapter_status_counts"] == r11_1["status_counts"]
+    assert set(audit["adverse_cases"]) == {
+        "exact_grid_identity",
+        "exact_grid_subset",
+        "off_grid_affine_interpolation",
+        "leading_missing",
+        "trailing_missing",
+        "interior_gap",
+        "single_sample_island",
+        "all_invalid_failure",
+        "no_impact",
+        "impact_lower_tie",
+        "impact_without_valid_target",
+        "outside_domain",
+        "invalid_target_grid",
+        "immutability_and_aliasing",
+        "serial_chunk_equivalence",
+        "source_layout_registry_drift",
+        "adapter_matrix_drift",
+    }
+    assert audit["scientific_boundary"] == (
+        "Trace-grid equivalence qualifies software alignment for model outputs; "
+        "it does not validate anatomical force attribution, a human swing "
+        "mechanism, or universal coaching advice."
+    )
+
+
+def test_r12_3_noise_response_evidence_is_verified_and_fail_closed() -> None:
+    """R12.3 must bind its field, capability matrix, tests, and neutral guide."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    requirement = requirements["R12.3"]
+    audit = cast(
+        dict[str, Any], json.loads(R12_3_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    relative = str(R12_3_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+
+    assert requirement["status"] == "verified"
+    assert requirement["gaps"] == []
+    assert relative in requirement["evidence_files"]
+    assert (
+        "docs/specs/GEOMETRIC_NOISE_RESPONSE_FIELD.md" in requirement["evidence_files"]
+    )
+    assert (
+        "https://github.com/D-sorganization/Tools/issues/4765"
+        in requirement["remote_evidence"]
+    )
+    assert audit["requirement_id"] == "R12.3"
+    assert len(audit["adapter_cells"]) == 12
+    assert audit["adapter_status_counts"] == {
+        "verified": 2,
+        "explicitly_unavailable": 10,
+    }
+    assert audit["scientific_boundary"].startswith("Model-scenario geometry only")
+
+
+def test_r13_3_paired_attribution_matrix_and_targets_are_exhaustive() -> None:
+    """R13.3 must inherit every source cell and enumerate every scalar target."""
+    requirements = {item["requirement_id"]: item for item in _load()["requirements"]}
+    requirement = requirements["R13.3"]
+    audit = cast(
+        dict[str, Any], json.loads(R13_3_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    r12_3 = cast(
+        dict[str, Any], json.loads(R12_3_CAPABILITY_AUDIT.read_text(encoding="utf-8"))
+    )
+    relative = str(R13_3_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+
+    assert requirement["status"] == "verified"
+    assert requirement["gaps"] == []
+    assert relative in requirement["evidence_files"]
+    assert "docs/specs/PAIRED_LOCALIZED_ATTRIBUTION.md" in requirement["evidence_files"]
+    assert audit["schema_version"] == "tools-r13.3-paired-attribution-capabilities/v1"
+    assert audit["requirement_id"] == "R13.3"
+    assert audit["implementation_issue"] == 4783
+    assert audit["adapter_cells"] == r12_3["adapter_cells"]
+    assert audit["adapter_status_counts"] == r12_3["adapter_status_counts"]
+    assert audit["source_layouts"] == r12_3["source_layouts"]
+    assert [
+        (item["metric_id"], item["kind"], item["unit"])
+        for item in audit["target_metrics"]
+    ] == list(rate_attribution_target_registry())
+    assert set(audit["availability_states"]) == {
+        "available",
+        "no-impact-unavailable",
+        "numerical-failure",
+        "missing-unavailable",
+        "nonfinite-unavailable",
+        "unsupported",
+    }
+    assert audit["scientific_boundary"].startswith(
+        "Model-scenario paired intervention response only"
+    )
 
 
 def test_r15_upstream_consumption_evidence_is_verified_and_revision_bound() -> None:

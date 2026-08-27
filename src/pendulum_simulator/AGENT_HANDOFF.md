@@ -19,14 +19,12 @@ terms with exact closure and rank-aware force-only hand-path mapping. The
 triple and golfer tiers remain unavailable until they supply compatible mass-
 matrix derivatives and endpoint semantics; do not synthesize those providers.
 
-Transfer-diagnostics issue **#4406**, under UpstreamDrift epic **#8551**, is
-**closed**. It landed on main via consolidation **#4450** (`8f654b3a1`,
-2026-08-14). The branch `research/shoulder-velocity-drift-transfer` is spent —
-do not resume work on it.
-
-What shipped: a model-neutral transfer contract, exact double-pendulum
-drift/control grip-force attribution, integrated braking/work/impulse metrics,
-Pareto ranking, and a PyQt **Drift Transfer** analysis tab.
+Transfer-diagnostics issue **#4406** (UpstreamDrift epic **#8551**) is **closed**,
+landed via consolidation **#4450**. It shipped the model-neutral transfer
+contract, exact double-pendulum drift/control grip-force attribution,
+braking/work/impulse metrics, Pareto ranking, and the PyQt **Drift Transfer**
+tab. The branch `research/shoulder-velocity-drift-transfer` is spent — do not
+resume it.
 
 Companion issue **#4430** is active on
 merged PR **#4618** (`87ff0ea8c`). Tools `main` now has the source-pinned
@@ -56,6 +54,39 @@ UpstreamDrift's `EnhancedBallFlightSimulator` and `movement_optimizer`'s
 parallel-start machinery) rather than reimplementing Monte Carlo sampling from
 scratch. If you're working in `swing_sim/variation/`, read this tool's
 perturbation analysis code first.
+
+## Active Epics — #4766 objectives, #4775 actuation and realism
+
+#4766 shipped the mechanism-vs-outcome comparison on this tool's existing
+physics (merged #4774). #4775 then asked why its optima brake the arms to a
+standstill at impact. Contract:
+`docs/specs/SWING_ACTUATION_AND_REALISM.md`.
+
+**Five results that bind future work here** (all regression-pinned):
+
+1. `P_coriolis_hub = -2 * P_centrifugal_wrist` identically, so centrifugal and
+   Coriolis _work_ are one functional. The centrifugal objective is an angular
+   impulse for that reason; do not "simplify" it back to work.
+2. The energy-optimal hand speed at impact is `L1*[I2 - m2*r2*(L2-r2)]`,
+   identically zero for a point-mass clubhead. That is an _unconstrained ideal_,
+   not a prediction about where a constrained optimum lands — a distinction that
+   was got wrong once, see 3.
+3. **The club preset was 2.1x too heavy at the tip (#4785).** In a
+   point-mass-at-tip model you must match the real club's inertia about the
+   _wrist_, not its mass: `me = 0.238 kg` for a driver, not 0.50. The earlier
+   value doubled the arm/club coupling and forced the optimizer to stop the
+   hands; that artifact was published as a structural limit before being caught.
+   Use `club_equivalence.equivalent_tip_mass` for any new club.
+4. **Corrected, the model is golf-like**: 49.7 m/s clubhead, 7.26 m/s hands,
+   club/arm 3.46, five of six measured observables inside their bands, with no
+   hand-speed floor. A moving hub is an improvement, not a prerequisite.
+5. **The objective ranking discriminates once the club is right.** Clubhead
+   speed, Coriolis, energy and impulse transfer tie; centrifugal release impulse
+   costs ~1 m/s. Check `is_discriminating` before quoting any ranking.
+
+Next open item is the **late release**: every objective releases at ~90% of the
+downswing against a measured 55-80%. A moving hub (`physics_triple.py`) is the
+most likely route. Hill-type actuation (`actuation.py`) is built and tested.
 
 ## Recent Activity (grounding — `git log --oneline -15 -- src/pendulum_simulator`)
 

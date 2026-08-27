@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 24,
-    "partial": 7,
+    "verified": 29,
+    "partial": 2,
     "unverified": 0,
     "external_blocked": 0
   },
@@ -133,20 +133,24 @@
     {
       "requirement_id": "R11.1",
       "requirement": "Retain sampled inputs, typed outcomes, event and impact state, shot result, and complete pre-impact traces for every trial.",
-      "status": "partial",
-      "rationale": "Core ensemble and Rate adapters retain sampled inputs, status, typed outcome, scalar outputs, and bounded trace tensors, but not every supported adapter binds the full requested event, impact, shot, and pre-impact trace set in one lossless document.",
+      "status": "verified",
+      "rationale": "Issue #4758 and PR #4762 add one immutable complete-trial record and bounded durable schema-v3 authority for every hit, no-impact, and numerical-failure trial. Records bind sampled inputs, plan/execution/configuration/source identities, frame, explicit units, stable point/joint IDs, complete swing kinematics and applied torques, event/contact state, and available impact/delivery/post-impact/launch/flight phases. Array-level shape, dtype, digest, range, strict JSON, corruption, legacy-v2 read-only, serial/chunk/resume parity, 16/64-trial scaling, and isolated installed-wheel gates pass. The exhaustive 3-source by 4-adapter matrix verifies the two qualified double-pendulum adapters and records ten other cells as explicitly unavailable without fabrication. This is model-data retention, not human or coaching validation.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/ensemble_types.py",
-        "src/rate_of_closure/variation/simulation_types.py",
-        "tests/rate_of_closure/test_variation_simulation_adapter.py"
+        "src/rate_of_closure/variation/complete_trial_record.py",
+        "src/rate_of_closure/variation/durable_ensemble_chunks.py",
+        "docs/audits/rate_of_closure_r11_1_complete_trial_capabilities.v1.json",
+        "docs/rate_of_closure/complete_trial_retention_scaling.v1.json",
+        "tests/rate_of_closure/test_variation_complete_trial_record.py",
+        "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
+        "tests/rate_of_closure/test_complete_trial_standalone_wheel.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py tests/rate_of_closure/test_variation_simulation_adapter.py -q"
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_variation_complete_trial_record.py tests/rate_of_closure/test_variation_durable_ensemble_chunks.py tests/rate_of_closure/test_variation_complete_trial_scaling_evidence.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+        "python -m pytest -n 0 -q tests/rate_of_closure/test_complete_trial_standalone_wheel.py",
+        "python -m scripts.measure_complete_trial_retention_scaling"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "A requirement matrix must prove complete event, impact, shot, and pre-impact trace retention for every compatible model adapter, including failure and no-impact paths."
-      ]
+      "remote_evidence": ["https://github.com/D-sorganization/Tools/pull/4762"],
+      "gaps": []
     },
     {
       "requirement_id": "R11.2",
@@ -167,20 +171,25 @@
     {
       "requirement_id": "R11.3",
       "requirement": "Use stable modeled-point identifiers, explicit frames, common grids, and documented interpolation.",
-      "status": "partial",
-      "rationale": "Geometry tensors bind point names, frame, units, and common time or phase coordinates, and strict readers reject drift.",
+      "status": "verified",
+      "rationale": "The versioned time-grid authority preserves stable point/frame/trial identities, is exactly equivalent on identity and subset grids for manual, double-pendulum, and triple-pendulum spatial layouts, interpolates only between adjacent valid samples, rejects extrapolation, retains missing intervals, and reports approximate impact-marker alignment error. The exhaustive 3-source by 4-adapter matrix inherits the two qualified R11.1 cells and records ten cells as explicitly unavailable. This qualifies model-output alignment, not participant validity.",
       "evidence_files": [
         "src/shared/python/swing_sim/variation/ensemble_geometry.py",
         "src/shared/python/swing_sim/variation/ensemble_types.py",
-        "tests/rate_of_closure/test_variation_geometry_properties.py"
+        "src/shared/python/swing_sim/variation/trace_resampling.py",
+        "docs/audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json",
+        "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
+        "tests/rate_of_closure/test_variation_trace_resampling.py",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py tests/rate_of_closure/test_variation_geometry_properties.py -q"
+        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py src/shared/python/swing_sim/variation/tests/test_trace_resampling.py tests/rate_of_closure/test_variation_geometry_properties.py tests/rate_of_closure/test_variation_trace_resampling.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py -n 0 -q"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "Interpolation and resampling equivalence is not qualified across every model adapter and missing-data pattern."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4763",
+        "https://github.com/D-sorganization/Tools/pull/4764"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R11.4",
@@ -252,20 +261,26 @@
     {
       "requirement_id": "R12.3",
       "requirement": "Separate responsiveness to input noise from absolute scatter without causal labeling.",
-      "status": "partial",
-      "rationale": "OAT and pairwise-finite rank attribution are distinct from absolute dispersion metrics and user copy avoids causal claims.",
+      "status": "verified",
+      "rationale": "Issue #4765 adds a versioned immutable point/time/input field that reports paired declared-scale Cartesian response and magnitude beside matched-cohort and all-eligible absolute RMS scatter. Exact counts, typed adequacy, NaN preservation, method and normalization identities, trace-resampling policy, provenance, row-oriented plot data, bounded streaming snapshots, and a 3-source by 4-adapter capability matrix are explicit. Analytical, metamorphic, nonlinear-countermodel, missingness, drift, and serial/chunk/resume tests qualify model-scenario geometry only; they do not establish causal anatomy, human validity, joint work, energy transfer, or coaching authority.",
       "evidence_files": [
-        "src/shared/python/swing_sim/variation/analysis.py",
-        "src/shared/python/swing_sim/variation/dispersion_metrics.py",
-        "tests/rate_of_closure/test_variation_plot_data.py"
+        "src/shared/python/swing_sim/variation/noise_response.py",
+        "src/shared/python/swing_sim/variation/noise_response_record.py",
+        "src/shared/python/swing_sim/variation/noise_response_plot.py",
+        "docs/specs/GEOMETRIC_NOISE_RESPONSE_FIELD.md",
+        "docs/audits/rate_of_closure_r12_3_noise_response_capabilities.v1.json",
+        "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+        "tests/rate_of_closure/test_variation_noise_response.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_analysis.py src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py tests/rate_of_closure/test_variation_plot_data.py -q"
+        "python -m pytest src/shared/python/swing_sim/variation/tests -k \"response or dispersion or resampling\" -n 0 -q",
+        "python -m pytest tests/rate_of_closure -k \"response or dispersion or variation_geometry\" -n 0 -q"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "No unified normalized noise-response field is qualified for every modeled point and time alongside absolute scatter under the same missing-data denominator."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4765",
+        "https://github.com/D-sorganization/Tools/pull/4782"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R12.4",
@@ -336,20 +351,27 @@
     {
       "requirement_id": "R13.3",
       "requirement": "Attribute parameter and optional locus to state, impact, and shot outcomes.",
-      "status": "partial",
-      "rationale": "Localized joint-torque studies bind source joint and time window to downstream traces and scalar outcomes, while global Morris and OAT cover parameter sources.",
+      "status": "verified",
+      "rationale": "Issue #4783 adds one immutable paired-intervention record that binds a registered parameter and optional exact control point and half-open time window to governed state-point, impact, and shot scalars. The complete 3-source by 4-adapter authority retains two verified double-pendulum cells and ten explicit unavailabilities inherited from the qualified response-field boundary. All 17 registered target metrics, state point/time/frame selectors, source and execution identities, typed unavailable outcomes, bounded serial/chunk/resume snapshots, and precision-preserving JSON/CSV reviewer rows are explicit. Affine, sign, zero-response, nonlinear, observational-confounding, no-impact, failure, missingness, unsupported-design, identity-drift, and replay falsifiers qualify a model-scenario paired response only; they do not establish a global main effect, causal anatomy, human validity, or coaching authority.",
       "evidence_files": [
-        "src/rate_of_closure/variation/simulation_adapter.py",
-        "src/shared/python/swing_sim/variation/global_sensitivity.py",
-        "tests/rate_of_closure/test_localized_torque_variation.py"
+        "src/shared/python/swing_sim/variation/paired_attribution_types.py",
+        "src/shared/python/swing_sim/variation/paired_attribution_record.py",
+        "src/shared/python/swing_sim/variation/paired_attribution.py",
+        "src/shared/python/swing_sim/variation/paired_attribution_snapshot.py",
+        "src/rate_of_closure/variation/paired_attribution_adapter.py",
+        "tests/rate_of_closure/test_paired_attribution_adapter.py",
+        "src/shared/python/swing_sim/variation/tests/test_paired_attribution.py",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+        "docs/specs/PAIRED_LOCALIZED_ATTRIBUTION.md",
+        "docs/audits/rate_of_closure_r13_3_paired_attribution_capabilities.v1.json"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_localized_torque_variation.py src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py -q"
+        "python -m pytest -n 0 -q src/shared/python/swing_sim/variation/tests/test_paired_attribution.py tests/rate_of_closure/test_paired_attribution_adapter.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "Locus-aware attribution is implemented for localized torque, not for every registered parameter or all state-point, impact, and shot metrics."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4783"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R13.4",
@@ -370,20 +392,27 @@
     {
       "requirement_id": "R13.5",
       "requirement": "Inspect global or selected-input, point, phase, impact, or shot attribution without unrelated presentation recomputation.",
-      "status": "partial",
-      "rationale": "Both surfaces consume serialized analysis records and expose multiple selectors rather than reimplementing the numerical methods.",
+      "status": "verified",
+      "rationale": "Issue #4791 replaces name-only Morris target selection with a versioned provenance-complete identity over target class, name, unit, point, time or phase, and coordinate frame. Both surfaces enumerate exact targets and all-input or one-source views from the immutable parsed report. A selected source retains its global rank and every typed availability denominator. Same-name point and phase counterexamples, unknown and ambiguous selections, nonmutation, and an exact Python/TypeScript fixture covering state, impact, and shot targets fail closed. This is presentation of serialized model-scenario screening, not simulation, sensitivity recomputation, anatomical attribution, human validation, or coaching authority.",
       "evidence_files": [
-        "src/rate_of_closure/ui/pyqt6/variation_results.py",
-        "src/rate_of_closure/web/src/components/VariationResults.tsx",
-        "tests/rate_of_closure/test_variation_visualization_widgets.py"
+        "src/rate_of_closure/application/morris/selector.py",
+        "src/rate_of_closure/application/morris/presentation.py",
+        "src/rate_of_closure/ui/pyqt6/morris_tab.py",
+        "src/rate_of_closure/web/src/model/morrisSelectorContract.ts",
+        "src/rate_of_closure/web/src/components/MorrisResults.tsx",
+        "src/rate_of_closure/web/src/model/__fixtures__/morris_selector_parity_v1.json",
+        "tests/rate_of_closure/test_morris_selector_contract.py",
+        "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+        "docs/audits/rate_of_closure_r13_5_attribution_selector_capabilities.v1.json"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_variation_visualization_widgets.py tests/rate_of_closure/test_morris_ui_contract.py -q"
+        "python -m pytest tests/rate_of_closure/test_morris_selector_contract.py tests/rate_of_closure/test_morris_ui_contract.py tests/rate_of_closure/test_morris_pyqt_workflow.py -n 0 -q",
+        "cd src/rate_of_closure/web && npm test -- --run src/model/morrisSelectorContract.test.ts src/model/morrisPresentation.test.ts src/model/morrisUiParity.test.ts src/components/MorrisResults.test.tsx"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "No end-to-end contract proves all selector dimensions are present on both surfaces or that changing one selector avoids every unrelated analysis recomputation."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4791"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R14.1",

@@ -77,17 +77,13 @@ class TrajectoryResultMixin:
         energy_at = getattr(self, "energy_at")
         first = energy_at(0)
         return {
-            key: np.asarray(
-                [energy_at(i)[key] for i in range(self.n_steps)], dtype=float
-            )
+            key: np.asarray([energy_at(i)[key] for i in range(self.n_steps)], dtype=float)
             for key in first
         }
 
     def all_accelerations(self) -> np.ndarray:
         accelerations_at = getattr(self, "accelerations_at")
-        return np.asarray(
-            [accelerations_at(i) for i in range(self.n_steps)], dtype=float
-        )
+        return np.asarray([accelerations_at(i) for i in range(self.n_steps)], dtype=float)
 
     def all_torques(self) -> np.ndarray:
         torques_at = getattr(self, "torques_at")

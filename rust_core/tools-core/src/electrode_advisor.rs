@@ -1,4 +1,5 @@
 use pyo3::prelude::*;
+use pyo3::types::PyAny;
 use std::f64::consts::PI;
 
 const MM_PER_M: f64 = 1000.0;
@@ -154,7 +155,7 @@ impl ElectrodeAdvisorLayout {
         self.bath.glass_level_m * MM_PER_M
     }
 
-    pub fn to_manifest(&self, py: Python<'_>) -> PyResult<PyObject> {
+    pub fn to_manifest(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
         use pyo3::types::{PyDict, PyList};
 
         let bath = PyDict::new(py);
@@ -226,7 +227,7 @@ impl ElectrodeAdvisorLayout {
         root.set_item("drafting_assumptions", drafting)?;
         root.set_item("placements", placements)?;
 
-        Ok(root.into())
+        Ok(root.into_any().unbind())
     }
 }
 

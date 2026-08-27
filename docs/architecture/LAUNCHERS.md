@@ -1,35 +1,53 @@
-# Launcher Hierarchy
+# Launcher Guide
 
-This repository utilizes a specific hierarchy for launching tools to ensure compatibility and ease of use.
+This repository has one supported entry point for its graphical tools. This
+document records that entry point, how individual tools are reached, and what to
+do when the launcher fails.
 
-## Primary Launcher
+## Canonical entry point
 
-**`UnifiedToolsLauncher.py`**
+**`UnifiedToolsLauncher.py`** — PyQt6 desktop launcher, at the repository root.
 
-- **Type:** PyQt6 (Modern GUI)
-- **Role:** The **canonical entry point** for the repository. It provides a modern, tabbed interface to access all tools, including Python, MATLAB, and Web Applications.
-- **Requirement:** Python 3.11+
-- **Usage:**
-  ```bash
-  python UnifiedToolsLauncher.py
-  ```
+```bash
+python UnifiedToolsLauncher.py
+```
 
-## Legacy Launcher (Fallback)
+- **Requirement**: Python 3.11 or newer, with PyQt6 installed
+  (`pip install -e ".[gui]"` or `".[dev]"`).
+- **Role**: presents every graphical application grouped by domain, validates
+  each tool path before launching, and captures the child process's output and
+  errors into an activity log.
+- **Diagnostics**: pass `--verbose` for detailed logging. A session log is
+  written to `unified_launcher.log` in the working directory.
 
-**`launch_tools_main.py`**
+The launcher discovers tools through the plugin system described in
+[Plugin system](PLUGIN_SYSTEM.md), so a correctly registered tool appears
+without changes to the launcher itself.
 
-- **Type:** Tkinter (Legacy GUI)
-- **Role:** A robust fallback launcher used if PyQt6 is unavailable or if the unified launcher fails. It focuses on core data processing tools.
-- **Usage:**
-  ```bash
-  python launch_tools_main.py
-  ```
+## Individual tool launchers
 
-## Specialized Launchers
+Some tools also carry their own entry point for direct use, for example
+`src/web_applications/urdf_viewer/main.py`. These exist to support development
+and embedding; the launcher remains the supported path for normal use.
 
-Individual tools may have their own specific launchers (e.g., `src/web_applications/urdf_viewer/main.py`), but users are encouraged to use the `UnifiedToolsLauncher.py` for a unified experience.
+A subset of tools is installed as console scripts by
+`pip install -e .`. Those are listed in the
+[repository README](../../README.md#command-line-entry-points) and defined under
+`[project.scripts]` in `pyproject.toml`.
 
-## Launcher Selection Logic
+## Unsupported entry points
 
-1. Users should attempt to run `UnifiedToolsLauncher.py` first.
-2. If dependencies (PyQt6) are missing or the environment is restricted, `launch_tools_main.py` serves as a reliable alternative using the standard Tkinter library.
+Names that appear in older documentation, commit messages, or issue history do
+not resolve to files in this repository and are not supported:
+
+- `tools_launcher.py`
+- `launch_tools_main.py`
+
+Neither exists. There is no Tkinter fallback launcher. If PyQt6 cannot be
+installed in the target environment, use the command-line entry points or the
+browser-based utilities under `src/web_applications/` instead.
+
+## When the launcher fails
+
+See [Troubleshooting](../help/troubleshooting.md#the-launcher-will-not-start)
+for the ordered checks.

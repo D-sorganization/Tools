@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Tool catalog
+    url: https://github.com/D-sorganization/Tools#tool-catalog
+    about: Every application in this repository and what each one does.
+  - name: Troubleshooting
+    url: https://github.com/D-sorganization/Tools/blob/main/docs/help/troubleshooting.md
+    about: Installation failures, launcher problems, MATLAB setup, and test collection errors.
+  - name: User manual
+    url: https://github.com/D-sorganization/Tools/blob/main/docs/USER_MANUAL.md
+    about: Per-tool operating instructions.
+  - name: Security vulnerabilities
+    url: https://github.com/D-sorganization/Tools/blob/main/SECURITY.md
+    about: Report vulnerabilities privately. Do not open a public issue.
