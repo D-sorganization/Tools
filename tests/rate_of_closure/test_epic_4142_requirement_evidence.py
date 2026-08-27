@@ -11,6 +11,9 @@ EVIDENCE = ROOT / "docs/audits/rate_of_closure_epic_4142_evidence.v1.json"
 R10_4_REQUALIFICATION = (
     ROOT / "docs/audits/rate_of_closure_r10_4_requalification.v1.json"
 )
+R10_3_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r10_3_execution_capabilities.v1.json"
+)
 PUBLIC_GUIDE = ROOT / "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
 EXPECTED_REQUIREMENTS = tuple(
     [f"R10.{index}" for index in range(1, 7)]
@@ -112,8 +115,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 23,
-        "partial": 8,
+        "verified": 24,
+        "partial": 7,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -158,6 +161,62 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
         "persistence does not validate a human swing mechanism, identify a "
         "participant, or support universal coaching advice."
     )
+
+
+def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
+    """R10.3 requires declared semantics for every registered input locus."""
+    evidence = _load()
+    requirements = {item["requirement_id"]: item for item in evidence["requirements"]}
+    r10_3 = requirements["R10.3"]
+    audit = cast(
+        dict[str, Any],
+        json.loads(R10_3_CAPABILITY_AUDIT.read_text(encoding="utf-8")),
+    )
+
+    assert evidence["status_counts"] == {
+        "verified": 24,
+        "partial": 7,
+        "unverified": 0,
+        "external_blocked": 0,
+    }
+    assert r10_3["status"] == "verified"
+    assert r10_3["gaps"] == []
+    assert (
+        str(R10_3_CAPABILITY_AUDIT.relative_to(ROOT)).replace("\\", "/")
+        in r10_3["evidence_files"]
+    )
+    assert audit == {
+        "schema_version": "tools-r10.3-execution-capabilities/v1",
+        "requirement_id": "R10.3",
+        "qualified_base_revision": (
+            "9fe87f0eec9f341fdfc50fc2a116c601b94781d5"  # pragma: allowlist secret
+        ),
+        "implementation_issue": 4756,
+        "authority": "src/rate_of_closure/locus_execution_capabilities.v1.json",
+        "registered_variable_count": 31,
+        "supported_by_adapter": {
+            "global_simulation_value/v1": 11,
+            "localized_joint_torque_offset/v1": 2,
+            "regional_ground_value/v1": 2,
+            "turf_profile_value/v1": 4,
+        },
+        "explicitly_unsupported_count": 12,
+        "time_window_semantics": "half_open_seconds",
+        "point_id_semantics": ("topological_control_loci_not_spatial_trace_points"),
+        "negative_gates": [
+            "registry_coverage_drift",
+            "duplicate_variable_key",
+            "malformed_capability_record",
+            "forbidden_locus_metadata",
+            "missing_or_inexact_topological_locus",
+            "out_of_run_time_window",
+        ],
+        "scientific_boundary": (
+            "Execution-locus coverage proves deterministic adapter semantics; "
+            "it does not identify anatomical force sources, validate a human "
+            "swing mechanism, or support universal coaching advice."
+        ),
+    }
 
 
 def test_r15_upstream_consumption_evidence_is_verified_and_revision_bound() -> None:

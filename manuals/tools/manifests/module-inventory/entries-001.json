@@ -6705,6 +6705,7 @@
           "tests/rate_of_closure/test_launch_monitor_analysis.py",
           "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
           "tests/rate_of_closure/test_launch_monitor_workspace_v3.py",
+          "tests/rate_of_closure/test_locus_execution_capabilities.py",
           "tests/rate_of_closure/test_morris_authority_contracts.py",
           "tests/rate_of_closure/test_python_compatibility.py",
           "tests/rate_of_closure/test_regional_ground_execution_controller.py",

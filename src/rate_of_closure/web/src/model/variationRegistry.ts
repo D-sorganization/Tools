@@ -7,6 +7,7 @@
  */
 
 import type { BallSetup } from "./ballSetup";
+import { capabilityFor } from "./locusExecutionCapabilities";
 
 export const CATEGORY_DELIVERY = "swing_sim.impact.delivery";
 export const CATEGORY_LAUNCH = "swing_sim.flight.launch";
@@ -34,7 +35,6 @@ export interface VariableDefTs {
   typicalScale: number;
   guidance: string;
   applicability?: "tee_only" | "localized_torque_only";
-  localizedJointId?: "joint.shoulder" | "joint.wrist";
 }
 
 /** Mirror of the Python registry (delivery + launch categories). */
@@ -95,7 +95,6 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     typicalScale: 2,
     guidance: "Additive double-pendulum command over a required half-open time window at joint.shoulder.",
     applicability: "localized_torque_only",
-    localizedJointId: "joint.shoulder",
   },
   {
     key: `${CATEGORY_SWING}.wrist_commanded_torque_offset_nm`,
@@ -105,7 +104,6 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     typicalScale: 1,
     guidance: "Additive double-pendulum command over a required half-open time window at joint.wrist.",
     applicability: "localized_torque_only",
-    localizedJointId: "joint.wrist",
   },
   {
     key: `${CATEGORY_CLUB}.head_mass_kg`,
@@ -180,6 +178,14 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     default: 10.5,
     typicalScale: 0.8,
     guidance: "Typical shot-to-shot variation: 0.5-1.5 deg.",
+  },
+  {
+    key: `${CATEGORY_DELIVERY}.lie_deg`,
+    label: "Residual Lie Rotation",
+    unit: "deg",
+    default: 0.0,
+    typicalScale: 0.5,
+    guidance: "Typical variation: within 1 deg of square. Source: AffineDrift launch-monitor frame conventions.",
   },
   {
     key: `${CATEGORY_DELIVERY}.impact_offset_toe_mm`,
@@ -311,5 +317,9 @@ export const variableDef = (key: string): VariableDefTs | undefined =>
 
 export const localizedTorqueJointId = (
   key: string,
-): "joint.shoulder" | "joint.wrist" | null =>
-  REGISTRY_BY_KEY.get(key)?.localizedJointId ?? null;
+): "joint.shoulder" | "joint.wrist" | null => {
+  const capability = capabilityFor(key);
+  return capability.adapterId === "localized_joint_torque_offset/v1"
+    ? capability.pointIds[0] as "joint.shoulder" | "joint.wrist"
+    : null;
+};

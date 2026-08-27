@@ -3,6 +3,399 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 364,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "45887645846342e4bb5b4881b1a22292e7922dd03154fb7499ab1beb423e158d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-AUTH-INIT-PY-BCD703F732E0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/auth/__init__.py",
+      "purpose": "Authentication and authorization module for AI features.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AuthManager",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AuthToken",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FeatureGate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SubscriptionTier",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UserProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_auth_manager",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 19361,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f9faaf744d32857f0b9af5cd8c33eb655dee9121aaf885a9dbcaf9bc1a626d4e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-AUTH-AUTHENTICATION-PY-143A7EB4A237",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/auth/authentication.py",
+      "purpose": "Authentication and Subscription Management for AI Features.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AuthManager",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AuthToken",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FeatureGate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SubscriptionTier",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UserProfile",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_P",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_R",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_auth_manager",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_authentication.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9773,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ead7b488af932f986619ea19659ccb4da2d999bc8cf327def26c963d7ec3edc1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-CONFIG-PY-168BF66542B7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/config.py",
+      "purpose": "AI configuration with environment variable support.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://localhost:11434"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ANTHROPIC_MAX_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ANTHROPIC_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ANTHROPIC_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GEMINI_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OLLAMA_HOST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OLLAMA_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OLLAMA_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OPENAI_MAX_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OPENAI_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OPENAI_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_ANTHROPIC_API_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_ANTHROPIC_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_ANTHROPIC_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_GEMINI_API_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_GEMINI_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_OLLAMA_HOST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_OLLAMA_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_OLLAMA_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_OPENAI_API_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_OPENAI_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_OPENAI_ORGANIZATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENV_OPENAI_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_anthropic_api_key",
+            "signature": "*, required: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_anthropic_model",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_anthropic_timeout",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_gemini_api_key",
+            "signature": "*, required: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_gemini_model",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_ollama_host",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_ollama_model",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_ollama_timeout",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_openai_api_key",
+            "signature": "*, required: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "get_openai_model",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_openai_organization",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_openai_timeout",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_shared_dependency_imports.py",
+          "tests/unit/ai/test_peer_review.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 28347,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14606,6 +14999,7 @@
           "tests/rate_of_closure/test_launch_monitor_conformance_golden.py",
           "tests/rate_of_closure/test_launch_monitor_workspace_v3.py",
           "tests/rate_of_closure/test_localized_torque_variation.py",
+          "tests/rate_of_closure/test_locus_execution_capabilities.py",
           "tests/rate_of_closure/test_morris_authority_contracts.py",
           "tests/rate_of_closure/test_morris_rate_adapter.py",
           "tests/rate_of_closure/test_python_compatibility.py",
@@ -14804,239 +15198,6 @@
         "validation_paths": [
           "tests/rate_of_closure/test_web_companion_contracts.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 747,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2590d7fea9e5d12e6c9569ce1811271239483e1f1aded9ad468a84a72ef8e4d7",
-      "family": "data-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSING-INIT-PY-455E512F58A1",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/shared/python/data_processing/__init__.py",
-      "purpose": "Shared data processing module extracted from Data_Processor_Integrated.py.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "DataProcessor",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 22175,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "82622eaab5e29425e356fc8d803ddb5956eb236df1ab43f043ba29b5c5fe4522",
-      "family": "data-processing-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSING-PROCESSOR-PY-98361D22A003",
-      "language": "python",
-      "maintainer": "Data processing maintainers",
-      "path": "src/shared/python/data_processing/processor.py",
-      "purpose": "DataProcessor facade -- clean API over the extracted core modules.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DataProcessor",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DatasetInfo",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SUPPORTED_FILTER_TYPES",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/data_processing/tests/test_processor.py",
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/shared/python/data_processing/test_data_processing_contract.py",
-          "tests/shared/python/data_processing/test_processor.py",
-          "tests/shared/python/test_safe_pandas_eval.py"
-        ],
-        "unit_mentions": [
-          "Hz",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/data_processor_io/test_rust_engine_contract.py",
-          "tests/shared/python/data_processing/test_data_processing_contract.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 901,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "26d5e04a95b09b3ba279852b0b8be6b270606fd3ac8f80b736957c1ea440d55c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-DATA-PROCESSOR-IO-INIT-PY-F39B0C83C2C1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/data_processor_io/__init__.py",
-      "purpose": "Bulk-I/O engine package for the Data Processor (issue #2989).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "CancellationToken",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ConversionReport",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DataProcessorRustError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "OperationCancelled",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RustBulkDataEngine",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SchemaInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "cancel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "convert",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "filter_export",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "inspect",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "preview",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "scan_batch",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],
