@@ -3,6 +3,556 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3666,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a4ee0e6da4070f2c384503db61eabe11255a5e8cfc7ffa15751463dd4eaafef3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-ENVIRONMENT-OBSTACLEMANAGER-M-7EF3669C402C",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/environment/ObstacleManager.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "ObstacleManager",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createRandomObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateCustom",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generatePreset",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "getObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setObstacles",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 29972,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ac977483c9c85e5d0a8610200d28461ea3d0b3d7ec9a7c6828520a9029baf824",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-GUI-STARWARSPATHPLANNERGUI-M-B703C04805A7",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "animateCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "animatePursuit",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "animateSingleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "cameraChangeCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createControlElements",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShipFaces",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "displayOptionCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawStarfield",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateObstaclesCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generateRandomObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "initializeVisualization",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "loadDefaultObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "loadObstaclesCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "modeChangeCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "planPathCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "resetCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "savePursuitVideo",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "saveSingleShipVideo",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "saveVideoCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "setupCallbacks",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "speedChangeCallback",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "starWarsPathPlannerGUI",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "updateCameraView",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "updateStatus",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "visualizePath",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "visualizePursuit",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 401,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d966fbf929f845cc6ef2f9f8b10f20f8d47219b9b16610d6c1673d657344957d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-MAIN-CINEMATIC-M-342B70521003",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/main_cinematic.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3937,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ec60ec332ef8e84c77ff74de85172563eff44757597fd5ebd7c2031bd82101f0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-MAIN-IMPROVED-M-56EAF4BEFEEB",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/main_improved.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "generateRandomObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "runCommandLineVersion",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 588,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3cd603fb79d5d29f066645d75ed5c8acee503bf9b3beed13e23a777c81e43684",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-MAIN-STATIC-M-DEB5AC74EA86",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/main_static.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2502,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5e1840f084533f755b41014e37581a6540f7dde6ba2400950596a002da5824f8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-SHIPS-SHIPLIBRARY-M-9C803DAA8D39",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/ships/ShipLibrary.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "ShipLibrary",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "availableShips",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createFallbackShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "defaultModelPath",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "getShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "loadAllShips",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9169,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b55509880684e4bced7e7ce33fbb85a09de775305cc3585e5a2eecb9f1d116ed",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTPURSUIT-IMPROVED-M-7F0FACB0B295",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotPursuit_Improved.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "createSimpleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShipFaces",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "plotPursuit_Improved",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4728,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14648,571 +15198,6 @@
           "g"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5673,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d637e81d11204f2a01c77e815d2dd8aefc68033ab6e96a0e23739cf379a90c4f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-MODELS-PY-7C5DBF9AF688",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/models.py",
-      "purpose": "Chat API contract models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatChunkResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatHistoryResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatIndexStatusResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatMessageRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatModelInfo",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatModelListResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatSessionInfo",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_RESPONSE_STYLE",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "RESPONSE_STYLE_PROMPTS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ResponseStyle",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ThinkingCapabilities",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ThinkingLevel",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ThinkingLevelName",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "make_full_thinking_capabilities",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "make_none_only_capabilities",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "style_prompt",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat.py",
-          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
-          "tests/shared/python/chat/test_models.py",
-          "tests/test_waves_2_3_imports.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2092,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "34f16a8a74cf8c0148ee03562641dc210f1932235b8c655104934fbb336c60c4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-DIAGNOSTICS-PY-1FE050C75ED7",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/qt_diagnostics.py",
-      "purpose": "Import-safe diagnostics for the optional PyQt6 chat dock runtime.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatQtDiagnostic",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "diagnose_chat_qt_runtime",
-            "signature": "*, python_executable: str | None=None, timeout_seconds: float=10.0"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 14879,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "af1c27760e6171df24945819bebd9c2f4dc724602209d884203f28779646a59f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QUICK-BAR-PY-18859D97AADF",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/quick_bar.py",
-      "purpose": "Quick-action chat bar for toolbar integration.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatLauncherMixin",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatQuickBar",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ThemeProviderProtocol",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_quick_bar.py",
-          "tests/shared/python/chat/test_quick_bar_widget.py"
-        ],
-        "unit_mentions": [
-          "bar",
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 13957,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d96a6de25190d368aaa78ac3849b2ca6ebb0db67e187e489bceba651d6ce6d4c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-ROUTER-FACTORY-PY-C4FB1F1A4282",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/router_factory.py",
-      "purpose": "Shared WebSocket router factory for AI chat streaming.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [
-          "/chat/sessions",
-          "/chat/sessions/{session_id}/history"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "create_chat_router",
-            "signature": "prefix: str='', authorize_fn: Any=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
-          "src/shared/python/chat/tests/test_chat_ws_error_handling.py",
-          "tests/shared/python/chat/test_router_error_logging.py",
-          "tests/shared/python/chat/test_router_factory.py",
-          "tests/shared/python/chat/test_router_rest.py",
-          "tests/shared/python/chat/test_terminal_protocol.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17688,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4f3e03bb12e22c16460a656e7fa8f3fda9c910e855095886874e8dbbdaee9abc",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-SERVICE-BASE-PY-A209D33ED55E",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/service_base.py",
-      "purpose": "Shared base class for AI chat session management.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ChatMessage",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatServiceBase",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ChatSession",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
-          "src/shared/python/chat/tests/test_service_base.py",
-          "tests/contracts/test_chat_service_conformance.py",
-          "tests/shared/python/chat/test_export.py",
-          "tests/shared/python/chat/test_router_factory.py",
-          "tests/unit/chat/condensation/test_condenser.py",
-          "tests/unit/chat/condensation/test_strategy.py",
-          "tests/unit/chat/export/test_copy_clipboard.py",
-          "tests/unit/chat/export/test_html_exporter.py",
-          "tests/unit/chat/export/test_markdown_exporter.py",
-          "tests/unit/chat/export/test_secret_redactor.py",
-          "tests/unit/chat/export/test_text_exporter.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/contracts/test_chat_service_conformance.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4663,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b5f57862c78dc1d449579bde8e30c4ce2bbf91fb57b47bd60083e2465714cc6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-SKILLS-MANAGER-PY-F0E3A2C22AD8",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/skills_manager.py",
-      "purpose": "Agentic skills and workflows manager.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SkillDefinition",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SkillsManager",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_skills_manager.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7134,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8900c60a22b90831d51cd2c72863757fea6b86e60a907606f5dc70cd56f2cbd4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-CONTRACTS-PY-0B1C9FEF2DFD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/terminal_contracts.py",
-      "purpose": "Shared contracts for terminal-backed chat agent sessions.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TerminalAgentEvent",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalAgentProviderInfo",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalAgentSessionInfo",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalAgentSessionRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalProviderRegistry",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalRegistryError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalSelection",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalShellInfo",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ID_PATTERN",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_cli_agent_adapters.py",
-          "tests/shared/python/chat/test_terminal_contracts.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/shared/python/chat/test_terminal_contracts.py"
-        ]
       }
     }
   ],

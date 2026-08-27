@@ -12,7 +12,12 @@
  * by `tests/rate_of_closure/test_club.py`.
  */
 
-import { massScale, profileFor, type HeadStyle } from "./clubHeads";
+import {
+  leadingEdgeHeight,
+  massScale,
+  profileFor,
+  type HeadStyle,
+} from "./clubHeads";
 import { triangleNormals, type HeadMesh, type Triangle, type Vec3 } from "./mesh";
 
 export type { Vec3 };
@@ -335,14 +340,11 @@ export function buildParametricHead(club: ClubSpec): Triangle[] {
   const faceX = sections[0][0];
   const faceYc = sections[0][3];
   const center: Vec3 = [faceX, faceYc, 0];
-  const rotation = loftRotation(club.loftDeg);
   const faceRing = (fraction: number): Vec3[] =>
     rings[0].map((v) => {
       const y = faceYc + (v[1] - faceYc) * fraction;
       const z = v[2] * fraction;
-      const p: Vec3 = [faceX - faceSagitta(club, z, y - faceYc), y, z];
-      const rotated = apply(rotation, [p[0] - center[0], p[1] - center[1], p[2]]);
-      return [rotated[0] + center[0], rotated[1] + center[1], rotated[2]];
+      return [faceX - faceSagitta(club, z, y - faceYc), y, z];
     });
 
   const faceRings = FACE_FRACTIONS.map(faceRing);
@@ -370,7 +372,24 @@ export function buildParametricHead(club: ClubSpec): Triangle[] {
   if (triangles.length !== expected) {
     throw new Error("parametric head must be closed");
   }
-  return triangles;
+  // Leading-edge loft lean (#4799 G1): shear the assembled unlofted
+  // solid about the y = y_le leading-edge line instead of rotating the
+  // face patch about its center, so the leading edge keeps the
+  // authored face station (no onset) and the authored face height
+  // becomes slant height. Same map as clubHeads.leanPoint; Jacobian
+  // det = cos(loft) > 0 keeps the winding outward.
+  const lam = (club.loftDeg * Math.PI) / 180;
+  const sinLoft = Math.sin(lam);
+  const cosLoft = Math.cos(lam);
+  const yLe = leadingEdgeHeight(club);
+  return triangles.map(
+    (tri) =>
+      tri.map(([x, y, z]): Vec3 => [
+        x - (y - yLe) * sinLoft,
+        yLe + (y - yLe) * cosLoft,
+        z,
+      ]) as Triangle,
+  );
 }
 
 /** Renderable head mesh for a spec (no normalization — already canonical). */

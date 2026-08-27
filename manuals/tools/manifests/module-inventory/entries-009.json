@@ -3,10 +3,55 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8848,
+      "bytes_lf": 2989,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c2fa439cca2904021afb2a3c913a1309345d319995a2e4813172d50212a621e0",
+      "content_sha256_lf": "6e0da5c094224e4bd868cc1906392856545ef6fdc2a162eb698c0bdbf6a128b5",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGVISUALS-TEST-TSX-C93FBB587F60",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/PuttingVisuals.test.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9236,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7c33696b805dd2297e614c41361f767918d3807e9d728ccfe221c4ed52889553",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGVISUALS-TSX-C2CC13AE2A64",
       "language": "typescript-react",
@@ -4190,10 +4235,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2731,
+      "bytes_lf": 3324,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "2b25e0578517c7e36a8cbd6fed3497dcf9edcf8400cf276335f2d4f55d3cfc13",
+      "content_sha256_lf": "fcc21af0b56302a0825a92a8fffe20504748ffe0ee3b38e673b2e04915e296de",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-IMPACTSCENESVG-TS-65B2F6AE95C9",
       "language": "typescript",
@@ -8375,10 +8420,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5099,
+      "bytes_lf": 5501,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c871c5dd014e7367723659d4f9d31c217dd7d8223626de86ed977933d1239a11",
+      "content_sha256_lf": "33b978920781058ccf83927b91595fa6fa62388b7bc0f286af32fe4b2b45fd27",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CAPABILITYRESULTEXPORT-TS-7DACCC0D8922",
       "language": "typescript",
@@ -8949,10 +8994,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15177,
+      "bytes_lf": 15556,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ba0709a593e323acda198d66a3c05cb393f1f02ebcee4058ab777bcbf9d243b1",
+      "content_sha256_lf": "c11abe6da2832733391b9aeaac1ce6359d627be8fff8198ce0d72d633f5d96a0",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CHIPFORGIVENESSENSEMBLE-TS-A5A7EEB45D9E",
       "language": "typescript",
@@ -9032,10 +9077,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6362,
+      "bytes_lf": 6615,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a0c6e79576147f54abbf4584a1cc481fc8e3cf6f03ffb11cb209a7bc537953de",
+      "content_sha256_lf": "248e1fad7c64995bef8aa9346143917a8ef3b701085aa4b9a1e190ac3572e8d5",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUB-TEST-TS-73D748B15FE8",
       "language": "typescript",
@@ -9077,10 +9122,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12879,
+      "bytes_lf": 13397,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "274a4d40e8615a68be9e311f1026a4899c686b7cc17401f2941cc7657567ba79",
+      "content_sha256_lf": "7eb6283015ba31e8e6a58dc18e5c31784fba7eae26cfb568b8f7f4c6bb57a504",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUB-TS-4CCD9625AC0C",
       "language": "typescript",
@@ -9272,7 +9317,7 @@
       "bytes_lf": 6039,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "69b8a04e6df3bc9c9ab39163ab0ed1c37df4690a4f61b760af98f2ad70b2f53f",
+      "content_sha256_lf": "2f0df70f41dc3d6cb71ec4e0262f0d095de9caf63b523533458b70072cd503e9",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBASSEMBLYBINDING-TEST-TS-54004F120558",
       "language": "typescript",
@@ -9943,7 +9988,7 @@
       "bytes_lf": 5498,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "74c2eb857644f5743f1ab50e7b8787a9709a1a8ca6ab95520778ebdf7b1a75e7",
+      "content_sha256_lf": "b361037276ccb37a35018c8c7f88a15a96474a651f3f1ccd8238137c841f873b",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBENGINEERINGSIDECAR-TEST-TS-418092DD4622",
       "language": "typescript",
@@ -10342,10 +10387,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5629,
+      "bytes_lf": 10029,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "306cbc234c1ddea23e2a290aed86eaaa4ee1655dc8f25db0afba0dfd0c643628",
+      "content_sha256_lf": "77ed9c645eb9a336ba04093eb913c781ce567846aba8945fe5fae5a8129ad3c0",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBHEADS-TS-595D80DFCFB8",
       "language": "typescript",
@@ -10380,6 +10425,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "BLADE_HOSEL_HEIGHT_FRACTION",
+            "signature": null
+          },
           {
             "kind": "export",
             "name": "BLADE_PUTTER_PROFILE",
@@ -10438,6 +10488,16 @@
           {
             "kind": "export",
             "name": "hoselPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "leadingEdgeHeight",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "leanPoint",
             "signature": null
           },
           {
@@ -12021,48 +12081,6 @@
           "rpm",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1160,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4dc897ce19dd59b6039c06bf54e4359529e07ef12da108624b958800a8c38cc8",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-DURABLEENSEMBLEWORKERCLIENT-TEST-TS-934ED84A2D58",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/durableEnsembleWorkerClient.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

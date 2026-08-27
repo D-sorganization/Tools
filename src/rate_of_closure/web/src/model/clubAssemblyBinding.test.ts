@@ -21,7 +21,7 @@ import { serializeClubheadStl } from "./clubStlExport";
 
 const DRIVER = "Driver 10.5\u00b0";
 const DRIVER_STL_SHA256 =
-  "3ea68a083099ce3780418e9eff0900e7178b835608261bf7d89825bddef243c8";
+  "16ec9cf2f8fb2c5cba7c11821229d2b84dc4f779b9264c28f43a7c833c475f40";
 
 interface BoundSidecarInspection {
   readonly capabilities: { readonly head_full_inertia_tensor: unknown };

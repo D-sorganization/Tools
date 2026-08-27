@@ -32,6 +32,7 @@ from shared.python.swing_sim.variation import (
     OutputStats,
     SensitivityResult,
     VariationDataset,
+    VariationPlan,
     dispersion_ellipse,
     spearman_matrix,
     summary_stats,
@@ -42,7 +43,7 @@ from shared.python.swing_sim.variation import (
 class PreparedResultViews:
     """Immutable, fully-derived scalar presentation for one accepted result."""
 
-    dataset: VariationDataset
+    dataset: VariationDataset | None
     stats: tuple[OutputStats, ...]
     spearman: np.ndarray
     spearman_magnitude: np.ndarray
@@ -82,6 +83,18 @@ class VariationTabResultsMixin:
         plot_dataset: EnsemblePlotDataset | None,
     ) -> None:
         dataset = prepared.dataset
+        if dataset is None:
+            if ensemble is not None or plot_dataset is not None:
+                raise ValueError("individual sensitivity cannot carry joint outputs")
+            self._clear_result_widgets()
+            populate_result_views(
+                prepared,
+                self._summary_table,
+                self._sensitivity_table,
+                self._spearman_table,
+                self._landing,
+            )
+            return
         if ensemble is not None:
             self._landing.set_outcomes(tuple(item.status for item in ensemble.outcomes))
             if plot_dataset is None:
@@ -110,7 +123,7 @@ class VariationTabResultsMixin:
         ],
     ) -> None:
         dataset, ensemble, prepared, plot_dataset = previous
-        if dataset is None or prepared is None:
+        if prepared is None:
             self._clear_result_widgets()
             return
         try:
@@ -200,16 +213,45 @@ def prepare_result_views(
     )
 
 
+def prepare_sensitivity_view(
+    plan: VariationPlan, sensitivity: SensitivityResult
+) -> PreparedResultViews:
+    """Validate an individual-only result without inventing a joint dataset."""
+    expected_inputs = tuple(spec.variable_key for spec in plan.noise)
+    prepared = _validated_sensitivity(
+        expected_inputs, sensitivity.output_names, sensitivity
+    )
+    empty = np.empty((0, 0), dtype=float)
+    empty.setflags(write=False)
+    return PreparedResultViews(
+        dataset=None,
+        stats=(),
+        spearman=empty,
+        spearman_magnitude=empty,
+        sensitivity=prepared,
+        ellipse=None,
+    )
+
+
 def _prepare_sensitivity(
     dataset: VariationDataset, sensitivity: SensitivityResult | None
 ) -> SensitivityResult | None:
     if sensitivity is None:
         return None
     expected_inputs = tuple(spec.variable_key for spec in dataset.plan.noise)
-    expected_shape = (len(expected_inputs), len(dataset.output_names))
+    return _validated_sensitivity(expected_inputs, dataset.output_names, sensitivity)
+
+
+def _validated_sensitivity(
+    expected_inputs: tuple[str, ...],
+    expected_outputs: tuple[str, ...],
+    sensitivity: SensitivityResult,
+) -> SensitivityResult:
+    """Return an immutable matrix after exact axis and value validation."""
+    expected_shape = (len(expected_inputs), len(expected_outputs))
     if sensitivity.input_keys != expected_inputs:
         raise ValueError("sensitivity inputs do not match the accepted plan")
-    if sensitivity.output_names != dataset.output_names:
+    if sensitivity.output_names != expected_outputs:
         raise ValueError("sensitivity outputs do not match the accepted dataset")
     if not isinstance(sensitivity.matrix, np.ndarray) or not isinstance(
         sensitivity.normalized, np.ndarray
@@ -246,6 +288,16 @@ def populate_result_views(
     """Commit one already-derived presentation to the visible widgets."""
     dataset = prepared.dataset
     summary.set_stats(prepared.stats)
+    if dataset is None:
+        assert prepared.sensitivity is not None
+        sensitivity = prepared.sensitivity
+        sensitivity_table.set_matrix(
+            sensitivity.input_keys,
+            sensitivity.output_names,
+            sensitivity.matrix,
+            sensitivity.normalized,
+        )
+        return
     spearman_table.set_matrix(
         dataset.input_names,
         dataset.output_names,
@@ -269,5 +321,6 @@ __all__ = [
     "PreparedResultViews",
     "build_result_tabs",
     "prepare_result_views",
+    "prepare_sensitivity_view",
     "populate_result_views",
 ]

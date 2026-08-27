@@ -2,7 +2,6 @@
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-27
-
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in
 > git and in [`docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md`](docs/agent_handoff_archive/2026-08_tools_root_handoff_log.md).
 > Do not append dated entries here again.
@@ -28,13 +27,14 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation and falsifiable sensitivity. R13.3 protected-merged as `d6c8a0a67`; R13.5 provenance-complete result selection is in protected PR #4794 through implementation commit `f102ce59a`, with a combined 29 verified / 2 partial ledger. |
+| #4142 | Ensemble variation and falsifiable sensitivity. R13.3 and R13.5 protected-merged as `d6c8a0a67` and `35853199b`; R14.3 cross-surface workflow parity is active as #4792 with a 30 verified / 1 partial ledger.                        |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                       |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
 | #4775 | Actuation and swing realism. Open. The fixed-hub two-link model cannot reach measured golfer hand speed; distributed club inertia is ruled out as the repair. Next: a moving hub via `physics_triple.py`.                             |
+| #4800 | Putting simulator parity. Open. P1 (#4808) delivered the full 2-D stroke/impact solve with the explicit head-MOI hook; P2 (#4809) green-surface heightfields, 2-D surface roll, Holmes/Penner capture, and the `swing_sim.green_surface/1` wire (planar limit bit-identical, TS twins); P3 (#4810) the `golf_club.putter_head/1` wire, mesh-MOI PutterSpec v2 with the club-library fallback, and quasi-static twist response (TS twins); P9 (#4807) the runtime-free UpstreamDrift `putting_green` topography adapter (`putting/ud_adapter.py`) with cross-engine gates — the µ-law difference is documented, not reconciled, and the UD pin bump + consumer test is UpstreamDrift#9143. P4 (#4811) the `swing_sim.putting_stroke/1` stroke wire + runtime-free Drake/MuJoCo/OpenSim adapters reusing `delivery_interchange`'s promoted envelope/`.sto`/Euler helpers, with a fixture export driving P1's strike through P2 to a holed putt with engine provenance (Python-only — `delivery_interchange` has no TS twin). P5-P8 remain. |
 | #4766 | Swing Objective Comparison. S1–S6 protected-merged through PR #4774; check `is_degenerate` before quoting objective agreement.                                                                                                        |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; Release B physical collection remains external and open.                                                                                              |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
@@ -64,13 +64,15 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   protected review and artifact-identity or complete rendered-page evidence.
 - #4142 R12.3 protected-squash-merged via PR #4782 as `a1b00db14`. R13.3 PR
   #4784 protected-squash-merged as `d6c8a0a67`; its required gates passed and
-  optional fleet-only backlog was not redundantly rerun. #4791/R13.5 is active
-  in PR #4794 through implementation commit `f102ce59a` from that protected base; #4793 was
-  superseded without force-push after visual governance required matched
-  evidence. Exact point/time/frame target identity plus all-input or selected-
-  source views are present in PyQt and React. The combined ledger is 29 verified /
-  2 partial; outputs remain model-scenario evidence without human causal,
-  anatomical, or coaching authority.
+  optional fleet-only backlog was not redundantly rerun. R13.5 protected-
+  squash-merged through PR #4794 as `35853199b`. It binds exact point/time/frame
+  target identity and all-input or selected-source views in PyQt and React.
+  R14.3 issue #4792 is replayed from that protected base and proves authoring-
+  through-export parity for `all_together`, `individual`, and `both`, including
+  dataset-free individual results, aggregate progress, cancellation, and
+  1--4096 durable chunks. Its ledger is 30 verified / 1 partial. Outputs remain
+  model-scenario evidence without human causal, anatomical, or coaching authority.
+  Hosted review fixed an unlabeled PyQt selector; exact Linux candidate `1f3f6ca7` is proposed without widening its calibrated renderer envelope.
 
 ## Must-Read Architecture Pointers
 
@@ -138,7 +140,7 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Protect-merge #4791/R13.5, then publish #4792/R14.3 from the new main.
+1. Validate and protect-merge #4792/R14.3 from the R13.5 protected mainline.
 2. Deliver main-rooted TOOLS-D4 #4720, then reconcile D5--D9 without rewriting remote history.
 3. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 4. Restore the isolated advisory benchmark lane through #4582.
