@@ -1086,6 +1086,11 @@ jobs:
       - name: Git HTTP/1.1 workaround
         run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
+        with:
+          # This job fetches the public RustSec advisory database. Persisted
+          # installation credentials are repository-scoped and cause that
+          # external fetch to fail with HTTP 401.
+          persist-credentials: false
 
       - name: Check for Rust changes
         id: rust-changes
