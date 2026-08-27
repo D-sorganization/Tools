@@ -13984,10 +13984,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3916,
+      "bytes_lf": 4198,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "db73c44183c35c69846861ee6f5126fee70d59d338ebd02a66433060dec93730",
+      "content_sha256_lf": "c2855ab80507bd5c2bec29c0ac13ada8150ec9aeb752832e8c684b09ff6aa0fd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-INIT-PY-BB0C6A767464",
       "language": "python",
@@ -14099,6 +14099,16 @@
           {
             "kind": "re-export",
             "name": "JointActuation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ObjectiveRealism",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ObjectiveRealismRanking",
             "signature": null
           },
           {
@@ -14229,6 +14239,11 @@
           {
             "kind": "re-export",
             "name": "impact_hand_speed_coefficient",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "objective_realism_ranking",
             "signature": null
           },
           {
@@ -14744,7 +14759,7 @@
       "bytes_lf": 8452,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "15e2bf8233a4914bf113c8e20b54372d14fd3009b9428a698797d4c05fb62396",
+      "content_sha256_lf": "a2a0525d74f360968fa075c0aed40d32fe5479aee4256443d36d2a9255c879d6",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-IMPACT-OPTIMALITY-PY-46372125DFAF",
       "language": "python",
@@ -14780,10 +14795,10 @@
         "citation_refs": [
           "10.1007/BF02844309",
           "10.1098/rspb.1938.0050",
-          "10.1119/1.1976433",
+          "10.1119/1.1976419",
           "https://doi.org/10.1007/BF02844309",
           "https://doi.org/10.1098/rspb.1938.0050",
-          "https://doi.org/10.1119/1.1976433",
+          "https://doi.org/10.1119/1.1976419",
           "https://www.jssm.org/jssm-04-499.xml.xml"
         ],
         "equation_refs": [],
@@ -14894,6 +14909,74 @@
           "N",
           "deg",
           "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6846,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "2a67f1cf13dd2642a5d5a895b8da4cb4b22143450270b439811e2efdec325cfc",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-OBJECTIVE-REALISM-PY-703B0EB9E7BE",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/objective_realism.py",
+      "purpose": "Ranking the swing objectives by how closely they match real golfers.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ObjectiveRealism",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ObjectiveRealismRanking",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "objective_realism_ranking",
+            "signature": "config: DownswingConfig, objective_keys: Sequence[str] | None=None, bands: tuple[ObservableBand, ...]=TOUR_DRIVER_BANDS"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_objective_realism.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -15080,7 +15163,7 @@
       "bytes_lf": 8639,
       "classification": "calculation",
       "classification_basis": "path-marker:kinematic",
-      "content_sha256_lf": "b80ed0b4306bfd2dac158793daef05cbcb36d8bbcba72590910795c72cf31fa5",
+      "content_sha256_lf": "56f3b950f3fe560b3cf28d80780ffd8f2312442236ee1f0b608c8076d9f2e8da",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-REFERENCE-KINEMATICS-PY-41E1B5637BF2",
       "language": "python",
@@ -15117,12 +15200,12 @@
           "10.1007/BF02844309",
           "10.1007/s12283-009-0020-9",
           "10.1098/rspb.1938.0050",
-          "10.1119/1.1976433",
+          "10.1119/1.1976419",
           "10.1123/jab.16.4.356",
           "https://doi.org/10.1007/BF02844309",
           "https://doi.org/10.1007/s12283-009-0020-9",
           "https://doi.org/10.1098/rspb.1938.0050",
-          "https://doi.org/10.1119/1.1976433",
+          "https://doi.org/10.1119/1.1976419",
           "https://doi.org/10.1123/jab.16.4.356",
           "https://www.jssm.org/jssm-04-499.xml.xml",
           "https://www.jssm.org/jssm-04-520.xml.xml"
@@ -15495,66 +15578,6 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 689,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5974fef2e9a268e75c9c161d6469c19eb0f38fa86f411c5b0ab8b61f6dccafb6",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-GUI-REGISTRATION-PY-B9738C24E015",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pid_generator/gui_registration.py",
-      "purpose": "GUI registration for the P&ID Generator tool.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "GUI_INFO",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_gui_info",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "src/pid_generator/tests/test_pid_generator_gui.py",
-          "tests/folder_tool/test_gui_registration.py",
-          "tests/rate_of_closure/test_gui_registration.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }

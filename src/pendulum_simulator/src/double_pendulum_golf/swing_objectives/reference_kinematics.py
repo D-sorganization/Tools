@@ -19,7 +19,7 @@ Sources
   <https://www.jssm.org/jssm-04-520.xml.xml>`_ — joint work and power budgets,
   the source for plausible hub torque magnitudes.
 * `Jorgensen 1970, "On the dynamics of the swing of a golf club"
-  <https://doi.org/10.1119/1.1976433>`_ — the canonical double-pendulum golf
+  <https://doi.org/10.1119/1.1976419>`_ — the canonical double-pendulum golf
   model and its timing.
 * `Miura 2001, "Parametric acceleration — the effect of inward pull of the golf
   club at impact stage" <https://doi.org/10.1007/BF02844309>`_ — the measured
@@ -141,7 +141,7 @@ TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
         low=0.23,
         high=0.32,
         source="Jorgensen 1970; Nesbit 2005",
-        url="https://doi.org/10.1119/1.1976433",
+        url="https://doi.org/10.1119/1.1976419",
     ),
     ObservableBand(
         key="club_arm_rate_ratio",

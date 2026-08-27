@@ -3,6 +3,63 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 980,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dde644428711ff7929638c012d39238f6cd6c0a59c08e6fa090089e5b9dbcbe5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONTRACTS-CONVERSATION-PY-A302CBD2E1C7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat_contracts/conversation.py",
+      "purpose": "Conversation snapshots shared across chat and memory services.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ArchivedConversationContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ArchivedMessage",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5021,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16835,86 +16892,6 @@
         "validation_paths": [
           "src/shared/python/programmatic_pid/tests/test_validation.py",
           "tests/programmatic_pid/test_validation.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6623,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "eb04e6b08b5928689240f24cc79556fee1df727a4eeffeea409d78c1c7f73ea4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-VALIDATION-PY-6E9C82C8DB2A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/validation.py",
-      "purpose": "Specification validation with structured error output.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_SCHEMA",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "collect_issues",
-            "signature": "spec: Any"
-          },
-          {
-            "kind": "function",
-            "name": "validate_spec",
-            "signature": "spec: Any"
-          },
-          {
-            "kind": "function",
-            "name": "validate_spec_json",
-            "signature": "spec: Any"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_validation.py",
-          "tests/python/utils/test_validation.py",
-          "tests/shared/python/model_generation/test_validation.py",
-          "tests/test_validation.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/programmatic_pid/tests/test_validation.py",
-          "tests/programmatic_pid/test_validation.py",
-          "tests/python/utils/test_validation.py",
-          "tests/shared/python/model_generation/test_validation.py",
-          "tests/test_validation.py"
         ]
       }
     }

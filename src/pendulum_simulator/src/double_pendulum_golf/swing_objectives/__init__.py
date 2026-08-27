@@ -44,6 +44,11 @@ from double_pendulum_golf.swing_objectives.model_adequacy import (
     hand_speed_frontier,
     swing_observables,
 )
+from double_pendulum_golf.swing_objectives.objective_realism import (
+    ObjectiveRealism,
+    ObjectiveRealismRanking,
+    objective_realism_ranking,
+)
 from double_pendulum_golf.swing_objectives.objectives import (
     CENTRIFUGAL,
     CLUBHEAD_SPEED,
@@ -137,4 +142,8 @@ __all__ = [
     "HandSpeedFrontier",
     "hand_speed_frontier",
     "swing_observables",
+    # Objective realism ranking (#4780)
+    "ObjectiveRealism",
+    "ObjectiveRealismRanking",
+    "objective_realism_ranking",
 ]

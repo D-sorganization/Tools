@@ -3,6 +3,109 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 33902,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5446392c6b4a82d677922792d2164992833eeb80211bb0493665ee855c0b7f98",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SRC-STAR-WARS-RRT-PY-DC467F6778ED",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/python/src/star_wars_rrt.py",
+      "purpose": "Asteroid-field RRT path planner with optional 3D visualization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Obstacle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PathMetrics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PursuitAI",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RRTPlanner",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Ship",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StarWarsRRTApp",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StarWarsRenderer",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "distance_to_obstacle_surface",
+            "signature": "point: npt.NDArray[np.float64], obstacle: Obstacle"
+          },
+          {
+            "kind": "function",
+            "name": "generate_asteroid_field",
+            "signature": "bounds: npt.NDArray[np.float64], num_obstacles: int, *, rng: np.random.Generator | None=None, reserved_points: list[npt.NDArray[np.float64]] | None=None, clearance: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/rrt_path_planner/python/tests/test_star_wars_rrt.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "bar",
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14997,63 +15100,6 @@
           {
             "kind": "re-export",
             "name": "style_prompt",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 980,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dde644428711ff7929638c012d39238f6cd6c0a59c08e6fa090089e5b9dbcbe5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CONTRACTS-CONVERSATION-PY-A302CBD2E1C7",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat_contracts/conversation.py",
-      "purpose": "Conversation snapshots shared across chat and memory services.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ArchivedConversationContext",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ArchivedMessage",
             "signature": null
           }
         ],

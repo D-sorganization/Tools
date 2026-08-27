@@ -3,6 +3,86 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6623,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eb04e6b08b5928689240f24cc79556fee1df727a4eeffeea409d78c1c7f73ea4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-VALIDATION-PY-6E9C82C8DB2A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/validation.py",
+      "purpose": "Specification validation with structured error output.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "collect_issues",
+            "signature": "spec: Any"
+          },
+          {
+            "kind": "function",
+            "name": "validate_spec",
+            "signature": "spec: Any"
+          },
+          {
+            "kind": "function",
+            "name": "validate_spec_json",
+            "signature": "spec: Any"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 108,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17339,73 +17419,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3353,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "642f9ad190a7a9694e35f6180f6f9a48b544b9dd6e784e967afce0758381f15b",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-WORKSPACE-PERSISTENCE-PY-513D74B7FD50",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/workspace_persistence.py",
-      "purpose": "JSON persistence helpers for Sidekick workspace registries.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "CALCULATOR_WORKSPACE_FORMAT_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "load_workspace_registry",
-            "signature": "registry: WorkspaceRegistry, path: str | Path, *, expected_scope: str, replace: bool, confirm_replace: bool"
-          },
-          {
-            "kind": "function",
-            "name": "save_workspace_registry",
-            "signature": "registry: WorkspaceRegistry, path: str | Path, *, scope: str"
-          },
-          {
-            "kind": "function",
-            "name": "validate_calculator_workspace_path",
-            "signature": "path: str | Path"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

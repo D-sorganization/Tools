@@ -47,7 +47,7 @@ and the arms are attached to a torso that cannot be stopped on demand. The fix
 therefore belongs in :mod:`double_pendulum_golf.swing_objectives.actuation`.
 
 Related reading: `Jorgensen 1970
-<https://doi.org/10.1119/1.1976433>`_ for the canonical double-pendulum golf
+<https://doi.org/10.1119/1.1976419>`_ for the canonical double-pendulum golf
 model, and `Miura 2001 <https://doi.org/10.1007/BF02844309>`_ for the
 "parametric acceleration" inward hand pull, which is the real, much milder
 version of the effect this model exaggerates.

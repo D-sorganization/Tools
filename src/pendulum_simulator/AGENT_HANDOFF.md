@@ -55,31 +55,35 @@ parallel-start machinery) rather than reimplementing Monte Carlo sampling from
 scratch. If you're working in `swing_sim/variation/`, read this tool's
 perturbation analysis code first.
 
-## Active Epic — #4766 Swing Objective Comparison
+## Active Epics — #4766 objectives, #4775 actuation and realism
 
-Mechanism-vs-outcome capability on this tool's existing physics: centrifugal/
-Coriolis split (#4767), five objectives (#4768), slew-limited collocation
-(#4769), cross-evaluation + wire (#4770), Lab surface (#4771), UpstreamDrift
-tile (#4772). Contract: `docs/specs/SWING_OBJECTIVE_COMPARISON.md`.
+#4766 shipped the mechanism-vs-outcome comparison on this tool's existing
+physics (merged #4774). #4775 then asked why its optima brake the arms to a
+standstill at impact. Contract:
+`docs/specs/SWING_ACTUATION_AND_REALISM.md`.
 
-**Nothing here re-derives physics.** `physics.py` already had the equations the
-research prototype `Double-Pendulum-Optimization` reached independently; that
-repo stays the notebook home and cross-check, not a vendored dependency.
-
-**Three regression-pinned findings that bind future work here:**
+**Four results that bind future work here** (all regression-pinned):
 
 1. `P_coriolis_hub = -2 * P_centrifugal_wrist` identically, so centrifugal and
    Coriolis _work_ are one functional. The centrifugal objective is an angular
-   impulse; do not "simplify" it back to work.
-2. The NLP needs non-dimensional variables and a tight `ftol`. Unscaled it leaves
-   defects near 1e-1; at SciPy's default it returns the initial guess and reports
-   success.
-3. **A comparison can be degenerate.** Near the minimum downswing duration the
-   constraints pin the trajectory and every objective returns the same swing, so
-   the matrix fills with 100% entries that read as agreement but are a
-   configuration artifact. Check `SwingComparison.is_degenerate` first; the
-   preset (0.36 s, 250 N·m) carries slack for this. Whether the mechanism
-   objectives track clubhead speed is configuration-dependent, not a result.
+   impulse for that reason; do not "simplify" it back to work.
+2. **The optimizer is right, the model is wrong.** The energy-optimal hand speed
+   at impact is `L1*[I2 - m2*r2*(L2-r2)]`, identically zero for a point-mass
+   clubhead and negative for a real driver. **Distributed club inertia is not
+   the fix** — that is settled analytically, do not re-litigate it.
+3. **Releasing the club and stopping the hands are the same act** in a two-link
+   fixed-hub model: hub torque drives the wrist open through `M12`, so the only
+   way to reach `phi = 0` at impact is to reverse the hub torque. Hand speed of
+   3 m/s is reachable; the measured 6-9 m/s band is not, at any price.
+4. **The objective is not what makes the swings unrealistic.** Under a
+   hand-speed floor the five objectives sit within 0.6% of each other and all
+   far outside the measured bands. Check `is_discriminating` before quoting any
+   ranking.
+
+Next step is a **moving hub** — give `physics_triple.py` the objective and
+actuation layers built here — not more tuning of the two-link model. Hill-type
+actuation (`actuation.py`) is built, tested and necessary, but sufficient only
+once the release no longer requires reversing the hub.
 
 ## Recent Activity (grounding — `git log --oneline -15 -- src/pendulum_simulator`)
 

@@ -3,6 +3,66 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 689,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5974fef2e9a268e75c9c161d6469c19eb0f38fa86f411c5b0ab8b61f6dccafb6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-GUI-REGISTRATION-PY-B9738C24E015",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pid_generator/gui_registration.py",
+      "purpose": "GUI registration for the P&ID Generator tool.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/pid_generator/tests/test_pid_generator_gui.py",
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 387,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14962,80 +15022,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4654,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7fd52dc236bf37fd8d1cba3e5a386cd1b6dcb55924dd8f7e24a732bdb0a7705d",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-SCALAR-ENTRIES-PY-390D79DFD770",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/_catalog_scalar_entries.py",
-      "purpose": "Scalar input, impact, launch, and metric catalog rows.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "IMPACT_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INPUT_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LAUNCH_ROWS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "METRIC_ROWS",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "J",
-          "deg",
-          "m/s",
-          "mm",
-          "rpm",
-          "s",
-          "µs"
-        ],
         "validation_paths": []
       }
     }
