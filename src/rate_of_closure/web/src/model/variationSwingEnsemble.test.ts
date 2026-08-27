@@ -5,7 +5,10 @@ import visualizationContract from "./__fixtures__/variation_visualization_contra
 import { DRIVER_TEE_HEIGHT_M } from "./ballSetup";
 import { golfDefaultParams } from "./doublePendulum";
 import type { SimulationInput } from "./simulation";
-import { executeVariationWork } from "./variationExecutionService";
+import {
+  executeVariationWork,
+  prepareVariationExecutionRequest,
+} from "./variationExecutionService";
 import { validateResult } from "./variationExecutionValidation";
 import {
   CATEGORY_SWING,
@@ -218,7 +221,7 @@ describe("web swing variation ensemble", () => {
     expect(failures.dataset.success).toEqual([false, false, false]);
     expect(failures.dataset.outputs.flat().every((value) => value === null)).toBe(true);
 
-    const request = { plan: localizedPlan, analysisExecution: "all_together" as const };
+    const request = prepareVariationExecutionRequest(localizedPlan, "all_together");
     const workerResult = executeVariationWork(request, () => undefined);
     const forgedInput = workerResult.ensemble?.runs[0].input as unknown as Record<string, unknown>;
     forgedInput.sourceKind = "manual";
