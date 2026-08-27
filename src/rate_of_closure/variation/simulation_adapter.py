@@ -95,6 +95,15 @@ _POINT_IDS_BY_SOURCE: Mapping[str, tuple[str, ...]] = MappingProxyType(
 )
 
 
+def spatial_source_layouts() -> Mapping[str, tuple[str, ...]]:
+    """Return the immutable source-kind to stable-point registry.
+
+    Consumers may enumerate supported spatial trace layouts without copying
+    the registry. The returned mapping and its tuple values are immutable.
+    """
+    return _POINT_IDS_BY_SOURCE
+
+
 def apply_ball_setup_sample(
     config: SimulationConfig,
     plan: VariationPlan,
@@ -461,4 +470,5 @@ __all__ = [
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",
     "spatial_point_ids",
+    "spatial_source_layouts",
 ]

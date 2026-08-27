@@ -27,10 +27,55 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.32                                    |
+| **Spec Version**        | 1.18.43                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 RustSec Dependency Remediation (#4764)
+
+Version 1.18.43 raises the workspace compiler floor to Rust 1.83 and migrates
+the Python binding stack from PyO3/NumPy 0.24 to 0.29. It also advances the
+AI backend from Reqwest 0.11 to 0.12, resolving to `h2` 0.4. These floors
+exclude RUSTSEC-2026-0176, RUSTSEC-2026-0177, and RUSTSEC-2026-0258 after the
+credential-isolated audit exposed real advisories. The migration preserves the
+extension APIs using PyO3 0.29's explicit `Py<PyAny>`, attachment, detachment,
+and object-conversion contracts. Workspace formatting, warning-denied Clippy,
+351 passing Rust tests plus one explicitly ignored benchmark, the RustSec audit,
+and an isolated built-wheel `tools_core.Vector3` import all pass. The existing allowed unmaintained-
+crate warnings remain warnings rather than vulnerabilities.
+
+### 2026-08-26 Complete UpstreamDrift Contract Checkout (#4764)
+
+Version 1.18.41 adds `src/bunkershot3d` to the narrow UpstreamDrift sparse
+checkout used by Cross-Repo Python Integration. Current UpstreamDrift shared
+simulation backends import the governed `bunkershot3d.postproc` wrench
+contract, whose curated package surface in turn imports its double-pendulum
+kinematics authority. Omitting either package root made provider and
+variation-gateway tests fail before exercising this PR's Tools authority. The
+workflow remains shallow and does not broaden to all of `src`; a contract test
+pins all three exact import roots and the existing parent package markers that
+make `src.engines` importable under non-cone sparse checkout.
+
+The same CI repair prevents the Rust quality checkout from persisting its
+repository-scoped installation credential. The RustSec fetch also disables
+runner-global and system Git configuration and interactive credential prompts,
+because a host-level GitHub App URL rewrite remained visible outside checkout's
+repository-local configuration. The job still installs `cargo-audit` from
+crates.io and fails closed on the public advisory database; it does not present
+an installation credential that RustSec must reject with HTTP 401.
+
+### 2026-08-26 Stable-Point Trace Resampling Qualification (#4763 / #4142 R11.3)
+
+Version 1.18.40 adds the versioned
+`swing-trace-time-linear-contiguous/v1` authority. It preserves point, frame,
+trial, and variation identities; rejects extrapolation and invalid grids;
+interpolates only between adjacent valid samples; and retains invalid gaps,
+all-invalid failures, no-impact rows, and per-impact display-marker alignment
+error. Identity/subset equivalence passes for manual, double-pendulum, and
+triple-pendulum spatial layouts, while the inherited 3-source by 4-adapter
+matrix keeps ten unsupported cells explicit. This is software/model-output
+alignment evidence, not participant or coaching validation.
 
 ### 2026-08-26 R11.1 Hosted Qualification Portability (#4758 / PR #4762)
 
@@ -47,7 +92,8 @@ qualification without changing archive bytes or scientific interpretation.
 Version 1.18.31 advances R11.1 from partial to verified in the branch ledger,
 with immutable PR evidence and executable links to the typed record, durable
 reader, capability matrix, scaling artifact, and installed-wheel gate. The
-parent epic remains open at 25 verified and 6 partial requirements.
+parent epic remained open at 25 verified and 6 partial requirements before
+the R11.3 qualification.
 
 ### 2026-08-26 Complete-Trial Qualification Evidence (#4758 / #4142 R11.1)
 
@@ -5421,6 +5467,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.43 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
+| 2026-08-26 | 1.18.42 | fix/test(ci, #4764): isolate the public RustSec fetch from runner-global and system Git credential rewrites as well as checkout-local credentials; prohibit interactive prompting and retain fail-closed `cargo audit` semantics. |
+| 2026-08-26 | 1.18.41 | fix(ci, #4764): include UpstreamDrift's `src/bunkershot3d`, double-pendulum engine, and parent package markers in the shallow downstream sparse checkout; isolate public RustSec advisory fetches from repository-scoped checkout credentials. |
+| 2026-08-26 | 1.18.40 | feat/test/docs(rate-of-closure, #4763 / #4142 R11.3): add the versioned fail-closed time-grid resampling authority, preserve stable point/frame/trial identities and missing intervals, retain approximate impact-marker error, qualify identity/subset equivalence for all three spatial layouts, and bind the inherited exhaustive adapter matrix and scientific boundary. |
 | 2026-08-26 | 1.18.39 | refactor(pendulum-simulator, epic #4766): bring the swing-objective modules under the AGENTS.md function-size and signature budgets. Extract the mass-matrix, velocity-product and gravity blocks out of `generalized_accelerations`; group the shared effort budget into a `SwingBudget` value object so `build_config` takes two arguments instead of five; split the Lab control panel builder. Behaviour is unchanged and all 68 feature tests still pass. |
 | 2026-08-26 | 1.18.38 | docs(pendulum-simulator, #4773 / epic #4766): publish the `SWING_OBJECTIVE_COMPARISON` design contract and update the tool README, FEATURES inventory, and both handoff documents. The contract records the coordinate conventions, the exact `P_coriolis = -2 * P_centrifugal` identity that forces the centrifugal objective to be an angular impulse, the three load-bearing solver settings, and the two failure modes the feature reports rather than hides: a downswing the torque budget provably cannot deliver, and a degenerate comparison whose all-100% matrix is a configuration artifact rather than mechanism agreement. It also states the planar two-link scientific boundary and records that the research prototype is an independent cross-check, not a dependency. |
 | 2026-08-26 | 1.18.37 | feat(pendulum-simulator, #4771 / epic #4766): add the PyQt6 Swing Objective Lab surface, a feasible default golfer preset, and the provider embed adapter. The surface is presentation only and a test asserts it, so the engine stays reusable by the CLI and notebooks; solving runs on a worker thread; every cross-evaluation cell carries a visible label so colour is never the sole encoding; and a degenerate comparison is reported in the UI as a property of the configuration rather than shown as mechanism agreement. The preset deliberately carries slack above the minimum sweep duration for the same reason. |

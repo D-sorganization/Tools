@@ -18062,10 +18062,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6617,
+      "bytes_lf": 6835,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e85cf9d25b4775a6bec8028adea2591d5378e6688d56e817ffd3f88b0238e84b",
+      "content_sha256_lf": "806e9c5aa8184d4d5f828266ab11afc05590b361480b99afe9ec1307f8e2d774",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-INIT-PY-5F95F06C7E85",
       "language": "python",
@@ -18438,6 +18438,16 @@
           },
           {
             "kind": "re-export",
+            "name": "TRACE_RESAMPLING_POLICY_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TraceResamplingResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "VariableDef",
             "signature": null
           },
@@ -18574,6 +18584,11 @@
           {
             "kind": "re-export",
             "name": "register_variable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resample_position_traces",
             "signature": null
           },
           {

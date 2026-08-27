@@ -22,23 +22,23 @@ calculator into a swing → impact → ball-flight simulation platform. Since
 early August the delivery pattern has shifted from long stacked PRs to
 **scoped consolidations rebuilt directly onto current `main`**.
 
-| Epic  | Status (one line)                                                                                                                                                                                                                       |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                                    |
-| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                             |
-| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                      |
-| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                              |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762 carries #4758/R11.1 and advances the branch ledger to 25 verified / 6 partial; protected merge remains pending.                                                      |
-| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                  |
-| #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained.   |
-| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                          |
-| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                         |
-| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                      |
-| #4766 | Swing Objective Comparison (pendulum_simulator). Open. S1--S6 landed; UpstreamDrift tile on `feat/swing-objective-lab-tile`. New objective layer only, no physics re-derived. Check `is_degenerate` before quoting objective agreement. |
-| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.        |
-| #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                       |
-| #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                   |
-| #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                              |
+| Epic  | Status (one line)                                                                                                                                                                                                                     |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 | Swing-Impact-Ball-Flight platform. Open. Stack PR #4119 closed; content landed in slices. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                                  |
+| #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
+| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
+| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762/R11.1 merged as `66b1cb4d`; PR #4764/#4763 R11.3 qualifies stable-point time-grid alignment and advances the branch ledger to 26 verified / 5 partial.             |
+| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
+| #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
+| #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
+| #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                       |
+| #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
+| #4766 | Swing Objective Comparison. S1–S6 protected-merged through PR #4774; the planar two-link objective layer reports infeasible and degenerate comparisons rather than promoting them to mechanism agreement.                             |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
+| #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
+| #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
+| #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                            |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -64,14 +64,13 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 - #4142 R10.3 protected-merged through PR #4757 as
   `5b3f585e3754fd77cc506631d55b163f50caf04d`: one packaged authority
   classifies all 31 inputs by adapter and locus or explicit unavailability.
-  PR #4760 protected-merged the unrelated process-CPU-clock CI stabilization as
-  `55805fe4de1b0afc3710efce4ed516d59e685717`. Issue #4758 is now active on
-  `feat/4758-complete-trial-record`: typed full-trial records now survive
-  schema-v3 durable write/read/resume with array identities, corruption gates,
-  legacy-v2 handling, and source/adapter coverage. PR #4762 passed its R11.1
-  gates but exposed a NumPy stub error and undeclared base-NumPy reliance in
-  hosted wheel tests. Both are fixed; focused mypy/Ruff and the 89.69 s wheel
-  test pass. Protected rerun, merge, and remote-main proof remain.
+  PR #4762/R11.1 protected-merged as
+  `66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734`; issue #4758 is closed and the
+  corrected Python 3.11/3.12, exact-wheel, browser, and governance gates passed.
+  PR #4764 for issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned time-grid authority rejects extrapolation and gap bridging, preserves
+  frame/point/trial identities and typed unavailability, reports approximate
+  impact-marker alignment error, and qualifies all three spatial layouts plus
+  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; the exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths, isolates the public RustSec fetch, and remediates the exposed PyO3/h2 advisories with PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83. Formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, audit, and isolated wheel import pass. Protected CI and remote-main evidence remain.
 
 ## Must-Read Architecture Pointers
 

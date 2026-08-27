@@ -1484,10 +1484,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4250,
+      "bytes_lf": 4308,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3edcfd5fe6dbd1492c62fb836c5dbd3b1f4cbbe449a50ddfc63c86861023c36d",
+      "content_sha256_lf": "b98a565127135f717100edd8966e93568b6edfad9942a3b7fbc04ae5ee666510",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-INIT-PY-5F9607A6AC35",
       "language": "python",
@@ -1825,6 +1825,11 @@
           {
             "kind": "re-export",
             "name": "spatial_point_ids",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spatial_source_layouts",
             "signature": null
           }
         ],
@@ -3328,7 +3333,8 @@
           "tests/rate_of_closure/test_localized_torque_variation.py",
           "tests/rate_of_closure/test_variation_ensemble_chunk_domains.py",
           "tests/rate_of_closure/test_variation_ensemble_chunks.py",
-          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py"
+          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py",
+          "tests/rate_of_closure/test_variation_trace_resampling.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -5217,10 +5223,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15671,
+      "bytes_lf": 16024,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "cb1e950a9746ece0d8718b1729648ad9547a8769f260c10c47e4d8d108fc46dc",
+      "content_sha256_lf": "e62b29beaec60b7c7c738af50dccd55dafa8e03cfd9659eb949ad39d587671ce",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-SIMULATION-ADAPTER-PY-A2C9EC3993FA",
       "language": "python",
@@ -5289,6 +5295,11 @@
             "signature": "run: SimulationRun"
           },
           {
+            "kind": "function",
+            "name": "spatial_source_layouts",
+            "signature": ""
+          },
+          {
             "kind": "re-export",
             "name": "APP_FRAME_ID",
             "signature": null
@@ -5351,6 +5362,7 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/pyqt_variation_render_probe.py",
+          "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
           "tests/rate_of_closure/test_localized_torque_variation.py",
           "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
@@ -5361,6 +5373,7 @@
           "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py",
           "tests/rate_of_closure/test_variation_streaming_ensemble_geometry.py",
           "tests/rate_of_closure/test_variation_streaming_ensemble_sensitivity.py",
+          "tests/rate_of_closure/test_variation_trace_resampling.py",
           "tests/rate_of_closure/test_variation_visualization_widgets.py"
         ],
         "unit_mentions": [],

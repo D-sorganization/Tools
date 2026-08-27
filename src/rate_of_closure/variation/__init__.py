@@ -66,6 +66,7 @@ from .simulation_adapter import (
     run_simulation_ensemble,
     run_simulation_ensemble_chunks,
     spatial_point_ids,
+    spatial_source_layouts,
 )
 from .streaming_ensemble_analysis import (
     AnalyzingDurableEnsembleSink,
@@ -143,4 +144,5 @@ __all__ = [
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",
     "spatial_point_ids",
+    "spatial_source_layouts",
 ]
