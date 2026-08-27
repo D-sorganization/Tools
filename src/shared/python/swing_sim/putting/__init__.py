@@ -27,6 +27,15 @@ with UpstreamDrift's ``putting_green`` topography files, and
 ``delivery_interchange`` sibling that turns a recorded putter-head
 stroke into the impact solve's inputs.
 
+:mod:`.result_wire` (#4800 P5) is the versioned fail-closed
+``swing_sim.putting_result/2`` record of one integrated putt.
+
+Two P5 modules are deliberately **not** re-exported here:
+:mod:`.dispersion` and :mod:`.variation`. Importing either pulls the
+shared ``swing_sim.variation`` engine (and therefore SciPy), which the
+rest of this package does not need — so they are imported directly,
+the same policy ``swing_sim.variation`` itself declares.
+
 Putter specs: :data:`~.impact.MINIMAL_PUTTERS` are deliberately
 minimal H3-local specs. The reconciliation with the H1 club-library
 putters landed in ``shared.python.golf_club.putter_head`` (#4800 P3):
@@ -56,6 +65,18 @@ from .impact import (
     PuttLaunch,
     clubhead_speed_from_backstroke,
     strike,
+)
+from .result_wire import (
+    PUTTING_RESULT_FORMAT,
+    PUTTING_RESULT_FORMAT_V1,
+    PUTTING_RESULT_KERNEL,
+    PuttingResultDocument,
+    PuttingResultProvenance,
+    PuttingResultV1Archive,
+    putting_result_document,
+    putting_result_from_json,
+    putting_result_to_json,
+    putting_result_v1_archive_from_json,
 )
 from .roll import (
     DEFAULT_SLIDING_MU,
@@ -106,6 +127,9 @@ __all__ = [
     "GREEN_SURFACE_FORMAT",
     "HOLE_RADIUS_M",
     "MINIMAL_PUTTERS",
+    "PUTTING_RESULT_FORMAT",
+    "PUTTING_RESULT_FORMAT_V1",
+    "PUTTING_RESULT_KERNEL",
     "PUTTING_STROKE_FORMAT",
     "STIMP_RELEASE_SPEED_MPS",
     "CaptureModel",
@@ -116,6 +140,9 @@ __all__ = [
     "PuttLaunch",
     "PuttResult",
     "PutterSpec",
+    "PuttingResultDocument",
+    "PuttingResultProvenance",
+    "PuttingResultV1Archive",
     "PuttingStroke",
     "SkidSolution",
     "StrokePutt",
@@ -131,6 +158,10 @@ __all__ = [
     "green_surface_to_ud_json",
     "impact_sample_index",
     "putt_from_stroke",
+    "putting_result_document",
+    "putting_result_from_json",
+    "putting_result_to_json",
+    "putting_result_v1_archive_from_json",
     "putting_stroke_from_drake_json",
     "putting_stroke_from_json",
     "putting_stroke_from_mujoco_json",
