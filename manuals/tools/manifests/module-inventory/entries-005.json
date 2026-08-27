@@ -13984,10 +13984,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4198,
+      "bytes_lf": 4510,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "c2855ab80507bd5c2bec29c0ac13ada8150ec9aeb752832e8c684b09ff6aa0fd",
+      "content_sha256_lf": "82775a8fd0d54de4cce654c7cfdfa65ac16b5857da24414f5226b1fec86efbcd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-INIT-PY-BB0C6A767464",
       "language": "python",
@@ -14049,6 +14049,11 @@
           {
             "kind": "re-export",
             "name": "DEFAULT_PRESET",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DRIVER_SPEC",
             "signature": null
           },
           {
@@ -14118,7 +14123,17 @@
           },
           {
             "kind": "re-export",
+            "name": "RealClubSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "RealismScore",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SEVEN_IRON_SPEC",
             "signature": null
           },
           {
@@ -14218,6 +14233,11 @@
           },
           {
             "kind": "re-export",
+            "name": "equivalent_tip_mass",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "evaluate_all",
             "signature": null
           },
@@ -14269,6 +14289,11 @@
           {
             "kind": "re-export",
             "name": "tour_wrist_actuation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wrist_inertia",
             "signature": null
           }
         ],
@@ -14465,6 +14490,91 @@
           "N*m",
           "m/s",
           "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6454,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "79e49f95414b8a948a622c9d1ffb27384851fef82ae810ebaaa98f2dd0165a44",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-CLUB-EQUIVALENCE-PY-52908F5B4992",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/club_equivalence.py",
+      "purpose": "Converting a real golf club into the point-mass-at-tip club this model uses.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "10.1007/s12283-009-0020-9",
+          "10.1119/1.1976419",
+          "https://archive.org/details/searchforperfect0000coch",
+          "https://doi.org/10.1007/s12283-009-0020-9",
+          "https://doi.org/10.1119/1.1976419"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RealClubSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_SPEC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SEVEN_IRON_SPEC",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "equivalent_tip_mass",
+            "signature": "club: RealClubSpec, shaft_length_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "wrist_inertia",
+            "signature": "club: RealClubSpec"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_club_equivalence.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -15086,10 +15196,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4759,
+      "bytes_lf": 6071,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "f2daf82ce42e5640c0b10874007f87837cff4448955906cf0f25bd7e8305a1cb",
+      "content_sha256_lf": "330a851af7d7c9defc8a845b67ba493b460d2580c709c6491c325505f5acbbd6",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-PRESETS-PY-42C0999A86DC",
       "language": "python",
@@ -15153,6 +15263,7 @@
         ],
         "unit_mentions": [
           "N·m",
+          "kg",
           "s"
         ],
         "validation_paths": []
@@ -15537,48 +15648,6 @@
           "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 134,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "53961372ee97f07020a6e91a248a610999e66dcdd181d045749bb800d9539114",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-INIT-PY-816C36943785",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pid_generator/__init__.py",
-      "purpose": "P&ID Generator tool package.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

@@ -62,28 +62,31 @@ physics (merged #4774). #4775 then asked why its optima brake the arms to a
 standstill at impact. Contract:
 `docs/specs/SWING_ACTUATION_AND_REALISM.md`.
 
-**Four results that bind future work here** (all regression-pinned):
+**Five results that bind future work here** (all regression-pinned):
 
 1. `P_coriolis_hub = -2 * P_centrifugal_wrist` identically, so centrifugal and
    Coriolis _work_ are one functional. The centrifugal objective is an angular
    impulse for that reason; do not "simplify" it back to work.
-2. **The optimizer is right, the model is wrong.** The energy-optimal hand speed
-   at impact is `L1*[I2 - m2*r2*(L2-r2)]`, identically zero for a point-mass
-   clubhead and negative for a real driver. **Distributed club inertia is not
-   the fix** — that is settled analytically, do not re-litigate it.
-3. **Releasing the club and stopping the hands are the same act** in a two-link
-   fixed-hub model: hub torque drives the wrist open through `M12`, so the only
-   way to reach `phi = 0` at impact is to reverse the hub torque. Hand speed of
-   3 m/s is reachable; the measured 6-9 m/s band is not, at any price.
-4. **The objective is not what makes the swings unrealistic.** Under a
-   hand-speed floor the five objectives sit within 0.6% of each other and all
-   far outside the measured bands. Check `is_discriminating` before quoting any
-   ranking.
+2. The energy-optimal hand speed at impact is `L1*[I2 - m2*r2*(L2-r2)]`,
+   identically zero for a point-mass clubhead. That is an _unconstrained ideal_,
+   not a prediction about where a constrained optimum lands — a distinction that
+   was got wrong once, see 3.
+3. **The club preset was 2.1x too heavy at the tip (#4785).** In a
+   point-mass-at-tip model you must match the real club's inertia about the
+   _wrist_, not its mass: `me = 0.238 kg` for a driver, not 0.50. The earlier
+   value doubled the arm/club coupling and forced the optimizer to stop the
+   hands; that artifact was published as a structural limit before being caught.
+   Use `club_equivalence.equivalent_tip_mass` for any new club.
+4. **Corrected, the model is golf-like**: 49.7 m/s clubhead, 7.26 m/s hands,
+   club/arm 3.46, five of six measured observables inside their bands, with no
+   hand-speed floor. A moving hub is an improvement, not a prerequisite.
+5. **The objective ranking discriminates once the club is right.** Clubhead
+   speed, Coriolis, energy and impulse transfer tie; centrifugal release impulse
+   costs ~1 m/s. Check `is_discriminating` before quoting any ranking.
 
-Next step is a **moving hub** — give `physics_triple.py` the objective and
-actuation layers built here — not more tuning of the two-link model. Hill-type
-actuation (`actuation.py`) is built, tested and necessary, but sufficient only
-once the release no longer requires reversing the hub.
+Next open item is the **late release**: every objective releases at ~90% of the
+downswing against a measured 55-80%. A moving hub (`physics_triple.py`) is the
+most likely route. Hill-type actuation (`actuation.py`) is built and tested.
 
 ## Recent Activity (grounding — `git log --oneline -15 -- src/pendulum_simulator`)
 

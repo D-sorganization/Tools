@@ -19,6 +19,13 @@ from double_pendulum_golf.swing_objectives.actuation import (
     tour_hub_actuation,
     tour_wrist_actuation,
 )
+from double_pendulum_golf.swing_objectives.club_equivalence import (
+    DRIVER_SPEC,
+    SEVEN_IRON_SPEC,
+    RealClubSpec,
+    equivalent_tip_mass,
+    wrist_inertia,
+)
 from double_pendulum_golf.swing_objectives.comparison import (
     COMPARISON_SCHEMA_VERSION,
     SwingComparison,
@@ -146,4 +153,10 @@ __all__ = [
     "ObjectiveRealism",
     "ObjectiveRealismRanking",
     "objective_realism_ranking",
+    # Club equivalence (#4785)
+    "RealClubSpec",
+    "DRIVER_SPEC",
+    "SEVEN_IRON_SPEC",
+    "wrist_inertia",
+    "equivalent_tip_mass",
 ]
