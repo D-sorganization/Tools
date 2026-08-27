@@ -27,10 +27,25 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.53                                    |
+| **Spec Version**        | 1.18.54                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Provenance-Complete Attribution Selection (#4791 / #4142 R13.5)
+
+Version 1.18.54 replaces name-only Morris result selection with the versioned
+`rate-of-closure/morris-target-selection` v1 identity. Target kind, name, unit,
+point, time or phase, and coordinate frame remain inseparable, so observations
+with the same scalar name cannot be conflated across geometry or time. PyQt and
+React enumerate the same deterministic options from an immutable parsed report
+and expose either its global factor ranking or one selected source while
+retaining that source's global rank, typed no-impact/failure/nonfinite counts,
+availability, and adequacy. A shared fixture covers state-point, impact, and
+shot targets. Selection imports no simulation, execution service, or
+sensitivity-analysis authority; it is reviewer-side projection of serialized
+model-scenario evidence and does not establish anatomical causality, human
+validity, or coaching advice.
 
 ### 2026-08-27 Governed Geometric Noise-Response Fields (#4765 / #4142 R12.3)
 
@@ -5485,6 +5500,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.54 | feat(rate-of-closure, #4791/#4142 R13.5): add provenance-complete Morris target and source selection across PyQt and React, preserve global ranking and typed denominators, fail closed on ambiguous same-name targets, and pin state/impact/shot parity without invoking simulation or sensitivity recomputation. |
 | 2026-08-27 | 1.18.55 | fix(pendulum-simulator, #4785 / epic #4775): **correct a published conclusion.** The golfer preset lumped 0.50 kg at the tip of a 1.10 m shaft; a real driver is 0.310 kg with its COM 76% down, so the preset overstated the club's inertia about the wrist — and the arm/club coupling that fights the release — by 2.1x. That, not the model's structure, forced the optimizer to reverse hub torque hard enough to stop the hands, and the artifact was published as a structural limit. Adds `club_equivalence` for inertia-matched clubs and corrects the preset to `me = 0.238 kg`. The same model now reaches 49.7 m/s clubhead with 7.26 m/s hand speed and a 3.46 club/arm ratio — five of six measured observables inside their bands, with no hand-speed floor. The objective ranking becomes discriminating: clubhead speed, Coriolis, energy and impulse transfer tie, while centrifugal release impulse costs about 1 m/s. The impact-optimality theorem (#4776) is unaffected. Tests now pin both the artifact and the corrected behaviour. |
 | 2026-08-27 | 1.18.51 | feat(pendulum-simulator, #4780 / epic #4775): add the objective realism ranking. In the only near-realistic regime the model can reach, the five objectives land within 0.6% of each other while every one has just 1 of 6 observables inside its measured band, so `is_discriminating` reports False and the ordering must not be quoted as a finding about golf. The objective is not what makes these swings unrealistic. |
 | 2026-08-27 | 1.18.53 | fix/test(variation, #4765 / #4142 R12.3): make the three-axis response-field invariant and NumPy-to-scalar contract boundary explicit, preserve the protected-base provenance digest with a reviewed secret-scan allowlist, and leave estimator, schema, and scientific interpretation unchanged. |

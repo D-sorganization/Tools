@@ -165,10 +165,10 @@ describe("Morris global-sensitivity report parity", () => {
     expect(() => parseMorrisReport(payload)).toThrow("source provenance");
   });
 
-  it("rejects inconsistent target provenance and duplicate source/target pairs", () => {
-    const inconsistent = record(cloneFixture());
-    record(record(estimatesOf(inconsistent)[1]).target).unit = "ft";
-    expect(() => parseMorrisReport(inconsistent)).toThrow("target provenance");
+  it("treats target provenance variants as distinct and rejects exact duplicate pairs", () => {
+    const incompleteVariant = record(cloneFixture());
+    record(record(estimatesOf(incompleteVariant)[1]).target).unit = "ft";
+    expect(() => parseMorrisReport(incompleteVariant)).toThrow("every source/target");
 
     const duplicate = record(cloneFixture());
     estimatesOf(duplicate).push(structuredClone(estimatesOf(duplicate)[0]));

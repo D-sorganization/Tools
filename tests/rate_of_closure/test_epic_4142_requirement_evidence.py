@@ -25,6 +25,9 @@ R11_3_CAPABILITY_AUDIT = (
 R12_3_CAPABILITY_AUDIT = (
     ROOT / "docs/audits/rate_of_closure_r12_3_noise_response_capabilities.v1.json"
 )
+R13_5_CAPABILITY_AUDIT = (
+    ROOT / "docs/audits/rate_of_closure_r13_5_attribution_selector_capabilities.v1.json"
+)
 PUBLIC_GUIDE = ROOT / "docs/rate_of_closure/variation_ensemble_reproducibility_guide.md"
 EXPECTED_REQUIREMENTS = tuple(
     [f"R10.{index}" for index in range(1, 7)]
@@ -115,6 +118,30 @@ def test_epic_4142_remote_evidence_is_immutable_and_reviewable() -> None:
             assert "/main/" not in remote
 
 
+def test_r13_5_is_verified_by_provenance_complete_cross_runtime_selection() -> None:
+    """R13.5 must bind every selector dimension without analysis recomputation."""
+    evidence = _load()
+    requirements = {item["requirement_id"]: item for item in evidence["requirements"]}
+    requirement = requirements["R13.5"]
+    audit = cast(
+        dict[str, Any],
+        json.loads(R13_5_CAPABILITY_AUDIT.read_text(encoding="utf-8")),
+    )
+
+    assert requirement["status"] == "verified"
+    assert requirement["gaps"] == []
+    assert audit["selection_schema_id"] == "rate-of-closure/morris-target-selection"
+    assert audit["selection_schema_version"] == 1
+    assert set(audit["qualified_target_classes"]) == {
+        "state-point",
+        "impact",
+        "shot-outcome",
+    }
+    assert "all-inputs-or-selected-source" in audit["qualified_dimensions"]
+    assert "anatomical causality" in audit["scientific_boundary"]
+    assert audit["implementation_issue"] == 4791
+
+
 def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> None:
     """R10.4 requires current behavior and adjudicated historical failures."""
     evidence = _load()
@@ -126,8 +153,8 @@ def test_r10_4_is_verified_by_revision_bound_current_main_requalification() -> N
     )
 
     assert evidence["status_counts"] == {
-        "verified": 27,
-        "partial": 4,
+        "verified": 28,
+        "partial": 3,
         "unverified": 0,
         "external_blocked": 0,
     }
@@ -185,8 +212,8 @@ def test_r10_3_is_verified_by_exhaustive_cross_runtime_capabilities() -> None:
     )
 
     assert evidence["status_counts"] == {
-        "verified": 27,
-        "partial": 4,
+        "verified": 28,
+        "partial": 3,
         "unverified": 0,
         "external_blocked": 0,
     }

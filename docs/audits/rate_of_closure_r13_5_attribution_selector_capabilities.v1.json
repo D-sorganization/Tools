@@ -1,0 +1,45 @@
+{
+  "schema_version": "tools-r13.5-attribution-selector-capabilities/v1",
+  "requirement_id": "R13.5",
+  "implementation_issue": 4791,
+  "selection_schema_id": "rate-of-closure/morris-target-selection",
+  "selection_schema_version": 1,
+  "authority": "src/rate_of_closure/application/morris/selector.py",
+  "surfaces": {
+    "pyqt": "src/rate_of_closure/ui/pyqt6/morris_tab.py",
+    "react": "src/rate_of_closure/web/src/components/MorrisResults.tsx"
+  },
+  "qualified_dimensions": [
+    "target-kind",
+    "target-name",
+    "target-unit",
+    "point-id",
+    "time-or-phase",
+    "coordinate-frame",
+    "all-inputs-or-selected-source"
+  ],
+  "qualified_target_classes": ["state-point", "impact", "shot-outcome"],
+  "preserved_fields": [
+    "global-rank",
+    "availability",
+    "sample-adequacy",
+    "valid-pairs",
+    "typed-no-impact-pairs",
+    "no-impact-unavailable-pairs",
+    "failed-pairs",
+    "nonfinite-pairs"
+  ],
+  "cross_runtime_fixture": "src/rate_of_closure/web/src/model/__fixtures__/morris_selector_parity_v1.json",
+  "falsifiers": [
+    "same-name targets at different points or times collapse into one option",
+    "selected-source rows acquire a different global rank",
+    "selection mutates the parsed report or invokes simulation or sensitivity analysis",
+    "Python and TypeScript order, labels, point IDs, or times disagree",
+    "unknown or ambiguous targets are silently accepted"
+  ],
+  "scientific_boundary": "This contract selects and projects serialized model-scenario screening estimates. It does not rerun the numerical authority, identify anatomical causality, validate a human mechanism, or authorize coaching advice.",
+  "validation_commands": [
+    "python -m pytest tests/rate_of_closure/test_morris_selector_contract.py tests/rate_of_closure/test_morris_ui_contract.py tests/rate_of_closure/test_morris_pyqt_workflow.py -n 0 -q",
+    "cd src/rate_of_closure/web && npm test -- --run src/model/morrisSelectorContract.test.ts src/model/morrisPresentation.test.ts src/model/morrisUiParity.test.ts src/components/MorrisResults.test.tsx"
+  ]
+}
