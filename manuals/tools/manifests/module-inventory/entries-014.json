@@ -3,6 +3,99 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2922,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cbcca41ea3c124563445e68568ac09855aa2f196ab764a5de60e789177d1465c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-TYPES-PY-DCA6E8146841",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/types.py",
+      "purpose": "Core types, exceptions, and constants for programmatic-pid.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BBox",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LayoutRegions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Point",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpecValidationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TextConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationIssue",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "src/shared/python/programmatic_pid/tests/test_types.py",
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_document.py",
+          "tests/programmatic_pid/test_geometry.py",
+          "tests/programmatic_pid/test_geometry_extra.py",
+          "tests/programmatic_pid/test_types.py",
+          "tests/programmatic_pid/test_validation.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6623,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17353,65 +17446,6 @@
           {
             "kind": "class",
             "name": "VisibilityPersistence",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9376,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "398f152a90ea4abb9d9e258a65e1f2651e9a823b4869954525501be3a331444c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-WORKSPACE-COMMANDS-PY-F6265A9C7AD6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/workspace_commands.py",
-      "purpose": "Explicit, bounded workspace commands for Sidekick runtime tabs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WorkspaceCommandExecutor",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WorkspaceCommandResult",
             "signature": null
           }
         ],

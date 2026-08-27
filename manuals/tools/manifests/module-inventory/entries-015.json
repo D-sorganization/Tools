@@ -3,6 +3,65 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9376,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "398f152a90ea4abb9d9e258a65e1f2651e9a823b4869954525501be3a331444c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-WORKSPACE-COMMANDS-PY-F6265A9C7AD6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/workspace_commands.py",
+      "purpose": "Explicit, bounded workspace commands for Sidekick runtime tabs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WorkspaceCommandExecutor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkspaceCommandResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3353,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -18400,10 +18459,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7853,
+      "bytes_lf": 9237,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "259e171461d149141d192d940c114bd6c1f93f2a97c1d21527af70974b8e5313",
+      "content_sha256_lf": "37f18a908ab6db90850070a6859f2f88682093a612b4bebd7f0ba408bcea04a1",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-INIT-PY-5F95F06C7E85",
       "language": "python",
@@ -18439,6 +18498,56 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_MISSING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_NONFINITE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_NO_IMPACT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_NUMERICAL_FAILURE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_UNSUPPORTED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionPair",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionRunContext",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionTarget",
+            "signature": null
+          },
           {
             "kind": "re-export",
             "name": "CATEGORY_BALL_SETUP",
@@ -18542,6 +18651,11 @@
           {
             "kind": "re-export",
             "name": "INSUFFICIENT_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "INTERPRETATION_BOUNDARY",
             "signature": null
           },
           {
@@ -18716,12 +18830,37 @@
           },
           {
             "kind": "re-export",
+            "name": "PAIRED_INTERVENTION_METHOD_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionInput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionSnapshot",
             "signature": null
           },
           {
@@ -18846,12 +18985,37 @@
           },
           {
             "kind": "re-export",
+            "name": "attribution_contract_fingerprint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribution_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribution_record_fingerprint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribution_rows",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "build_confidence_ellipsoids",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "build_dispersion_metric_series",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_paired_attribution",
             "signature": null
           },
           {
@@ -19006,6 +19170,16 @@
           },
           {
             "kind": "re-export",
+            "name": "snapshot_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "snapshot_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "spearman_matrix",
             "signature": null
           },
@@ -19049,67 +19223,6 @@
         "unit_mentions": [
           "N"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1717,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9cf173adb6882b483bf56afba9b26568e569d2186a12e2f9d71eb98c172bf995",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-DIGEST-PY-0E12A445B251",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/_execution_digest.py",
-      "purpose": "Cross-runtime canonical numeric digests for variation documents.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "canonical_sha256",
-            "signature": "value: object"
-          },
-          {
-            "kind": "function",
-            "name": "normalized_float",
-            "signature": "value: float"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

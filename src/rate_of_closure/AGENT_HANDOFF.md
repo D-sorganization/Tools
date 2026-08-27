@@ -51,19 +51,18 @@ identity, missing intervals, outcomes, failure semantics, and approximate
 impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
 double-pendulum cells and ten explicitly unavailable cells.
 
-PR #4782/#4765 R12.3 is active on `feat/4142-noise-response`. The immutable response
-field reports signed and magnitude paired-OAT position response per declared
-distribution standard deviation beside matched-cohort and all-eligible RMS
-scatter. It retains counts, typed adequacy and NaNs, method and policy IDs,
-provenance, bounded resumable statistics, deterministic fingerprints, and
-row-oriented plot data. Affine, metamorphic, nonlinear-countermodel,
-missingness, unsupported-design, drift, and serial/chunk/resume gates pass. The
-branch ledger is 27 verified / 4 partial. These are model-scenario software
-results, not causal anatomy, governed human validation, or coaching authority.
-The pre-merge repair passes CI-pinned MyPy by making NumPy boolean reductions
-explicit and passes detect-secrets without changing the protected-base SHA.
-SPEC 1.18.53 records the boundary; no runtime, schema, or scientific claim changed.
-The constructor-only test helper is explicitly allowlisted; assertions remain in its consumers.
+PR #4782/#4765 R12.3 protected-squash-merged as `a1b00db14`. Issue #4783/R13.3
+is active on `feat/4783-localized-attribution`. Shared schema
+`swing-sim/paired-localized-attribution` v1 binds one independently estimable,
+continuous, unbounded OAT source and optional exact point/time locus to governed
+state-point, impact, and shot scalars. Exact model/adapter/frame/grid/plan/
+registry/execution/source identity, typed unavailable cells, bounded resume,
+fingerprints, selectors, and JSON/CSV rows fail closed. The exhaustive authority
+inherits the two verified double-pendulum adapter cells and ten explicit
+unavailabilities and enumerates all 17 Rate target metrics. The 380-test serial
+variation, adapter, localized-torque, and epic-ledger suite passes. The ledger is 28 verified /
+3 partial. This is paired model-scenario response, not a global main effect,
+causal anatomy, governed human validation, or coaching authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

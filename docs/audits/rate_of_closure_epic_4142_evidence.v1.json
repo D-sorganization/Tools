@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 27,
-    "partial": 4,
+    "verified": 28,
+    "partial": 3,
     "unverified": 0,
     "external_blocked": 0
   },
@@ -351,20 +351,27 @@
     {
       "requirement_id": "R13.3",
       "requirement": "Attribute parameter and optional locus to state, impact, and shot outcomes.",
-      "status": "partial",
-      "rationale": "Localized joint-torque studies bind source joint and time window to downstream traces and scalar outcomes, while global Morris and OAT cover parameter sources.",
+      "status": "verified",
+      "rationale": "Issue #4783 adds one immutable paired-intervention record that binds a registered parameter and optional exact control point and half-open time window to governed state-point, impact, and shot scalars. The complete 3-source by 4-adapter authority retains two verified double-pendulum cells and ten explicit unavailabilities inherited from the qualified response-field boundary. All 17 registered target metrics, state point/time/frame selectors, source and execution identities, typed unavailable outcomes, bounded serial/chunk/resume snapshots, and precision-preserving JSON/CSV reviewer rows are explicit. Affine, sign, zero-response, nonlinear, observational-confounding, no-impact, failure, missingness, unsupported-design, identity-drift, and replay falsifiers qualify a model-scenario paired response only; they do not establish a global main effect, causal anatomy, human validity, or coaching authority.",
       "evidence_files": [
-        "src/rate_of_closure/variation/simulation_adapter.py",
-        "src/shared/python/swing_sim/variation/global_sensitivity.py",
-        "tests/rate_of_closure/test_localized_torque_variation.py"
+        "src/shared/python/swing_sim/variation/paired_attribution_types.py",
+        "src/shared/python/swing_sim/variation/paired_attribution_record.py",
+        "src/shared/python/swing_sim/variation/paired_attribution.py",
+        "src/shared/python/swing_sim/variation/paired_attribution_snapshot.py",
+        "src/rate_of_closure/variation/paired_attribution_adapter.py",
+        "tests/rate_of_closure/test_paired_attribution_adapter.py",
+        "src/shared/python/swing_sim/variation/tests/test_paired_attribution.py",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+        "docs/specs/PAIRED_LOCALIZED_ATTRIBUTION.md",
+        "docs/audits/rate_of_closure_r13_3_paired_attribution_capabilities.v1.json"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_localized_torque_variation.py src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py -q"
+        "python -m pytest -n 0 -q src/shared/python/swing_sim/variation/tests/test_paired_attribution.py tests/rate_of_closure/test_paired_attribution_adapter.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "Locus-aware attribution is implemented for localized torque, not for every registered parameter or all state-point, impact, and shot metrics."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4783"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R13.4",

@@ -1823,10 +1823,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4308,
+      "bytes_lf": 4518,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b98a565127135f717100edd8966e93568b6edfad9942a3b7fbc04ae5ee666510",
+      "content_sha256_lf": "6a1e10c63180a0e7220c849c316026e30ba5214553bc0c2d25865d07fec0a09d",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-INIT-PY-5F9607A6AC35",
       "language": "python",
@@ -2018,6 +2018,11 @@
           },
           {
             "kind": "re-export",
+            "name": "RATE_PAIRED_ATTRIBUTION_ADAPTER_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "RateMorrisEvaluator",
             "signature": null
           },
@@ -2099,6 +2104,11 @@
           {
             "kind": "re-export",
             "name": "build_ensemble_stream_header",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_rate_paired_attribution_input",
             "signature": null
           },
           {
@@ -4553,6 +4563,75 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9599,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "593b5a2d206e94a5b486a6de72abff7775fad6941c7cf960885f30c0ece50b6c",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-PAIRED-ATTRIBUTION-ADAPTER-PY-6F6E7A0F070D",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/variation/paired_attribution_adapter.py",
+      "purpose": "Thin Rate adapter from governed response pairs to shared attribution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "RATE_PAIRED_ATTRIBUTION_ADAPTER_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_rate_paired_attribution_input",
+            "signature": "field_input: ResponseFieldInput, targets: tuple[AttributionTarget, ...], baseline_outcomes: tuple[SimulationTrialOutcome, ...], perturbed_outcomes: tuple[SimulationTrialOutcome, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "rate_attribution_target_registry",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_epic_4142_requirement_evidence.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 16329,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -5829,6 +5908,7 @@
           "tests/rate_of_closure/test_morris_authority_router.py",
           "tests/rate_of_closure/test_morris_authority_service.py",
           "tests/rate_of_closure/test_morris_rate_adapter.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py",
           "tests/rate_of_closure/test_simulation_trial_outcome_scalar_contract.py",
           "tests/rate_of_closure/test_variation_complete_trial_record.py",
           "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
@@ -12312,61 +12392,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5132,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1a2586b6c374f4ba67aaa6b67b9dfa6da883ff937fe398ff44eb699f1a6d4cd6",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-REGIONALEXECUTIONLEDGERTABLES-TSX-5686D053E942",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/RegionalExecutionLedgerTables.tsx",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "RegionalExecutionLedgerTables",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "m/s",
-          "rad/s",
           "s"
         ],
         "validation_paths": []

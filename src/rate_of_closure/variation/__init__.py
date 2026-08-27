@@ -46,6 +46,10 @@ from .morris_rate_adapter import (
     RateMorrisEvaluator,
     evaluate_rate_morris_design,
 )
+from .paired_attribution_adapter import (
+    RATE_PAIRED_ATTRIBUTION_ADAPTER_ID,
+    build_rate_paired_attribution_input,
+)
 from .request_builder import apply_global_simulation_values
 from .simulation_adapter import (
     APP_FRAME_ID,
@@ -113,6 +117,7 @@ __all__ = [
     "NUMERICAL_FAILURE",
     "RATE_MORRIS_OUTPUTS",
     "RATE_MORRIS_VARIABLE_KEYS",
+    "RATE_PAIRED_ATTRIBUTION_ADAPTER_ID",
     "ResumableEnsembleChunkSink",
     "RateMorrisEvaluator",
     "SHOT_OUTPUT_NAMES",
@@ -132,6 +137,7 @@ __all__ = [
     "analyze_durable_ensemble",
     "build_simulation_ensemble_request",
     "build_ensemble_stream_header",
+    "build_rate_paired_attribution_input",
     "capture_simulation",
     "durable_ensemble_evidence",
     "durable_ensemble_evidence_from_document",

@@ -27,10 +27,27 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.53                                    |
+| **Spec Version**        | 1.18.54                                    |
 | **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Paired Localized Source-To-Downstream Attribution (#4783 / #4142 R13.3)
+
+Version 1.18.54 adds a versioned immutable record for exact paired model
+interventions. It binds one independently estimable source parameter and its
+optional control point and time window to governed state-point, impact, and
+shot scalars. Exact model, adapter, frame, grid, plan, registry, execution, and
+source identities fail closed, as do bounded, discrete, grouped, correlated,
+or zero-delta source designs. Missing, nonfinite, unsupported, no-impact, and
+solver-failure observations remain typed unavailable values. Bounded
+serial/chunk/resume snapshots, deterministic fingerprints, selectors, and
+precision-preserving JSON/CSV rows support independent review. The complete
+capability authority enumerates all 17 Rate target metrics and preserves ten
+unavailable source/adapter cells rather than fabricating coverage. Analytical
+and countermodel tests qualify paired model-scenario response only; they do not
+establish global main effects, causal anatomy, human validity, or coaching
+authority.
 
 ### 2026-08-27 Governed Geometric Noise-Response Fields (#4765 / #4142 R12.3)
 
@@ -5485,6 +5502,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.54 | feat/test/docs(variation, #4783 / #4142 R13.3): add immutable paired localized source-to-downstream attribution across exact state, impact, and shot scalars; bind source and execution identity; retain typed unavailable outcomes; reject confounded source designs; provide bounded deterministic replay and reviewer exports; and qualify the exhaustive capability and target matrix without making human causal or coaching claims. |
 | 2026-08-27 | 1.18.53 | fix/test(variation, #4765 / #4142 R12.3): make the three-axis response-field invariant and NumPy-to-scalar contract boundary explicit, preserve the protected-base provenance digest with a reviewed secret-scan allowlist, and leave estimator, schema, and scientific interpretation unchanged. |
 | 2026-08-27 | 1.18.52 | docs(pendulum-simulator, epic #4775): publish `SWING_ACTUATION_AND_REALISM` with hyperlinked literature. Records the impact-optimality theorem, the measured reference bands and their sources, the model-variant study, the feasibility frontier, and the ranked next steps. Every DOI was resolved before publication; the Jorgensen 1970 DOI was corrected from 10.1119/1.1976433 (which resolves to a different AJP article) to 10.1119/1.1976419. |
 | 2026-08-27 | 1.18.51 | feat(pendulum-simulator, #4780 / epic #4775): add the objective realism ranking. In the only near-realistic regime the model can reach, the five objectives land within 0.6% of each other while every one has just 1 of 6 observables inside its measured band, so `is_discriminating` reports False and the ordering must not be quoted as a finding about golf. The objective is not what makes these swings unrealistic. |

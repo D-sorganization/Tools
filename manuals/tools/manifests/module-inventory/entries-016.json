@@ -2,6 +2,67 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 1717,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "9cf173adb6882b483bf56afba9b26568e569d2186a12e2f9d71eb98c172bf995",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-DIGEST-PY-0E12A445B251",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/_execution_digest.py",
+      "purpose": "Cross-runtime canonical numeric digests for variation documents.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "canonical_sha256",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "normalized_float",
+            "signature": "value: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 2377,
       "classification": "non-calculation",
@@ -1474,7 +1535,8 @@
         ],
         "test_paths": [
           "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
-          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py"
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -2224,6 +2286,391 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 11345,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "64c6c38de8a9f7ecd445eb8d7c04ed0ea4b25902431dca645e57b5d90caac81e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-PY-70D49367230F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution.py",
+      "purpose": "Paired localized attribution production, resume, and reviewer exports.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_COUNT_STATES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "attribution_contract_fingerprint",
+            "signature": "contract: PairedAttributionContract"
+          },
+          {
+            "kind": "function",
+            "name": "attribution_csv",
+            "signature": "record: PairedAttributionRecord, **selectors: object"
+          },
+          {
+            "kind": "function",
+            "name": "attribution_record_fingerprint",
+            "signature": "record: PairedAttributionRecord"
+          },
+          {
+            "kind": "function",
+            "name": "attribution_rows",
+            "signature": "record: PairedAttributionRecord, *, source_id: str | None=None, target_id: str | None=None, kind: str | None=None, point_id: str | None=None, coordinate_value: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "compute_paired_attribution",
+            "signature": "field_input: PairedAttributionInput"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_paired_attribution.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7747,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "14c6ce12a191327d9b4f6a9fd9fb791a0b4fe9321c31727f9c26ff9af2ff717c",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-RECORD-PY-18B2B2CED3E6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_record.py",
+      "purpose": "Immutable result record for paired localized attribution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PairedAttributionRecord",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8770,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cca0de698727b7b608f12a3892f4c278eb8bdddf45fa4b95380c16c4f1c321c1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-SNAPSHOT-PY-F0CD48B145B8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_snapshot.py",
+      "purpose": "Bounded exact snapshots for paired localized attribution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PairedAttributionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedAttributionSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "snapshot_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "snapshot_to_json",
+            "signature": "snapshot: PairedAttributionSnapshot"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12220,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "c88ffa8bae39db3dee482ff83912e46c908381481a4275ebbf95b124a1b44b02",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-TYPES-PY-3E3867061F33",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_types.py",
+      "purpose": "Immutable input contracts for paired model-intervention attribution.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AttributionPair",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AttributionRunContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AttributionSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AttributionTarget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedAttributionContract",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedAttributionInput",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_MISSING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_NONFINITE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_NO_IMPACT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_NUMERICAL_FAILURE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_UNSUPPORTED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERPRETATION_BOUNDARY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ARCHIVE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_OBSERVATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PAIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_TARGETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_ATTRIBUTION_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_ATTRIBUTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_INTERVENTION_METHOD_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIR_AVAILABILITY_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TARGET_KINDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_EVALUATED_HIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_EVALUATED_NO_IMPACT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_NUMERICAL_FAILURE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALUE_STATES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7447,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2911,6 +3358,7 @@
           "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
           "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
           "src/shared/python/swing_sim/variation/tests/test_spec.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py",
           "tests/rate_of_closure/test_variation_plot_data.py"
         ],
         "unit_mentions": [
@@ -13891,283 +14339,6 @@
           "tests/folder_tool/test_gui_registration.py",
           "tests/rate_of_closure/test_gui_registration.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 349,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "423556feae5eaa6734e1151f1a40f5761613ee068781fa466bf9421a6072a4dd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-LAUNCH-PYQT6-PY-F82E8AFE828F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for Vessel Drafter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 121,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "822fe7de8a7765d36c50b01903bf0b3bb8265a5a939df9b1c06a88fa1a889d9c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-INIT-PY-FCFD9D4C05B9",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/__init__.py",
-      "purpose": "Programmatic drafting utilities for STEP-based geometry exports.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 317,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e6940e962a39f86413978cc4c7cd9fae8ab449f983477688a2059f38442bdfb4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-ANALYSIS-INIT-PY-3A22E2D7288A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/analysis/__init__.py",
-      "purpose": "Analysis helpers for vessel drafter models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ComponentMaterialMetric",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MaterialMetricsReport",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_material_metrics_report",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2948,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "92d6e6bd34e577f477144ff8388ba64b6749f27182d2968722ca5edb63666059",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-ANALYSIS-VESSEL-DRAFTER-METRICS-PY-7202C191021B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/analysis/vessel_drafter_metrics.py",
-      "purpose": "Volume and mass metrics for the vessel drafter model.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ComponentMaterialMetric",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MaterialMetricsReport",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CUBIC_INCHES_PER_CUBIC_FOOT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQUARE_INCHES_PER_SQUARE_FOOT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_material_metrics_report",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py",
-          "tests/vessel_drafter/test_dbc_lod.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3572,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "924080c97f986851758506d1ae087d9173d3de0f9ee1d6f15f145db21382f6f9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-CLI-PY-027B4F271BCD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/cli.py",
-      "purpose": "CLI for generating drafting artifacts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_parser",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

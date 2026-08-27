@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation and falsifiable sensitivity. R11.1 and R11.3 are protected-merged through `4ddec9175`; PR #4782/#4765 R12.3 carries a governed response/scatter field and a branch ledger of 27 verified / 4 partial.              |
+| #4142 | Ensemble variation and falsifiable sensitivity. R12.3 protected-merged as `a1b00db14`; #4783/R13.3 is active with a paired localized attribution contract and a branch ledger of 28 verified / 3 partial.                             |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -69,10 +69,10 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   `66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734`; issue #4758 is closed and the
   corrected Python 3.11/3.12, exact-wheel, browser, and governance gates passed.
   PR #4764/R11.3 protected-squash-merged as `4ddec9175814451fdc3d1a94b45f1190e7503bca`.
-  PR #4782/#4765 R12.3 is active on `feat/4142-noise-response`: its immutable field puts
-  paired declared-scale Cartesian response beside matched and all-eligible RMS
-  scatter, counts, adequacy, provenance, bounded resume state, and plot rows; the
-  matrix remains two verified / ten unavailable. The repair passes MyPy, secrets, and assertion gates; SPEC 1.18.53 is unchanged scientifically and tests are not human validation.
+  PR #4782/#4765 R12.3 protected-squash-merged as `a1b00db14`. Issue #4783/R13.3
+  is active on `feat/4783-localized-attribution`: a shared paired-intervention
+  record binds a source and optional locus to exact state, impact, and shot
+  scalars. It preserves ten unavailable cells and makes no human causal claim.
 
 ## Must-Read Architecture Pointers
 
@@ -140,7 +140,7 @@ Note: `ruff format --check` reports four pre-existing failures under
 
 ## Short-Term Roadmap (Ordered)
 
-1. Complete #4765/R12.3 noise-response qualification through protected merge.
+1. Complete #4783/R13.3 paired localized attribution through protected merge.
 2. Deliver main-rooted TOOLS-D4 #4720, then reconcile D5--D9 without rewriting remote history.
 3. Implement the Sidekick S1–S5 plan in `docs/development/epic_sidekick_unified_impact_model_and_launcher_integration.md`.
 4. Restore the isolated advisory benchmark lane through #4582.
