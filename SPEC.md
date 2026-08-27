@@ -27,14 +27,14 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.36                                    |
+| **Spec Version**        | 1.18.43                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-26 RustSec Dependency Remediation (#4764)
 
-Version 1.18.36 raises the workspace compiler floor to Rust 1.83 and migrates
+Version 1.18.43 raises the workspace compiler floor to Rust 1.83 and migrates
 the Python binding stack from PyO3/NumPy 0.24 to 0.29. It also advances the
 AI backend from Reqwest 0.11 to 0.12, resolving to `h2` 0.4. These floors
 exclude RUSTSEC-2026-0176, RUSTSEC-2026-0177, and RUSTSEC-2026-0258 after the
@@ -47,7 +47,7 @@ crate warnings remain warnings rather than vulnerabilities.
 
 ### 2026-08-26 Complete UpstreamDrift Contract Checkout (#4764)
 
-Version 1.18.34 adds `src/bunkershot3d` to the narrow UpstreamDrift sparse
+Version 1.18.41 adds `src/bunkershot3d` to the narrow UpstreamDrift sparse
 checkout used by Cross-Repo Python Integration. Current UpstreamDrift shared
 simulation backends import the governed `bunkershot3d.postproc` wrench
 contract, whose curated package surface in turn imports its double-pendulum
@@ -67,7 +67,7 @@ an installation credential that RustSec must reject with HTTP 401.
 
 ### 2026-08-26 Stable-Point Trace Resampling Qualification (#4763 / #4142 R11.3)
 
-Version 1.18.33 adds the versioned
+Version 1.18.40 adds the versioned
 `swing-trace-time-linear-contiguous/v1` authority. It preserves point, frame,
 trial, and variation identities; rejects extrapolation and invalid grids;
 interpolates only between adjacent valid samples; and retains invalid gaps,
@@ -5467,10 +5467,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-26 | 1.18.36 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
-| 2026-08-26 | 1.18.35 | fix/test(ci, #4764): isolate the public RustSec fetch from runner-global and system Git credential rewrites as well as checkout-local credentials; prohibit interactive prompting and retain fail-closed `cargo audit` semantics. |
-| 2026-08-26 | 1.18.34 | fix(ci, #4764): include UpstreamDrift's `src/bunkershot3d`, double-pendulum engine, and parent package markers in the shallow downstream sparse checkout; isolate public RustSec advisory fetches from repository-scoped checkout credentials. |
-| 2026-08-26 | 1.18.33 | feat/test/docs(rate-of-closure, #4763 / #4142 R11.3): add the versioned fail-closed time-grid resampling authority, preserve stable point/frame/trial identities and missing intervals, retain approximate impact-marker error, qualify identity/subset equivalence for all three spatial layouts, and bind the inherited exhaustive adapter matrix and scientific boundary. |
+| 2026-08-26 | 1.18.43 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
+| 2026-08-26 | 1.18.42 | fix/test(ci, #4764): isolate the public RustSec fetch from runner-global and system Git credential rewrites as well as checkout-local credentials; prohibit interactive prompting and retain fail-closed `cargo audit` semantics. |
+| 2026-08-26 | 1.18.41 | fix(ci, #4764): include UpstreamDrift's `src/bunkershot3d`, double-pendulum engine, and parent package markers in the shallow downstream sparse checkout; isolate public RustSec advisory fetches from repository-scoped checkout credentials. |
+| 2026-08-26 | 1.18.40 | feat/test/docs(rate-of-closure, #4763 / #4142 R11.3): add the versioned fail-closed time-grid resampling authority, preserve stable point/frame/trial identities and missing intervals, retain approximate impact-marker error, qualify identity/subset equivalence for all three spatial layouts, and bind the inherited exhaustive adapter matrix and scientific boundary. |
+| 2026-08-26 | 1.18.39 | refactor(pendulum-simulator, epic #4766): bring the swing-objective modules under the AGENTS.md function-size and signature budgets. Extract the mass-matrix, velocity-product and gravity blocks out of `generalized_accelerations`; group the shared effort budget into a `SwingBudget` value object so `build_config` takes two arguments instead of five; split the Lab control panel builder. Behaviour is unchanged and all 68 feature tests still pass. |
+| 2026-08-26 | 1.18.38 | docs(pendulum-simulator, #4773 / epic #4766): publish the `SWING_OBJECTIVE_COMPARISON` design contract and update the tool README, FEATURES inventory, and both handoff documents. The contract records the coordinate conventions, the exact `P_coriolis = -2 * P_centrifugal` identity that forces the centrifugal objective to be an angular impulse, the three load-bearing solver settings, and the two failure modes the feature reports rather than hides: a downswing the torque budget provably cannot deliver, and a degenerate comparison whose all-100% matrix is a configuration artifact rather than mechanism agreement. It also states the planar two-link scientific boundary and records that the research prototype is an independent cross-check, not a dependency. |
+| 2026-08-26 | 1.18.37 | feat(pendulum-simulator, #4771 / epic #4766): add the PyQt6 Swing Objective Lab surface, a feasible default golfer preset, and the provider embed adapter. The surface is presentation only and a test asserts it, so the engine stays reusable by the CLI and notebooks; solving runs on a worker thread; every cross-evaluation cell carries a visible label so colour is never the sole encoding; and a degenerate comparison is reported in the UI as a property of the configuration rather than shown as mechanism agreement. The preset deliberately carries slack above the minimum sweep duration for the same reason. |
+| 2026-08-26 | 1.18.36 | feat(pendulum-simulator, #4770 / epic #4766): add the objective cross-evaluation comparison and its versioned fail-closed `swing-objective-comparison/v1` payload. Require every swing to lead its own column, so a local optimum cannot be presented as a result, and report per-swing torque saturation so agreement can be distinguished from a binding limit. Detect and flag the degenerate case in which the constraints pin the trajectory: near the golfer's minimum downswing duration the feasible set collapses, every objective returns the same swing, and the resulting all-100% matrix reads as unanimous mechanism agreement while being an artifact of the configuration. |
+| 2026-08-26 | 1.18.35 | feat(pendulum-simulator, #4769 / epic #4766): add a slew-limited direct-collocation downswing optimizer that solves every objective under identical golfer, torque, duration and impact conditions. Solve in non-dimensional variables and at a tight tolerance — both are load-bearing and both carry regression pins, because the unscaled problem leaves defects near 1e-1 and the default SciPy tolerance returns the initial guess unchanged. Screen configurations whose torque budget provably cannot sweep the arm in the requested time, converting an opaque linesearch failure into a statement about the golfer; the bound is documented as necessary, not sufficient. Feasibility is reported from the measured defect, never from the solver's success flag. |
+| 2026-08-26 | 1.18.34 | feat(pendulum-simulator, #4768 / epic #4766): add vectorized downswing signals and the five competing swing objectives (clubhead speed, centrifugal release impulse, Coriolis kinetic-chain transfer, grip-force energy transfer, grip-force impulse). Every signal is pinned against the scalar `physics` authority the way the Python fallback is pinned against the native backend. Pin the exact `P_coriolis_hub = -2 * P_centrifugal_wrist` identity that forces the centrifugal objective to be an angular impulse rather than work, and prove the two are independent functionals. No equations of motion are re-derived. |
+| 2026-08-26 | 1.18.33 | feat(pendulum-simulator, #4767 / epic #4766): partition `physics.coriolis_vector` into named centrifugal and Coriolis components so a swing can be optimized for one mechanism without the other. The split is required to close exactly against the shipped (optionally Rust-backed) kernel as both a runtime postcondition and a randomized contract test; the Coriolis term is proven hub-only and the wrist centrifugal drive proven independent of the uncock rate. No equations of motion are re-derived and no existing behaviour changes. |
 | 2026-08-26 | 1.18.32 | fix/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): make the exact-wheel proof portable across hosted Python 3.11/3.12 by explicitly reusing only the qualified parent dependency site while requiring project imports to resolve from the isolated installed wheel; document the NumPy dynamic named-array stub boundary without changing archive behavior. |
 | 2026-08-26 | 1.18.31 | docs/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): bind the complete-trial qualification to its protected pull request, advance the fail-closed epic ledger to 25 verified / 6 partial, and require the source/adapter matrix, durable/scaling evidence, installed-wheel proof, and scientific boundary to remain locally traceable. |
 | 2026-08-26 | 1.18.30 | docs/test(rate-of-closure, #4758 / #4142 R11.1): publish revision-bound complete-trial scaling evidence and its deterministic generator, document schema-v3 retention and the exhaustive source/adapter boundary in the public reproducibility guide, export the typed public record contract, and prove an exact built wheel can create, persist, install, read, and reconstruct complete records outside the checkout. |

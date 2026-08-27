@@ -34,6 +34,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                       |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
+| #4766 | Swing Objective Comparison. S1–S6 protected-merged through PR #4774; the planar two-link objective layer reports infeasible and degenerate comparisons rather than promoting them to mechanism agreement.                             |
 | #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
 | #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
@@ -66,8 +67,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   PR #4762/R11.1 protected-merged as
   `66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734`; issue #4758 is closed and the
   corrected Python 3.11/3.12, exact-wheel, browser, and governance gates passed.
-  PR #4764 for issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned
-  time-grid authority rejects extrapolation and gap bridging, preserves
+  PR #4764 for issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned time-grid authority rejects extrapolation and gap bridging, preserves
   frame/point/trial identities and typed unavailability, reports approximate
   impact-marker alignment error, and qualifies all three spatial layouts plus
   the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; the exact CI repair retains UpstreamDrift's BunkerShot/pendulum package paths, isolates the public RustSec fetch, and remediates the exposed PyO3/h2 advisories with PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83. Formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, audit, and isolated wheel import pass. Protected CI and remote-main evidence remain.

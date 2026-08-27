@@ -2,6 +2,1132 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 6128,
+      "classification": "calculation",
+      "classification_basis": "path-marker:rotation",
+      "content_sha256_lf": "0bc9b44427f75150cccacdc2c2b951e3bcf5741b9fe81ed1a367ac51c0ac09d6",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-ROTATION-TRANSFORMS-ROTATION-PY-5645E5EA82C8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/rotation_transforms/rotation.py",
+      "purpose": "Shared rotation representation conversions.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Rotation",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15127,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "69d053b9eef08342b57f611f4d4f2b4fdceb5a6a3487dbb6a8b0b63898aa6807",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SAFE-EVAL-PY-17BBC425A821",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/safe_eval.py",
+      "purpose": "Safe mathematical expression evaluator.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "NUMPY_MATH_NAMESPACE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCALAR_MATH_NAMESPACE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "safe_eval",
+            "signature": "expression: str, namespace: dict[str, Any], *, allowed_names: set[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "safe_eval_math",
+            "signature": "expression: str, variables: dict[str, Any] | None=None, *, use_numpy: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "validate_expression",
+            "signature": "expression: str, allowed_names: set[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_calculator_plotting.py",
+          "tests/shared/python/test_safe_eval.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3964,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a86c84d31bb80e8d224442a696a65fa72b11878aa60eff8b00199e3fb54e83d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SAFE-PANDAS-EVAL-PY-26F350F93F93",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/safe_pandas_eval.py",
+      "purpose": "Validation wrapper for pandas formula expressions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MAX_FORMULA_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_FORMULA_NODES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_POWER_EXPONENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALLOWED_NODES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALLOWED_OPERATORS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BLOCKED_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "log_formula_rejected",
+            "signature": "expression: str, reason: Exception"
+          },
+          {
+            "kind": "function",
+            "name": "validate_pandas_formula",
+            "signature": "expression: str, *, allowed_columns: Collection[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/test_safe_pandas_eval.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 26,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "53237b105d100495fed0906ac5687dded8f883c62998815cf8feae8d79b04fc0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SCRIPTING-INIT-PY-8A59ABED3F54",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/scripting/__init__.py",
+      "purpose": "Package: scripting.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 28878,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5d921e97f10ba8b5b717f8d26eba92cdb6364791ca6c018cffbdc0954e03e573",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SCRIPTING-SCRIPTING-ENV-PY-E75AF63DF03D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/scripting/scripting_env.py",
+      "purpose": "Python scripting environment (MATLAB-like backend).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConsoleEnvironment",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SecurityError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "USER_CODE_ERROR_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BLOCKED_BUILTINS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BLOCKED_IMPORT_MODULES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CPU_HARD_LIMIT_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CPU_SOFT_LIMIT_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_MAX_EXECUTION_TIME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_INTROSPECTION_GADGETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MEM_LIMIT_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_process_resource_limits",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/rotation_converter/test_scripting_env.py",
+          "tests/shared/python/scripting/test_scripting_env.py",
+          "tests/shared/python/scripting/test_scripting_env_import_side_effects.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1284,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7adcdc556c3d68f00d3bc0a00ee65223acbd30b8ad8ac271508f8c11eec332dd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-INIT-PY-094C6D69DA1A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/__init__.py",
+      "purpose": "UpstreamDrift Shared Tools Library",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CalculationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Calculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DataTransformer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputValidator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProcessCalculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateSerializable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnitConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ValidationResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7477,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "16c4792de241878414997db425498169fb0a960b01cb0ff9cedb7dd57926967c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-MAIN-PY-A81E3316FBF5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/__main__.py",
+      "purpose": "CLI entry point for launching and dispatching standalone Sidekick flows.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickArgumentParser",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "launch_gui",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parse_cli_args",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_headless",
+            "signature": "args: argparse.Namespace"
+          }
+        ],
+        "test_paths": [
+          "tests/architecture/test_shared_import_aliases_3316.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py",
+          "tests/unit/test_project_metadata_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/unit/test_project_metadata_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2845,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c1b9f186e1fed892019f73077f0c892d2a9b43413821698bc8734dcb62e5d226",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-INIT-PY-36711854C8D6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/__init__.py",
+      "purpose": "Sidekick agent layer (epic #5967).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ActionChipModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionChipState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionDispatcher",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CANONICAL_ACTION_IDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorRun",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CanonicalActionPort",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CanonicalOperationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CanonicalToolAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ChatActionEnvelope",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FeatureEntry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FeatureKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HostActionPort",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HostAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HostCapability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HostInvocationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JsonlActionAudit",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MemoryActionAudit",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PendingUserDecision",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlannedStep",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlannerError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PolicyDecision",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickActionHandler",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickActionPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickActionService",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickAgentPlanner",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickWorkflow",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SubtabActionPort",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SubtabAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ToolCall",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkflowOutcome",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkflowStep",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkflowStepResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkflowStepStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkspaceSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "action_step",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_chip",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_feature_catalog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_sidekick_system_prompt",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "lookup_feature",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "redact_secrets",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_sidekick_workflow",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "search_features",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "serialize_envelope",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4409,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4dbefebcf113e0010c69981082e2f8449582568b22cd2241b249eaba4fbffa44",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACCESS-POLICY-PY-1986FCEFCF49",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/access_policy.py",
+      "purpose": "Access policy for SidekickActionService (epic #5967 / S6 / #5975).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PolicyDecision",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidekickActionPolicy",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/ai/tests/test_access_policy.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6463,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a9e73fd7b6191937cd8d26cd368fbbb4c37f8fcf2c22e833bc3ef195facb247f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-AUDIT-PY-DDE2937D201A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/action_audit.py",
+      "purpose": "Audit sinks for SidekickActionService (epic #5967 / S6 / #5975).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JsonlActionAudit",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MemoryActionAudit",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "redact_secrets",
+            "signature": "payload: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/agent/test_action_audit.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2993,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "238982130876e0363b6b552701133ee32ccedcefe900bcfc45d6454fbb830269",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-CONTRACTS-PY-9EDF125BE9B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/action_contracts.py",
+      "purpose": "Action-layer contracts for Sidekick agent dispatch.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ActionDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ActionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordedCall",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SidekickActionHandler",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VALID_SIDE_EFFECTS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18030,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "de4bbb39e3f6a7574b312aac274d381b4820b3ad9cd4517f72922d8a03727d3c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-ACTION-SERVICE-PY-12C0FCEDAA75",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/action_service.py",
+      "purpose": "Audited action-dispatch service for the Sidekick agent layer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-001-monorepo-workspaces.md",
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SidekickActionService",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionDispatcher",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AuditSink",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordedCall",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SideEffect",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SidekickActionHandler",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateError",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/agent/test_action_audit.py",
+          "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/agent/test_planner.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 8441,
       "classification": "non-calculation",
@@ -16274,1635 +17400,6 @@
           "bar",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 24,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8eea9df4f6d7b38ca0e39ccc27b04700e3d08dbeec8046d613d22706d19985fa",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-MIXINS-INIT-PY-F7740A86796F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/widgets/mixins/__init__.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9934,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "85d88283ffc2fe014fe9c0025e974cea942ed4cee5be3b3c4282fd2b293c6ae3",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-MIXINS-DATA-PROCESSOR-OPS-PY-2C9E7A376106",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py",
-      "purpose": "Data processor operations mixin.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DataProcessorOpsMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_data_processor_ops.py",
-          "tests/shared/python/ui/test_wave1_widget_state.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8587,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "473a88e953ea8688439c448c0a91cefb04e9967fe07d5f0b00c7287ba8e77913",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-UNIT-AWARE-INPUT-PY-615AFC263323",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/widgets/unit_aware_input.py",
-      "purpose": "Unit-Aware Input/Display Widgets.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "UnitAwareDisplay",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnitAwareInput",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_unit_aware_input.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 20813,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "68d854038154c91b2bb84b2984f4b06cac46ec7f8eaf9fc3c02235b350d18625",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-UNIT-CONVERTER-WIDGET-PY-F0A9F728C9B0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/widgets/unit_converter_widget.py",
-      "purpose": "Unit Converter - Shared Component for UI Applications.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "CaseInsensitiveCompleter",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ConversionRow",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TypedConverterWidget",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "UnitConverterWidget",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "create_unit_converter",
-            "signature": "parent: QWidget | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_unit_converter_widget.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1665,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f9f7126813746f23ded832b70f74e71e9fec876cd524f1bfd19a9899dd7e0def",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-INIT-PY-BC229FB9D61C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/__init__.py",
-      "purpose": "Upstream Drift Tools - Utility subpackage.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3805,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8ac13e09f9889d989d9790a083ccfb25abad3ca94e7ef26de24f320ecead10b2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-JSON-IO-PY-F36F996859DD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/json_io.py",
-      "purpose": "Self-contained JSON I/O helpers for the sidekick library.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "safe_read_json",
-            "signature": "file_path: Path | str, default: Any=None"
-          },
-          {
-            "kind": "function",
-            "name": "safe_write_json",
-            "signature": "file_path: Path | str, data: Any, indent: int=2, create_parents: bool=True, default: Callable[[Any], Any] | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_json_io_boundary_3333.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 790,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b0391986d619b1f2a72f418cefcbe36977711a0daf6b01c15c97b07663671ce",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-LOGGING-PY-1F8F2A2987FA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/logging.py",
-      "purpose": "Logging utilities for upstream_drift_tools.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "DEFAULT_SEED",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "JsonFormatter",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LogExecutionTime",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "SIMPLE_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_logger",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "init_default_logging",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "log_execution_time",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "set_seeds",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "setup_logging",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_logging.py",
-          "tests/shared/python/utils/test_logging.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1624,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d197d25677da0a00804be56709078b41f8c989ad049ea480fa59b74f63652c3d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-PATHS-PY-BC589D08F73C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/paths.py",
-      "purpose": "Canonical repository path utilities.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "get_repo_root",
-            "signature": "start_path: Path | str | None=None"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_paths.py",
-          "tests/shared/python/utils/test_paths.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 21107,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bb461c0fa22b683fff78bef11b0a7d5e5d0e81a237fa60ea658a6e31ed4e6e88",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-STATE-MANAGER-PY-B9C9F4EFAF02",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/state_manager.py",
-      "purpose": "# File: state_manager.py",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "StateManager",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_state_manager",
-            "signature": "base_directory: str='saved_states'"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/sidekick/tests/test_json_io_boundary_3333.py",
-          "src/shared/python/sidekick/tests/test_state_manager.py",
-          "src/shared/python/sidekick/tests/test_state_manager_atomic.py",
-          "src/shared/python/sidekick/tests/test_state_manager_side_effects.py",
-          "tests/shared/python/utils/test_state_manager.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 28481,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c630e3499ca0608f9b23b30c4723c9a6a060bf9ade8fbec5a896f08b61956140",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-UNIT-CONSTANTS-PY-EF9FD0AF9579",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/unit_constants.py",
-      "purpose": "Unit Conversion Constants",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "ACRE_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ANGSTROM_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ATMOSPHERE_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ATM_TO_KPA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "AVOGADRO_NUMBER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BAR_TO_KPA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BAR_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BOLTZMANN_CONSTANT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_FOOT_HOUR_FAHRENHEIT_TO_W_PER_M_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_HOUR_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_LB_TO_J_PER_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_LB_TO_MJ_PER_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_POUND_FAHRENHEIT_TO_J_PER_KG_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_PER_SQ_FOOT_HOUR_FAHRENHEIT_TO_W_PER_M2_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BTU_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALORIE_PER_SECOND_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CALORIE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CAL_PER_CM_SECOND_CELSIUS_TO_W_PER_M_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CAL_PER_GRAM_CELSIUS_TO_J_PER_KG_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CELSIUS_OFFSET",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CENTIMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CENTIPOISE_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CENTISTOKE_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CM_H2O_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CP_WATER_LIQUID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CP_WATER_VAPOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_CENTIMETER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_FOOT_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_INCH_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_METER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CU_MILLIMETER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DAY_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_AIR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_CO2",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_CO",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_HYDROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_METHANE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_NITROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_OXYGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_STP_WATER_VAPOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DENSITY_WATER_STD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ELECTRON_VOLT_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ERG_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_H2O_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_POUND_PER_SECOND_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_POUND_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_POUND_TO_NEWTON_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "FOOT_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GIGAJOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GIGAPASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GIGAWATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAIN_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_PER_CU_CM_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_PER_LITER_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_PER_SECOND_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAM_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HECTARE_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HORSEPOWER_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOURS_PER_DAY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HOUR_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "H_VAP_WATER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "IMPERIAL_GALLON_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INCH_H2O_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INCH_HG_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INCH_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "JOULE_PER_KG_KELVIN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "JOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KCAL_PER_HOUR_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_CU_METER_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_HOUR_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_MINUTE_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_PER_SECOND_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KG_TO_LB",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOCALORIE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOGRAM_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOJOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOPASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOWATT_HOUR_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "KILOWATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LB_TO_G",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LB_TO_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LITER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LONG_TON_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAJOULE_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAPASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAWATT_HOUR_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MEGAWATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "METER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "METRIC_HORSEPOWER_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "METRIC_TON_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MICROMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILE_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLIBAR_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLIGRAM_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLILITER_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MILLIMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIL_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MINUTE_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIN_BASIS_MOLES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MMBTU_PER_HOUR_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MMHG_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MOLAR_VOLUME_STP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MOLAR_VOLUME_STP_OLD",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_AIR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_AMMONIA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_CARBON_DIOXIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_CARBON_MONOXIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_HYDROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_HYDROGEN_SULFIDE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_METHANE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_NITROGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_OXYGEN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MW_WATER_VAPOR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NANOMETER_TO_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NTP_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "NTP_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "OUNCE_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PASCAL_SECOND_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PASCAL_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POISE_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_FORCE_INCH_TO_NEWTON_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_CU_FOOT_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_FOOT_SECOND_TO_PASCAL_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_GALLON_TO_KG_PER_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_HOUR_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_MINUTE_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_PER_SECOND_TO_KG_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "POUND_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PSI_TO_KPA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PSI_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RANKINE_RATIO",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "R_UNIVERSAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "R_UNIVERSAL_KMOL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SATP_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SATP_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_60F_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_70F_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCFM_TO_CU_METER_PER_HOUR_AT_60F",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SECOND_TO_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SHORT_TON_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SLUG_TO_KILOGRAM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_CENTIMETER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_FOOT_PER_SECOND_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_FOOT_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_INCH_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_KILOMETER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_METER_PER_SECOND_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_METER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_MILLIMETER_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQ_YARD_TO_SQ_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STANDARD_GRAVITY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STOKE_TO_SQ_METER_PER_SECOND",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STP_OLD_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STP_PRESSURE_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STP_TEMPERATURE_K",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "THERM_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TORR_TO_PASCAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TPD_TO_LB",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_ALIASES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_BTU_LB",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_KG_HR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_LB_HR",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_MG_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_MJ_KG",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_SCFM",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIT_LABEL_WT_PERCENT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_BARREL_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_FLUID_OUNCE_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_GALLON_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_PINT_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "US_QUART_TO_CU_METER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "VALIDATION_RANGES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_HOUR_TO_JOULE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_PER_METER_KELVIN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_PER_SQ_METER_KELVIN",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATT_TO_WATT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "YARD_TO_METER",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/pendulum_simulator/tests/test_unit_converter.py",
-          "src/shared/python/sidekick/tests/process_calculators/test_mmhg_constant_unified_3676.py",
-          "tests/shared/python/utils/test_unit_constants.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "MPa",
-          "Nm",
-          "Pa",
-          "W",
-          "bar",
-          "cm",
-          "g",
-          "kPa",
-          "kg",
-          "m/s",
-          "mm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3628,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b450f4673c08c1fbb3e32dce1852d3b5f6ba30ea49265e615a63b42a9ea54af2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-WORKSPACE-CONTRACT-PY-49EC6AF982EC",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/workspace_contract.py",
-      "purpose": "Formal Protocol contract for calculator-local workspace facades.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WorkspaceContract",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/contracts/test_workspace_contract_conformance.py",
-          "tests/shared/python/sidekick/ui/test_tools_sidebar_calculator_workspace.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/contracts/test_workspace_contract_conformance.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2556,
-      "classification": "calculation",
-      "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "cfb4c661ff7e3df66988eaa8411c79d54f355a7352396011338feda28b0e49e3",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-INIT-PY-74FCAD42F570",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/__init__.py",
-      "purpose": "Signal Processing Toolkit - Comprehensive Signal Analysis Library.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/shared/python/signal_toolkit/test_signal_loader.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

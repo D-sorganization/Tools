@@ -203,7 +203,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "c336c85f8ac91a8875593e27fad1ede47edbe383d80b77108ddf68164e59c62d",
+      "content_sha256_lf": "c3bb67b8227aac627f04fb941047f065d44f9e8fedb2453eeadb52adba900243",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
@@ -211,7 +211,7 @@
       "shard_index": 0
     },
     {
-      "content_sha256_lf": "b88079659fe54ef7e70a24a696e7ee4c469f9c0ef90ed5141f2ff14a83cf4ab8",
+      "content_sha256_lf": "adb29de1dcc89236dd975156c8d18ff5c3e6ac63df2b06f3d87cc8e0912823d6",
       "entry_count": 200,
       "first_path": "scripts/check_mirror_freshness.py",
       "last_path": "src/data_processing/data_processor/web/src/App.tsx",
@@ -243,121 +243,121 @@
       "shard_index": 4
     },
     {
-      "content_sha256_lf": "76ff5a6084ae293ebba09906ad1350d0910720833ad2d225daef213588431982",
+      "content_sha256_lf": "1be90d4f256990118446d74d67bec0eec1570df81d1f43dc0113956f343f46dd",
       "entry_count": 200,
       "first_path": "src/p1am_control_system/frontend/src/lib/dataAge.ts",
-      "last_path": "src/pressure_drop_calculator/python/__init__.py",
+      "last_path": "src/pid_generator/ui/pyqt6/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-005.json",
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "4584890fb00c505db930bf68d33251bc6cbf8d364c2f7a9e9078ac0a24517245",
+      "content_sha256_lf": "4e05cb63a814f2ff9bc14b25a74829e3888e8c86911ddd7821d17f59514ada47",
       "entry_count": 200,
-      "first_path": "src/pressure_drop_calculator/python/pressure_drop_calculator/__init__.py",
-      "last_path": "src/rate_of_closure/simulation/_kinetics_dynamics.py",
+      "first_path": "src/pid_generator/ui/pyqt6/main_window.py",
+      "last_path": "src/rate_of_closure/plotting/catalog_contract.py",
       "path": "manuals/tools/manifests/module-inventory/entries-006.json",
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "81f6756a09c2b5b0272a021165941315afa674b3414aaa07a5f1d2d889f208be",
+      "content_sha256_lf": "8849497496c281b9a9a74ebd61f485e9013de2f10cd50cc27accf987af872300",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/simulation/_kinetics_series.py",
-      "last_path": "src/rate_of_closure/ui/pyqt6/view_compositor.py",
+      "first_path": "src/rate_of_closure/plotting/optional_values.py",
+      "last_path": "src/rate_of_closure/ui/pyqt6/variation_results.py",
       "path": "manuals/tools/manifests/module-inventory/entries-007.json",
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "ab8676832ea45bd8f21e415b5071df2c7ca3c4260e7582abecd6a5e137441b14",
+      "content_sha256_lf": "dbde949e9e916fae9a300d327091dedf79524210082c42eb3f97b27097f864d9",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/ui/pyqt6/visual_state_frame.py",
-      "last_path": "src/rate_of_closure/web/src/components/SimulationTargetWorkflow.test.tsx",
+      "first_path": "src/rate_of_closure/ui/pyqt6/variation_rows.py",
+      "last_path": "src/rate_of_closure/web/src/components/ScalarEnsembleScatter.test.tsx",
       "path": "manuals/tools/manifests/module-inventory/entries-008.json",
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "b6b3cbc8a89dae460fd061c6e314db7c4c85bec7250e236b75e4f3845cfdc052",
+      "content_sha256_lf": "9686a00a14b92beb02ec92f13af196504d9c2e8ba9b1eee77561fad205005cb8",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/components/SolverPanel.tsx",
-      "last_path": "src/rate_of_closure/web/src/model/glossary.ts",
+      "first_path": "src/rate_of_closure/web/src/components/ScalarEnsembleScatter.tsx",
+      "last_path": "src/rate_of_closure/web/src/model/flightGroundTransfer.test.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-009.json",
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "d6fbc81e524134f26280907e1f7746cfe48466b9f932996c5f8e55147a8404f4",
+      "content_sha256_lf": "41ef4d18f252dd6f7b1d4880f9ab0c846c4fe1f2e480ad75a1108ad907162ce5",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/glossaryEntriesAL.ts",
-      "last_path": "src/rate_of_closure/web/src/model/variationExecution.worker.ts",
+      "first_path": "src/rate_of_closure/web/src/model/flightGroundTransfer.ts",
+      "last_path": "src/rate_of_closure/web/src/model/turfContact.test.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-010.json",
       "shard_index": 10
     },
     {
-      "content_sha256_lf": "27fe37d0213896ff20da48a7bab5e5e7f4d0e967933acdccf872d0189c8e148e",
+      "content_sha256_lf": "418c705d4f37be198813dbd36cacc291cf71caec89264c3ba8dfb42f641561e7",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/variationExecutionMetadata.test.ts",
-      "last_path": "src/shared/python/ai/adapters/gemini_adapter.py",
+      "first_path": "src/rate_of_closure/web/src/model/turfContact.ts",
+      "last_path": "src/shared/python/ai/_onnx_preflight.py",
       "path": "manuals/tools/manifests/module-inventory/entries-011.json",
       "shard_index": 11
     },
     {
-      "content_sha256_lf": "c0f5f13ba68cea9da4a9db983e48fc3376eaa7b5f0712d30b43622772fc9a7f3",
+      "content_sha256_lf": "45de7e63692ec6297465baaf9db500bb60657b1e4a1a46b634fd348d8902b64e",
       "entry_count": 200,
-      "first_path": "src/shared/python/ai/adapters/gemini_cli_adapter.py",
-      "last_path": "src/shared/python/codemap/watcher.py",
+      "first_path": "src/shared/python/ai/_settings_model.py",
+      "last_path": "src/shared/python/codemap/_lang_js.py",
       "path": "manuals/tools/manifests/module-inventory/entries-012.json",
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "f4047d38427bcac5698187cd2f3101a58bec8adbd7cdc693b7f084ce48141965",
+      "content_sha256_lf": "bbc002a5bb78a2edfaa393f00f2d39ff23959f77ddb7d509e708c38bdd35e15a",
       "entry_count": 200,
-      "first_path": "src/shared/python/compatibility.py",
-      "last_path": "src/shared/python/sidekick/agent/action_service.py",
+      "first_path": "src/shared/python/codemap/_lang_markdown.py",
+      "last_path": "src/shared/python/rotation_transforms/reference_frame_operations.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "24a1c4d0f7af9645e9eb3e1877e0c00320008af15969f2a1ef90b113fa60de18",
+      "content_sha256_lf": "de355ea574d4b4f537cd382d23e30ba02ec3eed80d34015700777fe05220621b",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/agent/canonical_tools.py",
-      "last_path": "src/shared/python/signal_toolkit/__init__.py",
+      "first_path": "src/shared/python/rotation_transforms/rotation.py",
+      "last_path": "src/shared/python/sidekick/ui/widgets/data_processor_widget.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "ff0ebf2abe80aed7b1ef0caa5046988a873311e95dd759de62b417155dc60307",
+      "content_sha256_lf": "4cd9405a2b19d56aa14c898a71a24e40ea06d1538493f17398282fd7a6f6f956",
       "entry_count": 200,
-      "first_path": "src/shared/python/signal_toolkit/_lazy_map.py",
-      "last_path": "src/shared/python/swing_sim/variation/identity_contracts.py",
+      "first_path": "src/shared/python/sidekick/ui/widgets/mixins/__init__.py",
+      "last_path": "src/shared/python/swing_sim/variation/analysis.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "4fc80472f229dfe655297584e9bbdecaefa1e1e6f94f38c3e6ccb061a67bc34d",
+      "content_sha256_lf": "fd826a0b0bec50ea1a00064b944a31d142f9f811c7a4b1a961eba53f817789b8",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/variation/morris_design.py",
-      "last_path": "src/vessel_drafter/python/vessel_drafter/projects/__init__.py",
+      "first_path": "src/shared/python/swing_sim/variation/contextual_registry.py",
+      "last_path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_window.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "7ab9ff49cd9673c87eb4c173ae6977f04ac25b7a98696690b3abfc655c4bcb74",
-      "entry_count": 48,
-      "first_path": "src/vessel_drafter/python/vessel_drafter/projects/cylindrical_bath_layout.py",
+      "content_sha256_lf": "7581021330485fa3cea33b0d26d91fe71d1c3a5a216a2ae14a833ff7889da78b",
+      "entry_count": 60,
+      "first_path": "src/vessel_drafter/python/vessel_drafter/gui/zoomable_graphics_view.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "41636380954b0a286cb0bbc39a04fa6a5367fb28931f44edab324e065745e354",
+  "source_tree_sha256": "3f9efcce69946da53469e68d16e3661bf2bdcd3dae30555821ab837d76d33446",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
       "not-applicable": 2638,
-      "provisional": 809
+      "provisional": 821
     },
     "blocked_count": 1,
-    "calculation_count": 809,
+    "calculation_count": 821,
     "classification_counts": {
-      "calculation": 809,
+      "calculation": 821,
       "non-calculation": 2639
     },
     "family_counts": {
@@ -369,7 +369,7 @@
       "media-processing-non-calculation": 74,
       "native-kernels-calculation": 10,
       "native-kernels-non-calculation": 61,
-      "pendulum-calculation": 146,
+      "pendulum-calculation": 158,
       "process-calculators-calculation": 59,
       "rate-of-closure-calculation": 161,
       "rate-of-closure-non-calculation": 889,
@@ -382,13 +382,13 @@
       "swing-simulation-calculation": 58,
       "swing-simulation-non-calculation": 136
     },
-    "module_count": 3448,
+    "module_count": 3460,
     "non_calculation_count": 2639,
-    "provisional_count": 809,
+    "provisional_count": 821,
     "review_status_counts": {
       "blocked": 1,
       "inventory-baseline": 2638,
-      "review-required": 809
+      "review-required": 821
     }
   }
 }
