@@ -9,6 +9,13 @@
  * Physics summary (full derivations in the Python docstrings):
  * - Impact: 1-D COR impulse along the lofted face normal plus the 2/7
  *   rolling-cap tangential transfer -> launch speed, angle, backspin.
+ * - 2-D stroke (#4800 P1): aim, face, path, attack angle, and strike
+ *   location, `swing_sim.impact` sign conventions verbatim (+ = open /
+ *   in-to-out / hitting up / toe / high; aim + = right of target; face
+ *   and path measured off the aim line). Start line = face azimuth
+ *   plus the 2/7-tangential drag toward the path; sidespin + =
+ *   draw-side; off-center strikes shrink the head's effective mass via
+ *   1/(1/M + r^2/I) (`headMoiKgM2` is the P3 mesh-MOI hook).
  * - Skid: sliding friction decelerates the ball and spins it up until
  *   v = omega r (pure roll at (5 v0 + 2 omega0 r) / 7).
  * - Green speed: the USGA stimpmeter (36 in ramp, 20 deg release,
@@ -22,6 +29,8 @@ export const GOLF_BALL_MASS_KG = 0.04593;
 export const GOLF_BALL_RADIUS_M = 0.04267 / 2.0;
 export const HOLE_RADIUS_M = 0.054;
 export const DEFAULT_PUTTER_COR = 0.78;
+/** Typical putter-head MOI about the CG heel-toe axis [kg m^2]. */
+export const DEFAULT_PUTTER_MOI_KG_M2 = 4.5e-4;
 export const DEFAULT_SLIDING_MU = 0.4;
 
 const FOOT_M = 0.3048;
@@ -45,8 +54,18 @@ export interface PutterSpec {
 
 /** H3-local minimal putters (H1 club-library reconciliation note). */
 export const MINIMAL_PUTTERS: PutterSpec[] = [
-  { name: "Blade Putter", headMassKg: 0.35, loftDeg: 3.0, cor: DEFAULT_PUTTER_COR },
-  { name: "Mallet Putter", headMassKg: 0.36, loftDeg: 3.0, cor: DEFAULT_PUTTER_COR },
+  {
+    name: "Blade Putter",
+    headMassKg: 0.35,
+    loftDeg: 3.0,
+    cor: DEFAULT_PUTTER_COR,
+  },
+  {
+    name: "Mallet Putter",
+    headMassKg: 0.36,
+    loftDeg: 3.0,
+    cor: DEFAULT_PUTTER_COR,
+  },
 ];
 
 export interface PuttLaunch {
@@ -56,37 +75,137 @@ export interface PuttLaunch {
   /** Topspin positive; a struck putt starts negative (backspin). */
   spinRadS: number;
   effectiveLoftDeg: number;
+  /**
+   * Start direction [deg] off the target line, + = right. Always set
+   * by `strike`; optional only for pre-#4800 1-D literals (0 limit).
+   */
+  startAzimuthDeg?: number;
+  /** Spin about the up axis [rad/s]; + = draw-side (ball turns left). */
+  sidespinRadS?: number;
 }
 
-/** Putter-ball impact (COR impulse + 2/7 tangential cap). */
+/** 2-D stroke/impact parameters for `strike` (#4800 P1); all default 0. */
+export interface StrikeOptions {
+  /** Start-line aim off the target line [deg]; + = right. */
+  aimDeg?: number;
+  /** Face angle off the aim line [deg]; + = open. */
+  faceAngleDeg?: number;
+  /** Putter path off the aim line [deg]; + = in-to-out. */
+  pathAngleDeg?: number;
+  /** Attack angle [deg]; + = hitting up. */
+  attackAngleDeg?: number;
+  /** Strike location toward the toe [mm]. */
+  strikeOffsetToeMm?: number;
+  /** Strike location up the face [mm]. */
+  strikeOffsetHighMm?: number;
+  /** P3 hook: head MOI about CG [kg m^2]; default catalogue value. */
+  headMoiKgM2?: number;
+}
+
+/**
+ * Putter-ball impact (COR impulse + 2/7 tangential cap).
+ *
+ * Twin of the Python `strike` op-for-op: the stroke-plane solve is the
+ * H3 model at the spin loft (loft - attack) rotated back by the attack
+ * angle, the horizontal face-vs-path split follows the 2/7 rolling
+ * cap, and off-center strikes reduce the head's effective mass by
+ * 1/(1/M + r^2/I). Defaults are bit-identical to the pre-#4800 1-D
+ * results.
+ */
 export function strike(
   putter: PutterSpec,
   clubheadSpeedMps: number,
   shaftLeanDeg = 0.0,
+  options: StrikeOptions = {},
 ): PuttLaunch {
   if (!(clubheadSpeedMps > 0 && clubheadSpeedMps <= 10)) {
     throw new Error("clubheadSpeedMps must be in (0, 10]");
+  }
+  if (!(Math.abs(shaftLeanDeg) <= 10)) {
+    throw new Error("shaft lean must be within +/-10 deg");
+  }
+  const aimDeg = options.aimDeg ?? 0.0;
+  const faceAngleDeg = options.faceAngleDeg ?? 0.0;
+  const pathAngleDeg = options.pathAngleDeg ?? 0.0;
+  const attackAngleDeg = options.attackAngleDeg ?? 0.0;
+  const strikeOffsetToeMm = options.strikeOffsetToeMm ?? 0.0;
+  const strikeOffsetHighMm = options.strikeOffsetHighMm ?? 0.0;
+  const bounds: Array<[string, number, number]> = [
+    ["aimDeg", aimDeg, 45.0],
+    ["faceAngleDeg", faceAngleDeg, 20.0],
+    ["pathAngleDeg", pathAngleDeg, 20.0],
+    ["attackAngleDeg", attackAngleDeg, 10.0],
+    ["strikeOffsetToeMm", strikeOffsetToeMm, 40.0],
+    ["strikeOffsetHighMm", strikeOffsetHighMm, 20.0],
+  ];
+  for (const [name, value, bound] of bounds) {
+    if (!Number.isFinite(value) || Math.abs(value) > bound) {
+      throw new Error(`${name} must be within +/-${bound}`);
+    }
+  }
+  if (options.headMoiKgM2 !== undefined) {
+    const moi = options.headMoiKgM2;
+    if (!Number.isFinite(moi) || moi < 1e-5 || moi > 1e-2) {
+      throw new Error("head MOI must be plausible [kg m^2]");
+    }
   }
   const effectiveLoftDeg = putter.loftDeg + shaftLeanDeg;
   if (effectiveLoftDeg < -2 || effectiveLoftDeg > 15) {
     throw new Error("effective loft must stay in [-2, 15] deg");
   }
+
+  // Off-center strike: scalar effective-mass reduction 1/(1/M + r^2/I).
+  const offsetRM = Math.hypot(strikeOffsetToeMm, strikeOffsetHighMm) * 1e-3;
+  let headMassEff = putter.headMassKg;
+  if (offsetRM > 0.0) {
+    const moi = options.headMoiKgM2 ?? DEFAULT_PUTTER_MOI_KG_M2;
+    headMassEff = 1.0 / (1.0 / putter.headMassKg + (offsetRM * offsetRM) / moi);
+  }
+
   const delta = (effectiveLoftDeg * Math.PI) / 180.0;
-  const massRatio = putter.headMassKg / (putter.headMassKg + GOLF_BALL_MASS_KG);
+  const alpha = (attackAngleDeg * Math.PI) / 180.0;
+  // Spin loft: face-normal-to-velocity angle in the stroke plane.
+  const beta = delta - alpha;
+  const massRatio = headMassEff / (headMassEff + GOLF_BALL_MASS_KG);
   const transfer = (1.0 + putter.cor) * massRatio;
-  const vNormal = transfer * clubheadSpeedMps * Math.cos(delta);
-  const uTangential = clubheadSpeedMps * Math.sin(delta);
+
+  // Stroke-plane solve (H3 model in the velocity-aligned frame).
+  const vNormal = transfer * clubheadSpeedMps * Math.cos(beta);
+  const uTangential = clubheadSpeedMps * Math.sin(beta);
   const vTangential = ROLLING_CAP * uTangential;
   const spinRadS = (-(1.0 - ROLLING_CAP) * uTangential) / GOLF_BALL_RADIUS_M;
-  const horizontal =
-    vNormal * Math.cos(delta) - vTangential * Math.sin(delta);
-  const vertical = vNormal * Math.sin(delta) + vTangential * Math.cos(delta);
+  const along = vNormal * Math.cos(beta) - vTangential * Math.sin(beta);
+  const lift = vNormal * Math.sin(beta) + vTangential * Math.cos(beta);
+  // Rotate by the attack angle back to horizontal/vertical.
+  const cosA = Math.cos(alpha);
+  const sinA = Math.sin(alpha);
+  let horizontal = along * cosA - lift * sinA;
+  let vertical = along * sinA + lift * cosA;
+
+  // Horizontal face-vs-path split: normal impulse along the face
+  // azimuth, 2/7 tangential impulse toward the path.
+  const faceToPath = ((pathAngleDeg - faceAngleDeg) * Math.PI) / 180.0;
+  const sinFP = Math.sin(faceToPath);
+  const cosFP = Math.cos(faceToPath);
+  const deflectionRad = Math.atan2(ROLLING_CAP * sinFP, transfer * cosFP);
+  const startAzimuthDeg =
+    aimDeg + faceAngleDeg + (deflectionRad * 180.0) / Math.PI;
+  // Mismatch trims the normal impulse; exactly 1.0 when square.
+  const scale = Math.hypot(transfer * cosFP, ROLLING_CAP * sinFP) / transfer;
+  horizontal *= scale;
+  vertical *= scale;
+  const sidespinRadS =
+    ((1.0 - ROLLING_CAP) * clubheadSpeedMps * cosA * sinFP) /
+    GOLF_BALL_RADIUS_M;
+
   return {
     ballSpeedMps: Math.hypot(horizontal, vertical),
     launchAngleDeg: (Math.atan2(vertical, horizontal) * 180.0) / Math.PI,
     horizontalSpeedMps: horizontal,
     spinRadS,
     effectiveLoftDeg,
+    startAzimuthDeg,
+    sidespinRadS,
   };
 }
 
@@ -194,7 +313,8 @@ export function simulatePutt(
   if (!(launch.horizontalSpeedMps > 0)) {
     throw new Error("putt must start moving");
   }
-  const muSlide = green.muSlide === undefined ? DEFAULT_SLIDING_MU : green.muSlide;
+  const muSlide =
+    green.muSlide === undefined ? DEFAULT_SLIDING_MU : green.muSlide;
   if (
     !Number.isFinite(green.gradePercent) ||
     !(green.gradePercent >= 0 && green.gradePercent <= 10)
