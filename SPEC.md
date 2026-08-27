@@ -27,10 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.26                                    |
+| **Spec Version**        | 1.18.27                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Deterministic Club-View Render Work Budget (#4759)
+
+Version 1.18.27 measures the worst-library-mesh render's CPU work rather than
+hosted-runner wall scheduling. The former wall-clock assertion could fail when
+sibling xdist workers descheduled the process even though the unchanged draw
+completed within its declared CPU budget. The 200 ms playback cadence and
+0.5 s render-work ceiling remain unchanged; this is test determinism, not a
+relaxation of the interactive performance contract.
 
 ### 2026-08-26 Execution-Capability Packaging Governance (#4756 / #4142 R10.3)
 
@@ -5367,6 +5376,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.27 | test(rate-of-closure, #4759): measure the worst-library-mesh draw's bounded CPU work with a monotonic process clock so parallel hosted-runner scheduling cannot masquerade as a rendering regression. Preserve the 200 ms playback cadence and 0.5 s work ceiling. |
 | 2026-08-26 | 1.18.26 | fix(rate-of-closure, #4756 / #4142 R10.3): reconcile the packaged locus-execution authority with the fail-closed visualization package-data governance exposed by both hosted Python matrices. Explicitly classify the named JSON as legitimate feature-owned, non-visualization package data while continuing to reject undeclared entries; retain exact-wheel, Python/TypeScript parity, and scientific-boundary requirements. |
 | 2026-08-26 | 1.18.25 | feat(rate-of-closure, #4756 / #4142 R10.3): replace implicit global/localized locus inference with one packaged, typed execution-capability authority for all 31 known registry inputs. Bind Python and TypeScript to exact whole-run, half-open temporal, topological-point, adapter, and unsupported semantics; fail closed on registry drift or undeclared loci; retain topological control joints as distinct from spatial traces. Supply the standalone web mirror through the governed byte-identical vendoring map instead of an import above `web/`. Keep matched visual-evidence governance fail-closed for shipped React surfaces while excluding test-only `.test.tsx` and `.spec.tsx` modules that cannot alter the rendered product. Advance the epic ledger to 24 verified / 7 partial without implying anatomical attribution, human validation, or coaching authority. |
 | 2026-08-26 | 1.18.24 | test(rate-of-closure, #4754 / #4142 R10.4): requalify canonical variation execution documents and persistence against protected base `cff2909f1585273e10fa49165bfab8521e889da1`; bind the merged implementation, current Python/TypeScript/downstream evidence, and explicit historical auxiliary-failure adjudication in a fail-closed audit. Advance the epic ledger to 23 verified / 8 partial while retaining scientific, human-validation, identifiability, and coaching boundaries. |
