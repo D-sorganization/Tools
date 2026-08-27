@@ -3,6 +3,48 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 234,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0b2ad354f1faee80c23aced10974585865321a10d96b09d52abcb7c442f1132a",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-CATALOG-ENTRY-TYPES-PY-28EB4754BD3F",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/plotting/_catalog_entry_types.py",
+      "purpose": "Private type aliases shared by plotting catalog data modules.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4654,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12863,99 +12905,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 6179,
-      "classification": "calculation",
-      "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "8caa5d594718c356cb137422dab23a80a18c1c7fd7588cf97a1c25e76576adef",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-GEOMETRY-RENDERING-PY-805B235E4C54",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_geometry_rendering.py",
-      "purpose": "Rendering helpers for prepared geometric variability data.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "clear_arc_views",
-            "signature": "main_canvas, variability_canvas"
-          },
-          {
-            "kind": "function",
-            "name": "confidence_ellipsoid_legend",
-            "signature": "confidence_level: float"
-          },
-          {
-            "kind": "function",
-            "name": "draw_arc_trials",
-            "signature": "axes: Any, overlay: ArcOverlayData, selected_trial: int | None, cohort_colors: Mapping[TrialEvaluationStatus, str]"
-          },
-          {
-            "kind": "function",
-            "name": "draw_confidence_ellipsoid_mesh",
-            "signature": "axes: Any, mesh: ConfidenceEllipsoidMesh"
-          },
-          {
-            "kind": "function",
-            "name": "draw_principal_spread",
-            "signature": "axes: Any, data: DispersionMetricVariabilityData"
-          },
-          {
-            "kind": "function",
-            "name": "draw_variability_timeline",
-            "signature": "canvas: Any, data: DispersionMetricVariabilityData"
-          },
-          {
-            "kind": "function",
-            "name": "principal_spread_legend",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "set_app_frame_axes",
-            "signature": "axes"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_confidence_ellipsoid_mesh.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

@@ -3,6 +3,122 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2595,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9b3f0281ece8e41cc7b2371ae29358fe6fc1718297799340eaae27a217757d4a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-PYTHON-SETUP-PY-AB2D40B84F8D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/python/setup.py",
+      "purpose": "Setup script for Star Wars RRT Path Planner - Python Version",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/your-repo/star-wars-rrt-planner"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "read_readme",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "read_requirements",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "benchmarks/test_data_processor_baseline.py",
+          "src/data_processing/data_processor/python/tests/conftest.py",
+          "src/document_processing/pdf_renamer/tests/conftest.py",
+          "src/media_processing/video_processor/apps/web/test/setup.ts",
+          "src/movement_optimizer/tests/conftest.py",
+          "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
+          "src/p1am_control_system/backend/tests/test_database.py",
+          "src/p1am_control_system/backend/tests/test_read_auth.py",
+          "src/p1am_control_system/backend/tests/test_temperature_controller.py",
+          "src/p1am_control_system/backend/tests/test_temperature_models.py",
+          "src/p1am_control_system/frontend/src/test/setup.ts",
+          "src/pendulum_simulator/tests/test_side_panel_tabs.py",
+          "src/rate_of_closure/web/src/test/setup.ts",
+          "src/rotation_converter/web/src/test/setup.ts",
+          "src/rrt_path_planner/matlab/tests/test_system.m",
+          "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/programmatic_pid/tests/test_pipeline_e2e.py",
+          "src/shared/python/sidekick/tests/conftest.py",
+          "src/shared/python/sidekick/tests/test_launcher_factory.py",
+          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
+          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
+          "src/web_applications/urdf_viewer/tests/conftest.py",
+          "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/ops/test_release_workflow.py",
+          "tests/programmatic_pid/test_controls.py",
+          "tests/programmatic_pid/test_equipment.py",
+          "tests/programmatic_pid/test_instruments.py",
+          "tests/programmatic_pid/test_streams.py",
+          "tests/programmatic_pid/test_title_block.py",
+          "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
+          "tests/rate_of_closure/test_ball_setup.py",
+          "tests/rate_of_closure/test_ball_setup_parity.py",
+          "tests/rate_of_closure/test_morris_authority_child.py",
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_morris_workspace.py",
+          "tests/rate_of_closure/test_visualization_tab_manifest.py",
+          "tests/scientific_modeling/test_star_wars_rrt_perf.py",
+          "tests/shared/python/ai/test_onnx_preflight.py",
+          "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
+          "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/test_debug_utils.py",
+          "tests/test_dry_compliance.py",
+          "tests/test_integration_test_helpers.py",
+          "tests/test_path_setup.py",
+          "tests/test_test_utils.py",
+          "tests/unit/sidekick/test_sidekick_f4_collaborators.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/scientific_modeling/test_star_wars_rrt_perf.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 20,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14980,67 +15096,6 @@
         "validation_paths": [
           "tests/shared/python/chat/test_public_contract.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7145,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "52f21d7f0d0cf46d9e420f08815c8adcbc2fcff220c0e6afe8c77744656118f9",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-WORKSPACE-COMMAND-HANDLER-PY-27C7FE6A8CE0",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/workspace_command_handler.py",
-      "purpose": "Headless workspace / plot slash-command controller (ADR-0022, issue #6119).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "WorkspaceCommandHandler",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_workspace_context_block",
-            "signature": "provider: Any"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/chat/test_workspace_command_handler.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
       }
     }
   ],

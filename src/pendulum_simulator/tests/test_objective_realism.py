@@ -1,10 +1,12 @@
 """Contract tests for the objective realism ranking.
 
-The important assertion here is a negative one: the ranking must *report that it
-is not discriminating* when the objectives all sit the same distance from a real
-swing. Without that, a 0.6% spread would get quoted as "golfers optimize X".
+The module-level fixtures deliberately use the **mis-specified** club (#4785) so
+the artifact stays characterised. The corrected-club test at the bottom is the
+one that answers the actual question, and it is where the useful result lives:
+with an inertia-matched club, four objectives tie and centrifugal release
+impulse is measurably worse.
 
-Closes #4780.
+Closes #4780, #4785.
 """
 
 from __future__ import annotations
@@ -28,7 +30,7 @@ _SUBSET = ("clubhead_speed", "centrifugal", "coriolis")
 
 
 def _config(min_hand_speed_ms: float | None = None) -> DownswingConfig:
-    """Feasible baseline, optionally with a hand-speed floor."""
+    """Baseline with the **mis-specified** club (#4785), optionally floored."""
     return DownswingConfig(
         params=_PARAMS,
         node_count=17,
@@ -57,8 +59,8 @@ def test_ranking_is_sorted_most_golf_like_first(ranking) -> None:
     assert all(isinstance(entry, ObjectiveRealism) for entry in ranking.entries)
 
 
-def test_no_objective_reaches_measured_golfer_behaviour(ranking) -> None:
-    """The headline: none of them look like a real swing on this model."""
+def test_no_objective_reaches_measured_behaviour_with_a_bad_club(ranking) -> None:
+    """With 2.1x the real coupling, no objective looks like a real swing."""
     assert not ranking.reaches_measured_behaviour
     assert ranking.mean_deviation > 1.0
     for entry in ranking.entries:
@@ -132,3 +134,29 @@ def test_rejects_an_unknown_objective() -> None:
     """Fails closed rather than silently ranking a smaller set."""
     with pytest.raises(KeyError, match="Unknown swing objective"):
         objective_realism_ranking(_config(), objective_keys=("clubhead_speed", "vibes"))
+
+
+def test_an_inertia_matched_club_makes_the_ranking_meaningful() -> None:
+    """The corrected result (#4785), and the answer to the epic's question.
+
+    With the shipped preset's inertia-matched club every objective lands 5 of 6
+    observables inside the measured bands, and the ranking separates: clubhead
+    speed, Coriolis transfer, energy transfer and impulse transfer are
+    indistinguishable, while **centrifugal release impulse is measurably worse**
+    — it gives up around 1 m/s of clubhead speed and pushes the club/arm rate
+    ratio to the edge of its band.
+    """
+    from double_pendulum_golf.swing_objectives.presets import build_config
+
+    ranking = objective_realism_ranking(build_config())
+
+    assert ranking.mean_deviation < 2.0
+    assert all(entry.inside_count >= 4 for entry in ranking.entries)
+    assert all(entry.feasible for entry in ranking.entries)
+
+    scores = {entry.key: entry.total_deviation for entry in ranking.entries}
+    assert scores["centrifugal"] > scores["clubhead_speed"]
+    assert scores["coriolis"] == pytest.approx(scores["clubhead_speed"], abs=0.05)
+
+    speeds = {entry.key: entry.clubhead_speed_ms for entry in ranking.entries}
+    assert speeds["clubhead_speed"] - speeds["centrifugal"] > 0.5
