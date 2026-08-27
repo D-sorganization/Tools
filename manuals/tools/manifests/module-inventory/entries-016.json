@@ -3,6 +3,975 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 2292,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "7f85052d8733548aabbadf254e572b764efe218ba5e04728d1ca4b80a61ecfcb",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TORQUE-LIBRARY-PY-3352E8027460",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/torque_library.py",
+      "purpose": "Immutable in-memory library for reusable prescribed torque profiles.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TorqueProfileLibrary",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
+          "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
+          "tests/rate_of_closure/test_torque_run_history.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 14154,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "a99394ff24fb76fbb49d912bfa006d821880d65c9adf996f7ab25bdb83d36096",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TORQUE-PROFILES-PY-43199F6EAC5F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/torque_profiles.py",
+      "purpose": "Canonical, UI-neutral prescribed joint-torque profile domain.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FitMetadata",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointTorqueAssignment",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrescribedTorqueProfile",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TorquePolynomial",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TorqueProfileSource",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COEFFICIENT_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TORQUE_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TORQUE_UNIT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_ascending_polynomial",
+            "signature": "coefficients: Sequence[float], time_s: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
+          "src/shared/python/swing_sim/tests/test_torque_profiles.py",
+          "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
+          "tests/rate_of_closure/test_torque_profile_ui.py",
+          "tests/rate_of_closure/test_torque_run_history.py",
+          "tests/rate_of_closure/test_workspace_document.py",
+          "tests/rate_of_closure/test_workspace_torque_session.py"
+        ],
+        "unit_mentions": [
+          "N*m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6992,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "644c67b054e0971befaed128f5d374a0c28939b3967018ce6ce8bf36bc5a9683",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TYPES-PY-581AA5744505",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/types.py",
+      "purpose": "Core swing-simulation value types (frozen dataclasses with DbC validation).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PendulumState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlaneOrientation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SwingSample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SwingTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GRAVITY_M_S2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_COM_RATIO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_INERTIA_SCALING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_LENGTH_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CLUBHEAD_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DAMPING_SHOULDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DAMPING_WRIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHAFT_COM_RATIO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHAFT_LENGTH_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHAFT_MASS_KG",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_force_attribution.py",
+          "src/shared/python/swing_sim/tests/test_localized_torque.py",
+          "src/shared/python/swing_sim/tests/test_parity_rust.py",
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/tests/test_reference.py",
+          "src/shared/python/swing_sim/tests/test_swing_source.py",
+          "src/shared/python/swing_sim/tests/test_types.py",
+          "tests/rate_of_closure/test_kinetics.py",
+          "tests/rate_of_closure/test_localized_torque_web_golden.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rate_of_closure/test_variation_simulation_request.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "ms",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7853,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "259e171461d149141d192d940c114bd6c1f93f2a97c1d21527af70974b8e5313",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-INIT-PY-5F95F06C7E85",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/__init__.py",
+      "purpose": "Shared variation / Monte-Carlo engine (epic #4120, phase V3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_BALL_SETUP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_DELIVERY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_LAUNCH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_SWING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CancelledError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CommonReferenceTrace",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConfidenceEllipsoidSeries",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_HDF5_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_HDF5_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_JSON_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DELIVERY_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DISTRIBUTIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DispersionEllipse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DispersionMetricSeries",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ELLIPSOID_VOLUME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EnsemblePositionTraces",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FLIGHT_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GAUSSIAN_POSITION_CONTENT_REGION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "INSUFFICIENT_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "INVALID_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LARGEST_PRINCIPAL_SIGMA",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LAUNCH_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOW_VARIABILITY_METRICS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityCriteria",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityMetricCriteria",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_DISPERSION_ACCUMULATOR_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_MORRIS_OBSERVATION_CELLS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_MORRIS_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_MORRIS_WORKERS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MIN_CONFIDENCE_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MIN_SAMPLES_FOR_FULL_3D_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODE_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_OBSERVATION_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_OBSERVATION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_PROGRESS_INTERVAL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_REPORT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_REPORT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisDesign",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisExecutionOptions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisFactor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisObservationArchive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisObservations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisOutput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NoiseSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OutputStats",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedIntervention",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PerturbationGroup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionDispersion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionDispersionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponseField",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponsePlotRow",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProgressReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PropagationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RANK_DEFICIENT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RMS_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RankedLowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseAccumulatorSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldInput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SWING_DERIVED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SensitivityResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TRACE_RESAMPLING_POLICY_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TraceResamplingResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariableDef",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariationDataset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_morris",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_paired_intervention",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_confidence_ellipsoids",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_dispersion_metric_series",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_position_dispersion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_position_dispersion_view",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_position_noise_response_field",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dispersion_ellipse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_morris_design",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "find_low_variability_intervals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "find_ranked_low_variability_intervals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "finite_sample_standard_deviation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_morris_design",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iter_position_noise_response_plot_rows",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "keys_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_morris_observation_archive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "morris_design_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "morris_observations_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "morris_observations_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "one_at_a_time_sensitivity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "outputs_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_hdf5",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_variable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resample_position_traces",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "response_field_fingerprint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_variation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_input_block",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_input_chunks",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_inputs",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sensitivity_from_standard_deviations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spearman_matrix",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "summary_stats",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variable_registry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variables_in_category",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_hdf5",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_json",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 1717,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -13951,227 +14920,6 @@
         "test_paths": [
           "tests/folder_tool/test_gui_registration.py",
           "tests/rate_of_closure/test_gui_registration.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 349,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "423556feae5eaa6734e1151f1a40f5761613ee068781fa466bf9421a6072a4dd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-LAUNCH-PYQT6-PY-F82E8AFE828F",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for Vessel Drafter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 121,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "822fe7de8a7765d36c50b01903bf0b3bb8265a5a939df9b1c06a88fa1a889d9c",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-INIT-PY-FCFD9D4C05B9",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/__init__.py",
-      "purpose": "Programmatic drafting utilities for STEP-based geometry exports.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 317,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e6940e962a39f86413978cc4c7cd9fae8ab449f983477688a2059f38442bdfb4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-ANALYSIS-INIT-PY-3A22E2D7288A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/analysis/__init__.py",
-      "purpose": "Analysis helpers for vessel drafter models.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "ComponentMaterialMetric",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MaterialMetricsReport",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "build_material_metrics_report",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2948,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "92d6e6bd34e577f477144ff8388ba64b6749f27182d2968722ca5edb63666059",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-ANALYSIS-VESSEL-DRAFTER-METRICS-PY-7202C191021B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/analysis/vessel_drafter_metrics.py",
-      "purpose": "Volume and mass metrics for the vessel drafter model.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ComponentMaterialMetric",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MaterialMetricsReport",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CUBIC_INCHES_PER_CUBIC_FOOT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SQUARE_INCHES_PER_SQUARE_FOOT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_material_metrics_report",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_metrics.py",
-          "tests/vessel_drafter/test_dbc_lod.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

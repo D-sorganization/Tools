@@ -3,6 +3,282 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9423,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6ecb3a06e4eb705dafd71842105585c676c94dc6986b37dc8795b6763bc2b3e3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-RUNTIME-PY-A48438705A6E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/terminal_runtime.py",
+      "purpose": "Project-scoped runtime for terminal-backed chat agent sessions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProcessLaunchRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalProcessAdapter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalRuntimeError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalSessionRuntime",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BASH_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_POWERSHELL_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SESSION_ENV_ALLOWLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SESSION_ENV_SENSITIVE_PATTERNS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_cli_agent_adapters.py",
+          "tests/shared/python/chat/test_terminal_runtime.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6326,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8a6697123e536f4a98affb14a8b56d6979eff4b7d9dd14521dc06f672f40bfee",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-VOICE-INPUT-MANAGER-PY-63D8D26C9675",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/voice_input_manager.py",
+      "purpose": "Voice-to-text input manager for ChatDockWidget.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VoiceInputManager",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_voice_input.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7050,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "97315713e7dee36d856e87a64ab960bf17515c8d5492693cf54e5612ac46bd63",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-WEBSOCKET-PROTOCOL-PY-31C30ECBE0BA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/websocket_protocol.py",
+      "purpose": "Shared chat WebSocket protocol loop.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ChatWebSocketState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DisconnectLogConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "run_chat_websocket_protocol",
+            "signature": "websocket: WebSocket, session_id: str='new', *, authorize_fn: AuthorizeFn | None=None, chat_service_getter: ChatServiceGetter=_default_chat_service_getter, before_send: BeforeSendHook | None=None, action_handlers: Mapping[str, ActionHandler] | None=None, message_context_getter: MessageContextGetter=_default_message_context, session_info_extra: SessionInfoExtraFn | None=None, log: logging.Logger=logger, disconnect_log: DisconnectLogConfig=_DEFAULT_DISCONNECT_LOG"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_public_contract.py",
+          "tests/shared/python/chat/test_websocket_protocol.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/chat/test_public_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7145,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "52f21d7f0d0cf46d9e420f08815c8adcbc2fcff220c0e6afe8c77744656118f9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-WORKSPACE-COMMAND-HANDLER-PY-27C7FE6A8CE0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/workspace_command_handler.py",
+      "purpose": "Headless workspace / plot slash-command controller (ADR-0022, issue #6119).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WorkspaceCommandHandler",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_workspace_context_block",
+            "signature": "provider: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/chat/test_workspace_command_handler.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 781,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16569,346 +16845,6 @@
           "tests/programmatic_pid/test_profiles_extra.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10637,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "335ab6bf16f0eeaec0944f8c86e6d8aa84203b6fc9233334900314ba10a5b4b2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-RENDERING-PY-7ED158C0CC02",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/rendering.py",
-      "purpose": "Low-level DXF rendering primitives.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_arrow",
-            "signature": "msp: Any, s: Sequence[float], e: Sequence[float], layer: str, color: int | None=None, arrow_size: float=1.6"
-          },
-          {
-            "kind": "function",
-            "name": "add_arrow_head",
-            "signature": "msp: Any, s: Sequence[float], e: Sequence[float], layer: str, color: int | None=None, arrow_size: float=1.6"
-          },
-          {
-            "kind": "function",
-            "name": "add_box",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, layer: str"
-          },
-          {
-            "kind": "function",
-            "name": "add_poly_arrow",
-            "signature": "msp: Any, verts: Sequence[Sequence[float]], layer: str, color: int | None=None, arrow_size: float=1.6"
-          },
-          {
-            "kind": "function",
-            "name": "add_text",
-            "signature": "msp: Any, text: str, x: float, y: float, h: float, layer: str='TEXT', align: str='MIDDLE_CENTER'"
-          },
-          {
-            "kind": "function",
-            "name": "add_text_panel",
-            "signature": "msp: Any, x: float, y: float, w: float, h: float, title: str, lines: Sequence[str | None], text_h: float, text_layer: str, border_layer: str, max_chars: int=42"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_layer",
-            "signature": "doc: Any, name: str, color: int=7, linetype: str='CONTINUOUS'"
-          },
-          {
-            "kind": "function",
-            "name": "ensure_layers",
-            "signature": "doc: Any, spec: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "export_svg_from_dxf",
-            "signature": "spec: dict[str, Any], dxf_path: str | Path, svg_path: str | Path | None, fallback_extent: tuple[float, float, float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "layer_name",
-            "signature": "layer_index: dict[str, str], *candidates: str, default: str='0'"
-          },
-          {
-            "kind": "function",
-            "name": "parse_alignment",
-            "signature": "align: Any"
-          },
-          {
-            "kind": "function",
-            "name": "wrap_text_lines",
-            "signature": "text: str, width: int"
-          }
-        ],
-        "test_paths": [
-          "src/movement_optimizer/tests/test_rendering.py",
-          "tests/programmatic_pid/test_controls.py",
-          "tests/programmatic_pid/test_instruments.py",
-          "tests/programmatic_pid/test_rendering.py",
-          "tests/programmatic_pid/test_streams.py",
-          "tests/programmatic_pid/test_title_block.py"
-        ],
-        "unit_mentions": [
-          "cm",
-          "mm",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10143,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0076685d96593ab21d37d7649b20553204b6ef6340d734551c944decc91cd1b8",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-SPEC-LOADER-PY-1451DECDC011",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/spec_loader.py",
-      "purpose": "Spec loading, accessor utilities, and configuration extraction.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SpecAccessor",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "ensure_drawing",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_drawing",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_layer_config",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_layout_config",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_project",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "get_text_config",
-            "signature": "spec: SpecDict"
-          },
-          {
-            "kind": "function",
-            "name": "load_spec",
-            "signature": "path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "prepare_spec",
-            "signature": "spec_path: str | Path, profile: str | None"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_profiles.py",
-          "tests/programmatic_pid/test_spec_loader.py"
-        ],
-        "unit_mentions": [
-          "g"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5348,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c9959bf64a08fa281ebfdff460dc578dda1237284bc73e5f86dcd17a20b5d7b1",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-STREAMS-PY-79086A024825",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/streams.py",
-      "purpose": "Stream (pipe / flow path) rendering.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_stream",
-            "signature": "msp: Any, stream: dict[str, Any], text_h: float, text_layer: str, equipment_by_id: dict[str, dict[str, Any]], arrow_size: float, label_scale: float=0.82, label_placer: Any | None=None, draw_label_leader: bool=False, leader_layer: str='LEADERS'"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_endpoint",
-            "signature": "endpoint: dict[str, Any] | None, equipment_by_id: dict[str, dict[str, Any]]"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_streams.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7521,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ee806999cf28b41781ea71d773320edd4175172853bb6b40f9fccde541b9f7e2",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-TITLE-BLOCK-PY-0EB02D220B6B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/title_block.py",
-      "purpose": "Title block, notes panels, and mass balance display.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "add_notes",
-            "signature": "msp: Any, spec: dict[str, Any], text_cfg: dict[str, float], text_layer: str, notes_layer: str, layout_regions: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "add_title_block",
-            "signature": "msp: Any, spec: dict[str, Any], text_cfg: dict[str, float], text_layer: str, notes_layer: str, title_box: tuple[float, float, float, float]"
-          },
-          {
-            "kind": "function",
-            "name": "get_mass_balance_values",
-            "signature": "spec: dict[str, Any]"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_title_block.py"
-        ],
-        "unit_mentions": [
-          "kg"
-        ],
         "validation_paths": []
       }
     }
