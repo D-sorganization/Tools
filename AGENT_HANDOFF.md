@@ -76,6 +76,10 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   manifest test rejected this legitimate non-visualization authority even
   though the exact wheel gate passed. The PR now classifies that named file as
   feature-owned package data while retaining rejection of undeclared entries.
+  The next hosted 3.12 matrix exposed an unrelated wall-clock-only club-view
+  performance flake under xdist contention; the same fixed 0.5 s work budget is
+  now measured with the process CPU clock while the 200 ms cadence remains
+  unchanged.
 
 ## Must-Read Architecture Pointers
 
