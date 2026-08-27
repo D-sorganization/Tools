@@ -306,10 +306,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5380,
+      "bytes_lf": 5604,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b7bd34b4d411ff40b7a72af5f0fda1bc50a69aef2176e15880f5b9d45ac473c2",
+      "content_sha256_lf": "5e4209f916dcd261af8a35933a879bdca4e4471ed802137e4b083400652aa430",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-RATE-VISUAL-EVIDENCE-CHANGES-PY-8242FB71D4B6",
       "language": "python",

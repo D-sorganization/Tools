@@ -68,7 +68,9 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   closed on registry drift and forbidden loci. The ledger is 24 verified / 7
   partial. A clean commit-qualified wheel loaded all 31 packaged capabilities
   and verified 76 immutable web assets; execution semantics are not scientific
-  or coaching approval.
+  or coaching approval. The visual co-change guard now excludes test-only TSX
+  modules while retaining fail-closed evidence requirements for shipped React
+  surfaces.
 
 ## Must-Read Architecture Pointers
 

@@ -211,7 +211,7 @@
       "shard_index": 0
     },
     {
-      "content_sha256_lf": "22ddb9d33c4bba922bb93049cb8e27212e001577b285f647942467d9ac0ccf56",
+      "content_sha256_lf": "2e838e0f4ff87d8e559ca47ec0b3dd0a746b7c7664a09d3e885e43f823687f23",
       "entry_count": 200,
       "first_path": "scripts/check_mirror_freshness.py",
       "last_path": "src/data_processing/data_processor/web/src/components/AdvancedPanel.tsx",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "0e20071dc706fbb58653433b7c65582d6ef3ecf1ca7c03d017ffeec6ac1aa8bc",
+  "source_tree_sha256": "1f8d89b4368cb30a944cc93232629569a5ecaaf367f416599cbb1724c9b78486",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
