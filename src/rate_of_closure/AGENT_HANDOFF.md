@@ -74,6 +74,10 @@ the visualization manifest test rejected this legitimate non-visualization
 authority although the exact wheel gate passed. PR #4757 now classifies the
 named file as feature-owned package data while retaining fail-closed rejection
 of undeclared package-data entries.
+The next hosted 3.12 matrix exposed an unrelated wall-clock-only club-view
+performance flake under xdist contention. Follow-up issue #4759 keeps the fixed
+0.5 s render-work budget but measures it with the process CPU clock, with the
+200 ms cadence unchanged.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
