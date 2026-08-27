@@ -331,7 +331,7 @@
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "0bf0b18af25e6a016e923a0bde1e855a762479fa4727160448759f4bdefdec6f",
+      "content_sha256_lf": "ba8e93c53bd920714cc8c6124212b0a5b59554ecf3f866d52321fe3d12ce9593",
       "entry_count": 200,
       "first_path": "src/shared/python/swing_sim/rotating_base/types.py",
       "last_path": "src/upstream_drift_tools/__init__.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "389d8b474bb83a07080c918daec3202ce4c3724b5c757ac9d8b76b2107fb26b8",
+  "source_tree_sha256": "06864f072afa6a0d4e2d1c2d788371879db185d0c496bd3ff8ece513aaa8371c",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
