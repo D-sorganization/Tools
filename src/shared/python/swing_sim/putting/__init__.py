@@ -22,7 +22,15 @@ SLIDING/ROLLING mode machine follows ``ball_roll_physics.py``. All
 derivations here are re-done from first principles in the module
 docstrings (this package shares no code with UpstreamDrift).
 :mod:`.ud_adapter` (#4800 P9) is the runtime-free interchange seam
-with UpstreamDrift's ``putting_green`` topography files.
+with UpstreamDrift's ``putting_green`` topography files, and
+:mod:`.result_wire` (#4800 P5) is the versioned fail-closed
+``swing_sim.putting_result/2`` record of one integrated putt.
+
+Two P5 modules are deliberately **not** re-exported here:
+:mod:`.dispersion` and :mod:`.variation`. Importing either pulls the
+shared ``swing_sim.variation`` engine (and therefore SciPy), which the
+rest of this package does not need — so they are imported directly,
+the same policy ``swing_sim.variation`` itself declares.
 
 Putter specs: :data:`~.impact.MINIMAL_PUTTERS` are deliberately
 minimal H3-local specs. The reconciliation with the H1 club-library
@@ -53,6 +61,18 @@ from .impact import (
     PuttLaunch,
     clubhead_speed_from_backstroke,
     strike,
+)
+from .result_wire import (
+    PUTTING_RESULT_FORMAT,
+    PUTTING_RESULT_FORMAT_V1,
+    PUTTING_RESULT_KERNEL,
+    PuttingResultDocument,
+    PuttingResultProvenance,
+    PuttingResultV1Archive,
+    putting_result_document,
+    putting_result_from_json,
+    putting_result_to_json,
+    putting_result_v1_archive_from_json,
 )
 from .roll import (
     DEFAULT_SLIDING_MU,
@@ -85,6 +105,9 @@ __all__ = [
     "GREEN_SURFACE_FORMAT",
     "HOLE_RADIUS_M",
     "MINIMAL_PUTTERS",
+    "PUTTING_RESULT_FORMAT",
+    "PUTTING_RESULT_FORMAT_V1",
+    "PUTTING_RESULT_KERNEL",
     "STIMP_RELEASE_SPEED_MPS",
     "CaptureModel",
     "GreenConditions",
@@ -94,6 +117,9 @@ __all__ = [
     "PuttLaunch",
     "PuttResult",
     "PutterSpec",
+    "PuttingResultDocument",
+    "PuttingResultProvenance",
+    "PuttingResultV1Archive",
     "SkidSolution",
     "UdGreenTopography",
     "capture_speed_mps",
@@ -103,6 +129,10 @@ __all__ = [
     "green_surface_from_ud_json",
     "green_surface_to_json",
     "green_surface_to_ud_json",
+    "putting_result_document",
+    "putting_result_from_json",
+    "putting_result_to_json",
+    "putting_result_v1_archive_from_json",
     "roll_out_distance",
     "roll_time_s",
     "rolling_mu_to_stimp",

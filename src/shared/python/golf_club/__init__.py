@@ -22,6 +22,7 @@ from .fitting_engine import (
     FittingReport,
     compare_counterfactuals,
     evaluate_club,
+    evaluate_counterfactual_set,
     fitting_report_to_json,
 )
 from .impact_coupling import (
@@ -37,6 +38,15 @@ from .mesh_mass_properties import (
     is_watertight,
     mesh_inertia,
     mesh_volume_centroid,
+)
+from .putter_fitting import (
+    PUTTER_FITTING_REPORT_FORMAT,
+    PutterCounterfactual,
+    PutterFittingReport,
+    PuttingOutcome,
+    compare_putter_counterfactuals,
+    putter_fitting_report_to_json,
+    scenario_for_head,
 )
 from .putter_head import (
     PUTTER_CONTACT_TIME_S,
@@ -276,6 +286,7 @@ __all__ = [
     "FittingReport",
     "compare_counterfactuals",
     "evaluate_club",
+    "evaluate_counterfactual_set",
     "fitting_report_to_json",
     "IMPACT_COUPLING_REPORT_FORMAT",
     "CoupledImpactConfig",
@@ -288,11 +299,18 @@ __all__ = [
     "mesh_inertia",
     "mesh_volume_centroid",
     "PUTTER_CONTACT_TIME_S",
+    "PUTTER_FITTING_REPORT_FORMAT",
     "PUTTER_HEAD_FORMAT",
     "PutterHeadDocument",
     "PutterHeadProvenance",
+    "PutterCounterfactual",
+    "PutterFittingReport",
     "PutterStrikeResult",
     "PutterTwist",
+    "PuttingOutcome",
+    "compare_putter_counterfactuals",
+    "putter_fitting_report_to_json",
+    "scenario_for_head",
     "head_moi_for_strike",
     "putter_head_from_json",
     "putter_head_from_library",

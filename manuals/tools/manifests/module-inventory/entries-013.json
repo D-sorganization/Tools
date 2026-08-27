@@ -3607,10 +3607,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8703,
+      "bytes_lf": 9215,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6dece063798b738b9b2f52e5e269f0ddbe86ad936bd3d75e4da8e4d641630a9c",
+      "content_sha256_lf": "71ca87aeab078169aa78a9be36de0bc2cda83ee15b672e00f79711bb1cb82482",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-INIT-PY-7496BE48C45A",
       "language": "python",
@@ -3803,7 +3803,22 @@
           },
           {
             "kind": "re-export",
+            "name": "PUTTER_FITTING_REPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PUTTER_HEAD_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PutterCounterfactual",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PutterFittingReport",
             "signature": null
           },
           {
@@ -3824,6 +3839,11 @@
           {
             "kind": "re-export",
             "name": "PutterTwist",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingOutcome",
             "signature": null
           },
           {
@@ -4123,7 +4143,17 @@
           },
           {
             "kind": "re-export",
+            "name": "compare_putter_counterfactuals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "evaluate_club",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_counterfactual_set",
             "signature": null
           },
           {
@@ -4183,6 +4213,11 @@
           },
           {
             "kind": "re-export",
+            "name": "putter_fitting_report_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "putter_head_from_json",
             "signature": null
           },
@@ -4219,6 +4254,11 @@
           {
             "kind": "re-export",
             "name": "scale_shaft_profile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "scenario_for_head",
             "signature": null
           },
           {
@@ -4737,10 +4777,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12039,
+      "bytes_lf": 13583,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d34479309288bdfdd38d3549e49232a9ffb148aa5c8260e4c4d2824754cb4e3d",
+      "content_sha256_lf": "076f56382d257efa6bbc05cdf65cab4dbe4f7303133061cccfb9919bfb0c168d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-FITTING-ENGINE-PY-759121E1958C",
       "language": "python",
@@ -4762,7 +4802,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -4808,6 +4848,11 @@
           },
           {
             "kind": "function",
+            "name": "evaluate_counterfactual_set",
+            "signature": "counterfactuals: tuple[CounterfactualSpec, ...], evaluate: Callable[[CounterfactualSpec | None], OutcomeT]"
+          },
+          {
+            "kind": "function",
             "name": "fitting_report_to_json",
             "signature": "report: FittingReport"
           }
@@ -4816,7 +4861,9 @@
           "tests/shared/python/golf_club/test_fitting_engine.py",
           "tests/shared/python/golf_club/test_fitting_fixtures_parity.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

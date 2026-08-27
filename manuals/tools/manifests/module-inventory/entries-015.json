@@ -16178,10 +16178,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3411,
+      "bytes_lf": 4504,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "91938f370eb368cc754b4b356ea452c4eb2c5b2d9d63ffc02324dd1e722954a3",
+      "content_sha256_lf": "33cbe27f561d45b0eba2a82d399d31fc5b29d5ff7d4167af54f7c3570e3efe56",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
       "language": "python",
@@ -16269,6 +16269,21 @@
           },
           {
             "kind": "re-export",
+            "name": "PUTTING_RESULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_FORMAT_V1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PUTTING_RESULT_KERNEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PlanarGreenSurface",
             "signature": null
           },
@@ -16285,6 +16300,21 @@
           {
             "kind": "re-export",
             "name": "PutterSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultDocument",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PuttingResultV1Archive",
             "signature": null
           },
           {
@@ -16335,6 +16365,26 @@
           {
             "kind": "re-export",
             "name": "green_surface_to_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "putting_result_v1_archive_from_json",
             "signature": null
           },
           {
@@ -16448,10 +16498,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15061,
+      "bytes_lf": 16756,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9ca62180aa15542c576c2ca50ec34752a5b431ea2bb1d92b497a2d1430258783",
+      "content_sha256_lf": "a86fc75a7b7f91c368fcc82d2a37c0ec603f601c693eda7f2b79515975b3d086",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-GREEN-PY-C9095C77BD3B",
       "language": "python",

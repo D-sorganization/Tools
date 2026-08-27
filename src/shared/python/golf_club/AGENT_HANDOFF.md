@@ -66,19 +66,32 @@ stiffness, so an explicit override is the sanctioned supply path there.
 Bandit flags stdlib `ElementTree` (B405/B314) in the parsers; the repo's
 convention is `# nosec` with a written justification, not `defusedxml`.
 
-## Putting Epic #4800 — P3 putter head (this package's slice)
+## Putting Epic #4800 — P3 putter head, P5 putter fitting
 
 `putter_head.py` owns `golf_club.putter_head/1`: PutterSpec **v2** = the P1
-v1 spec + CG + full inertia tensor + provenance, built from an STL through
+v1 spec + CG + inertia tensor + provenance, from an STL through
 `mesh_mass_properties` (C1 is the only mesh pipeline;
-`stl_validation.read_binary_stl` is the promoted public reader) or from a
-club-library putter — resolving the `PutterSpec` reconciliation: a library
-head carries **no tensor** and strikes bit-identically to P1's
-`head_moi_kg_m2=None` default (exact-equality gate). Quasi-static twist
-`theta = J r tau_c/(2I)` per axis (toe→I_yy opens the face, high→I_zz adds
-loft, tau_c = 0.5 ms); `head_moi_for_strike` feeds P1's explicit hook. Head
-frame: x = target line, y = up, z = toe. TS twins: `putterHead.ts` +
-`putterHeadWire.ts` (P2 wire-split precedent) + `volumetrics.meshInertia`.
+`stl_validation.read_binary_stl` is the promoted reader) or from a
+club-library putter — the `PutterSpec` reconciliation: a library head carries
+**no tensor** and strikes bit-identically to P1's `head_moi_kg_m2=None`
+default. Quasi-static twist `theta = J r tau_c/(2I)` per axis (toe→I_yy opens
+the face, high→I_zz adds loft, tau_c = 0.5 ms); `head_moi_for_strike` feeds
+P1's hook. Head frame: x = target line, y = up, z = toe. TS twins:
+`putterHead.ts` + `putterHeadWire.ts` + `volumetrics.meshInertia`.
+
+`putter_fitting.py` (P5) is the putting **outcome function** for the
+comparator, not a second comparator: `evaluate_counterfactual_set` was
+extracted out of `compare_counterfactuals` (labels unique, none named
+`baseline`, baseline through the same callable) and both callers run on it.
+`PutterCounterfactual` wraps `CounterfactualSpec` verbatim plus `moi_scale`
+and **refuses** its cg/ei/gj knobs — the putting chain models no shaft
+delivery, so accepting-and-ignoring one would answer a question nobody asked.
+A counterfactual moves only what the strike sees (mass, loft, scalar twist
+MOI); it never fabricates a mesh or a tensor. `scenario_for_head` binds a P5
+scenario to a P3 document so the two cannot disagree about which putter was
+tested. Wire: `golf_club.putter_fitting_report/1`. The MOI gate is closed
+form — `T = (1+e)/(1 + m/M + m·r²/I)` makes the offset-driven start line
+scale as `1/I`, so σ₂/σ₁ = I₁/I₂.
 
 ## Current CAD and Export Contract
 
@@ -128,13 +141,11 @@ The environment lacks some root-config pytest plugins, so the focused command
 disables plugin autoload and clears `addopts`; unknown-config warnings are
 environment evidence, not failures.
 
-Latest local evidence, 2026-08-27 (after the P3 putter-head merge):
-`tests/shared/python/golf_club` + `swing_sim/putting/tests`: **333 passed,
-2 skipped** (the pre-existing `test_turf_variation` seeded-plan failure is a
-local duplicate-module environment artifact, present on clean main). The C1/H1
-physics gates plus P3's box-inertia, twist, and fallback-equality gates are
-inside that run; ruff and the CI-faithful mypy batch (numpy < 2.4 — numpy 2.4+
-stubs crash mypy 1.13's cache serializer) are clean.
+Latest local evidence, 2026-08-27 (after P5): `tests/shared/python/golf_club`
++ `swing_sim/putting/tests`: **437 passed, 2 skipped**. The C1/H1 gates plus
+P3's box-inertia/twist/fallback and P5's closed-form MOI-ratio gates are in
+that run; ruff and the CI-faithful mypy batch are clean (mypy 1.13 needs
+numpy < 2.4 or `--no-incremental`: 2.4+ stubs crash its cache serializer).
 
 ## Residual #4149 / #4146 Scope
 

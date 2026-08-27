@@ -283,7 +283,7 @@
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "da7e2db6f1f84160261d30df12510980e603696e5199d784d3bb4dbf88c998a0",
+      "content_sha256_lf": "3d3c5d36f543219b011a61398e9db10ffd6d792d5885897fe134b09f5227542f",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/model/durableEnsembleWorkerClient.test.ts",
       "last_path": "src/rate_of_closure/web/src/model/spatialTarget.ts",
@@ -307,7 +307,7 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "abecd2a31cf63eaf287207e087cbfb19c292f7bc4e4748e0bb6cc71679b1fcb6",
+      "content_sha256_lf": "e63cddba943ab8d257a99226a095bace13376b613f827a089cad7226f1f1851f",
       "entry_count": 200,
       "first_path": "src/shared/python/chat/models.py",
       "last_path": "src/shared/python/programmatic_pid/__init__.py",
@@ -323,7 +323,7 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "9d27d1f0b6afb9cd148bc9956c426128780b2f8acb8aa4be6f94c37338c4dca0",
+      "content_sha256_lf": "38a3d6341c81a21f70dfc41765e4bd5f15455e345cf8a75c17bec6c748032519",
       "entry_count": 200,
       "first_path": "src/shared/python/sidekick/ui/tools_sidebar/sidebar.py",
       "last_path": "src/shared/python/swing_sim/run_config.py",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "ce83a521e816cbc159f0be566fb3d35757ee6c2a7b77e0d98d0e33792b852622",
+  "source_tree_sha256": "2be5e73a5edc3f81523744de3d4bac1253f75dfcd5982fab9f61bd5aa2450818",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

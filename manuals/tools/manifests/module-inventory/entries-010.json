@@ -9579,10 +9579,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15331,
+      "bytes_lf": 16713,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4ac6e3769dddbe5359e540dac302903072be98edff69dbdcb015ca529b73c27d",
+      "content_sha256_lf": "acc67dcc0be1c0735958e57e252f06d1b4a1eb2f24b8c304eae79e827bca42da",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGGREEN-TS-24E58A1B9755",
       "language": "typescript",

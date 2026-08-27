@@ -43,6 +43,12 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
 shared-first in `shared/python/{golf_club,swing_sim}` (contracts in `docs/specs/`).
 Putting #4800 P2 landed green-surface heightfields, the `swing_sim.green_surface/1`
 wire, and Holmes/Penner capture with TS twins; planar APIs delegate bit-identically.
+P5 added `swing_sim.putting_result/2` (`puttingResultWire.ts`) — it **supersedes v1
+with no silent migration**: the reader refuses a v1 payload and the v1 archive reader
+refuses v2, so never "upgrade" a retained record. Dispersion summaries arrive as
+`swing_sim.putt_dispersion/1` (`puttingDispersion.ts`); Monte-Carlo **execution**
+stays Python-authoritative (one canonical seeded sampler) and the web consumes the
+wire — do not port the sampler.
 
 Clubhead-realism epic #4799: G1-G3 landed. Loft is a **leading-edge lean**
 (head built unlofted, sheared about `y = y_le`; `head_profiles.lean_point` =
