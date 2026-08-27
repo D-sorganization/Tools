@@ -4235,10 +4235,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2731,
+      "bytes_lf": 3324,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "2b25e0578517c7e36a8cbd6fed3497dcf9edcf8400cf276335f2d4f55d3cfc13",
+      "content_sha256_lf": "fcc21af0b56302a0825a92a8fffe20504748ffe0ee3b38e673b2e04915e296de",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-IMPACTSCENESVG-TS-65B2F6AE95C9",
       "language": "typescript",
