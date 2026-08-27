@@ -51,21 +51,16 @@ identity, missing intervals, outcomes, failure semantics, and approximate
 impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
 double-pendulum cells and ten explicitly unavailable cells.
 
-PR #4782/#4765 R12.3 protected-squash-merged as `a1b00db14`. Issue #4783/R13.3
-is active on `feat/4783-localized-attribution`. Shared schema
-`swing-sim/paired-localized-attribution` v1 binds one independently estimable,
-continuous, unbounded OAT source and optional exact point/time locus to governed
-state-point, impact, and shot scalars. Exact model/adapter/frame/grid/plan/
-registry/execution/source identity, typed unavailable cells, bounded resume,
-fingerprints, selectors, and JSON/CSV rows fail closed. The exhaustive authority
-inherits the two verified double-pendulum adapter cells and ten explicit
-unavailabilities and enumerates all 17 Rate target metrics. The 380-test serial
-variation, adapter, localized-torque, and epic-ledger suite passes. The ledger is 28 verified /
-3 partial. This is paired model-scenario response, not a global main effect,
+R12.3 protected-squash-merged via PR #4782 as `a1b00db14`; R13.3 PR #4784
+protected-squash-merged as `d6c8a0a67`. Its paired-attribution schema binds one
+independently estimable source and optional exact locus to state, impact, and
+shot scalars with ten unsupported cells preserved. #4791/R13.5 is active from
+that protected base. `morris-target-selection` v1 binds kind/name/unit/point/
+time/frame and exposes all-input or one-source views without analysis execution;
+PyQt and React share a state/impact/shot parity fixture, while selected rows
+retain global ranks and typed denominators. The combined ledger is 29 verified /
+2 partial. These remain model-scenario responses, not global main effects,
 causal anatomy, governed human validation, or coaching authority.
-The same PR repairs the optional Rust gate's PyO3 0.29 test initializer with
-`Python::initialize` and gives the serialized gate a 45-minute runtime bound;
-no SCADA runtime, runner-concurrency, or attribution semantics change.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

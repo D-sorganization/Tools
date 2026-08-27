@@ -2,6 +2,378 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 4407,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "606e9f0656271232bde01afc689fc64c0bda6dd7c70291c9b3359532c3cf0143",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TORQUE-FITTING-PY-5B975E36626A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/torque_fitting.py",
+      "purpose": "Validated polynomial fitting for sampled SI joint-torque histories.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "fit_torque_polynomial",
+            "signature": "times_s: ArrayLike, torque_nm: ArrayLike, degree: int, *, max_condition_number: float=100000000.0"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_torque_profiles.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2292,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "7f85052d8733548aabbadf254e572b764efe218ba5e04728d1ca4b80a61ecfcb",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TORQUE-LIBRARY-PY-3352E8027460",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/torque_library.py",
+      "purpose": "Immutable in-memory library for reusable prescribed torque profiles.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TorqueProfileLibrary",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
+          "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
+          "tests/rate_of_closure/test_torque_run_history.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 14154,
+      "classification": "calculation",
+      "classification_basis": "path-marker:torque",
+      "content_sha256_lf": "a99394ff24fb76fbb49d912bfa006d821880d65c9adf996f7ab25bdb83d36096",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TORQUE-PROFILES-PY-43199F6EAC5F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/torque_profiles.py",
+      "purpose": "Canonical, UI-neutral prescribed joint-torque profile domain.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FitMetadata",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "JointTorqueAssignment",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrescribedTorqueProfile",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TorquePolynomial",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TorqueProfileSource",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COEFFICIENT_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TORQUE_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TORQUE_UNIT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_ascending_polynomial",
+            "signature": "coefficients: Sequence[float], time_s: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/tests/test_torque_library_export.py",
+          "src/shared/python/swing_sim/tests/test_torque_profiles.py",
+          "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
+          "tests/rate_of_closure/test_torque_profile_ui.py",
+          "tests/rate_of_closure/test_torque_run_history.py",
+          "tests/rate_of_closure/test_workspace_document.py",
+          "tests/rate_of_closure/test_workspace_torque_session.py"
+        ],
+        "unit_mentions": [
+          "N*m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6992,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "644c67b054e0971befaed128f5d374a0c28939b3967018ce6ce8bf36bc5a9683",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TYPES-PY-581AA5744505",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/types.py",
+      "purpose": "Core swing-simulation value types (frozen dataclasses with DbC validation).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PendulumParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PendulumState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlaneOrientation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SwingSample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SwingTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GRAVITY_M_S2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_COM_RATIO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_INERTIA_SCALING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_LENGTH_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ARM_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CLUBHEAD_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DAMPING_SHOULDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DAMPING_WRIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHAFT_COM_RATIO",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHAFT_LENGTH_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHAFT_MASS_KG",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/tests/test_force_attribution.py",
+          "src/shared/python/swing_sim/tests/test_localized_torque.py",
+          "src/shared/python/swing_sim/tests/test_parity_rust.py",
+          "src/shared/python/swing_sim/tests/test_prescribed_run.py",
+          "src/shared/python/swing_sim/tests/test_reference.py",
+          "src/shared/python/swing_sim/tests/test_swing_source.py",
+          "src/shared/python/swing_sim/tests/test_types.py",
+          "tests/rate_of_closure/test_kinetics.py",
+          "tests/rate_of_closure/test_localized_torque_web_golden.py",
+          "tests/rate_of_closure/test_morris_pyqt_workflow.py",
+          "tests/rate_of_closure/test_simulation.py",
+          "tests/rate_of_closure/test_variation_simulation_request.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "ms",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 9237,
       "classification": "non-calculation",
@@ -14814,215 +15186,6 @@
       "maintainer": "Tools module maintainers",
       "path": "src/verification/__init__.py",
       "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2375,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2694ace6887e710d5da1b3345dfdf0d7472cbc138870ba93513a97e0da0c07da",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-A11Y-PY-8066B4665CA5",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/verification/verify_a11y.py",
-      "purpose": "Accessibility verification script for Gas Density and Custom Unit inputs.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "http://localhost:8080"
-        ],
-        "equation_refs": [],
-        "public_routes": [
-          "verification/verification.png"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "verify_a11y",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/verification/test_verification_lod.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2034,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a5df859a3118994f125273b07b40008ffb8b54bf4fef753c713b1d0fd8d86194",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-PALETTE-PY-D6395AE10222",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/verification/verify_palette.py",
-      "purpose": "Verification script for Unit Converter accessibility and shortcut hints.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [
-          "verification/shortcut_hint.png"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "run",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/verification/test_verification_lod.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2186,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8a1559c38160ef3581aa29a74beafb3ef4c677b0645add0d35dfb772f90bdb59",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VERIFICATION-VERIFY-PALETTE-FINAL-PY-50AFFCD19145",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/verification/verify_palette_final.py",
-      "purpose": "Final verification script for Unit Converter accessibility attributes and keyboard shortcuts.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "mapped",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [
-          "verification/shortcut_hint_final.png"
-        ],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "run",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/verification/test_verification_lod.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 35,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b06b7ecedf3e25f1bef07c71a4c6e25480fccf5c0b35d8963c09f0eeb901b73e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-INIT-PY-1834C083E26D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/__init__.py",
-      "purpose": "Vessel Drafter tool package.",
       "review_status": "inventory-baseline",
       "risk_tags": [],
       "states": {
