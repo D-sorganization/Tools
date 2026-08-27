@@ -47,6 +47,10 @@ from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
 
 from ._simulation_config_identity import simulation_configuration_stream_sha256
+from .complete_trial_record import (
+    CompleteTrialRecordSource,
+    build_complete_trial_record,
+)
 from .ensemble_chunks import (
     MAX_CHUNK_POSITION_CELLS,
     CollectingEnsembleSink,
@@ -89,6 +93,15 @@ _POINT_IDS_BY_SOURCE: Mapping[str, tuple[str, ...]] = MappingProxyType(
         ),
     }
 )
+
+
+def spatial_source_layouts() -> Mapping[str, tuple[str, ...]]:
+    """Return the immutable source-kind to stable-point registry.
+
+    Consumers may enumerate supported spatial trace layouts without copying
+    the registry. The returned mapping and its tuple values are immutable.
+    """
+    return _POINT_IDS_BY_SOURCE
 
 
 def apply_ball_setup_sample(
@@ -339,6 +352,19 @@ def _result_chunk(
         project_simulation_outcome(work.start_index + offset, capture)
         for offset, capture in enumerate(captures)
     )
+    complete_records = tuple(
+        build_complete_trial_record(
+            CompleteTrialRecordSource(
+                work.start_index + offset,
+                work.sampled_inputs[offset],
+                work.configs[offset],
+            ),
+            capture,
+            outcomes[offset],
+            header,
+        )
+        for offset, capture in enumerate(captures)
+    )
     for offset, capture in enumerate(captures):
         run = capture.run
         if run is None:
@@ -355,6 +381,7 @@ def _result_chunk(
         positions_m=positions,
         sample_valid=valid,
         impact_sample_indices=impacts,
+        complete_records=complete_records,
     )
 
 
@@ -443,4 +470,5 @@ __all__ = [
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",
     "spatial_point_ids",
+    "spatial_source_layouts",
 ]

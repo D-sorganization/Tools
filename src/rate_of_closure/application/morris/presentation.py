@@ -19,6 +19,7 @@ from .response_contract import (
     MorrisResponseEstimate,
     MorrisResponseJob,
     MorrisResponseReport,
+    MorrisTarget,
 )
 
 _TERMINAL = frozenset({"completed", "cancelled", "failed"})
@@ -197,7 +198,7 @@ def present_morris_job(job: MorrisResponseJob) -> MorrisJobPresentation:
 
 def _source_order(variable_key: str) -> int:
     try:
-        return CANONICAL_MORRIS_FACTOR_KEYS.index(variable_key)
+        return int(CANONICAL_MORRIS_FACTOR_KEYS.index(variable_key))
     except ValueError:
         return len(CANONICAL_MORRIS_FACTOR_KEYS)
 
@@ -253,21 +254,38 @@ def _unavailable_sort_key(item: MorrisResponseEstimate) -> tuple[int, str]:
 def present_morris_report(
     report: MorrisResponseReport | None, target_name: str
 ) -> MorrisReportPresentation:
-    """Rank finite effects only within one explicitly selected target."""
-    from rate_of_closure.variation.plot_labels import OUTPUT_LABELS
-
+    """Rank one unambiguous name-selected target for legacy callers."""
     if not isinstance(report, MorrisResponseReport):
         raise TypeError("report must be a MorrisResponseReport")
     if not isinstance(target_name, str) or not target_name:
         raise ValueError("target_name must be nonempty")
+    targets = {
+        estimate.target
+        for estimate in report.estimates
+        if estimate.target.name == target_name
+    }
+    if not targets:
+        raise ValueError("unknown Morris report target")
+    if len(targets) != 1:
+        raise ValueError("Morris report target name is ambiguous")
+    return present_morris_target(report, next(iter(targets)))
+
+
+def present_morris_target(
+    report: MorrisResponseReport, target: MorrisTarget
+) -> MorrisReportPresentation:
+    """Rank finite effects only within one provenance-complete target."""
+    from rate_of_closure.variation.plot_labels import OUTPUT_LABELS
+
+    if not isinstance(report, MorrisResponseReport):
+        raise TypeError("report must be a MorrisResponseReport")
+    if not isinstance(target, MorrisTarget):
+        raise TypeError("target must be a MorrisTarget")
     selected = tuple(
-        estimate for estimate in report.estimates if estimate.target.name == target_name
+        estimate for estimate in report.estimates if estimate.target == target
     )
     if not selected:
         raise ValueError("unknown Morris report target")
-    target = selected[0].target
-    if any(estimate.target != target for estimate in selected):
-        raise ValueError("Morris target provenance is inconsistent")
     finite = sorted(
         (item for item in selected if item.effects.mu_star is not None),
         key=_finite_sort_key,
@@ -301,4 +319,5 @@ __all__ = [
     "present_morris_job",
     "present_morris_factor_rows",
     "present_morris_report",
+    "present_morris_target",
 ]

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,10 @@ from scripts.check_design_manual_governance import (
 REPO_ROOT = Path(__file__).resolve().parents[2]
 POLICY_PATH = REPO_ROOT / "config" / "design_manual_governance.json"
 REGISTRY_PATH = REPO_ROOT / "manuals" / "tools" / "calculation-registry.json"
+REQUIRES_PANDOC = pytest.mark.skipif(
+    shutil.which("pandoc") is None,
+    reason="Pandoc is unavailable; protected Docs Governance owns this gate",
+)
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -27,12 +32,14 @@ def _json(path: Path) -> dict[str, Any]:
     return payload
 
 
+@REQUIRES_PANDOC
 def test_repository_adopts_one_qmd_authority_and_blocks_release() -> None:
     summary = verify_repository(REPO_ROOT)
 
     assert summary.manual_id == "tools"
-    assert summary.canonical_qmd_count == 3
-    assert summary.calculation_count == 0
+    assert summary.canonical_qmd_count == 6
+    assert summary.calculation_count == 1
+    assert summary.textbook_chapter_count == 1
     assert summary.release_status == "provisional"
     assert summary.public_projection_allowed is False
 
@@ -48,13 +55,16 @@ def test_policy_reuses_program_contracts_without_copying_schemas() -> None:
     assert not (REPO_ROOT / "schemas" / "publication-projection.schema.json").exists()
 
 
-def test_registry_is_fail_closed_until_stable_calculation_pathways() -> None:
+def test_registry_is_fail_closed_with_one_unapproved_calculation_pathway() -> None:
     registry = _json(REGISTRY_PATH)
 
-    assert verify_calculation_registry(registry) == 0
+    assert verify_calculation_registry(registry) == 1
     assert registry["release_status"] == "provisional"
-    assert registry["inventory_commit"] is None
-    assert registry["blockers"][0]["id"] == "TOOLS-D3-pathway-contract-required"
+    expected_inventory_commit = (
+        "916fb9f27f486486f0c071dcc6f15f81f68ecb18"  # pragma: allowlist secret
+    )
+    assert registry["inventory_commit"] == expected_inventory_commit
+    assert registry["blockers"][0]["id"] == "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
 
 
 @pytest.mark.parametrize(
@@ -121,10 +131,13 @@ def test_agent_context_exposes_update_and_artifact_rules() -> None:
         assert "generated latex, pdf, docx, and html" in normalized
     assert "TOOLS-D1 (#4711)" in spec
     assert "TOOLS-D1 (#4711)" in handoff
+    assert "TOOLS-D3 (#4717)" in spec
+    assert "TOOLS-D3 (#4717)" in handoff
     assert "module-inventory.json" in handoff
+    assert "lint_tools_textbook_chapters" in handoff
 
 
-def test_manual_tree_contains_no_editable_release_artifacts() -> None:
+def test_manual_tree_contains_only_governed_generated_and_style_artifacts() -> None:
     manual_root = REPO_ROOT / "manuals" / "tools"
     forbidden_suffixes = {".docx", ".html", ".pdf", ".tex"}
     found = sorted(
@@ -133,4 +146,11 @@ def test_manual_tree_contains_no_editable_release_artifacts() -> None:
         if path.is_file() and path.suffix.lower() in forbidden_suffixes
     )
 
-    assert found == []
+    assert found == [
+        "manuals/tools/dist/tools-engineering-design-manual.docx",
+        "manuals/tools/dist/tools-engineering-design-manual.html",
+        "manuals/tools/dist/tools-engineering-design-manual.pdf",
+        "manuals/tools/dist/tools-engineering-design-manual.tex",
+        "manuals/tools/styles/tools-header.tex",
+        "manuals/tools/styles/tools-reference.docx",
+    ]

@@ -1,6 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
+
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-25
+> Last updated: 2026-08-27
 > **Current state only**, capped at 150 lines; history lives in git and in [`docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md`](../../docs/agent_handoff_archive/2026-08_rate_of_closure_handoff_log.md).
 > Do not append dated entries — that is how it reached 2,205 lines.
 
@@ -21,30 +22,18 @@ fitting epics is the sibling `shared/python/golf_club/`.
 
 ## Delivery Pattern
 
-PR #4466 cannot be merged: its merge-base predates this package, leaving 281
-both-added conflicts. Twenty-two current-main slices landed as #4517–#4547.
-Only the camera cluster remains, owned by #4571. It is a reimplementation:
-wiring the mixin passes 20 camera tests but regresses three main-owned tests and
-requires about 20 more UI files. Do not merge/slice #4466 or close it before
-#4571. The old branch is not uniformly newer; diff every candidate and require
-main's existing suite to pass before adding new tests.
+PR #4466 predates this package and cannot merge. Twenty-two slices landed as
+#4517–#4547; #4571 owns the remaining camera reimplementation. Diff every
+candidate against current main and preserve main-owned tests.
 
 ## Active Epics — Golf Epics Merged
 
-Launch-monitor epic #4583 has merged consolidated Release A. PyQt6 and
-React now share explicit-identity projects, arbitrary-variable analysis,
-dispersion/target-error, attested session summaries, persistence/export, and a
-safe capability-driven Neural Model Lab. The desktop client can load all
-261,666 manifest-verified private-authority rows from an explicitly authorized
-local root while its plot stays bounded. #4603 adds parity clients for canonical
-dataset jobs/player covariation, a 20,000-row cap, and no private rows/paths in
-projects; embedded calculations remain labelled offline compatibility. The #4277 slice adds pooled, player-centered, between-player,
-per-player and random-effects covariation plus exploratory all-pairs scans to
-both clients, with unit-labelled plots and complete backing exports. The next
-performance slice adds hash-verified, user-authorized expected-strokes baseline
-artifacts and attested longitudinal player/population inference in both clients;
-no baseline data is bundled. Do not claim vendor emulation or paired-device
-validation: Release B remains open and has no real paired observations.
+Launch-monitor epic #4583 has merged Release A with explicit-identity projects,
+bounded private-authority loading, canonical dataset/covariation clients, and
+source-backed expected-strokes/longitudinal analysis. No private rows or paths
+enter project files and no baseline data is bundled. Release B remains open:
+do not claim vendor emulation or paired-device validation without real paired
+observations.
 
 #4584/#4599 merged source-backed strokes-gained v2 into both clients with exact
 strata, uncertainty, exclusions, and grouping attestations. #4600 owns the
@@ -55,18 +44,25 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-Tools PR #4703 merged as `57b443201b402fc110ec5623885c7e310d6ad6d3`
-from exact contribution head `e1d8d098d038ae2cf6bc5ace7c4864ef1df05ed1`
-and advanced the 31-item R10--R15 ledger to 22 verified, 9 partial, and zero unverified
-requirements after protected UpstreamDrift PR #9039 consumed immutable Tools
-revision `17474249b9267d0e73a779c1d72f231e7b8de39c`. R15.1--R15.3 now bind the
-exact consumer, thin ownership boundary, typed no-impact rows, deterministic
-serial/batched artifacts, geometry/attribution records, and cross-engine
-rejection tests. The guide consolidates theory, schema, assumptions,
-performance, quick start, reproduction, falsifiers, and scientific limits;
-R14.6 remains partial with visualization epic #4433 open. #4142 is therefore
-not closeable. These controls prove provenance and model-data parity, not human
-validity or coaching strategy.
+R10.3, R10.4, R11.1, and R11.3 are protected-merged through
+`4ddec9175814451fdc3d1a94b45f1190e7503bca`. The complete-trial authority and
+`swing-trace-time-linear-contiguous/v1` preserve stable trial/point/frame
+identity, missing intervals, outcomes, failure semantics, and approximate
+impact-marker error. The inherited 3-source by 4-adapter matrix has two verified
+double-pendulum cells and ten explicitly unavailable cells.
+
+R12.3 protected-squash-merged via PR #4782 as `a1b00db14`; R13.3 PR #4784
+protected-squash-merged as `d6c8a0a67`. Its paired-attribution schema binds one
+independently estimable source and optional exact locus to state, impact, and
+shot scalars with ten unsupported cells preserved. #4791/R13.5 is active from
+that protected base. `morris-target-selection` v1 binds kind/name/unit/point/
+time/frame and exposes all-input or one-source views without analysis execution;
+PyQt and React share a state/impact/shot parity fixture, while selected rows
+retain global ranks and typed denominators. Protected PR #4794 contains
+implementation commit `f102ce59a`; #4793 was superseded without force-push after the matched visual
+manifest/audit/tests and vendored projection were added. The combined ledger is
+29 verified / 2 partial. These remain model-scenario responses, not global main
+effects, causal anatomy, governed human validation, or coaching authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

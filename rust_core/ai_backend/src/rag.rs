@@ -365,7 +365,7 @@ impl RagPipeline {
     /// Recursively indexes a directory, chunks text, generates embeddings,
     /// and stores them via the MemoryManager.
     ///
-    /// Holds the GIL while indexing — releasing it across `py.allow_threads`
+    /// Holds the interpreter attachment while indexing — detaching it across `py.detach`
     /// is blocked by the `PyRef<MemoryManager>` borrow not implementing
     /// `Ungil`. Indexing is bound by the embedder (HTTP latency or ONNX
     /// inference), neither of which contends on the GIL, so the practical

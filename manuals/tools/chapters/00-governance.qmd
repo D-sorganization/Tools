@@ -52,8 +52,13 @@ projection.
 ## Current Boundary
 
 TOOLS-D1 establishes a complete file-level denominator for its declared tracked
-scope. Its conservative detector labels calculation candidates `provisional`;
-it does not establish stable calculation identity, equation correctness,
-validity ranges, uncertainty, or approval. Those pathways remain empty and
-blocked pending TOOLS-D3 through TOOLS-D9. No multi-format reproducibility,
-page inspection, accessibility, or publication claim is made by this source.
+scope. TOOLS-D2 establishes deterministic byte reproduction and governed
+semantic preservation across HTML, LaTeX, PDF, and DOCX. Its generated
+artifacts remain non-editable and unapproved. The conservative inventory does
+not establish stable calculation identity, equation correctness, validity
+ranges, uncertainty, page/accessibility approval, or publication authority.
+TOOLS-D4 registers one model-conditioned D-plane exemplar with explicit
+equation-to-code-to-test evidence while retaining review-required inventory
+authority. The markerless-mocap exemplar remains fail-closed because its source
+dependency is unmerged. Expansion, executable freshness, review, publication,
+and human approval remain blocked under TOOLS-D5 through TOOLS-D9.

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from time import perf_counter
+from time import process_time
 from types import SimpleNamespace
 
 import pytest
@@ -83,9 +83,12 @@ def test_worst_library_mesh_uses_bounded_playback_cadence(qtbot) -> None:  # typ
         cog_point=head_cog(spec).cog,
         label=spec.name,
     )
-    started = perf_counter()
+    # This is a CPU-work budget, not a hosted-runner scheduling benchmark.
+    # Wall time makes an otherwise deterministic render fail when sibling
+    # xdist workers temporarily deschedule this process.
+    started = process_time()
     view._draw()
-    elapsed = perf_counter() - started
+    elapsed = process_time() - started
     assert view._timer.interval() == 200
     assert elapsed < 0.5
 

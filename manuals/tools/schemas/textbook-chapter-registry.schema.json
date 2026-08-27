@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/textbook-chapter-registry/1.0.0.json",
+  "title": "Tools textbook chapter registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "contract_schema_version",
+    "release_status",
+    "owner",
+    "review_owner",
+    "blockers",
+    "chapters"
+  ],
+  "properties": {
+    "schema_version": { "const": "tools-textbook-chapter-registry/1.0.0" },
+    "manual_id": { "const": "tools" },
+    "contract_schema_version": {
+      "const": "tools-textbook-chapter-contract/1.0.0"
+    },
+    "release_status": { "const": "provisional" },
+    "owner": { "type": "string", "minLength": 1 },
+    "review_owner": { "type": "string", "minLength": 1 },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "chapters": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/chapter" }
+    }
+  },
+  "$defs": {
+    "nonemptyUniqueStrings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "date", "summary"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.[0-9]+\\.[0-9]+$"
+        },
+        "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+        "summary": { "type": "string", "minLength": 1 }
+      }
+    },
+    "chapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chapter_id",
+        "path",
+        "title",
+        "chapter_version",
+        "authority_status",
+        "owner",
+        "review_owner",
+        "calculation_ids",
+        "module_ids",
+        "verification_tests",
+        "source_citations",
+        "limitations",
+        "revision_history"
+      ],
+      "properties": {
+        "chapter_id": {
+          "type": "string",
+          "pattern": "^tools\\.textbook\\.[a-z0-9._-]+$"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^manuals/tools/chapters/[a-z0-9][a-z0-9-]*\\.qmd$"
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "chapter_version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.[0-9]+\\.[0-9]+$"
+        },
+        "authority_status": {
+          "enum": ["provisional", "verified-unapproved", "approved"]
+        },
+        "owner": { "type": "string", "minLength": 1 },
+        "review_owner": { "type": "string", "minLength": 1 },
+        "calculation_ids": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "module_ids": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "verification_tests": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "source_citations": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "limitations": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "revision_history": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/revision" }
+        }
+      }
+    }
+  }
+}

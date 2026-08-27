@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/exemplar-coverage/1.0.0.json",
+  "title": "Tools governed exemplar coverage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "release_status",
+    "owner_subepic",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": { "const": "tools-exemplar-coverage/1.0.0" },
+    "manual_id": { "const": "tools" },
+    "release_status": { "const": "provisional" },
+    "owner_subepic": { "const": 4720 },
+    "entries": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/exemplar" }
+    }
+  },
+  "$defs": {
+    "nonemptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "strings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "workedExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["example_id", "fixture_path", "fixture_case_id"],
+      "properties": {
+        "example_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "fixture_path": { "type": "string", "pattern": "^[^\\\\]+\\.json$" },
+        "fixture_case_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "exemplar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exemplar_id",
+        "title",
+        "status",
+        "chapter_id",
+        "calculation_ids",
+        "module_ids",
+        "source_paths",
+        "test_paths",
+        "consumer_paths",
+        "worked_examples",
+        "blockers",
+        "dependency_evidence",
+        "owner",
+        "review_owner",
+        "approval_state"
+      ],
+      "properties": {
+        "exemplar_id": {
+          "type": "string",
+          "pattern": "^tools\\.exemplar\\.[a-z0-9-]+$"
+        },
+        "title": { "type": "string", "minLength": 3 },
+        "status": { "enum": ["verified-unapproved", "blocked"] },
+        "chapter_id": {
+          "type": ["string", "null"],
+          "pattern": "^tools\\.textbook\\.[a-z0-9-]+$"
+        },
+        "calculation_ids": { "$ref": "#/$defs/strings" },
+        "module_ids": { "$ref": "#/$defs/strings" },
+        "source_paths": { "$ref": "#/$defs/strings" },
+        "test_paths": { "$ref": "#/$defs/strings" },
+        "consumer_paths": { "$ref": "#/$defs/strings" },
+        "worked_examples": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/workedExample" }
+        },
+        "blockers": { "$ref": "#/$defs/strings" },
+        "dependency_evidence": { "$ref": "#/$defs/nonemptyStrings" },
+        "owner": { "type": "string", "minLength": 1 },
+        "review_owner": { "type": "string", "minLength": 1 },
+        "approval_state": { "const": "blocked-pending-human-approval" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "verified-unapproved" } }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": { "type": "string" },
+              "calculation_ids": { "$ref": "#/$defs/nonemptyStrings" },
+              "module_ids": { "$ref": "#/$defs/nonemptyStrings" },
+              "source_paths": { "$ref": "#/$defs/nonemptyStrings" },
+              "test_paths": { "$ref": "#/$defs/nonemptyStrings" },
+              "consumer_paths": { "$ref": "#/$defs/nonemptyStrings" },
+              "worked_examples": { "minItems": 1 },
+              "blockers": { "maxItems": 0 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "blocked" } } },
+          "then": {
+            "properties": {
+              "chapter_id": { "type": "null" },
+              "calculation_ids": { "maxItems": 0 },
+              "module_ids": { "maxItems": 0 },
+              "source_paths": { "maxItems": 0 },
+              "test_paths": { "maxItems": 0 },
+              "consumer_paths": { "maxItems": 0 },
+              "worked_examples": { "maxItems": 0 },
+              "blockers": { "$ref": "#/$defs/nonemptyStrings" }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

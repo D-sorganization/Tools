@@ -40,9 +40,10 @@ _EXPECTED_REGISTERED_CONTROL_RANGES = {
     # control beyond the static-provider catalogue used by hosted CI.
     "launch_monitor_analytics": (59, 111),
     "neural_model_lab": (14, 14),
-    # The durable authority contributes one additional focusable control when
-    # its asynchronous availability probe succeeds during the audit.
-    "variation": (162, 164),
+    # The provenance-qualified Morris result view contributes two named
+    # selectors. The durable authority and asynchronous availability probes can
+    # contribute the remaining environment-dependent controls during the audit.
+    "variation": (164, 166),
     "putting": (11, 11),
     "glossary": (2, 2),
 }
