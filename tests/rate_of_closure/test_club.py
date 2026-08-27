@@ -22,6 +22,7 @@ from rate_of_closure.club import (
     build_parametric_head,
     club_inertia,
     club_names,
+    face_center_point,
     face_normal_at_offset,
     face_sagitta,
     get_club,
@@ -206,12 +207,19 @@ class TestParametricHead:
         assert np.array_equal(first, second)
 
     def test_envelope_scales_with_head_mass(self) -> None:
-        """Constant-density scaling: cbrt(m / 0.200 kg) on every axis."""
+        """Constant-density scaling: cbrt(m / 0.200 kg) on every axis.
+
+        The vertical extent additionally compresses by cos(loft) — the
+        leading-edge loft lean turns the authored height into slant
+        height (#4799 G1). The z extent is untouched by loft.
+        """
         wood = get_club("3-Wood")
         scale = (wood.head_mass_kg / REFERENCE_HEAD_MASS_KG) ** (1.0 / 3.0)
         flat = build_parametric_head(wood).reshape(-1, 3)
         assert flat[:, 2].max() - flat[:, 2].min() == pytest.approx(0.124 * scale)
-        assert flat[:, 1].max() - flat[:, 1].min() == pytest.approx(0.062 * scale)
+        assert flat[:, 1].max() - flat[:, 1].min() == pytest.approx(
+            0.062 * scale * math.cos(math.radians(wood.loft_deg))
+        )
 
     def test_face_vertex_honors_bulge_sagitta(self) -> None:
         """The zero-loft toe vertex sits back by the circle sagitta."""
@@ -234,14 +242,18 @@ class TestParametricHead:
         np.testing.assert_allclose(extents, [0.11, 0.062, 0.124], atol=1e-12)
 
     def test_loft_tilts_face_triangle_normals_upward(self) -> None:
-        """Face-patch normals average to ~(cos loft, sin loft, 0)."""
+        """Flat-face normals realize (cos loft, sin loft, 0) exactly.
+
+        #4799 G1: the leading-edge lean keeps the flat face planar, so
+        the face plane passes through the *leaned* face center.
+        """
         spec = replace(
             get_club(_DRIVER), face_bulge_radius_m=None, face_roll_radius_m=None
         )
         mesh = parametric_head_mesh(spec)
         lam = math.radians(spec.loft_deg)
         expected = np.array([math.cos(lam), math.sin(lam), 0.0])
-        face_center = np.array([0.055, 0.0, 0.0])
+        face_center = np.array(face_center_point(spec))
         signed_distance = (mesh.triangles - face_center) @ expected
         face = np.max(np.abs(signed_distance), axis=1) < 1e-10
         assert np.count_nonzero(face) == 9 * RING_POINTS
@@ -289,7 +301,11 @@ class TestParity:
         )
 
     def test_driver_mesh_pinned_vertex_and_extent(self) -> None:
+        # Repinned for the leading-edge loft lean (#4799 G1): the
+        # forward extent is now the leading edge at the authored face
+        # station (minus the roll sagitta), and the pinned vertex is
+        # the leaned outer face-ring toe vertex.
         flat = build_parametric_head(get_club(_DRIVER)).reshape(-1, 3)
-        assert flat[:, 0].max() == pytest.approx(0.058722579135751, rel=1e-12)
-        target = np.array([0.049434717761548, -0.001031464094849, 0.058])
+        assert flat[:, 0].max() == pytest.approx(0.053596482389853546, rel=1e-12)
+        target = np.array([0.044237344811932186, -0.00046886258820926993, 0.058])
         assert (np.abs(flat - target).sum(axis=1) < 1e-12).any()
