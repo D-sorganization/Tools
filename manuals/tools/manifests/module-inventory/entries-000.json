@@ -1589,6 +1589,7 @@
           "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
           "src/shared/python/swing_sim/variation/tests/test_propagation.py",
           "src/shared/python/swing_sim/variation/tests/test_spec.py",
+          "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
           "tests/p1am_control_system/test_control_tab_construction.py",
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/test_capability_workflow.py",

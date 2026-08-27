@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 25,
-    "partial": 6,
+    "verified": 26,
+    "partial": 5,
     "unverified": 0,
     "external_blocked": 0
   },
@@ -171,20 +171,24 @@
     {
       "requirement_id": "R11.3",
       "requirement": "Use stable modeled-point identifiers, explicit frames, common grids, and documented interpolation.",
-      "status": "partial",
-      "rationale": "Geometry tensors bind point names, frame, units, and common time or phase coordinates, and strict readers reject drift.",
+      "status": "verified",
+      "rationale": "The versioned time-grid authority preserves stable point/frame/trial identities, is exactly equivalent on identity and subset grids for manual, double-pendulum, and triple-pendulum spatial layouts, interpolates only between adjacent valid samples, rejects extrapolation, retains missing intervals, and reports approximate impact-marker alignment error. The exhaustive 3-source by 4-adapter matrix inherits the two qualified R11.1 cells and records ten cells as explicitly unavailable. This qualifies model-output alignment, not participant validity.",
       "evidence_files": [
         "src/shared/python/swing_sim/variation/ensemble_geometry.py",
         "src/shared/python/swing_sim/variation/ensemble_types.py",
-        "tests/rate_of_closure/test_variation_geometry_properties.py"
+        "src/shared/python/swing_sim/variation/trace_resampling.py",
+        "docs/audits/rate_of_closure_r11_3_trace_resampling_capabilities.v1.json",
+        "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
+        "tests/rate_of_closure/test_variation_trace_resampling.py",
+        "tests/rate_of_closure/test_epic_4142_requirement_evidence.py"
       ],
       "validation_commands": [
-        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py tests/rate_of_closure/test_variation_geometry_properties.py -q"
+        "python -m pytest src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py src/shared/python/swing_sim/variation/tests/test_trace_resampling.py tests/rate_of_closure/test_variation_geometry_properties.py tests/rate_of_closure/test_variation_trace_resampling.py tests/rate_of_closure/test_epic_4142_requirement_evidence.py -n 0 -q"
       ],
-      "remote_evidence": [],
-      "gaps": [
-        "Interpolation and resampling equivalence is not qualified across every model adapter and missing-data pattern."
-      ]
+      "remote_evidence": [
+        "https://github.com/D-sorganization/Tools/issues/4763"
+      ],
+      "gaps": []
     },
     {
       "requirement_id": "R11.4",

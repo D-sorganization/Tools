@@ -508,6 +508,7 @@
           "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py",
           "src/shared/python/swing_sim/variation/tests/test_propagation.py",
           "src/shared/python/swing_sim/variation/tests/test_spec.py",
+          "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
           "src/shared/python/swing_sim/variation/tests/test_wire_identity.py",
           "src/shared/python/tests/test_contracts_shared.py",
           "src/shared/python/tests/test_cors.py",

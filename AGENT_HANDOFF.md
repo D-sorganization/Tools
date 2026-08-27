@@ -28,7 +28,7 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4120 | Investigation & Variation Suite. Open. PR #4124 **merged**.                                                                                                                                                                           |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 **merged**. H5 (public release-management repo) still not started.                                                                                                    |
 | #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 landed in PR #4577) — 6-DOF transient package, tests, and impact wire.                                                                                                            |
-| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762 carries #4758/R11.1 and advances the branch ledger to 25 verified / 6 partial; protected merge remains pending.                                                    |
+| #4142 | Ensemble variation, quiet zones, sensitivity attribution. PR #4762/R11.1 merged as `66b1cb4d`; #4763/R11.3 now qualifies stable-point time-grid alignment and advances the branch ledger to 26 verified / 5 partial.                  |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                                                |
 | #4433 | Visual-first tab visibility and visualization-led UX. Open. V0.1, strict cross-runtime parity, and V5.2 are merged through PR #4738; the audit is 8 verified / 23 partial obligations with seven gaps and two human actions retained. |
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
@@ -63,14 +63,14 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
 - #4142 R10.3 protected-merged through PR #4757 as
   `5b3f585e3754fd77cc506631d55b163f50caf04d`: one packaged authority
   classifies all 31 inputs by adapter and locus or explicit unavailability.
-  PR #4760 protected-merged the unrelated process-CPU-clock CI stabilization as
-  `55805fe4de1b0afc3710efce4ed516d59e685717`. Issue #4758 is now active on
-  `feat/4758-complete-trial-record`: typed full-trial records now survive
-  schema-v3 durable write/read/resume with array identities, corruption gates,
-  legacy-v2 handling, and source/adapter coverage. PR #4762 passed its R11.1
-  gates but exposed a NumPy stub error and undeclared base-NumPy reliance in
-  hosted wheel tests. Both are fixed; focused mypy/Ruff and the 89.69 s wheel
-  test pass. Protected rerun, merge, and remote-main proof remain.
+  PR #4762/R11.1 protected-merged as
+  `66b1cb4d16d8ea36fa7c3f4eb0c4f3725ae03734`; issue #4758 is closed and the
+  corrected Python 3.11/3.12, exact-wheel, browser, and governance gates passed.
+  Issue #4763/R11.3 is active on `feat/4763-trace-resampling`: the versioned
+  time-grid authority rejects extrapolation and gap bridging, preserves
+  frame/point/trial identities and typed unavailability, reports approximate
+  impact-marker alignment error, and qualifies all three spatial layouts plus
+  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; protected PR and remote-main evidence remain.
 
 ## Must-Read Architecture Pointers
 

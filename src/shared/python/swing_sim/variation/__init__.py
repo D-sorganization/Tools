@@ -141,6 +141,11 @@ from .spec import (
     variable_registry,
     variables_in_category,
 )
+from .trace_resampling import (
+    TRACE_RESAMPLING_POLICY_ID,
+    TraceResamplingResult,
+    resample_position_traces,
+)
 
 __all__ = [
     "CATEGORY_BALL_SETUP",
@@ -212,6 +217,8 @@ __all__ = [
     "RMS_RADIUS",
     "PerturbationGroup",
     "SensitivityResult",
+    "TRACE_RESAMPLING_POLICY_ID",
+    "TraceResamplingResult",
     "VariableDef",
     "VariationDataset",
     "VariationPlan",
@@ -238,6 +245,7 @@ __all__ = [
     "read_hdf5",
     "read_json",
     "register_variable",
+    "resample_position_traces",
     "run_variation",
     "sensitivity_from_standard_deviations",
     "sample_inputs",

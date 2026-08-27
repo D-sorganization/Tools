@@ -57,16 +57,16 @@ gaps keep #4142 open. This verifies execution semantics, not anatomy, human
 validity, or coaching. The visual co-change guard excludes test-only TSX
 modules but remains fail-closed for shipped React surfaces. The standalone
 public mirror consumes a byte-identical governed vendored authority.
-PR #4760 protected-merged the unrelated process-CPU-clock CI stabilization as
-`55805fe4de1b0afc3710efce4ed516d59e685717` without changing the 0.5 s
-work or 200 ms cadence limits. Issue #4758/R11.1 is active on
-`feat/4758-complete-trial-record`; PR #4762 is open. Full state now uses
-typed records and bounded schema-v3 durable write/read/resume. Array manifests,
-strict corruption gates, legacy-v2 read-only inspection, explicit units, exact
-serial/chunk/resume fingerprints, and the 3-source by 4-adapter matrix pass.
-The dc1cf1d4f scaling run, guide, and 25/6 ledger pass. PR #4762 exposed a NumPy stub
-boundary and undeclared base-NumPy reliance in hosted wheel tests; both are fixed, and
-focused mypy/Ruff plus the 89.69 s wheel test pass. Protected rerun and merge remain.
+PR #4762/R11.1 protected-merged as `66b1cb4d`; issue #4758 is closed. Typed
+records, bounded schema-v3 write/read/resume, array identities, corruption and
+legacy-v2 gates, exact serial/chunk/resume fingerprints, scaling evidence, and
+the 3-source by 4-adapter boundary passed Python 3.11/3.12, wheel, browser, and
+governance CI. Issue #4763/R11.3 is active on
+`feat/4763-trace-resampling`: policy `swing-trace-time-linear-contiguous/v1`
+rejects extrapolation and gap bridging, preserves stable point/frame/trial
+identity and typed unavailability, and retains approximate impact-marker error.
+Identity/subset equivalence passes for all three spatial layouts; the inherited
+adapter matrix remains two verified / ten explicitly unavailable. The ledger is 26 verified / 5 partial. Protected PR and remote-main proof remain.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

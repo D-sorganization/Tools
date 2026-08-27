@@ -203,7 +203,7 @@
   },
   "shards": [
     {
-      "content_sha256_lf": "cdc4c1010fd4b543152c5384723d429f8aa677de6c5b09f6611c2ee6d1753681",
+      "content_sha256_lf": "11f1bed47708885bcca86d6332bfceb95f6a62086473f906945ce7e45589b4be",
       "entry_count": 200,
       "first_path": ".docker/entrypoint.sh",
       "last_path": "scripts/check_minimum_test_contract.py",
@@ -267,7 +267,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "98272519333cfa61b4745964089792a3bcc9a27c7b32ef744e5262b13df3250f",
+      "content_sha256_lf": "ab8676832ea45bd8f21e415b5071df2c7ca3c4260e7582abecd6a5e137441b14",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/visual_state_frame.py",
       "last_path": "src/rate_of_closure/web/src/components/SimulationTargetWorkflow.test.tsx",
@@ -307,7 +307,7 @@
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "11c83824428632f2e002a52e7a209bf47f7687b27d6b1d2edcdf20111f70968a",
+      "content_sha256_lf": "f4047d38427bcac5698187cd2f3101a58bec8adbd7cdc693b7f084ce48141965",
       "entry_count": 200,
       "first_path": "src/shared/python/compatibility.py",
       "last_path": "src/shared/python/sidekick/agent/action_service.py",
@@ -323,7 +323,7 @@
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "283c8f4f50eb20d2d753fa2f283712e5a07578c9cb9475022b567be68f13e6e3",
+      "content_sha256_lf": "ff0ebf2abe80aed7b1ef0caa5046988a873311e95dd759de62b417155dc60307",
       "entry_count": 200,
       "first_path": "src/shared/python/signal_toolkit/_lazy_map.py",
       "last_path": "src/shared/python/swing_sim/variation/identity_contracts.py",
@@ -331,34 +331,34 @@
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "56f89d642d6b441b5115b08a5ee18cd23a75d6f100176f6f06f86bf7cd0c09f8",
+      "content_sha256_lf": "4fc80472f229dfe655297584e9bbdecaefa1e1e6f94f38c3e6ccb061a67bc34d",
       "entry_count": 200,
       "first_path": "src/shared/python/swing_sim/variation/morris_design.py",
-      "last_path": "src/vessel_drafter/python/vessel_drafter/projects/cylindrical_bath_layout.py",
+      "last_path": "src/vessel_drafter/python/vessel_drafter/projects/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "eb4d6cc9512f4f9508de562490137b5036868fbc78073a0cb460db7951ae316e",
-      "entry_count": 47,
-      "first_path": "src/vessel_drafter/python/vessel_drafter/projects/electrode_advisor_default_layout.py",
+      "content_sha256_lf": "7ab9ff49cd9673c87eb4c173ae6977f04ac25b7a98696690b3abfc655c4bcb74",
+      "entry_count": 48,
+      "first_path": "src/vessel_drafter/python/vessel_drafter/projects/cylindrical_bath_layout.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "2f06c207c491a3fec02baf939771d1ca34daf50cd2d8b163b4d59c2bf26999e8",
+  "source_tree_sha256": "0912074f5ac7a5fc9aeee9665fe82bcd60dc1ed8f2a54351b5c812140310e69d",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
-      "not-applicable": 2637,
+      "not-applicable": 2638,
       "provisional": 809
     },
     "blocked_count": 1,
     "calculation_count": 809,
     "classification_counts": {
       "calculation": 809,
-      "non-calculation": 2638
+      "non-calculation": 2639
     },
     "family_counts": {
       "control-systems-calculation": 6,
@@ -380,14 +380,14 @@
       "shared-tools-non-calculation": 1021,
       "signal-processing-calculation": 28,
       "swing-simulation-calculation": 58,
-      "swing-simulation-non-calculation": 135
+      "swing-simulation-non-calculation": 136
     },
-    "module_count": 3447,
-    "non_calculation_count": 2638,
+    "module_count": 3448,
+    "non_calculation_count": 2639,
     "provisional_count": 809,
     "review_status_counts": {
       "blocked": 1,
-      "inventory-baseline": 2637,
+      "inventory-baseline": 2638,
       "review-required": 809
     }
   }

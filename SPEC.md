@@ -27,10 +27,22 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.32                                    |
+| **Spec Version**        | 1.18.33                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Stable-Point Trace Resampling Qualification (#4763 / #4142 R11.3)
+
+Version 1.18.33 adds the versioned
+`swing-trace-time-linear-contiguous/v1` authority. It preserves point, frame,
+trial, and variation identities; rejects extrapolation and invalid grids;
+interpolates only between adjacent valid samples; and retains invalid gaps,
+all-invalid failures, no-impact rows, and per-impact display-marker alignment
+error. Identity/subset equivalence passes for manual, double-pendulum, and
+triple-pendulum spatial layouts, while the inherited 3-source by 4-adapter
+matrix keeps ten unsupported cells explicit. This is software/model-output
+alignment evidence, not participant or coaching validation.
 
 ### 2026-08-26 R11.1 Hosted Qualification Portability (#4758 / PR #4762)
 
@@ -47,7 +59,8 @@ qualification without changing archive bytes or scientific interpretation.
 Version 1.18.31 advances R11.1 from partial to verified in the branch ledger,
 with immutable PR evidence and executable links to the typed record, durable
 reader, capability matrix, scaling artifact, and installed-wheel gate. The
-parent epic remains open at 25 verified and 6 partial requirements.
+parent epic remained open at 25 verified and 6 partial requirements before
+the R11.3 qualification.
 
 ### 2026-08-26 Complete-Trial Qualification Evidence (#4758 / #4142 R11.1)
 
@@ -5421,6 +5434,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.33 | feat/test/docs(rate-of-closure, #4763 / #4142 R11.3): add the versioned fail-closed time-grid resampling authority, preserve stable point/frame/trial identities and missing intervals, retain approximate impact-marker error, qualify identity/subset equivalence for all three spatial layouts, and bind the inherited exhaustive adapter matrix and scientific boundary. |
 | 2026-08-26 | 1.18.32 | fix/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): make the exact-wheel proof portable across hosted Python 3.11/3.12 by explicitly reusing only the qualified parent dependency site while requiring project imports to resolve from the isolated installed wheel; document the NumPy dynamic named-array stub boundary without changing archive behavior. |
 | 2026-08-26 | 1.18.31 | docs/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): bind the complete-trial qualification to its protected pull request, advance the fail-closed epic ledger to 25 verified / 6 partial, and require the source/adapter matrix, durable/scaling evidence, installed-wheel proof, and scientific boundary to remain locally traceable. |
 | 2026-08-26 | 1.18.30 | docs/test(rate-of-closure, #4758 / #4142 R11.1): publish revision-bound complete-trial scaling evidence and its deterministic generator, document schema-v3 retention and the exhaustive source/adapter boundary in the public reproducibility guide, export the typed public record contract, and prove an exact built wheel can create, persist, install, read, and reconstruct complete records outside the checkout. |
