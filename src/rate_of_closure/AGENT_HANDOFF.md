@@ -63,7 +63,9 @@ including `all_together`, `individual`, and `both` execution, dataset-free
 individual results, aggregate progress, cancellation, and 1--4096 durable
 chunks. The ledger is 30 verified / 1 partial. All remain model-scenario
 screening views, not global main effects, causal anatomy, governed human
-validation, or coaching authority.
+validation, or coaching authority. Hosted visual review found and fixed an
+unlabeled PyQt policy selector; approve no baseline until the corrected Linux
+candidate is inspected through the protected PR.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

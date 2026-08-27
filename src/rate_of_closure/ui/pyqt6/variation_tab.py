@@ -189,6 +189,8 @@ class VariationTab(
         for policy in ANALYSIS_EXECUTIONS:
             self._analysis_combo.addItem(labels[policy], policy)
         self._analysis_combo.setCurrentIndex(self._analysis_combo.findData("both"))
+        self._analysis_label = QLabel("Analysis Policy")
+        self._analysis_label.setBuddy(self._analysis_combo)
         self._analysis_combo.setAccessibleName("Variation analysis execution policy")
         self._analysis_combo.setToolTip(
             "Choose the joint Monte Carlo batch, paired one-at-a-time "
@@ -196,7 +198,10 @@ class VariationTab(
             "in the physical variation plan."
         )
         self._analysis_combo.currentIndexChanged.connect(self._invalidate_current_study)
-        layout.addWidget(self._analysis_combo)
+        analysis_row = QHBoxLayout()
+        analysis_row.addWidget(self._analysis_label)
+        analysis_row.addWidget(self._analysis_combo, stretch=1)
+        layout.addLayout(analysis_row)
         row = QHBoxLayout()
         self._run_button = QPushButton("Run Variation Study")
         self._run_button.setToolTip(

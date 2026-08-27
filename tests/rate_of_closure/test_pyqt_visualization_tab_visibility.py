@@ -50,6 +50,9 @@ def test_initial_variation_execution_policy_is_visible_and_bounded(qtbot) -> Non
     assert tab._analysis_combo.accessibleName() == (
         "Variation analysis execution policy"
     )
+    assert tab._analysis_label.text() == "Analysis Policy"
+    assert tab._analysis_label.buddy() is tab._analysis_combo
+    assert tab._analysis_label.isVisible()
     assert tab._analysis_combo.isVisible()
     assert [tab._analysis_combo.itemData(index) for index in range(3)] == [
         "all_together",
