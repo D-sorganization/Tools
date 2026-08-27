@@ -1075,7 +1075,7 @@ jobs:
   rust-quality-gate:
     needs: pick-runner
     runs-on: d-sorg-fleet
-    timeout-minutes: 15
+    timeout-minutes: 45
     env:
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_BUILD_JOBS: "1"
@@ -1086,6 +1086,11 @@ jobs:
       - name: Git HTTP/1.1 workaround
         run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
+        with:
+          # This job fetches the public RustSec advisory database. Persisted
+          # installation credentials are repository-scoped and cause that
+          # external fetch to fail with HTTP 401.
+          persist-credentials: false
 
       - name: Check for Rust changes
         id: rust-changes
@@ -1175,7 +1180,17 @@ jobs:
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
           cargo install cargo-audit --locked
-          cargo audit
+          # The public RustSec database must not inherit a runner-global
+          # GitHub App URL rewrite or credential helper.  Those credentials
+          # are repository-scoped and GitHub correctly rejects them for
+          # RustSec/advisory-db.  Isolate only the public database fetch;
+          # crates.io installation above and the checked-out repository keep
+          # their normal configuration.
+          GIT_CONFIG_GLOBAL=/dev/null \
+            GIT_CONFIG_NOSYSTEM=1 \
+            GIT_TERMINAL_PROMPT=0 \
+            GIT_ASKPASS=/bin/false \
+            cargo audit
 
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'

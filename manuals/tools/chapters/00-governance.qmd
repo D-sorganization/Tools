@@ -1,0 +1,64 @@
+# Documentation Authority and Release Boundary
+
+## Purpose
+
+The manual will explain shared calculations and interchange contracts from
+theory and assumptions through typed inputs, units, coordinate and time
+conventions, algorithms, implementation symbols, tests, uncertainty,
+limitations, consumer surfaces, and artifacts. Tools source and evidence remain
+authoritative; the manual cannot approve a calculation that its owning source,
+evidence, license, or human review has not approved.
+
+## Canonical Source
+
+Only QMD under `manuals/tools` is editable manual source. Existing user guides,
+ADRs, package documentation, generated API references, and publications are
+separate governed products. They can supply reviewed references, but none is a
+second mutable source for this manual.
+
+Generated LaTeX, PDF, DOCX, and HTML are non-editable artifacts. A correction
+starts in canonical QMD, then regenerates every affected representation through
+the qualified toolchain. TOOLS-D2 owns that toolchain; TOOLS-D7 and TOOLS-D8
+own artifact review and publication evidence.
+
+## Evidence and License Classes
+
+Every calculation and claim must be classified as observed, derived,
+model-scenario, external, provisional, unavailable, or approved within an
+explicit scope. Every borrowed source and generated artifact must preserve its
+license and attribution. Content from Tools_Private or another non-public
+source may not enter this public manual without explicit public authority.
+
+## Approval and Failure Semantics
+
+The default is deny-until-approved. Missing inventory coverage, source
+authority, units, coordinate or time convention, implementation symbol, test,
+validity range, uncertainty, license, artifact digest, page review,
+accessibility review, or human approval keeps the affected item blocked.
+Unsupported values are never replaced with synthetic or plausible values
+without an explicit model-scenario contract.
+
+## Exemptions
+
+Freshness failures are release-blocking. The TOOLS-D1 module baseline is
+recomputed from tracked implementation and governed configuration files by
+`python -m scripts.build_tools_module_inventory --check`; later TOOLS-D6 work
+must extend freshness from the file baseline to stable calculation pathways.
+Future exemptions must be structured, narrowly scoped, justified,
+owned, reviewed, and expiring. An exemption cannot authorize an equation,
+scientific claim, artifact, operating use, license transfer, or public
+projection.
+
+## Current Boundary
+
+TOOLS-D1 establishes a complete file-level denominator for its declared tracked
+scope. TOOLS-D2 establishes deterministic byte reproduction and governed
+semantic preservation across HTML, LaTeX, PDF, and DOCX. Its generated
+artifacts remain non-editable and unapproved. The conservative inventory does
+not establish stable calculation identity, equation correctness, validity
+ranges, uncertainty, page/accessibility approval, or publication authority.
+TOOLS-D4 registers one model-conditioned D-plane exemplar with explicit
+equation-to-code-to-test evidence while retaining review-required inventory
+authority. The markerless-mocap exemplar remains fail-closed because its source
+dependency is unmerged. Expansion, executable freshness, review, publication,
+and human approval remain blocked under TOOLS-D5 through TOOLS-D9.

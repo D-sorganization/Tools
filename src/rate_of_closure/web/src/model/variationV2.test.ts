@@ -11,7 +11,7 @@ import {
   type PerturbationGroupTs,
   type VariationPlanTs,
 } from "./variation";
-import { datasetToJson, oneAtATimeSensitivity } from "./variationAnalysis";
+import { oneAtATimeSensitivity } from "./variationAnalysis";
 import { DRIVER_TEE_HEIGHT_M } from "./ballSetup";
 import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
 import localizedTorqueFixture from "./__fixtures__/localized_torque_authoring_v1.json";
@@ -232,30 +232,11 @@ describe("variation plan schema v2", () => {
     });
   });
 
-  it("round-trips spec IDs, locus metadata, groups, and replay inputs", () => {
+  it("rejects locus metadata for variables declared whole-run only", () => {
     const plan = groupedPlan();
     plan.noise[0].timeWindowS = [0.7, 0.8];
     plan.noise[0].pointIds = ["swing.clubhead"];
-
-    const decoded = planFromJson(planToJson(plan));
-
-    expect(decoded).toEqual(plan);
-    expect(decoded.baseVariables).toEqual(plan.baseVariables);
-    expect(decoded.flightModel).toBe(plan.flightModel);
-    const datasetJson = JSON.parse(
-      datasetToJson({
-        plan: decoded,
-        inputNames: [BALL, ANGLE],
-        inputs: [[154, 13]],
-        outputNames: [],
-        outputs: [[]],
-        success: [true],
-      }),
-    ) as { plan_document: { plan: Record<string, unknown> } };
-    expect(datasetJson.plan_document.plan).toMatchObject({
-      base_variables: plan.baseVariables,
-      flight_model: plan.flightModel,
-    });
+    expect(() => planToJson(plan)).toThrow(/locus metadata is forbidden/);
   });
 
   it("rejects unsupported future schemas", () => {
@@ -372,7 +353,7 @@ describe("grouped sampling", () => {
     expect(result.matrix).toHaveLength(2);
   });
 
-  it("allows locus metadata in sampling but rejects scalar execution", () => {
+  it("rejects undeclared locus behavior before sampling or scalar execution", () => {
     const plan = groupedPlan();
     plan.groups = [];
     plan.nRuns = 4;
@@ -385,7 +366,7 @@ describe("grouped sampling", () => {
       },
     ];
 
-    expect(sampleInputs(plan)).toHaveLength(4);
-    expect(() => runVariation(plan)).toThrow(/global perturbations/);
+    expect(() => sampleInputs(plan)).toThrow(/locus metadata is forbidden/);
+    expect(() => runVariation(plan)).toThrow(/locus metadata is forbidden/);
   });
 });

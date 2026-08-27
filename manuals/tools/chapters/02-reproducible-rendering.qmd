@@ -1,0 +1,56 @@
+# Reproducible Rendering Contract
+
+## Outcome and Authority
+
+TOOLS-D2 renders the canonical QMD into deterministic HTML, LaTeX, PDF, and
+DOCX representations. Generated outputs are engineering records, not approval.
+Only QMD may be corrected directly. Every output remains blocked from public
+projection until semantic, page, accessibility, provenance, licensing, and
+human-review gates owned by later subepics are complete.
+
+The renderer uses the pinned command versions and inputs recorded in
+`toolchain-lock.json`. It verifies the exact first version line before render,
+expands only bounded QMD includes, uses the governed bibliography and reference
+DOCX, disables TeX shell escape, normalizes volatile package metadata, and
+binds every representation into `manifests/artifacts.json`. The command model
+follows the documented Pandoc conversion contract [@pandoc-manual] while QMD
+remains compatible with the pinned Quarto authoring surface [@quarto-guide].
+
+![Deterministic rendering pathway.](figures/render-pipeline.png){width=70%}
+
+## Semantic, Unit, and Warning Preservation
+
+The semantic contract is deliberately format-neutral. Every representation
+must retain the governed title, release boundary, representative unit string,
+warning, figure label, and bibliography identity before receiving a shared
+semantic digest. Example unit string: 10 m/s.
+
+::: {.warning}
+WARNING: Provisional calculations remain blocked.
+:::
+
+This gate proves preservation of required meaning across the four
+representations. It does not prove calculation correctness, equation coverage,
+accessibility, page aesthetics, or release approval. Missing text, a stale
+digest, an unpinned tool, an unsafe include, or an absent artifact fails closed.
+
+## Reproduction and Consumer Contract
+
+Run `python -m scripts.render_tools_design_manual --verify-toolchain` before a
+qualified build. Run `python -m scripts.render_tools_design_manual --render`
+to replace renderer-owned artifacts, then
+`python -m scripts.render_tools_design_manual --check` to validate source,
+toolchain, byte, and semantic bindings. The strict JSON Schemas allow consumers
+to validate the lock and manifest without importing producer code.
+
+Artifact rows expose media type, byte count, byte digest, and shared semantic
+digest. The manifest also preserves the owning epic, review owner, explicit
+blockers, and a null immutable source commit while this local stack is not a
+merged authority. A consumer must reject unknown fields, versions, formats,
+paths, hashes, status promotion, or semantic divergence.
+
+# References
+
+The cited Pandoc and Quarto records are resolved from the governed bibliography
+declared by the pinned toolchain contract; an unresolved citation fails the
+qualified render.

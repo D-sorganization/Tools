@@ -11,7 +11,7 @@ nalgebra = "0.33"
 serde = { workspace = true }
 
 [dependencies.pyo3]
-version = "0.24"
+workspace = true
 optional = true
 
 [dependencies.numpy]

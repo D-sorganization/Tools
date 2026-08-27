@@ -1,0 +1,319 @@
+{
+  "schema_version": "rate-locus-execution-capabilities/v1",
+  "mode": "multi_adapter",
+  "source_kind": "declared_by_adapter",
+  "point_id_semantics": "topological_control_loci_not_spatial_trace_points",
+  "time_window_semantics": "half_open_seconds",
+  "capabilities": [
+    {
+      "variable_key": "swing_sim.impact.delivery.clubhead_speed_mps",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Clubhead speed is derived from the swing trace in swing mode and cannot be independently imposed by this adapter."
+    },
+    {
+      "variable_key": "swing_sim.impact.delivery.club_path_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Club path is derived from the swing trace in swing mode and cannot be independently imposed by this adapter."
+    },
+    {
+      "variable_key": "swing_sim.impact.delivery.face_angle_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Face angle has no double-pendulum trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.impact.delivery.attack_angle_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Attack angle is derived from the swing trace in swing mode and cannot be independently imposed by this adapter."
+    },
+    {
+      "variable_key": "swing_sim.impact.delivery.dynamic_loft_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Dynamic loft has no double-pendulum trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.impact.delivery.lie_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Residual lie rotation has no double-pendulum trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.impact.delivery.impact_offset_toe_mm",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.impact.delivery.impact_offset_high_mm",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.swing.yaw_deg",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.swing.side_tilt_deg",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.swing.forward_tilt_deg",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.swing.impact_time_offset_s",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.swing.damping_shoulder",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.swing.damping_wrist",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.club.head_mass_kg",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.club.head_moi_kg_m2",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.club.cor",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Coefficient of restitution has no complete Rate trace execution adapter."
+    },
+    {
+      "variable_key": "swing_sim.flight.launch.ball_speed_mph",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Launch variables are outputs of the swing-impact trace adapter, not independent swing inputs."
+    },
+    {
+      "variable_key": "swing_sim.flight.launch.launch_angle_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Launch variables are outputs of the swing-impact trace adapter, not independent swing inputs."
+    },
+    {
+      "variable_key": "swing_sim.flight.launch.launch_azimuth_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Launch variables are outputs of the swing-impact trace adapter, not independent swing inputs."
+    },
+    {
+      "variable_key": "swing_sim.flight.launch.spin_rpm",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Launch variables are outputs of the swing-impact trace adapter, not independent swing inputs."
+    },
+    {
+      "variable_key": "swing_sim.flight.launch.spin_axis_deg",
+      "supported": false,
+      "adapter_id": null,
+      "whole_run": false,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": "Launch variables are outputs of the swing-impact trace adapter, not independent swing inputs."
+    },
+    {
+      "variable_key": "swing_sim.swing.shoulder_commanded_torque_offset_nm",
+      "supported": true,
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "whole_run": false,
+      "time_window_policy": "required_half_open_seconds",
+      "point_locus_policy": "required_exact_topological",
+      "point_ids": ["joint.shoulder"],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.swing.wrist_commanded_torque_offset_nm",
+      "supported": true,
+      "adapter_id": "localized_joint_torque_offset/v1",
+      "whole_run": false,
+      "time_window_policy": "required_half_open_seconds",
+      "point_locus_policy": "required_exact_topological",
+      "point_ids": ["joint.wrist"],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.ball_setup.tee_height_m",
+      "supported": true,
+      "adapter_id": "global_simulation_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "golf_club.turf.normal_stiffness_n_m",
+      "supported": true,
+      "adapter_id": "turf_profile_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "golf_club.turf.normal_damping_n_s_m",
+      "supported": true,
+      "adapter_id": "turf_profile_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "golf_club.turf.friction_coefficient",
+      "supported": true,
+      "adapter_id": "turf_profile_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "golf_club.turf.max_penetration_m",
+      "supported": true,
+      "adapter_id": "turf_profile_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.flight.launch.ground_normal_restitution",
+      "supported": true,
+      "adapter_id": "regional_ground_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    },
+    {
+      "variable_key": "swing_sim.flight.launch.ground_rolling_resistance",
+      "supported": true,
+      "adapter_id": "regional_ground_value/v1",
+      "whole_run": true,
+      "time_window_policy": "forbidden",
+      "point_locus_policy": "forbidden",
+      "point_ids": [],
+      "unsupported_reason": null
+    }
+  ]
+}

@@ -309,6 +309,6 @@ describe("analysis + export", () => {
     // ground_normal_restitution and ground_rolling_resistance, which
     // regional_ground_variation_request does from inside its parse path.
     expect(keysForMode("launch")).toHaveLength(7);
-    expect(keysForMode("delivery")).toHaveLength(7); // club category is desktop-only
+    expect(keysForMode("delivery")).toHaveLength(8); // club category is desktop-only
   });
 });

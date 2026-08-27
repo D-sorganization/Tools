@@ -27,10 +27,265 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.13                                    |
-| **Last Spec Update**    | 2026-08-25                                 |
+| **Spec Version**        | 1.18.59                                    |
+| **Last Spec Update**    | 2026-08-27                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-27 Provenance-Complete Attribution Selection (#4791 / #4142 R13.5)
+
+Version 1.18.59 replaces name-only Morris result selection with the versioned
+`rate-of-closure/morris-target-selection` v1 identity. Target kind, name, unit,
+point, time or phase, and coordinate frame remain inseparable, so observations
+with the same scalar name cannot be conflated across geometry or time. PyQt and
+React enumerate the same deterministic options from an immutable parsed report
+and expose either its global factor ranking or one selected source while
+retaining that source's global rank, typed no-impact/failure/nonfinite counts,
+availability, and adequacy. A shared fixture covers state-point, impact, and
+shot targets. Selection imports no simulation, execution service, or
+sensitivity-analysis authority; it is reviewer-side projection of serialized
+model-scenario evidence and does not establish anatomical causality, human
+validity, or coaching advice.
+
+### 2026-08-27 Rust Artifact-Finalization Runtime Budget
+
+Version 1.18.58 raises the same single-worker Rust gate's bound from 30 to 45
+minutes after an exact-head run passed formatting, warning-denied Clippy,
+tests, security audit, wheel and WASM builds, and Criterion benchmarks, then
+GitHub cancelled it at 35 minutes while `actions/upload-artifact` was still
+finalizing the benchmark result. The change preserves every phase, the
+benchmark artifact, one gate job, and `CARGO_BUILD_JOBS=1`.
+
+### 2026-08-27 Rust Quality-Gate Runtime Budget
+
+Version 1.18.57 raises only the Rust quality gate's job timeout from 15 to 30
+minutes. Two exact-head attempts completed formatting, warning-denied Clippy,
+and Rust tests before GitHub cancelled the job during the security-audit/cache
+tail. The larger bound accommodates the existing serialized, resource-capped
+gate without increasing runner concurrency or weakening any check.
+
+### 2026-08-27 PyO3 0.29 Embedded-Test Initialization Compatibility
+
+Version 1.18.56 migrates the SCADA Rust unit test from the removed
+`pyo3::prepare_freethreaded_python` function to `Python::initialize`, the PyO3
+0.29 API with the same embedded-interpreter purpose. This repairs the optional
+workspace Rust gate exposed during #4783 qualification without changing SCADA
+runtime behavior or the paired-attribution scientific contract.
+
+### 2026-08-27 Paired Localized Source-To-Downstream Attribution (#4783 / #4142 R13.3)
+
+Version 1.18.54 adds a versioned immutable record for exact paired model
+interventions. It binds one independently estimable source parameter and its
+optional control point and time window to governed state-point, impact, and
+shot scalars. Exact model, adapter, frame, grid, plan, registry, execution, and
+source identities fail closed, as do bounded, discrete, grouped, correlated,
+or zero-delta source designs. Missing, nonfinite, unsupported, no-impact, and
+solver-failure observations remain typed unavailable values. Bounded
+serial/chunk/resume snapshots, deterministic fingerprints, selectors, and
+precision-preserving JSON/CSV rows support independent review. The complete
+capability authority enumerates all 17 Rate target metrics and preserves ten
+unavailable source/adapter cells rather than fabricating coverage. Analytical
+and countermodel tests qualify paired model-scenario response only; they do not
+establish global main effects, causal anatomy, human validity, or coaching
+authority.
+
+### 2026-08-27 Governed Geometric Noise-Response Fields (#4765 / #4142 R12.3)
+
+Version 1.18.44 adds an immutable, fingerprinted field that reports signed and
+magnitude paired-OAT positional response per declared distribution standard
+deviation beside absolute RMS scatter from the same eligible cohort. It also
+retains all-eligible scatter and both denominators so missingness cannot be
+mistaken for geometric robustness. The field consumes the qualified contiguous
+trace-resampling policy and fails closed on identity, frame, registry, policy,
+resume, discrete-input, bounded-input, correlated-design, and zero-perturbation
+conditions. Bounded streaming sufficient statistics avoid duplicating source
+trace tensors, while row-oriented plot records expose method, units, adequacy,
+provenance, and scientific limits. Analytical, metamorphic, countermodel, and
+missingness tests qualify model-scenario geometry only; they do not establish
+causal anatomy, human validity, energy transfer, joint work, or coaching advice.
+The public record contract has exactly three index axes—input, point, and time—
+and reduces NumPy predicates to scalar booleans before enforcing invariants, so
+static typing and runtime validation express the same fail-closed boundary.
+
+### 2026-08-26 RustSec Dependency Remediation (#4764)
+
+Version 1.18.43 raises the workspace compiler floor to Rust 1.83 and migrates
+the Python binding stack from PyO3/NumPy 0.24 to 0.29. It also advances the
+AI backend from Reqwest 0.11 to 0.12, resolving to `h2` 0.4. These floors
+exclude RUSTSEC-2026-0176, RUSTSEC-2026-0177, and RUSTSEC-2026-0258 after the
+credential-isolated audit exposed real advisories. The migration preserves the
+extension APIs using PyO3 0.29's explicit `Py<PyAny>`, attachment, detachment,
+and object-conversion contracts. Workspace formatting, warning-denied Clippy,
+351 passing Rust tests plus one explicitly ignored benchmark, the RustSec audit,
+and an isolated built-wheel `tools_core.Vector3` import all pass. The existing allowed unmaintained-
+crate warnings remain warnings rather than vulnerabilities.
+
+### 2026-08-26 Complete UpstreamDrift Contract Checkout (#4764)
+
+Version 1.18.41 adds `src/bunkershot3d` to the narrow UpstreamDrift sparse
+checkout used by Cross-Repo Python Integration. Current UpstreamDrift shared
+simulation backends import the governed `bunkershot3d.postproc` wrench
+contract, whose curated package surface in turn imports its double-pendulum
+kinematics authority. Omitting either package root made provider and
+variation-gateway tests fail before exercising this PR's Tools authority. The
+workflow remains shallow and does not broaden to all of `src`; a contract test
+pins all three exact import roots and the existing parent package markers that
+make `src.engines` importable under non-cone sparse checkout.
+
+The same CI repair prevents the Rust quality checkout from persisting its
+repository-scoped installation credential. The RustSec fetch also disables
+runner-global and system Git configuration and interactive credential prompts,
+because a host-level GitHub App URL rewrite remained visible outside checkout's
+repository-local configuration. The job still installs `cargo-audit` from
+crates.io and fails closed on the public advisory database; it does not present
+an installation credential that RustSec must reject with HTTP 401.
+
+### 2026-08-26 Stable-Point Trace Resampling Qualification (#4763 / #4142 R11.3)
+
+Version 1.18.40 adds the versioned
+`swing-trace-time-linear-contiguous/v1` authority. It preserves point, frame,
+trial, and variation identities; rejects extrapolation and invalid grids;
+interpolates only between adjacent valid samples; and retains invalid gaps,
+all-invalid failures, no-impact rows, and per-impact display-marker alignment
+error. Identity/subset equivalence passes for manual, double-pendulum, and
+triple-pendulum spatial layouts, while the inherited 3-source by 4-adapter
+matrix keeps ten unsupported cells explicit. This is software/model-output
+alignment evidence, not participant or coaching validation.
+
+### 2026-08-26 R11.1 Hosted Qualification Portability (#4758 / PR #4762)
+
+Version 1.18.32 makes the installed-wheel proof independent of undeclared
+base-interpreter packages: an isolated child environment receives only the
+already-qualified CI environment's dependency site, while assertions require
+the project module itself to resolve from the exact installed wheel outside the
+checkout. The durable writer also records the NumPy stub boundary for its
+validated dynamic named-array map. These changes repair hosted Python 3.11/3.12
+qualification without changing archive bytes or scientific interpretation.
+
+### 2026-08-26 R11.1 Requirement-Ledger Qualification (#4758 / PR #4762)
+
+Version 1.18.31 advances R11.1 from partial to verified in the branch ledger,
+with immutable PR evidence and executable links to the typed record, durable
+reader, capability matrix, scaling artifact, and installed-wheel gate. The
+parent epic remained open at 25 verified and 6 partial requirements before
+the R11.3 qualification.
+
+### 2026-08-26 Complete-Trial Qualification Evidence (#4758 / #4142 R11.1)
+
+Version 1.18.30 publishes the neutral reproducibility guide, executable scaling
+measurement, revision-bound 16/64-trial evidence, and an isolated installed-
+wheel round-trip for the public complete-trial reader. At fixed four-trial
+chunks, traced peak Python allocation grew 1.188 times while retained bytes per
+trial stayed effectively flat. These are software qualification results, not
+human biomechanics evidence.
+
+### 2026-08-26 Durable Complete-Trial Retention (#4758 / #4142 R11.1)
+
+Version 1.18.29 persists complete trial records through bounded schema-v3 NPZ
+chunks. Every array is bound by shape, dtype, digest, trial range, units, frame,
+source, and execution provenance. Strict readers reconstruct immutable records,
+reject corrupt payloads, and expose schema-v2 archives as read-only legacy
+evidence. Serial, chunked, and resumed executions have canonical record parity;
+the source/adapter matrix records two verified and ten explicitly unavailable
+cells without promoting model retention to human validation.
+
+### 2026-08-26 Complete Per-Trial Model Evidence Contract (#4758 / #4142 R11.1)
+
+Version 1.18.28 introduces the typed, immutable complete-trial record used by
+bounded Rate ensemble execution. It binds sampled inputs and execution/config
+identities to full swing kinematics, stable spatial and torque identifiers,
+contact/event timing, impact/delivery/post-impact/launch/flight state, and
+explicit hit, no-impact, or numerical-failure availability. This first slice
+does not yet qualify durable round-trip or promote R11.1 to verified.
+
+### 2026-08-26 Deterministic Club-View Render Work Budget (#4759)
+
+Version 1.18.27 measures the worst-library-mesh render's CPU work rather than
+hosted-runner wall scheduling. The former wall-clock assertion could fail when
+sibling xdist workers descheduled the process even though the unchanged draw
+completed within its declared CPU budget. The 200 ms playback cadence and
+0.5 s render-work ceiling remain unchanged; this is test determinism, not a
+relaxation of the interactive performance contract.
+
+### 2026-08-26 Execution-Capability Packaging Governance (#4756 / #4142 R10.3)
+
+Version 1.18.26 reconciles the R10.3 execution-capability authority with the
+repository's package-data governance. The exact wheel already included and
+loaded the authority; the hosted 3.11 and 3.12 matrices exposed that a
+visualization-focused allowlist rejected the legitimate non-visualization JSON.
+The governance test now names this feature-owned authority explicitly while
+continuing to reject undeclared package-data entries. This changes packaging
+qualification only and does not expand scientific, anatomical, human-data, or
+coaching authority.
+
+### 2026-08-26 Exemplar Engineering Manuals (#4707 / TOOLS-D4 (#4720))
+
+Version 1.18.22 adds the strict `tools-exemplar-coverage/1.0.0` contract and
+registers the first calculation-level exemplar, `TOOLS-DPLANE-GEOMETRY`. The
+swing-simulation and Rate-of-Closure pathway now binds a stable calculation ID,
+source commit and digest, public symbols, frames, units, equations, consumer,
+tests, golden fixture, limitations, textbook chapter, and review boundaries.
+The deterministic module inventory projects that evidence onto both owning
+modules without promoting their provisional authority. Markerless mocap remains
+an explicit blocked coverage row because issue #4708 and PR #4734 are unmerged
+and no markerless module exists on this exact source base. Generated HTML,
+LaTeX, PDF, and DOCX remain `generated-unapproved`; scientific review,
+accessibility/page approval, public projection, and human approval remain
+fail-closed under TOOLS-D5 through TOOLS-D9.
+
+### 2026-08-26 Required Textbook Chapter Contract (#4707 / TOOLS-D3 (#4717))
+
+Version 1.18.21 adds the strict `tools-textbook-chapter-contract/1.0.0`
+and `tools-textbook-chapter-registry/1.0.0` consumer contracts. Every future
+registered calculation chapter must provide fourteen ordered textbook sections
+covering purpose, DbC, coordinates and time, units, derivation, algorithms,
+implementation symbols, failures, uncertainty, V&V, limits, examples,
+references/provenance, and revision history. The typed linter rejects missing
+or reordered content, unknown fields or versions, unsafe paths, duplicate IDs,
+unsorted or absent traceability, placeholders, private-source references, and
+unsupported approval promotion. The registry remains intentionally empty and
+provisional pending TOOLS-D4 exemplars; rendered artifacts remain
+`generated-unapproved` pending TOOLS-D4 through TOOLS-D8.
+The required-section SHA-256 is public deterministic integrity evidence, not a
+credential; its inline detect-secrets allowlist is deliberately narrow and
+leaves the repository-wide scanner fail closed for every other value.
+
+### 2026-08-26 Reproducible Multi-Format Renderer (#4707 / TOOLS-D2 (#4712))
+
+Version 1.18.19 adds the strict `tools-manual-toolchain/1.0.0` and
+`tools-manual-artifacts/1.0.0` consumer contracts, pinned Pandoc, Quarto, TeX,
+bibliography, reference DOCX, visual tokens, semantic warnings/units, and
+figure inputs. The canonical QMD now renders byte-reproducible HTML, LaTeX,
+PDF, and DOCX artifacts whose hashes and shared semantic digest are verified
+fail closed in pre-commit and Docs Governance. Generated representations remain
+non-editable and `generated-unapproved`; stable calculation pathways,
+accessibility/page approval, public projection, and human approval remain
+blocked under TOOLS-D4 and TOOLS-D7 through TOOLS-D9.
+
+### 2026-08-25 Deterministic Module Inventory (#4707 / TOOLS-D1 (#4711))
+
+Version 1.18.15 inventories every tracked implementation and governed
+configuration module under the declared repository-wide denominator. The
+strict `tools-module-inventory/1.0.0` schema records LF-normalized SHA-256
+digests, path-derived provisional identities, calculation/non-calculation
+classification, authority and review status, maintainers, public surfaces,
+tests, ADRs, citations, units, chapters, and risk states. The current manifest
+contains 3,439 modules: 808 provisional calculation candidates, 2,631
+non-calculation modules, and one explicit encoding blocker. Freshness is
+enforced in pre-commit and Docs Governance. Stable calculation IDs,
+equation-to-code-to-test-to-claim pathways, generated formats, publication, and
+approval remain blocked under TOOLS-D2 through TOOLS-D9.
+
+### 2026-08-25 Engineering Design Manual Authority (#4707 / TOOLS-D0 (#4709))
+
+Version 1.18.14 establishes `manuals/tools` QMD as the sole editable
+calculation-level design-manual authority. The executable policy and empty
+inventory fail closed until TOOLS-D1 through TOOLS-D8 provide classification,
+equation-to-code-to-test traceability, reproducible formats, freshness,
+semantic/page/accessibility review, license evidence, immutable digests, and
+human approval. Generated HTML, LaTeX, PDF, and DOCX are non-editable and
+unapproved; private Tools_Private content is prohibited. Program-owned schemas
+remain in Engineering-Design-Manuals and are referenced rather than copied.
 
 ### 2026-08-25 V5.2 Protected Merge Reconciliation (#4433 / #4737 / #4738)
 
@@ -5287,6 +5542,47 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-27 | 1.18.59 | feat(rate-of-closure, #4791/#4142 R13.5): add provenance-complete Morris target and source selection across PyQt and React, preserve global ranking and typed denominators, fail closed on ambiguous same-name targets, and pin state/impact/shot parity without invoking simulation or sensitivity recomputation. |
+| 2026-08-27 | 1.18.58 | fix(ci): raise the single-worker Rust gate timeout from 30 to 45 minutes after an exact-head run passed all quality and benchmark phases but was cancelled while `actions/upload-artifact` finalized the benchmark result; retain the artifact, one job, one Cargo worker, and every existing check. |
+| 2026-08-27 | 1.18.57 | fix(ci): raise the serialized Rust quality gate timeout from 15 to 30 minutes after two exact-head runs reached the security-audit/cache tail and were cancelled by the prior bound; retain one build job, one Cargo build worker, and every existing quality phase. |
+| 2026-08-27 | 1.18.56 | fix(tools-core): migrate the SCADA embedded-Python unit test to `Python::initialize` for PyO3 0.29 compatibility, repairing the workspace Rust test gate without changing runtime or scientific semantics. |
+| 2026-08-27 | 1.18.55 | fix(pendulum-simulator, #4785 / epic #4775): **correct a published conclusion.** The golfer preset lumped 0.50 kg at the tip of a 1.10 m shaft; a real driver is 0.310 kg with its COM 76% down, so the preset overstated the club's inertia about the wrist — and the arm/club coupling that fights the release — by 2.1x. That, not the model's structure, forced the optimizer to reverse hub torque hard enough to stop the hands, and the artifact was published as a structural limit. Adds `club_equivalence` for inertia-matched clubs and corrects the preset to `me = 0.238 kg`. The same model now reaches 49.7 m/s clubhead with 7.26 m/s hand speed and a 3.46 club/arm ratio — five of six measured observables inside their bands, with no hand-speed floor. The objective ranking becomes discriminating: clubhead speed, Coriolis, energy and impulse transfer tie, while centrifugal release impulse costs about 1 m/s. The impact-optimality theorem (#4776) is unaffected. Tests now pin both the artifact and the corrected behaviour. |
+| 2026-08-27 | 1.18.54 | feat/test/docs(variation, #4783 / #4142 R13.3): add immutable paired localized source-to-downstream attribution across exact state, impact, and shot scalars; bind source and execution identity; retain typed unavailable outcomes; reject confounded source designs; provide bounded deterministic replay and reviewer exports; and qualify the exhaustive capability and target matrix without making human causal or coaching claims. |
+| 2026-08-27 | 1.18.53 | fix/test(variation, #4765 / #4142 R12.3): make the three-axis response-field invariant and NumPy-to-scalar contract boundary explicit, preserve the protected-base provenance digest with a reviewed secret-scan allowlist, and leave estimator, schema, and scientific interpretation unchanged. |
+| 2026-08-27 | 1.18.52 | docs(pendulum-simulator, epic #4775): publish `SWING_ACTUATION_AND_REALISM` with hyperlinked literature. Records the impact-optimality theorem, the measured reference bands and their sources, the model-variant study, the feasibility frontier, and the ranked next steps. Every DOI was resolved before publication; the Jorgensen 1970 DOI was corrected from 10.1119/1.1976433 (which resolves to a different AJP article) to 10.1119/1.1976419. |
+| 2026-08-27 | 1.18.51 | feat(pendulum-simulator, #4780 / epic #4775): add the objective realism ranking. In the only near-realistic regime the model can reach, the five objectives land within 0.6% of each other while every one has just 1 of 6 observables inside its measured band, so `is_discriminating` reports False and the ordering must not be quoted as a finding about golf. The objective is not what makes these swings unrealistic. |
+| 2026-08-27 | 1.18.48 | feat(pendulum-simulator, #4779 / epic #4775): add the model-adequacy measurement. `hand_speed_frontier` sweeps a floor on hand speed at impact and records the price: raising it monotonically costs clubhead speed, and the measured 6-9 m/s golfer band is unreachable at any price. Records the mechanism — hub torque drives the wrist open through the off-diagonal mass term, so the only way this model releases the club is to reverse hub torque and decelerate the arms. Releasing the club and stopping the hands are the same act in a two-link fixed-hub model; a moving hub is required, and is explicitly out of scope rather than approximated. |
+| 2026-08-27 | 1.18.47 | feat(pendulum-simulator, #4778 / epic #4775): add measured golfer reference bands and a realism score. Every band carries a source and a resolvable link and is enforced to do so by test; deviations are reported in half-widths so observables in different units stay comparable; observables a model cannot produce are reported missing rather than scored as zero. |
+| 2026-08-27 | 1.18.46 | feat(pendulum-simulator, #4777 / epic #4775): add Hill-type joint actuation limits — torque capacity falling with joint angular velocity, plus concentric/eccentric asymmetry so braking the arms is not as cheap as driving them — wired into the downswing optimizer as optional inequality constraints alongside a hand-speed floor. |
+| 2026-08-27 | 1.18.45 | feat(pendulum-simulator, #4776 / epic #4775): pin the impact-optimality coefficient `L1*[I2 - m2*r2*(L2-r2)]`, which is identically zero for the shipped point-mass clubhead and negative for a real driver. This establishes that the optimizer stops the hands because doing so is the exact optimum of the model, and that distributed club inertia cannot be the fix. |
+| 2026-08-27 | 1.18.44 | feat/test/docs(variation, #4765 / #4142 R12.3): qualify the immutable geometric noise-response field, paired declared-scale response estimator, matched and all-eligible absolute scatter, exact adequacy and denominators, bounded resumable moments, fingerprinted plot rows, exhaustive source/adapter capability matrix, and neutral interpretation and falsification guidance. |
+| 2026-08-26 | 1.18.43 | fix/test(rust, #4764): remediate the newly exposed PyO3 and h2 RustSec advisories by migrating the workspace to PyO3/NumPy 0.29, Reqwest 0.12, and Rust 1.83; preserve Python binding behavior through the official attachment, detachment, object, and conversion APIs; add dependency-floor regressions and verify formatting, warning-denied Clippy, 351 passing Rust tests plus one explicitly ignored benchmark, RustSec audit, and an isolated wheel import. |
+| 2026-08-26 | 1.18.39 | refactor(pendulum-simulator, epic #4766): bring the swing-objective modules under the AGENTS.md function-size and signature budgets. Extract the mass-matrix, velocity-product and gravity blocks out of `generalized_accelerations`; group the shared effort budget into a `SwingBudget` value object so `build_config` takes two arguments instead of five; split the Lab control panel builder. Behaviour is unchanged and all 68 feature tests still pass. |
+| 2026-08-26 | 1.18.38 | docs(pendulum-simulator, #4773 / epic #4766): publish the `SWING_OBJECTIVE_COMPARISON` design contract and update the tool README, FEATURES inventory, and both handoff documents. The contract records the coordinate conventions, the exact `P_coriolis = -2 * P_centrifugal` identity that forces the centrifugal objective to be an angular impulse, the three load-bearing solver settings, and the two failure modes the feature reports rather than hides: a downswing the torque budget provably cannot deliver, and a degenerate comparison whose all-100% matrix is a configuration artifact rather than mechanism agreement. It also states the planar two-link scientific boundary and records that the research prototype is an independent cross-check, not a dependency. |
+| 2026-08-26 | 1.18.37 | feat(pendulum-simulator, #4771 / epic #4766): add the PyQt6 Swing Objective Lab surface, a feasible default golfer preset, and the provider embed adapter. The surface is presentation only and a test asserts it, so the engine stays reusable by the CLI and notebooks; solving runs on a worker thread; every cross-evaluation cell carries a visible label so colour is never the sole encoding; and a degenerate comparison is reported in the UI as a property of the configuration rather than shown as mechanism agreement. The preset deliberately carries slack above the minimum sweep duration for the same reason. |
+| 2026-08-26 | 1.18.36 | feat(pendulum-simulator, #4770 / epic #4766): add the objective cross-evaluation comparison and its versioned fail-closed `swing-objective-comparison/v1` payload. Require every swing to lead its own column, so a local optimum cannot be presented as a result, and report per-swing torque saturation so agreement can be distinguished from a binding limit. Detect and flag the degenerate case in which the constraints pin the trajectory: near the golfer's minimum downswing duration the feasible set collapses, every objective returns the same swing, and the resulting all-100% matrix reads as unanimous mechanism agreement while being an artifact of the configuration. |
+| 2026-08-26 | 1.18.35 | feat(pendulum-simulator, #4769 / epic #4766): add a slew-limited direct-collocation downswing optimizer that solves every objective under identical golfer, torque, duration and impact conditions. Solve in non-dimensional variables and at a tight tolerance — both are load-bearing and both carry regression pins, because the unscaled problem leaves defects near 1e-1 and the default SciPy tolerance returns the initial guess unchanged. Screen configurations whose torque budget provably cannot sweep the arm in the requested time, converting an opaque linesearch failure into a statement about the golfer; the bound is documented as necessary, not sufficient. Feasibility is reported from the measured defect, never from the solver's success flag. |
+| 2026-08-26 | 1.18.34 | feat(pendulum-simulator, #4768 / epic #4766): add vectorized downswing signals and the five competing swing objectives (clubhead speed, centrifugal release impulse, Coriolis kinetic-chain transfer, grip-force energy transfer, grip-force impulse). Every signal is pinned against the scalar `physics` authority the way the Python fallback is pinned against the native backend. Pin the exact `P_coriolis_hub = -2 * P_centrifugal_wrist` identity that forces the centrifugal objective to be an angular impulse rather than work, and prove the two are independent functionals. No equations of motion are re-derived. |
+| 2026-08-26 | 1.18.33 | feat(pendulum-simulator, #4767 / epic #4766): partition `physics.coriolis_vector` into named centrifugal and Coriolis components so a swing can be optimized for one mechanism without the other. The split is required to close exactly against the shipped (optionally Rust-backed) kernel as both a runtime postcondition and a randomized contract test; the Coriolis term is proven hub-only and the wrist centrifugal drive proven independent of the uncock rate. No equations of motion are re-derived and no existing behaviour changes. |
+| 2026-08-26 | 1.18.32 | fix/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): make the exact-wheel proof portable across hosted Python 3.11/3.12 by explicitly reusing only the qualified parent dependency site while requiring project imports to resolve from the isolated installed wheel; document the NumPy dynamic named-array stub boundary without changing archive behavior. |
+| 2026-08-26 | 1.18.31 | docs/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): bind the complete-trial qualification to its protected pull request, advance the fail-closed epic ledger to 25 verified / 6 partial, and require the source/adapter matrix, durable/scaling evidence, installed-wheel proof, and scientific boundary to remain locally traceable. |
+| 2026-08-26 | 1.18.30 | docs/test(rate-of-closure, #4758 / #4142 R11.1): publish revision-bound complete-trial scaling evidence and its deterministic generator, document schema-v3 retention and the exhaustive source/adapter boundary in the public reproducibility guide, export the typed public record contract, and prove an exact built wheel can create, persist, install, read, and reconstruct complete records outside the checkout. |
+| 2026-08-26 | 1.18.29 | feat(rate-of-closure, #4758 / #4142 R11.1): add bounded schema-v3 complete-trial persistence with exact array identities, immutable strict-JSON reconstruction, hit/miss/failure nullability, corruption rejection, schema-v2 read-only compatibility, and serial/chunk/resume digest parity. Bind explicit units and publish the exhaustive 3-source by 4-adapter capability matrix with unsupported cells retained rather than fabricated. |
+| 2026-08-26 | 1.18.28 | feat(rate-of-closure, #4758 / #4142 R11.1): add a typed immutable per-trial evidence record that binds sampled inputs and execution/configuration identities to complete swing, event, impact, delivery, post-impact, launch, and flight state. Preserve explicit absence for misses/failures and source-specific manual/double/triple layouts; deliver records to sinks through the existing bounded chunk executor without claiming durable qualification or human validation. |
+| 2026-08-26 | 1.18.27 | test(rate-of-closure, #4759): measure the worst-library-mesh draw's bounded CPU work with a monotonic process clock so parallel hosted-runner scheduling cannot masquerade as a rendering regression. Preserve the 200 ms playback cadence and 0.5 s work ceiling. |
+| 2026-08-26 | 1.18.26 | fix(rate-of-closure, #4756 / #4142 R10.3): reconcile the packaged locus-execution authority with the fail-closed visualization package-data governance exposed by both hosted Python matrices. Explicitly classify the named JSON as legitimate feature-owned, non-visualization package data while continuing to reject undeclared entries; retain exact-wheel, Python/TypeScript parity, and scientific-boundary requirements. |
+| 2026-08-26 | 1.18.25 | feat(rate-of-closure, #4756 / #4142 R10.3): replace implicit global/localized locus inference with one packaged, typed execution-capability authority for all 31 known registry inputs. Bind Python and TypeScript to exact whole-run, half-open temporal, topological-point, adapter, and unsupported semantics; fail closed on registry drift or undeclared loci; retain topological control joints as distinct from spatial traces. Supply the standalone web mirror through the governed byte-identical vendoring map instead of an import above `web/`. Keep matched visual-evidence governance fail-closed for shipped React surfaces while excluding test-only `.test.tsx` and `.spec.tsx` modules that cannot alter the rendered product. Advance the epic ledger to 24 verified / 7 partial without implying anatomical attribution, human validation, or coaching authority. |
+| 2026-08-26 | 1.18.24 | test(rate-of-closure, #4754 / #4142 R10.4): requalify canonical variation execution documents and persistence against protected base `cff2909f1585273e10fa49165bfab8521e889da1`; bind the merged implementation, current Python/TypeScript/downstream evidence, and explicit historical auxiliary-failure adjudication in a fail-closed audit. Advance the epic ledger to 23 verified / 8 partial while retaining scientific, human-validation, identifiability, and coaching boundaries. |
+| 2026-08-26 | 1.18.23 | fix(manual, #4707/#4720 TOOLS-D4): classify the deterministic source-commit assertion as public integrity evidence for detect-secrets while retaining repository-wide fail-closed scanning. |
+| 2026-08-26 | 1.18.22 | docs(manual, #4707/#4720 TOOLS-D4): add strict exemplar coverage schema and typed consumer, register the model-conditioned `TOOLS-DPLANE-GEOMETRY` pathway with source/symbol/equation/unit/test/golden-fixture/chapter traceability, project evidence onto both owning module rows, and add the first fourteen-section textbook exemplar. Retain markerless mocap as explicitly blocked on unmerged #4708/#4734 and all artifacts as generated-unapproved pending later review and publication gates. |
+| 2026-08-26 | 1.18.21 | fix(manual, #4707/#4717 TOOLS-D3): classify the public required-section SHA-256 as deterministic integrity evidence with a single-line detect-secrets allowlist, while retaining repository-wide fail-closed secret scanning. |
+| 2026-08-26 | 1.18.20 | docs(manual, #4707/#4717 TOOLS-D3): reconcile the strict textbook chapter and registry contracts on protected D2, enforce fourteen ordered calculation-level sections, traceability and status invariants, LF-normalized evidence hashes, CI/pre-commit checks, and generated-but-unapproved manual content. Retain an empty provisional registry pending TOOLS-D4 exemplars and later freshness, review, and publication authority. |
+| 2026-08-26 | 1.18.19 | fix(manual, #4707/#4712 TOOLS-D2): separate external render-tool assertions from generic Python CI. Tests report an explicit unavailable skip without Pandoc/Quarto/TeX, execute under the locked local toolchain, and remain protected by the dedicated Docs Governance lane, which installs Pandoc and invokes artifact freshness and semantic verification directly and fail closed. |
+| 2026-08-26 | 1.18.18 | fix(manual, #4707/#4712 TOOLS-D2): repair protected CI integration by declaring and locking the PDF semantic dependency, keeping PDF imports lazy for non-PDF consumers, proving import isolation without the optional stack, and returning the verified XML serialization as typed bytes. Refresh the governed inventory and retain generated-unapproved authority. |
+| 2026-08-26 | 1.18.17 | fix(manual, #4707/#4712 TOOLS-D2): canonicalize the Pandoc DOCX bibliography custom property to the repository-relative `manuals/tools/references.bib` path before deterministic ZIP normalization. Add a cross-workspace regression contract, refresh the governed module inventory and artifact manifest, and remove workstation identity from generated Word artifacts while retaining generated-unapproved release status. |
+| 2026-08-26 | 1.18.16 | docs(manual, #4707/#4712 TOOLS-D2): qualify the pinned deterministic HTML/LaTeX/PDF/DOCX renderer, strict schemas and consumer loaders, input/artifact hashes, shared semantic parity, reference DOCX, style/figure sources, CI/pre-commit freshness, and generated-but-unapproved artifacts. |
+| 2026-08-25 | 1.18.15 | docs(manual, #4707/#4711 TOOLS-D1): add the strict repository-owned module inventory schema, deterministic tracked-file generator, LF-normalized per-module and source-tree SHA-256 integrity, conservative calculation/non-calculation classifications, maintainers, public surfaces, tests, ADRs, citations, units, chapters, and risk states for all 3,429 in-scope modules. Add fail-closed consumer/freshness tests and CI/pre-commit enforcement; retain 808 calculation candidates as provisional, one encoding blocker, an empty stable calculation registry, and all TOOLS-D2--D9 format/pathway/publication/approval boundaries. |
+| 2026-08-25 | 1.18.14 | docs(manual, #4707/#4709 TOOLS-D0): establish `manuals/tools` QMD as the sole editable engineering design-manual authority. Add a versioned fail-closed policy and empty inventory, ADR-007, agent rules, offline contract tests, and CI/pre-commit enforcement. Generated HTML, LaTeX, PDF, and DOCX remain non-editable and unapproved; calculation coverage, freshness, semantic/page/accessibility review, licenses, immutable digests, public projection, and human approval remain blocked through TOOLS-D1--D8. |
 | 2026-08-25 | 1.18.13 | docs(rate-of-closure, #4433/#4737/#4738): record protected V5.2 merge `4b4aec421f349d00cf9dc93289fda97af3845baa` and retain all partial scientific and human-review boundaries. |
 | 2026-08-25 | 1.18.12 | feat(rate-of-closure, #4433 V5.2): add fail-closed PR changed-path governance requiring material React, PyQt, and shared visual-authority changes to co-update the shared manifest, acceptance audit, and surface-specific first-viewport evidence before expensive E2E; advance the audit to 8 verified / 23 partial obligations without changing the seven R14.6 blockers or two human actions. |
 | 2026-08-25 | 1.18.11 | fix(rate-of-closure, #4735 / #4433 V0.1): extend the strict TypeScript visualization-manifest reader to the canonical purpose, nonempty unique prerequisite, and reciprocal-counterpart fields; add browser-side tamper falsifiers while preserving exact-field rejection and Python/React authority parity. |

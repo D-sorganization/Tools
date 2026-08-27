@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ud-tools"
-version = "1.8.0"
+version = "1.9.0"
 description = "Shared engineering tools: URDF generation, signal processing, and process calculators."
 readme = "src/shared/python/README.md"
 requires-python = ">=3.11"
@@ -263,6 +263,7 @@ exclude = [
 "shared.python.swing_sim.rotating_base" = ["resources/*.json"]
 "rate_of_closure" = [
     "data/*.json",
+    "locus_execution_capabilities.v1.json",
     "visualization_tabs.v1.json",
     "visualization_performance.v1.json",
     "visualization_accessibility.v1.json",

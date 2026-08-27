@@ -74,21 +74,21 @@
 
 ## 4 Analysis & Plotting
 
-| Feature                                        | Status             | Notes                                                                       |
-| ---------------------------------------------- | ------------------ | --------------------------------------------------------------------------- |
-| Docked analysis panel (2D + 3D)                | :white_check_mark: | QDockWidget, model-aware                                                    |
-| Data extractor registry (25+ series)           | :white_check_mark: | Dispatch-table pattern                                                      |
-| 2D line plots (any X vs Y)                     | :white_check_mark: | Dark-themed matplotlib                                                      |
-| 3D surface plots (parameter sweep)             | :white_check_mark: | Model-aware sweep variables                                                 |
-| Surface evaluators (det, cond, PE, w)          | :white_check_mark: | Double, triple, golfer                                                      |
-| Polynomial regression overlay (deg 0-10)       | :white_check_mark: | Pop-out chart + analysis tab                                                |
-| Pop-out chart window                           | :white_check_mark: | Non-modal, independent                                                      |
-| Equations popup (physics formulas)             | :white_check_mark: | Model-specific HTML rendering                                               |
-| Jacobian equations topic                       | :white_check_mark: | Manipulability, ellipsoids                                                  |
-| Constraint Jacobian topic                      | :white_check_mark: | KKT, Lagrange multipliers                                                   |
-| **Random perturbation / consistency analysis** | :white_check_mark: | `perturbation_analysis.py` — Monte Carlo noise injection, variability stats |
-| **Phase-resolved drift-transfer diagnostics**  | :white_check_mark: | Exact grip-force closure, drift/control work, braking work, along-path impulse, peak force, and Pareto metrics for the double-pendulum tier |
-| **Drift Transfer GUI tab**                     | :white_check_mark: | User-declared time window with power, speed, work, braking, and model-boundary display; unsupported tiers fail closed |
+| Feature                                        | Status             | Notes                                                                                                                                                                                               |
+| ---------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Docked analysis panel (2D + 3D)                | :white_check_mark: | QDockWidget, model-aware                                                                                                                                                                            |
+| Data extractor registry (25+ series)           | :white_check_mark: | Dispatch-table pattern                                                                                                                                                                              |
+| 2D line plots (any X vs Y)                     | :white_check_mark: | Dark-themed matplotlib                                                                                                                                                                              |
+| 3D surface plots (parameter sweep)             | :white_check_mark: | Model-aware sweep variables                                                                                                                                                                         |
+| Surface evaluators (det, cond, PE, w)          | :white_check_mark: | Double, triple, golfer                                                                                                                                                                              |
+| Polynomial regression overlay (deg 0-10)       | :white_check_mark: | Pop-out chart + analysis tab                                                                                                                                                                        |
+| Pop-out chart window                           | :white_check_mark: | Non-modal, independent                                                                                                                                                                              |
+| Equations popup (physics formulas)             | :white_check_mark: | Model-specific HTML rendering                                                                                                                                                                       |
+| Jacobian equations topic                       | :white_check_mark: | Manipulability, ellipsoids                                                                                                                                                                          |
+| Constraint Jacobian topic                      | :white_check_mark: | KKT, Lagrange multipliers                                                                                                                                                                           |
+| **Random perturbation / consistency analysis** | :white_check_mark: | `perturbation_analysis.py` — Monte Carlo noise injection, variability stats                                                                                                                         |
+| **Phase-resolved drift-transfer diagnostics**  | :white_check_mark: | Exact grip-force closure, drift/control work, braking work, along-path impulse, peak force, and Pareto metrics for the double-pendulum tier                                                         |
+| **Drift Transfer GUI tab**                     | :white_check_mark: | User-declared time window with power, speed, work, braking, and model-boundary display; unsupported tiers fail closed                                                                               |
 | **Qualified Rotating-Base Study**              | :white_check_mark: | Source-pinned 18-case provider; async PyQt execution; digest-pinned React/Tauri scalar/trace parity; adverse rows, killswitches, closures, five reviewer charts, and governed full-run JSON exports |
 
 ## 5 Signal Generation & Torque Profiles
@@ -104,16 +104,21 @@
 
 ## 6 Optimisation
 
-| Feature                                         | Status             | Notes                         |
-| ----------------------------------------------- | ------------------ | ----------------------------- |
-| CMA-ES (Rust + Python)                          | :white_check_mark: | Population-based evolutionary |
-| Batch evaluation (Rust rayon)                   | :white_check_mark: | Parallel candidate eval       |
-| Warm-start strategy                             | :white_check_mark: | Reuse previous best           |
-| Multi-objective (speed, efficiency, smoothness) | :white_check_mark: | Configurable weights          |
-| Joint limit enforcement                         | :white_check_mark: | Hard bounds                   |
-| Torque bound enforcement                        | :white_check_mark: | Clamp to limits               |
-| Progress bar + convergence detection            | :white_check_mark: | Real-time GUI feedback        |
-| Early stopping (fitness tolerance)              | :white_check_mark: | Configurable plateau          |
+| Feature                                         | Status             | Notes                                  |
+| ----------------------------------------------- | ------------------ | -------------------------------------- |
+| CMA-ES (Rust + Python)                          | :white_check_mark: | Population-based evolutionary          |
+| Batch evaluation (Rust rayon)                   | :white_check_mark: | Parallel candidate eval                |
+| Warm-start strategy                             | :white_check_mark: | Reuse previous best                    |
+| Multi-objective (speed, efficiency, smoothness) | :white_check_mark: | Configurable weights                   |
+| Joint limit enforcement                         | :white_check_mark: | Hard bounds                            |
+| Torque bound enforcement                        | :white_check_mark: | Clamp to limits                        |
+| Progress bar + convergence detection            | :white_check_mark: | Real-time GUI feedback                 |
+| Early stopping (fitness tolerance)              | :white_check_mark: | Configurable plateau                   |
+| Named centrifugal/Coriolis split                | :white_check_mark: | Exact partition of C(q,q̇)q̇             |
+| Mechanism objectives (4)                        | :white_check_mark: | Centrifugal, Coriolis, energy, impulse |
+| Slew-limited downswing collocation              | :white_check_mark: | Physiological torque rate              |
+| Objective cross-evaluation + degeneracy flag    | :white_check_mark: | `swing_objectives/comparison`          |
+| Swing Objective Lab surface + tile              | :white_check_mark: | Separate launchable tile               |
 
 ## 7 Integration & Backends
 
