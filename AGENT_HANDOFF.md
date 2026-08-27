@@ -72,7 +72,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   dataset-free individual results, aggregate progress, cancellation, and
   1--4096 durable chunks. Its ledger is 30 verified / 1 partial. Outputs remain
   model-scenario evidence without human causal, anatomical, or coaching authority.
-  Hosted review fixed an unlabeled PyQt selector; approve only a corrected Linux candidate.
+  Hosted review fixed an unlabeled PyQt selector; exact Linux candidate `1f3f6ca7` is proposed without widening its calibrated renderer envelope.
 
 ## Must-Read Architecture Pointers
 

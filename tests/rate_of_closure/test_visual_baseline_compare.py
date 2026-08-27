@@ -29,7 +29,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     manifest = load_visual_baseline_manifest()
 
     assert manifest.source_artifact_commit == (
-        "1214008e9dbf06b583ef44a4c821dc0567efdf8b"  # pragma: allowlist secret
+        "1f3f6ca769276a9dbec5471e04ea576f8728eb9a"  # pragma: allowlist secret
     )
     assert len(manifest.baselines) == 20
     package = files("rate_of_closure")
@@ -39,7 +39,6 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     }
     calibrated_tolerances = {
         ("pyqt", "simulation"): VisualBaselineTolerance(1, 10_000, 10_000),
-        ("pyqt", "variation"): VisualBaselineTolerance(1, 10_000, 50_000),
     }
     for entry in manifest.baselines:
         data = package.joinpath(
