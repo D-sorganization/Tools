@@ -64,9 +64,9 @@ work or 200 ms cadence limits. Issue #4758/R11.1 is active on
 typed records and bounded schema-v3 durable write/read/resume. Array manifests,
 strict corruption gates, legacy-v2 read-only inspection, explicit units, exact
 serial/chunk/resume fingerprints, and the 3-source by 4-adapter matrix pass.
-The dc1cf1d4f scaling run, clean installed-wheel round-trip, 114-test release
-set, guide, and 25/6 ledger pass. Protected review, CI, merge, and remote-main
-ancestry remain before R11.1 is verified outside the branch.
+The dc1cf1d4f scaling run, guide, and 25/6 ledger pass. PR #4762 exposed a NumPy stub
+boundary and undeclared base-NumPy reliance in hosted wheel tests; both are fixed, and
+focused mypy/Ruff plus the 89.69 s wheel test pass. Protected rerun and merge remain.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

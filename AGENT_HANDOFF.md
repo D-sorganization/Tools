@@ -67,10 +67,10 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   `55805fe4de1b0afc3710efce4ed516d59e685717`. Issue #4758 is now active on
   `feat/4758-complete-trial-record`: typed full-trial records now survive
   schema-v3 durable write/read/resume with array identities, corruption gates,
-  legacy-v2 read-only handling, and source/adapter coverage. Seventy-three core
-  tests plus the new capability/parity cases pass. Revision-bound 16/64-trial
-  scaling and a clean installed-wheel round-trip also pass. PR #4762 carries
-  the 25/6 ledger. Protected review, CI, merge, and remote-main proof remain.
+  legacy-v2 handling, and source/adapter coverage. PR #4762 passed its R11.1
+  gates but exposed a NumPy stub error and undeclared base-NumPy reliance in
+  hosted wheel tests. Both are fixed; focused mypy/Ruff and the 89.69 s wheel
+  test pass. Protected rerun, merge, and remote-main proof remain.
 
 ## Must-Read Architecture Pointers
 

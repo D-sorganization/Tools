@@ -1351,10 +1351,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17370,
+      "bytes_lf": 17675,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8516a18fcb3bb0c258243c389e9dc90f0e80eeb9637236dfb01023cf58410c14",
+      "content_sha256_lf": "24348847c18ed12d6a0e759733a8b34ee8f26a888df1d608ac8e4cc39ab96ed7",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-DURABLE-ENSEMBLE-IO-PY-7E184FBF7E9A",
       "language": "python",
@@ -1375,7 +1375,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -1446,7 +1446,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

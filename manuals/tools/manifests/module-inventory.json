@@ -267,7 +267,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "ef8b65eda5328ed2584cb70d2b6d3179691403585cfaefe4bf7565f35b97df9d",
+      "content_sha256_lf": "98272519333cfa61b4745964089792a3bcc9a27c7b32ef744e5262b13df3250f",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/visual_state_frame.py",
       "last_path": "src/rate_of_closure/web/src/components/SimulationTargetWorkflow.test.tsx",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "649963bca4b242a15bed457b1744c91c3927001c4d19ad3cbb5b4f9e95c97ded",
+  "source_tree_sha256": "2f06c207c491a3fec02baf939771d1ca34daf50cd2d8b163b4d59c2bf26999e8",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

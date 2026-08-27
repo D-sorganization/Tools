@@ -253,7 +253,11 @@ def write_chunk_atomic(
     }
     try:
         with temporary.open("wb") as stream:
-            np.savez_compressed(stream, **arrays)
+            # NumPy's stub reserves the ``allow_pickle`` keyword, so mypy
+            # cannot express a dynamic mapping of named arrays even though the
+            # runtime API accepts it.  The mapping is closed and validated by
+            # the archive identity contract immediately below.
+            np.savez_compressed(stream, **cast(Any, arrays))
             stream.flush()
             os.fsync(stream.fileno())
         require(

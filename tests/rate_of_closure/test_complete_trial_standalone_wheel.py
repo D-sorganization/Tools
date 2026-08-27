@@ -6,6 +6,7 @@ import json
 import os
 import subprocess  # nosec B404 - fixed local interpreters and artifacts
 import sys
+import sysconfig
 import zipfile
 from pathlib import Path
 
@@ -72,9 +73,13 @@ def test_exact_wheel_round_trips_complete_trial_archive(tmp_path: Path) -> None:
     with zipfile.ZipFile(wheel) as archive:
         assert WHEEL_MEMBERS <= set(archive.namelist())
 
+    parent_site = Path(sysconfig.get_paths()["purelib"]).resolve()
+    assert parent_site.is_dir()
+    assert not parent_site.is_relative_to(ROOT.resolve())
+
     venv = tmp_path / "venv"
     created = _run(
-        [sys.executable, "-m", "venv", "--system-site-packages", str(venv)],
+        [sys.executable, "-m", "venv", str(venv)],
         cwd=tmp_path,
         environment=environment,
     )
@@ -89,8 +94,15 @@ def test_exact_wheel_round_trips_complete_trial_archive(tmp_path: Path) -> None:
 
     probe = r"""
 import json
+import site
+import sys
 import tempfile
 from pathlib import Path
+
+# Reuse only the already-qualified job environment's third-party dependencies.
+# The project package itself must still resolve from the exact wheel installed
+# in the otherwise isolated child environment, which is asserted below.
+site.addsitedir(sys.argv[1])
 
 import rate_of_closure.variation.complete_trial_record as record_module
 from rate_of_closure.club import get_club
@@ -135,7 +147,7 @@ with tempfile.TemporaryDirectory() as raw:
     }))
 """
     checked = _run(
-        [str(python), "-I", "-c", probe],
+        [str(python), "-I", "-c", probe, str(parent_site)],
         cwd=tmp_path,
         environment=environment,
     )

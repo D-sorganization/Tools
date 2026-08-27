@@ -27,10 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.31                                    |
+| **Spec Version**        | 1.18.32                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 R11.1 Hosted Qualification Portability (#4758 / PR #4762)
+
+Version 1.18.32 makes the installed-wheel proof independent of undeclared
+base-interpreter packages: an isolated child environment receives only the
+already-qualified CI environment's dependency site, while assertions require
+the project module itself to resolve from the exact installed wheel outside the
+checkout. The durable writer also records the NumPy stub boundary for its
+validated dynamic named-array map. These changes repair hosted Python 3.11/3.12
+qualification without changing archive bytes or scientific interpretation.
 
 ### 2026-08-26 R11.1 Requirement-Ledger Qualification (#4758 / PR #4762)
 
@@ -5411,6 +5421,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.32 | fix/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): make the exact-wheel proof portable across hosted Python 3.11/3.12 by explicitly reusing only the qualified parent dependency site while requiring project imports to resolve from the isolated installed wheel; document the NumPy dynamic named-array stub boundary without changing archive behavior. |
 | 2026-08-26 | 1.18.31 | docs/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): bind the complete-trial qualification to its protected pull request, advance the fail-closed epic ledger to 25 verified / 6 partial, and require the source/adapter matrix, durable/scaling evidence, installed-wheel proof, and scientific boundary to remain locally traceable. |
 | 2026-08-26 | 1.18.30 | docs/test(rate-of-closure, #4758 / #4142 R11.1): publish revision-bound complete-trial scaling evidence and its deterministic generator, document schema-v3 retention and the exhaustive source/adapter boundary in the public reproducibility guide, export the typed public record contract, and prove an exact built wheel can create, persist, install, read, and reconstruct complete records outside the checkout. |
 | 2026-08-26 | 1.18.29 | feat(rate-of-closure, #4758 / #4142 R11.1): add bounded schema-v3 complete-trial persistence with exact array identities, immutable strict-JSON reconstruction, hit/miss/failure nullability, corruption rejection, schema-v2 read-only compatibility, and serial/chunk/resume digest parity. Bind explicit units and publish the exhaustive 3-source by 4-adapter capability matrix with unsupported cells retained rather than fabricated. |
