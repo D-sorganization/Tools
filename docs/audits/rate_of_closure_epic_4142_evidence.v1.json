@@ -6,8 +6,8 @@
   "audit_scope": "Requirement-level implementation and evidence audit. A verified status is repository evidence, not validation of a human golf-swing mechanism.",
   "epic_closeable": false,
   "status_counts": {
-    "verified": 29,
-    "partial": 2,
+    "verified": 30,
+    "partial": 1,
     "unverified": 0,
     "external_blocked": 0
   },
