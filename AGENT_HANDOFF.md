@@ -70,7 +70,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   time-grid authority rejects extrapolation and gap bridging, preserves
   frame/point/trial identities and typed unavailability, reports approximate
   impact-marker alignment error, and qualifies all three spatial layouts plus
-  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; protected CI and remote-main evidence remain.
+  the inherited fail-closed 3-source by 4-adapter matrix. Focused local gates pass; the exact CI repair retains UpstreamDrift's imported `src/bunkershot3d` package in the shallow contract checkout. Protected CI and remote-main evidence remain.
 
 ## Must-Read Architecture Pointers
 

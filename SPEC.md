@@ -27,10 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.33                                    |
+| **Spec Version**        | 1.18.34                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Complete UpstreamDrift Contract Checkout (#4764)
+
+Version 1.18.34 adds `src/bunkershot3d` to the narrow UpstreamDrift sparse
+checkout used by Cross-Repo Python Integration. Current UpstreamDrift shared
+simulation backends import the governed `bunkershot3d.postproc` wrench
+contract, so omitting that package root made provider and variation-gateway
+tests fail before exercising this PR's Tools authority. The workflow remains
+shallow and does not broaden to all of `src`; a contract test pins both exact
+import roots.
 
 ### 2026-08-26 Stable-Point Trace Resampling Qualification (#4763 / #4142 R11.3)
 
@@ -5434,6 +5444,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.34 | fix(ci, #4764): include UpstreamDrift's `src/bunkershot3d` package in the shallow downstream sparse checkout so shared simulation-backend wrench imports resolve and the provider/variation contracts test the current Tools authority. |
 | 2026-08-26 | 1.18.33 | feat/test/docs(rate-of-closure, #4763 / #4142 R11.3): add the versioned fail-closed time-grid resampling authority, preserve stable point/frame/trial identities and missing intervals, retain approximate impact-marker error, qualify identity/subset equivalence for all three spatial layouts, and bind the inherited exhaustive adapter matrix and scientific boundary. |
 | 2026-08-26 | 1.18.32 | fix/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): make the exact-wheel proof portable across hosted Python 3.11/3.12 by explicitly reusing only the qualified parent dependency site while requiring project imports to resolve from the isolated installed wheel; document the NumPy dynamic named-array stub boundary without changing archive behavior. |
 | 2026-08-26 | 1.18.31 | docs/test(rate-of-closure, #4758 / PR #4762 / #4142 R11.1): bind the complete-trial qualification to its protected pull request, advance the fail-closed epic ledger to 25 verified / 6 partial, and require the source/adapter matrix, durable/scaling evidence, installed-wheel proof, and scientific boundary to remain locally traceable. |

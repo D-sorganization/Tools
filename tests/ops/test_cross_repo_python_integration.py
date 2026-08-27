@@ -23,6 +23,7 @@ REQUIRED_SPARSE_PATHS = {
         "launch_upstream_drift.py",
         "pyproject.toml",
         "scripts",
+        "src/bunkershot3d",
         "src/shared",
         "tests/conftest.py",
         "tests/shared_contracts",
@@ -68,7 +69,7 @@ def test_each_downstream_declares_its_required_sparse_scope() -> None:
     assert "ui" not in upstream_scope
 
 
-def test_upstream_scope_includes_every_release_build_package_root() -> None:
+def test_upstream_scope_includes_every_imported_contract_package_root() -> None:
     workflow = _workflow()
     downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
         "matrix"
@@ -80,11 +81,10 @@ def test_upstream_scope_includes_every_release_build_package_root() -> None:
     )
 
     scope = set(upstream["sparse_checkout"].splitlines())
-    # `src/shared` is the package root that actually carries the code this repo
-    # provides to UpstreamDrift; `pip install -e .` there resolves through
-    # hatchling's `packages = ["src"]`, and cone-mode sparse checkout gives it a
-    # populated `src/shared` without pulling all of `src`.
-    assert {"src/shared"} <= scope
+    # The shared provider gateway imports UpstreamDrift's simulation-backend
+    # package, whose wrench contract resolves bunkershot3d.postproc. Sparse
+    # checkout must preserve both import roots without pulling all of `src`.
+    assert {"src/shared", "src/bunkershot3d"} <= scope
 
 
 def test_upstream_install_uses_current_tools_without_repackaging_pinned_snapshot() -> (
