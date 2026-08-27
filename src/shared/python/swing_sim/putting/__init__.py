@@ -23,9 +23,10 @@ derivations here are re-done from first principles in the module
 docstrings (this package shares no code with UpstreamDrift).
 
 Putter specs: :data:`~.impact.MINIMAL_PUTTERS` are deliberately
-minimal H3-local specs, clearly marked for reconciliation with the H1
-club-library putters (epic #4125 H1); UIs should prefer library
-putters when present and fall back to these.
+minimal H3-local specs. The reconciliation with the H1 club-library
+putters landed in ``shared.python.golf_club.putter_head`` (#4800 P3):
+build heads there (mesh or library fallback) and fall back to these
+only when neither source is available.
 """
 
 from __future__ import annotations
