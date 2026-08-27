@@ -3,6 +3,316 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 2620,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "d8108041a54ad943f04a118079a8c60018889c6437e5630d44eff1eddaed4903",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-SOLVER-TARGET-VALIDATION-PY-14E37F71E6F3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/solver/_target_validation.py",
+      "purpose": "Shared boundary validation for spatial target domain and persistence code.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13025,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "e469398edb1df3b53e36de69af660be68e450f98b43bc949b002ca4bb0852bb2",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-SOLVER-GOALS-PY-FE3238EB3401",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/solver/goals.py",
+      "purpose": "Goal and variable-partition types for the impact-parameter solver.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GoalTerm",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactGoal",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VariablePartition",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DELIVERY_VARIABLE_DEFAULTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOAL_QUANTITIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SWING_DERIVED_VARIABLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SWING_VARIABLE_DEFAULTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetRegion",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/solver/tests/test_goals.py",
+          "tests/rate_of_closure/test_solver_gui.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12476,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "4c069e6d3adab82e7e9f9ca5dffc18461876d3d1c888f989b9fb8d7f06137ed9",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-SOLVER-OBJECTIVE-PY-DA26881FAE4C",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/solver/objective.py",
+      "purpose": "Residual-vector builder for the impact-parameter solver (#4103, #4109).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EvaluationConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "achieved_quantities",
+            "signature": "variables: Mapping[str, float], partition: VariablePartition, goal: ImpactGoal, config: EvaluationConfig | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_candidate",
+            "signature": "variables: Mapping[str, float], partition: VariablePartition, goal: ImpactGoal, config: EvaluationConfig | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "residuals",
+            "signature": "x: np.ndarray, partition: VariablePartition, goal: ImpactGoal, config: EvaluationConfig | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/solver/tests/test_objective.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13522,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "bcb39c941e13f7fadcf4e0dc80509d29a742f298542644e26f8814a923e3f270",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-SOLVER-SOLVE-PY-93C4D910E22A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/solver/solve.py",
+      "purpose": "Robust multi-start driver for the impact-parameter solver (#4103, #4109).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CancelledError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProgressReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SolverResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StartSummary",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_stall",
+            "signature": "history: list[float]"
+          },
+          {
+            "kind": "function",
+            "name": "solve",
+            "signature": "goal: ImpactGoal, partition: VariablePartition, config: EvaluationConfig | None=None, n_starts: int=DEFAULT_N_STARTS, seed: int=0, x0: np.ndarray | None=None, max_nfev_per_start: int=DEFAULT_MAX_NFEV_PER_START, n_workers: int | None=None, progress_cb: ProgressCallback | None=None, cancel_event: threading.Event | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/solver/tests/test_solve.py",
+          "tests/rate_of_closure/test_durable_ensemble_authority_service.py",
+          "tests/rate_of_closure/test_localized_torque_variation.py",
+          "tests/rate_of_closure/test_solver_gui.py",
+          "tests/rate_of_closure/test_variation_durable_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 14181,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
@@ -15145,293 +15455,6 @@
         ],
         "unit_mentions": [],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 360,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cee7218aa0445b80ff6fd88bd0dfd87b17aacbea94d7ed75cc0fde25c6e3e21d",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-LAUNCH-PYQT6-PY-93CBDA0BBBE4",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/urdf_builder_gui/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for Parametric URDF Builder.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 102,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8b10e8ba250626c81fc629aea7fc8b4d5dbc2fd3f9a69ba45f9abe8f010d199f",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-PYTHON-URDF-BUILDER-GUI-INIT-PY-F873B1906886",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/urdf_builder_gui/python/urdf_builder_gui/__init__.py",
-      "purpose": "PyQt6 GUI for Parametric URDF Builder.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7953,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c68da0df57ce306d2339f7b65b9c278cb1a41b71ee20fd4c8a4c2ab37482a2b5",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-PYTHON-URDF-BUILDER-GUI-ANTHROPOMETRIC-MODEL-PY-D6EA2216B0C1",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/urdf_builder_gui/python/urdf_builder_gui/anthropometric_model.py",
-      "purpose": "Anthropometric body model — shared constants for URDF generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SegmentDimensions",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "URDFConfig",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "TEMPLATE_SEGMENTS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_box_inertia",
-            "signature": "mass: float, width: float, height: float, depth: float"
-          },
-          {
-            "kind": "function",
-            "name": "compute_cylinder_inertia",
-            "signature": "mass: float, radius: float, length: float"
-          },
-          {
-            "kind": "function",
-            "name": "compute_segment_length",
-            "signature": "total_height: float, segment_key: str, proportion_factor: float=1.0"
-          },
-          {
-            "kind": "function",
-            "name": "compute_segment_mass",
-            "signature": "total_mass: float, segment_key: str, count: int=1"
-          },
-          {
-            "kind": "function",
-            "name": "compute_sphere_inertia",
-            "signature": "mass: float, radius: float"
-          },
-          {
-            "kind": "function",
-            "name": "get_template_segments",
-            "signature": "template_name: str"
-          },
-          {
-            "kind": "function",
-            "name": "interpolate_gender_factor",
-            "signature": "factor: float, female_val: float, male_val: float"
-          },
-          {
-            "kind": "re-export",
-            "name": "HEIGHT_RATIOS",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "MASS_RATIOS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
-          "tests/test_anthropometry_parity.py",
-          "tests/unit/test_anthropometry_parity.py"
-        ],
-        "unit_mentions": [
-          "J",
-          "kg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 509,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "42ae113ffd5aea62500be50d5dadca8633ea21c077b950520d0b070d559df414",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-URDF-BUILDER-GUI-PYTHON-URDF-BUILDER-GUI-CONTRACTS-PY-0EBF61547DD9",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/urdf_builder_gui/python/urdf_builder_gui/contracts.py",
-      "purpose": "Design by Contract support for urdf_builder_gui.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "PostconditionError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PreconditionError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "ensure",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "require",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
-          "tests/rate_of_closure/test_contracts.py",
-          "tests/shared/python/golf_club/test_contracts.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/unit/ai/mcp/test_contracts.py",
-          "tests/unit/ai/peer_review/test_contracts.py",
-          "tests/unit/ai/skills/test_contracts.py",
-          "tests/unit/test_contracts.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
-          "src/shared/python/model_generation/tests/test_contracts.py",
-          "tests/rate_of_closure/test_contracts.py",
-          "tests/shared/python/golf_club/test_contracts.py",
-          "tests/shared/python/test_contracts.py",
-          "tests/unit/ai/mcp/test_contracts.py",
-          "tests/unit/ai/peer_review/test_contracts.py",
-          "tests/unit/ai/skills/test_contracts.py",
-          "tests/unit/test_contracts.py"
-        ]
       }
     }
   ],

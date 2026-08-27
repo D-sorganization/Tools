@@ -2105,7 +2105,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_flight_playback.py"
+          "tests/rate_of_closure/test_flight_playback.py",
+          "tests/rate_of_closure/test_playback_transport.py"
         ],
         "unit_mentions": [
           "N",
@@ -3103,6 +3104,97 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4096,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "e0d0d1ddb08b9009a9acfc4b3f3b3005772db95fb23ec288495e27c16db40264",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-PLAYBACK-TRANSPORT-PY-E7728F726E91",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/playback_transport.py",
+      "purpose": "Runtime-neutral playback transport math for 3D shot playback (#4800 P8).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlaybackAdvance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCRUB_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "advance_playback",
+            "signature": "time_s: float, elapsed_s: float, speed: float, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "clamp_time",
+            "signature": "time_s: float, duration_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "scrub_value",
+            "signature": "time_s: float, duration_s: float, steps: int=SCRUB_STEPS"
+          },
+          {
+            "kind": "function",
+            "name": "time_at_scrub",
+            "signature": "value: int, duration_s: float, steps: int=SCRUB_STEPS"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_playback_transport.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -9132,6 +9224,62 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9896,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9ea844be03df4605ede2c62fff5058528e02c50732494c63b43226da50db13e5",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-PLAYBACK-TRANSPORT-CONTROLS-PY-F9D4CC8C32D3",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/playback_transport_controls.py",
+      "purpose": "Subject-neutral, lifecycle-safe transport controls for 3D shot playback.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlaybackTransportControls",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_playback_transport.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8812,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12841,112 +12989,6 @@
             "kind": "function",
             "name": "add_labeled_control",
             "signature": "layout: QHBoxLayout, text: str, control: QWidget, stretch: int=0"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12022,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "00b671c8489cc53d78d6b7090a749a14634e9cda7f6fa2cc1242446f8b806058",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-DISTRIBUTION-MATRIX-PY-828E1D891B66",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_distribution_matrix.py",
-      "purpose": "Selectable PyQt scatter matrix with honest marginal distributions.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "DistributionMatrixView",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_variation_visualization_widgets.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 546,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1f46cfb4b019a3ba7817d81fb8390a9ef6002bfe334845b3ff2f1289148eae33",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-EDITOR-WIDGETS-PY-10D082967086",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_editor_widgets.py",
-      "purpose": "Small shared editor factories for the PyQt variation workflow.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "make_spin",
-            "signature": "lo: float, hi: float, value: float, decimals: int"
           }
         ],
         "test_paths": [],
