@@ -3,6 +3,324 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 293,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f24372d27866fa1d62a4690782cdc3ce72f965b14fa23c5415b8fd1f920ad036",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-INIT-PY-12D97C00E1B1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/__init__.py",
+      "purpose": "Source-of-truth drafting models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_VESSEL_DRAFTER_LAYOUT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VesselDrafterLayout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VesselLidPort",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VesselSidePort",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6288,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "00ede32be1cb700db94e3a449bf68d8cbc10590c8723a039c39569ede04ea2ce",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-CYLINDRICAL-BATH-PY-141732815A07",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/cylindrical_bath.py",
+      "purpose": "Cylindrical bath drafting defaults for radial electrode layouts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CylindricalBathDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CylindricalBathLayout",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CylindricalElectrodeDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RadialElectrodePlacement",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CYLINDRICAL_BATH_LAYOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MM_PER_INCH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_default_cylindrical_bath_layout",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_cylindrical_bath_layout.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7174,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "07a1142477f3f2652631b91a7a30ff33c7b1ff2cff5e8d422ac92c334636b170",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-ELECTRODE-ADVISOR-PY-24A7A13ACA7B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/electrode_advisor.py",
+      "purpose": "Default electrode advisor drafting inputs mirrored from the current UI.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BathDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DraftingEnvelope",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodeAdvisorLayout",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodeDefaults",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodePlacement",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_ELECTRODE_ADVISOR_LAYOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MM_PER_M",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_default_electrode_advisor_layout",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/vessel_drafter/tests/test_electrode_advisor_defaults.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1483,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "196e719978f0d53a40039d7d61a39e19560ff0432752770621e2e8b3b255787a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-MODELS-RUST-KERNEL-PY-91BE0C026A21",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/vessel_drafter/python/vessel_drafter/models/rust_kernel.py",
+      "purpose": "Rust-backed electrode advisor interface.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_BACKEND_ENV",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_BACKEND",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REQUESTED_BACKEND",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RUST_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VALID_BACKENDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_default_electrode_advisor_layout",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "is_rust_available",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 15036,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

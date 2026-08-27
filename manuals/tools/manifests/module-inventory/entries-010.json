@@ -3,6 +3,478 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8874,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c4366c28ae8841c642cc532ccd8a535c908d45698b81cd454f2e5b6c3e47f6e0",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTGROUNDTRANSFER-TS-0FA0180FFE5F",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/flightGroundTransfer.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "FlightToGroundTransferConfig",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FlightToGroundTransferOutcome",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FlightToGroundUnavailableReason",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundFlightSimulationOptions",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildFlightToGroundRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "flightVectorToTarget",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "launchRelativeSurfaceHeightM",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "simulateFlightForGroundTransfer",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5233,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "43e1c88981979353554b183d856614bce0816cbdda33193198a40fc1859ea6d8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTGROUNDTYPES-TS-F4ECFDE5342F",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/flightGroundTypes.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "CalibrationKind",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FLIGHT_TO_GROUND_REQUEST_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FLIGHT_TO_GROUND_RESULT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FlightToGroundRequest",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FlightToGroundResult",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GROUND_TARGET_FRAME",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundCalibration",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundContactState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundEvent",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundEventType",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundFrame",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundPhase",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundProvenance",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundResultStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundSummary",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundSurfaceProfile",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundTermination",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundTerminationReason",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundTrajectoryPoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundUnavailableField",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundUnavailableFieldId",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundUnavailableReason",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundVec3",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundWarning",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GroundWarningSeverity",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9103,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c17ad8ea8ef72f650b7f1c23504aed095464217b8943f58bd3120f705a5c0dc2",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTGROUNDVALIDATION-TS-04A40D4FD9C4",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/flightGroundValidation.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "JsonRecord",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "MIN_CANONICAL_POSITIVE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "array",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "boolean",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "bounded",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "canonicalNumber",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "dot",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "exact",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "finiteRaw",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "groundSignedGapM",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "integer",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "nonnegative",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "oneOf",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseCalibration",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseContactState",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseProvenance",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parseSurface",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "positive",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "record",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "relativeNormalSpeedMps",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "text",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "vector",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8663,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a4fda7615b8b92b69f79c22bca06b298e5e8372abca0007c126d426ab5a8ec57",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTINTEGRATOR-TS-73256949AF99",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/flightIntegrator.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "MAX_FLIGHT_INTEGRATION_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "integrateFlight",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1782,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13331,280 +13803,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8077,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "83b08e1d8f4705910efef2fe664bf00e7c173d9d719d7b165c5b853b4729ac1a",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-TURFCONTACT-TS-99AAC59D8F9C",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/turfContact.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "FIRM_FAIRWAY_TURF",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ReducedTurfContactResultTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ReducedTurfStatus",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "TurfContactProfileTs",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "simulateReducedTurfContact",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 614,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a5f3f7eab1ae839173c66cbffea53e7c4e68d16a1e71bfb884b8be580013e2ef",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-UNICODESCALAR-TS-22DC1A648443",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/unicodeScalar.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "hasUnpairedSurrogate",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4107,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "70e2d4ba220c477f30b88d96967d272c2d21c1ee2545834adabef599b29d8e67",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-UNITS-TEST-TS-79AEC8CEC5EC",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/units.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "m/s",
-          "rpm"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10706,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0aa5311af90ce910f59ab8736078550bbf2536eaa4e605d9e54a05cdb1e571da",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-UNITS-TS-83597472B71E",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/units.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "DISTANCE_UNITS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "FIELD_GUIDANCE",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "LENGTH_UNITS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "QUANTITY_UNITS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "Quantity",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "ROTATION_UNITS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "SPEED_UNITS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "formatDistanceM",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "fromCanonical",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "toCanonical",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_units.py"
-        ],
-        "unit_mentions": [
-          "cm",
-          "deg",
-          "m/s",
-          "mm",
-          "rad/s",
-          "rpm",
-          "s",
-          "µs"
-        ],
         "validation_paths": []
       }
     }

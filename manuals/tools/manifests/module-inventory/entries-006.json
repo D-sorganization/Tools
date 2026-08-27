@@ -3,6 +3,212 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6019,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5316b1c9bb1037785d137b25e15efbeaf80bb441473075fb1f8b530b955b427d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-UI-PYQT6-MAIN-WINDOW-PY-DC3143ECDBD1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/pid_generator/ui/pyqt6/main_window.py",
+      "purpose": "P&ID Generator — PyQt6 main window.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PIDGeneratorMainWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "src/pid_generator/tests/test_pid_generator_gui.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 745,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c64683a221afddee6da8b3e31cd6a0c3acc4e7aa662b1782052a84c0dbc50111",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PLANT-SIMULATOR-INIT-PY-7DCFE6FAC423",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/plant_simulator/__init__.py",
+      "purpose": "Neural Network Plant Simulator module (EXPERIMENTAL).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7357,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "913edbe5ba47541af840e43ff6721baea80776b4e1e2027ed071aa1e15e2de9f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PLANT-SIMULATOR-DATASET-PY-104E98473997",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/plant_simulator/dataset.py",
+      "purpose": "SCADA dataset loader for the (experimental) neural plant simulator.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SCADADataset",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/plant_simulator/test_dataset.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1207,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "76e4a46a1b0bf52e1ed0bef6489b51652e4d618b0ff835196963b65d866a5330",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PLANT-SIMULATOR-MODEL-PY-FB8AF4F148A3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/plant_simulator/model.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlantSimulatorLSTM",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_model.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5034,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14933,310 +15139,6 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_plotting.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1925,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c36c8661c703d1c637607b556f684ff6ec8af80c88cf180a8d32f29bceab9953",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-OPTIONAL-VALUES-PY-E7AD835C97B8",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/optional_values.py",
-      "purpose": "Miss-safe scalar extraction for optional simulation phases.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "attack_angle_deg",
-            "signature": "run: SimulationRun"
-          },
-          {
-            "kind": "function",
-            "name": "delivered_speed",
-            "signature": "run: SimulationRun"
-          },
-          {
-            "kind": "function",
-            "name": "delivery_scalar",
-            "signature": "run: SimulationRun, attribute: str"
-          },
-          {
-            "kind": "function",
-            "name": "impact_energy",
-            "signature": "run: SimulationRun"
-          },
-          {
-            "kind": "function",
-            "name": "launch_scalar",
-            "signature": "run: SimulationRun, key: str"
-          },
-          {
-            "kind": "function",
-            "name": "optional_float",
-            "signature": "value: float | None"
-          },
-          {
-            "kind": "function",
-            "name": "path_deg",
-            "signature": "run: SimulationRun"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4344,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c61bc630903b3b7347cd56bb0395270c76c17a826360a77965eb4cb4c3442dc5",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-PUTTING-CATALOG-PY-8C37A35B8DCD",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/putting_catalog.py",
-      "purpose": "Putting output catalog — additive registry for the Putting tab (#4125 H3).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PuttingVariableSpec",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PUTTING_CATALOG",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "extract_putting",
-            "signature": "result: PuttResult, key: str"
-          },
-          {
-            "kind": "function",
-            "name": "putting_catalog_keys",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12301,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "266af0e4b663e8d77177844622d9ef747ba37c1dd17c9b6547a569515700c23f",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-RENDER-PY-DFFDE5FFE8F5",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/render.py",
-      "purpose": "The one plot pipeline: PlotSpec + SimulationRun -> data -> figure.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PlotData",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_plot_data",
-            "signature": "spec: PlotSpec, run: SimulationRun, should_cancel: Callable[[], bool] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "plot_data_rows",
-            "signature": "data: PlotData"
-          },
-          {
-            "kind": "function",
-            "name": "render_plot",
-            "signature": "data: PlotData, figure: Figure"
-          },
-          {
-            "kind": "function",
-            "name": "write_plot_csv",
-            "signature": "data: PlotData, path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "write_plot_json",
-            "signature": "data: PlotData, path: str | Path"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6500,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e784cd4ac267e84bdff97319f58103def3a91e0e161cf7221511f689e4384a67",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PLOTTING-SPEC-PY-CDE4EF02A5F0",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/plotting/spec.py",
-      "purpose": "Frozen plot definitions with JSON round-trip.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PlotSpec",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PLOT_KINDS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SPEC_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "spec_from_json",
-            "signature": "path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "spec_to_json",
-            "signature": "spec: PlotSpec, path: str | Path"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_spec.py"
         ],
         "unit_mentions": [
           "s"

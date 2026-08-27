@@ -3,6 +3,242 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 24,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8eea9df4f6d7b38ca0e39ccc27b04700e3d08dbeec8046d613d22706d19985fa",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-MIXINS-INIT-PY-F7740A86796F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/widgets/mixins/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9934,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "85d88283ffc2fe014fe9c0025e974cea942ed4cee5be3b3c4282fd2b293c6ae3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-MIXINS-DATA-PROCESSOR-OPS-PY-2C9E7A376106",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py",
+      "purpose": "Data processor operations mixin.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DataProcessorOpsMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_data_processor_ops.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8587,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "473a88e953ea8688439c448c0a91cefb04e9967fe07d5f0b00c7287ba8e77913",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-UNIT-AWARE-INPUT-PY-615AFC263323",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/widgets/unit_aware_input.py",
+      "purpose": "Unit-Aware Input/Display Widgets.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "UnitAwareDisplay",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnitAwareInput",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_unit_aware_input.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 20813,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "68d854038154c91b2bb84b2984f4b06cac46ec7f8eaf9fc3c02235b350d18625",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-UNIT-CONVERTER-WIDGET-PY-F0A9F728C9B0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/widgets/unit_converter_widget.py",
+      "purpose": "Unit Converter - Shared Component for UI Applications.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CaseInsensitiveCompleter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConversionRow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TypedConverterWidget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnitConverterWidget",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_unit_converter",
+            "signature": "parent: QWidget | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_unit_converter_widget.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1665,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -18913,360 +19149,6 @@
           "deg",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1236,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2ea9d812d93962d5492276f6bfae56c6e66f63ca6550285e1cd85bc78200234b",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-CONTEXTUAL-REGISTRY-PY-355E19D49F07",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/contextual_registry.py",
-      "purpose": "Built-in variables that require an execution-context adapter.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ContextualVariable",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LOCALIZED_TORQUE_VARIABLES",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "N·m"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9534,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9bc6d68f018ba4657c7137c7011641ad053d2f7872f408c352e48c214335519e",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DATASET-IO-PY-226D8D679CE3",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/dataset_io.py",
-      "purpose": "Variation-dataset export/import (CSV + JSON) — epic #4120, V3.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DATASET_HDF5_SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DATASET_HDF5_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DATASET_JSON_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "from_json_dict",
-            "signature": "data: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "read_csv",
-            "signature": "path: str | Path, plan: VariationPlan"
-          },
-          {
-            "kind": "function",
-            "name": "read_hdf5",
-            "signature": "path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "read_json",
-            "signature": "path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "to_json_dict",
-            "signature": "dataset: VariationDataset"
-          },
-          {
-            "kind": "function",
-            "name": "write_csv",
-            "signature": "dataset: VariationDataset, path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "write_hdf5",
-            "signature": "dataset: VariationDataset, path: str | Path"
-          },
-          {
-            "kind": "function",
-            "name": "write_json",
-            "signature": "dataset: VariationDataset, path: str | Path"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
-          "tests/rate_of_closure/test_variation_gui_execution.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 12703,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4012762fcd630a6fffc37c5568cc34a372f582f65e3f8edf274fe378fe9d67ed",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DISPERSION-METRIC-TYPES-PY-4E5F8AE613C3",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/dispersion_metric_types.py",
-      "purpose": "Immutable contracts for selectable geometric dispersion metrics.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ConfidenceEllipsoidSeries",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "DispersionMetricSeries",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LowVariabilityMetricCriteria",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RankedLowVariabilityInterval",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ELLIPSOID_VOLUME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ESTIMABLE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GAUSSIAN_POSITION_CONTENT_REGION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INSUFFICIENT_SAMPLES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "INVALID_COVARIANCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LARGEST_PRINCIPAL_SIGMA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "LOW_VARIABILITY_METRICS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIN_CONFIDENCE_LEVEL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIN_SAMPLES_FOR_FULL_3D_COVARIANCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RANK_DEFICIENT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "RMS_RADIUS",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11371,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0ec19a4e45e937d76a2644807b2edeafbe7fc8194add67e5acd95554c1d65300",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DISPERSION-METRICS-PY-AACAACD2451A",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/dispersion_metrics.py",
-      "purpose": "Confidence-scaled dispersion and ranked quiet-zone analysis.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_confidence_ellipsoids",
-            "signature": "dispersion: PositionDispersion, point_id: str, confidence_level: float=0.95"
-          },
-          {
-            "kind": "function",
-            "name": "build_dispersion_metric_series",
-            "signature": "dispersion: PositionDispersion, point_id: str, metric: str, confidence_level: float=0.95"
-          },
-          {
-            "kind": "function",
-            "name": "find_ranked_low_variability_intervals",
-            "signature": "dispersion: PositionDispersion, criteria: LowVariabilityMetricCriteria"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

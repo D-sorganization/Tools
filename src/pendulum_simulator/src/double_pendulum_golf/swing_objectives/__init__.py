@@ -37,6 +37,11 @@ from double_pendulum_golf.swing_objectives.objectives import (
     evaluate_all,
     get_objective,
 )
+from double_pendulum_golf.swing_objectives.presets import (
+    DEFAULT_PRESET,
+    GolferPreset,
+    build_config,
+)
 from double_pendulum_golf.swing_objectives.signals import (
     SwingSignals,
     build_swing_signals,
@@ -82,4 +87,8 @@ __all__ = [
     "comparison_to_payload",
     "comparison_from_payload",
     "COMPARISON_SCHEMA_VERSION",
+    # Presets (#4771)
+    "GolferPreset",
+    "DEFAULT_PRESET",
+    "build_config",
 ]
