@@ -8,6 +8,13 @@ import {
   type PlaybackCamera,
 } from "./flightPlaybackDrawing";
 import { PlaybackTimeline, validatePlaybackPoints } from "../model/flightPlayback";
+import {
+  PLAYBACK_SPEEDS,
+  SCRUB_STEPS,
+  advancePlayback,
+  scrubValue,
+  timeAtScrub,
+} from "../model/playbackTransport";
 import type { FlightPoint } from "../model/flight";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
@@ -21,12 +28,15 @@ interface Props {
   selectedCommandId?: number;
 }
 
+// #4571 extension point: named cameras (Face-On / Down-the-Line) own their
+// state in model/cameraCommands.ts. When that seam lands for playback, seed
+// this orbit camera from `canvasAngles(cameraPreset(...))` instead of the
+// constant below; playback must never re-implement camera state (#4800 P8).
 const INITIAL_CAMERA: PlaybackCamera = {
   yawRad: -0.65,
   pitchRad: 0.38,
   zoom: 1,
 };
-const SPEEDS = [0.25, 0.5, 1, 2, 4];
 
 export function FlightPlayback3D({
   points, comparisonPoints = [], spatialTarget, selectedTimeS = null, selectedCommandId = 0,
@@ -73,10 +83,10 @@ export function FlightPlayback3D({
     const animate = (now: number) => {
       const elapsed = Math.max(0, now - previous) / 1000;
       previous = now;
-      const next = Math.min(duration, timeRef.current + elapsed * speed);
-      timeRef.current = next;
-      setTime(next);
-      if (next >= duration) setPlaying(false);
+      const step = advancePlayback(timeRef.current, elapsed, speed, duration);
+      timeRef.current = step.timeS;
+      setTime(step.timeS);
+      if (step.finished) setPlaying(false);
       else animationId = window.requestAnimationFrame(animate);
     };
     animationId = window.requestAnimationFrame(animate);
@@ -169,11 +179,11 @@ export function FlightPlayback3D({
         <input
           type="range"
           min={0}
-          max={duration}
-          step={0.001}
-          value={time}
+          max={SCRUB_STEPS}
+          step={1}
+          value={scrubValue(time, duration)}
           disabled={duration <= 0}
-          onChange={(event) => jump(Number(event.target.value))}
+          onChange={(event) => jump(timeAtScrub(Number(event.target.value), duration))}
           aria-label="Ball Flight Time"
           title="Physical trajectory time [s], interpolated between solver samples"
           className="min-w-36 flex-1"
@@ -186,7 +196,7 @@ export function FlightPlayback3D({
             aria-label="Playback Speed"
             className="rounded border border-slate-700 bg-slate-900 px-1 py-1"
           >
-            {SPEEDS.map((option) => (
+            {PLAYBACK_SPEEDS.map((option) => (
               <option key={option} value={option}>{option}×</option>
             ))}
           </select>
