@@ -4900,10 +4900,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3728,
+      "bytes_lf": 3827,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4c5cdd95f6c9586a99e82314d6a1b16daad5f5d49ff695747f3cf38748e9591e",
+      "content_sha256_lf": "aafbc45fee85e7761346d7c733f8813d429b8dc63485c7073dbb1f1f389f5782",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VOLUMETRICS-TEST-TS-DC828F822CFA",
       "language": "typescript",
