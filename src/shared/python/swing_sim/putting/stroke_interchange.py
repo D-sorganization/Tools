@@ -316,32 +316,18 @@ class StrokeStrike:
     strike_offset_high_mm: float
 
 
-def _face_separations(
+def _impact_index(
     trajectory: DeliveryTrajectory,
     ball_position_m: tuple[float, float, float],
     body_to_face_m: float,
-) -> list[float]:
-    """Signed face-normal distance from the face center to the ball, per sample."""
+) -> int:
+    """Sample nearest face-ball contact; refuses a stroke that misses."""
     ball = np.asarray(ball_position_m, dtype=np.float64)
     separations = []
     for index in range(len(trajectory.samples)):
         center, _ = head_state_at(trajectory, index, grip_to_head_m=body_to_face_m)
         normal = trajectory.samples[index].rotation_matrix()[:, 0]
         separations.append(float((ball - center) @ normal))
-    return separations
-
-
-def impact_sample_index(stroke: PuttingStroke, *, body_to_face_m: float) -> int:
-    """Index of the sample nearest face-ball contact (module docstring).
-
-    Raises:
-        ValueError: If the stroke does not start behind the ball or
-            never reaches it.
-    """
-    require(isinstance(stroke, PuttingStroke), "stroke must be PuttingStroke")
-    separations = _face_separations(
-        stroke.to_delivery_trajectory(), stroke.ball_position_m, body_to_face_m
-    )
     require(
         separations[0] > GOLF_BALL_RADIUS_M,
         "stroke must start with the face behind the ball",
@@ -356,6 +342,19 @@ def impact_sample_index(stroke: PuttingStroke, *, body_to_face_m: float) -> int:
     return deltas.index(min(deltas))
 
 
+def impact_sample_index(stroke: PuttingStroke, *, body_to_face_m: float) -> int:
+    """Index of the sample nearest face-ball contact (module docstring).
+
+    Raises:
+        ValueError: If the stroke does not start behind the ball or
+            never reaches it.
+    """
+    require(isinstance(stroke, PuttingStroke), "stroke must be PuttingStroke")
+    return _impact_index(
+        stroke.to_delivery_trajectory(), stroke.ball_position_m, body_to_face_m
+    )
+
+
 def strike_parameters(stroke: PuttingStroke, *, body_to_face_m: float) -> StrokeStrike:
     """Recover the P1 strike parameters at ball contact.
 
@@ -367,8 +366,9 @@ def strike_parameters(stroke: PuttingStroke, *, body_to_face_m: float) -> Stroke
     Returns:
         The :class:`StrokeStrike` feeding :func:`~.impact.strike`.
     """
-    index = impact_sample_index(stroke, body_to_face_m=body_to_face_m)
+    require(isinstance(stroke, PuttingStroke), "stroke must be PuttingStroke")
     trajectory = stroke.to_delivery_trajectory()
+    index = _impact_index(trajectory, stroke.ball_position_m, body_to_face_m)
     view = delivery_view_at(trajectory, index, grip_to_head_m=body_to_face_m)
     center, _ = head_state_at(trajectory, index, grip_to_head_m=body_to_face_m)
     rotation = trajectory.samples[index].rotation_matrix()
