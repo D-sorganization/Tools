@@ -43,6 +43,15 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete and
 merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}`;
 see the two contracts under `docs/specs/`.
 
+Clubhead-realism epic #4799: G1/G2 landed — loft is a **leading-edge lean**
+(head built unlofted, sheared about `y = y_le`; `head_profiles.lean_point` =
+`clubHeads.leanPoint`, shared by the mesh, `face_center_point`, `hosel_point`)
+and hosel anchors are loft-aware (blades `x_le - offset` at 0.58 slant height,
+offset never onset; others the leaned authored anchor). Gates cover all 16
+clubs in both twins. G3 (silhouettes), G4 (camera-golden/visual-baseline
+regeneration), G5 (profile-view acceptance) remain open; the driver sidecar
+STL digest was repinned with G1/G2 since CI's source-keyed lane runs it.
+
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through
 `4ddec9175814451fdc3d1a94b45f1190e7503bca`. The complete-trial authority and
@@ -137,8 +146,8 @@ flight`, breaking the Morris UI import contract. Use the lazy-export map.
   `MYPYPATH='src;src/python/src' py -3.12 -m mypy --ignore-missing-imports --follow-imports=skip <changed non-test files>`
 - **`tools_core` capability is two-tier** — a wheel can expose
   `simulate_trajectory` yet lack the tee-aware full-state API; guard on the
-  specific capability. `test_club_view_camera.py`'s cadence test asserts
-  wall-clock time and is flaky under load.
+  specific capability. `test_club_view_camera.py`'s cadence test budgets
+  process-CPU time; it can still trip when sibling suites saturate the box.
 - PowerShell `Set-Content` and `pathlib.write_text` can rewrite LF as CRLF;
   preserve newlines explicitly.
 - **`detect_secrets scan` writes native separators** — on Windows run it
