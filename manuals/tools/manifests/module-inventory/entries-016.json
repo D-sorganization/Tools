@@ -3,6 +3,174 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 15804,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6c75b1654b338a0d51e5d65f265a587dbc99df83d6eca9d0ae8e80c83cfef718",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-EXECUTION-PY-2878E04E4210",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/morris_execution.py",
+      "purpose": "Deterministic UI-neutral execution adapter for Morris designs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisExecutionOptions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisSample",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_MORRIS_WORKERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_PROGRESS_INTERVAL",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_morris_design",
+            "signature": "design: MorrisDesign, outputs: tuple[MorrisOutput, ...], evaluator: MorrisEvaluator, options: MorrisExecutionOptions | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_morris_execution.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13370,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6734d8b187410469a7b447e8b9c338a4dba81aa63ee53b94d99207b05cbead36",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-OBSERVATION-IO-PY-6354CD992072",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/morris_observation_io.py",
+      "purpose": "Strict lossless archive for raw Morris design-point observations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisObservationArchive",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_OBSERVATION_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_OBSERVATION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_morris_observation_archive",
+            "signature": "observations: MorrisObservations, *, study_id: str, provenance: Mapping[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "morris_design_sha256",
+            "signature": "design: MorrisDesign"
+          },
+          {
+            "kind": "function",
+            "name": "morris_observations_from_json_dict",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "morris_observations_to_json_dict",
+            "signature": "observations: MorrisObservations, *, study_id: str, provenance: Mapping[str, str]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7447,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13533,175 +13701,6 @@
         "test_paths": [
           "src/vessel_drafter/tests/test_electrode_advisor_defaults.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9579,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8d2a50005d0e36acd33602bcba7ef2bdc469c140175ac8ad549b3357c087cefb",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-VESSEL-DRAFTER-LAYOUT-PY-8CEB673949E6",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_layout.py",
-      "purpose": "STEP-ready geometry for the vessel drafter tool.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VesselComponent",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_vessel_drafter_components",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          },
-          {
-            "kind": "function",
-            "name": "build_vessel_drafter_shape",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          }
-        ],
-        "test_paths": [
-          "src/vessel_drafter/tests/test_vessel_drafter_geometry.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5793,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2f766f510a00898e53d9fd750844c54a4ff3517d7bcd5a388f725b698286d094",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VESSEL-DRAFTER-PYTHON-VESSEL-DRAFTER-PROJECTS-VESSEL-DRAFTER-PROFILES-PY-2B58BD02C25D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_profiles.py",
-      "purpose": "Shared vessel head profile helpers used by preview and STEP generation.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ProfilePoint",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ShellBandProfile",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "HEAD_SAMPLE_COUNT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_band_boundary_loops",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          },
-          {
-            "kind": "function",
-            "name": "build_bottom_head_curve",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, offset_in: float=0.0, sample_count: int=HEAD_SAMPLE_COUNT"
-          },
-          {
-            "kind": "function",
-            "name": "build_cavity_boundary_half",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          },
-          {
-            "kind": "function",
-            "name": "build_full_boundary_loop",
-            "signature": "half_boundary: tuple[ProfilePoint, ...]"
-          },
-          {
-            "kind": "function",
-            "name": "build_glass_boundary_half",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          },
-          {
-            "kind": "function",
-            "name": "build_plenum_boundary_half",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          },
-          {
-            "kind": "function",
-            "name": "build_shell_band_profiles",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT"
-          },
-          {
-            "kind": "function",
-            "name": "build_shell_boundary_half",
-            "signature": "layout: VesselDrafterLayout, offset_in: float"
-          },
-          {
-            "kind": "function",
-            "name": "build_top_head_curve",
-            "signature": "layout: VesselDrafterLayout=DEFAULT_VESSEL_DRAFTER_LAYOUT, offset_in: float=0.0, sample_count: int=HEAD_SAMPLE_COUNT"
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

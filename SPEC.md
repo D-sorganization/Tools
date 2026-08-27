@@ -27,10 +27,20 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.17.10                                    |
-| **Spec Version**        | 1.18.28                                    |
+| **Spec Version**        | 1.18.29                                    |
 | **Last Spec Update**    | 2026-08-26                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-26 Durable Complete-Trial Retention (#4758 / #4142 R11.1)
+
+Version 1.18.29 persists complete trial records through bounded schema-v3 NPZ
+chunks. Every array is bound by shape, dtype, digest, trial range, units, frame,
+source, and execution provenance. Strict readers reconstruct immutable records,
+reject corrupt payloads, and expose schema-v2 archives as read-only legacy
+evidence. Serial, chunked, and resumed executions have canonical record parity;
+the source/adapter matrix records two verified and ten explicitly unavailable
+cells without promoting model retention to human validation.
 
 ### 2026-08-26 Complete Per-Trial Model Evidence Contract (#4758 / #4142 R11.1)
 
@@ -5385,6 +5395,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-26 | 1.18.29 | feat(rate-of-closure, #4758 / #4142 R11.1): add bounded schema-v3 complete-trial persistence with exact array identities, immutable strict-JSON reconstruction, hit/miss/failure nullability, corruption rejection, schema-v2 read-only compatibility, and serial/chunk/resume digest parity. Bind explicit units and publish the exhaustive 3-source by 4-adapter capability matrix with unsupported cells retained rather than fabricated. |
 | 2026-08-26 | 1.18.28 | feat(rate-of-closure, #4758 / #4142 R11.1): add a typed immutable per-trial evidence record that binds sampled inputs and execution/configuration identities to complete swing, event, impact, delivery, post-impact, launch, and flight state. Preserve explicit absence for misses/failures and source-specific manual/double/triple layouts; deliver records to sinks through the existing bounded chunk executor without claiming durable qualification or human validation. |
 | 2026-08-26 | 1.18.27 | test(rate-of-closure, #4759): measure the worst-library-mesh draw's bounded CPU work with a monotonic process clock so parallel hosted-runner scheduling cannot masquerade as a rendering regression. Preserve the 200 ms playback cadence and 0.5 s work ceiling. |
 | 2026-08-26 | 1.18.26 | fix(rate-of-closure, #4756 / #4142 R10.3): reconcile the packaged locus-execution authority with the fail-closed visualization package-data governance exposed by both hosted Python matrices. Explicitly classify the named JSON as legitimate feature-owned, non-visualization package data while continuing to reject undeclared entries; retain exact-wheel, Python/TypeScript parity, and scientific-boundary requirements. |

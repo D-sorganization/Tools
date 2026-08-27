@@ -3,6 +3,157 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6366,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c972e5bc8918dbd9b9101f629d9df5e115516d16db522589ba93840cbe7d12a3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CHAT-SURFACE-PY-44896433A2C5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/chat_surface.py",
+      "purpose": "Chat-side surface for the Sidekick agent layer (epic #5967 / S8 / #5977).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ActionChipModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ActionChipState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ChatActionEnvelope",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_chip",
+            "signature": "*, step: PlannedStep, service: SidekickActionService"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_envelope",
+            "signature": "envelope: ChatActionEnvelope"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7681,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ca4e327291880871ba605a250dddeb5981f365ead326f818c1f47254df246529",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-FEATURE-CATALOG-PY-B093918D89BF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/feature_catalog.py",
+      "purpose": "Feature catalog — Sidekick's machine-readable self-knowledge index.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_feature_catalog",
+            "signature": "*, force_refresh: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "lookup_feature",
+            "signature": "feature_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "search_features",
+            "signature": "query: str, *, limit: int=5"
+          },
+          {
+            "kind": "re-export",
+            "name": "FeatureEntry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FeatureKind",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/agent/test_feature_catalog.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8001,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17739,124 +17890,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 5671,
-      "classification": "calculation",
-      "classification_basis": "path-marker:filter",
-      "content_sha256_lf": "36817ccc8511c1d29fe167a37844c26568d5a20978dd5e6aeb5b8ae763683339",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-ADAPTIVE-FILTER-PY-F06693A313DD",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/adaptive_filter.py",
-      "purpose": "Adaptive filter implementations for signal_toolkit.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "AdaptiveFilter",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
-          "tests/shared/python/signal_toolkit/test_adaptive_filter.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 3870,
-      "classification": "calculation",
-      "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "f8a4321a427572a455585eff01de685e4b56e6aafe44a9b5cb74affab864a276",
-      "family": "signal-processing-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-BILATERAL-RUST-PY-7E4D128D5AC4",
-      "language": "python",
-      "maintainer": "Signal processing maintainers",
-      "path": "src/shared/python/signal_toolkit/bilateral_rust.py",
-      "purpose": "Rust-accelerated bilateral filter facade.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "apply_bilateral_filter_rust",
-            "signature": "signal: Signal, window_size: int=5, sigma_space: float=1.0, sigma_intensity: float=0.1"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
-          "tests/benchmarks/test_bilateral_rust_perf.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

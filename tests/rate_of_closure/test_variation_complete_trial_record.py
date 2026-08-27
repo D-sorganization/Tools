@@ -14,6 +14,7 @@ from rate_of_closure.variation.complete_trial_record import (
     CompleteTrialRecordSource,
     build_complete_trial_record,
 )
+from rate_of_closure.variation.request_builder import build_simulation_ensemble_request
 from rate_of_closure.variation.simulation_adapter import (
     build_ensemble_stream_header,
     run_simulation_ensemble_chunks,
@@ -29,6 +30,7 @@ from rate_of_closure.variation.trial_projection import (
     project_simulation_outcome,
 )
 from shared.python.contracts import ContractViolationError
+from shared.python.swing_sim.run_config import SHOULDER_JOINT_ID
 from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
     NoiseSpec,
@@ -182,6 +184,8 @@ def test_record_owns_arrays_and_rejects_nonfinite_state() -> None:
         ContractViolationError, match="swing_positions_m must be finite"
     ):
         _record(config, TrialCapture(invalid, None))
+    with pytest.raises(ContractViolationError, match="trial units"):
+        replace(record, units={})
 
 
 def test_bounded_executor_delivers_aligned_complete_records_to_its_sink() -> None:
@@ -231,3 +235,88 @@ def test_bounded_executor_delivers_aligned_complete_records_to_its_sink() -> Non
         NUMERICAL_FAILURE,
     )
     assert result[2].failure_message == "bounded planted failure"
+
+
+@pytest.mark.parametrize(
+    ("spec", "adapter_id"),
+    (
+        (NoiseSpec("swing_sim.swing.yaw_deg", scale=0.1), "global_simulation_value/v1"),
+        (
+            NoiseSpec(
+                "swing_sim.swing.shoulder_commanded_torque_offset_nm",
+                scale=0.1,
+                time_window_s=(0.01, 0.03),
+                point_ids=(SHOULDER_JOINT_ID,),
+            ),
+            "localized_joint_torque_offset/v1",
+        ),
+    ),
+)
+def test_qualified_double_pendulum_adapters_emit_complete_golden_records(
+    spec: NoiseSpec, adapter_id: str
+) -> None:
+    plan = VariationPlan(mode="swing", noise=(spec,), n_runs=1, seed=29)
+    request = build_simulation_ensemble_request(
+        plan, _config(ContactMode.DELIVERY_INSPECTION)
+    )
+
+    class Sink:
+        def __init__(self) -> None:
+            self.records = []
+
+        def begin(self, _header) -> None:  # type: ignore[no-untyped-def]
+            return None
+
+        def accept(self, chunk) -> None:  # type: ignore[no-untyped-def]
+            self.records.extend(chunk.complete_records)
+
+        def commit(self, _elapsed_s: float):  # type: ignore[no-untyped-def]
+            return tuple(self.records)
+
+        def abort(self) -> None:
+            return None
+
+    records = run_simulation_ensemble_chunks(request, Sink(), chunk_size=1)
+
+    assert len(records) == 1
+    assert records[0].adapter_ids == (adapter_id,)
+    assert records[0].source_kind == "double_pendulum"
+    assert records[0].units["swing_applied_torques_nm"] == "N*m"
+    assert records[0].swing_times_s.size > 0
+
+
+@pytest.mark.parametrize("source_kind", ("manual", "triple_pendulum"))
+def test_nonqualified_sources_fail_closed_before_adapter_execution(
+    source_kind: str,
+) -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(NoiseSpec("swing_sim.swing.yaw_deg", scale=0.1),),
+        n_runs=1,
+    )
+
+    with pytest.raises(ContractViolationError, match="double_pendulum source"):
+        build_simulation_ensemble_request(
+            plan, _config(ContactMode.DELIVERY_INSPECTION, source_kind)
+        )
+
+
+@pytest.mark.parametrize(
+    "variable_key",
+    (
+        "swing_sim.flight.launch.ground_normal_restitution",
+        "golf_club.turf.normal_stiffness_n_m",
+    ),
+)
+def test_non_trace_adapters_fail_closed_before_complete_trial_builder(
+    variable_key: str,
+) -> None:
+    with pytest.raises(ContractViolationError, match="registered|legal in swing"):
+        plan = VariationPlan(
+            mode="swing",
+            noise=(NoiseSpec(variable_key, scale=0.1),),
+            n_runs=1,
+        )
+        build_simulation_ensemble_request(
+            plan, _config(ContactMode.DELIVERY_INSPECTION)
+        )

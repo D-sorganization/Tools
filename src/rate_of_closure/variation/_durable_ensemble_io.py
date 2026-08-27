@@ -17,6 +17,13 @@ from shared.python.swing_sim.variation.execution_metadata import (
     execution_document_to_json_dict,
 )
 
+from ._complete_trial_wire import (
+    METADATA_ARRAY_KEY,
+    VALUES_ARRAY_KEY,
+    pack_complete_records,
+    unpack_complete_records,
+)
+from .complete_trial_record import COMPLETE_TRIAL_SCHEMA
 from .ensemble_chunks import EnsembleStreamHeader, SimulationResultChunk
 from .simulation_types import (
     ALL_OUTPUT_NAMES,
@@ -24,11 +31,12 @@ from .simulation_types import (
     TrialEvaluationStatus,
 )
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
+SUPPORTED_SCHEMA_VERSIONS = frozenset({2, SCHEMA_VERSION})
 MANIFEST_NAME = "manifest.json"
 MAX_CHUNK_FILE_BYTES = 16_000_000
 MAX_CHUNK_UNCOMPRESSED_BYTES = 32_000_000
-_ARRAY_KEYS = frozenset(
+_ARRAY_KEYS_V2 = frozenset(
     {
         "sampled_inputs",
         "positions_m",
@@ -41,6 +49,7 @@ _ARRAY_KEYS = frozenset(
         "failure_messages",
     }
 )
+_ARRAY_KEYS_V3 = _ARRAY_KEYS_V2 | {METADATA_ARRAY_KEY, VALUES_ARRAY_KEY}
 _MANIFEST_KEYS = frozenset(
     {
         "schema_version",
@@ -53,18 +62,25 @@ _MANIFEST_KEYS = frozenset(
         "elapsed_s",
     }
 )
-_CHUNK_RECORD_KEYS = frozenset(
+_CHUNK_RECORD_KEYS_V2 = frozenset(
     {"file", "start_index", "stop_index", "sha256", "failed_count"}
 )
+_CHUNK_RECORD_KEYS_V3 = _CHUNK_RECORD_KEYS_V2 | {"arrays"}
 
 
-def header_document(header: EnsembleStreamHeader) -> dict[str, object]:
+def header_document(
+    header: EnsembleStreamHeader, schema_version: int = SCHEMA_VERSION
+) -> dict[str, object]:
     """Describe immutable scientific identity without execution controls."""
     require(
         len(header.configuration_sha256) == 64,
         "durable headers require complete simulation configuration identity",
     )
-    return {
+    require(
+        schema_version in SUPPORTED_SCHEMA_VERSIONS,
+        "unsupported durable header schema",
+    )
+    result: dict[str, object] = {
         "plan_document": execution_document_to_json_dict(header.plan),
         "sampled_inputs": {
             "shape": [header.plan.n_runs, len(header.plan.noise)],
@@ -76,6 +92,9 @@ def header_document(header: EnsembleStreamHeader) -> dict[str, object]:
         "coordinate_frame": header.coordinate_frame,
         "configuration_sha256": header.configuration_sha256,
     }
+    if schema_version >= 3:
+        result["trial_record_schema"] = COMPLETE_TRIAL_SCHEMA
+    return result
 
 
 def json_sha256(value: object) -> str:
@@ -125,7 +144,10 @@ def read_manifest(path: Path) -> dict[str, Any]:
     require(type(value) is dict, "durable manifest must be an object")
     manifest = cast(dict[str, Any], value)
     require(set(manifest) == _MANIFEST_KEYS, "durable manifest fields are invalid")
-    require(manifest["schema_version"] == SCHEMA_VERSION, "unsupported manifest schema")
+    require(
+        manifest["schema_version"] in SUPPORTED_SCHEMA_VERSIONS,
+        "unsupported manifest schema",
+    )
     require(
         type(manifest["status"]) is str
         and manifest["status"] in {"in_progress", "complete"},
@@ -165,12 +187,15 @@ def verify_header(
 
 
 def chunk_record(
-    value: object, expected_start: int, trial_count: int
+    value: object, expected_start: int, trial_count: int, schema_version: int
 ) -> dict[str, object]:
     """Validate one exact contiguous manifest chunk entry."""
     require(type(value) is dict, "chunk record must be an object")
     record = cast(dict[str, object], value)
-    require(set(record) == _CHUNK_RECORD_KEYS, "chunk record fields are invalid")
+    expected_keys = (
+        _CHUNK_RECORD_KEYS_V3 if schema_version >= 3 else _CHUNK_RECORD_KEYS_V2
+    )
+    require(set(record) == expected_keys, "chunk record fields are invalid")
     start_value = record["start_index"]
     stop_value = record["stop_index"]
     require(
@@ -197,31 +222,38 @@ def chunk_record(
         type(failures_value) is int and 0 <= failures_value <= stop - start,
         "invalid chunk failures",
     )
+    if schema_version >= 3:
+        _validate_array_manifest(record["arrays"], _ARRAY_KEYS_V3)
     return record
 
 
-def write_chunk_atomic(path: Path, chunk: SimulationResultChunk) -> None:
+def write_chunk_atomic(
+    path: Path, chunk: SimulationResultChunk
+) -> dict[str, dict[str, object]]:
     """Replace one pickle-free NPZ only after a flushed bounded write."""
+    require(
+        len(chunk.complete_records) == len(chunk.outcomes),
+        "schema-v3 chunks require one complete record per outcome",
+    )
     temporary = path.with_suffix(path.suffix + ".tmp")
     values = _outcome_values(chunk)
+    arrays = {
+        "sampled_inputs": chunk.sampled_inputs,
+        "positions_m": chunk.positions_m,
+        "sample_valid": chunk.sample_valid,
+        "impact_sample_indices": chunk.impact_sample_indices,
+        "trial_indices": np.array([item.trial_index for item in chunk.outcomes]),
+        "statuses": np.array([item.status.value for item in chunk.outcomes]),
+        "output_values": values,
+        "failure_types": np.array([item.failure_type or "" for item in chunk.outcomes]),
+        "failure_messages": np.array(
+            [item.failure_message or "" for item in chunk.outcomes]
+        ),
+        **pack_complete_records(chunk.complete_records),
+    }
     try:
         with temporary.open("wb") as stream:
-            np.savez_compressed(
-                stream,
-                sampled_inputs=chunk.sampled_inputs,
-                positions_m=chunk.positions_m,
-                sample_valid=chunk.sample_valid,
-                impact_sample_indices=chunk.impact_sample_indices,
-                trial_indices=np.array([item.trial_index for item in chunk.outcomes]),
-                statuses=np.array([item.status.value for item in chunk.outcomes]),
-                output_values=values,
-                failure_types=np.array(
-                    [item.failure_type or "" for item in chunk.outcomes]
-                ),
-                failure_messages=np.array(
-                    [item.failure_message or "" for item in chunk.outcomes]
-                ),
-            )
+            np.savez_compressed(stream, **arrays)
             stream.flush()
             os.fsync(stream.fileno())
         require(
@@ -231,30 +263,56 @@ def write_chunk_atomic(path: Path, chunk: SimulationResultChunk) -> None:
         temporary.replace(path)
     finally:
         temporary.unlink(missing_ok=True)
+    return {name: _array_identity(value) for name, value in sorted(arrays.items())}
 
 
-def read_chunk(directory: Path, record: dict[str, object]) -> SimulationResultChunk:
+def read_chunk(
+    directory: Path, record: dict[str, object], schema_version: int
+) -> SimulationResultChunk:
     """Checksum, bound, decode, and reconstruct one immutable chunk."""
     path = directory / cast(str, record["file"])
     require(path.resolve().parent == directory, "durable chunk escapes archive")
     require(path.is_file(), "declared durable chunk is missing")
     require(path.stat().st_size <= MAX_CHUNK_FILE_BYTES, "chunk file is too large")
     require(file_sha256(path) == record["sha256"], "chunk checksum mismatch")
-    _require_bounded_zip(path)
+    require(
+        schema_version in SUPPORTED_SCHEMA_VERSIONS,
+        "unsupported durable chunk schema",
+    )
+    expected_keys = _ARRAY_KEYS_V3 if schema_version >= 3 else _ARRAY_KEYS_V2
+    _require_bounded_zip(path, expected_keys)
     try:
         with np.load(path, allow_pickle=False) as source:
-            require(set(source.files) == _ARRAY_KEYS, "chunk array fields are invalid")
-            arrays = {name: np.array(source[name], copy=True) for name in _ARRAY_KEYS}
+            require(
+                set(source.files) == expected_keys, "chunk array fields are invalid"
+            )
+            arrays = {name: np.array(source[name], copy=True) for name in expected_keys}
     except (BadZipFile, OSError, ValueError) as exc:
         require(False, "durable chunk arrays are invalid", str(exc))
         raise AssertionError from exc
+    if schema_version >= 3:
+        expected_manifest = cast(dict[str, object], record["arrays"])
+        require(
+            {name: _array_identity(value) for name, value in sorted(arrays.items())}
+            == expected_manifest,
+            "chunk array manifest does not match content",
+        )
+    outcomes = _decode_outcomes(arrays)
+    complete_records = (
+        unpack_complete_records(
+            arrays[METADATA_ARRAY_KEY], arrays[VALUES_ARRAY_KEY], len(outcomes)
+        )
+        if schema_version >= 3
+        else ()
+    )
     return SimulationResultChunk(
         start_index=cast(int, record["start_index"]),
         sampled_inputs=arrays["sampled_inputs"],
-        outcomes=_decode_outcomes(arrays),
+        outcomes=outcomes,
         positions_m=arrays["positions_m"],
         sample_valid=arrays["sample_valid"],
         impact_sample_indices=arrays["impact_sample_indices"],
+        complete_records=complete_records,
     )
 
 
@@ -274,6 +332,36 @@ def _array_identity(value: np.ndarray) -> dict[str, object]:
         "dtype": array.dtype.str,
         "sha256": hashlib.sha256(array.tobytes(order="C")).hexdigest(),
     }
+
+
+def _validate_array_manifest(value: object, keys: frozenset[str]) -> None:
+    require(type(value) is dict, "chunk array manifest must be an object")
+    manifest = cast(dict[str, object], value)
+    require(set(manifest) == keys, "chunk array manifest fields are invalid")
+    for name, raw in manifest.items():
+        require(type(raw) is dict, "chunk array identity must be an object", name)
+        identity = cast(dict[str, object], raw)
+        require(
+            set(identity) == {"shape", "dtype", "sha256"},
+            "chunk array identity fields are invalid",
+            name,
+        )
+        shape = identity["shape"]
+        require(
+            type(shape) is list
+            and all(type(dimension) is int and dimension >= 0 for dimension in shape),
+            "chunk array shape identity is invalid",
+            name,
+        )
+        require(type(identity["dtype"]) is str, "chunk array dtype is invalid", name)
+        digest = identity["sha256"]
+        require(
+            type(digest) is str
+            and len(digest) == 64
+            and set(digest) <= set("0123456789abcdef"),
+            "chunk array checksum is invalid",
+            name,
+        )
 
 
 def _json_bytes(value: object) -> bytes:
@@ -308,11 +396,11 @@ def _outcome_values(chunk: SimulationResultChunk) -> np.ndarray:
     return result
 
 
-def _require_bounded_zip(path: Path) -> None:
+def _require_bounded_zip(path: Path, array_keys: frozenset[str]) -> None:
     try:
         with ZipFile(path) as archive:
             entries = archive.infolist()
-            expected = {f"{name}.npy" for name in _ARRAY_KEYS}
+            expected = {f"{name}.npy" for name in array_keys}
             require(
                 len(entries) == len(expected)
                 and {item.filename for item in entries} == expected,

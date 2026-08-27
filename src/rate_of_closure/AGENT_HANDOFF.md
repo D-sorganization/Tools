@@ -60,12 +60,12 @@ public mirror consumes a byte-identical governed vendored authority.
 PR #4760 protected-merged the unrelated process-CPU-clock CI stabilization as
 `55805fe4de1b0afc3710efce4ed516d59e685717` without changing the 0.5 s
 work or 200 ms cadence limits. Issue #4758/R11.1 is active on
-`feat/4758-complete-trial-record`. Its first local TDD slice owns full swing,
-contact, impact, delivery, post-impact, launch, and flight state per bounded
-trial; misses/failures remain explicitly absent. Manual, double-, and
-triple-pendulum layouts and 62 focused tests pass. Durable round-trip,
-corruption, resume/digest parity, adapter matrix, memory, packaging, and
-protected CI are still required before R11.1 can become verified.
+`feat/4758-complete-trial-record`. Full swing/contact/downstream state now uses
+typed records and bounded schema-v3 durable write/read/resume. Array manifests,
+strict corruption gates, legacy-v2 read-only inspection, explicit units, exact
+serial/chunk/resume fingerprints, and the 3-source by 4-adapter matrix pass.
+Memory/artifact evidence, clean-wheel/package checks, full governance, and
+protected CI remain before R11.1 can become verified.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

@@ -12,7 +12,7 @@ import json
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 
@@ -28,6 +28,7 @@ from shared.python.swing_sim.variation.execution_provenance import (
     PYTHON_DEFAULT_PROVENANCE,
 )
 
+from ._complete_trial_fields import COMPLETE_TRIAL_UNITS, CommonFields, PhaseFields
 from ._complete_trial_state import (
     DELIVERY_FIELDS,
     IMPACT_FIELDS,
@@ -133,6 +134,7 @@ class CompleteTrialRecord:
     coordinate_frame: str
     spatial_point_ids: tuple[str, ...]
     torque_joint_ids: tuple[str, ...]
+    units: Mapping[str, str]
     candidate_time_s: float | None
     impact_time_s: float | None
     event_sample_index: int | None
@@ -159,51 +161,8 @@ class CompleteTrialRecord:
         """Validate dimensions, identities, and phase availability."""
         _validate_record_identity(self)
         _validate_record_arrays(self)
+        _validate_record_states(self)
         _validate_record_phases(self)
-
-
-class _CommonFields(TypedDict):
-    trial_index: int
-    status: TrialEvaluationStatus
-    sampled_inputs: np.ndarray
-    plan_sha256: str
-    execution_sha256: str
-    stream_configuration_sha256: str
-    configuration_sha256: str
-    sampled_input_sha256: str
-    registry_sha256: str
-    adapter_ids: tuple[str, ...]
-    source_repository: str
-    source_revision: str | None
-    source_revision_status: str
-    source_revision_reason: str | None
-    source_kind: str
-    coordinate_frame: str
-    spatial_point_ids: tuple[str, ...]
-    torque_joint_ids: tuple[str, ...]
-    failure_type: str | None
-    failure_message: str | None
-
-
-class _PhaseFields(TypedDict):
-    candidate_time_s: float | None
-    impact_time_s: float | None
-    event_sample_index: int | None
-    event_interpolation_status: str
-    pre_impact_sample_count: int
-    swing_times_s: np.ndarray
-    swing_positions_m: np.ndarray
-    swing_poses: np.ndarray
-    swing_twists: np.ndarray
-    swing_joint_positions_m: np.ndarray
-    swing_applied_torques_nm: np.ndarray
-    impact_outcome: Mapping[str, object] | None
-    delivery_state: Mapping[str, object] | None
-    post_impact_state: Mapping[str, object] | None
-    launch_state: Mapping[str, object] | None
-    flight_times_s: np.ndarray
-    flight_positions_m: np.ndarray
-    flight_velocities_mps: np.ndarray
 
 
 def _validate_digest(value: str, name: str) -> None:
@@ -229,6 +188,8 @@ def _validate_record_identity(record: CompleteTrialRecord) -> None:
         _validate_digest(cast(str, getattr(record, name)), name)
     require(bool(record.source_kind), "source_kind must be non-empty")
     require(bool(record.coordinate_frame), "coordinate_frame must be non-empty")
+    require(dict(record.units) == dict(COMPLETE_TRIAL_UNITS), "trial units are invalid")
+    object.__setattr__(record, "units", COMPLETE_TRIAL_UNITS)
     require(
         record.event_interpolation_status in INTERPOLATION_STATUSES,
         "unsupported event interpolation status",
@@ -291,6 +252,18 @@ def _validate_record_arrays(record: CompleteTrialRecord) -> None:
         ("flight_velocities_mps", flight_velocities),
     ):
         object.__setattr__(record, name, value)
+
+
+def _validate_record_states(record: CompleteTrialRecord) -> None:
+    for name, expected in (
+        ("impact_outcome", IMPACT_FIELDS),
+        ("delivery_state", DELIVERY_FIELDS),
+        ("post_impact_state", POST_IMPACT_FIELDS),
+        ("launch_state", LAUNCH_FIELDS),
+    ):
+        value = getattr(record, name)
+        if value is not None:
+            object.__setattr__(record, name, state_mapping(value, expected, name))
 
 
 def _validate_record_phases(record: CompleteTrialRecord) -> None:
@@ -395,7 +368,7 @@ def _common_fields(
     metadata: VariationExecutionMetadata,
     execution: dict[str, object],
     adapters: tuple[str, ...],
-) -> _CommonFields:
+) -> CommonFields:
     registry_sha256 = metadata.registry_sha256
     return {
         "trial_index": source.trial_index,
@@ -418,6 +391,7 @@ def _common_fields(
         "coordinate_frame": header.coordinate_frame,
         "spatial_point_ids": header.point_ids,
         "torque_joint_ids": _torque_ids(source.config.source_kind),
+        "units": COMPLETE_TRIAL_UNITS,
         "failure_type": outcome.failure_type,
         "failure_message": outcome.failure_message,
     }
@@ -431,7 +405,7 @@ def _failure_fields(
     source: CompleteTrialRecordSource,
     outcome: SimulationTrialOutcome,
     header: EnsembleStreamHeader,
-) -> _PhaseFields:
+) -> PhaseFields:
     points = 0 if source.config.source_kind == "manual" else len(header.point_ids)
     torques = len(_torque_ids(source.config.source_kind))
     return {
@@ -456,7 +430,7 @@ def _failure_fields(
     }
 
 
-def _run_fields(run: SimulationRun) -> _PhaseFields:
+def _run_fields(run: SimulationRun) -> PhaseFields:
     event_time = run.inspection_time_s
     event_index = int(np.argmin(np.abs(run.swing_times - event_time)))
     exact = math.isclose(

@@ -3,6 +3,194 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 18529,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4950432a765673081cc415cdc188106d1802130f06cede212bcf62b33fd38ae6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GITHUB-CLI-PROVIDER-PY-037FDEDC5B48",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/github_cli_provider.py",
+      "purpose": "GitHub CLI agent provider — wraps ``gh`` as a chat-level CLI agent.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://cli.github.com/"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GhIntent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GitHubCliProvider",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GitHubCliResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GH_EXECUTABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_INTENTS_HELP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HASH_NUMBER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPO_REF",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TITLE_QUOTED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_gh_intent",
+            "signature": "message: str"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/ai/adapters/test_github_cli_provider.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 24594,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "db1a56b5738797746f61f2934db8700f4732dd4de2ee1bdddbb8551be3a7dd9c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-OLLAMA-ADAPTER-PY-9CEFE7C107C2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/ollama_adapter.py",
+      "purpose": "Ollama adapter for local LLM inference.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://``",
+          "http://localhost:11434",
+          "http://{host",
+          "https://ollama.ai"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OllamaAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OLLAMA_DEFAULT_HOST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OLLAMA_DEFAULT_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OLLAMA_DEFAULT_TIMEOUT",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_adapter_factory.py",
+          "tests/shared/python/ai/test_ollama_adapter.py",
+          "tests/shared/python/ai/test_ollama_adapter_extended.py",
+          "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/unit/chat/test_adapter_capabilities.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 19412,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14700,161 +14888,6 @@
           "tests/unit/test_project_metadata_contracts.py",
           "tests/vessel_drafter/test_contracts_unified.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 269,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "98fc7f6f365e087ee017494252290fb26d6e1446b7f7d230038104077c7abb10",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONFIG-INIT-PY-164207F71D94",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/config/__init__.py",
-      "purpose": "Shared configuration helpers.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "re-export",
-            "name": "EnvironmentError",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_env",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_env_bool",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_env_float",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "get_env_int",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3490,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8cf487df26d39cdd033f23eb92f387d8b6a559b240ef9d39e76027b36470c88e",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONFIG-ENVIRONMENT-PY-6A1979F29846",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/config/environment.py",
-      "purpose": "Environment variable helpers for shared Tools modules.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "EnvironmentError",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_env",
-            "signature": "name: str, default: str | None=None, *, required: bool=False, strip: bool=True"
-          },
-          {
-            "kind": "function",
-            "name": "get_env_bool",
-            "signature": "name: str, default: bool=False"
-          },
-          {
-            "kind": "function",
-            "name": "get_env_float",
-            "signature": "name: str, default: float | None=None, *, min_value: float | None=None, max_value: float | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "get_env_int",
-            "signature": "name: str, default: int | None=None, *, min_value: int | None=None, max_value: int | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/conftest.py",
-          "tests/shared/python/ai/test_shared_dependency_imports.py",
-          "tests/shared/python/chat/test_adapter_lifecycle.py",
-          "tests/shared/python/chat/test_assistant_panel_inline_controls.py",
-          "tests/shared/python/chat/test_assistant_panel_memory_sync.py",
-          "tests/shared/python/chat/test_indexing_controller.py",
-          "tests/shared/python/chat/test_message_display.py",
-          "tests/shared/python/chat/test_panel_header.py",
-          "tests/shared/python/config/test_environment.py",
-          "tests/unit/ai/test_peer_review.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],
