@@ -3,6 +3,64 @@
   "entries": [
     {
       "authority_status": "provisional",
+      "bytes_lf": 4093,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "8aa93302a52c983f62ded251c659758a603d9a41e4bbcd0b1f0c7d8a957128a6",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONLAUNCHNUMBERS-TSX-8F94EDC91902",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/SimulationLaunchNumbers.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SimulationLaunchNumbers",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 15519,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
@@ -12381,48 +12439,6 @@
             "signature": null
           }
         ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1782,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3cb75c58e75281ba9b3c42cbd177243cf2561f0cf6f5604861ff5a8752981104",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTPLAYBACK-TEST-TS-C10B6872022F",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/flightPlayback.test.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []

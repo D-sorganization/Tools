@@ -3,6 +3,57 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10661,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e2972d19fd3ed3755f4bb193ba18105c831e0b761db505996ce19b48fa11eb0c",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TAB-IO-PY-1D17F8E5AF73",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/variation_tab_io.py",
+      "purpose": "Plan and dataset persistence behavior for the PyQt Variation tab.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VariationTabIoMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 9482,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12188,64 +12239,6 @@
         "test_paths": [],
         "unit_mentions": [
           "ms"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 4093,
-      "classification": "calculation",
-      "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "8aa93302a52c983f62ded251c659758a603d9a41e4bbcd0b1f0c7d8a957128a6",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONLAUNCHNUMBERS-TSX-8F94EDC91902",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/SimulationLaunchNumbers.tsx",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "SimulationLaunchNumbers",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "rpm",
-          "s"
         ],
         "validation_paths": []
       }

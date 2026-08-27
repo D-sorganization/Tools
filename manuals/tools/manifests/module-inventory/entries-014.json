@@ -3,6 +3,115 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 28878,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5d921e97f10ba8b5b717f8d26eba92cdb6364791ca6c018cffbdc0954e03e573",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SCRIPTING-SCRIPTING-ENV-PY-E75AF63DF03D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/scripting/scripting_env.py",
+      "purpose": "Python scripting environment (MATLAB-like backend).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConsoleEnvironment",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SecurityError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "USER_CODE_ERROR_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BLOCKED_BUILTINS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BLOCKED_IMPORT_MODULES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CPU_HARD_LIMIT_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CPU_SOFT_LIMIT_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_MAX_EXECUTION_TIME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_INTROSPECTION_GADGETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MEM_LIMIT_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_process_resource_limits",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/rotation_converter/test_scripting_env.py",
+          "tests/shared/python/scripting/test_scripting_env.py",
+          "tests/shared/python/scripting/test_scripting_env_import_side_effects.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1284,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17261,50 +17370,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1665,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f9f7126813746f23ded832b70f74e71e9fec876cd524f1bfd19a9899dd7e0def",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-INIT-PY-BC229FB9D61C",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/utils/__init__.py",
-      "purpose": "Upstream Drift Tools - Utility subpackage.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

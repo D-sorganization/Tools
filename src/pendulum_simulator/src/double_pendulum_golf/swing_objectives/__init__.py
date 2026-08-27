@@ -13,6 +13,14 @@ motion are re-derived here.
 See ``docs/specs/SWING_OBJECTIVE_COMPARISON.md``. Epic #4766.
 """
 
+from double_pendulum_golf.swing_objectives.comparison import (
+    COMPARISON_SCHEMA_VERSION,
+    SwingComparison,
+    compare_objectives,
+    comparison_from_payload,
+    comparison_to_payload,
+    cross_evaluation_matrix,
+)
 from double_pendulum_golf.swing_objectives.downswing import (
     DownswingConfig,
     DownswingOptimizer,
@@ -67,4 +75,11 @@ __all__ = [
     "DownswingConfig",
     "DownswingOptimizer",
     "DownswingResult",
+    # Objective comparison (#4770)
+    "SwingComparison",
+    "compare_objectives",
+    "cross_evaluation_matrix",
+    "comparison_to_payload",
+    "comparison_from_payload",
+    "COMPARISON_SCHEMA_VERSION",
 ]

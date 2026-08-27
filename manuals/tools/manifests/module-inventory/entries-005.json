@@ -13908,10 +13908,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2028,
+      "bytes_lf": 2462,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "4f23b79e362acde5ec729c2227399cefe21b80dba55ff86983fed57b036380a2",
+      "content_sha256_lf": "f73fbf2e53cd29ac30ac75f5947b4c28862da08252cddb14916fe2ff25f51602",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-INIT-PY-BB0C6A767464",
       "language": "python",
@@ -13962,6 +13962,11 @@
           },
           {
             "kind": "re-export",
+            "name": "COMPARISON_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CORIOLIS",
             "signature": null
           },
@@ -13997,6 +14002,11 @@
           },
           {
             "kind": "re-export",
+            "name": "SwingComparison",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SwingObjective",
             "signature": null
           },
@@ -14022,12 +14032,32 @@
           },
           {
             "kind": "re-export",
+            "name": "compare_objectives",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "comparison_from_payload",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "comparison_to_payload",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "coriolis_only_vector",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "coupling_constant",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "cross_evaluation_matrix",
             "signature": null
           },
           {
@@ -14109,6 +14139,89 @@
         "test_paths": [],
         "unit_mentions": [
           "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12123,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "6ca4e94fe09e5827647d3ac3c33fee9f15e60d4787643cc44fa58fad7032ee6d",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-COMPARISON-PY-0D591EEEEB3F",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/comparison.py",
+      "purpose": "Controlled comparison of the competing swing objectives.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SwingComparison",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMPARISON_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compare_objectives",
+            "signature": "config: DownswingConfig, objective_keys: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "comparison_from_payload",
+            "signature": "payload: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "comparison_to_payload",
+            "signature": "comparison: SwingComparison"
+          },
+          {
+            "kind": "function",
+            "name": "cross_evaluation_matrix",
+            "signature": "raw_values: Mapping[str, Mapping[str, float]], objective_keys: Sequence[str]"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_comparison.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -15136,57 +15249,6 @@
         "test_paths": [
           "tests/rate_of_closure/test_model.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 5034,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2f7feb5cadd4b71020e22d8696ffbd064691a9fcce4cb8d80b703b1fe427463a",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PLANT-SIMULATOR-NEURAL-SIMULATOR-CLIENT-PY-3CC23422A1DE",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/plant_simulator/neural_simulator_client.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "NeuralSimulatorClient",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }

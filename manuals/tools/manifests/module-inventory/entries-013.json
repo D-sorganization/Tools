@@ -3,6 +3,105 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10522,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e575f15d128c1385b9009d49914698e9018776ce3a4e3f4e3a0bd93ca4acbe8e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-API-PY-9260BAE7DFB4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/api.py",
+      "purpose": "Public query API for the code map.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Hit",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RepoStats",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Symbol",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "discover_repo_root",
+            "signature": "start: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_symbol",
+            "signature": "qualified_name: str, *, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "imports_of",
+            "signature": "path: str, *, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "neighbors",
+            "signature": "qualified_name: str, *, hops: int=1, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "repo_summary",
+            "signature": "*, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "search_code",
+            "signature": "query: str, *, k: int=20, kind: str | None=None, repo_root: str | os.PathLike[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "who_calls",
+            "signature": "qualified_name: str, *, repo_root: str | os.PathLike[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4938,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16782,115 +16881,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 28878,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5d921e97f10ba8b5b717f8d26eba92cdb6364791ca6c018cffbdc0954e03e573",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SCRIPTING-SCRIPTING-ENV-PY-E75AF63DF03D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/scripting/scripting_env.py",
-      "purpose": "Python scripting environment (MATLAB-like backend).",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ConsoleEnvironment",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SecurityError",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "USER_CODE_ERROR_TYPES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BLOCKED_BUILTINS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_BLOCKED_IMPORT_MODULES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CPU_HARD_LIMIT_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_CPU_SOFT_LIMIT_S",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_DEFAULT_MAX_EXECUTION_TIME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_INTROSPECTION_GADGETS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_MEM_LIMIT_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "apply_process_resource_limits",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/rotation_converter/test_scripting_env.py",
-          "tests/shared/python/scripting/test_scripting_env.py",
-          "tests/shared/python/scripting/test_scripting_env_import_side_effects.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
         "validation_paths": []
       }
     }

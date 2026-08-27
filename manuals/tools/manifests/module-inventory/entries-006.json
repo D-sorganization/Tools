@@ -3,6 +3,57 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5034,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2f7feb5cadd4b71020e22d8696ffbd064691a9fcce4cb8d80b703b1fe427463a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PLANT-SIMULATOR-NEURAL-SIMULATOR-CLIENT-PY-3CC23422A1DE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/plant_simulator/neural_simulator_client.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NeuralSimulatorClient",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1915,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15188,68 +15239,6 @@
           "src/shared/python/swing_sim/variation/tests/test_spec.py"
         ],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2583,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d07535d4debe00f95e1e5fcfca411d47097d7b4a1673043b253e2605f011f31f",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PRESETS-PY-C56270B5FA85",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/presets.py",
-      "purpose": "Named delivery presets for the rate-of-closure impact explorer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "PRESETS",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "preset_names",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/unit/ai/mcp/test_presets.py"
-        ],
-        "unit_mentions": [
-          "deg",
-          "mm",
           "s"
         ],
         "validation_paths": []
