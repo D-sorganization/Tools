@@ -12,6 +12,8 @@ import { describe, expect, it } from "vitest";
 import {
   captureSpeedMps,
   clubheadSpeedFromBackstroke,
+  DEFAULT_PUTTER_MOI_KG_M2,
+  GOLF_BALL_MASS_KG,
   GOLF_BALL_RADIUS_M,
   simulatePutt,
   STIMP_RELEASE_SPEED_MPS,
@@ -46,6 +48,228 @@ describe("strike — Python parity", () => {
   it("rejects out-of-range speeds", () => {
     expect(() => strike(PUTTER, 0)).toThrow();
     expect(() => strike(PUTTER, 2, -30)).toThrow();
+  });
+});
+
+describe("strike 2-D — analytic gates (#4800 P1, Python twin)", () => {
+  /** 2/7 rolling cap (swing_sim.impact SPHERE_ROLLING_CAP_FACTOR). */
+  const CAP = 2.0 / 7.0;
+  const transfer =
+    ((1.0 + PUTTER.cor) * PUTTER.headMassKg) /
+    (PUTTER.headMassKg + GOLF_BALL_MASS_KG);
+  const BALL_MOI =
+    0.4 * GOLF_BALL_MASS_KG * GOLF_BALL_RADIUS_M * GOLF_BALL_RADIUS_M;
+
+  it("square face + square path launches straight with zero sidespin", () => {
+    const launch = strike(PUTTER, 1.8);
+    expect(launch.startAzimuthDeg).toBe(0.0);
+    expect(launch.sidespinRadS).toBe(0.0);
+  });
+
+  it("aim rotates the start line without touching the solve", () => {
+    const neutral = strike(PUTTER, 1.8);
+    const aimed = strike(PUTTER, 1.8, 0.0, { aimDeg: 4.0 });
+    expect(aimed.startAzimuthDeg).toBe(4.0);
+    expect(aimed.sidespinRadS).toBe(0.0);
+    expect(aimed.ballSpeedMps).toBe(neutral.ballSpeedMps);
+    expect(aimed.launchAngleDeg).toBe(neutral.launchAngleDeg);
+    expect(aimed.spinRadS).toBe(neutral.spinRadS);
+  });
+
+  it("face-only vs path-only split matches the 2/7 rolling-cap ratio", () => {
+    const k = CAP / transfer;
+    const angle = 2.0;
+    const faceOnly = strike(PUTTER, 1.8, 0.0, { faceAngleDeg: angle });
+    const pathOnly = strike(PUTTER, 1.8, 0.0, { pathAngleDeg: angle });
+    const rad = (angle * Math.PI) / 180.0;
+    const expectedPath =
+      (Math.atan2(CAP * Math.sin(rad), transfer * Math.cos(rad)) * 180.0) /
+      Math.PI;
+    expect(pathOnly.startAzimuthDeg).toBeCloseTo(expectedPath, 12);
+    expect(faceOnly.startAzimuthDeg! / angle).toBeCloseTo(1.0 - k, 3);
+    expect(pathOnly.startAzimuthDeg! / angle).toBeCloseTo(k, 3);
+    expect(faceOnly.startAzimuthDeg!).toBeGreaterThan(
+      pathOnly.startAzimuthDeg!,
+    );
+    expect(pathOnly.startAzimuthDeg!).toBeGreaterThan(0.0);
+  });
+
+  it("face and path deflections are exact complements", () => {
+    for (const angle of [0.5, 2.0, 8.0]) {
+      const faceOnly = strike(PUTTER, 1.8, 0.0, { faceAngleDeg: angle });
+      const pathOnly = strike(PUTTER, 1.8, 0.0, { pathAngleDeg: angle });
+      expect(faceOnly.startAzimuthDeg! + pathOnly.startAzimuthDeg!).toBeCloseTo(
+        angle,
+        12,
+      );
+    }
+  });
+
+  it("sidespin sign and magnitude follow face-to-path", () => {
+    const v = 2.0;
+    const draw = strike(PUTTER, v, 0.0, { pathAngleDeg: 3.0 });
+    const fade = strike(PUTTER, v, 0.0, { faceAngleDeg: 3.0 });
+    const expected =
+      ((1.0 - CAP) * v * Math.sin((3.0 * Math.PI) / 180.0)) /
+      GOLF_BALL_RADIUS_M;
+    expect(draw.sidespinRadS!).toBeGreaterThan(0.0);
+    expect(fade.sidespinRadS!).toBeLessThan(0.0);
+    expect(draw.sidespinRadS).toBeCloseTo(expected, 10);
+    expect(fade.sidespinRadS).toBeCloseTo(-expected, 10);
+    const aimed = strike(PUTTER, v, 0.0, { aimDeg: 5.0, pathAngleDeg: 3.0 });
+    expect(aimed.sidespinRadS).toBe(draw.sidespinRadS);
+  });
+
+  it("ball speed decreases monotonically with strike offset", () => {
+    const toeSpeeds = [0.0, 4.0, 8.0, 16.0, 32.0].map(
+      (r) => strike(PUTTER, 2.0, 0.0, { strikeOffsetToeMm: r }).ballSpeedMps,
+    );
+    for (let i = 1; i < toeSpeeds.length; i++) {
+      expect(toeSpeeds[i]).toBeLessThan(toeSpeeds[i - 1]);
+    }
+    const highSpeeds = [0.0, 3.0, 6.0, 12.0].map(
+      (r) => strike(PUTTER, 2.0, 0.0, { strikeOffsetHighMm: r }).ballSpeedMps,
+    );
+    for (let i = 1; i < highSpeeds.length; i++) {
+      expect(highSpeeds[i]).toBeLessThan(highSpeeds[i - 1]);
+    }
+    const combined = strike(PUTTER, 2.0, 0.0, {
+      strikeOffsetToeMm: 8.0,
+      strikeOffsetHighMm: 6.0,
+    });
+    const toeOnly = strike(PUTTER, 2.0, 0.0, { strikeOffsetToeMm: 8.0 });
+    expect(combined.ballSpeedMps).toBeLessThan(toeOnly.ballSpeedMps);
+  });
+
+  it("off-center effective mass matches the impact-package formula", () => {
+    const flat = { ...PUTTER, loftDeg: 0 };
+    const rM = 10.0e-3;
+    const launch = strike(flat, 2.0, 0.0, { strikeOffsetToeMm: 10.0 });
+    const mEff =
+      1.0 / (1.0 / flat.headMassKg + (rM * rM) / DEFAULT_PUTTER_MOI_KG_M2);
+    const expected =
+      (2.0 * (1.0 + flat.cor) * mEff) / (mEff + GOLF_BALL_MASS_KG);
+    expect(launch.ballSpeedMps).toBeCloseTo(expected, 12);
+  });
+
+  it("head MOI hook scales the off-center loss", () => {
+    const base = strike(PUTTER, 2.0, 0.0, { strikeOffsetToeMm: 10.0 });
+    const explicit = strike(PUTTER, 2.0, 0.0, {
+      strikeOffsetToeMm: 10.0,
+      headMoiKgM2: DEFAULT_PUTTER_MOI_KG_M2,
+    });
+    expect(explicit.ballSpeedMps).toBe(base.ballSpeedMps);
+    const lowMoi = strike(PUTTER, 2.0, 0.0, {
+      strikeOffsetToeMm: 10.0,
+      headMoiKgM2: 2.0e-4,
+    });
+    const highMoi = strike(PUTTER, 2.0, 0.0, {
+      strikeOffsetToeMm: 10.0,
+      headMoiKgM2: 9.0e-4,
+    });
+    expect(lowMoi.ballSpeedMps).toBeLessThan(base.ballSpeedMps);
+    expect(highMoi.ballSpeedMps).toBeGreaterThan(base.ballSpeedMps);
+  });
+
+  it("center strike ignores head MOI", () => {
+    const neutral = strike(PUTTER, 2.0);
+    const withMoi = strike(PUTTER, 2.0, 0.0, { headMoiKgM2: 2.0e-4 });
+    expect(withMoi.ballSpeedMps).toBe(neutral.ballSpeedMps);
+    expect(withMoi.spinRadS).toBe(neutral.spinRadS);
+  });
+
+  it("attack angle square to the face kills spin", () => {
+    const launch = strike(PUTTER, 2.0, 0.0, {
+      attackAngleDeg: PUTTER.loftDeg,
+    });
+    expect(launch.spinRadS).toBeCloseTo(0.0, 12);
+    expect(launch.launchAngleDeg).toBeCloseTo(PUTTER.loftDeg, 10);
+  });
+
+  it("hitting down adds backspin", () => {
+    const down = strike(PUTTER, 2.0, 0.0, { attackAngleDeg: -3.0 });
+    const level = strike(PUTTER, 2.0);
+    const up = strike(PUTTER, 2.0, 0.0, { attackAngleDeg: 2.0 });
+    expect(down.spinRadS).toBeLessThan(level.spinRadS);
+    expect(level.spinRadS).toBeLessThan(up.spinRadS);
+    expect(up.spinRadS).toBeLessThan(0.0);
+  });
+
+  it("energy is never created", () => {
+    for (const face of [-10.0, 0.0, 10.0]) {
+      for (const path of [-10.0, 0.0, 10.0]) {
+        for (const attack of [-5.0, 0.0, 5.0]) {
+          for (const toe of [0.0, 15.0]) {
+            for (const speed of [0.5, 3.0]) {
+              const launch = strike(PUTTER, speed, 0.0, {
+                faceAngleDeg: face,
+                pathAngleDeg: path,
+                attackAngleDeg: attack,
+                strikeOffsetToeMm: toe,
+              });
+              const ballKe =
+                0.5 * GOLF_BALL_MASS_KG * launch.ballSpeedMps ** 2 +
+                0.5 *
+                  BALL_MOI *
+                  (launch.spinRadS ** 2 + launch.sidespinRadS! ** 2);
+              const headKe = 0.5 * PUTTER.headMassKg * speed ** 2;
+              expect(ballKe).toBeLessThan(headKe);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  it("defaults are bit-identical to the legacy 1-D solve", () => {
+    for (const speed of [0.3, 1.0, 1.8, 3.2]) {
+      for (const lean of [-2.0, 0.0, 1.5]) {
+        const launch = strike(PUTTER, speed, lean);
+        const delta = ((PUTTER.loftDeg + lean) * Math.PI) / 180.0;
+        const massRatio =
+          PUTTER.headMassKg / (PUTTER.headMassKg + GOLF_BALL_MASS_KG);
+        const legacyTransfer = (1.0 + PUTTER.cor) * massRatio;
+        const vNormal = legacyTransfer * speed * Math.cos(delta);
+        const uTangential = speed * Math.sin(delta);
+        const vTangential = CAP * uTangential;
+        const spin = (-(1.0 - CAP) * uTangential) / GOLF_BALL_RADIUS_M;
+        const horizontal =
+          vNormal * Math.cos(delta) - vTangential * Math.sin(delta);
+        const vertical =
+          vNormal * Math.sin(delta) + vTangential * Math.cos(delta);
+        expect(launch.ballSpeedMps).toBe(Math.hypot(horizontal, vertical));
+        expect(launch.launchAngleDeg).toBe(
+          (Math.atan2(vertical, horizontal) * 180.0) / Math.PI,
+        );
+        expect(launch.horizontalSpeedMps).toBe(horizontal);
+        expect(launch.spinRadS).toBe(spin);
+        expect(launch.startAzimuthDeg).toBe(0.0);
+        expect(launch.sidespinRadS).toBe(0.0);
+      }
+    }
+  });
+
+  it("rejects out-of-range 2-D parameters", () => {
+    expect(() => strike(PUTTER, 2, 0, { aimDeg: 60 })).toThrow(/aimDeg/);
+    expect(() => strike(PUTTER, 2, 0, { faceAngleDeg: 25 })).toThrow(
+      /faceAngleDeg/,
+    );
+    expect(() => strike(PUTTER, 2, 0, { pathAngleDeg: -25 })).toThrow(
+      /pathAngleDeg/,
+    );
+    expect(() => strike(PUTTER, 2, 0, { attackAngleDeg: 15 })).toThrow(
+      /attackAngleDeg/,
+    );
+    expect(() => strike(PUTTER, 2, 0, { strikeOffsetToeMm: 50 })).toThrow(
+      /strikeOffsetToeMm/,
+    );
+    expect(() => strike(PUTTER, 2, 0, { strikeOffsetHighMm: -30 })).toThrow(
+      /strikeOffsetHighMm/,
+    );
+    expect(() => strike(PUTTER, 2, 0, { headMoiKgM2: 0 })).toThrow(/MOI/);
+    expect(() => strike(PUTTER, 2, 0, { headMoiKgM2: Number.NaN })).toThrow(
+      /MOI/,
+    );
   });
 });
 
@@ -184,10 +408,12 @@ describe("simulatePutt — Python parity", () => {
   });
 
   it("rejects explicit null sliding friction instead of defaulting it", () => {
-    expect(() => simulatePutt(
-      strike(PUTTER, 2),
-      { stimpFt: 10, gradePercent: 0, aspectDeg: 0, muSlide: null } as never,
-      3,
-    )).toThrow(/muSlide/);
+    expect(() =>
+      simulatePutt(
+        strike(PUTTER, 2),
+        { stimpFt: 10, gradePercent: 0, aspectDeg: 0, muSlide: null } as never,
+        3,
+      ),
+    ).toThrow(/muSlide/);
   });
 });

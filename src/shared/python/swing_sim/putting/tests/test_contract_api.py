@@ -17,6 +17,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.contract]
 
 EXPECTED_PUBLIC_API = {
     "DEFAULT_PUTTER_COR",
+    "DEFAULT_PUTTER_MOI_KG_M2",
     "DEFAULT_SLIDING_MU",
     "GREEN_SURFACE_FORMAT",
     "HOLE_RADIUS_M",
