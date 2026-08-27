@@ -8646,6 +8646,7 @@
           "src/shared/python/swing_sim/conventions/tests/test_registry.py",
           "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
           "src/shared/python/swing_sim/impact/tests/test_dplane.py",
+          "src/shared/python/swing_sim/putting/tests/test_impact.py",
           "src/shared/python/swing_sim/tests/test_swing_source.py",
           "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
           "tests/benchmarks/conftest.py",

@@ -15908,10 +15908,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2955,
+      "bytes_lf": 3017,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "143a2d47824042f44c4c7f891776a079d88f6978468d266346db2bd97333e1a5",
+      "content_sha256_lf": "b72ec31cad338dbe978db3312c6d5e5414fd5097c33204b8e4994daf33fe0a88",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
       "language": "python",
@@ -15955,6 +15955,11 @@
           {
             "kind": "re-export",
             "name": "DEFAULT_PUTTER_COR",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PUTTER_MOI_KG_M2",
             "signature": null
           },
           {
@@ -16250,10 +16255,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9336,
+      "bytes_lf": 17093,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "819cfe9f810dd5c791fa7d3e39868a8017b1fe7ee4b3d7d683002c30bf13b8f4",
+      "content_sha256_lf": "c7ad9e52e5c84840b1b46809be940a124ac0f986f464d364367783327ba3bd41",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-IMPACT-PY-3307AA71CDBE",
       "language": "python",
@@ -16309,6 +16314,11 @@
           },
           {
             "kind": "constant",
+            "name": "DEFAULT_PUTTER_MOI_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "MINIMAL_PUTTERS",
             "signature": null
           },
@@ -16320,18 +16330,20 @@
           {
             "kind": "function",
             "name": "strike",
-            "signature": "putter: PutterSpec, clubhead_speed_mps: float, shaft_lean_deg: float=0.0"
+            "signature": "putter: PutterSpec, clubhead_speed_mps: float, shaft_lean_deg: float=0.0, *, aim_deg: float=0.0, face_angle_deg: float=0.0, path_angle_deg: float=0.0, attack_angle_deg: float=0.0, strike_offset_toe_mm: float=0.0, strike_offset_high_mm: float=0.0, head_moi_kg_m2: float | None=None"
           }
         ],
         "test_paths": [
           "src/shared/python/swing_sim/putting/tests/test_impact.py"
         ],
         "unit_mentions": [
+          "cm",
           "deg",
           "g",
           "kg",
           "m/s",
           "m/s^2",
+          "mm",
           "ms",
           "rad/s",
           "s"
