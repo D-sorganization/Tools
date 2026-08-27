@@ -1153,10 +1153,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4239,
+      "bytes_lf": 4595,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "d4a62fc17c0a24d8b5d034f9e16394a4de8e72ca376c8975492e6b159fae0520",
+      "content_sha256_lf": "21e4549bc8a45a2da2bfa33d68728dbecb4c10e426ab1a50b4721cd8245fc8db",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-INIT-PY-7BC8891DC6A1",
       "language": "python",
@@ -1227,6 +1227,11 @@
           },
           {
             "kind": "re-export",
+            "name": "DEFAULT_SPEED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "EXPLORER_METRIC_KEYS",
             "signature": null
           },
@@ -1292,6 +1297,16 @@
           },
           {
             "kind": "re-export",
+            "name": "PLAYBACK_SPEEDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlaybackAdvance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PlaybackFrame",
             "signature": null
           },
@@ -1308,6 +1323,11 @@
           {
             "kind": "re-export",
             "name": "SCREW_CSV_COLUMNS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCRUB_STEPS",
             "signature": null
           },
           {
@@ -1357,7 +1377,17 @@
           },
           {
             "kind": "re-export",
+            "name": "advance_playback",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ball_setup_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clamp_time",
             "signature": null
           },
           {
@@ -1462,12 +1492,22 @@
           },
           {
             "kind": "re-export",
+            "name": "scrub_value",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "simulate_forced",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "spatial_target_from_simulation_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "time_at_scrub",
             "signature": null
           },
           {
@@ -2012,16 +2052,16 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4091,
+      "bytes_lf": 5523,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "07079e8588113e1f5efe5c7b75a5e5ae2d2ad9ee551ea1371115fb0ae2a6041f",
+      "content_sha256_lf": "34698209a73e37fd5444658dd030b93ae0c24ede6c6c3aa41c2265d2907700d3",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-FLIGHT-PLAYBACK-PY-4CFE5FB15AC7",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/simulation/flight_playback.py",
-      "purpose": "Deterministic interpolation contract for ball-flight playback (#4200).",
+      "purpose": "Deterministic interpolation contract for shot playback (#4200, #4800 P8).",
       "review_status": "review-required",
       "risk_tags": [
         "public-api",
@@ -5901,16 +5941,16 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9023,
+      "bytes_lf": 4102,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "04ae9a389fb0c87950aece2bef059d838241dd8a9d8b0cac5a7e5d401e8dc465",
+      "content_sha256_lf": "301c5a11716489b5c950bf5fe53a4fe77118e408a92ca156cc3e6006291c9094",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-FLIGHT-PLAYBACK-CONTROLS-PY-576218E37F2E",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/ui/pyqt6/flight_playback_controls.py",
-      "purpose": "Accessible, lifecycle-safe transport controls for ball-flight playback.",
+      "purpose": "Ball-flight binding of the shared transport controls (#4800 P8).",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "public-api"

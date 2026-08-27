@@ -43,6 +43,13 @@ Club Fitting #4549, Heavy Hit #4562, and packaging #4579 are complete; physics
 shared-first in `shared/python/{golf_club,swing_sim}` (contracts in `docs/specs/`).
 Putting #4800 P2 landed green-surface heightfields, the `swing_sim.green_surface/1`
 wire, and Holmes/Penner capture with TS twins; planar APIs delegate bit-identically.
+P8's flight side landed one playback architecture: `simulation/playback_transport.py`
+and `web/src/model/playbackTransport.ts` twins own scrub quantization, speeds, and
+wall-clock advance, pinned with the `TimedTrajectory`/`PlaybackTimeline` sample→frame
+mapping by `playback_transport_golden_v1.json`. The putting seams are the
+subject-neutral Qt `PlaybackTransportControls` (flight binds it as
+`FlightPlaybackControls`) and the source-independent timeline classes; camera state
+stays with #4571 (`camera_commands`/`cameraCommands.ts`, documented extension points).
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
 R10.3, R10.4, R11.1, and R11.3 are protected-merged through

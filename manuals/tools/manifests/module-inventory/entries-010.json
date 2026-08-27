@@ -1124,10 +1124,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4231,
+      "bytes_lf": 4848,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b69c9ddc720fd71e4ef810842322ef1cd1af4b20a07e285030a99a27c78e5542",
+      "content_sha256_lf": "818d5e87b2ecb1a1d722b0b03dc99c8d362b2850a05096125ce0320ec47131e2",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-FLIGHTPLAYBACK-TS-B37D01A8F3C9",
       "language": "typescript",
@@ -1148,7 +1148,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -1174,6 +1174,11 @@
           },
           {
             "kind": "export",
+            "name": "TimedSample",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "frameAtTime",
             "signature": null
           },
@@ -1184,7 +1189,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

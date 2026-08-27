@@ -259,7 +259,7 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "b0c5b2f16de83d792635cdae58299c5b7b7109bbf11c825ba069e63b3d8f1d49",
+      "content_sha256_lf": "9695848741e7756569ef4421a007b7a8c7447be421fd150ceaca7b2ca670d9b1",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/plotting/_catalog_entries.py",
       "last_path": "src/rate_of_closure/ui/pyqt6/variation_editor_widgets.py",
@@ -267,7 +267,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "bb2199898a8b96efb0b79d755a0df1a75f29dff4535648c832ddd369e75a8083",
+      "content_sha256_lf": "0847a60fb8e18502d0ebb49103346fce5ec9835181b43ebe088c5de3c7dfd5c9",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/variation_forgiveness_view.py",
       "last_path": "src/rate_of_closure/web/src/components/PuttingPanel.tsx",
@@ -283,7 +283,7 @@
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "6f5545db30fd35382acce9b4db0f497b7ad2ff2afe1aeaf387b77d15a0415922",
+      "content_sha256_lf": "1933433e41182039dd3b9242c0f0faaf68c6abf227348a9945159cf0ab4a46e8",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/web/src/model/durableEnsembleWorkerClient.test.ts",
       "last_path": "src/rate_of_closure/web/src/model/spatialTargetTrajectory.ts",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "3c9c50473e3fca4f1adbbbec5674796d79d5c0cb563d9085b5728425a8eb7cc5",
+  "source_tree_sha256": "9d1dfb94632c47c6e979011e9256dc8b0f922327b006d212bc38c4b59b2cf010",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
