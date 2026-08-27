@@ -105,6 +105,7 @@ jobs:
               pyproject.toml
               scripts
               src/bunkershot3d
+              src/engines/pendulum_models/python/double_pendulum_model
               src/shared
               tests/conftest.py
               tests/shared_contracts

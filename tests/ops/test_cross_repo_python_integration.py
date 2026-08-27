@@ -24,6 +24,7 @@ REQUIRED_SPARSE_PATHS = {
         "pyproject.toml",
         "scripts",
         "src/bunkershot3d",
+        "src/engines/pendulum_models/python/double_pendulum_model",
         "src/shared",
         "tests/conftest.py",
         "tests/shared_contracts",
@@ -83,8 +84,12 @@ def test_upstream_scope_includes_every_imported_contract_package_root() -> None:
     scope = set(upstream["sparse_checkout"].splitlines())
     # The shared provider gateway imports UpstreamDrift's simulation-backend
     # package, whose wrench contract resolves bunkershot3d.postproc. Sparse
-    # checkout must preserve both import roots without pulling all of `src`.
-    assert {"src/shared", "src/bunkershot3d"} <= scope
+    # checkout must preserve all three import roots without pulling all of `src`.
+    assert {
+        "src/shared",
+        "src/bunkershot3d",
+        "src/engines/pendulum_models/python/double_pendulum_model",
+    } <= scope
 
 
 def test_upstream_install_uses_current_tools_without_repackaging_pinned_snapshot() -> (
