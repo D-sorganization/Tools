@@ -3,6 +3,221 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3691,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "de1fc014bcd4c96b594cf85cc28ef03fa76e6a8b0de8e96b6da7242f0899f908",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PUTTING-PY-668C8AE660B9",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/putting.py",
+      "purpose": "Putting bridge: library putters + putt explanations (#4125 H3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PUTT_EXPLANATIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "putter_specs",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_putting.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2975,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "46f4235297164fbceb541ce2bb7a248f742eab92629598333cef8d514e261646",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PUTTING-RESULT-CONTRACT-PY-F4368D02DCE1",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/putting_result_contract.py",
+      "purpose": "Atomic accepted-authority contracts for Putting presentation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AcceptedPuttingContext",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "validate_putting_result_summary",
+            "signature": "result: PuttResult, plan: PuttingSamplePlan"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_putting_sample_inspector.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "kg",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12952,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1f8837f7474b1961d2a519e1038e4c088f90f73c08deaf94588e71bb097d0ec7",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PUTTING-SAMPLE-INSPECTOR-PY-3C97F86F0A89",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/putting_sample_inspector.py",
+      "purpose": "Immutable, bounded presentation plans for putting sample inspection.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttingDisplaySample",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingSamplePlan",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingSampleSeries",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HIT_RADIUS_PX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PUTTING_DISPLAY_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PUTTING_RAW_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "navigate_putting_samples",
+            "signature": "plan: PuttingSamplePlan, current_raw_index: int | None, command: PuttingNavigation"
+          },
+          {
+            "kind": "function",
+            "name": "nearest_putting_sample",
+            "signature": "projected: Sequence[tuple[object, object, object]], pointer_px: tuple[object, object], *, hit_radius_px: object=DEFAULT_HIT_RADIUS_PX"
+          },
+          {
+            "kind": "function",
+            "name": "plan_putting_samples",
+            "signature": "series: PuttingSampleSeries, *, cap: int=MAX_PUTTING_DISPLAY_SAMPLES"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_putting_sample_inspector.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 63,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -12629,195 +12844,6 @@
             "kind": "class",
             "name": "VariationTabIoMixin",
             "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9482,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "12d2e73f4cf04abae82d9f2c22ec778f924b89554c8e0a88a6c357df9460fe1c",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TAB-RESULTS-PY-29451F49303B",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_tab_results.py",
-      "purpose": "Construction and population of PyQt Variation result surfaces.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PreparedResultViews",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VariationTabResultsMixin",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_result_tabs",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "populate_result_views",
-            "signature": "prepared: PreparedResultViews, summary: SummaryTable, sensitivity_table: SensitivityTable, spearman_table: SensitivityTable, landing: LandingCanvas"
-          },
-          {
-            "kind": "function",
-            "name": "prepare_result_views",
-            "signature": "dataset: VariationDataset, sensitivity: SensitivityResult | None"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_variation_gui.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 15226,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2cc71312b7e735f466a90a7334a5ddb8422867a90659c3a93d774b982040b377",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TAB-RUN-PY-5491D38CC8EF",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_tab_run.py",
-      "purpose": "Generation- and worker-bound lifecycle for the PyQt Variation tab.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "VariationTabRunMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2754,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7b32f11a5d64f062b355a51a6e7ab7c2cc5365d464dbe8a6e091a7bec0e64829",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TRIAL-TABLE-PY-DD8730987472",
-      "language": "python",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/ui/pyqt6/variation_trial_table.py",
-      "purpose": "Accessible raw-trial tables shared by variation plot views.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "create_trial_table",
-            "signature": "accessible_name: str, tooltip: str"
-          },
-          {
-            "kind": "function",
-            "name": "populate_trial_table",
-            "signature": "table: QTableWidget, dataset: VariationDataset, variables: tuple[ScalarPlotVariable, ...], outcomes: tuple[str, ...]"
-          },
-          {
-            "kind": "function",
-            "name": "validated_trial_index",
-            "signature": "trial_index: int | None, trial_count: int"
           }
         ],
         "test_paths": [],

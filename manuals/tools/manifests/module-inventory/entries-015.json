@@ -3,6 +3,224 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3805,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8ac13e09f9889d989d9790a083ccfb25abad3ca94e7ef26de24f320ecead10b2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-JSON-IO-PY-F36F996859DD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/utils/json_io.py",
+      "purpose": "Self-contained JSON I/O helpers for the sidekick library.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "safe_read_json",
+            "signature": "file_path: Path | str, default: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "safe_write_json",
+            "signature": "file_path: Path | str, data: Any, indent: int=2, create_parents: bool=True, default: Callable[[Any], Any] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_json_io_boundary_3333.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 790,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b0391986d619b1f2a72f418cefcbe36977711a0daf6b01c15c97b07663671ce",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-LOGGING-PY-1F8F2A2987FA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/utils/logging.py",
+      "purpose": "Logging utilities for upstream_drift_tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SEED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JsonFormatter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LogExecutionTime",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SIMPLE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_logger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "init_default_logging",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "log_execution_time",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_seeds",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "setup_logging",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_logging.py",
+          "tests/shared/python/utils/test_logging.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1624,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d197d25677da0a00804be56709078b41f8c989ad049ea480fa59b74f63652c3d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-PATHS-PY-BC589D08F73C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/utils/paths.py",
+      "purpose": "Canonical repository path utilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "get_repo_root",
+            "signature": "start_path: Path | str | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_paths.py",
+          "tests/shared/python/utils/test_paths.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 21107,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -19107,376 +19325,6 @@
         ],
         "unit_mentions": [
           "N",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 10274,
-      "classification": "calculation",
-      "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "d001686d00bfcb5e4f484c6830788cb1a07194ee7a1aefc214d5c65f443c67a2",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENSEMBLE-GEOMETRY-PY-A42876EE4753",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/ensemble_geometry.py",
-      "purpose": "Pure-data geometric analysis for multi-trial swing ensembles.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "PositionDispersionAccumulator",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MAX_DISPERSION_ACCUMULATOR_BYTES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_position_dispersion",
-            "signature": "ensemble: EnsemblePositionTraces"
-          },
-          {
-            "kind": "function",
-            "name": "compute_position_dispersion_view",
-            "signature": "ensemble: EnsemblePositionTraces, trial_indices: np.ndarray | None=None, sample_count: int | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "find_low_variability_intervals",
-            "signature": "dispersion: PositionDispersion, criteria: LowVariabilityCriteria"
-          },
-          {
-            "kind": "re-export",
-            "name": "EnsemblePositionTraces",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LowVariabilityCriteria",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LowVariabilityInterval",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PositionDispersion",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 11786,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "50137a3781fc45a8080c8052bf4eac5730bb5c4c0d0379bf3b9f6c34afa677aa",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENSEMBLE-TYPES-PY-3DFBF7A4A643",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/ensemble_types.py",
-      "purpose": "Contracts and immutable value types for ensemble swing geometry.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "EnsemblePositionTraces",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LowVariabilityCriteria",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LowVariabilityInterval",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "PositionDispersion",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CARTESIAN_DIMENSIONS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MIN_TRIALS_FOR_COVARIANCE",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "immutable_array",
-            "signature": "value: np.ndarray, dtype: Any"
-          },
-          {
-            "kind": "function",
-            "name": "require_coordinate_frame_id",
-            "signature": "coordinate_frame: str"
-          },
-          {
-            "kind": "function",
-            "name": "require_point_ids",
-            "signature": "point_ids: tuple[str, ...]"
-          },
-          {
-            "kind": "function",
-            "name": "validated_sample_times",
-            "signature": "sample_times_s: np.ndarray"
-          }
-        ],
-        "test_paths": [
-          "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 18015,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2d386db078c338ea9e847735b86c038ceb91a4eb25aecd0f30e4a811bc96ee3c",
-      "family": "swing-simulation-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-METADATA-PY-9F98D2D3E7D9",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/variation/execution_metadata.py",
-      "purpose": "Strict resolved-base and registry identity for variation execution.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "ExecutionImplementationIdentity",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ExecutionMetadataResolution",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "ResolvedVariableSnapshot",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "RngExecutionIdentity",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VariationExecutionDocument",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "VariationExecutionMetadata",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "execution_document_dumps",
-            "signature": "value: VariationPlan | VariationExecutionDocument, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
-          },
-          {
-            "kind": "function",
-            "name": "execution_document_from_json_dict",
-            "signature": "value: object"
-          },
-          {
-            "kind": "function",
-            "name": "execution_document_to_json_dict",
-            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata | None=None, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
-          },
-          {
-            "kind": "function",
-            "name": "make_execution_metadata",
-            "signature": "plan: VariationPlan, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
-          },
-          {
-            "kind": "function",
-            "name": "resolve_execution_metadata",
-            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata | None, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
-          },
-          {
-            "kind": "function",
-            "name": "validate_execution_metadata",
-            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE, expected_implementation_identity: ExecutionImplementationIdentity | None=None"
-          },
-          {
-            "kind": "re-export",
-            "name": "EXECUTION_DOCUMENT_SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "EXECUTION_DOCUMENT_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "EXECUTION_METADATA_SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "EXECUTION_METADATA_SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LEGACY_CURRENT_REGISTRY_WARNING",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PYTHON_DEFAULT_PROVENANCE",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "PlanProducerProvenance",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VARIABLE_REGISTRY_SCHEMA_ID",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VARIABLE_REGISTRY_SCHEMA_VERSION",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
-          "tests/rate_of_closure/test_workspace_document.py"
-        ],
-        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

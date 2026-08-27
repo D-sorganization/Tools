@@ -13,6 +13,11 @@ motion are re-derived here.
 See ``docs/specs/SWING_OBJECTIVE_COMPARISON.md``. Epic #4766.
 """
 
+from double_pendulum_golf.swing_objectives.downswing import (
+    DownswingConfig,
+    DownswingOptimizer,
+    DownswingResult,
+)
 from double_pendulum_golf.swing_objectives.objectives import (
     CENTRIFUGAL,
     CLUBHEAD_SPEED,
@@ -58,4 +63,8 @@ __all__ = [
     "CORIOLIS",
     "ENERGY_TRANSFER",
     "IMPULSE_TRANSFER",
+    # Downswing optimization (#4769)
+    "DownswingConfig",
+    "DownswingOptimizer",
+    "DownswingResult",
 ]

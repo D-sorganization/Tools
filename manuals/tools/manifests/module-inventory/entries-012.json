@@ -3,6 +3,227 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13173,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f59587f5b2f8199ecc2d9b235c976b0af53403ee7b7ea3a24ae355ebfa1e8779",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-BITNET-ADAPTER-PY-35C5AC4E879F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/bitnet_adapter.py",
+      "purpose": "BitNet local adapter using direct subprocess execution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BitnetAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_BITNET_TIMEOUT",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py",
+          "tests/shared/python/ai/test_adapter_factory.py",
+          "tests/shared/python/ai/test_bitnet_adapter.py",
+          "tests/unit/ai/test_bitnet_adapter.py",
+          "tests/unit/chat/test_adapter_capabilities.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/ai/test_adapter_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11973,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aeb16cab573e2da44209f90bb3a3e5d8d11c48851ab88648448d479fc843819a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/claude_code_adapter.py",
+      "purpose": "Claude Code CLI adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://claude.com/claude-code"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClaudeCodeAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CLAUDE_CODE_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FALLBACK_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STATIC_MODELS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_claude_code_adapter.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9817,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "45fb3f2024c6a17621c4f08b83afa0d310dcfbe157e07fb328bec4631f49784e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-PROVIDER-SETUP-PY-C79DFEFB6F41",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cli_provider_setup.py",
+      "purpose": "CLI-provider installation + authentication guide.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://aistudio.google.com/apikey",
+          "https://claude.ai/install.sh",
+          "https://cline.bot/",
+          "https://docs.claude.com/en/docs/claude-code/quickstart",
+          "https://github.com/google-gemini/gemini-cli",
+          "https://github.com/openai/codex"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CliSetupStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLI_PROVIDERS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_all_cli_setup_statuses",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "get_cli_setup_status",
+            "signature": "provider: str"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_cli_provider_setup.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11878,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -14700,219 +14921,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 4938,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cb01a9019a810555b3c8ae134366166f874ef2a80f96ece7fa250976fc3ed7bb",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-CLI-PY-0C84314EA300",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/codemap/cli.py",
-      "purpose": "``codemap`` command-line interface.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "build_parser",
-            "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": "argv: list[str] | None=None"
-          }
-        ],
-        "test_paths": [
-          "tests/unit/test_project_metadata_contracts.py"
-        ],
-        "unit_mentions": [
-          "N",
-          "bar",
-          "g",
-          "s"
-        ],
-        "validation_paths": [
-          "tests/unit/test_project_metadata_contracts.py"
-        ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6245,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e7683a5801c4a56c2a929ffe793911fd0dcc39b426dd45fd532e68a94b95e445",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-DB-PY-0C80D420428B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/codemap/db.py",
-      "purpose": "SQLite schema + open/init helpers for the code map index.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "DB_DIR_NAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DB_FILE_NAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "MANIFEST_FILE_NAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "SCHEMA_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "db_path",
-            "signature": "repo_root: Path"
-          },
-          {
-            "kind": "function",
-            "name": "get_schema_version",
-            "signature": "conn: sqlite3.Connection"
-          },
-          {
-            "kind": "function",
-            "name": "init_schema",
-            "signature": "conn: sqlite3.Connection"
-          },
-          {
-            "kind": "function",
-            "name": "manifest_path",
-            "signature": "repo_root: Path"
-          },
-          {
-            "kind": "function",
-            "name": "open_db",
-            "signature": "repo_root: Path"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 912,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "12c7d07714154ee066667e17fffb0444ee7d18162203209abfe37622efc2cd63",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-EMBEDDINGS-PY-084A8F4DE0DE",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/codemap/embeddings.py",
-      "purpose": "Optional embedding layer — placeholder.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/D-sorganization/Gasification_Model/issues/3442:",
-          "https://github.com/D-sorganization/UpstreamDrift/issues/5171"
-        ],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "EMBED_DIM",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

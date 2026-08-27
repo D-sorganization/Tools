@@ -13908,10 +13908,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1789,
+      "bytes_lf": 2028,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "123fe1d3b6643f475fbe0982111b0956d6ed68d9d9bea98aa2a22558f05b6a7a",
+      "content_sha256_lf": "4f23b79e362acde5ec729c2227399cefe21b80dba55ff86983fed57b036380a2",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-INIT-PY-BB0C6A767464",
       "language": "python",
@@ -13963,6 +13963,21 @@
           {
             "kind": "re-export",
             "name": "CORIOLIS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DownswingConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DownswingOptimizer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DownswingResult",
             "signature": null
           },
           {
@@ -14038,6 +14053,206 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8648,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "59ea2804532cf82c4b11b8d0a33c3599990dbf302259035fab00c1788252c15e",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-COLLOCATION-PY-704EA3959FE8",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/collocation.py",
+      "purpose": "Direct-collocation transcription of the downswing optimal control problem.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CollocationTranscription",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8230,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "3ca3a47acd193baf3db182af95bb3bbf3e63011125b27c275338f1805c3f28fe",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-PY-31CBD3F1B74F",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing.py",
+      "purpose": "Slew-limited direct-collocation optimizer for a golf downswing.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DownswingOptimizer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DownswingResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DownswingConfig",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "N·m",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10349,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "bfd9f72e2e26b9eaf5a7519b3f646b85915fd0356dac473a0c8e6defd5736c10",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-CONFIG-PY-5B8D37472DAA",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/downswing_config.py",
+      "purpose": "Configuration for a downswing optimization, shared by every objective.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DownswingConfig",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_TORQUE_RATE_LIMITS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RATE_SCALE",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N*m",
+          "N·m",
+          "kg",
+          "ms",
+          "rad",
+          "rad/s",
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -14972,166 +15187,6 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 1915,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9c8e875a94233f83ef19c74b00040eb3b808fa409cbbfd51f2458a6d2f9b63c0",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PLANT-SIMULATOR-TRAIN-PY-302F6E25AFAA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/plant_simulator/train.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "train",
-            "signature": "db_path: str, save_path: str, epochs: int=10, batch_size: int=32"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2329,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "676470800418e86cca02c01506d51c202b348fb9c51ede63f806cca1ca69a0bd",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-INIT-PY-F62B8452803B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pressure_drop_calculator/__init__.py",
-      "purpose": "Pressure Drop Calculator Module.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 863,
-      "classification": "calculation",
-      "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "0cb6d4933dd67f511fdeb1c8a22190542b1d47e64fd6724844f51f3f4727ea4a",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-GUI-REGISTRATION-PY-77306FCCFF5B",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pressure_drop_calculator/gui_registration.py",
-      "purpose": "GUI registration for Pressure Drop Calculator.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "GUI_INFO",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_gui_info",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/folder_tool/test_gui_registration.py",
-          "tests/rate_of_closure/test_gui_registration.py"
-        ],
         "unit_mentions": [],
         "validation_paths": []
       }
