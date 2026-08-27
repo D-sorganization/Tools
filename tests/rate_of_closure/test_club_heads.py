@@ -16,6 +16,7 @@ import pytest
 from rate_of_closure._contracts import PreconditionError
 from rate_of_closure.club import (
     CLUB_LIBRARY,
+    ClubSpec,
     ClubType,
     HeadStyle,
     build_parametric_head,
@@ -28,7 +29,9 @@ from rate_of_closure.club import (
 )
 from rate_of_closure.club.geometry import RING_POINTS
 from rate_of_closure.club.head_profiles import (
+    IRON_PROFILE,
     PLUMBER_NECK_OFFSET_M,
+    WEDGE_PROFILE,
     leading_edge_height,
     lean_point,
     mass_scale,
@@ -51,6 +54,12 @@ _BLADES = [
 ]
 _DRIVERS = [
     name for name, spec in CLUB_LIBRARY.items() if spec.club_type is ClubType.DRIVER
+]
+_IRONS = [
+    name for name, spec in CLUB_LIBRARY.items() if spec.club_type is ClubType.IRON
+]
+_WEDGES = [
+    name for name, spec in CLUB_LIBRARY.items() if spec.club_type is ClubType.WEDGE
 ]
 
 
@@ -305,6 +314,145 @@ class TestHoselAnchors:
         lam = math.radians(spec.loft_deg)
         expected_y = leading_edge_height(spec) + 0.58 * 2.0 * hh * math.cos(lam)
         assert hosel_point(spec)[1] == pytest.approx(expected_y, rel=1e-12)
+
+
+def _sole_depth_reference_mm(spec: ClubSpec) -> float:
+    """Front-to-back extent [mm] of the post-lean sole band, at reference.
+
+    The sole band is every mesh vertex within 1 mm (at reference scale)
+    of the lowest point; the leading-edge lean keeps ``y = y_le`` fibers
+    fixed, so the band's x span is the sole's face-to-back width. The
+    result is divided by the mass scale so gates read in reference-scale
+    millimeters across the whole library.
+    """
+    scale = mass_scale(spec)
+    flat = build_parametric_head(spec).reshape(-1, 3)
+    band = flat[:, 1] <= flat[:, 1].min() + 1.0e-3 * scale
+    return float((flat[band, 0].max() - flat[band, 0].min()) / scale * 1000.0)
+
+
+def _refined_authored_sections(spec: ClubSpec) -> list[tuple[float, ...]]:
+    """The generator's refined (mass-scaled) stations — same subdivision."""
+    profile = profile_for(spec)
+    scale = mass_scale(spec)
+    authored = [tuple(c * scale for c in section) for section in profile.sections]
+    refined: list[tuple[float, ...]] = []
+    for first, second in zip(authored[:-1], authored[1:], strict=True):
+        for step in range(3):
+            fraction = step / 3
+            refined.append(
+                tuple(
+                    a + fraction * (b - a) for a, b in zip(first, second, strict=True)
+                )
+            )
+    refined.append(authored[-1])
+    return refined
+
+
+def _sole_slab_areas_m2(spec: ClubSpec) -> tuple[float, float]:
+    """(front, rear) side-view areas of the post-lean sole slab.
+
+    The slab is the bottom quarter of the leaned head's height; its
+    side-view (z = 0) area between the sole curve and the slab line is
+    integrated by trapezoid over the leaned station bottoms and split
+    at the sole's x midpoint. Rear >= front is the muscle/bounce mass
+    bias of a real wedge sole (#4803).
+    """
+    refined = _refined_authored_sections(spec)
+    bottoms = [lean_point(spec, (x, yc - hh, 0.0)) for x, hh, _hw, yc in refined]
+    tops = [lean_point(spec, (x, yc + hh, 0.0)) for x, hh, _hw, yc in refined]
+    y_min = min(p[1] for p in bottoms)
+    y_max = max(p[1] for p in tops)
+    line = y_min + 0.25 * (y_max - y_min)
+    pts = sorted((p[0], max(0.0, line - p[1])) for p in bottoms)
+    xs = [p[0] for p in pts]
+    cs = [p[1] for p in pts]
+    x_mid = 0.5 * (xs[0] + xs[-1])
+    c_mid = float(np.interp(x_mid, xs, cs))
+
+    def _trapezoid(x: list[float], c: list[float]) -> float:
+        return sum(
+            0.5 * (c[i] + c[i + 1]) * (x[i + 1] - x[i]) for i in range(len(x) - 1)
+        )
+
+    rear = _trapezoid(
+        [x for x in xs if x <= x_mid] + [x_mid],
+        [c for x, c in zip(xs, cs, strict=True) if x <= x_mid] + [c_mid],
+    )
+    front = _trapezoid(
+        [x_mid] + [x for x in xs if x > x_mid],
+        [c_mid] + [c for x, c in zip(xs, cs, strict=True) if x > x_mid],
+    )
+    return front, rear
+
+
+class TestBladeSilhouettes:
+    """G3 gates (#4803): real blade silhouettes — sole depth, muscle,
+    bounce hint. Judged post-lean on the generated mesh at reference
+    scale. Published typical dimension spans (no brand geometry):
+    iron sole widths ~18-24 mm, wedge sole widths ~26-32 mm. Mirrored
+    test-for-test in ``web/src/model/heads.test.ts``.
+    """
+
+    @pytest.mark.parametrize("name", _WEDGES)
+    def test_wedge_sole_depth_at_reference(self, name: str) -> None:
+        assert 26.0 <= _sole_depth_reference_mm(CLUB_LIBRARY[name]) <= 32.0
+
+    @pytest.mark.parametrize("name", _IRONS)
+    def test_iron_sole_depth_at_reference(self, name: str) -> None:
+        assert 18.0 <= _sole_depth_reference_mm(CLUB_LIBRARY[name]) <= 24.0
+
+    @pytest.mark.parametrize("name", _WEDGES)
+    def test_wedge_rear_sole_area_at_least_front(self, name: str) -> None:
+        """Muscle bias: the rear half of the sole slab carries at least
+        as much side-view material as the front half."""
+        front, rear = _sole_slab_areas_m2(CLUB_LIBRARY[name])
+        assert front > 0.0
+        assert rear >= front
+
+    @pytest.mark.parametrize("name", _WEDGES)
+    def test_wedge_bounce_hint_low_point_behind_leading_edge(self, name: str) -> None:
+        """A bounce hint: the sole's lowest fiber dips 0.2-1.0 mm below
+        the leading edge and sits well behind it."""
+        spec = CLUB_LIBRARY[name]
+        scale = mass_scale(spec)
+        flat = build_parametric_head(spec).reshape(-1, 3)
+        dip = leading_edge_height(spec) - float(flat[:, 1].min())
+        assert 0.2e-3 * scale <= dip <= 1.0e-3 * scale
+        low_x = float(flat[np.argmin(flat[:, 1]), 0])
+        x_le = profile_for(spec).sections[0][0] * scale
+        assert low_x <= x_le - 2.0e-3 * scale
+
+    @pytest.mark.parametrize("name", _IRONS)
+    def test_iron_sole_stays_on_the_leading_edge_line(self, name: str) -> None:
+        """Irons keep a flat sole: the lowest fiber is the leading edge."""
+        spec = CLUB_LIBRARY[name]
+        flat = build_parametric_head(spec).reshape(-1, 3)
+        assert float(flat[:, 1].min()) == pytest.approx(
+            leading_edge_height(spec), abs=1e-12
+        )
+
+    def test_cavity_recess_on_irons_only(self) -> None:
+        assert IRON_PROFILE.rear_recess_m > 0.0
+        assert WEDGE_PROFILE.rear_recess_m == 0.0
+
+    @pytest.mark.parametrize("name", _BLADES)
+    def test_tail_cap_center_realizes_the_recess(self, name: str) -> None:
+        """The mesh's tail-fan center sits at the (possibly recessed)
+        authored tail station under the lean — the cavity on irons,
+        the plain tail cap on wedges."""
+        spec = CLUB_LIBRARY[name]
+        profile = profile_for(spec)
+        scale = mass_scale(spec)
+        tail_x, _hh, _hw, tail_yc = profile.sections[-1]
+        expected = np.asarray(
+            lean_point(
+                spec,
+                ((tail_x + profile.rear_recess_m) * scale, tail_yc * scale, 0.0),
+            )
+        )
+        flat = build_parametric_head(spec).reshape(-1, 3)
+        assert (np.abs(flat - expected).sum(axis=1) < 1e-12).any()
 
 
 class TestHosel:
