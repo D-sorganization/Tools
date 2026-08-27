@@ -259,7 +259,7 @@
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "e372faa6722dd8da81a19b25d1f857d7f3fa4ff4edb2e0f43c5eba4c67bf43fb",
+      "content_sha256_lf": "2b19f19f30b8f6d8306ddf0f9c3ebd561a9081ef3b56195993c21fe7f9d96dc3",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/plotting/_catalog_entries.py",
       "last_path": "src/rate_of_closure/ui/pyqt6/variation_editor_widgets.py",
@@ -267,7 +267,7 @@
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "9cce64036ace0f9ed0b66a2a2097a5ff79279cb0d19d565d293487718b4b50c8",
+      "content_sha256_lf": "a13b5c617d0153712437cf2f9dd727d5a99934d9c1d55f16b43ee31ddf9a6956",
       "entry_count": 200,
       "first_path": "src/rate_of_closure/ui/pyqt6/variation_forgiveness_view.py",
       "last_path": "src/rate_of_closure/web/src/components/PuttingVisuals.test.tsx",
@@ -347,7 +347,7 @@
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "7fe6f7ee6bdb497806273c5981310227a5108189fcbdf9e31ca34e9aa6c13964",
+  "source_tree_sha256": "144141671fa0475a47fe788e5b97316a93ccbb9d194c88f76dca4d0a8ec9542f",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,

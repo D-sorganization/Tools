@@ -8664,7 +8664,8 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_morris_pyqt_workflow.py",
-          "tests/rate_of_closure/test_morris_pyqt_workspace.py"
+          "tests/rate_of_closure/test_morris_pyqt_workspace.py",
+          "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
