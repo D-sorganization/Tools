@@ -56,16 +56,16 @@ merged. Their physics lives shared-first in `shared/python/{golf_club,swing_sim}
 see the two contracts under `docs/specs/`.
 
 #4142 remains Python-authoritative; PyQt6 and React do not reimplement physics.
-Tools issue #4754 requalifies #4142 R10.4 from protected base
-`cff2909f1585273e10fa49165bfab8521e889da1`. The canonical version-3
-execution document and supported persistence boundaries pass 138 Python and
-270 web tests; current Upstream main passes all three formerly failing
-provider-mode contracts. PR #4669's ground/tee failure is retained as apt-lock
-provisioning contention before browser execution, and its downstream failure
-as the superseded Upstream consumer-isolation defect repaired by #9022. The
-31-item ledger is now 23 verified / 8 partial. R14.6 and seven other gaps keep
-#4142 open. These controls verify provenance and model-data parity, not human
-validity, participant identity, or coaching strategy.
+Tools issue #4754 is on branch `fix/4754-r10-4-requalification` at
+implementation commit `5cbd6388f62a510e7d1aa5dedfe363275b4f72e8` in open
+PR #4755. It requalifies #4142 R10.4 from protected base
+`cff2909f1585273e10fa49165bfab8521e889da1`: 138 Python, 270 web, and three
+current-Upstream provider contracts pass. PR #4669's ground/tee failure remains
+apt-lock contention before browser execution; its downstream failure is the
+superseded Upstream consumer-isolation defect repaired by #9022. The proposed
+31-item ledger is 23 verified / 8 partial. R14.6 and seven other gaps keep
+#4142 open. This verifies provenance and model-data parity, not human validity,
+participant identity, or coaching strategy.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

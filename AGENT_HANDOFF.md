@@ -60,12 +60,14 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   gates. The prior local artifacts had all 10 native PDF and 14 Word-rendered
   DOCX pages visually reviewed; this reconciled exact head still requires fresh
   protected review and artifact-identity or complete rendered-page evidence.
-- #4142 issue #4754 requalifies R10.4 at protected base
-  `cff2909f1585273e10fa49165bfab8521e889da1`: 138 Python, 270 web, and
+- #4142 issue #4754 is delivered on branch
+  `fix/4754-r10-4-requalification` at implementation commit
+  `5cbd6388f62a510e7d1aa5dedfe363275b4f72e8` in open PR #4755. At protected
+  base `cff2909f1585273e10fa49165bfab8521e889da1`, 138 Python, 270 web, and
   three current-Upstream provider contracts pass. PR #4669's auxiliary
-  failures are retained as apt-lock provisioning contention and a superseded
-  Upstream consumer-isolation defect. The ledger is 23 verified / 8 partial;
-  model-data provenance remains neither human nor scientific approval.
+  failures remain classified as apt-lock provisioning contention and a
+  superseded Upstream consumer-isolation defect. The proposed ledger is 23
+  verified / 8 partial; model-data provenance is not scientific approval.
 
 ## Must-Read Architecture Pointers
 
