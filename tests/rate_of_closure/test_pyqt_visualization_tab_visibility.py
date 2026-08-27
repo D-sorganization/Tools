@@ -13,6 +13,7 @@ from typing import Any, cast
 import pytest
 
 from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
+from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.visualization_performance_manifest import (
     load_visualization_performance_manifest,
 )
@@ -36,6 +37,26 @@ def test_initial_morris_result_selectors_are_visible_and_fail_closed(qtbot) -> N
     assert tab._target_combo.count() == 0
     assert tab._source_combo.count() == 0
     assert tab._target_detail.text() == "Run a study to choose a target."
+
+
+def test_initial_variation_execution_policy_is_visible_and_bounded(qtbot) -> None:
+    """Expose the governed computation policy without changing the saved plan."""
+
+    tab = VariationTab(None)
+    qtbot.addWidget(tab)
+    tab.resize(1000, 700)
+    tab.show()
+
+    assert tab._analysis_combo.accessibleName() == (
+        "Variation analysis execution policy"
+    )
+    assert tab._analysis_combo.isVisible()
+    assert [tab._analysis_combo.itemData(index) for index in range(3)] == [
+        "all_together",
+        "individual",
+        "both",
+    ]
+    assert tab._analysis_combo.currentData() == "both"
 
 
 def _probe(

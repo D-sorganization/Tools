@@ -12,6 +12,10 @@ from types import MappingProxyType
 import numpy as np
 
 from rate_of_closure.simulation import SimulationConfig
+from rate_of_closure.variation.analysis_policy import (
+    AnalysisExecution,
+    validate_analysis_execution,
+)
 from shared.python.swing_sim.variation import VariationPlan
 
 _FIXTURE = (
@@ -157,16 +161,15 @@ def _authority_value(value: object) -> object:
 def simulation_authority_identity(
     plan: VariationPlan,
     config: SimulationConfig,
-    compute_sensitivity: bool,
+    analysis_execution: AnalysisExecution,
 ) -> object:
     """Return a lossless same-runtime identity for every execution input."""
     if not isinstance(plan, VariationPlan):
         raise TypeError("plan must be a VariationPlan")
     if not isinstance(config, SimulationConfig):
         raise TypeError("config must be a SimulationConfig")
-    if type(compute_sensitivity) is not bool:
-        raise TypeError("compute_sensitivity must be bool")
-    return _authority_value((plan, config, compute_sensitivity, plan.resolved_base()))
+    policy = validate_analysis_execution(analysis_execution)
+    return _authority_value((plan, config, policy, plan.resolved_base()))
 
 
 __all__ = [

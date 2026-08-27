@@ -3,6 +3,74 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 9169,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b55509880684e4bced7e7ce33fbb85a09de775305cc3585e5a2eecb9f1d116ed",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RRT-PATH-PLANNER-MATLAB-SRC-VISUALIZATION-PLOTPURSUIT-IMPROVED-M-7F0FACB0B295",
+      "language": "matlab",
+      "maintainer": "Tools module maintainers",
+      "path": "src/rrt_path_planner/matlab/src/visualization/plotPursuit_Improved.m",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "createSimpleShip",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "createSimpleShipFaces",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "drawObstacles",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "plotPursuit_Improved",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4728,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -15116,103 +15184,6 @@
           "s"
         ],
         "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 7134,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8900c60a22b90831d51cd2c72863757fea6b86e60a907606f5dc70cd56f2cbd4",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-CONTRACTS-PY-0B1C9FEF2DFD",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/chat/terminal_contracts.py",
-      "purpose": "Shared contracts for terminal-backed chat agent sessions.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "mapped"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TerminalAgentEvent",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalAgentProviderInfo",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalAgentSessionInfo",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalAgentSessionRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalProviderRegistry",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalRegistryError",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalSelection",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "TerminalShellInfo",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_ID_PATTERN",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/chat/test_cli_agent_adapters.py",
-          "tests/shared/python/chat/test_terminal_contracts.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": [
-          "tests/shared/python/chat/test_terminal_contracts.py"
-        ]
       }
     }
   ],

@@ -453,22 +453,26 @@
     {
       "requirement_id": "R14.3",
       "requirement": "Provide equivalent PyQt and React plan, execution, analysis, persistence, and export capabilities.",
-      "status": "partial",
-      "rationale": "Both surfaces provide durable execution, progress, cancellation, quiet-zone, overlay, scatter, Morris, persistence, and export surfaces using Python-owned records.",
+      "status": "verified",
+      "rationale": "The governed R14.3 interaction matrix proves equivalent PyQt and React authoring, validation, execution, progress, cancellation, joint and individual analysis policies, durable resume, result publication, persistence, export, disabled, and error behavior. Both surfaces consume Python-owned plan and result records; declared surface-only conveniences do not create separate model or evidence authority. Outputs remain model-scenario evidence, not human validation, causal anatomy, or coaching authority.",
       "evidence_files": [
+        "docs/audits/rate_of_closure_r14_3_surface_parity.v1.json",
+        "src/rate_of_closure/variation/analysis_policy.py",
         "src/rate_of_closure/ui/pyqt6/durable_ensemble_tab.py",
+        "src/rate_of_closure/ui/pyqt6/variation_tab.py",
         "src/rate_of_closure/web/src/components/DurableEnsembleWorkflowPanel.tsx",
-        "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py"
+        "src/rate_of_closure/web/src/components/VariationPanel.tsx",
+        "tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py",
+        "tests/rate_of_closure/test_variation_surface_parity.py"
       ],
       "validation_commands": [
-        "python -m pytest tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py tests/rate_of_closure/test_variation_visualization_widgets.py tests/rate_of_closure/test_morris_ui_contract.py -q"
+        "python -m pytest -q tests/rate_of_closure/test_variation_surface_parity.py tests/rate_of_closure/test_variation_gui.py tests/rate_of_closure/test_variation_gui_execution.py tests/rate_of_closure/test_variation_gui_roundtrip.py tests/rate_of_closure/test_variation_visual_state.py tests/rate_of_closure/test_variation_visualization_widgets.py tests/rate_of_closure/test_durable_ensemble_pyqt_workflow.py src/shared/python/swing_sim/variation/tests/test_analysis.py",
+        "npm --prefix src/rate_of_closure/web test -- --run --maxWorkers=2 src/components/VariationPanel.test.tsx src/components/VariationPanelAnalysis.test.tsx src/components/VariationPanelAsync.test.tsx src/components/VariationResults.test.tsx src/components/DurableEnsembleWorkflowPanel.test.tsx src/model/variationAnalysisPolicy.test.ts src/model/variationExecutionService.test.ts src/model/variationPersistedPlan.test.ts src/model/variationSwingEnsemble.test.ts src/model/localizedTorque.test.ts src/model/variationV2.test.ts src/model/durableEnsembleAuthorityContract.test.ts"
       ],
       "remote_evidence": [
-        "https://github.com/D-sorganization/Tools/actions/runs/32689177846"
+        "https://github.com/D-sorganization/Tools/issues/4792"
       ],
-      "gaps": [
-        "A requirement-by-requirement interaction matrix has not proven equivalent authoring, persistence, export, disabled, and error behavior across both surfaces."
-      ]
+      "gaps": []
     },
     {
       "requirement_id": "R14.4",

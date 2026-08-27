@@ -107,12 +107,13 @@
       "requirement_id": "V1.4",
       "requirement": "Retain the landmark through loading, unavailable, no-impact, failure, and no-result states.",
       "status": "partial",
-      "rationale": "All states are declared and Variation has matched lifecycle renders. The Morris result state now exposes provenance-qualified output-target and input-source selectors on both surfaces, while initial-state evidence asserts that no synthetic result selector is presented before a completed report. All-tab state geometry remains absent.",
+      "rationale": "All states are declared and Variation has matched lifecycle renders. The Morris result state exposes provenance-qualified output-target and input-source selectors on both surfaces, while initial-state evidence asserts that no synthetic result selector is presented before a completed report. The PyQt execution-policy selector is visibly and accessibly pinned to the same three governed policies as React, and the R14.3 matrix binds progress, cancellation, durable resume, publication, and export parity. All-tab state geometry remains absent.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
         "src/rate_of_closure/web/e2e/variation-visual-state.spec.ts",
         "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts",
         "src/rate_of_closure/web/src/components/MorrisResults.test.tsx",
+        "docs/audits/rate_of_closure_r14_3_surface_parity.v1.json",
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
         "tests/rate_of_closure/test_morris_pyqt_workflow.py"
       ],
@@ -157,8 +158,9 @@
       "requirement_id": "V2.3",
       "requirement": "Provide discoverable direct visual interaction where scientifically appropriate.",
       "status": "partial",
-      "rationale": "Explorer, Putting, Flight, Launch Monitor, Plots, Simulation, and Variation have interaction contracts; applicability and parity are not adjudicated for all tabs.",
+      "rationale": "Explorer, Putting, Flight, Launch Monitor, Plots, Simulation, and Variation have interaction contracts. Variation now has a governed cross-surface matrix for execution-policy selection through export; applicability and parity are not adjudicated for all tabs.",
       "evidence_files": [
+        "docs/audits/rate_of_closure_r14_3_surface_parity.v1.json",
         "tests/rate_of_closure/test_pyqt_variation_rendered_interactions.py",
         "tests/rate_of_closure/test_launch_monitor_linked_scatter_layout.py"
       ],

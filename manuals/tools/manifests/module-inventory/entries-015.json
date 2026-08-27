@@ -3,6 +3,58 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2782,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2fc30fbf0ca94850a97e154f654d5665db5a6d9b9342208e8d2981c6e15b8278",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-TAB-DISPLAY-NAMES-PY-C9C720DDF6E3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/tab_display_names.py",
+      "purpose": "Custom tab display-name helpers for the Sidekick sidebar.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TabDisplayNameMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6433,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -18366,63 +18418,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 2485,
-      "classification": "calculation",
-      "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "9f55a5eb7ad5864c9a46e677dd380d0e749bbba6e7ae2d256eb4b0927d73f185",
-      "family": "swing-simulation-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-TORQUE-EXPORT-PY-B85CB3E27077",
-      "language": "python",
-      "maintainer": "Swing simulation maintainers",
-      "path": "src/shared/python/swing_sim/torque_export.py",
-      "purpose": "Fit sampled per-joint torque histories into reusable profiles.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "unavailable",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "fit_torque_history_profile",
-            "signature": "*, profile_id: str, model_id: str, name: str, description: str, source_metadata: Mapping[str, str], created_at_utc: str, modified_at_utc: str, times_s: ArrayLike, torque_nm_by_joint: Mapping[str, ArrayLike], degree: int, max_condition_number: float=100000000.0"
-          }
-        ],
-        "test_paths": [
-          "src/shared/python/swing_sim/tests/test_torque_library_export.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

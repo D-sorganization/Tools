@@ -54,15 +54,16 @@ double-pendulum cells and ten explicitly unavailable cells.
 R12.3 protected-squash-merged via PR #4782 as `a1b00db14`; R13.3 PR #4784
 protected-squash-merged as `d6c8a0a67`. Its paired-attribution schema binds one
 independently estimable source and optional exact locus to state, impact, and
-shot scalars with ten unsupported cells preserved. #4791/R13.5 is active from
-that protected base. `morris-target-selection` v1 binds kind/name/unit/point/
-time/frame and exposes all-input or one-source views without analysis execution;
-PyQt and React share a state/impact/shot parity fixture, while selected rows
-retain global ranks and typed denominators. Protected PR #4794 contains
-implementation commit `f102ce59a`; #4793 was superseded without force-push after the matched visual
-manifest/audit/tests and vendored projection were added. The combined ledger is
-29 verified / 2 partial. These remain model-scenario responses, not global main
-effects, causal anatomy, governed human validation, or coaching authority.
+shot scalars with ten unsupported cells preserved. R13.5 protected-squash-
+merged through PR #4794 as `35853199b`; `morris-target-selection` v1 binds
+kind/name/unit/point/time/frame and exact all-input or selected-source views.
+R14.3 issue #4792 is replayed from that protected base. Its
+governed matrix proves PyQt/React parity from authoring through export,
+including `all_together`, `individual`, and `both` execution, dataset-free
+individual results, aggregate progress, cancellation, and 1--4096 durable
+chunks. The ledger is 30 verified / 1 partial. All remain model-scenario
+screening views, not global main effects, causal anatomy, governed human
+validation, or coaching authority.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline

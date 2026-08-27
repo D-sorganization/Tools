@@ -168,7 +168,8 @@
       "purpose": "Compare reproducible perturbation outcomes, dispersion, sensitivity, and quiet-zone diagnostics.",
       "data_prerequisites": [
         "Deterministic variation bundle with sampled inputs, outputs, method identity, and provenance.",
-        "Completed Morris results require an unambiguous output-target identity; optional input-source filtering retains the selected source specification and global rank."
+        "Completed Morris results require an unambiguous output-target identity; optional input-source filtering retains the selected source specification and global rank.",
+        "Analysis execution must declare all enabled inputs together, each enabled input individually, or both; this policy changes computation rather than the persisted physical experiment plan."
       ],
       "counterpart_tab_id": "variation",
       "classification": "form-led-live-preview",
@@ -355,7 +356,8 @@
       "purpose": "Compare reproducible perturbation outcomes, dispersion, sensitivity, and quiet-zone diagnostics.",
       "data_prerequisites": [
         "Deterministic variation bundle with sampled inputs, outputs, method identity, and provenance.",
-        "Completed Morris results require an unambiguous output-target identity; optional input-source filtering retains the selected source specification and global rank."
+        "Completed Morris results require an unambiguous output-target identity; optional input-source filtering retains the selected source specification and global rank.",
+        "Analysis execution must declare all enabled inputs together, each enabled input individually, or both; this policy changes computation rather than the persisted physical experiment plan."
       ],
       "counterpart_tab_id": "variation",
       "classification": "form-led-live-preview",

@@ -3,6 +3,48 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 23,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ff69ebfc3e42dac7b73cb235586b90e570a3463bd17b74413bb94c1abf7bb74e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VERIFICATION-INIT-PY-A9DF39B75A04",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/verification/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2375,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
