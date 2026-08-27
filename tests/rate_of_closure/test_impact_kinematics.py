@@ -64,13 +64,17 @@ def test_documented_generated_wedge_geometry_pins_shaft_aoa_contribution() -> No
 
     result = analyze_wedge_kinematics(state)
 
-    assert contact_offset == pytest.approx((-0.00353255, -0.02464453, 0.037573))
+    # Repinned for #4799 G1/G2: the wedge hosel now sits at the leading
+    # edge (loft-aware anchor) and the face center is leaned, so the
+    # hosel-to-face lever arm — and the shaft-rotation decomposition —
+    # legitimately changed. The total delivery is unchanged.
+    assert contact_offset == pytest.approx((-0.015259324, 0.001130622, 0.037573))
     assert result.shaft_rotation_velocity_mps == pytest.approx(
-        (0.49766011, -0.16405655, -0.06081723), abs=1e-8
+        (0.75540859, -0.04679021, 0.30819811), abs=1e-8
     )
-    assert result.shaft_vertical_velocity_share == pytest.approx(0.07044590)
-    assert result.without_shaft_aoa_deg == pytest.approx(-9.66593875)
-    assert result.shaft_counterfactual_aoa_delta_deg == pytest.approx(-0.33406125)
+    assert result.shaft_vertical_velocity_share == pytest.approx(0.02009172)
+    assert result.without_shaft_aoa_deg == pytest.approx(-10.38203153)
+    assert result.shaft_counterfactual_aoa_delta_deg == pytest.approx(0.38203153)
 
 
 def test_manual_impact_adapter_reconciles_the_existing_point_velocity() -> None:
