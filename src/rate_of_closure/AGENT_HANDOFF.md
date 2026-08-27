@@ -37,10 +37,15 @@ strokes-gained v2 into both clients; #4600 owns the PyQt reference,
 
 Club Fitting #4549, Heavy Hit #4562, packaging #4579 complete; physics is
 shared-first in `shared/python/{golf_club,swing_sim}` (contracts `docs/specs/`).
-Putting #4800: P1-P3 and P9 landed (2-D impact solve, green heightfields +
+Putting #4800: P1-P3, P5, and P9 landed (2-D impact solve, green heightfields +
 `swing_sim.green_surface/1` + Holmes/Penner capture, `golf_club.putter_head/1`
 mesh-MOI import, UpstreamDrift topography adapter). Planar APIs delegate
-bit-identically. P4-P8 remain.
+bit-identically. P5 added `swing_sim.putting_result/2` (`puttingResultWire.ts`),
+which **supersedes v1 with no silent migration** — the v2 reader refuses a v1
+payload and the v1 archive reader refuses v2, so never "upgrade" a retained
+record — plus `swing_sim.putt_dispersion/1` (`puttingDispersion.ts`). Monte-Carlo
+**execution** stays Python-authoritative (one canonical seeded sampler); the web
+consumes the wire, so do not port the sampler. P4, P6, P7, P8 remain.
 
 Clubhead-realism #4799: G1-G3 landed. Loft is a **leading-edge lean** — the
 head is built unlofted then sheared about `y = y_le`, so the leading edge stays
