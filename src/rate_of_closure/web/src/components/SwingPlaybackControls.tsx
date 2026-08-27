@@ -17,7 +17,7 @@ export interface SwingPlaybackControlsProps {
 
 const buttonClass =
   "rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-300 " +
-  "hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-40";
+  "hover:border-slate-500 disabled:opacity-40";
 
 export function SwingPlaybackControls(props: SwingPlaybackControlsProps) {
   const { run, playing, setPlaying, time, setTime, loop, setLoop, rate, setRate, toggles } = props;
