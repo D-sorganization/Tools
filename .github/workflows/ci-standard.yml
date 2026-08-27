@@ -1180,7 +1180,17 @@ jobs:
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
           cargo install cargo-audit --locked
-          cargo audit
+          # The public RustSec database must not inherit a runner-global
+          # GitHub App URL rewrite or credential helper.  Those credentials
+          # are repository-scoped and GitHub correctly rejects them for
+          # RustSec/advisory-db.  Isolate only the public database fetch;
+          # crates.io installation above and the checked-out repository keep
+          # their normal configuration.
+          GIT_CONFIG_GLOBAL=/dev/null \
+            GIT_CONFIG_NOSYSTEM=1 \
+            GIT_TERMINAL_PROMPT=0 \
+            GIT_ASKPASS=/bin/false \
+            cargo audit
 
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'

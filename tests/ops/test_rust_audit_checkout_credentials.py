@@ -23,3 +23,6 @@ def test_rust_audit_checkout_does_not_persist_repository_credentials() -> None:
 
     assert checkout["with"]["persist-credentials"] is False
     assert "cargo audit" in audit["run"]
+    assert "GIT_CONFIG_GLOBAL=/dev/null" in audit["run"]
+    assert "GIT_CONFIG_NOSYSTEM=1" in audit["run"]
+    assert "GIT_TERMINAL_PROMPT=0" in audit["run"]
