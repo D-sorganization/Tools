@@ -243,121 +243,121 @@
       "shard_index": 4
     },
     {
-      "content_sha256_lf": "1be90d4f256990118446d74d67bec0eec1570df81d1f43dc0113956f343f46dd",
+      "content_sha256_lf": "1e274f0bc41a6717c2b9c9d18c60a30e035abd453a6c31ce84b977d2d80f8ffc",
       "entry_count": 200,
       "first_path": "src/p1am_control_system/frontend/src/lib/dataAge.ts",
-      "last_path": "src/pid_generator/ui/pyqt6/__init__.py",
+      "last_path": "src/pid_generator/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-005.json",
       "shard_index": 5
     },
     {
-      "content_sha256_lf": "4e05cb63a814f2ff9bc14b25a74829e3888e8c86911ddd7821d17f59514ada47",
+      "content_sha256_lf": "012dbaea455a51c49d14d4ba8e5a1da47f6db5babf07ac64963691871f611ad3",
       "entry_count": 200,
-      "first_path": "src/pid_generator/ui/pyqt6/main_window.py",
-      "last_path": "src/rate_of_closure/plotting/catalog_contract.py",
+      "first_path": "src/pid_generator/gui_registration.py",
+      "last_path": "src/rate_of_closure/plotting/_catalog_entry_types.py",
       "path": "manuals/tools/manifests/module-inventory/entries-006.json",
       "shard_index": 6
     },
     {
-      "content_sha256_lf": "8849497496c281b9a9a74ebd61f485e9013de2f10cd50cc27accf987af872300",
+      "content_sha256_lf": "8127e36d4cd95a6d03f0eba2b15cf9343d6a257b91e427b793e9586af6b5df3d",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/plotting/optional_values.py",
-      "last_path": "src/rate_of_closure/ui/pyqt6/variation_results.py",
+      "first_path": "src/rate_of_closure/plotting/_catalog_scalar_entries.py",
+      "last_path": "src/rate_of_closure/ui/pyqt6/variation_geometry_rendering.py",
       "path": "manuals/tools/manifests/module-inventory/entries-007.json",
       "shard_index": 7
     },
     {
-      "content_sha256_lf": "928bf842f3732f02b50ac6959ff313533b3ded72968dc488c4d53b4c0ff61a3c",
+      "content_sha256_lf": "e006ff13fbd8ae5a2ba673f92b8b4a34e85c8da9258f0f34bc107bb4a939b6da",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/ui/pyqt6/variation_rows.py",
-      "last_path": "src/rate_of_closure/web/src/components/ScalarEnsembleScatter.test.tsx",
+      "first_path": "src/rate_of_closure/ui/pyqt6/variation_locus_editor.py",
+      "last_path": "src/rate_of_closure/web/src/components/RegionalExecutionLedgerTables.tsx",
       "path": "manuals/tools/manifests/module-inventory/entries-008.json",
       "shard_index": 8
     },
     {
-      "content_sha256_lf": "9686a00a14b92beb02ec92f13af196504d9c2e8ba9b1eee77561fad205005cb8",
+      "content_sha256_lf": "012f4d815280ef5b63953fb5da6050d7f17b4c2865cb573213cee549246ffb53",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/components/ScalarEnsembleScatter.tsx",
-      "last_path": "src/rate_of_closure/web/src/model/flightGroundTransfer.test.ts",
+      "first_path": "src/rate_of_closure/web/src/components/RegionalGroundImportedJobPanel.test.tsx",
+      "last_path": "src/rate_of_closure/web/src/model/flightExplorer.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-009.json",
       "shard_index": 9
     },
     {
-      "content_sha256_lf": "41ef4d18f252dd6f7b1d4880f9ab0c846c4fe1f2e480ad75a1108ad907162ce5",
+      "content_sha256_lf": "efd067dbcce02cda57e919d445cd4b2bfb033e8ba23c51836659af1d2073e068",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/flightGroundTransfer.ts",
-      "last_path": "src/rate_of_closure/web/src/model/turfContact.test.ts",
+      "first_path": "src/rate_of_closure/web/src/model/flightGroundContract.test.ts",
+      "last_path": "src/rate_of_closure/web/src/model/torqueProfileEditor.ts",
       "path": "manuals/tools/manifests/module-inventory/entries-010.json",
       "shard_index": 10
     },
     {
-      "content_sha256_lf": "418c705d4f37be198813dbd36cacc291cf71caec89264c3ba8dfb42f641561e7",
+      "content_sha256_lf": "09d7cffa14686a8b8095475527cf7b985f4dd93316a6354f76c94c83f66e43ad",
       "entry_count": 200,
-      "first_path": "src/rate_of_closure/web/src/model/turfContact.ts",
-      "last_path": "src/shared/python/ai/_onnx_preflight.py",
+      "first_path": "src/rate_of_closure/web/src/model/torqueProfiles.test.ts",
+      "last_path": "src/rrt_path_planner/python/src/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-011.json",
       "shard_index": 11
     },
     {
-      "content_sha256_lf": "45de7e63692ec6297465baaf9db500bb60657b1e4a1a46b634fd348d8902b64e",
+      "content_sha256_lf": "474f3be00999cf519db7ddc542bf653f5f26dffc99d522bd912aadff7f4dbb7d",
       "entry_count": 200,
-      "first_path": "src/shared/python/ai/_settings_model.py",
-      "last_path": "src/shared/python/codemap/_lang_js.py",
+      "first_path": "src/rrt_path_planner/python/src/star_wars_rrt.py",
+      "last_path": "src/shared/python/chat_contracts/__init__.py",
       "path": "manuals/tools/manifests/module-inventory/entries-012.json",
       "shard_index": 12
     },
     {
-      "content_sha256_lf": "140becd6cdba1cac34cc9d9086bc203e4897244964a305d39503e9319c3e3ffa",
+      "content_sha256_lf": "738a2c6aa68ee1666e6eebc155b352611eb171db4ef5b0e0f27cfc8012839bc2",
       "entry_count": 200,
-      "first_path": "src/shared/python/codemap/_lang_markdown.py",
-      "last_path": "src/shared/python/rotation_transforms/reference_frame_operations.py",
+      "first_path": "src/shared/python/chat_contracts/conversation.py",
+      "last_path": "src/shared/python/programmatic_pid/types.py",
       "path": "manuals/tools/manifests/module-inventory/entries-013.json",
       "shard_index": 13
     },
     {
-      "content_sha256_lf": "de355ea574d4b4f537cd382d23e30ba02ec3eed80d34015700777fe05220621b",
+      "content_sha256_lf": "8082cec44257bd4714416549f46dc9b94c47ae16ddb9b6ad8a4fb8fc555201e6",
       "entry_count": 200,
-      "first_path": "src/shared/python/rotation_transforms/rotation.py",
-      "last_path": "src/shared/python/sidekick/ui/widgets/data_processor_widget.py",
+      "first_path": "src/shared/python/programmatic_pid/validation.py",
+      "last_path": "src/shared/python/sidekick/ui/tools_sidebar/workspace_commands.py",
       "path": "manuals/tools/manifests/module-inventory/entries-014.json",
       "shard_index": 14
     },
     {
-      "content_sha256_lf": "4ac5e1606518bf096fc4c0791af41d5a7fcdb5a7622748e9cc0d687aeea2a55f",
+      "content_sha256_lf": "a412f17fdd64928f4d3beef5d16a6f04963b18d3b95049f096b1d6a0516437b4",
       "entry_count": 200,
-      "first_path": "src/shared/python/sidekick/ui/widgets/mixins/__init__.py",
-      "last_path": "src/shared/python/swing_sim/variation/analysis.py",
+      "first_path": "src/shared/python/sidekick/ui/tools_sidebar/workspace_persistence.py",
+      "last_path": "src/shared/python/swing_sim/variation/_execution_digest.py",
       "path": "manuals/tools/manifests/module-inventory/entries-015.json",
       "shard_index": 15
     },
     {
-      "content_sha256_lf": "9650e0a0210fdb3958314b4b15feaf8802f079ccc2e30c16f886a098a10581ec",
+      "content_sha256_lf": "9e615718b9af3c56259327187135f8c0a998f9321029238ded71606faaa1e5bd",
       "entry_count": 200,
-      "first_path": "src/shared/python/swing_sim/variation/contextual_registry.py",
-      "last_path": "src/vessel_drafter/python/vessel_drafter/gui/__init__.py",
+      "first_path": "src/shared/python/swing_sim/variation/_execution_metadata_schema.py",
+      "last_path": "src/vessel_drafter/python/vessel_drafter/cli.py",
       "path": "manuals/tools/manifests/module-inventory/entries-016.json",
       "shard_index": 16
     },
     {
-      "content_sha256_lf": "f585e1ff4c7dfca6ea3c7cbb1760c9e28e32f4935b94a1e00de35365480b714f",
-      "entry_count": 65,
-      "first_path": "src/vessel_drafter/python/vessel_drafter/gui/material_summary_table.py",
+      "content_sha256_lf": "c95b34822b2ffa160ffde5931bb2aa226aa414beb751ec818da83d59fa5d8ad5",
+      "entry_count": 70,
+      "first_path": "src/vessel_drafter/python/vessel_drafter/contracts.py",
       "last_path": "wave_solver.py",
       "path": "manuals/tools/manifests/module-inventory/entries-017.json",
       "shard_index": 17
     }
   ],
-  "source_tree_sha256": "73cb36e6b8f02ead337dfd11854b7662c5958411d0474fd6bf8c8f60d2617656",
+  "source_tree_sha256": "b598e5f025590208571249155a8df46ca6eac7dec3235b4026ce5e8a85aab04c",
   "summary": {
     "authority_status_counts": {
       "blocked": 1,
       "not-applicable": 2643,
-      "provisional": 821
+      "provisional": 826
     },
     "blocked_count": 1,
-    "calculation_count": 821,
+    "calculation_count": 826,
     "classification_counts": {
-      "calculation": 821,
+      "calculation": 826,
       "non-calculation": 2644
     },
     "family_counts": {
@@ -369,7 +369,7 @@
       "media-processing-non-calculation": 74,
       "native-kernels-calculation": 10,
       "native-kernels-non-calculation": 61,
-      "pendulum-calculation": 158,
+      "pendulum-calculation": 163,
       "process-calculators-calculation": 59,
       "rate-of-closure-calculation": 161,
       "rate-of-closure-non-calculation": 889,
@@ -382,13 +382,13 @@
       "swing-simulation-calculation": 58,
       "swing-simulation-non-calculation": 141
     },
-    "module_count": 3465,
+    "module_count": 3470,
     "non_calculation_count": 2644,
-    "provisional_count": 821,
+    "provisional_count": 826,
     "review_status_counts": {
       "blocked": 1,
       "inventory-baseline": 2643,
-      "review-required": 821
+      "review-required": 826
     }
   }
 }

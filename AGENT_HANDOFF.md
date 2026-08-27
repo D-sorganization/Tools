@@ -34,11 +34,12 @@ early August the delivery pattern has shifted from long stacked PRs to
 | #4430 | Qualified rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed the immutable provider through #8954.                                                                                                        |
 | #4549 | Club Fitting Tester (OEM-grade). **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc, counterfactuals, PyQt6/React GUI tabs).                                                                       |
 | #4562 | Heavy Hit - hand/body coupling at impact. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import, GUI readout).                                                                                    |
-| #4766 | Swing Objective Comparison. S1–S6 protected-merged through PR #4774; the planar two-link objective layer reports infeasible and degenerate comparisons rather than promoting them to mechanism agreement.                             |
-| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; #4603 adds canonical dataset/covariation consumers through the ordinary protected flow. Release B physical collection remains external and open.      |
+| #4775 | Actuation and swing realism. Open. The fixed-hub two-link model cannot reach measured golfer hand speed; distributed club inertia is ruled out as the repair. Next: a moving hub via `physics_triple.py`.                             |
+| #4766 | Swing Objective Comparison. S1–S6 protected-merged through PR #4774; check `is_degenerate` before quoting objective agreement.                                                                                                        |
+| #4583 | Professional launch-monitor program. Release A and source-backed SG are merged; Release B physical collection remains external and open.                                                                                              |
 | #4698 | Coordinate-explicit pendulum force attribution and impulse optimization. Active on `feat/4698-force-attribution`; schema `force-attribution/v1` is the planned Upstream boundary.                                                     |
 | #4706 | Markerless mocap. M0/M1 PR #4734 is the schema authority; M2-M7/M9 remain local and unapproved pending protected dependency delivery.                                                                                                 |
-| #4707 | Engineering design manuals. D0--D3 are protected-merged. D4 is reconciled on a fresh main-rooted branch with reviewed local artifacts; D5--D9 remain local and unapproved.                                                            |
+| #4707 | Engineering design manuals. D0--D3 are protected-merged; later phases remain unapproved.                                                                                                                                              |
 
 Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`, and `src/rotation_converter/AGENT_HANDOFF.md`.
 
@@ -71,8 +72,7 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   PR #4782/#4765 R12.3 is active on `feat/4142-noise-response`: its immutable field puts
   paired declared-scale Cartesian response beside matched and all-eligible RMS
   scatter, counts, adequacy, provenance, bounded resume state, and plot rows; the
-  matrix remains two verified / ten unavailable. The repair passes CI-pinned MyPy
-  and detect-secrets. SPEC 1.18.45 behavior/schemas are unchanged; tests are not human validation.
+  matrix remains two verified / ten unavailable. The repair passes CI-pinned MyPy and detect-secrets; SPEC 1.18.53 is unchanged scientifically and tests are not human validation.
 
 ## Must-Read Architecture Pointers
 

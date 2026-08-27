@@ -62,7 +62,7 @@ branch ledger is 27 verified / 4 partial. These are model-scenario software
 results, not causal anatomy, governed human validation, or coaching authority.
 The pre-merge repair passes CI-pinned MyPy by making NumPy boolean reductions
 explicit and passes detect-secrets without changing the protected-base SHA.
-SPEC 1.18.45 records the boundary; no runtime, schema, or scientific claim changed.
+SPEC 1.18.53 records the boundary; no runtime, schema, or scientific claim changed.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
