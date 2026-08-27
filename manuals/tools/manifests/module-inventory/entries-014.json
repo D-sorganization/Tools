@@ -3,6 +3,84 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8674,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2355542bfa0f4faf9f98be27892a1c73a6f707a20dbe88622ae3b03ac24713ea",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-LAYOUT-PY-9336B1EEDAFA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/programmatic_pid/layout.py",
+      "purpose": "Layout computation and label placement.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LabelPlacer",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_layout_regions",
+            "signature": "spec: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_equipment_bounds",
+            "signature": "spec: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_modelspace_extent",
+            "signature": "spec: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "spread_instrument_positions",
+            "signature": "instruments: list[dict[str, Any]], min_spacing: float=3.5"
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_instruments.py",
+          "tests/programmatic_pid/test_layout.py",
+          "tests/programmatic_pid/test_title_block.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3528,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -17461,58 +17539,6 @@
         "validation_paths": [
           "tests/unit/sidekick/test_tab_collection_alias_contract.py"
         ]
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2782,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2fc30fbf0ca94850a97e154f654d5665db5a6d9b9342208e8d2981c6e15b8278",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-TOOLS-SIDEBAR-TAB-DISPLAY-NAMES-PY-C9C720DDF6E3",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/sidekick/ui/tools_sidebar/tab_display_names.py",
-      "purpose": "Custom tab display-name helpers for the Sidekick sidebar.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "TabDisplayNameMixin",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
       }
     }
   ],

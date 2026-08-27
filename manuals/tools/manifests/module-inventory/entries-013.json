@@ -3,6 +3,103 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7134,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8900c60a22b90831d51cd2c72863757fea6b86e60a907606f5dc70cd56f2cbd4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-TERMINAL-CONTRACTS-PY-0B1C9FEF2DFD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/terminal_contracts.py",
+      "purpose": "Shared contracts for terminal-backed chat agent sessions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TerminalAgentEvent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalAgentProviderInfo",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalAgentSessionInfo",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalAgentSessionRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalProviderRegistry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalRegistryError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalSelection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TerminalShellInfo",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ID_PATTERN",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/chat/test_cli_agent_adapters.py",
+          "tests/shared/python/chat/test_terminal_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/chat/test_terminal_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6426,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -16812,84 +16909,6 @@
           "tests/programmatic_pid/test_instruments.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8674,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2355542bfa0f4faf9f98be27892a1c73a6f707a20dbe88622ae3b03ac24713ea",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PROGRAMMATIC-PID-LAYOUT-PY-9336B1EEDAFA",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/programmatic_pid/layout.py",
-      "purpose": "Layout computation and label placement.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LabelPlacer",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_layout_regions",
-            "signature": "spec: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "get_equipment_bounds",
-            "signature": "spec: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "get_modelspace_extent",
-            "signature": "spec: dict[str, Any]"
-          },
-          {
-            "kind": "function",
-            "name": "spread_instrument_positions",
-            "signature": "instruments: list[dict[str, Any]], min_spacing: float=3.5"
-          }
-        ],
-        "test_paths": [
-          "tests/programmatic_pid/test_instruments.py",
-          "tests/programmatic_pid/test_layout.py",
-          "tests/programmatic_pid/test_title_block.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }

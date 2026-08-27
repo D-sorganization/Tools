@@ -6,15 +6,18 @@ Monte-Carlo batch runs inside this :class:`QThread`, solver-shaped
 progress reports cross back as queued signals, and cancellation is
 cooperative via the engine's ``cancel_event`` seam.
 
-Optionally follows the main batch with the one-at-a-time sensitivity
-pass (``len(plan.noise)`` extra sub-studies, same seed streams).
+Runs the selected joint batch, one-at-a-time sensitivity batches, or both.
+Individual studies use the same seed streams as the joint plan.
 """
 
 from __future__ import annotations
 
 import logging
 import threading
+import time
+from collections.abc import Callable
 from dataclasses import replace
+from functools import partial
 
 import numpy as np
 from PyQt6.QtCore import QThread, pyqtSignal
@@ -24,7 +27,15 @@ from rate_of_closure.variation import (
     build_simulation_ensemble_request,
     run_simulation_ensemble,
 )
+from rate_of_closure.variation.analysis_policy import (
+    AnalysisExecution,
+    planned_analysis_runs,
+    runs_individual_analysis,
+    runs_joint_analysis,
+    validate_analysis_execution,
+)
 from rate_of_closure.variation_visual_state import simulation_authority_identity
+from shared.python.swing_sim.solver.solve import ProgressReport
 from shared.python.swing_sim.variation import (
     CancelledError,
     SensitivityResult,
@@ -42,6 +53,22 @@ __all__ = ["MAX_WORKER_ERROR_LENGTH", "VariationWorker"]
 MAX_WORKER_ERROR_LENGTH = 512
 
 
+def _emit_offset_progress(
+    callback: Callable[[ProgressReport], None],
+    iteration_offset: int,
+    failure_offset: int,
+    report: ProgressReport,
+) -> None:
+    """Translate sub-study progress onto the complete analysis axis."""
+    callback(
+        replace(
+            report,
+            iteration=iteration_offset + report.iteration,
+            cost=failure_offset + report.cost,
+        )
+    )
+
+
 class VariationWorker(QThread):
     """One variation study: construct, ``start()``, listen, ``cancel()``.
 
@@ -50,8 +77,9 @@ class VariationWorker(QThread):
             (``iteration`` = completed runs of the main batch).
         phaseChanged(str): Human-readable phase ("Running…" /
             "Sensitivity…").
-        succeeded(object, object): The final ``VariationDataset`` and the
-            ``SensitivityResult`` (or ``None`` when not requested).
+        succeeded(object, object): The final ``VariationDataset`` and
+            ``SensitivityResult``. Either object can be ``None`` when its
+            corresponding analysis was not selected.
         cancelled(): The study was cancelled.
         failed(str): The engine raised; message is user-presentable.
     """
@@ -66,19 +94,19 @@ class VariationWorker(QThread):
     def __init__(
         self,
         plan: VariationPlan,
-        compute_sensitivity: bool = True,
+        analysis_execution: AnalysisExecution = "both",
         n_workers: int = 4,
         base_simulation_config: SimulationConfig | None = None,
     ) -> None:
         super().__init__()
         self._plan = plan
-        self._compute_sensitivity = bool(compute_sensitivity)
+        self._analysis_execution = validate_analysis_execution(analysis_execution)
         self._n_workers = int(n_workers)
         self._cancel_event = threading.Event()
         self._base_simulation_config = base_simulation_config
         self._authority_identity = (
             simulation_authority_identity(
-                self._plan, base_simulation_config, self._compute_sensitivity
+                self._plan, base_simulation_config, self._analysis_execution
             )
             if base_simulation_config is not None
             else None
@@ -96,8 +124,14 @@ class VariationWorker(QThread):
 
     @property
     def total_runs(self) -> int:
-        """Main-batch run count (drives the determinate progress bar)."""
-        return int(self._plan.n_runs)
+        """Exact joint plus individual evaluation count."""
+        return int(
+            planned_analysis_runs(
+                self._plan.n_runs,
+                len(self._plan.noise),
+                self._analysis_execution,
+            )
+        )
 
     def cancel(self) -> None:
         """Request cooperative cancellation (in-flight runs unwind)."""
@@ -108,9 +142,15 @@ class VariationWorker(QThread):
         try:
             if self._cancel_event.is_set():
                 raise CancelledError
-            self.phaseChanged.emit("Running…")
+            started = time.monotonic()
             ensemble = None
-            if self._plan.mode == "swing":
+            dataset = None
+            if runs_joint_analysis(self._analysis_execution):
+                self.phaseChanged.emit("Running jointly enabled variables…")
+            if (
+                runs_joint_analysis(self._analysis_execution)
+                and self._plan.mode == "swing"
+            ):
                 if self._base_simulation_config is None:
                     raise ValueError("swing trace studies require a simulation config")
                 request = build_simulation_ensemble_request(
@@ -122,7 +162,7 @@ class VariationWorker(QThread):
                     cancel_event=self._cancel_event,
                 )
                 dataset = ensemble.variation
-            else:
+            elif runs_joint_analysis(self._analysis_execution):
                 dataset = run_variation(
                     self._plan,
                     n_workers=self._n_workers,
@@ -130,15 +170,31 @@ class VariationWorker(QThread):
                     cancel_event=self._cancel_event,
                 )
             sensitivity: SensitivityResult | None = None
-            if self._compute_sensitivity:
-                self.phaseChanged.emit("Sensitivity…")
+            if runs_individual_analysis(self._analysis_execution):
+                self.phaseChanged.emit("Sensitivity: individual interventions…")
+                completed_before = self._plan.n_runs if dataset is not None else 0
+                failed_before = (
+                    self._plan.n_runs - dataset.n_success if dataset is not None else 0
+                )
+
+                def individual_progress(report: ProgressReport) -> None:
+                    self.progressed.emit(
+                        replace(
+                            report,
+                            iteration=completed_before + report.iteration,
+                            cost=failed_before + report.cost,
+                            elapsed_s=time.monotonic() - started,
+                        )
+                    )
+
                 sensitivity = (
-                    self._simulation_sensitivity()
-                    if ensemble is not None
+                    self._simulation_sensitivity(individual_progress)
+                    if self._plan.mode == "swing"
                     else one_at_a_time_sensitivity(
                         self._plan,
                         n_workers=self._n_workers,
                         cancel_event=self._cancel_event,
+                        progress_cb=individual_progress,
                     )
                 )
         except CancelledError:
@@ -151,11 +207,15 @@ class VariationWorker(QThread):
                 self.ensembleSucceeded.emit(ensemble)
             self.succeeded.emit(dataset, sensitivity)
 
-    def _simulation_sensitivity(self) -> SensitivityResult:
+    def _simulation_sensitivity(
+        self, progress_cb: Callable[[ProgressReport], None]
+    ) -> SensitivityResult:
         """Run trace-capable one-at-a-time studies through the same simulator."""
         assert self._base_simulation_config is not None
         rows: list[np.ndarray] = []
         output_names: tuple[str, ...] | None = None
+        completed_before = 0
+        failed_before = 0
         for spec in self._plan.noise:
             if self._cancel_event.is_set():
                 raise CancelledError
@@ -163,9 +223,21 @@ class VariationWorker(QThread):
             request = build_simulation_ensemble_request(
                 sub_plan, self._base_simulation_config
             )
+            offset = completed_before
+            prior_failures = failed_before
+
             dataset = run_simulation_ensemble(
-                request, cancel_event=self._cancel_event
+                request,
+                progress_cb=partial(
+                    _emit_offset_progress,
+                    progress_cb,
+                    offset,
+                    prior_failures,
+                ),
+                cancel_event=self._cancel_event,
             ).variation
+            completed_before += self._plan.n_runs
+            failed_before += self._plan.n_runs - dataset.n_success
             current_output_names = dataset.output_names
             output_names = current_output_names
             row = np.full(len(current_output_names), np.nan)
