@@ -111,6 +111,22 @@ class _PlanSampler:
         return _clip(values, spec)
 
 
+#: The sampling authority reads exactly these plan fields; a frozen plan
+#: that mirrors them (``golf_club.turf_variation.TurfVariationPlan`` — its
+#: turf variables are illegal in every pipeline mode, so it deliberately
+#: cannot *be* a ``VariationPlan``) is accepted by shape. The #4628 refactor
+#: tightened this to an ``isinstance`` and silently broke that documented
+#: caller; the change-scoped test lane re-exposed it in #4822.
+_SAMPLING_PLAN_FIELDS = ("noise", "base_variables", "n_runs", "seed", "groups")
+
+
+def _is_sampling_plan(plan: object) -> bool:
+    """A ``VariationPlan`` or a frozen mirror of its sampling-only shape."""
+    return isinstance(plan, VariationPlan) or all(
+        hasattr(plan, name) for name in _SAMPLING_PLAN_FIELDS
+    )
+
+
 def sample_input_chunks(
     plan: VariationPlan, *, chunk_size: int, start_index: int = 0
 ) -> Iterator[tuple[int, np.ndarray]]:
@@ -119,7 +135,10 @@ def sample_input_chunks(
     Resume regenerates and discards the deterministic prefix without retaining
     it. This performs no solver work and preserves the exact canonical stream.
     """
-    require(isinstance(plan, VariationPlan), "plan must be a VariationPlan")
+    require(
+        _is_sampling_plan(plan),
+        "plan must be a VariationPlan or mirror its sampling shape",
+    )
     require(
         type(chunk_size) is int and chunk_size > 0,
         "chunk_size must be a positive integer",
