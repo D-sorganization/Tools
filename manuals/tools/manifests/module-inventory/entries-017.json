@@ -3,6 +3,167 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 27742,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c543ba86846fc1016fd5580f137c19dedaadb220fb821d17b7dc89e144c1c440",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-ANALYZER-PY-FD1D03F3DEE7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/analyzer.py",
+      "purpose": "Golf Swing Analyzer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SwingAnalyzer",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/video_analyzer/test_swing_score_derivation.py",
+          "tests/video_analyzer/test_video_analyzer_packaging.py"
+        ],
+        "unit_mentions": [
+          "cm",
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 616,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d366218f730f76fcf7f36e30a00fbac7bab75142c020672249aaa98cc2a9b178",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-GUI-REGISTRATION-PY-0B2E87A27809",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/gui_registration.py",
+      "purpose": "GUI registration for Video Analyzer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "GUI_INFO",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_gui_info",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/folder_tool/test_gui_registration.py",
+          "tests/rate_of_closure/test_gui_registration.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 337,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cd0be6d4072e3176b306bdfa728dc443b5cfee7fb48c03a352a3810ed9ffb5cd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-LAUNCH-PYQT6-PY-5DB6D8CF6B9A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/video_analyzer/launch_pyqt6.py",
+      "purpose": "Standalone PyQt6 launcher for Video Analyzer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/folder_tool/test_launch_pyqt6.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1971,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

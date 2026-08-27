@@ -2,6 +2,63 @@
   "authority": "D-sorganization/Tools",
   "entries": [
     {
+      "authority_status": "provisional",
+      "bytes_lf": 1018,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "20a61245ab858ef303bc90f6a98cd1a6336341fed40e09de5cf69c851d1ddf58",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SPATIALTARGETSOLVERPANEL-TSX-69CEDABFF14F",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/SpatialTargetSolverPanel.tsx",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "SpatialTargetSolverPanel",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 6043,
       "classification": "non-calculation",
@@ -820,10 +877,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15694,
+      "bytes_lf": 15356,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "038e759211dff8923fb819b1701aef926855ca28f7c8c77eb814ea3ac57d9f1a",
+      "content_sha256_lf": "31fffe56515f882420a04b84b273467874994a30dca30563352632b088ffe3f8",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-VARIATIONPANEL-TEST-TSX-41D94FF244C1",
       "language": "typescript-react",
@@ -12485,107 +12542,6 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8360,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "94f625e897b443941c07a65583e65630872b55865e9d37534370ff56e2aeb889",
-      "family": "rate-of-closure-non-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-GROUNDPLAYBACK-TS-36A1DE5C1A62",
-      "language": "typescript",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/model/groundPlayback.ts",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "GROUND_PLAYBACK_MAX_POINTS",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GROUND_PLAYBACK_VISIBLE_ROW_BUDGET",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GROUND_PLAYBACK_VISUAL_POINT_BUDGET",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GroundEvidenceWindow",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GroundPlaybackFrame",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "GroundPlaybackTimeline",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "adjacentPlaybackTime",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "groundEvidenceWindow",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "lowerPlaybackIndex",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "selectGroundPlaybackPath",
-            "signature": null
-          },
-          {
-            "kind": "export",
-            "name": "timelineFromRegionalExecution",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

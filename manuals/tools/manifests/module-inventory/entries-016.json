@@ -3,6 +3,290 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10396,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a290859204dc545af99dbbb4de6a586f039dfcde0d30df757bbf6d505c54fd1f",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PROPAGATION-PY-9B2ECDF9B6B2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/propagation.py",
+      "purpose": "Honest paired-intervention propagation over common-grid position traces.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CommonReferenceTrace",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedIntervention",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PropagationResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_paired_intervention",
+            "signature": "intervention: PairedIntervention"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_propagation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13615,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "1f5783c2a3977a660f111223b5928881d602cbda3aecd00417c0515f92796e11",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-REGISTRY-PY-7CEBD71DF4F1",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/registry.py",
+      "purpose": "Namespaced variable registry for the variation engine (#4120 V3).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VariableDef",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APPLICABILITIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_BALL_SETUP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_DELIVERY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_LAUNCH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_SWING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODE_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SWING_DERIVED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNIT_DIMENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "keys_for_mode",
+            "signature": "mode: str"
+          },
+          {
+            "kind": "function",
+            "name": "register_variable",
+            "signature": "definition: VariableDef"
+          },
+          {
+            "kind": "function",
+            "name": "unit_dimension",
+            "signature": "unit: str"
+          },
+          {
+            "kind": "function",
+            "name": "variable_registry",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "variables_in_category",
+            "signature": "category: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/conventions/tests/test_registry.py",
+          "src/shared/python/swing_sim/flight/tests/test_registry.py",
+          "tests/rate_of_closure/conftest.py",
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/unit/ai/peer_review/test_registry.py",
+          "tests/unit/ai/skills/test_registry.py"
+        ],
+        "unit_mentions": [
+          "N·m",
+          "deg",
+          "g",
+          "kg",
+          "m/s",
+          "mm",
+          "ms",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1615,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2a62379c557ed0ae41e1937b71429bdbbad26b94de9dda3e36444166276d341",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-REGISTRY-MODE-POLICY-PY-13EA501506D4",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/registry_mode_policy.py",
+      "purpose": "Pipeline-mode category and derived-variable policy for the registry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "keys_for_mode",
+            "signature": "mode: str, categories: Mapping[str, tuple[str, ...]], variables_in_category: Callable[[str], tuple[Any, ...]], derived_swing_keys: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "mode_categories",
+            "signature": "delivery: str, swing: str, club: str, ball_setup: str, launch: str"
+          },
+          {
+            "kind": "function",
+            "name": "swing_derived_keys",
+            "signature": "delivery: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7102,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -13374,167 +13658,6 @@
           "g",
           "s"
         ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 27742,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c543ba86846fc1016fd5580f137c19dedaadb220fb821d17b7dc89e144c1c440",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-ANALYZER-PY-FD1D03F3DEE7",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/video_analyzer/analyzer.py",
-      "purpose": "Golf Swing Analyzer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SwingAnalyzer",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/video_analyzer/test_swing_score_derivation.py",
-          "tests/video_analyzer/test_video_analyzer_packaging.py"
-        ],
-        "unit_mentions": [
-          "cm",
-          "deg",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 616,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d366218f730f76fcf7f36e30a00fbac7bab75142c020672249aaa98cc2a9b178",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-GUI-REGISTRATION-PY-0B2E87A27809",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/video_analyzer/gui_registration.py",
-      "purpose": "GUI registration for Video Analyzer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "GUI_INFO",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "get_gui_info",
-            "signature": ""
-          }
-        ],
-        "test_paths": [
-          "tests/folder_tool/test_gui_registration.py",
-          "tests/rate_of_closure/test_gui_registration.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 337,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cd0be6d4072e3176b306bdfa728dc443b5cfee7fb48c03a352a3810ed9ffb5cd",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-VIDEO-ANALYZER-LAUNCH-PYQT6-PY-5DB6D8CF6B9A",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/video_analyzer/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for Video Analyzer.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
         "validation_paths": []
       }
     }

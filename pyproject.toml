@@ -263,6 +263,7 @@ exclude = [
 "shared.python.swing_sim.rotating_base" = ["resources/*.json"]
 "rate_of_closure" = [
     "data/*.json",
+    "locus_execution_capabilities.v1.json",
     "visualization_tabs.v1.json",
     "visualization_performance.v1.json",
     "visualization_accessibility.v1.json",

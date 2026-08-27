@@ -2999,6 +2999,94 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10106,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "84cbabb27a7152e514cf41417c184a12ad52b6ddfdb5ca7d864563912da49482",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-LOCUS-EXECUTION-CAPABILITIES-PY-90FF7A3C615E",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/variation/locus_execution_capabilities.py",
+      "purpose": "Typed authority for whole-run and localized variation execution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LocusContractError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LocusExecutionCapability",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LocusExecutionContract",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RATE_EXTENSION_VARIABLE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "capability_for",
+            "signature": "variable_key: str"
+          },
+          {
+            "kind": "function",
+            "name": "load_locus_execution_contract",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "managed_registry_keys",
+            "signature": "registry: Mapping[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "parse_locus_execution_contract",
+            "signature": "payload: object, *, registered_keys: Iterable[str]"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_locus_execution_capabilities.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7237,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3770,10 +3858,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10464,
+      "bytes_lf": 11505,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7e582bc5aedd0dfd9ec2237c4146a760ab0b48dde1b4086704e58134788118ce",
+      "content_sha256_lf": "ae3e5df4a3a73fc1f9b1919cb746f10c66a7479cf68454b72d963f7ff9ab7bc4",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-REQUEST-BUILDER-PY-FB276191BCF3",
       "language": "python",
@@ -3810,6 +3898,11 @@
         "public_surfaces": [
           {
             "kind": "constant",
+            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "TRACE_CAPABILITIES",
             "signature": null
           },
@@ -3827,11 +3920,6 @@
             "kind": "function",
             "name": "build_simulation_ensemble_request",
             "signature": "plan: VariationPlan, base_config: SimulationConfig"
-          },
-          {
-            "kind": "re-export",
-            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
-            "signature": null
           }
         ],
         "test_paths": [
@@ -11995,63 +12083,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 1018,
-      "classification": "calculation",
-      "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "20a61245ab858ef303bc90f6a98cd1a6336341fed40e09de5cf69c851d1ddf58",
-      "family": "rate-of-closure-calculation",
-      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SPATIALTARGETSOLVERPANEL-TSX-69CEDABFF14F",
-      "language": "typescript-react",
-      "maintainer": "Rate of Closure maintainers",
-      "path": "src/rate_of_closure/web/src/components/SpatialTargetSolverPanel.tsx",
-      "purpose": null,
-      "review_status": "review-required",
-      "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "export",
-            "name": "SpatialTargetSolverPanel",
-            "signature": null
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
         "validation_paths": []
       }
     }
