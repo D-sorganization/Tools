@@ -71,7 +71,11 @@ Per-tool detail: `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator
   or coaching approval. The visual co-change guard now excludes test-only TSX
   modules while retaining fail-closed evidence requirements for shipped React
   surfaces. The standalone public mirror consumes a byte-identical governed
-  vendored copy rather than importing above `web/`.
+  vendored copy rather than importing above `web/`. The first hosted 3.11/3.12
+  matrices exposed one packaging-governance mismatch: the visualization
+  manifest test rejected this legitimate non-visualization authority even
+  though the exact wheel gate passed. The PR now classifies that named file as
+  feature-owned package data while retaining rejection of undeclared entries.
 
 ## Must-Read Architecture Pointers
 

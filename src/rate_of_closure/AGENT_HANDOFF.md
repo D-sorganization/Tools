@@ -69,6 +69,11 @@ gaps keep #4142 open. This verifies execution semantics, not anatomy, human
 validity, or coaching. The visual co-change guard excludes test-only TSX
 modules but remains fail-closed for shipped React surfaces. The standalone
 public mirror consumes a byte-identical governed vendored authority.
+The first hosted 3.11/3.12 matrices exposed one packaging-governance mismatch:
+the visualization manifest test rejected this legitimate non-visualization
+authority although the exact wheel gate passed. PR #4757 now classifies the
+named file as feature-owned package data while retaining fail-closed rejection
+of undeclared package-data entries.
 
 PR #4705 maps all 31 #4433 obligations; trusted run `32689177846` proves only
 the initial React/PyQt visibility, accessibility, performance, and baseline
