@@ -13,6 +13,12 @@ motion are re-derived here.
 See ``docs/specs/SWING_OBJECTIVE_COMPARISON.md``. Epic #4766.
 """
 
+from double_pendulum_golf.swing_objectives.actuation import (
+    JointActuation,
+    SwingActuation,
+    tour_hub_actuation,
+    tour_wrist_actuation,
+)
 from double_pendulum_golf.swing_objectives.comparison import (
     COMPARISON_SCHEMA_VERSION,
     SwingComparison,
@@ -26,6 +32,18 @@ from double_pendulum_golf.swing_objectives.downswing import (
     DownswingOptimizer,
     DownswingResult,
 )
+from double_pendulum_golf.swing_objectives.impact_optimality import (
+    EnergyOptimalRates,
+    energy_optimal_rates,
+    impact_hand_speed_coefficient,
+    optimal_hand_speed_sign,
+)
+from double_pendulum_golf.swing_objectives.model_adequacy import (
+    FrontierPoint,
+    HandSpeedFrontier,
+    hand_speed_frontier,
+    swing_observables,
+)
 from double_pendulum_golf.swing_objectives.objectives import (
     CENTRIFUGAL,
     CLUBHEAD_SPEED,
@@ -36,6 +54,12 @@ from double_pendulum_golf.swing_objectives.objectives import (
     SwingObjective,
     evaluate_all,
     get_objective,
+)
+from double_pendulum_golf.swing_objectives.reference_kinematics import (
+    TOUR_DRIVER_BANDS,
+    ObservableBand,
+    RealismScore,
+    score_against_reference,
 )
 from double_pendulum_golf.swing_objectives.presets import (
     DEFAULT_PRESET,
@@ -93,4 +117,24 @@ __all__ = [
     "SwingBudget",
     "DEFAULT_PRESET",
     "build_config",
+    # Impact optimality (#4776)
+    "EnergyOptimalRates",
+    "impact_hand_speed_coefficient",
+    "optimal_hand_speed_sign",
+    "energy_optimal_rates",
+    # Actuation limits (#4777)
+    "JointActuation",
+    "SwingActuation",
+    "tour_hub_actuation",
+    "tour_wrist_actuation",
+    # Measured reference kinematics (#4778)
+    "ObservableBand",
+    "RealismScore",
+    "TOUR_DRIVER_BANDS",
+    "score_against_reference",
+    # Model adequacy (#4779)
+    "FrontierPoint",
+    "HandSpeedFrontier",
+    "hand_speed_frontier",
+    "swing_observables",
 ]

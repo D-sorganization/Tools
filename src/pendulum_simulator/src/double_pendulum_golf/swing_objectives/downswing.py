@@ -67,6 +67,8 @@ class DownswingResult:
         iterations: Iterations used.
         max_defect: Largest absolute dynamics collocation defect.
         max_slew_violation: Largest torque slew-rate overshoot, zero when legal.
+        max_actuation_violation: Largest breach of the Hill-type actuation
+            limits, zero when legal and when no actuation model is configured.
     """
 
     objective: SwingObjective
@@ -79,6 +81,7 @@ class DownswingResult:
     iterations: int
     max_defect: float
     max_slew_violation: float
+    max_actuation_violation: float = 0.0
     feasibility_tolerance: float = field(default=FEASIBILITY_TOLERANCE)
 
     @property
@@ -178,14 +181,37 @@ class DownswingOptimizer:
             )
 
         constraints: list[dict[str, Any]] = [{"type": "eq", "fun": equalities}]
-        if not self._config.limit_torque_rate:
-            return constraints
 
-        def inequalities(scaled_decision: FloatArray) -> FloatArray:
-            _, torques = transcription.unpack(scaled_decision * scales)
-            return transcription.slew_margins(torques) / slew_scale
+        if self._config.limit_torque_rate:
 
-        constraints.append({"type": "ineq", "fun": inequalities})
+            def slew_inequalities(scaled_decision: FloatArray) -> FloatArray:
+                _, torques = transcription.unpack(scaled_decision * scales)
+                return transcription.slew_margins(torques) / slew_scale
+
+            constraints.append({"type": "ineq", "fun": slew_inequalities})
+
+        floor = self._config.min_hand_speed_ms
+        if floor is not None:
+            arm_length = self._config.params.L1
+            minimum_rate = floor / arm_length
+
+            def hand_speed_inequalities(scaled_decision: FloatArray) -> FloatArray:
+                states, _ = transcription.unpack(scaled_decision * scales)
+                return np.array([abs(states[-1, 2]) - minimum_rate])
+
+            constraints.append({"type": "ineq", "fun": hand_speed_inequalities})
+
+        actuation = self._config.actuation
+        if actuation is not None:
+            torque_scale = float(np.mean(actuation.peak_torques_nm))
+
+            def actuation_inequalities(scaled_decision: FloatArray) -> FloatArray:
+                states, torques = transcription.unpack(scaled_decision * scales)
+                margins = actuation.batch_margins(states[:, 2:4], torques)
+                return margins.ravel() / torque_scale
+
+            constraints.append({"type": "ineq", "fun": actuation_inequalities})
+
         return constraints
 
     def _build_result(
@@ -199,6 +225,10 @@ class DownswingOptimizer:
         max_defect = float(np.max(np.abs(self._transcription.defects(states, torques))))
         margins = self._transcription.slew_margins(torques)
         max_slew_violation = float(max(0.0, -np.min(margins)))
+        max_actuation_violation = 0.0
+        if config.actuation is not None:
+            actuation_margins = config.actuation.batch_margins(states[:, 2:4], torques)
+            max_actuation_violation = float(max(0.0, -np.min(actuation_margins)))
         value = objective.evaluate(signals)
 
         logger.info(
@@ -220,4 +250,5 @@ class DownswingOptimizer:
             iterations=int(getattr(solution, "nit", -1)),
             max_defect=max_defect,
             max_slew_violation=max_slew_violation,
+            max_actuation_violation=max_actuation_violation,
         )

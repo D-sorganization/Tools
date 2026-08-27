@@ -13984,10 +13984,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2700,
+      "bytes_lf": 3916,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "eb0ba9dc549225f553f4ffa617ce0fa05dad85fa502945b21da96dd74c1ea5f0",
+      "content_sha256_lf": "db73c44183c35c69846861ee6f5126fee70d59d338ebd02a66433060dec93730",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-INIT-PY-BB0C6A767464",
       "language": "python",
@@ -14073,7 +14073,22 @@
           },
           {
             "kind": "re-export",
+            "name": "EnergyOptimalRates",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrontierPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "GolferPreset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HandSpeedFrontier",
             "signature": null
           },
           {
@@ -14083,7 +14098,27 @@
           },
           {
             "kind": "re-export",
+            "name": "JointActuation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ObservableBand",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RealismScore",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SWING_OBJECTIVES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SwingActuation",
             "signature": null
           },
           {
@@ -14104,6 +14139,11 @@
           {
             "kind": "re-export",
             "name": "SwingSignals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TOUR_DRIVER_BANDS",
             "signature": null
           },
           {
@@ -14163,6 +14203,11 @@
           },
           {
             "kind": "re-export",
+            "name": "energy_optimal_rates",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "evaluate_all",
             "signature": null
           },
@@ -14174,6 +14219,41 @@
           {
             "kind": "re-export",
             "name": "get_objective",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "hand_speed_frontier",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "impact_hand_speed_coefficient",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "optimal_hand_speed_sign",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "score_against_reference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "swing_observables",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "tour_hub_actuation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "tour_wrist_actuation",
             "signature": null
           }
         ],
@@ -14289,6 +14369,89 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12308,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "fc0eb3e4014b5ff3604fca685a8617b1a11b69fff1a9fd92c49113d2a803a1f9",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-ACTUATION-PY-65ED0AEB5C54",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/actuation.py",
+      "purpose": "Hill-type joint actuation limits for a golf downswing.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "10.1007/s12283-009-0020-9",
+          "10.1098/rspb.1938.0050",
+          "10.1123/jab.16.4.356",
+          "https://doi.org/10.1007/s12283-009-0020-9",
+          "https://doi.org/10.1098/rspb.1938.0050",
+          "https://doi.org/10.1123/jab.16.4.356"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "JointActuation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SwingActuation",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "tour_hub_actuation",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "tour_wrist_actuation",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_actuation.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "N*m",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -14435,10 +14598,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8230,
+      "bytes_lf": 9733,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "3ca3a47acd193baf3db182af95bb3bbf3e63011125b27c275338f1805c3f28fe",
+      "content_sha256_lf": "e2ec8546bb404563e9cf68a65aed73b1554fbb0fc5bd8a7f848385f941e751c8",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-PY-31CBD3F1B74F",
       "language": "python",
@@ -14504,10 +14667,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10349,
+      "bytes_lf": 11316,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "bfd9f72e2e26b9eaf5a7519b3f646b85915fd0356dac473a0c8e6defd5736c10",
+      "content_sha256_lf": "96dd57acb135ad0ee228a7974ddad1accdfee466e8ebb8cf470f8cc9060e3ad7",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-DOWNSWING-CONFIG-PY-5B8D37472DAA",
       "language": "python",
@@ -14567,9 +14730,170 @@
           "N*m",
           "N·m",
           "kg",
+          "m/s",
           "ms",
           "rad",
           "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8452,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "15e2bf8233a4914bf113c8e20b54372d14fd3009b9428a698797d4c05fb62396",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-IMPACT-OPTIMALITY-PY-46372125DFAF",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/impact_optimality.py",
+      "purpose": "Why a speed-optimal downswing stops the hands, in closed form.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "10.1007/BF02844309",
+          "10.1098/rspb.1938.0050",
+          "10.1119/1.1976433",
+          "https://doi.org/10.1007/BF02844309",
+          "https://doi.org/10.1098/rspb.1938.0050",
+          "https://doi.org/10.1119/1.1976433",
+          "https://www.jssm.org/jssm-04-499.xml.xml"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EnergyOptimalRates",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "energy_optimal_rates",
+            "signature": "params: PendulumParams, kinetic_energy_j: float"
+          },
+          {
+            "kind": "function",
+            "name": "impact_hand_speed_coefficient",
+            "signature": "params: PendulumParams, club_mass_kg: float | None=None, club_com_m: float | None=None, club_inertia_kgm2: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "optimal_hand_speed_sign",
+            "signature": "params: PendulumParams, club_mass_kg: float | None=None, club_com_m: float | None=None, club_inertia_kgm2: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_impact_optimality.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9207,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "72f16b40cebe7703d6192938baeb0bee98ff0eeb326cd5c31fe8e1bff07d3b6e",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-MODEL-ADEQUACY-PY-E5B09834B73A",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/model_adequacy.py",
+      "purpose": "Measuring what the two-link model can and cannot be asked to do.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "10.1007/BF02844309",
+          "https://doi.org/10.1007/BF02844309"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FrontierPoint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandSpeedFrontier",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "hand_speed_frontier",
+            "signature": "config: DownswingConfig, floors_ms: Sequence[float], bands: tuple[ObservableBand, ...]=TOUR_DRIVER_BANDS"
+          },
+          {
+            "kind": "function",
+            "name": "swing_observables",
+            "signature": "states: FloatArray, clubhead_speed: FloatArray, duration_s: float, arm_length_m: float"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_model_adequacy.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "deg",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -14746,6 +15070,93 @@
         ],
         "unit_mentions": [
           "N·m",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8639,
+      "classification": "calculation",
+      "classification_basis": "path-marker:kinematic",
+      "content_sha256_lf": "b80ed0b4306bfd2dac158793daef05cbcb36d8bbcba72590910795c72cf31fa5",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-REFERENCE-KINEMATICS-PY-41E1B5637BF2",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/reference_kinematics.py",
+      "purpose": "Measured golfer kinematics, with sources, and a score against them.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "10.1007/BF02844309",
+          "10.1007/s12283-009-0020-9",
+          "10.1098/rspb.1938.0050",
+          "10.1119/1.1976433",
+          "10.1123/jab.16.4.356",
+          "https://doi.org/10.1007/BF02844309",
+          "https://doi.org/10.1007/s12283-009-0020-9",
+          "https://doi.org/10.1098/rspb.1938.0050",
+          "https://doi.org/10.1119/1.1976433",
+          "https://doi.org/10.1123/jab.16.4.356",
+          "https://www.jssm.org/jssm-04-499.xml.xml",
+          "https://www.jssm.org/jssm-04-520.xml.xml"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ObservableBand",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RealismScore",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOUR_DRIVER_BANDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "score_against_reference",
+            "signature": "measurements: dict[str, float], bands: tuple[ObservableBand, ...]=TOUR_DRIVER_BANDS"
+          }
+        ],
+        "test_paths": [
+          "src/pendulum_simulator/tests/test_reference_kinematics.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s",
           "s"
         ],
         "validation_paths": []
@@ -15144,185 +15555,6 @@
           "tests/folder_tool/test_gui_registration.py",
           "tests/rate_of_closure/test_gui_registration.py"
         ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 387,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "acfa21ae74c75ad577c06b9f63bbe3b15b66547183c31bb12735de8fe3c22b37",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-LAUNCH-CLI-PY-2A950B12DB3D",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pid_generator/launch_cli.py",
-      "purpose": "Launch the Programmatic PID generator CLI.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "function",
-            "name": "main",
-            "signature": ""
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 348,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "555c3682d0e16e857e9fde85790791405c7bafb4b6e751c2b45683891843d344",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-LAUNCH-PYQT6-PY-9F73E5265CE8",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pid_generator/launch_pyqt6.py",
-      "purpose": "Standalone PyQt6 launcher for P&ID Generator.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/folder_tool/test_launch_pyqt6.py"
-        ],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 0,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-UI-INIT-PY-94106057DAD8",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pid_generator/ui/__init__.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 0,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-SRC-PID-GENERATOR-UI-PYQT6-INIT-PY-01B9CE7A9664",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/pid_generator/ui/pyqt6/__init__.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }
